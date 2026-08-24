@@ -66,6 +66,16 @@ public interface ISpaceDesignV1Service
         Guid versionId,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<SpaceSceneFloorDto>> GetFloorsAsync(
+        Guid versionId,
+        CancellationToken cancellationToken = default);
+
+    Task<CreateSpaceFloorResponse> CreateFloorAsync(
+        Guid versionId,
+        CreateSpaceFloorRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+
     Task<SpaceDesignSceneDto> GetSceneAsync(
         Guid versionId,
         Guid floorLogicalId,
@@ -76,6 +86,12 @@ public interface ISpaceDesignV1Service
         CancellationToken cancellationToken = default);
 
     Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommandsAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        ApplySpaceElementCommandBatchRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<ApplySpaceElementCommandBatchResponse> ApplyCadElementCommandsAsync(
         Guid versionId,
         Guid floorLogicalId,
         ApplySpaceElementCommandBatchRequest request,
@@ -99,6 +115,30 @@ public interface ISpaceDesignV1Service
         string idempotencyKey,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<SpaceWarehouseTemplateDto>> GetWarehouseTemplatesAsync(
+        string? scope,
+        CancellationToken cancellationToken = default);
+
+    Task<CreateTenantSpaceWarehouseTemplateResponse>
+        CreateTenantWarehouseTemplateAsync(
+            CreateTenantSpaceWarehouseTemplateRequest request,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default);
+
+    Task<SpaceWarehouseTemplateInstantiationPreviewDto>
+        PreviewWarehouseTemplateAsync(
+            Guid templateId,
+            PreviewSpaceWarehouseTemplateRequest request,
+            CancellationToken cancellationToken = default);
+
+    Task<ApplySpaceWarehouseTemplateFloorResponse>
+        ApplyWarehouseTemplateFloorAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            Guid templateId,
+            ApplySpaceWarehouseTemplateFloorRequest request,
+            CancellationToken cancellationToken = default);
+
     Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,
@@ -116,6 +156,18 @@ public interface ISpaceDesignV1Service
     Task<CreateSpaceSourceResponse> CreateSourceAsync(
         Guid versionId,
         CreateSpaceSourceRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+
+    Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreviewAsync(
+        Guid versionId,
+        Guid sourceId,
+        CancellationToken cancellationToken = default);
+
+    Task<RemoveSpaceSourceResponse> RemoveSourceAsync(
+        Guid versionId,
+        Guid sourceId,
+        RemoveSpaceSourceRequest request,
         string idempotencyKey,
         CancellationToken cancellationToken = default);
 

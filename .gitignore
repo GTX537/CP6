@@ -110,6 +110,7 @@ appsettings.Local.json
 # ============================================================
 openapi.json
 backend.log
+/.tmp-autocad-*/
 
 # Claude Code worktrees & temp probes
 .claude/worktrees/

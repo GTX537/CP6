@@ -18,6 +18,7 @@ public sealed class SpaceDesignV1Service :
 {
     private const int DefaultPageSize = 50;
     private const int MaxPageSize = 200;
+    private const string BlankVersionMode = "Blank";
     private const string PublishedVersionMode = "PublishedVersion";
     private const string CodingDecisionModify = "modify";
     private const string CodingDecisionUnchanged = "unchanged";
@@ -109,13 +110,39 @@ public sealed class SpaceDesignV1Service :
             .Skip(offset)
             .Take(limit + 1)
             .ToListAsync(cancellationToken);
+        var visibleVersionIds = rows
+            .Take(limit)
+            .Select(version => version.Id)
+            .ToArray();
+        var blockingCounts = visibleVersionIds.Length == 0
+            ? new Dictionary<Guid, int>()
+            : await _context.Issues
+                .AsNoTracking()
+                .Where(issue =>
+                    issue.ModelVersionId.HasValue &&
+                    visibleVersionIds.Contains(issue.ModelVersionId.Value) &&
+                    issue.Status == SpaceIssueStatus.Open &&
+                    issue.Severity == SpaceIssueSeverity.Blocking)
+                .GroupBy(issue => issue.ModelVersionId!.Value)
+                .Select(group => new
+                {
+                    VersionId = group.Key,
+                    Count = group.Count(),
+                })
+                .ToDictionaryAsync(
+                    item => item.VersionId,
+                    item => item.Count,
+                    cancellationToken);
         return Page(
             rows,
             limit,
             offset,
             "versions",
             filterHash,
-            version => ToDto(version, model.SiteId));
+            version => ToDto(
+                version,
+                model.SiteId,
+                blockingCounts.GetValueOrDefault(version.Id)));
     }
 
     public async Task<SpaceVersionDto> GetVersionAsync(
@@ -134,7 +161,173 @@ public sealed class SpaceDesignV1Service :
             throw NotFound(SpaceErrorCodes.VersionNotFound, "Space version");
 
         EnsureReadable(result.Model);
-        return ToDto(result.Version, result.Model.SiteId);
+        var openBlockingCount = await _context.Issues
+            .AsNoTracking()
+            .CountAsync(
+                issue =>
+                    issue.ModelVersionId == versionId &&
+                    issue.Status == SpaceIssueStatus.Open &&
+                    issue.Severity == SpaceIssueSeverity.Blocking,
+                cancellationToken);
+        return ToDto(result.Version, result.Model.SiteId, openBlockingCount);
+    }
+
+    public async Task<IReadOnlyList<SpaceSceneFloorDto>> GetFloorsAsync(
+        Guid versionId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureReadable(model);
+
+        var floors = await _context.FloorRevisions
+            .AsNoTracking()
+            .Where(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(candidate => candidate.Level)
+            .ThenBy(candidate => candidate.FloorCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        return floors.Select(ToSceneDto).ToArray();
+    }
+
+    public async Task<CreateSpaceFloorResponse> CreateFloorAsync(
+        Guid versionId,
+        CreateSpaceFloorRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        ArgumentNullException.ThrowIfNull(request);
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureWritable(model);
+
+        var normalizedRequest = new CreateSpaceFloorRequest(
+            RequireText(request.FloorCode, 100, "floorCode"),
+            RequireText(request.Name, 200, "name"),
+            request.Level,
+            request.Elevation,
+            request.Height,
+            request.ExpectedContentRevision);
+        if (normalizedRequest.Height < 0)
+        {
+            throw Invalid(
+                "height",
+                "height must be greater than or equal to zero.");
+        }
+        if (normalizedRequest.ExpectedContentRevision < 0)
+        {
+            throw Invalid(
+                "expectedContentRevision",
+                "expectedContentRevision must be greater than or equal to zero.");
+        }
+
+        var operation = $"create-floor:{versionId:D}";
+        var requestHash = Hash(
+            JsonSerializer.Serialize(normalizedRequest, JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadFloorReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        try
+        {
+            await AcquireVersionFloorInitializationLockAsync(
+                versionId,
+                cancellationToken);
+            replay = await ReadFloorReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (replay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return replay;
+            }
+
+            var version = await _context.Versions
+                              .SingleOrDefaultAsync(
+                                  candidate => candidate.Id == versionId,
+                                  cancellationToken)
+                          ?? throw NotFound(
+                              SpaceErrorCodes.VersionNotFound,
+                              "Space version");
+            if (version.Purpose != SpaceModelVersionPurpose.Production ||
+                version.Status != SpaceVersionStatus.Draft)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionStateInvalid,
+                    "Only a production Draft version accepts new floors.",
+                    "open-or-create-draft");
+            }
+            if (version.ContentRevision !=
+                normalizedRequest.ExpectedContentRevision)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.ConcurrencyConflict,
+                    $"Expected content revision " +
+                    $"{normalizedRequest.ExpectedContentRevision}, but the " +
+                    $"current revision is {version.ContentRevision}.",
+                    "reload-design-project");
+            }
+            if (await _context.FloorRevisions.AnyAsync(
+                    candidate =>
+                        candidate.ModelVersionId == versionId &&
+                        candidate.FloorCode == normalizedRequest.FloorCode,
+                    cancellationToken))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionConflict,
+                    "The Draft already contains that floor code.",
+                    "choose-another-floor-code");
+            }
+
+            var floor = SpaceFloorRevision.Create(
+                _execution.TenantId,
+                versionId,
+                Guid.NewGuid(),
+                model.SiteId,
+                normalizedRequest.Level,
+                normalizedRequest.FloorCode,
+                normalizedRequest.Name,
+                normalizedRequest.Elevation,
+                normalizedRequest.Height);
+            _context.FloorRevisions.Add(floor);
+            version.TouchContent();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var response = new CreateSpaceFloorResponse(
+                ToSceneDto(floor),
+                version.ContentRevision,
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    HttpCreated));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
     }
 
     public async Task<SpaceDesignSceneDto> GetSceneAsync(
@@ -417,12 +610,39 @@ public sealed class SpaceDesignV1Service :
             floors);
     }
 
-    public async Task<ApplySpaceElementCommandBatchResponse>
+    public Task<ApplySpaceElementCommandBatchResponse>
         ApplyElementCommandsAsync(
             Guid versionId,
             Guid floorLogicalId,
             ApplySpaceElementCommandBatchRequest request,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default) =>
+        ApplyElementCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            maximumCommandCount: 100,
+            cancellationToken);
+
+    public Task<ApplySpaceElementCommandBatchResponse>
+        ApplyCadElementCommandsAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceElementCommandBatchRequest request,
+            CancellationToken cancellationToken = default) =>
+        ApplyElementCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            SpaceCadReviewWorkspaceVersions.MaximumApplyChanges,
+            cancellationToken);
+
+    private async Task<ApplySpaceElementCommandBatchResponse>
+        ApplyElementCommandsCoreAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceElementCommandBatchRequest request,
+            int maximumCommandCount,
+            CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
@@ -520,7 +740,7 @@ public sealed class SpaceDesignV1Service :
                     "reload-floor-scene");
             }
 
-            ValidateElementCommandBatch(request);
+            ValidateElementCommandBatch(request, maximumCommandCount);
             var concurrentReplay = await ReadElementCommandReplayAsync(
                 request.CommandBatchId,
                 requestHash,
@@ -624,7 +844,8 @@ public sealed class SpaceDesignV1Service :
                 elements,
                 racks,
                 rackLevels,
-                locations);
+                locations,
+                request.ChangesetSha256 is not null);
             await ValidateRackArrayCodesAsync(
                 versionId,
                 request.Commands,
@@ -649,6 +870,11 @@ public sealed class SpaceDesignV1Service :
 
             var affectedElementCommands =
                 new Dictionary<Guid, SpaceElementCommandDto>();
+            var beforeElements =
+                new Dictionary<Guid, SpaceSceneElementDto>();
+            var beforeElementAttributes =
+                new Dictionary<Guid,
+                    IReadOnlyList<SpaceSceneElementAttributeDto>>();
             var affectedRacks = new Dictionary<Guid, SpaceRackRevision>();
             var affectedRackLevels =
                 new Dictionary<Guid, SpaceRackLevelRevision>();
@@ -681,8 +907,8 @@ public sealed class SpaceDesignV1Service :
                         payload.Depth);
                     element.ConfigureBusinessLink(
                         payload.BusinessCode,
-                        linkedEntityType: null,
-                        linkedLogicalId: null);
+                        payload.LinkedEntityType,
+                        payload.LinkedLogicalId);
                     if (payload.SourceId.HasValue)
                     {
                         element.AttachSource(
@@ -709,6 +935,17 @@ public sealed class SpaceDesignV1Service :
                     {
                         attributes = [];
                         attributesByElement[element.Id] = attributes;
+                    }
+
+                    if (!beforeElements.ContainsKey(element.LogicalId))
+                    {
+                        beforeElements[element.LogicalId] = ToSceneDto(element);
+                        beforeElementAttributes[element.LogicalId] = attributes
+                            .Where(attribute => !attribute.IsDeleted)
+                            .OrderBy(attribute => attribute.Namespace)
+                            .ThenBy(attribute => attribute.Key)
+                            .Select(ToSceneDto)
+                            .ToArray();
                     }
 
                     beforeJson = ElementAuditJson(element, attributes);
@@ -838,7 +1075,9 @@ public sealed class SpaceDesignV1Service :
                         .OrderBy(attribute => attribute.Namespace)
                         .ThenBy(attribute => attribute.Key)
                         .Select(ToSceneDto)
-                        .ToArray());
+                        .ToArray(),
+                        beforeElements.GetValueOrDefault(pair.Key),
+                        beforeElementAttributes.GetValueOrDefault(pair.Key));
                 })
                 .ToArray();
             var response = new ApplySpaceElementCommandBatchResponse(
@@ -909,12 +1148,30 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
-    public async Task<ApplySpaceLayoutCommandBatchResponse>
+    public Task<ApplySpaceLayoutCommandBatchResponse>
         ApplyLayoutCommandsAsync(
             Guid versionId,
             Guid floorLogicalId,
             ApplySpaceLayoutCommandBatchRequest request,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default) =>
+        ApplyLayoutCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            maximumCommandCount: 100,
+            requestHashBinding: null,
+            configureFloor: null,
+            cancellationToken);
+
+    private async Task<ApplySpaceLayoutCommandBatchResponse>
+        ApplyLayoutCommandsCoreAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceLayoutCommandBatchRequest request,
+            int maximumCommandCount,
+            string? requestHashBinding,
+            Action<SpaceFloorRevision>? configureFloor,
+            CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
@@ -927,9 +1184,11 @@ public sealed class SpaceDesignV1Service :
             request.LeaseId,
             request.ClientInstanceId,
             cancellationToken);
-        var requestHash = Hash(
-            $"layout\n{versionId:D}\n{floorLogicalId:D}\n" +
-            JsonSerializer.Serialize(request, JsonOptions));
+        var serializedRequest = JsonSerializer.Serialize(request, JsonOptions);
+        var requestHash = Hash(requestHashBinding is null
+            ? $"layout\n{versionId:D}\n{floorLogicalId:D}\n{serializedRequest}"
+            : $"layout\n{versionId:D}\n{floorLogicalId:D}\n" +
+              $"{requestHashBinding}\n{serializedRequest}");
 
         await using var transaction = await _context.Database
             .BeginTransactionAsync(
@@ -1003,7 +1262,8 @@ public sealed class SpaceDesignV1Service :
                     "reload-floor-scene");
             }
 
-            ValidateLayoutCommandBatch(request);
+            ValidateLayoutCommandBatch(request, maximumCommandCount);
+            configureFloor?.Invoke(floor);
             var concurrentReplay = await ReadLayoutCommandReplayAsync(
                 request.CommandBatchId,
                 requestHash,
@@ -2151,6 +2411,422 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
+    public async Task<IReadOnlyList<SpaceWarehouseTemplateDto>>
+        GetWarehouseTemplatesAsync(
+            string? scope,
+            CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        cancellationToken.ThrowIfCancellationRequested();
+        var normalizedScope = scope?.Trim();
+        if (!string.IsNullOrWhiteSpace(normalizedScope) &&
+            !string.Equals(
+                normalizedScope,
+                "System",
+                StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(
+                normalizedScope,
+                "Tenant",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw Invalid(
+                "scope",
+                "Supported warehouse template scopes are System and Tenant.");
+        }
+
+        var result = new List<SpaceWarehouseTemplateDto>();
+        var includeSystem = string.IsNullOrWhiteSpace(normalizedScope) ||
+            string.Equals(
+                normalizedScope,
+                "System",
+                StringComparison.OrdinalIgnoreCase);
+        var includeTenant = string.IsNullOrWhiteSpace(normalizedScope) ||
+            string.Equals(
+                normalizedScope,
+                "Tenant",
+                StringComparison.OrdinalIgnoreCase);
+        if (includeSystem)
+            result.AddRange(SpaceBuiltInWarehouseTemplates.List());
+        if (includeTenant)
+        {
+            var templates = await _context.WarehouseTemplates
+                .AsNoTracking()
+                .OrderBy(template => template.NormalizedTemplateCode)
+                .ThenBy(template => template.Id)
+                .ToArrayAsync(cancellationToken);
+            var templateIds = templates.Select(template => template.Id).ToArray();
+            var versions = templateIds.Length == 0
+                ? []
+                : await _context.WarehouseTemplateVersions
+                    .AsNoTracking()
+                    .Where(version => templateIds.Contains(version.TemplateId))
+                    .ToArrayAsync(cancellationToken);
+            var currentVersionByTemplate = templates.ToDictionary(
+                template => template.Id,
+                template => template.CurrentVersion);
+            var currentByTemplate = versions
+                .Where(version =>
+                    currentVersionByTemplate.TryGetValue(
+                        version.TemplateId,
+                        out var currentVersion) &&
+                    version.VersionNo == currentVersion)
+                .ToDictionary(version => version.TemplateId);
+            result.AddRange(templates.Select(template =>
+                ToDto(template, currentByTemplate[template.Id])));
+        }
+        return result;
+    }
+
+    public async Task<CreateTenantSpaceWarehouseTemplateResponse>
+        CreateTenantWarehouseTemplateAsync(
+            CreateTenantSpaceWarehouseTemplateRequest request,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        SpaceWarehouseTemplate template;
+        SpaceWarehouseTemplateInstantiationPreviewDto preview;
+        SpaceWarehouseTemplateVersion version;
+        try
+        {
+            template = SpaceWarehouseTemplate.CreateTenant(
+                _execution.TenantId,
+                request.TemplateCode,
+                request.Name,
+                request.Description);
+            var versionId = Guid.NewGuid();
+            preview = SpaceWarehouseTemplatePlanCodec.Seal(
+                template.Id,
+                versionId,
+                request.SchemaVersion,
+                request.Floors,
+                request.Zones,
+                request.Aisles,
+                request.Racks);
+            version = SpaceWarehouseTemplateVersion.CreateReady(
+                _execution.TenantId,
+                versionId,
+                template.Id,
+                versionNo: 1,
+                preview.SchemaVersion,
+                SpaceWarehouseTemplatePlanCodec.SerializeContent(preview),
+                preview.TemplateContentHash,
+                preview.Counts.Floors,
+                preview.Counts.Zones,
+                preview.Counts.Aisles,
+                preview.Counts.Racks,
+                preview.Counts.Locations);
+        }
+        catch (ArgumentException exception)
+        {
+            throw Invalid("warehouseTemplate", exception.Message);
+        }
+
+        const string operation = "create-tenant-warehouse-template";
+        var normalizedRequest = new CreateTenantSpaceWarehouseTemplateRequest(
+            template.TemplateCode,
+            template.Name,
+            template.Description,
+            preview.SchemaVersion,
+            preview.Floors,
+            preview.Zones,
+            preview.Aisles,
+            preview.Racks);
+        var requestHash = Hash(
+            JsonSerializer.Serialize(normalizedRequest, JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadWarehouseTemplateReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        try
+        {
+            var concurrentReplay = await ReadWarehouseTemplateReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            _context.WarehouseTemplates.Add(template);
+            _context.WarehouseTemplateVersions.Add(version);
+            await _context.SaveChangesAsync(cancellationToken);
+            var response = new CreateTenantSpaceWarehouseTemplateResponse(
+                ToDto(template, version),
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    HttpCreated));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var concurrentReplay = await ReadWarehouseTemplateReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+                return concurrentReplay;
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateConflict,
+                "A tenant warehouse template with this code already exists.",
+                "choose-another-template-code");
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
+    public async Task<SpaceWarehouseTemplateInstantiationPreviewDto>
+        PreviewWarehouseTemplateAsync(
+            Guid templateId,
+            PreviewSpaceWarehouseTemplateRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        ArgumentNullException.ThrowIfNull(request);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (templateId == Guid.Empty || request.TemplateVersionId == Guid.Empty)
+        {
+            throw Invalid(
+                "templateVersionId",
+                "Template and template version identities are required.");
+        }
+
+        var resolved = await ResolveWarehouseTemplateAsync(
+            templateId,
+            request.TemplateVersionId,
+            cancellationToken);
+        return resolved.Preview;
+    }
+
+    public async Task<ApplySpaceWarehouseTemplateFloorResponse>
+        ApplyWarehouseTemplateFloorAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            Guid templateId,
+            ApplySpaceWarehouseTemplateFloorRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureWritable(model);
+        await EnsureActiveEditLeaseAsync(
+            versionId,
+            floorLogicalId,
+            request.LeaseId,
+            request.ClientInstanceId,
+            cancellationToken);
+
+        if (request.SchemaVersion != SpaceWarehouseTemplateContract.SchemaVersion)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CommandSchemaUnsupported,
+                422,
+                "The warehouse template Apply schema is not supported.",
+                $"schemaVersion must be " +
+                $"{SpaceWarehouseTemplateContract.SchemaVersion}.",
+                "upgrade-client");
+        }
+        if (request.SiteId == Guid.Empty || request.SiteId != model.SiteId)
+        {
+            throw Conflict(
+                SpaceErrorCodes.VersionConflict,
+                "The target Site does not match the Draft version.",
+                "reload-design-project");
+        }
+        if (templateId == Guid.Empty ||
+            request.TemplateVersionId == Guid.Empty ||
+            request.CommandBatchId == Guid.Empty ||
+            string.IsNullOrWhiteSpace(request.TemplateFloorKey) ||
+            !IsSha256(request.ProposalHash))
+        {
+            throw Invalid(
+                "templateApply",
+                "Template, floor, command batch and proposal identities are required.");
+        }
+
+        var resolved = await ResolveWarehouseTemplateAsync(
+            templateId,
+            request.TemplateVersionId,
+            cancellationToken);
+        var preview = resolved.Preview;
+        if (!string.Equals(
+                preview.ProposalHash,
+                request.ProposalHash,
+                StringComparison.Ordinal))
+        {
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateProposalStale,
+                "The warehouse template proposal changed after preview.",
+                "preview-warehouse-template-again");
+        }
+        if (!SpaceBuiltInWarehouseTemplates.TryBuildFloorCommandBatch(
+                preview,
+                request.TemplateFloorKey,
+                versionId,
+                floorLogicalId,
+                request.CommandBatchId,
+                request.ClientInstanceId,
+                request.LeaseId,
+                request.ExpectedFloorRevision,
+                request.ExpectedContentRevision,
+                out var templateFloor,
+                out var counts,
+                out var commandBatch) ||
+            templateFloor is null ||
+            counts is null ||
+            commandBatch is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateFloorNotFound,
+                404,
+                "Warehouse template floor not found.",
+                recoveryAction: "preview-warehouse-template-again");
+        }
+
+        var applied = await ApplyLayoutCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            commandBatch,
+            SpaceBuiltInWarehouseTemplates.MaximumFloorCommandCount,
+            $"template\n{templateId:D}\n{request.TemplateVersionId:D}\n" +
+            $"{request.ProposalHash}\n{templateFloor.Key}",
+            floor => floor.ConfigureBoundary(
+                TemplateFloorBoundary(templateFloor),
+                "LOCAL_MM_Z_UP"),
+            cancellationToken);
+        return new ApplySpaceWarehouseTemplateFloorResponse(
+            SpaceWarehouseTemplateContract.SchemaVersion,
+            templateId,
+            request.TemplateVersionId,
+            preview.TemplateContentHash,
+            preview.ProposalHash,
+            templateFloor.Key,
+            versionId,
+            floorLogicalId,
+            applied.FloorRevision,
+            applied.VersionContentRevision,
+            counts,
+            applied.CommandBatchId,
+            applied.IdempotentReplay);
+    }
+
+    private async Task<ResolvedWarehouseTemplate>
+        ResolveWarehouseTemplateAsync(
+            Guid templateId,
+            Guid templateVersionId,
+            CancellationToken cancellationToken)
+    {
+        var systemTemplate = SpaceBuiltInWarehouseTemplates.List()
+            .SingleOrDefault(candidate => candidate.Id == templateId);
+        if (systemTemplate is not null)
+        {
+            if (systemTemplate.LatestVersion.Id != templateVersionId)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                    "The requested warehouse template version is not current.",
+                    "reload-template-catalog");
+            }
+            if (!SpaceBuiltInWarehouseTemplates.TryPreview(
+                    templateId,
+                    templateVersionId,
+                    out var systemPreview) ||
+                systemPreview is null)
+            {
+                throw new SpaceProblemException(
+                    SpaceErrorCodes.WarehouseTemplateNotFound,
+                    404,
+                    "Warehouse template preview not found.",
+                    recoveryAction: "reload-template-catalog");
+            }
+            return new ResolvedWarehouseTemplate(
+                systemTemplate,
+                systemPreview);
+        }
+
+        var tenantTemplate = await _context.WarehouseTemplates
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate => candidate.Id == templateId,
+                cancellationToken);
+        if (tenantTemplate is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateNotFound,
+                404,
+                "Warehouse template not found.",
+                recoveryAction: "reload-template-catalog");
+        }
+        var tenantVersion = await _context.WarehouseTemplateVersions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == templateVersionId &&
+                    candidate.TemplateId == templateId,
+                cancellationToken);
+        if (tenantVersion is null ||
+            tenantVersion.VersionNo != tenantTemplate.CurrentVersion)
+        {
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                "The requested warehouse template version is not current.",
+                "reload-template-catalog");
+        }
+
+        SpaceWarehouseTemplateInstantiationPreviewDto tenantPreview;
+        try
+        {
+            tenantPreview = SpaceWarehouseTemplatePlanCodec.ReadAndSeal(
+                templateId,
+                templateVersionId,
+                tenantVersion.ContentJson,
+                tenantVersion.ContentHash);
+        }
+        catch (InvalidDataException exception)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                409,
+                "The tenant warehouse template version is invalid.",
+                exception.Message,
+                "contact-support");
+        }
+        return new ResolvedWarehouseTemplate(
+            ToDto(tenantTemplate, tenantVersion),
+            tenantPreview);
+    }
+
     public async Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,
@@ -2163,23 +2839,36 @@ public sealed class SpaceDesignV1Service :
         EnsureWritable(model);
 
         var name = RequireText(request.Name, 200, "name");
-        if (!string.Equals(
-                request.CreateMode?.Trim(),
-                PublishedVersionMode,
-                StringComparison.Ordinal))
+        var createMode = request.CreateMode?.Trim();
+        var isBlank = string.Equals(
+            createMode,
+            BlankVersionMode,
+            StringComparison.Ordinal);
+        var isPublishedClone = string.Equals(
+            createMode,
+            PublishedVersionMode,
+            StringComparison.Ordinal);
+        if (!isBlank && !isPublishedClone)
         {
             throw Invalid(
                 "createMode",
-                "Only PublishedVersion is supported by the MVP create endpoint.");
+                "Supported values are Blank and PublishedVersion.");
         }
-        if (!model.CurrentPublishedVersionId.HasValue)
+        if (isBlank && request.BasedOnVersionId.HasValue)
+        {
+            throw Invalid(
+                "basedOnVersionId",
+                "Blank drafts cannot specify a base version.");
+        }
+        if (isPublishedClone && !model.CurrentPublishedVersionId.HasValue)
         {
             throw Conflict(
                 SpaceErrorCodes.VersionStateInvalid,
                 "A current Published version is required.",
                 "publish-or-bootstrap-version");
         }
-        if (request.BasedOnVersionId.HasValue &&
+        if (isPublishedClone &&
+            request.BasedOnVersionId.HasValue &&
             request.BasedOnVersionId != model.CurrentPublishedVersionId)
         {
             throw Conflict(
@@ -2191,8 +2880,8 @@ public sealed class SpaceDesignV1Service :
         var operation = $"create-version:{siteId:D}";
         var normalizedRequest = new CreateSpaceVersionRequest(
             name,
-            model.CurrentPublishedVersionId,
-            PublishedVersionMode);
+            isBlank ? null : model.CurrentPublishedVersionId,
+            isBlank ? BlankVersionMode : PublishedVersionMode);
         var requestHash = Hash(
             JsonSerializer.Serialize(normalizedRequest, JsonOptions));
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
@@ -2205,15 +2894,36 @@ public sealed class SpaceDesignV1Service :
         if (replay is not null)
             return replay;
 
-        SpaceVersionCloneStartResult started;
+        Guid startedVersionId;
+        Guid startedJobId;
+        bool startedReused;
         try
         {
-            started = await _clone.StartAsync(
-                new SpaceVersionCloneRequest(
-                    model.Id,
-                    name,
-                    OperationId(keyHash)),
-                cancellationToken);
+            if (isBlank)
+            {
+                var started = await _clone.StartBlankAsync(
+                    new SpaceBlankVersionRequest(
+                        model.Id,
+                        name,
+                        OperationId(keyHash),
+                        requestHash),
+                    cancellationToken);
+                startedVersionId = started.ModelVersionId;
+                startedJobId = started.JobId;
+                startedReused = started.Reused;
+            }
+            else
+            {
+                var started = await _clone.StartAsync(
+                    new SpaceVersionCloneRequest(
+                        model.Id,
+                        name,
+                        OperationId(keyHash)),
+                    cancellationToken);
+                startedVersionId = started.ModelVersionId;
+                startedJobId = started.JobId;
+                startedReused = started.Reused;
+            }
         }
         catch (SpaceVersionConflictException exception)
             when (exception.Message.Contains(
@@ -2230,7 +2940,7 @@ public sealed class SpaceDesignV1Service :
         var version = await _context.Versions
             .AsNoTracking()
             .SingleAsync(
-                candidate => candidate.Id == started.ModelVersionId,
+                candidate => candidate.Id == startedVersionId,
                 cancellationToken);
         var response = new CreateSpaceVersionResponse(
             version.Id,
@@ -2238,9 +2948,9 @@ public sealed class SpaceDesignV1Service :
             FormatVersionNo(version.VersionNo),
             version.Status.ToString(),
             RowVersion(version.RowVersion),
-            started.JobId,
-            $"/api/space/design/v1/jobs/{started.JobId:D}",
-            started.Reused);
+            startedJobId,
+            $"/api/space/design/v1/jobs/{startedJobId:D}",
+            startedReused);
 
         return await StoreVersionResultAsync(
             operation,
@@ -2426,6 +3136,186 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
+    public async Task<SpaceSourceRemovalPreviewDto>
+        GetSourceRemovalPreviewAsync(
+            Guid versionId,
+            Guid sourceId,
+            CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        var model = await FindModelByVersionAsync(
+            versionId,
+            cancellationToken);
+        EnsureReadable(model);
+
+        var version = await _context.Versions
+                          .AsNoTracking()
+                          .SingleOrDefaultAsync(
+                              candidate => candidate.Id == versionId,
+                              cancellationToken)
+                      ?? throw NotFound(
+                          SpaceErrorCodes.VersionNotFound,
+                          "Space version");
+        var source = await _context.Sources
+                         .AsNoTracking()
+                         .SingleOrDefaultAsync(
+                             candidate =>
+                                 candidate.Id == sourceId &&
+                                 candidate.ModelVersionId == versionId,
+                             cancellationToken)
+                     ?? throw NotFound(
+                         SpaceErrorCodes.SourceNotFound,
+                         "Space source");
+        var references = await GetSourceRemovalReferencesAsync(
+            version,
+            source,
+            cancellationToken);
+
+        return SourceRemovalPreview(version, source, references);
+    }
+
+    public async Task<RemoveSpaceSourceResponse> RemoveSourceAsync(
+        Guid versionId,
+        Guid sourceId,
+        RemoveSpaceSourceRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        var model = await FindModelByVersionAsync(
+            versionId,
+            cancellationToken);
+        EnsureWritable(model);
+        if (request.ExpectedContentRevision < 0)
+        {
+            throw Invalid(
+                "expectedContentRevision",
+                "expectedContentRevision must be greater than or equal to zero.");
+        }
+        var expectedSourceRowVersion = ParseSourceRowVersion(
+            request.ExpectedSourceRowVersion);
+
+        var normalizedRequest = new RemoveSpaceSourceRequest(
+            request.ExpectedContentRevision,
+            Convert.ToBase64String(expectedSourceRowVersion));
+        var operation = $"remove-source:{versionId:D}:{sourceId:D}";
+        var requestHash = Hash(
+            JsonSerializer.Serialize(normalizedRequest, JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadSourceRemovalReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        try
+        {
+            var concurrentReplay = await ReadSourceRemovalReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            var version = await _context.Versions
+                              .SingleOrDefaultAsync(
+                                  candidate => candidate.Id == versionId,
+                                  cancellationToken)
+                          ?? throw NotFound(
+                              SpaceErrorCodes.VersionNotFound,
+                              "Space version");
+            var source = await _context.Sources
+                             .SingleOrDefaultAsync(
+                                 candidate =>
+                                     candidate.Id == sourceId &&
+                                     candidate.ModelVersionId == versionId,
+                                 cancellationToken)
+                         ?? throw NotFound(
+                             SpaceErrorCodes.SourceNotFound,
+                             "Space source");
+            if (version.Status != SpaceVersionStatus.Draft ||
+                version.Purpose != SpaceModelVersionPurpose.Production)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionStateInvalid,
+                    "Only a production Draft version accepts source removal.",
+                    "open-or-create-draft");
+            }
+            if (version.ContentRevision != request.ExpectedContentRevision ||
+                !source.RowVersion.AsSpan().SequenceEqual(expectedSourceRowVersion))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.SourceConflict,
+                    "The source or Draft revision changed after removal preview.",
+                    "refresh-source-removal-preview");
+            }
+
+            var references = await GetSourceRemovalReferencesAsync(
+                version,
+                source,
+                cancellationToken);
+            if (references.Any(reference => reference.BlocksRemoval))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.SourceReferenced,
+                    "The source is referenced and cannot be removed.",
+                    "refresh-source-removal-preview");
+            }
+
+            source.Remove();
+            version.TouchContent();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var response = new RemoveSpaceSourceResponse(
+                source.Id,
+                version.ContentRevision,
+                PhysicalFileRetained: source.FileId.HasValue,
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    HttpOk));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var concurrentReplay = await ReadSourceRemovalReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+                return concurrentReplay;
+            throw Conflict(
+                SpaceErrorCodes.SourceConflict,
+                "The source changed concurrently.",
+                "refresh-source-removal-preview");
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
     public async Task<SpaceJobDto> GetJobAsync(
         Guid jobId,
         CancellationToken cancellationToken = default)
@@ -2531,7 +3421,8 @@ public sealed class SpaceDesignV1Service :
     }
 
     private static void ValidateElementCommandBatch(
-        ApplySpaceElementCommandBatchRequest request)
+        ApplySpaceElementCommandBatchRequest request,
+        int maximumCommandCount)
     {
         if (request.SchemaVersion != SpaceElementCommandContract.SchemaVersion)
         {
@@ -2566,12 +3457,19 @@ public sealed class SpaceDesignV1Service :
                 "expectedContentRevision",
                 "A complete CAD changeset content fence is required.");
         }
+        if (maximumCommandCount is < 1 or >
+                SpaceCadReviewWorkspaceVersions.MaximumApplyChanges)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maximumCommandCount));
+        }
         if (request.Commands is null ||
-            request.Commands.Count is < 1 or > 100)
+            request.Commands.Count < 1 ||
+            request.Commands.Count > maximumCommandCount)
         {
             throw Invalid(
                 "commands",
-                "A command batch must contain between 1 and 100 commands.");
+                $"A command batch must contain between 1 and " +
+                $"{maximumCommandCount} commands.");
         }
         if (request.Commands.Any(command => command is null))
             throw Invalid("commands", "Command entries cannot be null.");
@@ -2611,6 +3509,8 @@ public sealed class SpaceDesignV1Service :
                 case SpaceElementCommandContract.UpdateProperties
                     when command.UpdateProperties is not null &&
                          payloadCount == 1:
+                    ValidateOptionalElementType(
+                        command.UpdateProperties.ElementType);
                     if (command.UpdateProperties.Attributes is null ||
                         command.UpdateProperties.Attributes.Count > 100)
                     {
@@ -2679,7 +3579,8 @@ public sealed class SpaceDesignV1Service :
     }
 
     private static void ValidateLayoutCommandBatch(
-        ApplySpaceLayoutCommandBatchRequest request)
+        ApplySpaceLayoutCommandBatchRequest request,
+        int maximumCommandCount)
     {
         if (request.SchemaVersion != SpaceLayoutCommandContract.SchemaVersion)
         {
@@ -2708,11 +3609,16 @@ public sealed class SpaceDesignV1Service :
                 "expectedContentRevision",
                 "A non-negative revision is required.");
         }
-        if (request.Commands is null || request.Commands.Count is < 1 or > 100)
+        if (maximumCommandCount < 1)
+            throw new ArgumentOutOfRangeException(nameof(maximumCommandCount));
+        if (request.Commands is null ||
+            request.Commands.Count < 1 ||
+            request.Commands.Count > maximumCommandCount)
         {
             throw Invalid(
                 "commands",
-                "A layout command batch must contain between 1 and 100 commands.");
+                $"A layout command batch must contain between 1 and " +
+                $"{maximumCommandCount} commands.");
         }
         if (request.Commands.Any(command => command is null))
             throw Invalid("commands", "Command entries cannot be null.");
@@ -3362,6 +4268,23 @@ public sealed class SpaceDesignV1Service :
             : string.Create(
                 CultureInfo.InvariantCulture,
                 $"{prefix.Trim()}-L{levelNo:00}-C{columnNo:000}-D{depthNo:00}");
+
+    private static string TemplateFloorBoundary(
+        SpaceWarehouseTemplateFloorPlanDto floor) =>
+        JsonSerializer.Serialize(
+            new
+            {
+                schemaVersion = 1,
+                kind = "polygon",
+                points = new[]
+                {
+                    new[] { 0, 0 },
+                    new[] { floor.Width, 0 },
+                    new[] { floor.Width, floor.Depth },
+                    new[] { 0, floor.Depth },
+                },
+            },
+            JsonOptions);
 
     private async Task<ApplySpaceLayoutCommandBatchResponse?>
         ReadLayoutCommandReplayAsync(
@@ -4052,7 +4975,8 @@ public sealed class SpaceDesignV1Service :
         IReadOnlyDictionary<Guid, SpaceElementRevision> elements,
         IReadOnlyDictionary<Guid, SpaceRackRevision> racks,
         IReadOnlyCollection<SpaceRackLevelRevision> rackLevels,
-        IReadOnlyCollection<SpaceLocationRevision> locations)
+        IReadOnlyCollection<SpaceLocationRevision> locations,
+        bool isCadChangeset)
     {
         foreach (var command in commands)
         {
@@ -4086,6 +5010,48 @@ public sealed class SpaceDesignV1Service :
                 throw Invalid(
                     "commands.updateProperties",
                     "UpdateProperties can target only a common element.");
+            }
+            if (isCadChangeset && isElement &&
+                element!.IsManualCorrectionLocked)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.CadManualCorrectionLocked,
+                    "A CAD changeset cannot replace a locked manual correction.",
+                    "keep-manual-correction-or-unlock");
+            }
+            if (command.Type ==
+                    SpaceElementCommandContract.UpdateProperties &&
+                command.UpdateProperties!.ManualCorrectionLocked.HasValue)
+            {
+                if (element!.SourceId is null ||
+                    string.IsNullOrWhiteSpace(element.SourceRef))
+                {
+                    throw Invalid(
+                        "commands.updateProperties.manualCorrectionLocked",
+                        "Only a source-backed element can lock a manual correction.");
+                }
+                if (element.IsManualCorrectionLocked ==
+                    command.UpdateProperties.ManualCorrectionLocked.Value)
+                {
+                    throw Conflict(
+                        SpaceErrorCodes.CommandConflict,
+                        "The manual correction already has the requested lock state.",
+                        "reload-floor-scene");
+                }
+            }
+            if (command.Type ==
+                    SpaceElementCommandContract.UpdateProperties &&
+                element?.ModelAssetId is not null &&
+                !string.IsNullOrWhiteSpace(
+                    command.UpdateProperties!.ElementType) &&
+                !string.Equals(
+                    command.UpdateProperties.ElementType.Trim(),
+                    element.ElementType,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                throw Invalid(
+                    "commands.updateProperties.elementType",
+                    "An asset-backed element cannot be retyped.");
             }
             if (command.Type ==
                     SpaceElementCommandContract.GenerateRackArray &&
@@ -4201,10 +5167,25 @@ public sealed class SpaceDesignV1Service :
         switch (command.Type)
         {
             case SpaceElementCommandContract.UpdateProperties:
-                return ApplyElementProperties(
+                var update = command.UpdateProperties!;
+                var updateJson = ApplyElementProperties(
                     element,
                     attributes,
-                    command.UpdateProperties!);
+                    update);
+                if (update.ManualCorrectionLocked.HasValue)
+                {
+                    element.SetManualCorrectionLock(
+                        update.ManualCorrectionLocked.Value,
+                        _execution.ActorId,
+                        RequireUtcNow());
+                }
+                else
+                {
+                    element.MarkLockedManualCorrectionChanged(
+                        _execution.ActorId,
+                        RequireUtcNow());
+                }
+                return updateJson;
             case SpaceElementCommandContract.MoveObject:
                 var move = command.MoveObject!;
                 element.ConfigurePlacement(
@@ -4215,6 +5196,9 @@ public sealed class SpaceDesignV1Service :
                     element.Width,
                     element.Height,
                     element.Depth);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return JsonSerializer.Serialize(move, JsonOptions);
             case SpaceElementCommandContract.RotateObject:
                 var rotation = command.RotateObject!;
@@ -4226,13 +5210,22 @@ public sealed class SpaceDesignV1Service :
                     element.Width,
                     element.Height,
                     element.Depth);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return JsonSerializer.Serialize(rotation, JsonOptions);
             case SpaceElementCommandContract.DeleteObject:
                 element.ChangeLifecycle(
                     SpaceLifecycleState.RemoveRequested);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return "{}";
             case SpaceElementCommandContract.RestoreLogicalObject:
                 element.ChangeLifecycle(SpaceLifecycleState.Active);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return "{}";
             default:
                 throw new UnreachableException();
@@ -4447,6 +5440,14 @@ public sealed class SpaceDesignV1Service :
         List<SpaceElementAttribute> attributes,
         SpaceUpdateElementPropertiesDto payload)
     {
+        if (!string.IsNullOrWhiteSpace(payload.ElementType) &&
+            !string.Equals(
+                payload.ElementType.Trim(),
+                element.ElementType,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            element.Retype(payload.ElementType);
+        }
         element.UpdateGeometry(payload.GeometryJson);
         element.ConfigurePlacement(
             payload.X,
@@ -4463,6 +5464,22 @@ public sealed class SpaceDesignV1Service :
 
         ApplyElementAttributes(element, attributes, payload.Attributes);
         return JsonSerializer.Serialize(payload, JsonOptions);
+    }
+
+    private static void ValidateOptionalElementType(string? elementType)
+    {
+        if (elementType is null)
+            return;
+        var normalized = elementType.Trim();
+        if (normalized.Length == 0 ||
+            !SpaceElementTypes.Supported.Contains(
+                normalized,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            throw Invalid(
+                "commands.updateProperties.elementType",
+                "A supported Space element type is required when retyping an element.");
+        }
     }
 
     private async Task<bool> LogicalIdsExistAsync(
@@ -4567,6 +5584,10 @@ public sealed class SpaceDesignV1Service :
                 element.BusinessCode,
                 element.LinkedEntityType,
                 element.LinkedLogicalId,
+                element.IsManualCorrectionLocked,
+                element.UserCorrectionVersion,
+                element.ManualCorrectionUpdatedBy,
+                element.ManualCorrectionUpdatedAtUtc,
                 LifecycleState = element.LifecycleState.ToString(),
                 Attributes = attributes
                     .Where(attribute => !attribute.IsDeleted)
@@ -4735,6 +5756,20 @@ public sealed class SpaceDesignV1Service :
                 "commands.createElement.sourceId",
                 "Source identity and source reference must be supplied together.");
         }
+        if (payload.LinkedLogicalId == Guid.Empty ||
+            payload.LinkedLogicalId.HasValue !=
+            !string.IsNullOrWhiteSpace(payload.LinkedEntityType))
+        {
+            throw Invalid(
+                "commands.createElement.linkedLogicalId",
+                "Linked entity type and logical identity must be supplied together.");
+        }
+        if (payload.LinkedEntityType?.Trim().Length > 100)
+        {
+            throw Invalid(
+                "commands.createElement.linkedEntityType",
+                "Linked entity type cannot exceed 100 characters.");
+        }
     }
 
 
@@ -4784,6 +5819,41 @@ public sealed class SpaceDesignV1Service :
                 SpaceErrorCodes.CommandConflict,
                 "The floor edit session is busy.",
                 "retry-command-batch");
+        }
+    }
+
+    private async Task AcquireVersionFloorInitializationLockAsync(
+        Guid versionId,
+        CancellationToken cancellationToken)
+    {
+        if (!_context.Database.IsSqlServer())
+            return;
+
+        var result = new SqlParameter("@result", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output,
+        };
+        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
+        {
+            Value = $"cp6:space:version-floor-init:{_execution.TenantId:N}:" +
+                    $"{versionId:N}",
+        };
+        await _context.Database.ExecuteSqlRawAsync(
+            """
+            EXEC @result = sys.sp_getapplock
+                @Resource = @resource,
+                @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction',
+                @LockTimeout = 15000;
+            """,
+            [result, resource],
+            cancellationToken);
+        if (Convert.ToInt32(result.Value) < 0)
+        {
+            throw Conflict(
+                SpaceErrorCodes.ConcurrencyConflict,
+                "The version floor initialization session is busy.",
+                "retry-floor-creation");
         }
     }
 
@@ -4898,6 +5968,43 @@ public sealed class SpaceDesignV1Service :
         EnsureMatchingIdempotency(record, requestHash);
         return Deserialize<CreateSpaceSourceResponse>(record.ResponseJson)
             with
+            { IdempotentReplay = true };
+    }
+
+    private async Task<RemoveSpaceSourceResponse?>
+        ReadSourceRemovalReplayAsync(
+            string operation,
+            string keyHash,
+            string requestHash,
+            CancellationToken cancellationToken)
+    {
+        var record = await FindIdempotencyAsync(
+            operation,
+            keyHash,
+            cancellationToken);
+        if (record is null)
+            return null;
+        EnsureMatchingIdempotency(record, requestHash);
+        return Deserialize<RemoveSpaceSourceResponse>(record.ResponseJson)
+            with
+            { IdempotentReplay = true };
+    }
+
+    private async Task<CreateSpaceFloorResponse?> ReadFloorReplayAsync(
+        string operation,
+        string keyHash,
+        string requestHash,
+        CancellationToken cancellationToken)
+    {
+        var record = await FindIdempotencyAsync(
+            operation,
+            keyHash,
+            cancellationToken);
+        if (record is null)
+            return null;
+        EnsureMatchingIdempotency(record, requestHash);
+        return Deserialize<CreateSpaceFloorResponse>(record.ResponseJson)
+            with
         { IdempotentReplay = true };
     }
 
@@ -4917,6 +6024,26 @@ public sealed class SpaceDesignV1Service :
         return Deserialize<CreateSpaceAssetResponse>(record.ResponseJson)
             with
         { IdempotentReplay = true };
+    }
+
+    private async Task<CreateTenantSpaceWarehouseTemplateResponse?>
+        ReadWarehouseTemplateReplayAsync(
+            string operation,
+            string keyHash,
+            string requestHash,
+            CancellationToken cancellationToken)
+    {
+        var record = await FindIdempotencyAsync(
+            operation,
+            keyHash,
+            cancellationToken);
+        if (record is null)
+            return null;
+        EnsureMatchingIdempotency(record, requestHash);
+        return Deserialize<CreateTenantSpaceWarehouseTemplateResponse>(
+                record.ResponseJson)
+            with
+            { IdempotentReplay = true };
     }
 
     private Task<SpaceIdempotencyRecord?> FindIdempotencyAsync(
@@ -5218,7 +6345,11 @@ public sealed class SpaceDesignV1Service :
             element.Depth,
             element.BusinessCode,
             element.LinkedEntityType,
-            element.LinkedLogicalId);
+            element.LinkedLogicalId,
+            element.IsManualCorrectionLocked,
+            element.UserCorrectionVersion,
+            element.ManualCorrectionUpdatedBy,
+            element.ManualCorrectionUpdatedAtUtc);
 
     private static SpaceAssetDto ToDto(
         SpaceAsset asset,
@@ -5243,6 +6374,29 @@ public sealed class SpaceDesignV1Service :
                 RowVersion(latestVersion.RowVersion)),
             RowVersion(asset.RowVersion));
 
+    private static SpaceWarehouseTemplateDto ToDto(
+        SpaceWarehouseTemplate template,
+        SpaceWarehouseTemplateVersion latestVersion) =>
+        new(
+            template.Id,
+            "Tenant",
+            template.TemplateCode,
+            template.Name,
+            template.Description,
+            "Active",
+            new SpaceWarehouseTemplateVersionDto(
+                latestVersion.Id,
+                latestVersion.VersionNo,
+                latestVersion.SchemaVersion,
+                latestVersion.ContentHash,
+                new SpaceWarehouseTemplateCountsDto(
+                    latestVersion.FloorCount,
+                    latestVersion.ZoneCount,
+                    latestVersion.AisleCount,
+                    latestVersion.RackCount,
+                    latestVersion.LocationCount),
+                "Ready"));
+
     private static SpaceSceneElementAttributeDto ToSceneDto(
         SpaceElementAttribute attribute) =>
         new(
@@ -5266,7 +6420,8 @@ public sealed class SpaceDesignV1Service :
 
     private static SpaceVersionDto ToDto(
         SpaceModelVersion version,
-        Guid siteId) =>
+        Guid siteId,
+        int openBlockingCount) =>
         new(
             version.Id,
             version.ModelId,
@@ -5280,7 +6435,228 @@ public sealed class SpaceDesignV1Service :
             version.ValidatedHash,
             version.PublishedAtUtc,
             RowVersion(version.RowVersion),
-            version.Purpose.ToString());
+            version.Purpose.ToString(),
+            VersionCreationSource(version),
+            version.CreatedBy,
+            version.CreatedAtUtc,
+            version.ModifiedAtUtc ?? version.CreatedAtUtc,
+            openBlockingCount);
+
+    private static string VersionCreationSource(SpaceModelVersion version) =>
+        version.BasedOnVersionId.HasValue
+            ? SpaceVersionCreationSources.PublishedVersion
+            : SpaceVersionCreationSources.Blank;
+
+    private async Task<IReadOnlyList<SpaceSourceRemovalReferenceDto>>
+        GetSourceRemovalReferencesAsync(
+            SpaceModelVersion version,
+            SpaceModelSource source,
+            CancellationToken cancellationToken)
+    {
+        var tenantId = _execution.TenantId;
+        var versionId = version.Id;
+        var sourceId = source.Id;
+        var sourceIdentity = sourceId.ToString("D");
+        var references = new List<SpaceSourceRemovalReferenceDto>();
+
+        void Add(string code, int count, bool blocksRemoval)
+        {
+            if (count > 0)
+            {
+                references.Add(
+                    new SpaceSourceRemovalReferenceDto(
+                        code,
+                        count,
+                        blocksRemoval));
+            }
+        }
+
+        Add(
+            SpaceSourceRemovalReferenceCodes.VersionNotDraft,
+            version.Status == SpaceVersionStatus.Draft &&
+            version.Purpose == SpaceModelVersionPurpose.Production
+                ? 0
+                : 1,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.SourceInProgress,
+            source.State is SpaceSourceState.Scanning or SpaceSourceState.Parsing
+                ? 1
+                : 0,
+            blocksRemoval: true);
+
+        var jobs = _context.Jobs
+            .IgnoreQueryFilters()
+            .Where(job =>
+                job.TenantId == tenantId &&
+                ((job.SubjectType == SpaceJobSubjectType.ModelSource &&
+                  job.SubjectId == sourceId) ||
+                 (job.PayloadJson != null &&
+                  job.PayloadJson.Contains(sourceIdentity))));
+        var activeJobs = await jobs.CountAsync(
+            job =>
+                job.Status == SpaceJobStatus.Queued ||
+                job.Status == SpaceJobStatus.Running,
+            cancellationToken);
+        var allJobs = await jobs.CountAsync(cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.ActiveJobs,
+            activeJobs,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.JobAudit,
+            allJobs - activeJobs,
+            blocksRemoval: false);
+
+        Add(
+            SpaceSourceRemovalReferenceCodes.Artifacts,
+            await _context.Artifacts.IgnoreQueryFilters().CountAsync(
+                artifact =>
+                    artifact.TenantId == tenantId &&
+                    artifact.ModelVersionId == versionId &&
+                    artifact.SourceId == sourceId,
+                cancellationToken),
+            blocksRemoval: false);
+        Add(
+            SpaceSourceRemovalReferenceCodes.Issues,
+            await _context.Issues.IgnoreQueryFilters().CountAsync(
+                issue =>
+                    issue.TenantId == tenantId &&
+                    issue.ModelVersionId == versionId &&
+                    issue.SourceId == sourceId,
+                cancellationToken),
+            blocksRemoval: false);
+        Add(
+            SpaceSourceRemovalReferenceCodes.CadPreparations,
+            await _context.CadParsePreparations.IgnoreQueryFilters().CountAsync(
+                preparation =>
+                    preparation.TenantId == tenantId &&
+                    preparation.ModelVersionId == versionId &&
+                    preparation.SourceId == sourceId,
+                cancellationToken),
+            blocksRemoval: false);
+
+        var generationRuns = _context.GenerationRuns
+            .IgnoreQueryFilters()
+            .Where(run =>
+                run.TenantId == tenantId &&
+                run.ModelVersionId == versionId &&
+                run.SourceId == sourceId);
+        var activeGenerationRuns = await generationRuns.CountAsync(
+            run => run.IsCurrent,
+            cancellationToken);
+        var allGenerationRuns = await generationRuns.CountAsync(
+            cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.ActiveGenerationRuns,
+            activeGenerationRuns,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.GenerationAudit,
+            allGenerationRuns - activeGenerationRuns,
+            blocksRemoval: false);
+
+        var underlayReferences = await _context.FloorRevisions.CountAsync(
+            floor =>
+                floor.ModelVersionId == versionId &&
+                floor.UnderlaySourceId == sourceId,
+            cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.Underlays,
+            underlayReferences,
+            blocksRemoval: true);
+        var calibrationAudit = await _context.UnderlayCalibrations
+            .IgnoreQueryFilters()
+            .CountAsync(
+                calibration =>
+                    calibration.TenantId == tenantId &&
+                    calibration.ModelVersionId == versionId &&
+                    calibration.SourceId == sourceId,
+                cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.Underlays,
+            calibrationAudit,
+            blocksRemoval: false);
+
+        var designRevisionReferences =
+            await _context.FloorRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.ZoneRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.AisleRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.RackRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.RackLevelRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.LocationRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.ElementRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.DesignRevisions,
+            designRevisionReferences,
+            blocksRemoval: true);
+
+        var designMetadataReferences =
+            await _context.LocationExternalBindings.CountAsync(
+                binding =>
+                    binding.ModelVersionId == versionId &&
+                    binding.SourceId == sourceId,
+                cancellationToken) +
+            await _context.DesignAttributes.CountAsync(
+                attribute =>
+                    attribute.ModelVersionId == versionId &&
+                    attribute.SourceId == sourceId,
+                cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.DesignMetadata,
+            designMetadataReferences,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.ImportAudit,
+            source.ImportedCommandBatchId.HasValue ? 1 : 0,
+            blocksRemoval: false);
+
+        return references;
+    }
+
+    private static SpaceSourceRemovalPreviewDto SourceRemovalPreview(
+        SpaceModelVersion version,
+        SpaceModelSource source,
+        IReadOnlyList<SpaceSourceRemovalReferenceDto> references) =>
+        new(
+            source.Id,
+            source.FileId,
+            source.DisplayName,
+            source.SourceType.ToString(),
+            source.State.ToString(),
+            version.ContentRevision,
+            RowVersion(source.RowVersion),
+            references.All(reference => !reference.BlocksRemoval),
+            PhysicalFileRetained: source.FileId.HasValue,
+            references);
 
     private static SpaceSourceDto ToDto(SpaceModelSource source) =>
         new(
@@ -5338,7 +6714,7 @@ public sealed class SpaceDesignV1Service :
         throw new SpaceProblemException(
             SpaceErrorCodes.ExternalSubjectDenied,
             403,
-            "External principals cannot access Draft location coding.",
+            "External principals cannot access Draft design APIs.",
             recoveryAction: "use-internal-space-editor");
     }
 
@@ -5431,6 +6807,23 @@ public sealed class SpaceDesignV1Service :
             CultureInfo.InvariantCulture,
             $"V{versionNo:000000}");
 
+    private static byte[] ParseSourceRowVersion(string? value)
+    {
+        try
+        {
+            var parsed = Convert.FromBase64String(value?.Trim() ?? string.Empty);
+            if (parsed.Length != 8)
+                throw new FormatException();
+            return parsed;
+        }
+        catch (FormatException)
+        {
+            throw Invalid(
+                "expectedSourceRowVersion",
+                "A valid SQL row-version token is required.");
+        }
+    }
+
     private static string RowVersion(byte[] rowVersion) =>
         Convert.ToBase64String(rowVersion ?? []);
 
@@ -5464,6 +6857,11 @@ public sealed class SpaceDesignV1Service :
             detail,
             recoveryAction);
 
+    private sealed record ResolvedWarehouseTemplate(
+        SpaceWarehouseTemplateDto Template,
+        SpaceWarehouseTemplateInstantiationPreviewDto Preview);
+
+    private const int HttpOk = 200;
     private const int HttpCreated = 201;
     private const int HttpAccepted = 202;
 }

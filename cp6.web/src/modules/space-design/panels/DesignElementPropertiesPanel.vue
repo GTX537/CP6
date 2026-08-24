@@ -7,6 +7,7 @@ import type {
 import {
   buildElementPropertiesPayload,
   createElementPropertiesDraft,
+  SPACE_ELEMENT_TYPES,
   type ElementPropertiesDraft,
 } from './elementProperties'
 
@@ -49,10 +50,22 @@ function addAttribute(): void {
   })
 }
 
-function save(): void {
+function save(manualCorrectionLocked?: boolean): void {
   if (error.value) return
-  emit('save', buildElementPropertiesPayload(props.element, draft))
+  emit('save', {
+    ...buildElementPropertiesPayload(props.element, draft),
+    ...(manualCorrectionLocked === undefined
+      ? {}
+      : { manualCorrectionLocked }),
+  })
 }
+
+const sourceBacked = computed(() => Boolean(
+  props.element.revision?.sourceId && props.element.revision?.sourceRef,
+))
+const correctionLocked = computed(() =>
+  Boolean(props.element.isManualCorrectionLocked),
+)
 </script>
 
 <template>
@@ -69,7 +82,37 @@ function save(): void {
       <el-tag size="small">{{ element.revision?.lifecycleState }}</el-tag>
     </div>
 
+    <el-alert
+      v-if="sourceBacked"
+      class="correction-lock-state"
+      :type="correctionLocked ? 'warning' : 'info'"
+      :closable="false"
+      :title="correctionLocked
+        ? `人工校正已锁定 v${element.userCorrectionVersion ?? 0}`
+        : '来源对象尚未锁定；重新解析可提出替换或删除。'"
+      :description="correctionLocked
+        ? '后续保存仍受保护并递增版本；CAD 重新解析只能产生 Blocking 冲突。'
+        : '保存并锁定会把当前表单与锁状态原子写入同一命令批。'"
+      data-test="manual-correction-lock-state"
+    />
+
     <fieldset class="property-fields" :disabled="readonly || saving">
+      <el-divider content-position="left">构件语义</el-divider>
+      <label>构件类型
+        <el-select
+          v-model="draft.elementType"
+          data-test="element-type"
+          aria-label="构件类型"
+        >
+          <el-option
+            v-for="type in SPACE_ELEMENT_TYPES"
+            :key="type"
+            :label="type"
+            :value="type"
+          />
+        </el-select>
+      </label>
+
       <el-divider content-position="left">位置与尺寸（mm）</el-divider>
       <div class="number-grid">
         <label>X <el-input-number v-model="draft.x" :step="100" /></label>
@@ -140,9 +183,31 @@ function save(): void {
         type="primary"
         :loading="saving"
         :disabled="readonly || Boolean(error)"
-        @click="save"
+        @click="save()"
       >
         保存属性
+      </el-button>
+      <el-button
+        v-if="sourceBacked && !correctionLocked"
+        v-permission="'space:model:edit'"
+        data-test="lock-manual-correction"
+        type="warning"
+        :loading="saving"
+        :disabled="readonly || Boolean(error)"
+        @click="save(true)"
+      >
+        保存并锁定
+      </el-button>
+      <el-button
+        v-else-if="sourceBacked"
+        v-permission="'space:model:edit'"
+        data-test="unlock-manual-correction"
+        plain
+        :loading="saving"
+        :disabled="readonly || Boolean(error)"
+        @click="save(false)"
+      >
+        保存并解除锁定
       </el-button>
     </div>
   </aside>
@@ -172,6 +237,10 @@ function save(): void {
   font-family: monospace;
   font-size: 13px;
   word-break: break-all;
+}
+
+.correction-lock-state {
+  margin: 12px 0;
 }
 
 .number-grid {

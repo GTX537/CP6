@@ -107,11 +107,44 @@ async function fetchManifestVersion(): Promise<string> {
   return v
 }
 
+const I18N_STORAGE_PREFIX = 'cp6_i18n_pack_'
+
 /** 合并一批扁平词条到某语言（不覆盖语言切换状态）。 */
 function merge(lang: string, flat: Record<string, string>) {
   const existing = (i18n.global.getLocaleMessage(lang) as any) || {}
   i18n.global.setLocaleMessage(lang, { ...existing, ...flat })
+  try {
+    const raw = localStorage.getItem(`${I18N_STORAGE_PREFIX}${lang}`)
+    const cached = raw ? JSON.parse(raw) : {}
+    localStorage.setItem(`${I18N_STORAGE_PREFIX}${lang}`, JSON.stringify({ ...cached, ...flat }))
+  } catch {
+    // 忽略 localStorage 异常
+  }
 }
+
+/** 从 localStorage 恢复已缓存的语言包到 i18n 实例（同步执行，0ms 阻塞） */
+export function hydrateCachedLanguagePacks(targetLang?: string) {
+  const lang = targetLang || localStorage.getItem('lang') || 'ja'
+  const langs = [lang, ...(fallbackChain[lang] || [])]
+  for (const l of langs) {
+    try {
+      const raw = localStorage.getItem(`${I18N_STORAGE_PREFIX}${l}`)
+      if (raw) {
+        const flat = JSON.parse(raw)
+        if (flat && typeof flat === 'object') {
+          const existing = (i18n.global.getLocaleMessage(l) as any) || {}
+          i18n.global.setLocaleMessage(l, { ...existing, ...flat })
+          loadedPacks.add(`${l}:_core`)
+        }
+      }
+    } catch {
+      // 忽略解析异常
+    }
+  }
+}
+
+// 模块初始化时立即尝试同步恢复已有缓存
+hydrateCachedLanguagePacks()
 
 /** 兜底：实时拉某语言全量包（懒加载失败 / 无路由 ns 映射时用，保证不出现裸 key）。 */
 function loadFull(lang: string): Promise<void> {

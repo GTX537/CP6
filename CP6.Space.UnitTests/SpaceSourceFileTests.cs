@@ -52,6 +52,37 @@ public sealed class SpaceSourceFileTests
         Assert.Equal(result.File.Sha256, scanJob.InputHash);
     }
 
+    [Theory]
+    [InlineData(
+        SpaceSourceType.Dwg,
+        "warehouse.dwg",
+        "application/vnd.autocad.dwg",
+        "AC1032development-dwg")]
+    [InlineData(
+        SpaceSourceType.Dxf,
+        "warehouse.dxf",
+        "application/vnd.autocad.dxf",
+        "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF")]
+    public async Task Upload_accepts_signature_bound_dwg_and_dxf_sources(
+        SpaceSourceType sourceType,
+        string fileName,
+        string contentType,
+        string payloadText)
+    {
+        var quarantine = new FakeQuarantineStore();
+        var service = NewUploadService(quarantine, new FakeFileCatalog());
+
+        var result = await service.UploadAsync(
+            new SpaceFileUploadRequest(sourceType, fileName, contentType),
+            new MemoryStream(Encoding.ASCII.GetBytes(payloadText)));
+
+        Assert.False(result.Reused);
+        Assert.Equal(Path.GetExtension(fileName), result.File.Extension);
+        Assert.Equal(contentType, result.File.DetectedContentType);
+        Assert.Equal(SpaceFileState.Quarantined, result.File.State);
+        Assert.Equal(1, quarantine.Sessions.Single().CommitCount);
+    }
+
     [Fact]
     public async Task Duplicate_hash_reuses_metadata_and_aborts_the_second_object()
     {
@@ -347,6 +378,61 @@ public sealed class SpaceSourceFileTests
         Assert.Equal(source.Id, artifact.SourceId);
         Assert.Equal(artifactFile.Id, artifact.FileId);
         Assert.Equal(SpaceArtifactType.Thumbnail, artifact.ArtifactType);
+    }
+
+    [Fact]
+    public void Ready_source_can_be_logically_removed_without_deleting_its_file()
+    {
+        var file = NewCleanFile(
+            TenantId,
+            ".pdf",
+            SpaceFileRetentionClass.Source);
+        var source = SpaceModelSource.CreateFileSource(
+            TenantId,
+            Guid.NewGuid(),
+            SpaceSourceType.Pdf,
+            file,
+            "Unused plan");
+
+        source.Remove();
+
+        Assert.True(source.IsDeleted);
+        Assert.False(file.IsDeleted);
+        Assert.Equal(SpaceFileState.Clean, file.State);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Source_with_work_in_progress_cannot_be_removed(bool parsing)
+    {
+        var file = parsing
+            ? NewCleanFile(
+                TenantId,
+                ".pdf",
+                SpaceFileRetentionClass.Source)
+            : NewQuarantinedFile(
+                TenantId,
+                ".pdf",
+                SpaceFileRetentionClass.Source);
+        var source = parsing
+            ? SpaceModelSource.CreateFileSource(
+                TenantId,
+                Guid.NewGuid(),
+                SpaceSourceType.Pdf,
+                file,
+                "Parsing plan")
+            : SpaceModelSource.CreatePendingFileSource(
+                TenantId,
+                Guid.NewGuid(),
+                SpaceSourceType.Pdf,
+                file,
+                "Scanning plan");
+        if (parsing)
+            source.BeginParsing();
+
+        Assert.Throws<SpaceFileStateException>(() => source.Remove());
+        Assert.False(source.IsDeleted);
     }
 
     private static SpaceFileUploadService NewUploadService(

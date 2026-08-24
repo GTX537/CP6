@@ -4,6 +4,7 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace CP6.Space.IntegrationTests;
 
@@ -506,7 +507,8 @@ public sealed class SpaceDesignSceneSqlServerTests
                                     SpaceElementAttributeValueTypes.String,
                                     "steel",
                                     null),
-                            ]))
+                            ],
+                            ElementType: SpaceElementTypes.Door))
                 ]);
 
             var updated = await service.ApplyElementCommandsAsync(
@@ -525,8 +527,24 @@ public sealed class SpaceDesignSceneSqlServerTests
             Assert.Equal(updated.FloorRevision, replay.FloorRevision);
             Assert.Single(updated.AffectedObjects);
             Assert.Equal(1200, updated.AffectedObjects[0].Element.X);
+            Assert.Equal(
+                SpaceElementTypes.Door,
+                updated.AffectedObjects[0].Element.ElementType);
             Assert.Equal("C-100", updated.AffectedObjects[0].Element.BusinessCode);
             Assert.Equal(2, updated.AffectedObjects[0].Attributes.Count);
+            Assert.Equal(
+                SpaceElementTypes.Column,
+                updated.AffectedObjects[0].BeforeElement!.ElementType);
+            Assert.Equal(1000, updated.AffectedObjects[0].BeforeElement!.X);
+            Assert.Equal(
+                "Column A",
+                Assert.Single(updated.AffectedObjects[0].BeforeAttributes!).Value);
+            Assert.Equal(
+                updated.AffectedObjects[0].BeforeElement,
+                replay.AffectedObjects[0].BeforeElement);
+            Assert.Equal(
+                updated.AffectedObjects[0].BeforeAttributes,
+                replay.AffectedObjects[0].BeforeAttributes);
             Assert.Single(context.ElementCommandBatches);
             Assert.Single(context.ElementCommandRecords);
             var audit = await context.ElementCommandRecords
@@ -534,7 +552,35 @@ public sealed class SpaceDesignSceneSqlServerTests
                 .SingleAsync();
             Assert.Contains("\"businessCode\":null", audit.BeforeJson);
             Assert.Contains("\"businessCode\":\"C-100\"", audit.AfterJson);
+            Assert.Contains("\"elementType\":\"Door\"", audit.AfterJson);
             Assert.Contains("\"label\"", audit.AfterJson);
+
+            var unsupportedRetype = update with
+            {
+                CommandBatchId = Guid.NewGuid(),
+                ExpectedFloorRevision = 1,
+                Commands =
+                [
+                    update.Commands[0] with
+                    {
+                        CommandId = Guid.NewGuid(),
+                        UpdateProperties =
+                            update.Commands[0].UpdateProperties! with
+                            {
+                                ElementType = "LiveRobot",
+                            },
+                    },
+                ],
+            };
+            var unsupportedProblem =
+                await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.ApplyElementCommandsAsync(
+                        draft.Id,
+                        floor.LogicalId,
+                        unsupportedRetype));
+            Assert.Equal(SpaceErrorCodes.RequestInvalid, unsupportedProblem.Code);
+            Assert.Equal(400, unsupportedProblem.StatusCode);
+            Assert.Single(context.ElementCommandBatches);
 
             var stale = new ApplySpaceElementCommandBatchRequest(
                 SpaceElementCommandContract.SchemaVersion,
@@ -635,6 +681,657 @@ public sealed class SpaceDesignSceneSqlServerTests
                 scene.Elements[0].Revision.LifecycleState);
             Assert.Equal(2, await context.ElementCommandBatches.CountAsync());
             Assert.Equal(2, await context.ElementCommandRecords.CountAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Element_group_merge_and_saved_compensation_are_atomic()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Element exception merge",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var survivor = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """);
+            survivor.ConfigurePlacement(1000, 2000, 0, 0, 400, 5000, 400);
+            var source = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """);
+            source.ConfigurePlacement(1800, 2000, 0, 0, 400, 5000, 400);
+            var survivorAttribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                survivor,
+                SpaceElementAttributeNamespaces.Design,
+                "label",
+                SpaceElementAttributeValueTypes.String,
+                "CAD exception");
+            var sourceAttribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                source,
+                SpaceElementAttributeNamespaces.Design,
+                "label",
+                SpaceElementAttributeValueTypes.String,
+                "CAD exception");
+            context.AddRange(
+                draft,
+                floor,
+                survivor,
+                source,
+                survivorAttribute,
+                sourceAttribute);
+            await context.SaveChangesAsync();
+
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var groupGeometry = $$$"""
+                {"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"{{{survivor.LogicalId}}}","x":0,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}},{"sourceLogicalId":"{{{source.LogicalId}}}","x":800,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}}]}
+                """;
+            var attributes = new[]
+            {
+                new SpaceElementAttributeWriteDto(
+                    SpaceElementAttributeNamespaces.Design,
+                    "label",
+                    SpaceElementAttributeValueTypes.String,
+                    "CAD exception",
+                    null),
+            };
+            var merged = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            new SpaceUpdateElementPropertiesDto(
+                                groupGeometry,
+                                1000,
+                                2000,
+                                0,
+                                0,
+                                1200,
+                                5000,
+                                400,
+                                null,
+                                null,
+                                null,
+                                attributes,
+                                SpaceElementTypes.Column)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.DeleteObject,
+                            source.LogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(1, merged.FloorRevision);
+            Assert.Equal(1, merged.VersionContentRevision);
+            Assert.Equal(2, merged.AffectedObjects.Count);
+            Assert.Equal(2, await context.ElementCommandRecords.CountAsync());
+            Assert.Single(await context.ElementCommandBatches.ToListAsync());
+            Assert.Contains("\"kind\":\"group\"", survivor.GeometryJson);
+            Assert.Equal(SpaceLifecycleState.RemoveRequested, source.LifecycleState);
+
+            var compensated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 1,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            new SpaceUpdateElementPropertiesDto(
+                                """
+                                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                                """,
+                                1000,
+                                2000,
+                                0,
+                                0,
+                                400,
+                                5000,
+                                400,
+                                null,
+                                null,
+                                null,
+                                attributes,
+                                SpaceElementTypes.Column)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.RestoreLogicalObject,
+                            source.LogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(2, compensated.FloorRevision);
+            Assert.Equal(2, compensated.VersionContentRevision);
+            Assert.Equal(2, compensated.AffectedObjects.Count);
+            Assert.Equal(SpaceLifecycleState.Active, source.LifecycleState);
+            Assert.Equal(4, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(2, await context.ElementCommandBatches.CountAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Element_group_split_compensation_and_redo_keep_new_identities_atomic()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Element exception split",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var survivorLogicalId = Guid.NewGuid();
+            var sourceLogicalId = Guid.NewGuid();
+            var groupGeometry = $$$"""
+                {"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"{{{survivorLogicalId}}}","x":0,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}},{"sourceLogicalId":"{{{sourceLogicalId}}}","x":800,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}}]}
+                """;
+            const string partGeometry = """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """;
+            var survivor = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                survivorLogicalId,
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                groupGeometry);
+            survivor.ConfigurePlacement(1000, 2000, 0, 90, 1200, 5000, 400);
+            survivor.ConfigureBusinessLink(
+                "COL-01",
+                "Floor",
+                floor.LogicalId);
+            var survivorAttribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                survivor,
+                SpaceElementAttributeNamespaces.Design,
+                "label",
+                SpaceElementAttributeValueTypes.String,
+                "CAD exception");
+            context.AddRange(draft, floor, survivor, survivorAttribute);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var splitLogicalId = Guid.NewGuid();
+            var attributes = new[]
+            {
+                new SpaceElementAttributeWriteDto(
+                    SpaceElementAttributeNamespaces.Design,
+                    "label",
+                    SpaceElementAttributeValueTypes.String,
+                    "CAD exception",
+                    null),
+            };
+            SpaceUpdateElementPropertiesDto survivorPart() => new(
+                partGeometry,
+                1000,
+                2000,
+                0,
+                90,
+                400,
+                5000,
+                400,
+                "COL-01",
+                "Floor",
+                floor.LogicalId,
+                attributes,
+                SpaceElementTypes.Column);
+
+            var split = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            survivorPart()),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            splitLogicalId,
+                            UpdateProperties: null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Column,
+                                partGeometry,
+                                1000,
+                                2800,
+                                0,
+                                90,
+                                400,
+                                5000,
+                                400,
+                                "COL-01",
+                                ParentLogicalId: null,
+                                SourceId: null,
+                                SourceRef: null,
+                                attributes,
+                                LinkedEntityType: "Floor",
+                                LinkedLogicalId: floor.LogicalId)),
+                    ]));
+
+            Assert.Equal(1, split.FloorRevision);
+            Assert.Equal(1, split.VersionContentRevision);
+            Assert.Equal(2, split.AffectedObjects.Count);
+            var created = await context.ElementRevisions.SingleAsync(
+                item => item.LogicalId == splitLogicalId);
+            Assert.Equal(SpaceLifecycleState.Active, created.LifecycleState);
+            Assert.Equal("COL-01", created.BusinessCode);
+            Assert.Equal("Floor", created.LinkedEntityType);
+            Assert.Equal(floor.LogicalId, created.LinkedLogicalId);
+            Assert.Equal(1000, created.X);
+            Assert.Equal(2800, created.Y);
+            Assert.Equal(
+                "CAD exception",
+                Assert.Single(await context.ElementAttributes
+                    .Where(item => item.ElementRevisionId == created.Id)
+                    .ToListAsync()).Value);
+            Assert.Equal(2, await context.ElementCommandRecords.CountAsync());
+
+            var compensated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 1,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            new SpaceUpdateElementPropertiesDto(
+                                groupGeometry,
+                                1000,
+                                2000,
+                                0,
+                                90,
+                                1200,
+                                5000,
+                                400,
+                                "COL-01",
+                                "Floor",
+                                floor.LogicalId,
+                                attributes,
+                                SpaceElementTypes.Column)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.DeleteObject,
+                            splitLogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(2, compensated.FloorRevision);
+            Assert.Equal(SpaceLifecycleState.RemoveRequested, created.LifecycleState);
+
+            var redone = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 2,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            survivorPart()),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.RestoreLogicalObject,
+                            splitLogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(3, redone.FloorRevision);
+            Assert.Equal(3, redone.VersionContentRevision);
+            Assert.Equal(SpaceLifecycleState.Active, created.LifecycleState);
+            Assert.Equal(
+                2,
+                await context.ElementRevisions.CountAsync(item =>
+                    item.ModelVersionId == draft.Id));
+            Assert.Equal(6, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(3, await context.ElementCommandBatches.CountAsync());
+
+            var invalidLink = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    new ApplySpaceElementCommandBatchRequest(
+                        SpaceElementCommandContract.SchemaVersion,
+                        Guid.NewGuid(),
+                        clientId,
+                        lease.LeaseId,
+                        ExpectedFloorRevision: 3,
+                        [new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            Guid.NewGuid(),
+                            UpdateProperties: null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Column,
+                                partGeometry,
+                                1800,
+                                2800,
+                                0,
+                                90,
+                                400,
+                                5000,
+                                400,
+                                "COL-01",
+                                ParentLogicalId: null,
+                                SourceId: null,
+                                SourceRef: null,
+                                attributes,
+                                LinkedEntityType: "Floor",
+                                LinkedLogicalId: null))])));
+            Assert.Equal(SpaceErrorCodes.RequestInvalid, invalidLink.Code);
+            Assert.Equal(
+                2,
+                await context.ElementRevisions.CountAsync(item =>
+                    item.ModelVersionId == draft.Id));
+            Assert.Equal(6, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(3, await context.ElementCommandBatches.CountAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Element_polygon_redraw_and_saved_compensation_keep_identity_atomic()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Element exception redraw",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            const string originalGeometry = """
+                {"schemaVersion":1,"kind":"box","width":400,"height":3000,"depth":400}
+                """;
+            const string redrawnGeometry = """
+                {"schemaVersion":1,"kind":"polygon","outer":[{"x":0,"y":0},{"x":800,"y":0},{"x":900,"y":700},{"x":100,"y":800}],"holes":[],"height":3000}
+                """;
+            var element = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                originalGeometry);
+            element.ConfigurePlacement(5200, 2400, 0, 0, 400, 3000, 400);
+            element.ConfigureBusinessLink("COL-01", "Floor", floor.LogicalId);
+            var source = SpaceModelSource.CreateInlineSource(
+                execution.TenantId,
+                draft.Id,
+                SpaceSourceType.Editor,
+                "CAD redraw source",
+                new string('d', 64));
+            element.AttachSource(source, "CAD:COLUMN-01");
+            var attribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                element,
+                SpaceElementAttributeNamespaces.Design,
+                "confidence",
+                SpaceElementAttributeValueTypes.Decimal,
+                "0.72");
+            context.AddRange(draft, floor, source, element, attribute);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var attributes = new[]
+            {
+                new SpaceElementAttributeWriteDto(
+                    SpaceElementAttributeNamespaces.Design,
+                    "confidence",
+                    SpaceElementAttributeValueTypes.Decimal,
+                    "0.72",
+                    null),
+            };
+            SpaceUpdateElementPropertiesDto redraw() => new(
+                redrawnGeometry,
+                4800,
+                2200,
+                0,
+                0,
+                900,
+                3000,
+                800,
+                "COL-01",
+                "Floor",
+                floor.LogicalId,
+                attributes,
+                SpaceElementTypes.Column);
+            SpaceUpdateElementPropertiesDto restore() => new(
+                originalGeometry,
+                5200,
+                2400,
+                0,
+                0,
+                400,
+                3000,
+                400,
+                "COL-01",
+                "Floor",
+                floor.LogicalId,
+                attributes,
+                SpaceElementTypes.Column);
+            ApplySpaceElementCommandBatchRequest request(
+                long expectedFloorRevision,
+                SpaceUpdateElementPropertiesDto update) => new(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    expectedFloorRevision,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.UpdateProperties,
+                        element.LogicalId,
+                        update)]);
+
+            var saved = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request(0, redraw()));
+
+            Assert.Equal(1, saved.FloorRevision);
+            Assert.Equal(1, saved.VersionContentRevision);
+            Assert.Single(saved.AffectedObjects);
+            Assert.Equal(element.LogicalId, saved.AffectedObjects[0].Element.Revision.LogicalId);
+            Assert.Equal(4800, element.X);
+            Assert.Equal(2200, element.Y);
+            Assert.Equal(0, element.RotationZ);
+            Assert.Equal(900, element.Width);
+            Assert.Equal(800, element.Depth);
+            Assert.Contains("\"kind\":\"polygon\"", element.GeometryJson);
+            Assert.Equal(source.Id, element.SourceId);
+            Assert.Equal("CAD:COLUMN-01", element.SourceRef);
+            Assert.Equal("COL-01", element.BusinessCode);
+            Assert.Equal("Floor", element.LinkedEntityType);
+            Assert.Equal(floor.LogicalId, element.LinkedLogicalId);
+            Assert.Equal(
+                "0.72",
+                Assert.Single(await context.ElementAttributes
+                    .Where(item => item.ElementRevisionId == element.Id)
+                    .ToListAsync()).Value);
+            Assert.Single(await context.ElementCommandBatches.ToListAsync());
+            var redrawAudit = Assert.Single(
+                await context.ElementCommandRecords.ToListAsync());
+            using var beforeAudit = JsonDocument.Parse(redrawAudit.BeforeJson);
+            using var afterAudit = JsonDocument.Parse(redrawAudit.AfterJson);
+            Assert.Contains(
+                "\"kind\":\"box\"",
+                beforeAudit.RootElement.GetProperty("geometryJson").GetString()!);
+            Assert.Contains(
+                "\"kind\":\"polygon\"",
+                afterAudit.RootElement.GetProperty("geometryJson").GetString()!);
+
+            var compensated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request(1, restore()));
+            Assert.Equal(2, compensated.FloorRevision);
+            Assert.Equal(element.LogicalId, compensated.AffectedObjects[0].Element.Revision.LogicalId);
+            Assert.Contains("\"kind\":\"box\"", element.GeometryJson);
+            Assert.Equal(source.Id, element.SourceId);
+
+            var redone = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request(2, redraw()));
+            Assert.Equal(3, redone.FloorRevision);
+            Assert.Equal(3, redone.VersionContentRevision);
+            Assert.Equal(element.LogicalId, redone.AffectedObjects[0].Element.Revision.LogicalId);
+            Assert.Contains("\"kind\":\"polygon\"", element.GeometryJson);
+            Assert.Equal(3, await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(3, await context.ElementCommandRecords.CountAsync());
+            Assert.Single(await context.ElementRevisions
+                .Where(item => item.ModelVersionId == draft.Id)
+                .ToListAsync());
         });
     }
 
@@ -776,6 +1473,214 @@ public sealed class SpaceDesignSceneSqlServerTests
             Assert.Equal(SpaceErrorCodes.ParseChangesetStale, problem.Code);
             Assert.Single(await context.ElementRevisions.AsNoTracking().ToListAsync());
             Assert.Single(await context.ElementCommandBatches.AsNoTracking().ToListAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Manual_correction_lock_persists_and_fences_CAD_changesets()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Manual correction lock",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var fileId = Guid.NewGuid();
+            var file = SpaceFile.CreateUploading(
+                fileId,
+                execution.TenantId,
+                $"{execution.TenantId:N}/{fileId:N}/source.content",
+                "warehouse.dxf",
+                "application/vnd.autocad.dxf",
+                SpaceFileRetentionClass.Source);
+            file.CompleteQuarantine(
+                "application/vnd.autocad.dxf",
+                ".dxf",
+                1,
+                new string('a', 64));
+            file.BeginScanning();
+            file.MarkClean("sql-test", "1");
+            var source = SpaceModelSource.CreateFileSource(
+                execution.TenantId,
+                draft.Id,
+                SpaceSourceType.Dxf,
+                file,
+                "warehouse.dxf");
+            context.AddRange(draft, floor, file, source);
+            await context.SaveChangesAsync();
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "CAD reviewer",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var logicalId = Guid.NewGuid();
+            var created = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.CreateElement,
+                        logicalId,
+                        UpdateProperties: null,
+                        CreateElement: new SpaceCreateElementDto(
+                            SpaceElementTypes.Wall,
+                            """
+                            {"schemaVersion":1,"kind":"box","width":5000,"height":3000,"depth":200}
+                            """,
+                            1000,
+                            2000,
+                            0,
+                            0,
+                            5000,
+                            3000,
+                            200,
+                            null,
+                            null,
+                            source.Id,
+                            "CAD:H:WALL-1",
+                            []))],
+                    ExpectedContentRevision: 0,
+                    ExpectedContentHash: null,
+                    ChangesetSha256: new string('b', 64)));
+            var element = Assert.Single(created.AffectedObjects).Element;
+            SpaceUpdateElementPropertiesDto update(
+                SpaceSceneElementDto current,
+                int x,
+                bool? lockState = null) => new(
+                    current.GeometryJson,
+                    x,
+                    current.Y,
+                    current.Z,
+                    current.RotationZ,
+                    current.Width,
+                    current.Height,
+                    current.Depth,
+                    current.BusinessCode,
+                    current.LinkedEntityType,
+                    current.LinkedLogicalId,
+                    [],
+                    current.ElementType,
+                    lockState);
+            async Task<SpaceModelVersion> version() =>
+                await context.Versions.SingleAsync(candidate =>
+                    candidate.Id == draft.Id);
+
+            var currentVersion = await version();
+            var locked = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 1,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.UpdateProperties,
+                        logicalId,
+                        update(element, 1250, true))],
+                    currentVersion.ContentRevision,
+                    currentVersion.ContentHash));
+            element = Assert.Single(locked.AffectedObjects).Element;
+            Assert.True(element.IsManualCorrectionLocked);
+            Assert.Equal(1, element.UserCorrectionVersion);
+
+            context.ChangeTracker.Clear();
+            var persisted = await context.ElementRevisions.AsNoTracking()
+                .SingleAsync(candidate => candidate.LogicalId == logicalId);
+            Assert.True(persisted.IsManualCorrectionLocked);
+            Assert.Equal(1, persisted.UserCorrectionVersion);
+            Assert.Equal(execution.ActorId, persisted.ManualCorrectionUpdatedBy);
+            Assert.NotNull(persisted.ManualCorrectionUpdatedAtUtc);
+
+            currentVersion = await version();
+            var revised = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 2,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.UpdateProperties,
+                        logicalId,
+                        update(element, 1500))],
+                    currentVersion.ContentRevision,
+                    currentVersion.ContentHash));
+            element = Assert.Single(revised.AffectedObjects).Element;
+            Assert.Equal(2, element.UserCorrectionVersion);
+            Assert.Equal(1500, element.X);
+
+            currentVersion = await version();
+            var batchesBefore = await context.ElementCommandBatches.CountAsync();
+            var blocked = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    new ApplySpaceElementCommandBatchRequest(
+                        SpaceElementCommandContract.SchemaVersion,
+                        Guid.NewGuid(),
+                        clientId,
+                        lease.LeaseId,
+                        ExpectedFloorRevision: 3,
+                        [new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            logicalId,
+                            update(element, 1750))],
+                        currentVersion.ContentRevision,
+                        currentVersion.ContentHash,
+                        ChangesetSha256: new string('c', 64))));
+            Assert.Equal(SpaceErrorCodes.CadManualCorrectionLocked, blocked.Code);
+            Assert.Equal(
+                batchesBefore,
+                await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(
+                1500,
+                (await context.ElementRevisions.AsNoTracking()
+                    .SingleAsync(candidate => candidate.LogicalId == logicalId)).X);
         });
     }
 
@@ -1044,13 +1949,115 @@ public sealed class SpaceDesignSceneSqlServerTests
                     SpaceLifecycleState.Active.ToString(),
                     candidate.Revision.LifecycleState));
 
-            var atomicFailure =
+            var copiedElementId = Guid.NewGuid();
+            var copied = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
                 new ApplySpaceElementCommandBatchRequest(
                     SpaceElementCommandContract.SchemaVersion,
                     Guid.NewGuid(),
                     clientId,
                     editLease.LeaseId,
                     ExpectedFloorRevision: 5,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            copiedElementId,
+                            null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Column,
+                                """
+                                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                                """,
+                                X: 2400,
+                                Y: 700,
+                                Z: 0,
+                                RotationZ: 0,
+                                Width: 400,
+                                Height: 5000,
+                                Depth: 400,
+                                BusinessCode: null,
+                                ParentLogicalId: null,
+                                SourceId: null,
+                                SourceRef: null,
+                                Attributes: [])),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.GenerateRackArray,
+                            rack.LogicalId,
+                            null,
+                            GenerateRackArray:
+                                new SpaceGenerateRackArrayDto(
+                                    Rows: 1,
+                                    Columns: 2,
+                                    RowGap: 0,
+                                    ColumnGap: 500,
+                                    StaggerOffset: 0,
+                                    CodePrefix: "R-TEMPLATE-COPY-",
+                                    StartNumber: 1,
+                                    CodeDigits: 3)),
+                    ]));
+
+            Assert.Equal(6, copied.FloorRevision);
+            Assert.Equal(copiedElementId, copied.AffectedObjects.Single()
+                .Element.Revision.LogicalId);
+            var copiedRackId = copied.AffectedRacks!.Single()
+                .Revision.LogicalId;
+            Assert.Equal(
+                "R-TEMPLATE-COPY-001",
+                copied.AffectedRacks!.Single().RackCode);
+            Assert.Single(copied.AffectedRackLevels!);
+            Assert.All(
+                copied.AffectedLocations!,
+                copiedLocation =>
+                {
+                    Assert.Null(copiedLocation.LocationCode);
+                    Assert.Equal(
+                        SpaceExternalBindingState.Unbound.ToString(),
+                        copiedLocation.ExternalBindingState);
+                });
+
+            var copiedIds = new[] { copiedElementId, copiedRackId };
+            var copyUndo = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                LifecycleBatch(
+                    clientId,
+                    editLease.LeaseId,
+                    expectedFloorRevision: 6,
+                    SpaceElementCommandContract.DeleteObject,
+                    copiedIds));
+            Assert.Equal(7, copyUndo.FloorRevision);
+            Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                copyUndo.AffectedObjects.Single().Element.Revision.LifecycleState);
+            Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                copyUndo.AffectedRacks!.Single().Revision.LifecycleState);
+
+            var copyRedo = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                LifecycleBatch(
+                    clientId,
+                    editLease.LeaseId,
+                    expectedFloorRevision: 7,
+                    SpaceElementCommandContract.RestoreLogicalObject,
+                    copiedIds));
+            Assert.Equal(8, copyRedo.FloorRevision);
+            Assert.Equal(copiedElementId, copyRedo.AffectedObjects.Single()
+                .Element.Revision.LogicalId);
+            Assert.Equal(copiedRackId, copyRedo.AffectedRacks!.Single()
+                .Revision.LogicalId);
+
+            var atomicFailure =
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    editLease.LeaseId,
+                    ExpectedFloorRevision: 8,
                     [
                         new SpaceElementCommandDto(
                             Guid.NewGuid(),
@@ -1071,6 +2078,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                     atomicFailure));
 
             Assert.Equal(SpaceErrorCodes.LogicalIdNotFound, problem.Code);
+            var failedCopyElementId = Guid.NewGuid();
             var codeConflict =
                 await Assert.ThrowsAsync<SpaceProblemException>(
                     () => service.ApplyElementCommandsAsync(
@@ -1081,8 +2089,30 @@ public sealed class SpaceDesignSceneSqlServerTests
                             Guid.NewGuid(),
                             clientId,
                             editLease.LeaseId,
-                            ExpectedFloorRevision: 5,
+                            ExpectedFloorRevision: 8,
                             [
+                                new SpaceElementCommandDto(
+                                    Guid.NewGuid(),
+                                    SpaceElementCommandContract.CreateElement,
+                                    failedCopyElementId,
+                                    null,
+                                    CreateElement: new SpaceCreateElementDto(
+                                        SpaceElementTypes.Column,
+                                        """
+                                        {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                                        """,
+                                        X: 2800,
+                                        Y: 700,
+                                        Z: 0,
+                                        RotationZ: 0,
+                                        Width: 400,
+                                        Height: 5000,
+                                        Depth: 400,
+                                        BusinessCode: null,
+                                        ParentLogicalId: null,
+                                        SourceId: null,
+                                        SourceRef: null,
+                                        Attributes: [])),
                                 new SpaceElementCommandDto(
                                     Guid.NewGuid(),
                                     SpaceElementCommandContract
@@ -1101,6 +2131,10 @@ public sealed class SpaceDesignSceneSqlServerTests
                                             CodeDigits: 3)),
                             ])));
             Assert.Equal(SpaceErrorCodes.CommandConflict, codeConflict.Code);
+            Assert.False(await context.ElementRevisions
+                .AsNoTracking()
+                .AnyAsync(candidate =>
+                    candidate.LogicalId == failedCopyElementId));
             Assert.Equal(
                 1000,
                 await context.RackRevisions
@@ -1109,21 +2143,309 @@ public sealed class SpaceDesignSceneSqlServerTests
                     .Select(candidate => candidate.X)
                     .SingleAsync());
             Assert.Equal(
-                5,
+                8,
                 await context.FloorRevisions
                     .AsNoTracking()
                     .Where(candidate => candidate.Id == floor.Id)
                     .Select(candidate => candidate.Revision)
                     .SingleAsync());
-            Assert.Equal(5, await context.ElementCommandBatches.CountAsync());
-            Assert.Equal(11, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(8, await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(17, await context.ElementCommandRecords.CountAsync());
             var arrayAudit = await context.ElementCommandRecords
                 .AsNoTracking()
                 .SingleAsync(candidate =>
                     candidate.CommandType ==
-                    SpaceElementCommandContract.GenerateRackArray);
+                    SpaceElementCommandContract.GenerateRackArray &&
+                    candidate.PayloadJson.Contains("\"codePrefix\":\"ARR-\""));
             Assert.Contains("\"generatedRacks\"", arrayAudit.AfterJson);
             Assert.Contains("\"rackCode\":\"ARR-001\"", arrayAudit.AfterJson);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Tenant_warehouse_template_is_idempotent_isolated_and_applyable()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            CreateTenantSpaceWarehouseTemplateResponse created;
+            var request = TenantWarehouseTemplateRequest("PRIVATE-WAREHOUSE");
+            await using (var context = CreateContext(
+                             connectionString,
+                             execution,
+                             clock))
+            {
+                var service = NewService(
+                    context,
+                    execution,
+                    clock,
+                    Guid.NewGuid());
+                created = await service.CreateTenantWarehouseTemplateAsync(
+                    request,
+                    "tenant-template-create");
+                var replay = await service.CreateTenantWarehouseTemplateAsync(
+                    request,
+                    "tenant-template-create");
+                Assert.False(created.IdempotentReplay);
+                Assert.True(replay.IdempotentReplay);
+                Assert.Equal(created.Template.Id, replay.Template.Id);
+                Assert.Equal("Tenant", created.Template.Scope);
+                Assert.Equal(1, created.Template.LatestVersion.VersionNo);
+                Assert.Equal(4, created.Template.LatestVersion.Counts.Locations);
+
+                var tenantCatalog = await service.GetWarehouseTemplatesAsync("Tenant");
+                Assert.Single(tenantCatalog);
+                Assert.Equal(created.Template.Id, tenantCatalog[0].Id);
+                Assert.Equal(2, (await service.GetWarehouseTemplatesAsync(null)).Count);
+                var preview = await service.PreviewWarehouseTemplateAsync(
+                    created.Template.Id,
+                    new PreviewSpaceWarehouseTemplateRequest(
+                        created.Template.LatestVersion.Id));
+                Assert.Equal(
+                    created.Template.LatestVersion.ContentHash,
+                    preview.TemplateContentHash);
+                Assert.False(preview.WritesDraft);
+
+                var changedReplay = await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.CreateTenantWarehouseTemplateAsync(
+                        request with { Name = "Changed request" },
+                        "tenant-template-create"));
+                Assert.Equal(SpaceErrorCodes.IdempotencyConflict, changedReplay.Code);
+                var duplicate = await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.CreateTenantWarehouseTemplateAsync(
+                        request with { TemplateCode = "private-warehouse" },
+                        "tenant-template-duplicate"));
+                Assert.Equal(SpaceErrorCodes.WarehouseTemplateConflict, duplicate.Code);
+
+                var version = await context.WarehouseTemplateVersions.SingleAsync();
+                context.Entry(version).Property(value => value.ContentHash)
+                    .CurrentValue = new string('f', 64);
+                await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => context.SaveChangesAsync());
+                context.ChangeTracker.Clear();
+
+                var seeded = await SeedDesignModelAsync(
+                    context,
+                    execution.ActorId,
+                    clock.UtcNow);
+                var draft = SpaceModelVersion.CreateDraft(
+                    execution.TenantId,
+                    seeded.Model.Id,
+                    2,
+                    "Tenant template Draft",
+                    seeded.Published.Id);
+                seeded.Model.ReserveDraft(draft);
+                var floor = SpaceFloorRevision.Create(
+                    execution.TenantId,
+                    draft.Id,
+                    Guid.NewGuid(),
+                    seeded.Model.SiteId,
+                    1,
+                    "F1",
+                    "Floor 1",
+                    height: 6000);
+                context.AddRange(draft, floor);
+                await context.SaveChangesAsync();
+                var clientId = Guid.NewGuid();
+                var lease = SpaceEditLease.Create(
+                    execution.TenantId,
+                    draft.Id,
+                    floor.LogicalId,
+                    execution.ActorId,
+                    "Editor",
+                    clientId,
+                    clock.UtcNow,
+                    TimeSpan.FromSeconds(90));
+                context.EditLeases.Add(lease);
+                await context.SaveChangesAsync();
+
+                service = NewService(
+                    context,
+                    execution,
+                    clock,
+                    seeded.Model.SiteId);
+                preview = await service.PreviewWarehouseTemplateAsync(
+                    created.Template.Id,
+                    new PreviewSpaceWarehouseTemplateRequest(
+                        created.Template.LatestVersion.Id));
+                var applied = await service.ApplyWarehouseTemplateFloorAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    created.Template.Id,
+                    new ApplySpaceWarehouseTemplateFloorRequest(
+                        SpaceWarehouseTemplateContract.SchemaVersion,
+                        seeded.Model.SiteId,
+                        created.Template.LatestVersion.Id,
+                        preview.ProposalHash,
+                        "floor:f1",
+                        Guid.NewGuid(),
+                        clientId,
+                        lease.LeaseId,
+                        ExpectedFloorRevision: 0,
+                        ExpectedContentRevision: 0));
+                Assert.Equal(1, applied.AppliedCounts.Zones);
+                Assert.Equal(1, applied.AppliedCounts.Aisles);
+                Assert.Equal(1, applied.AppliedCounts.Racks);
+                Assert.Equal(4, applied.AppliedCounts.Locations);
+                Assert.Single(await context.RackRevisions.ToArrayAsync());
+                Assert.Equal(4, await context.LocationRevisions.CountAsync());
+            }
+
+            var otherExecution = new TestExecutionContext(
+                Guid.NewGuid(),
+                Guid.NewGuid());
+            await using var otherContext = CreateContext(
+                connectionString,
+                otherExecution,
+                clock);
+            var otherService = NewService(
+                otherContext,
+                otherExecution,
+                clock,
+                Guid.NewGuid());
+            Assert.Empty(await otherService.GetWarehouseTemplatesAsync("Tenant"));
+            var hidden = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                otherService.PreviewWarehouseTemplateAsync(
+                    created.Template.Id,
+                    new PreviewSpaceWarehouseTemplateRequest(
+                        created.Template.LatestVersion.Id)));
+            Assert.Equal(SpaceErrorCodes.WarehouseTemplateNotFound, hidden.Code);
+            var sameCode = await otherService.CreateTenantWarehouseTemplateAsync(
+                request,
+                "other-tenant-template");
+            Assert.NotEqual(created.Template.Id, sameCode.Template.Id);
+            Assert.Single(await otherService.GetWarehouseTemplatesAsync("Tenant"));
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Warehouse_template_floor_apply_is_leased_atomic_and_replayable()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "System template Draft",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            context.AddRange(draft, floor);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var template = Assert.Single(
+                await service.GetWarehouseTemplatesAsync("System"));
+            var preview = await service.PreviewWarehouseTemplateAsync(
+                template.Id,
+                new PreviewSpaceWarehouseTemplateRequest(
+                    template.LatestVersion.Id));
+            var templateFloor = Assert.Single(
+                preview.Floors,
+                candidate => candidate.FloorCode == "F1");
+            var request = new ApplySpaceWarehouseTemplateFloorRequest(
+                SpaceWarehouseTemplateContract.SchemaVersion,
+                seeded.Model.SiteId,
+                template.LatestVersion.Id,
+                preview.ProposalHash,
+                templateFloor.Key,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 0,
+                ExpectedContentRevision: 0);
+
+            var leaseFirst = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyWarehouseTemplateFloorAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    template.Id,
+                    request with
+                    {
+                        LeaseId = Guid.NewGuid(),
+                        ProposalHash = new string('c', 64),
+                    }));
+            Assert.Equal(SpaceErrorCodes.EditLeaseLost, leaseFirst.Code);
+
+            var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyWarehouseTemplateFloorAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    template.Id,
+                    request with { ProposalHash = new string('c', 64) }));
+            Assert.Equal(
+                SpaceErrorCodes.WarehouseTemplateProposalStale,
+                stale.Code);
+            Assert.Empty(await context.ElementCommandBatches.ToArrayAsync());
+            Assert.Empty(await context.ZoneRevisions.ToArrayAsync());
+
+            var applied = await service.ApplyWarehouseTemplateFloorAsync(
+                draft.Id,
+                floor.LogicalId,
+                template.Id,
+                request);
+            Assert.False(applied.IdempotentReplay);
+            Assert.Equal(1, applied.FloorRevision);
+            Assert.Equal(1, applied.VersionContentRevision);
+            Assert.Equal(3, applied.AppliedCounts.Zones);
+            Assert.Equal(10, applied.AppliedCounts.Aisles);
+            Assert.Equal(250, applied.AppliedCounts.Racks);
+            Assert.Equal(5_000, applied.AppliedCounts.Locations);
+            Assert.Equal(3, await context.ZoneRevisions.CountAsync());
+            Assert.Equal(10, await context.AisleRevisions.CountAsync());
+            Assert.Equal(250, await context.RackRevisions.CountAsync());
+            Assert.Equal(1_250, await context.RackLevelRevisions.CountAsync());
+            Assert.Equal(5_000, await context.LocationRevisions.CountAsync());
+            Assert.Equal(263, await context.ElementCommandRecords.CountAsync());
+            Assert.Contains(
+                "140000",
+                await context.FloorRevisions
+                    .Where(candidate => candidate.Id == floor.Id)
+                    .Select(candidate => candidate.BoundaryJson)
+                    .SingleAsync());
+
+            var replay = await service.ApplyWarehouseTemplateFloorAsync(
+                draft.Id,
+                floor.LogicalId,
+                template.Id,
+                request);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(applied.CommandBatchId, replay.CommandBatchId);
+            Assert.Equal(250, await context.RackRevisions.CountAsync());
+            Assert.Equal(5_000, await context.LocationRevisions.CountAsync());
+            Assert.Single(await context.ElementCommandBatches.ToArrayAsync());
         });
     }
 
@@ -1928,6 +3250,65 @@ public sealed class SpaceDesignSceneSqlServerTests
                     logicalId,
                     null))
                 .ToArray());
+
+    private static CreateTenantSpaceWarehouseTemplateRequest
+        TenantWarehouseTemplateRequest(string templateCode) =>
+        new(
+            templateCode,
+            "Private warehouse",
+            "Tenant private immutable template",
+            SpaceWarehouseTemplateContract.SchemaVersion,
+            [
+                new SpaceWarehouseTemplateFloorPlanDto(
+                    "floor:f1",
+                    "F1",
+                    "Floor 1",
+                    1,
+                    0,
+                    10_000,
+                    8_000,
+                    6_000),
+            ],
+            [
+                new SpaceWarehouseTemplateZonePlanDto(
+                    "zone:z1",
+                    "floor:f1",
+                    "Z1",
+                    "Storage",
+                    0,
+                    0,
+                    10_000,
+                    8_000),
+            ],
+            [
+                new SpaceWarehouseTemplateAislePlanDto(
+                    "aisle:a1",
+                    "floor:f1",
+                    "zone:z1",
+                    "A1",
+                    5_000,
+                    0,
+                    5_000,
+                    8_000),
+            ],
+            [
+                new SpaceWarehouseTemplateRackPlanDto(
+                    "rack:r1",
+                    "floor:f1",
+                    "zone:z1",
+                    "aisle:a1",
+                    "R1",
+                    1_000,
+                    1_000,
+                    0,
+                    0,
+                    2_000,
+                    1_000,
+                    3_000,
+                    2,
+                    2,
+                    1),
+            ]);
 
     private static SpaceDesignV1Service NewService(
         SpaceContext context,

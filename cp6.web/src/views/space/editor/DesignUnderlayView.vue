@@ -6,6 +6,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { isAxiosError } from 'axios'
 import { designLeaseApi, type SpaceEditLease } from '@/api/space/designLease'
 import { designCadParseApi } from '@/api/space/designCadParse'
+import { designProjectApi } from '@/api/space/designProject'
 import {
   designCodingApi,
   type LocationCodingEnvelope,
@@ -25,6 +26,7 @@ import {
   standardSpaceModelingTemplateFileName,
 } from '@/api/space/designModelingTemplate'
 import { designUnderlayApi } from '@/api/space/designUnderlay'
+import { designExcelCadMatchApi } from '@/api/space/designExcelCadMatch'
 import {
   ElementCanvasLayer,
   type CanvasObjectRef,
@@ -41,14 +43,44 @@ import {
   buildDistributionBatch,
   buildRotationBatch,
   buildTranslationBatch,
+  isExcelCadHistoryEntry,
+  isUnderlayHistoryEntry,
   type AlignmentMode,
   type DistributionMode,
   type EditorCommandInput,
+  type EditorHistoryEntry,
   type EditorObjectSnapshot,
   type GenerateRackArrayPayload,
   type ReversibleCommandBatch,
 } from '@/modules/space-design/commands/editorBatchCommands'
+import { buildCadApplyHistoryEntry } from '@/modules/space-design/commands/cadApplyHistory'
+import { buildExcelCadApplyHistoryEntry } from '@/modules/space-design/commands/excelCadApplyHistory'
+import { buildUnderlayHistoryEntry } from '@/modules/space-design/commands/underlayHistory'
+import {
+  buildElementMergePlan,
+  type ElementMergePlan,
+} from '@/modules/space-design/commands/elementMerge'
+import {
+  buildElementSplitPlan,
+  type ElementSplitPlan,
+} from '@/modules/space-design/commands/elementSplit'
+import {
+  buildElementRedrawPlan,
+  maximumElementRedrawVertices,
+  validateElementRedrawTarget,
+  type ElementRedrawPoint,
+} from '@/modules/space-design/commands/elementRedraw'
+import {
+  buildObjectCopyPlan,
+  inspectObjectCopySelection,
+  type ObjectCopySource,
+} from '@/modules/space-design/commands/objectCopy'
+import {
+  buildSpaceStudioComponentCreationPlan,
+  type SpaceStudioComponentPresetId,
+} from '@/modules/space-design/components/staticComponentCatalog'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
+import { sceneElementPropertiesPayload } from '@/modules/space-design/panels/elementProperties'
 import DesignLocationCodingPanel from '@/modules/space-design/coding/DesignLocationCodingPanel.vue'
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
@@ -56,6 +88,8 @@ import SpaceStudioContextPanel from '@/modules/space-design/panels/SpaceStudioCo
 import SpaceStudioChecklist from '@/modules/space-design/panels/SpaceStudioChecklist.vue'
 import DesignLayoutCreatePanel from '@/modules/space-design/layout/DesignLayoutCreatePanel.vue'
 import DesignLayoutPropertiesPanel from '@/modules/space-design/layout/DesignLayoutPropertiesPanel.vue'
+import DesignWarehouseTemplatePanel from '@/modules/space-design/templates/DesignWarehouseTemplatePanel.vue'
+import { uploadReuseNotice } from '@/modules/space-design/sources/uploadReuseNotice'
 import type {
   LayoutCreateIntent,
   LayoutParentOption,
@@ -69,9 +103,12 @@ import {
   type SpaceStudioProjectionMode,
 } from '@/modules/space-design/preview3d/floorViewState'
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
+import { ElementRedrawOverlayLayer } from '@/modules/space-design/canvas2d/ElementRedrawOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
+import DesignCadReviewCandidatePicker from '@/modules/space-design/cad-review/DesignCadReviewCandidatePicker.vue'
 import DesignExcelCadMatchPanel from '@/modules/space-design/cad-review/DesignExcelCadMatchPanel.vue'
 import DesignCadStartWizard from '@/modules/space-design/cad-start/DesignCadStartWizard.vue'
+import DesignExcelCadStartWizard from '@/modules/space-design/excel-cad/DesignExcelCadStartWizard.vue'
 import {
   cadReviewFreshness,
   parseCadReviewWorkspace,
@@ -95,6 +132,9 @@ import {
 import { sourceTypeForUnderlay } from '@/space-editor/underlay/underlayFile'
 import {
   calculateUnderlayCalibration,
+  deriveSecondCalibrationWorldPoint,
+  type UnderlayCalibrationInput,
+  type UnderlayCalibrationPreview,
   type UnderlayPixelPoint,
 } from '@/space-editor/underlay/underlayCalibration'
 import {
@@ -105,6 +145,7 @@ import { screenToWorld, type ViewState } from '@/space-editor/coords'
 import type {
   ISpaceDesignSceneDto,
   ISpaceExcelCadRackMatchV1,
+  ISpaceExcelCadApplyDto,
   ISpaceSceneElementDto,
   ISpaceSceneElementAttributeDto,
   ISpaceSceneFloorDto,
@@ -115,6 +156,8 @@ import type {
   ISpaceUpdateLayoutAisleDto,
   ISpaceUpdateLayoutRackDto,
   ISpaceUpdateLayoutZoneDto,
+  ISpaceWarehouseTemplateDto,
+  ISpaceWarehouseTemplateInstantiationPreviewDto,
   IPreviewSpaceLocationCodesResponse,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
@@ -140,6 +183,10 @@ const generationRunId = computed(() => String(route.query.generationRunId ?? '')
 const matchJobId = computed(() => String(route.query.matchJobId ?? ''))
 const cadSourceId = computed(() => String(route.query.cadSourceId ?? ''))
 const cadParseJobId = computed(() => String(route.query.cadParseJobId ?? ''))
+const excelSourceId = computed(() => String(route.query.excelSourceId ?? ''))
+const excelPreflightJobId = computed(
+  () => String(route.query.excelPreflightJobId ?? ''),
+)
 const initialFloorViewState = readFloorViewState(
   versionId.value,
   floorLogicalId.value,
@@ -154,6 +201,10 @@ const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
 const cadReviewWorkspace = ref<CadReviewWorkspace | null>(null)
 const cadWizardVisible = ref(false)
+const cadCandidatePickerVisible = ref(false)
+const excelCadWizardVisible = ref(Boolean(
+  excelSourceId.value && excelPreflightJobId.value && !matchJobId.value,
+))
 const cadReviewPanelVisible = ref(false)
 const matchPanelVisible = ref(Boolean(matchJobId.value))
 const activeCadReviewItemId = ref('')
@@ -161,7 +212,9 @@ const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
 const aiReviewPanelVisible = ref(false)
 const aiDecisionPanelVisible = ref(false)
 const aiGenerationPanelVisible = ref(false)
+const aiGenerationSourceId = ref('')
 const inspectorTab = ref<InspectorTab>('properties')
+const sourceListRefreshKey = ref(0)
 const activeAiReviewItemId = ref('')
 const loading = ref(true)
 const projectionMode = ref<SpaceStudioProjectionMode>(
@@ -171,6 +224,27 @@ const uploading = ref(false)
 const downloadingTemplate = ref(false)
 const savingCalibration = ref(false)
 const savingElement = ref(false)
+const warehouseTemplates = ref<ISpaceWarehouseTemplateDto[]>([])
+const warehouseTemplatePreview = ref<ISpaceWarehouseTemplateInstantiationPreviewDto | null>(null)
+const warehouseTemplateLoading = ref(false)
+const warehouseTemplateApplying = ref(false)
+const warehouseTemplateError = ref('')
+const pendingWarehouseTemplateApply = ref<{
+  templateId: string
+  templateFloorKey: string
+  request: {
+    schemaVersion: number
+    siteId: string
+    templateVersionId: string
+    proposalHash: string
+    templateFloorKey: string
+    commandBatchId: string
+    clientInstanceId: string
+    leaseId: string
+    expectedFloorRevision: number
+    expectedContentRevision: number
+  }
+} | null>(null)
 const calibrationMode = ref(false)
 const statusText = ref('')
 const saveState = ref<'idle' | 'saving' | 'saved' | 'failed'>('idle')
@@ -195,7 +269,8 @@ const parseStartedAt = ref<Date | null>(null)
 const parseElapsed = ref('')
 const parseError = ref('')
 const canvasZoomPercent = ref(5)
-const canvasSelectionTool = ref<'select' | 'pan' | 'measure'>('select')
+type CanvasTool = 'select' | 'pan' | 'measure' | 'redraw'
+const canvasSelectionTool = ref<CanvasTool>('select')
 const canvasViewport = ref({
   ...(initialFloorViewState?.canvasViewport ?? defaultCanvasViewport),
 })
@@ -206,6 +281,11 @@ const pointerCoordinates = ref('X — / Y —')
 const canvasPointerWorld = ref<{ x: number; y: number } | null>(null)
 const measurementText = ref('')
 const measurementStart = ref<{ x: number; y: number } | null>(null)
+const redrawSession = ref<{
+  targetLogicalId: string
+  points: ElementRedrawPoint[]
+} | null>(null)
+const redrawHover = ref<ElementRedrawPoint | null>(null)
 let panGesture: {
   screenX: number
   screenY: number
@@ -218,17 +298,26 @@ let pendingFloorViewState: {
   storageKey: string
   state: SpaceStudioFloorViewState
 } | null = null
-const visible = ref(true)
-const opacity = ref(55)
-const locked = ref(true)
+const visible = ref(initialFloorViewState?.underlay?.visible ?? true)
+const opacity = ref(initialFloorViewState?.underlay?.opacityPercent ?? 55)
+const locked = ref(initialFloorViewState?.underlay?.locked ?? true)
 const calibrationPoints = ref([
-  { pixel: null as UnderlayPixelPoint | null, worldX: 0, worldY: 0 },
-  { pixel: null as UnderlayPixelPoint | null, worldX: 10_000, worldY: 0 },
-  { pixel: null as UnderlayPixelPoint | null, worldX: 0, worldY: 10_000 },
+  { pixel: null as UnderlayPixelPoint | null },
+  { pixel: null as UnderlayPixelPoint | null },
+  { pixel: null as UnderlayPixelPoint | null },
 ])
+const calibrationSettings = ref({
+  distanceMillimeters: 10_000,
+  originX: 0,
+  originY: 0,
+  rotationZ: 0,
+  validationWorldX: 0,
+  validationWorldY: 10_000,
+})
 let stage: UnderlayStage | null = null
 let elementLayer: ElementCanvasLayer | null = null
 let cadIssueOverlay: CadIssueOverlayLayer | null = null
+let elementRedrawOverlay: ElementRedrawOverlayLayer | null = null
 let resizeObserver: ResizeObserver | null = null
 let disposed = false
 const clientInstanceId = tabClientInstanceId()
@@ -257,9 +346,13 @@ const leaseLabel = computed(() => {
 const saveLabel = computed(() => {
   if (saveState.value === 'saving') return `保存中 · ${unsavedCommands.value.length} 条`
   if (saveState.value === 'failed') return `保存失败 · ${unsavedCommands.value.length} 条未同步`
+  if (redrawSession.value) return `未保存重画 · ${redrawSession.value.points.length} 个顶点`
   if (lastSavedAt.value) return `已保存 ${lastSavedAt.value.toLocaleTimeString()}`
   return '尚无修改'
 })
+const redrawStatus = computed(() => redrawSession.value
+  ? `重画 ${redrawSession.value.points.length}/${maximumElementRedrawVertices} 点 · Enter 完成 · Backspace 回退 · Esc 取消`
+  : '')
 const cadReviewWorkspaceFreshness = computed(() => {
   const workspace = cadReviewWorkspace.value
   const scene = designScene.value
@@ -274,6 +367,14 @@ const cadReviewWorkspaceFreshness = computed(() => {
 const cadReviewWorkspaceStale = computed(
   () => cadReviewWorkspaceFreshness.value?.fresh === false,
 )
+const hasCurrentCadForExcel = computed(() => Boolean(
+  cadSourceId.value
+  && cadParseJobId.value
+  && cadReviewWorkspace.value
+  && cadReviewWorkspace.value.sourceId === cadSourceId.value
+  && cadReviewWorkspace.value.cadParseJobId === cadParseJobId.value
+  && !cadReviewWorkspaceStale.value,
+))
 const aiReviewWorkspaceFreshness = computed(() => {
   const workspace = aiReviewWorkspace.value
   const scene = designScene.value
@@ -401,7 +502,104 @@ const selectedAttributes = computed<ISpaceSceneElementAttributeDto[]>(() => {
       )
     : []
 })
-const calibrationPreview = computed(() => {
+const elementRedrawEligibility = computed<{ eligible: boolean; reason: string }>(() => {
+  if (!selectedElement.value) {
+    return { eligible: false, reason: '请选择一个通用元素进行重画' }
+  }
+  if (readonlyScene.value) {
+    return { eligible: false, reason: '当前场景只读，无法重画' }
+  }
+  if (projectionMode.value !== '2d') {
+    return { eligible: false, reason: '请切换到 2D 后重画' }
+  }
+  if (calibrationMode.value) {
+    return { eligible: false, reason: '请先完成或取消底图标定' }
+  }
+  try {
+    validateElementRedrawTarget(selectedElement.value)
+    return { eligible: true, reason: '' }
+  } catch (error) {
+    return {
+      eligible: false,
+      reason: error instanceof Error ? error.message : '当前对象不能重画',
+    }
+  }
+})
+const selectedMergeElements = computed<ISpaceSceneElementDto[]>(() => {
+  if (
+    selectedObjects.value.length < 2
+    || selectedObjects.value.some((selection) => selection.ownerKind !== 'Element')
+  ) {
+    return []
+  }
+  const byLogicalId = new Map(
+    activeElements.value.flatMap((element) => element.revision?.logicalId
+      ? [[element.revision.logicalId, element] as const]
+      : []),
+  )
+  return selectedObjects.value.flatMap((selection) => {
+    const element = byLogicalId.get(selection.logicalId)
+    return element ? [element] : []
+  })
+})
+const elementMergeState = computed<{
+  plan?: ElementMergePlan
+  error?: string
+}>(() => {
+  if (selectedMergeElements.value.length !== selectedObjects.value.length) {
+    return { error: '仅支持合并 2–20 个通用元素' }
+  }
+  try {
+    return {
+      plan: buildElementMergePlan(
+        selectedMergeElements.value,
+        designScene.value?.elementAttributes ?? [],
+      ),
+    }
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : '当前选择不能合并',
+    }
+  }
+})
+const objectCopyState = computed<{ eligible: boolean; reason: string }>(() => {
+  if (selectedEditorObjectCount.value !== selectedObjects.value.length) {
+    return { eligible: false, reason: '仅支持复制通用元素和货架' }
+  }
+  try {
+    return inspectObjectCopySelection(selectedCopySources())
+  } catch (error) {
+    return {
+      eligible: false,
+      reason: error instanceof Error ? error.message : '当前选择不能复制',
+    }
+  }
+})
+const elementSplitState = computed<{
+  plan?: ElementSplitPlan
+  error?: string
+}>(() => {
+  if (!selectedElement.value) {
+    return { error: '请选择一个组合元素进行拆分' }
+  }
+  try {
+    return {
+      plan: buildElementSplitPlan(
+        selectedElement.value,
+        designScene.value?.elementAttributes ?? [],
+      ),
+    }
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : '当前对象不能拆分',
+    }
+  }
+})
+const calibrationState = computed<{
+  input?: UnderlayCalibrationInput
+  preview?: UnderlayCalibrationPreview
+  issue: string
+}>(() => {
   const size = stage?.getRasterSize()
   const [point1, point2, validationPoint] = calibrationPoints.value
   if (
@@ -410,39 +608,75 @@ const calibrationPreview = computed(() => {
     !point2?.pixel ||
     !validationPoint?.pixel
   ) {
-    return null
+    return { issue: '请依次选择 P1 原点、P2 比例点和 V 验证点' }
   }
   try {
-    return calculateUnderlayCalibration({
+    const derivedPoint2World = deriveSecondCalibrationWorldPoint({
+      point1Pixel: point1.pixel,
+      point2Pixel: point2.pixel,
+      originWorld: {
+        x: calibrationSettings.value.originX,
+        y: calibrationSettings.value.originY,
+      },
+      distanceMillimeters: calibrationSettings.value.distanceMillimeters,
+      rotationZ: calibrationSettings.value.rotationZ,
+    })
+    const point2World = {
+      x: Math.round(derivedPoint2World.x),
+      y: Math.round(derivedPoint2World.y),
+    }
+    const input: UnderlayCalibrationInput = {
       pixelWidth: size.width,
       pixelHeight: size.height,
       point1: {
         pixel: point1.pixel,
-        world: { x: point1.worldX, y: point1.worldY },
+        world: {
+          x: calibrationSettings.value.originX,
+          y: calibrationSettings.value.originY,
+        },
       },
       point2: {
         pixel: point2.pixel,
-        world: { x: point2.worldX, y: point2.worldY },
+        world: point2World,
       },
       validationPoint: {
         pixel: validationPoint.pixel,
         world: {
-          x: validationPoint.worldX,
-          y: validationPoint.worldY,
+          x: calibrationSettings.value.validationWorldX,
+          y: calibrationSettings.value.validationWorldY,
         },
       },
-    })
+    }
+    return {
+      input,
+      preview: calculateUnderlayCalibration(input),
+      issue: '',
+    }
   } catch {
-    return null
+    return { issue: '请检查两点间距、真实距离、旋转和验证点位置' }
   }
+})
+const calibrationPreview = computed(() => calibrationState.value.preview ?? null)
+const calibrationWithinTolerance = computed(() => {
+  const preview = calibrationPreview.value
+  return Boolean(
+    preview &&
+      preview.validationErrorMillimeters <= preview.errorThresholdMillimeters,
+  )
 })
 
 onMounted(async () => {
   window.addEventListener('resize', updateViewportWidth)
   window.addEventListener('keydown', onStudioKeydown)
+  window.addEventListener('beforeunload', protectPendingDraftWork)
   await nextTick()
   if (!canvasRef.value) return
   stage = new UnderlayStage(canvasRef.value)
+  stage.setLayerState({
+    visible: visible.value,
+    opacity: opacity.value / 100,
+    locked: locked.value,
+  })
   stage.stage.on('pointermove.space-studio-tools', onCanvasPointerMove)
   stage.stage.on('pointerdown.space-studio-tools', onCanvasPointerDown)
   stage.stage.on('pointerup.space-studio-tools', onCanvasPointerUp)
@@ -454,6 +688,7 @@ onMounted(async () => {
     moveCanvasObjects,
   )
   cadIssueOverlay = new CadIssueOverlayLayer(stage.stage)
+  elementRedrawOverlay = new ElementRedrawOverlayLayer(stage.stage)
   applyCanvasViewport(canvasViewport.value, false)
   resizeObserver = new ResizeObserver((entries) => {
     const size = entries[0]?.contentRect
@@ -461,10 +696,12 @@ onMounted(async () => {
       stage?.resize(size.width, size.height)
       elementLayer?.resize()
       cadIssueOverlay?.resize()
+      elementRedrawOverlay?.resize()
     }
   })
   resizeObserver.observe(canvasRef.value)
   await loadScene()
+  void loadWarehouseTemplates()
   if (narrowReadonly.value) {
     projectionMode.value = '3d'
     inspectorTab.value = 'issues'
@@ -498,6 +735,26 @@ const publishReady = computed(
 )
 
 onBeforeRouteUpdate(async () => {
+  if (pendingWarehouseTemplateApply.value) {
+    ElMessage.warning('模板 Apply 状态尚未确认；请先按原幂等请求安全重试，再切换楼层')
+    return false
+  }
+  if (redrawSession.value) {
+    try {
+      await ElMessageBox.confirm(
+        '当前重画仍未确认保存，切换楼层会丢弃这些画布顶点。',
+        '未保存重画',
+        {
+          type: 'warning',
+          confirmButtonText: '丢弃并切换',
+          cancelButtonText: '留在当前楼层',
+        },
+      )
+      cancelElementRedraw(false)
+    } catch {
+      return false
+    }
+  }
   if (!unsavedEnvelope.value && !unsavedCodingEnvelope.value) return true
   try {
     await ElMessageBox.confirm(
@@ -521,6 +778,7 @@ onBeforeUnmount(() => {
   disposed = true
   window.removeEventListener('resize', updateViewportWidth)
   window.removeEventListener('keydown', onStudioKeydown)
+  window.removeEventListener('beforeunload', protectPendingDraftWork)
   if (leaseRenewTimer !== null) window.clearInterval(leaseRenewTimer)
   if (parseElapsedTimer !== null) window.clearInterval(parseElapsedTimer)
   const leaseId = lease.value?.leaseId
@@ -537,6 +795,8 @@ onBeforeUnmount(() => {
   elementLayer = null
   cadIssueOverlay?.destroy()
   cadIssueOverlay = null
+  elementRedrawOverlay?.destroy()
+  elementRedrawOverlay = null
   stage?.destroy()
   stage = null
 })
@@ -566,6 +826,7 @@ watch(narrowReadonly, async (isNarrow, wasNarrow) => {
 
 watch(readonlyScene, (isReadonly) => {
   elementLayer?.setEnabled(!isReadonly && canvasSelectionTool.value === 'select')
+  if (isReadonly && redrawSession.value) cancelElementRedraw(false)
 })
 
 watch([visible, opacity, locked], () => {
@@ -575,10 +836,12 @@ watch([visible, opacity, locked], () => {
     locked: locked.value,
   }
   stage?.setLayerState(state)
+  scheduleFloorViewStatePersistence()
 })
 
 watch(matchJobId, (jobId) => {
   if (jobId) {
+    excelCadWizardVisible.value = false
     openMatchPanel()
     return
   }
@@ -677,12 +940,262 @@ async function loadScene(): Promise<void> {
   }
 }
 
+async function loadWarehouseTemplates(): Promise<void> {
+  warehouseTemplateLoading.value = true
+  warehouseTemplateError.value = ''
+  try {
+    warehouseTemplates.value = await designProjectApi.getWarehouseTemplates()
+  } catch {
+    warehouseTemplates.value = []
+    warehouseTemplateError.value = '整仓模板目录暂不可用；手工构件仍可继续。'
+  } finally {
+    warehouseTemplateLoading.value = false
+  }
+}
+
+async function previewWarehouseTemplate(
+  template: ISpaceWarehouseTemplateDto,
+): Promise<void> {
+  if (warehouseTemplateLoading.value || warehouseTemplateApplying.value ||
+    savingElement.value) return
+  warehouseTemplateLoading.value = true
+  warehouseTemplateError.value = ''
+  try {
+    warehouseTemplatePreview.value = await designProjectApi.previewWarehouseTemplate(
+      template.id,
+      template.latestVersion.id,
+    )
+    pendingWarehouseTemplateApply.value = null
+    ElMessage.success('模板预览已密封；确认前 Draft 保持不变')
+  } catch {
+    warehouseTemplatePreview.value = null
+    warehouseTemplateError.value = '模板预览失败，请重新加载目录后再试。'
+  } finally {
+    warehouseTemplateLoading.value = false
+  }
+}
+
+async function applyWarehouseTemplateFloor(payload: {
+  templateId: string
+  templateFloorKey: string
+}): Promise<void> {
+  const scene = designScene.value
+  const currentFloor = floor.value
+  const currentLeaseId = lease.value?.leaseId
+  const preview = warehouseTemplatePreview.value
+  if (!scene || !currentFloor || !currentLeaseId || !preview ||
+    readonlyScene.value || warehouseTemplateApplying.value || savingElement.value) return
+
+  const pending = pendingWarehouseTemplateApply.value
+  const canRetryPending = pending?.templateId === payload.templateId &&
+    pending.templateFloorKey === payload.templateFloorKey
+  if (pending && !canRetryPending) {
+    warehouseTemplateError.value =
+      '已有状态未确认的模板命令包；请先按原模板楼层安全重试。'
+    return
+  }
+  let request = canRetryPending ? pending.request : null
+  if (!request) {
+    const templateFloor = preview.floors.find(
+      (item) => item.key === payload.templateFloorKey,
+    )
+    if (!templateFloor || preview.templateId !== payload.templateId) {
+      warehouseTemplateError.value = '模板预览与所选楼层不一致，请重新预览。'
+      return
+    }
+    const racks = preview.racks.filter(
+      (item) => item.floorKey === payload.templateFloorKey,
+    )
+    const locationCount = racks.reduce(
+      (total, rack) => total + rack.columns * rack.levels * rack.depths,
+      0,
+    )
+    try {
+      await ElMessageBox.confirm(
+        `将模板 ${templateFloor.floorCode} 原子写入当前楼层，预计新增 ` +
+          `${racks.length} 个货架和 ${locationCount} 个库位。` +
+          '操作仅修改当前 Draft，不直接修改 Published/WMS。是否继续？',
+        '确认整仓模板写入',
+        {
+          type: 'warning',
+          confirmButtonText: '确认写入 Draft',
+          cancelButtonText: '取消',
+        },
+      )
+    } catch {
+      return
+    }
+    const siteId = String(scene.siteId ?? '')
+    if (!siteId) {
+      warehouseTemplateError.value = '当前场景缺少 Site 身份，无法安全写入模板。'
+      return
+    }
+    request = {
+      schemaVersion: 1,
+      siteId,
+      templateVersionId: preview.templateVersionId,
+      proposalHash: preview.proposalHash,
+      templateFloorKey: payload.templateFloorKey,
+      commandBatchId: crypto.randomUUID(),
+      clientInstanceId,
+      leaseId: currentLeaseId,
+      expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+      expectedContentRevision: scene.contentRevision ?? 0,
+    }
+    pendingWarehouseTemplateApply.value = {
+      ...payload,
+      request,
+    }
+  }
+
+  warehouseTemplateApplying.value = true
+  savingElement.value = true
+  saveState.value = 'saving'
+  warehouseTemplateError.value = ''
+  try {
+    const response = await designProjectApi.applyWarehouseTemplateFloor(
+      versionId.value,
+      floorLogicalId.value,
+      payload.templateId,
+      request,
+    )
+    pendingWarehouseTemplateApply.value = null
+    saveState.value = 'saved'
+    lastSavedAt.value = new Date()
+    await loadScene()
+    ElMessage.success(
+      `模板楼层已原子写入：${response.appliedCounts.racks} 个货架、` +
+        `${response.appliedCounts.locations} 个库位` +
+        (response.idempotentReplay ? '（幂等重放）' : ''),
+    )
+  } catch (error) {
+    saveState.value = 'failed'
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_EDIT_LEASE_LOST') {
+      loseEditLease()
+      warehouseTemplateError.value = '编辑租约已丢失；模板未部分写入。'
+    } else if (code === 'SPACE_WAREHOUSE_TEMPLATE_PROPOSAL_STALE') {
+      pendingWarehouseTemplateApply.value = null
+      warehouseTemplatePreview.value = null
+      warehouseTemplateError.value = '模板 Proposal 已过期且零写入，请重新生成预览。'
+    } else if (
+      code === 'SPACE_FLOOR_REVISION_CONFLICT' ||
+      code === 'SPACE_VERSION_CONFLICT'
+    ) {
+      pendingWarehouseTemplateApply.value = null
+      revisionConflict.value = true
+      warehouseTemplateError.value = 'Draft 已变化且零写入；请刷新场景并重新确认模板。'
+    } else {
+      warehouseTemplateError.value =
+        '模板 Apply 状态未确认；原命令包已保留，可按原幂等请求安全重试。'
+    }
+  } finally {
+    warehouseTemplateApplying.value = false
+    savingElement.value = false
+  }
+}
+
 function chooseCadReviewArtifact(): void {
   cadReviewFileInputRef.value?.click()
 }
 
 function chooseCadFile(): void {
   cadFileInputRef.value?.click()
+}
+
+function openExistingCadCatalog(): void {
+  cadCandidatePickerVisible.value = true
+}
+
+async function selectExistingCadReview(
+  sourceId: string,
+  jobId: string,
+): Promise<void> {
+  const {
+    cadSourceId: _oldCadSource,
+    cadParseJobId: _oldCadJob,
+    excelSourceId: _oldExcelSource,
+    excelPreflightJobId: _oldPreflight,
+    matchJobId: _oldMatch,
+    ...remainingQuery
+  } = route.query
+  cadCandidatePickerVisible.value = false
+  cadReviewWorkspace.value = null
+  cadReviewPanelVisible.value = false
+  excelCadWizardVisible.value = false
+  matchPanelVisible.value = false
+  parseError.value = ''
+  stopParseElapsed()
+  await router.replace({
+    query: {
+      ...remainingQuery,
+      cadSourceId: sourceId,
+      cadParseJobId: jobId,
+    },
+  })
+  void monitorCadParse()
+}
+
+async function reparseExistingCad(sourceId: string): Promise<void> {
+  const {
+    cadSourceId: _oldCadSource,
+    cadParseJobId: _oldCadJob,
+    excelSourceId: _oldExcelSource,
+    excelPreflightJobId: _oldPreflight,
+    matchJobId: _oldMatch,
+    ...remainingQuery
+  } = route.query
+  cadCandidatePickerVisible.value = false
+  cadReviewWorkspace.value = null
+  cadReviewPanelVisible.value = false
+  excelCadWizardVisible.value = false
+  matchPanelVisible.value = false
+  parseStatus.value = ''
+  parseProgress.value = 0
+  parseError.value = ''
+  stopParseElapsed()
+  await router.replace({
+    query: { ...remainingQuery, cadSourceId: sourceId },
+  })
+  cadWizardVisible.value = true
+  ElMessage.info('历史结果不会直接写入 Draft；请重新确认坐标、映射与当前 Revision。')
+}
+
+function openExcelCadWorkflow(): void {
+  if (!hasCurrentCadForExcel.value) {
+    ElMessage.warning('请先完成并加载当前楼层的 CAD 审核，再上传 Excel。')
+    return
+  }
+  excelCadWizardVisible.value = true
+}
+
+function onExcelSourceUploaded(): void {
+  sourceListRefreshKey.value += 1
+}
+
+async function onExcelPreflightStarted(
+  sourceId: string,
+  jobId: string,
+): Promise<void> {
+  await router.replace({
+    query: {
+      ...route.query,
+      excelSourceId: sourceId,
+      excelPreflightJobId: jobId,
+    },
+  })
+}
+
+async function onExcelCadMatchStarted(jobId: string): Promise<void> {
+  await router.replace({
+    query: {
+      ...route.query,
+      matchJobId: jobId,
+    },
+  })
+  excelCadWizardVisible.value = false
+  openMatchPanel()
+  ElMessage.success('Excel–CAD 权威匹配已启动；确认 Apply 前 Draft 保持不变。')
 }
 
 async function onCadFileSelected(event: Event): Promise<void> {
@@ -697,6 +1210,7 @@ async function onCadFileSelected(event: Event): Promise<void> {
   uploading.value = true
   try {
     const uploaded = await designCadParseApi.upload(versionId.value, file)
+    sourceListRefreshKey.value += 1
     parseStatus.value = uploaded.source.state
     await router.replace({
       query: {
@@ -705,7 +1219,12 @@ async function onCadFileSelected(event: Event): Promise<void> {
       },
     })
     cadWizardVisible.value = true
-    ElMessage.success('CAD 已上传。安全扫描完成后可按冻结映射启动解析。')
+    const reuseNotice = uploadReuseNotice('CAD', uploaded.reused)
+    if (reuseNotice) {
+      ElMessage.info(reuseNotice)
+    } else {
+      ElMessage.success('CAD 已上传。安全扫描完成后可按冻结映射启动解析。')
+    }
   } catch {
     ElMessage.error('CAD 上传失败，当前 Draft 未变更')
   } finally {
@@ -855,6 +1374,7 @@ function applyCanvasViewport(
   stage?.setViewport(viewport)
   elementLayer?.setViewport(viewport)
   cadIssueOverlay?.setViewport(viewport)
+  elementRedrawOverlay?.setViewport(viewport)
   if (persist) scheduleFloorViewStatePersistence()
 }
 
@@ -878,6 +1398,9 @@ function restoreFloorViewState(nextVersionId: string, nextFloorLogicalId: string
     ? '3d'
     : stored?.projectionMode ?? '2d'
   preview3dViewState.value = stored?.preview3d ?? null
+  visible.value = stored?.underlay?.visible ?? true
+  opacity.value = stored?.underlay?.opacityPercent ?? 55
+  locked.value = stored?.underlay?.locked ?? true
   applyCanvasViewport(stored?.canvasViewport ?? defaultCanvasViewport, false)
 }
 
@@ -897,6 +1420,11 @@ function scheduleFloorViewStatePersistence(): void {
       ...(preview3dViewState.value
         ? { preview3d: preview3dViewState.value }
         : {}),
+      underlay: {
+        visible: visible.value,
+        opacityPercent: opacity.value,
+        locked: locked.value,
+      },
     },
   }
   if (floorViewPersistenceTimer !== null) return
@@ -952,7 +1480,8 @@ function canvasWorldPoint(): { x: number; y: number } | null {
   })
 }
 
-function selectCanvasTool(tool: 'select' | 'pan' | 'measure'): void {
+function selectCanvasTool(tool: Exclude<CanvasTool, 'redraw'>): void {
+  if (redrawSession.value) cancelElementRedraw(false)
   canvasSelectionTool.value = tool
   elementLayer?.setEnabled(tool === 'select' && !readonlyScene.value)
   if (tool === 'measure') {
@@ -967,6 +1496,16 @@ function onCanvasPointerMove(): void {
   const world = canvasWorldPoint()
   canvasPointerWorld.value = world
   if (world) pointerCoordinates.value = `X ${Math.round(world.x)} / Y ${Math.round(world.y)} mm`
+  if (canvasSelectionTool.value === 'redraw') {
+    redrawHover.value = world
+      ? { x: Math.round(world.x), y: Math.round(world.y) }
+      : null
+    elementRedrawOverlay?.setDraft(
+      redrawSession.value?.points ?? [],
+      redrawHover.value,
+    )
+    return
+  }
   if (!canvasStage || !screen || !panGesture || canvasSelectionTool.value !== 'pan') return
   applyCanvasViewport({
     zoom: panGesture.viewport.zoom,
@@ -990,6 +1529,27 @@ function onCanvasPointerUp(): void {
 }
 
 function onCanvasToolClick(): void {
+  if (canvasSelectionTool.value === 'redraw') {
+    const session = redrawSession.value
+    const world = canvasWorldPoint()
+    if (!session || !world) return
+    if (session.points.length >= maximumElementRedrawVertices) {
+      ElMessage.warning(`重画最多支持 ${maximumElementRedrawVertices} 个顶点`)
+      return
+    }
+    const point = { x: Math.round(world.x), y: Math.round(world.y) }
+    if (session.points.some((candidate) =>
+      candidate.x === point.x && candidate.y === point.y)) {
+      ElMessage.warning('重画顶点不能重复')
+      return
+    }
+    redrawSession.value = {
+      ...session,
+      points: [...session.points, point],
+    }
+    elementRedrawOverlay?.setDraft(redrawSession.value.points, redrawHover.value)
+    return
+  }
   if (canvasSelectionTool.value !== 'measure') return
   const world = canvasWorldPoint()
   if (!world) return
@@ -1004,6 +1564,87 @@ function onCanvasToolClick(): void {
   )
   measurementText.value = `测量 ${distance.toFixed(1)} mm`
   measurementStart.value = null
+}
+
+function startElementRedraw(): void {
+  const element = selectedElement.value
+  if (!element || !elementRedrawEligibility.value.eligible) {
+    ElMessage.warning(elementRedrawEligibility.value.reason)
+    return
+  }
+  const logicalId = element.revision?.logicalId
+  if (!logicalId) return
+  measurementStart.value = null
+  measurementText.value = ''
+  redrawSession.value = { targetLogicalId: logicalId, points: [] }
+  redrawHover.value = null
+  canvasSelectionTool.value = 'redraw'
+  elementLayer?.setEnabled(false)
+  elementRedrawOverlay?.setDraft([], null)
+  ElMessage.info('请依次点击多边形顶点；Enter 完成，Esc 取消')
+}
+
+function removeLastRedrawPoint(): void {
+  const session = redrawSession.value
+  if (!session || session.points.length === 0) return
+  redrawSession.value = {
+    ...session,
+    points: session.points.slice(0, -1),
+  }
+  elementRedrawOverlay?.setDraft(redrawSession.value.points, redrawHover.value)
+}
+
+function cancelElementRedraw(announce = true): void {
+  const hadSession = Boolean(redrawSession.value)
+  redrawSession.value = null
+  redrawHover.value = null
+  elementRedrawOverlay?.clear()
+  canvasSelectionTool.value = 'select'
+  elementLayer?.setEnabled(!readonlyScene.value)
+  if (announce && hadSession) ElMessage.info('已取消重画，Draft 未发生写入')
+}
+
+async function completeElementRedraw(): Promise<void> {
+  const session = redrawSession.value
+  if (!session || savingElement.value || readonlyScene.value) return
+  const element = activeElements.value.find(
+    (candidate) => candidate.revision?.logicalId === session.targetLogicalId,
+  )
+  if (!element) {
+    ElMessage.error('重画目标已失效，请刷新场景后重试')
+    cancelElementRedraw(false)
+    return
+  }
+  const revisionId = element.revision?.revisionId
+  const attributes = revisionId
+    ? (designScene.value?.elementAttributes ?? []).filter(
+        (attribute) => attribute.elementRevisionId === revisionId,
+      )
+    : []
+  let plan
+  try {
+    plan = buildElementRedrawPlan(element, attributes, session.points)
+  } catch (error) {
+    ElMessage.warning(error instanceof Error ? error.message : '重画几何无效')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将 ${plan.vertexCount} 个顶点保存为多边形，并保留对象 LogicalId ${plan.logicalId}、业务属性及 CAD 来源。确认前 Draft 尚未写入，保存后可撤销。`,
+      '确认重画',
+      {
+        type: 'warning',
+        confirmButtonText: '确认保存',
+        cancelButtonText: '继续绘制',
+      },
+    )
+  } catch {
+    return
+  }
+  const saved = await runBatchTool('重画异常对象', plan.batch)
+  if (!saved) return
+  cancelElementRedraw(false)
+  selectObjects([{ logicalId: plan.logicalId, ownerKind: 'Element' }], 'replace')
 }
 
 function onCanvasWheel(event: { evt: WheelEvent }): void {
@@ -1222,6 +1863,7 @@ function openAiDecisionPanel(): void {
 }
 
 function openAiGenerationPanel(): void {
+  aiGenerationSourceId.value = ''
   aiGenerationPanelVisible.value = true
   aiDecisionPanelVisible.value = false
   matchPanelVisible.value = false
@@ -1234,6 +1876,7 @@ function openAiGenerationPanel(): void {
 
 function closeAiGenerationPanel(): void {
   aiGenerationPanelVisible.value = false
+  aiGenerationSourceId.value = ''
 }
 
 function closeAiDecisionPanel(): void {
@@ -1324,6 +1967,9 @@ async function onFileSelected(event: Event): Promise<void> {
     if (!fileId || !sourceId) {
       throw new Error('Underlay upload response is incomplete')
     }
+    sourceListRefreshKey.value += 1
+    const reuseNotice = uploadReuseNotice('底图', result.reused)
+    if (reuseNotice) ElMessage.info(reuseNotice)
 
     if (result.file?.state === 'Clean') {
       await attachAndRender(sourceId)
@@ -1362,21 +2008,134 @@ async function waitForClean(fileId: string, sourceId: string): Promise<void> {
 
 async function attachAndRender(sourceId: string): Promise<void> {
   const current = floor.value
-  if (!current) throw new Error('Floor is unavailable')
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
+  if (!current
+    || currentScene?.contentRevision === undefined
+    || !activeLeaseId
+    || leaseState.value !== 'owned') {
+    throw new Error('An active edit lease and current scene are required')
+  }
+  const replacing = Boolean(current.underlaySourceId)
+  const commandBatchId = crypto.randomUUID()
   const response = await designUnderlayApi.attach(
     versionId.value,
     floorLogicalId.value,
-    sourceId,
-    current.revisionNumber ?? 0,
+    {
+      sourceId,
+      expectedFloorRevision: current.revisionNumber ?? 0,
+      expectedContentRevision: currentScene.contentRevision,
+      clientInstanceId,
+      leaseId: activeLeaseId,
+      commandBatchId,
+    },
+    `underlay-attach:${commandBatchId}`,
   )
-  if (!response.floor) throw new Error('Attach response is missing its floor')
+  if (!response.floor || !response.history) {
+    throw new Error('Attach response is missing its floor or history')
+  }
+  const entry = buildUnderlayHistoryEntry(
+    response.history,
+    replacing ? '替换底图' : '挂接底图',
+  )
+  history.push(entry)
+  touchHistory()
   floor.value = response.floor
+  sourceListRefreshKey.value += 1
+  visible.value = true
+  locked.value = false
   cancelCalibration()
-  await loadContent(sourceId)
+  await loadScene()
   statusText.value = calibrated.value
     ? t('底图已加载并标定')
     : t('底图已加载，等待两点标定')
   ElMessage.success(t('底图已安全加载'))
+}
+
+async function removeUnderlay(): Promise<void> {
+  const current = floor.value
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
+  if (!current?.underlaySourceId
+    || currentScene?.contentRevision === undefined
+    || !activeLeaseId
+    || leaseState.value !== 'owned') return
+  try {
+    await ElMessageBox.confirm(
+      t('移除当前底图？该操作可以通过撤销恢复。'),
+      t('移除底图'),
+      {
+        type: 'warning',
+        confirmButtonText: t('确认'),
+        cancelButtonText: t('取消'),
+      },
+    )
+  } catch {
+    return
+  }
+  const commandBatchId = crypto.randomUUID()
+  try {
+    const response = await designUnderlayApi.attach(
+      versionId.value,
+      floorLogicalId.value,
+      {
+        sourceId: null,
+        expectedFloorRevision: current.revisionNumber ?? 0,
+        expectedContentRevision: currentScene.contentRevision,
+        clientInstanceId,
+        leaseId: activeLeaseId,
+        commandBatchId,
+      },
+      `underlay-detach:${commandBatchId}`,
+    )
+    if (!response.history) throw new Error('Detach history is missing')
+    history.push(buildUnderlayHistoryEntry(response.history, '移除底图'))
+    touchHistory()
+    cancelCalibration()
+    await loadScene()
+    sourceListRefreshKey.value += 1
+    ElMessage.success(t('底图已移除，可使用撤销恢复'))
+  } catch (error) {
+    handleUnderlayWriteError(error)
+    ElMessage.error(t('底图移除失败，请刷新后重试'))
+  }
+}
+
+async function onSourceRemoved(
+  sourceId: string,
+  _versionContentRevision: number,
+): Promise<void> {
+  sourceListRefreshKey.value += 1
+  if (sourceId === cadSourceId.value) {
+    const {
+      cadSourceId: _removedSource,
+      cadParseJobId: _removedJob,
+      excelSourceId: _removedExcelSource,
+      excelPreflightJobId: _removedPreflightJob,
+      matchJobId: _removedMatchJob,
+      ...remainingQuery
+    } = route.query
+    cadReviewWorkspace.value = null
+    cadReviewPanelVisible.value = false
+    cadWizardVisible.value = false
+    parseStatus.value = ''
+    parseProgress.value = 0
+    parseError.value = ''
+    excelCadWizardVisible.value = false
+    matchPanelVisible.value = false
+    await router.replace({ query: remainingQuery })
+  } else if (sourceId === excelSourceId.value) {
+    const {
+      excelSourceId: _removedExcelSource,
+      excelPreflightJobId: _removedPreflightJob,
+      matchJobId: _removedMatchJob,
+      ...remainingQuery
+    } = route.query
+    excelCadWizardVisible.value = false
+    matchPanelVisible.value = false
+    await router.replace({ query: remainingQuery })
+  }
+  await loadScene()
 }
 
 async function loadContent(sourceId: string): Promise<void> {
@@ -1402,9 +2161,9 @@ function beginCalibration(): void {
 
 function resetCalibrationPoints(): void {
   calibrationPoints.value = [
-    { pixel: null, worldX: 0, worldY: 0 },
-    { pixel: null, worldX: 10_000, worldY: 0 },
-    { pixel: null, worldX: 0, worldY: 10_000 },
+    { pixel: null },
+    { pixel: null },
+    { pixel: null },
   ]
   syncCalibrationStage()
 }
@@ -1437,25 +2196,30 @@ function syncCalibrationStage(): void {
 
 async function saveCalibration(): Promise<void> {
   const currentFloor = floor.value
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
   const sourceId = currentFloor?.underlaySourceId
   const size = stage?.getRasterSize()
-  const preview = calibrationPreview.value
-  const [point1, point2, validationPoint] = calibrationPoints.value
+  const calibrationInput = calibrationState.value.input
   if (
     !currentFloor ||
+    currentScene?.contentRevision === undefined ||
+    !activeLeaseId ||
+    leaseState.value !== 'owned' ||
     !sourceId ||
     !size ||
-    !preview ||
-    !point1?.pixel ||
-    !point2?.pixel ||
-    !validationPoint?.pixel
+    !calibrationInput ||
+    !calibrationWithinTolerance.value
   ) {
-    ElMessage.warning(t('请选择三个有效控制点并填写毫米坐标'))
+    ElMessage.warning(
+      calibrationState.value.issue || t('验证点误差超过允许阈值，请重新选点或检查坐标'),
+    )
     return
   }
 
   savingCalibration.value = true
   try {
+    const commandBatchId = crypto.randomUUID()
     const response = await designUnderlayApi.calibrate(
       versionId.value,
       sourceId,
@@ -1465,39 +2229,49 @@ async function saveCalibration(): Promise<void> {
         pixelWidth: size.width,
         pixelHeight: size.height,
         point1: {
-          pixelX: point1.pixel.x,
-          pixelY: point1.pixel.y,
-          worldX: Math.round(point1.worldX),
-          worldY: Math.round(point1.worldY),
+          pixelX: calibrationInput.point1.pixel.x,
+          pixelY: calibrationInput.point1.pixel.y,
+          worldX: Math.round(calibrationInput.point1.world.x),
+          worldY: Math.round(calibrationInput.point1.world.y),
         },
         point2: {
-          pixelX: point2.pixel.x,
-          pixelY: point2.pixel.y,
-          worldX: Math.round(point2.worldX),
-          worldY: Math.round(point2.worldY),
+          pixelX: calibrationInput.point2.pixel.x,
+          pixelY: calibrationInput.point2.pixel.y,
+          worldX: Math.round(calibrationInput.point2.world.x),
+          worldY: Math.round(calibrationInput.point2.world.y),
         },
         validationPoint: {
-          pixelX: validationPoint.pixel.x,
-          pixelY: validationPoint.pixel.y,
-          worldX: Math.round(validationPoint.worldX),
-          worldY: Math.round(validationPoint.worldY),
+          pixelX: calibrationInput.validationPoint.pixel.x,
+          pixelY: calibrationInput.validationPoint.pixel.y,
+          worldX: Math.round(calibrationInput.validationPoint.world.x),
+          worldY: Math.round(calibrationInput.validationPoint.world.y),
         },
         expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+        expectedContentRevision: currentScene.contentRevision,
+        clientInstanceId,
+        leaseId: activeLeaseId,
+        commandBatchId,
       },
+      `underlay-calibrate:${commandBatchId}`,
     )
-    if (!response.floor || !response.calibration) {
+    if (!response.floor || !response.calibration || !response.history) {
       throw new Error('Calibration response is incomplete')
     }
+    history.push(buildUnderlayHistoryEntry(response.history))
+    touchHistory()
     floor.value = response.floor
     stage?.setFloor(response.floor)
+    locked.value = true
     cancelCalibration()
+    await loadScene()
     statusText.value = t('底图已加载并标定')
     ElMessage.success(
       t('标定已保存，验证误差 {error} mm', {
         error: response.calibration.validationErrorMillimeters ?? 0,
       }),
     )
-  } catch {
+  } catch (error) {
+    handleUnderlayWriteError(error)
     ElMessage.error(t('标定未通过，请检查控制点和实际坐标'))
   } finally {
     savingCalibration.value = false
@@ -1545,7 +2319,13 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
   try {
     const logicalId = element.revision?.logicalId
     if (!logicalId) throw new Error('Element logical identity is missing')
-    const before = elementPropertiesPayload(element)
+    const lockChanged = payload.manualCorrectionLocked !== undefined
+    const before = {
+      ...elementPropertiesPayload(element),
+      ...(lockChanged
+        ? { manualCorrectionLocked: Boolean(element.isManualCorrectionLocked) }
+        : {}),
+    }
     await applyEditorCommands([
       {
         type: 'UpdateProperties',
@@ -1554,7 +2334,9 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
       },
     ])
     history.push({
-      label: '修改通用元素属性',
+      label: lockChanged
+        ? (payload.manualCorrectionLocked ? '锁定人工校正' : '解除人工校正锁定')
+        : '修改通用元素属性',
       undo: [
         {
           type: 'UpdateProperties',
@@ -1572,7 +2354,11 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
     })
     touchHistory()
     await loadScene()
-    ElMessage.success(t('元素属性已保存'))
+    ElMessage.success(t(lockChanged
+      ? (payload.manualCorrectionLocked
+          ? '人工校正已保存并锁定'
+          : '人工校正锁定已解除')
+      : '元素属性已保存'))
   } catch {
     ElMessage.error(t('元素保存失败，请刷新场景后重试'))
   } finally {
@@ -1635,6 +2421,145 @@ async function rotateSelected(degrees: number): Promise<void> {
   )
 }
 
+async function copySelectedObjects(): Promise<void> {
+  if (!objectCopyState.value.eligible || savingElement.value || readonlyScene.value) {
+    ElMessage.warning(objectCopyState.value.reason || '当前选择不能复制')
+    return
+  }
+  let plan
+  try {
+    plan = buildObjectCopyPlan(selectedCopySources(), activeRacks.value)
+  } catch (error) {
+    ElMessage.warning(error instanceof Error ? error.message : '当前选择不能复制')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将复制 ${plan.elementLogicalIds.length} 个通用元素和 ${plan.expectedRackCopies} 个货架。通用元素保留几何、类型、父级和设计属性，清除唯一业务编码、业务链接与 CAD 来源；货架复制逐层规格和未绑定库位并生成新编码。操作作为一个原子批保存且可撤销，是否继续？`,
+      '确认复制对象',
+      {
+        type: 'warning',
+        confirmButtonText: '确认复制',
+        cancelButtonText: '取消',
+      },
+    )
+  } catch {
+    return
+  }
+
+  savingElement.value = true
+  try {
+    const response = await applyEditorCommands(plan.commands)
+    const affectedElementIds = new Set((response.affectedObjects ?? [])
+      .map((affected) => affected.targetLogicalId)
+      .filter((id): id is string => Boolean(id)))
+    if (plan.elementLogicalIds.some((logicalId) => !affectedElementIds.has(logicalId))) {
+      throw new Error('Copy response did not contain every generated element')
+    }
+    const rackLogicalIds = (response.affectedRacks ?? [])
+      .map((rack) => rack.revision?.logicalId)
+      .filter((id): id is string => Boolean(id))
+    if (rackLogicalIds.length !== plan.expectedRackCopies) {
+      throw new Error('Copy response did not contain every generated rack')
+    }
+    const copied = [
+      ...plan.elementLogicalIds.map((logicalId) => ({
+        logicalId,
+        ownerKind: 'Element' as const,
+      })),
+      ...rackLogicalIds.map((logicalId) => ({
+        logicalId,
+        ownerKind: 'Rack' as const,
+      })),
+    ]
+    history.push({
+      label: `复制 ${copied.length} 个对象`,
+      undo: copied.map(({ logicalId }) => ({
+        type: 'DeleteObject',
+        targetLogicalId: logicalId,
+      })),
+      redo: copied.map(({ logicalId }) => ({
+        type: 'RestoreLogicalObject',
+        targetLogicalId: logicalId,
+      })),
+    })
+    touchHistory()
+    await loadScene()
+    selectObjects(copied, 'replace')
+    ElMessage.success(`已复制 ${copied.length} 个草稿对象`)
+  } catch {
+    ElMessage.error('对象复制失败，请刷新场景后重试')
+  } finally {
+    savingElement.value = false
+  }
+}
+
+async function mergeSelectedElements(): Promise<void> {
+  const plan = elementMergeState.value.plan
+  if (!plan) {
+    ElMessage.warning(elementMergeState.value.error ?? '当前选择不能合并')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将 ${plan.sourceLogicalIds.length + 1} 个通用元素合并为一个组合元素。保留首选对象 ${plan.survivorLogicalId}，其余对象标记为待移除；操作可撤销。是否继续？`,
+      '确认合并',
+      {
+        type: 'warning',
+        confirmButtonText: '确认合并',
+        cancelButtonText: '取消',
+      },
+    )
+  } catch {
+    return
+  }
+
+  const saved = await runBatchTool(
+    `合并 ${plan.sourceLogicalIds.length + 1} 个异常对象`,
+    plan.batch,
+  )
+  if (saved) {
+    selectObjects([
+      { logicalId: plan.survivorLogicalId, ownerKind: 'Element' },
+    ], 'replace')
+  }
+}
+
+async function splitSelectedElement(): Promise<void> {
+  const plan = elementSplitState.value.plan
+  if (!plan) {
+    ElMessage.warning(elementSplitState.value.error ?? '当前对象不能拆分')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将组合元素拆分为 ${plan.partCount} 个独立元素。首个部件保留当前 LogicalId，其余 ${plan.splitLogicalIds.length} 个部件分配新 LogicalId；类型、父级、业务链接、设计属性和 CAD 来源将继承，操作可撤销。是否继续？`,
+      '确认拆分',
+      {
+        type: 'warning',
+        confirmButtonText: '确认拆分',
+        cancelButtonText: '取消',
+      },
+    )
+  } catch {
+    return
+  }
+
+  const saved = await runBatchTool(
+    `拆分 ${plan.partCount} 个异常部件`,
+    plan.batch,
+  )
+  if (saved) {
+    selectObjects([
+      { logicalId: plan.groupLogicalId, ownerKind: 'Element' },
+      ...plan.splitLogicalIds.map((logicalId) => ({
+        logicalId,
+        ownerKind: 'Element' as const,
+      })),
+    ], 'replace')
+  }
+}
+
 async function moveCanvasObjects(
   object: CanvasObjectRef,
   delta: { x: number; y: number },
@@ -1679,16 +2604,18 @@ async function moveCanvasObjects(
 async function runBatchTool(
   label: string,
   batch: ReversibleCommandBatch,
-): Promise<void> {
+): Promise<boolean> {
   if (savingElement.value || readonlyScene.value || batch.forward.length === 0) {
-    return
+    return false
   }
   savingElement.value = true
   try {
     await executeReversible(label, batch)
     ElMessage.success(label)
+    return true
   } catch {
     ElMessage.error(`${label}失败，请刷新场景后重试`)
+    return false
   } finally {
     savingElement.value = false
   }
@@ -1763,12 +2690,19 @@ async function undoSavedCommand(): Promise<void> {
   savingElement.value = true
   touchHistory()
   try {
-    await applyEditorCommands(entry.undo)
+    await executeHistoryAction(entry, 'Undo')
     history.completeUndo(entry)
-    await loadScene()
+    touchHistory()
+    try {
+      await loadScene()
+    } catch {
+      ElMessage.warning('撤销已保存，但场景刷新失败；请手动刷新')
+      return
+    }
     ElMessage.success(`已撤销：${entry.label}`)
-  } catch {
+  } catch (error) {
     history.cancelUndo(entry)
+    handleUnderlayWriteError(error)
     ElMessage.error('撤销失败，请刷新场景后重试')
   } finally {
     savingElement.value = false
@@ -1782,12 +2716,19 @@ async function redoSavedCommand(): Promise<void> {
   savingElement.value = true
   touchHistory()
   try {
-    await applyEditorCommands(entry.redo)
+    await executeHistoryAction(entry, 'Redo')
     history.completeRedo(entry)
-    await loadScene()
+    touchHistory()
+    try {
+      await loadScene()
+    } catch {
+      ElMessage.warning('重做已保存，但场景刷新失败；请手动刷新')
+      return
+    }
     ElMessage.success(`已重做：${entry.label}`)
-  } catch {
+  } catch (error) {
     history.cancelRedo(entry)
+    handleUnderlayWriteError(error)
     ElMessage.error('重做失败，请刷新场景后重试')
   } finally {
     savingElement.value = false
@@ -1795,12 +2736,120 @@ async function redoSavedCommand(): Promise<void> {
   }
 }
 
+async function executeHistoryAction(
+  entry: EditorHistoryEntry,
+  direction: 'Undo' | 'Redo',
+): Promise<void> {
+  if (isUnderlayHistoryEntry(entry)) {
+    const currentFloor = floor.value
+    const currentScene = designScene.value
+    const activeLeaseId = lease.value?.leaseId
+    if (!currentFloor
+      || currentScene?.contentRevision === undefined
+      || !activeLeaseId
+      || leaseState.value !== 'owned') {
+      throw new Error('Underlay history requires an active edit lease')
+    }
+    const action = entry.underlayCompensation
+    const pendingKey = direction === 'Undo'
+      ? 'pendingUndoCommandBatchId'
+      : 'pendingRedoCommandBatchId'
+    const commandBatchId = action[pendingKey] ?? crypto.randomUUID()
+    action[pendingKey] = commandBatchId
+    await designUnderlayApi.compensate(
+      versionId.value,
+      floorLogicalId.value,
+      {
+        schemaVersion: 1,
+        originalCommandBatchId: action.originalCommandBatchId,
+        direction,
+        commandBatchId,
+        clientInstanceId,
+        leaseId: activeLeaseId,
+        expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+        expectedContentRevision: currentScene.contentRevision,
+        historySha256: action.historySha256,
+      },
+      `underlay-history:${action.originalCommandBatchId}:${commandBatchId}`,
+    )
+    delete action[pendingKey]
+    return
+  }
+  if (!isExcelCadHistoryEntry(entry)) {
+    await applyEditorCommands(direction === 'Undo' ? entry.undo : entry.redo)
+    return
+  }
+  const currentFloor = floor.value
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
+  if (!currentFloor
+    || currentScene?.contentRevision === undefined
+    || !activeLeaseId
+    || leaseState.value !== 'owned') {
+    throw new Error('Excel/CAD history requires an active edit lease')
+  }
+  const action = entry.excelCadCompensation
+  const pendingKey = direction === 'Undo'
+    ? 'pendingUndoCommandBatchId'
+    : 'pendingRedoCommandBatchId'
+  const commandBatchId = action[pendingKey] ?? crypto.randomUUID()
+  action[pendingKey] = commandBatchId
+  await designExcelCadMatchApi.compensate(
+    versionId.value,
+    action.matchJobId,
+    action.applyJobId,
+    {
+      schemaVersion: 2,
+      direction,
+      commandBatchId,
+      clientInstanceId,
+      leaseId: activeLeaseId,
+      expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+      expectedContentRevision: currentScene.contentRevision,
+      historySha256: action.historySha256,
+    },
+    `excel-cad-history:${action.applyJobId}:${commandBatchId}`,
+  )
+  delete action[pendingKey]
+}
+
+function handleUnderlayWriteError(error: unknown): void {
+  const code = isAxiosError(error) ? error.response?.data?.code : undefined
+  if (code === 'SPACE_EDIT_LEASE_LOST') loseEditLease()
+  if (code === 'SPACE_FLOOR_REVISION_CONFLICT'
+    || code === 'SPACE_VERSION_CONFLICT'
+    || code === 'SPACE_CONCURRENCY_CONFLICT') {
+    revisionConflict.value = true
+  }
+}
+
+async function onExcelCadApplied(
+  confirmation: ISpaceExcelCadApplyDto,
+): Promise<void> {
+  let entry: EditorHistoryEntry
+  try {
+    entry = buildExcelCadApplyHistoryEntry(confirmation)
+  } catch {
+    ElMessage.error('Excel–CAD 已写入，但可逆历史校验失败；请刷新并联系管理员')
+    return
+  }
+  history.push(entry)
+  touchHistory()
+  try {
+    await loadScene()
+  } catch {
+    ElMessage.warning('Excel–CAD 已写入历史，但场景刷新失败；请手动刷新')
+    return
+  }
+  ElMessage.success('Excel–CAD 写入已加入公共撤销历史')
+}
+
 async function executeReversible(
   label: string,
   batch: ReversibleCommandBatch,
 ): Promise<void> {
   await applyEditorCommands(batch.forward)
-  history.push({ label, undo: batch.reverse, redo: batch.forward })
+  history.push({ label, undo: batch.reverse, redo: batch.redo ?? batch.forward })
   touchHistory()
   await loadScene()
 }
@@ -2102,11 +3151,27 @@ async function applyCadReviewChanges(changeIds: string[]): Promise<void> {
         changeIds,
       },
     )
+    let cadHistory
+    try {
+      cadHistory = buildCadApplyHistoryEntry(response)
+    } catch {
+      cadHistory = undefined
+    }
+    if (cadHistory) {
+      history.push(cadHistory)
+      touchHistory()
+    }
     saveState.value = 'saved'
     lastSavedAt.value = new Date()
     cadReviewWorkspace.value = null
     await loadScene()
-    ElMessage.success(`已确认并原子合入 ${response.appliedChangeCount} 项 CAD 变更`)
+    if (cadHistory) {
+      ElMessage.success(`已确认并原子合入 ${response.appliedChangeCount} 项 CAD 变更，可撤销`)
+    } else {
+      stopLeaseRenewal()
+      leaseState.value = 'lost'
+      ElMessage.error('CAD 变更已合入，但历史响应无效；工作台已保护性切换为只读')
+    }
   } catch (error) {
     saveState.value = 'failed'
     const code = isAxiosError(error) ? error.response?.data?.code : undefined
@@ -2213,14 +3278,14 @@ function selectedSnapshots(): EditorObjectSnapshot[] {
     (selection): selection is CanvasObjectRef & { ownerKind: 'Element' | 'Rack' } =>
       selection.ownerKind === 'Element' || selection.ownerKind === 'Rack',
   )
-  const drawables = new Map(
-    buildElementCanvasPlan(scene).map((drawable) => [
-      drawable.logicalId,
-      drawable,
-    ]),
-  )
+  const drawables = new Map<string, ElementCanvasDrawable[]>()
+  for (const drawable of buildElementCanvasPlan(scene)) {
+    const candidates = drawables.get(drawable.logicalId) ?? []
+    candidates.push(drawable)
+    drawables.set(drawable.logicalId, candidates)
+  }
   return editorSelections.map((selection) => {
-    const drawable = drawables.get(selection.logicalId)
+    const objectDrawables = drawables.get(selection.logicalId)
     const source =
       selection.ownerKind === 'Rack'
         ? activeRacks.value.find(
@@ -2229,9 +3294,10 @@ function selectedSnapshots(): EditorObjectSnapshot[] {
         : activeElements.value.find(
             (element) => element.revision?.logicalId === selection.logicalId,
           )
-    if (!drawable || !source) {
+    if (!objectDrawables?.length || !source) {
       throw new Error(`Selected object ${selection.logicalId} is unavailable`)
     }
+    const objectBounds = objectDrawables.map(drawableBounds)
     return {
       logicalId: selection.logicalId,
       ownerKind: selection.ownerKind,
@@ -2239,8 +3305,49 @@ function selectedSnapshots(): EditorObjectSnapshot[] {
       y: source.y ?? 0,
       z: source.z ?? 0,
       rotationZ: source.rotationZ ?? 0,
-      bounds: drawableBounds(drawable),
+      bounds: {
+        minX: Math.min(...objectBounds.map((bounds) => bounds.minX)),
+        maxX: Math.max(...objectBounds.map((bounds) => bounds.maxX)),
+        minY: Math.min(...objectBounds.map((bounds) => bounds.minY)),
+        maxY: Math.max(...objectBounds.map((bounds) => bounds.maxY)),
+      },
     }
+  })
+}
+
+function selectedCopySources(): ObjectCopySource[] {
+  const scene = designScene.value
+  if (!scene) return []
+  return selectedObjects.value.map((selection) => {
+    if (selection.ownerKind === 'Element') {
+      const element = activeElements.value.find(
+        (candidate) => candidate.revision?.logicalId === selection.logicalId,
+      )
+      if (!element) throw new Error(`Selected element ${selection.logicalId} is unavailable`)
+      const revisionId = element.revision?.revisionId?.toLowerCase()
+      const attributes = (scene.elementAttributes ?? [])
+        .filter((attribute) =>
+          attribute.elementRevisionId?.toLowerCase() === revisionId)
+        .map((attribute) => ({
+          namespace: attribute.namespace ?? '',
+          key: attribute.key ?? '',
+          valueType: attribute.valueType ?? 'String',
+          value: attribute.value,
+          unit: attribute.unit,
+        }))
+      return { ownerKind: 'Element' as const, element, attributes }
+    }
+    if (selection.ownerKind === 'Rack') {
+      const rack = activeRacks.value.find(
+        (candidate) => candidate.revision?.logicalId === selection.logicalId,
+      )
+      if (!rack) throw new Error(`Selected rack ${selection.logicalId} is unavailable`)
+      const hasActiveLevel = (scene.rackLevels ?? []).some((level) =>
+        level.rackLogicalId === selection.logicalId &&
+        level.revision?.lifecycleState === 'Active')
+      return { ownerKind: 'Rack' as const, rack, hasActiveLevel }
+    }
+    throw new Error('Only common elements and racks can be copied')
   })
 }
 
@@ -2273,26 +3380,7 @@ function drawableBounds(drawable: ElementCanvasDrawable) {
 function elementPropertiesPayload(
   element: ISpaceSceneElementDto,
 ): ElementPropertiesPayload {
-  return {
-    geometryJson: element.geometryJson ?? '{}',
-    x: element.x ?? 0,
-    y: element.y ?? 0,
-    z: element.z ?? 0,
-    rotationZ: element.rotationZ ?? 0,
-    width: element.width ?? 1,
-    height: element.height ?? 1,
-    depth: element.depth ?? 1,
-    businessCode: element.businessCode,
-    linkedEntityType: element.linkedEntityType,
-    linkedLogicalId: element.linkedLogicalId,
-    attributes: selectedAttributes.value.map((attribute) => ({
-      namespace: attribute.namespace ?? '',
-      key: attribute.key ?? '',
-      valueType: attribute.valueType ?? 'String',
-      value: attribute.value,
-      unit: attribute.unit,
-    })),
-  }
+  return sceneElementPropertiesPayload(element, selectedAttributes.value)
 }
 
 function touchHistory(): void {
@@ -2478,55 +3566,36 @@ function openCadReviewWorkspace(): void {
   else chooseCadReviewArtifact()
 }
 
-function openRuleOnlyCreation(): void {
+function openRuleOnlyCreation(sourceId = ''): void {
   inspectorTab.value = 'issues'
+  aiGenerationSourceId.value = sourceId
   aiGenerationPanelVisible.value = true
   cadReviewPanelVisible.value = false
   ElMessage.info('请在 RuleOnly 模式中选择已上传 CAD 来源和货架模板；结果确认后才写入 Draft。')
 }
 
-async function createComponent(elementType: string): Promise<void> {
+async function createComponent(presetId: SpaceStudioComponentPresetId): Promise<void> {
   if (readonlyScene.value || savingElement.value) return
   const logicalId = crypto.randomUUID()
-  const point = canvasWorldPoint()
+  const point = canvasPointerWorld.value
   const x = Math.round((point?.x ?? 0) - 500)
   const y = Math.round((point?.y ?? 0) - 500)
-  const dimensions = elementType === 'Wall'
-    ? { width: 4000, height: 3000, depth: 200 }
-    : elementType === 'Column'
-      ? { width: 500, height: 3000, depth: 500 }
-      : { width: 1200, height: 2200, depth: 300 }
+  const creation = buildSpaceStudioComponentCreationPlan(
+    presetId,
+    logicalId,
+    x,
+    y,
+  )
   savingElement.value = true
   try {
-    await applyEditorCommands([{
-      type: 'CreateElement',
-      targetLogicalId: logicalId,
-      createElement: {
-        elementType,
-        geometryJson: JSON.stringify({
-          schemaVersion: 1,
-          kind: 'box',
-          width: dimensions.width,
-          height: dimensions.height,
-          depth: dimensions.depth,
-        }),
-        x,
-        y,
-        z: 0,
-        rotationZ: 0,
-        ...dimensions,
-        businessCode: `${elementType.toUpperCase()}-${logicalId.slice(0, 6)}`,
-        attributes: [],
-      },
-    }])
-    await loadScene()
+    await executeReversible(`创建${creation.preset.label}`, creation.batch)
     const created = designScene.value && buildElementCanvasPlan(designScene.value).find(
       item => item.logicalId === logicalId,
     )
     if (created) selectObjects([{ logicalId, ownerKind: 'Element' }], 'replace')
-    ElMessage.success(`${elementType} 已创建，可在属性面板继续调整`)
+    ElMessage.success(`${creation.preset.label} 已创建，可在属性面板继续调整`)
   } catch {
-    ElMessage.error(`${elementType} 创建失败，命令包已保留用于恢复`)
+    ElMessage.error(`${creation.preset.label} 创建失败，命令包已保留用于恢复`)
   } finally {
     savingElement.value = false
   }
@@ -2560,7 +3629,7 @@ async function openPublishWorkflow(): Promise<void> {
 
 function showShortcutHelp(): void {
   void ElMessageBox.alert(
-    'Ctrl/Cmd+Z 撤销 · Ctrl/Cmd+Y 重做 · Ctrl/Cmd+A 全选可批量对象 · Delete 删除 · Esc 清空选择 · V 选择 · H 平移 · M 测量 · G 定位下一个 Open 问题 · Ctrl/Cmd+S 查看保存状态 · ? 快捷键帮助',
+    'Ctrl/Cmd+Z 撤销 · Ctrl/Cmd+Y 重做 · Ctrl/Cmd+A 全选可批量对象 · Delete 删除 · Esc 清空选择/取消重画 · V 选择 · H 平移 · M 测量 · R 重画选中通用元素 · 重画中 Enter 完成、Backspace 回退顶点 · G 定位下一个 Open 问题 · Ctrl/Cmd+S 查看保存状态 · ? 快捷键帮助',
     'Space Studio 快捷键',
   )
 }
@@ -2588,6 +3657,19 @@ function onStudioKeydown(event: KeyboardEvent): void {
     return
   }
   const key = event.key.toLowerCase()
+  if (redrawSession.value) {
+    if (key === 'escape') {
+      event.preventDefault()
+      cancelElementRedraw()
+    } else if (key === 'enter' && projectionMode.value === '2d') {
+      event.preventDefault()
+      void completeElementRedraw()
+    } else if (key === 'backspace' && projectionMode.value === '2d') {
+      event.preventDefault()
+      removeLastRedrawPoint()
+    }
+    return
+  }
   if ((event.ctrlKey || event.metaKey) && key === 'z') {
     event.preventDefault()
     void (event.shiftKey ? redoSavedCommand() : undoSavedCommand())
@@ -2603,18 +3685,16 @@ function onStudioKeydown(event: KeyboardEvent): void {
     void removeSelected()
   } else if (key === 'escape') {
     selectObjects([], 'replace')
-    canvasSelectionTool.value = 'select'
+    selectCanvasTool('select')
   } else if (key === 'v') {
-    canvasSelectionTool.value = 'select'
-    elementLayer?.setEnabled(!readonlyScene.value)
+    selectCanvasTool('select')
   } else if (key === 'h') {
-    canvasSelectionTool.value = 'pan'
-    elementLayer?.setEnabled(false)
+    selectCanvasTool('pan')
   } else if (key === 'm') {
-    canvasSelectionTool.value = 'measure'
-    elementLayer?.setEnabled(false)
-    measurementStart.value = null
-    measurementText.value = '测量：请选择起点'
+    selectCanvasTool('measure')
+  } else if (key === 'r') {
+    event.preventDefault()
+    startElementRedraw()
   } else if ((event.ctrlKey || event.metaKey) && key === 'a') {
     event.preventDefault()
     selectObjects(
@@ -2655,6 +3735,15 @@ function delay(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
+function protectPendingDraftWork(event: BeforeUnloadEvent): void {
+  if (!pendingWarehouseTemplateApply.value &&
+    !unsavedEnvelope.value &&
+    !unsavedCodingEnvelope.value &&
+    !redrawSession.value) return
+  event.preventDefault()
+  event.returnValue = ''
+}
+
 function tabClientInstanceId(): string {
   const key = 'cp6-space-studio-client-instance'
   try {
@@ -2688,6 +3777,24 @@ function tabClientInstanceId(): string {
       <button type="button" aria-keyshortcuts="V" :aria-pressed="canvasSelectionTool === 'select'" :class="{ active: canvasSelectionTool === 'select' }" @click="selectCanvasTool('select')">选择 V</button>
       <button type="button" aria-keyshortcuts="H" :aria-pressed="canvasSelectionTool === 'pan'" :class="{ active: canvasSelectionTool === 'pan' }" @click="selectCanvasTool('pan')">平移 H</button>
       <button type="button" aria-keyshortcuts="M" :aria-pressed="canvasSelectionTool === 'measure'" :class="{ active: canvasSelectionTool === 'measure' }" @click="selectCanvasTool('measure')">测量 M</button>
+      <button
+        type="button"
+        data-testid="space-redraw-tool"
+        aria-keyshortcuts="R"
+        :aria-pressed="canvasSelectionTool === 'redraw'"
+        :class="{ active: canvasSelectionTool === 'redraw' }"
+        :disabled="!redrawSession && !elementRedrawEligibility.eligible"
+        :title="elementRedrawEligibility.reason"
+        @click="redrawSession ? cancelElementRedraw() : startElementRedraw()"
+      >{{ redrawSession ? '取消重画 Esc' : '重画 R' }}</button>
+      <button
+        v-if="redrawSession"
+        type="button"
+        data-testid="space-redraw-complete"
+        aria-keyshortcuts="Enter"
+        :disabled="projectionMode !== '2d' || redrawSession.points.length < 3 || savingElement"
+        @click="completeElementRedraw"
+      >完成重画 Enter</button>
       <button type="button" aria-keyshortcuts="Control+Z Meta+Z" :disabled="!canUndo || readonlyScene" @click="undoSavedCommand">撤销</button>
       <button type="button" aria-keyshortcuts="Control+Y Meta+Y" :disabled="!canRedo || readonlyScene" @click="redoSavedCommand">重做</button>
       <button type="button" @click="resetCanvasViewport">重置视图</button>
@@ -2703,24 +3810,50 @@ function tabClientInstanceId(): string {
 
     <section class="workspace">
       <SpaceStudioContextPanel
+        :version-id="versionId"
+        :source-refresh-key="sourceListRefreshKey"
         :parse-status="parseStatus"
         :parse-progress="parseProgress"
         :parse-elapsed="parseElapsed"
         :parse-error="parseError"
+        :has-current-cad="hasCurrentCadForExcel"
         :has-underlay="hasUnderlay"
         :calibrated="calibrated"
         :readonly="readonlyScene"
+        :underlay-visible="visible"
+        :underlay-opacity="opacity"
+        :underlay-locked="locked"
         @choose-underlay="chooseFile"
         @calibrate-underlay="beginCalibration"
+        @remove-underlay="removeUnderlay"
         @choose-cad="chooseCadFile"
+        @open-existing-cad="openExistingCadCatalog"
+        @open-excel-cad="openExcelCadWorkflow"
         @download-template="downloadStandardExcelTemplate"
         @open-cad-review="openCadReviewWorkspace"
         @cancel-parse="cancelCadParse"
         @retry-parse="retryCadParse"
         @open-rule-only="openRuleOnlyCreation"
         @create-component="createComponent"
+        @underlay-visibility-change="visible = $event"
+        @underlay-opacity-change="opacity = $event"
+        @underlay-lock-change="locked = $event"
+        @source-removed="onSourceRemoved"
       >
         <template #assets>
+          <DesignWarehouseTemplatePanel
+            :templates="warehouseTemplates"
+            :preview="warehouseTemplatePreview"
+            :current-floor-code="floor?.floorCode"
+            :readonly="readonlyScene || Boolean(unsavedEnvelope) || Boolean(unsavedCodingEnvelope)"
+            :loading="warehouseTemplateLoading"
+            :busy="savingElement || warehouseTemplateApplying"
+            :retry-pending="Boolean(pendingWarehouseTemplateApply)"
+            :pending-floor-key="pendingWarehouseTemplateApply?.templateFloorKey"
+            :error="warehouseTemplateError"
+            @preview="previewWarehouseTemplate"
+            @apply="applyWarehouseTemplateFloor"
+          />
           <DesignLayoutCreatePanel
             :zones="activeZones"
             :aisles="activeAisles"
@@ -2794,10 +3927,19 @@ function tabClientInstanceId(): string {
             :readonly="readonlyScene"
             :can-undo="canUndo"
             :can-redo="canRedo"
+            :can-merge="Boolean(elementMergeState.plan)"
+            :merge-hint="elementMergeState.error"
+            :can-split="Boolean(elementSplitState.plan)"
+            :split-hint="elementSplitState.error"
+            :can-copy="objectCopyState.eligible"
+            :copy-hint="objectCopyState.reason"
             @align="alignSelected"
             @distribute="distributeSelected"
             @rotate="rotateSelected"
             @remove="removeSelected"
+            @merge="mergeSelectedElements"
+            @split="splitSelectedElement"
+            @copy="copySelectedObjects"
             @array="generateRackArray"
             @undo="undoSavedCommand"
             @redo="redoSavedCommand"
@@ -2813,71 +3955,165 @@ function tabClientInstanceId(): string {
         </div>
 
         <aside v-else-if="calibrationMode" class="calibration-panel">
-        <div class="panel-title">{{ t('两点标定') }}</div>
-        <p class="panel-help">
-          {{ t('依次在底图选择 P1、P2 和验证点 V，再填写各点的世界毫米坐标。') }}
-        </p>
-        <div
-          v-for="(point, index) in calibrationPoints"
-          :key="index"
-          class="calibration-point-row"
-        >
-          <strong>{{ index === 2 ? 'V' : `P${index + 1}` }}</strong>
-          <span class="pixel-value">
-            {{
-              point.pixel
-                ? `px (${point.pixel.x.toFixed(1)}, ${point.pixel.y.toFixed(1)})`
-                : t('等待画布选点')
-            }}
-          </span>
-          <label>
-            X mm
-            <el-input-number v-model="point.worldX" :step="100" />
-          </label>
-          <label>
-            Y mm
-            <el-input-number v-model="point.worldY" :step="100" />
-          </label>
-        </div>
-        <div v-if="calibrationPreview" class="calibration-preview">
-          <div>
-            {{ t('比例') }}:
-            {{ calibrationPreview.millimetersPerPixel.toFixed(6) }} mm/px
-          </div>
-          <div>
-            {{ t('旋转') }}: {{ calibrationPreview.rotationZ.toFixed(4) }}°
-          </div>
-          <div>
-            {{ t('验证误差') }}:
-            {{ calibrationPreview.validationErrorMillimeters.toFixed(2) }} mm
-          </div>
-        </div>
-        <div class="panel-actions">
-          <el-button @click="resetCalibrationPoints">{{ t('重选') }}</el-button>
-          <el-button @click="cancelCalibration">{{ t('取消') }}</el-button>
-          <el-button
-            v-permission="'space:model:edit'"
-            type="primary"
-            :disabled="!calibrationPreview"
-            :loading="savingCalibration"
-            @click="saveCalibration"
+          <div class="panel-title">{{ t('两点实距标定') }}</div>
+          <p class="panel-help">
+            {{ t('依次选择 P1 原点、P2 比例点和独立验证点 V。P1/P2 由真实距离、原点和旋转决定，V 只用于检查误差。') }}
+          </p>
+          <div
+            v-for="(point, index) in calibrationPoints"
+            :key="index"
+            class="calibration-point-row"
+            :data-test="`calibration-point-${index + 1}`"
           >
-            {{ t('验证并保存') }}
-          </el-button>
-        </div>
+            <strong>{{ ['P1 原点', 'P2 比例点', 'V 验证点'][index] }}</strong>
+            <span class="pixel-value">
+              {{
+                point.pixel
+                  ? `px (${point.pixel.x.toFixed(1)}, ${point.pixel.y.toFixed(1)})`
+                  : t('等待画布选点')
+              }}
+            </span>
+          </div>
+
+          <fieldset class="calibration-settings">
+            <legend>{{ t('两点实距与放置') }}</legend>
+            <label>
+              <span>{{ t('真实距离') }} mm</span>
+              <el-input-number
+                v-model="calibrationSettings.distanceMillimeters"
+                data-test="calibration-distance"
+                :min="1"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>{{ t('P1 原点 X') }} mm</span>
+              <el-input-number
+                v-model="calibrationSettings.originX"
+                data-test="calibration-origin-x"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>{{ t('P1 原点 Y') }} mm</span>
+              <el-input-number
+                v-model="calibrationSettings.originY"
+                data-test="calibration-origin-y"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>{{ t('旋转') }} °</span>
+              <el-input-number
+                v-model="calibrationSettings.rotationZ"
+                data-test="calibration-rotation"
+                :min="0"
+                :max="359.9999"
+                :precision="4"
+                :step="1"
+                controls-position="right"
+              />
+            </label>
+          </fieldset>
+
+          <fieldset class="calibration-settings">
+            <legend>{{ t('验证点世界坐标') }}</legend>
+            <label>
+              <span>V X mm</span>
+              <el-input-number
+                v-model="calibrationSettings.validationWorldX"
+                data-test="calibration-validation-x"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>V Y mm</span>
+              <el-input-number
+                v-model="calibrationSettings.validationWorldY"
+                data-test="calibration-validation-y"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+          </fieldset>
+
+          <div v-if="calibrationPreview" class="calibration-preview" aria-live="polite">
+            <div>
+              {{ t('比例') }}:
+              {{ calibrationPreview.millimetersPerPixel.toFixed(6) }} mm/px
+            </div>
+            <div>
+              {{ t('原点') }}:
+              ({{ calibrationSettings.originX }}, {{ calibrationSettings.originY }}) mm
+            </div>
+            <div>
+              {{ t('旋转') }}: {{ calibrationPreview.rotationZ.toFixed(4) }}°
+            </div>
+            <div>
+              {{ t('验证误差') }}:
+              {{ calibrationPreview.validationErrorMillimeters.toFixed(2) }} mm
+              / {{ t('允许') }} {{ calibrationPreview.errorThresholdMillimeters.toFixed(2) }} mm
+            </div>
+            <div
+              v-if="!calibrationWithinTolerance"
+              class="calibration-preview-warning"
+              role="alert"
+            >
+              {{ t('验证未通过，请重新选点或检查坐标') }}
+            </div>
+          </div>
+          <p v-else class="calibration-issue" aria-live="polite">
+            {{ calibrationState.issue }}
+          </p>
+          <div class="panel-actions">
+            <el-button @click="resetCalibrationPoints">{{ t('重选') }}</el-button>
+            <el-button @click="cancelCalibration">{{ t('取消') }}</el-button>
+            <el-button
+              v-permission="'space:model:edit'"
+              type="primary"
+              :disabled="!calibrationWithinTolerance"
+              :loading="savingCalibration"
+              @click="saveCalibration"
+            >
+              {{ t('验证并保存') }}
+            </el-button>
+          </div>
         </aside>
       <DesignExcelCadMatchPanel
         v-else-if="inspectorTab === 'issues' && matchPanelVisible && matchJobId"
         :version-id="versionId"
         :job-id="matchJobId"
         :current-content-revision="designScene?.contentRevision"
+        :current-floor-revision="floor?.revisionNumber"
+        :client-instance-id="clientInstanceId"
+        :lease-id="leaseState === 'owned' ? lease?.leaseId : undefined"
         @locate="focusExcelCadMatchRow"
+        @applied="onExcelCadApplied"
         @close="closeMatchPanel"
       />
       <DesignAiGenerationLauncherPanel
         v-else-if="inspectorTab === 'issues' && aiGenerationPanelVisible && designScene?.contentRevision !== undefined"
         :version-id="versionId"
         :current-content-revision="designScene.contentRevision"
+        :initial-source-id="aiGenerationSourceId || undefined"
         @close="closeAiGenerationPanel"
         @created="onAiRunCreated"
       />
@@ -2905,6 +4141,7 @@ function tabClientInstanceId(): string {
         :stale="cadReviewWorkspaceStale"
         @select="focusCadReviewItem"
         @apply-changes="applyCadReviewChanges"
+        @open-rule-only="openRuleOnlyCreation"
         @close="closeCadReviewPanel"
       />
       <DesignElementPropertiesPanel
@@ -2962,6 +4199,7 @@ function tabClientInstanceId(): string {
       <span>比例 {{ canvasZoomPercent }}%</span>
       <span>选择 {{ selectedObjects.length }}</span>
       <span v-if="measurementText">{{ measurementText }}</span>
+      <span v-if="redrawStatus" class="pending" aria-live="polite">{{ redrawStatus }}</span>
       <span>{{ saveLabel }}</span>
       <span :class="{ blocking: readonlyScene }">{{ leaseLabel }}</span>
       <span v-if="cadReviewWorkspace">阻断 {{ cadReviewWorkspace.summary.openBlockingCount }}</span>
@@ -3006,6 +4244,29 @@ function tabClientInstanceId(): string {
       :floor-logical-id="floorLogicalId"
       @close="cadWizardVisible = false"
       @started="onCadParseStarted"
+    />
+    <DesignCadReviewCandidatePicker
+      v-if="cadCandidatePickerVisible && versionId && floorLogicalId"
+      :version-id="versionId"
+      :floor-logical-id="floorLogicalId"
+      :readonly="readonlyScene"
+      @close="cadCandidatePickerVisible = false"
+      @select="selectExistingCadReview"
+      @reparse="reparseExistingCad"
+    />
+    <DesignExcelCadStartWizard
+      v-if="excelCadWizardVisible && hasCurrentCadForExcel && designScene?.contentRevision !== undefined"
+      :version-id="versionId"
+      :floor-logical-id="floorLogicalId"
+      :cad-source-id="cadSourceId"
+      :cad-parse-job-id="cadParseJobId"
+      :current-content-revision="designScene.contentRevision"
+      :initial-excel-source-id="excelSourceId || undefined"
+      :initial-preflight-job-id="excelPreflightJobId || undefined"
+      @close="excelCadWizardVisible = false"
+      @source-uploaded="onExcelSourceUploaded"
+      @preflight-started="onExcelPreflightStarted"
+      @started="onExcelCadMatchStarted"
     />
   </div>
 </template>
@@ -3167,14 +4428,37 @@ function tabClientInstanceId(): string {
   gap: 8px;
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #eef1f5;
+  border-top: 1px solid var(--space-studio-border);
 }
 
-.calibration-point-row label {
+.calibration-settings {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--space-studio-border);
+  border-radius: 6px;
+}
+
+.calibration-settings legend {
+  padding: 0 5px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.calibration-settings label {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  min-height: 52px;
+  font-size: 14px;
+}
+
+.calibration-settings :deep(.el-input-number) {
+  width: 142px;
+}
+
+.calibration-settings :deep(.el-input__wrapper) {
+  min-height: 44px;
 }
 
 .calibration-preview {
@@ -3184,6 +4468,18 @@ function tabClientInstanceId(): string {
   background:var(--space-studio-panel-raised);
   border-radius: 6px;
   font-size:14px;
+}
+
+.calibration-issue {
+  margin: 16px 0 0;
+  color: var(--space-studio-warning);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.calibration-preview-warning {
+  color: var(--space-studio-blocking);
+  font-weight: 700;
 }
 
 .panel-actions {

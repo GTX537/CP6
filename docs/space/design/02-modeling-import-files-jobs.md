@@ -340,6 +340,11 @@ IR 以 Artifact 保存。大文件使用流式记录格式，API 不一次返回
 - 几何解释规则、默认高度/厚度。
 - 置信度权重和必须图层标记。
 
+Design V1 以 `/api/space/design/v1/mapping-profiles/cad` 提供租户 Profile 的
+list/get/save 权威。System 版本只读；租户复制后保存完整规则快照和 SHA-256，
+后续修改必须携带 RowVersion 与 Idempotency-Key，并追加不可变版本，不能原地覆盖。
+Profile/Version 以 Tenant 复合外键隔离，第一版不允许读取或复制其他租户方案。
+
 解析器输出 Preview Item：
 
 - 临时 `previewObjectId`，不是永久 LogicalId。

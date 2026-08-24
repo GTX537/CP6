@@ -336,6 +336,125 @@ public sealed class SpaceCadParseService(
             artifacts);
     }
 
+    public async Task<SpaceCadReviewCandidateListDto> ListReviewCandidatesAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        int limit,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        if (versionId == Guid.Empty || floorLogicalId == Guid.Empty)
+            throw NotFound();
+        if (limit is < 1 or > 100)
+            throw Invalid("The candidate limit must be between 1 and 100.");
+
+        var scope = await (
+                from version in context.Versions.AsNoTracking()
+                join model in context.Models.AsNoTracking()
+                    on version.ModelId equals model.Id
+                where version.Id == versionId
+                select new { Version = version, Model = model })
+            .SingleOrDefaultAsync(cancellationToken);
+        if (scope is null)
+            throw NotFound();
+        EnsureReadable(scope.Model);
+
+        var floorExists = await context.FloorRevisions.AsNoTracking().AnyAsync(
+            floor =>
+                floor.ModelVersionId == versionId &&
+                floor.LogicalId == floorLogicalId &&
+                floor.LifecycleState == SpaceLifecycleState.Active,
+            cancellationToken);
+        if (!floorExists)
+            throw NotFound();
+
+        var query =
+            from job in context.Jobs.AsNoTracking()
+            join source in context.Sources.AsNoTracking()
+                on job.SubjectId equals source.Id
+            where source.ModelVersionId == versionId &&
+                  (source.SourceType == SpaceSourceType.Dwg ||
+                   source.SourceType == SpaceSourceType.Dxf) &&
+                  job.JobType == SpaceJobType.CadParse &&
+                  job.SubjectType == SpaceJobSubjectType.ModelSource &&
+                  job.Status == SpaceJobStatus.Succeeded
+            orderby job.FinishedAtUtc descending, job.RequestedAtUtc descending
+            select new
+            {
+                SourceId = source.Id,
+                source.DisplayName,
+                source.SourceType,
+                source.Sha256,
+                SourceState = source.State,
+                JobId = job.Id,
+                JobStatus = job.Status,
+                job.RequestedAtUtc,
+                job.FinishedAtUtc,
+                job.PayloadJson,
+                HasPreviewSet = context.Artifacts.Any(
+                    artifact =>
+                        artifact.ArtifactType == SpaceArtifactType.PreviewSet &&
+                        (artifact.JobId == job.Id ||
+                         (job.RetryOfJobId.HasValue &&
+                          artifact.JobId == job.RetryOfJobId.Value))),
+            };
+
+        var candidates = new List<SpaceCadReviewCandidateDto>(limit + 1);
+        await foreach (var row in query.AsAsyncEnumerable()
+                           .WithCancellation(cancellationToken))
+        {
+            if (!TryDeserializeCandidatePayload(row.PayloadJson, out var payload) ||
+                payload.ModelVersionId != versionId ||
+                payload.SourceId != row.SourceId ||
+                payload.FloorLogicalId != floorLogicalId ||
+                !SourceFormatMatches(payload.SourceFormat, row.SourceType))
+            {
+                continue;
+            }
+
+            var isCurrentRevision =
+                payload.BaseContentRevision == scope.Version.ContentRevision &&
+                string.Equals(
+                    payload.BaseContentHash,
+                    scope.Version.ContentHash,
+                    StringComparison.Ordinal);
+            var canLoadReview =
+                isCurrentRevision &&
+                row.SourceState == SpaceSourceState.PreviewReady &&
+                row.HasPreviewSet;
+
+            candidates.Add(new SpaceCadReviewCandidateDto(
+                row.SourceId,
+                row.DisplayName,
+                row.SourceType.ToString(),
+                row.Sha256,
+                row.JobId,
+                row.JobStatus.ToString(),
+                row.SourceState.ToString(),
+                payload.FloorLogicalId,
+                payload.BaseContentRevision,
+                payload.BaseContentHash,
+                isCurrentRevision,
+                canLoadReview,
+                row.RequestedAtUtc,
+                row.FinishedAtUtc,
+                payload.PreferredProviderKey,
+                payload.PreferredProviderVersion,
+                payload.MappingProfileId,
+                payload.MappingProfileVersion));
+            if (candidates.Count > limit)
+                break;
+        }
+
+        return new SpaceCadReviewCandidateListDto(
+            versionId,
+            floorLogicalId,
+            scope.Version.ContentRevision,
+            scope.Version.ContentHash,
+            candidates.Count > limit,
+            candidates.Take(limit).ToArray());
+    }
+
     public async Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspaceAsync(
         Guid versionId,
         Guid sourceId,
@@ -573,7 +692,8 @@ public sealed class SpaceCadParseService(
             request.ExpectedContentHash is not null &&
                 !IsSha256(request.ExpectedContentHash) ||
             request.ChangeIds is null ||
-            request.ChangeIds.Count is < 1 or > 100 ||
+            request.ChangeIds.Count is < 1 or >
+                SpaceCadReviewWorkspaceVersions.MaximumApplyChanges ||
             request.ChangeIds.Any(string.IsNullOrWhiteSpace) ||
             request.ChangeIds.Distinct(StringComparer.Ordinal).Count() !=
                 request.ChangeIds.Count)
@@ -687,7 +807,7 @@ public sealed class SpaceCadParseService(
                 null),
             _ => throw Invalid("The selected CAD change is not applyable."),
         }).ToArray();
-        var applied = await design.ApplyElementCommandsAsync(
+        var applied = await design.ApplyCadElementCommandsAsync(
             versionId,
             workspace.FloorLogicalId,
             new ApplySpaceElementCommandBatchRequest(
@@ -701,13 +821,16 @@ public sealed class SpaceCadParseService(
                 request.ExpectedContentHash,
                 applyFingerprint),
             cancellationToken);
+        var history = BuildCadApplyHistory(applied);
         return new ApplySpaceCadChangesetResponse(
             applied.CommandBatchId,
             applied.FloorRevision,
             applied.VersionContentRevision,
             selected.LongLength,
             request.WorkspaceSha256,
-            applied.IdempotentReplay);
+            applied.IdempotentReplay,
+            history.UndoCommands,
+            history.RedoCommands);
     }
 
     private async Task<SpaceCadPreviewSetV2> ReadPreviewSetAsync(
@@ -800,6 +923,10 @@ public sealed class SpaceCadParseService(
                     (SpaceCadChangeKind.Conflict, false,
                         "SPACE_CAD_SOURCE_REF_CONFLICT"),
                 _ when existing.Length == 1 &&
+                       existing[0].IsManualCorrectionLocked =>
+                    (SpaceCadChangeKind.Conflict, false,
+                        SpaceErrorCodes.CadManualCorrectionLocked),
+                _ when existing.Length == 1 &&
                        !existing[0].ElementType.Equals(
                            supportedType,
                            StringComparison.Ordinal) =>
@@ -822,6 +949,11 @@ public sealed class SpaceCadParseService(
                 item.IsSelected && canApply,
                 canApply,
                 reason,
+                existing.Length == 1 &&
+                    existing[0].IsManualCorrectionLocked,
+                existing.Length == 1
+                    ? existing[0].UserCorrectionVersion
+                    : 0,
                 existing.Length == 1
                     ? new SpaceCadMillimeterBoundsV1(
                         existing[0].X,
@@ -836,17 +968,24 @@ public sealed class SpaceCadParseService(
                      !seenRefs.Contains(item.SourceRef) &&
                      item.LifecycleState == SpaceLifecycleState.Active))
         {
+            var isLocked = element.IsManualCorrectionLocked;
             changes.Add(new SpaceCadChangeV1(
                 ChangeId(element.SourceRef!, element.LogicalId),
-                SpaceCadChangeKind.Delete,
+                isLocked
+                    ? SpaceCadChangeKind.Conflict
+                    : SpaceCadChangeKind.Delete,
                 element.LogicalId,
                 element.SourceRef!,
                 null,
                 element.ElementType,
                 null,
                 IsSelected: false,
-                CanApply: true,
-                BlockingReasonCode: null,
+                CanApply: !isLocked,
+                BlockingReasonCode: isLocked
+                    ? SpaceErrorCodes.CadManualCorrectionLocked
+                    : null,
+                IsManualCorrectionLocked: isLocked,
+                UserCorrectionVersion: element.UserCorrectionVersion,
                 new SpaceCadMillimeterBoundsV1(
                     element.X,
                     element.Y,
@@ -1033,6 +1172,99 @@ public sealed class SpaceCadParseService(
     private static string ChangeId(string sourceRef, Guid logicalId) =>
         $"cad-change-{Hash($"{sourceRef}\n{logicalId:D}")[..32]}";
 
+    private static CadApplyHistory BuildCadApplyHistory(
+        ApplySpaceElementCommandBatchResponse applied)
+    {
+        var undo = new List<SpaceSavedElementCommandDto>();
+        var redo = new List<SpaceSavedElementCommandDto>();
+        foreach (var result in applied.AffectedObjects)
+        {
+            switch (result.Type)
+            {
+                case SpaceElementCommandContract.CreateElement:
+                    undo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.DeleteObject,
+                        result.TargetLogicalId));
+                    redo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.RestoreLogicalObject,
+                        result.TargetLogicalId));
+                    break;
+                case SpaceElementCommandContract.UpdateProperties:
+                    if (result.BeforeElement is null ||
+                        result.BeforeAttributes is null)
+                    {
+                        throw new InvalidDataException(
+                            "A CAD modify result is missing its pre-apply snapshot.");
+                    }
+                    undo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.UpdateProperties,
+                        result.TargetLogicalId,
+                        UpdateFromSnapshot(
+                            result.BeforeElement,
+                            result.BeforeAttributes)));
+                    redo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.UpdateProperties,
+                        result.TargetLogicalId,
+                        UpdateFromSnapshot(result.Element, result.Attributes)));
+                    break;
+                case SpaceElementCommandContract.DeleteObject:
+                    undo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.RestoreLogicalObject,
+                        result.TargetLogicalId));
+                    redo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.DeleteObject,
+                        result.TargetLogicalId));
+                    break;
+                default:
+                    throw new InvalidDataException(
+                        $"CAD Apply returned unsupported history command '{result.Type}'.");
+            }
+        }
+        if (undo.Count == 0 || undo.Count != redo.Count)
+        {
+            throw new InvalidDataException(
+                "CAD Apply did not return a complete reversible command set.");
+        }
+        undo.Reverse();
+        return new CadApplyHistory(undo.ToArray(), redo.ToArray());
+    }
+
+    private static SpaceUpdateElementPropertiesDto UpdateFromSnapshot(
+        SpaceSceneElementDto element,
+        IReadOnlyList<SpaceSceneElementAttributeDto> attributes)
+    {
+        if (element.IsManualCorrectionLocked)
+        {
+            throw new InvalidDataException(
+                "A locked manual correction cannot enter CAD Apply history.");
+        }
+        return new SpaceUpdateElementPropertiesDto(
+            element.GeometryJson,
+            element.X,
+            element.Y,
+            element.Z,
+            element.RotationZ,
+            element.Width,
+            element.Height,
+            element.Depth,
+            element.BusinessCode,
+            element.LinkedEntityType,
+            element.LinkedLogicalId,
+            attributes.Select(attribute =>
+                new SpaceElementAttributeWriteDto(
+                    attribute.Namespace,
+                    attribute.Key,
+                    attribute.ValueType,
+                    attribute.Value,
+                    attribute.Unit))
+                .ToArray(),
+            element.ElementType);
+    }
+
+    private sealed record CadApplyHistory(
+        IReadOnlyList<SpaceSavedElementCommandDto> UndoCommands,
+        IReadOnlyList<SpaceSavedElementCommandDto> RedoCommands);
+
     private static string CadApplyFingerprint(
         Guid versionId,
         Guid sourceId,
@@ -1125,13 +1357,16 @@ public sealed class SpaceCadParseService(
                 "The CAD changeset replay no longer matches the current floor revision.",
                 recoveryAction: "reload-floor-scene");
         }
+        var history = BuildCadApplyHistory(applied);
         return new ApplySpaceCadChangesetResponse(
             applied.CommandBatchId,
             applied.FloorRevision,
             applied.VersionContentRevision,
             request.ChangeIds.Count,
             request.WorkspaceSha256,
-            IdempotentReplay: true);
+            IdempotentReplay: true,
+            history.UndoCommands,
+            history.RedoCommands);
     }
 
     private async Task<ApplySpaceCadChangesetResponse?>
@@ -1811,6 +2046,35 @@ public sealed class SpaceCadParseService(
             throw Invalid("The stored CAD parse payload is invalid.");
         }
     }
+
+    private static bool TryDeserializeCandidatePayload(
+        string json,
+        out SpaceCadParseJobPayload payload)
+    {
+        try
+        {
+            payload = JsonSerializer.Deserialize<SpaceCadParseJobPayload>(
+                          json,
+                          JsonOptions)!;
+            return payload is not null &&
+                   payload.SchemaVersion is (
+                       SpaceCadParsePayloadVersions.LegacyBaseRevision or
+                       SpaceCadParsePayloadVersions.LegacyProviderRouting or
+                       SpaceCadParsePayloadVersions.LegacyMappingReplay or
+                       SpaceCadParsePayloadVersions.Current);
+        }
+        catch (JsonException)
+        {
+            payload = null!;
+            return false;
+        }
+    }
+
+    private static bool SourceFormatMatches(
+        SpaceCadSourceFormat format,
+        SpaceSourceType sourceType) =>
+        (format == SpaceCadSourceFormat.Dwg && sourceType == SpaceSourceType.Dwg) ||
+        (format == SpaceCadSourceFormat.Dxf && sourceType == SpaceSourceType.Dxf);
 
     private static StartSpaceCadParseResponse Response(
         SpaceJob job,

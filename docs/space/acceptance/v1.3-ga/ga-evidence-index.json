@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
   "scope": "CoreGA",
-  "asOfDate": "2026-08-14",
+  "asOfDate": "2026-08-15",
   "declaredStatus": "NoGo",
   "baselinePercent": 72,
   "gaPercent": 100,
@@ -51,6 +51,7 @@
       "evidenceFormat": [
         "Five-role responsibility register with real names and approval authority"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -62,6 +63,7 @@
       "evidenceFormat": [
         "Named allocation for two backend, two frontend/3D, one QA, and shared roles"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -74,6 +76,7 @@
         "Authorized 20-file candidate register",
         "Source SHA-256 and authorization reference per file"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -86,6 +89,7 @@
         "Licensing, security, data-region, retention and deletion approvals",
         "Controlled isolated worker deployment and secret references"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -98,6 +102,7 @@
         "Named greenfield and retrofit Sites",
         "Business owner, implementation owner and CP6 WMS test window"
       ],
+      "verificationManifest": null,
       "evidence": []
     }
   ],
@@ -116,7 +121,8 @@
       ],
       "evidencePaths": [
         "docs/project-memory/PROJECT_STATE.md",
-        "docs/space/reports/2026-08-14-ga-evidence-attestation.md"
+        "docs/space/reports/2026-08-14-ga-evidence-attestation.md",
+        "docs/space/reports/2026-08-15-space-ga-repository-completion-audit.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -131,13 +137,18 @@
       "ownerRole": "BackendBFrontendAQA",
       "ownerName": null,
       "deadlineMilestone": "M1",
-      "implementationStatus": "Complete",
+      "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Automated blank-canvas modeling and code Preview/Apply results",
         "Independent QA acceptance record"
       ],
       "evidencePaths": [
+        "docs/space/reports/2026-08-15-space-draft-summary-metadata.md",
+        "docs/space/reports/2026-08-15-space-system-template-floor-apply.md",
+        "docs/space/reports/2026-08-15-space-system-template-catalog.md",
+        "docs/space/reports/2026-08-15-space-design-floor-shell.md",
+        "docs/space/reports/2026-08-15-space-design-blank-draft.md",
         "docs/space/reports/2026-08-14-space-studio-3d-interaction.md",
         "docs/space/reports/2026-08-14-space-studio-canvas-drag.md",
         "docs/project-memory/05-Completed.md"
@@ -189,7 +200,8 @@
         "docs/space/reports/2026-08-14-cad-mapping-replay-snapshot.md",
         "docs/space/reports/2026-08-14-cad-provider-version-fence.md",
         "docs/space/reports/2026-08-14-cad-converter-conformance-runner.md",
-        "docs/space/reports/2026-08-14-space-cad-provider-sqlserver-gate.md"
+        "docs/space/reports/2026-08-14-space-cad-provider-sqlserver-gate.md",
+        "docs/space/reports/2026-08-15-space-autocad-core-console-development.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -204,14 +216,30 @@
       "ownerRole": "FrontendABackendBQA",
       "ownerName": null,
       "deadlineMilestone": "M2",
-      "implementationStatus": "Complete",
+      "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Real DWG, DXF, Excel, PDF/image and blank-canvas E2E records",
         "Draft to Validate, Publish, CP6 WMS and Published evidence"
       ],
       "evidencePaths": [
-        "docs/space/reports/2026-08-14-space-studio-path-closure.md"
+        "docs/space/reports/2026-08-15-space-source-removal-preflight.md",
+        "docs/space/reports/2026-08-15-space-upload-reuse-notice.md",
+        "docs/space/reports/2026-08-14-space-studio-path-closure.md",
+        "docs/space/reports/2026-08-15-space-cad-exception-retype.md",
+        "docs/space/reports/2026-08-15-space-cad-exception-merge.md",
+        "docs/space/reports/2026-08-15-space-cad-exception-split.md",
+        "docs/space/reports/2026-08-15-space-cad-exception-redraw.md",
+        "docs/space/reports/2026-08-15-space-studio-object-copy.md",
+        "docs/space/reports/2026-08-15-space-studio-manual-correction-lock.md",
+        "docs/space/reports/2026-08-15-space-studio-cad-apply-history.md",
+        "docs/space/reports/2026-08-15-space-studio-excel-cad-apply-lease.md",
+        "docs/space/reports/2026-08-15-space-studio-excel-cad-apply-history.md",
+        "docs/space/reports/2026-08-15-space-studio-underlay-history.md",
+        "docs/space/reports/2026-08-15-space-studio-underlay-layer-controls.md",
+        "docs/space/reports/2026-08-15-space-studio-underlay-calibration-workflow.md",
+        "docs/space/reports/2026-08-15-space-studio-static-component-library.md",
+        "docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -236,7 +264,8 @@
         "docs/space/reports/2026-08-14-space-viewer-v13-ga.md",
         "docs/space/reports/2026-08-14-space-viewer-v13-ga.json",
         "docs/space/reports/2026-08-14-space-studio-accessibility.md",
-        "docs/space/reports/2026-08-14-space-sqlserver-localdb-full-gate.md"
+        "docs/space/reports/2026-08-14-space-sqlserver-localdb-full-gate.md",
+        "docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [

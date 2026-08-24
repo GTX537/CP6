@@ -59,6 +59,76 @@ describe('buildElementCanvasPlan', () => {
     ])
   })
 
+  it('keeps every group part selectable through the survivor logical identity', () => {
+    const logicalId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+    const scene = {
+      schemaVersion: 1,
+      authority: 'DesignRevision',
+      runtimeOverlayIncluded: false,
+      racks: [],
+      rackLevels: [],
+      elements: [{
+        revision: { logicalId, lifecycleState: 'Active' },
+        elementType: 'Column',
+        geometryJson: JSON.stringify({
+          schemaVersion: 1,
+          kind: 'group',
+          parts: [
+            {
+              sourceLogicalId: logicalId,
+              x: 0,
+              y: 0,
+              z: 0,
+              rotationZ: 0,
+              width: 100,
+              height: 1000,
+              depth: 100,
+              geometry: {
+                schemaVersion: 1,
+                kind: 'box',
+                width: 100,
+                height: 1000,
+                depth: 100,
+              },
+            },
+            {
+              sourceLogicalId: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+              x: 500,
+              y: 0,
+              z: 0,
+              rotationZ: 0,
+              width: 100,
+              height: 1000,
+              depth: 100,
+              geometry: {
+                schemaVersion: 1,
+                kind: 'box',
+                width: 100,
+                height: 1000,
+                depth: 100,
+              },
+            },
+          ],
+        }),
+        x: 0,
+        y: 0,
+        z: 0,
+        rotationZ: 0,
+        width: 600,
+        height: 1000,
+        depth: 100,
+      }],
+    } as unknown as ISpaceDesignSceneDto
+
+    const plan = buildElementCanvasPlan(scene)
+
+    expect(plan).toHaveLength(2)
+    expect(plan.map((drawable) => drawable.logicalId)).toEqual([
+      logicalId,
+      logicalId,
+    ])
+  })
+
   it('projects the active rack envelope as a shared selectable object', () => {
     const rackId = '44444444-4444-4444-4444-444444444444'
     const scene = {

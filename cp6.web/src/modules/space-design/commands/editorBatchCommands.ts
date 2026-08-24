@@ -64,6 +64,8 @@ export interface EditorCommandInput {
     sourceId?: string
     sourceRef?: string
     attributes: unknown[]
+    linkedEntityType?: string
+    linkedLogicalId?: string
   }
   updateProperties?: unknown
 }
@@ -71,6 +73,7 @@ export interface EditorCommandInput {
 export interface ReversibleCommandBatch {
   forward: EditorCommandInput[]
   reverse: EditorCommandInput[]
+  redo?: EditorCommandInput[]
 }
 
 export type AlignmentMode =
@@ -83,10 +86,54 @@ export type AlignmentMode =
 
 export type DistributionMode = 'horizontal' | 'vertical'
 
-export interface EditorHistoryEntry {
+export interface CommandHistoryEntry {
   label: string
   undo: EditorCommandInput[]
   redo: EditorCommandInput[]
+}
+
+export interface ExcelCadCompensationHistory {
+  matchJobId: string
+  applyJobId: string
+  historySha256: string
+  historyCommandCount: number
+  pendingUndoCommandBatchId?: string
+  pendingRedoCommandBatchId?: string
+}
+
+export interface ExcelCadHistoryEntry {
+  label: string
+  excelCadCompensation: ExcelCadCompensationHistory
+}
+
+export interface UnderlayCompensationHistory {
+  originalCommandBatchId: string
+  historySha256: string
+  operationType: 'UnderlaySet' | 'UnderlayCalibrate'
+  pendingUndoCommandBatchId?: string
+  pendingRedoCommandBatchId?: string
+}
+
+export interface UnderlayHistoryEntry {
+  label: string
+  underlayCompensation: UnderlayCompensationHistory
+}
+
+export type EditorHistoryEntry =
+  | CommandHistoryEntry
+  | ExcelCadHistoryEntry
+  | UnderlayHistoryEntry
+
+export function isExcelCadHistoryEntry(
+  entry: EditorHistoryEntry,
+): entry is ExcelCadHistoryEntry {
+  return 'excelCadCompensation' in entry
+}
+
+export function isUnderlayHistoryEntry(
+  entry: EditorHistoryEntry,
+): entry is UnderlayHistoryEntry {
+  return 'underlayCompensation' in entry
 }
 
 export class SavedCommandHistory {

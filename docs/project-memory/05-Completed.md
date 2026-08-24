@@ -1,10 +1,242 @@
 # 已完成能力与近期里程碑
 
-## 2026-08-14 CP6 SaaS V1 私有产品冻结与公开契约候选
+## 2026-08-16 Space Tenant 私有整仓模板
 
-- 私有 `GTX537/CP6.CRM` 已以 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d` 保存 Frozen 产品摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 和 Accepted R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`；单一 ProgramOwner 不能豁免专业证据或硬门禁。
-- 公开仓库从最新 `main` 独立生成脱敏 `CP6-SAAS-V1-PUBLIC-CONTRACT` Candidate、R00/M0 镜像和失败关闭验证器；没有复用落后主线的旧本地同步分支，也没有修改 R2 workflow、业务代码、云资源、Secret、数据库或部署。
-- 本项完成的是可审阅候选，不是公开同步完成或 M0 Go。公开摘要仍需 ProgramOwner 可审计批准，随后才能更新 Complete 并回写私有聚合记录。
+- 新增租户私有整仓模板头与 append-only 版本表；租户内编码大小写不敏感唯一，版本保存规范计划 JSON、内容 SHA-256、各类对象计数和创建审计，复合租户外键阻止跨租户版本归属。
+- Design V1 新增带幂等键的 Tenant 模板创建接口；服务端只接受 schema v1 类型化计划，并校验父链、唯一 Key/编码、坐标、尺寸整除、逐楼层命令上限和总库位上限。租户接口不能创建或改写 System 模板。
+- 现有目录、密封 Preview 与逐层 Lease/Revision Apply 同时解析内置 System 和当前租户模板；另一个租户猜测模板/版本 ID 返回 NotFound，同一模板编码可在不同租户独立存在。
+- Space Studio 工作台读取合并目录、显示“系统/租户私有”作用域，并只展示与当前所选模板一致的密封 Preview；API wrapper 为后续受控模板制作 UI 保留创建合同。
+- 门禁：新增真实 SQL 聚焦 2/2；全量 Space Integration 456/456（0 skipped）、Space Unit 549/549、CP6.Tests 2,934 passed / 19 项既有环境门禁 skipped、Web 884/884、Space Studio Playwright 26/26；OpenAPI/权限聚焦 96/96、EF pending-model clean、双 SDK drift、Vue TypeScript、生产构建和完整 solution Release 均通过。完整证据见 `docs/space/reports/2026-08-16-space-tenant-warehouse-template.md`。
+- Tenant 模板持久化与消费纵切已闭环；仓库人员模板制作表单、四模式统一 Draft 创建向导和 Template 创建来源持久化仍未完成，因此 LM-FR-001/WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-16 Space Studio 历史 CAD 审核结果目录
+
+- Design V1 新增 Floor 级只读候选目录，只枚举同 Version/Floor、成功完成且来源格式为 DWG/DXF 的 CAD Parse Job；服务端从持久 Payload 读取冻结 Base Content Revision/Hash，不用请求时的当前值伪造新鲜度。
+- 只有 Base Revision/Hash 与当前 Draft 一致、来源仍为 `PreviewReady` 且 PreviewSet Artifact 存在的候选返回 `canLoadReview=true`；历史候选仍可审计，但只能重新解析，不能直接加载或 Apply 到新 Revision。
+- Space Studio 来源面板新增“选择已有 CAD 结果”；当前候选复用既有 Job 监控和 Review Workspace，历史候选带原 Source 进入起始向导重新解析。切换前统一清理旧 CAD/Excel/Preflight/Match 路由和本地状态，页面不暴露内部 ID 输入。
+- 只读用户可查看目录，只有可编辑状态才能触发重新解析；实际 Workspace 加载仍执行来源安全状态、SHA、Artifact 和身份链校验，目录不能绕过现有 Trust Boundary。
+- 门禁：Space CAD Integration 15/15、OpenAPI/权限 95/95、双 SDK drift、Web 882/882、Space Studio Playwright 26/26、Vue TypeScript 与生产构建通过。完整证据见 `docs/space/reports/2026-08-16-space-cad-review-candidate-catalog.md`。
+- 历史 CAD 候选可发现与显式重新关联的仓库 UI 边界已闭环；真实 Provider/文件/WMS/黄金集/Pilot 未因此关闭，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-16 Space Studio 当前 CAD + Excel 统一工作流
+
+- 来源模式新增“上传 Excel 并匹配当前 CAD”；入口只消费本楼层已自动加载且与当前 Draft Revision 一致的 CAD Review Workspace，不要求用户填写 SourceId、ParseJobId、FloorId 或 Revision。
+- `.xlsx` 上传继续走既有 Design V1 隔离来源链；工作台等待服务器 Ready、选择服务器 Mapping Profile、自动轮询预检，并展示行数、有效数、Info/Warning/Blocking 与工作表/行/列恢复提示。Blocking 或服务器不可确认时失败关闭。
+- Excel Source/Preflight Job 持久在 URL 中支持刷新恢复；显式复核后，匹配绑定当前 CAD/Excel/Floor/Content Revision，自动轮询到权威结果并进入既有 Lease/Revision/Artifact Apply 与统一撤销/重做链。确认前 Draft 零写入。
+- Web 全量 878/878、Space Studio Playwright 25/25、Vue TypeScript 和生产构建通过。详见 `docs/space/reports/2026-08-16-space-excel-current-cad-workflow.md`。
+- 当前工作会话的统一 Excel 上传 UI 已闭环；历史 CAD 候选目录已由同日后续纵切闭环。真实 DWG/DXF+Excel/Provider/WMS/Pilot 接受仍未关闭，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-16 Space CAD 待审变更集与 RuleOnly 交接
+
+- LM-FR-019 保持 Job → Clean PreviewSet → 绑定 Source/Transform/Mapping/Base Revision 的自动 Workspace 加载；用户不再下载或重传 JSON，stale 继续返回 `SPACE_PARSE_CHANGESET_STALE` 且零写入。
+- LM-FR-019A 的工作台完整显示并筛选新增、修改、删除、冲突、低置信度和未识别六类变更；客户端验证 Change Summary、可 Apply 类型和选择一致性，并在密封 Workspace 变化时重置旧选择。
+- 通用静态元素的 CAD Apply 使用内部专用上限 10,000 项，公开手工 Element Command 仍为 100 项；101 项服务集成用例验证单事务、一次 Floor/Content Revision、完整 Undo/Redo 和一个幂等批次。
+- Zone/Aisle/Rack 保持设计态领域权威，不伪装成 `Space_Element`；对应冲突可从同一审核面板一键进入既有 RuleOnly/Proposal Review/Atomic Apply，并自动预选当前 CAD 来源。
+- 门禁：Space Cad Parse Integration 15/15、Space Unit 546/546、CP6.Tests 2,933 passed / 19 environment-skipped、Web 873/873、OpenAPI 55/55、Space Studio Playwright 24/24、生产 Web 构建、完整 solution Release 0 warning / 0 error 与双 SDK drift 通过。完整证据见 `docs/space/reports/2026-08-16-space-cad-review-changeset-handoff.md`。
+- LM-FR-019/019A 仓库实现闭环；真实 Provider、黄金 CAD、三路径现场浏览器、WMS 和 Pilot 不因此关闭，核心 GA 继续 72% / `NoGo`。
+
+## 2026-08-16 Space CAD 输入与坐标确认
+
+- LM-FR-010 延续唯一 Design V1 来源链：工作台文件选择器接受 `.dwg/.dxf`，客户端显式提交 `Dwg/Dxf`，服务端按扩展名、声明 MIME 和文件签名失败关闭，再进入隔离扫描与同一 CAD IR/Preparation/Parse 合同。
+- LM-FR-011 的服务端确定性分析继续提供建议单位、mm 比例、原始范围、建议毫米范围、合理性和稳定问题；起始向导现完整展示 X/Y/宽高、比例与异常原因，而不是只显示“合理/需复核”。
+- 单位/原点/旋转/楼层转换与映射语义继续分开显式确认；修改任一输入或逐层 Override 都会使旧 Preview 和确认失效，Parse 只消费服务端密封的 Start Request。
+- 门禁为 Space Unit 546/546、Web 869/869、Vue TypeScript、Web 生产构建和完整 solution Release 0 warning / 0 error。
+- 安装型 AutoCAD 2025 Core Console 使用真实 Autodesk DWG 的开发合同用例 1/1、0 skipped；它不是 Site 已认证生产 Provider。仓库自动化见 `docs/space/reports/2026-08-16-space-cad-input-coordinate-confirmation.md`。
+- LM-FR-010～011 仓库实现闭环；生产主备 Provider、20 份黄金 CAD、真实浏览器三路径、Pilot 与签字仍为 GA 门禁，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-16 Space CAD 语义与质量诊断
+
+- 复核确认 LM-FR-014 的墙/柱/门/月台/区域/巷道/货架目标和 LM-FR-015 的 SourceRef、命中规则、几何规则、置信度及画布位置已由现有 Semantic Preview/Diagnostic Index 权威覆盖。
+- LM-FR-016 补齐稳定分类：零长度、零面积、缺失半径与退化变换进入 `SPACE_CAD_SEMANTIC_ZERO_SIZE`；开放边界进入 `SPACE_CAD_SEMANTIC_BOUNDARY_UNCLOSED`；楼层越界保留全图 Blocking，并追加逐对象 SourceRef Warning，经 Preparation/OpenAPI/双 SDK 直接进入 CAD 起始向导的问题清单。
+- 新增同目标面积几何重叠检查：Polygon/Circle 使用边界预筛和实际相交判断，只为真实正面积重叠的双方生成可定位 `SPACE_CAD_SEMANTIC_GEOMETRY_OVERLAP`，边界接触、不同目标包含和降级 BlockInstance 不报重叠。
+- 门禁为 Space Unit 544/544、CAD Preparation/Parse/BuildScene/Excel 集成聚焦 37/37、CAD 实验工具常规门禁 39 passed / 1 个安装环境用例 skipped、OpenAPI 55/55、CAD 向导 4/4、Vue TypeScript、CP6.Tests 2,933、完整 solution Release 0 warning / 0 error；配置安装环境后，签名有效的 AutoCAD 2025 Core Console 真实 Autodesk DWG 用例另行 1/1、0 skipped。详见 `docs/space/reports/2026-08-16-space-cad-semantic-quality-diagnostics.md`。
+- LM-FR-014～016 仓库实现闭环；真实主备 Provider、20 份授权黄金 CAD、双仓 Pilot 与五方签字仍未完成，WP4 继续 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-16 Space 租户私有 CAD Mapping Profile
+
+- 新增 `Space_LayerMappingProfile` 与 append-only `Space_LayerMappingProfileVersion`：Tenant 过滤、复合外键、唯一名称/版本、RowVersion、规范 Profile JSON、Definition SHA-256、复制来源和创建审计均持久化；已发布迁移未修改。
+- System Profile 保持只读；租户可复制系统/本租户版本、结构化维护图层与块匹配规则、启停方案，并以 `ExpectedRowVersion + Idempotency-Key` 追加新版本。跨租户读取/复制返回稳定 NotFound，旧版本更新/删除由 `SpaceContext` 失败关闭。
+- Design V1 新增 CAD Profile 管理 list/get/save，Preparation Catalog 自动消费当前租户版本；OpenAPI、C#/TypeScript SDK、权限矩阵和 Problem Details 同步。CAD 起始向导无需填写内部 ID，可复制/编辑规则并在保存后自动刷新选中新启用版本。
+- 门禁为 Space Unit 540/540、Space Integration 真 SQL 453/453（0 skipped）、CP6.Tests 2,933、Web 866、Vue TypeScript、production build、OpenAPI/双 SDK、EF 无 pending model changes，以及完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-16-space-tenant-cad-mapping-profiles.md`。
+- LM-FR-013 仓库实现闭环；WP4 仍需真实多路径、Provider、黄金 CAD、WMS 与 Pilot 接受证据，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-16 Space CAD 图层/块审核与逐层 Override
+
+- Design V1 CAD Preparation Preview 复用现有确定性 Inventory/Mapping 权威，新增面向审核的完整图层与块清单；原始 CAD 字节和逐块引用明细不进入浏览器。
+- CAD 向导可搜索并查看图层颜色、线型、可见性、对象/支持/未支持计数和块定义/引用/属性计数；映射 Profile 明确显示系统公共或租户私有 Scope。
+- 每个图层可显式沿用 Profile、忽略或覆盖语义目标，并调整几何规则和置信度。单位、坐标、Profile 或 Override 变化都会撤销确认并阻止使用旧 Preview 启动 Parse，重新预览后由服务端密封完整 Override Snapshot。
+- 门禁为 Space Unit 540/540、Space Integration 真 SQL 447/447（0 skipped）、CP6.Tests 2,932、Web 863、Vue TypeScript、production build、OpenAPI/双 SDK 和完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-16-space-cad-inventory-layer-overrides.md`。
+- LM-FR-012 仓库实现闭环；当时 LM-FR-013 只关闭逐层 Override 与 Scope 展示，租户私有 Profile 已由同日后续任务闭环。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space 来源移除引用预检
+
+- 新增 Design V1 来源移除预检与确认 Apply：预检按“阻断/保留”分类返回 Draft、任务、生成、底图、设计对象/元数据和历史审计引用，Apply 使用 Expected ContentRevision、Expected Source RowVersion、Idempotency-Key 与 Serializable 事务重新复核。
+- 活动引用或预检后的并发变化统一零写入；成功只软删除来源记录。物理文件、终态 Job、工件、问题、标定和导入审计继续受原有保留权威管理，不级联删除。
+- Space Studio 来源面板展示引用计数、只读保护和明确保留提示；OpenAPI、C#/TypeScript SDK、权限矩阵和稳定 `SPACE_SOURCE_REFERENCED` 错误同步。
+- 全量门禁为 Space Unit 540/540、Space Integration 真 SQL 447/447（0 skipped）、CP6.Tests 2,932、Web 862、OpenAPI/双 SDK/EF/production build 和完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-15-space-source-removal-preflight.md`。
+- LM-FR-005 仓库实现闭环；LM-FR-010～016、019/019A 与真实多路径接受证据仍待完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space 上传重复内容复用提示
+
+- CAD 前端上传合同补齐服务端 `file/reused` 事实；CAD 与 PDF/图片底图检测到重复内容时明确提示按 SHA-256 复用受控文件或当前来源，不会重复保存原文件。
+- 复用判断仍完全来自隔离上传服务；客户端不生成哈希、不跳过安全扫描，重复底图继续按 Clean/Scanning/Rejected 状态进入既有挂接链。
+- 聚焦测试 10/10、Vue TypeScript、Web 全量 858/858 和 production build 通过。详见 `docs/space/reports/2026-08-15-space-upload-reuse-notice.md`。
+- Excel 后端/SDK 已有 `Reused` 合同；该条记录时缺失的当前 CAD + Excel 上传 UI 与历史 CAD 候选目录均已由 2026-08-16 后续纵切闭环。LM-FR-005 已由后续来源移除预检纵切闭环。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Draft 来源与阻断摘要
+
+- Design V1 Version 列表与详情新增来源、创建者、创建/更新时间和 Open Blocking 数；现有 Blank/PublishedVersion 创建路径返回稳定来源语义，历史创建者为空时不伪造姓名。
+- Space Studio 活动 Draft 卡片直接展示这些字段；Blocking 数量使用文字与阻断语义色，日期按浏览器区域格式显示。
+- Space Integration 真库 444/444、Space Unit 537/537、CP6.Tests 2,926（19 个既有环境门禁跳过）、Web 856/856、OpenAPI/双 SDK、EF、类型检查、生产构建及完整 solution Release 0 warning / 0 error 通过。详见 `docs/space/reports/2026-08-15-space-draft-summary-metadata.md`。
+- 当前已支持的 Draft 创建路径 LM-FR-002 摘要缺口关闭；System/Tenant Template 创建来源须随四模式向导持久化，创建者显示名解析也仍为后续边界。LM-FR-001/WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space System 整仓模板按楼层写入 Draft
+
+- 新增 `POST /api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/templates/{templateId}:apply`，只接受服务端内置模板版本和密封 Proposal，按一个模板楼层生成确定性的 Zone/Aisle/Rack/逐层规格/Location 命令。
+- Apply 绑定目标 Site、页面 Lease/ClientInstance、Floor/Content Revision 与 CommandBatch；整批和 Floor 边界在同一 Serializable 事务中提交，正常 Layout 命令仍保持 100 条上限，受控模板内部上限为 300 条。
+- Space Studio「构件」面板可预览模板、按目标 Floor 编码优先选择模板楼层、显示逐楼层计数并显式确认；状态未知时冻结选择并按原命令包安全重试，窄屏、只读、无租约和 Revision 冲突禁止写入。
+- Space Unit 537/537、Space Integration 真库 443/443、CP6.Tests 2,925（19 个既有环境门禁跳过）、Web 856/856、OpenAPI/双 SDK、权限、EF、类型检查、生产构建及完整 solution Release 0 warning / 0 error 通过。详见 `docs/space/reports/2026-08-15-space-system-template-floor-apply.md`。
+- Tenant 私有模板和 Blank/Published/System/Tenant 四模式统一向导仍未完成；LM-FR-001/WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space System 整仓模板目录与预览纵切
+
+- 新增 Design V1 整仓模板 GET 与实例化预览 POST 合同；平台内置标准模板固定模板/版本/内容 SHA，并只包含 2 层、7 区、20 巷道、500 货架与 10,000 库位的设计布局。
+- 预览返回完整 Floor/Zone/Aisle/Rack 父级计划和 Proposal Hash，固定 `writesDraft=false`；旧模板版本、非法 scope、未知模板和外部主体失败关闭。
+- Space Studio 项目入口可以展示平台模板计数并查看密封预览；OpenAPI、双 SDK、权限矩阵和前端类型同步。
+- Space Unit 536/536、CP6.Tests 2,924 通过、Web 851/851、契约/SDK/EF/GA 证据门禁和生产构建通过；完整 solution Release 0 warning / 0 error。
+- 本纵切不实现租户私有模板、Template → Draft Apply 或四模式统一向导，LM-FR-001/WP1 仍为 Partial/Pending，核心 GA 仍为 72% / `NoGo`。详见 `docs/space/reports/2026-08-15-space-system-template-catalog.md`。
+
+## 2026-08-15 Design V1 Floor shell 与项目入口纵切
+
+- Space 首页新增按 Site 进入 `Space Studio` 的用户入口；页面自动读取活动 Draft 与活动设计楼层，不再要求用户手工拼 VersionId/FloorLogicalId。
+- 新增 Design V1 Floor GET/POST 合同。创建必须显式提交编码、名称、层级、标高、层高和 Expected Content Revision，并以 Version 级 SQL 锁、Serializable 事务、Content Revision 与 Idempotency-Key 原子提交。
+- Floor 创建后直接进入既有 `DesignUnderlayView`，后续继续遵循 Floor Lease、Floor Revision 与 Command Batch；低于 1280px 的入口禁止写入。
+- 真 SQL 聚焦 4/4、Space Unit 534/534、Space Integration 真库全量 441/441、CP6.Tests 2,923 通过、Web 全量 848/848、OpenAPI/双 SDK/EF/GA 证据门禁、Vue TypeScript 与生产构建通过；完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-15-space-design-floor-shell.md`。
+- 本纵切不实现整仓 System/Tenant 模板或四模式统一创建向导，LM-FR-001/WP1 仍为 Partial/Pending，核心 GA 仍为 72% / `NoGo`。
+
+## 2026-08-15 Design V1 空白 Draft 初始化纵切
+
+- `POST /api/space/design/v1/sites/{siteId}/versions` 新增 `Blank` 模式；草稿不继承 Published 内容，拒绝 `BasedOnVersionId`，保留线上指针并占用唯一活动 Draft 槽。
+- 新增 `InitializeVersion` 完成态 Job/Attempt 和 `space-blank-v1` 初始化身份；Version Operation fence、请求 Hash、SQL 事务及既有 Idempotency-Key 共同保证重放返回同一 Version/Job，不同输入失败关闭。
+- 领域聚焦 7/7、SQL Server LocalDB 聚焦 2/2、Space Integration 真库全量 437/437 且 0 skipped。详细报告见 `docs/space/reports/2026-08-15-space-design-blank-draft.md`。
+- 该版本纵切不创建或猜测 Floor；Floor 初始化/选择随后由独立纵切交付。平台/租户整仓模板仍缺，LM-FR-001 与 WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio LM-FR-025～029 最终工作台 UX 要求
+
+- 保存后的同一 Design Scene 直接驱动 2D/3D；选择与逐楼层相机跨模式保留。切到 3D 不再清除 2D 未保存重画，标题持续标记、3D 禁止误提交，切回 2D 后保留全部点集。
+- 首次四步任务清单默认展开并可折叠重开，补齐 44px 热区、焦点环、符号和可访问完成状态；右侧问题严重度筛选控件同样补齐 44px 热区。
+- 聚焦单测 5/5、Web 843/843、Space Studio Playwright 23/23、production build 和完整 Release solution 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md`。
+- LM-FR-025～029 仓库实现闭环；WP4 保持 Partial/Pending，WP5 保持 Complete/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio 两点实距标定工作流
+
+- 底图标定明确为 P1 原点、P2 比例点和独立验证点 V；用户直接输入真实距离、世界原点、旋转和 V 世界坐标，不再手工换算 P2 世界坐标。
+- 工作台以栅格 Y-up 坐标和整数毫米请求合同计算比例/旋转/偏移，预览第三点误差与 `max(50mm, 实距×0.2%)` 阈值；无效或超限输入在提交前失败关闭。
+- 保存继续复用 Design V1 租约、双 Revision、数据库 UTC、幂等 CommandBatch 和公共撤销/重做。Web 841/841、Space Studio Playwright 23/23、production build 和完整 Release solution 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-underlay-calibration-workflow.md`。
+- LM-FR-021 仓库实现闭环；真实 PDF/图片、多路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio 托盘与静态设备构件库
+
+- 构件库与既有 Zone/Aisle/Rack/Location 表单同页，补齐墙、柱、门、月台、托盘和输送线、AGV、叉车、工作台、电子秤、充电站六类固定静态设备。
+- 每个预设固定领域类型、尺寸、业务编码前缀、目录/设备子类和 `Static` 设计属性；不引入实时状态、运动或第二套领域权威。
+- 创建复用 Design V1 租约/Revision/Hash/幂等命令链，并以 Delete/Restore 进入公共撤销/重做历史。Web 837/837、Space Studio Playwright 23/23、production build 和完整 Release solution 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-static-component-library.md`。
+- LM-FR-022 仓库实现闭环；真实多路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio 底图图层控制
+
+- “图层”模式提供底图显示/隐藏、0～100% 透明度和锁定/解锁；控制直接重绘 Konva 底图，44px 热区、键盘焦点、状态文本和无底图禁用状态同步。
+- 锁定会阻止比例/坐标标定，新挂接底图自动解锁，标定成功后自动锁回；视图偏好按版本/楼层保存在当前浏览器标签页，不推进 Draft Revision。
+- floor view schema v1 向后兼容地增加可选底图状态并校验边界；单测、类型检查及 Playwright 覆盖实际画布变化和重载恢复。详细报告见 `docs/space/reports/2026-08-15-space-studio-underlay-layer-controls.md`。
+- LM-FR-020 仓库实现闭环；真实 PDF/PNG/JPG、三条路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio 底图统一撤销/重做
+
+- PDF/PNG/JPG 底图的挂接、替换、标定和显式移除统一携带页面实例、编辑租约、Floor/Content Revision、CommandBatch 与幂等键；未取得当前会话租约或 Revision 已变化时零 Draft 写入。
+- 服务端复用不可变 Element Command Batch/Record 密封底图 Source、Calibration 和变换前后态；Undo/Redo 只接受原批次、方向与历史 Hash，校验当前状态后恢复追加式标定指针，并写入新的不可变补偿批次。
+- 工作台把底图操作加入既有公共历史栈；OpenAPI/C#/TypeScript SDK、真 SQL、Web、Playwright 和构建门禁同步。详细报告见 `docs/space/reports/2026-08-15-space-studio-underlay-history.md`。
+- LM-FR-024 的 CAD、Excel–CAD 和底图可逆历史仓库实现已闭环；真实多路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio Excel–CAD 确认统一撤销/重做
+
+- Excel–CAD v2 Apply 结果从实际不可变 Command Record 密封历史 Hash 与数量；客户端不能提交可信补偿正文，旧 v1 成功结果仍可读取但不会伪装成可撤销历史。
+- 新增服务器 Undo/Redo 补偿链，统一验证页面租约、Floor/Content Revision、内容 Hash、原 Apply 工件链、当前 Rack/层/库位/绑定/属性/Source 状态与幂等键；每次补偿形成新的不可变审计批次，介入编辑时零写入。
+- 工作台把确认结果加入现有统一历史栈。OpenAPI/双 SDK、后端、真 SQL 1/1、Web 817/817、Space Studio Playwright 21/21、Release solution 0 warning/0 error 与 SDK drift 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-excel-cad-apply-history.md`。
+- LM-FR-024 的 CAD 与 Excel–CAD 历史已完成，仍剩底图挂接/标定可逆合同；WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio Excel–CAD 确认 Lease/Revision Fence
+
+- Excel–CAD 确认请求强制携带 `clientInstanceId`、`leaseId`、Floor Revision 和 Content Revision；确认服务与后台 Worker 均在实际写入前验证同一请求人、同一页面实例和未过期租约，并与普通 Design V1 编辑复用 Floor application lock。
+- SQL Server 租约到期判断使用 `SYSUTCDATETIME()`；换会话、释放/过期租约或双 Revision 漂移均失败关闭，且不创建 Rack、CommandBatch 或部分层级数据。历史成功 payload 可读，未完成的无租约旧 payload 不会继续写入。
+- OpenAPI/C#/TypeScript SDK 和工作台门禁同步；后端聚焦 14/14、Space Unit 533/533、契约/Controller 50/50、CP6.Tests 2919 passed、Web 814/814、Space Studio Playwright 21/21、完整 Release solution 0 warning/0 error及 SDK drift 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-excel-cad-apply-lease.md`。
+- 该任务只关闭 Excel–CAD 统一历史前的写入安全前置条件；补偿命令和底图可逆合同仍待完成。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio CAD 确认批次撤销/重做
+
+- CAD Typed Changeset 显式 Apply 后，服务端按实际提交结果密封统一历史：新增为 Delete/Restore，删除为 Restore/Delete，修改为提交前/后的完整 Update 快照；多项撤销逆序，LogicalId 保持稳定。
+- Element Command 幂等响应持久保存首次修改前的元素和属性快照；CAD Apply 回放返回同一撤销/重做集合。工作台只接受白名单命令和完整数量，异常历史会保护性切换只读。
+- OpenAPI/C#/TypeScript SDK 同步。门禁通过：CAD 2/2、SQL Server LocalDB 1/1 且 0 skipped、OpenAPI 45/45、Space Unit 533/533、Web 813/813、Space Studio Playwright 21/21、Vue production build、完整解决方案 0 warning/0 error及 SDK 二次生成无漂移。详细报告见 `docs/space/reports/2026-08-15-space-studio-cad-apply-history.md`。
+- 该纵切只关闭 LM-FR-024 的 CAD 确认批次；Excel–CAD 确认和底图挂接/标定仍待接入统一历史。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio CAD 人工校正锁定
+
+- CAD 来源通用元素可在属性检查器中原子保存并锁定/解除锁定；Design Revision 持久保存锁状态、单调校正版本、最后操作者与 UTC 时间，锁定后的继续编辑递增版本，撤销/重做显式恢复锁状态。
+- 重新解析同一 SourceRef 时，锁定对象的修改或删除转为不可应用的 Blocking Conflict；审核空间展示并定位校正版本，Design V1 对任何携带 CAD Changeset 身份且指向锁定对象的命令执行最终 409 Fence，保证零写入。
+- 新增加法迁移与版本克隆映射，OpenAPI/C#/TypeScript SDK 同步。门禁通过：Space Unit 533/533、CAD reparse 1/1、OpenAPI 45/45、Web 809/809、Space Studio Playwright 20/20、SQL Server LocalDB 1/1 且 0 skipped、Vue production build、EF 无模型漂移及 Release solution 0 warning/0 error。详细报告见 `docs/space/reports/2026-08-15-space-studio-manual-correction-lock.md`。
+- LM-FR-018 仓库实现已闭环；WP4 仍为 Partial/Pending，真实 CAD/Provider/WMS/Pilot/签字不因本项自动完成，核心 GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio 对象复制
+
+- 批量检查器可复制 1–100 个 Active 通用元素和货架，允许混合选择；确认前零写入，确认后 `CreateElement` 与 `GenerateRackArray` 使用同一 Lease/Revision/Content Hash/幂等原子批。
+- 通用元素副本保留几何、类型、父级和设计属性，但清除唯一业务编码、业务链接及 CAD 来源；货架副本复制 Active RackLevel 与空编码、Generated/Unbound Location，不复制 WMS 绑定语义，并生成 Zone 内新编码。
+- 撤销/重做只对既有新 LogicalId 执行 Delete/Restore，不重复 Create。复制聚焦 4/4、面板 3/3、前端全量 805/805、真 SQL 1/1、Space Studio Playwright 19/19、Space Unit 531/531、OpenAPI 44/44、类型检查、构建、SDK drift 与 GA 自测通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-object-copy.md`。
+- LM-FR-023 的对齐、等距分布、复制、旋转和阵列仓库实现现已闭环；WP4 保持 Partial/Pending，GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio CAD 异常对象画布重画
+
+- 单个 Active 非资产通用元素可在 2D 画布进入重画模式；R/Enter/Backspace/Esc 与命令栏按钮可达，状态栏持续显示本地未保存顶点。3–100 点、重复、零面积、自交和 Int32 包络校验均在显式确认前完成，取消时 Draft 零写入。
+- 确认后只提交同一 LogicalId 的 `UpdateProperties`，将世界轮廓规范化为局部多边形并保留类型、BusinessCode、业务链接、设计属性及 CAD SourceId/SourceRef；撤销/重做仍为同一 ID 的补偿更新，2D/3D 消费同一几何。
+- 门禁通过：重画聚焦 6/6、前端 800/800、Space Unit 531/531、OpenAPI 44/44、SQL Server LocalDB 1/1 且 0 skipped、Space Studio Playwright 18/18、Vue type-check、production build、Release solution 0 warning/0 error、SDK drift 和 GA 证据 36/36。详细报告见 `docs/space/reports/2026-08-15-space-cad-exception-redraw.md`。
+- 该纵切关闭 LM-FR-017 的“重画”，五项异常处理仓库能力现均已实现。WP4 仍保持 Partial/Pending，须继续复核其它 LM-FR 并取得真实 CAD/Excel/PDF/Provider/WMS 接受证据；GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio CAD 异常对象拆分
+
+- 单个 Active 非资产 `group` 元素可拆成 2–100 个独立元素：首部件保留当前 LogicalId，其余部件分配新 LogicalId，并继承类型、父级、BusinessCode、业务链接、设计属性和成对的 CAD SourceId/SourceRef。
+- 正向/撤销/重做分别复用 `UpdateProperties + CreateElement`、`UpdateProperties + DeleteObject`、`UpdateProperties + RestoreLogicalObject` 原子批；重做保持相同新 LogicalId且不会重复 Create。组合整体移动/旋转按参数化渲染器同一坐标变换展开，2D/3D 拆分前后等价。
+- `SpaceCreateElementDto` 以可选成对字段补齐业务链接继承，OpenAPI、双 SDK 和零写入验证同步。门禁通过：Space Unit 531/531、前端 794/794、SQL Server LocalDB 1/1 且 0 skipped、Space Studio Playwright 17/17、Vue type-check、production build、Release solution、SDK drift 和 GA 证据 36/36。详细报告见 `docs/space/reports/2026-08-15-space-cad-exception-split.md`。
+- 该纵切关闭 LM-FR-017 的“拆分”；画布重画已由后续独立纵切关闭。WP4 保持 Partial，GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio CAD 异常对象合并
+
+- 新增受约束的 `group` 组合几何，允许 2–20 个通用元素在保留首选 LogicalId 的前提下合并；来源 LogicalId/SourceId/SourceRef、相对位置、旋转、尺寸和原始几何均保留，资产、元数据或属性冲突失败关闭。
+- 合并复用现有 `UpdateProperties + DeleteObject` 原子命令，撤销复用 `UpdateProperties + RestoreLogicalObject` 补偿批次，没有第二套写接口；2D/3D 递归渲染共享同一 LogicalId，工作台提供显式确认和可达按钮。
+- 门禁通过：Space Element 50/50、Space Unit 531/531、前端聚焦 21/21 与全量 788/788、Vue type-check、SQL Server LocalDB 1/1 且 0 skipped、Space Studio Playwright 16/16、完整 Release solution 0 warning/0 error、production build、SDK drift 和 GA 证据 36/36。详细报告见 `docs/space/reports/2026-08-15-space-cad-exception-merge.md`。
+- 该纵切关闭 LM-FR-017 的“合并”；拆分与画布重画已由后续独立纵切关闭。WP4 保持 Partial，GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space Studio CAD 异常对象改类型
+
+- Design V1 `UpdateProperties` 增加可选 `ElementType`，支持通用元素在保留 LogicalId 的情况下切换到受支持语义类型；资产实例拒绝改型，未知类型在零写入前失败。
+- 工作台属性检查器增加构件类型选择；保存、场景刷新、命令审计及撤销/重做继续复用 Lease、Floor/Content Revision 与幂等命令批，没有建立第二套设计权威。
+- 生成 OpenAPI、C# 与 TypeScript SDK 已同步；真 SQL 1/1、Space Unit 全量 526/526、OpenAPI 44/44、前端全量 780/780、Vue type-check 和 Space Studio Playwright 全量 15/15 通过。
+- 该纵切只关闭 LM-FR-017 的“改类型”；删除为既有能力，合并、拆分与重画已由后续独立纵切关闭。WP4 仍为 Partial，GA 保持 72% / `NoGo`。
+
+## 2026-08-15 Space AutoCAD Core Console 开发转换链
+
+- 新增实验型 `convert-autocad-dev-ir` 和 `ICadConverter`，以显式 Core Console 路径把原生 DWG 转为中间 DXF，再复用既有确定性 CAD IR 转换与共合同执行器。
+- 原始 DWG/中间 DXF 仅进入 D 盘每次唯一 `attempts` 目录，校验源哈希与 Core Console 文件版本；Activity Insights 持久运行包进入不允许出现 DWG/DXF 的独立缓存。子进程无 Shell，具备超时/取消进程树终止和原始数据目录清理重试。
+- 本机签名有效的 AutoCAD 2025 Core Console 安装型测试 1/1 通过；Autodesk Floor Plan 样例连续两次得到相同 CAD IR SHA，4,424 个实体中 4,422 个受支持。该结果仅为开发证据，不计 Provider 认证、黄金 CAD 或 GA 完成度。
+- GA 总索引已把该开发报告登记到 WP3，并把 2026-08-15 仓库完成度审计登记到 WP0，路径校验通过；共享 JSON 兼容层让四个证据校验器在 PowerShell 7.6 保留 ISO 时间字符串，同时保持 Windows PowerShell 5.1 行为和原有严格门禁。证据保持实现态，不进入接受证明，核心 GA 仍为 72% / `NoGo`。
+
+## 2026-08-15 Space Studio 单人开发人员种子
+
+- 新增 `00001`～`00005` 五个 `DevelopmentSeed` 虚拟人员，为一名真实开发者提供产品、后端、前端/3D、QA、WMS、架构、安全和 DevOps 的本地流程视角。
+- 人员册固定 `formalGaEligible=false`、无生产访问、无正式签字资格；专项校验阻止开发编号进入正式 GA 人员或证据字段，总 GA 与开工人名校验也拒绝纯数字及开发/测试身份。
+- 本项仅完成开发测试人员配置和防误报护栏，不创建登录凭据，不证明真实 2+2+1 团队或五方审批，正式进度保持 72% / `NoGo`。
+
+## 2026-08-14 Space Studio M0 开工证据语义门禁
+
+- 五类外部输入新增共享的结构化开工 Manifest、复制模板、协议和专项校验器，可按分区增量完成，不要求一次性伪造全绿。
+- 门禁覆盖五角色实名/审批权、2 Backend + 2 Frontend3D + 1 QA 与共享角色、20 份授权 CAD 候选、至少两条 `ICadConverter` 审批链和隔离 Worker、Greenfield/Retrofit 双仓与 CP6 WMS 窗口。
+- 总 GA 校验器要求每个 Complete 输入绑定并证明 Manifest 自身哈希，复核分区 Owner 及签字人索引一致；专项 26/26、组合证明链 34/34。真实输入仍全部 Pending，不计外部执行完成。
 
 ## 2026-08-14 Space Studio 正式黄金 CAD 证据门禁
 

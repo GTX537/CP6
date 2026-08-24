@@ -82,6 +82,7 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceDesignV1Controller.GetVersions"] = "space:model:read",
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetFloors"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
             ["SpaceEditLeaseController.GetEditLease"] = "space:model:edit",
             ["SpaceCadParseController.GetPreparationStatus"] =
@@ -91,10 +92,20 @@ public class SpacePermissionAttributeTests
             ["SpaceCadParseController.GetMappingProfiles"] =
                 "space:source:upload",
             ["SpaceCadParseController.GetParse"] = "space:model:read",
+            ["SpaceCadParseController.ListReviewCandidates"] =
+                "space:model:read",
             ["SpaceCadParseController.GetReviewWorkspace"] =
                 "space:model:read",
+            ["SpaceCadMappingProfileController.GetCadMappingProfiles"] =
+                "space:model:read",
+            ["SpaceCadMappingProfileController.GetCadMappingProfile"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetWarehouseTemplates"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetSourceRemovalPreview"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayContent"] = "space:model:read",
             ["SpacePublishController.GetHistoricalRepublish"] = "space:model:read",
@@ -248,7 +259,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(45, SpaceControllers.Count());
+        Assert.Equal(46, SpaceControllers.Count());
     }
 
     [Fact]
@@ -318,6 +329,7 @@ public class SpacePermissionAttributeTests
 
     [Theory]
     [InlineData(nameof(SpaceDesignV1Controller.CreateSource))]
+    [InlineData(nameof(SpaceDesignV1Controller.RemoveSource))]
     [InlineData(nameof(SpaceDesignV1Controller.UploadUnderlay))]
     [InlineData(nameof(SpaceDesignV1Controller.AttachUnderlay))]
     [InlineData(nameof(SpaceDesignV1Controller.CalibrateUnderlay))]

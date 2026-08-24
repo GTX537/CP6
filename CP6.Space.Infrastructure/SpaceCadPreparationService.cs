@@ -159,6 +159,7 @@ public sealed class SpaceCadPreparationService(
                 scope.Version,
                 analysis,
                 prepared.Metadata,
+                prepared.Issues,
                 profile,
                 inventory: null,
                 mapping: null,
@@ -177,6 +178,7 @@ public sealed class SpaceCadPreparationService(
                 scope.Version,
                 analysis,
                 prepared.Metadata,
+                prepared.Issues,
                 profile,
                 inventory,
                 mapping,
@@ -195,6 +197,7 @@ public sealed class SpaceCadPreparationService(
                 scope.Version,
                 analysis,
                 prepared.Metadata,
+                prepared.Issues,
                 profile,
                 inventory,
                 mapping,
@@ -282,7 +285,9 @@ public sealed class SpaceCadPreparationService(
             ReadyForParsing: true,
             analysis,
             prepared.Metadata,
+            prepared.Issues,
             inventory.Summary,
+            ToReviewInventory(inventory),
             ToSummary(profile),
             mapping,
             semantic,
@@ -411,6 +416,7 @@ public sealed class SpaceCadPreparationService(
         SpaceModelVersion version,
         SpaceCadCoordinateAnalysisV1 analysis,
         SpaceCadCoordinateMetadataV1 metadata,
+        IReadOnlyList<SpaceCadConversionIssueV1> coordinateIssues,
         SpaceCadMappingProfileV1 profile,
         SpaceCadInventoryV1? inventory,
         SpaceCadMappingPreviewV1? mapping,
@@ -423,11 +429,30 @@ public sealed class SpaceCadPreparationService(
             ReadyForParsing: false,
             analysis,
             metadata,
+            coordinateIssues,
             inventory?.Summary,
+            inventory is null ? null : ToReviewInventory(inventory),
             ToSummary(profile),
             mapping,
             semantic,
             StartRequest: null);
+
+    private static SpaceCadPreparationInventoryDto ToReviewInventory(
+        SpaceCadInventoryV1 inventory) =>
+        new(
+            inventory.Summary,
+            inventory.Layers,
+            inventory.Blocks.Select(block =>
+                new SpaceCadPreparationBlockInventoryDto(
+                    block.BlockId,
+                    block.Name,
+                    block.IsDefined,
+                    block.IsExternalReference,
+                    block.DefinitionEntityCount,
+                    block.ReferenceCount,
+                    block.AttributedReferenceCount,
+                    block.Attributes,
+                    block.ReferenceBounds)).ToArray());
 
     private static SpaceCadMappingProfileSummaryDto ToSummary(
         SpaceCadMappingProfileV1 value) =>

@@ -226,6 +226,8 @@ public static class SpaceElementAttributeNamespaces
 internal static class SpaceElementGeometry
 {
     private const int SupportedSchemaVersion = 1;
+    private const int MaximumGroupDepth = 8;
+    private const int MaximumGroupParts = 100;
 
     public static string Validate(string value, string parameterName)
     {
@@ -233,60 +235,13 @@ internal static class SpaceElementGeometry
         try
         {
             using var document = JsonDocument.Parse(json);
-            var root = document.RootElement;
-            if (root.ValueKind != JsonValueKind.Object)
-            {
-                throw Invalid(
-                    parameterName,
-                    "Element geometry must be a JSON object.");
-            }
-
-            if (!root.TryGetProperty("schemaVersion", out var schemaVersion)
-                || schemaVersion.ValueKind != JsonValueKind.Number
-                || !schemaVersion.TryGetInt32(out var version)
-                || version != SupportedSchemaVersion)
-            {
-                throw Invalid(
-                    parameterName,
-                    $"Element geometry schemaVersion must be {SupportedSchemaVersion}.");
-            }
-
-            if (!root.TryGetProperty("kind", out var kindValue)
-                || kindValue.ValueKind != JsonValueKind.String)
-            {
-                throw Invalid(
-                    parameterName,
-                    "Element geometry kind is required.");
-            }
-
-            var kind = kindValue.GetString();
-            switch (kind)
-            {
-                case "point":
-                    RequirePoint(root, parameterName);
-                    break;
-                case "path":
-                    RequirePoints(root, "points", 2, parameterName);
-                    RequirePositiveInteger(root, "width", parameterName);
-                    break;
-                case "polygon":
-                    RequirePoints(root, "outer", 3, parameterName);
-                    RequirePolygonHoles(root, parameterName);
-                    RequirePositiveInteger(root, "height", parameterName);
-                    break;
-                case "box":
-                    RequirePositiveInteger(root, "width", parameterName);
-                    RequirePositiveInteger(root, "height", parameterName);
-                    RequirePositiveInteger(root, "depth", parameterName);
-                    break;
-                case "asset":
-                    RequireAsset(root, parameterName);
-                    break;
-                default:
-                    throw Invalid(
-                        parameterName,
-                        "Unsupported element geometry kind.");
-            }
+            var partCount = 0;
+            ValidateRoot(
+                document.RootElement,
+                parameterName,
+                depth: 0,
+                allowAsset: true,
+                ref partCount);
 
             return json;
         }
@@ -296,6 +251,138 @@ internal static class SpaceElementGeometry
                 "Element geometry JSON is invalid.",
                 parameterName,
                 exception);
+        }
+    }
+
+    private static void ValidateRoot(
+        JsonElement root,
+        string parameterName,
+        int depth,
+        bool allowAsset,
+        ref int partCount)
+    {
+        if (root.ValueKind != JsonValueKind.Object)
+        {
+            throw Invalid(
+                parameterName,
+                "Element geometry must be a JSON object.");
+        }
+
+        if (!root.TryGetProperty("schemaVersion", out var schemaVersion)
+            || schemaVersion.ValueKind != JsonValueKind.Number
+            || !schemaVersion.TryGetInt32(out var version)
+            || version != SupportedSchemaVersion)
+        {
+            throw Invalid(
+                parameterName,
+                $"Element geometry schemaVersion must be {SupportedSchemaVersion}.");
+        }
+
+        if (!root.TryGetProperty("kind", out var kindValue)
+            || kindValue.ValueKind != JsonValueKind.String)
+        {
+            throw Invalid(
+                parameterName,
+                "Element geometry kind is required.");
+        }
+
+        switch (kindValue.GetString())
+        {
+            case "point":
+                RequirePoint(root, parameterName);
+                break;
+            case "path":
+                RequirePoints(root, "points", 2, parameterName);
+                RequirePositiveInteger(root, "width", parameterName);
+                break;
+            case "polygon":
+                RequirePoints(root, "outer", 3, parameterName);
+                RequirePolygonHoles(root, parameterName);
+                RequirePositiveInteger(root, "height", parameterName);
+                break;
+            case "box":
+                RequirePositiveInteger(root, "width", parameterName);
+                RequirePositiveInteger(root, "height", parameterName);
+                RequirePositiveInteger(root, "depth", parameterName);
+                break;
+            case "group":
+                RequireGroup(root, parameterName, depth, ref partCount);
+                break;
+            case "asset" when allowAsset:
+                RequireAsset(root, parameterName);
+                break;
+            case "asset":
+                throw Invalid(
+                    parameterName,
+                    "Group geometry cannot contain asset geometry.");
+            default:
+                throw Invalid(
+                    parameterName,
+                    "Unsupported element geometry kind.");
+        }
+    }
+
+    private static void RequireGroup(
+        JsonElement root,
+        string parameterName,
+        int depth,
+        ref int partCount)
+    {
+        if (depth >= MaximumGroupDepth)
+        {
+            throw Invalid(
+                parameterName,
+                $"Group geometry nesting cannot exceed {MaximumGroupDepth} levels.");
+        }
+
+        if (!root.TryGetProperty("parts", out var parts)
+            || parts.ValueKind != JsonValueKind.Array
+            || parts.GetArrayLength() < 2)
+        {
+            throw Invalid(
+                parameterName,
+                "Group geometry requires at least two parts.");
+        }
+
+        foreach (var part in parts.EnumerateArray())
+        {
+            partCount++;
+            if (partCount > MaximumGroupParts)
+            {
+                throw Invalid(
+                    parameterName,
+                    $"Group geometry cannot contain more than {MaximumGroupParts} parts.");
+            }
+
+            if (part.ValueKind != JsonValueKind.Object)
+            {
+                throw Invalid(parameterName, "Group geometry parts must be objects.");
+            }
+
+            RequireGuid(part, "sourceLogicalId", parameterName);
+            RequireOptionalGuid(part, "sourceId", parameterName);
+            RequireOptionalText(part, "sourceRef", 500, parameterName);
+            RequireInteger(part, "x", parameterName);
+            RequireInteger(part, "y", parameterName);
+            RequireInteger(part, "z", parameterName);
+            RequireRotation(part, "rotationZ", parameterName);
+            RequirePositiveInteger(part, "width", parameterName);
+            RequirePositiveInteger(part, "height", parameterName);
+            RequirePositiveInteger(part, "depth", parameterName);
+
+            if (!part.TryGetProperty("geometry", out var geometry))
+            {
+                throw Invalid(
+                    parameterName,
+                    "Group geometry parts require nested geometry.");
+            }
+
+            ValidateRoot(
+                geometry,
+                parameterName,
+                depth + 1,
+                allowAsset: false,
+                ref partCount);
         }
     }
 
@@ -410,6 +497,73 @@ internal static class SpaceElementGeometry
             throw Invalid(
                 parameterName,
                 "Asset geometry requires a transform object.");
+        }
+    }
+
+    private static void RequireGuid(
+        JsonElement root,
+        string propertyName,
+        string parameterName)
+    {
+        if (!root.TryGetProperty(propertyName, out var value)
+            || value.ValueKind != JsonValueKind.String
+            || !Guid.TryParse(value.GetString(), out var parsed)
+            || parsed == Guid.Empty)
+        {
+            throw Invalid(
+                parameterName,
+                $"Geometry '{propertyName}' must be a non-empty GUID.");
+        }
+    }
+
+    private static void RequireOptionalGuid(
+        JsonElement root,
+        string propertyName,
+        string parameterName)
+    {
+        if (!root.TryGetProperty(propertyName, out _))
+        {
+            return;
+        }
+
+        RequireGuid(root, propertyName, parameterName);
+    }
+
+    private static void RequireOptionalText(
+        JsonElement root,
+        string propertyName,
+        int maximumLength,
+        string parameterName)
+    {
+        if (!root.TryGetProperty(propertyName, out var value))
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.String
+            || string.IsNullOrWhiteSpace(value.GetString())
+            || value.GetString()!.Trim().Length > maximumLength)
+        {
+            throw Invalid(
+                parameterName,
+                $"Geometry '{propertyName}' must be non-empty text up to {maximumLength} characters.");
+        }
+    }
+
+    private static void RequireRotation(
+        JsonElement root,
+        string propertyName,
+        string parameterName)
+    {
+        if (!root.TryGetProperty(propertyName, out var value)
+            || value.ValueKind != JsonValueKind.Number
+            || !value.TryGetDecimal(out var rotation)
+            || rotation < 0
+            || rotation >= 360)
+        {
+            throw Invalid(
+                parameterName,
+                $"Geometry '{propertyName}' must be in [0, 360) degrees.");
         }
     }
 

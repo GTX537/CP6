@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CP6.Space.Contracts;
 
 public sealed record UploadSpaceCadSourceResponse(
@@ -45,6 +47,22 @@ public sealed record SpaceCadPreparationStatusDto(
     bool ReadyForPreparation,
     string? BlockingCode);
 
+public sealed record SpaceCadPreparationInventoryDto(
+    SpaceCadInventorySummaryV1 Summary,
+    IReadOnlyList<SpaceCadLayerInventoryV1> Layers,
+    IReadOnlyList<SpaceCadPreparationBlockInventoryDto> Blocks);
+
+public sealed record SpaceCadPreparationBlockInventoryDto(
+    string BlockId,
+    string Name,
+    bool IsDefined,
+    bool IsExternalReference,
+    long DefinitionEntityCount,
+    long ReferenceCount,
+    long AttributedReferenceCount,
+    IReadOnlyList<SpaceCadBlockAttributeInventoryV1> Attributes,
+    SpaceCadBoundsV1? ReferenceBounds);
+
 public sealed record PreviewSpaceCadPreparationResponse(
     Guid? PreparationId,
     DateTime? ExpiresAtUtc,
@@ -53,7 +71,9 @@ public sealed record PreviewSpaceCadPreparationResponse(
     bool ReadyForParsing,
     SpaceCadCoordinateAnalysisV1 CoordinateAnalysis,
     SpaceCadCoordinateMetadataV1 CoordinateMetadata,
+    IReadOnlyList<SpaceCadConversionIssueV1> CoordinateIssues,
     SpaceCadInventorySummaryV1? InventorySummary,
+    SpaceCadPreparationInventoryDto? Inventory,
     SpaceCadMappingProfileSummaryDto MappingProfile,
     SpaceCadMappingPreviewV1? MappingPreview,
     SpaceCadSemanticPreviewV1? SemanticPreview,
@@ -94,6 +114,34 @@ public sealed record SpaceCadParseDto(
     string? LastErrorSummary,
     IReadOnlyList<SpaceCadParseArtifactDto> Artifacts);
 
+public sealed record SpaceCadReviewCandidateDto(
+    Guid SourceId,
+    string SourceDisplayName,
+    string SourceType,
+    string SourceSha256,
+    Guid JobId,
+    string JobStatus,
+    string SourceState,
+    Guid FloorLogicalId,
+    long BaseContentRevision,
+    string? BaseContentHash,
+    bool IsCurrentRevision,
+    bool CanLoadReview,
+    DateTime RequestedAtUtc,
+    DateTime? FinishedAtUtc,
+    string? PreferredProviderKey,
+    string? PreferredProviderVersion,
+    Guid MappingProfileId,
+    int MappingProfileVersion);
+
+public sealed record SpaceCadReviewCandidateListDto(
+    Guid ModelVersionId,
+    Guid FloorLogicalId,
+    long CurrentContentRevision,
+    string? CurrentContentHash,
+    bool Truncated,
+    IReadOnlyList<SpaceCadReviewCandidateDto> Items);
+
 public sealed record SpaceCadParseActionResponse(
     Guid JobId,
     string Status,
@@ -109,6 +157,8 @@ public sealed record ApplySpaceCadChangesetRequest(
     long ExpectedContentRevision,
     string? ExpectedContentHash,
     string WorkspaceSha256,
+    [property: MinLength(1)]
+    [property: MaxLength(SpaceCadReviewWorkspaceVersions.MaximumApplyChanges)]
     IReadOnlyList<string> ChangeIds);
 
 public sealed record ApplySpaceCadChangesetResponse(
@@ -117,4 +167,11 @@ public sealed record ApplySpaceCadChangesetResponse(
     long VersionContentRevision,
     long AppliedChangeCount,
     string WorkspaceSha256,
-    bool IdempotentReplay);
+    bool IdempotentReplay,
+    IReadOnlyList<SpaceSavedElementCommandDto> UndoCommands,
+    IReadOnlyList<SpaceSavedElementCommandDto> RedoCommands);
+
+public sealed record SpaceSavedElementCommandDto(
+    string Type,
+    Guid TargetLogicalId,
+    SpaceUpdateElementPropertiesDto? UpdateProperties = null);

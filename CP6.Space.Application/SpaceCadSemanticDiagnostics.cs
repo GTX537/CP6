@@ -533,6 +533,8 @@ public static class SpaceCadSemanticDiagnostics
             return SpaceCadDiagnosticRecovery.ReviewCandidate;
         }
         if (code.Contains("GEOMETRY", StringComparison.Ordinal)
+            || code.Contains("BOUNDARY", StringComparison.Ordinal)
+            || code.Contains("ZERO_SIZE", StringComparison.Ordinal)
             || code.Contains("UNSUPPORTED", StringComparison.Ordinal)
             || code.Contains("FOOTPRINT", StringComparison.Ordinal))
         {

@@ -13,6 +13,12 @@ public sealed record SpaceModelDto(
     Guid? CurrentPublishedVersionId,
     string RowVersion);
 
+public static class SpaceVersionCreationSources
+{
+    public const string Blank = "Blank";
+    public const string PublishedVersion = "PublishedVersion";
+}
+
 public sealed record SpaceVersionDto(
     Guid Id,
     Guid ModelId,
@@ -26,7 +32,12 @@ public sealed record SpaceVersionDto(
     string? ValidatedHash,
     DateTime? PublishedAtUtc,
     string RowVersion,
-    string Purpose = "Production");
+    string Purpose,
+    string CreationSource,
+    Guid? CreatedBy,
+    DateTime CreatedAtUtc,
+    DateTime UpdatedAtUtc,
+    int OpenBlockingCount);
 
 public sealed record CreateSpaceVersionRequest(
     string Name,
@@ -41,6 +52,19 @@ public sealed record CreateSpaceVersionResponse(
     string RowVersion,
     Guid JobId,
     string JobStatusUrl,
+    bool IdempotentReplay);
+
+public sealed record CreateSpaceFloorRequest(
+    string FloorCode,
+    string Name,
+    int Level,
+    int Elevation,
+    int Height,
+    long ExpectedContentRevision);
+
+public sealed record CreateSpaceFloorResponse(
+    SpaceSceneFloorDto Floor,
+    long VersionContentRevision,
     bool IdempotentReplay);
 
 public sealed record SpaceSourceDto(
@@ -67,6 +91,50 @@ public sealed record CreateSpaceSourceResponse(
     SpaceSourceDto Source,
     bool IdempotentReplay);
 
+public static class SpaceSourceRemovalReferenceCodes
+{
+    public const string VersionNotDraft = "VERSION_NOT_DRAFT";
+    public const string SourceInProgress = "SOURCE_IN_PROGRESS";
+    public const string ActiveJobs = "ACTIVE_JOB_REFERENCE";
+    public const string JobAudit = "JOB_AUDIT_REFERENCE";
+    public const string Artifacts = "ARTIFACT_REFERENCE";
+    public const string Issues = "ISSUE_REFERENCE";
+    public const string CadPreparations = "CAD_PREPARATION_REFERENCE";
+    public const string ActiveGenerationRuns = "ACTIVE_GENERATION_REFERENCE";
+    public const string GenerationAudit = "GENERATION_AUDIT_REFERENCE";
+    public const string Underlays = "UNDERLAY_REFERENCE";
+    public const string DesignRevisions = "DESIGN_REVISION_REFERENCE";
+    public const string DesignMetadata = "DESIGN_METADATA_REFERENCE";
+    public const string ImportAudit = "IMPORT_AUDIT_REFERENCE";
+}
+
+public sealed record SpaceSourceRemovalReferenceDto(
+    string Code,
+    int Count,
+    bool BlocksRemoval);
+
+public sealed record SpaceSourceRemovalPreviewDto(
+    Guid SourceId,
+    Guid? FileId,
+    string DisplayName,
+    string SourceType,
+    string State,
+    long VersionContentRevision,
+    string SourceRowVersion,
+    bool CanRemove,
+    bool PhysicalFileRetained,
+    IReadOnlyList<SpaceSourceRemovalReferenceDto> References);
+
+public sealed record RemoveSpaceSourceRequest(
+    long ExpectedContentRevision,
+    string ExpectedSourceRowVersion);
+
+public sealed record RemoveSpaceSourceResponse(
+    Guid SourceId,
+    long VersionContentRevision,
+    bool PhysicalFileRetained,
+    bool IdempotentReplay);
+
 public sealed record SpaceFileDto(
     Guid Id,
     string OriginalName,
@@ -85,12 +153,35 @@ public sealed record UploadSpaceUnderlayResponse(
     string? JobStatusUrl,
     bool Reused);
 
+public static class SpaceUnderlayHistoryVersions
+{
+    public const int SchemaVersion = 1;
+}
+
+public static class SpaceUnderlayCompensationDirections
+{
+    public const string Undo = "Undo";
+    public const string Redo = "Redo";
+}
+
 public sealed record AttachSpaceUnderlayRequest(
-    Guid SourceId,
-    long ExpectedFloorRevision);
+    Guid? SourceId,
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    Guid CommandBatchId);
+
+public sealed record SpaceUnderlayHistoryDto(
+    int SchemaVersion,
+    Guid OriginalCommandBatchId,
+    string OperationType,
+    string HistorySha256);
 
 public sealed record AttachSpaceUnderlayResponse(
     SpaceSceneFloorDto Floor,
+    long VersionContentRevision,
+    SpaceUnderlayHistoryDto History,
     bool IdempotentReplay);
 
 public sealed record SpaceUnderlayCalibrationPointDto(
@@ -107,7 +198,11 @@ public sealed record SaveSpaceUnderlayCalibrationRequest(
     SpaceUnderlayCalibrationPointDto Point1,
     SpaceUnderlayCalibrationPointDto Point2,
     SpaceUnderlayCalibrationPointDto ValidationPoint,
-    long ExpectedFloorRevision);
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    Guid CommandBatchId);
 
 public sealed record SpaceUnderlayCalibrationDto(
     Guid Id,
@@ -132,6 +227,29 @@ public sealed record SpaceUnderlayCalibrationDto(
 public sealed record SaveSpaceUnderlayCalibrationResponse(
     SpaceSceneFloorDto Floor,
     SpaceUnderlayCalibrationDto Calibration,
+    long VersionContentRevision,
+    SpaceUnderlayHistoryDto History,
+    bool IdempotentReplay);
+
+public sealed record CompensateSpaceUnderlayRequest(
+    int SchemaVersion,
+    string Direction,
+    Guid OriginalCommandBatchId,
+    string HistorySha256,
+    Guid CommandBatchId,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision);
+
+public sealed record CompensateSpaceUnderlayResponse(
+    int SchemaVersion,
+    Guid OriginalCommandBatchId,
+    Guid CommandBatchId,
+    string Direction,
+    string HistorySha256,
+    SpaceSceneFloorDto Floor,
+    long VersionContentRevision,
     bool IdempotentReplay);
 
 public sealed record SpaceJobDto(

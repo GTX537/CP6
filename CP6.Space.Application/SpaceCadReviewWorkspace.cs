@@ -86,6 +86,10 @@ public static class SpaceCadReviewWorkspace
             }
         }
 
+        var canonicalChanges = CanonicalChanges(changes ?? []);
+        foreach (var change in canonicalChanges)
+            ValidateChange(change);
+
         var openItems = diagnosticIndex.Diagnostics
             .Select(DiagnosticItem)
             .Concat(diagnosticIndex.Evidence
@@ -98,6 +102,11 @@ public static class SpaceCadReviewWorkspace
                     or SpaceExcelCadMatchDisposition.Error)
                 .Select(item => ExcelItem(item, diagnosticIndex.FloorLogicalId))
                 ?? [])
+            .Concat(canonicalChanges
+                .Where(item => item.IsManualCorrectionLocked)
+                .Select(item => ManualCorrectionItem(
+                    item,
+                    diagnosticIndex.FloorLogicalId)))
             .ToDictionary(item => item.TrackingKey, StringComparer.Ordinal);
 
         var resolvedItems = previousWorkspace?.Items
@@ -118,7 +127,6 @@ public static class SpaceCadReviewWorkspace
                 "CAD review workspace exceeds the bounded item count.");
         }
 
-        var canonicalChanges = CanonicalChanges(changes ?? []);
         var changesetSha256 = sourceId.HasValue
             ? ComputeSha256(CanonicalJson(new
             {
@@ -396,6 +404,38 @@ public static class SpaceCadReviewWorkspace
             row.MatchEvidenceSha256);
     }
 
+    private static SpaceCadReviewItemV1 ManualCorrectionItem(
+        SpaceCadChangeV1 change,
+        Guid floorLogicalId)
+    {
+        var bounds = change.BeforeBounds ?? change.AfterBounds;
+        return Item(
+            $"cad-manual-correction:{change.ChangeId}:v{change.UserCorrectionVersion}",
+            SpaceCadReviewItemKind.SemanticDiagnostic,
+            SpaceCadIssueSeverity.Blocking,
+            SpaceErrorCodes.CadManualCorrectionLocked,
+            [],
+            $"userCorrectionVersion={change.UserCorrectionVersion}",
+            "keep-manual-correction-or-unlock",
+            change.SourceRef,
+            change.PreviewObjectId,
+            change.LogicalId,
+            null,
+            null,
+            new SpaceCadDiagnosticLocationV1(
+                SpaceCadDiagnosticLocationKind.Entity,
+                floorLogicalId,
+                LayerId: null,
+                BlockName: null,
+                change.SourceRef,
+                change.PreviewObjectId,
+                bounds,
+                Anchor: null,
+                SuggestedPaddingMillimeters: 1_000,
+                CanFocusCanvas: bounds is not null),
+            ComputeSha256(CanonicalJson(change)));
+    }
+
     private static SpaceCadReviewItemV1 Item(
         string trackingKey,
         SpaceCadReviewItemKind kind,
@@ -567,6 +607,15 @@ public static class SpaceCadReviewWorkspace
                 SpaceCadChangeKind.Add or
                 SpaceCadChangeKind.Modify or
                 SpaceCadChangeKind.Delete) ||
+            change.UserCorrectionVersion < 0 ||
+            change.IsManualCorrectionLocked &&
+                (change.UserCorrectionVersion <= 0 ||
+                 change.Kind != SpaceCadChangeKind.Conflict ||
+                 change.CanApply ||
+                 !string.Equals(
+                     change.BlockingReasonCode,
+                     SpaceErrorCodes.CadManualCorrectionLocked,
+                     StringComparison.Ordinal)) ||
             change.BlockingReasonCode is not null &&
                 !IsToken(change.BlockingReasonCode))
         {

@@ -47,6 +47,25 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
         return version;
     }
 
+    public static SpaceModelVersion CreateBlankDraft(
+        Guid tenantId,
+        Guid modelId,
+        long versionNo,
+        string name,
+        Guid initializationOperationId)
+    {
+        if (initializationOperationId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Initialization operation is required.",
+                nameof(initializationOperationId));
+        }
+
+        var version = CreateDraft(tenantId, modelId, versionNo, name);
+        version.CloneOperationId = initializationOperationId;
+        return version;
+    }
+
     public static SpaceModelVersion CreateInitializingClone(
         Guid tenantId,
         Guid modelId,

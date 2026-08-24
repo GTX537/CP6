@@ -187,6 +187,17 @@ public sealed class SpaceLocationExternalBinding : SpaceTenantEntity
 
     public void Remove() => MarkEntityDeleted();
 
+    public void Restore(
+        Guid tenantId,
+        SpaceLocationRevision location,
+        SpaceLocationBindingMode bindingMode,
+        SpaceModelSource source,
+        string sourceRef)
+    {
+        UpdateTarget(tenantId, location, bindingMode, source, sourceRef);
+        MarkEntityActive();
+    }
+
     private static void EnsureSameSnapshot(
         Guid tenantId,
         SpaceLocationRevision location,
@@ -304,6 +315,16 @@ public sealed class SpaceDesignAttribute : SpaceTenantEntity
     }
 
     public void Remove() => MarkEntityDeleted();
+
+    public void Restore(
+        string value,
+        string? unit,
+        SpaceModelSource source,
+        string sourceRef)
+    {
+        UpdateValue(value, unit, source, sourceRef);
+        MarkEntityActive();
+    }
 
     private static string Required(
         string value,

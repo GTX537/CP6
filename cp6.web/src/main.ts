@@ -19,8 +19,8 @@ import { permission } from './directives/permission'
 import { usePermissionStore } from './stores/permission'
 
 async function bootstrap() {
-  // 先从API加载翻译数据
-  await initI18n()
+  // 后台初始化/增量同步语言包（已由 hydrateCachedLanguagePacks 同步载入本地缓存，此处不阻塞首屏挂载）
+  void initI18n()
 
   const app = createApp(App)
 
@@ -49,8 +49,10 @@ async function bootstrap() {
 
   app.mount('#app')
 
-  // 已登录则预拉当前用户操作权（v-permission 数据源）；未登录会静默失败
-  usePermissionStore().loadMyActions()
+  // 仅在已有登录态时预拉当前用户操作权。匿名访问登录页不触发 401
+  if (localStorage.getItem('cp6_authed') === '1') {
+    usePermissionStore().loadMyActions()
+  }
 }
 
 bootstrap()

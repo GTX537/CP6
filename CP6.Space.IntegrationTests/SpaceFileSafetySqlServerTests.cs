@@ -166,7 +166,11 @@ public sealed class SpaceFileSafetySqlServerTests
                 design.SiteId);
             var request = new AttachSpaceUnderlayRequest(
                 source.Id,
-                ExpectedFloorRevision: 0);
+                ExpectedFloorRevision: 0,
+                ExpectedContentRevision: 0,
+                design.ClientInstanceId,
+                design.LeaseId,
+                CommandBatchId: Guid.NewGuid());
 
             var first = await service.AttachAsync(
                 design.DraftVersionId,
@@ -183,6 +187,102 @@ public sealed class SpaceFileSafetySqlServerTests
             Assert.True(replay.IdempotentReplay);
             Assert.Equal(source.Id, first.Floor.UnderlaySourceId);
             Assert.Equal(1, first.Floor.RevisionNumber);
+            Assert.Equal("UnderlaySet", first.History.OperationType);
+            Assert.Equal(request.CommandBatchId, first.History.OriginalCommandBatchId);
+            Assert.Matches("^[0-9a-f]{64}$", first.History.HistorySha256);
+
+            var undoRequest = new CompensateSpaceUnderlayRequest(
+                SchemaVersion: SpaceUnderlayHistoryVersions.SchemaVersion,
+                Direction: SpaceUnderlayCompensationDirections.Undo,
+                OriginalCommandBatchId: first.History.OriginalCommandBatchId,
+                HistorySha256: first.History.HistorySha256,
+                CommandBatchId: Guid.NewGuid(),
+                ClientInstanceId: design.ClientInstanceId,
+                LeaseId: design.LeaseId,
+                ExpectedFloorRevision: 1,
+                ExpectedContentRevision: 1);
+            var invalidHistory = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.CompensateAsync(
+                    design.DraftVersionId,
+                    design.FloorLogicalId,
+                    undoRequest with
+                    {
+                        CommandBatchId = Guid.NewGuid(),
+                        HistorySha256 = new string('0', 64),
+                    },
+                    "undo-invalid-underlay-history"));
+            Assert.Equal(SpaceErrorCodes.UnderlayHistoryInvalid, invalidHistory.Code);
+            var wrongSession = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.CompensateAsync(
+                    design.DraftVersionId,
+                    design.FloorLogicalId,
+                    undoRequest with
+                    {
+                        CommandBatchId = Guid.NewGuid(),
+                        ClientInstanceId = Guid.NewGuid(),
+                    },
+                    "undo-underlay-wrong-session"));
+            Assert.Equal(SpaceErrorCodes.EditLeaseLost, wrongSession.Code);
+            var undone = await service.CompensateAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                undoRequest,
+                "undo-attach-underlay");
+            var undoReplay = await service.CompensateAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                undoRequest,
+                "undo-attach-underlay");
+            Assert.Null(undone.Floor.UnderlaySourceId);
+            Assert.Equal(2, undone.Floor.RevisionNumber);
+            Assert.True(undoReplay.IdempotentReplay);
+
+            var redoRequest = undoRequest with
+            {
+                Direction = SpaceUnderlayCompensationDirections.Redo,
+                CommandBatchId = Guid.NewGuid(),
+                ExpectedFloorRevision = 2,
+                ExpectedContentRevision = 2,
+            };
+            var redone = await service.CompensateAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                redoRequest,
+                "redo-attach-underlay");
+            Assert.Equal(source.Id, redone.Floor.UnderlaySourceId);
+            Assert.Equal(3, redone.Floor.RevisionNumber);
+
+            var detachRequest = request with
+            {
+                SourceId = null,
+                ExpectedFloorRevision = 3,
+                ExpectedContentRevision = 3,
+                CommandBatchId = Guid.NewGuid(),
+            };
+            var detached = await service.AttachAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                detachRequest,
+                "detach-underlay-once");
+            Assert.Null(detached.Floor.UnderlaySourceId);
+            Assert.Equal(4, detached.Floor.RevisionNumber);
+
+            var undoDetach = await service.CompensateAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                new CompensateSpaceUnderlayRequest(
+                    SchemaVersion: SpaceUnderlayHistoryVersions.SchemaVersion,
+                    Direction: SpaceUnderlayCompensationDirections.Undo,
+                    OriginalCommandBatchId: detached.History.OriginalCommandBatchId,
+                    HistorySha256: detached.History.HistorySha256,
+                    CommandBatchId: Guid.NewGuid(),
+                    ClientInstanceId: design.ClientInstanceId,
+                    LeaseId: design.LeaseId,
+                    ExpectedFloorRevision: 4,
+                    ExpectedContentRevision: 4),
+                "undo-detach-underlay");
+            Assert.Equal(source.Id, undoDetach.Floor.UnderlaySourceId);
+            Assert.Equal(5, undoDetach.Floor.RevisionNumber);
             context.ChangeTracker.Clear();
             var floor = await context.FloorRevisions.SingleAsync(
                 candidate =>
@@ -191,9 +291,11 @@ public sealed class SpaceFileSafetySqlServerTests
             var version = await context.Versions.SingleAsync(
                 candidate => candidate.Id == design.DraftVersionId);
             Assert.Equal(source.Id, floor.UnderlaySourceId);
-            Assert.Equal(1, floor.Revision);
-            Assert.Equal(1, version.ContentRevision);
-            Assert.Single(context.IdempotencyRecords);
+            Assert.Equal(5, floor.Revision);
+            Assert.Equal(5, version.ContentRevision);
+            Assert.Equal(5, context.IdempotencyRecords.Count());
+            Assert.Equal(5, context.ElementCommandBatches.Count());
+            Assert.Equal(5, context.ElementCommandRecords.Count());
         });
     }
 
@@ -253,7 +355,11 @@ public sealed class SpaceFileSafetySqlServerTests
                 design.FloorLogicalId,
                 new AttachSpaceUnderlayRequest(
                     source.Id,
-                    ExpectedFloorRevision: 0),
+                    ExpectedFloorRevision: 0,
+                    ExpectedContentRevision: 0,
+                    design.ClientInstanceId,
+                    design.LeaseId,
+                    CommandBatchId: Guid.NewGuid()),
                 "attach-before-calibration");
             var request = new SaveSpaceUnderlayCalibrationRequest(
                 design.FloorLogicalId,
@@ -275,7 +381,11 @@ public sealed class SpaceFileSafetySqlServerTests
                     400,
                     1_000,
                     3_000),
-                ExpectedFloorRevision: 1);
+                ExpectedFloorRevision: 1,
+                ExpectedContentRevision: 1,
+                design.ClientInstanceId,
+                design.LeaseId,
+                CommandBatchId: Guid.NewGuid());
 
             var first = await service.CalibrateAsync(
                 design.DraftVersionId,
@@ -318,13 +428,69 @@ public sealed class SpaceFileSafetySqlServerTests
             Assert.Single(context.UnderlayCalibrations);
             Assert.Equal(2, context.IdempotencyRecords.Count());
 
-            await service.AttachAsync(
+            var undoCalibration = await service.CompensateAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                new CompensateSpaceUnderlayRequest(
+                    SchemaVersion: SpaceUnderlayHistoryVersions.SchemaVersion,
+                    Direction: SpaceUnderlayCompensationDirections.Undo,
+                    OriginalCommandBatchId: first.History.OriginalCommandBatchId,
+                    HistorySha256: first.History.HistorySha256,
+                    CommandBatchId: Guid.NewGuid(),
+                    ClientInstanceId: design.ClientInstanceId,
+                    LeaseId: design.LeaseId,
+                    ExpectedFloorRevision: 2,
+                    ExpectedContentRevision: 2),
+                "undo-underlay-calibration");
+            Assert.Null(undoCalibration.Floor.UnderlayCalibrationId);
+            Assert.Equal(source.Id, undoCalibration.Floor.UnderlaySourceId);
+
+            var redoCalibration = await service.CompensateAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                new CompensateSpaceUnderlayRequest(
+                    SchemaVersion: SpaceUnderlayHistoryVersions.SchemaVersion,
+                    Direction: SpaceUnderlayCompensationDirections.Redo,
+                    OriginalCommandBatchId: first.History.OriginalCommandBatchId,
+                    HistorySha256: first.History.HistorySha256,
+                    CommandBatchId: Guid.NewGuid(),
+                    ClientInstanceId: design.ClientInstanceId,
+                    LeaseId: design.LeaseId,
+                    ExpectedFloorRevision: 3,
+                    ExpectedContentRevision: 3),
+                "redo-underlay-calibration");
+            Assert.Equal(first.Calibration.Id, redoCalibration.Floor.UnderlayCalibrationId);
+
+            var replacement = await service.AttachAsync(
                 design.DraftVersionId,
                 design.FloorLogicalId,
                 new AttachSpaceUnderlayRequest(
                     replacementSource.Id,
-                    ExpectedFloorRevision: 2),
+                    ExpectedFloorRevision: 4,
+                    ExpectedContentRevision: 4,
+                    design.ClientInstanceId,
+                    design.LeaseId,
+                    CommandBatchId: Guid.NewGuid()),
                 "attach-replacement-underlay");
+            Assert.Equal(replacementSource.Id, replacement.Floor.UnderlaySourceId);
+            Assert.Null(replacement.Floor.UnderlayCalibrationId);
+
+            var undoReplacement = await service.CompensateAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                new CompensateSpaceUnderlayRequest(
+                    SchemaVersion: SpaceUnderlayHistoryVersions.SchemaVersion,
+                    Direction: SpaceUnderlayCompensationDirections.Undo,
+                    OriginalCommandBatchId: replacement.History.OriginalCommandBatchId,
+                    HistorySha256: replacement.History.HistorySha256,
+                    CommandBatchId: Guid.NewGuid(),
+                    ClientInstanceId: design.ClientInstanceId,
+                    LeaseId: design.LeaseId,
+                    ExpectedFloorRevision: 5,
+                    ExpectedContentRevision: 5),
+                "undo-underlay-replacement");
+            Assert.Equal(source.Id, undoReplacement.Floor.UnderlaySourceId);
+            Assert.Equal(first.Calibration.Id, undoReplacement.Floor.UnderlayCalibrationId);
             var keyConflict =
                 await Assert.ThrowsAsync<SpaceProblemException>(
                     () => service.CalibrateAsync(
@@ -479,6 +645,233 @@ public sealed class SpaceFileSafetySqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Unused_source_is_logically_removed_idempotently_and_file_is_retained()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            var seeded = await SeedWritableDesignAsync(
+                connectionString,
+                execution,
+                clock);
+            var file = NewFile(
+                execution.TenantId,
+                clean: true,
+                retainUntilUtc: Now.AddDays(30));
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            context.Files.Add(file);
+            await context.SaveChangesAsync();
+            var service = NewDesignService(
+                context,
+                execution,
+                clock,
+                seeded.SiteId);
+            var created = await service.CreateSourceAsync(
+                seeded.DraftVersionId,
+                new CreateSpaceSourceRequest(
+                    file.Id,
+                    "Pdf",
+                    "Unused source"),
+                "create-unused-source");
+
+            var preview = await service.GetSourceRemovalPreviewAsync(
+                seeded.DraftVersionId,
+                created.Source.Id);
+            Assert.True(preview.CanRemove);
+            Assert.Empty(preview.References);
+            Assert.True(preview.PhysicalFileRetained);
+
+            var request = new RemoveSpaceSourceRequest(
+                preview.VersionContentRevision,
+                preview.SourceRowVersion);
+            var removed = await service.RemoveSourceAsync(
+                seeded.DraftVersionId,
+                created.Source.Id,
+                request,
+                "remove-unused-source");
+            var replay = await service.RemoveSourceAsync(
+                seeded.DraftVersionId,
+                created.Source.Id,
+                request,
+                "remove-unused-source");
+
+            Assert.False(removed.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(
+                preview.VersionContentRevision + 1,
+                removed.VersionContentRevision);
+            context.ChangeTracker.Clear();
+            var tombstone = await context.Sources
+                .IgnoreQueryFilters()
+                .SingleAsync(source => source.Id == created.Source.Id);
+            var retainedFile = await context.Files
+                .IgnoreQueryFilters()
+                .SingleAsync(candidate => candidate.Id == file.Id);
+            Assert.True(tombstone.IsDeleted);
+            Assert.False(retainedFile.IsDeleted);
+            Assert.Equal(SpaceFileState.Clean, retainedFile.State);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            var seeded = await SeedWritableDesignAsync(
+                connectionString,
+                execution,
+                clock);
+            var file = NewFile(
+                execution.TenantId,
+                clean: true,
+                retainUntilUtc: Now.AddDays(30));
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            context.Files.Add(file);
+            await context.SaveChangesAsync();
+            var service = NewDesignService(
+                context,
+                execution,
+                clock,
+                seeded.SiteId);
+            var created = await service.CreateSourceAsync(
+                seeded.DraftVersionId,
+                new CreateSpaceSourceRequest(
+                    file.Id,
+                    "Pdf",
+                    "Job source"),
+                "create-job-source");
+            var job = SpaceJob.CreateQueued(
+                execution.TenantId,
+                SpaceJobType.CadParse,
+                SpaceJobSubjectType.ModelSource,
+                created.Source.Id,
+                new string('a', 64),
+                new string('b', 64),
+                priority: 10,
+                maxAttempts: 2,
+                execution.ActorId,
+                Now,
+                execution.CorrelationId);
+            context.Jobs.Add(job);
+            await context.SaveChangesAsync();
+
+            var blocked = await service.GetSourceRemovalPreviewAsync(
+                seeded.DraftVersionId,
+                created.Source.Id);
+            var activeReference = Assert.Single(
+                blocked.References,
+                reference =>
+                    reference.Code ==
+                    SpaceSourceRemovalReferenceCodes.ActiveJobs);
+            Assert.True(activeReference.BlocksRemoval);
+            Assert.False(blocked.CanRemove);
+            var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.RemoveSourceAsync(
+                    seeded.DraftVersionId,
+                    created.Source.Id,
+                    new RemoveSpaceSourceRequest(
+                        blocked.VersionContentRevision,
+                        blocked.SourceRowVersion),
+                    "blocked-remove"));
+            Assert.Equal(SpaceErrorCodes.SourceReferenced, error.Code);
+
+            job.RequestCancellation(execution.ActorId, Now);
+            await context.SaveChangesAsync();
+            var retained = await service.GetSourceRemovalPreviewAsync(
+                seeded.DraftVersionId,
+                created.Source.Id);
+            var auditReference = Assert.Single(
+                retained.References,
+                reference =>
+                    reference.Code ==
+                    SpaceSourceRemovalReferenceCodes.JobAudit);
+            Assert.False(auditReference.BlocksRemoval);
+            Assert.True(retained.CanRemove);
+            await service.RemoveSourceAsync(
+                seeded.DraftVersionId,
+                created.Source.Id,
+                new RemoveSpaceSourceRequest(
+                    retained.VersionContentRevision,
+                    retained.SourceRowVersion),
+                "remove-after-cancel");
+
+            context.ChangeTracker.Clear();
+            Assert.True(await context.Jobs.IgnoreQueryFilters().AnyAsync(
+                candidate => candidate.Id == job.Id));
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Active_design_revision_blocks_source_removal()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            var seeded = await SeedWritableDesignAsync(
+                connectionString,
+                execution,
+                clock);
+            var file = NewFile(
+                execution.TenantId,
+                clean: true,
+                retainUntilUtc: Now.AddDays(30));
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            context.Files.Add(file);
+            await context.SaveChangesAsync();
+            var service = NewDesignService(
+                context,
+                execution,
+                clock,
+                seeded.SiteId);
+            var created = await service.CreateSourceAsync(
+                seeded.DraftVersionId,
+                new CreateSpaceSourceRequest(
+                    file.Id,
+                    "Pdf",
+                    "Design source"),
+                "create-design-source");
+            var source = await context.Sources.SingleAsync(
+                candidate => candidate.Id == created.Source.Id);
+            var floor = await context.FloorRevisions.SingleAsync(
+                candidate =>
+                    candidate.ModelVersionId == seeded.DraftVersionId &&
+                    candidate.LogicalId == seeded.FloorLogicalId);
+            floor.AttachSource(source, "manual-floor-reference");
+            await context.SaveChangesAsync();
+
+            var preview = await service.GetSourceRemovalPreviewAsync(
+                seeded.DraftVersionId,
+                source.Id);
+            var designReference = Assert.Single(
+                preview.References,
+                reference =>
+                    reference.Code ==
+                    SpaceSourceRemovalReferenceCodes.DesignRevisions);
+            Assert.True(designReference.BlocksRemoval);
+            Assert.False(preview.CanRemove);
+
+            var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.RemoveSourceAsync(
+                    seeded.DraftVersionId,
+                    source.Id,
+                    new RemoveSpaceSourceRequest(
+                        preview.VersionContentRevision,
+                        preview.SourceRowVersion),
+                    "blocked-design-remove"));
+            Assert.Equal(SpaceErrorCodes.SourceReferenced, error.Code);
+            Assert.False(source.IsDeleted);
+        });
+    }
+
+    [SqlServerFact]
     public async Task Tombstone_survives_object_failure_and_can_be_completed_later()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>
@@ -600,7 +993,9 @@ public sealed class SpaceFileSafetySqlServerTests
     private static async Task<(
         Guid SiteId,
         Guid DraftVersionId,
-        Guid FloorLogicalId)>
+        Guid FloorLogicalId,
+        Guid ClientInstanceId,
+        Guid LeaseId)>
         SeedWritableDesignAsync(
             string connectionString,
             TestExecutionContext execution,
@@ -647,9 +1042,28 @@ public sealed class SpaceFileSafetySqlServerTests
             1,
             "F1",
             "Floor 1");
-        context.AddRange(draft, floor);
+        var clientInstanceId = Guid.NewGuid();
+        var leaseNow = await context.Database
+            .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
+            .SingleAsync();
+        leaseNow = DateTime.SpecifyKind(leaseNow, DateTimeKind.Utc);
+        var lease = SpaceEditLease.Create(
+            execution.TenantId,
+            draft.Id,
+            floor.LogicalId,
+            execution.ActorId,
+            "Space file safety test",
+            clientInstanceId,
+            leaseNow,
+            TimeSpan.FromMinutes(5));
+        context.AddRange(draft, floor, lease);
         await context.SaveChangesAsync();
-        return (model.SiteId, draft.Id, floor.LogicalId);
+        return (
+            model.SiteId,
+            draft.Id,
+            floor.LogicalId,
+            clientInstanceId,
+            lease.LeaseId);
     }
 
     private static SpaceDesignV1Service NewDesignService(

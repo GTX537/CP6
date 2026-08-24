@@ -115,10 +115,25 @@ public sealed class SpaceGaEvidenceIndexTests
         var root = document.RootElement;
         var implementationComplete = root.GetProperty("gates")
             .EnumerateArray()
-            .Count(gate => gate.GetProperty("implementationStatus").GetString() ==
-                "Complete");
+            .Where(gate => gate.GetProperty("implementationStatus").GetString() ==
+                "Complete")
+            .Select(gate => gate.GetProperty("id").GetString()!)
+            .ToArray();
 
-        Assert.True(implementationComplete >= 5);
+        Assert.Equal(
+            [
+                "WP2_CAD_START_WIZARD",
+                "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
+                "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY"
+            ],
+            implementationComplete);
+        Assert.Contains(
+            root.GetProperty("gates").EnumerateArray(),
+            gate =>
+                gate.GetProperty("id").GetString() ==
+                    "WP1_DESIGN_V1_MANUAL_MODELING" &&
+                gate.GetProperty("implementationStatus").GetString() ==
+                    "Partial");
         Assert.False(IsGaReady(root));
         Assert.Contains(
             "every blocking gate is Accepted",

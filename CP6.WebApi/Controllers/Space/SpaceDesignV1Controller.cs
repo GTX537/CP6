@@ -4,6 +4,7 @@ using CP6.Core.Auth;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
+using CP6.WebApi.Filters;
 using CP6.WebApi.OpenApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -146,6 +147,43 @@ public sealed class SpaceDesignV1Controller(
         CancellationToken cancellationToken) =>
         service.GetVersionAsync(versionId, cancellationToken);
 
+    [HttpGet("versions/{versionId:guid}/floors")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<IReadOnlyList<SpaceSceneFloorDto>>(
+        StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<SpaceSceneFloorDto>> GetFloors(
+        Guid versionId,
+        CancellationToken cancellationToken) =>
+        service.GetFloorsAsync(versionId, cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/floors")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CreateSpaceFloorResponse>(
+        StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateFloor(
+        Guid versionId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] CreateSpaceFloorRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CreateFloorAsync(
+            versionId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return CreatedAtAction(
+            nameof(GetScene),
+            new
+            {
+                versionId,
+                floorLogicalId = result.Floor.Revision.LogicalId,
+            },
+            result);
+    }
+
     [HttpGet("versions/{versionId:guid}/floors/{floorLogicalId:guid}/scene")]
     [RequirePermission("space", "model:read")]
     [ProducesResponseType<SpaceDesignSceneDto>(StatusCodes.Status200OK)]
@@ -271,10 +309,48 @@ public sealed class SpaceDesignV1Controller(
             result);
     }
 
+    [HttpGet(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/removal-preview")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceSourceRemovalPreviewDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreview(
+        Guid versionId,
+        Guid sourceId,
+        CancellationToken cancellationToken) =>
+        service.GetSourceRemovalPreviewAsync(
+            versionId,
+            sourceId,
+            cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/sources/{sourceId:guid}:remove")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<RemoveSpaceSourceResponse>(
+        StatusCodes.Status200OK)]
+    public async Task<IActionResult> RemoveSource(
+        Guid versionId,
+        Guid sourceId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] RemoveSpaceSourceRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.RemoveSourceAsync(
+            versionId,
+            sourceId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Ok(result);
+    }
+
     [HttpPost("versions/{versionId:guid}/underlay-sources")]
     [Consumes("multipart/form-data")]
-    [RequirePermission("space", "source:upload")]
-    [RequirePermission("space", "model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
     [RequestSizeLimit(UnderlayUploadLimit)]
     [RequestFormLimits(MultipartBodyLengthLimit = UnderlayUploadLimit)]
     [ProducesResponseType<UploadSpaceUnderlayResponse>(
@@ -297,7 +373,7 @@ public sealed class SpaceDesignV1Controller(
     }
 
     [HttpGet("versions/{versionId:guid}/files/{fileId:guid}")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceFileDto>(StatusCodes.Status200OK)]
     public Task<SpaceFileDto> GetFile(
         Guid versionId,
@@ -309,7 +385,7 @@ public sealed class SpaceDesignV1Controller(
             cancellationToken);
 
     [HttpGet("versions/{versionId:guid}/sources/{sourceId:guid}/content")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType(
         typeof(FileStreamResult),
         StatusCodes.Status200OK,
@@ -340,7 +416,7 @@ public sealed class SpaceDesignV1Controller(
 
     [HttpGet(
         "versions/{versionId:guid}/sources/{sourceId:guid}/underlay-calibration")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceUnderlayCalibrationDto>(
         StatusCodes.Status200OK)]
     public Task<SpaceUnderlayCalibrationDto> GetUnderlayCalibration(
@@ -356,8 +432,8 @@ public sealed class SpaceDesignV1Controller(
 
     [HttpPost(
         "versions/{versionId:guid}/sources/{sourceId:guid}/underlay-calibration")]
-    [RequirePermission("space", "source:upload")]
-    [RequirePermission("space", "model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
     [ProducesResponseType<SaveSpaceUnderlayCalibrationResponse>(
         StatusCodes.Status200OK)]
     public async Task<IActionResult> CalibrateUnderlay(
@@ -381,8 +457,8 @@ public sealed class SpaceDesignV1Controller(
 
     [HttpPut(
         "versions/{versionId:guid}/floors/{floorLogicalId:guid}/underlay")]
-    [RequirePermission("space", "source:upload")]
-    [RequirePermission("space", "model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
     [ProducesResponseType<AttachSpaceUnderlayResponse>(
         StatusCodes.Status200OK)]
     public async Task<IActionResult> AttachUnderlay(
@@ -394,6 +470,35 @@ public sealed class SpaceDesignV1Controller(
         CancellationToken cancellationToken)
     {
         var result = await underlays.AttachAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Ok(result);
+    }
+
+    [HttpPost(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/underlay:compensate")]
+    [SpaceAuditOperation(
+        "space.underlay.compensate",
+        "Floor",
+        ResourceIdArgument = "floorLogicalId",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CompensateSpaceUnderlayResponse>(
+        StatusCodes.Status200OK)]
+    public async Task<IActionResult> CompensateUnderlay(
+        Guid versionId,
+        Guid floorLogicalId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] CompensateSpaceUnderlayRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await underlays.CompensateAsync(
             versionId,
             floorLogicalId,
             request,
@@ -509,6 +614,73 @@ public sealed class SpaceDesignV1Controller(
         wmsAdoptions.PlaceAsync(
             versionId,
             adoptionId,
+            request,
+            cancellationToken);
+
+    [HttpPost("templates")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CreateTenantSpaceWarehouseTemplateResponse>(
+        StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateTenantWarehouseTemplate(
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required]
+        CreateTenantSpaceWarehouseTemplateRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CreateTenantWarehouseTemplateAsync(
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return CreatedAtAction(
+            nameof(GetWarehouseTemplates),
+            new { scope = "Tenant" },
+            result);
+    }
+
+    [HttpGet("templates")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<IReadOnlyList<SpaceWarehouseTemplateDto>>(
+        StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<SpaceWarehouseTemplateDto>>
+        GetWarehouseTemplates(
+            [FromQuery] string? scope = null,
+            CancellationToken cancellationToken = default) =>
+        service.GetWarehouseTemplatesAsync(scope, cancellationToken);
+
+    [HttpPost("templates/{templateId:guid}/instantiate")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceWarehouseTemplateInstantiationPreviewDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWarehouseTemplateInstantiationPreviewDto>
+        PreviewWarehouseTemplate(
+            Guid templateId,
+            [FromBody, Required] PreviewSpaceWarehouseTemplateRequest request,
+            CancellationToken cancellationToken) =>
+        service.PreviewWarehouseTemplateAsync(
+            templateId,
+            request,
+            cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/templates/{templateId:guid}:apply")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<ApplySpaceWarehouseTemplateFloorResponse>(
+        StatusCodes.Status200OK)]
+    public Task<ApplySpaceWarehouseTemplateFloorResponse>
+        ApplyWarehouseTemplateFloor(
+            Guid versionId,
+            Guid floorLogicalId,
+            Guid templateId,
+            [FromBody, Required]
+            ApplySpaceWarehouseTemplateFloorRequest request,
+            CancellationToken cancellationToken) =>
+        service.ApplyWarehouseTemplateFloorAsync(
+            versionId,
+            floorLogicalId,
+            templateId,
             request,
             cancellationToken);
 }

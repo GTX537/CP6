@@ -5,7 +5,28 @@ import type {
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 import type { ElementPropertiesPayload } from '@/api/space/designElements'
 
+export const SPACE_ELEMENT_TYPES = [
+  'Wall',
+  'Column',
+  'Door',
+  'Dock',
+  'Stair',
+  'Elevator',
+  'Pallet',
+  'Device',
+  'Workstation',
+  'Conveyor',
+  'StaticEquipment',
+  'Annotation',
+  'Dimension',
+  'Guide',
+  'RestrictedArea',
+  'Decoration',
+  'ImportedReference',
+] as const
+
 export interface ElementPropertiesDraft {
+  elementType: string
   x: number
   y: number
   z: number
@@ -24,6 +45,7 @@ export function createElementPropertiesDraft(
   attributes: readonly ISpaceSceneElementAttributeDto[],
 ): ElementPropertiesDraft {
   return {
+    elementType: element.elementType ?? '',
     x: element.x ?? 0,
     y: element.y ?? 0,
     z: element.z ?? 0,
@@ -48,6 +70,10 @@ export function buildElementPropertiesPayload(
   element: ISpaceSceneElementDto,
   draft: ElementPropertiesDraft,
 ): ElementPropertiesPayload {
+  const elementType = draft.elementType.trim()
+  if (!(SPACE_ELEMENT_TYPES as readonly string[]).includes(elementType)) {
+    throw new Error('A supported Space element type is required')
+  }
   if (
     !Number.isInteger(draft.x) ||
     !Number.isInteger(draft.y) ||
@@ -92,7 +118,8 @@ export function buildElementPropertiesPayload(
   }
 
   return {
-    geometryJson: updateGeometryEnvelope(element.geometryJson ?? '{}', draft),
+    elementType,
+    geometryJson: updateGeometryEnvelope(element, draft),
     x: draft.x,
     y: draft.y,
     z: draft.z,
@@ -107,10 +134,38 @@ export function buildElementPropertiesPayload(
   }
 }
 
+export function sceneElementPropertiesPayload(
+  element: ISpaceSceneElementDto,
+  attributes: readonly ISpaceSceneElementAttributeDto[],
+): ElementPropertiesPayload {
+  return {
+    elementType: element.elementType,
+    geometryJson: element.geometryJson ?? '{}',
+    x: element.x ?? 0,
+    y: element.y ?? 0,
+    z: element.z ?? 0,
+    rotationZ: element.rotationZ ?? 0,
+    width: element.width ?? 1,
+    height: element.height ?? 1,
+    depth: element.depth ?? 1,
+    businessCode: element.businessCode,
+    linkedEntityType: element.linkedEntityType,
+    linkedLogicalId: element.linkedLogicalId,
+    attributes: attributes.map((attribute) => ({
+      namespace: attribute.namespace ?? '',
+      key: attribute.key ?? '',
+      valueType: attribute.valueType ?? 'String',
+      value: attribute.value,
+      unit: attribute.unit,
+    })),
+  }
+}
+
 function updateGeometryEnvelope(
-  geometryJson: string,
+  element: ISpaceSceneElementDto,
   draft: Pick<ElementPropertiesDraft, 'width' | 'height' | 'depth'>,
 ): string {
+  const geometryJson = element.geometryJson ?? '{}'
   const geometry = JSON.parse(geometryJson) as Record<string, unknown>
   if (geometry.schemaVersion !== 1) {
     throw new Error('Only geometry schemaVersion 1 is editable')
@@ -123,6 +178,15 @@ function updateGeometryEnvelope(
     geometry.width = draft.depth
   } else if (geometry.kind === 'polygon') {
     geometry.height = draft.height
+  } else if (
+    geometry.kind === 'group'
+    && (
+      draft.width !== element.width
+      || draft.height !== element.height
+      || draft.depth !== element.depth
+    )
+  ) {
+    throw new Error('Group geometry dimensions cannot be edited directly')
   }
   return JSON.stringify(geometry)
 }

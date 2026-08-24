@@ -470,11 +470,34 @@ public sealed class SpaceCadParseJobTests
         Assert.Equal(SpaceElementTypes.Wall, change.ObjectType);
         Assert.Equal(1, workspace.ChangeSummary!.AddCount);
 
+        var currentCandidates = await fixture.Service.ListReviewCandidatesAsync(
+            fixture.Version.Id,
+            request.FloorLogicalId,
+            50);
+        Assert.Equal(0, currentCandidates.CurrentContentRevision);
+        Assert.False(currentCandidates.Truncated);
+        var currentCandidate = Assert.Single(currentCandidates.Items);
+        Assert.Equal(fixture.Source.Id, currentCandidate.SourceId);
+        Assert.Equal(started.JobId, currentCandidate.JobId);
+        Assert.Equal("warehouse.dxf", currentCandidate.SourceDisplayName);
+        Assert.True(currentCandidate.IsCurrentRevision);
+        Assert.True(currentCandidate.CanLoadReview);
+        Assert.Equal(request.MappingProfileId, currentCandidate.MappingProfileId);
+
         var version = await fixture.Context.Versions.SingleAsync(
             item => item.Id == fixture.Version.Id);
         version.TouchContent();
         await fixture.Context.SaveChangesAsync();
         fixture.Context.ChangeTracker.Clear();
+
+        var historicalCandidates = await fixture.Service.ListReviewCandidatesAsync(
+            fixture.Version.Id,
+            request.FloorLogicalId,
+            50);
+        Assert.Equal(1, historicalCandidates.CurrentContentRevision);
+        var historicalCandidate = Assert.Single(historicalCandidates.Items);
+        Assert.False(historicalCandidate.IsCurrentRevision);
+        Assert.False(historicalCandidate.CanLoadReview);
 
         var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
             fixture.Service.GetReviewWorkspaceAsync(
@@ -591,6 +614,17 @@ public sealed class SpaceCadParseJobTests
         Assert.True(replay.IdempotentReplay);
         Assert.Equal(applied.FloorRevision, replay.FloorRevision);
         Assert.Equal(1, applied.AppliedChangeCount);
+        var addUndo = Assert.Single(applied.UndoCommands);
+        Assert.Equal(SpaceElementCommandContract.DeleteObject, addUndo.Type);
+        Assert.Equal(change.LogicalId, addUndo.TargetLogicalId);
+        Assert.Null(addUndo.UpdateProperties);
+        var addRedo = Assert.Single(applied.RedoCommands);
+        Assert.Equal(
+            SpaceElementCommandContract.RestoreLogicalObject,
+            addRedo.Type);
+        Assert.Equal(change.LogicalId, addRedo.TargetLogicalId);
+        Assert.Equal(applied.UndoCommands, replay.UndoCommands);
+        Assert.Equal(applied.RedoCommands, replay.RedoCommands);
         var element = Assert.Single(await fixture.Context.ElementRevisions
             .AsNoTracking()
             .ToListAsync());
@@ -639,6 +673,381 @@ public sealed class SpaceCadParseJobTests
         Assert.Equal(SpaceErrorCodes.EditLeaseLost, lost.Code);
         Assert.Single(await fixture.Context.ElementRevisions.AsNoTracking().ToListAsync());
         Assert.Single(await fixture.Context.ElementCommandBatches.AsNoTracking().ToListAsync());
+    }
+
+    [Fact]
+    public async Task Cad_changeset_applies_more_than_the_interactive_command_limit_atomically()
+    {
+        const int changeCount = 101;
+        await using var fixture = await CreateFixtureAsync();
+        var provider = new ReviewWorkspaceProvider(
+            fixture.Execution.TenantId,
+            fixture.Source.Sha256,
+            changeCount);
+        var model = await fixture.Context.Models.SingleAsync();
+        var floor = SpaceFloorRevision.Create(
+            fixture.Execution.TenantId,
+            fixture.Version.Id,
+            provider.Request.FloorLogicalId,
+            model.SiteId,
+            1,
+            "F1",
+            "Floor 1",
+            0,
+            6000);
+        fixture.Context.FloorRevisions.Add(floor);
+        await fixture.Context.SaveChangesAsync();
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
+            "cad-review-large-apply");
+        await CompleteParseAsync(fixture, provider, started.JobId);
+        fixture.Context.ChangeTracker.Clear();
+
+        var workspace = await fixture.Service.GetReviewWorkspaceAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            started.JobId);
+        Assert.Equal(changeCount, workspace.Changes!.Count);
+        Assert.All(workspace.Changes, change => Assert.True(change.CanApply));
+        var clientId = Guid.NewGuid();
+        var lease = SpaceEditLease.Create(
+            fixture.Execution.TenantId,
+            fixture.Version.Id,
+            floor.LogicalId,
+            fixture.Execution.ActorId,
+            "CAD reviewer",
+            clientId,
+            Now,
+            TimeSpan.FromSeconds(90));
+        fixture.Context.EditLeases.Add(lease);
+        await fixture.Context.SaveChangesAsync();
+
+        var interactive = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Design.ApplyElementCommandsAsync(
+                fixture.Version.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    workspace.Changes.Select(change =>
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            change.LogicalId,
+                            UpdateProperties: null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Wall,
+                                """
+                                {"schemaVersion":1,"kind":"box","width":10000,"height":6000,"depth":200}
+                                """,
+                                0,
+                                0,
+                                0,
+                                0,
+                                10_000,
+                                6_000,
+                                200,
+                                null,
+                                null,
+                                fixture.Source.Id,
+                                change.SourceRef,
+                                [])))
+                        .ToArray(),
+                    workspace.EditorContentRevision,
+                    workspace.EditorContentHash,
+                    workspace.ChangesetSha256)));
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, interactive.Code);
+        Assert.Contains("between 1 and 100", interactive.Detail);
+
+        var applied = await fixture.Service.ApplyReviewChangesAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            started.JobId,
+            new ApplySpaceCadChangesetRequest(
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 0,
+                workspace.EditorContentRevision,
+                workspace.EditorContentHash,
+                workspace.WorkspaceSha256,
+                workspace.Changes.Select(change => change.ChangeId).ToArray()));
+
+        Assert.Equal(changeCount, applied.AppliedChangeCount);
+        Assert.Equal(changeCount, applied.UndoCommands.Count);
+        Assert.Equal(changeCount, applied.RedoCommands.Count);
+        Assert.Equal(1, applied.FloorRevision);
+        Assert.Equal(
+            workspace.EditorContentRevision + 1,
+            applied.VersionContentRevision);
+        Assert.Equal(
+            changeCount,
+            await fixture.Context.ElementRevisions.AsNoTracking().CountAsync());
+        Assert.Single(await fixture.Context.ElementCommandBatches
+            .AsNoTracking()
+            .ToListAsync());
+    }
+
+    [Fact]
+    public async Task Locked_manual_correction_survives_reparse_as_a_blocking_conflict()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var provider = new ReviewWorkspaceProvider(
+            fixture.Execution.TenantId,
+            fixture.Source.Sha256);
+        var model = await fixture.Context.Models.SingleAsync();
+        var floor = SpaceFloorRevision.Create(
+            fixture.Execution.TenantId,
+            fixture.Version.Id,
+            provider.Request.FloorLogicalId,
+            model.SiteId,
+            1,
+            "F1",
+            "Floor 1",
+            0,
+            6000);
+        fixture.Context.FloorRevisions.Add(floor);
+        await fixture.Context.SaveChangesAsync();
+        var firstParse = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
+            "cad-review-lock-first");
+        await CompleteParseAsync(fixture, provider, firstParse.JobId);
+        fixture.Context.ChangeTracker.Clear();
+
+        var firstWorkspace = await fixture.Service.GetReviewWorkspaceAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            firstParse.JobId);
+        var firstChange = Assert.Single(firstWorkspace.Changes!);
+        var clientId = Guid.NewGuid();
+        var lease = SpaceEditLease.Create(
+            fixture.Execution.TenantId,
+            fixture.Version.Id,
+            floor.LogicalId,
+            fixture.Execution.ActorId,
+            "CAD reviewer",
+            clientId,
+            Now,
+            TimeSpan.FromSeconds(90));
+        fixture.Context.EditLeases.Add(lease);
+        await fixture.Context.SaveChangesAsync();
+        await fixture.Service.ApplyReviewChangesAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            firstParse.JobId,
+            new ApplySpaceCadChangesetRequest(
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 0,
+                firstWorkspace.EditorContentRevision,
+                firstWorkspace.EditorContentHash,
+                firstWorkspace.WorkspaceSha256,
+                [firstChange.ChangeId]));
+
+        fixture.Context.ChangeTracker.Clear();
+        var element = await fixture.Context.ElementRevisions.SingleAsync();
+        var version = await fixture.Context.Versions.SingleAsync(item =>
+            item.Id == fixture.Version.Id);
+        var attributes = await fixture.Context.ElementAttributes
+            .Where(item => item.ElementRevisionId == element.Id)
+            .Select(item => new SpaceElementAttributeWriteDto(
+                item.Namespace,
+                item.Key,
+                item.ValueType,
+                item.Value,
+                item.Unit))
+            .ToArrayAsync();
+        SpaceUpdateElementPropertiesDto update(
+            SpaceElementRevision target,
+            int x,
+            bool? lockState = null) => new(
+                target.GeometryJson,
+                x,
+                target.Y,
+                target.Z,
+                target.RotationZ,
+                target.Width,
+                target.Height,
+                target.Depth,
+                target.BusinessCode,
+                target.LinkedEntityType,
+                target.LinkedLogicalId,
+                attributes,
+                target.ElementType,
+                lockState);
+        ApplySpaceElementCommandBatchRequest command(
+            long floorRevision,
+            long contentRevision,
+            string? contentHash,
+            SpaceUpdateElementPropertiesDto payload) => new(
+                SpaceElementCommandContract.SchemaVersion,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                floorRevision,
+                [new SpaceElementCommandDto(
+                    Guid.NewGuid(),
+                    SpaceElementCommandContract.UpdateProperties,
+                    element.LogicalId,
+                    payload)],
+                contentRevision,
+                contentHash);
+
+        var parsedX = element.X;
+        var manualCorrection = await fixture.Design.ApplyElementCommandsAsync(
+            fixture.Version.Id,
+            floor.LogicalId,
+            command(
+                1,
+                version.ContentRevision,
+                version.ContentHash,
+                update(element, element.X + 250)));
+        var manualX = Assert.Single(manualCorrection.AffectedObjects).Element.X;
+        fixture.Context.ChangeTracker.Clear();
+        var correctionParse = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
+            "cad-review-correction-history");
+        await CompleteParseAsync(fixture, provider, correctionParse.JobId);
+        fixture.Context.ChangeTracker.Clear();
+        var correctionWorkspace = await fixture.Service.GetReviewWorkspaceAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            correctionParse.JobId);
+        var modify = Assert.Single(correctionWorkspace.Changes!);
+        Assert.Equal(SpaceCadChangeKind.Modify, modify.Kind);
+        var correctionApply = new ApplySpaceCadChangesetRequest(
+            Guid.NewGuid(),
+            clientId,
+            lease.LeaseId,
+            ExpectedFloorRevision: 2,
+            correctionWorkspace.EditorContentRevision,
+            correctionWorkspace.EditorContentHash,
+            correctionWorkspace.WorkspaceSha256,
+            [modify.ChangeId]);
+        var correctionApplied = await fixture.Service.ApplyReviewChangesAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            correctionParse.JobId,
+            correctionApply);
+        var modifyUndo = Assert.Single(correctionApplied.UndoCommands);
+        var modifyRedo = Assert.Single(correctionApplied.RedoCommands);
+        Assert.Equal(SpaceElementCommandContract.UpdateProperties, modifyUndo.Type);
+        Assert.Equal(manualX, modifyUndo.UpdateProperties!.X);
+        Assert.Equal(SpaceElementCommandContract.UpdateProperties, modifyRedo.Type);
+        Assert.Equal(parsedX, modifyRedo.UpdateProperties!.X);
+        var correctionReplay = await fixture.Service.ApplyReviewChangesAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            correctionParse.JobId,
+            correctionApply);
+        Assert.True(correctionReplay.IdempotentReplay);
+        Assert.Equal(correctionApplied.UndoCommands, correctionReplay.UndoCommands);
+        Assert.Equal(correctionApplied.RedoCommands, correctionReplay.RedoCommands);
+
+        fixture.Context.ChangeTracker.Clear();
+        version = await fixture.Context.Versions.SingleAsync(item =>
+            item.Id == fixture.Version.Id);
+        element = await fixture.Context.ElementRevisions.SingleAsync();
+
+        var locked = await fixture.Design.ApplyElementCommandsAsync(
+            fixture.Version.Id,
+            floor.LogicalId,
+            command(
+                3,
+                version.ContentRevision,
+                version.ContentHash,
+                update(element, element.X + 250, true)));
+        Assert.True(Assert.Single(locked.AffectedObjects)
+            .Element.IsManualCorrectionLocked);
+        Assert.Equal(1, locked.AffectedObjects[0].Element.UserCorrectionVersion);
+
+        fixture.Context.ChangeTracker.Clear();
+        version = await fixture.Context.Versions.SingleAsync(item =>
+            item.Id == fixture.Version.Id);
+        element = await fixture.Context.ElementRevisions.SingleAsync();
+        var revised = await fixture.Design.ApplyElementCommandsAsync(
+            fixture.Version.Id,
+            floor.LogicalId,
+            command(
+                4,
+                version.ContentRevision,
+                version.ContentHash,
+                update(element, element.X + 250)));
+        Assert.Equal(2, Assert.Single(revised.AffectedObjects)
+            .Element.UserCorrectionVersion);
+        var protectedX = revised.AffectedObjects[0].Element.X;
+
+        fixture.Context.ChangeTracker.Clear();
+        var secondParse = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
+            "cad-review-lock-second");
+        await CompleteParseAsync(fixture, provider, secondParse.JobId);
+        fixture.Context.ChangeTracker.Clear();
+        var workspace = await fixture.Service.GetReviewWorkspaceAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            secondParse.JobId);
+
+        var conflict = Assert.Single(workspace.Changes!);
+        Assert.Equal(SpaceCadChangeKind.Conflict, conflict.Kind);
+        Assert.False(conflict.CanApply);
+        Assert.True(conflict.IsManualCorrectionLocked);
+        Assert.Equal(2, conflict.UserCorrectionVersion);
+        Assert.Equal(
+            SpaceErrorCodes.CadManualCorrectionLocked,
+            conflict.BlockingReasonCode);
+        Assert.Equal(1, workspace.ChangeSummary!.ConflictCount);
+        Assert.Equal(1, workspace.Summary.OpenBlockingCount);
+        var blocking = Assert.Single(workspace.Items, item =>
+            item.Code == SpaceErrorCodes.CadManualCorrectionLocked);
+        Assert.Equal(conflict.LogicalId, blocking.TargetLogicalId);
+
+        var batchesBefore = await fixture.Context.ElementCommandBatches.CountAsync();
+        var rejected = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.ApplyReviewChangesAsync(
+                fixture.Version.Id,
+                fixture.Source.Id,
+                secondParse.JobId,
+                new ApplySpaceCadChangesetRequest(
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 5,
+                    workspace.EditorContentRevision,
+                    workspace.EditorContentHash,
+                    workspace.WorkspaceSha256,
+                    [conflict.ChangeId])));
+        Assert.Equal(SpaceErrorCodes.CadParseInvalid, rejected.Code);
+        Assert.Equal(
+            batchesBefore,
+            await fixture.Context.ElementCommandBatches.CountAsync());
+        Assert.Equal(
+            protectedX,
+            (await fixture.Context.ElementRevisions.AsNoTracking().SingleAsync()).X);
     }
 
     [Fact]
@@ -885,7 +1294,8 @@ public sealed class SpaceCadParseJobTests
             source,
             request,
             files,
-            service);
+            service,
+            design);
     }
 
     private static async Task<StartSpaceCadParseRequest> ConfirmPreparationAsync(
@@ -893,9 +1303,11 @@ public sealed class SpaceCadParseJobTests
         StartSpaceCadParseRequest request,
         string semanticPreviewSha256)
     {
+        var version = await fixture.Context.Versions.SingleAsync(item =>
+            item.Id == fixture.Version.Id);
         var preparation = Preparation(
             fixture.Execution.TenantId,
-            fixture.Version,
+            version,
             fixture.Source,
             request,
             semanticPreviewSha256);
@@ -1037,8 +1449,13 @@ public sealed class SpaceCadParseJobTests
         private readonly SpaceCadSemanticPreviewV1 _semantic;
         private readonly SpaceCadSemanticDiagnosticIndexV1 _diagnostics;
 
-        public ReviewWorkspaceProvider(Guid tenantId, string sourceSha256)
+        public ReviewWorkspaceProvider(
+            Guid tenantId,
+            string sourceSha256,
+            int wallCount = 1)
         {
+            if (wallCount < 1)
+                throw new ArgumentOutOfRangeException(nameof(wallCount));
             _tenantId = tenantId;
             var fileId = Guid.NewGuid();
             var sourceId = Guid.NewGuid();
@@ -1050,6 +1467,32 @@ public sealed class SpaceCadParseJobTests
                 SpaceCadSourceFormat.Dxf,
                 "review-test",
                 "1.0");
+            var entities = Enumerable.Range(0, wallCount)
+                .Select(index =>
+                {
+                    var y = checked(index * 1_000m);
+                    return new SpaceCadIrEntityV1(
+                        $"H:WALL-{index + 1}",
+                        SpaceCadIrEntityType.Line,
+                        "LINE",
+                        "WALL",
+                        null,
+                        [new(0, y), new(10_000, y)],
+                        null,
+                        null,
+                        null,
+                        SpaceCadAffineTransformV1.Identity,
+                        new SpaceCadBoundsV1(0, y, 10_000, y),
+                        false,
+                        true,
+                        new Dictionary<string, string>());
+                })
+                .ToArray();
+            var packageBounds = new SpaceCadBoundsV1(
+                0,
+                0,
+                10_000,
+                checked((wallCount - 1) * 1_000m));
             _package = new SpaceCadIrPackageV1(
                 new SpaceCadIrDocumentV1(
                     SpaceCadIrVersions.SchemaVersion,
@@ -1059,35 +1502,26 @@ public sealed class SpaceCadParseJobTests
                     SpaceCadUnit.Millimeter,
                     1,
                     SpaceCadIrVersions.CoordinateSystem,
-                    new SpaceCadBoundsV1(0, 0, 10_000, 0),
+                    packageBounds,
                     "review-test",
                     "1.0"),
-                [new SpaceCadIrLayerV1("WALL", "WALL", 1, "ACI:7", "CONTINUOUS")],
-                [],
-                [new SpaceCadIrEntityV1(
-                    "H:WALL-1",
-                    SpaceCadIrEntityType.Line,
-                    "LINE",
+                [new SpaceCadIrLayerV1(
                     "WALL",
-                    null,
-                    [new(0, 0), new(10_000, 0)],
-                    null,
-                    null,
-                    null,
-                    SpaceCadAffineTransformV1.Identity,
-                    new SpaceCadBoundsV1(0, 0, 10_000, 0),
-                    false,
-                    true,
-                    new Dictionary<string, string>())],
+                    "WALL",
+                    wallCount,
+                    "ACI:7",
+                    "CONTINUOUS")],
+                [],
+                entities,
                 [],
                 new SpaceCadIrSummaryV1(
                     1,
                     0,
-                    1,
-                    1,
+                    wallCount,
+                    wallCount,
                     0,
                     0,
-                    new SpaceCadBoundsV1(0, 0, 10_000, 0)));
+                    packageBounds));
             var floor = new SpaceCadFloorAssignmentV1(
                 Guid.NewGuid(),
                 "F1",
@@ -1329,7 +1763,8 @@ public sealed class SpaceCadParseJobTests
         SpaceModelSource Source,
         StartSpaceCadParseRequest Request,
         MemoryFileStore Files,
-        SpaceCadParseService Service) : IAsyncDisposable
+        SpaceCadParseService Service,
+        SpaceDesignV1Service Design) : IAsyncDisposable
     {
         public ValueTask DisposeAsync() => Context.DisposeAsync();
     }

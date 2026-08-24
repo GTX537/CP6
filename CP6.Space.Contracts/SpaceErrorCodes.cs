@@ -20,8 +20,19 @@ public static class SpaceErrorCodes
     public const string VersionConflict = "SPACE_VERSION_CONFLICT";
     public const string VersionStateInvalid = "SPACE_VERSION_STATE_INVALID";
     public const string SourceConflict = "SPACE_SOURCE_CONFLICT";
+    public const string SourceReferenced = "SPACE_SOURCE_REFERENCED";
     public const string AssetScopeDenied = "SPACE_ASSET_SCOPE_DENIED";
     public const string AssetConflict = "SPACE_ASSET_CONFLICT";
+    public const string WarehouseTemplateNotFound =
+        "SPACE_WAREHOUSE_TEMPLATE_NOT_FOUND";
+    public const string WarehouseTemplateVersionConflict =
+        "SPACE_WAREHOUSE_TEMPLATE_VERSION_CONFLICT";
+    public const string WarehouseTemplateProposalStale =
+        "SPACE_WAREHOUSE_TEMPLATE_PROPOSAL_STALE";
+    public const string WarehouseTemplateFloorNotFound =
+        "SPACE_WAREHOUSE_TEMPLATE_FLOOR_NOT_FOUND";
+    public const string WarehouseTemplateConflict =
+        "SPACE_WAREHOUSE_TEMPLATE_CONFLICT";
     public const string IdempotencyConflict = "SPACE_IDEMPOTENCY_KEY_REUSED";
     public const string IdempotencyKeyRequired = "SPACE_IDEMPOTENCY_KEY_REQUIRED";
     public const string CursorInvalid = "SPACE_CURSOR_INVALID";
@@ -71,12 +82,15 @@ public static class SpaceErrorCodes
         "SPACE_UNDERLAY_CALIBRATION_INVALID";
     public const string UnderlayCalibrationOutOfTolerance =
         "SPACE_UNDERLAY_CALIBRATION_OUT_OF_TOLERANCE";
+    public const string UnderlayHistoryInvalid = "SPACE_UNDERLAY_HISTORY_INVALID";
     public const string FloorRevisionConflict = "SPACE_FLOOR_REVISION_CONFLICT";
     public const string EditLeaseHeld = "SPACE_EDIT_LEASE_HELD";
     public const string EditLeaseLost = "SPACE_EDIT_LEASE_LOST";
     public const string EditLeaseTakeoverDenied =
         "SPACE_EDIT_LEASE_TAKEOVER_DENIED";
     public const string ParseChangesetStale = "SPACE_PARSE_CHANGESET_STALE";
+    public const string CadManualCorrectionLocked =
+        "SPACE_CAD_MANUAL_CORRECTION_LOCKED";
     public const string ValidationBlocking = "SPACE_VALIDATION_BLOCKING";
     public const string PublishReconciliationRequired =
         "SPACE_PUBLISH_RECONCILIATION_REQUIRED";
@@ -113,6 +127,14 @@ public static class SpaceErrorCodes
         "SPACE_CAD_PREPARATION_EXPIRED";
     public const string CadPreparationUnavailable =
         "SPACE_CAD_PREPARATION_UNAVAILABLE";
+    public const string CadMappingProfileInvalid =
+        "SPACE_CAD_MAPPING_PROFILE_INVALID";
+    public const string CadMappingProfileNotFound =
+        "SPACE_CAD_MAPPING_PROFILE_NOT_FOUND";
+    public const string CadMappingProfileConflict =
+        "SPACE_CAD_MAPPING_PROFILE_CONFLICT";
+    public const string CadMappingProfileReadOnly =
+        "SPACE_CAD_MAPPING_PROFILE_READ_ONLY";
     public const string CadProviderConfigurationInvalid =
         "SPACE_CAD_PROVIDER_CONFIGURATION_INVALID";
     public const string CadProviderRevisionConflict =

@@ -39,6 +39,22 @@ public abstract class SpaceRevisionEntity : SpaceTenantEntity
         SourceRef = SpaceRevisionValue.OptionalText(sourceRef, 500, nameof(sourceRef));
     }
 
+    public void RestoreSource(SpaceModelSource? source, string? sourceRef)
+    {
+        if (source is null)
+        {
+            if (!string.IsNullOrWhiteSpace(sourceRef))
+                throw new ArgumentException(
+                    "A source reference requires a source.",
+                    nameof(sourceRef));
+            SourceId = null;
+            SourceRef = null;
+            return;
+        }
+
+        AttachSource(source, sourceRef);
+    }
+
     public void ChangeLifecycle(SpaceLifecycleState lifecycleState)
     {
         LifecycleState = lifecycleState;
@@ -152,6 +168,64 @@ public sealed class SpaceFloorRevision : SpaceRevisionEntity
         UnderlayOffsetX = 0;
         UnderlayOffsetY = 0;
         UnderlayRotationZ = 0;
+    }
+
+    public void DetachUnderlay()
+    {
+        UnderlaySourceId = null;
+        UnderlayCalibrationId = null;
+        UnderlayScale = null;
+        UnderlayOffsetX = 0;
+        UnderlayOffsetY = 0;
+        UnderlayRotationZ = 0;
+    }
+
+    public void RestoreUnderlaySnapshot(
+        SpaceModelSource? source,
+        SpaceUnderlayCalibration? calibration,
+        decimal? scale,
+        int offsetX,
+        int offsetY,
+        decimal rotationZ)
+    {
+        if (source is null)
+        {
+            if (calibration is not null || scale.HasValue || offsetX != 0 ||
+                offsetY != 0 || rotationZ != 0)
+            {
+                throw new ArgumentException(
+                    "A detached underlay snapshot cannot contain calibration data.");
+            }
+            DetachUnderlay();
+            return;
+        }
+
+        AttachUnderlay(source);
+        if (calibration is null)
+        {
+            if (scale.HasValue || offsetX != 0 || offsetY != 0 || rotationZ != 0)
+            {
+                throw new ArgumentException(
+                    "An uncalibrated underlay snapshot cannot contain a transform.");
+            }
+            // AttachUnderlay is intentionally idempotent for the same source,
+            // so explicitly restore the uncalibrated pointer state as well.
+            UnderlayCalibrationId = null;
+            UnderlayScale = null;
+            UnderlayOffsetX = 0;
+            UnderlayOffsetY = 0;
+            UnderlayRotationZ = 0;
+            return;
+        }
+        if (scale != calibration.MillimetersPerPixel ||
+            offsetX != calibration.OffsetX ||
+            offsetY != calibration.OffsetY ||
+            rotationZ != calibration.RotationZ)
+        {
+            throw new ArgumentException(
+                "The underlay snapshot transform does not match its calibration.");
+        }
+        ApplyUnderlayCalibration(source, calibration);
     }
 
     public void ApplyUnderlayCalibration(
@@ -422,6 +496,45 @@ public sealed class SpaceRackRevision : SpaceRevisionEntity
         RackType = SpaceRevisionValue.OptionalText(rackType, 64, nameof(rackType));
         ChangeLifecycle(SpaceLifecycleState.Active);
     }
+
+    public void RestoreSnapshot(
+        Guid floorLogicalId,
+        Guid zoneLogicalId,
+        Guid? aisleLogicalId,
+        string rackCode,
+        string name,
+        string? rackType,
+        Guid? templateVersionId,
+        int x,
+        int y,
+        int z,
+        decimal rotationZ,
+        int width,
+        int depth,
+        int height,
+        SpaceLifecycleState lifecycleState,
+        SpaceModelSource? source,
+        string? sourceRef)
+    {
+        UpdateDefinition(
+            floorLogicalId,
+            zoneLogicalId,
+            rackCode,
+            aisleLogicalId,
+            name,
+            rackType);
+        ConfigureGeometry(
+            x,
+            y,
+            z,
+            rotationZ,
+            width,
+            depth,
+            height,
+            templateVersionId);
+        ChangeLifecycle(lifecycleState);
+        RestoreSource(source, sourceRef);
+    }
 }
 
 public sealed class SpaceRackLevelRevision : SpaceRevisionEntity
@@ -516,6 +629,37 @@ public sealed class SpaceRackLevelRevision : SpaceRevisionEntity
     public void Restore()
     {
         ChangeLifecycle(SpaceLifecycleState.Active);
+    }
+
+    public void RestoreSnapshot(
+        Guid rackLogicalId,
+        int levelNo,
+        int bottomZ,
+        int clearHeight,
+        int binCount,
+        int depthCount,
+        int cellWidth,
+        int cellDepth,
+        int beamHeight,
+        decimal? maxLoad,
+        SpaceLifecycleState lifecycleState,
+        SpaceModelSource? source,
+        string? sourceRef)
+    {
+        SpaceRevisionValue.RequireIdentity(rackLogicalId, nameof(rackLogicalId));
+        RackLogicalId = rackLogicalId;
+        UpdateSpecification(
+            levelNo,
+            bottomZ,
+            clearHeight,
+            binCount,
+            depthCount,
+            cellWidth,
+            cellDepth,
+            maxLoad,
+            beamHeight);
+        ChangeLifecycle(lifecycleState);
+        RestoreSource(source, sourceRef);
     }
 
     private static void RequirePositive(int value, string parameterName)
@@ -742,6 +886,64 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         if (ExternalBindingState == SpaceExternalBindingState.Unbound)
             CodeOrigin = SpaceLocationCodeOrigin.Imported;
     }
+
+    public void RestoreSnapshot(
+        Guid floorLogicalId,
+        Guid? rackLogicalId,
+        string? locationCode,
+        int columnNo,
+        int levelNo,
+        int depthNo,
+        int width,
+        int height,
+        int depth,
+        decimal? maxLoad,
+        string? locationType,
+        SpaceLocationCodeOrigin codeOrigin,
+        SpaceExternalBindingState externalBindingState,
+        SpaceLifecycleState lifecycleState,
+        SpaceModelSource? source,
+        string? sourceRef)
+    {
+        SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
+        if (rackLogicalId == Guid.Empty)
+            throw new ArgumentException(
+                "Rack logical identity cannot be empty.",
+                nameof(rackLogicalId));
+        if (columnNo <= 0 || levelNo <= 0 || depthNo <= 0)
+            throw new ArgumentOutOfRangeException(
+                nameof(columnNo),
+                "Location coordinates must be positive.");
+        SpaceRevisionValue.RequireDimensions(width, height, depth);
+        if (maxLoad < 0)
+            throw new ArgumentOutOfRangeException(nameof(maxLoad));
+        if (!Enum.IsDefined(codeOrigin) || !Enum.IsDefined(externalBindingState) ||
+            !Enum.IsDefined(lifecycleState))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(codeOrigin),
+                "Location snapshot enum values are invalid.");
+        }
+
+        FloorLogicalId = floorLogicalId;
+        RackLogicalId = rackLogicalId;
+        LocationCode = SpaceRevisionValue.OptionalText(
+            locationCode,
+            200,
+            nameof(locationCode));
+        ColumnNo = columnNo;
+        LevelNo = levelNo;
+        DepthNo = depthNo;
+        Width = width;
+        Height = height;
+        Depth = depth;
+        MaxLoad = maxLoad;
+        LocationType = SpaceLocationTypes.NormalizeOptional(locationType);
+        CodeOrigin = codeOrigin;
+        ExternalBindingState = externalBindingState;
+        ChangeLifecycle(lifecycleState);
+        RestoreSource(source, sourceRef);
+    }
 }
 
 public sealed class SpaceElementRevision : SpaceRevisionEntity
@@ -767,6 +969,10 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
     public string? BusinessCode { get; private set; }
     public string? LinkedEntityType { get; private set; }
     public Guid? LinkedLogicalId { get; private set; }
+    public bool IsManualCorrectionLocked { get; private set; }
+    public long UserCorrectionVersion { get; private set; }
+    public Guid? ManualCorrectionUpdatedBy { get; private set; }
+    public DateTime? ManualCorrectionUpdatedAtUtc { get; private set; }
 
     public static SpaceElementRevision Create(
         Guid tenantId,
@@ -821,6 +1027,17 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
         }
 
         GeometryJson = validated;
+    }
+
+    public void Retype(string elementType)
+    {
+        if (ModelAssetId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "An asset-backed element cannot be retyped.");
+        }
+
+        ElementType = SpaceElementTypes.Normalize(elementType, nameof(elementType));
     }
 
     public void UpdateDefinition(
@@ -969,6 +1186,57 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
             100,
             nameof(linkedEntityType));
         LinkedLogicalId = linkedLogicalId;
+    }
+
+    public void SetManualCorrectionLock(
+        bool isLocked,
+        Guid actorId,
+        DateTime nowUtc)
+    {
+        SpaceRevisionValue.RequireIdentity(actorId, nameof(actorId));
+        if (nowUtc.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException(
+                "Manual correction time must be UTC.",
+                nameof(nowUtc));
+        }
+        if (SourceId is null || string.IsNullOrWhiteSpace(SourceRef))
+        {
+            throw new InvalidOperationException(
+                "Only a source-backed element can lock a manual correction.");
+        }
+        if (IsManualCorrectionLocked == isLocked)
+        {
+            throw new InvalidOperationException(
+                $"The manual correction is already {(isLocked ? "locked" : "unlocked")}.");
+        }
+
+        IsManualCorrectionLocked = isLocked;
+        if (!isLocked)
+            return;
+
+        UserCorrectionVersion = checked(UserCorrectionVersion + 1);
+        ManualCorrectionUpdatedBy = actorId;
+        ManualCorrectionUpdatedAtUtc = nowUtc;
+    }
+
+    public void MarkLockedManualCorrectionChanged(
+        Guid actorId,
+        DateTime nowUtc)
+    {
+        if (!IsManualCorrectionLocked)
+            return;
+        SpaceRevisionValue.RequireIdentity(actorId, nameof(actorId));
+        if (nowUtc.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException(
+                "Manual correction time must be UTC.",
+                nameof(nowUtc));
+        }
+
+        UserCorrectionVersion = checked(UserCorrectionVersion + 1);
+        ManualCorrectionUpdatedBy = actorId;
+        ManualCorrectionUpdatedAtUtc = nowUtc;
     }
 }
 

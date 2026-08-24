@@ -125,6 +125,11 @@ public static class SpaceCadSemanticParser
         var canonicalItems = items
             .OrderBy(item => item.Source.SourceRef, StringComparer.Ordinal)
             .ToArray();
+        foreach (var issue in SpaceCadSemanticQualityDiagnostics.DetectOverlaps(
+                     canonicalItems))
+        {
+            issues.Add(issue);
+        }
         var canonicalIssues = CanonicalIssues(issues);
         var summary = Summary(
             preparation.Package.Entities.Count,
@@ -362,7 +367,7 @@ public static class SpaceCadSemanticParser
         if (geometryResult.Geometry is null)
         {
             issues.Add(ItemIssue(
-                "SPACE_CAD_SEMANTIC_GEOMETRY_REJECTED",
+                GeometryRejectionCode(geometryResult.DetailToken),
                 SpaceCadIssueSeverity.Warning,
                 entity,
                 decision,
@@ -432,6 +437,20 @@ public static class SpaceCadSemanticParser
             confirmable,
             selected);
     }
+
+    private static string GeometryRejectionCode(string? detailToken) => detailToken switch
+    {
+        "closed-boundary-requires-closed-polyline-or-circle" =>
+            "SPACE_CAD_SEMANTIC_BOUNDARY_UNCLOSED",
+        "path-requires-two-distinct-points"
+            or "polygon-requires-three-distinct-points"
+            or "polygon-area-is-zero"
+            or "circle-radius-is-missing"
+            or "arc-radius-is-missing"
+            or "block-transform-is-degenerate" =>
+            "SPACE_CAD_SEMANTIC_ZERO_SIZE",
+        _ => "SPACE_CAD_SEMANTIC_GEOMETRY_REJECTED",
+    };
 
     private static GeometryBuildResult BuildGeometry(
         SpaceCadIrEntityV1 entity,

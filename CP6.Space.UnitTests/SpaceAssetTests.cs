@@ -133,6 +133,8 @@ public sealed class SpaceAssetTests
         element.AttachAsset(expectedVersion);
         element.EnsureAssetReferenceConsistency();
         Assert.Throws<InvalidOperationException>(
+            () => element.Retype(SpaceElementTypes.Wall));
+        Assert.Throws<InvalidOperationException>(
             () => element.UpdateGeometry(
                 AssetGeometry(otherVersion.Id)));
         Assert.Throws<InvalidOperationException>(element.DetachAsset);

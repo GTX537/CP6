@@ -2225,6 +2225,382 @@
         }
       }
     },
+    "/api/space/design/v1/mapping-profiles/cad": {
+      "get": {
+        "tags": [
+          "SpaceCadMappingProfile"
+        ],
+        "operationId": "GetCadMappingProfiles",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SpaceCadMappingProfile"
+        ],
+        "operationId": "SaveCadMappingProfile",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/mapping-profiles/cad/{profileId}": {
+      "get": {
+        "tags": [
+          "SpaceCadMappingProfile"
+        ],
+        "operationId": "GetCadMappingProfile",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/cad-sources": {
       "post": {
         "tags": [
@@ -3016,6 +3392,137 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadParseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/cad-review-candidates": {
+      "get": {
+        "tags": [
+          "SpaceCadParse"
+        ],
+        "operationId": "ListReviewCandidates",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadReviewCandidateListDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadReviewCandidateListDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadReviewCandidateListDto"
                 }
               }
             }
@@ -4810,6 +5317,263 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/floors": {
+      "get": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "GetFloors",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "CreateFloor",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceFloorRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceFloorRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceFloorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceFloorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceFloorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceFloorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene": {
       "get": {
         "tags": [
@@ -5766,6 +6530,283 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/removal-preview": {
+      "get": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "GetSourceRemovalPreview",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalPreviewDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalPreviewDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalPreviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "RemoveSource",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Idempotent-Replay": {
+                "description": "True when this response replays a stored result.",
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/underlay-sources": {
       "post": {
         "tags": [
@@ -6584,6 +7625,154 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CP6.Space.Contracts.AttachSpaceUnderlayResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay:compensate": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "CompensateUnderlay",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayResponse"
                 }
               }
             }
@@ -7519,6 +8708,541 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsAdoptionCommandResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/templates": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "CreateTenantWarehouseTemplate",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+              "Idempotent-Replay": {
+                "description": "True when this response replays a stored result.",
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "GetWarehouseTemplates",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/templates/{templateId}/instantiate": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "PreviewWarehouseTemplate",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.PreviewSpaceWarehouseTemplateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.PreviewSpaceWarehouseTemplateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.PreviewSpaceWarehouseTemplateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateInstantiationPreviewDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateInstantiationPreviewDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateInstantiationPreviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/templates/{templateId}:apply": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "ApplyWarehouseTemplateFloor",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse"
                 }
               }
             }
@@ -9533,6 +11257,173 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadApplyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}:compensate": {
+      "post": {
+        "tags": [
+          "SpaceExcelCadMatch"
+        ],
+        "operationId": "CompensateConfirmation",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "matchJobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "applyJobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceExcelCadApplyRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceExcelCadApplyRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceExcelCadApplyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceExcelCadApplyResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceExcelCadApplyResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceExcelCadApplyResponse"
                 }
               }
             }
@@ -17936,6 +19827,8 @@
             "type": "string"
           },
           "changeIds": {
+            "maxItems": 10000,
+            "minItems": 1,
             "type": "array",
             "items": {
               "type": "string"
@@ -17950,6 +19843,8 @@
           "commandBatchId",
           "floorRevision",
           "idempotentReplay",
+          "redoCommands",
+          "undoCommands",
           "versionContentRevision",
           "workspaceSha256"
         ],
@@ -17976,6 +19871,18 @@
           },
           "idempotentReplay": {
             "type": "boolean"
+          },
+          "undoCommands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSavedElementCommandDto"
+            }
+          },
+          "redoCommands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSavedElementCommandDto"
+            }
           }
         },
         "additionalProperties": false
@@ -18290,25 +20197,187 @@
         },
         "additionalProperties": false
       },
-      "CP6.Space.Contracts.AttachSpaceUnderlayRequest": {
+      "CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "leaseId",
+          "proposalHash",
+          "schemaVersion",
+          "siteId",
+          "templateFloorKey",
+          "templateVersionId"
+        ],
         "type": "object",
         "properties": {
-          "sourceId": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proposalHash": {
+            "type": "string"
+          },
+          "templateFloorKey": {
+            "type": "string"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
             "type": "string",
             "format": "uuid"
           },
           "expectedFloorRevision": {
             "type": "integer",
             "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse": {
+        "required": [
+          "appliedCounts",
+          "commandBatchId",
+          "floorLogicalId",
+          "floorRevision",
+          "idempotentReplay",
+          "modelVersionId",
+          "proposalHash",
+          "schemaVersion",
+          "templateContentHash",
+          "templateFloorKey",
+          "templateId",
+          "templateVersionId",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "templateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateContentHash": {
+            "type": "string"
+          },
+          "proposalHash": {
+            "type": "string"
+          },
+          "templateFloorKey": {
+            "type": "string"
+          },
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "appliedCounts": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateCountsDto"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.AttachSpaceUnderlayRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "leaseId",
+          "sourceId"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
       },
       "CP6.Space.Contracts.AttachSpaceUnderlayResponse": {
+        "required": [
+          "floor",
+          "history",
+          "idempotentReplay",
+          "versionContentRevision"
+        ],
         "type": "object",
         "properties": {
           "floor": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "history": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayHistoryDto"
           },
           "idempotentReplay": {
             "type": "boolean"
@@ -18361,7 +20430,212 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.CompensateSpaceExcelCadApplyRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "direction",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "historySha256",
+          "leaseId",
+          "schemaVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "historySha256": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CompensateSpaceExcelCadApplyResponse": {
+        "required": [
+          "applyJobId",
+          "commandBatchId",
+          "direction",
+          "floorRevision",
+          "historyCommandCount",
+          "historySha256",
+          "idempotentReplay",
+          "matchJobId",
+          "schemaVersion",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "matchJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applyJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "historySha256": {
+            "type": "string"
+          },
+          "historyCommandCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "floorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CompensateSpaceUnderlayRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "direction",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "historySha256",
+          "leaseId",
+          "originalCommandBatchId",
+          "schemaVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "originalCommandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "historySha256": {
+            "type": "string"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CompensateSpaceUnderlayResponse": {
+        "required": [
+          "commandBatchId",
+          "direction",
+          "floor",
+          "historySha256",
+          "idempotentReplay",
+          "originalCommandBatchId",
+          "schemaVersion",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalCommandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "historySha256": {
+            "type": "string"
+          },
+          "floor": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest": {
+        "required": [
+          "artifactId",
+          "artifactPayloadSha256",
+          "clientInstanceId",
+          "confirmed",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "leaseId"
+        ],
         "type": "object",
         "properties": {
           "confirmed": {
@@ -18372,10 +20646,21 @@
             "format": "uuid"
           },
           "artifactPayloadSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
             "type": "integer",
             "format": "int64"
           }
@@ -18788,6 +21073,63 @@
             }
           },
           "canExport": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CreateSpaceFloorRequest": {
+        "required": [
+          "elevation",
+          "expectedContentRevision",
+          "floorCode",
+          "height",
+          "level",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "floorCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "elevation": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CreateSpaceFloorResponse": {
+        "required": [
+          "floor",
+          "idempotentReplay",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "floor": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idempotentReplay": {
             "type": "boolean"
           }
         },
@@ -19266,6 +21608,75 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateRequest": {
+        "required": [
+          "aisles",
+          "floors",
+          "name",
+          "racks",
+          "schemaVersion",
+          "templateCode",
+          "zones"
+        ],
+        "type": "object",
+        "properties": {
+          "templateCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "floors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateFloorPlanDto"
+            }
+          },
+          "zones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateZonePlanDto"
+            }
+          },
+          "aisles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateAislePlanDto"
+            }
+          },
+          "racks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateRackPlanDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateResponse": {
+        "required": [
+          "idempotentReplay",
+          "template"
+        ],
+        "type": "object",
+        "properties": {
+          "template": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateDto"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.IngestSpaceDeviceEventsRequest": {
         "required": [
           "contractVersion",
@@ -19512,6 +21923,14 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.PreviewSpaceCadPreparationResponse": {
+        "required": [
+          "baseContentRevision",
+          "coordinateAnalysis",
+          "coordinateIssues",
+          "coordinateMetadata",
+          "mappingProfile",
+          "readyForParsing"
+        ],
         "type": "object",
         "properties": {
           "preparationId": {
@@ -19541,8 +21960,17 @@
           "coordinateMetadata": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadCoordinateMetadataV1"
           },
+          "coordinateIssues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadConversionIssueV1"
+            }
+          },
           "inventorySummary": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadInventorySummaryV1"
+          },
+          "inventory": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationInventoryDto"
           },
           "mappingProfile": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileSummaryDto"
@@ -19689,6 +22117,19 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.PreviewSpaceWarehouseTemplateRequest": {
+        "required": [
+          "templateVersionId"
+        ],
+        "type": "object",
+        "properties": {
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.RefreshSpaceWmsAdoptionResponse": {
         "type": "object",
         "properties": {
@@ -19735,6 +22176,49 @@
           "differenceCount": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.RemoveSpaceSourceRequest": {
+        "required": [
+          "expectedContentRevision",
+          "expectedSourceRowVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedSourceRowVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.RemoveSpaceSourceResponse": {
+        "required": [
+          "idempotentReplay",
+          "physicalFileRetained",
+          "sourceId",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "physicalFileRetained": {
+            "type": "boolean"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -19805,6 +22289,68 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SaveSpaceCadMappingProfileRequest": {
+        "required": [
+          "isEnabled",
+          "name",
+          "rules"
+        ],
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingRuleV1"
+            }
+          },
+          "expectedRowVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "copyFromProfileId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "copyFromVersion": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse": {
+        "required": [
+          "created",
+          "idempotentReplay",
+          "profile"
+        ],
+        "type": "object",
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileDto"
+          },
+          "created": {
+            "type": "boolean"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SaveSpaceExcelMappingProfileRequest": {
         "required": [
           "definition",
@@ -19861,6 +22407,20 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SaveSpaceUnderlayCalibrationRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "floorLogicalId",
+          "leaseId",
+          "pageNumber",
+          "pixelHeight",
+          "pixelWidth",
+          "point1",
+          "point2",
+          "validationPoint"
+        ],
         "type": "object",
         "properties": {
           "floorLogicalId": {
@@ -19891,11 +22451,34 @@
           "expectedFloorRevision": {
             "type": "integer",
             "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SaveSpaceUnderlayCalibrationResponse": {
+        "required": [
+          "calibration",
+          "floor",
+          "history",
+          "idempotentReplay",
+          "versionContentRevision"
+        ],
         "type": "object",
         "properties": {
           "floor": {
@@ -19903,6 +22486,13 @@
           },
           "calibration": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationDto"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "history": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayHistoryDto"
           },
           "idempotentReplay": {
             "type": "boolean"
@@ -20989,6 +23579,15 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadAffineTransformV1": {
+        "required": [
+          "m11",
+          "m12",
+          "m21",
+          "m22",
+          "offsetX",
+          "offsetY",
+          "offsetZ"
+        ],
         "type": "object",
         "properties": {
           "m11": {
@@ -21022,7 +23621,35 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceCadBlockAttributeInventoryV1": {
+        "required": [
+          "distinctValueCount",
+          "name",
+          "referenceCount"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "referenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "distinctValueCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceCadBoundsV1": {
+        "required": [
+          "maxX",
+          "maxY",
+          "minX",
+          "minY"
+        ],
         "type": "object",
         "properties": {
           "minX": {
@@ -21112,11 +23739,13 @@
         "required": [
           "canApply",
           "changeId",
+          "isManualCorrectionLocked",
           "isSelected",
           "kind",
           "logicalId",
           "objectType",
-          "sourceRef"
+          "sourceRef",
+          "userCorrectionVersion"
         ],
         "type": "object",
         "properties": {
@@ -21155,6 +23784,13 @@
             "type": "string",
             "nullable": true
           },
+          "isManualCorrectionLocked": {
+            "type": "boolean"
+          },
+          "userCorrectionVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
           "beforeBounds": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMillimeterBoundsV1"
           },
@@ -21174,11 +23810,14 @@
         "type": "string"
       },
       "CP6.Space.Contracts.SpaceCadConversionIssueV1": {
+        "required": [
+          "code",
+          "severity"
+        ],
         "type": "object",
         "properties": {
           "code": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "severity": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadIssueSeverity"
@@ -21195,6 +23834,14 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadCoordinateAnalysisV1": {
+        "required": [
+          "issues",
+          "isSuggestedExtentPlausible",
+          "requiresUnitConfirmation",
+          "schemaVersion",
+          "sourceSha256",
+          "suggestedUnit"
+        ],
         "type": "object",
         "properties": {
           "schemaVersion": {
@@ -21202,8 +23849,7 @@
             "format": "int32"
           },
           "sourceSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "suggestedUnit": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadUnit"
@@ -21229,13 +23875,26 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadConversionIssueV1"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadCoordinateMetadataV1": {
+        "required": [
+          "confirmedScaleToMillimeters",
+          "confirmedUnit",
+          "detectedUnit",
+          "floorOriginMillimeters",
+          "rotationZDegrees",
+          "schemaVersion",
+          "sourceOriginInSourceUnits",
+          "sourceSha256",
+          "sourceToFloorTransform",
+          "targetFloor",
+          "transformSha256",
+          "unitConfirmed"
+        ],
         "type": "object",
         "properties": {
           "schemaVersion": {
@@ -21243,8 +23902,7 @@
             "format": "int32"
           },
           "sourceSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "unitConfirmed": {
             "type": "boolean"
@@ -21287,8 +23945,7 @@
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"
           },
           "transformSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -21345,6 +24002,14 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadFloorAssignmentV1": {
+        "required": [
+          "boundaryBounds",
+          "coordinateSystem",
+          "elevationMillimeters",
+          "floorCode",
+          "floorLogicalId",
+          "level"
+        ],
         "type": "object",
         "properties": {
           "floorLogicalId": {
@@ -21352,8 +24017,7 @@
             "format": "uuid"
           },
           "floorCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "level": {
             "type": "integer",
@@ -21364,8 +24028,7 @@
             "format": "int32"
           },
           "coordinateSystem": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "boundaryBounds": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"
@@ -21384,6 +24047,17 @@
         "type": "string"
       },
       "CP6.Space.Contracts.SpaceCadInventorySummaryV1": {
+        "required": [
+          "attributedBlockReferenceCount",
+          "blockCount",
+          "blockReferenceCount",
+          "emptyLayerCount",
+          "entityCount",
+          "layerCount",
+          "supportedEntityCount",
+          "undefinedBlockCount",
+          "unsupportedEntityCount"
+        ],
         "type": "object",
         "properties": {
           "layerCount": {
@@ -21435,6 +24109,70 @@
           "Blocking"
         ],
         "type": "string"
+      },
+      "CP6.Space.Contracts.SpaceCadLayerInventoryV1": {
+        "required": [
+          "attributedEntityCount",
+          "blockReferenceCount",
+          "entityCount",
+          "entityTypeCounts",
+          "isVisible",
+          "layerId",
+          "name",
+          "supportedEntityCount",
+          "unsupportedEntityCount"
+        ],
+        "type": "object",
+        "properties": {
+          "layerId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineType": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "entityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "supportedEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unsupportedEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "blockReferenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attributedEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "entityTypeCounts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "bounds": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"
+          }
+        },
+        "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadLayerMappingOverrideV1": {
         "required": [
@@ -21578,6 +24316,14 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceCadMappingMatchKind": {
+        "enum": [
+          "Exact",
+          "Glob",
+          "Regex"
+        ],
+        "type": "string"
+      },
       "CP6.Space.Contracts.SpaceCadMappingPreviewSummaryV1": {
         "type": "object",
         "properties": {
@@ -21713,6 +24459,75 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceCadMappingProfileDto": {
+        "required": [
+          "definitionSha256",
+          "id",
+          "isEnabled",
+          "isReadOnly",
+          "name",
+          "rules",
+          "scope",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingScope"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isReadOnly": {
+            "type": "boolean"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "definitionSha256": {
+            "type": "string"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingRuleV1"
+            }
+          },
+          "basedOnProfileId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "basedOnVersion": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "rowVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceCadMappingProfileSummaryDto": {
         "type": "object",
         "properties": {
@@ -21745,6 +24560,84 @@
           }
         },
         "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadMappingRuleV1": {
+        "required": [
+          "confidenceWeight",
+          "geometryRule",
+          "isRequired",
+          "matchKind",
+          "pattern",
+          "priority",
+          "ruleId",
+          "sourceKind",
+          "target"
+        ],
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceKind": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingSourceKind"
+          },
+          "matchKind": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingMatchKind"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "attributeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "attributeMatchKind": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingMatchKind"
+          },
+          "attributePattern": {
+            "type": "string",
+            "nullable": true
+          },
+          "target": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadSemanticTarget"
+          },
+          "targetSubtype": {
+            "type": "string",
+            "nullable": true
+          },
+          "geometryRule": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadGeometryRule"
+          },
+          "defaultHeightMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "defaultThicknessMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "confidenceWeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "isRequired": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadMappingScope": {
+        "enum": [
+          "System",
+          "Tenant"
+        ],
+        "type": "string"
       },
       "CP6.Space.Contracts.SpaceCadMappingSourceKind": {
         "enum": [
@@ -21948,6 +24841,81 @@
           "z": {
             "type": "number",
             "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadPreparationBlockInventoryDto": {
+        "required": [
+          "attributedReferenceCount",
+          "attributes",
+          "blockId",
+          "definitionEntityCount",
+          "isDefined",
+          "isExternalReference",
+          "name",
+          "referenceCount"
+        ],
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isDefined": {
+            "type": "boolean"
+          },
+          "isExternalReference": {
+            "type": "boolean"
+          },
+          "definitionEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "referenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attributedReferenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBlockAttributeInventoryV1"
+            }
+          },
+          "referenceBounds": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadPreparationInventoryDto": {
+        "required": [
+          "blocks",
+          "layers",
+          "summary"
+        ],
+        "type": "object",
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadInventorySummaryV1"
+          },
+          "layers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadLayerInventoryV1"
+            }
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationBlockInventoryDto"
+            }
           }
         },
         "additionalProperties": false
@@ -22171,6 +25139,115 @@
           },
           "currentlyValid": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadReviewCandidateDto": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceType": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceSha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceState": {
+            "type": "string",
+            "nullable": true
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseContentHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "isCurrentRevision": {
+            "type": "boolean"
+          },
+          "canLoadReview": {
+            "type": "boolean"
+          },
+          "requestedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "preferredProviderKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredProviderVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappingProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingProfileVersion": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadReviewCandidateListDto": {
+        "type": "object",
+        "properties": {
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currentContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currentContentHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadReviewCandidateDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -22931,6 +26008,15 @@
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementAttributeWriteDto"
             }
+          },
+          "linkedEntityType": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -23872,6 +26958,16 @@
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
             },
             "nullable": true
+          },
+          "beforeElement": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementDto"
+          },
+          "beforeAttributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -23998,6 +27094,14 @@
           "applyPlanSha256": {
             "type": "string",
             "nullable": true
+          },
+          "historySha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "historyCommandCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -28877,6 +31981,26 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceSavedElementCommandDto": {
+        "required": [
+          "targetLogicalId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "targetLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updateProperties": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateElementPropertiesDto"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceSceneAisleDto": {
         "type": "object",
         "properties": {
@@ -29057,6 +32181,23 @@
           "linkedLogicalId": {
             "type": "string",
             "format": "uuid",
+            "nullable": true
+          },
+          "isManualCorrectionLocked": {
+            "type": "boolean"
+          },
+          "userCorrectionVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "manualCorrectionUpdatedBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "manualCorrectionUpdatedAtUtc": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
@@ -29482,6 +32623,82 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceSourceRemovalPreviewDto": {
+        "required": [
+          "canRemove",
+          "displayName",
+          "fileId",
+          "physicalFileRetained",
+          "references",
+          "sourceId",
+          "sourceRowVersion",
+          "sourceType",
+          "state",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "sourceType": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sourceRowVersion": {
+            "type": "string"
+          },
+          "canRemove": {
+            "type": "boolean"
+          },
+          "physicalFileRetained": {
+            "type": "boolean"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalReferenceDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceSourceRemovalReferenceDto": {
+        "required": [
+          "blocksRemoval",
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blocksRemoval": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceUnderlayCalibrationDto": {
         "type": "object",
         "properties": {
@@ -29580,6 +32797,32 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceUnderlayHistoryDto": {
+        "required": [
+          "historySha256",
+          "operationType",
+          "originalCommandBatchId",
+          "schemaVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalCommandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operationType": {
+            "type": "string"
+          },
+          "historySha256": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceUpdateElementPropertiesDto": {
         "type": "object",
         "properties": {
@@ -29633,6 +32876,14 @@
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementAttributeWriteDto"
             },
+            "nullable": true
+          },
+          "elementType": {
+            "type": "string",
+            "nullable": true
+          },
+          "manualCorrectionLocked": {
+            "type": "boolean",
             "nullable": true
           }
         },
@@ -30001,6 +33252,12 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceVersionDto": {
+        "required": [
+          "createdAtUtc",
+          "creationSource",
+          "openBlockingCount",
+          "updatedAtUtc"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -30056,6 +33313,409 @@
           "purpose": {
             "type": "string",
             "nullable": true
+          },
+          "creationSource": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "openBlockingCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateAislePlanDto": {
+        "required": [
+          "aisleCode",
+          "endX",
+          "endY",
+          "floorKey",
+          "key",
+          "startX",
+          "startY",
+          "zoneKey"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "floorKey": {
+            "type": "string"
+          },
+          "zoneKey": {
+            "type": "string"
+          },
+          "aisleCode": {
+            "type": "string"
+          },
+          "startX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "endX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "endY": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateCountsDto": {
+        "required": [
+          "aisles",
+          "floors",
+          "locations",
+          "racks",
+          "zones"
+        ],
+        "type": "object",
+        "properties": {
+          "floors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "zones": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "aisles": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "racks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locations": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateDto": {
+        "required": [
+          "id",
+          "latestVersion",
+          "name",
+          "scope",
+          "status",
+          "templateCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "latestVersion": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateVersionDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateFloorPlanDto": {
+        "required": [
+          "depth",
+          "elevation",
+          "floorCode",
+          "height",
+          "key",
+          "level",
+          "name",
+          "width"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "floorCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "elevation": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateInstantiationPreviewDto": {
+        "required": [
+          "aisles",
+          "counts",
+          "floors",
+          "proposalHash",
+          "racks",
+          "schemaVersion",
+          "templateContentHash",
+          "templateId",
+          "templateVersionId",
+          "writesDraft",
+          "zones"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "templateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateContentHash": {
+            "type": "string"
+          },
+          "proposalHash": {
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateCountsDto"
+          },
+          "floors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateFloorPlanDto"
+            }
+          },
+          "zones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateZonePlanDto"
+            }
+          },
+          "aisles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateAislePlanDto"
+            }
+          },
+          "racks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateRackPlanDto"
+            }
+          },
+          "writesDraft": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateRackPlanDto": {
+        "required": [
+          "aisleKey",
+          "columns",
+          "depth",
+          "depths",
+          "floorKey",
+          "height",
+          "key",
+          "levels",
+          "rackCode",
+          "rotationZ",
+          "width",
+          "x",
+          "y",
+          "z",
+          "zoneKey"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "floorKey": {
+            "type": "string"
+          },
+          "zoneKey": {
+            "type": "string"
+          },
+          "aisleKey": {
+            "type": "string"
+          },
+          "rackCode": {
+            "type": "string"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "columns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "levels": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depths": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateVersionDto": {
+        "required": [
+          "contentHash",
+          "counts",
+          "id",
+          "schemaVersion",
+          "status",
+          "versionNo"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateCountsDto"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWarehouseTemplateZonePlanDto": {
+        "required": [
+          "floorKey",
+          "key",
+          "maxX",
+          "maxY",
+          "minX",
+          "minY",
+          "zoneCode",
+          "zoneType"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "floorKey": {
+            "type": "string"
+          },
+          "zoneCode": {
+            "type": "string"
+          },
+          "zoneType": {
+            "type": "string"
+          },
+          "minX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxY": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

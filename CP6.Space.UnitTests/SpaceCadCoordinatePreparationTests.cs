@@ -162,6 +162,12 @@ public sealed class SpaceCadCoordinatePreparationTests
             result.Issues,
             issue => issue.Code == "SPACE_CAD_FLOOR_BOUNDARY_EXCEEDED"
                      && issue.Severity == SpaceCadIssueSeverity.Blocking);
+        Assert.Contains(
+            result.Issues,
+            issue => issue.Code == "SPACE_CAD_ENTITY_FLOOR_BOUNDARY_EXCEEDED"
+                     && issue.Severity == SpaceCadIssueSeverity.Warning
+                     && issue.SourceRef == "H:100"
+                     && issue.DetailToken == "outside-target-floor");
     }
 
     [Fact]

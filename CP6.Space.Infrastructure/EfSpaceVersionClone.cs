@@ -85,6 +85,208 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
             "The clone reservation could not be serialized.");
     }
 
+    public async Task<SpaceBlankVersionStartResult> StartBlankAsync(
+        SpaceBlankVersionRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        var normalizedName = NormalizeName(request.Name);
+
+        for (var attempt = 0; attempt < StartRetries; attempt++)
+        {
+            _context.ChangeTracker.Clear();
+            try
+            {
+                return await StartBlankOnceAsync(
+                    request with { Name = normalizedName },
+                    cancellationToken);
+            }
+            catch (Exception exception)
+                when (ContainsSqlError(exception, 1205))
+            {
+                _context.ChangeTracker.Clear();
+                if (attempt + 1 >= StartRetries)
+                {
+                    throw new SpaceVersionConflictException(
+                        "Another request won the model Draft reservation.");
+                }
+            }
+            catch (DbUpdateException exception)
+                when (IsUniqueViolation(exception))
+            {
+                _context.ChangeTracker.Clear();
+                var existing = await FindExistingBlankAsync(
+                    request with { Name = normalizedName },
+                    cancellationToken);
+                if (existing is not null)
+                    return existing;
+                throw new SpaceVersionConflictException(
+                    "Another active Draft won the blank initialization reservation.");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                _context.ChangeTracker.Clear();
+                var existing = await FindExistingBlankAsync(
+                    request with { Name = normalizedName },
+                    cancellationToken);
+                if (existing is not null)
+                    return existing;
+                throw new SpaceVersionConflictException(
+                    "Another request changed the model Draft reservation.");
+            }
+        }
+
+        throw new SpaceVersionConflictException(
+            "The blank Draft reservation could not be serialized.");
+    }
+
+    private async Task<SpaceBlankVersionStartResult> StartBlankOnceAsync(
+        SpaceBlankVersionRequest request,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken);
+        try
+        {
+            var existing = await FindExistingBlankAsync(request, cancellationToken);
+            if (existing is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return existing;
+            }
+
+            var model = await _context.Models.SingleOrDefaultAsync(
+                            candidate => candidate.Id == request.ModelId,
+                            cancellationToken)
+                        ?? throw new KeyNotFoundException(
+                            "The Space model was not found.");
+            if (model.ActiveDraftVersionId.HasValue)
+            {
+                throw new SpaceVersionConflictException(
+                    "The model already has an active Draft reservation.");
+            }
+
+            var nextVersionNo =
+                (await _context.Versions
+                    .Where(version => version.ModelId == model.Id)
+                    .MaxAsync(
+                        version => (long?)version.VersionNo,
+                        cancellationToken) ?? 0) + 1;
+            var target = SpaceModelVersion.CreateBlankDraft(
+                _execution.TenantId,
+                model.Id,
+                nextVersionNo,
+                request.Name,
+                request.OperationId);
+            model.ReserveDraft(target);
+
+            var payload = new SpaceBlankVersionPayload(
+                model.Id,
+                target.Id,
+                request.OperationId);
+            var businessKey = SpaceJobBusinessKey.Create(
+                new SpaceJobEnqueueRequest(
+                    SpaceJobType.InitializeVersion,
+                    SpaceJobSubjectType.ModelVersion,
+                    target.Id,
+                    request.InputHash,
+                    SpaceBlankVersionContract.ProcessorVersion,
+                    request.OperationId.ToString("N")));
+            var now = RequireUtcNow();
+            var job = SpaceJob.CreateQueued(
+                _execution.TenantId,
+                SpaceJobType.InitializeVersion,
+                SpaceJobSubjectType.ModelVersion,
+                target.Id,
+                businessKey,
+                request.InputHash,
+                priority: 50,
+                maxAttempts: 1,
+                _execution.ActorId,
+                now,
+                CorrelationId(request.OperationId),
+                JsonSerializer.Serialize(payload, JsonOptions));
+            var jobAttempt = job.Claim(
+                "inline-blank-version",
+                SpaceBlankVersionContract.ProcessorVersion,
+                now,
+                TimeSpan.FromMinutes(1));
+            jobAttempt.Succeed(now, "{\"mode\":\"Blank\"}");
+            job.Complete(
+                jobAttempt.Id,
+                jobAttempt.WorkerId,
+                now,
+                "{\"mode\":\"Blank\",\"created\":true}");
+
+            _context.Versions.Add(target);
+            _context.Jobs.Add(job);
+            _context.JobAttempts.Add(jobAttempt);
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return BlankResult(target, job, reused: false);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
+    private async Task<SpaceBlankVersionStartResult?> FindExistingBlankAsync(
+        SpaceBlankVersionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var version = await _context.Versions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.ModelId == request.ModelId &&
+                    candidate.CloneOperationId == request.OperationId,
+                cancellationToken);
+        if (version is null)
+            return null;
+
+        if (!string.Equals(version.Name, request.Name, StringComparison.Ordinal) ||
+            version.BasedOnVersionId.HasValue ||
+            version.Status != SpaceVersionStatus.Draft)
+        {
+            throw new SpaceVersionConflictException(
+                "The initialization operation ID was already used with different input.");
+        }
+
+        var job = await _context.Jobs
+                      .AsNoTracking()
+                      .SingleOrDefaultAsync(
+                          candidate =>
+                              candidate.JobType == SpaceJobType.InitializeVersion &&
+                              candidate.SubjectType == SpaceJobSubjectType.ModelVersion &&
+                              candidate.SubjectId == version.Id,
+                          cancellationToken)
+                  ?? throw new SpaceVersionStateException(
+                      "The blank Draft reservation is missing its Job ledger entry.");
+        if (!string.Equals(job.InputHash, request.InputHash, StringComparison.Ordinal))
+        {
+            throw new SpaceVersionConflictException(
+                "The initialization operation ID was already used with different input.");
+        }
+
+        return BlankResult(version, job, reused: true);
+    }
+
+    private static SpaceBlankVersionStartResult BlankResult(
+        SpaceModelVersion version,
+        SpaceJob job,
+        bool reused) =>
+        new(
+            version.Id,
+            version.VersionNo,
+            version.Status,
+            job.Id,
+            job.Status,
+            reused);
+
     private async Task<SpaceVersionCloneStartResult> StartOnceAsync(
         SpaceVersionCloneRequest request,
         CancellationToken cancellationToken)
@@ -956,7 +1158,10 @@ public sealed class EfSpaceVersionCloneProcessor :
                     [ElementType], [GeometryJson], [ModelAssetId], [ModelAssetScope],
                     [ModelAssetOwnerTenantId], [X], [Y], [Z],
                     [RotationZ], [Width], [Height], [Depth], [BusinessCode],
-                  [LinkedEntityType], [LinkedLogicalId], [TenantId],
+                  [LinkedEntityType], [LinkedLogicalId],
+                  [IsManualCorrectionLocked], [UserCorrectionVersion],
+                  [ManualCorrectionUpdatedBy], [ManualCorrectionUpdatedAtUtc],
+                  [TenantId],
                   [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc], [ModifiedBy],
                   [IsDeleted])
              SELECT em.[NewId], {targetVersionId}, r.[LogicalId], sm.[NewId],
@@ -965,7 +1170,10 @@ public sealed class EfSpaceVersionCloneProcessor :
                       r.[ModelAssetId], r.[ModelAssetScope],
                       r.[ModelAssetOwnerTenantId], r.[X], r.[Y], r.[Z], r.[RotationZ],
                     r.[Width], r.[Height], r.[Depth], r.[BusinessCode],
-                    r.[LinkedEntityType], r.[LinkedLogicalId], {tenantId},
+                    r.[LinkedEntityType], r.[LinkedLogicalId],
+                    r.[IsManualCorrectionLocked], r.[UserCorrectionVersion],
+                    r.[ManualCorrectionUpdatedBy],
+                    r.[ManualCorrectionUpdatedAtUtc], {tenantId},
                     {nowUtc}, {actorId}, NULL, NULL, 0
              FROM [Space_ElementRevision] r
              INNER JOIN @ElementMap em ON em.[OldId] = r.[Id]

@@ -49,6 +49,18 @@ public sealed class SpaceCadPreparationServiceTests
         Assert.Equal(preview.PreparationId, preview.StartRequest!.PreparationId);
         Assert.Equal(fixture.Floor.LogicalId, preview.StartRequest.FloorLogicalId);
         Assert.Equal(0, preview.BaseContentRevision);
+        Assert.NotNull(preview.Inventory);
+        var layer = Assert.Single(preview.Inventory!.Layers);
+        Assert.Equal("WALL", layer.Name);
+        Assert.Equal("ACI:7", layer.Color);
+        Assert.Equal("CONTINUOUS", layer.LineType);
+        Assert.True(layer.IsVisible);
+        Assert.Equal(1, layer.EntityCount);
+        var block = Assert.Single(preview.Inventory.Blocks);
+        Assert.Equal("RACK-A", block.Name);
+        Assert.True(block.IsDefined);
+        Assert.Equal(0, block.ReferenceCount);
+        Assert.Equal(preview.InventorySummary, preview.Inventory.Summary);
         var preparation = Assert.Single(
             await fixture.Context.CadParsePreparations.ToListAsync());
         var snapshot = SpaceCadMappingReplaySnapshot.Deserialize(
@@ -71,6 +83,39 @@ public sealed class SpaceCadPreparationServiceTests
         Assert.Equal(preparation.ProviderVersion, payload.PreferredProviderVersion);
         Assert.Equal(preparation.MappingReplaySnapshotJson,
             payload.MappingReplaySnapshotJson);
+    }
+
+    [Fact]
+    public async Task Preview_returns_document_and_entity_boundary_issues_with_source_refs()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        fixture.Floor.ConfigureBoundary(
+            "[[0,0],[5000,0],[5000,5000],[0,5000]]",
+            SpaceCadCoordinateVersions.TargetCoordinateSystem);
+        await fixture.Context.SaveChangesAsync();
+        _ = await fixture.Service.GetStatusAsync(
+            fixture.Version.Id,
+            fixture.Source.Id);
+        var profile = Assert.Single(
+            await fixture.Service.ListProfilesAsync(fixture.Version.Id));
+
+        var preview = await fixture.Service.PreviewAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            Request(fixture.Floor.LogicalId, profile));
+
+        Assert.False(preview.ReadyForParsing);
+        Assert.Null(preview.StartRequest);
+        Assert.Contains(
+            preview.CoordinateIssues,
+            issue => issue.Code == "SPACE_CAD_FLOOR_BOUNDARY_EXCEEDED"
+                     && issue.Severity == SpaceCadIssueSeverity.Blocking
+                     && issue.SourceRef is null);
+        Assert.Contains(
+            preview.CoordinateIssues,
+            issue => issue.Code == "SPACE_CAD_ENTITY_FLOOR_BOUNDARY_EXCEEDED"
+                     && issue.Severity == SpaceCadIssueSeverity.Warning
+                     && issue.SourceRef == "H:WALL-1");
     }
 
     [Fact]
@@ -306,7 +351,7 @@ public sealed class SpaceCadPreparationServiceTests
                     "deterministic-test",
                     "1.0"),
                 [new SpaceCadIrLayerV1("WALL", "WALL", 1, "ACI:7", "CONTINUOUS")],
-                [],
+                [new SpaceCadIrBlockV1("B:RACK-A", "RACK-A", false, null, 0)],
                 [new SpaceCadIrEntityV1(
                     "H:WALL-1",
                     SpaceCadIrEntityType.Line,
@@ -325,7 +370,7 @@ public sealed class SpaceCadPreparationServiceTests
                 [],
                 new SpaceCadIrSummaryV1(
                     1,
-                    0,
+                    1,
                     1,
                     1,
                     0,

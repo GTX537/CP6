@@ -1,5 +1,6 @@
 import http from '@/api/http'
 import type { CadReviewWorkspace } from '@/modules/space-design/cad-review/cadReviewWorkspace'
+import type { IApplySpaceCadChangesetResponse } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const root = '/space/design/v1'
 
@@ -16,10 +17,42 @@ export interface SpaceCadParse {
   }>
 }
 
+export interface SpaceCadReviewCandidate {
+  sourceId: string
+  sourceDisplayName: string
+  sourceType: string
+  sourceSha256: string
+  jobId: string
+  jobStatus: string
+  sourceState: string
+  floorLogicalId: string
+  baseContentRevision: number
+  baseContentHash?: string
+  isCurrentRevision: boolean
+  canLoadReview: boolean
+  requestedAtUtc: string
+  finishedAtUtc?: string
+  preferredProviderKey?: string
+  preferredProviderVersion?: string
+  mappingProfileId: string
+  mappingProfileVersion: number
+}
+
+export interface SpaceCadReviewCandidateList {
+  modelVersionId: string
+  floorLogicalId: string
+  currentContentRevision: number
+  currentContentHash?: string
+  truncated: boolean
+  items: SpaceCadReviewCandidate[]
+}
+
 export interface UploadSpaceCadSourceResponse {
+  file: { id: string; state: string; sha256?: string }
   source: { id: string; state: string; sha256: string }
   scanJobId?: string
   jobStatusUrl?: string
+  reused: boolean
 }
 
 export interface SpaceCadMappingProfile {
@@ -92,6 +125,69 @@ export interface StartSpaceCadParseRequest {
   mappingPreviewSha256: string
 }
 
+export type SpaceCadSemanticTarget =
+  | 'Wall'
+  | 'Column'
+  | 'Door'
+  | 'Dock'
+  | 'Zone'
+  | 'Aisle'
+  | 'Rack'
+  | 'Equipment'
+  | 'VerticalCirculation'
+  | 'Annotation'
+  | 'Guide'
+  | 'RestrictedArea'
+
+export type SpaceCadGeometryRule =
+  | 'DirectGeometry'
+  | 'Centerline'
+  | 'ClosedBoundary'
+  | 'BlockFootprint'
+  | 'InsertionPoint'
+
+export interface SpaceCadLayerMappingOverride {
+  layerId: string
+  ignore: boolean
+  target?: SpaceCadSemanticTarget
+  targetSubtype?: string
+  geometryRule?: SpaceCadGeometryRule
+  defaultHeightMillimeters?: number
+  defaultThicknessMillimeters?: number
+  confidenceWeight?: number
+}
+
+export interface SpaceCadLayerInventory {
+  layerId: string
+  name: string
+  color?: string
+  lineType?: string
+  isVisible: boolean
+  entityCount: number
+  supportedEntityCount: number
+  unsupportedEntityCount: number
+  blockReferenceCount: number
+  attributedEntityCount: number
+  entityTypeCounts: Record<string, number>
+  bounds?: { minX: number; minY: number; maxX: number; maxY: number }
+}
+
+export interface SpaceCadBlockInventory {
+  blockId: string
+  name: string
+  isDefined: boolean
+  isExternalReference: boolean
+  definitionEntityCount: number
+  referenceCount: number
+  attributedReferenceCount: number
+  attributes: Array<{
+    name: string
+    referenceCount: number
+    distinctValueCount: number
+  }>
+  referenceBounds?: { minX: number; minY: number; maxX: number; maxY: number }
+}
+
 export interface PreviewSpaceCadPreparationResponse {
   preparationId?: string
   expiresAtUtc?: string
@@ -101,14 +197,18 @@ export interface PreviewSpaceCadPreparationResponse {
   coordinateAnalysis: {
     suggestedUnit: string
     suggestedScaleToMillimeters?: number
+    sourceBounds?: { minX: number; minY: number; maxX: number; maxY: number }
+    suggestedBoundsMillimeters?: { minX: number; minY: number; maxX: number; maxY: number }
     isSuggestedExtentPlausible: boolean
-    issues: Array<{ code: string; severity: string }>
+    requiresUnitConfirmation: boolean
+    issues: SpaceCadCoordinateIssue[]
   }
   coordinateMetadata: {
     confirmedUnit: string
     confirmedScaleToMillimeters: number
     preparedBounds?: { minX: number; minY: number; maxX: number; maxY: number }
   }
+  coordinateIssues: SpaceCadCoordinateIssue[]
   inventorySummary?: {
     layerCount: number
     blockCount: number
@@ -116,8 +216,37 @@ export interface PreviewSpaceCadPreparationResponse {
     supportedEntityCount: number
     unsupportedEntityCount: number
   }
+  inventory?: {
+    summary: {
+      layerCount: number
+      emptyLayerCount: number
+      blockCount: number
+      undefinedBlockCount: number
+      blockReferenceCount: number
+      attributedBlockReferenceCount: number
+      entityCount: number
+      supportedEntityCount: number
+      unsupportedEntityCount: number
+    }
+    layers: SpaceCadLayerInventory[]
+    blocks: SpaceCadBlockInventory[]
+  }
   mappingProfile: SpaceCadMappingProfile
   mappingPreview?: {
+    layerOverrides: SpaceCadLayerMappingOverride[]
+    decisions: Array<{
+      sourceKind: 'Layer' | 'Block'
+      sourceKey: string
+      layerId?: string
+      objectCount: number
+      status: 'Mapped' | 'Unmapped' | 'Ignored' | 'Conflict'
+      decisionSource: 'ProfileRule' | 'LayerOverride' | 'None'
+      ruleId?: string
+      target?: SpaceCadSemanticTarget
+      targetSubtype?: string
+      geometryRule?: string
+      confidenceWeight?: number
+    }>
     summary: {
       mappedLayerCount: number
       unmappedLayerCount: number
@@ -148,8 +277,22 @@ export interface PreviewSpaceCadPreparationResponse {
   startRequest?: StartSpaceCadParseRequest
 }
 
+export interface SpaceCadCoordinateIssue {
+  code: string
+  severity: string
+  sourceRef?: string
+  detailToken?: string
+}
+
 function url(versionId: string, sourceId: string, jobId: string) {
   return `${root}/versions/${versionId}/sources/${sourceId}/cad-parses/${jobId}`
+}
+
+function sourceFormat(fileName: string): 'Dwg' | 'Dxf' {
+  const normalized = fileName.trim().toLocaleLowerCase()
+  if (normalized.endsWith('.dwg')) return 'Dwg'
+  if (normalized.endsWith('.dxf')) return 'Dxf'
+  throw new Error('CAD 导入仅支持 .dwg 或 .dxf 文件。')
 }
 
 export const designCadParseApi = {
@@ -161,7 +304,7 @@ export const designCadParseApi = {
 
   upload(versionId: string, file: File) {
     const form = new FormData()
-    form.append('SourceFormat', file.name.toLowerCase().endsWith('.dwg') ? 'Dwg' : 'Dxf')
+    form.append('SourceFormat', sourceFormat(file.name))
     form.append('File', file)
     return http.post<unknown, UploadSpaceCadSourceResponse>(
       `${root}/versions/${versionId}/cad-sources`,
@@ -192,7 +335,7 @@ export const designCadParseApi = {
       rotationZDegrees: number
       mappingProfileId: string
       mappingProfileVersion: number
-      layerOverrides: unknown[]
+      layerOverrides: SpaceCadLayerMappingOverride[]
     },
   ) {
     return http.post<unknown, PreviewSpaceCadPreparationResponse>(
@@ -218,6 +361,13 @@ export const designCadParseApi = {
     return http.get<unknown, SpaceCadParse>(url(versionId, sourceId, jobId))
   },
 
+  listReviewCandidates(versionId: string, floorLogicalId: string, limit = 50) {
+    return http.get<unknown, SpaceCadReviewCandidateList>(
+      `${root}/versions/${versionId}/floors/${floorLogicalId}/cad-review-candidates`,
+      { params: { limit } },
+    )
+  },
+
   getReviewWorkspace(versionId: string, sourceId: string, jobId: string) {
     return http.get<unknown, CadReviewWorkspace>(
       `${url(versionId, sourceId, jobId)}/review-workspace`,
@@ -239,14 +389,10 @@ export const designCadParseApi = {
       changeIds: string[]
     },
   ) {
-    return http.post<unknown, {
-      commandBatchId: string
-      floorRevision: number
-      versionContentRevision: number
-      appliedChangeCount: number
-      workspaceSha256: string
-      idempotentReplay: boolean
-    }>(`${url(versionId, sourceId, jobId)}/review-workspace:apply`, request)
+    return http.post<unknown, IApplySpaceCadChangesetResponse>(
+      `${url(versionId, sourceId, jobId)}/review-workspace:apply`,
+      request,
+    )
   },
 
   cancel(versionId: string, sourceId: string, jobId: string) {

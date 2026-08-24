@@ -181,11 +181,35 @@ public sealed class SpaceModelSource : SpaceTenantEntity
         State = SpaceSourceState.Imported;
     }
 
+    public void ReopenImportedPreview(Guid expectedCommandBatchId)
+    {
+        if (State != SpaceSourceState.Imported ||
+            ImportedCommandBatchId != expectedCommandBatchId)
+        {
+            throw new SpaceFileStateException(
+                "Only the command batch that imported a source can reopen its preview.");
+        }
+
+        ImportedCommandBatchId = null;
+        State = SpaceSourceState.PreviewReady;
+    }
+
     public void Reject()
     {
         if (State == SpaceSourceState.Imported)
             throw new SpaceFileStateException("An imported source cannot be rejected.");
         State = SpaceSourceState.Rejected;
+    }
+
+    public void Remove()
+    {
+        if (State is SpaceSourceState.Scanning or SpaceSourceState.Parsing)
+        {
+            throw new SpaceFileStateException(
+                "A source with work in progress cannot be removed.");
+        }
+
+        MarkEntityDeleted();
     }
 
     public void CompleteFileScan(SpaceFile file)

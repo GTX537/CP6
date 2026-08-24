@@ -293,9 +293,11 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceCadProviderCapabilityService,
             SpaceCadProviderCapabilityService>();
-        services.TryAddSingleton<
-            ISpaceCadMappingProfileCatalog,
-            StandardSpaceCadMappingProfileCatalog>();
+        services.AddScoped<
+            ISpaceCadMappingProfileService,
+            SpaceCadMappingProfileService>();
+        services.AddScoped<ISpaceCadMappingProfileCatalog>(provider =>
+            provider.GetRequiredService<ISpaceCadMappingProfileService>());
         services.AddScoped<
             ISpaceCadPreparationService,
             SpaceCadPreparationService>();
