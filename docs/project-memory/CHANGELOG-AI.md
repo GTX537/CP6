@@ -104,6 +104,11 @@
 - 新增 `cp6-daytime-server.bat` 与 PowerShell 控制器，提供复用镜像启动、重建启动、状态检查、仅关闭公网 Tunnel 和安全停止全栈；启动前失败关闭检查 Docker、Compose、`.env` 及 Cloudflare Tunnel 配置/本机凭证。
 - 停止流程只使用 Compose `stop` 并保留容器和命名卷；关闭公网只影响 `cp6-cloudflared`。没有加入 Windows 防睡眠、电源计划、计划任务或自动结束主机 cloudflared 的行为。
 - 新增静态合同测试；实机只读验收确认 7 个 Compose 服务就绪，本机及公网 Web/API 均返回 HTTP 200。当前运行环境未被重启或重建；`estimate` Worker Git 集成仍为独立外部待办。
+## 2026-08-24：CRM V1 产品需求草案
+
+- 新增 `docs/crm/CRM-V1-PRD.md` v0.1，按 Frozen SaaS V1 长期范围和 Lead Pilot 首个切片，定义 CRM 前端效果、后端命令/状态、数据主权、权限/PII/Entitlement、失败恢复、验收和升级接口。
+- 更新 CRM 文档入口与项目状态，明确私有 CRM 仓目前为 docs-only，当前 `main` 仍只有 Foundation；产品草案不冒充已实现功能。
+- PRD 状态为 Draft。Public Contract Sync 仍 Pending，M0 仍 No-Go；必须先完成产品评审和治理门禁，才可拆实施票。
 
 ## 2026-08-24：Space GA 退出码假红修复
 

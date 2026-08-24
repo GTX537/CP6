@@ -66,14 +66,14 @@
 
 ## P0：CRM V1 端到端交付
 
-- 产品框架和三仓可执行 Spec 已批准为 implementation-planning baseline，入口为 `docs/crm/README.md`；Foundation 的 20 张表、固定状态机、迁移、6 个禁用菜单节点和 22 个动作只作为迁移源与兼容语义，不是目标服务实现。
-- 先完成 M0/R00 ADR，冻结 GHCR/R2 权威、Azure SQL/Emergency Intake、System Manifest 整体回退，并取得 Sponsor、Product、Sales Operations、Architecture、Security、Data、ERP、SRE、QA、Release 的 named Owner、Pilot cohort 与 Observation Gate 证据；缺失即 No-Go。
-- 不要现在建立 `GTX537/CP6.CRM` 空仓。只有 T1 已在最新 main、M0 输入关闭且 P01 runner/合同可消费后，才由 CRM01-S01 创建私有仓库；V1 不实现软件产品目录、商城、订阅或客户产品中心。
-- 第一阶段可并行推进 Platform P01–P07、CP6 C01–C03、CRM01–CRM03；随后只实现 CRM04 的 Lead Pilot 子集、C 分栏工作台、真实 Dapr/Kafka Intake、两租户负向与 Pilot 性能 Smoke。Pilot UAT 通过后才解锁 CRM04 余项、CRM05–CRM10、完整 ERP/CMS 旅程，再进入 P08–P10、C04A、CRM11/CRM12。
-- Intake 必须覆盖人工录入、同源 BFF 官网提交、稳定 attempt、Needs Review release/reject/expiry、原 ReceivedAt 首次响应 SLA、Emergency Intake、线索池、分配/移交、协作人、活动时间线、重复候选与受控合并；数据范围按负责人、协作人、部门和管理员显式校验。
-- 后续能力为企业/联系人/商机转化、报价接受和 ERP 订单桥接、独立 CRM Next.js 工作台、营销官网 CMS/多语言 SSR/ISR、PII 24 个月匿名化、SLA 通知及漏斗/来源报表。
-- CRM09 开始前必须批准首页、能力/行业和联系/回执的桌面/平板/移动高保真稿与受控 CMS Schema；完整 UAT 必须使用真实 C03 handler 和隔离 ERP SQL，Mock 只允许单元测试。
-- 单次生产切换后依次执行 ≥10 工作日/≥200 Eligible Lead 的 Lead Adoption 和最多 30 日 Full Journey Gate；技术绿灯、部署成功或菜单可见都不能关闭 Epic。两项通过并完成只读观察后才执行 C04B，旧表物理删除另立任务。
+- 先评审 `docs/crm/CRM-V1-PRD.md` v0.1；确认长期 V1 采用 2026-08-14 Frozen SaaS 四仓边界，首个可见结果采用 Lead Pilot C 分栏工作台，并在批准 commit 中记录结论。未批准前 PRD 保持 Draft。
+- 完成 Draft PR #8 的 Public Contract Sync，消除当前公开三仓 Approved 文档与私有 Frozen 四仓产品范围的冲突。不得在同步前选择性实现 Portal、商业化或旧排除项。
+- 完成 M0/R00 ADR，冻结 GHCR/R2 权威、Azure SQL/Emergency Intake、System Manifest 整体回退，并取得 ProgramOwner 及各专业证据 DRI、Pilot cohort 与 Observation Gate；缺失即 No-Go。
+- 当前 `main` 的 20 表、状态机、迁移、6 个禁用菜单和 22 个动作只作为迁移源与兼容语义；私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only，不得把仓库存在或菜单种子描述为应用开工。
+- M0 Go 后先交付每组织数据库、身份/授权/Entitlement 投影、Website/Manual Intake 和 Lead Pilot：SLA 队列、分配/移交、客户面对型 Activity、412 草稿恢复、两租户负向和真实 SQL/Kafka/Dapr 性能 Smoke。Pilot UAT 通过前不铺开完整菜单。
+- Pilot 后交付 Account/Contact、转换、Opportunity、CP6 ERP/ExternalEvidence、Dashboard/报表、Import/Export、Site/CMS/Offering、Portal 商业协作和五语言；所有读写共享 Organization、DataScope、PII、Entitlement、幂等和审计语义。
+- CRM09/对应产品切片开始前批准公开站点、管理台和移动端关键流程高保真稿；完整 UAT 使用真实 C03 与隔离 ERP SQL，Mock 只用于单元测试。
+- 单次切换后依次完成设计伙伴、Web GA、30 日内移动 GA、Lead Adoption、Full Journey 和 90 日采用门禁。技术绿灯、部署成功或菜单可见都不能关闭 V1 Epic。
 
 ## 已完成：Space `CodeEngineService` Zone 级 rackSeq
 

@@ -102,6 +102,11 @@
 - 新增可双击菜单 `cp6-daytime-server.bat` 及 PowerShell 控制器，统一提供 `start`、`start-build`、`status`、`close`、`stop` 五个入口；启动前检查 Docker、`.env`、Compose、Tunnel 配置和本机凭证文件。
 - `close` 只停止 Compose 内的 `cp6-cloudflared`，保留本机 API/Web/基础服务；`stop` 使用 `docker compose stop` 安全停止全栈并保留所有命名卷。脚本不会自动结束主机上的其他 cloudflared 进程，也不会修改 Windows 睡眠或电源设置。
 - 合同测试覆盖 PowerShell 语法、动作/入口映射、四个 HTTP 地址、Tunnel 单独关闭、数据保留停止、凭证预检和禁止电源修改；实机只读状态检查确认 7 个服务及本机/公网 Web/API 全部就绪、HTTP 200。为避免中断当前使用者，没有执行现场启停或重建。
+## 2026-08-24 CRM V1 产品需求草案
+
+- 完成 `docs/crm/CRM-V1-PRD.md` v0.1，把 Frozen SaaS V1 与当前 Foundation、旧三仓规划和 Lead Pilot 批准设计对齐为一份可评审产品合同。
+- 文档明确前端 IA/页面状态/Lead Pilot 交互、后端状态机/事务/权限/幂等/并发/错误、四仓数据主权、CP6 ERP 与 ExternalEvidence 成交路径，以及 API/event/custom-field/channel 的升级边界。
+- CRM 文档入口已补充 PRD，并更正私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only 的事实。该里程碑只表示需求草案完成，不表示产品批准、Public Contract Sync、M0、业务代码或上线完成。
 
 ## 2026-08-24 Space GA 退出码假红修复
 
