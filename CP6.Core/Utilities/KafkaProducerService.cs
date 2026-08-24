@@ -95,8 +95,15 @@ public class KafkaProducerService : IOperLogTransport, IDisposable
 
     public void Dispose()
     {
-        // 等待在途消息发完（最多 5s），再释放
-        _producer?.Flush(TimeSpan.FromSeconds(5));
-        _producer?.Dispose();
+        try
+        {
+            // 等待在途消息发完（最多 5s），再释放
+            _producer?.Flush(TimeSpan.FromSeconds(5));
+            _producer?.Dispose();
+        }
+        catch
+        {
+            // 忽略销毁时的瞬态与 handle closed 异常，保证 host 安全退出
+        }
     }
 }
