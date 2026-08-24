@@ -7,6 +7,13 @@
 - 私有 `GTX537/CP6.CRM` 的 Frozen 产品 merge commit 为 `07a7bb0b50f33b0cb70c18c14f83be77c725626d`，产品摘要为 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`；R00 `CP6-SAAS-R00` 摘要为 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`。
 - 公开 `CP6-SAAS-V1-PUBLIC-CONTRACT` 仍是 Candidate，只同步四仓职责、领域/API/事件、安全、发布与 M0 开工规则；价格、支付供应商、商业 cohort、个人审批身份和内部风险记录不公开。
 - Draft PR #8 已合并 `main@0a14581f` 并消除旧项目记忆冲突。公开同步尚未达到 Complete，M0 保持 No-Go；唯一人类批准角色为 ProgramOwner，专业证据、Critical/High、分支保护和必需检查不可豁免。
+## 仓库分支整顿与当前开发基线（2026-08-24）
+
+- 当前已确认集成基线为 `main@0a14581f87ac1955678bdb664911183fc5a2a2a1`；根工作区已从落后 172 个提交且含 43 个 tracked 修改/4 个 untracked 文件的旧 WIP 分支切回干净 `main`。整顿前完整引用、脏 worktree patch、原始未跟踪文件与校验清单保存在本机 `D:\CP6-archives\2026-08-24-branch-consolidation`，不得在完成独立备份前删除。
+- 远端 72 个旧非 `main` 分支中，61 个已被 `main` 包含、9 个经内容审计后只需归档，均已删除远端引用；陈旧 PR #3 已关闭。两个 CRM 草稿分支已合并当前 `main` 后继续保留为 Draft PR #7/#8，不视为已获产品批准。
+- 根目录混合 WIP 已按职责拆成三个基于当前 `main` 的续开发分支：登录体验 `1a5a58f`、日期时间规范化 `fd0b64fc`、Kafka Dispose `1ee78fa6`。三者均已推送并通过各自的最低恢复门禁，但仍是 WIP，必须分别评审、补齐验收并以独立 PR 合并，禁止整体回灌旧根分支。
+- 仓库保持 GitHub Public 是本阶段的明确决定；未执行生产部署。`main` 已启用严格分支保护：管理员同样必须经 PR，分支必须基于最新主线并通过 `windows-and-web`、`android`、`sql-integration`，禁止 force-push/删除且要求解决会话。下一治理项是单独修复 Space GA 证据测试脚本“36/36 通过但进程退出 1”的 CI 假红。
+- 完整分支处置、恢复入口、验证证据和续开发顺序见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 

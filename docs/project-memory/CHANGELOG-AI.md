@@ -7,6 +7,14 @@
 - Draft PR #8 已合并 `main@0a14581f`，公开 `CP6-SAAS-V1-PUBLIC-CONTRACT` Candidate 继续绑定 Frozen 产品摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`。
 - 续接保留四仓边界、API/事件/数据、安全、迁移、SLO、候选身份、M0 规则、审批 JSON 和失败关闭验证器，同时保留 8 月 16 日以后主线项目记忆。
 - 公开同步仍为 Candidate、M0 仍为 No-Go；没有因此解锁 CRM 业务开发、云资源、数据库迁移或部署。
+## 2026-08-24：仓库分支整顿与 WIP 当前-main恢复
+
+- 以 `main@0a14581f` 为基线完成分支审计；整顿前 105 refs、脏 worktree patch、原始未跟踪文件和校验数据已本地归档。
+- 远端删除 61 个已合并分支和 9 个归档型陈旧分支，关闭 PR #3；旧本地 worktree/分支已清理，根工作区恢复为干净 `main`。
+- 旧根目录 WIP 被拆为登录体验、日期时间规范化、Kafka Dispose 三个独立当前-main分支并推送；每个分支只保留单一职责和独立验证证据。
+- CRM Draft PR #7/#8 合并当前 `main` 后继续保留 Draft；PR #8 公共契约验证已恢复为绿色。仓库可见性保持 Public，未执行生产部署。
+- 整顿记录经 PR #9 合并为 `main@2abf451d`；随后启用并回读 `main` 严格保护，要求 PR、最新主线、三个常驻检查及对话解决，管理员不得绕过，force-push/删除关闭。
+- 详细恢复与后续开发边界见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
 
 ## 2026-08-16：Space Tenant 私有整仓模板
 

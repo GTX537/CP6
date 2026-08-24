@@ -5,6 +5,14 @@
 - 私有产品冻结 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d`、Frozen 摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 R00 摘要继续绑定到公开契约候选。
 - Draft PR #8 已合并 `main@0a14581f`，保留脱敏合同、R00/M0 镜像、审批 JSON、失败关闭验证器和专用 GitHub Actions；旧主线快照没有覆盖 2026-08-16 之后的 Space 与项目记忆。
 - 本项只完成候选内容向当前主线的续接，不代表公开同步 Complete 或 M0 Go，也没有解锁 CRM 业务开发。
+## 2026-08-24 仓库分支整顿与 WIP 恢复
+
+- 建立整顿前全引用 Git bundle、各脏 worktree 状态/patch/原始未跟踪文件与 SHA-256 清单；根工作区安全恢复为干净 `main@0a14581f`，没有通过 reset/覆盖丢弃用户数据。
+- 删除 61 个已进入 `main` 的远端分支和 9 个仅需归档的陈旧远端分支；关闭陈旧 PR #3；清除 10 个旧本地分支和 8 个旧 worktree。所有被删除引用均可从归档 bundle 或远端/patch 证据恢复。
+- 把旧根目录混合 WIP 拆成登录体验、日期时间规范化、Kafka Dispose 三个当前-main分支并推送；分别完成 6/6 前端聚焦测试+类型检查、Web 174 文件/886 测试+类型检查+生产构建、CP6.Core Release 0 warning/0 error。
+- CRM Draft PR #7/#8 均已合并当前 `main` 基线；PR #8 的公共契约本地校验通过。两者保持 Draft，不把治理文档同步冒充产品批准或可发布状态。
+- `main` 已启用严格分支保护：要求最新主线、PR、`windows-and-web`/`android`/`sql-integration` 三项检查和对话解决；管理员同样受保护，force-push 与分支删除被禁止。
+- 完整证据与分支逐项处置见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
 
 ## 2026-08-16 Space Tenant 私有整仓模板
 
