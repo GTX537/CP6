@@ -95,7 +95,7 @@
             <el-table-column prop="receiptNo" :label="t('wms.prodIn.fld.receiptNo')" width="180" />
             <el-table-column prop="workOrderNo" :label="t('wms.prodIn.fld.workOrder')" width="140" />
             <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="80" />
-            <el-table-column prop="receiveDateTime" :label="t('wms.prodIn.fld.receivedAt')" width="160" />
+            <el-table-column prop="receiveDateTime" :label="t('wms.prodIn.fld.receivedAt')" width="180" :formatter="formatDateTimeCell" />
           </el-table>
         </el-card>
       </el-col>
@@ -111,6 +111,7 @@ import { useI18n } from 'vue-i18n'
 import CpTag from '@/components/base/CpTag.vue'
 import { inboundReceiptApi } from '@/api/wms/inboundReceipt'
 import type { InboundReceipt } from '@/types/wms/wms'
+import { formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 const saving = ref(false)

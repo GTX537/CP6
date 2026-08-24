@@ -25,7 +25,7 @@
           <el-input v-model="form.cron" placeholder="0 9 * * *" @change="loadPreview" />
           <div class="cron-preview">
             <div>{{ t('oa.flowtrigger.form.previewTz') }}</div>
-            <div v-for="d in preview" :key="d">{{ new Date(d).toLocaleString() }}</div>
+            <div v-for="d in preview" :key="d">{{ formatDateTime(d) }}</div>
           </div>
         </el-form-item>
         <el-form-item :label="t('oa.flowtrigger.form.varsJson')">
@@ -73,6 +73,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { flowTriggerApi, type FlowTriggerItem } from '@/api/oa/flowTrigger'
 import { TRIGGER_TYPES, CRON_PRESETS, validateTriggerForm, buildConfigJson } from './flowTriggerModel'
+import { formatDateTime } from '@/utils/format'
 
 const props = defineProps<{ modelValue: boolean; editing: FlowTriggerItem | null }>()
 const emit = defineEmits<{ 'update:modelValue': [boolean]; saved: [string | null | undefined] }>()

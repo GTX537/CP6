@@ -7,7 +7,7 @@
 
   Props:
     - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag /
-                                   date→String(val).slice(0,10)，null/undefined 渲染空）。
+                                   date→String(val).slice(0,10)，datetime→按当前语言格式化日期时间；null/undefined 渲染空）。
                                    列级透传：width / minWidth→min-width / overflowTooltip→show-overflow-tooltip /
                                    fixed:'left'|'right'→fixed（钉列）。
                                    map?: (val,row)=>{ label, tone? }：码值列声明式映射——label 替换单元格文案（任意 kind 生效）；
@@ -68,7 +68,7 @@ export interface ListColumn<Row = unknown> {
   width?: number
   minWidth?: number
   align?: 'left' | 'right' | 'center'
-  kind?: 'text' | 'num' | 'mono' | 'tag' | 'date'
+  kind?: 'text' | 'num' | 'mono' | 'tag' | 'date' | 'datetime'
   overflowTooltip?: boolean
   fixed?: 'left' | 'right'
   map?: (val: unknown, row: Row) => { label: string; tone?: Tone }
@@ -101,6 +101,7 @@ import CpStatusStrip from './CpStatusStrip.vue'
 import CpFilterBar, { type FilterField, type FilterBarLabels } from './CpFilterBar.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
+import { formatDateTime } from '@/utils/format'
 
 const props = withDefaults(defineProps<{
   columns: ListColumn<Row>[]
@@ -212,11 +213,12 @@ function asRow(row: ListRow): Row {
 function colAlign(c: ListColumn<Row>): 'left' | 'right' | 'center' {
   return c.align ?? (c.kind === 'num' ? 'right' : 'left')
 }
-// 单元格文案：map.label > date 截断(yyyy-MM-dd) > 原值
+// 单元格文案：map.label > date/datetime 格式化 > 原值
 function display(c: ListColumn<Row>, row: Row): unknown {
   const v = cell(row, c.prop)
   if (c.map) return c.map(v, row).label
   if (c.kind === 'date') return v == null ? '' : String(v).slice(0, 10)
+  if (c.kind === 'datetime') return formatDateTime(v as Date | string | number | null | undefined)
   return v
 }
 function mapTone(c: ListColumn<Row>, row: Row): Tone | undefined {

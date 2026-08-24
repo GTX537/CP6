@@ -61,7 +61,7 @@
               <div v-if="row.failureCode" class="failure-code">{{ row.failureCode }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="requestedAtUtc" label="Requested at" min-width="190" />
+          <el-table-column prop="requestedAtUtc" label="Requested at" min-width="190" :formatter="formatDateTimeCell" />
           <el-table-column label="Action">
             <template #default="{ row }">
               <el-button
@@ -128,7 +128,7 @@
           <el-table-column prop="warehouseCd" label="Warehouse" />
           <el-table-column prop="areaCd" label="Area" />
           <el-table-column prop="currentUser" label="Current user" />
-          <el-table-column prop="lastSeenAt" label="Last heartbeat" min-width="165" />
+          <el-table-column prop="lastSeenAt" label="Last heartbeat" min-width="180" :formatter="formatDateTimeCell" />
           <el-table-column prop="status" label="Status" />
           <el-table-column label="Action">
             <template #default="{ row }">
@@ -342,6 +342,7 @@ import { ElMessage, ElMessageBox, type UploadFile } from 'element-plus'
 import QRCode from 'qrcode'
 import { productionApi } from '@/api/wms/production'
 import { buildDeviceActivationPayload, type ScannerHidTerminator } from '@/utils/deviceActivation'
+import { formatDateTimeCell } from '@/utils/format'
 import WmsSerialLpnDialogs from './WmsSerialLpnDialogs.vue'
 import type {
   BarcodeAlias, BarcodeImportResult, BarcodeProfile, ClientDevice, LabelJob,

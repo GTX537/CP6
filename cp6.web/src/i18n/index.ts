@@ -40,11 +40,11 @@ export function namespacesForPath(path: string): string[] {
 }
 
 const datetimeFormats = {
-  'zh-CN': { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
-  'zh-TW': { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
-  en: { short: { year: 'numeric', month: 'short', day: 'numeric' }, long: { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
-  ja: { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
-  ko: { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
+  'zh-CN': { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
+  'zh-TW': { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
+  en: { short: { year: 'numeric', month: 'short', day: 'numeric' }, long: { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
+  ja: { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
+  ko: { short: { year: 'numeric', month: '2-digit', day: '2-digit' }, long: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }, time: { hour: '2-digit', minute: '2-digit', second: '2-digit' } },
 } as const
 
 const numberFormats = {

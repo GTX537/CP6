@@ -10,9 +10,9 @@
       <dt>{{ t('运行连接') }}</dt>
       <dd>{{ source.adapterId }}</dd>
       <dt>{{ t('数据时间') }}</dt>
-      <dd>{{ ts || source.observedAtUtc || '—' }}</dd>
+      <dd>{{ formatTime(ts || source.observedAtUtc) }}</dd>
       <dt>{{ t('系统接收') }}</dt>
-      <dd>{{ source.receivedAtUtc || '—' }}</dd>
+      <dd>{{ formatTime(source.receivedAtUtc) }}</dd>
       <dt>{{ t('快照延迟') }}</dt>
       <dd>{{ formatDuration(source.delayMilliseconds) }}</dd>
       <template v-if="source.clockSkewMilliseconds > 0">
@@ -20,7 +20,7 @@
         <dd class="trust-warning">{{ formatDuration(source.clockSkewMilliseconds) }}</dd>
       </template>
       <dt>{{ t('最近成功') }}</dt>
-      <dd>{{ refreshState.lastSuccessfulAtUtc || t('本次会话尚无') }}</dd>
+      <dd>{{ refreshState.lastSuccessfulAtUtc ? formatTime(refreshState.lastSuccessfulAtUtc) : t('本次会话尚无') }}</dd>
       <dt>{{ t('最近失败') }}</dt>
       <dd :class="`failure-${refreshState.failureState}`">{{ failureText }}</dd>
     </dl>
@@ -53,6 +53,7 @@ import type { OverlayMode } from '@/types/space/overlay'
 import type { SpaceRuntimeSource } from '@/types/space/runtime'
 import { dataSourceLabel } from '@/types/space/dataSource'
 import type { RuntimeRefreshState } from '@/space-viewer/overlay/runtimeRefreshState'
+import { formatDateTime } from '@/utils/format'
 
 const props = defineProps<{
   mode: OverlayMode
@@ -74,10 +75,14 @@ const failureText = computed(() => {
   const state = props.refreshState
   if (state.failureState === 'never') return t('本次会话未发生')
   const status = state.failureState === 'active' ? t('当前失败') : t('已恢复')
-  const time = state.lastFailureAtUtc || '—'
+  const time = formatTime(state.lastFailureAtUtc)
   const code = state.lastFailureCode ? ` · ${state.lastFailureCode}` : ''
   return `${status} · ${time}${code}`
 })
+
+function formatTime(value?: string | null): string {
+  return formatDateTime(value) || '—'
+}
 
 function formatDuration(milliseconds: number): string {
   if (milliseconds < 1000) return `${milliseconds} ms`

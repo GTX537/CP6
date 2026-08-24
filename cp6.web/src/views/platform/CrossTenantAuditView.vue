@@ -48,7 +48,7 @@
       </el-table-column>
       <el-table-column prop="reason" label="" show-overflow-tooltip />
       <el-table-column prop="clientIp" label="IP" width="130" />
-      <el-table-column prop="createdAt" :label="t('platform.audit.from')" width="170" />
+      <el-table-column prop="createdAt" :label="t('platform.audit.from')" width="180" :formatter="formatDateTimeCell" />
     </el-table>
 
     <div class="pagination">
@@ -71,6 +71,7 @@ import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { platformAuditApi } from '@/api/platform/audit'
 import type { AuditRow } from '@/types/platform/platform'
+import { formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 
