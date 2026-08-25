@@ -2,6 +2,12 @@
 
 最后更新：2026-08-24
 
+## Kafka 生产者安全退出修复（2026-08-24）
+
+- `KafkaProducerService` 作为 DI Singleton 由 Host 在进程退出时释放。关闭流程现在只执行一次：先最多等待 5 秒刷新在途消息，再无条件尝试释放 producer handle；`Flush` 抛错不再跳过真正的 `Dispose`。
+- 刷新异常、释放异常和超时后仍在队列中的消息数都会记录 Warning，但旁路操作日志通道的关闭异常不会反向阻断 WebApi Host 退出。正常 Publish、Kafka 配置和运行期降级语义不变。
+- 新增 4 个行为回归，覆盖刷新异常仍释放、剩余消息告警、释放异常不外抛和重复调用幂等；`CP6.Tests` 全量 2,938 passed、19 项既有 SQL 环境门禁 skipped、0 failed。
+
 ## 日期时间规范化恢复与 P4/P5 决策（2026-08-24）
 
 - 旧 WIP 的 P4 `env.d.ts` 通配 `declare module '*.vue'` 不恢复：最新 `main` 使用 Vue 3.5、TypeScript 6 和 `vue-tsc` 3.2，在没有该声明时完成干净 `vue-tsc --build`。旧声明中的 `DefineComponent<{}, {}, any>` 会弱化 SFC 类型检查，只保留归档证据，不进入主线。
@@ -25,9 +31,9 @@
 
 ## 仓库分支整顿与当前开发基线（2026-08-24）
 
-- 当前已确认集成基线为 `main@0a14581f87ac1955678bdb664911183fc5a2a2a1`；根工作区已从落后 172 个提交且含 43 个 tracked 修改/4 个 untracked 文件的旧 WIP 分支切回干净 `main`。整顿前完整引用、脏 worktree patch、原始未跟踪文件与校验清单保存在本机 `D:\CP6-archives\2026-08-24-branch-consolidation`，不得在完成独立备份前删除。
+- 分支整顿当时的集成基线为 `main@0a14581f87ac1955678bdb664911183fc5a2a2a1`；根工作区已从落后 172 个提交且含 43 个 tracked 修改/4 个 untracked 文件的旧 WIP 分支切回干净主线。整顿前完整引用、脏 worktree patch、原始未跟踪文件与校验清单保存在本机 `D:\CP6-archives\2026-08-24-branch-consolidation`，不得在完成独立备份前删除。
 - 远端 72 个旧非 `main` 分支中，61 个已被 `main` 包含、9 个经内容审计后只需归档，均已删除远端引用；陈旧 PR #3 已关闭。两个 CRM 草稿分支已合并当前 `main` 后继续保留为 Draft PR #7/#8，不视为已获产品批准。
-- 根目录混合 WIP 已按职责拆成三个基于当前 `main` 的续开发分支：登录体验 `1a5a58f`、日期时间规范化 `fd0b64fc`、Kafka Dispose `1ee78fa6`。三者均已推送并通过各自的最低恢复门禁，但仍是 WIP，必须分别评审、补齐验收并以独立 PR 合并，禁止整体回灌旧根分支。
+- 根目录混合 WIP 当时按职责拆成登录体验、日期时间规范化和 Kafka Dispose 三条续开发分支；日期时间 P4/P5 与 Kafka 安全退出已分别完成评审、自动化和独立合并流程。当前只剩登录体验仍须完成组件/浏览器验收，禁止整体回灌旧根分支。
 - 仓库保持 GitHub Public 是本阶段的明确决定；未执行生产部署。`main` 已启用严格分支保护：管理员同样必须经 PR，分支必须基于最新主线并通过 `windows-and-web`、`android`、`sql-integration`，禁止 force-push/删除且要求解决会话。下一治理项是单独修复 Space GA 证据测试脚本“36/36 通过但进程退出 1”的 CI 假红。
 - 完整分支处置、恢复入口、验证证据和续开发顺序见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
 

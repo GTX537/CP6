@@ -9,7 +9,7 @@
 ## P0：整顿后的仓库治理与续开发边界
 
 - `codex/login-experience-recovery-20260824@1a5a58f`：补 LoginView 组件/浏览器验收、审查大幅模板重排与可访问性后再提 PR；当前只有 helper 6/6 和 Vue type-check 证据。
-- `codex/kafka-dispose-recovery-20260824@1ee78fa6`：补 Dispose/异常/日志策略的行为测试并确认生命周期语义；当前仅 CP6.Core Release build 0 warning/0 error，不得直接合并。
+- Kafka Dispose 恢复已关闭：刷新异常仍释放 producer、关闭异常只告警不阻断 Host、剩余队列可观测且重复调用幂等；4 个聚焦行为测试和 `CP6.Tests` 全量回归通过。
 - 日期时间恢复的 P4/P5 已关闭：不恢复多余且弱类型的 Vue shim；普通业务日期时间固定到分钟精度并完成五语言回归。若后续审计日志明确要求秒/毫秒，必须新建立独立精确格式任务，不得修改全局 `long` 合同。
 - CRM Draft PR #7 和 #8 已基于当前 `main`，继续等待各自产品/治理确认与 CI。PR #7 的 Cloudflare Workers 外部构建失败需单独归因；PR #8 公共契约校验已通过。两者保持 Draft，不纳入本次干净 `main`。
 - 完成整顿后把本机归档复制到第二介质，再考虑清理 `D:\CP6-archives\2026-08-24-branch-consolidation`；在此之前禁止删除 bundle、patch、原始未跟踪文件或 SHA-256 清单。
