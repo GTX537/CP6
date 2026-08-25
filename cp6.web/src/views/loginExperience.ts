@@ -6,7 +6,7 @@ export interface LoginFlowNodeCopy {
 }
 
 export interface LoginExperienceCopy {
-  serviceStatus: string
+  accessStatus: string
   heroLine: string
   heroAccent: string
   leadPrefix: string
@@ -32,7 +32,7 @@ export interface LoginExperienceCopy {
 
 const copies: Record<LoginLocale, LoginExperienceCopy> = {
   'zh-CN': {
-    serviceStatus: '系统服务正常',
+    accessStatus: '安全访问入口',
     heroLine: '让订单、生产、仓储与财务',
     heroAccent: '在同一条业务链上运行',
     leadPrefix: 'CP6 是面向',
@@ -62,7 +62,7 @@ const copies: Record<LoginLocale, LoginExperienceCopy> = {
     hidePassword: '隐藏密码',
   },
   'zh-TW': {
-    serviceStatus: '系統服務正常',
+    accessStatus: '安全存取入口',
     heroLine: '讓訂單、生產、倉儲與財務',
     heroAccent: '在同一條業務鏈上運行',
     leadPrefix: 'CP6 是面向',
@@ -92,7 +92,7 @@ const copies: Record<LoginLocale, LoginExperienceCopy> = {
     hidePassword: '隱藏密碼',
   },
   en: {
-    serviceStatus: 'All services operational',
+    accessStatus: 'Secure access portal',
     heroLine: 'Orders, production, warehouse and finance',
     heroAccent: 'running on one connected chain',
     leadPrefix: 'CP6 is the core operations platform for',
@@ -122,7 +122,7 @@ const copies: Record<LoginLocale, LoginExperienceCopy> = {
     hidePassword: 'Hide password',
   },
   ja: {
-    serviceStatus: 'システムは正常稼働中',
+    accessStatus: 'セキュアアクセス',
     heroLine: '受注・生産・倉庫・財務を',
     heroAccent: 'ひとつの業務チェーンで運用',
     leadPrefix: 'CP6 は',
@@ -152,7 +152,7 @@ const copies: Record<LoginLocale, LoginExperienceCopy> = {
     hidePassword: 'パスワードを隠す',
   },
   ko: {
-    serviceStatus: '시스템 정상 운영 중',
+    accessStatus: '보안 접속',
     heroLine: '주문·생산·창고·재무를',
     heroAccent: '하나의 업무 체인으로 운영',
     leadPrefix: 'CP6는',

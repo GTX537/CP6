@@ -32,9 +32,9 @@
       </div>
 
       <div class="top-actions">
-        <div class="status-pill" role="status">
-          <i class="status-dot" aria-hidden="true"></i>
-          <span>{{ copy.serviceStatus }}</span>
+        <div class="status-pill">
+          <el-icon class="status-icon" aria-hidden="true"><Lock /></el-icon>
+          <span>{{ copy.accessStatus }}</span>
         </div>
 
         <el-popover
@@ -58,7 +58,7 @@
               class="lang-button"
               :class="{ 'is-open': langMenuOpen }"
               :aria-expanded="langMenuOpen"
-              aria-haspopup="listbox"
+              aria-haspopup="true"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
@@ -69,7 +69,7 @@
             </button>
           </template>
 
-          <div class="lang-menu-panel" role="listbox" :aria-label="$t('login.selectLanguage')">
+          <div class="lang-menu-panel" role="group" :aria-label="$t('login.selectLanguage')">
             <div class="lang-menu-title">{{ $t('login.selectLanguage') }}</div>
             <button
               v-for="item in langOptions"
@@ -77,8 +77,7 @@
               type="button"
               class="lang-option"
               :class="{ 'is-active': item.value === currentLang }"
-              role="option"
-              :aria-selected="item.value === currentLang"
+              :aria-pressed="item.value === currentLang"
               @click="onChangeLang(item.value)"
             >
               <span>{{ item.label }}</span>
@@ -183,7 +182,13 @@
               </button>
             </div>
 
-            <div id="tenant-code-field" class="tenant-field" :class="{ 'is-open': showTenant }">
+            <div
+              id="tenant-code-field"
+              class="tenant-field"
+              :class="{ 'is-open': showTenant }"
+              :inert="!showTenant"
+              :aria-hidden="!showTenant"
+            >
               <div class="tenant-field-inner">
                 <el-form-item prop="tenantCode" :label="$t('login.tenantCode')">
                   <el-input
@@ -238,6 +243,7 @@
               class="login-button"
               :class="{ 'is-success': loginSuccess }"
               :loading="loading"
+              :disabled="ssoLoading"
             >
               <span v-if="loginSuccess" class="success-label">
                 <el-icon><Check /></el-icon>{{ $t('login.entering') }}
@@ -247,7 +253,7 @@
 
             <div class="divider">{{ copy.divider }}</div>
 
-            <button type="button" class="sso-button" :class="{ 'is-loading': ssoLoading }" :disabled="ssoLoading" @click="handleSsoLogin">
+            <button type="button" class="sso-button" :class="{ 'is-loading': ssoLoading }" :disabled="authBusy" @click="handleSsoLogin">
               <el-icon><Key /></el-icon>
               <span>{{ ssoLoading ? $t('sec.sso.redirecting') : $t('sec.sso.loginButton') }}</span>
             </button>
@@ -336,6 +342,7 @@ const rules = computed(() => ({
 }))
 
 const copy = computed(() => getLoginExperienceCopy(currentLang.value))
+const authBusy = computed(() => loading.value || ssoLoading.value)
 const shellStyle = computed(() => ({
   '--pointer-x': `${pointerX.value}%`,
   '--pointer-y': `${pointerY.value}%`,
@@ -415,7 +422,7 @@ async function toggleTenant() {
 }
 
 async function handleLogin() {
-  if (!formRef.value || loading.value) return
+  if (!formRef.value || authBusy.value) return
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
 
@@ -452,7 +459,11 @@ async function handleLogin() {
     router.push('/')
   } catch (err: any) {
     // 同名用户存在于多个租户时，后端要求用户补充租户编码。
-    if (err?.response?.data?.needTenant) showTenant.value = true
+    if (err?.response?.data?.needTenant) {
+      showTenant.value = true
+      await nextTick()
+      tenantInputRef.value?.focus()
+    }
     loginSuccess.value = false
   } finally {
     loading.value = false
@@ -460,6 +471,8 @@ async function handleLogin() {
 }
 
 async function handleSsoLogin() {
+  if (authBusy.value) return
+
   const tenantCode = form.value.tenantCode.trim()
   if (!tenantCode) {
     showTenant.value = true
@@ -655,13 +668,10 @@ async function handleSsoLogin() {
   animation: status-sheen 7s ease-in-out 2.5s infinite;
 }
 
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--ok);
-  box-shadow: 0 0 0 4px rgba(34, 181, 115, .1);
-  animation: status-pulse 2.4s ease-out infinite;
+.status-icon {
+  z-index: 1;
+  color: var(--brand-deep);
+  font-size: 14px;
 }
 
 .lang-button {
