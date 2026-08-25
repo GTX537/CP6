@@ -43,7 +43,17 @@ stages:
         $ErrorActionPreference = 'Stop'
         .\scripts\test-azure-ci-runtime-artifact-contract.ps1
         .\scripts\test-cp6-dev-runtime-artifact.ps1
+        .\scripts\test-cp6-ci-host-capacity.ps1
       displayName: 'Verify runtime artifact contracts'
+
+    - powershell: |
+        $ErrorActionPreference = 'Stop'
+        & .\scripts\Assert-Cp6CiHostCapacity.ps1 `
+          -MinimumFreeMemoryMiB 5632 `
+          -MaxWaitSeconds 600 `
+          -PollIntervalSeconds 15 |
+          Out-Null
+      displayName: 'Wait for safe CI host capacity'
 
     # =========================
     # .NET Backend

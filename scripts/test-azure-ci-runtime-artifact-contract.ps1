@@ -11,6 +11,10 @@ if (-not (Test-Path -LiteralPath $pipelinePath -PathType Leaf)) {
 $pipeline = Get-Content -LiteralPath $pipelinePath -Raw -Encoding utf8
 $requiredPatterns = [ordered]@{
     "main CI trigger" = '(?s)trigger:\s*branches:\s*include:\s*- main'
+    "host capacity behavior test" = 'test-cp6-ci-host-capacity\.ps1'
+    "host capacity gate" = 'Assert-Cp6CiHostCapacity\.ps1'
+    "five and a half GiB start threshold" = '-MinimumFreeMemoryMiB 5632'
+    "bounded capacity wait" = '(?s)-MaxWaitSeconds 600.*?-PollIntervalSeconds 15'
     "API build" = 'dotnet build CP6\.WebApi/CP6\.WebApi\.csproj'
     "backend tests" = 'dotnet test CP6\.Tests/CP6\.Tests\.csproj'
     "client tests" = 'dotnet test CP6\.Client\.Tests/CP6\.Client\.Tests\.csproj'
@@ -74,6 +78,13 @@ foreach ($displayName in @('Build CP6 API', 'Run Backend Tests', 'Run Client Tes
 }
 
 $apiBuildIndex = $pipeline.IndexOf("displayName: 'Build CP6 API'")
+$capacityGateIndex = $pipeline.IndexOf("displayName: 'Wait for safe CI host capacity'")
+$restoreIndex = $pipeline.IndexOf("displayName: 'Restore .NET Projects'")
+if ($capacityGateIndex -lt 0 -or
+    $restoreIndex -le $capacityGateIndex -or
+    $apiBuildIndex -le $restoreIndex) {
+    throw "Azure CI host capacity, restore, and API build order is invalid."
+}
 $webBuildIndex = $pipeline.IndexOf("displayName: 'Build Vue Production'")
 $artifactCreateIndex = $pipeline.IndexOf("displayName: 'Create hashed DEV runtime artifact'")
 $artifactPublishIndex = $pipeline.IndexOf("displayName: 'Publish DEV runtime artifact'")
