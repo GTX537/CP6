@@ -39,6 +39,13 @@ stages:
       inputs:
         versionSpec: '22.x'
 
+    - powershell: |
+        .\scripts\test-azure-ci-runtime-artifact-contract.ps1
+        if ($LASTEXITCODE -ne 0) { throw 'Azure CI runtime artifact contract failed.' }
+        .\scripts\test-cp6-dev-runtime-artifact.ps1
+        if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV runtime artifact behavior test failed.' }
+      displayName: 'Verify runtime artifact contracts'
+
     # =========================
     # .NET Backend
     # =========================
@@ -90,3 +97,47 @@ stages:
         npm run build-only
       workingDirectory: 'cp6.web'
       displayName: 'Build Vue Production'
+      env:
+        CP6_RELEASE_VERSION: '0.0.0-dev.$(Build.BuildId)'
+        CP6_GIT_SHA: '$(Build.SourceVersion)'
+
+    # =========================
+    # DEV runtime artifact
+    # =========================
+
+    - powershell: |
+        $ErrorActionPreference = 'Stop'
+        $prebuiltRoot = Join-Path $env:CP6_ARTIFACT_STAGING 'cp6-prebuilt'
+        $apiPublishRoot = Join-Path $prebuiltRoot 'api-publish'
+        $runtimeArtifactRoot = Join-Path $env:CP6_ARTIFACT_STAGING 'cp6-dev-runtime'
+        $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
+
+        dotnet publish CP6.WebApi/CP6.WebApi.csproj `
+          -c $(buildConfiguration) `
+          -o $apiPublishRoot `
+          --no-build `
+          --no-restore `
+          --disable-build-servers
+        if ($LASTEXITCODE -ne 0) { throw 'Unable to collect the prebuilt API payload.' }
+
+        & .\scripts\New-Cp6DevRuntimeArtifact.ps1 `
+          -ApiPublishPath $apiPublishRoot `
+          -WebDistPath .\cp6.web\dist `
+          -WebNginxConfigPath .\cp6.web\nginx.conf `
+          -OutputRoot $runtimeArtifactRoot `
+          -ReleaseVersion $releaseVersion `
+          -GitSha $env:CP6_GIT_SHA |
+          Out-Null
+        & .\scripts\Test-Cp6DevRuntimeArtifact.ps1 `
+          -ArtifactRoot $runtimeArtifactRoot `
+          -ExpectedReleaseVersion $releaseVersion `
+          -ExpectedGitSha $env:CP6_GIT_SHA
+      displayName: 'Create hashed DEV runtime artifact'
+      env:
+        CP6_ARTIFACT_STAGING: '$(Build.ArtifactStagingDirectory)'
+        CP6_CI_RUN_ID: '$(Build.BuildId)'
+        CP6_GIT_SHA: '$(Build.SourceVersion)'
+
+    - publish: '$(Build.ArtifactStagingDirectory)\cp6-dev-runtime'
+      artifact: 'cp6-dev-runtime'
+      displayName: 'Publish DEV runtime artifact'

@@ -202,6 +202,9 @@ try {
         throw "Lab script does not support the complete Pipeline Secret contract."
     }
     if ($labScript -notmatch '\[string\]\$SourceRoot = ""' -or
+        $labScript -notmatch '\[string\]\$RuntimeArtifactRoot = ""' -or
+        $labScript -notmatch 'Test-Cp6DevRuntimeArtifact\.ps1' -or
+        $labScript -notmatch 'Packaging the verified runtime artifact from the selected CI run' -or
         $labScript -notmatch '(?s)& dotnet restore.*?--disable-build-servers.*?--disable-parallel' -or
         $labScript -notmatch '--disable-build-servers' -or
         $labScript -notmatch '-m:1' -or
