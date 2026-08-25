@@ -1,11 +1,13 @@
 # 已完成能力与近期里程碑
 
-## 2026-08-25 DEV 候选宿主机构建隔离
+## 2026-08-25 DEV 候选 CI Artifact 隔离
 
 - Manual Run #98 在 API publish 内存达到 96.03% 后于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。Docker OOM 造成根 `cp6-db`/`cp6-api` 自动重启，因此该 Run 不计验收并保留为失败证据。
 - API Docker publish 改为单 MSBuild 节点并关闭项目并行、共享编译服务器后，Manual Run #101 仍在 Docker VM 95.83% 使用率时于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。根 `cp6-db`/`cp6-api` RestartCount 分别增至 2/3，因此同样不计验收。
 - DEV 候选现由部署 Agent 使用 .NET 8/Node 22 在 Windows 宿主机串行构建，Docker 只用两个 runtime-only Dockerfile 封装 publish/dist；Web 堆上限 768 MiB，Readiness 与 DEV CD 均固定工具版本并有合同覆盖。生产 R2 Dockerfile/工作流未改。
 - 提交 `72ec0e70` 的本机完整构建成功生成 API/Web 不可变 image ID，临时上下文清零；Docker VM 采样始终保留约 1.9 GiB 以上，根 API/DB 的 ID、StartedAt、RestartCount 不变，宿主 SQL 无新增 701/17300。六组契约、PowerShell 解析、差异与凭据扫描通过；自动/公网仍关闭，手动验收仍为 1/3。
+- CI #102、completion DEV #104 和 Readiness #105 均成功；Manual #106 因资源版本输入错误在 YAML 解析前失败。Manual #107 正确绑定 CI #102，但宿主重复 publish 达约 4.18 GiB 工作集并导致 `CP6_DEV` 连接超时，按门禁取消；没有备份/迁移/镜像切换，根 API/DB 不变，旧 DEV API RestartCount 16→17，因此不计验收。
+- 基础 CI 现从同一次已通过测试的 API/Web build 生成带完整身份与逐文件 SHA-256 的 `cp6-dev-runtime` Artifact；DEV 只下载、验证并用 runtime-only Dockerfile 封装，不再重复编译。587 文件真实产物本机封装约 17 秒完成，根 API/DB、旧 DEV API 与 SQL 均保持稳定；篡改、清单外文件和身份错配回归均失败关闭。GH R2/生产候选权威未改。
 
 ## 2026-08-25 Azure CI 与首次手动 DEV 发布外部闭环
 

@@ -115,7 +115,7 @@ stages:
           Write-Host "##vso[task.setvariable variable=skipReason;isOutput=true]$($plan.SkipReason)"
 
 - stage: BuildCandidate
-  displayName: 'Build DEV candidate locally'
+  displayName: 'Package DEV candidate from selected CI artifact'
   dependsOn: PlanRelease
   condition: and(succeeded(), eq(dependencies.PlanRelease.outputs['ClassifyRelease.releasePlan.deployAllowed'], 'true'))
   variables:
@@ -123,7 +123,7 @@ stages:
 
   jobs:
   - job: BuildLocalImages
-    displayName: 'Build API and Web images from selected CI commit'
+    displayName: 'Verify CI runtime artifact and package API/Web images'
     timeoutInMinutes: 60
 
     workspace:
@@ -134,16 +134,9 @@ stages:
       clean: true
       fetchDepth: 0
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET SDK 8 for host candidate build'
-      inputs:
-        packageType: 'sdk'
-        version: '8.0.x'
-
-    - task: NodeTool@0
-      displayName: 'Use Node.js 22 for host candidate build'
-      inputs:
-        versionSpec: '22.x'
+    - download: cp6ci
+      artifact: cp6-dev-runtime
+      displayName: 'Download selected CI runtime artifact'
 
     - task: PowerShell@2
       displayName: 'Verify deployment identity and contracts'
@@ -173,10 +166,12 @@ stages:
           if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV data safety contract test failed.' }
           & .\scripts\test-cp6-public-tunnel-contract.ps1
           if ($LASTEXITCODE -ne 0) { throw 'CP6 public Tunnel contract test failed.' }
+          & .\scripts\test-cp6-dev-runtime-artifact.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV runtime artifact contract test failed.' }
 
     - task: PowerShell@2
       name: buildOutputs
-      displayName: 'Build commit-addressed API and Web images'
+      displayName: 'Package commit-addressed API and Web images'
       env:
         CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
         CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
@@ -188,6 +183,9 @@ stages:
         script: |
           $ErrorActionPreference = 'Stop'
           $candidateRoot = Join-Path $env:CP6_PIPELINE_WORKSPACE 'cp6-selected-source'
+          $runtimeArtifactRoot = Join-Path `
+              $env:CP6_PIPELINE_WORKSPACE `
+              'cp6ci\cp6-dev-runtime'
           $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
           $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
           $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
@@ -203,13 +201,14 @@ stages:
                   -Environment dev `
                   -Action Build `
                   -SourceRoot $candidateRoot `
+                  -RuntimeArtifactRoot $runtimeArtifactRoot `
                   -ApiImage $apiImage `
                   -WebImage $webImage `
                   -ApiImageIdFile $apiImageIdFile `
                   -WebImageIdFile $webImageIdFile `
                   -ReleaseVersion $releaseVersion `
                   -GitSha $env:CP6_CI_SOURCE_COMMIT
-              if ($LASTEXITCODE -ne 0) { throw 'DEV image build failed.' }
+              if ($LASTEXITCODE -ne 0) { throw 'DEV runtime image packaging failed.' }
           }
           finally {
               & git worktree remove --force $candidateRoot 2>$null
@@ -224,7 +223,7 @@ stages:
           Write-Host "##vso[task.setvariable variable=apiImageId;isOutput=true]$apiImageId"
           Write-Host "##vso[task.setvariable variable=webImageId;isOutput=true]$webImageId"
 
-          Write-Host "Built DEV candidate $releaseVersion from $($env:CP6_CI_SOURCE_COMMIT) in $env:CP6_RELEASE_TRIGGER_MODE mode."
+          Write-Host "Packaged DEV candidate $releaseVersion from the verified CI artifact for $($env:CP6_CI_SOURCE_COMMIT) in $env:CP6_RELEASE_TRIGGER_MODE mode."
 
 - stage: DeployDev
   displayName: 'Deploy CP6 DEV'

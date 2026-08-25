@@ -13,6 +13,7 @@ param(
     [string]$ReleaseVersion = "0.0.0-lab",
     [string]$GitSha = "",
     [string]$SourceRoot = "",
+    [string]$RuntimeArtifactRoot = "",
     [string]$ApiImageIdFile = "",
     [string]$WebImageIdFile = "",
     [switch]$AllowPromotedGitSha,
@@ -82,6 +83,10 @@ if ($Action -ne "Build" -and
     (-not [string]::IsNullOrWhiteSpace($ApiImageIdFile) -or
      -not [string]::IsNullOrWhiteSpace($WebImageIdFile))) {
     throw "Image ID output files are only valid for Build."
+}
+if ($Action -ne "Build" -and
+    -not [string]::IsNullOrWhiteSpace($RuntimeArtifactRoot)) {
+    throw "RuntimeArtifactRoot is only valid for Build."
 }
 
 function New-RandomSecret {
@@ -467,6 +472,7 @@ if ($Action -eq "Initialize") {
 if ($Action -eq "Build") {
     Assert-DockerDaemon
     $releaseGitSha = Get-ReleaseGitSha
+    $useRuntimeArtifact = -not [string]::IsNullOrWhiteSpace($RuntimeArtifactRoot)
     $runtimeBuildRoot = Join-Path `
         ([IO.Path]::GetTempPath()) `
         "cp6-runtime-build-$([Guid]::NewGuid().ToString('N'))"
@@ -493,52 +499,74 @@ if ($Action -eq "Build") {
     try {
         [IO.Directory]::CreateDirectory($apiPublishRoot) | Out-Null
         [IO.Directory]::CreateDirectory($webDistPayloadRoot) | Out-Null
-
-        & dotnet restore `
-            $apiProjectPath `
-            --disable-build-servers `
-            --disable-parallel
-        if ($LASTEXITCODE -ne 0) { throw "API host restore failed." }
-        & dotnet publish `
-            $apiProjectPath `
-            -c Release `
-            -o $apiPublishRoot `
-            --no-restore `
-            --disable-build-servers `
-            -m:1 `
-            -p:BuildInParallel=false `
-            -p:UseSharedCompilation=false `
-            "-p:Version=$ReleaseVersion" `
-            "-p:InformationalVersion=$ReleaseVersion+$releaseGitSha"
-        if ($LASTEXITCODE -ne 0) { throw "API host publish failed." }
-
-        [Environment]::SetEnvironmentVariable(
-            "CP6_RELEASE_VERSION",
-            $ReleaseVersion,
-            "Process")
-        [Environment]::SetEnvironmentVariable("CP6_GIT_SHA", $releaseGitSha, "Process")
-        [Environment]::SetEnvironmentVariable(
-            "NODE_OPTIONS",
-            "--max-old-space-size=768",
-            "Process")
-        [Environment]::SetEnvironmentVariable("npm_config_jobs", "1", "Process")
-        Push-Location $webSourceRoot
-        try {
-            & npm.cmd ci --no-audit --no-fund
-            if ($LASTEXITCODE -ne 0) { throw "Web host dependency restore failed." }
-            & npm.cmd run build-only
-            if ($LASTEXITCODE -ne 0) { throw "Web host build failed." }
+        if ($useRuntimeArtifact) {
+            $resolvedRuntimeArtifactRoot = [IO.Path]::GetFullPath($RuntimeArtifactRoot)
+            & (Join-Path $repoRoot "scripts\Test-Cp6DevRuntimeArtifact.ps1") `
+                -ArtifactRoot $resolvedRuntimeArtifactRoot `
+                -ExpectedReleaseVersion $ReleaseVersion `
+                -ExpectedGitSha $releaseGitSha |
+                Out-Null
+            Get-ChildItem `
+                -LiteralPath (Join-Path $resolvedRuntimeArtifactRoot "api\publish") `
+                -Force |
+                Copy-Item -Destination $apiPublishRoot -Recurse -Force
+            Get-ChildItem `
+                -LiteralPath (Join-Path $resolvedRuntimeArtifactRoot "web\dist") `
+                -Force |
+                Copy-Item -Destination $webDistPayloadRoot -Recurse -Force
+            Copy-Item `
+                -LiteralPath (Join-Path $resolvedRuntimeArtifactRoot "web\nginx.conf") `
+                -Destination (Join-Path $webRuntimeContext "nginx.conf") `
+                -Force
+            Write-Host "Packaging the verified runtime artifact from the selected CI run."
         }
-        finally {
-            Pop-Location
-        }
+        else {
+            & dotnet restore `
+                $apiProjectPath `
+                --disable-build-servers `
+                --disable-parallel
+            if ($LASTEXITCODE -ne 0) { throw "API host restore failed." }
+            & dotnet publish `
+                $apiProjectPath `
+                -c Release `
+                -o $apiPublishRoot `
+                --no-restore `
+                --disable-build-servers `
+                -m:1 `
+                -p:BuildInParallel=false `
+                -p:UseSharedCompilation=false `
+                "-p:Version=$ReleaseVersion" `
+                "-p:InformationalVersion=$ReleaseVersion+$releaseGitSha"
+            if ($LASTEXITCODE -ne 0) { throw "API host publish failed." }
 
-        Get-ChildItem -LiteralPath $webSourceDist -Force |
-            Copy-Item -Destination $webDistPayloadRoot -Recurse -Force
-        Copy-Item `
-            -LiteralPath (Join-Path $webSourceRoot "nginx.conf") `
-            -Destination (Join-Path $webRuntimeContext "nginx.conf") `
-            -Force
+            [Environment]::SetEnvironmentVariable(
+                "CP6_RELEASE_VERSION",
+                $ReleaseVersion,
+                "Process")
+            [Environment]::SetEnvironmentVariable("CP6_GIT_SHA", $releaseGitSha, "Process")
+            [Environment]::SetEnvironmentVariable(
+                "NODE_OPTIONS",
+                "--max-old-space-size=768",
+                "Process")
+            [Environment]::SetEnvironmentVariable("npm_config_jobs", "1", "Process")
+            Push-Location $webSourceRoot
+            try {
+                & npm.cmd ci --no-audit --no-fund
+                if ($LASTEXITCODE -ne 0) { throw "Web host dependency restore failed." }
+                & npm.cmd run build-only
+                if ($LASTEXITCODE -ne 0) { throw "Web host build failed." }
+            }
+            finally {
+                Pop-Location
+            }
+
+            Get-ChildItem -LiteralPath $webSourceDist -Force |
+                Copy-Item -Destination $webDistPayloadRoot -Recurse -Force
+            Copy-Item `
+                -LiteralPath (Join-Path $webSourceRoot "nginx.conf") `
+                -Destination (Join-Path $webRuntimeContext "nginx.conf") `
+                -Force
+        }
 
         $apiBuildArguments = @(
             "build",

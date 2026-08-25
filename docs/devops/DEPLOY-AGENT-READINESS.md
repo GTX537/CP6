@@ -63,8 +63,9 @@ Run #94/#95 生成和验证。
 `Verify identity, Docker, and SQL endpoint` 为绿色；本机 Worker 日志进一步确认 Build ID `10`、
 Build Number `20260811.1`，该验证 Step 与最终 Job 结果均为 `Succeeded`。由于任一身份、管理员、
 Docker、Compose 或 SQL TCP 断言失败都会使 PowerShell Step 失败，本次绿色结果关闭当时的宿主机
-Readiness 门禁。2026-08-25 候选改为宿主机构建后，门禁新增 .NET 8、Node.js 22 与 npm 版本断言；
-更新后的 YAML 合入 `main` 后必须再运行一次，成功证据才能覆盖新增能力。
+Readiness 门禁。2026-08-25 候选一度改为宿主机构建后，门禁新增 .NET 8、Node.js 22 与 npm 版本断言；
+更新后的 Readiness Run #105 已通过。DEV Pipeline 现复用 CI Runtime Artifact，不再调用这些编译工具，
+但 Readiness 继续保留版本断言，用于本机 Lab 回退构建和 Agent 能力漂移诊断。
 
 ## 在 Azure DevOps 创建 Pipeline
 

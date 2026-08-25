@@ -23,8 +23,10 @@ $requiredPatterns = [ordered]@{
     'dedicated agent demand' = 'Agent\.Name\s+-equals\s+LAPTOP-3QQ44FJS'
     'release planning stage' = '(?m)^- stage:\s*PlanRelease\s*$'
     'candidate build stage' = '(?m)^- stage:\s*BuildCandidate\s*$'
-    'host .NET SDK 8 task' = "(?s)- task: UseDotNet@2.*?version: '8\.0\.x'"
-    'host Node.js 22 task' = "(?s)- task: NodeTool@0.*?versionSpec: '22\.x'"
+    'selected CI artifact download' = '(?s)- download:\s*cp6ci\s+artifact:\s*cp6-dev-runtime'
+    'selected CI artifact path' = 'cp6ci\\cp6-dev-runtime'
+    'runtime artifact contract' = 'test-cp6-dev-runtime-artifact\.ps1'
+    'runtime artifact packaging input' = '-RuntimeArtifactRoot\s+\$runtimeArtifactRoot'
     'DEV deployment stage' = '(?m)^- stage:\s*DeployDev\s*$'
     'release policy resolver' = 'Resolve-Cp6DevReleasePlan\.ps1'
     'release behavior test' = 'test-cp6-dev-release-plan\.ps1'
@@ -98,6 +100,8 @@ $forbiddenPatterns = [ordered]@{
     'root stack deployment' = 'docker-compose\.yml'
     'destructive compose removal' = '(?i)down\s+(?:--volumes|-v)'
     'Docker volume pruning' = '(?i)docker\s+volume\s+prune'
+    'duplicate API compilation' = '(?i)dotnet\s+(?:restore|build|publish)'
+    'duplicate Web compilation' = '(?i)npm(?:\.cmd)?\s+(?:ci|run)'
 }
 
 foreach ($entry in $forbiddenPatterns.GetEnumerator()) {
