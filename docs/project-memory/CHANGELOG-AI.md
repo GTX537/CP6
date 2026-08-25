@@ -2,11 +2,18 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-25：Azure CI 与首次手动 DEV 发布外部闭环
+
+- Azure CI Run #92 在 `main@47ca8441` 完整成功。此前 `.NET Restore` 的 PowerShell 类型数据冲突来自 `CP6-Windows` Agent 继承 PowerShell 7 `PSModulePath`；清空父环境后同一提交通过，仓库新增前台启动器和合同测试固化该运行方式。
+- `CP6 DEV CD`、定向 Pool/Variable Group/Environment 权限、Exclusive lock、两项关闭开关、`cp6_dev_backup` Secret/权限和 Readiness Run #89 已完成；completion Run #93 成功证明自动关闭时 Build/Deploy 安全跳过。
+- Manual Run #94 在备份通过后因宿主 SQL Server 已有 701/17300 内存耗尽事件而失败关闭；重启数据引擎后，Manual Run #95 成功发布 `0.0.0-dev.92` / `47ca8441...9dbe9c18`，备份、迁移、不可变镜像、本机健康与证据 Artifact 均验证通过。
+- 根 `cp6`/`CP6DB`/旧 Tunnel 未修改；自动和公网验证仍关闭，当前手动 DEV 验收为 1/3，未宣称 UAT/PROD 或公网切换完成。
+
 ## 2026-08-25：DEV 首次运行前置审计与 sqlcmd 路径修复
 
 - 实机确认 Docker/Compose、专用 Azure Agent、`KOUSQLSERVER`、`CP6_DEV` 与 SQL TCP 端点可用；创建并收紧 `C:\CP6Backups\CP6_DEV` ACL，根 `cp6`、`CP6DB` 和命名卷未变更。
 - 修复 `sqlcmd` 只存在于交互用户 PATH、服务 Agent 可能找不到的问题：备份脚本与 Readiness YAML 兼容 PATH、Go sqlcmd、ODBC 18/17 标准目录；7 场景行为回归覆盖发现/失败分支和 `SQLCMDPASSWORD` 恢复，三组合同测试同步通过。
-- Azure CLI/DevOps 扩展已装入当前用户目录；设备登录、`cp6_dev_backup`、Azure Secret/Exclusive lock/变量、Readiness 重跑及真实发布仍待完成。本条不构成 DEV 部署成功证据。
+- Azure CLI/DevOps 扩展已装入当前用户目录；本条保留当时的审计状态。同日后续已完成设备登录、`cp6_dev_backup`、Azure Secret/Exclusive lock/变量、Readiness 重跑及首次真实发布，以上方外部闭环记录为当前事实。
 
 ## 2026-08-25：本机 DEV 双模式发布闭环
 

@@ -1,6 +1,6 @@
 # How to 发布 CP6
 
-本指南描述 CP6 接通完整 Azure Release/CD 后的标准流程。当前 Azure 只完成 CI，所以下列 Azure Release/DEV/PROD 步骤是目标操作规程，不是已经可执行的生产声明。在 Azure 迁移验收前，生产发布继续遵循 [WMS R2 主规范](../client/r2/README.md)。
+本指南描述 CP6 接通完整 Azure Release/CD 后的标准流程。当前 Azure 已完成基础 CI，并运行了一条不具生产权威的本机 DEV 学习链；下列 Registry Release/UAT/PROD 步骤仍是目标操作规程，不是已经可执行的生产声明。在 Azure 迁移验收前，生产发布继续遵循 [WMS R2 主规范](../client/r2/README.md)。
 
 ## 前置条件
 
@@ -108,6 +108,16 @@
 ### Pipeline 排队但 Job 不启动
 
 检查 `Default` pool 是否有在线且已授权的 self-hosted Agent，以及 Agent capabilities 是否满足 PowerShell、Git、.NET、Node 和后续 Docker 要求。YAML 未绑定具体 Agent 名称。
+
+本机 `CP6-Windows` 必须通过仓库脚本以前台方式启动：
+
+```powershell
+.\scripts\Start-Cp6CiAgent.ps1
+```
+
+不要直接从 PowerShell 7 环境运行 `C:\agent\bin\Agent.Listener.exe run`。PowerShell 7 的
+`PSModulePath` 会被 Agent 继承，并使任务中的 Windows PowerShell 5.1 重复加载类型数据；脚本会先核对
+`.agent` 必须为 `CP6-Windows` / `Default`，只对 Agent 子进程清空该变量，退出后恢复当前终端环境。
 
 ### 镜像版本显示 unknown
 

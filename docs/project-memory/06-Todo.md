@@ -3,9 +3,11 @@
 ## P0：白天临时家庭测试环境的外部边界
 
 - 本机必须保持开机、未睡眠，且 Docker Desktop 与网络正常；这是当前白天临时测试方案的可用性边界。若需要夜间、无人值守或稳定 SLA，仍须另选真实云主机/托管容器平台并完成生产部署设计，不能把本机 Tunnel 描述为高可用云部署。
-- 首次切换 `cp6.uk` 前，先手动成功发布 `cp6-dev`，再运行 `Invoke-Cp6PublicTunnel.ps1 -Action Validate`、显式停止旧 `cp6-cloudflared`、启动 `cp6-public-tunnel` 并核对完整 SHA；确认后才设置 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED=true`。旧/新 connector 禁止同时运行。
+- 首次手动 `cp6-dev` 已由 Run #95 成功发布，但自动验收仅完成 1/3。继续保持 `CP6_DEV_AUTO_DEPLOY_ENABLED=false`，再完成两次有独立备份/证据的成功 Manual Run；每次运行前确认宿主 `KOUSQLSERVER` 可执行真实查询且没有 701/17300 内存事件。
+- 首次切换 `cp6.uk` 前，运行 `Invoke-Cp6PublicTunnel.ps1 -Action Validate`、显式停止旧 `cp6-cloudflared`、启动 `cp6-public-tunnel` 并核对完整 SHA；确认后才设置 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED=true`。旧/新 connector 禁止同时运行。
 - 给同事开放测试前，确认 `cp6-dev` 的 `19991`/`18080` 与公网 release identity 一致；同事只使用 `https://cp6.uk` 的应用账号，不共享 `.env`、Tunnel JSON、数据库/RabbitMQ/Kafka 管理端口或基础设施凭证。根 `cp6` 继续作为私人开发环境。
 - Cloudflare Workers 的 `estimate` Git 集成仍需在 Cloudflare 控制台单独断开或改正 Build 配置。它与 `cp6-cloudflared` Tunnel 不在同一部署链；当前家庭测试服务器不依赖 `estimate`，也没有修复其外部构建失败。
+- `MSSQLLaunchpad$KOUSQLSERVER`、`SQLPBENGINE$KOUSQLSERVER`、`SQLPBDMS$KOUSQLSERVER` 在故障恢复后保持 Stopped，但 StartMode 仍为 Automatic。确认 CP6 与其他本机工作负载均不使用这些功能后，另立管理员任务决定是否禁用；Pipeline 不得自行修改 Windows 服务启动类型。
 
 ## P0：整顿后的仓库治理与续开发边界
 
