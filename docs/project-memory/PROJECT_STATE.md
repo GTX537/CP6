@@ -2,6 +2,13 @@
 
 最后更新：2026-08-24
 
+## 日期时间规范化恢复与 P4/P5 决策（2026-08-24）
+
+- 旧 WIP 的 P4 `env.d.ts` 通配 `declare module '*.vue'` 不恢复：最新 `main` 使用 Vue 3.5、TypeScript 6 和 `vue-tsc` 3.2，在没有该声明时完成干净 `vue-tsc --build`。旧声明中的 `DefineComponent<{}, {}, any>` 会弱化 SFC 类型检查，只保留归档证据，不进入主线。
+- 日期时间恢复分支把 OA/PMS/WMS/Space 与通用列表中散落的原始 ISO、字符串截断和浏览器直出统一到共享 `formatDateTime`/`formatDateTimeCell`；`VolTable` 与 `CpListPage` 增加显式 datetime 列合同，高精度 .NET 输入不再直接暴露。
+- P5 精度合同固定为普通业务 UI 显示本地日期及“时:分”。没有产品需求时不得在全局 `long` 格式加入秒或小数秒；将来若审计/追踪确需更高精度，必须使用独立命名格式和独立验收，不能扩大所有调用方。
+- 回归覆盖 zh-CN、zh-TW、en、ja、ko 五种语言及高精度/空值/非法值；Web 全量 175 文件、892 测试通过，Vue 类型检查和 production build 通过。
+
 ## 白天临时家庭测试服务器（2026-08-24）
 
 - 当前阶段选择由本机 Docker Desktop 承载 CP6，Cloudflare Tunnel 仅把容器内的 Web/API 转发到 `cp6.uk` 与 `api.cp6.uk`；它是供同事白天临时测试的开发环境，不是云主机或正式生产部署。

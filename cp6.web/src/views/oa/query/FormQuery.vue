@@ -129,7 +129,7 @@
             </CpTag>
           </template>
         </el-table-column>
-        <el-table-column prop="createDate" label="发起时间" min-width="160" show-overflow-tooltip />
+        <el-table-column prop="createDate" label="发起时间" min-width="180" :formatter="formatDateTimeCell" show-overflow-tooltip />
         <el-table-column label="操作" width="80" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click.stop="openDetail(row.instanceId)">
@@ -175,6 +175,7 @@ import CpEmpty from '@/components/base/CpEmpty.vue'
 import FormDetail from '@/views/oa/inbox/FormDetail.vue'
 import type { FormQueryFilter, FormQueryItem } from '@/types/oa/advanced'
 import type { FlowAdminItem } from '@/types/oa/inbox'
+import { formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 

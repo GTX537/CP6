@@ -353,7 +353,7 @@ const orderColumns = computed<ListColumn<KitOrder>[]>(() => [
   { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 90 },
   { prop: 'kitLocationCd', label: t('wms.kit.fld.kitLoc'), width: 140 },
   { prop: 'kitLotNo', label: t('wms.kit.fld.kitLot'), width: 160 },
-  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160 },
+  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), kind: 'datetime', width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
 ])
 

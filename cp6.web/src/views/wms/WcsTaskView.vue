@@ -158,8 +158,8 @@ const columns = computed<ListColumn<WcsTask>[]>(() => [
   { prop: 'productCd', label: t('wms.common.product'), width: 120 },
   { prop: 'qty', label: t('wms.common.qty'), width: 100, align: 'right' },
   { prop: 'relatedNo', label: t('wms.wcs.fld.related'), width: 160 },
-  { prop: 'createdAt', label: t('wms.wcs.fld.created'), width: 160 },
-  { prop: 'completedAt', label: t('wms.wcs.fld.completed'), width: 160 },
+  { prop: 'createdAt', label: t('wms.wcs.fld.created'), kind: 'datetime', width: 180 },
+  { prop: 'completedAt', label: t('wms.wcs.fld.completed'), kind: 'datetime', width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 280, fixed: 'right' },
 ])
 

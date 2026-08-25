@@ -35,7 +35,7 @@
         <template #default="{ row }">{{ row.elapsedMs }}ms</template>
       </el-table-column>
       <el-table-column prop="clientIp" label="IP" width="120" />
-      <el-table-column prop="createDate" :label="t('operlog.time')" width="170" />
+      <el-table-column prop="createDate" :label="t('operlog.time')" width="180" :formatter="formatDateTimeCell" />
       <el-table-column :label="t('table.operation')" width="80">
         <template #default="{ row }">
           <el-button link type="primary" @click="showDetail(row)">{{ t('operlog.detail') }}</el-button>
@@ -65,7 +65,7 @@
         <el-descriptions-item :label="t('operlog.status')">{{ detailRow?.statusCode }}</el-descriptions-item>
         <el-descriptions-item :label="t('operlog.elapsed')">{{ detailRow?.elapsedMs }}ms</el-descriptions-item>
         <el-descriptions-item label="IP">{{ detailRow?.clientIp }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.time')">{{ detailRow?.createDate }}</el-descriptions-item>
+        <el-descriptions-item :label="t('operlog.time')">{{ formatDateTime(detailRow?.createDate) }}</el-descriptions-item>
         <el-descriptions-item :label="t('operlog.requestBody')">
           <pre style="max-height: 200px; overflow: auto; white-space: pre-wrap; margin: 0">{{ detailRow?.requestBody || '-' }}</pre>
         </el-descriptions-item>
@@ -79,6 +79,7 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { operLogApi } from '@/api/sys/operlog'
+import { formatDateTime, formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 

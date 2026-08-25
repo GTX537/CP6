@@ -120,7 +120,7 @@ function statusTone(status: MaterialShortageStatus): Tone {
 }
 
 const columns = computed<ListColumn<MaterialShortage>[]>(() => [
-  { prop: 'detectedAt', label: t('wms.materialShortage.col.detectedAt'), width: 170 },
+  { prop: 'detectedAt', label: t('wms.materialShortage.col.detectedAt'), kind: 'datetime', width: 180 },
   { prop: 'workOrderNo', label: t('wms.materialShortage.col.wo'), width: 160, overflowTooltip: true },
   { prop: 'relatedOutboundNo', label: t('wms.materialShortage.col.outbound'), width: 160, overflowTooltip: true },
   { prop: 'productCd', label: t('wms.materialShortage.col.product'), width: 130, overflowTooltip: true },

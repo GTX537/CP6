@@ -151,8 +151,7 @@ const columns = computed<ListColumn<ReplenishOrder>[]>(() => [
   { prop: 'toLocationCd', label: t('wms.replenish.fld.toLoc'), width: 140 },
   { prop: 'lotNo', label: t('wms.common.lot'), width: 120 },
   { prop: 'qty', label: t('wms.common.qty'), width: 100, kind: 'num', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160,
-    map: (v) => ({ label: v ? String(v).replace('T', ' ').slice(0, 16) : '—' }) },
+  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), kind: 'datetime', width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 220, fixed: 'right' },
 ])
 
