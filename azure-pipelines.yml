@@ -35,7 +35,7 @@ stages:
 
     - powershell: |
         $ErrorActionPreference = 'Stop'
-        $authorizationHeader = & git config --get-all http.https://github.com/.extraheader |
+        $authorizationHeader = & git config --get-all "http.https://github.com/$env:CP6_GITHUB_REPOSITORY.extraheader" |
           Where-Object { $_ -match '^(?i)AUTHORIZATION:\s+.+' } |
           Select-Object -First 1
         if ([string]::IsNullOrWhiteSpace($authorizationHeader)) {
@@ -63,6 +63,7 @@ stages:
         }
       displayName: 'Download verified GitHub runtime artifact'
       env:
+        CP6_GITHUB_REPOSITORY: 'GTX537/CP6'
         CP6_GIT_SHA: '$(Build.SourceVersion)'
         CP6_RUNTIME_ARTIFACT_ROOT: '$(Build.ArtifactStagingDirectory)\cp6-dev-runtime'
 

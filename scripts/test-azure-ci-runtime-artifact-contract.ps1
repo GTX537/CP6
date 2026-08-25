@@ -42,7 +42,8 @@ if ($downloadStepIndex -lt 0) {
     throw "Azure CI artifact bridge download step boundary is invalid."
 }
 $downloadStep = $pipeline.Substring($downloadStepIndex, $publishIndex - $downloadStepIndex)
-if ($downloadStep -notmatch 'git config --get-all http\.https://github\.com/\.extraheader' -or
+if ($downloadStep -notmatch 'git config --get-all "http\.https://github\.com/\$env:CP6_GITHUB_REPOSITORY\.extraheader"' -or
+    $downloadStep -notmatch "CP6_GITHUB_REPOSITORY: 'GTX537/CP6'" -or
     $downloadStep -notmatch 'CP6_GITHUB_AUTHORIZATION' -or
     $downloadStep -notmatch '(?s)finally\s*\{.*?CP6_GITHUB_AUTHORIZATION.*?\$null') {
     throw "Azure CI artifact bridge must scope and clear the authorized checkout credential."
