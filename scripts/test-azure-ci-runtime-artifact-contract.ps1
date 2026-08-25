@@ -11,6 +11,7 @@ if (-not (Test-Path -LiteralPath $pipelinePath -PathType Leaf)) {
 $pipeline = Get-Content -LiteralPath $pipelinePath -Raw -Encoding utf8
 $requiredPatterns = [ordered]@{
     "main CI trigger" = '(?s)trigger:\s*branches:\s*include:\s*- main'
+    "Microsoft-hosted Windows pool" = "(?s)pool:\s*vmImage:\s*'windows-latest'"
     "API build" = 'dotnet build CP6\.WebApi/CP6\.WebApi\.csproj'
     "backend tests" = 'dotnet test CP6\.Tests/CP6\.Tests\.csproj'
     "client tests" = 'dotnet test CP6\.Client\.Tests/CP6\.Client\.Tests\.csproj'
@@ -60,6 +61,7 @@ if ($contractStep -match '\$LASTEXITCODE') {
 }
 
 $forbiddenPatterns = [ordered]@{
+    "shared self-hosted Default pool" = "(?m)^\s*name:\s*'Default'\s*$"
     "Docker image build" = '(?i)docker\s+(?:build|push)'
     "environment deployment" = '(?m)^\s*- deployment:'
     "production registry" = '(?i)(?:ghcr\.io|\.azurecr\.io)'
