@@ -26,6 +26,10 @@ RUN dotnet restore CP6.WebApi/CP6.WebApi.csproj
 # 再复制全部源码，编译发布
 COPY . .
 RUN dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o /app/publish --no-restore \
+    --disable-build-servers \
+    -m:1 \
+    -p:BuildInParallel=false \
+    -p:UseSharedCompilation=false \
     -p:Version=${RELEASE_VERSION} \
     -p:InformationalVersion=${RELEASE_VERSION}+${GIT_SHA}
 

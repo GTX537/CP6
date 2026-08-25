@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-25 DEV Docker 低内存构建加固
+
+- Manual Run #98 在 API publish 内存达到 96.03% 后于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。Docker OOM 造成根 `cp6-db`/`cp6-api` 自动重启，因此该 Run 不计验收并保留为失败证据。
+- API Docker publish 改为单 MSBuild 节点并关闭项目并行、共享编译服务器；DEV CD 合同覆盖四项约束，本机串行 restore 与完整 Release publish 通过。
+- 根 `cp6` 与 `cp6-dev` 均已恢复 Healthy；自动/公网仍关闭，手动验收仍为 1/3。
+
 ## 2026-08-25 Azure CI 与首次手动 DEV 发布外部闭环
 
 - Azure CI Run #92 在 `main@47ca8441` 完整成功；通用 `CP6-Windows` Agent 的 `.NET Restore` 假失败已定位为 PowerShell 7 `PSModulePath` 继承污染。新增安全前台启动器及合同测试，固定核对 `C:\agent`、Agent 名称和 `Default` Pool，并只隔离 Agent 子进程环境。
