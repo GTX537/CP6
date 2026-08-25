@@ -69,6 +69,12 @@ Azure Pipeline 变量控制行为：
 CP6 当前不使用 PolyBase/Launchpad；故障恢复后这三个依赖服务保持停止以释放内存，但 StartMode 仍为
 Automatic。是否永久禁用属于独立的宿主机管理决定，不能由 Pipeline 或本仓库脚本静默修改。
 
+Docker Desktop 当前只有约 8 GiB WSL 内存。2026-08-25 Manual Run #98 在并行 `dotnet publish`
+期间把宿主机内存使用率推到 96.03%，随后 Docker OOM 杀死并自动重启根 `cp6-db`，`cp6-api`
+也因依赖恢复而重启；该 Run 在 Deploy 前取消，不计手动验收。API Dockerfile 现固定使用单 MSBuild
+节点、关闭项目并行与共享编译服务器，合同测试会阻止这些低内存约束被删除。后续每次手动 Run 还要
+记录根七容器的 `RestartCount`，仅核对容器 ID 不足以证明根环境未受影响。
+
 ## Azure 一次性外部配置
 
 仓库合入 `main` 后：
@@ -113,6 +119,7 @@ SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；�
 | `#93` / `dev-20260825.1` | completion trigger；Succeeded | 否 | `CP6_DEV_AUTO_DEPLOY_ENABLED=false` 时 Build/Deploy 均为 Skipped，证明自动门安全关闭 |
 | `#94` / `dev-20260825.2` | Manual；Failed | 否 | 备份与 VERIFYONLY 成功；宿主 `KOUSQLSERVER` 已有 701/17300 内存耗尽事件并处于退化状态，db-init 元数据查询超时，API/Web 未启动 |
 | `#95` / `dev-20260825.3` | Manual；Succeeded | **是，1/3** | SQL 服务恢复后完成新备份、迁移、不可变镜像核对、本机健康与 Pipeline Artifact 归档 |
+| `#98` / `dev-20260825.5` | Manual；Canceled | 否 | 分类通过并选择 CI #96；API publish 内存告警后人工取消，Deploy Skipped。Docker OOM 导致根 `cp6-db`/`cp6-api` 自动重启，因此该次明确不合格 |
 
 Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
 分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。根 `cp6` 七个容器 ID 与 Run 前一致。

@@ -46,7 +46,7 @@
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |
 | 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；最新 Readiness [`Run #89`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=89) 验证身份、Docker、Compose、SQL TCP、`sqlcmd` 与备份目录 |
-| Azure DEV 双模式发布 | 外部配置完成，手动验收 1/3 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；自动 Run #93 安全跳过，手动 Run #95 完成备份、迁移、不可变镜像和健康证据。满三次前不启用自动 |
+| Azure DEV 双模式发布 | 外部配置完成，手动验收 1/3 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；自动 Run #93 安全跳过，手动 Run #95 成功。Run #98 因 Docker 构建 OOM 在 Deploy 前取消且不计数；API Docker publish 已加低内存约束。满三次前不启用自动 |
 | 白天测试公网 | 工具已交付，切换待执行 | `cp6-public-tunnel` 只连接 `cp6-dev_default`；切换前必须显式停止旧 `cp6-cloudflared`，Pipeline 不自动切换 Cloudflare |
 | 私人本地 `cp6`/`CP6DB` | 保持独立 | DEV CD 不操作根 Compose、`CP6DB` 或 `cp6_cp6-db-data`；DEV 数据只能手动恢复为新的 `CP6DEV_IMPORT_*` 旁路库 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |

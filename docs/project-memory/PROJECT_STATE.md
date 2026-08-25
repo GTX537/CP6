@@ -2,6 +2,13 @@
 
 最后更新：2026-08-25
 
+## DEV Manual Run #98 Docker OOM 与低内存构建加固（2026-08-25）
+
+- 继续 2/3、3/3 验收前，宿主机仅余 1.09 GiB / 6.9% 内存，预检按门禁拒绝排队；关闭 Chrome 后，12/12 次 `CP6_DEV` 独立 SQL 连接/查询通过，最低可用内存 3.57 GiB / 22.6%，无新增宿主 SQL 701/17300。
+- Manual Run #98 正确选择成功的 CI #96 / `main@c9b02c82`，但 API Docker `dotnet publish` 期间 Agent 报宿主内存已使用 96.03%。Run 在 Build 阶段人工取消，Deploy 为 Skipped，没有新备份、迁移或 DEV 候选切换，不计手动验收。
+- Docker 事件证明根 `cp6-db` 被 OOM kill 后自动重启一次，`cp6-api` 因数据库恢复累计重启两次；两者与其余根容器当前均恢复 Healthy，但“根环境未受影响”门禁已失败，不能只凭容器 ID 未变化放行。
+- `CP6.WebApi/Dockerfile` 的 publish 已固定 `--disable-build-servers`、单 MSBuild 节点、`BuildInParallel=false` 与 `UseSharedCompilation=false`；DEV CD 合同测试新增相应回归。本机同参数串行 restore/publish 已成功生成 Release 输出。自动与公网开关仍为 `false`，手动成功计数保持 1/3。
+
 ## Azure CI 与首次本机 DEV 发布外部闭环（2026-08-25）
 
 - Azure 基础 CI `GTX537.CP6` Run #92 在 `main@47ca8441898af69d1e66bc1acb6c51129dbe9c18` 完整成功。此前固定失败的 `.NET Restore` 根因是通用 `CP6-Windows` Agent 从 PowerShell 7 启动后继承 `PSModulePath`，使 Windows PowerShell 5.1 重复加载类型数据；清空父进程该变量后同一提交通过。新增 `Start-Cp6CiAgent.ps1` 固化 `CP6-Windows` / `Default` 校验和前台隔离启动，不注册服务、不改电源设置。

@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-25：DEV Docker publish 低内存加固
+
+- Manual Run #98 在 API Docker publish 报宿主内存使用 96.03% 后于 Deploy 前取消；没有新备份、迁移或 DEV 候选切换。Docker OOM 造成根 `cp6-db` 重启一次、`cp6-api` 累计重启两次，因此不计手动验收。
+- API Dockerfile 关闭持久 build server、限制单 MSBuild 节点并禁用项目并行/共享编译；DEV CD 合同新增四项回归，本机完整低内存 Release publish 通过。
+- 根与 DEV 健康已恢复；自动/公网开关仍关闭，手动成功计数保持 1/3，后续必须同时核对容器 ID、StartedAt 与 RestartCount。
+
 ## 2026-08-25：Azure CI 与首次手动 DEV 发布外部闭环
 
 - Azure CI Run #92 在 `main@47ca8441` 完整成功。此前 `.NET Restore` 的 PowerShell 类型数据冲突来自 `CP6-Windows` Agent 继承 PowerShell 7 `PSModulePath`；清空父环境后同一提交通过，仓库新增前台启动器和合同测试固化该运行方式。
