@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-25：DEV 复用 CI 哈希运行时产物
+
+- CI #102、关闭状态 completion #104 与 Readiness #105 成功；Manual #106 因资源版本输入错误在 YAML 解析前失败，无副作用。Manual #107 正确绑定 CI #102，但 DEV 中重复宿主 publish 达约 4.18 GiB 工作集并导致 `CP6_DEV` 新连接超时，按门禁取消；没有备份/迁移/候选切换，根 API/DB 不变，旧 DEV API 重启，因此不计验收。
+- 基础 Azure CI 现从同一次通过测试的 API/Web build 收集 runtime payload，生成带版本、完整 SHA、逐文件长度和 SHA-256 的 `cp6-dev-runtime` Pipeline Artifact；DEV 下载所选 CI 的 Artifact，拒绝篡改、额外文件或身份错配，只用 runtime-only Dockerfile 封装并捕获不可变 image ID。
+- 真实 145,966,387 bytes API 与 7,473,275 bytes Web 共 587 个文件已完成本机哈希与约 17 秒封装验证，根 API/DB、旧 DEV API 和 `CP6_DEV` 均保持稳定。GH R2/GHCR 生产权威、自动/公网关闭状态不变，手动成功计数仍为 1/3。
+
 ## 2026-08-25：DEV 候选宿主机构建与 Docker 运行时封装
 
 - Manual Run #98 在 API Docker publish 报宿主内存使用 96.03% 后于 Deploy 前取消；没有新备份、迁移或 DEV 候选切换。Docker OOM 造成根 `cp6-db` 重启一次、`cp6-api` 累计重启两次，因此不计手动验收。
