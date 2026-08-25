@@ -1,254 +1,445 @@
 <template>
-  <div class="login-shell" :style="shellStyle" @pointermove="handlePointerMove" @pointerleave="handlePointerLeave">
-    <div class="login-ambient">
-      <span class="blob blob-a"></span>
-      <span class="blob blob-b"></span>
-      <span class="blob blob-c"></span>
-      <span class="wave-ring wave-ring-a"></span>
-      <span class="wave-ring wave-ring-b"></span>
-      <span
-        v-for="particle in particles"
-        :key="particle.id"
-        class="float-particle"
-        :style="particle.style"
-      ></span>
-      <span class="grid-mask"></span>
-    </div>
+  <div
+    class="login-page"
+    :class="{ 'is-ready': pageReady }"
+    :style="shellStyle"
+    @pointermove="handlePointerMove"
+    @pointerleave="handlePointerLeave"
+  >
+    <div class="ambient-orb ambient-orb-one" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb-two" aria-hidden="true"></div>
 
-    <section class="login-panel" :class="{ 'is-success': loginSuccess }">
-      <el-card class="login-card" shadow="never" :style="cardStyle" :class="{ 'is-success': loginSuccess }">
-        <div class="card-glow"></div>
-        <div class="success-burst"></div>
-        <div class="card-header">
-          <div class="brand-chip">CP6</div>
-          <p class="card-eyebrow">{{ $t('login.welcomeBack') }}</p>
-          <h2 class="login-title">{{ $t('login.title') }}</h2>
-          <p class="login-subtitle">{{ $t('login.subtitle') }}</p>
+    <header class="topbar">
+      <div class="brand" aria-label="CP6 Packaging Operations Platform">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="login-logo-bg" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#2bd4cd" />
+              <stop offset="1" stop-color="#0e93a0" />
+            </linearGradient>
+          </defs>
+          <rect x="3" y="3" width="58" height="58" rx="16" fill="url(#login-logo-bg)" />
+          <g stroke="#0e93a0" stroke-width="1.2" stroke-linejoin="round">
+            <polygon points="32,13 50,23 32,33 14,23" fill="#fff" />
+            <polygon points="14,23 32,33 32,53 14,43" fill="#d2f6f3" />
+            <polygon points="50,23 32,33 32,53 50,43" fill="#9de3de" />
+          </g>
+        </svg>
+        <div class="brand-copy">
+          <strong>CP6</strong>
+          <span>PACKAGING OPERATIONS PLATFORM</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="status-pill">
+          <el-icon class="status-icon" aria-hidden="true"><Lock /></el-icon>
+          <span>{{ copy.accessStatus }}</span>
         </div>
 
-        <el-form ref="formRef" :model="form" :rules="rules" label-width="0" class="login-form">
-          <el-form-item prop="userName">
-            <el-input
-              v-model="form.userName"
-              :placeholder="$t('login.username')"
-              :prefix-icon="User"
-              size="large"
-            />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input
-              v-model="form.password"
-              :type="passwordVisible ? 'text' : 'password'"
-              :placeholder="$t('login.password')"
-              :prefix-icon="Lock"
-              size="large"
-              @keyup.enter="handleLogin"
+        <el-popover
+          v-model:visible="langMenuOpen"
+          placement="bottom-end"
+          trigger="click"
+          :width="220"
+          popper-class="login-lang-popper"
+          :teleported="false"
+          :show-arrow="false"
+          :popper-style="{
+            padding: '0',
+            border: 'none',
+            background: 'transparent',
+            boxShadow: 'none'
+          }"
+        >
+          <template #reference>
+            <button
+              type="button"
+              class="lang-button"
+              :class="{ 'is-open': langMenuOpen }"
+              :aria-expanded="langMenuOpen"
+              aria-haspopup="true"
             >
-              <template #suffix>
-                <button
-                  type="button"
-                  class="password-toggle"
-                  :aria-label="passwordVisible ? 'Hide password' : 'Show password'"
-                  @click="passwordVisible = !passwordVisible"
-                >
-                  <el-icon>
-                    <component :is="passwordVisible ? View : Hide" />
-                  </el-icon>
-                </button>
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item v-if="showTenant" prop="tenantCode">
-            <el-input
-              v-model="form.tenantCode"
-              :placeholder="$t('login.tenantCode')"
-              :prefix-icon="OfficeBuilding"
-              size="large"
-              @keyup.enter="handleLogin"
-            />
-          </el-form-item>
-          <div v-else class="tenant-toggle-row">
-            <button type="button" class="tenant-toggle" @click="showTenant = true">
-              {{ $t('login.specifyTenant') }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+              </svg>
+              <span>{{ currentLangLabel }}</span>
+              <el-icon class="lang-chevron"><ArrowDown /></el-icon>
+            </button>
+          </template>
+
+          <div class="lang-menu-panel" role="group" :aria-label="$t('login.selectLanguage')">
+            <div class="lang-menu-title">{{ $t('login.selectLanguage') }}</div>
+            <button
+              v-for="item in langOptions"
+              :key="item.value"
+              type="button"
+              class="lang-option"
+              :class="{ 'is-active': item.value === currentLang }"
+              :aria-pressed="item.value === currentLang"
+              @click="onChangeLang(item.value)"
+            >
+              <span>{{ item.label }}</span>
+              <el-icon v-if="item.value === currentLang"><Check /></el-icon>
             </button>
           </div>
-          <el-form-item class="login-action">
+        </el-popover>
+      </div>
+    </header>
+
+    <main class="login-stage">
+      <section class="story" aria-labelledby="login-story-title">
+        <div class="story-content">
+          <div class="story-eyebrow">PACKAGING MANUFACTURING CORE PLATFORM</div>
+          <h1 id="login-story-title">
+            <span>{{ copy.heroLine }}</span>
+            <em>{{ copy.heroAccent }}</em>
+          </h1>
+          <p class="story-lead">
+            {{ copy.leadPrefix }} <strong>{{ copy.leadStrong }}</strong>{{ copy.leadSuffix }}
+          </p>
+
+          <div class="flow-card">
+            <div class="flow-head">
+              <span>{{ copy.flowTitle }}</span>
+              <span class="connected"><i aria-hidden="true"></i>{{ copy.connected }}</span>
+            </div>
+            <div class="flow">
+              <span class="flow-signal" aria-hidden="true"></span>
+              <div
+                v-for="(node, index) in flowNodes"
+                :key="node.title"
+                class="flow-node"
+                :class="`node-tone-${index + 1}`"
+              >
+                <div class="node-icon">
+                  <el-icon><component :is="node.icon" /></el-icon>
+                </div>
+                <strong>{{ node.title }}</strong>
+                <span>{{ node.detail }}</span>
+              </div>
+            </div>
+            <div class="foundation">
+              <div v-for="item in foundations" :key="item.text" class="foundation-item">
+                <el-icon><component :is="item.icon" /></el-icon>
+                <span>{{ item.text }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="capabilities" aria-label="CP6 clients and security">
+            <div v-for="item in capabilities" :key="item.text" class="capability">
+              <el-icon><component :is="item.icon" /></el-icon>
+              <span>{{ item.text }}</span>
+            </div>
+          </div>
+        </div>
+
+        <svg class="dieline" viewBox="0 0 520 290" fill="none" aria-hidden="true">
+          <g stroke="#0e93a0" stroke-width="1.2">
+            <path d="M62 76h96v70H62zM158 76h96v70h-96zM254 76h96v70h-96zM350 76h96v70h-96z" />
+            <path d="M158 22h96v54h-96zM158 146h96v56h-96zM254 146h96v56h-96z" />
+            <path d="M62 76 28 97v28l34 21M446 76l37 20v30l-37 20" stroke-dasharray="5 5" />
+            <path d="M158 76l16-54M254 76l-18-54M158 146l18 56M254 146l-18 56" stroke-dasharray="5 5" />
+            <circle cx="206" cy="111" r="18" />
+            <path d="M198 111h16M206 103v16" />
+            <path d="M95 239h330M116 221v36M175 221v36M234 221v36M293 221v36M352 221v36M411 221v36" opacity=".65" />
+          </g>
+        </svg>
+      </section>
+
+      <section class="auth-zone" aria-labelledby="login-form-title">
+        <div class="auth-card" :class="{ 'is-success': loginSuccess }">
+          <div class="auth-kicker">SECURE WORKSPACE ACCESS</div>
+          <h2 id="login-form-title">{{ $t('login.welcomeBack') }}</h2>
+          <p class="auth-subtitle">{{ $t('login.subtitle') }}</p>
+
+          <el-form
+            ref="formRef"
+            :model="form"
+            :rules="rules"
+            label-position="top"
+            class="auth-form"
+            @submit.prevent="handleLogin"
+          >
+            <div class="tenant-strip">
+              <div class="tenant-icon">
+                <el-icon><OfficeBuilding /></el-icon>
+              </div>
+              <div class="tenant-copy">
+                <span>{{ copy.tenantLabel }}</span>
+                <strong>{{ form.tenantCode.trim() || copy.tenantAutomatic }}</strong>
+              </div>
+              <button
+                type="button"
+                class="tenant-change"
+                :aria-expanded="showTenant"
+                aria-controls="tenant-code-field"
+                @click="toggleTenant"
+              >
+                {{ showTenant ? copy.collapseTenant : $t('login.specifyTenant') }}
+              </button>
+            </div>
+
+            <div
+              id="tenant-code-field"
+              class="tenant-field"
+              :class="{ 'is-open': showTenant }"
+              :inert="!showTenant"
+              :aria-hidden="!showTenant"
+            >
+              <div class="tenant-field-inner">
+                <el-form-item prop="tenantCode" :label="$t('login.tenantCode')">
+                  <el-input
+                    ref="tenantInputRef"
+                    v-model="form.tenantCode"
+                    :placeholder="$t('login.tenantCode')"
+                    :prefix-icon="OfficeBuilding"
+                    autocomplete="organization"
+                  />
+                </el-form-item>
+              </div>
+            </div>
+
+            <el-form-item prop="userName" :label="$t('login.username')">
+              <el-input
+                v-model="form.userName"
+                :placeholder="$t('login.username')"
+                :prefix-icon="User"
+                autocomplete="username"
+              />
+            </el-form-item>
+
+            <el-form-item prop="password" :label="$t('login.password')">
+              <el-input
+                v-model="form.password"
+                :type="passwordVisible ? 'text' : 'password'"
+                :placeholder="$t('login.password')"
+                :prefix-icon="Lock"
+                autocomplete="current-password"
+              >
+                <template #suffix>
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    :aria-label="passwordVisible ? copy.hidePassword : copy.showPassword"
+                    @click="passwordVisible = !passwordVisible"
+                  >
+                    <el-icon><component :is="passwordVisible ? View : Hide" /></el-icon>
+                  </button>
+                </template>
+              </el-input>
+            </el-form-item>
+
+            <div class="form-meta">
+              <span class="secure-note"><el-icon><CircleCheck /></el-icon>{{ copy.secureTransport }}</span>
+              <span>{{ copy.twoFactorPolicy }}</span>
+            </div>
+
             <el-button
               type="primary"
-              size="large"
+              native-type="submit"
               class="login-button"
               :class="{ 'is-success': loginSuccess }"
               :loading="loading"
-              @click="handleLogin"
+              :disabled="ssoLoading"
             >
-              {{ loginSuccess ? $t('login.entering') : $t('login.button') }}
+              <span v-if="loginSuccess" class="success-label">
+                <el-icon><Check /></el-icon>{{ $t('login.entering') }}
+              </span>
+              <span v-else>{{ $t('login.button') }}</span>
             </el-button>
-          </el-form-item>
-          <el-form-item class="sso-action">
-            <button type="button" class="sso-button" :disabled="ssoLoading" @click="handleSsoLogin">
-              {{ ssoLoading ? $t('sec.sso.redirecting') : $t('sec.sso.loginButton') }}
+
+            <div class="divider">{{ copy.divider }}</div>
+
+            <button type="button" class="sso-button" :class="{ 'is-loading': ssoLoading }" :disabled="authBusy" @click="handleSsoLogin">
+              <el-icon><Key /></el-icon>
+              <span>{{ ssoLoading ? $t('sec.sso.redirecting') : $t('sec.sso.loginButton') }}</span>
             </button>
-          </el-form-item>
-        </el-form>
+          </el-form>
 
-        <div class="lang-switch">
-          <span class="lang-label">{{ $t('login.language') }}</span>
-          <el-popover
-            v-model:visible="langMenuOpen"
-            placement="top"
-            trigger="click"
-            :width="220"
-            popper-class="login-lang-popper"
-            :teleported="false"
-            :show-arrow="false"
-            :popper-style="{
-              padding: '0',
-              border: 'none',
-              background: 'transparent',
-              boxShadow: 'none'
-            }"
-          >
-            <template #reference>
-              <button type="button" class="lang-trigger">
-                <span class="lang-current">{{ currentLangLabel }}</span>
-                <el-icon class="lang-arrow" :class="{ 'is-open': langMenuOpen }"><ArrowDown /></el-icon>
-              </button>
-            </template>
-
-            <div class="lang-menu-panel">
-              <div class="lang-menu-title">{{ $t('login.selectLanguage') }}</div>
-              <div class="lang-menu">
-                <button
-                  v-for="item in langOptions"
-                  :key="item.value"
-                  type="button"
-                  class="lang-option"
-                  :class="{ 'is-active': item.value === currentLang }"
-                  @click="onChangeLang(item.value)"
-                >
-                  <span>{{ item.label }}</span>
-                  <el-icon v-if="item.value === currentLang"><Check /></el-icon>
-                </button>
-              </div>
+          <div class="security-row">
+            <div v-for="item in securityItems" :key="item.text" class="security-item">
+              <el-icon><component :is="item.icon" /></el-icon>
+              <span>{{ item.text }}</span>
             </div>
-          </el-popover>
+          </div>
+          <p class="auth-foot">{{ copy.accessNotice }}</p>
         </div>
-      </el-card>
-    </section>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <div class="platform-name"><strong>CP6</strong><span>{{ copy.platformTagline }}</span></div>
+      <div>© 2026 CP6 · Web / Windows / Android</div>
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import type { FormInstance } from 'element-plus'
-import { ArrowDown, Check, Hide, Lock, OfficeBuilding, User, View } from '@element-plus/icons-vue'
+import type { FormInstance, InputInstance } from 'element-plus'
+import {
+  ArrowDown,
+  Box,
+  Calendar,
+  Cellphone,
+  Check,
+  CircleCheck,
+  Collection,
+  Connection,
+  CreditCard,
+  Document,
+  Hide,
+  House,
+  Key,
+  Lock,
+  Monitor,
+  OfficeBuilding,
+  Operation,
+  Platform,
+  Tickets,
+  User,
+  View,
+} from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { authApi } from '@/api/sys/auth'
 import { ssoApi } from '@/api/sys/sso'
 import { langOptions, changeLang } from '@/i18n'
 import { addDynamicRoutes } from '@/router'
 import { usePlatformStore } from '@/stores/platform'
+import { getLoginExperienceCopy } from './loginExperience'
 
 const { t, locale } = useI18n()
 const router = useRouter()
 const formRef = ref<FormInstance>()
+const tenantInputRef = ref<InputInstance>()
 const loading = ref(false)
 const ssoLoading = ref(false)
-const currentLang = ref(locale.value)
-const pointerX = ref(50)
-const pointerY = ref(40)
-const rotateX = ref(0)
-const rotateY = ref(0)
+const currentLang = ref(String(locale.value))
+const pointerX = ref(72)
+const pointerY = ref(18)
 const loginSuccess = ref(false)
 const passwordVisible = ref(false)
 const langMenuOpen = ref(false)
-// 章10 §7 登录租户选择器：默认折叠，同名多租户时后端回 needTenant → 自动展开
 const showTenant = ref(false)
-
-const particles = [
-  { id: 1, style: '--size: 10px; --left: 8%; --top: 18%; --duration: 14s; --delay: -2s;' },
-  { id: 2, style: '--size: 6px; --left: 22%; --top: 72%; --duration: 17s; --delay: -11s;' },
-  { id: 3, style: '--size: 14px; --left: 34%; --top: 32%; --duration: 16s; --delay: -5s;' },
-  { id: 4, style: '--size: 8px; --left: 58%; --top: 14%; --duration: 13s; --delay: -7s;' },
-  { id: 5, style: '--size: 12px; --left: 76%; --top: 62%; --duration: 19s; --delay: -3s;' },
-  { id: 6, style: '--size: 7px; --left: 84%; --top: 26%; --duration: 15s; --delay: -9s;' },
-  { id: 7, style: '--size: 9px; --left: 66%; --top: 82%; --duration: 18s; --delay: -6s;' },
-  { id: 8, style: '--size: 5px; --left: 44%; --top: 54%; --duration: 12s; --delay: -1s;' }
-] as const
+const pageReady = ref(false)
+let pointerFrame: number | null = null
+let readyFrame: number | null = null
 
 const form = ref({
   userName: '',
   password: '',
-  tenantCode: ''
+  tenantCode: '',
 })
 
 const rules = computed(() => ({
   userName: [{ required: true, message: t('login.usernameRequired'), trigger: 'blur' }],
-  password: [{ required: true, message: t('login.passwordRequired'), trigger: 'blur' }]
+  password: [{ required: true, message: t('login.passwordRequired'), trigger: 'blur' }],
 }))
 
+const copy = computed(() => getLoginExperienceCopy(currentLang.value))
+const authBusy = computed(() => loading.value || ssoLoading.value)
 const shellStyle = computed(() => ({
   '--pointer-x': `${pointerX.value}%`,
-  '--pointer-y': `${pointerY.value}%`
+  '--pointer-y': `${pointerY.value}%`,
 }))
-
-const cardStyle = computed(() => ({
-  transform: `perspective(1200px) rotateX(${rotateX.value}deg) rotateY(${rotateY.value}deg)`
-}))
-
 const currentLangLabel = computed(
-  () => langOptions.find(item => item.value === currentLang.value)?.label ?? currentLang.value
+  () => langOptions.find(item => item.value === currentLang.value)?.label ?? currentLang.value,
 )
 
+const flowIcons = [Tickets, Calendar, Operation, House, CreditCard] as const
+const foundationIcons = [Document, Connection, Box] as const
+const capabilityIcons = [Monitor, Platform, Cellphone, Lock] as const
+const securityIcons = [OfficeBuilding, Key, Collection] as const
+
+const flowNodes = computed(() => copy.value.flowNodes.map((node, index) => ({
+  ...node,
+  icon: flowIcons[index]!,
+})))
+const foundations = computed(() => copy.value.foundations.map((text, index) => ({
+  text,
+  icon: foundationIcons[index]!,
+})))
+const capabilities = computed(() => copy.value.capabilities.map((text, index) => ({
+  text,
+  icon: capabilityIcons[index]!,
+})))
+const securityItems = computed(() => copy.value.securityItems.map((text, index) => ({
+  text,
+  icon: securityIcons[index]!,
+})))
+
+onMounted(() => {
+  readyFrame = window.requestAnimationFrame(() => {
+    pageReady.value = true
+  })
+})
+
+onBeforeUnmount(() => {
+  if (pointerFrame !== null) window.cancelAnimationFrame(pointerFrame)
+  if (readyFrame !== null) window.cancelAnimationFrame(readyFrame)
+})
+
 async function onChangeLang(lang: string) {
-  currentLang.value = lang
   langMenuOpen.value = false
   await changeLang(lang)
+  currentLang.value = lang
 }
 
 function handlePointerMove(event: PointerEvent) {
   const currentTarget = event.currentTarget as HTMLElement | null
-  if (!currentTarget) return
+  if (!currentTarget || pointerFrame !== null) return
 
-  const rect = currentTarget.getBoundingClientRect()
-  const x = ((event.clientX - rect.left) / rect.width) * 100
-  const y = ((event.clientY - rect.top) / rect.height) * 100
-
-  pointerX.value = Math.max(0, Math.min(100, x))
-  pointerY.value = Math.max(0, Math.min(100, y))
-
-  rotateY.value = ((pointerX.value - 50) / 50) * 4
-  rotateX.value = ((50 - pointerY.value) / 50) * 4
+  const clientX = event.clientX
+  const clientY = event.clientY
+  pointerFrame = window.requestAnimationFrame(() => {
+    const rect = currentTarget.getBoundingClientRect()
+    pointerX.value = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100))
+    pointerY.value = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100))
+    pointerFrame = null
+  })
 }
 
 function handlePointerLeave() {
-  pointerX.value = 50
-  pointerY.value = 40
-  rotateX.value = 0
-  rotateY.value = 0
+  if (pointerFrame !== null) {
+    window.cancelAnimationFrame(pointerFrame)
+    pointerFrame = null
+  }
+  pointerX.value = 72
+  pointerY.value = 18
+}
+
+async function toggleTenant() {
+  showTenant.value = !showTenant.value
+  if (showTenant.value) {
+    await nextTick()
+    tenantInputRef.value?.focus()
+  }
 }
 
 async function handleLogin() {
-  if (!formRef.value) return
-  await formRef.value.validate()
+  if (!formRef.value || authBusy.value) return
+  const valid = await formRef.value.validate().catch(() => false)
+  if (!valid) return
 
   loading.value = true
   loginSuccess.value = false
   try {
     const res: any = await authApi.login(form.value)
-    // #2 2FA（T9）：租户要求 2FA 时后端不签发 auth cookie，仅写 pending cookie（cp6_2fa/cp6_csrf），
-    // 回 { twoFactorRequired:true, mustEnroll }。此时绝不置 cp6_authed，转挑战屏/入会屏完成第二因素。
+    // 租户要求 2FA 时后端只写 pending cookie，不在前端设置已登录标志。
     if (res?.twoFactorRequired === true) {
       loginSuccess.value = true
       router.push(res.mustEnroll === true ? '/sys/2fa-enroll' : '/sys/2fa-challenge')
       return
     }
-    // T9：token 已由后端 Set-Cookie（httpOnly），前端仅存非敏感登录态标志
+
+    // token 由后端写入 httpOnly cookie；前端只保存非敏感的界面状态。
     localStorage.setItem('cp6_authed', '1')
     localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
-    // #5 多租户合规（T9）：带外平台区入口标志（前端 UX 闸；真闸在后端 [RequirePlatformAdmin]）
     localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')
     usePlatformStore().refreshFlag()
     localStorage.setItem('userName', res.userName)
@@ -258,570 +449,275 @@ async function handleLogin() {
     addDynamicRoutes(menus)
     ElMessage.success(t('login.success'))
     loginSuccess.value = true
-    // 强制改密：直接进改密页，不走登录过渡动画
+
     if (res.mustChangePassword) {
       router.push('/sys/change-password')
       return
     }
+
     sessionStorage.setItem('cp6-login-transition', 'pending')
     router.push('/')
   } catch (err: any) {
-    // 错误由 http.ts 拦截器统一提示文案；此处仅在"同名多租户"时展开租户编码输入
-    if (err?.response?.data?.needTenant) showTenant.value = true
+    // 同名用户存在于多个租户时，后端要求用户补充租户编码。
+    if (err?.response?.data?.needTenant) {
+      showTenant.value = true
+      await nextTick()
+      tenantInputRef.value?.focus()
+    }
     loginSuccess.value = false
   } finally {
     loading.value = false
   }
 }
 
-// #3 SSO（T9）：SSO 登录入口。必须先有租户编码（SSO 按租户配 IdP），跳转到 IdP 授权端点。
 async function handleSsoLogin() {
+  if (authBusy.value) return
+
   const tenantCode = form.value.tenantCode.trim()
   if (!tenantCode) {
     showTenant.value = true
+    await nextTick()
+    tenantInputRef.value?.focus()
     ElMessage.warning(t('sec.sso.tenantCodePrompt'))
     return
   }
+
   ssoLoading.value = true
   try {
     const { authorizeUrl } = await ssoApi.authorize(tenantCode)
-    window.location.href = authorizeUrl   // 整页跳转到 IdP（回调后落地屏 /sso/landing）
+    window.location.href = authorizeUrl
   } catch {
-    // 错误（E-SEC-020/028）由 http.ts 拦截器统一提示
+    // API 错误由全局 HTTP 拦截器统一提示。
     ssoLoading.value = false
   }
 }
 </script>
 
 <style scoped>
-.login-shell {
-  --glass-border: rgba(255, 255, 255, 0.34);
-  --glass-surface: rgba(255, 255, 255, 0.14);
-  --glass-surface-strong: rgba(255, 255, 255, 0.2);
-  --text-primary: #eff7ff;
-  --text-secondary: rgba(239, 247, 255, 0.72);
-  --accent: #7dd3fc;
-  --accent-strong: #0f9cf3;
+.login-page {
+  --brand: #14b8c4;
+  --brand-2: #2bd4cd;
+  --brand-deep: #0e93a0;
+  --brand-pale: #e8f9f8;
+  --ink: #10343c;
+  --text: #47616b;
+  --muted: #8ca3ab;
+  --faint: #c2d2d7;
+  --line: #e6eff1;
+  --line-soft: #eff6f7;
+  --surface: #ffffff;
+  --ok: #22b573;
+  --warn: #f0940a;
+  --info: #4e80ee;
+  --violet: #8b7cf0;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
   position: relative;
-  min-height: 100vh;
-  min-height: 100dvh;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: 100vh;
+  height: 100dvh;
+  padding: 34px 42px 30px;
   overflow: hidden;
+  box-sizing: border-box;
+  color: var(--text);
+  font-family: Nunito, "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", system-ui, sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(110, 231, 255, 0.24), transparent 32%),
-    radial-gradient(circle at 85% 18%, rgba(255, 255, 255, 0.18), transparent 24%),
-    linear-gradient(135deg, #07111f 0%, #0b1d34 42%, #12345d 100%);
-  transition: background-position 0.35s ease;
+    radial-gradient(900px 520px at 92% -8%, rgba(43, 212, 205, .16), transparent 58%),
+    radial-gradient(760px 560px at -8% 80%, rgba(78, 128, 238, .08), transparent 60%),
+    #f2fafb;
 }
 
-.login-shell::before {
+.login-page::before {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.08), transparent 36%),
-    linear-gradient(300deg, rgba(16, 185, 255, 0.1), transparent 30%);
-  mix-blend-mode: screen;
+  z-index: -2;
+  opacity: .52;
   pointer-events: none;
+  background-image:
+    linear-gradient(rgba(16, 52, 60, .025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 52, 60, .025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to right, #000, transparent 78%);
+  animation: grid-drift 28s linear infinite;
 }
 
-.login-shell::after {
+.login-page::after {
   content: '';
   position: absolute;
   inset: -12%;
+  z-index: -1;
+  opacity: .82;
+  pointer-events: none;
+  filter: blur(12px);
   background:
-    radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 40%), rgba(255, 255, 255, 0.2), transparent 18%),
-    radial-gradient(circle at calc(var(--pointer-x, 50%) + 12%) calc(var(--pointer-y, 40%) - 10%), rgba(125, 211, 252, 0.18), transparent 22%);
-  filter: blur(24px);
-  opacity: 0.9;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+    radial-gradient(420px 320px at var(--pointer-x) var(--pointer-y), rgba(43, 212, 205, .13), transparent 66%),
+    radial-gradient(320px 260px at calc(var(--pointer-x) - 24%) calc(var(--pointer-y) + 26%), rgba(78, 128, 238, .055), transparent 70%);
 }
 
-.login-ambient {
+.ambient-orb {
   position: absolute;
-  inset: 0;
-  overflow: hidden;
+  z-index: -1;
+  border: 1px solid rgba(20, 184, 196, .12);
+  border-radius: 50%;
   pointer-events: none;
 }
 
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(18px);
-  opacity: 0.82;
-  animation: drift 18s ease-in-out infinite;
+.ambient-orb-one {
+  left: -210px;
+  bottom: -190px;
+  width: 460px;
+  height: 460px;
+  animation: orb-float-a 15s ease-in-out infinite;
 }
 
-.blob-a {
-  top: 8%;
-  left: 8%;
-  width: 22rem;
-  height: 22rem;
-  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.72), rgba(94, 234, 212, 0.2) 55%, transparent 72%);
+.ambient-orb-two {
+  right: 105px;
+  top: -165px;
+  width: 280px;
+  height: 280px;
+  animation: orb-float-b 18s ease-in-out -5s infinite;
 }
 
-.blob-b {
-  right: 10%;
-  bottom: 6%;
-  width: 26rem;
-  height: 26rem;
-  background: radial-gradient(circle at 50% 50%, rgba(147, 197, 253, 0.5), rgba(14, 165, 233, 0.18) 58%, transparent 76%);
-  animation-duration: 24s;
-  animation-delay: -8s;
+.topbar {
+  z-index: 5;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 8px 0 10px;
+  opacity: 0;
+  transform: translateY(-14px);
 }
 
-.blob-c {
-  top: 46%;
-  left: 46%;
-  width: 14rem;
-  height: 14rem;
-  background: radial-gradient(circle at 45% 45%, rgba(255, 255, 255, 0.42), rgba(125, 211, 252, 0.14) 52%, transparent 74%);
-  animation-duration: 16s;
-  animation-delay: -4s;
+.is-ready .topbar {
+  animation: topbar-enter .72s var(--motion-ease) .05s both;
 }
 
-.wave-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(190, 242, 255, 0.14);
-  box-shadow:
-    inset 0 0 40px rgba(255, 255, 255, 0.05),
-    0 0 50px rgba(56, 189, 248, 0.08);
-  animation: ripple 15s linear infinite;
-}
-
-.wave-ring-a {
-  top: 12%;
-  right: 14%;
-  width: 28rem;
-  height: 28rem;
-}
-
-.wave-ring-b {
-  left: 12%;
-  bottom: 8%;
-  width: 20rem;
-  height: 20rem;
-  animation-duration: 19s;
-  animation-delay: -6s;
-}
-
-.float-particle {
-  position: absolute;
-  left: var(--left);
-  top: var(--top);
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(125, 211, 252, 0.2));
-  box-shadow: 0 0 18px rgba(125, 211, 252, 0.25);
-  opacity: 0.72;
-  animation: float-up var(--duration) ease-in-out infinite;
-  animation-delay: var(--delay);
-}
-
-.grid-mask {
-  position: absolute;
-  inset: -10%;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
-  opacity: 0.28;
-  transform: perspective(900px) rotateX(66deg) translateY(24%);
-}
-
-.login-panel {
-  position: relative;
-  z-index: 1;
+.brand,
+.top-actions,
+.status-pill,
+.lang-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: 3rem clamp(1.25rem, 3vw, 3rem);
-  max-width: 960px;
-  margin: 0 auto;
+}
+
+.brand {
+  gap: 14px;
+}
+
+.brand-mark {
+  width: 43px;
+  height: 43px;
+  filter: drop-shadow(0 8px 14px rgba(20, 184, 196, .22));
+  animation: logo-hover 5.2s ease-in-out 1.2s infinite;
+}
+
+.brand-copy strong {
+  display: block;
+  color: var(--ink);
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.brand-copy span {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2.2px;
+}
+
+.top-actions {
+  gap: 11px;
+}
+
+.status-pill,
+.lang-button {
+  min-height: 39px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   box-sizing: border-box;
-  transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease;
-}
-
-.login-panel.is-success {
-  transform: scale(1.015);
-  filter: saturate(1.08);
-}
-
-.brand-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 64px;
-  padding: 0.45rem 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(16px);
-  font-size: 0.85rem;
+  color: var(--text);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, .84);
+  box-shadow: 0 4px 16px rgba(16, 52, 60, .035);
 }
 
-.login-card {
+.status-pill {
   position: relative;
-  width: min(100%, 440px);
-  border: 1px solid var(--glass-border);
-  border-radius: 30px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.1)),
-    rgba(255, 255, 255, 0.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    0 28px 80px rgba(3, 10, 24, 0.45);
-  backdrop-filter: blur(24px) saturate(150%);
+  gap: 9px;
   overflow: hidden;
-  animation: rise-in 1s ease-out 0.15s both;
-  transform-style: preserve-3d;
-  transition:
-    transform 0.28s ease,
-    box-shadow 0.28s ease,
-    border-color 0.28s ease,
-    opacity 0.45s ease,
-    filter 0.45s ease;
 }
 
-.card-glow {
-  position: absolute;
-  inset: auto auto 75% 62%;
-  width: 9rem;
-  height: 9rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent 68%);
-  filter: blur(10px);
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-.login-card::before {
+.status-pill::after {
   content: '';
   position: absolute;
-  inset: 1px;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 40%), rgba(255, 255, 255, 0.26), transparent 22%),
-    linear-gradient(140deg, rgba(255, 255, 255, 0.18), transparent 34%);
-  opacity: 0.95;
-  pointer-events: none;
+  inset: 0 auto 0 -42%;
+  width: 34%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .78), transparent);
+  transform: skewX(-18deg);
+  animation: status-sheen 7s ease-in-out 2.5s infinite;
 }
 
-.login-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.24) 40%, transparent 58%);
-  transform: translateX(-120%);
-  animation: sheen 8s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.login-card.is-success {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    0 36px 96px rgba(3, 10, 24, 0.52);
-  filter: brightness(1.05);
-}
-
-.login-card :deep(.el-card__body) {
-  position: relative;
-  padding: 2rem;
-}
-
-.card-header {
-  margin-bottom: 1.6rem;
-  color: var(--text-primary);
-  transition: transform 0.4s ease, opacity 0.4s ease;
-}
-
-.card-eyebrow {
-  margin: 1rem 0 0.55rem;
-  color: rgba(224, 231, 255, 0.7);
-  font-size: 0.76rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.login-title {
-  margin: 0;
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-  line-height: 1.08;
-  letter-spacing: -0.04em;
-}
-
-.login-subtitle {
-  margin: 0.65rem 0 0;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-
-.login-form {
-  position: relative;
+.status-icon {
   z-index: 1;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  color: var(--brand-deep);
+  font-size: 14px;
 }
 
-.login-form :deep(.el-form-item) {
-  margin-bottom: 1rem;
+.lang-button {
+  gap: 9px;
+  cursor: pointer;
+  transition: transform .18s var(--motion-ease), border-color .18s ease, box-shadow .18s ease;
 }
 
-.login-form :deep(.el-input__wrapper),
-.lang-switch :deep(.el-select__wrapper) {
-  background: var(--glass-surface) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 10px 26px rgba(15, 23, 42, 0.18) !important;
-  backdrop-filter: blur(16px);
-  transition:
-    transform 0.24s ease,
-    box-shadow 0.24s ease,
-    border-color 0.24s ease;
-}
-
-.login-form :deep(.el-input__wrapper:hover),
-.lang-switch :deep(.el-select__wrapper:hover) {
+.lang-button:hover,
+.lang-button:focus-visible {
+  border-color: rgba(20, 184, 196, .48);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(20, 184, 196, .1), 0 8px 22px rgba(16, 52, 60, .07);
   transform: translateY(-1px);
 }
 
-.login-form :deep(.el-input__wrapper.is-focus),
-.lang-switch :deep(.is-focused .el-select__wrapper) {
-  box-shadow:
-    0 0 0 1px rgba(125, 211, 252, 0.65),
-    0 16px 32px rgba(14, 165, 233, 0.2) !important;
+.lang-button > svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
 }
 
-.login-form :deep(.el-input__inner),
-.login-form :deep(.el-input__prefix-inner),
-.login-form :deep(.el-input__suffix-inner),
-.lang-switch :deep(.el-select__selected-item),
-.lang-switch :deep(.el-select__placeholder) {
-  color: var(--text-primary) !important;
+.lang-chevron {
+  color: var(--muted);
+  transition: transform .22s var(--motion-ease);
 }
 
-.login-form :deep(.el-input__inner::placeholder) {
-  color: rgba(226, 232, 240, 0.52);
-}
-
-.password-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  margin-right: -0.2rem;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: rgba(239, 247, 255, 0.7);
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.password-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #eff7ff;
-  transform: scale(1.05);
-}
-
-.tenant-toggle-row {
-  display: flex;
-  justify-content: flex-end;
-  margin: -0.4rem 0 0.6rem;
-}
-
-.tenant-toggle {
-  border: 0;
-  background: transparent;
-  color: rgba(239, 247, 255, 0.66);
-  font-size: 0.8rem;
-  cursor: pointer;
-  padding: 0.1rem 0.2rem;
-  transition: color 0.2s ease;
-}
-
-.tenant-toggle:hover {
-  color: var(--accent, #7dd3fc);
-  text-decoration: underline;
-}
-
-.login-button {
-  width: 100%;
-  height: 3.2rem;
-  border: none;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(125, 211, 252, 0.95), rgba(14, 165, 233, 0.9)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 18px 34px rgba(14, 165, 233, 0.34);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    filter 0.25s ease,
-    letter-spacing 0.25s ease;
-  animation: pulse 3.6s ease-in-out infinite;
-}
-
-.login-button.is-success {
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.96), rgba(6, 182, 212, 0.92)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 24px 42px rgba(16, 185, 129, 0.34);
-}
-
-.login-button:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 22px 42px rgba(14, 165, 233, 0.42);
-  filter: saturate(112%);
-  letter-spacing: 0.04em;
-}
-
-.login-button:active {
-  transform: translateY(0);
-}
-
-.login-action {
-  margin-top: 1.35rem;
-  margin-bottom: 0.4rem !important;
-}
-
-.sso-action {
-  margin-bottom: 0.2rem !important;
-}
-
-.sso-button {
-  width: 100%;
-  height: 2.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  backdrop-filter: blur(16px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transition: transform 0.22s ease, border-color 0.22s ease, background-color 0.22s ease;
-}
-
-.sso-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: rgba(125, 211, 252, 0.5);
-  background: rgba(125, 211, 252, 0.14);
-}
-
-.sso-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.lang-switch {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  margin-top: 1rem;
-  color: var(--text-secondary);
-  transition: transform 0.4s ease, opacity 0.4s ease;
-}
-
-.lang-label {
-  font-size: 0.82rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.lang-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  min-width: 166px;
-  padding: 0.78rem 0.95rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.09);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 10px 26px rgba(15, 23, 42, 0.16);
-  color: var(--text-primary);
-  backdrop-filter: blur(16px);
-  cursor: pointer;
-  transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
-}
-
-.lang-trigger:hover {
-  transform: translateY(-1px);
-  border-color: rgba(125, 211, 252, 0.36);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 16px 30px rgba(14, 165, 233, 0.14);
-}
-
-.lang-current {
-  font-size: 0.95rem;
-}
-
-.lang-arrow {
-  transition: transform 0.24s ease, opacity 0.24s ease;
-  opacity: 0.72;
-}
-
-.lang-arrow.is-open {
+.lang-button.is-open .lang-chevron {
   transform: rotate(180deg);
 }
 
-.lang-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
 .lang-menu-panel {
-  padding: 0.7rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 22px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
-    rgba(7, 18, 33, 0.76);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    0 24px 56px rgba(3, 10, 24, 0.42);
-  backdrop-filter: blur(24px) saturate(150%);
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(16, 52, 60, .14);
 }
 
 .lang-menu-title {
-  margin-bottom: 0.55rem;
-  padding: 0.2rem 0.45rem 0.45rem;
-  color: rgba(226, 232, 240, 0.72);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
+  padding: 7px 10px 8px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
   text-transform: uppercase;
-}
-
-:deep(.login-lang-popper.el-popover) {
-  padding: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-:deep(.login-lang-popper.el-popper .el-popper__arrow::before) {
-  background: rgba(10, 24, 43, 0.9);
-  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .lang-option {
@@ -829,203 +725,1092 @@ async function handleSsoLogin() {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0.78rem 0.9rem;
+  min-height: 38px;
+  padding: 0 10px;
   border: 0;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(248, 250, 252, 0.92);
+  border-radius: 9px;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
   text-align: left;
   cursor: pointer;
-  transition:
-    background-color 0.22s ease,
-    color 0.22s ease,
-    transform 0.22s ease,
-    box-shadow 0.22s ease;
+  background: transparent;
+  transition: color .16s ease, background .16s ease, transform .16s var(--motion-ease);
+}
+
+.lang-option:hover,
+.lang-option:focus-visible,
+.lang-option.is-active {
+  color: var(--brand-deep);
+  outline: none;
+  background: var(--brand-pale);
 }
 
 .lang-option:hover {
-  background: rgba(125, 211, 252, 0.16);
-  color: #f8fbff;
   transform: translateX(2px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.lang-option.is-active {
-  background: linear-gradient(135deg, rgba(125, 211, 252, 0.3), rgba(59, 130, 246, 0.22));
-  color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    0 8px 24px rgba(59, 130, 246, 0.18);
-}
-
-.success-burst {
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: 16rem;
-  height: 16rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(52, 211, 153, 0.32), rgba(125, 211, 252, 0.18) 35%, transparent 68%);
-  transform: translate(-50%, -50%) scale(0.35);
+.login-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.42fr) minmax(470px, .78fr);
+  flex: 1;
+  min-height: 0;
+  margin-top: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(230, 239, 241, .95);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: 0 24px 80px rgba(16, 52, 60, .11);
   opacity: 0;
-  filter: blur(10px);
+  transform: translateY(18px) scale(.992);
+  transform-origin: 50% 45%;
+}
+
+.login-stage::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(20, 184, 196, .35), transparent);
+}
+
+.is-ready .login-stage {
+  animation: stage-enter .88s var(--motion-ease) .14s both;
+}
+
+.story {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(48px, 5.2vh, 78px) clamp(46px, 4.5vw, 74px) clamp(36px, 4vh, 56px);
+  overflow: hidden;
+  background:
+    radial-gradient(680px 460px at 15% 8%, rgba(43, 212, 205, .12), transparent 64%),
+    linear-gradient(150deg, rgba(255, 255, 255, .84), rgba(244, 252, 252, .92));
+}
+
+.story::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: -12%;
+  bottom: -12%;
+  left: -280px;
+  width: 210px;
   pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(43, 212, 205, .045), rgba(255, 255, 255, .28), rgba(43, 212, 205, .035), transparent);
+  transform: skewX(-13deg);
+  animation: story-scan 10s ease-in-out 2.2s infinite;
 }
 
-.login-card.is-success .success-burst {
-  animation: success-burst 0.7s ease-out forwards;
+.story::after {
+  content: '';
+  position: absolute;
+  right: -120px;
+  top: -70px;
+  width: 520px;
+  height: 520px;
+  border: 1px solid rgba(20, 184, 196, .1);
+  border-radius: 50%;
+  box-shadow: 0 0 0 62px rgba(20, 184, 196, .025), 0 0 0 124px rgba(20, 184, 196, .018);
+  animation: halo-breathe 8s ease-in-out infinite;
 }
 
-.login-card.is-success .card-header,
-.login-card.is-success .login-form,
-.login-card.is-success .lang-switch {
+.story-content {
+  position: relative;
+  z-index: 2;
+  max-width: 830px;
+}
+
+.story-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--brand-deep);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.2px;
+}
+
+.story-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--brand-2), var(--brand));
+}
+
+.story h1 {
+  margin: 24px 0 19px;
+  color: var(--ink);
+  font-size: clamp(36px, 2.65vw, 47px);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -1.8px;
+}
+
+.story h1 span,
+.story h1 em {
+  display: block;
+}
+
+.story h1 em {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+  color: var(--brand-deep);
+  font-style: normal;
+}
+
+.story h1 em::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -5px;
+  left: 1px;
+  z-index: -1;
+  height: 8px;
+  border-radius: 8px;
+  background: rgba(43, 212, 205, .18);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.is-ready .story h1 em::after {
+  animation: underline-reveal .9s var(--motion-ease) 1.02s both;
+}
+
+.story-lead {
+  max-width: 700px;
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.9;
+}
+
+.story-lead strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.flow-card {
+  position: relative;
+  margin-top: 36px;
+  padding: 20px 21px 17px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 21px;
+  background: rgba(255, 255, 255, .88);
+  box-shadow: 0 1px 2px rgba(16, 52, 60, .04), 0 10px 30px rgba(16, 52, 60, .07);
+  transition: transform .28s var(--motion-ease), box-shadow .28s ease, border-color .28s ease;
+}
+
+.flow-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(125deg, rgba(43, 212, 205, .055), transparent 42%);
+}
+
+.flow-card:hover {
+  border-color: rgba(20, 184, 196, .24);
+  box-shadow: 0 18px 48px rgba(16, 52, 60, .105);
+  transform: translateY(-3px);
+}
+
+.flow-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.flow-head > span:first-child {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.connected {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  color: var(--ok);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.connected i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: connected-pulse 2.3s ease-out infinite;
+}
+
+.flow {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.flow::before {
+  content: '';
+  position: absolute;
+  left: 8.5%;
+  right: 8.5%;
+  top: 28px;
+  z-index: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(20, 184, 196, .12), rgba(20, 184, 196, .62), rgba(20, 184, 196, .12));
+  background-size: 220% 100%;
+  animation: line-flow 5.8s linear infinite;
+}
+
+.flow-signal {
+  position: absolute;
+  z-index: 0;
+  top: 23px;
+  left: 8.5%;
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--brand);
+  border-radius: 50%;
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 0 0 5px rgba(20, 184, 196, .12), 0 0 18px rgba(20, 184, 196, .55);
+  animation: signal-travel 6.2s ease-in-out 1.3s infinite;
+}
+
+.flow-node {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.node-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 9px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  color: var(--brand-deep);
+  background: var(--surface);
+  box-shadow: 0 6px 18px rgba(16, 52, 60, .065);
+  animation: node-float 4.8s ease-in-out infinite;
+  transition: transform .24s var(--motion-ease), box-shadow .24s ease, border-color .24s ease;
+}
+
+.node-icon::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 1px solid transparent;
+  border-radius: 21px;
+  opacity: 0;
+  animation: node-ring 6.2s ease-out infinite;
+}
+
+.node-icon .el-icon {
+  font-size: 23px;
+}
+
+.node-tone-2 .node-icon { color: var(--info); background: #f5f8ff; }
+.node-tone-3 .node-icon { color: var(--warn); background: #fff9ef; }
+.node-tone-4 .node-icon { color: var(--violet); background: #f8f6ff; }
+.node-tone-5 .node-icon { color: var(--ok); background: #f2fbf7; }
+.node-tone-2 .node-icon,
+.node-tone-2 .node-icon::after { animation-delay: -3.8s; }
+.node-tone-3 .node-icon,
+.node-tone-3 .node-icon::after { animation-delay: -2.6s; }
+.node-tone-4 .node-icon,
+.node-tone-4 .node-icon::after { animation-delay: -1.4s; }
+.node-tone-5 .node-icon,
+.node-tone-5 .node-icon::after { animation-delay: -.2s; }
+
+.flow-node:hover .node-icon {
+  border-color: rgba(20, 184, 196, .34);
+  box-shadow: 0 14px 28px rgba(16, 52, 60, .11);
+  transform: translateY(-5px) scale(1.035);
+}
+
+.flow-node strong {
+  display: block;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-node > span {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.foundation {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.18fr;
+  gap: 9px;
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px dashed var(--line);
+}
+
+.foundation-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 8px;
+  border: 1px solid var(--line-soft);
+  border-radius: 11px;
+  color: var(--text);
+  font-size: 10.5px;
+  font-weight: 800;
+  background: #f9fcfc;
+  opacity: 0;
+  transition: transform .2s var(--motion-ease), background .2s ease, border-color .2s ease;
+}
+
+.foundation-item .el-icon {
+  flex: 0 0 auto;
+  color: var(--brand-deep);
+  font-size: 15px;
+}
+
+.foundation-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.foundation-item:hover {
+  border-color: rgba(20, 184, 196, .28);
+  background: #fff;
   transform: translateY(-2px);
 }
 
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  33% {
-    transform: translate3d(18px, -24px, 0) scale(1.04);
-  }
-  66% {
-    transform: translate3d(-22px, 20px, 0) scale(0.96);
-  }
+.capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  margin-top: 24px;
 }
 
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(26px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.capability {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0;
 }
 
-@keyframes ripple {
-  0%,
-  100% {
-    transform: scale(0.94);
-    opacity: 0.22;
-  }
-  50% {
-    transform: scale(1.04);
-    opacity: 0.42;
-  }
+.capability .el-icon {
+  color: var(--brand-deep);
+  font-size: 16px;
 }
 
-@keyframes float-up {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.45;
-  }
-  40% {
-    transform: translate3d(12px, -24px, 0) scale(1.12);
-    opacity: 0.9;
-  }
-  70% {
-    transform: translate3d(-10px, -54px, 0) scale(0.9);
-    opacity: 0.55;
-  }
+.is-ready .story-eyebrow,
+.is-ready .story h1,
+.is-ready .story-lead,
+.is-ready .flow-card,
+.is-ready .capabilities {
+  opacity: 0;
+  animation: content-enter .78s var(--motion-ease) both;
 }
 
-@keyframes success-burst {
-  0% {
-    transform: translate(-50%, -50%) scale(0.35);
-    opacity: 0;
-  }
-  35% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.45);
-    opacity: 0;
-  }
+.is-ready .story-eyebrow { animation-delay: .42s; }
+.is-ready .story h1 { animation-delay: .51s; }
+.is-ready .story-lead { animation-delay: .61s; }
+.is-ready .flow-card { animation-delay: .72s; }
+.is-ready .capabilities { animation-delay: .86s; }
+.is-ready .foundation-item,
+.is-ready .capability { animation: mini-enter .55s var(--motion-ease) both; }
+.is-ready .foundation-item:nth-child(1) { animation-delay: 1.02s; }
+.is-ready .foundation-item:nth-child(2) { animation-delay: 1.1s; }
+.is-ready .foundation-item:nth-child(3) { animation-delay: 1.18s; }
+.is-ready .capability:nth-child(1) { animation-delay: 1.15s; }
+.is-ready .capability:nth-child(2) { animation-delay: 1.22s; }
+.is-ready .capability:nth-child(3) { animation-delay: 1.29s; }
+.is-ready .capability:nth-child(4) { animation-delay: 1.36s; }
+
+.dieline {
+  position: absolute;
+  right: -35px;
+  bottom: -10px;
+  z-index: 1;
+  width: 510px;
+  height: 285px;
+  opacity: .16;
+  pointer-events: none;
+  animation: dieline-float 9s ease-in-out infinite;
 }
 
-@keyframes sheen {
-  0%,
-  70%,
-  100% {
-    transform: translateX(-120%);
-  }
-  82% {
-    transform: translateX(140%);
-  }
+.dieline g {
+  stroke-dasharray: 7 5;
+  animation: blueprint-drift 14s linear infinite;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.45),
-      0 18px 34px rgba(14, 165, 233, 0.34);
+.auth-zone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 34px 54px;
+  border-left: 1px solid var(--line);
+  background: rgba(255, 255, 255, .95);
+}
+
+.auth-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(520px 420px at 100% 100%, rgba(43, 212, 205, .07), transparent 68%);
+  background-size: 125% 125%;
+  animation: auth-glow 10s ease-in-out infinite alternate;
+}
+
+.auth-card {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 455px);
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+.is-ready .auth-card {
+  animation: auth-enter .82s var(--motion-ease) .46s both;
+}
+
+.auth-card::before {
+  content: '';
+  position: absolute;
+  inset: -24px;
+  z-index: -1;
+  border: 1px solid transparent;
+  border-radius: 24px;
+  transition: border-color .3s ease, background .3s ease;
+}
+
+.auth-card.is-success::before {
+  border-color: rgba(34, 181, 115, .18);
+  background: rgba(34, 181, 115, .025);
+}
+
+.auth-kicker {
+  color: var(--brand-deep);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.auth-card h2 {
+  margin: 12px 0 8px;
+  color: var(--ink);
+  font-size: 31px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.6px;
+}
+
+.auth-subtitle {
+  margin: 0 0 26px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+.tenant-strip {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  margin-bottom: 18px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  box-sizing: border-box;
+  background: #fbfdfe;
+  transition: transform .2s var(--motion-ease), border-color .2s ease, box-shadow .2s ease;
+}
+
+.tenant-strip:hover {
+  border-color: rgba(20, 184, 196, .28);
+  box-shadow: 0 8px 22px rgba(16, 52, 60, .05);
+  transform: translateY(-1px);
+}
+
+.tenant-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border-radius: 9px;
+  color: var(--brand-deep);
+  background: var(--brand-pale);
+  animation: tenant-icon-breathe 4.6s ease-in-out infinite;
+}
+
+.tenant-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.tenant-copy span,
+.tenant-copy strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-copy span {
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+.tenant-copy strong {
+  margin-top: 2px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tenant-change {
+  flex: 0 0 auto;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--brand-deep);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  background: transparent;
+}
+
+.tenant-change:hover,
+.tenant-change:focus-visible {
+  outline: none;
+  background: var(--brand-pale);
+}
+
+.tenant-field {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: -8px;
+  margin-bottom: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: grid-template-rows .34s var(--motion-ease), opacity .25s ease, margin .34s var(--motion-ease);
+}
+
+.tenant-field-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tenant-field.is-open {
+  grid-template-rows: 1fr;
+  margin-bottom: 2px;
+  opacity: 1;
+}
+
+.auth-form :deep(.el-form-item) {
+  margin-bottom: 16px;
+}
+
+.auth-form :deep(.el-form-item__label) {
+  height: auto;
+  margin: 0;
+  padding: 0 0 8px;
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.auth-form :deep(.el-input__wrapper) {
+  min-height: 51px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(16, 52, 60, .02) !important;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.auth-form :deep(.el-input__wrapper:hover) {
+  border-color: rgba(20, 184, 196, .38);
+}
+
+.auth-form :deep(.el-input__wrapper.is-focus) {
+  border-color: rgba(20, 184, 196, .72);
+  box-shadow: 0 0 0 4px rgba(20, 184, 196, .1) !important;
+}
+
+.auth-form :deep(.el-input__inner) {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.auth-form :deep(.el-input__inner::placeholder) {
+  color: #a8bac0;
+  font-weight: 500;
+}
+
+.auth-form :deep(.el-input__prefix-inner) {
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.auth-form :deep(.el-form-item__error) {
+  padding-top: 3px;
+  font-size: 10px;
+}
+
+.password-toggle {
+  display: grid;
+  place-items: center;
+  padding: 7px;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  transition: color .2s ease, transform .2s var(--motion-ease);
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  color: var(--brand-deep);
+  outline: none;
+  transform: scale(1.08);
+}
+
+.form-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 2px 0 20px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.secure-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.secure-note .el-icon {
+  color: var(--ok);
+  font-size: 14px;
+  animation: shield-breathe 3.4s ease-in-out infinite;
+}
+
+.login-button.el-button {
+  position: relative;
+  width: 100%;
+  height: 51px;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 13px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  background: linear-gradient(118deg, var(--brand-2), var(--brand));
+  box-shadow: 0 10px 22px rgba(20, 184, 196, .26);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.login-button.el-button::before {
+  content: '';
+  position: absolute;
+  inset: -2px auto -2px -45%;
+  width: 34%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent);
+  transform: skewX(-18deg);
+  animation: button-sheen 4.8s ease-in-out 2.2s infinite;
+}
+
+.login-button.el-button:hover,
+.login-button.el-button:focus-visible {
+  color: #fff;
+  outline: none;
+  background: linear-gradient(118deg, #32dbd4, #12abb7);
+  box-shadow: 0 13px 26px rgba(20, 184, 196, .31), 0 0 0 4px rgba(20, 184, 196, .1);
+  transform: translateY(-1px);
+}
+
+.login-button.el-button.is-loading {
+  background: linear-gradient(118deg, #20c7c2, var(--brand-deep));
+}
+
+.login-button.el-button.is-success {
+  background: linear-gradient(118deg, #39c987, var(--ok));
+  box-shadow: 0 10px 24px rgba(34, 181, 115, .25);
+}
+
+.success-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 19px 0;
+  color: var(--faint);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line-soft);
+}
+
+.sso-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  height: 49px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  background: #fff;
+  transition: transform .2s var(--motion-ease), border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.sso-button .el-icon {
+  color: var(--brand-deep);
+  font-size: 17px;
+}
+
+.sso-button:hover,
+.sso-button:focus-visible {
+  border-color: rgba(20, 184, 196, .55);
+  color: var(--brand-deep);
+  outline: none;
+  background: #fbffff;
+  box-shadow: 0 10px 24px rgba(16, 52, 60, .06);
+  transform: translateY(-1px);
+}
+
+.sso-button.is-loading {
+  color: var(--brand-deep);
+  cursor: wait;
+  background: var(--brand-pale);
+}
+
+.sso-button.is-loading .el-icon {
+  animation: spin 1s linear infinite;
+}
+
+.security-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 23px;
+}
+
+.security-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  height: 42px;
+  padding: 0 6px;
+  border: 1px solid var(--line-soft);
+  border-radius: 11px;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 800;
+  background: #f8fbfc;
+  transition: transform .2s var(--motion-ease), border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.security-item .el-icon {
+  flex: 0 0 auto;
+  color: var(--brand-deep);
+  font-size: 14px;
+}
+
+.security-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.security-item:hover {
+  border-color: rgba(20, 184, 196, .24);
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(16, 52, 60, .045);
+  transform: translateY(-2px);
+}
+
+.auth-foot {
+  margin: 21px 0 0;
+  color: var(--faint);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.page-footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 37px;
+  padding: 0 9px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0;
+}
+
+.is-ready .page-footer {
+  animation: footer-enter .62s var(--motion-ease) .62s both;
+}
+
+.platform-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.platform-name strong {
+  color: var(--text);
+  font-weight: 800;
+}
+
+@keyframes topbar-enter { to { opacity: 1; transform: translateY(0); } }
+@keyframes stage-enter { to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes footer-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes content-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes auth-enter { to { opacity: 1; transform: translateX(0); } }
+@keyframes mini-enter { from { opacity: 0; transform: translateY(9px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes underline-reveal { to { transform: scaleX(1); } }
+@keyframes grid-drift { to { background-position: 42px 42px, 42px 42px; } }
+@keyframes orb-float-a { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(22px, -18px) scale(1.035); } }
+@keyframes orb-float-b { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-18px, 22px); } }
+@keyframes logo-hover { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(.6deg); } }
+@keyframes status-pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 181, 115, .32); } 70% { box-shadow: 0 0 0 8px rgba(34, 181, 115, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 181, 115, 0); } }
+@keyframes status-sheen { 0%, 70% { left: -42%; } 88%, 100% { left: 120%; } }
+@keyframes story-scan { 0%, 12% { left: -280px; opacity: 0; } 22% { opacity: 1; } 50% { left: 115%; opacity: .9; } 60%, 100% { left: 115%; opacity: 0; } }
+@keyframes halo-breathe { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.035); opacity: .72; } }
+@keyframes line-flow { to { background-position: -220% 0; } }
+@keyframes signal-travel { 0% { left: 8.5%; opacity: 0; transform: scale(.7); } 8% { opacity: 1; transform: scale(1); } 88% { opacity: 1; transform: scale(1); } 96%, 100% { left: 91.5%; opacity: 0; transform: scale(.7); } }
+@keyframes node-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+@keyframes node-ring { 0%, 10% { opacity: 0; transform: scale(.9); border-color: transparent; } 18% { opacity: 1; border-color: rgba(20, 184, 196, .34); } 32%, 100% { opacity: 0; transform: scale(1.18); border-color: transparent; } }
+@keyframes connected-pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 181, 115, .28); } 70% { box-shadow: 0 0 0 7px rgba(34, 181, 115, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 181, 115, 0); } }
+@keyframes blueprint-drift { to { stroke-dashoffset: -48; } }
+@keyframes dieline-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes auth-glow { from { background-position: 0 0; } to { background-position: 18% 14%; } }
+@keyframes tenant-icon-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 196, 0); } 50% { box-shadow: 0 0 0 7px rgba(20, 184, 196, .07); } }
+@keyframes button-sheen { 0%, 58% { left: -45%; } 78%, 100% { left: 125%; } }
+@keyframes shield-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 1360px) {
+  .login-page { padding: 24px 28px 22px; }
+  .login-stage { grid-template-columns: minmax(0, 1.2fr) minmax(430px, .8fr); }
+  .story { padding-right: 42px; padding-left: 42px; }
+  .auth-zone { padding-right: 38px; padding-left: 38px; }
+  .story h1 { font-size: 38px; }
+  .story-lead { font-size: 13.5px; line-height: 1.75; }
+}
+
+@media (max-width: 1100px) {
+  .login-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: auto;
+    padding: 22px;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
-  50% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.52),
-      0 24px 40px rgba(14, 165, 233, 0.4);
+
+  .login-stage {
+    display: block;
+    flex: 0 0 auto;
+    min-height: calc(100dvh - 145px);
+    border-radius: 24px;
   }
+
+  .story { display: none; }
+
+  .auth-zone {
+    min-height: calc(100dvh - 145px);
+    padding: 50px clamp(28px, 8vw, 80px);
+    border-left: 0;
+  }
+
+  .auth-card { max-width: 500px; }
+}
+
+@media (max-width: 640px) {
+  .login-page { padding: 14px; }
+  .topbar { height: 48px; padding: 0 2px; }
+  .brand { gap: 10px; }
+  .brand-mark { width: 38px; height: 38px; }
+  .brand-copy strong { font-size: 18px; }
+  .brand-copy span { display: none; }
+  .status-pill { display: none; }
+  .lang-button { min-height: 38px; padding: 0 11px; }
+  .lang-button > span { max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .login-stage { min-height: calc(100dvh - 112px); margin-top: 10px; border-radius: 20px; }
+  .auth-zone { min-height: calc(100dvh - 112px); padding: 34px 22px; }
+  .auth-card h2 { font-size: 27px; }
+  .auth-subtitle { margin-bottom: 21px; }
+  .form-meta { align-items: flex-start; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+  .security-row { gap: 6px; margin-top: 18px; }
+  .security-item { height: 38px; font-size: 8.5px; }
+  .security-item .el-icon { display: none; }
+  .auth-foot { margin-top: 16px; }
+  .page-footer { height: 26px; padding: 0 3px; font-size: 8.5px; }
+  .platform-name span { display: none; }
+}
+
+@media (max-width: 390px) {
+  .login-page { padding: 10px; }
+  .auth-zone { padding: 28px 16px; }
+  .tenant-strip { padding: 0 10px; }
+  .tenant-icon { margin-right: 8px; }
+  .tenant-change { padding-right: 3px; padding-left: 5px; font-size: 10px; }
+}
+
+@media (max-height: 820px) and (min-width: 1101px) {
+  .login-page { padding: 18px 28px 16px; }
+  .topbar { height: 48px; }
+  .brand-mark { width: 37px; height: 37px; }
+  .brand-copy strong { font-size: 18px; }
+  .brand-copy span { margin-top: 3px; font-size: 8.5px; }
+  .status-pill,
+  .lang-button { min-height: 34px; padding: 0 12px; }
+  .login-stage { grid-template-columns: minmax(0, 1.36fr) minmax(410px, .74fr); margin-top: 10px; border-radius: 24px; }
+  .story { padding: 34px 48px 26px; }
+  .story-eyebrow { font-size: 9px; letter-spacing: 1.8px; }
+  .story h1 { margin: 16px 0 11px; font-size: 36px; line-height: 1.13; letter-spacing: -1.3px; }
+  .story h1 em::after { bottom: -3px; height: 6px; }
+  .story-lead { max-width: 650px; font-size: 12.5px; line-height: 1.65; }
+  .flow-card { margin-top: 20px; padding: 13px 16px 12px; border-radius: 17px; }
+  .flow-head { margin-bottom: 11px; }
+  .flow-head > span:first-child { font-size: 8.5px; }
+  .connected { font-size: 9.5px; }
+  .flow::before { top: 22px; }
+  .flow-signal { top: 17px; width: 10px; height: 10px; }
+  .node-icon { width: 44px; height: 44px; margin-bottom: 6px; border-radius: 14px; }
+  .node-icon::after { border-radius: 18px; }
+  .node-icon .el-icon { font-size: 19px; }
+  .flow-node strong { font-size: 10.5px; }
+  .flow-node > span { margin-top: 2px; font-size: 8px; }
+  .foundation { margin-top: 10px; padding-top: 9px; }
+  .foundation-item { height: 31px; font-size: 8.8px; border-radius: 9px; }
+  .capabilities { gap: 15px; margin-top: 12px; }
+  .capability { gap: 6px; font-size: 9px; }
+  .dieline { right: -28px; bottom: -28px; width: 430px; height: 240px; }
+  .auth-zone { padding: 20px 38px; }
+  .auth-card { width: min(100%, 420px); }
+  .auth-kicker { font-size: 9px; }
+  .auth-card h2 { margin: 8px 0 5px; font-size: 25px; }
+  .auth-subtitle { margin-bottom: 14px; font-size: 11px; line-height: 1.5; }
+  .tenant-strip { height: 42px; margin-bottom: 11px; border-radius: 11px; }
+  .tenant-icon { width: 27px; height: 27px; }
+  .tenant-copy span { font-size: 8px; }
+  .tenant-copy strong { font-size: 10.5px; }
+  .tenant-change { font-size: 9.5px; }
+  .auth-form :deep(.el-form-item) { margin-bottom: 10px; }
+  .auth-form :deep(.el-form-item__label) { padding-bottom: 5px; font-size: 10px; }
+  .auth-form :deep(.el-input__wrapper) { min-height: 43px; border-radius: 11px; }
+  .auth-form :deep(.el-input__inner) { font-size: 11.5px; }
+  .form-meta { margin: 0 0 11px; font-size: 8.8px; }
+  .login-button.el-button { height: 44px; border-radius: 11px; font-size: 11.5px; }
+  .divider { margin: 11px 0; font-size: 8.5px; }
+  .sso-button { height: 42px; border-radius: 11px; font-size: 10.5px; }
+  .security-row { gap: 6px; margin-top: 13px; }
+  .security-item { height: 34px; border-radius: 9px; font-size: 8.2px; }
+  .auth-foot { margin-top: 10px; font-size: 8px; line-height: 1.45; }
+  .page-footer { height: 26px; font-size: 8.5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .blob,
-  .wave-ring,
-  .float-particle,
-  .login-card,
-  .login-card::after,
-  .login-card .success-burst,
-  .login-button {
-    animation: none !important;
+  .login-page *,
+  .login-page *::before,
+  .login-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
   }
 
-  .login-card,
-  .login-button,
-  .login-form :deep(.el-input__wrapper),
-  .lang-switch :deep(.el-select__wrapper) {
-    transition: none !important;
-  }
-}
-
-@media (max-width: 960px) {
-  .login-panel {
-    padding: 1.25rem;
-  }
-}
-
-@media (max-width: 767px) {
-  .login-shell {
-    background:
-      radial-gradient(circle at top, rgba(110, 231, 255, 0.2), transparent 32%),
-      linear-gradient(180deg, #09111f 0%, #102746 100%);
-  }
-
-  .login-panel {
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: max(1rem, var(--safe-top)) 1rem max(1rem, var(--safe-bottom));
-  }
-
-  .login-card {
-    border-radius: 26px;
+  .topbar,
+  .login-stage,
+  .auth-card,
+  .page-footer,
+  .story-eyebrow,
+  .story h1,
+  .story-lead,
+  .flow-card,
+  .capabilities,
+  .foundation-item,
+  .capability {
+    opacity: 1 !important;
     transform: none !important;
-  }
-
-  .login-card :deep(.el-card__body) {
-    padding: 1.35rem;
-  }
-
-  .lang-switch {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .lang-trigger {
-    width: 100%;
   }
 }
 </style>
