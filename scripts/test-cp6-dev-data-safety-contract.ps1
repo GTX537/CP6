@@ -28,6 +28,9 @@ foreach ($pattern in @(
     'WITH COPY_ONLY, INIT, COMPRESSION, CHECKSUM',
     'RESTORE VERIFYONLY',
     'SQLCMDPASSWORD',
+    'Client SDK\\ODBC\\180\\Tools\\Binn\\SQLCMD\.EXE',
+    'Client SDK\\ODBC\\170\\Tools\\Binn\\SQLCMD\.EXE',
+    '& \$SqlcmdPath',
     'Get-FileHash.+SHA256',
     'NewGuid\(\).+Substring\(0, 8\)'
 )) {

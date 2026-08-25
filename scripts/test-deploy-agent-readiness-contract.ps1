@@ -21,6 +21,9 @@ $requiredPatterns = [ordered]@{
     "Docker engine verification" = 'docker\s+version'
     "Docker Compose verification" = 'docker\s+compose\s+version'
     "SQL endpoint verification" = 'Test-NetConnection'
+    "sqlcmd standard path fallback" = 'Client SDK\\ODBC\\170\\Tools\\Binn\\SQLCMD\.EXE'
+    "sqlcmd execution verification" = '&\s+\$sqlcmdPath\s+-\?'
+    "sqlcmd exit-code verification" = '\$LASTEXITCODE\s+-ne\s+0'
 }
 
 foreach ($entry in $requiredPatterns.GetEnumerator()) {

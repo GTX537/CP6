@@ -86,7 +86,9 @@ GRANT CREATE ANY DATABASE TO [cp6_dev_backup];
 
 `db_backupoperator` 允许备份 `CP6_DEV`；`RESTORE VERIFYONLY`/`FILELISTONLY` 在现代 SQL Server 需要 `CREATE DATABASE` 权限，因此该账号仍不是 runtime 身份，也不加入 `sysadmin`。参考 Microsoft 的 [BACKUP 权限](https://learn.microsoft.com/en-us/sql/t-sql/statements/backup-transact-sql) 与 [RESTORE VERIFYONLY 权限](https://learn.microsoft.com/en-us/sql/t-sql/statements/restore-statements-verifyonly-transact-sql)。
 
-SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；部署 Agent 必须能读取该目录并安装 `sqlcmd`。Pipeline 不在命令行传密码，而是临时使用进程级 `SQLCMDPASSWORD`，结束后恢复原值。
+SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；部署 Agent 必须能读取该目录并安装 `sqlcmd`。备份脚本先查 PATH，再查 Go sqlcmd、ODBC 18 与 ODBC 17 的标准安装目录，因此不依赖交互用户的用户级 PATH。Pipeline 不在命令行传密码，而是临时使用进程级 `SQLCMDPASSWORD`，结束后恢复原值。
+
+2026-08-25 宿主机已确认 ODBC 17 `sqlcmd`，并创建/收紧备份目录 ACL；`cp6_dev_backup`、Azure Secret 与服务身份真实 Run 仍待完成，因此尚未执行第一次备份。
 
 当前工具不会自动删除任何 `.bak`。在尚未建立并验收保留策略前，定期人工检查 `C:\CP6Backups\CP6_DEV` 的剩余空间；不得为了腾空间让 Pipeline 自动清空目录或删除唯一可用备份。
 

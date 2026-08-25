@@ -12,14 +12,34 @@ param(
 
     [string]$BackupRoot = 'C:\CP6Backups\CP6_DEV',
 
-    [string]$EvidencePath = ''
+    [string]$EvidencePath = '',
+
+    [string]$SqlcmdPath = ''
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-if (-not (Get-Command sqlcmd -ErrorAction SilentlyContinue)) {
-    throw 'sqlcmd was not found. Install Microsoft sqlcmd on the dedicated deployment agent.'
+if ([string]::IsNullOrWhiteSpace($SqlcmdPath)) {
+    $sqlcmdCommand = Get-Command sqlcmd.exe -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    $sqlcmdCandidates = @(
+        if ($null -ne $sqlcmdCommand) { $sqlcmdCommand.Source }
+        'C:\Program Files\sqlcmd\sqlcmd.exe'
+        'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\SQLCMD.EXE'
+        'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE'
+    )
+    $SqlcmdPath = $sqlcmdCandidates |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and (Test-Path -LiteralPath $_ -PathType Leaf) } |
+        Select-Object -First 1
+}
+elseif (-not [IO.Path]::IsPathRooted($SqlcmdPath)) {
+    throw 'SqlcmdPath must be an absolute executable path when provided.'
+}
+
+if ([string]::IsNullOrWhiteSpace($SqlcmdPath) -or
+    -not (Test-Path -LiteralPath $SqlcmdPath -PathType Leaf)) {
+    throw 'sqlcmd was not found on PATH or in a supported standard installation directory.'
 }
 
 $password = [Environment]::GetEnvironmentVariable($PasswordEnvironmentVariable, 'Process')
@@ -55,7 +75,7 @@ RESTORE VERIFYONLY
 $previousSqlCmdPassword = [Environment]::GetEnvironmentVariable('SQLCMDPASSWORD', 'Process')
 try {
     [Environment]::SetEnvironmentVariable('SQLCMDPASSWORD', $password, 'Process')
-    & sqlcmd `
+    & $SqlcmdPath `
         -S $ServerInstance `
         -U $BackupAccount `
         -C `

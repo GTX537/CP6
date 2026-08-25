@@ -42,9 +42,9 @@
 ## P0：Azure DevOps Release/CD 演进
 
 - 外部 Readiness Pipeline 已命名为 `CP6 Deploy Agent`；可再补全为 `CP6 Deploy Agent Readiness`，并保持 `CP6-Deploy` Pool 未对所有 Pipelines 开放。
-- Readiness Build ID `10` 已通过；下一步确认 Agent 已安装 `sqlcmd`，创建最小化 `cp6_dev_backup`、授权 SQL Server 服务账号/部署 Agent 访问 `C:\CP6Backups\CP6_DEV`，并在 `cp6-dev-secrets` 增加锁定的 `CP6_DEV_DB_BACKUP_PASSWORD`。
+- Readiness Build ID `10` 已通过；2026-08-25 已确认宿主机安装 ODBC 17 `sqlcmd`，并让 Readiness/备份脚本在服务 PATH 缺失时探测标准目录。`C:\CP6Backups\CP6_DEV` 与 SQL Server Modify/部署 Agent Read ACL 已配置；下一步在修复合入后重跑 Readiness，创建最小化 `cp6_dev_backup`，并在 `cp6-dev-secrets` 增加同一强随机密码的锁定 `CP6_DEV_DB_BACKUP_PASSWORD`。
 - 首次三次手动验收同时记录备份目录容量增长；当前不自动删除 `.bak`，后续需单独确认保留数量、最小保留期、磁盘告警和可恢复证据后再实现清理策略。
-- 从 `/azure-pipelines-dev.yml` 创建/更新 `CP6 DEV CD`，只对它授权 `CP6-Deploy`、`cp6-dev-secrets` 与 `cp6-dev`；在 Environment 资源侧增加 Exclusive lock，把 `CP6_DEV_AUTO_DEPLOY_ENABLED` 与 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED` 初始都设为 `false`。
+- 当前用户目录已安装 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6，但设备登录尚待用户确认。登录后从 `/azure-pipelines-dev.yml` 创建/更新 `CP6 DEV CD`，只对它授权 `CP6-Deploy`、`cp6-dev-secrets` 与 `cp6-dev`；在 Environment 资源侧增加 Exclusive lock，把 `CP6_DEV_AUTO_DEPLOY_ENABLED` 与 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED` 初始都设为 `false`。
 - 连续完成三次手动 Run，保存 Build/Run ID、Environment history、database-backup/deployment evidence，并证明根 `cp6`/`CP6DB` 未受影响；三次均成功后才启用自动。外部证据齐全前只能称为“仓库能力闭环”，不能称为“DEV 自动部署已运行”。
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
