@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-25：DEV 三次独立 Manual 验收 3/3
+
+- PR #24 合入 `main@a5c6b5fa...`；GitHub main client-contract 与 Azure #118 成功，自动 completion #119 在 `CP6_DEV_AUTO_DEPLOY_ENABLED=false` 时安全跳过 Package/Deploy。
+- Manual #120/#121 复用 #118 的同一不可变 Runtime Artifact，各自独立完成分类、验证/封装、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份与 2 文件 `cp6-dev-evidence`。备份目录 2→4；SHA-256 分别为 `c90a3db2...19a3a`、`9fc35ca1...414fb`。
+- #95/#120/#121 现为 3/3。最终 API/Web 为 `0.0.0-dev.a5c6b5fa...59e6`，8/8 SQL 查询成功且无新增 701/17300；公网七容器零漂移、旧 Tunnel 保持运行。自动/公网开关仍为 `false`，未宣称公网切换或生产部署。
+
 ## 2026-08-25：GitHub 远程构建与 Azure 轻量 Artifact 桥
 
 - #113/#115 证明降低并发或拆分项目仍不能让本机完整编译与 SQL/Docker 安全共存；#110 又证明 Azure 组织没有 hosted parallelism。完整 .NET/Web/客户端/Android/R2 source 门禁因此迁至 GitHub hosted `client-contract`，运行包按完整 SHA 命名、内部逐文件哈希、保留 3 天。

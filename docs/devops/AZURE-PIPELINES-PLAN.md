@@ -20,7 +20,7 @@
 - [x] 记录 Azure Pipeline 成功运行 URL/Run ID 和 Agent 能力清单：[`Run #92`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=92)，`CP6-Windows` / `Default`。
 - [x] 确认本机编译与 SQL/Docker 共存不安全：#109/#111/#113/#115 均按内存或 SQL 门禁取消；Microsoft-hosted [`Run #110`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=110) 证明 Azure 组织当前没有 hosted parallelism，未启用计费。
 - [x] 将 Azure 基础流水线收敛为轻量 Artifact 桥。分支 [`Run #117`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=117) 已从 GitHub 成功下载并验证工作流来源、完整 SHA、归档 SHA-256 与内部 manifest，再发布 Azure Pipeline Artifact；本机 SQL/公网容器基线不变。
-- [ ] 合并后取得成功的 `main` GitHub 远程构建与 Azure Artifact 桥，并完成剩余两次独立 Manual DEV。
+- [x] `main@a5c6b5fa...` 的 GitHub client-contract 与 Azure [`Run #118`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=118) 成功；Manual DEV #120/#121 复用同一 Artifact，分别完成独立备份、部署、身份验证与证据发布，三次手动验收达到 3/3。
 - [ ] 决定 PR 验证归属：启用 Azure PR trigger，或明确只依赖现有 GitHub PR 门禁；当前 `pr: none`。
 - [ ] 比较 Azure CI 与 `client-contract.yml`/`wms-production-sql.yml`，登记未覆盖的 Space、OpenAPI/SDK、SQL、E2E、安全和 Android 门禁。
 - [ ] 为 self-hosted Agent 定义更新、磁盘清理、离线告警、并发和工作区隔离规则。
@@ -63,7 +63,7 @@
 
 状态：**待 Phase 3**。
 
-学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选提交构建本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；自动 Run #93 已证明关闭开关时安全跳过，手动 Run #95 已完成首次真实部署和证据归档。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；另两次手动 Run、自动开关和 Tunnel 切换仍待验收。
+学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选哈希 Runtime Artifact 封装本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；自动 Run #119 在关闭开关时安全跳过，Manual #95/#120/#121 已完成 3/3。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；自动开关和 Tunnel 切换仍须单独授权。
 
 - [x] 创建 `cp6-dev` Azure Environment，并只授权 `CP6 DEV CD`；Exclusive lock 与 Run #95 部署历史已验证。
 - [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和强化后的 Readiness Run #89 已验证。

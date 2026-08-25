@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-25 DEV 三次独立 Manual 验收闭环
+
+- PR #24 合入 `main@a5c6b5fa...`；GitHub client-contract 与 Azure #118 成功生成/桥接同 SHA Runtime Artifact，自动 #119 在关闭状态安全跳过。
+- Manual #120/#121 分别成功，和既有 #95 合计 3/3。两次都独立完成 Artifact 验证、runtime-only 封装、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份验证和 2 文件证据 Artifact；备份目录由 2 份增至 4 份。
+- 最终 API/Web 均为 `0.0.0-dev.a5c6b5fa...59e6`，live/ready Healthy；8/8 SQL 查询成功，无新增 701/17300。公网七容器基线完全不变，自动/公网开关仍为 `false`，未切换 Tunnel。
+
 ## 2026-08-25 GitHub 远程构建与 Azure Artifact 桥分支验证
 
 - `client-contract.yml` 现可手动运行并在 GitHub-hosted Runner 完成 .NET/客户端/OpenAPI/Web/Android/R2 source 门禁，发布与完整 Git SHA 绑定、3 天保留的 DEV Runtime Artifact。

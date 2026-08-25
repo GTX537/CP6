@@ -7,7 +7,9 @@
 - 本机完整编译在 #113/#115 仍触发宿主内存或 SQL 门禁；Azure 组织 #110 又无 hosted parallelism，因此基础编译迁至 GitHub `client-contract.yml`。它在 GitHub-hosted Runner 完成 .NET、客户端、OpenAPI、Web、Android 与 R2 source 门禁，生成名称含完整 SHA、内部含逐文件 SHA-256 的 3 天 Runtime Artifact。
 - Azure `azure-pipelines.yml` 现只执行合同、使用授权 Checkout 凭证下载、核对工作流来源/事件/结论/完整 SHA/归档 SHA-256、验证 ZIP 路径与内部 manifest，再发布 Azure `cp6-dev-runtime`；不在本机运行 .NET/Node，也不部署。
 - GitHub Run 32879704210 在 `f18e4610...` 首次完整成功并生成约 49.8 MiB 产物。Azure #116 因错误查询非仓库专属 extraheader 在下载前失败、Publish skipped；修复为仓库专属键后，GitHub Run 32881647447 在 `489c99be...` 完整成功，Azure #117 随后成功完成下载、双层验证与发布。SQL 与公网七容器 ID/StartedAt/RestartCount 不变。
-- 分支 Artifact 不能作为 DEV 候选；下一步合入后取得成功 `main` GitHub/Azure Artifact，再完成两次独立 Manual DEV。自动与公网开关继续为 `false`，计数仍为 1/3，GitHub R2/GHCR 生产权威未变。
+- PR #24 已合入 `main@a5c6b5fa...`；GitHub client-contract 与 Azure #118 成功产出/桥接同 SHA Runtime Artifact，自动 completion #119 在开关关闭时安全跳过。
+- Manual #120/#121 各自完成独立分类、Artifact 验证/封装、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份验证和 `cp6-dev-evidence` 发布；备份由 2→4。#120 备份 SHA-256 `c90a3db2...19a3a`，#121 为 `9fc35ca1...414fb`。最终 API/Web 版本 `0.0.0-dev.a5c6b5fa...59e6`、live/ready Healthy、最新迁移 `20260811030108_CrmFoundation`。
+- 手动验收现为 **3/3**。最终 8/8 SQL 查询成功、近 45 分钟无 701/17300，公网七容器 ID/StartedAt/RestartCount 全部不变；只有旧 `cp6-cloudflared` 运行。自动/公网开关继续为 `false`，GitHub R2/GHCR 生产权威未变。
 
 ## DEV Manual Run #98/#101/#107 内存失败与 CI Artifact 隔离（2026-08-25）
 
