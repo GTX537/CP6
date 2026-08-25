@@ -201,8 +201,34 @@ try {
         $labScript -notmatch 'CP6_JWT_SECRET') {
         throw "Lab script does not support the complete Pipeline Secret contract."
     }
-    if ($labScript -notmatch '-t \$WebImage \$repoRoot') {
-        throw "Lab Web image build does not use the repository root context."
+    if ($labScript -notmatch '\[string\]\$SourceRoot = ""' -or
+        $labScript -notmatch '\$webBuildArguments \+= \$resolvedSourceRoot' -or
+        $labScript -notmatch '\$apiBuildArguments \+= @\("--iidfile"' -or
+        $labScript -notmatch '\$webBuildArguments \+= @\("--iidfile"') {
+        throw "Lab image build does not support an isolated selected-source context."
+    }
+    if ($labScript -notmatch 'Global\\CP6_\$\(\$settings\.ProjectName\)_deploy' -or
+        $labScript -notmatch '\$deploymentMutex\.WaitOne\(0\)' -or
+        $labScript -notmatch '\$deploymentMutex\.ReleaseMutex\(\)') {
+        throw "Lab deployment does not enforce a host-wide deployment mutex."
+    }
+    $imageAssertionDefinitionIndex = $labScript.IndexOf('function Assert-ComposeServiceImage')
+    $apiImageAssertionIndex = $labScript.IndexOf('Assert-ComposeServiceImage -Service "api"')
+    $webImageAssertionIndex = $labScript.IndexOf('Assert-ComposeServiceImage -Service "web"')
+    if ($imageAssertionDefinitionIndex -lt 0 -or
+        $apiImageAssertionIndex -le $imageAssertionDefinitionIndex -or
+        $webImageAssertionIndex -le $apiImageAssertionIndex) {
+        throw "Lab deployment does not verify the immutable image used by each running container."
+    }
+    $stopIndex = $labScript.IndexOf('@("stop", "web", "api")')
+    $migrationIndex = $labScript.IndexOf('@("--profile", "migration", "run", "--rm", "db-init")')
+    $apiStartIndex = $labScript.IndexOf('@("up", "-d", "--wait", "--wait-timeout", "240", "api")')
+    $webStartIndex = $labScript.IndexOf('@("up", "-d", "--wait", "--wait-timeout", "240", "web")')
+    if ($stopIndex -lt 0 -or
+        $migrationIndex -le $stopIndex -or
+        $apiStartIndex -le $migrationIndex -or
+        $webStartIndex -le $apiStartIndex) {
+        throw "Lab deployment does not enforce stop, migrate, API verify, then Web start order."
     }
 
     $webDockerfile = [IO.File]::ReadAllText(

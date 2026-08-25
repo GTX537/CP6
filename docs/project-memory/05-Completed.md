@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-25 本机 DEV 双模式发布仓库闭环
+
+- `CP6 DEV CD` 以单一 YAML 支持自动/手动两种入口，自动初始关闭；所选 CI Run 会经 Azure REST 核对成功状态、`main` 分支和完整 SHA，旧自动任务在分类阶段与 DEV 锁内跳过，旧版本手动回退要求先关闭自动。
+- 从所选提交的隔离 worktree 构建 SHA 镜像并捕获不可变 Docker image ID；部署受 Azure 顺序锁和本机互斥锁保护。对 `CP6_DEV` 执行 CHECKSUM 备份和 VERIFYONLY 后，停止旧 Web/API、运行一次性 db-init、先验证 API 再启动/验证 Web。发布证据新增 trigger、备份 SHA-256、镜像与本机/可选公网身份。
+- 新增专用 `cp6-public-tunnel` 控制器和 `CP6DEV_IMPORT_*` 旁路恢复工具；旧/新 Tunnel connector 不得同时运行，数据导入拒绝覆盖或合并 `CP6DB`。根 `cp6` 和 `cp6_cp6-db-data` 不在自动化作用域。
+- Lab、DEV CD、数据安全和 Tunnel 四组契约测试已建立并通过；本任务没有运行真实部署、数据库备份/恢复、容器启停或 Cloudflare 切换，外部三次手动验收仍为待办。
+
 ## 2026-08-24 登录体验恢复与可访问性闭环
 
 - 恢复包装制造运营登录页及五语言产品文案，保留账号密码、租户识别、SSO、2FA、菜单和登录后路由合同，并完成桌面/移动响应式布局验收。

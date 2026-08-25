@@ -41,8 +41,10 @@ Agent.Name: LAPTOP-3QQ44FJS
 5. Docker Compose 可用；
 6. 能从注册表发现 `KOUSQLSERVER` TCP 端口并建立 TCP 连接。
 
-Readiness 不验证 SQL 登录密码。SQL migrator/runtime、RabbitMQ 和 JWT Secret 将在后续受限
-Variable Group 任务中接入。
+Readiness 不验证 SQL 登录密码。SQL migrator/runtime/backup、RabbitMQ 和 JWT Secret 只在受限
+Variable Group 的部署任务中接入。DEV CD 的外部首次运行前还要确认 Agent 可执行 `sqlcmd`，且 SQL
+Server 服务账号和部署 Agent 都能按各自职责访问 `C:\CP6Backups\CP6_DEV`；该项尚未纳入 Build ID `10`
+的历史 Readiness 证据。
 
 2026-08-11 的首次 Azure Run 由 Agent `LAPTOP-3QQ44FJS` 执行。Azure 截图显示完整 Job 和
 `Verify identity, Docker, and SQL endpoint` 为绿色；本机 Worker 日志进一步确认 Build ID `10`、
@@ -71,5 +73,6 @@ Docker、Compose 或 SQL TCP 断言失败都会使 PowerShell Step 失败，本�
 - [ ] `CP6-Deploy` 只授权给 Readiness/后续 DEV CD Pipeline，而不是所有 Pipelines。
 - [x] Readiness Run 成功，身份、Docker、Compose 和 SQL TCP 断言全部通过。（Build ID `10`）
 - [x] 成功 Run URL/Run ID 已记录。
+- [ ] `sqlcmd`、`cp6_dev_backup` 和 `C:\CP6Backups\CP6_DEV` 读写权限已完成部署前验收。
 
 这些验收项全部完成后，才创建读取 DEV Variable Group 并指向 `cp6-dev` 的 deployment job。

@@ -1,0 +1,19 @@
+services:
+  cloudflared:
+    image: ${CP6_CLOUDFLARED_IMAGE:?Set CP6_CLOUDFLARED_IMAGE to a pinned image ID}
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --config
+      - /etc/cloudflared/config.yml
+      - run
+    volumes:
+      - ${CP6_TUNNEL_CONFIG_DIR:?Set CP6_TUNNEL_CONFIG_DIR}:/etc/cloudflared:ro
+    networks:
+      - cp6-dev
+    restart: unless-stopped
+
+networks:
+  cp6-dev:
+    external: true
+    name: cp6-dev_default

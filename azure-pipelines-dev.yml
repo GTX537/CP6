@@ -19,12 +19,111 @@ pool:
     - Agent.Name -equals LAPTOP-3QQ44FJS
 
 stages:
+- stage: PlanRelease
+  displayName: 'Classify automatic or manual DEV release'
+
+  jobs:
+  - job: ClassifyRelease
+    displayName: 'Validate the selected successful main CI run'
+    timeoutInMinutes: 10
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      clean: true
+      fetchDepth: 0
+
+    - task: PowerShell@2
+      name: releasePlan
+      displayName: 'Apply trigger, freshness, and rollback policy'
+      env:
+        CP6_BUILD_REASON: '$(Build.Reason)'
+        CP6_AUTO_DEPLOY_ENABLED: '$(CP6_DEV_AUTO_DEPLOY_ENABLED)'
+        CP6_CI_PIPELINE_NAME: '$(resources.pipeline.cp6ci.pipelineName)'
+        CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
+        CP6_CI_SOURCE_BRANCH: '$(resources.pipeline.cp6ci.sourceBranch)'
+        CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+        CP6_ORCHESTRATION_BRANCH: '$(Build.SourceBranch)'
+        CP6_ORCHESTRATION_COMMIT: '$(Build.SourceVersion)'
+        CP6_COLLECTION_URI: '$(System.CollectionUri)'
+        CP6_TEAM_PROJECT_ID: '$(System.TeamProjectId)'
+        CP6_AZURE_TOKEN: '$(System.AccessToken)'
+      inputs:
+        targetType: 'inline'
+        pwsh: false
+        script: |
+          $ErrorActionPreference = 'Stop'
+
+          if ($env:CP6_CI_PIPELINE_NAME -ne 'GTX537.CP6') {
+              throw "The selected CI run belongs to '$($env:CP6_CI_PIPELINE_NAME)', not GTX537.CP6."
+          }
+          if ($env:CP6_CI_RUN_ID -notmatch '^\d+$') {
+              throw 'A CI Run ID must be selected before DEV deployment.'
+          }
+          if ($env:CP6_CI_SOURCE_BRANCH -ne 'refs/heads/main') {
+              throw "DEV deployment requires a main CI run; received '$($env:CP6_CI_SOURCE_BRANCH)'."
+          }
+          if ($env:CP6_CI_SOURCE_COMMIT -notmatch '^[0-9a-fA-F]{40}$') {
+              throw 'The selected CI run did not provide a complete source commit.'
+          }
+
+          $buildUri = "$($env:CP6_COLLECTION_URI)$($env:CP6_TEAM_PROJECT_ID)/_apis/build/builds/$($env:CP6_CI_RUN_ID)?api-version=7.1"
+          $selectedRun = Invoke-RestMethod `
+              -Uri $buildUri `
+              -Headers @{ Authorization = "Bearer $($env:CP6_AZURE_TOKEN)" }
+          if ($selectedRun.status -ne 'completed' -or $selectedRun.result -ne 'succeeded') {
+              throw "CI Run $($env:CP6_CI_RUN_ID) is not completed/succeeded."
+          }
+          if ($selectedRun.definition.name -ne $env:CP6_CI_PIPELINE_NAME -or
+              $selectedRun.sourceBranch -ne 'refs/heads/main' -or
+              -not ([string]$selectedRun.sourceVersion).Equals(
+                  $env:CP6_CI_SOURCE_COMMIT,
+                  [StringComparison]::OrdinalIgnoreCase)) {
+              throw 'Azure CI metadata does not match the selected main run.'
+          }
+
+          & git fetch origin main --prune
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to refresh origin/main.' }
+          $currentMain = (& git rev-parse origin/main).Trim()
+          & git merge-base --is-ancestor $env:CP6_CI_SOURCE_COMMIT origin/main
+          if ($LASTEXITCODE -ne 0) {
+              throw 'The selected CI commit is not contained in current origin/main.'
+          }
+
+          $plan = & .\scripts\Resolve-Cp6DevReleasePlan.ps1 `
+              -BuildReason $env:CP6_BUILD_REASON `
+              -AutoDeployEnabled $env:CP6_AUTO_DEPLOY_ENABLED `
+              -CiSourceBranch $env:CP6_CI_SOURCE_BRANCH `
+              -CiSourceCommit $env:CP6_CI_SOURCE_COMMIT `
+              -CurrentMainCommit $currentMain `
+              -OrchestrationBranch $env:CP6_ORCHESTRATION_BRANCH `
+              -OrchestrationCommit $env:CP6_ORCHESTRATION_COMMIT
+
+          Write-Host "Trigger mode: $($plan.TriggerMode)"
+          Write-Host "Automatic deployment enabled: $($plan.AutoEnabled)"
+          Write-Host "Selected CI Run: $($env:CP6_CI_RUN_ID) / $($env:CP6_CI_SOURCE_COMMIT)"
+          Write-Host "Current origin/main: $currentMain"
+          if (-not $plan.DeployAllowed) {
+              Write-Host "DEV deployment skipped safely: $($plan.SkipReason)."
+          }
+
+          Write-Host "##vso[task.setvariable variable=deployAllowed;isOutput=true]$($plan.DeployAllowed.ToString().ToLowerInvariant())"
+          Write-Host "##vso[task.setvariable variable=triggerMode;isOutput=true]$($plan.TriggerMode)"
+          Write-Host "##vso[task.setvariable variable=autoEnabled;isOutput=true]$($plan.AutoEnabled.ToString().ToLowerInvariant())"
+          Write-Host "##vso[task.setvariable variable=skipReason;isOutput=true]$($plan.SkipReason)"
+
 - stage: BuildCandidate
   displayName: 'Build DEV candidate locally'
+  dependsOn: PlanRelease
+  condition: and(succeeded(), eq(dependencies.PlanRelease.outputs['ClassifyRelease.releasePlan.deployAllowed'], 'true'))
+  variables:
+    CP6_RELEASE_TRIGGER_MODE: $[ stageDependencies.PlanRelease.ClassifyRelease.outputs['releasePlan.triggerMode'] ]
 
   jobs:
   - job: BuildLocalImages
-    displayName: 'Build API and Web images from CI commit'
+    displayName: 'Build API and Web images from selected CI commit'
     timeoutInMinutes: 60
 
     workspace:
@@ -36,32 +135,12 @@ stages:
       fetchDepth: 0
 
     - task: PowerShell@2
-      displayName: 'Verify CI source and deployment identity'
-      env:
-        CP6_CI_SOURCE_BRANCH: '$(resources.pipeline.cp6ci.sourceBranch)'
-        CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+      displayName: 'Verify deployment identity and contracts'
       inputs:
         targetType: 'inline'
         pwsh: false
         script: |
           $ErrorActionPreference = 'Stop'
-
-          if ($env:CP6_CI_SOURCE_BRANCH -ne 'refs/heads/main') {
-              throw "DEV deployment requires a successful main CI run; received '$($env:CP6_CI_SOURCE_BRANCH)'."
-          }
-          if ($env:CP6_CI_SOURCE_COMMIT -notmatch '^[0-9a-fA-F]{40}$') {
-              throw 'The CI pipeline did not provide a complete source commit.'
-          }
-
-          $checkedOutCommit = (& git rev-parse HEAD).Trim()
-          if ($LASTEXITCODE -ne 0 -or
-              -not $checkedOutCommit.Equals(
-                  $env:CP6_CI_SOURCE_COMMIT,
-                  [StringComparison]::OrdinalIgnoreCase
-              )) {
-              throw "Checked-out commit '$checkedOutCommit' does not match CI commit '$($env:CP6_CI_SOURCE_COMMIT)'."
-          }
-
           $expectedIdentity = 'LAPTOP-3QQ44FJS\cp6_deploy_agent'
           $actualIdentity = [Security.Principal.WindowsIdentity]::GetCurrent().Name
           if (-not $actualIdentity.Equals(
@@ -71,56 +150,86 @@ stages:
               throw "Expected '$expectedIdentity', but the job is running as '$actualIdentity'."
           }
 
-          Write-Host "Verified main CI source commit: $checkedOutCommit"
-          Write-Host "Verified deployment identity: $actualIdentity"
-
-    - task: PowerShell@2
-      displayName: 'Run DEV deployment contract tests'
-      inputs:
-        targetType: 'inline'
-        pwsh: false
-        script: |
-          $ErrorActionPreference = 'Stop'
           & .\scripts\test-cp6-lab-environment-contract.ps1
           if ($LASTEXITCODE -ne 0) { throw 'CP6 lab contract test failed.' }
           & .\scripts\test-dev-cd-contract.ps1
           if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV CD contract test failed.' }
+          & .\scripts\test-cp6-dev-release-plan.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV release planning behavior test failed.' }
+          & .\scripts\test-cp6-dev-data-safety-contract.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV data safety contract test failed.' }
+          & .\scripts\test-cp6-public-tunnel-contract.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'CP6 public Tunnel contract test failed.' }
 
     - task: PowerShell@2
+      name: buildOutputs
       displayName: 'Build commit-addressed API and Web images'
       env:
         CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
         CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+        CP6_PIPELINE_WORKSPACE: '$(Pipeline.Workspace)'
         DOCKER_HOST: 'npipe:////./pipe/dockerDesktopLinuxEngine'
       inputs:
         targetType: 'inline'
         pwsh: false
         script: |
           $ErrorActionPreference = 'Stop'
+          $candidateRoot = Join-Path $env:CP6_PIPELINE_WORKSPACE 'cp6-selected-source'
           $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
           $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
           $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+          $apiImageIdFile = Join-Path $env:CP6_PIPELINE_WORKSPACE 'cp6-api.iid'
+          $webImageIdFile = Join-Path $env:CP6_PIPELINE_WORKSPACE 'cp6-web.iid'
 
-          & .\scripts\Invoke-Cp6LabEnvironment.ps1 `
-              -Environment dev `
-              -Action Build `
-              -ApiImage $apiImage `
-              -WebImage $webImage `
-              -ReleaseVersion $releaseVersion `
-              -GitSha $env:CP6_CI_SOURCE_COMMIT
-          if ($LASTEXITCODE -ne 0) { throw 'DEV image build failed.' }
+          & git fetch origin main --prune
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to fetch selected source history.' }
+          & git worktree add --detach $candidateRoot $env:CP6_CI_SOURCE_COMMIT
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to materialize the selected CI commit.' }
+          try {
+              & .\scripts\Invoke-Cp6LabEnvironment.ps1 `
+                  -Environment dev `
+                  -Action Build `
+                  -SourceRoot $candidateRoot `
+                  -ApiImage $apiImage `
+                  -WebImage $webImage `
+                  -ApiImageIdFile $apiImageIdFile `
+                  -WebImageIdFile $webImageIdFile `
+                  -ReleaseVersion $releaseVersion `
+                  -GitSha $env:CP6_CI_SOURCE_COMMIT
+              if ($LASTEXITCODE -ne 0) { throw 'DEV image build failed.' }
+          }
+          finally {
+              & git worktree remove --force $candidateRoot 2>$null
+          }
 
-          Write-Host "Built DEV candidate version $releaseVersion from $($env:CP6_CI_SOURCE_COMMIT)."
+          $apiImageId = (Get-Content -LiteralPath $apiImageIdFile -Raw).Trim()
+          $webImageId = (Get-Content -LiteralPath $webImageIdFile -Raw).Trim()
+          if ($apiImageId -notmatch '^sha256:[0-9a-f]{64}$' -or
+              $webImageId -notmatch '^sha256:[0-9a-f]{64}$') {
+              throw 'Docker did not return immutable API/Web image IDs for this build.'
+          }
+          Write-Host "##vso[task.setvariable variable=apiImageId;isOutput=true]$apiImageId"
+          Write-Host "##vso[task.setvariable variable=webImageId;isOutput=true]$webImageId"
+
+          Write-Host "Built DEV candidate $releaseVersion from $($env:CP6_CI_SOURCE_COMMIT) in $env:CP6_RELEASE_TRIGGER_MODE mode."
 
 - stage: DeployDev
   displayName: 'Deploy CP6 DEV'
-  dependsOn: BuildCandidate
-  condition: succeeded()
+  dependsOn:
+  - PlanRelease
+  - BuildCandidate
+  condition: and(succeeded(), eq(dependencies.PlanRelease.outputs['ClassifyRelease.releasePlan.deployAllowed'], 'true'))
+  lockBehavior: sequential
+  variables:
+    CP6_RELEASE_TRIGGER_MODE: $[ stageDependencies.PlanRelease.ClassifyRelease.outputs['releasePlan.triggerMode'] ]
+    CP6_RELEASE_AUTO_ENABLED: $[ stageDependencies.PlanRelease.ClassifyRelease.outputs['releasePlan.autoEnabled'] ]
+    CP6_API_CANDIDATE_ID: $[ stageDependencies.BuildCandidate.BuildLocalImages.outputs['buildOutputs.apiImageId'] ]
+    CP6_WEB_CANDIDATE_ID: $[ stageDependencies.BuildCandidate.BuildLocalImages.outputs['buildOutputs.webImageId'] ]
 
   jobs:
   - deployment: DeployDev
-    displayName: 'Deploy and verify cp6-dev'
-    timeoutInMinutes: 30
+    displayName: 'Backup, deploy, and verify cp6-dev'
+    timeoutInMinutes: 40
     environment:
       name: cp6-dev
     variables:
@@ -135,11 +244,65 @@ stages:
             fetchDepth: 0
 
           - task: PowerShell@2
-            displayName: 'Deploy database, API, and Web'
+            displayName: 'Revalidate automatic freshness inside DEV lock'
+            env:
+              CP6_TRIGGER_MODE: '$(CP6_RELEASE_TRIGGER_MODE)'
+              CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+              CP6_EVIDENCE_DIRECTORY: '$(Pipeline.Workspace)\cp6-dev-evidence'
+            inputs:
+              targetType: 'inline'
+              pwsh: false
+              script: |
+                $ErrorActionPreference = 'Stop'
+                New-Item -ItemType Directory -Path $env:CP6_EVIDENCE_DIRECTORY -Force | Out-Null
+                & git fetch origin main --prune
+                if ($LASTEXITCODE -ne 0) { throw 'Unable to refresh origin/main inside the DEV lock.' }
+                $currentMain = (& git rev-parse origin/main).Trim()
+                $deployAllowed = $true
+                if ($env:CP6_TRIGGER_MODE -eq 'automatic' -and
+                    -not $currentMain.Equals(
+                        $env:CP6_CI_SOURCE_COMMIT,
+                        [StringComparison]::OrdinalIgnoreCase)) {
+                    $deployAllowed = $false
+                    [ordered]@{
+                        schemaVersion = 1
+                        environment = 'cp6-dev'
+                        skippedAtUtc = [DateTime]::UtcNow.ToString('o')
+                        reason = 'automatic run became superseded while waiting for the DEV lock'
+                        selectedGitSha = $env:CP6_CI_SOURCE_COMMIT
+                        currentMainGitSha = $currentMain
+                    } | ConvertTo-Json -Depth 4 |
+                        Set-Content `
+                            -LiteralPath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'deployment-skipped.json') `
+                            -Encoding utf8
+                    Write-Host 'Automatic DEV deployment skipped because main advanced while this run waited for the lock.'
+                }
+                Write-Host "##vso[task.setvariable variable=CP6_DEPLOY_ALLOWED]$($deployAllowed.ToString().ToLowerInvariant())"
+
+          - task: PowerShell@2
+            displayName: 'Backup and verify CP6_DEV before migration'
+            condition: and(succeeded(), eq(variables['CP6_DEPLOY_ALLOWED'], 'true'))
+            env:
+              CP6_DEV_DB_BACKUP_PASSWORD: '$(CP6_DEV_DB_BACKUP_PASSWORD)'
+              CP6_EVIDENCE_DIRECTORY: '$(Pipeline.Workspace)\cp6-dev-evidence'
+            inputs:
+              targetType: 'inline'
+              pwsh: false
+              script: |
+                $ErrorActionPreference = 'Stop'
+                New-Item -ItemType Directory -Path $env:CP6_EVIDENCE_DIRECTORY -Force | Out-Null
+                & .\scripts\Backup-Cp6DevDatabase.ps1 `
+                    -EvidencePath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'database-backup.json')
+                if ($LASTEXITCODE -ne 0) { throw 'CP6_DEV backup or RESTORE VERIFYONLY failed.' }
+
+          - task: PowerShell@2
+            displayName: 'Stop old app, migrate, and start candidate'
+            condition: and(succeeded(), eq(variables['CP6_DEPLOY_ALLOWED'], 'true'))
             env:
               CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
-              CP6_CI_SOURCE_BRANCH: '$(resources.pipeline.cp6ci.sourceBranch)'
               CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+              CP6_API_CANDIDATE_ID: '$(CP6_API_CANDIDATE_ID)'
+              CP6_WEB_CANDIDATE_ID: '$(CP6_WEB_CANDIDATE_ID)'
               CP6_DB_MIGRATOR_PASSWORD: '$(CP6_DEV_DB_MIGRATOR_PASSWORD)'
               CP6_DB_RUNTIME_PASSWORD: '$(CP6_DEV_DB_RUNTIME_PASSWORD)'
               CP6_RABBITMQ_PASSWORD: '$(CP6_DEV_RABBITMQ_PASSWORD)'
@@ -150,42 +313,42 @@ stages:
               pwsh: false
               script: |
                 $ErrorActionPreference = 'Stop'
-
-                if ($env:CP6_CI_SOURCE_BRANCH -ne 'refs/heads/main') {
-                    throw 'Only a successful main CI run may deploy to cp6-dev.'
-                }
-                $checkedOutCommit = (& git rev-parse HEAD).Trim()
-                if ($LASTEXITCODE -ne 0 -or
-                    -not $checkedOutCommit.Equals(
-                        $env:CP6_CI_SOURCE_COMMIT,
-                        [StringComparison]::OrdinalIgnoreCase
-                    )) {
-                    throw "Deployment checkout '$checkedOutCommit' does not match CI commit '$($env:CP6_CI_SOURCE_COMMIT)'."
-                }
-
                 $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
-                $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
-                $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+                $apiImage = $env:CP6_API_CANDIDATE_ID
+                $webImage = $env:CP6_WEB_CANDIDATE_ID
+                if ($apiImage -notmatch '^sha256:[0-9a-f]{64}$' -or
+                    $webImage -notmatch '^sha256:[0-9a-f]{64}$') {
+                    throw 'The BuildCandidate stage did not provide immutable API/Web image IDs.'
+                }
 
                 & .\scripts\Invoke-Cp6LabEnvironment.ps1 `
                     -Environment dev `
                     -Action Deploy `
+                    -AllowPromotedGitSha `
                     -ApiImage $apiImage `
                     -WebImage $webImage `
                     -ReleaseVersion $releaseVersion `
                     -GitSha $env:CP6_CI_SOURCE_COMMIT
-                if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV deployment failed.' }
+                if ($LASTEXITCODE -ne 0) {
+                    throw 'CP6 DEV deployment failed; the app remains stopped or partially started for forward repair.'
+                }
 
           - task: PowerShell@2
             displayName: 'Verify release identity and write evidence'
+            condition: and(succeeded(), eq(variables['CP6_DEPLOY_ALLOWED'], 'true'))
             env:
               CP6_CI_PIPELINE_NAME: '$(resources.pipeline.cp6ci.pipelineName)'
               CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
               CP6_CI_RUN_NAME: '$(resources.pipeline.cp6ci.runName)'
               CP6_CI_SOURCE_BRANCH: '$(resources.pipeline.cp6ci.sourceBranch)'
               CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+              CP6_API_CANDIDATE_ID: '$(CP6_API_CANDIDATE_ID)'
+              CP6_WEB_CANDIDATE_ID: '$(CP6_WEB_CANDIDATE_ID)'
               CP6_CD_RUN_ID: '$(Build.BuildId)'
               CP6_CD_RUN_NAME: '$(Build.BuildNumber)'
+              CP6_TRIGGER_MODE: '$(CP6_RELEASE_TRIGGER_MODE)'
+              CP6_AUTO_ENABLED: '$(CP6_RELEASE_AUTO_ENABLED)'
+              CP6_PUBLIC_VERIFICATION_ENABLED: '$(CP6_DEV_PUBLIC_VERIFICATION_ENABLED)'
               CP6_EVIDENCE_DIRECTORY: '$(Pipeline.Workspace)\cp6-dev-evidence'
               DOCKER_HOST: 'npipe:////./pipe/dockerDesktopLinuxEngine'
             inputs:
@@ -194,8 +357,10 @@ stages:
               script: |
                 $ErrorActionPreference = 'Stop'
                 $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
-                $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
-                $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+                $apiImageTag = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+                $webImageTag = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+                $apiImageId = $env:CP6_API_CANDIDATE_ID
+                $webImageId = $env:CP6_WEB_CANDIDATE_ID
 
                 $live = Invoke-RestMethod -Uri 'http://127.0.0.1:19991/health/live'
                 $ready = Invoke-RestMethod -Uri 'http://127.0.0.1:19991/health/ready'
@@ -212,19 +377,71 @@ stages:
                     throw 'API/Web release identity does not match the promoted CI commit.'
                 }
 
-                $apiImageId = (& docker image inspect --format '{{.Id}}' $apiImage).Trim()
-                if ($LASTEXITCODE -ne 0) { throw "Cannot inspect '$apiImage'." }
-                $webImageId = (& docker image inspect --format '{{.Id}}' $webImage).Trim()
-                if ($LASTEXITCODE -ne 0) { throw "Cannot inspect '$webImage'." }
+                $publicVerification = [ordered]@{ enabled = $false; status = 'not-enabled' }
+                if ($env:CP6_PUBLIC_VERIFICATION_ENABLED -match '^(?i:true|1|yes)$') {
+                    $publicApi = Invoke-RestMethod -Uri 'https://api.cp6.uk/health/release'
+                    $publicWeb = Invoke-RestMethod -Uri 'https://cp6.uk/release.json'
+                    if ($publicApi.gitSha -ne $env:CP6_CI_SOURCE_COMMIT -or
+                        $publicWeb.gitSha -ne $env:CP6_CI_SOURCE_COMMIT) {
+                        throw 'Public cp6.uk does not expose the promoted DEV identity.'
+                    }
+                    $publicVerification = [ordered]@{
+                        enabled = $true
+                        status = 'verified'
+                        apiGitSha = $publicApi.gitSha
+                        webGitSha = $publicWeb.gitSha
+                    }
+                }
 
-                New-Item -ItemType Directory -Path $env:CP6_EVIDENCE_DIRECTORY -Force | Out-Null
+                $inspectedApiId = (& docker image inspect --format '{{.Id}}' $apiImageId).Trim()
+                if ($LASTEXITCODE -ne 0 -or $inspectedApiId -ne $apiImageId) {
+                    throw "Cannot inspect immutable API image '$apiImageId'."
+                }
+                $inspectedWebId = (& docker image inspect --format '{{.Id}}' $webImageId).Trim()
+                if ($LASTEXITCODE -ne 0 -or $inspectedWebId -ne $webImageId) {
+                    throw "Cannot inspect immutable Web image '$webImageId'."
+                }
+
+                $apiContainerIds = @(& docker ps `
+                    --filter 'label=com.docker.compose.project=cp6-dev' `
+                    --filter 'label=com.docker.compose.service=api' `
+                    --format '{{.ID}}')
+                if ($LASTEXITCODE -ne 0 -or $apiContainerIds.Count -ne 1) {
+                    throw 'Expected exactly one running cp6-dev API container.'
+                }
+                $apiContainerId = $apiContainerIds[0].Trim()
+                $runningApiImageId = (& docker inspect --format '{{.Image}}' $apiContainerId).Trim()
+                if ($LASTEXITCODE -ne 0 -or $runningApiImageId -ne $apiImageId) {
+                    throw 'The running cp6-dev API container does not use the built immutable image ID.'
+                }
+
+                $webContainerIds = @(& docker ps `
+                    --filter 'label=com.docker.compose.project=cp6-dev' `
+                    --filter 'label=com.docker.compose.service=web' `
+                    --format '{{.ID}}')
+                if ($LASTEXITCODE -ne 0 -or $webContainerIds.Count -ne 1) {
+                    throw 'Expected exactly one running cp6-dev Web container.'
+                }
+                $webContainerId = $webContainerIds[0].Trim()
+                $runningWebImageId = (& docker inspect --format '{{.Image}}' $webContainerId).Trim()
+                if ($LASTEXITCODE -ne 0 -or $runningWebImageId -ne $webImageId) {
+                    throw 'The running cp6-dev Web container does not use the built immutable image ID.'
+                }
+                $databaseBackup = Get-Content `
+                    -LiteralPath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'database-backup.json') `
+                    -Raw | ConvertFrom-Json
+
                 [ordered]@{
-                    schemaVersion = 1
+                    schemaVersion = 2
                     environment = 'cp6-dev'
                     deployedAtUtc = [DateTime]::UtcNow.ToString('o')
                     releaseVersion = $releaseVersion
                     sourceBranch = $env:CP6_CI_SOURCE_BRANCH
                     gitSha = $env:CP6_CI_SOURCE_COMMIT
+                    trigger = [ordered]@{
+                        mode = $env:CP6_TRIGGER_MODE
+                        automaticEnabled = [bool]::Parse($env:CP6_AUTO_ENABLED)
+                    }
                     ci = [ordered]@{
                         pipeline = $env:CP6_CI_PIPELINE_NAME
                         runId = $env:CP6_CI_RUN_ID
@@ -234,9 +451,20 @@ stages:
                         runId = $env:CP6_CD_RUN_ID
                         runName = $env:CP6_CD_RUN_NAME
                     }
+                    databaseBackup = $databaseBackup
                     images = [ordered]@{
-                        api = [ordered]@{ tag = $apiImage; id = $apiImageId }
-                        web = [ordered]@{ tag = $webImage; id = $webImageId }
+                        api = [ordered]@{
+                            tag = $apiImageTag
+                            builtId = $apiImageId
+                            runningId = $runningApiImageId
+                            containerId = $apiContainerId
+                        }
+                        web = [ordered]@{
+                            tag = $webImageTag
+                            builtId = $webImageId
+                            runningId = $runningWebImageId
+                            containerId = $webContainerId
+                        }
                     }
                     verification = [ordered]@{
                         live = $live.status
@@ -246,16 +474,18 @@ stages:
                         webVersion = $webRelease.version
                         webGitSha = $webRelease.gitSha
                         latestMigration = $apiRelease.latestMigration
+                        public = $publicVerification
                     }
-                } | ConvertTo-Json -Depth 8 |
+                } | ConvertTo-Json -Depth 10 |
                     Set-Content `
                         -LiteralPath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'deployment.json') `
                         -Encoding utf8
 
-                Write-Host "Verified CP6 DEV version $releaseVersion at $($env:CP6_CI_SOURCE_COMMIT)."
+                Write-Host "Verified CP6 DEV $releaseVersion in $($env:CP6_TRIGGER_MODE) mode."
 
           - task: PublishPipelineArtifact@1
             displayName: 'Publish DEV deployment evidence'
+            condition: always()
             inputs:
               targetPath: '$(Pipeline.Workspace)\cp6-dev-evidence'
               artifact: 'cp6-dev-evidence'

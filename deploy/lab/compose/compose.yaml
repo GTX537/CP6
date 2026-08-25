@@ -148,6 +148,10 @@ services:
       timeout: 5s
       retries: 12
       start_period: 15s
+    networks:
+      default:
+        aliases:
+          - cp6-web
     restart: unless-stopped
 
 volumes:
