@@ -40,10 +40,9 @@ stages:
         versionSpec: '22.x'
 
     - powershell: |
+        $ErrorActionPreference = 'Stop'
         .\scripts\test-azure-ci-runtime-artifact-contract.ps1
-        if ($LASTEXITCODE -ne 0) { throw 'Azure CI runtime artifact contract failed.' }
         .\scripts\test-cp6-dev-runtime-artifact.ps1
-        if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV runtime artifact behavior test failed.' }
       displayName: 'Verify runtime artifact contracts'
 
     # =========================

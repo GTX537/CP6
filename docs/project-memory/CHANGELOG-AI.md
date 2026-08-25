@@ -4,6 +4,7 @@
 
 ## 2026-08-25：DEV 复用 CI 哈希运行时产物
 
+- 首次主线 CI #108 暴露 PowerShell 编排假红：合同脚本已输出 passed，但 Step 随后读取了进入脚本前遗留的非零 `$LASTEXITCODE`。修复删除 `.ps1` 后的外部进程码判断，改由 terminating error 传播，并让基础 CI/DEV 静态合同拒绝该反模式；#108 在 restore/build 前结束，无环境副作用。
 - CI #102、关闭状态 completion #104 与 Readiness #105 成功；Manual #106 因资源版本输入错误在 YAML 解析前失败，无副作用。Manual #107 正确绑定 CI #102，但 DEV 中重复宿主 publish 达约 4.18 GiB 工作集并导致 `CP6_DEV` 新连接超时，按门禁取消；没有备份/迁移/候选切换，根 API/DB 不变，旧 DEV API 重启，因此不计验收。
 - 基础 Azure CI 现从同一次通过测试的 API/Web build 收集 runtime payload，生成带版本、完整 SHA、逐文件长度和 SHA-256 的 `cp6-dev-runtime` Pipeline Artifact；DEV 下载所选 CI 的 Artifact，拒绝篡改、额外文件或身份错配，只用 runtime-only Dockerfile 封装并捕获不可变 image ID。
 - 真实 145,966,387 bytes API 与 7,473,275 bytes Web 共 587 个文件已完成本机哈希与约 17 秒封装验证，根 API/DB、旧 DEV API 和 `CP6_DEV` 均保持稳定。GH R2/GHCR 生产权威、自动/公网关闭状态不变，手动成功计数仍为 1/3。
