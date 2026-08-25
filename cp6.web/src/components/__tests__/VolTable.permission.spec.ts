@@ -140,7 +140,7 @@ describe('VolTable mobile permissions', () => {
     expect(buttons).toContain('table.delete')
   })
 
-  it('formats .NET datetime values instead of exposing raw ISO precision', async () => {
+  it('formats .NET high-precision values without exposing raw or fractional precision', async () => {
     const { pinia } = prepareStore([])
     const datetimeApi = {
       ...api,
@@ -169,7 +169,7 @@ describe('VolTable mobile permissions', () => {
     await flushPromises()
 
     expect(wrapper.text()).toContain('2026')
-    expect(wrapper.text()).toContain('22:06:21.179')
     expect(wrapper.text()).not.toContain('T22:06:21.1795134')
+    expect(wrapper.text()).not.toContain('.179')
   })
 })

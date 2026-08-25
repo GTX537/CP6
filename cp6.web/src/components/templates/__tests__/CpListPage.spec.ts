@@ -339,7 +339,7 @@ describe('CpListPage 契约扩展（Milestone C）', () => {
     expect(w.text()).not.toContain('null')
   })
 
-  it("kind:'datetime'：.NET 高精度时间按当前语言正常显示", async () => {
+  it("kind:'datetime'：.NET 高精度时间按当前语言显示且不扩散小数秒", async () => {
     const c: ListColumn[] = [
       { prop: 'no', label: '单号', kind: 'mono' },
       { prop: 'createdAt', label: '创建时间', kind: 'datetime' }
@@ -352,8 +352,8 @@ describe('CpListPage 契约扩展（Milestone C）', () => {
     await flushPromises()
 
     expect(w.text()).toContain('2026')
-    expect(w.text()).toContain('22:06:21.179')
     expect(w.text()).not.toContain('T22:06:21.1795134')
+    expect(w.text()).not.toContain('.179')
   })
 })
 

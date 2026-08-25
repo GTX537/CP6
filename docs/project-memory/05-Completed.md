@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-24 日期时间规范化恢复与 P4/P5 关闭
+
+- 确认 P4 的通配 Vue SFC shim 对当前 Vue 3.5 + TypeScript 6 + `vue-tsc` 3.2 工具链并非必需；最新 `main` 在无 shim 时干净类型检查通过，因此不恢复会引入 `any` 的旧声明。
+- 共享日期时间工具新增 Element Plus 单元格适配器；OA/PMS/WMS/Space 页面及 `VolTable`、`CpListPage` 的 datetime 列统一本地化，替代原始 ISO、直接 `toLocaleString()` 和分散截断。
+- P5 不再把 `.sss` 加到全局 `long` 格式。普通业务 UI 固定为日期 + 时:分；高精度 .NET 输入会被解析但不向所有页面扩散秒/小数秒，未来精确审计格式须独立立项。
+- 门禁：P4 干净基线 `vue-tsc --build`；日期时间聚焦 3 文件/53 测试、Web 全量 175 文件/892 测试、Vue 类型检查和 production build 全部通过。
+
 ## 2026-08-24 白天临时家庭测试服务器控制流程
 
 - 新增可双击菜单 `cp6-daytime-server.bat` 及 PowerShell 控制器，统一提供 `start`、`start-build`、`status`、`close`、`stop` 五个入口；启动前检查 Docker、`.env`、Compose、Tunnel 配置和本机凭证文件。
