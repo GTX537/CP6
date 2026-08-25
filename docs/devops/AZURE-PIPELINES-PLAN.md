@@ -18,6 +18,7 @@
 - [x] 配置 .NET 8、Node.js 22、后端/客户端测试和 Web 检查。
 - [x] `main` 提交触发 CI。
 - [x] 记录 Azure Pipeline 成功运行 URL/Run ID 和 Agent 能力清单：[`Run #92`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=92)，`CP6-Windows` / `Default`。
+- [x] 为同机 SQL/Docker 学习环境固定低内存执行合同：restore 非并行、.NET build/test 单节点且无持久/共享编译服务器、Vue 单测两个 worker；分支 [`Run #112`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=112) 已在 SQL/容器运行时成功并产出 Runtime Artifact。Microsoft-hosted [`Run #110`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=110) 证明组织当前没有 hosted parallelism，未启用计费。
 - [ ] 决定 PR 验证归属：启用 Azure PR trigger，或明确只依赖现有 GitHub PR 门禁；当前 `pr: none`。
 - [ ] 比较 Azure CI 与 `client-contract.yml`/`wms-production-sql.yml`，登记未覆盖的 Space、OpenAPI/SDK、SQL、E2E、安全和 Android 门禁。
 - [ ] 为 self-hosted Agent 定义更新、磁盘清理、离线告警、并发和工作区隔离规则。
