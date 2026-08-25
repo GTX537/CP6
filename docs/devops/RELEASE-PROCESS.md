@@ -107,7 +107,7 @@
 
 ### Pipeline 排队但 Job 不启动
 
-检查 `Default` pool 是否有在线且已授权的 self-hosted Agent，以及 Agent capabilities 是否满足 PowerShell、Git、.NET、Node 和后续 Docker 要求。YAML 未绑定具体 Agent 名称。
+检查 `Default` pool 是否有在线且已授权的 self-hosted Agent，以及 Agent capabilities 是否满足 PowerShell、Git 和 Azure Artifact 桥要求。基础流水线不再要求本机 .NET/Node 编译；Docker 与 SQL 能力属于独立 `CP6-Deploy` Agent。YAML 未绑定具体 Agent 名称。
 
 本机 `CP6-Windows` 必须通过仓库脚本以前台方式启动：
 
@@ -118,6 +118,10 @@
 不要直接从 PowerShell 7 环境运行 `C:\agent\bin\Agent.Listener.exe run`。PowerShell 7 的
 `PSModulePath` 会被 Agent 继承，并使任务中的 Windows PowerShell 5.1 重复加载类型数据；脚本会先核对
 `.agent` 必须为 `CP6-Windows` / `Default`，只对 Agent 子进程清空该变量，退出后恢复当前终端环境。
+
+### Azure 桥找不到或不能下载 GitHub Runtime Artifact
+
+先确认 GitHub `client-contract.yml` 对同一完整 SHA 已 `completed/success` 并上传未过期的 `cp6-dev-runtime-<sha>`。Checkout 必须设置 `persistCredentials: true`，并从仓库专属 `http.https://github.com/<owner>/<repo>.extraheader` 读取凭证；不得输出凭证。接收器还会失败关闭于工作流路径/事件/SHA 不符、归档 SHA-256 不符、ZIP 越界或内部 manifest 不符。
 
 ### 镜像版本显示 unknown
 

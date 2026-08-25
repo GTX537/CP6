@@ -15,20 +15,22 @@ CI 成功只证明某个提交能够构建和通过已配置的测试，不等�
           +----------+-------------------+
           |                              |
           v                              v
-Azure DevOps CI                    GitHub R2 Release
-Default self-hosted pool           protected vX.Y.Z tag
-Build/Test/Type Check              source + SQL + E2E gates
-          |                        build/sign/scan/archive
+GitHub client-contract             GitHub R2 Release
+hosted build/test/android          protected vX.Y.Z tag
+          |                        source + SQL + E2E gates
+          v                        build/sign/scan/archive
+ SHA runtime artifact                    |
+          |                           GHCR digest
           v                              |
-     验证结果                          GHCR digest
-     不部署                              |
+Azure self-hosted bridge                 |
+verify + republish; no build/deploy      |
                                          v
                                protected environment deploy
 ```
 
-当前 Azure CI 的职责是快速验证 `main`。GitHub R2 负责受保护 Tag、候选镜像、签名、SBOM、漏洞扫描、不可变证据、数据库初始化、生产部署和运行身份核对。
+当前代码编译与完整客户端合同由 GitHub-hosted `client-contract` 执行；Azure `Default` self-hosted Agent 只把同一完整 SHA 的成功 GitHub Runtime Artifact 做来源、摘要和内部清单验证后转存，避免本机 CI 与 SQL/Docker 争抢内存。GitHub R2 仍负责受保护 Tag、候选镜像、签名、SBOM、漏洞扫描、不可变证据、数据库初始化、生产部署和运行身份核对。
 
-这两个流程可以暂时并存，但职责不能模糊：Azure CI 绿灯不是 R2 候选，也不能替代生产批准。
+这些流程可以暂时并存，但职责不能模糊：Azure Artifact 绿灯不是 R2 候选，也不能替代生产批准。
 
 ## 目标架构
 
@@ -119,7 +121,7 @@ DEV 和 PROD 重建“同版本”会产生无法证明相同的二进制。CP6 
 
 ### 3. CI Agent 与部署身份分离
 
-当前 Azure CI 使用 `Default` self-hosted pool。YAML 未固定具体 Agent，且开发机 Agent 不应自动获得 DEV/PROD Secret 或生产网络权限。
+当前 Azure Artifact 桥使用 `Default` self-hosted pool。YAML 未固定具体 Agent；该 Agent 只需 Checkout 服务连接与 Azure Artifact 权限，不执行编译，也不应自动获得 DEV/PROD Secret 或生产网络权限。
 
 部署阶段应使用专用 Azure Environment 资源、专用部署 Agent 或受限 Service Connection。CI Agent 被攻陷时，不应因此获得生产发布能力。
 

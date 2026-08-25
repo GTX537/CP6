@@ -10,15 +10,17 @@
 
 ## Phase 1：CI 基线
 
-状态：**已接入，待补强**。
+状态：**远程构建 + 本机轻量 Artifact 桥已验证，待 main 及稳定性闭环**。
 
 - [x] GitHub 仓库已连接 Azure DevOps。
 - [x] 根目录存在 `azure-pipelines.yml`。
 - [x] 使用 `Default` self-hosted agent pool。
-- [x] 配置 .NET 8、Node.js 22、后端/客户端测试和 Web 检查。
+- [x] GitHub `client-contract.yml` 配置 .NET 8、Node.js 22、后端/客户端、OpenAPI、Web、Android 和 R2 source 检查，并创建完整 SHA 绑定的 DEV 运行包。
 - [x] `main` 提交触发 CI。
 - [x] 记录 Azure Pipeline 成功运行 URL/Run ID 和 Agent 能力清单：[`Run #92`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=92)，`CP6-Windows` / `Default`。
-- [x] 为同机 SQL/Docker 学习环境固定低内存执行合同：restore 非并行、.NET build/test 单节点且无持久/共享编译服务器、Vue 单测两个 worker；分支 [`Run #112`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=112) 已在 SQL/容器运行时成功并产出 Runtime Artifact。Microsoft-hosted [`Run #110`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=110) 证明组织当前没有 hosted parallelism，未启用计费。
+- [x] 确认本机编译与 SQL/Docker 共存不安全：#109/#111/#113/#115 均按内存或 SQL 门禁取消；Microsoft-hosted [`Run #110`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=110) 证明 Azure 组织当前没有 hosted parallelism，未启用计费。
+- [x] 将 Azure 基础流水线收敛为轻量 Artifact 桥。分支 [`Run #117`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=117) 已从 GitHub 成功下载并验证工作流来源、完整 SHA、归档 SHA-256 与内部 manifest，再发布 Azure Pipeline Artifact；本机 SQL/公网容器基线不变。
+- [ ] 合并后取得成功的 `main` GitHub 远程构建与 Azure Artifact 桥，并完成剩余两次独立 Manual DEV。
 - [ ] 决定 PR 验证归属：启用 Azure PR trigger，或明确只依赖现有 GitHub PR 门禁；当前 `pr: none`。
 - [ ] 比较 Azure CI 与 `client-contract.yml`/`wms-production-sql.yml`，登记未覆盖的 Space、OpenAPI/SDK、SQL、E2E、安全和 Android 门禁。
 - [ ] 为 self-hosted Agent 定义更新、磁盘清理、离线告警、并发和工作区隔离规则。

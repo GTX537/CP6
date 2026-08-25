@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-25：GitHub 远程构建与 Azure 轻量 Artifact 桥
+
+- #113/#115 证明降低并发或拆分项目仍不能让本机完整编译与 SQL/Docker 安全共存；#110 又证明 Azure 组织没有 hosted parallelism。完整 .NET/Web/客户端/Android/R2 source 门禁因此迁至 GitHub hosted `client-contract`，运行包按完整 SHA 命名、内部逐文件哈希、保留 3 天。
+- Azure 基础流水线改为只验证合同、使用已有授权 Checkout 凭证下载同 SHA 成功工作流的产物、核对 GitHub 归档 SHA-256/ZIP 安全/内部 manifest，再发布 Azure Pipeline Artifact；不本机编译、不部署。
+- GitHub Run 32879704210 首次成功；Azure #116 因 extraheader 查询缺少仓库路径在下载前安全失败。修复后 GitHub Run 32881647447 与 Azure #117 完整成功，SQL 与公网七容器基线不变。分支 Artifact 不计 DEV，仍须 main 成功和两次独立 Manual DEV；自动/公网关闭、R2/GHCR 生产权威不变。
+
 ## 2026-08-25：DEV 复用 CI 哈希运行时产物
 
 - #109/#111 暴露 self-hosted 基础 CI 的并行 MSBuild 内存竞争，均在 Artifact 与 DEV 部署前取消；#110 的 Microsoft-hosted 探测因组织没有 hosted parallelism 在 Checkout 前失败，未启用计费。#112 以非并行 restore、单节点 build/test、禁用持久/共享编译服务器和两个 Vue worker 完整成功并发布 Runtime Artifact，最低观测可用内存约 2.22 GiB，SQL/受保护容器基线不变；该分支证据不能替代成功的 main 候选。

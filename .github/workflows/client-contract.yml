@@ -1,6 +1,7 @@
 name: client-contract
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches: [main]
@@ -32,10 +33,10 @@ jobs:
 
       - name: Build and test .NET
         run: |
-          dotnet build CP6.WebApi/CP6.WebApi.csproj --no-restore
-          dotnet build CP6.Desktop/CP6.Desktop.csproj --no-restore
-          dotnet test CP6.Tests/CP6.Tests.csproj
-          dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj --no-restore
+          dotnet build CP6.WebApi/CP6.WebApi.csproj -c Release --no-restore
+          dotnet build CP6.Desktop/CP6.Desktop.csproj -c Release --no-restore
+          dotnet test CP6.Tests/CP6.Tests.csproj -c Release
+          dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj -c Release --no-restore
 
       - name: Check OpenAPI generated client drift
         shell: pwsh
@@ -46,7 +47,7 @@ jobs:
           $api = Start-Process dotnet `
             -WorkingDirectory "CP6.WebApi" `
             -ArgumentList @(
-              "bin/Debug/net8.0/CP6.WebApi.dll",
+              "bin/Release/net8.0/CP6.WebApi.dll",
               "--urls", "http://127.0.0.1:5080"
             ) -WindowStyle Hidden -PassThru
           try {
@@ -67,6 +68,9 @@ jobs:
 
       - name: Build and test Web
         working-directory: cp6.web
+        env:
+          CP6_RELEASE_VERSION: 0.0.0-dev.${{ github.sha }}
+          CP6_GIT_SHA: ${{ github.sha }}
         run: |
           npm ci
           npm run type-check
@@ -75,7 +79,46 @@ jobs:
 
       - name: R2 source release gate
         shell: pwsh
-        run: ./scripts/test-r2-source-gate.ps1 -Configuration Debug
+        run: ./scripts/test-r2-source-gate.ps1 -Configuration Release
+
+      - name: Create hashed DEV runtime artifact
+        shell: pwsh
+        env:
+          CP6_RELEASE_VERSION: 0.0.0-dev.${{ github.sha }}
+          CP6_GIT_SHA: ${{ github.sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $apiPublishRoot = Join-Path $env:RUNNER_TEMP 'cp6-api-publish'
+          $runtimeArtifactRoot = Join-Path $env:RUNNER_TEMP 'cp6-dev-runtime'
+          dotnet publish CP6.WebApi/CP6.WebApi.csproj `
+            -c Release `
+            -o $apiPublishRoot `
+            --no-build `
+            --no-restore `
+            --disable-build-servers
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to collect the prebuilt API payload.' }
+
+          ./scripts/New-Cp6DevRuntimeArtifact.ps1 `
+            -ApiPublishPath $apiPublishRoot `
+            -WebDistPath ./cp6.web/dist `
+            -WebNginxConfigPath ./cp6.web/nginx.conf `
+            -OutputRoot $runtimeArtifactRoot `
+            -ReleaseVersion $env:CP6_RELEASE_VERSION `
+            -GitSha $env:CP6_GIT_SHA |
+            Out-Null
+          ./scripts/Test-Cp6DevRuntimeArtifact.ps1 `
+            -ArtifactRoot $runtimeArtifactRoot `
+            -ExpectedReleaseVersion $env:CP6_RELEASE_VERSION `
+            -ExpectedGitSha $env:CP6_GIT_SHA
+
+      - name: Upload DEV runtime artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp6-dev-runtime-${{ github.sha }}
+          path: ${{ runner.temp }}\cp6-dev-runtime
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 6
 
   android:
     runs-on: windows-latest

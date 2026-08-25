@@ -10,108 +10,58 @@ if (-not (Test-Path -LiteralPath $pipelinePath -PathType Leaf)) {
 
 $pipeline = Get-Content -LiteralPath $pipelinePath -Raw -Encoding utf8
 $requiredPatterns = [ordered]@{
-    "main CI trigger" = '(?s)trigger:\s*branches:\s*include:\s*- main'
-    "API build" = 'dotnet build CP6\.WebApi/CP6\.WebApi\.csproj'
-    "backend tests" = 'dotnet test CP6\.Tests/CP6\.Tests\.csproj'
-    "client tests" = 'dotnet test CP6\.Client\.Tests/CP6\.Client\.Tests\.csproj'
-    "Vue type check" = 'npm run type-check'
-    "bounded Vue unit test workers" = 'npm test -- --maxWorkers=2'
-    "Vue production build" = 'npm run build-only'
-    "Web artifact release version" = "CP6_RELEASE_VERSION:\s*'0\.0\.0-dev\.\$\(Build\.BuildId\)'"
-    "Web artifact Git SHA" = "CP6_GIT_SHA:\s*'\$\(Build\.SourceVersion\)'"
-    "API payload copied without recompilation" = '(?s)dotnet publish CP6\.WebApi/CP6\.WebApi\.csproj.*?--no-build.*?--no-restore'
-    "hashed runtime artifact creation" = 'New-Cp6DevRuntimeArtifact\.ps1'
-    "runtime artifact verification" = 'Test-Cp6DevRuntimeArtifact\.ps1'
-    "pipeline artifact publication" = "(?s)- publish:\s*'\$\(Build\.ArtifactStagingDirectory\)\\cp6-dev-runtime'\s+artifact:\s*'cp6-dev-runtime'"
+    "main trigger" = '(?s)trigger:\s*branches:\s*include:\s*- main'
+    "PR disabled" = '(?m)^pr:\s*none\s*$'
+    "self-hosted bridge pool" = "(?s)pool:\s*name:\s*'Default'"
+    "clean workspace" = '(?s)workspace:\s*clean:\s*all'
+    "credential-preserving checkout" = '(?s)- checkout:\s*self.*?clean:\s*true.*?fetchDepth:\s*0.*?persistCredentials:\s*true'
+    "bridge behavior contract" = 'test-cp6-github-runtime-artifact-bridge\.ps1'
+    "GitHub artifact receiver" = 'Receive-Cp6GitHubRuntimeArtifact\.ps1'
+    "source SHA input" = "CP6_GIT_SHA:\s*'\$\(Build\.SourceVersion\)'"
+    "isolated staging root" = "CP6_RUNTIME_ARTIFACT_ROOT:\s*'\$\(Build\.ArtifactStagingDirectory\)\\cp6-dev-runtime'"
+    "bounded GitHub wait" = '(?s)-MaxWaitSeconds 1800.*?-PollIntervalSeconds 20'
+    "Azure artifact publication" = "(?s)- publish:\s*'\$\(Build\.ArtifactStagingDirectory\)\\cp6-dev-runtime'\s+artifact:\s*'cp6-dev-runtime'"
 }
 foreach ($entry in $requiredPatterns.GetEnumerator()) {
     if ($pipeline -notmatch $entry.Value) {
-        throw "Azure CI pipeline is missing $($entry.Key)."
+        throw "Azure CI artifact bridge is missing $($entry.Key)."
     }
 }
 
-$restoreDisplayIndex = $pipeline.IndexOf("displayName: 'Restore .NET Projects'")
-$restoreStepIndex = if ($restoreDisplayIndex -ge 0) {
-    $pipeline.LastIndexOf("    - powershell: |", $restoreDisplayIndex)
-}
-else {
-    -1
-}
-$apiBuildDisplayIndex = $pipeline.IndexOf("displayName: 'Build CP6 API'")
-if ($restoreStepIndex -lt 0 -or $apiBuildDisplayIndex -le $restoreStepIndex) {
-    throw "Azure CI .NET restore step boundary is invalid."
-}
-$restoreStep = $pipeline.Substring(
-    $restoreStepIndex,
-    $apiBuildDisplayIndex - $restoreStepIndex)
-if ($restoreStep -notmatch '--disable-build-servers' -or
-    $restoreStep -notmatch '--disable-parallel') {
-    throw "Azure CI .NET restore must disable persistent servers and parallel restore."
+$contractIndex = $pipeline.IndexOf("displayName: 'Verify runtime artifact contracts'")
+$downloadIndex = $pipeline.IndexOf("displayName: 'Download verified GitHub runtime artifact'")
+$publishIndex = $pipeline.IndexOf("displayName: 'Publish DEV runtime artifact'")
+if ($contractIndex -lt 0 -or
+    $downloadIndex -le $contractIndex -or
+    $publishIndex -le $downloadIndex) {
+    throw "Azure CI artifact bridge verification, download, and publish order is invalid."
 }
 
-foreach ($displayName in @('Build CP6 API', 'Run Backend Tests', 'Run Client Tests')) {
-    $displayIndex = $pipeline.IndexOf("displayName: '$displayName'")
-    $stepIndex = if ($displayIndex -ge 0) {
-        $pipeline.LastIndexOf("    - powershell: |", $displayIndex)
-    }
-    else {
-        -1
-    }
-    if ($stepIndex -lt 0 -or $displayIndex -le $stepIndex) {
-        throw "Azure CI '$displayName' step boundary is invalid."
-    }
-    $step = $pipeline.Substring($stepIndex, $displayIndex - $stepIndex)
-    foreach ($requiredFlag in @(
-        '--disable-build-servers',
-        '-m:1',
-        '-p:BuildInParallel=false',
-        '-p:UseSharedCompilation=false'
-    )) {
-        if (-not $step.Contains($requiredFlag)) {
-            throw "Azure CI '$displayName' must include '$requiredFlag'."
-        }
-    }
+$downloadStepIndex = $pipeline.LastIndexOf("    - powershell: |", $downloadIndex)
+if ($downloadStepIndex -lt 0) {
+    throw "Azure CI artifact bridge download step boundary is invalid."
 }
-
-$apiBuildIndex = $pipeline.IndexOf("displayName: 'Build CP6 API'")
-$webBuildIndex = $pipeline.IndexOf("displayName: 'Build Vue Production'")
-$artifactCreateIndex = $pipeline.IndexOf("displayName: 'Create hashed DEV runtime artifact'")
-$artifactPublishIndex = $pipeline.IndexOf("displayName: 'Publish DEV runtime artifact'")
-if ($apiBuildIndex -lt 0 -or
-    $webBuildIndex -le $apiBuildIndex -or
-    $artifactCreateIndex -le $webBuildIndex -or
-    $artifactPublishIndex -le $artifactCreateIndex) {
-    throw "Azure CI build, test, runtime artifact, and publication order is invalid."
-}
-
-$contractDisplayIndex = $pipeline.IndexOf("displayName: 'Verify runtime artifact contracts'")
-$contractStepIndex = if ($contractDisplayIndex -ge 0) {
-    $pipeline.LastIndexOf("    - powershell: |", $contractDisplayIndex)
-}
-else {
-    -1
-}
-$backendSectionIndex = $pipeline.IndexOf("# .NET Backend")
-if ($contractStepIndex -lt 0 -or $backendSectionIndex -le $contractStepIndex) {
-    throw "Azure CI runtime artifact contract step boundary is invalid."
-}
-$contractStep = $pipeline.Substring(
-    $contractStepIndex,
-    $backendSectionIndex - $contractStepIndex)
-if ($contractStep -match '\$LASTEXITCODE') {
-    throw "PowerShell contract scripts must not be judged by inherited LASTEXITCODE state."
+$downloadStep = $pipeline.Substring($downloadStepIndex, $publishIndex - $downloadStepIndex)
+if ($downloadStep -notmatch 'git config --get-all "http\.https://github\.com/\$env:CP6_GITHUB_REPOSITORY\.extraheader"' -or
+    $downloadStep -notmatch "CP6_GITHUB_REPOSITORY: 'GTX537/CP6'" -or
+    $downloadStep -notmatch 'CP6_GITHUB_AUTHORIZATION' -or
+    $downloadStep -notmatch '(?s)finally\s*\{.*?CP6_GITHUB_AUTHORIZATION.*?\$null') {
+    throw "Azure CI artifact bridge must scope and clear the authorized checkout credential."
 }
 
 $forbiddenPatterns = [ordered]@{
+    "local dotnet compilation" = '(?i)dotnet\s+(?:restore|build|test|publish)'
+    "local Node compilation" = '(?i)npm(?:\.cmd)?\s+(?:ci|test|run)'
     "Docker image build" = '(?i)docker\s+(?:build|push)'
     "environment deployment" = '(?m)^\s*- deployment:'
     "production registry" = '(?i)(?:ghcr\.io|\.azurecr\.io)'
-    "inline password" = '(?i)(?:Password|Pwd)\s*='
+    "inline secret" = '(?i)(?:Password|Pwd|Bearer)\s*='
+    "obsolete host capacity gate" = 'Assert-Cp6CiHostCapacity\.ps1'
 }
 foreach ($entry in $forbiddenPatterns.GetEnumerator()) {
     if ($pipeline -match $entry.Value) {
-        throw "Azure CI pipeline unexpectedly contains $($entry.Key)."
+        throw "Azure CI artifact bridge unexpectedly contains $($entry.Key)."
     }
 }
 
-Write-Host "Azure CI runtime artifact contract test passed."
+Write-Host "Azure CI GitHub runtime artifact bridge contract test passed."
