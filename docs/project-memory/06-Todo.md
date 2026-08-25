@@ -1,8 +1,13 @@
 # 当前待办与优先级
 
+## P0：白天临时家庭测试环境的外部边界
+
+- 本机必须保持开机、未睡眠，且 Docker Desktop 与网络正常；这是当前白天临时测试方案的可用性边界。若需要夜间、无人值守或稳定 SLA，仍须另选真实云主机/托管容器平台并完成生产部署设计，不能把本机 Tunnel 描述为高可用云部署。
+- 给同事开放测试前，使用 `cp6-daytime-server.bat status` 确认 7 个容器、本机地址和公网地址全绿；同事只使用 `https://cp6.uk` 的应用账号，不共享 `.env`、Tunnel JSON、数据库/RabbitMQ/Kafka 管理端口或基础设施凭证。
+- Cloudflare Workers 的 `estimate` Git 集成仍需在 Cloudflare 控制台单独断开或改正 Build 配置。它与 `cp6-cloudflared` Tunnel 不在同一部署链；当前家庭测试服务器不依赖 `estimate`，也没有修复其外部构建失败。
+
 ## P0：整顿后的仓库治理与续开发边界
 
-- 独立修复 `tools/Test-SpaceGaEvidence.Tests.ps1`：目前 36/36 断言通过，但预期失败的最后一个子进程把 `$LASTEXITCODE=1` 泄漏为脚本最终退出码，导致 GA CI 假红。必须新增退出码回归并在单独分支/PR完成，不得通过放宽 GA 校验绕过。
 - `codex/login-experience-recovery-20260824@1a5a58f`：补 LoginView 组件/浏览器验收、审查大幅模板重排与可访问性后再提 PR；当前只有 helper 6/6 和 Vue type-check 证据。
 - `codex/datetime-normalization-recovery-20260824@fd0b64fc`：审查 35 文件跨域修改与日期语义，补项目记忆/变更说明；当前 Web 174 文件/886 测试、Vue type-check 和 production build 已通过，是三个恢复分支中最接近可合并的一支。
 - `codex/kafka-dispose-recovery-20260824@1ee78fa6`：补 Dispose/异常/日志策略的行为测试并确认生命周期语义；当前仅 CP6.Core Release build 0 warning/0 error，不得直接合并。

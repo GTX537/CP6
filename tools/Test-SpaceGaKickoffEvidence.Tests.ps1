@@ -334,6 +334,10 @@ function Invoke-KickoffValidatorCase {
         throw "$Name produced a PowerShell parameter binding failure.`n$output"
     }
     $script:passed++
+
+    # The validator exit code has been asserted above. Clear the consumed native
+    # process status so a successful suite cannot leak an expected failure to CI.
+    $global:LASTEXITCODE = 0
 }
 
 try {
@@ -595,6 +599,10 @@ try {
         -ManifestPath $sectionEvidencePath -ShouldPass $false `
         -InputId 'CORE_TEAM_ALLOCATION' `
         -ExpectedError 'SPACE_GA_KICKOFF_EVIDENCE_ACCEPTOR_MISMATCH'
+
+    if ($global:LASTEXITCODE -ne 0) {
+        throw "Test suite leaked child process exit code $global:LASTEXITCODE."
+    }
 
     [ordered]@{
         suite = 'CP6_SPACE_GA_KICKOFF_EVIDENCE'

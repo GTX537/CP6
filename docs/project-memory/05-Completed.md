@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-24 白天临时家庭测试服务器控制流程
+
+- 新增可双击菜单 `cp6-daytime-server.bat` 及 PowerShell 控制器，统一提供 `start`、`start-build`、`status`、`close`、`stop` 五个入口；启动前检查 Docker、`.env`、Compose、Tunnel 配置和本机凭证文件。
+- `close` 只停止 Compose 内的 `cp6-cloudflared`，保留本机 API/Web/基础服务；`stop` 使用 `docker compose stop` 安全停止全栈并保留所有命名卷。脚本不会自动结束主机上的其他 cloudflared 进程，也不会修改 Windows 睡眠或电源设置。
+- 合同测试覆盖 PowerShell 语法、动作/入口映射、四个 HTTP 地址、Tunnel 单独关闭、数据保留停止、凭证预检和禁止电源修改；实机只读状态检查确认 7 个服务及本机/公网 Web/API 全部就绪、HTTP 200。为避免中断当前使用者，没有执行现场启停或重建。
+
+## 2026-08-24 Space GA 退出码假红修复
+
+- 根因是五个 Space GA 负向测试辅助函数已正确消费预期失败的 validator 退出码，但都未清除 PowerShell 全局 `$LASTEXITCODE`；末项负向用例因此让 Actions 在断言全绿后仍返回 `1`。
+- Attestation、Pilot、Golden CAD、Kickoff 和人员种子套件现在都先完成期望退出码与稳定错误码断言，再将已消费状态归零；各自汇总前新增全局退出码回归断言。真实 validator 失败仍会抛错，GA 证据失败关闭语义未改变。
+- 直接 Actions 风格调用和独立进程调用均得到 Attestation 36/36、退出码 `0`；完整 Space GA 工作流另通过 Pilot 21/21、Golden CAD 31/31、Kickoff 28/28 和人员种子 8/8。
+
 ## 2026-08-24 仓库分支整顿与 WIP 恢复
 
 - 建立整顿前全引用 Git bundle、各脏 worktree 状态/patch/原始未跟踪文件与 SHA-256 清单；根工作区安全恢复为干净 `main@0a14581f`，没有通过 reset/覆盖丢弃用户数据。
