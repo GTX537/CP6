@@ -15,7 +15,7 @@ $requiredPatterns = [ordered]@{
     "backend tests" = 'dotnet test CP6\.Tests/CP6\.Tests\.csproj'
     "client tests" = 'dotnet test CP6\.Client\.Tests/CP6\.Client\.Tests\.csproj'
     "Vue type check" = 'npm run type-check'
-    "Vue unit tests" = 'npm test -- --maxWorkers=4'
+    "bounded Vue unit test workers" = 'npm test -- --maxWorkers=2'
     "Vue production build" = 'npm run build-only'
     "Web artifact release version" = "CP6_RELEASE_VERSION:\s*'0\.0\.0-dev\.\$\(Build\.BuildId\)'"
     "Web artifact Git SHA" = "CP6_GIT_SHA:\s*'\$\(Build\.SourceVersion\)'"
@@ -27,6 +27,49 @@ $requiredPatterns = [ordered]@{
 foreach ($entry in $requiredPatterns.GetEnumerator()) {
     if ($pipeline -notmatch $entry.Value) {
         throw "Azure CI pipeline is missing $($entry.Key)."
+    }
+}
+
+$restoreDisplayIndex = $pipeline.IndexOf("displayName: 'Restore .NET Projects'")
+$restoreStepIndex = if ($restoreDisplayIndex -ge 0) {
+    $pipeline.LastIndexOf("    - powershell: |", $restoreDisplayIndex)
+}
+else {
+    -1
+}
+$apiBuildDisplayIndex = $pipeline.IndexOf("displayName: 'Build CP6 API'")
+if ($restoreStepIndex -lt 0 -or $apiBuildDisplayIndex -le $restoreStepIndex) {
+    throw "Azure CI .NET restore step boundary is invalid."
+}
+$restoreStep = $pipeline.Substring(
+    $restoreStepIndex,
+    $apiBuildDisplayIndex - $restoreStepIndex)
+if ($restoreStep -notmatch '--disable-build-servers' -or
+    $restoreStep -notmatch '--disable-parallel') {
+    throw "Azure CI .NET restore must disable persistent servers and parallel restore."
+}
+
+foreach ($displayName in @('Build CP6 API', 'Run Backend Tests', 'Run Client Tests')) {
+    $displayIndex = $pipeline.IndexOf("displayName: '$displayName'")
+    $stepIndex = if ($displayIndex -ge 0) {
+        $pipeline.LastIndexOf("    - powershell: |", $displayIndex)
+    }
+    else {
+        -1
+    }
+    if ($stepIndex -lt 0 -or $displayIndex -le $stepIndex) {
+        throw "Azure CI '$displayName' step boundary is invalid."
+    }
+    $step = $pipeline.Substring($stepIndex, $displayIndex - $stepIndex)
+    foreach ($requiredFlag in @(
+        '--disable-build-servers',
+        '-m:1',
+        '-p:BuildInParallel=false',
+        '-p:UseSharedCompilation=false'
+    )) {
+        if (-not $step.Contains($requiredFlag)) {
+            throw "Azure CI '$displayName' must include '$requiredFlag'."
+        }
     }
 }
 

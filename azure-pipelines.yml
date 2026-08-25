@@ -50,27 +50,45 @@ stages:
     # =========================
 
     - powershell: |
-        dotnet restore CP6.WebApi/CP6.WebApi.csproj
-        dotnet restore CP6.Tests/CP6.Tests.csproj
-        dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj
+        dotnet restore CP6.WebApi/CP6.WebApi.csproj `
+          --disable-build-servers `
+          --disable-parallel
+        dotnet restore CP6.Tests/CP6.Tests.csproj `
+          --disable-build-servers `
+          --disable-parallel
+        dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj `
+          --disable-build-servers `
+          --disable-parallel
       displayName: 'Restore .NET Projects'
 
     - powershell: |
         dotnet build CP6.WebApi/CP6.WebApi.csproj `
           -c $(buildConfiguration) `
-          --no-restore
+          --no-restore `
+          --disable-build-servers `
+          -m:1 `
+          -p:BuildInParallel=false `
+          -p:UseSharedCompilation=false
       displayName: 'Build CP6 API'
 
     - powershell: |
         dotnet test CP6.Tests/CP6.Tests.csproj `
           -c $(buildConfiguration) `
-          --no-restore
+          --no-restore `
+          --disable-build-servers `
+          -m:1 `
+          -p:BuildInParallel=false `
+          -p:UseSharedCompilation=false
       displayName: 'Run Backend Tests'
 
     - powershell: |
         dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj `
           -c $(buildConfiguration) `
-          --no-restore
+          --no-restore `
+          --disable-build-servers `
+          -m:1 `
+          -p:BuildInParallel=false `
+          -p:UseSharedCompilation=false
       displayName: 'Run Client Tests'
 
     # =========================
@@ -88,7 +106,7 @@ stages:
       displayName: 'Vue Type Check'
 
     - powershell: |
-        npm test -- --maxWorkers=4
+        npm test -- --maxWorkers=2
       workingDirectory: 'cp6.web'
       displayName: 'Vue Unit Tests'
 
