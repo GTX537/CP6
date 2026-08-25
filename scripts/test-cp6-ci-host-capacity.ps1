@@ -10,7 +10,7 @@ if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
 $sleepCounter = [pscustomobject]@{ Count = 0 }
 $immediateSleep = { param([int]$Seconds) $sleepCounter.Count++ }.GetNewClosure()
 $immediateResult = & $scriptPath `
-    -MinimumFreeMemoryMiB 4608 `
+    -MinimumFreeMemoryMiB 5632 `
     -MaxWaitSeconds 30 `
     -PollIntervalSeconds 10 `
     -MemoryProbe { [pscustomobject]@{ FreeMemoryMiB = 6144; TotalMemoryMiB = 16384 } } `
@@ -31,7 +31,7 @@ $waitingSleep = {
     $waitingSleepCounter.Count++
 }.GetNewClosure()
 $waitingResult = & $scriptPath `
-    -MinimumFreeMemoryMiB 4608 `
+    -MinimumFreeMemoryMiB 5632 `
     -MaxWaitSeconds 30 `
     -PollIntervalSeconds 10 `
     -MemoryProbe $waitingProbe `
@@ -56,7 +56,7 @@ $unsafeSleep = {
 $failure = $null
 try {
     & $scriptPath `
-        -MinimumFreeMemoryMiB 4608 `
+        -MinimumFreeMemoryMiB 5632 `
         -MaxWaitSeconds 20 `
         -PollIntervalSeconds 10 `
         -MemoryProbe $unsafeProbe `
@@ -67,7 +67,7 @@ catch {
     $failure = $_
 }
 if ($null -eq $failure -or
-    $failure.Exception.Message -notmatch 'below the required 4608 MiB' -or
+    $failure.Exception.Message -notmatch 'below the required 5632 MiB' -or
     $unsafeSleepCounter.Count -ne 2) {
     throw "CI host capacity gate did not fail closed after the bounded wait."
 }
@@ -75,7 +75,7 @@ if ($null -eq $failure -or
 $invalidProbeFailure = $null
 try {
     & $scriptPath `
-        -MinimumFreeMemoryMiB 4608 `
+        -MinimumFreeMemoryMiB 5632 `
         -MaxWaitSeconds 0 `
         -MemoryProbe { [pscustomobject]@{ TotalMemoryMiB = 16384 } } |
         Out-Null

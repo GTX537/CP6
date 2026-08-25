@@ -44,13 +44,12 @@ stages:
         .\scripts\test-azure-ci-runtime-artifact-contract.ps1
         .\scripts\test-cp6-dev-runtime-artifact.ps1
         .\scripts\test-cp6-ci-host-capacity.ps1
-        .\scripts\test-cp6-ci-dotnet-build.ps1
       displayName: 'Verify runtime artifact contracts'
 
     - powershell: |
         $ErrorActionPreference = 'Stop'
         & .\scripts\Assert-Cp6CiHostCapacity.ps1 `
-          -MinimumFreeMemoryMiB 4608 `
+          -MinimumFreeMemoryMiB 5632 `
           -MaxWaitSeconds 600 `
           -PollIntervalSeconds 15 |
           Out-Null
@@ -73,34 +72,33 @@ stages:
       displayName: 'Restore .NET Projects'
 
     - powershell: |
-        $ErrorActionPreference = 'Stop'
-        & .\scripts\Invoke-Cp6CiDotNetBuild.ps1 `
-          -Graph BackendRuntime `
-          -Configuration $(buildConfiguration)
+        dotnet build CP6.WebApi/CP6.WebApi.csproj `
+          -c $(buildConfiguration) `
+          --no-restore `
+          --disable-build-servers `
+          -m:1 `
+          -p:BuildInParallel=false `
+          -p:UseSharedCompilation=false
       displayName: 'Build CP6 API'
 
     - powershell: |
-        $ErrorActionPreference = 'Stop'
-        & .\scripts\Invoke-Cp6CiDotNetBuild.ps1 `
-          -Graph BackendTests `
-          -Configuration $(buildConfiguration)
         dotnet test CP6.Tests/CP6.Tests.csproj `
           -c $(buildConfiguration) `
-          --no-build `
           --no-restore `
-          --disable-build-servers
+          --disable-build-servers `
+          -m:1 `
+          -p:BuildInParallel=false `
+          -p:UseSharedCompilation=false
       displayName: 'Run Backend Tests'
 
     - powershell: |
-        $ErrorActionPreference = 'Stop'
-        & .\scripts\Invoke-Cp6CiDotNetBuild.ps1 `
-          -Graph ClientTests `
-          -Configuration $(buildConfiguration)
         dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj `
           -c $(buildConfiguration) `
-          --no-build `
           --no-restore `
-          --disable-build-servers
+          --disable-build-servers `
+          -m:1 `
+          -p:BuildInParallel=false `
+          -p:UseSharedCompilation=false
       displayName: 'Run Client Tests'
 
     # =========================
