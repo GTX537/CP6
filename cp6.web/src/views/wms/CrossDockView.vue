@@ -110,7 +110,7 @@ const columns = computed<ListColumn<CrossDockOrder>[]>(() => [
   { prop: 'fromDock', label: t('wms.xdock.fld.fromDock'), width: 140 },
   { prop: 'toDock', label: t('wms.xdock.fld.toDock'), width: 140 },
   { prop: 'tempLocationCd', label: t('wms.xdock.fld.tempLoc'), width: 140 },
-  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160 },
+  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), kind: 'datetime', width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 160, fixed: 'right' },
 ])
 

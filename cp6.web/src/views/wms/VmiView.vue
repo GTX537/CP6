@@ -186,7 +186,7 @@ const billingColumns = computed<ListColumn<VmiBilling>[]>(() => [
   { prop: 'avgQty', label: t('wms.vmi.fld.avgQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
   { prop: 'dailyStorageRate', label: t('wms.vmi.fld.dailyRate'), width: 110, align: 'right', map: (v) => ({ label: formatMoney(v as number) }) },
   { prop: 'billingAmount', label: t('wms.vmi.fld.billingAmt'), width: 140, align: 'right' },
-  { prop: 'calculatedAt', label: t('wms.vmi.fld.calculatedAt'), width: 170 },
+  { prop: 'calculatedAt', label: t('wms.vmi.fld.calculatedAt'), kind: 'datetime', width: 180 },
   { prop: 'confirmed', label: t('wms.vmi.fld.confirmed'), width: 100, align: 'center' },
   { prop: '_action', label: t('wms.common.action'), width: 120, fixed: 'right' },
 ])

@@ -54,7 +54,7 @@ const columns = computed<ColumnConfig[]>(() => [
   { prop: 'managerId', label: t('直属上级'), formType: 'select', options: userOptions.value, tableHidden: true },
   { prop: 'email', label: t('邮箱') },
   { prop: 'enable', label: t('user.enable'), width: 80, type: 'switch', formType: 'switch' },
-  { prop: 'createDate', label: t('user.createDate'), width: 180, formType: 'none' }
+  { prop: 'createDate', label: t('user.createDate'), width: 180, type: 'datetime', formType: 'none' }
 ])
 
 function flattenDept(nodes: any[], acc: { label: string; value: string }[] = []) {

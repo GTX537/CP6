@@ -90,7 +90,7 @@
             <el-table-column prop="customerName" :label="t('wms.vmi.fld.customerName')" width="160" />
             <el-table-column prop="colorCode" :label="t('wms.ink.fld.colorCode')" width="120" />
             <el-table-column prop="consumedQty" :label="t('wms.ink.fld.consumedQty')" width="100" align="right" />
-            <el-table-column prop="matchedAt" :label="t('wms.ink.fld.matchedAt')" width="170" />
+            <el-table-column prop="matchedAt" :label="t('wms.ink.fld.matchedAt')" width="180" :formatter="formatDateTimeCell" />
             <el-table-column prop="operatorCd" :label="t('wms.ink.fld.operator')" width="120" />
             <el-table-column prop="remarks" :label="t('wms.common.remarks')" min-width="180" show-overflow-tooltip />
           </el-table>
@@ -187,7 +187,7 @@ import { useI18n } from 'vue-i18n'
 import CpTag from '@/components/base/CpTag.vue'
 import { inkApi } from '@/api/wms/paperIndustry'
 import type { InkLot, InkLotSearchQuery, InkColorMatchHistory, MixInkRequest } from '@/types/wms/wms'
-import { formatQty as fmtQty } from '@/utils/format'
+import { formatQty as fmtQty, formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 const activeTab = ref<'lots' | 'matches'>('lots')

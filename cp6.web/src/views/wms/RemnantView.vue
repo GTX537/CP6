@@ -166,7 +166,7 @@ const columns = computed<ListColumn<RemnantMaterial>[]>(() => [
   { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
   { prop: 'locationCd', label: t('wms.common.location'), width: 120 },
   { prop: 'reservedFor', label: t('wms.remnant.fld.reservedFor'), width: 140 },
-  { prop: 'registeredAt', label: t('wms.sample.fld.registeredAt'), width: 170 },
+  { prop: 'registeredAt', label: t('wms.sample.fld.registeredAt'), kind: 'datetime', width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 240, fixed: 'right' },
 ])
 

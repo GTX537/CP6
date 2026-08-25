@@ -49,6 +49,7 @@
           <span v-else-if="col.options">
             {{ col.options.find(o => o.value === row[col.prop])?.label || row[col.prop] }}
           </span>
+          <span v-else-if="col.type === 'datetime'">{{ formatDateTime(row[col.prop]) }}</span>
           <span v-else>{{ row[col.prop] }}</span>
         </template>
       </el-table-column>
@@ -145,6 +146,7 @@
               <template v-if="col.options">
                 {{ col.options.find(o => o.value === row[col.prop])?.label || row[col.prop] }}
               </template>
+              <template v-else-if="col.type === 'datetime'">{{ formatDateTime(row[col.prop]) || '—' }}</template>
               <template v-else>{{ row[col.prop] || '—' }}</template>
             </span>
           </div>
@@ -203,6 +205,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import VolForm from './VolForm.vue'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import { usePermissionStore } from '@/stores/permission'
+import { formatDateTime } from '@/utils/format'
 
 const { t } = useI18n()
 const { isMobile } = useBreakpoint()

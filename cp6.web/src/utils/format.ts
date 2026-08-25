@@ -45,6 +45,11 @@ export function formatDateTime(v: DateInput): string {
   return formatDate(v, 'long')
 }
 
+/** Element Plus el-table-column formatter adapter for date-time cells. */
+export function formatDateTimeCell(_row: unknown, _column: unknown, value: DateInput): string {
+  return formatDateTime(value)
+}
+
 export function formatNumber(v: NumberInput, fmt: NumberFormatKey = 'decimal'): string {
   const n = toNumber(v)
   return n === null ? '' : (i18n.global as any).n(n, fmt)

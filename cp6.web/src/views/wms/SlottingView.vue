@@ -175,8 +175,7 @@ const columns = computed<ListColumn<SlottingPlan>[]>(() => [
   { prop: 'analysisDays', label: t('wms.slotting.fld.analysisDays'), width: 130, kind: 'num' },
   { prop: 'txnSampleCount', label: t('wms.slotting.fld.sampleCount'), width: 130, kind: 'num' },
   { prop: 'recommendationCount', label: t('wms.slotting.fld.recCount'), width: 130, kind: 'num' },
-  { prop: 'analyzedAt', label: t('wms.slotting.fld.analyzedAt'), width: 160,
-    map: (v) => ({ label: v ? String(v).replace('T', ' ').slice(0, 16) : '—' }) },
+  { prop: 'analyzedAt', label: t('wms.slotting.fld.analyzedAt'), kind: 'datetime', width: 180 },
   { prop: 'approverCd', label: t('wms.stocktake.fld.approver'), width: 120 },
   { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
 ])

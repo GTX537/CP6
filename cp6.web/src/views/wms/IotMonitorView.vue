@@ -51,7 +51,7 @@
             <span v-else>—</span>
           </template>
         </el-table-column>
-        <el-table-column prop="lastReadAt" :label="t('wms.iot.fld.lastRead')" width="160" />
+        <el-table-column prop="lastReadAt" :label="t('wms.iot.fld.lastRead')" width="180" :formatter="formatDateTimeCell" />
         <el-table-column :label="t('wms.common.action')" width="220" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click.stop="openPost(row)">{{ t('wms.iot.btn.postReading') }}</el-button>
@@ -64,7 +64,7 @@
     <!-- 履歴 Dialog（只读表，保留 el-dialog） -->
     <el-dialog v-model="historyDialog" :title="(historyTarget?.sensorId ?? '') + ' — ' + t('wms.iot.tab.history')" width="800">
       <el-table :data="readings" border stripe size="small" max-height="450">
-        <el-table-column prop="readAt" label="ReadAt" width="180" />
+        <el-table-column prop="readAt" label="ReadAt" width="180" :formatter="formatDateTimeCell" />
         <el-table-column prop="value" :label="t('wms.iot.fld.value')" width="120" align="right">
           <template #default="{ row }">{{ row.value }} {{ historyTarget?.unit || '' }}</template>
         </el-table-column>
@@ -135,6 +135,7 @@ import CpEmpty from '@/components/base/CpEmpty.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { iotApi } from '@/api/wms/connectivity'
 import type { IotSensor, IotSensorReading, IotAlert } from '@/types/wms/wms'
+import { formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 const loading = ref(false)

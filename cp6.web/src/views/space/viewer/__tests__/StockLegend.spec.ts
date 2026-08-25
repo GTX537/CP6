@@ -51,8 +51,9 @@ describe('StockLegend', () => {
     expect(text).toContain('REAL')
     expect(text).toContain('CP6_WMS')
     expect(text).toContain('cp6-wms-v1')
-    expect(text).toContain('2026-08-01T12:00:00Z')
-    expect(text).toContain('2026-08-01T12:00:02Z')
+    expect(text).toContain('2026')
+    expect(text).not.toContain('2026-08-01T12:00:00Z')
+    expect(text).not.toContain('2026-08-01T12:00:02Z')
     expect(text).toContain('2.0 s')
     expect(text).toContain('本次会话未发生')
   })
@@ -66,7 +67,7 @@ describe('StockLegend', () => {
 
     expect(wrapper.text()).toContain('当前失败')
     expect(wrapper.text()).toContain('HTTP_503')
-    expect(wrapper.text()).toContain('2026-08-01T12:00:02Z')
+    expect(wrapper.text()).not.toContain('2026-08-01T12:00:02Z')
     expect(wrapper.find('.failure-active').exists()).toBe(true)
   })
 
