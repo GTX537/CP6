@@ -2,11 +2,38 @@
 
 最后更新：2026-08-24
 
+## Kafka 生产者安全退出修复（2026-08-24）
+
+- `KafkaProducerService` 作为 DI Singleton 由 Host 在进程退出时释放。关闭流程现在只执行一次：先最多等待 5 秒刷新在途消息，再无条件尝试释放 producer handle；`Flush` 抛错不再跳过真正的 `Dispose`。
+- 刷新异常、释放异常和超时后仍在队列中的消息数都会记录 Warning，但旁路操作日志通道的关闭异常不会反向阻断 WebApi Host 退出。正常 Publish、Kafka 配置和运行期降级语义不变。
+- 新增 4 个行为回归，覆盖刷新异常仍释放、剩余消息告警、释放异常不外抛和重复调用幂等；`CP6.Tests` 全量 2,938 passed、19 项既有 SQL 环境门禁 skipped、0 failed。
+
+## 日期时间规范化恢复与 P4/P5 决策（2026-08-24）
+
+- 旧 WIP 的 P4 `env.d.ts` 通配 `declare module '*.vue'` 不恢复：最新 `main` 使用 Vue 3.5、TypeScript 6 和 `vue-tsc` 3.2，在没有该声明时完成干净 `vue-tsc --build`。旧声明中的 `DefineComponent<{}, {}, any>` 会弱化 SFC 类型检查，只保留归档证据，不进入主线。
+- 日期时间恢复分支把 OA/PMS/WMS/Space 与通用列表中散落的原始 ISO、字符串截断和浏览器直出统一到共享 `formatDateTime`/`formatDateTimeCell`；`VolTable` 与 `CpListPage` 增加显式 datetime 列合同，高精度 .NET 输入不再直接暴露。
+- P5 精度合同固定为普通业务 UI 显示本地日期及“时:分”。没有产品需求时不得在全局 `long` 格式加入秒或小数秒；将来若审计/追踪确需更高精度，必须使用独立命名格式和独立验收，不能扩大所有调用方。
+- 回归覆盖 zh-CN、zh-TW、en、ja、ko 五种语言及高精度/空值/非法值；Web 全量 175 文件、892 测试通过，Vue 类型检查和 production build 通过。
+
+## 白天临时家庭测试服务器（2026-08-24）
+
+- 当前阶段选择由本机 Docker Desktop 承载 CP6，Cloudflare Tunnel 仅把容器内的 Web/API 转发到 `cp6.uk` 与 `api.cp6.uk`；它是供同事白天临时测试的开发环境，不是云主机或正式生产部署。
+- 新增根目录 `cp6-daytime-server.bat` 和 `scripts/Invoke-Cp6DaytimeServer.ps1`：支持复用现有镜像启动、显式重建后启动、状态检查、仅关闭公网 Tunnel，以及安全停止全部 Compose 服务。全部停止使用 `docker compose stop`，保留容器和 SQL Server/Redis/RabbitMQ/Kafka/i18n 命名卷。
+- 流程不会修改 Windows 睡眠、电源计划或计划任务。电脑睡眠、关机、Docker Desktop 停止或网络中断时，`cp6.uk` 暂时不可访问是预期行为；恢复后由用户手动启动/检查。
+- 2026-08-24 只读实机验收确认 7 个服务运行，DB/Redis/MQ/Kafka 健康；本机 Web/API 与公网 Web/API 四个地址均为 HTTP 200。为保护正在使用的环境，本任务没有执行重启、重建或停止。
+- Cloudflare Workers 中名为 `estimate` 的 Git 集成仍是独立外部清理项，不参与本机 Docker + Tunnel 运行链，也不因本流程交付而视为已修复。
+
+## Space GA 退出码假红修复（2026-08-24）
+
+- Attestation、Pilot、Golden CAD、Kickoff 和 Development Personnel Seed 五个负向测试套件都会在末个预期失败的 validator 子进程后把 `$LASTEXITCODE=1` 留在调用方全局作用域；GitHub Actions 的 `pwsh` 包装器因此把断言全绿的测试误判为失败。
+- 五个测试辅助函数现在都只在完成正/负向退出码与错误码断言后清除已消费的子进程状态，并在各自套件汇总前断言全局退出码必须为 `0`。没有放宽任何 GA 证据规则、错误码或 `NoGo` 条件。
+- 本地按 Actions 顺序运行全部 Space GA 门禁：当前状态校验通过，Attestation 36/36、Pilot 21/21、Golden CAD 31/31、Kickoff 28/28、Development Personnel Seed 8/8；全部独立 `pwsh` 进程退出码为 `0`。
+
 ## 仓库分支整顿与当前开发基线（2026-08-24）
 
-- 当前已确认集成基线为 `main@0a14581f87ac1955678bdb664911183fc5a2a2a1`；根工作区已从落后 172 个提交且含 43 个 tracked 修改/4 个 untracked 文件的旧 WIP 分支切回干净 `main`。整顿前完整引用、脏 worktree patch、原始未跟踪文件与校验清单保存在本机 `D:\CP6-archives\2026-08-24-branch-consolidation`，不得在完成独立备份前删除。
+- 分支整顿当时的集成基线为 `main@0a14581f87ac1955678bdb664911183fc5a2a2a1`；根工作区已从落后 172 个提交且含 43 个 tracked 修改/4 个 untracked 文件的旧 WIP 分支切回干净主线。整顿前完整引用、脏 worktree patch、原始未跟踪文件与校验清单保存在本机 `D:\CP6-archives\2026-08-24-branch-consolidation`，不得在完成独立备份前删除。
 - 远端 72 个旧非 `main` 分支中，61 个已被 `main` 包含、9 个经内容审计后只需归档，均已删除远端引用；陈旧 PR #3 已关闭。两个 CRM 草稿分支已合并当前 `main` 后继续保留为 Draft PR #7/#8，不视为已获产品批准。
-- 根目录混合 WIP 已按职责拆成三个基于当前 `main` 的续开发分支：登录体验 `1a5a58f`、日期时间规范化 `fd0b64fc`、Kafka Dispose `1ee78fa6`。三者均已推送并通过各自的最低恢复门禁，但仍是 WIP，必须分别评审、补齐验收并以独立 PR 合并，禁止整体回灌旧根分支。
+- 根目录混合 WIP 当时按职责拆成登录体验、日期时间规范化和 Kafka Dispose 三条续开发分支；日期时间 P4/P5 与 Kafka 安全退出已分别完成评审、自动化和独立合并流程。当前只剩登录体验仍须完成组件/浏览器验收，禁止整体回灌旧根分支。
 - 仓库保持 GitHub Public 是本阶段的明确决定；未执行生产部署。`main` 已启用严格分支保护：管理员同样必须经 PR，分支必须基于最新主线并通过 `windows-and-web`、`android`、`sql-integration`，禁止 force-push/删除且要求解决会话。下一治理项是单独修复 Space GA 证据测试脚本“36/36 通过但进程退出 1”的 CI 假红。
 - 完整分支处置、恢复入口、验证证据和续开发顺序见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
 

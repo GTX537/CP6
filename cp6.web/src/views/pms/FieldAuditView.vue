@@ -45,7 +45,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="userName" :label="t('sec.audit.operator')" width="140" />
-      <el-table-column prop="changedAt" :label="t('sec.audit.changedAt')" width="170" />
+      <el-table-column prop="changedAt" :label="t('sec.audit.changedAt')" width="180" :formatter="formatDateTimeCell" />
       <el-table-column prop="changeCount" :label="t('sec.audit.changeCount')" width="120" align="center" />
       <el-table-column :label="t('sec.audit.operation')" width="140" fixed="right">
         <template #default="{ row }">
@@ -84,7 +84,7 @@
           <el-timeline-item
             v-for="item in timeline"
             :key="item.id"
-            :timestamp="item.changedAt"
+            :timestamp="formatDateTime(item.changedAt)"
             placement="top"
             :type="opTimelineColor(item.operation)"
           >
@@ -122,6 +122,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { fieldAuditApi } from '@/api/sys/fieldAudit'
+import { formatDateTime, formatDateTimeCell } from '@/utils/format'
 import {
   Operation,
   type FieldAuditListItem,

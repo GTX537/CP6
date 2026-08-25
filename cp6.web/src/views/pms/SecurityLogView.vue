@@ -54,7 +54,7 @@
       <el-table-column prop="clientIp" :label="t('sec.log.clientIp')" width="130" />
       <el-table-column prop="requestTenantCode" :label="t('sec.log.tenantCode')" width="120" />
       <el-table-column prop="userAgent" :label="t('sec.log.userAgent')" show-overflow-tooltip />
-      <el-table-column prop="createdAt" :label="t('sec.log.createdAt')" width="170" />
+      <el-table-column prop="createdAt" :label="t('sec.log.createdAt')" width="180" :formatter="formatDateTimeCell" />
     </el-table>
 
     <div class="pagination">
@@ -77,6 +77,7 @@ import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { securityLogApi } from '@/api/sys/securityLog'
 import { SecurityEventType, type SecurityLogRow } from '@/types/sys/security'
+import { formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 

@@ -75,6 +75,7 @@ import CpTag from '@/components/base/CpTag.vue'
 import FlowTriggerDialog from './FlowTriggerDialog.vue'
 import { flowTriggerApi, type FlowTriggerItem, type TriggerFireItem } from '@/api/oa/flowTrigger'
 import { typeTone, TRIGGER_TYPES } from './flowTriggerModel'
+import { formatDateTime } from '@/utils/format'
 
 const { t } = useI18n()
 const rows = ref<FlowTriggerItem[]>([])
@@ -87,7 +88,7 @@ const fires = ref<TriggerFireItem[]>([])
 const firesLoading = ref(false)
 
 const typeLabelKey = (v: number) => TRIGGER_TYPES.find(x => x.value === v)?.labelKey ?? 'oa.flowtrigger.type.timer'
-const fmtUtc = (s?: string | null) => (s ? new Date(s).toLocaleString() : '—')
+const fmtUtc = (s?: string | null) => formatDateTime(s) || '—'
 
 async function reload() {
   loading.value = true

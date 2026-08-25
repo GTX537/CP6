@@ -198,7 +198,7 @@ const columns = computed<ListColumn<PlateMoldStock>[]>(() => [
   { prop: 'colorCount', label: t('wms.plate.fld.colorCount'), width: 80, kind: 'num' },
   { prop: 'sizeNote', label: t('wms.plate.fld.sizeNote'), width: 120 },
   { prop: 'lifeRatio', label: t('wms.plate.fld.lifeRatio'), width: 180 },
-  { prop: 'lastUsedAt', label: t('wms.plate.fld.lastUsed'), width: 160 },
+  { prop: 'lastUsedAt', label: t('wms.plate.fld.lastUsed'), kind: 'datetime', width: 180 },
   { prop: 'nextMaintenanceDate', label: t('wms.plate.fld.nextMaint'), width: 130 },
   { prop: '_action', label: t('wms.common.action'), width: 260, fixed: 'right' },
 ])

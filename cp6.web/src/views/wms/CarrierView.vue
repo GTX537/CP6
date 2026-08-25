@@ -160,8 +160,8 @@ const columns = computed<ListColumn<CarrierShipment>[]>(() => [
   { prop: 'customerCd', label: t('wms.carrier.fld.customer'), width: 100 },
   { prop: 'shipToAddress', label: t('wms.carrier.fld.address'), minWidth: 180, overflowTooltip: true },
   { prop: 'weightKg', label: t('wms.carrier.fld.weight'), width: 90, align: 'right' },
-  { prop: 'pickedUpAt', label: t('wms.carrier.fld.pickedAt'), width: 150 },
-  { prop: 'deliveredAt', label: t('wms.carrier.fld.deliveredAt'), width: 150 },
+  { prop: 'pickedUpAt', label: t('wms.carrier.fld.pickedAt'), kind: 'datetime', width: 180 },
+  { prop: 'deliveredAt', label: t('wms.carrier.fld.deliveredAt'), kind: 'datetime', width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 320, fixed: 'right' },
 ])
 

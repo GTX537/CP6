@@ -139,4 +139,37 @@ describe('VolTable mobile permissions', () => {
     expect(buttons).toContain('table.edit')
     expect(buttons).toContain('table.delete')
   })
+
+  it('formats .NET high-precision values without exposing raw or fractional precision', async () => {
+    const { pinia } = prepareStore([])
+    const datetimeApi = {
+      ...api,
+      getList: vi.fn().mockResolvedValue({
+        rows: [{ id: 1, createDate: '2026-04-08T22:06:21.1795134' }],
+        total: 1,
+      }),
+    }
+    Object.defineProperty(window, 'innerWidth', { value: 1280, configurable: true })
+
+    const wrapper = mount(VolTable, {
+      props: {
+        columns: [{ prop: 'createDate', label: '创建时间', type: 'datetime' }],
+        api: datetimeApi,
+      },
+      global: {
+        plugins: [
+          pinia,
+          createI18n({ legacy: false, locale: 'zh-CN', missingWarn: false, fallbackWarn: false }),
+          ElementPlus,
+        ],
+        directives: { permission },
+        stubs: { VolForm: VolFormStub },
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('2026')
+    expect(wrapper.text()).not.toContain('T22:06:21.1795134')
+    expect(wrapper.text()).not.toContain('.179')
+  })
 })

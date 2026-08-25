@@ -2,6 +2,30 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-24：Kafka 生产者安全退出修复
+
+- 将 Kafka Singleton 的限时 Flush 与 producer Dispose 拆成独立失败边界，确保刷新异常后仍释放底层 handle，并通过幂等门防止重复关闭。
+- 关闭异常继续保持旁路语义，不让 WebApi Host 因 Kafka 清理失败而退出失败；同时对刷新异常、释放异常和 5 秒后剩余消息数记录 Warning，替代旧 WIP 的静默吞错。
+- 新增 4 个生命周期回归；聚焦 4/4、`CP6.Tests` 全量 2,938 passed / 19 skipped / 0 failed。
+
+## 2026-08-24：日期时间规范化恢复与 P4/P5 决策
+
+- P4 经最新 `main` 干净类型检查确认无需恢复 `env.d.ts` 的通配 `*.vue` 声明；当前 Vue/TypeScript/`vue-tsc` 工具链原生处理 SFC，旧 `any` shim 仅保留在分支整顿归档。
+- 恢复共享日期时间格式化与 Element Plus 单元格适配器，统一 OA/PMS/WMS/Space 及两个通用列表组件的 datetime 输出，避免直接暴露高精度 .NET ISO 字符串。
+- P5 将全局 `long` 合同锁定为普通业务 UI 的日期 + 时:分，不再全局显示秒或 `.sss`。五语言回归、Web 175 文件/892 测试、Vue 类型检查和 production build 通过。
+
+## 2026-08-24：白天临时家庭测试服务器流程
+
+- 新增 `cp6-daytime-server.bat` 与 PowerShell 控制器，提供复用镜像启动、重建启动、状态检查、仅关闭公网 Tunnel 和安全停止全栈；启动前失败关闭检查 Docker、Compose、`.env` 及 Cloudflare Tunnel 配置/本机凭证。
+- 停止流程只使用 Compose `stop` 并保留容器和命名卷；关闭公网只影响 `cp6-cloudflared`。没有加入 Windows 防睡眠、电源计划、计划任务或自动结束主机 cloudflared 的行为。
+- 新增静态合同测试；实机只读验收确认 7 个 Compose 服务就绪，本机及公网 Web/API 均返回 HTTP 200。当前运行环境未被重启或重建；`estimate` Worker Git 集成仍为独立外部待办。
+
+## 2026-08-24：Space GA 退出码假红修复
+
+- 修复 Attestation、Pilot、Golden CAD、Kickoff 和人员种子五个负向套件在断言全绿后仍向 GitHub Actions 泄漏末个预期失败子进程退出码 `1` 的问题；根因是 PowerShell 全局 `$LASTEXITCODE` 未在负向用例完成断言后清除。
+- 五个套件均新增汇总前退出码回归断言；只清除已经被测试消费的子进程状态，不放宽任何证据错误码或核心 GA `NoGo` 校验。
+- Actions 风格直接调用与独立进程调用均为 Attestation 36/36、退出码 `0`；完整 Space GA 顺序验证为 36/36、21/21、31/31、28/28、8/8，所有进程退出码均为 `0`。
+
 ## 2026-08-24：仓库分支整顿与 WIP 当前-main恢复
 
 - 以 `main@0a14581f` 为基线完成分支审计；整顿前 105 refs、脏 worktree patch、原始未跟踪文件和校验数据已本地归档。

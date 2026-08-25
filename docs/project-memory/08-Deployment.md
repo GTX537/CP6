@@ -37,6 +37,34 @@ npm run build
 
 Compose 服务包括 SQL Server、API、Web、Redis、RabbitMQ、Kafka 和 cloudflared。新机首次启动前审核 `.env` 与端口，不直接复用旧生产 token。
 
+## 白天临时家庭测试服务器
+
+当前方案由这台 Windows 电脑上的 Docker Desktop 运行 CP6，Compose 内的 `cp6-cloudflared` 把 Web/API 暴露为：
+
+- 同事访问：`https://cp6.uk`
+- 公网 API 就绪检查：`https://api.cp6.uk/health/ready`
+- 本机访问：`http://127.0.0.1:8080`
+- 本机 API 就绪检查：`http://127.0.0.1:9991/health/ready`
+
+双击根目录 `cp6-daytime-server.bat` 可使用操作菜单，也可在终端运行：
+
+```powershell
+.\cp6-daytime-server.bat start        # 复用现有镜像，日常启动
+.\cp6-daytime-server.bat start-build  # 代码/依赖有变化时显式重建
+.\cp6-daytime-server.bat status       # 检查 7 个容器及本机/公网地址
+.\cp6-daytime-server.bat close        # 只停公网 Tunnel，本机服务继续运行
+.\cp6-daytime-server.bat stop         # 安全停止全栈，保留容器和命名卷
+```
+
+运行边界：
+
+- 此流程不会禁止 Windows 自动睡眠，也不会修改电源计划或计划任务。电脑睡眠、关机、Docker Desktop 退出或网络中断后，`cp6.uk` 暂时不可访问是预期行为；电脑恢复后手动执行 `start` 和 `status`。
+- 同事只使用 `https://cp6.uk` 和分配给他们的应用账号。不要共享 `.env`、Tunnel JSON、数据库密码、JWT 密钥、RabbitMQ/Kafka 管理入口或本机基础设施端口。
+- `close` 只停止 Docker 中的 CP6 Tunnel。若检测到 Windows 主机另有 cloudflared 进程，脚本只告警而不自动结束，避免误停其他项目。
+- `stop` 使用 `docker compose stop`，不会删除数据库、Redis、RabbitMQ、Kafka 或 i18n 数据卷。不得使用 `docker compose down -v`，除非已明确接受不可恢复的数据卷删除风险并完成备份。
+- 这是白天临时测试环境，不提供夜间可用性、高可用、SLA 或生产级运维承诺；需要持续在线时应迁移到正式云主机或托管平台。
+- Cloudflare Workers 的 `estimate` Git 集成与这条 Docker + Tunnel 链无关，必须在 Cloudflare 控制台作为独立事项处理。
+
 ## 发布红线
 
 - 不把 Local/Development 配置打进 API 镜像。
