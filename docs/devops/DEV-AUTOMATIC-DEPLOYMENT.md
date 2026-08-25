@@ -59,6 +59,16 @@ Azure Pipeline 变量控制行为：
 
 预计维护窗口为 1～3 分钟。迁移失败或新 API 无法就绪时失败关闭；脚本不会把旧 API 自动套回已经前移的 Schema。处理方式是保留备份证据、修复问题并前滚。若确需数据库恢复，必须另行人工授权和停机，不由 Pipeline 自动执行。
 
+## 宿主机运行前检查
+
+本机同时运行浏览器、IDE、Docker、通用 CI Agent 和宿主 SQL Server，手动发布前应保留可用内存并确认
+`KOUSQLSERVER` 能完成真实 SQL 查询；端口监听或 Windows Service 显示 `Running` 不能替代查询验证。
+若 Application 日志出现 MSSQL 701/17300，或登录前握手/简单元数据查询超时，先停止发布并恢复 SQL
+实例，禁止连续重试 db-init。2026-08-25 的首次失败正是服务进程仍在但已无法创建新系统任务。
+
+CP6 当前不使用 PolyBase/Launchpad；故障恢复后这三个依赖服务保持停止以释放内存，但 StartMode 仍为
+Automatic。是否永久禁用属于独立的宿主机管理决定，不能由 Pipeline 或本仓库脚本静默修改。
+
 ## Azure 一次性外部配置
 
 仓库合入 `main` 后：
@@ -88,11 +98,25 @@ GRANT CREATE ANY DATABASE TO [cp6_dev_backup];
 
 SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；部署 Agent 必须能读取该目录并安装 `sqlcmd`。备份脚本先查 PATH，再查 Go sqlcmd、ODBC 18 与 ODBC 17 的标准安装目录，因此不依赖交互用户的用户级 PATH；DEV CD 在构建候选前运行 7 场景 resolver/失败恢复行为测试。Pipeline 不在命令行传密码，而是临时使用进程级 `SQLCMDPASSWORD`，结束后恢复原值。
 
-2026-08-25 宿主机已确认 ODBC 17 `sqlcmd`，并创建/收紧备份目录 ACL；`cp6_dev_backup`、Azure Secret 与服务身份真实 Run 仍待完成，因此尚未执行第一次备份。
+2026-08-25 宿主机已确认 ODBC 17 `sqlcmd`，并创建/收紧备份目录 ACL；最小权限
+`cp6_dev_backup`、锁定 Azure Secret 和服务身份 Readiness Run #89 均已验收。DEV CD Run #94/#95
+已实际生成 CHECKSUM 备份并通过 RESTORE VERIFYONLY。
 
 当前工具不会自动删除任何 `.bak`。在尚未建立并验收保留策略前，定期人工检查 `C:\CP6Backups\CP6_DEV` 的剩余空间；不得为了腾空间让 Pipeline 自动清空目录或删除唯一可用备份。
 
 ## 三次手动验收后再开自动
+
+截至 2026-08-25 的外部运行记录：
+
+| Run | 模式/结果 | 是否计入三次成功 | 证据结论 |
+| --- | --- | --- | --- |
+| `#93` / `dev-20260825.1` | completion trigger；Succeeded | 否 | `CP6_DEV_AUTO_DEPLOY_ENABLED=false` 时 Build/Deploy 均为 Skipped，证明自动门安全关闭 |
+| `#94` / `dev-20260825.2` | Manual；Failed | 否 | 备份与 VERIFYONLY 成功；宿主 `KOUSQLSERVER` 已有 701/17300 内存耗尽事件并处于退化状态，db-init 元数据查询超时，API/Web 未启动 |
+| `#95` / `dev-20260825.3` | Manual；Succeeded | **是，1/3** | SQL 服务恢复后完成新备份、迁移、不可变镜像核对、本机健康与 Pipeline Artifact 归档 |
+
+Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
+分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。根 `cp6` 七个容器 ID 与 Run 前一致。
+当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=false`、`CP6_DEV_PUBLIC_VERIFICATION_ENABLED=false`。
 
 每次手动发布都必须保存：
 
@@ -142,4 +166,6 @@ DEV CD 不会自动切换 Cloudflare。切换前 `cp6.uk` 仍可能指向根 `cp
 
 ## 当前完成口径
 
-仓库内双模式 YAML、备份/导入/Tunnel 工具和契约测试完成，只代表“能力配置完成”。在 Azure 首次三次手动 Run、独立 Tunnel 切换和公网身份验证尚未实际执行前，不得写成“DEV 自动部署已运行”或“cp6.uk 已切到 cp6-dev”。
+仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness 和首次手动 DEV 发布均已完成。当前只能描述为
+“手动 DEV 验收 1/3”；在另两次手动成功、独立 Tunnel 切换和公网身份验证实际完成前，不得写成
+“DEV 自动部署已启用”或“cp6.uk 已切到 cp6-dev”。

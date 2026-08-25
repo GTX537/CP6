@@ -26,7 +26,7 @@
 - 安装 .NET 8 SDK 和 Node.js 22。
 - 还原、构建并测试 `CP6.WebApi`、`CP6.Tests`、`CP6.Client.Tests`。
 - 执行 Vue 类型检查、Vitest 和生产构建。
-- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 负责本机 DEV 双模式学习链，自动开关初始关闭，外部手动 Run 尚待验收。
+- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 负责本机 DEV 双模式学习链。Azure CI [`Run #92`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=92) 已在 `main@47ca8441` 完整成功，首次手动 DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95) 已成功；自动与公网验证开关仍保持关闭。
 
 项目上下文确认 self-hosted Agent 已接通并能执行该 CI。具体 Agent 名称、在线状态和历史运行结果属于 Azure DevOps 外部运行证据，不能只靠仓库文件推断。
 
@@ -44,9 +44,9 @@
 | CI 代码验证 | 已配置并已接通 | Azure self-hosted Agent 可执行后端/客户端测试与 Web 检查 |
 | 发布制品 | Azure 未完成；GitHub R2 已有实现 | Azure 尚未产出 `cp6-api` / `cp6-web` 镜像或不可变清单 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
-| Azure 逻辑 Environments | 已创建 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已由 2026-08-11 外部截图验证，当前均为 `Never deployed` |
-| 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；Azure Build ID `10` 验证身份、Docker、Compose 与 SQL TCP |
-| Azure DEV 双模式发布 | 仓库闭环已交付，Azure 运行待验收 | 同一 YAML 支持手动和受开关控制的自动模式，拒绝失败/非 main/过期自动 Run；部署前备份并 VERIFYONLY，停旧应用后前向迁移，发布触发/备份/镜像/健康证据 |
+| Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |
+| 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；最新 Readiness [`Run #89`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=89) 验证身份、Docker、Compose、SQL TCP、`sqlcmd` 与备份目录 |
+| Azure DEV 双模式发布 | 外部配置完成，手动验收 1/3 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；自动 Run #93 安全跳过，手动 Run #95 完成备份、迁移、不可变镜像和健康证据。满三次前不启用自动 |
 | 白天测试公网 | 工具已交付，切换待执行 | `cp6-public-tunnel` 只连接 `cp6-dev_default`；切换前必须显式停止旧 `cp6-cloudflared`，Pipeline 不自动切换 Cloudflare |
 | 私人本地 `cp6`/`CP6DB` | 保持独立 | DEV CD 不操作根 Compose、`CP6DB` 或 `cp6_cp6-db-data`；DEV 数据只能手动恢复为新的 `CP6DEV_IMPORT_*` 旁路库 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |

@@ -2,19 +2,27 @@
 
 最后更新：2026-08-25
 
+## Azure CI 与首次本机 DEV 发布外部闭环（2026-08-25）
+
+- Azure 基础 CI `GTX537.CP6` Run #92 在 `main@47ca8441898af69d1e66bc1acb6c51129dbe9c18` 完整成功。此前固定失败的 `.NET Restore` 根因是通用 `CP6-Windows` Agent 从 PowerShell 7 启动后继承 `PSModulePath`，使 Windows PowerShell 5.1 重复加载类型数据；清空父进程该变量后同一提交通过。新增 `Start-Cp6CiAgent.ps1` 固化 `CP6-Windows` / `Default` 校验和前台隔离启动，不注册服务、不改电源设置。
+- `CP6 DEV CD` Definition ID `4`、`cp6-dev-secrets`、`CP6-Deploy` 与 `cp6-dev` 已按 Pipeline 定向授权；Environment 配置 Exclusive lock，两项非 Secret 开关均为 `false`。Readiness Run #89 由 `cp6_deploy_agent` 服务身份成功验证 Docker、SQL TCP、`sqlcmd` 和备份目录；`cp6_dev_backup` 及锁定 Secret 已完成最小权限验收。
+- completion-trigger Run #93 成功完成分类并明确跳过 Build/Deploy，证明自动关闭门有效。首次 Manual Run #94 在生成并 VERIFYONLY 备份后因宿主 `KOUSQLSERVER` 已发生 701/17300 内存耗尽、实例退化而在 db-init 元数据查询超时；API/Web 未启动，失败未冒充成功。管理员重启 SQL 数据引擎并停止当前未使用的 PolyBase/Launchpad 依赖后，`CP6_DEV` ONLINE 且 128 条迁移历史可立即读取。
+- Manual Run #95 成功发布 `0.0.0-dev.92`：API/Web 均对应完整 SHA `47ca8441898af69d1e66bc1acb6c51129dbe9c18`，`19991` live/ready 与 `18080` release identity 一致，最新迁移为 `20260811030108_CrmFoundation`。新备份 `CP6_DEV_20260825_123030_332_9b7cd05d_UTC.bak` 为 2,453,504 bytes，SHA-256 `58c6ff73...5079c23`，CHECKSUM/VERIFYONLY 通过；`cp6-dev-evidence` 已发布。
+- 根 `cp6` 七个容器 ID、Docker `CP6DB` 与既有 Cloudflare connector 全程未变。当前口径是手动 DEV 验收 **1/3**；自动与公网验证仍关闭，未切换 Tunnel，另两次成功 Run、宿主机内存治理和公网身份验收仍是后续门禁。
+
 ## 本机 DEV 外部首次运行就绪审计（2026-08-25）
 
 - 只读审计确认 Docker Desktop 29.3.1、Compose 5.1.1、`MSSQL$KOUSQLSERVER` 和专用 Azure Agent `vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS` 正常运行；`CP6_DEV` 已存在，根 `cp6` 七个容器、`CP6DB` 与 `cp6_cp6-db-data` 保持运行且未被修改。
 - `sqlcmd.exe` 已安装于 ODBC 17 标准目录，但该目录不在机器级 `PATH`；交互用户能发现它不代表 `cp6_deploy_agent` 服务身份也能发现。备份脚本和 Readiness YAML 现同时探测 PATH、Go sqlcmd、ODBC 18 与 ODBC 17 标准目录；新增 7 场景行为回归覆盖 PATH、显式路径、全缺失、标准目录回退、Secret 前置门与失败后 `SQLCMDPASSWORD` 恢复，相关数据安全/Readiness/DEV CD 合同测试通过。
-- 已创建 `C:\CP6Backups\CP6_DEV` 并关闭继承的宽泛修改权限；SQL Server 服务身份具有 Modify，部署 Agent 只有 Read/Execute，当前管理员维护身份、SYSTEM 和 Administrators 保留 Full Control。独立 SQL 登录 `cp6_dev_backup` 尚未创建，因此尚未执行真实备份。
-- 微软 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6 已安装到当前用户目录，仍待用户完成设备登录。Azure Pipeline/Variable Group/Environment 尚未修改；备份 Secret、Exclusive lock、两项 `false` 开关、三次手动 Run 与 Tunnel 切换继续保持待验收。
+- 已创建 `C:\CP6Backups\CP6_DEV` 并关闭继承的宽泛修改权限；SQL Server 服务身份具有 Modify，部署 Agent 只有 Read/Execute，当前管理员维护身份、SYSTEM 和 Administrators 保留 Full Control。独立 SQL 登录 `cp6_dev_backup`、Azure 锁定 Secret 和最小权限已在同日后续外部闭环完成；Run #94/#95 已生成并验证真实备份。
+- 微软 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6 已安装并完成设备登录。Pipeline/Variable Group/Environment 定向授权、Exclusive lock 和两项 `false` 开关已完成；手动 Run 当前完成 1/3，Tunnel 切换仍待验收。
 
 ## 本机 DEV 双模式发布闭环（2026-08-25）
 
 - `azure-pipelines-dev.yml` 统一支持手动和 completion-trigger 自动模式；`CP6_DEV_AUTO_DEPLOY_ENABLED` 初始为 `false`。两种模式都只接受 Azure 回读为 `completed/succeeded` 的 `GTX537.CP6/main` Run；过期自动 Run 安全跳过，自动开启时禁止选择旧 Run 手动回退。
 - 候选使用 `0.0.0-dev.<CI Run ID>` 与完整 SHA 镜像 Tag，从所选提交的隔离 worktree 构建；编排逻辑始终来自当前 `main`。构建同步捕获 Docker 不可变 image ID，部署不依赖可能被并发重写的本机 Tag，并逐容器核对实际运行 `.Image`。deployment job 进入 `cp6-dev` 顺序锁后会二次淘汰过期自动 Run，并受 Windows 全局互斥锁兜底；之后先对 `CP6_DEV` 做 COPY_ONLY/COMPRESSION/CHECKSUM 备份及 RESTORE VERIFYONLY，再停止旧 Web/API、执行一次性前向迁移、依次验证 API 与 Web，并归档触发/备份/镜像/健康证据。
 - 根 Compose `cp6`、Docker 数据库 `CP6DB` 与命名卷 `cp6_cp6-db-data` 明确排除在 DEV CD 之外。新增手工导出与旁路导入工具；导入只允许新的 `CP6DEV_IMPORT_yyyyMMdd_HHmmss`，拒绝目标已存在且不含 `WITH REPLACE`，不会自动合并到 `CP6DB`。
-- 新增独立 `cp6-public-tunnel` Compose，只加入 `cp6-dev_default`。控制器要求旧 `cp6-cloudflared` 已被用户显式停止，避免同一 Tunnel 双 connector 分流；DEV CD 不执行一次性公网切换。外部 Azure Secret/Exclusive lock/三次手动 Run、Tunnel 切换和公网身份验收尚未执行，因此当前状态仍是“仓库能力闭环，外部运行待验收”。
+- 新增独立 `cp6-public-tunnel` Compose，只加入 `cp6-dev_default`。控制器要求旧 `cp6-cloudflared` 已被用户显式停止，避免同一 Tunnel 双 connector 分流；DEV CD 不执行一次性公网切换。Azure Secret/Exclusive lock 已配置且首次手动 Run 成功；另两次手动 Run、Tunnel 切换和公网身份验收尚未执行。
 
 ## 登录体验恢复与可访问性闭环（2026-08-24）
 
@@ -164,13 +172,13 @@
 
 - 已交付本机学习环境的 `azure-pipelines-dev.yml`：仅由 `GTX537.CP6` 在 `main` 成功后的 pipeline completion 触发，在 `CP6-Deploy/LAPTOP-3QQ44FJS` 上核对完整 Git SHA，构建一次 commit-addressed API/Web 镜像，再用 `cp6-dev` deployment job 执行 db-init、服务启动、健康/发布身份验证和非敏感证据归档。
 - Azure Variable Group `cp6-dev-secrets` 已由 2026-08-11 外部截图确认存在，四项 DEV SQL/RabbitMQ/JWT 变量均为锁定 Secret。部署脚本新增进程环境 Secret 模式，同时保留人工 DPAPI 模式；只有 deployment task 接收 Secret，RabbitMQ 使用独立 `cp6-dev_rabbitmq-data-azure` volume，不覆盖原人工 Lab 数据。
-- 上述是仓库配置完成，不是外部部署成功：`CP6 DEV CD` Pipeline 尚待从 `/azure-pipelines-dev.yml` 创建，`CP6-Deploy`、Variable Group、`cp6-dev` 必须仅授权该 Pipeline，并取得首次成功 Run/Environment deployment history/Artifact 证据。该本机镜像缓存方案不适用于 UAT/PROD-LAB，也不关闭 Registry/发布权威门禁。
+- 上述段落记录仓库配置交付时的边界；同日后续已创建 `CP6 DEV CD`，完成 `CP6-Deploy`、Variable Group、`cp6-dev` 定向授权，并由 Run #95 取得首次成功 Run、Environment deployment history 和 Artifact 证据。该本机镜像缓存方案仍不适用于 UAT/PROD-LAB，也不关闭 Registry/发布权威门禁。
 - Azure `CP6-Deploy` 专用 Pool 已建立；Agent `LAPTOP-3QQ44FJS` 以非管理员本机账号 `cp6_deploy_agent` 作为延迟自动启动 Windows 服务运行，Azure 截图显示版本 `5.277.0`、Online/Idle。通用 CI Agent `CP6-Windows` 仍留在 `Default` Pool。
-- 手工、无 Secret、无 Checkout 的 `azure-pipelines-deploy-agent-readiness.yml` 已在 Azure Build ID `10`（Run `20260811.1`）成功运行；截图与 Worker 日志确认专用 Job 身份、非管理员边界、Docker Desktop Linux engine、Compose 和 `KOUSQLSERVER` TCP 门禁通过。Pipeline 当前外部名称为 `CP6 Deploy Agent`，可再补全为 `CP6 Deploy Agent Readiness`。
+- 手工、无 Secret、无 Checkout 的 `azure-pipelines-deploy-agent-readiness.yml` 已在 Azure Build ID `10`（Run `20260811.1`）成功运行；截图与 Worker 日志确认专用 Job 身份、非管理员边界、Docker Desktop Linux engine、Compose 和 `KOUSQLSERVER` TCP 门禁通过。Pipeline 后续已重命名为 `CP6 Deploy Agent Readiness`，并由 Build ID `89` 补齐 `sqlcmd` 与备份目录服务身份验收。
 - 已交付本机 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三套隔离 Compose project；每套包含 Redis、RabbitMQ、Kafka、API、Web，分别使用 `CP6_DEV`、`CP6_UAT`、`CP6_PROD_LAB` 和独立 migrator/runtime SQL 登录。三套环境均为 5/5 容器健康，live/ready Healthy，API/Web 版本与 Git SHA 一致。
 - 新增 `deploy/lab/` 与 `Invoke-Cp6LabEnvironment.ps1`，从现有 SQL DPAPI note 临时渲染最小权限 Secret；RabbitMQ/JWT Lab 密钥保存在额外 DPAPI vault，明文临时文件在每次命令结束后删除。`KOUSQLSERVER` TCP `50286` 由工具自动发现，不写入 Git。
 - 修复 API Dockerfile 未在 restore 层复制 Space 项目文件，以及 Web Docker 构建上下文无法读取仓库级 TypeScript SDK 的缺陷；Lab、根 Compose 与 R2 candidate 现统一使用可复现的构建边界。
-- 2026-08-11 用户提供的 Azure DevOps 列表截图已确认 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三个逻辑 Environment 存在，且当时均为 `Never deployed`。这只关闭 Environment 名称创建项；DEV YAML job 已交付，但 Resource、Pipeline permissions、审批检查和首次 deployment history 仍待外部验收，详见 `docs/devops/AZURE-ENVIRONMENTS-SETUP.md`。
+- 2026-08-11 用户提供的 Azure DevOps 列表截图已确认 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三个逻辑 Environment 存在，且当时均为 `Never deployed`。2026-08-25 已补齐 DEV 的定向 Pipeline permissions、Exclusive lock 与首次 deployment history；UAT/PROD-LAB 仍未部署，详见 `docs/devops/AZURE-ENVIRONMENTS-SETUP.md`。
 - 新增 `docs/devops/` 项目级文档入口，整理当前 Azure CI、目标 Release/CD、Build once、环境策略、发布步骤和分阶段路线；`AGENTS.md` 与根 README 已接入，Codex 后续无需从聊天记录猜测上下文。
 - 当前仓库事实是：`azure-pipelines.yml` 在 `main` 提交上运行 `Default` self-hosted pool，完成 .NET 8/Node 22 的后端/客户端测试和 Web 类型/单测/构建；`pr: none`。另有 DEV 学习链在部署 Agent 本机 Build/Deploy，但尚无 Azure Registry、不可变候选或生产环境部署。
 - 现有 `.github/workflows/r2-*` 已实现更完整的受保护版本、GHCR 镜像、SBOM/漏洞扫描、签名、不可变证据和 digest 部署，因此在 Azure 门禁等价并显式切换前继续作为生产发布权威。

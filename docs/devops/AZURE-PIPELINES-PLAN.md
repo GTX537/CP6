@@ -17,7 +17,7 @@
 - [x] 使用 `Default` self-hosted agent pool。
 - [x] 配置 .NET 8、Node.js 22、后端/客户端测试和 Web 检查。
 - [x] `main` 提交触发 CI。
-- [ ] 记录 Azure Pipeline 成功运行 URL/Run ID 和 Agent 能力清单。
+- [x] 记录 Azure Pipeline 成功运行 URL/Run ID 和 Agent 能力清单：[`Run #92`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=92)，`CP6-Windows` / `Default`。
 - [ ] 决定 PR 验证归属：启用 Azure PR trigger，或明确只依赖现有 GitHub PR 门禁；当前 `pr: none`。
 - [ ] 比较 Azure CI 与 `client-contract.yml`/`wms-production-sql.yml`，登记未覆盖的 Space、OpenAPI/SDK、SQL、E2E、安全和 Android 门禁。
 - [ ] 为 self-hosted Agent 定义更新、磁盘清理、离线告警、并发和工作区隔离规则。
@@ -60,10 +60,10 @@
 
 状态：**待 Phase 3**。
 
-学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选提交构建本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；外部 Secret/Lock/三次手动 Run/Tunnel 切换仍待验收。
+学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选提交构建本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；自动 Run #93 已证明关闭开关时安全跳过，手动 Run #95 已完成首次真实部署和证据归档。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；另两次手动 Run、自动开关和 Tunnel 切换仍待验收。
 
-- [x] 创建 `cp6-dev` Azure Environment。（2026-08-11 外部截图验证；Pipeline 权限仍待配置。）
-- [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和 Readiness Run Build ID `10` 已验证。
+- [x] 创建 `cp6-dev` Azure Environment，并只授权 `CP6 DEV CD`；Exclusive lock 与 Run #95 部署历史已验证。
+- [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和强化后的 Readiness Run #89 已验证。
 - [ ] 配置外部 SQL Server、Redis、消息服务和 S3；不把它们塞进生产 Compose。
 - [ ] 从候选清单读取 digest，不从源码重新 Build。
 - [ ] 复用 `deploy/production/compose/compose.yaml` 与受控部署/验证脚本，或记录与其等价的新实现。

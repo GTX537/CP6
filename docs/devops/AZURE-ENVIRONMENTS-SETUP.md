@@ -13,12 +13,13 @@ cp6-uat
 cp6-prod-lab
 ```
 
-2026-08-11 已通过用户提供的 Azure DevOps `Pipelines → Environments` 列表截图确认：
-以上三个逻辑 Environment 均已创建，状态均为 `Never deployed`。该状态符合当前阶段预期，
-表示尚无 deployment job 写入部署历史；它不代表创建失败。
+2026-08-11 已通过用户提供的 Azure DevOps `Pipelines → Environments` 列表截图确认三个逻辑
+Environment 均已创建，当时均为 `Never deployed`。2026-08-25，`CP6 DEV CD` Run #95 已向
+`cp6-dev` 写入首次成功部署历史；`cp6-uat` 与 `cp6-prod-lab` 仍未部署。
 
 截图只证明名称和当时的部署状态，未展示 Resource 详情、Pipeline permissions 或 Approvals and checks。
-DEV deployment job 的仓库配置现已交付，但这些 Azure 资源权限和首次实际部署仍需在对应详情页单独验收。
+DEV deployment job 已完成外部验收：只有 `CP6 DEV CD` 获得 `cp6-dev`、`CP6-Deploy` 和
+`cp6-dev-secrets` 的定向权限；Environment 已配置 Exclusive lock，未启用全局 Open access。
 
 ## 创建步骤
 
@@ -55,7 +56,8 @@ DEV deployment job 的仓库配置现已交付，但这些 Azure 资源权限和
 - [x] Azure Environment 列表出现 `cp6-prod-lab`。（2026-08-11 截图验证）
 - [ ] 三者 Resource 均为 `None` 或空列表。
 - [x] 列表中没有 `cp6-prod`，避免把本机实验环境误标为真实生产。（2026-08-11 截图验证）
-- [ ] 没有录入 SQL 密码、JWT、GHCR token 或个人 Windows 凭据。
+- [x] Environment 本身没有录入 SQL 密码、JWT、GHCR token 或个人 Windows 凭据；DEV 所需 SQL 凭据仅保存在锁定且定向授权的 `cp6-dev-secrets` Variable Group。
+- [x] `cp6-dev` 只授权给 `CP6 DEV CD`，并配置 Exclusive lock；Run #95 写入成功部署历史。
 
 环境创建本身不等于部署完成。只有后续 deployment job 写入部署历史并通过
 live、ready、release identity 和迁移门禁后，才能声明某个候选已部署。
