@@ -2,6 +2,7 @@
 
 ## 2026-08-25 DEV 候选 CI Artifact 隔离
 
+- 默认 self-hosted CI 在 #109/#111 两次触及本机内存/SQL门禁后均于 Artifact/Deploy 前取消；#110 证明当前 Azure 组织没有 hosted parallelism，未开启计费。低内存分支 #112 以非并行 restore、单节点 build/test、禁用持久/共享编译服务器和两个 Vue test worker 完整成功，发布哈希 Runtime Artifact；最低观测可用内存约 2.22 GiB，SQL 和根/旧 DEV 容器基线不变。该分支只验证实现，合并前不作为 DEV 候选。
 - 首次主线 CI #108 在 `Verify runtime artifact contracts` 打印 passed 后仍被陈旧 `$LASTEXITCODE` 判为失败；所有 restore/build/test/artifact 步骤均跳过，根环境与 `CP6_DEV` 无变化。基础 CI 与 DEV 合同 Step 现统一依靠 PowerShell terminating error，并由静态回归禁止在 `.ps1` 成功后读取继承的 `$LASTEXITCODE`。
 - Manual Run #98 在 API publish 内存达到 96.03% 后于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。Docker OOM 造成根 `cp6-db`/`cp6-api` 自动重启，因此该 Run 不计验收并保留为失败证据。
 - API Docker publish 改为单 MSBuild 节点并关闭项目并行、共享编译服务器后，Manual Run #101 仍在 Docker VM 95.83% 使用率时于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。根 `cp6-db`/`cp6-api` RestartCount 分别增至 2/3，因此同样不计验收。

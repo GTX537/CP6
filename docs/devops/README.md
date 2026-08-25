@@ -22,12 +22,12 @@
 仓库内可直接验证的 Azure CI 配置位于根目录 [`azure-pipelines.yml`](../../azure-pipelines.yml)：
 
 - `main` 提交触发；`pr: none`，当前不承担 PR 验证。
-- 使用 Azure DevOps `Default` self-hosted agent pool；YAML 没有绑定具体 Agent 名称。
+- 使用 Azure DevOps `Default` self-hosted agent pool；YAML 没有绑定具体 Agent 名称。为避免与同机 SQL/Docker 争抢内存，.NET restore 禁止并行，build/test 固定单 MSBuild 节点并关闭持久/共享编译服务器，Vue 单测固定两个 worker。
 - 安装 .NET 8 SDK 和 Node.js 22。
 - 还原、构建并测试 `CP6.WebApi`、`CP6.Tests`、`CP6.Client.Tests`。
 - 执行 Vue 类型检查、Vitest 和生产构建。
 - 将同一次已通过检查的 API/Web 输出封装为带版本、完整 SHA 和逐文件 SHA-256 的 `cp6-dev-runtime` Pipeline Artifact；它不是 Registry 镜像或生产候选。
-- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 下载并验证所选 CI Artifact 后只做 runtime-only 镜像封装。Azure CI [`Run #102`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=102) 已在 `main@f6484591` 完整成功，首次手动 DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95) 已成功；自动与公网验证开关仍保持关闭。
+- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 下载并验证所选 CI Artifact 后只做 runtime-only 镜像封装。Azure CI [`Run #102`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=102) 已在 `main@f6484591` 完整成功；低内存分支 [`Run #112`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=112) 已完整通过并发布 Runtime Artifact，但分支 Artifact 不可部署，仍须取得新的成功 `main` Run。首次手动 DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95) 已成功；自动与公网验证开关仍保持关闭。
 
 项目上下文确认 self-hosted Agent 已接通并能执行该 CI。具体 Agent 名称、在线状态和历史运行结果属于 Azure DevOps 外部运行证据，不能只靠仓库文件推断。
 

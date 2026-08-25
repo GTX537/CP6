@@ -4,6 +4,8 @@
 
 ## DEV Manual Run #98/#101/#107 内存失败与 CI Artifact 隔离（2026-08-25）
 
+- Artifact 主线 CI #109/#111 均证明 `Default` Pool 的默认 MSBuild 并行度会在本机 SQL/Docker 共存时形成不可接受的内存竞争：#109 在 API build 工作集约 2.97 GiB、宿主可用约 0.96 GiB时取消；用户释放内存后重跑的 #111 仍达到约 4.63 GiB、可用 1.24 GiB，按门禁取消。两次都没有 Artifact 或 DEV completion/deploy，备份仍为两份，根 API/DB 与旧 DEV API 的 ID、StartedAt、RestartCount 不变，SQL 随取消立即恢复。
+- Microsoft-hosted 探测 Run #110 正确选到 `Azure Pipelines` hosted Pool，但组织未获赠或购买 hosted parallelism，Job 在 Checkout 前以 `No hosted parallelism has been purchased or granted` 失败；没有本机负载或环境副作用，也未擅自启用计费。低内存分支 Run #112 随后把 restore 固定为非并行、build/test 固定为单 MSBuild 节点并关闭持久/共享编译服务器、Vue 单测限制两个 worker；完整 CI 于约 9 分钟内成功并发布 `cp6-dev-runtime`，最低观测宿主可用内存约 2.22 GiB，SQL 全程可查询且三项受保护容器重启数不变。分支 Artifact 不可部署，仍须合入后取得成功的 `main` CI Artifact。
 - Artifact 方案首次主线 CI #108 在真正 restore/build 前失败：`test-azure-ci-runtime-artifact-contract.ps1` 已打印 passed，但 Azure Windows PowerShell 5.1 继承了进入 Step 前的非零 `$LASTEXITCODE`，随后 YAML 把这一陈旧值误判为脚本失败。根因不是合同断言、YAML 或产物逻辑；Run 无编译、Artifact、completion DEV 或部署副作用，根 API/DB 与旧 DEV API 三项元数据均不变，`CP6_DEV` 仍 ONLINE。修复为 PowerShell 脚本依靠 terminating error/`ErrorActionPreference=Stop`，禁止用继承的外部进程退出码判断 `.ps1` 成败，并对基础 CI/DEV 两个合同 Step 增加静态回归。
 - 继续 2/3、3/3 验收前，宿主机仅余 1.09 GiB / 6.9% 内存，预检按门禁拒绝排队；关闭 Chrome 后，12/12 次 `CP6_DEV` 独立 SQL 连接/查询通过，最低可用内存 3.57 GiB / 22.6%，无新增宿主 SQL 701/17300。
 - Manual Run #98 正确选择成功的 CI #96 / `main@c9b02c82`，但 API Docker `dotnet publish` 期间 Agent 报宿主内存已使用 96.03%。Run 在 Build 阶段人工取消，Deploy 为 Skipped，没有新备份、迁移或 DEV 候选切换，不计手动验收。

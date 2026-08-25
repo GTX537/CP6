@@ -2,7 +2,7 @@
 
 ## P0：白天临时家庭测试环境的外部边界
 
-- CI #108 的 Artifact 逻辑尚未被实际执行：合同脚本已通过，但 Windows PowerShell 5.1 的陈旧 `$LASTEXITCODE` 造成 Step 假红并提前结束。先合入退出码判断修复，要求下一次 main CI 完成构建、哈希 Artifact 发布和成功结论，再允许排队 Manual DEV；#108 不计任何验收。
+- #108 的陈旧退出码假红已修复；#109/#111 证明默认 MSBuild 并行度在共用本机上仍不安全，#110 证明当前组织没有可用 hosted parallelism。低内存分支 #112 已完整成功并发布哈希 Artifact，但分支 Run 不可作为 DEV 候选。下一步先合入低内存合同并要求 `main` CI 在同一 SQL/容器门禁下成功、发布 `cp6-dev-runtime`，之后才排队两次 Manual DEV；#108–#111 均不计验收。
 - 本机必须保持开机、未睡眠，且 Docker Desktop 与网络正常；这是当前白天临时测试方案的可用性边界。若需要夜间、无人值守或稳定 SLA，仍须另选真实云主机/托管容器平台并完成生产部署设计，不能把本机 Tunnel 描述为高可用云部署。
 - 首次手动 `cp6-dev` 已由 Run #95 成功发布，但验收仅完成 1/3。Run #98/#101 的 Docker 编译和 Run #107 的宿主重复 publish 均触发内存/SQL 门禁，Deploy 前取消且不计数；#106 在 YAML 解析前失败也不计数。候选现改为复用所选成功 CI 的哈希 Runtime Artifact，DEV 只封装镜像；先合入并确认新 CI 实际产出/下载 Artifact，再完成两次各有独立备份、迁移、镜像身份和 Pipeline Artifact 的成功 Manual Run。每次运行前确认宿主 `KOUSQLSERVER` 可执行真实查询且没有新 701/17300，并以根 `cp6-db` RestartCount 2 / StartedAt `15:06:55Z`、`cp6-api` RestartCount 3 / StartedAt `15:07:03Z` 及其余五容器为基线，证明 ID、StartedAt、RestartCount 前后不变；基础 CI 结束后还要等待旧 DEV API/SQL 稳定。`CP6_DEV_AUTO_DEPLOY_ENABLED` 继续保持 `false`。
 - 首次切换 `cp6.uk` 前，运行 `Invoke-Cp6PublicTunnel.ps1 -Action Validate`、显式停止旧 `cp6-cloudflared`、启动 `cp6-public-tunnel` 并核对完整 SHA；确认后才设置 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED=true`。旧/新 connector 禁止同时运行。
