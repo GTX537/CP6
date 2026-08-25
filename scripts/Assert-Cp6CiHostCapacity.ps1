@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidateRange(1, 1048576)]
-    [int]$MinimumFreeMemoryMiB = 5632,
+    [int]$MinimumFreeMemoryMiB = 4608,
 
     [ValidateRange(0, 86400)]
     [int]$MaxWaitSeconds = 600,

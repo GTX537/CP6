@@ -13,9 +13,10 @@ $requiredPatterns = [ordered]@{
     "main CI trigger" = '(?s)trigger:\s*branches:\s*include:\s*- main'
     "host capacity behavior test" = 'test-cp6-ci-host-capacity\.ps1'
     "host capacity gate" = 'Assert-Cp6CiHostCapacity\.ps1'
-    "five and a half GiB start threshold" = '-MinimumFreeMemoryMiB 5632'
+    "four and a half GiB start threshold" = '-MinimumFreeMemoryMiB 4608'
     "bounded capacity wait" = '(?s)-MaxWaitSeconds 600.*?-PollIntervalSeconds 15'
-    "API build" = 'dotnet build CP6\.WebApi/CP6\.WebApi\.csproj'
+    "isolated build graph behavior test" = 'test-cp6-ci-dotnet-build\.ps1'
+    "isolated API build graph" = '(?s)Invoke-Cp6CiDotNetBuild\.ps1.*?-Graph BackendRuntime'
     "backend tests" = 'dotnet test CP6\.Tests/CP6\.Tests\.csproj'
     "client tests" = 'dotnet test CP6\.Client\.Tests/CP6\.Client\.Tests\.csproj'
     "Vue type check" = 'npm run type-check'
@@ -53,7 +54,13 @@ if ($restoreStep -notmatch '--disable-build-servers' -or
     throw "Azure CI .NET restore must disable persistent servers and parallel restore."
 }
 
-foreach ($displayName in @('Build CP6 API', 'Run Backend Tests', 'Run Client Tests')) {
+$buildGraphsByStep = [ordered]@{
+    'Build CP6 API' = 'BackendRuntime'
+    'Run Backend Tests' = 'BackendTests'
+    'Run Client Tests' = 'ClientTests'
+}
+foreach ($entry in $buildGraphsByStep.GetEnumerator()) {
+    $displayName = $entry.Key
     $displayIndex = $pipeline.IndexOf("displayName: '$displayName'")
     $stepIndex = if ($displayIndex -ge 0) {
         $pipeline.LastIndexOf("    - powershell: |", $displayIndex)
@@ -65,15 +72,15 @@ foreach ($displayName in @('Build CP6 API', 'Run Backend Tests', 'Run Client Tes
         throw "Azure CI '$displayName' step boundary is invalid."
     }
     $step = $pipeline.Substring($stepIndex, $displayIndex - $stepIndex)
-    foreach ($requiredFlag in @(
-        '--disable-build-servers',
-        '-m:1',
-        '-p:BuildInParallel=false',
-        '-p:UseSharedCompilation=false'
-    )) {
-        if (-not $step.Contains($requiredFlag)) {
-            throw "Azure CI '$displayName' must include '$requiredFlag'."
-        }
+    if ($step -notmatch 'Invoke-Cp6CiDotNetBuild\.ps1' -or
+        $step -notmatch ("-Graph\s+{0}" -f $entry.Value)) {
+        throw "Azure CI '$displayName' must use the '$($entry.Value)' isolated build graph."
+    }
+    if ($displayName -ne 'Build CP6 API' -and
+        ($step -notmatch 'dotnet test' -or
+        $step -notmatch '--no-build' -or
+        $step -notmatch '--disable-build-servers')) {
+        throw "Azure CI '$displayName' must execute the prebuilt test assembly."
     }
 }
 
