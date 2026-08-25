@@ -15,11 +15,16 @@ $requiredPatterns = [ordered]@{
     "dedicated pool" = "name:\s*'CP6-Deploy'"
     "dedicated agent demand" = 'Agent\.Name\s+-equals\s+LAPTOP-3QQ44FJS'
     "no repository checkout" = 'checkout:\s*none'
+    ".NET SDK 8 setup task" = "(?s)- task: UseDotNet@2.*?version: '8\.0\.x'"
+    "Node.js 22 setup task" = "(?s)- task: NodeTool@0.*?versionSpec: '22\.x'"
     "dedicated Windows identity" = 'LAPTOP-3QQ44FJS\\cp6_deploy_agent'
     "non-admin assertion" = 'WindowsBuiltInRole\]::Administrator'
     "explicit Docker Desktop pipe" = 'dockerDesktopLinuxEngine'
     "Docker engine verification" = 'docker\s+version'
     "Docker Compose verification" = 'docker\s+compose\s+version'
+    ".NET SDK 8 verification" = "dotnetVersion -notmatch '\^8\\\.'"
+    "Node.js 22 verification" = "nodeVersion -notmatch '\^v22\\\.'"
+    "npm execution verification" = 'npm\.cmd --version'
     "SQL endpoint verification" = 'Test-NetConnection'
     "sqlcmd standard path fallback" = 'Client SDK\\ODBC\\170\\Tools\\Binn\\SQLCMD\.EXE'
     "sqlcmd execution and scoped exit-code verification" = '(?s)\$sqlcmdHelp\s*=\s*@\(&\s+\$sqlcmdPath\s+-\?.*?if\s*\(\$LASTEXITCODE\s+-ne\s+0\s+-or\s+\$sqlcmdHelp\.Count\s+-eq\s+0\)'

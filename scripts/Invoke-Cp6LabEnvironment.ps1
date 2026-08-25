@@ -467,35 +467,127 @@ if ($Action -eq "Initialize") {
 if ($Action -eq "Build") {
     Assert-DockerDaemon
     $releaseGitSha = Get-ReleaseGitSha
-    $apiBuildArguments = @(
-        "build",
-        "-f", (Join-Path $resolvedSourceRoot "CP6.WebApi\Dockerfile"),
-        "--build-arg", "RELEASE_VERSION=$ReleaseVersion",
-        "--build-arg", "GIT_SHA=$releaseGitSha",
-        "-t", $ApiImage
-    )
-    if (-not [string]::IsNullOrWhiteSpace($ApiImageIdFile)) {
-        $apiBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($ApiImageIdFile))
-    }
-    $apiBuildArguments += $resolvedSourceRoot
-    & docker @apiBuildArguments
-    if ($LASTEXITCODE -ne 0) { throw "API image build failed." }
+    $runtimeBuildRoot = Join-Path `
+        ([IO.Path]::GetTempPath()) `
+        "cp6-runtime-build-$([Guid]::NewGuid().ToString('N'))"
+    $apiRuntimeContext = Join-Path $runtimeBuildRoot "api"
+    $apiPublishRoot = Join-Path $apiRuntimeContext "publish"
+    $webRuntimeContext = Join-Path $runtimeBuildRoot "web"
+    $webDistPayloadRoot = Join-Path $webRuntimeContext "dist"
+    $apiProjectPath = Join-Path $resolvedSourceRoot "CP6.WebApi\CP6.WebApi.csproj"
+    $webSourceRoot = Join-Path $resolvedSourceRoot "cp6.web"
+    $webSourceDist = Join-Path $webSourceRoot "dist"
+    $apiRuntimeDockerfile = Join-Path `
+        $resolvedSourceRoot `
+        "deploy\lab\images\api-runtime.Dockerfile"
+    $webRuntimeDockerfile = Join-Path `
+        $resolvedSourceRoot `
+        "deploy\lab\images\web-runtime.Dockerfile"
+    $previousReleaseVersion = [Environment]::GetEnvironmentVariable(
+        "CP6_RELEASE_VERSION",
+        "Process")
+    $previousGitSha = [Environment]::GetEnvironmentVariable("CP6_GIT_SHA", "Process")
+    $previousNodeOptions = [Environment]::GetEnvironmentVariable("NODE_OPTIONS", "Process")
+    $previousNpmJobs = [Environment]::GetEnvironmentVariable("npm_config_jobs", "Process")
 
-    $webBuildArguments = @(
-        "build",
-        "-f", (Join-Path $resolvedSourceRoot "cp6.web\Dockerfile"),
-        "--build-arg", "RELEASE_VERSION=$ReleaseVersion",
-        "--build-arg", "GIT_SHA=$releaseGitSha",
-        "-t", $WebImage
-    )
-    if (-not [string]::IsNullOrWhiteSpace($WebImageIdFile)) {
-        $webBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($WebImageIdFile))
+    try {
+        [IO.Directory]::CreateDirectory($apiPublishRoot) | Out-Null
+        [IO.Directory]::CreateDirectory($webDistPayloadRoot) | Out-Null
+
+        & dotnet restore `
+            $apiProjectPath `
+            --disable-build-servers `
+            --disable-parallel
+        if ($LASTEXITCODE -ne 0) { throw "API host restore failed." }
+        & dotnet publish `
+            $apiProjectPath `
+            -c Release `
+            -o $apiPublishRoot `
+            --no-restore `
+            --disable-build-servers `
+            -m:1 `
+            -p:BuildInParallel=false `
+            -p:UseSharedCompilation=false `
+            "-p:Version=$ReleaseVersion" `
+            "-p:InformationalVersion=$ReleaseVersion+$releaseGitSha"
+        if ($LASTEXITCODE -ne 0) { throw "API host publish failed." }
+
+        [Environment]::SetEnvironmentVariable(
+            "CP6_RELEASE_VERSION",
+            $ReleaseVersion,
+            "Process")
+        [Environment]::SetEnvironmentVariable("CP6_GIT_SHA", $releaseGitSha, "Process")
+        [Environment]::SetEnvironmentVariable(
+            "NODE_OPTIONS",
+            "--max-old-space-size=768",
+            "Process")
+        [Environment]::SetEnvironmentVariable("npm_config_jobs", "1", "Process")
+        Push-Location $webSourceRoot
+        try {
+            & npm.cmd ci --no-audit --no-fund
+            if ($LASTEXITCODE -ne 0) { throw "Web host dependency restore failed." }
+            & npm.cmd run build-only
+            if ($LASTEXITCODE -ne 0) { throw "Web host build failed." }
+        }
+        finally {
+            Pop-Location
+        }
+
+        Get-ChildItem -LiteralPath $webSourceDist -Force |
+            Copy-Item -Destination $webDistPayloadRoot -Recurse -Force
+        Copy-Item `
+            -LiteralPath (Join-Path $webSourceRoot "nginx.conf") `
+            -Destination (Join-Path $webRuntimeContext "nginx.conf") `
+            -Force
+
+        $apiBuildArguments = @(
+            "build",
+            "-f", $apiRuntimeDockerfile,
+            "-t", $ApiImage
+        )
+        if (-not [string]::IsNullOrWhiteSpace($ApiImageIdFile)) {
+            $apiBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($ApiImageIdFile))
+        }
+        $apiBuildArguments += $apiRuntimeContext
+        & docker @apiBuildArguments
+        if ($LASTEXITCODE -ne 0) { throw "API runtime image packaging failed." }
+
+        $webBuildArguments = @(
+            "build",
+            "-f", $webRuntimeDockerfile,
+            "-t", $WebImage
+        )
+        if (-not [string]::IsNullOrWhiteSpace($WebImageIdFile)) {
+            $webBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($WebImageIdFile))
+        }
+        $webBuildArguments += $webRuntimeContext
+        & docker @webBuildArguments
+        if ($LASTEXITCODE -ne 0) { throw "Web runtime image packaging failed." }
+        Write-Host "Built '$ApiImage' and '$WebImage' from $releaseGitSha."
+        exit 0
     }
-    $webBuildArguments += $resolvedSourceRoot
-    & docker @webBuildArguments
-    if ($LASTEXITCODE -ne 0) { throw "Web image build failed." }
-    Write-Host "Built '$ApiImage' and '$WebImage' from $releaseGitSha."
-    exit 0
+    finally {
+        [Environment]::SetEnvironmentVariable(
+            "CP6_RELEASE_VERSION",
+            $previousReleaseVersion,
+            "Process")
+        [Environment]::SetEnvironmentVariable("CP6_GIT_SHA", $previousGitSha, "Process")
+        [Environment]::SetEnvironmentVariable("NODE_OPTIONS", $previousNodeOptions, "Process")
+        [Environment]::SetEnvironmentVariable("npm_config_jobs", $previousNpmJobs, "Process")
+
+        $resolvedRuntimeBuildRoot = [IO.Path]::GetFullPath($runtimeBuildRoot)
+        $resolvedSystemTemp = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
+        $runtimeBuildLeaf = Split-Path -Leaf $resolvedRuntimeBuildRoot
+        if ($resolvedRuntimeBuildRoot.StartsWith(
+            $resolvedSystemTemp,
+            [StringComparison]::OrdinalIgnoreCase
+        ) -and $runtimeBuildLeaf.StartsWith(
+            "cp6-runtime-build-",
+            [StringComparison]::OrdinalIgnoreCase
+        ) -and (Test-Path -LiteralPath $resolvedRuntimeBuildRoot)) {
+            Remove-Item -LiteralPath $resolvedRuntimeBuildRoot -Recurse -Force
+        }
+    }
 }
 
 if (-not $usePipelineSecrets) {
