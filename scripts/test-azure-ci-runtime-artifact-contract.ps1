@@ -41,6 +41,24 @@ if ($apiBuildIndex -lt 0 -or
     throw "Azure CI build, test, runtime artifact, and publication order is invalid."
 }
 
+$contractDisplayIndex = $pipeline.IndexOf("displayName: 'Verify runtime artifact contracts'")
+$contractStepIndex = if ($contractDisplayIndex -ge 0) {
+    $pipeline.LastIndexOf("    - powershell: |", $contractDisplayIndex)
+}
+else {
+    -1
+}
+$backendSectionIndex = $pipeline.IndexOf("# .NET Backend")
+if ($contractStepIndex -lt 0 -or $backendSectionIndex -le $contractStepIndex) {
+    throw "Azure CI runtime artifact contract step boundary is invalid."
+}
+$contractStep = $pipeline.Substring(
+    $contractStepIndex,
+    $backendSectionIndex - $contractStepIndex)
+if ($contractStep -match '\$LASTEXITCODE') {
+    throw "PowerShell contract scripts must not be judged by inherited LASTEXITCODE state."
+}
+
 $forbiddenPatterns = [ordered]@{
     "Docker image build" = '(?i)docker\s+(?:build|push)'
     "environment deployment" = '(?m)^\s*- deployment:'

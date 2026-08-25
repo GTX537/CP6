@@ -155,19 +155,12 @@ stages:
           }
 
           & .\scripts\test-cp6-lab-environment-contract.ps1
-          if ($LASTEXITCODE -ne 0) { throw 'CP6 lab contract test failed.' }
           & .\scripts\test-dev-cd-contract.ps1
-          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV CD contract test failed.' }
           & .\scripts\test-cp6-dev-release-plan.ps1
-          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV release planning behavior test failed.' }
           & .\scripts\test-cp6-sqlcmd-resolution.ps1
-          if ($LASTEXITCODE -ne 0) { throw 'CP6 sqlcmd resolution behavior test failed.' }
           & .\scripts\test-cp6-dev-data-safety-contract.ps1
-          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV data safety contract test failed.' }
           & .\scripts\test-cp6-public-tunnel-contract.ps1
-          if ($LASTEXITCODE -ne 0) { throw 'CP6 public Tunnel contract test failed.' }
           & .\scripts\test-cp6-dev-runtime-artifact.ps1
-          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV runtime artifact contract test failed.' }
 
     - task: PowerShell@2
       name: buildOutputs

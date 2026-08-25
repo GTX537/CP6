@@ -89,6 +89,18 @@ if ($planStageIndex -lt 0 -or
     throw 'DEV CD stage, secret, backup, and deployment order is unsafe.'
 }
 
+$contractStepIndex = $pipeline.IndexOf("displayName: 'Verify deployment identity and contracts'")
+$packageStepIndex = $pipeline.IndexOf("displayName: 'Package commit-addressed API and Web images'")
+if ($contractStepIndex -lt 0 -or $packageStepIndex -le $contractStepIndex) {
+    throw 'DEV contract verification step boundary is invalid.'
+}
+$contractStep = $pipeline.Substring(
+    $contractStepIndex,
+    $packageStepIndex - $contractStepIndex)
+if ($contractStep -match '\$LASTEXITCODE') {
+    throw 'PowerShell contract scripts must not be judged by inherited LASTEXITCODE state.'
+}
+
 $forbiddenPatterns = [ordered]@{
     'mutable latest tag' = '(?i)(?:^|[:\s-])latest(?:$|[\s''"])'
     'UAT deployment' = '(?m)^\s*name:\s*cp6-uat\s*$'

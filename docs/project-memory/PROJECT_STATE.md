@@ -4,6 +4,7 @@
 
 ## DEV Manual Run #98/#101/#107 内存失败与 CI Artifact 隔离（2026-08-25）
 
+- Artifact 方案首次主线 CI #108 在真正 restore/build 前失败：`test-azure-ci-runtime-artifact-contract.ps1` 已打印 passed，但 Azure Windows PowerShell 5.1 继承了进入 Step 前的非零 `$LASTEXITCODE`，随后 YAML 把这一陈旧值误判为脚本失败。根因不是合同断言、YAML 或产物逻辑；Run 无编译、Artifact、completion DEV 或部署副作用，根 API/DB 与旧 DEV API 三项元数据均不变，`CP6_DEV` 仍 ONLINE。修复为 PowerShell 脚本依靠 terminating error/`ErrorActionPreference=Stop`，禁止用继承的外部进程退出码判断 `.ps1` 成败，并对基础 CI/DEV 两个合同 Step 增加静态回归。
 - 继续 2/3、3/3 验收前，宿主机仅余 1.09 GiB / 6.9% 内存，预检按门禁拒绝排队；关闭 Chrome 后，12/12 次 `CP6_DEV` 独立 SQL 连接/查询通过，最低可用内存 3.57 GiB / 22.6%，无新增宿主 SQL 701/17300。
 - Manual Run #98 正确选择成功的 CI #96 / `main@c9b02c82`，但 API Docker `dotnet publish` 期间 Agent 报宿主内存已使用 96.03%。Run 在 Build 阶段人工取消，Deploy 为 Skipped，没有新备份、迁移或 DEV 候选切换，不计手动验收。
 - Docker 事件证明根 `cp6-db` 被 OOM kill 后自动重启一次，`cp6-api` 因数据库恢复累计重启两次；两者与其余根容器当前均恢复 Healthy，但“根环境未受影响”门禁已失败，不能只凭容器 ID 未变化放行。
