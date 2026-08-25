@@ -134,6 +134,17 @@ stages:
       clean: true
       fetchDepth: 0
 
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK 8 for host candidate build'
+      inputs:
+        packageType: 'sdk'
+        version: '8.0.x'
+
+    - task: NodeTool@0
+      displayName: 'Use Node.js 22 for host candidate build'
+      inputs:
+        versionSpec: '22.x'
+
     - task: PowerShell@2
       displayName: 'Verify deployment identity and contracts'
       inputs:

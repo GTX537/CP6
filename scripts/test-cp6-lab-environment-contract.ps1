@@ -202,10 +202,24 @@ try {
         throw "Lab script does not support the complete Pipeline Secret contract."
     }
     if ($labScript -notmatch '\[string\]\$SourceRoot = ""' -or
-        $labScript -notmatch '\$webBuildArguments \+= \$resolvedSourceRoot' -or
+        $labScript -notmatch '(?s)& dotnet restore.*?--disable-build-servers.*?--disable-parallel' -or
+        $labScript -notmatch '--disable-build-servers' -or
+        $labScript -notmatch '-m:1' -or
+        $labScript -notmatch '-p:BuildInParallel=false' -or
+        $labScript -notmatch '-p:UseSharedCompilation=false' -or
+        $labScript -notmatch '& npm\.cmd ci --no-audit --no-fund' -or
+        $labScript -notmatch '& npm\.cmd run build-only' -or
+        $labScript -notmatch '--max-old-space-size=768' -or
+        $labScript -notmatch '\$apiBuildArguments \+= \$apiRuntimeContext' -or
+        $labScript -notmatch '\$webBuildArguments \+= \$webRuntimeContext' -or
         $labScript -notmatch '\$apiBuildArguments \+= @\("--iidfile"' -or
         $labScript -notmatch '\$webBuildArguments \+= @\("--iidfile"') {
-        throw "Lab image build does not support an isolated selected-source context."
+        throw "Lab image build does not prebuild selected-source artifacts outside Docker."
+    }
+    if ($labScript -notmatch 'cp6-runtime-build-' -or
+        $labScript -notmatch '\$resolvedRuntimeBuildRoot\.StartsWith\(' -or
+        $labScript -notmatch 'Remove-Item -LiteralPath \$resolvedRuntimeBuildRoot -Recurse -Force') {
+        throw "Lab runtime packaging does not safely clean its dedicated temporary context."
     }
     if ($labScript -notmatch 'Global\\CP6_\$\(\$settings\.ProjectName\)_deploy' -or
         $labScript -notmatch '\$deploymentMutex\.WaitOne\(0\)' -or
@@ -237,6 +251,19 @@ try {
     if ($webDockerfile -notmatch 'COPY sdk/typescript/space-design-v1/' -or
         $webDockerfile -notmatch 'WORKDIR /src/cp6\.web') {
         throw "Web Dockerfile does not preserve the repository-level SDK layout."
+    }
+
+    $apiRuntimeDockerfile = [IO.File]::ReadAllText(
+        (Join-Path $repoRoot "deploy\lab\images\api-runtime.Dockerfile"),
+        [Text.Encoding]::UTF8)
+    $webRuntimeDockerfile = [IO.File]::ReadAllText(
+        (Join-Path $repoRoot "deploy\lab\images\web-runtime.Dockerfile"),
+        [Text.Encoding]::UTF8)
+    if ($apiRuntimeDockerfile -match 'dotnet/sdk' -or
+        $apiRuntimeDockerfile -notmatch 'COPY publish/' -or
+        $webRuntimeDockerfile -match 'FROM node:' -or
+        $webRuntimeDockerfile -notmatch 'COPY dist/') {
+        throw "Lab runtime Dockerfiles must package prebuilt payloads without SDK or Node builds."
     }
 
     $r2Workflow = [IO.File]::ReadAllText(

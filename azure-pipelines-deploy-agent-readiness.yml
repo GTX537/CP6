@@ -22,6 +22,17 @@ stages:
     steps:
     - checkout: none
 
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK 8'
+      inputs:
+        packageType: 'sdk'
+        version: '8.0.x'
+
+    - task: NodeTool@0
+      displayName: 'Use Node.js 22'
+      inputs:
+        versionSpec: '22.x'
+
     - task: PowerShell@2
       displayName: 'Verify identity, Docker, and SQL endpoint'
       inputs:
@@ -48,6 +59,22 @@ stages:
 
           Get-Command git.exe -ErrorAction Stop | Out-Null
           Get-Command docker.exe -ErrorAction Stop | Out-Null
+          Get-Command dotnet.exe -ErrorAction Stop | Out-Null
+          Get-Command node.exe -ErrorAction Stop | Out-Null
+          Get-Command npm.cmd -ErrorAction Stop | Out-Null
+
+          $dotnetVersion = (& dotnet.exe --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $dotnetVersion -notmatch '^8\.') {
+              throw "The deployment agent requires .NET SDK 8.x, but received '$dotnetVersion'."
+          }
+          $nodeVersion = (& node.exe --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $nodeVersion -notmatch '^v22\.') {
+              throw "The deployment agent requires Node.js 22.x, but received '$nodeVersion'."
+          }
+          $npmVersion = (& npm.cmd --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($npmVersion)) {
+              throw "npm is unavailable to the deployment agent."
+          }
 
           # The service account does not use the interactive user's Docker context.
           # Address Docker Desktop's Linux engine explicitly instead.
@@ -122,6 +149,9 @@ stages:
           Write-Host "Deploy agent identity: $actualIdentity"
           Write-Host "Docker server: $dockerServerVersion ($dockerOsType)"
           Write-Host "Docker Compose: $composeVersion"
+          Write-Host ".NET SDK: $dotnetVersion"
+          Write-Host "Node.js: $nodeVersion"
+          Write-Host "npm: $npmVersion"
           Write-Host "KOUSQLSERVER TCP: reachable"
           Write-Host "sqlcmd: executable at $sqlcmdPath"
           Write-Host "CP6 deploy agent readiness passed."

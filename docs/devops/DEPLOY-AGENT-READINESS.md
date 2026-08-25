@@ -38,10 +38,12 @@ Agent.Name: LAPTOP-3QQ44FJS
 1. Job 身份严格等于 `LAPTOP-3QQ44FJS\cp6_deploy_agent`；
 2. 该身份不是本机管理员；
 3. Git 和 Docker CLI 可用；
-4. 通过显式 named pipe 连接 Docker Desktop Linux engine；
-5. Docker Compose 可用；
-6. 能从注册表发现 `KOUSQLSERVER` TCP 端口并建立 TCP 连接；
-7. 能从 PATH、Go sqlcmd、ODBC 18 或 ODBC 17 标准目录定位并实际执行 `sqlcmd.exe`。
+4. 由 Azure tool task 取得并实际执行 .NET SDK 8.x；
+5. 由 Azure tool task 取得并实际执行 Node.js 22.x 与 npm；
+6. 通过显式 named pipe 连接 Docker Desktop Linux engine；
+7. Docker Compose 可用；
+8. 能从注册表发现 `KOUSQLSERVER` TCP 端口并建立 TCP 连接；
+9. 能从 PATH、Go sqlcmd、ODBC 18 或 ODBC 17 标准目录定位并实际执行 `sqlcmd.exe`。
 
 Readiness 不验证 SQL 登录密码。SQL migrator/runtime/backup、RabbitMQ 和 JWT Secret 只在受限
 Variable Group 的部署任务中接入。DEV CD 的外部首次运行前还要确认 Agent 可执行 `sqlcmd`，且 SQL
@@ -60,7 +62,9 @@ Run #94/#95 生成和验证。
 2026-08-11 的首次 Azure Run 由 Agent `LAPTOP-3QQ44FJS` 执行。Azure 截图显示完整 Job 和
 `Verify identity, Docker, and SQL endpoint` 为绿色；本机 Worker 日志进一步确认 Build ID `10`、
 Build Number `20260811.1`，该验证 Step 与最终 Job 结果均为 `Succeeded`。由于任一身份、管理员、
-Docker、Compose 或 SQL TCP 断言失败都会使 PowerShell Step 失败，本次绿色结果关闭宿主机 Readiness 门禁。
+Docker、Compose 或 SQL TCP 断言失败都会使 PowerShell Step 失败，本次绿色结果关闭当时的宿主机
+Readiness 门禁。2026-08-25 候选改为宿主机构建后，门禁新增 .NET 8、Node.js 22 与 npm 版本断言；
+更新后的 YAML 合入 `main` 后必须再运行一次，成功证据才能覆盖新增能力。
 
 ## 在 Azure DevOps 创建 Pipeline
 
