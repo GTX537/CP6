@@ -2,12 +2,17 @@ $ErrorActionPreference = 'Stop'
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $pipelinePath = Join-Path $repoRoot 'azure-pipelines-dev.yml'
+$apiDockerfilePath = Join-Path $repoRoot 'CP6.WebApi\Dockerfile'
 
 if (-not (Test-Path -LiteralPath $pipelinePath -PathType Leaf)) {
     throw 'DEV CD pipeline was not found.'
 }
+if (-not (Test-Path -LiteralPath $apiDockerfilePath -PathType Leaf)) {
+    throw 'CP6 API Dockerfile was not found.'
+}
 
 $pipeline = Get-Content -LiteralPath $pipelinePath -Raw -Encoding utf8
+$apiDockerfile = Get-Content -LiteralPath $apiDockerfilePath -Raw -Encoding utf8
 
 $requiredPatterns = [ordered]@{
     'CI-only repository trigger' = '(?m)^trigger:\s*none\s*$'
@@ -96,6 +101,18 @@ $forbiddenPatterns = [ordered]@{
 foreach ($entry in $forbiddenPatterns.GetEnumerator()) {
     if ($pipeline -match $entry.Value) {
         throw "DEV CD pipeline unexpectedly contains $($entry.Key)."
+    }
+}
+
+$lowMemoryPublishPatterns = [ordered]@{
+    'disabled persistent build servers' = '--disable-build-servers'
+    'single MSBuild node' = '(?m)^\s*-m:1\s*\\\s*$'
+    'disabled project build parallelism' = '-p:BuildInParallel=false'
+    'disabled shared compiler process' = '-p:UseSharedCompilation=false'
+}
+foreach ($entry in $lowMemoryPublishPatterns.GetEnumerator()) {
+    if ($apiDockerfile -notmatch $entry.Value) {
+        throw "CP6 API Docker publish is missing $($entry.Key)."
     }
 }
 
