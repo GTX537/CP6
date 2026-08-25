@@ -39,12 +39,21 @@ Agent.Name: LAPTOP-3QQ44FJS
 3. Git 和 Docker CLI 可用；
 4. 通过显式 named pipe 连接 Docker Desktop Linux engine；
 5. Docker Compose 可用；
-6. 能从注册表发现 `KOUSQLSERVER` TCP 端口并建立 TCP 连接。
+6. 能从注册表发现 `KOUSQLSERVER` TCP 端口并建立 TCP 连接；
+7. 能从 PATH、Go sqlcmd、ODBC 18 或 ODBC 17 标准目录定位并实际执行 `sqlcmd.exe`。
 
 Readiness 不验证 SQL 登录密码。SQL migrator/runtime/backup、RabbitMQ 和 JWT Secret 只在受限
 Variable Group 的部署任务中接入。DEV CD 的外部首次运行前还要确认 Agent 可执行 `sqlcmd`，且 SQL
 Server 服务账号和部署 Agent 都能按各自职责访问 `C:\CP6Backups\CP6_DEV`；该项尚未纳入 Build ID `10`
 的历史 Readiness 证据。
+
+2026-08-25 本机审计确认 `sqlcmd.exe` 位于
+`C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE`，但该目录不在机器级
+PATH。Readiness YAML 和备份脚本已改为显式探测标准目录，避免依赖交互用户 PATH。当天还创建了
+`C:\CP6Backups\CP6_DEV`：`NT SERVICE\MSSQL$KOUSQLSERVER` 具有 Modify，
+`LAPTOP-3QQ44FJS\cp6_deploy_agent` 只有 Read/Execute，宽泛继承修改权限已移除。修复合入后仍须以服务
+身份重跑 Readiness；仓库内 7 场景行为测试已覆盖 resolver 与失败恢复，但不能替代该服务身份 Run。
+`cp6_dev_backup` 和真实备份尚未验收。
 
 2026-08-11 的首次 Azure Run 由 Agent `LAPTOP-3QQ44FJS` 执行。Azure 截图显示完整 Job 和
 `Verify identity, Docker, and SQL endpoint` 为绿色；本机 Worker 日志进一步确认 Build ID `10`、
@@ -73,6 +82,9 @@ Docker、Compose 或 SQL TCP 断言失败都会使 PowerShell Step 失败，本�
 - [ ] `CP6-Deploy` 只授权给 Readiness/后续 DEV CD Pipeline，而不是所有 Pipelines。
 - [x] Readiness Run 成功，身份、Docker、Compose 和 SQL TCP 断言全部通过。（Build ID `10`）
 - [x] 成功 Run URL/Run ID 已记录。
-- [ ] `sqlcmd`、`cp6_dev_backup` 和 `C:\CP6Backups\CP6_DEV` 读写权限已完成部署前验收。
+- [x] 宿主机 `sqlcmd` 安装位置已确认，仓库门禁不再依赖用户 PATH。（仍待合入后用 Agent 重跑）
+- [x] `C:\CP6Backups\CP6_DEV` 已创建并配置 SQL Server 写入/部署 Agent 读取的显式 ACL。
+- [ ] 创建并验收最小权限 `cp6_dev_backup`，保存同一密码到锁定 Azure Secret。
+- [ ] 使用更新后的 `main` 重跑 Readiness，确认服务身份实际发现 `sqlcmd` 与备份目录。
 
 这些验收项全部完成后，才创建读取 DEV Variable Group 并指向 `cp6-dev` 的 deployment job。

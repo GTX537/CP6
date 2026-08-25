@@ -95,8 +95,33 @@ stages:
               throw "The deployment agent cannot reach KOUSQLSERVER on its configured TCP port."
           }
 
+          # The service account does not inherit the interactive developer's user PATH.
+          # Accept PATH when present, but also probe Microsoft sqlcmd's standard install paths.
+          $sqlcmdCommand = Get-Command sqlcmd.exe -ErrorAction SilentlyContinue |
+              Select-Object -First 1
+          $sqlcmdCandidates = @(
+              if ($null -ne $sqlcmdCommand) { $sqlcmdCommand.Source }
+              'C:\Program Files\sqlcmd\sqlcmd.exe'
+              'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\SQLCMD.EXE'
+              'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE'
+          )
+          $sqlcmdPath = $sqlcmdCandidates |
+              Where-Object {
+                  -not [string]::IsNullOrWhiteSpace($_) -and
+                  (Test-Path -LiteralPath $_ -PathType Leaf)
+              } |
+              Select-Object -First 1
+          if ([string]::IsNullOrWhiteSpace($sqlcmdPath)) {
+              throw 'sqlcmd was not found on PATH or in a supported standard installation directory.'
+          }
+          $sqlcmdHelp = @(& $sqlcmdPath -? 2>&1)
+          if ($LASTEXITCODE -ne 0 -or $sqlcmdHelp.Count -eq 0) {
+              throw "sqlcmd was found at '$sqlcmdPath' but could not be executed by the deployment agent."
+          }
+
           Write-Host "Deploy agent identity: $actualIdentity"
           Write-Host "Docker server: $dockerServerVersion ($dockerOsType)"
           Write-Host "Docker Compose: $composeVersion"
           Write-Host "KOUSQLSERVER TCP: reachable"
+          Write-Host "sqlcmd: executable at $sqlcmdPath"
           Write-Host "CP6 deploy agent readiness passed."

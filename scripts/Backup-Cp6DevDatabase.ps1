@@ -12,15 +12,17 @@ param(
 
     [string]$BackupRoot = 'C:\CP6Backups\CP6_DEV',
 
-    [string]$EvidencePath = ''
+    [string]$EvidencePath = '',
+
+    [string]$SqlcmdPath = ''
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-if (-not (Get-Command sqlcmd -ErrorAction SilentlyContinue)) {
-    throw 'sqlcmd was not found. Install Microsoft sqlcmd on the dedicated deployment agent.'
-}
+$sqlcmdModulePath = Join-Path $PSScriptRoot 'Cp6.Sqlcmd.psm1'
+Import-Module $sqlcmdModulePath -Force
+$SqlcmdPath = Resolve-Cp6SqlcmdPath -SqlcmdPath $SqlcmdPath
 
 $password = [Environment]::GetEnvironmentVariable($PasswordEnvironmentVariable, 'Process')
 if ([string]::IsNullOrWhiteSpace($password)) {
@@ -55,7 +57,7 @@ RESTORE VERIFYONLY
 $previousSqlCmdPassword = [Environment]::GetEnvironmentVariable('SQLCMDPASSWORD', 'Process')
 try {
     [Environment]::SetEnvironmentVariable('SQLCMDPASSWORD', $password, 'Process')
-    & sqlcmd `
+    & $SqlcmdPath `
         -S $ServerInstance `
         -U $BackupAccount `
         -C `

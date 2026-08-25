@@ -2,6 +2,13 @@
 
 最后更新：2026-08-25
 
+## 本机 DEV 外部首次运行就绪审计（2026-08-25）
+
+- 只读审计确认 Docker Desktop 29.3.1、Compose 5.1.1、`MSSQL$KOUSQLSERVER` 和专用 Azure Agent `vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS` 正常运行；`CP6_DEV` 已存在，根 `cp6` 七个容器、`CP6DB` 与 `cp6_cp6-db-data` 保持运行且未被修改。
+- `sqlcmd.exe` 已安装于 ODBC 17 标准目录，但该目录不在机器级 `PATH`；交互用户能发现它不代表 `cp6_deploy_agent` 服务身份也能发现。备份脚本和 Readiness YAML 现同时探测 PATH、Go sqlcmd、ODBC 18 与 ODBC 17 标准目录；新增 7 场景行为回归覆盖 PATH、显式路径、全缺失、标准目录回退、Secret 前置门与失败后 `SQLCMDPASSWORD` 恢复，相关数据安全/Readiness/DEV CD 合同测试通过。
+- 已创建 `C:\CP6Backups\CP6_DEV` 并关闭继承的宽泛修改权限；SQL Server 服务身份具有 Modify，部署 Agent 只有 Read/Execute，当前管理员维护身份、SYSTEM 和 Administrators 保留 Full Control。独立 SQL 登录 `cp6_dev_backup` 尚未创建，因此尚未执行真实备份。
+- 微软 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6 已安装到当前用户目录，仍待用户完成设备登录。Azure Pipeline/Variable Group/Environment 尚未修改；备份 Secret、Exclusive lock、两项 `false` 开关、三次手动 Run 与 Tunnel 切换继续保持待验收。
+
 ## 本机 DEV 双模式发布闭环（2026-08-25）
 
 - `azure-pipelines-dev.yml` 统一支持手动和 completion-trigger 自动模式；`CP6_DEV_AUTO_DEPLOY_ENABLED` 初始为 `false`。两种模式都只接受 Azure 回读为 `completed/succeeded` 的 `GTX537.CP6/main` Run；过期自动 Run 安全跳过，自动开启时禁止选择旧 Run 手动回退。
