@@ -60,7 +60,7 @@
 
 状态：**待 Phase 3**。
 
-学习环境旁路（不计入 Phase 4 生产门禁）：仓库已新增 `azure-pipelines-dev.yml`，在 `GTX537.CP6` 的 `main` CI 成功后，于唯一 `CP6-Deploy` Agent 上按完整 Git SHA 构建一次本机镜像并部署 `cp6-dev`。它用于练习 completion trigger、Variable Group、deployment job 和证据归档；没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成。`cp6-dev-secrets` 已由 2026-08-11 外部截图确认创建；外部 `CP6 DEV CD`、三类资源授权和首次成功 Run 仍待验收。
+学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选提交构建本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；外部 Secret/Lock/三次手动 Run/Tunnel 切换仍待验收。
 
 - [x] 创建 `cp6-dev` Azure Environment。（2026-08-11 外部截图验证；Pipeline 权限仍待配置。）
 - [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和 Readiness Run Build ID `10` 已验证。

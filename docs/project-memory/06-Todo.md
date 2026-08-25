@@ -3,7 +3,8 @@
 ## P0：白天临时家庭测试环境的外部边界
 
 - 本机必须保持开机、未睡眠，且 Docker Desktop 与网络正常；这是当前白天临时测试方案的可用性边界。若需要夜间、无人值守或稳定 SLA，仍须另选真实云主机/托管容器平台并完成生产部署设计，不能把本机 Tunnel 描述为高可用云部署。
-- 给同事开放测试前，使用 `cp6-daytime-server.bat status` 确认 7 个容器、本机地址和公网地址全绿；同事只使用 `https://cp6.uk` 的应用账号，不共享 `.env`、Tunnel JSON、数据库/RabbitMQ/Kafka 管理端口或基础设施凭证。
+- 首次切换 `cp6.uk` 前，先手动成功发布 `cp6-dev`，再运行 `Invoke-Cp6PublicTunnel.ps1 -Action Validate`、显式停止旧 `cp6-cloudflared`、启动 `cp6-public-tunnel` 并核对完整 SHA；确认后才设置 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED=true`。旧/新 connector 禁止同时运行。
+- 给同事开放测试前，确认 `cp6-dev` 的 `19991`/`18080` 与公网 release identity 一致；同事只使用 `https://cp6.uk` 的应用账号，不共享 `.env`、Tunnel JSON、数据库/RabbitMQ/Kafka 管理端口或基础设施凭证。根 `cp6` 继续作为私人开发环境。
 - Cloudflare Workers 的 `estimate` Git 集成仍需在 Cloudflare 控制台单独断开或改正 Build 配置。它与 `cp6-cloudflared` Tunnel 不在同一部署链；当前家庭测试服务器不依赖 `estimate`，也没有修复其外部构建失败。
 
 ## P0：整顿后的仓库治理与续开发边界
@@ -41,8 +42,10 @@
 ## P0：Azure DevOps Release/CD 演进
 
 - 外部 Readiness Pipeline 已命名为 `CP6 Deploy Agent`；可再补全为 `CP6 Deploy Agent Readiness`，并保持 `CP6-Deploy` Pool 未对所有 Pipelines 开放。
-- Readiness Build ID `10` 已通过；`cp6-dev-secrets` Variable Group 和四个锁定 Secret 已由截图确认创建。下一步从 `/azure-pipelines-dev.yml` 创建 `CP6 DEV CD`，只对它授权 `CP6-Deploy`、`cp6-dev-secrets` 与 `cp6-dev`，再用最新成功的 `GTX537.CP6/main` Run 完成首次部署验收。
-- 首次 DEV Run 必须保存 Build/Run ID、Environment deployment history 和 `cp6-dev-evidence`；在这些外部证据齐全前，只能称为“仓库配置已交付”，不能称为“DEV 自动部署已成功”。
+- Readiness Build ID `10` 已通过；下一步确认 Agent 已安装 `sqlcmd`，创建最小化 `cp6_dev_backup`、授权 SQL Server 服务账号/部署 Agent 访问 `C:\CP6Backups\CP6_DEV`，并在 `cp6-dev-secrets` 增加锁定的 `CP6_DEV_DB_BACKUP_PASSWORD`。
+- 首次三次手动验收同时记录备份目录容量增长；当前不自动删除 `.bak`，后续需单独确认保留数量、最小保留期、磁盘告警和可恢复证据后再实现清理策略。
+- 从 `/azure-pipelines-dev.yml` 创建/更新 `CP6 DEV CD`，只对它授权 `CP6-Deploy`、`cp6-dev-secrets` 与 `cp6-dev`；在 Environment 资源侧增加 Exclusive lock，把 `CP6_DEV_AUTO_DEPLOY_ENABLED` 与 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED` 初始都设为 `false`。
+- 连续完成三次手动 Run，保存 Build/Run ID、Environment history、database-backup/deployment evidence，并证明根 `cp6`/`CP6DB` 未受影响；三次均成功后才启用自动。外部证据齐全前只能称为“仓库能力闭环”，不能称为“DEV 自动部署已运行”。
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。

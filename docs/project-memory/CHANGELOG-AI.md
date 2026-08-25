@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-25：本机 DEV 双模式发布闭环
+
+- 把 Azure DEV CD 收敛为同一条自动/手动 Pipeline：验证成功 main CI、在分类阶段和 DEV 锁内跳过 superseded 自动任务、关闭自动后才允许旧版本手动回退，并从所选提交的隔离 worktree 构建完整 SHA 镜像、捕获不可变 Docker image ID。
+- 发布先对 `CP6_DEV` 执行 COPY_ONLY/COMPRESSION/CHECKSUM 备份和 RESTORE VERIFYONLY，再停止旧 API/Web、前向迁移、逐层启动与核对 release identity；证据记录触发、备份 SHA-256、镜像和健康结果。
+- 新增只连接 `cp6-dev_default` 的独立 Cloudflare connector，以及只允许 `CP6DEV_IMPORT_*` 新库的 DEV 快照导入工具；根 `cp6`/`CP6DB`/`cp6_cp6-db-data` 保持隔离。外部 Azure Run 与 Tunnel 切换未在本次执行。
+
 ## 2026-08-24：登录体验恢复与可访问性闭环
 
 - 恢复面向包装制造运营的五语言登录体验和桌面/移动布局，同时保留既有账号密码、Tenant、SSO、2FA、菜单和路由合同。

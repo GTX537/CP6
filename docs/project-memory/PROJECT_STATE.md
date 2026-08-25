@@ -1,6 +1,13 @@
 # 项目当前状态
 
-最后更新：2026-08-24
+最后更新：2026-08-25
+
+## 本机 DEV 双模式发布闭环（2026-08-25）
+
+- `azure-pipelines-dev.yml` 统一支持手动和 completion-trigger 自动模式；`CP6_DEV_AUTO_DEPLOY_ENABLED` 初始为 `false`。两种模式都只接受 Azure 回读为 `completed/succeeded` 的 `GTX537.CP6/main` Run；过期自动 Run 安全跳过，自动开启时禁止选择旧 Run 手动回退。
+- 候选使用 `0.0.0-dev.<CI Run ID>` 与完整 SHA 镜像 Tag，从所选提交的隔离 worktree 构建；编排逻辑始终来自当前 `main`。构建同步捕获 Docker 不可变 image ID，部署不依赖可能被并发重写的本机 Tag，并逐容器核对实际运行 `.Image`。deployment job 进入 `cp6-dev` 顺序锁后会二次淘汰过期自动 Run，并受 Windows 全局互斥锁兜底；之后先对 `CP6_DEV` 做 COPY_ONLY/COMPRESSION/CHECKSUM 备份及 RESTORE VERIFYONLY，再停止旧 Web/API、执行一次性前向迁移、依次验证 API 与 Web，并归档触发/备份/镜像/健康证据。
+- 根 Compose `cp6`、Docker 数据库 `CP6DB` 与命名卷 `cp6_cp6-db-data` 明确排除在 DEV CD 之外。新增手工导出与旁路导入工具；导入只允许新的 `CP6DEV_IMPORT_yyyyMMdd_HHmmss`，拒绝目标已存在且不含 `WITH REPLACE`，不会自动合并到 `CP6DB`。
+- 新增独立 `cp6-public-tunnel` Compose，只加入 `cp6-dev_default`。控制器要求旧 `cp6-cloudflared` 已被用户显式停止，避免同一 Tunnel 双 connector 分流；DEV CD 不执行一次性公网切换。外部 Azure Secret/Exclusive lock/三次手动 Run、Tunnel 切换和公网身份验收尚未执行，因此当前状态仍是“仓库能力闭环，外部运行待验收”。
 
 ## 登录体验恢复与可访问性闭环（2026-08-24）
 
