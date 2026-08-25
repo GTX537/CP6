@@ -179,7 +179,7 @@ stages:
           $runtimeArtifactRoot = Join-Path `
               $env:CP6_PIPELINE_WORKSPACE `
               'cp6ci\cp6-dev-runtime'
-          $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
+          $releaseVersion = "0.0.0-dev.$($env:CP6_CI_SOURCE_COMMIT)"
           $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
           $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
           $apiImageIdFile = Join-Path $env:CP6_PIPELINE_WORKSPACE 'cp6-api.iid'
@@ -318,7 +318,7 @@ stages:
               pwsh: false
               script: |
                 $ErrorActionPreference = 'Stop'
-                $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
+                $releaseVersion = "0.0.0-dev.$($env:CP6_CI_SOURCE_COMMIT)"
                 $apiImage = $env:CP6_API_CANDIDATE_ID
                 $webImage = $env:CP6_WEB_CANDIDATE_ID
                 if ($apiImage -notmatch '^sha256:[0-9a-f]{64}$' -or
@@ -361,7 +361,7 @@ stages:
               pwsh: false
               script: |
                 $ErrorActionPreference = 'Stop'
-                $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
+                $releaseVersion = "0.0.0-dev.$($env:CP6_CI_SOURCE_COMMIT)"
                 $apiImageTag = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
                 $webImageTag = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
                 $apiImageId = $env:CP6_API_CANDIDATE_ID

@@ -25,6 +25,7 @@ $requiredPatterns = [ordered]@{
     'candidate build stage' = '(?m)^- stage:\s*BuildCandidate\s*$'
     'selected CI artifact download' = '(?s)- download:\s*cp6ci\s+artifact:\s*cp6-dev-runtime'
     'selected CI artifact path' = 'cp6ci\\cp6-dev-runtime'
+    'commit-addressed release version' = '0\.0\.0-dev\.\$\(\$env:CP6_CI_SOURCE_COMMIT\)'
     'runtime artifact contract' = 'test-cp6-dev-runtime-artifact\.ps1'
     'runtime artifact packaging input' = '-RuntimeArtifactRoot\s+\$runtimeArtifactRoot'
     'DEV deployment stage' = '(?m)^- stage:\s*DeployDev\s*$'
@@ -114,12 +115,19 @@ $forbiddenPatterns = [ordered]@{
     'Docker volume pruning' = '(?i)docker\s+volume\s+prune'
     'duplicate API compilation' = '(?i)dotnet\s+(?:restore|build|publish)'
     'duplicate Web compilation' = '(?i)npm(?:\.cmd)?\s+(?:ci|run)'
+    'bridge Run ID as binary version' = '0\.0\.0-dev\.\$\(\$env:CP6_CI_RUN_ID\)'
 }
 
 foreach ($entry in $forbiddenPatterns.GetEnumerator()) {
     if ($pipeline -match $entry.Value) {
         throw "DEV CD pipeline unexpectedly contains $($entry.Key)."
     }
+}
+
+if ([regex]::Matches(
+    $pipeline,
+    '0\.0\.0-dev\.\$\(\$env:CP6_CI_SOURCE_COMMIT\)').Count -ne 3) {
+    throw 'DEV CD release version must use the full source SHA in all three stages.'
 }
 
 $lowMemoryPublishPatterns = [ordered]@{
