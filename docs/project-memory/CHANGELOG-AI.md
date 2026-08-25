@@ -5,7 +5,7 @@
 ## 2026-08-25：DEV 首次运行前置审计与 sqlcmd 路径修复
 
 - 实机确认 Docker/Compose、专用 Azure Agent、`KOUSQLSERVER`、`CP6_DEV` 与 SQL TCP 端点可用；创建并收紧 `C:\CP6Backups\CP6_DEV` ACL，根 `cp6`、`CP6DB` 和命名卷未变更。
-- 修复 `sqlcmd` 只存在于交互用户 PATH、服务 Agent 可能找不到的问题：备份脚本与 Readiness YAML 兼容 PATH、Go sqlcmd、ODBC 18/17 标准目录，三组合同测试和 PATH 移除聚焦回归通过。
+- 修复 `sqlcmd` 只存在于交互用户 PATH、服务 Agent 可能找不到的问题：备份脚本与 Readiness YAML 兼容 PATH、Go sqlcmd、ODBC 18/17 标准目录；7 场景行为回归覆盖发现/失败分支和 `SQLCMDPASSWORD` 恢复，三组合同测试同步通过。
 - Azure CLI/DevOps 扩展已装入当前用户目录；设备登录、`cp6_dev_backup`、Azure Secret/Exclusive lock/变量、Readiness 重跑及真实发布仍待完成。本条不构成 DEV 部署成功证据。
 
 ## 2026-08-25：本机 DEV 双模式发布闭环

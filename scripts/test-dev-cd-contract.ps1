@@ -21,6 +21,7 @@ $requiredPatterns = [ordered]@{
     'DEV deployment stage' = '(?m)^- stage:\s*DeployDev\s*$'
     'release policy resolver' = 'Resolve-Cp6DevReleasePlan\.ps1'
     'release behavior test' = 'test-cp6-dev-release-plan\.ps1'
+    'sqlcmd resolution behavior test' = 'test-cp6-sqlcmd-resolution\.ps1'
     'automatic deployment switch' = 'CP6_DEV_AUTO_DEPLOY_ENABLED'
     'successful CI REST validation' = "selectedRun\.result\s*-ne\s*'succeeded'"
     'current main freshness input' = '-CurrentMainCommit \$currentMain'

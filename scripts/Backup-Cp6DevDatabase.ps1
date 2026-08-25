@@ -20,27 +20,9 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-if ([string]::IsNullOrWhiteSpace($SqlcmdPath)) {
-    $sqlcmdCommand = Get-Command sqlcmd.exe -ErrorAction SilentlyContinue |
-        Select-Object -First 1
-    $sqlcmdCandidates = @(
-        if ($null -ne $sqlcmdCommand) { $sqlcmdCommand.Source }
-        'C:\Program Files\sqlcmd\sqlcmd.exe'
-        'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\SQLCMD.EXE'
-        'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE'
-    )
-    $SqlcmdPath = $sqlcmdCandidates |
-        Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and (Test-Path -LiteralPath $_ -PathType Leaf) } |
-        Select-Object -First 1
-}
-elseif (-not [IO.Path]::IsPathRooted($SqlcmdPath)) {
-    throw 'SqlcmdPath must be an absolute executable path when provided.'
-}
-
-if ([string]::IsNullOrWhiteSpace($SqlcmdPath) -or
-    -not (Test-Path -LiteralPath $SqlcmdPath -PathType Leaf)) {
-    throw 'sqlcmd was not found on PATH or in a supported standard installation directory.'
-}
+$sqlcmdModulePath = Join-Path $PSScriptRoot 'Cp6.Sqlcmd.psm1'
+Import-Module $sqlcmdModulePath -Force
+$SqlcmdPath = Resolve-Cp6SqlcmdPath -SqlcmdPath $SqlcmdPath
 
 $password = [Environment]::GetEnvironmentVariable($PasswordEnvironmentVariable, 'Process')
 if ([string]::IsNullOrWhiteSpace($password)) {

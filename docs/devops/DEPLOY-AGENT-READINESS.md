@@ -52,7 +52,8 @@ Server 服务账号和部署 Agent 都能按各自职责访问 `C:\CP6Backups\CP
 PATH。Readiness YAML 和备份脚本已改为显式探测标准目录，避免依赖交互用户 PATH。当天还创建了
 `C:\CP6Backups\CP6_DEV`：`NT SERVICE\MSSQL$KOUSQLSERVER` 具有 Modify，
 `LAPTOP-3QQ44FJS\cp6_deploy_agent` 只有 Read/Execute，宽泛继承修改权限已移除。修复合入后仍须以服务
-身份重跑 Readiness；`cp6_dev_backup` 和真实备份尚未验收。
+身份重跑 Readiness；仓库内 7 场景行为测试已覆盖 resolver 与失败恢复，但不能替代该服务身份 Run。
+`cp6_dev_backup` 和真实备份尚未验收。
 
 2026-08-11 的首次 Azure Run 由 Agent `LAPTOP-3QQ44FJS` 执行。Azure 截图显示完整 Job 和
 `Verify identity, Docker, and SQL endpoint` 为绿色；本机 Worker 日志进一步确认 Build ID `10`、

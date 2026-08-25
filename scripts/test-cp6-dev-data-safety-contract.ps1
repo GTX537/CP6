@@ -5,18 +5,30 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 
 $backupPath = Join-Path $PSScriptRoot 'Backup-Cp6DevDatabase.ps1'
+$sqlcmdModulePath = Join-Path $PSScriptRoot 'Cp6.Sqlcmd.psm1'
+$sqlcmdTestPath = Join-Path $PSScriptRoot 'test-cp6-sqlcmd-resolution.ps1'
 $exportPath = Join-Path $PSScriptRoot 'Export-Cp6DevSnapshot.ps1'
 $importPath = Join-Path $PSScriptRoot 'Import-Cp6DevSnapshot.ps1'
 $labPath = Join-Path $PSScriptRoot 'Invoke-Cp6LabEnvironment.ps1'
 $pipelinePath = Join-Path $repoRoot 'azure-pipelines-dev.yml'
 
-foreach ($path in @($backupPath, $exportPath, $importPath, $labPath, $pipelinePath)) {
+foreach ($path in @(
+    $backupPath,
+    $sqlcmdModulePath,
+    $sqlcmdTestPath,
+    $exportPath,
+    $importPath,
+    $labPath,
+    $pipelinePath
+)) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         throw "Required DEV data-safety file is missing: $path"
     }
 }
 
 $backup = Get-Content -LiteralPath $backupPath -Raw -Encoding utf8
+$sqlcmdModule = Get-Content -LiteralPath $sqlcmdModulePath -Raw -Encoding utf8
+$sqlcmdTest = Get-Content -LiteralPath $sqlcmdTestPath -Raw -Encoding utf8
 $export = Get-Content -LiteralPath $exportPath -Raw -Encoding utf8
 $import = Get-Content -LiteralPath $importPath -Raw -Encoding utf8
 $lab = Get-Content -LiteralPath $labPath -Raw -Encoding utf8
@@ -28,14 +40,38 @@ foreach ($pattern in @(
     'WITH COPY_ONLY, INIT, COMPRESSION, CHECKSUM',
     'RESTORE VERIFYONLY',
     'SQLCMDPASSWORD',
-    'Client SDK\\ODBC\\180\\Tools\\Binn\\SQLCMD\.EXE',
-    'Client SDK\\ODBC\\170\\Tools\\Binn\\SQLCMD\.EXE',
+    'Join-Path \$PSScriptRoot ''Cp6\.Sqlcmd\.psm1''',
+    'Import-Module \$sqlcmdModulePath -Force',
+    'Resolve-Cp6SqlcmdPath',
     '& \$SqlcmdPath',
     'Get-FileHash.+SHA256',
     'NewGuid\(\).+Substring\(0, 8\)'
 )) {
     if ($backup -notmatch $pattern) {
         throw "CP6_DEV backup contract is missing '$pattern'."
+    }
+}
+
+foreach ($pattern in @(
+    'Client SDK\\ODBC\\180\\Tools\\Binn\\SQLCMD\.EXE',
+    'Client SDK\\ODBC\\170\\Tools\\Binn\\SQLCMD\.EXE',
+    'IsPathRooted',
+    'Test-Path.+PathType Leaf'
+)) {
+    if ($sqlcmdModule -notmatch $pattern) {
+        throw "CP6 sqlcmd resolver contract is missing '$pattern'."
+    }
+}
+
+foreach ($pattern in @(
+    'Resolve-Cp6SqlcmdPath -StandardPaths @\(\)',
+    "SqlcmdPath '\.\\sqlcmd\.exe'",
+    'missing\\sqlcmd\.exe',
+    'fallbackCandidate',
+    '7 scenarios'
+)) {
+    if ($sqlcmdTest -notmatch $pattern) {
+        throw "CP6 sqlcmd behavior test is missing '$pattern'."
     }
 }
 if ($backup -match '(?m)(?:^|\s)-P(?:\s|$)' -or $backup -match 'CP6DB') {

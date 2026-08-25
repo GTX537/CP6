@@ -4,7 +4,7 @@
 
 - 实机确认专用 Agent、Docker、Compose、宿主机 SQL Server、`CP6_DEV` 与 TCP 端点存在；根 `cp6`/`CP6DB`/`cp6_cp6-db-data` 只读核对后保持原状。
 - 创建 `C:\CP6Backups\CP6_DEV`，以显式 ACL 只授予 SQL Server 服务写入、部署 Agent 读取，以及维护身份/SYSTEM/Administrators 管理权限；未生成或删除任何 `.bak`。
-- 修复服务身份不继承交互用户 PATH 时找不到 `sqlcmd` 的门禁缺口：备份脚本和 Readiness Pipeline 会探测 PATH 与三类标准安装路径。数据安全、Readiness、DEV CD 三组合同测试及“移除 ODBC 目录 PATH 后仍能进入 Secret 门禁”的聚焦验证通过。
+- 修复服务身份不继承交互用户 PATH 时找不到 `sqlcmd` 的门禁缺口：备份脚本和 Readiness Pipeline 会探测 PATH 与三类标准安装路径。新增 7 场景无数据库副作用行为回归，覆盖 PATH、相对/缺失绝对路径、全候选缺失、标准目录回退、Secret 前置门和执行失败后的 `SQLCMDPASSWORD` 恢复；数据安全、Readiness、DEV CD 三组合同测试同步通过。
 - 当前完成项只覆盖宿主机前置与仓库修复；`cp6_dev_backup`、Azure Secret/Lock/变量、Readiness 重跑和三次手动发布尚未完成，不能描述为 DEV 已部署。
 
 ## 2026-08-25 本机 DEV 双模式发布仓库闭环
