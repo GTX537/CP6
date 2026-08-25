@@ -2,12 +2,13 @@
 
 最后更新：2026-08-25
 
-## DEV Manual Run #98 Docker OOM 与低内存构建加固（2026-08-25）
+## DEV Manual Run #98/#101 Docker OOM 与宿主机构建隔离（2026-08-25）
 
 - 继续 2/3、3/3 验收前，宿主机仅余 1.09 GiB / 6.9% 内存，预检按门禁拒绝排队；关闭 Chrome 后，12/12 次 `CP6_DEV` 独立 SQL 连接/查询通过，最低可用内存 3.57 GiB / 22.6%，无新增宿主 SQL 701/17300。
 - Manual Run #98 正确选择成功的 CI #96 / `main@c9b02c82`，但 API Docker `dotnet publish` 期间 Agent 报宿主内存已使用 96.03%。Run 在 Build 阶段人工取消，Deploy 为 Skipped，没有新备份、迁移或 DEV 候选切换，不计手动验收。
 - Docker 事件证明根 `cp6-db` 被 OOM kill 后自动重启一次，`cp6-api` 因数据库恢复累计重启两次；两者与其余根容器当前均恢复 Healthy，但“根环境未受影响”门禁已失败，不能只凭容器 ID 未变化放行。
-- `CP6.WebApi/Dockerfile` 的 publish 已固定 `--disable-build-servers`、单 MSBuild 节点、`BuildInParallel=false` 与 `UseSharedCompilation=false`；DEV CD 合同测试新增相应回归。本机同参数串行 restore/publish 已成功生成 Release 输出。自动与公网开关仍为 `false`，手动成功计数保持 1/3。
+- 低并发修复合入 `main@76d0832e` 后，自动 CI Run #99 与关闭状态的 completion Run #100 均成功；Manual Run #101 / `dev-20260825.7` 正确选择该提交，但 Docker VM 在串行 publish 时仍达到 95.83%。任务在 Build 阶段安全取消，Deploy Skipped，无新备份、迁移或 DEV 镜像切换；根 `cp6-db` RestartCount 由 1→2、`cp6-api` 由 2→3，因此仍不计验收。当前根基线分别为 StartedAt `15:06:55Z` / `15:07:03Z`。
+- DEV 候选构建已改为部署 Agent 在宿主机使用 .NET 8/Node 22 串行生成 API publish/Web dist，再由新增 runtime-only Dockerfile 封装；Web Node 堆限制 768 MiB，两个镜像仍各只构建一次并以 `--iidfile` 固定身份。提交 `72ec0e70` 的完整本机验证生成 API `sha256:bc681051...293d92` 与 Web `sha256:c81ae3ce...77e05`，专属临时目录清零，Docker VM 采样保持约 1.9 GiB 以上可用，根 API/DB 三项元数据未变且宿主 SQL 无新增 701/17300。六组契约、PowerShell 解析、差异与凭据扫描通过；GitHub R2/生产 Dockerfile 未改。自动与公网开关仍为 `false`，手动成功计数保持 1/3。
 
 ## Azure CI 与首次本机 DEV 发布外部闭环（2026-08-25）
 

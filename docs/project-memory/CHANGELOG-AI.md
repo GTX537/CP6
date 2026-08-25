@@ -2,11 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-25：DEV Docker publish 低内存加固
+## 2026-08-25：DEV 候选宿主机构建与 Docker 运行时封装
 
 - Manual Run #98 在 API Docker publish 报宿主内存使用 96.03% 后于 Deploy 前取消；没有新备份、迁移或 DEV 候选切换。Docker OOM 造成根 `cp6-db` 重启一次、`cp6-api` 累计重启两次，因此不计手动验收。
-- API Dockerfile 关闭持久 build server、限制单 MSBuild 节点并禁用项目并行/共享编译；DEV CD 合同新增四项回归，本机完整低内存 Release publish 通过。
-- 根与 DEV 健康已恢复；自动/公网开关仍关闭，手动成功计数保持 1/3，后续必须同时核对容器 ID、StartedAt 与 RestartCount。
+- API Dockerfile 关闭持久 build server、限制单 MSBuild 节点并禁用项目并行/共享编译后，Manual Run #101 仍在 Docker VM 使用率 95.83% 时取消；Deploy Skipped、无备份/迁移/候选切换，但根 `cp6-db`/`cp6-api` RestartCount 增至 2/3，因此同样不计验收。
+- DEV 候选改为部署 Agent 使用固定 .NET 8/Node 22 在 Windows 宿主机串行构建 API/Web，Docker 只以 runtime-only Dockerfile 封装预构建产物；Web Node 堆限制为 768 MiB。GitHub R2 与生产 Dockerfile/工作流不变。
+- 提交 `72ec0e70` 的本机完整构建生成并核对两个不可变 image ID，临时上下文清零；Docker VM 采样保留约 1.9 GiB 以上，根 API/DB 三项元数据不变且宿主 SQL 无新增 701/17300。自动/公网仍关闭，手动成功计数保持 1/3。
 
 ## 2026-08-25：Azure CI 与首次手动 DEV 发布外部闭环
 

@@ -26,7 +26,7 @@
 - 安装 .NET 8 SDK 和 Node.js 22。
 - 还原、构建并测试 `CP6.WebApi`、`CP6.Tests`、`CP6.Client.Tests`。
 - 执行 Vue 类型检查、Vitest 和生产构建。
-- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 负责本机 DEV 双模式学习链。Azure CI [`Run #92`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=92) 已在 `main@47ca8441` 完整成功，首次手动 DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95) 已成功；自动与公网验证开关仍保持关闭。
+- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 负责本机 DEV 双模式学习链。Azure CI [`Run #99`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=99) 已在 `main@76d0832e` 完整成功，首次手动 DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95) 已成功；自动与公网验证开关仍保持关闭。
 
 项目上下文确认 self-hosted Agent 已接通并能执行该 CI。具体 Agent 名称、在线状态和历史运行结果属于 Azure DevOps 外部运行证据，不能只靠仓库文件推断。
 
@@ -46,7 +46,7 @@
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |
 | 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；最新 Readiness [`Run #89`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=89) 验证身份、Docker、Compose、SQL TCP、`sqlcmd` 与备份目录 |
-| Azure DEV 双模式发布 | 外部配置完成，手动验收 1/3 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；自动 Run #93 安全跳过，手动 Run #95 成功。Run #98 因 Docker 构建 OOM 在 Deploy 前取消且不计数；API Docker publish 已加低内存约束。满三次前不启用自动 |
+| Azure DEV 双模式发布 | 外部配置完成，手动验收 1/3 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；自动 Run #93/#100 安全跳过，手动 Run #95 成功。Run #98/#101 证明 Docker 内 SDK 编译即使限并发仍会 OOM，均在 Deploy 前取消且不计数；候选现由宿主机 .NET 8/Node 22 串行构建、Docker 仅封装运行时产物，本机完整构建已保持根环境不变。满三次前不启用自动 |
 | 白天测试公网 | 工具已交付，切换待执行 | `cp6-public-tunnel` 只连接 `cp6-dev_default`；切换前必须显式停止旧 `cp6-cloudflared`，Pipeline 不自动切换 Cloudflare |
 | 私人本地 `cp6`/`CP6DB` | 保持独立 | DEV CD 不操作根 Compose、`CP6DB` 或 `cp6_cp6-db-data`；DEV 数据只能手动恢复为新的 `CP6DEV_IMPORT_*` 旁路库 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |

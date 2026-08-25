@@ -36,14 +36,15 @@ Azure Pipeline 变量控制行为：
 - Web：`cp6-web:dev-<完整 Git SHA>`；
 - 禁止 `latest`。
 
-所选提交在隔离 Git worktree 中构建，流水线编排脚本始终来自当前 `main`。完整 SHA Tag 用于人类检索，构建任务同时通过 Docker `--iidfile` 捕获该次构建的不可变 `sha256` image ID；部署和证据都使用这个 ID，避免另一条任务重写同名本机 Tag 后部署错镜像。当前阶段镜像只保存在这一台 Docker Desktop；跨机器或长期精确回退必须改为消费现有 GHCR 的不可变 digest，不能增加第二个 Registry 真相源。
+所选提交在隔离 Git worktree 中构建，流水线编排脚本始终来自当前 `main`。部署 Agent 使用 .NET 8 和 Node.js 22 在 Windows 宿主机上串行生成 API publish 与 Web dist，再由两个仅含运行时的 Dockerfile 分别封装镜像；SDK/Node 编译不再占用约 8 GiB 的 Docker Desktop WSL 内存。完整 SHA Tag 用于人类检索，构建任务同时通过 Docker `--iidfile` 捕获该次封装的不可变 `sha256` image ID；部署和证据都使用这个 ID，避免另一条任务重写同名本机 Tag 后部署错镜像。当前阶段镜像只保存在这一台 Docker Desktop；跨机器或长期精确回退必须改为消费现有 GHCR 的不可变 digest，不能增加第二个 Registry 真相源。
 
 ## 每次实际发布的顺序
 
 ```text
 成功 main CI Run
   → 校验 Azure Run / 完整 SHA / 当前 main / 自动或手动策略
-  → 从所选提交构建一次 commit-addressed API/Web，并捕获不可变 image ID
+  → 在宿主机从所选提交各构建一次 API/Web 产物
+  → 用 runtime-only Dockerfile 各封装一次 commit-addressed 镜像并捕获不可变 image ID
   → 进入 Azure Environment cp6-dev 的 exclusive lock
   → 锁内再次检查自动 Run 是否仍对应当前 main
   → BACKUP CP6_DEV WITH COPY_ONLY, COMPRESSION, CHECKSUM
@@ -61,7 +62,8 @@ Azure Pipeline 变量控制行为：
 
 ## 宿主机运行前检查
 
-本机同时运行浏览器、IDE、Docker、通用 CI Agent 和宿主 SQL Server，手动发布前应保留可用内存并确认
+本机同时运行浏览器、IDE、Docker、通用 CI Agent 和宿主 SQL Server，手动发布前应保留可用内存，确认
+部署 Agent Readiness 已验证 .NET 8、Node.js 22 与 npm，并确认
 `KOUSQLSERVER` 能完成真实 SQL 查询；端口监听或 Windows Service 显示 `Running` 不能替代查询验证。
 若 Application 日志出现 MSSQL 701/17300，或登录前握手/简单元数据查询超时，先停止发布并恢复 SQL
 实例，禁止连续重试 db-init。2026-08-25 的首次失败正是服务进程仍在但已无法创建新系统任务。
@@ -69,11 +71,16 @@ Azure Pipeline 变量控制行为：
 CP6 当前不使用 PolyBase/Launchpad；故障恢复后这三个依赖服务保持停止以释放内存，但 StartMode 仍为
 Automatic。是否永久禁用属于独立的宿主机管理决定，不能由 Pipeline 或本仓库脚本静默修改。
 
-Docker Desktop 当前只有约 8 GiB WSL 内存。2026-08-25 Manual Run #98 在并行 `dotnet publish`
-期间把宿主机内存使用率推到 96.03%，随后 Docker OOM 杀死并自动重启根 `cp6-db`，`cp6-api`
-也因依赖恢复而重启；该 Run 在 Deploy 前取消，不计手动验收。API Dockerfile 现固定使用单 MSBuild
-节点、关闭项目并行与共享编译服务器，合同测试会阻止这些低内存约束被删除。后续每次手动 Run 还要
-记录根七容器的 `RestartCount`，仅核对容器 ID 不足以证明根环境未受影响。
+Docker Desktop 当前只有约 8 GiB WSL 内存。2026-08-25 Manual Run #98 的并行 Docker
+`dotnet publish` 触发 OOM；加入单 MSBuild 节点、关闭项目并行/共享编译服务器后，Manual Run #101
+仍在 Docker VM 使用率 95.83% 时必须取消。两次均发生在 Deploy 前，不计手动验收，但分别导致根
+`cp6-db`/`cp6-api` 自动重启，证明只调低 Docker 内的编译并发不足以隔离根环境。
+
+DEV 候选现改为宿主机串行 restore/publish/build，再由 runtime-only Dockerfile 复制已生成产物；Web
+构建固定 `NODE_OPTIONS=--max-old-space-size=768`。提交 `72ec0e70` 的本机完整验证生成 API/Web
+不可变 image ID，清理了专属临时上下文；采样期间 Docker VM 始终保留约 1.9 GiB 以上可用内存，根
+`cp6-api`/`cp6-db` 的 ID、StartedAt、RestartCount 均未变化，宿主 SQL 无新增 701/17300。后续每次
+手动 Run 仍要记录根七容器的三项元数据，仅核对容器 ID 不足以证明根环境未受影响。
 
 ## Azure 一次性外部配置
 
@@ -120,9 +127,12 @@ SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；�
 | `#94` / `dev-20260825.2` | Manual；Failed | 否 | 备份与 VERIFYONLY 成功；宿主 `KOUSQLSERVER` 已有 701/17300 内存耗尽事件并处于退化状态，db-init 元数据查询超时，API/Web 未启动 |
 | `#95` / `dev-20260825.3` | Manual；Succeeded | **是，1/3** | SQL 服务恢复后完成新备份、迁移、不可变镜像核对、本机健康与 Pipeline Artifact 归档 |
 | `#98` / `dev-20260825.5` | Manual；Canceled | 否 | 分类通过并选择 CI #96；API publish 内存告警后人工取消，Deploy Skipped。Docker OOM 导致根 `cp6-db`/`cp6-api` 自动重启，因此该次明确不合格 |
+| `#101` / `dev-20260825.7` | Manual；Canceled | 否 | 正确选择 `main@76d0832e`；串行 Docker publish 仍把 VM 推到 95.83%，安全取消后 Deploy Skipped，无备份/迁移/DEV 镜像切换。根 `cp6-db` RestartCount 由 1→2、`cp6-api` 由 2→3，因此明确不合格 |
 
 Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
-分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。根 `cp6` 七个容器 ID 与 Run 前一致。
+分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。Run #101 恢复后的根基线为
+`cp6-db` RestartCount `2` / StartedAt `2026-08-25T15:06:55Z`、`cp6-api` RestartCount `3` /
+StartedAt `2026-08-25T15:07:03Z`；接下来的合格 Run 必须保持这组基线不变。
 当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=false`、`CP6_DEV_PUBLIC_VERIFICATION_ENABLED=false`。
 
 每次手动发布都必须保存：

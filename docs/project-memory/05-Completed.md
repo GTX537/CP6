@@ -1,10 +1,11 @@
 # 已完成能力与近期里程碑
 
-## 2026-08-25 DEV Docker 低内存构建加固
+## 2026-08-25 DEV 候选宿主机构建隔离
 
 - Manual Run #98 在 API publish 内存达到 96.03% 后于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。Docker OOM 造成根 `cp6-db`/`cp6-api` 自动重启，因此该 Run 不计验收并保留为失败证据。
-- API Docker publish 改为单 MSBuild 节点并关闭项目并行、共享编译服务器；DEV CD 合同覆盖四项约束，本机串行 restore 与完整 Release publish 通过。
-- 根 `cp6` 与 `cp6-dev` 均已恢复 Healthy；自动/公网仍关闭，手动验收仍为 1/3。
+- API Docker publish 改为单 MSBuild 节点并关闭项目并行、共享编译服务器后，Manual Run #101 仍在 Docker VM 95.83% 使用率时于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。根 `cp6-db`/`cp6-api` RestartCount 分别增至 2/3，因此同样不计验收。
+- DEV 候选现由部署 Agent 使用 .NET 8/Node 22 在 Windows 宿主机串行构建，Docker 只用两个 runtime-only Dockerfile 封装 publish/dist；Web 堆上限 768 MiB，Readiness 与 DEV CD 均固定工具版本并有合同覆盖。生产 R2 Dockerfile/工作流未改。
+- 提交 `72ec0e70` 的本机完整构建成功生成 API/Web 不可变 image ID，临时上下文清零；Docker VM 采样始终保留约 1.9 GiB 以上，根 API/DB 的 ID、StartedAt、RestartCount 不变，宿主 SQL 无新增 701/17300。六组契约、PowerShell 解析、差异与凭据扫描通过；自动/公网仍关闭，手动验收仍为 1/3。
 
 ## 2026-08-25 Azure CI 与首次手动 DEV 发布外部闭环
 
