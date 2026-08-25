@@ -22,12 +22,11 @@
 仓库内可直接验证的 Azure CI 配置位于根目录 [`azure-pipelines.yml`](../../azure-pipelines.yml)：
 
 - `main` 提交触发；`pr: none`，当前不承担 PR 验证。
-- 使用 Azure DevOps `Default` self-hosted agent pool；YAML 没有绑定具体 Agent 名称。为避免与同机 SQL/Docker 争抢内存，.NET restore 禁止并行，build/test 固定单 MSBuild 节点并关闭持久/共享编译服务器，Vue 单测固定两个 worker。
-- 安装 .NET 8 SDK 和 Node.js 22。
-- 还原、构建并测试 `CP6.WebApi`、`CP6.Tests`、`CP6.Client.Tests`。
-- 执行 Vue 类型检查、Vitest 和生产构建。
-- 将同一次已通过检查的 API/Web 输出封装为带版本、完整 SHA 和逐文件 SHA-256 的 `cp6-dev-runtime` Pipeline Artifact；它不是 Registry 镜像或生产候选。
-- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 下载并验证所选 CI Artifact 后只做 runtime-only 镜像封装。Azure CI [`Run #102`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=102) 已在 `main@f6484591` 完整成功；低内存分支 [`Run #112`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=112) 已完整通过并发布 Runtime Artifact，但分支 Artifact 不可部署，仍须取得新的成功 `main` Run。首次手动 DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95) 已成功；自动与公网验证开关仍保持关闭。
+- 使用 Azure DevOps `Default` self-hosted agent pool；YAML 没有绑定具体 Agent 名称。该 Agent 只执行合同、受认证下载、摘要/清单验证和 Azure Artifact 发布，不再运行 .NET/Node 编译。
+- GitHub `.github/workflows/client-contract.yml` 在 GitHub-hosted Runner 完成 .NET、客户端、OpenAPI、Web、Android 与 R2 source 门禁，并生成名称含完整 Git SHA、内部逐文件 SHA-256 的 `cp6-dev-runtime-<sha>`；保留期为 3 天。
+- Azure 只接受同一仓库、同一完整 SHA、指定工作流路径、`push`/`workflow_dispatch` 事件且结论为 `success` 的未过期 Artifact；下载归档还必须匹配 GitHub SHA-256，解压后再次验证内部 manifest。
+- Azure [`Run #116`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=116) 因错误查询非仓库专属 Checkout extraheader 在下载前失败，Publish 被跳过；修复后 [`Run #117`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=117) 在分支 SHA `489c99be...` 成功下载、验证并发布 Azure `cp6-dev-runtime`。SQL 与公网七容器基线未变。分支 Artifact 仍不可部署，须取得新的成功 `main` Run。
+- 该桥自身不构建/推送生产镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 下载并验证所选成功 `main` Azure Artifact 后只做 runtime-only 镜像封装。首次手动 DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95) 已成功；自动与公网验证开关仍保持关闭。
 
 项目上下文确认 self-hosted Agent 已接通并能执行该 CI。具体 Agent 名称、在线状态和历史运行结果属于 Azure DevOps 外部运行证据，不能只靠仓库文件推断。
 
@@ -42,7 +41,7 @@
 
 | 层次 | 状态 | 准确描述 |
 | --- | --- | --- |
-| CI 代码验证 | 已配置并已接通 | Azure self-hosted Agent 可执行后端/客户端测试与 Web 检查 |
+| CI 代码验证 | 已配置并已接通 | GitHub-hosted `client-contract` 执行完整编译/测试；Azure self-hosted Agent 只桥接经 SHA/摘要验证的运行包 |
 | 发布制品 | Azure 未完成；GitHub R2 已有实现 | Azure 尚未产出 `cp6-api` / `cp6-web` 镜像或不可变清单 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |

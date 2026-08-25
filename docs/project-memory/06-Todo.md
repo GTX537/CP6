@@ -2,9 +2,9 @@
 
 ## P0：白天临时家庭测试环境的外部边界
 
-- #108 的陈旧退出码假红已修复；#109/#111 证明默认 MSBuild 并行度在共用本机上仍不安全，#110 证明当前组织没有可用 hosted parallelism。低内存分支 #112 已完整成功并发布哈希 Artifact，但分支 Run 不可作为 DEV 候选。下一步先合入低内存合同并要求 `main` CI 在同一 SQL/容器门禁下成功、发布 `cp6-dev-runtime`，之后才排队两次 Manual DEV；#108–#111 均不计验收。
+- #108 假红已修；#109/#111/#113/#115 证明本机完整编译与 SQL/Docker 共存不安全，#110 证明 Azure 组织没有 hosted parallelism。编译已迁至 GitHub hosted Runner，Azure #117 已在分支真实完成受认证下载、来源/摘要/manifest 验证和 Artifact 发布且不影响 SQL/公网容器。下一步合入并要求 `main` 自己成功产出/桥接 `cp6-dev-runtime`，之后才排队两次 Manual DEV；上述失败/取消 Run 均不计验收。
 - 本机必须保持开机、未睡眠，且 Docker Desktop 与网络正常；这是当前白天临时测试方案的可用性边界。若需要夜间、无人值守或稳定 SLA，仍须另选真实云主机/托管容器平台并完成生产部署设计，不能把本机 Tunnel 描述为高可用云部署。
-- 首次手动 `cp6-dev` 已由 Run #95 成功发布，但验收仅完成 1/3。Run #98/#101 的 Docker 编译和 Run #107 的宿主重复 publish 均触发内存/SQL 门禁，Deploy 前取消且不计数；#106 在 YAML 解析前失败也不计数。候选现改为复用所选成功 CI 的哈希 Runtime Artifact，DEV 只封装镜像；先合入并确认新 CI 实际产出/下载 Artifact，再完成两次各有独立备份、迁移、镜像身份和 Pipeline Artifact 的成功 Manual Run。每次运行前确认宿主 `KOUSQLSERVER` 可执行真实查询且没有新 701/17300，并以根 `cp6-db` RestartCount 2 / StartedAt `15:06:55Z`、`cp6-api` RestartCount 3 / StartedAt `15:07:03Z` 及其余五容器为基线，证明 ID、StartedAt、RestartCount 前后不变；基础 CI 结束后还要等待旧 DEV API/SQL 稳定。`CP6_DEV_AUTO_DEPLOY_ENABLED` 继续保持 `false`。
+- 首次手动 `cp6-dev` 已由 Run #95 成功发布，但验收仅完成 1/3。先合入远程构建/轻量桥并确认新 `main` Artifact，再完成两次各有独立备份、迁移、镜像身份和 Pipeline Artifact 的成功 Manual Run。每次运行前确认宿主 `KOUSQLSERVER` 可执行真实查询且没有新 701/17300，并以根 `cp6-db` RestartCount 2 / StartedAt `15:06:55Z`、`cp6-api` RestartCount 3 / StartedAt `15:07:03Z` 及其余五容器为基线，证明 ID、StartedAt、RestartCount 前后不变。`CP6_DEV_AUTO_DEPLOY_ENABLED` 继续保持 `false`。
 - 首次切换 `cp6.uk` 前，运行 `Invoke-Cp6PublicTunnel.ps1 -Action Validate`、显式停止旧 `cp6-cloudflared`、启动 `cp6-public-tunnel` 并核对完整 SHA；确认后才设置 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED=true`。旧/新 connector 禁止同时运行。
 - 给同事开放测试前，确认 `cp6-dev` 的 `19991`/`18080` 与公网 release identity 一致；同事只使用 `https://cp6.uk` 的应用账号，不共享 `.env`、Tunnel JSON、数据库/RabbitMQ/Kafka 管理端口或基础设施凭证。根 `cp6` 继续作为私人开发环境。
 - Cloudflare Workers 的 `estimate` Git 集成仍需在 Cloudflare 控制台单独断开或改正 Build 配置。它与 `cp6-cloudflared` Tunnel 不在同一部署链；当前家庭测试服务器不依赖 `estimate`，也没有修复其外部构建失败。
@@ -51,7 +51,7 @@
 - 连续完成三次手动 Run，保存 Build/Run ID、Environment history、database-backup/deployment evidence，并证明根 `cp6`/`CP6DB` 未受影响；三次均成功后才启用自动。外部证据齐全前只能称为“仓库能力闭环”，不能称为“DEV 自动部署已运行”。
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
-- 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。
+- 当前 Azure `azure-pipelines.yml` 是 `Default` self-hosted 轻量 Artifact 桥、`main` trigger、`pr: none`；完整编译/测试在 GitHub `client-contract`。仍需补 Agent 运维边界和 PR 门禁归属，不把 Artifact 绿灯描述为上线。
 - 下一张 CRM 相关任务卡为 M0/R00：把 CRM V1 已锁定的 GHCR/R2 唯一权威、候选清单、Azure 非权威影子边界、等价矩阵和回退写入 ADR；不得重新选择 Registry。ACR 迁移与其他产品的长期 Azure Registry 决策独立立项。
 - 决策通过后按独立任务推进：Docker Release（版本/SHA、provenance、SBOM、扫描、digest）→ DEV Environment/健康与身份核对 → UAT → PROD 资源侧审批 → 回滚/前滚演练 → AKS 多仓。
 - 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。

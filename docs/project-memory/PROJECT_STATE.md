@@ -2,6 +2,13 @@
 
 最后更新：2026-08-25
 
+## GitHub 远程构建与 Azure 轻量 Artifact 桥（2026-08-25）
+
+- 本机完整编译在 #113/#115 仍触发宿主内存或 SQL 门禁；Azure 组织 #110 又无 hosted parallelism，因此基础编译迁至 GitHub `client-contract.yml`。它在 GitHub-hosted Runner 完成 .NET、客户端、OpenAPI、Web、Android 与 R2 source 门禁，生成名称含完整 SHA、内部含逐文件 SHA-256 的 3 天 Runtime Artifact。
+- Azure `azure-pipelines.yml` 现只执行合同、使用授权 Checkout 凭证下载、核对工作流来源/事件/结论/完整 SHA/归档 SHA-256、验证 ZIP 路径与内部 manifest，再发布 Azure `cp6-dev-runtime`；不在本机运行 .NET/Node，也不部署。
+- GitHub Run 32879704210 在 `f18e4610...` 首次完整成功并生成约 49.8 MiB 产物。Azure #116 因错误查询非仓库专属 extraheader 在下载前失败、Publish skipped；修复为仓库专属键后，GitHub Run 32881647447 在 `489c99be...` 完整成功，Azure #117 随后成功完成下载、双层验证与发布。SQL 与公网七容器 ID/StartedAt/RestartCount 不变。
+- 分支 Artifact 不能作为 DEV 候选；下一步合入后取得成功 `main` GitHub/Azure Artifact，再完成两次独立 Manual DEV。自动与公网开关继续为 `false`，计数仍为 1/3，GitHub R2/GHCR 生产权威未变。
+
 ## DEV Manual Run #98/#101/#107 内存失败与 CI Artifact 隔离（2026-08-25）
 
 - Artifact 主线 CI #109/#111 均证明 `Default` Pool 的默认 MSBuild 并行度会在本机 SQL/Docker 共存时形成不可接受的内存竞争：#109 在 API build 工作集约 2.97 GiB、宿主可用约 0.96 GiB时取消；用户释放内存后重跑的 #111 仍达到约 4.63 GiB、可用 1.24 GiB，按门禁取消。两次都没有 Artifact 或 DEV completion/deploy，备份仍为两份，根 API/DB 与旧 DEV API 的 ID、StartedAt、RestartCount 不变，SQL 随取消立即恢复。

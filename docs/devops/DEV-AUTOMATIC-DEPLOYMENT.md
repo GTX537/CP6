@@ -31,12 +31,12 @@ Azure Pipeline 变量控制行为：
 
 发布身份固定为：
 
-- Release version：`0.0.0-dev.<CI Run ID>`；
+- Release version：`0.0.0-dev.<完整 Git SHA>`；
 - API：`cp6-api:dev-<完整 Git SHA>`；
 - Web：`cp6-web:dev-<完整 Git SHA>`；
 - 禁止 `latest`。
 
-基础 CI 在完成 API/Web 构建和全部测试后，以 `dotnet publish --no-build` 收集已经通过检查的 API 输出，并复用同一次 Vue build 的 dist；随后生成带版本、完整 Git SHA、逐文件长度和 SHA-256 的 `cp6-dev-runtime` Pipeline Artifact。DEV Pipeline 只下载所选 CI Run 的这一份 Artifact，重新核对身份、完整文件集合和哈希，再由两个仅含运行时的 Dockerfile 封装镜像，不重复运行 .NET/Node 编译。所选提交仍在隔离 Git worktree 中物化，流水线编排脚本始终来自当前 `main`。完整 SHA Tag 用于人类检索，封装任务同时通过 Docker `--iidfile` 捕获不可变 `sha256` image ID；部署和证据都使用这个 ID，避免另一条任务重写同名本机 Tag 后部署错镜像。当前阶段镜像只保存在这一台 Docker Desktop；跨机器或长期精确回退必须改为消费现有 GHCR 的不可变 digest，不能增加第二个 Registry 真相源。
+GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 source 门禁后生成与完整 Git SHA 绑定、含逐文件长度和 SHA-256 的 Runtime Artifact。Azure 基础流水线只接受同仓库、同 SHA、指定成功工作流的未过期产物，验证 GitHub 归档摘要和内部 manifest 后转存为 `cp6-dev-runtime` Pipeline Artifact。DEV Pipeline 只下载所选成功 `main` Azure Run 的这一份 Artifact，再次核对身份、完整文件集合和哈希，由两个仅含运行时的 Dockerfile 封装镜像，不重复运行 .NET/Node 编译。所选提交仍在隔离 Git worktree 中物化，流水线编排脚本始终来自当前 `main`。完整 SHA Tag 用于人类检索，封装任务同时通过 Docker `--iidfile` 捕获不可变 `sha256` image ID；部署和证据都使用这个 ID，避免另一条任务重写同名本机 Tag 后部署错镜像。当前阶段镜像只保存在这一台 Docker Desktop；跨机器或长期精确回退必须改为消费现有 GHCR 的不可变 digest，不能增加第二个 Registry 真相源。
 
 ## 每次实际发布的顺序
 
@@ -62,8 +62,8 @@ Azure Pipeline 变量控制行为：
 
 ## 宿主机运行前检查
 
-本机同时运行浏览器、IDE、Docker、通用 CI Agent 和宿主 SQL Server，手动发布前应保留可用内存，确认
-部署 Agent Readiness 已验证 .NET 8、Node.js 22 与 npm，并确认
+本机同时运行浏览器、IDE、Docker、轻量 Artifact 桥 Agent 和宿主 SQL Server，手动发布前应保留可用内存，确认
+部署 Agent Readiness 已验证 Docker/Compose 与 SQL 工具，并确认
 `KOUSQLSERVER` 能完成真实 SQL 查询；端口监听或 Windows Service 显示 `Running` 不能替代查询验证。
 若 Application 日志出现 MSSQL 701/17300，或登录前握手/简单元数据查询超时，先停止发布并恢复 SQL
 实例，禁止连续重试 db-init。2026-08-25 的首次失败正是服务进程仍在但已无法创建新系统任务。
@@ -85,8 +85,7 @@ Manual #106 因错误把 Run ID 当成 pipeline resource 版本而在 YAML 解�
 候选阶段现进一步改为复用 CI Artifact，彻底删除 DEV 中的第二次 .NET/Node 编译。真实 145,966,387
 bytes API 与 7,473,275 bytes Web 产物本机验证为 587 个逐文件哈希，约 17 秒封装出两个不可变 image
 ID；过程中根 API/DB 和旧 DEV API 的 ID、StartedAt、RestartCount 均未变化，`CP6_DEV` 仍 ONLINE，
-最新迁移仍为 `20260811030108_CrmFoundation`。后续每次手动 Run 仍要记录根七容器三项元数据；基础
-CI 本身仍包含完整编译，因此合并后的首次 CI 结束后必须等待宿主 SQL 与 DEV API 稳定再开始验收。
+最新迁移仍为 `20260811030108_CrmFoundation`。后续每次手动 Run 仍要记录根七容器三项元数据。#113/#115 进一步证明即使降低并发或拆项目，本机完整编译仍会压迫 SQL；因此编译已迁到 GitHub hosted Runner。Azure #116 在下载前安全失败，#117 已成功完成受认证下载、双层校验与 Artifact 发布，且 SQL/公网七容器基线不变。
 
 ## Azure 一次性外部配置
 

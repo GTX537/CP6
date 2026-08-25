@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-25 GitHub 远程构建与 Azure Artifact 桥分支验证
+
+- `client-contract.yml` 现可手动运行并在 GitHub-hosted Runner 完成 .NET/客户端/OpenAPI/Web/Android/R2 source 门禁，发布与完整 Git SHA 绑定、3 天保留的 DEV Runtime Artifact。
+- Azure 基础流水线不再本机编译；它使用授权 Checkout 凭证，验证 GitHub 工作流来源、成功结论、完整 SHA、归档 SHA-256、ZIP 路径和内部逐文件 manifest 后转存 Azure `cp6-dev-runtime`。
+- Azure #116 在下载前失败并跳过 Publish，定位到 extraheader 查询缺少仓库路径；修复后 GitHub Run 32881647447 与 Azure #117 真实成功。全过程 SQL 与公网七容器基线未变，无部署副作用。main 与两次 Manual DEV 验收仍待完成。
+
 ## 2026-08-25 DEV 候选 CI Artifact 隔离
 
 - 默认 self-hosted CI 在 #109/#111 两次触及本机内存/SQL门禁后均于 Artifact/Deploy 前取消；#110 证明当前 Azure 组织没有 hosted parallelism，未开启计费。低内存分支 #112 以非并行 restore、单节点 build/test、禁用持久/共享编译服务器和两个 Vue test worker 完整成功，发布哈希 Runtime Artifact；最低观测可用内存约 2.22 GiB，SQL 和根/旧 DEV 容器基线不变。该分支只验证实现，合并前不作为 DEV 候选。

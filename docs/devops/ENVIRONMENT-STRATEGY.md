@@ -54,9 +54,9 @@ cp6-prod-lab
 
 ## Agent 与网络边界
 
-当前 Azure CI 在 `Default` self-hosted pool 上运行。YAML 没有绑定 Agent 名称，因此项目文档不把聊天中的机器名当成仓库事实。
+当前 GitHub `client-contract` 在 hosted Runner 完成编译/测试；Azure `Default` self-hosted pool 只执行受认证 Runtime Artifact 桥接。YAML 没有绑定 Agent 名称，因此项目文档不把聊天中的机器名当成仓库事实。
 
-CI Agent 只需要源码、包源和测试依赖访问。它不应拥有 PROD Secret、生产数据库写权限或生产主机管理权限。
+Azure 桥 Agent 只需要源码 Checkout、GitHub Artifact 读取和 Azure Artifact 发布权限。它不应拥有 DEV/PROD Secret、生产数据库写权限或生产主机管理权限；部署由独立 `CP6-Deploy` 身份承担。
 
 部署建议使用以下任一受控模式，并在实现任务中固定一种：
 
