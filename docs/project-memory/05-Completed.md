@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-24 Kafka 生产者安全退出
+
+- 修复 Kafka Singleton 关闭顺序：`Flush` 与 producer handle 释放分别保护，刷新失败也保证继续释放；重复 `Dispose()` 幂等，不重复等待或释放。
+- 关闭阶段的 Flush/Dispose 异常不会让 WebApi Host 退出失败，但会保留 Warning；5 秒刷新后仍未发送的队列长度也会被记录，避免原 WIP 静默吞错。
+- 新增 4 个生命周期行为测试；聚焦 4/4、`CP6.Tests` 全量 2,938 passed / 19 项既有环境门禁 skipped / 0 failed。
+
 ## 2026-08-24 日期时间规范化恢复与 P4/P5 关闭
 
 - 确认 P4 的通配 Vue SFC shim 对当前 Vue 3.5 + TypeScript 6 + `vue-tsc` 3.2 工具链并非必需；最新 `main` 在无 shim 时干净类型检查通过，因此不恢复会引入 `any` 的旧声明。

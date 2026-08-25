@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-24：Kafka 生产者安全退出修复
+
+- 将 Kafka Singleton 的限时 Flush 与 producer Dispose 拆成独立失败边界，确保刷新异常后仍释放底层 handle，并通过幂等门防止重复关闭。
+- 关闭异常继续保持旁路语义，不让 WebApi Host 因 Kafka 清理失败而退出失败；同时对刷新异常、释放异常和 5 秒后剩余消息数记录 Warning，替代旧 WIP 的静默吞错。
+- 新增 4 个生命周期回归；聚焦 4/4、`CP6.Tests` 全量 2,938 passed / 19 skipped / 0 failed。
+
 ## 2026-08-24：日期时间规范化恢复与 P4/P5 决策
 
 - P4 经最新 `main` 干净类型检查确认无需恢复 `env.d.ts` 的通配 `*.vue` 声明；当前 Vue/TypeScript/`vue-tsc` 工具链原生处理 SFC，旧 `any` shim 仅保留在分支整顿归档。
