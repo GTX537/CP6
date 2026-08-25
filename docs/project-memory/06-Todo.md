@@ -66,7 +66,7 @@
 
 ## P0：CRM V1 端到端交付
 
-- 先评审 `docs/crm/CRM-V1-PRD.md` v0.1；确认长期 V1 采用 2026-08-14 Frozen SaaS 四仓边界，首个可见结果采用 Lead Pilot C 分栏工作台，并在批准 commit 中记录结论。未批准前 PRD 保持 Draft。
+- 先联合评审 `docs/crm/CRM-V1-PRD.md` v0.2 与 `docs/crm/CRM-COMPETITIVE-ANALYSIS.md`；确认长期 V1 采用 2026-08-14 Frozen SaaS 四仓边界、`CRM-COMP-001`～`007` 的产品取舍，以及 Lead Pilot C 分栏工作台为首个可见结果，并在批准 commit 中记录结论。未批准前 PRD 保持 Draft。
 - 完成 Draft PR #8 的 Public Contract Sync，消除当前公开三仓 Approved 文档与私有 Frozen 四仓产品范围的冲突。不得在同步前选择性实现 Portal、商业化或旧排除项。
 - 完成 M0/R00 ADR，冻结 GHCR/R2 权威、Azure SQL/Emergency Intake、System Manifest 整体回退，并取得 ProgramOwner 及各专业证据 DRI、Pilot cohort 与 Observation Gate；缺失即 No-Go。
 - 当前 `main` 的 20 表、状态机、迁移、6 个禁用菜单和 22 个动作只作为迁移源与兼容语义；私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only，不得把仓库存在或菜单种子描述为应用开工。

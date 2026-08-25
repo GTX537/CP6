@@ -62,6 +62,13 @@
 - Azure 外部资源闭环：`CP6 DEV CD` Definition ID `4`、定向 Pool/Variable Group/Environment 权限、Exclusive lock、两项 `false` 开关、最小权限 `cp6_dev_backup`/锁定 Secret，以及 Readiness Run #89 全部完成。自动 Run #93 已证明关闭状态只分类并跳过部署。
 - Manual Run #94 正确失败关闭：先完成 CHECKSUM/VERIFYONLY 备份，再因宿主 SQL 已有 701/17300 内存耗尽事件而在 db-init 超时；未启动 API/Web。重启 `KOUSQLSERVER` 后，Manual Run #95 成功发布 `0.0.0-dev.92` / 完整 SHA `47ca8441...9dbe9c18`，健康、迁移、不可变镜像和 `cp6-dev-evidence` 均通过。
 - Run #95 新备份长度 2,453,504 bytes、SHA-256 `58c6ff73...5079c23`、VERIFYONLY passed。根 `cp6` 七个容器与 `CP6DB` 未变；自动/公网开关继续关闭，当前手动验收计数为 1/3。
+## 2026-08-25 CRM 公开产品对比与 PRD v0.2
+
+- 新增 `docs/crm/CRM-COMPETITIVE-ANALYSIS.md`，以 Salesforce、HubSpot、Dynamics 365、Pipedrive、Zoho、Odoo、SAP Sales Cloud、纷享销客和销售易的官方公开资料为证据，归纳轻量销售、增长平台、企业平台、ERP 邻接和中国企业连接型五类产品。
+- 将竞品观察冻结为 `CRM-COMP-001`～`007` 决策，明确 Lead Pilot 行动优先、稳定对象/状态、来源与 SLA、CRM/ERP 成交权威、公海/连接器 VNext、AI 权限边界和不按 Lead 制造漏记激励。
+- `CRM-V1-PRD.md` 升为 v0.2 并建立竞品结论到现有 PRD ID 的追踪；状态仍为 Draft，Public Contract Sync、M0、业务代码和上线状态均未改变。
+
+## 2026-08-24 CRM V1 产品需求草案
 
 ## 2026-08-25 DEV 首次运行前置审计与 sqlcmd 可发现性修复
 

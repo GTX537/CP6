@@ -54,6 +54,12 @@
 - Manual Run #95 成功发布 `0.0.0-dev.92`：API/Web 均对应完整 SHA `47ca8441898af69d1e66bc1acb6c51129dbe9c18`，`19991` live/ready 与 `18080` release identity 一致，最新迁移为 `20260811030108_CrmFoundation`。新备份 `CP6_DEV_20260825_123030_332_9b7cd05d_UTC.bak` 为 2,453,504 bytes，SHA-256 `58c6ff73...5079c23`，CHECKSUM/VERIFYONLY 通过；`cp6-dev-evidence` 已发布。
 - 根 `cp6` 七个容器 ID、Docker `CP6DB` 与既有 Cloudflare connector 全程未变。当前口径是手动 DEV 验收 **1/3**；自动与公网验证仍关闭，未切换 Tunnel，另两次成功 Run、宿主机内存治理和公网身份验收仍是后续门禁。
 
+## CRM 公开产品对比与 PRD v0.2（2026-08-25）
+
+- `docs/crm/CRM-COMPETITIVE-ANALYSIS.md` 已对比 Salesforce、HubSpot、Dynamics 365、Pipedrive、Zoho、Odoo、SAP Sales Cloud、纷享销客和销售易，按获客、Lead 执行、客户/商机、报价成交、ERP 权威、治理扩展及商业模式建立同口径分析。
+- 竞品研究没有扩大 V1：`CRM-COMP-001`～`007` 固定 Lead Pilot 行动优先、稳定对象/状态、来源与 SLA、CP6 ERP/ExternalEvidence 成交权威，并把公海、企微/钉钉、邮件/日历、移动拜访、评分和 AI 保留为后续受控扩展。
+- `CRM-V1-PRD.md` 已升为 v0.2，并把竞品结论映射到目标、旅程、前端、后端、升级和验收合同。它仍是产品评审草案；当前代码、Public Contract Sync、M0 `No-Go`、设计伙伴与上线门禁状态均未改变。
+
 ## 本机 DEV 外部首次运行就绪审计（2026-08-25）
 
 - 只读审计确认 Docker Desktop 29.3.1、Compose 5.1.1、`MSSQL$KOUSQLSERVER` 和专用 Azure Agent `vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS` 正常运行；`CP6_DEV` 已存在，根 `cp6` 七个容器、`CP6DB` 与 `cp6_cp6-db-data` 保持运行且未被修改。

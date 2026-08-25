@@ -1,13 +1,14 @@
 # CP6 CRM V1 产品需求文档
 
 - 文档 ID：`CP6-CRM-V1-PRD`
-- 版本：`0.1`
+- 版本：`0.2`
 - 状态：**Draft for Product Review**
-- 日期：2026-08-24
+- 日期：2026-08-25
 - 产品决策源：[`CP6-SAAS-V1` Frozen 产品主档](https://github.com/GTX537/CP6.CRM/blob/main/docs/product/CP6-SAAS-V1-PRODUCT-FREEZE.md)
 - 产品决策摘要：`e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`
 - 工程约束源：[`CRM-V1-EXECUTABLE-SPEC.md`](./CRM-V1-EXECUTABLE-SPEC.md) 与私有仓 `CP6-SAAS-V1-SYSTEM-SPEC` Candidate
 - 当前实现基线：[`CRM-V1-SPEC.md`](./CRM-V1-SPEC.md)
+- 公开产品研究基线：[`CRM-COMPETITIVE-ANALYSIS.md`](./CRM-COMPETITIVE-ANALYSIS.md)
 
 ## 0. 文档地位与使用规则
 
@@ -65,6 +66,20 @@ CRM V1 必须让用户从一条真实需求走到合法成交依据，并让管�
 | 移动 | 不存在 | React Native 功能等价客户端 | 在 Web GA 后 30 日内完成移动 GA |
 | 商业化 | 当前 CRM Foundation 不含 Portal/Billing | Portal 为 Commerce、Billing、Entitlement 权威 | CRM 只消费版本化 Entitlement Snapshot |
 | 发布 | Foundation 测试通过，不等于产品完成 | 四仓同 digest、真实门禁和采用证据 | 菜单、部署或技术绿灯都不能单独关闭 Epic |
+
+### 2.1 公开产品研究到 CP6 决策
+
+公开 CRM 研究只用于检验产品取舍，不改变 Frozen 产品主档和本 PRD 的权威顺序。完整证据、调研日期和官方来源见 [`CRM-COMPETITIVE-ANALYSIS.md`](./CRM-COMPETITIVE-ANALYSIS.md)。
+
+| 决策 ID | 公开产品观察 | CP6 决策 | V1 影响 |
+| --- | --- | --- | --- |
+| `CRM-COMP-001` | 轻量 CRM 通过活动、逾期和下一步行动缩短首次价值时间 | 第一可见结果保持 Lead Pilot 行动队列，不先做 Dashboard | 固定 `PRD-GOAL-002`、`PRD-UI-001`～`008` |
+| `CRM-COMP-002` | 企业 CRM 依靠任意对象、工作流和生态扩张，但实施治理成本高 | V1 使用稳定对象、状态和原因 code，扩展走版本化合同 | 任意对象、状态、脚本继续是非目标 |
+| `CRM-COMP-003` | 增长型和 ERP 邻接型 CRM 都把入站来源连接到 Lead/Opportunity | Website/Manual/Import 统一进入可审计来源、SLA 和活动链 | 固定旅程 A～D 和来源/SLA KPI |
+| `CRM-COMP-004` | CRM 与 ERP 越接近，越需要明确报价、订单和财务权威 | CRM 拥有售前意图；CP6 ERP 或 External Evidence 提供 Won 权威 | 固定数据主权和 Accepted/Won 守卫 |
+| `CRM-COMP-005` | 国内企业 CRM 和大型套件重视公海、企微/钉钉、渠道和移动拜访 | 这些能力保留为 VNext 连接器/协作扩展，不阻塞 Lead Pilot | 不扩大 V1 首个切片 |
+| `CRM-COMP-006` | 市场正把 AI 加入摘要、评分、预测和销售动作 | AI 不拥有权限、状态、价格或成交权威；V1 不做 AI | 后续 AI 仍须调用同一受守卫命令并由用户确认 |
+| `CRM-COMP-007` | 市场主要按席位和能力分层，再叠加使用量、实施或 AI 成本 | 商业模型由 Portal 冻结；不得按 Lead 数量制造漏记激励 | 价格保持 TBD，CRM 只消费 Entitlement Snapshot |
 
 ## 3. 目标、非目标与成功边界
 
@@ -653,6 +668,7 @@ PRD requirement
 ## 相关文档
 
 - [CRM 文档入口](./README.md)
+- [CRM 公开产品对比与业务决策基线](./CRM-COMPETITIVE-ANALYSIS.md)
 - [CRM 产品框架](./CRM-PRODUCT-FRAMEWORK.md)
 - [CRM V1 可执行工程规格](./CRM-V1-EXECUTABLE-SPEC.md)
 - [CRM V1 Foundation 基线](./CRM-V1-SPEC.md)

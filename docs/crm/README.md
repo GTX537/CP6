@@ -4,6 +4,7 @@
 | --- | --- | --- |
 | [CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md) | Complete public synchronization contract | 脱敏同步私有 Frozen 产品与 Accepted R00 的四仓边界、领域/API/事件、安全、发布和 M0 开工规则 |
 | [CRM V1 产品需求文档](./CRM-V1-PRD.md) | Draft for Product Review | 对齐 Frozen SaaS V1，定义前端效果、后端逻辑、状态/权限/失败语义、验收和升级边界 |
+| [公开产品对比与业务决策基线](./CRM-COMPETITIVE-ANALYSIS.md) | Product research baseline | 对比 9 个公开 CRM 产品，归纳市场分型、CRM 业务主链、CP6 取舍、V1/VNext 和商业验证假设 |
 | [CRM M0 Readiness](./CRM-M0-READINESS.md) | No-Go gate mirror | DEC-000 至 DEC-009、唯一 ProgramOwner 模型、专业证据、分支保护和开工关闭公式 |
 | [CRM R00 发布权威镜像](../devops/adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) | Private source Accepted / public mirror Complete | GHCR/GitHub R2 唯一权威、CandidateLocator、精确对象身份、四仓 Manifest 和回退 |
 | [CRM 产品框架](./CRM-PRODUCT-FRAMEWORK.md) | Historical planning baseline | 2026-08-11 至 08-13 的产品规划输入；不再作为新实施权威 |

@@ -68,6 +68,13 @@
 - `CP6 DEV CD`、定向 Pool/Variable Group/Environment 权限、Exclusive lock、两项关闭开关、`cp6_dev_backup` Secret/权限和 Readiness Run #89 已完成；completion Run #93 成功证明自动关闭时 Build/Deploy 安全跳过。
 - Manual Run #94 在备份通过后因宿主 SQL Server 已有 701/17300 内存耗尽事件而失败关闭；重启数据引擎后，Manual Run #95 成功发布 `0.0.0-dev.92` / `47ca8441...9dbe9c18`，备份、迁移、不可变镜像、本机健康与证据 Artifact 均验证通过。
 - 根 `cp6`/`CP6DB`/旧 Tunnel 未修改；自动和公网验证仍关闭，当前手动 DEV 验收为 1/3，未宣称 UAT/PROD 或公网切换完成。
+## 2026-08-25：CRM 竞品分析与 PRD v0.2
+
+- 新增 `docs/crm/CRM-COMPETITIVE-ANALYSIS.md`，使用 9 个公开 CRM 的官方产品和价格页面建立市场分型、业务主链、横向能力及商业成本假设。
+- 新增 `CRM-COMP-001`～`007` 决策追踪，将行动优先 Lead Pilot、稳定语义、来源/SLA、CRM/ERP 权威、VNext 连接器、AI 边界和套餐原则映射到 PRD。
+- `CRM-V1-PRD.md` 升为 v0.2，仍为 `Draft for Product Review`；本次只补产品研究和决策依据，不改变 M0 `No-Go`、Public Contract Sync 或实现状态。
+
+## 2026-08-24：CRM V1 产品需求草案
 
 ## 2026-08-25：DEV 首次运行前置审计与 sqlcmd 路径修复
 
