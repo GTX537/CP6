@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## CRM V1 PRD 精确摘要审批候选（2026-08-26）
+
+- `docs/crm/CRM-V1-PRD.md` v0.2 已迁移到最新 `main`，与 `CRM-COMP-001`～`007` 研究基线、Frozen 产品主档和已完成公开合同统一；规范 payload SHA-256 为 `128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53`。
+- 当前状态为 `Candidate for Product Approval`，只等待唯一 `ProgramOwner` 对精确摘要和五项产品结论形成不可变 PR 评论证据；批准证据必须绑定候选 commit/blob，并以 append-only 历史记录保存。
+- Public Contract Sync 已为 Complete，M0 仍为 No-Go。本候选没有创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也不解锁 CRM01。
+
 最后更新：2026-08-26
 
 ## 发布权威与 Registry 决策完成（2026-08-26）
@@ -58,7 +64,7 @@
 
 - `docs/crm/CRM-COMPETITIVE-ANALYSIS.md` 已对比 Salesforce、HubSpot、Dynamics 365、Pipedrive、Zoho、Odoo、SAP Sales Cloud、纷享销客和销售易，按获客、Lead 执行、客户/商机、报价成交、ERP 权威、治理扩展及商业模式建立同口径分析。
 - 竞品研究没有扩大 V1：`CRM-COMP-001`～`007` 固定 Lead Pilot 行动优先、稳定对象/状态、来源与 SLA、CP6 ERP/ExternalEvidence 成交权威，并把公海、企微/钉钉、邮件/日历、移动拜访、评分和 AI 保留为后续受控扩展。
-- `CRM-V1-PRD.md` 已升为 v0.2，并把竞品结论映射到目标、旅程、前端、后端、升级和验收合同。它仍是产品评审草案；当前代码、Public Contract Sync、M0 `No-Go`、设计伙伴与上线门禁状态均未改变。
+- `CRM-V1-PRD.md` 已升为 v0.2，并把竞品结论映射到目标、旅程、前端、后端、升级和验收合同。该 2026-08-25 里程碑当时仍是产品评审草案；当前审批候选与 Public Contract 状态以上方 2026-08-26 记录为准，M0 始终保持 `No-Go`。
 
 ## 本机 DEV 外部首次运行就绪审计（2026-08-25）
 
@@ -107,7 +113,7 @@
 - 新增 `docs/crm/CRM-V1-PRD.md` v0.1，状态为 `Draft for Product Review`。文档以 2026-08-14 私有 `GTX537/CP6.CRM` Frozen SaaS V1 为长期产品目标，并把已批准的 Lead Pilot C 分栏工作台定义为第一可见交付。
 - PRD 已统一 Website/Manual/Import Intake、Lead/Opportunity/PublicSubmission/IntegrationProcess 状态、22 个权限动作、DataScope/PII/Entitlement、幂等/ETag/412、CP6 ERP 与 ExternalEvidence 两种成交权威、Site/CMS、Portal、移动端、KPI、采用门禁和未来升级接口。
 - 当前代码事实不变：`main` 只有 20 表 Foundation、状态机、迁移、6 个禁用菜单和 22 个动作；没有 CRM Controller、独立 API、Next.js/React Native 客户端或可用 CRM 页面。私有 CRM 仓当前为 docs-only。
-- 本 PRD 只是产品评审工件，不覆盖公开仓 Draft PR #8 的 Public Contract Sync，也不把 M0 从 No-Go 改为 Go。评审通过后仍须记录批准 commit，完成 Public Sync 和 M0，才可按 Lead Pilot 切片拆实施票。
+- 本条记录 2026-08-24 的草案事实；Public Contract Sync 后续已由 PR #8 完成。PRD 产品批准仍不把 M0 从 No-Go 改为 Go，只有 M0 Go 后才可按 Lead Pilot 切片拆实施票。
 
 ## Space GA 退出码假红修复（2026-08-24）
 

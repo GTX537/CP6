@@ -1,20 +1,27 @@
 # CP6 CRM V1 产品需求文档
 
+<!-- crm-v1-prd-status: Candidate -->
+
 - 文档 ID：`CP6-CRM-V1-PRD`
 - 版本：`0.2`
-- 状态：**Draft for Product Review**
-- 日期：2026-08-25
+- 状态：**Candidate for Product Approval**
+- 日期：2026-08-26
 - 产品决策源：[`CP6-SAAS-V1` Frozen 产品主档](https://github.com/GTX537/CP6.CRM/blob/main/docs/product/CP6-SAAS-V1-PRODUCT-FREEZE.md)
 - 产品决策摘要：`e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`
+- 公开工程契约：`CP6-SAAS-V1-PUBLIC-CONTRACT` / `Complete` / `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`
+- 审批状态：**Pending exact-digest ProgramOwner approval**
+- M0：**No-Go**
 - 工程约束源：[`CRM-V1-EXECUTABLE-SPEC.md`](./CRM-V1-EXECUTABLE-SPEC.md) 与私有仓 `CP6-SAAS-V1-SYSTEM-SPEC` Candidate
 - 当前实现基线：[`CRM-V1-SPEC.md`](./CRM-V1-SPEC.md)
 - 公开产品研究基线：[`CRM-COMPETITIVE-ANALYSIS.md`](./CRM-COMPETITIVE-ANALYSIS.md)
+
+<!-- crm-v1-prd-payload:start -->
 
 ## 0. 文档地位与使用规则
 
 本 PRD 把已冻结的 SaaS V1 产品方向转换为 CRM 可评审、可拆票、可验收的前后端产品合同。它回答四个问题：用户看到什么、用户能完成什么、后端必须保证什么、未来升级时哪些语义不得破坏。
 
-本版本仍待产品评审，不表示已经允许开发、迁移或上线。当前 Public Contract Sync 仍为 Pending，M0 仍为 No-Go。评审通过后，应把状态改为 `Approved product requirements baseline`，记录审批人和对应 commit；此后任何改变 V1 范围、状态语义、商业规则或数据主权的修改都必须升版本并重新审批。
+本版本是等待精确摘要批准的产品候选，不表示已经允许开发、迁移或上线。Public Contract Sync 已为 Complete，M0 仍为 No-Go。评审通过后，必须把状态改为 `Approved product requirements baseline`，记录唯一 ProgramOwner 的不可变审批证据、候选 commit 和 blob；此后任何改变 V1 范围、状态语义、商业规则或数据主权的修改都必须升版本并重新审批。
 
 权威顺序如下：
 
@@ -23,7 +30,7 @@
 3. System Spec、OpenAPI、事件 Schema 和数据库设计决定工程实现。
 4. 当前 CP6 Foundation 代码只提供迁移来源与已验证兼容语义，不代表目标服务已经存在。
 
-若当前公开仓文档与 Frozen 产品主档冲突，在 Public Contract Sync 合并前不得选择性实现任一版本；应先关闭公开同步差异。本 PRD 不覆盖 M0、Security、Privacy、Release 或真实环境门禁。
+公开 `CP6-SAAS-V1-PUBLIC-CONTRACT` 已完成与 Frozen 产品主档的脱敏同步；若本 PRD 与该公开合同或私有 Frozen 主档冲突，必须先形成新版本和重新审批，不得选择性实现任一版本。本 PRD 不覆盖 M0、Security、Privacy、Release 或真实环境门禁。
 
 ## 1. 产品摘要
 
@@ -655,7 +662,7 @@ PRD requirement
 
 ## 18. 产品评审清单
 
-本 PRD 进入 Approved 前，产品评审必须明确同意以下五个结论：
+本 PRD 的产品批准证据必须明确同意以下五个结论：
 
 1. 长期 V1 使用 Frozen SaaS 四仓边界，Portal/移动/双区域/商业化属于产品 V1，但按门禁分切片交付。
 2. 第一可见结果是 Lead Pilot C 分栏工作台，不以 Dashboard 或全菜单铺开替代。
@@ -663,7 +670,8 @@ PRD requirement
 4. Opportunity 同时支持 Cp6Erp 与 ExternalEvidence，但 Won 必须有合法且不可变的成交依据。
 5. 后续升级通过版本化 API、事件、字段定义、原因 code 和连接器边界扩展，不破坏稳定业务语义。
 
-批准后还必须完成 Public Contract Sync 和 M0；二者未完成时，产品批准仍不构成实施或上线授权。
+Public Contract Sync 已完成；产品批准后仍必须取得 M0 Go。M0 未完成时，产品批准仍不构成实施或上线授权。
+<!-- crm-v1-prd-payload:end -->
 
 ## 相关文档
 

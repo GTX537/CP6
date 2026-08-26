@@ -21,7 +21,7 @@
 - 登录体验恢复已关闭：大幅模板重排已完成组件、全量 Web、类型、生产构建和桌面/移动浏览器验收；折叠 Tenant 焦点、虚假健康状态、语言语义与并发认证问题均有回归覆盖。后续新增实时服务状态时必须接入真实健康检查与失败/未知状态，不能恢复静态“正常”宣称。
 - Kafka Dispose 恢复已关闭：刷新异常仍释放 producer、关闭异常只告警不阻断 Host、剩余队列可观测且重复调用幂等；4 个聚焦行为测试和 `CP6.Tests` 全量回归通过。
 - 日期时间恢复的 P4/P5 已关闭：不恢复多余且弱类型的 Vue shim；普通业务日期时间固定到分钟精度并完成五语言回归。若后续审计日志明确要求秒/毫秒，必须新建立独立精确格式任务，不得修改全局 `long` 合同。
-- CRM Draft PR #7 和 #8 已基于当前 `main`，继续等待各自产品/治理确认与 CI。PR #7 的 Cloudflare Workers 外部构建失败需单独归因；PR #8 公共契约校验已通过。两者保持 Draft，不纳入本次干净 `main`。
+- CRM 旧 Draft PR #7 已关闭，替代 PR #8 已合并且公共契约主线冒烟通过。Cloudflare Workers `estimate` 外部失败继续单独归因，不影响受保护的 CRM 合同、Windows/Web、Android 和 SQL 必需检查。
 - 完成整顿后把本机归档复制到第二介质，再考虑清理 `D:\CP6-archives\2026-08-24-branch-consolidation`；在此之前禁止删除 bundle、patch、原始未跟踪文件或 SHA-256 清单。
 
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
@@ -66,9 +66,9 @@
 
 ## P0：CRM V1 端到端交付
 
-- 先联合评审 `docs/crm/CRM-V1-PRD.md` v0.2 与 `docs/crm/CRM-COMPETITIVE-ANALYSIS.md`；确认长期 V1 采用 2026-08-14 Frozen SaaS 四仓边界、`CRM-COMP-001`～`007` 的产品取舍，以及 Lead Pilot C 分栏工作台为首个可见结果，并在批准 commit 中记录结论。未批准前 PRD 保持 Draft。
-- 完成 Draft PR #8 的 Public Contract Sync，消除当前公开三仓 Approved 文档与私有 Frozen 四仓产品范围的冲突。不得在同步前选择性实现 Portal、商业化或旧排除项。
-- 完成 M0/R00 ADR，冻结 GHCR/R2 权威、Azure SQL/Emergency Intake、System Manifest 整体回退，并取得 ProgramOwner 及各专业证据 DRI、Pilot cohort 与 Observation Gate；缺失即 No-Go。
+- 对 `docs/crm/CRM-V1-PRD.md` v0.2 候选摘要 `128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53` 完成唯一 `ProgramOwner` 的不可变审批；审批必须逐项同意五个产品结论，并绑定候选 commit/blob。未完成前状态保持 Candidate。
+- Public Contract Sync 已由 PR #8 完成并合入主线；继续以公开摘要 `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9` 作为工程边界，不得选择性恢复历史三仓范围。
+- R00 已 Accepted 且公开镜像 Complete。M0 继续关闭 Azure SQL/Emergency Intake、System Manifest 整体回退、各专业证据 DRI、Pilot cohort、Observation Gate、Critical/High、私有仓保护和必需检查；任一缺失即 No-Go。
 - 当前 `main` 的 20 表、状态机、迁移、6 个禁用菜单和 22 个动作只作为迁移源与兼容语义；私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only，不得把仓库存在或菜单种子描述为应用开工。
 - M0 Go 后先交付每组织数据库、身份/授权/Entitlement 投影、Website/Manual Intake 和 Lead Pilot：SLA 队列、分配/移交、客户面对型 Activity、412 草稿恢复、两租户负向和真实 SQL/Kafka/Dapr 性能 Smoke。Pilot UAT 通过前不铺开完整菜单。
 - Pilot 后交付 Account/Contact、转换、Opportunity、CP6 ERP/ExternalEvidence、Dashboard/报表、Import/Export、Site/CMS/Offering、Portal 商业协作和五语言；所有读写共享 Organization、DataScope、PII、Entitlement、幂等和审计语义。
