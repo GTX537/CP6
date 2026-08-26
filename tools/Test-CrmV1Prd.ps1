@@ -333,7 +333,12 @@ $privateCommercialPatterns = @(
     '(?i)(Lead\s*(Pilot\s*UAT|Adoption)|Full\s*Journey)[^\n]*(至少|最多|不超过|>=|≥|<=|≤)?\s*\d+\s*(个\s*)?(工作日|自然日|日|天|周|月|条|名|人|个|%)',
     '(?i)\d+\s*(个\s*)?(工作日|自然日|日|天|周|月|条|名|人|个|%)[^\n]{0,80}(Lead\s*(Pilot\s*UAT|Adoption)|Full\s*Journey)',
     '(?i)(Web\s*GA|移动\s*GA|Lead\s*Adoption|Full\s*Journey)[^\n]{0,80}20\d{2}[-/年]\d{1,2}',
-    '(?i)(trial[-\s]*(到|to)[-\s]*paid|付费[^\n]{0,20}(Logo\s*)?retention)[^\n]{0,40}(至少|>=|≥)\s*\d+%'
+    '(?i)(trial[-\s]*(到|to)[-\s]*paid|signup[-\s]*(到|to)[-\s]*activation|weekly\s*active\s*org|支持首次响应|付费[^\n]{0,20}((Logo\s*)?retention|留存))[^\n]{0,60}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+%',
+    '(?i)(采用|adoption)[^\n]{0,60}(至少|最多|不超过|应在|within)?\s*(\d+|[一二三四五六七八九十百千万两〇零]+)\s*(个\s*)?(工作日|自然日|日|天|周|月)',
+    '(?i)(\d+|[一二三四五六七八九十百千万两〇零]+)\s*(个\s*)?(工作日|自然日|日|天|周|月)[^\n]{0,60}(采用|adoption)',
+    '(?i)(Pilot|试点)[^\n]{0,50}(位于|来自|地区|区域|region|中国|北美|欧洲|亚太)|(?i)(位于|来自|地区|区域|region|中国|北美|欧洲|亚太)[^\n]{0,50}(Pilot|试点)',
+    '(?i)(公司|集团|Inc\.?|LLC|Ltd\.?|科技|包装)[^\n]{0,50}(Pilot|试点)|(?i)(Pilot|试点)[^\n]{0,50}(公司|集团|Inc\.?|LLC|Ltd\.?|科技|包装)',
+    '(?i)(Eligible\s*Lead|Conversion|OrderRequest)[^\n]{0,50}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+|(?i)(至少|最多|不超过|>=|≥|<=|≤)\s*\d+[^\n]{0,50}(Eligible\s*Lead|Conversion|OrderRequest)'
 )
 foreach ($file in $publicBaselineScanFiles) {
     $text = Read-NormalizedText $file
@@ -365,29 +370,44 @@ if ($null -ne $prdText) {
     }
 }
 
-$expectedDesignPartnerLineHashes = @(
+$expectedControlledDisclosureLineHashes = @(
     '4a4272137ceb9ac6ef77c05754db035fa251211025a115ee8432b7aa9a8a829f',
     '6fa0097d64c67b7d10105a2e572bb8dde1ea4bfb633ab15c5f90f05b699b08b7',
+    '844e7fafd39892364be0eb5cde1c683d18936b6af4af6898ac96a751368cff16',
     '1270679808fa373d84cbe80e3d788555a07994e70f35bd019764a7e24158a9fa',
+    '95c14fd7a3564f9e85e637eaa4981db0541b480c4df06a8a4f596084875d6b31',
     '9e59a16d31f9e45abcb8660fb836e7015e771bfd83bca6da3da00355f2679b4d',
     'd866e24be22e203c23de59d631788e5fb78999b9be52d87ecbe0b1fc2a2a2d39',
     '7152aebfe0c71f99acb7717ffe68019426d89ed092789c8b30de796d6932f1b0',
     'abf667bab0efb8b3d5bc3582effb44a54db0b7b2aa309a8627cdd01ed453d2f6',
     '096e72a9ff7a020921e68c8e184f7251fb8c2e22f4787389c5ecf3dbf2ba14a9',
-    '875b99c37691542e0dd7b18fc73c182d05f509066f9e96541113352c32b49f2e'
+    '193047cf321e348fe416c5498f0bef3df42a0d15b53189534b888b40fbb46d6b',
+    'd6805c4415b3729be45c6b456c2f261684259e3da5f3dd8ec485b1536579d874',
+    '9fd7bf9ba9f4b1bba83b3cc0772f7a687c255c2b77b76886c284231f2f3e7059',
+    'cedb9baee5aac60bbd7167804b364aa960619b9c5530160766f4c8cc1b446b97',
+    'b49367ad5e1ab251746fa8aa220040d49876c7fb3a0bdb446182569d0dfb644f',
+    '8715ce9b73cf71d9f6bff8956abae2dc7e606aa7d768667e733f6996a8b48874',
+    'cc444db32312f5f85b333dfc34e183567e931150aa789ce6eaf861f0b42f3076',
+    '3320e5ab4de4aed8899003d5b1296da75d6019467546f632747679954ef921e9',
+    '2d5ccefa1fe20c1059639827e5039237cc25ed40b5c513f4f61e684480da6c4e',
+    '315b43111bfa9368aadc5ecb0bbee7bfb2605cba5dc9805749c9a7852a29ae4f',
+    '875b99c37691542e0dd7b18fc73c182d05f509066f9e96541113352c32b49f2e',
+    'afdfc5c0446e2865839c0903302b97e2416a5cc03d9716f043b60cffad0e55be',
+    '972728c75de992f377ed6fa33cb9d812e38e74393de9a8ca394da78aaab32120',
+    'cbd380000f9f29c87ab2e55b1333d4e0558da262421ffd9fcd7d939dde66c812'
 )
-$actualDesignPartnerLineHashes = New-Object 'System.Collections.Generic.List[string]'
+$actualControlledDisclosureLineHashes = New-Object 'System.Collections.Generic.List[string]'
 foreach ($file in $publicBaselineScanFiles) {
     $text = Read-NormalizedText $file
     if ($null -eq $text) { continue }
     foreach ($line in $text.Split("`n")) {
-        if ($line.Contains('设计伙伴', [StringComparison]::Ordinal)) {
-            $actualDesignPartnerLineHashes.Add((Get-TextSha256 "$file`n$line"))
+        if ($line -match '(?i)cohort|设计伙伴|signup[-\s]*(到|to)[-\s]*activation|trial[-\s]*(到|to)[-\s]*paid|weekly\s*active\s*org|付费留存') {
+            $actualControlledDisclosureLineHashes.Add((Get-TextSha256 "$file`n$line"))
         }
     }
 }
-if (@(Compare-Object $expectedDesignPartnerLineHashes @($actualDesignPartnerLineHashes)).Count -ne 0) {
-    Fail 'Public design-partner lines changed or a possible cohort name was introduced'
+if (@(Compare-Object $expectedControlledDisclosureLineHashes @($actualControlledDisclosureLineHashes)).Count -ne 0) {
+    Fail 'Public controlled-disclosure lines changed or a possible private cohort/KPI disclosure was introduced'
 }
 
 $aggregate = Read-JsonFile $aggregatePath
