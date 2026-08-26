@@ -300,7 +300,7 @@ stages:
                 & .\scripts\Wait-Cp6DevBackupReadiness.ps1 `
                     -MinimumFreeMemoryMiB 2048 `
                     -RequiredConsecutiveSuccesses 3 `
-                    -MaxWaitSeconds 300 `
+                    -MaxWaitSeconds 600 `
                     -PollIntervalSeconds 10 `
                     -EvidencePath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'backup-readiness.json') |
                     Out-Null
