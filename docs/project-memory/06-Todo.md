@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## P0：认证 BUG #38
+
+- GitHub Issue #38 是首次改密后重新登录死锁的唯一 BUG 记录。下一独立任务按 Issue 完成条件修复旧认证 Cookie/登录放行衔接并补回归测试；根因、进展和验收证据不在本文件重复维护。
+
 ## P0：CRM V1 公开同步与 M0
 
 - `CP6-SAAS-V1-PUBLIC-CONTRACT` 已由 ProgramOwner 对精确摘要批准并同步为 Complete；下一步把公开 merge commit、摘要和审批证据回写私有聚合记录。公开同步完成本身不构成 M0 Go。

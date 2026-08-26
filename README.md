@@ -145,6 +145,7 @@ npm run e2e
 
 | 文档 | 用途 |
 | --- | --- |
+| [BUG 管理](docs/quality/BUG-MANAGEMENT.md) | 单人开发的 Issue 登记、P0/P1/P2、修复分支、验证与关闭规则 |
 | [DevOps 与 CI/CD](docs/devops/README.md) | Azure DevOps 当前状态、CI/CD 架构、Registry 决策、发布流程和环境演进计划 |
 | [CRM 产品需求与公开工程契约](docs/crm/README.md) | 私有 Frozen 产品、已批准 CRM V1 PRD 完整脱敏基线与 Accepted R00 的四仓合同；公开同步已为 Complete、M0 仍为 No-Go，不代表业务功能已实现 |
 | [WMS R2 生产就绪主规范](docs/client/r2/README.md) | 候选制品、签名、部署、R2A/R2B 试点、退出标准与现场证据的唯一规范源 |
