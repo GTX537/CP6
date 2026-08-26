@@ -1,8 +1,10 @@
 name: crm-v1-prd
 
 on:
-  # This workflow is a required check, so it must report a result for every PR.
+  # Head validation bootstraps this PR and gives fast diagnostics. The required
+  # check is emitted only by protected-base code via pull_request_target.
   pull_request:
+  pull_request_target:
   push:
     branches: [main]
     paths:
@@ -19,14 +21,57 @@ permissions:
   pull-requests: read
 
 jobs:
-  verify:
-    name: crm-v1-prd
+  verify-head:
+    if: github.event_name == 'pull_request'
+    name: crm-v1-prd-head
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
       - name: Verify approved CRM V1 product requirements
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./tools/Test-CrmV1Prd.ps1 -VerifyGitHubEvidence
+          ./tools/Test-CrmV1Prd.Tests.ps1
+
+  verify-protected-base:
+    if: github.event_name == 'pull_request_target'
+    name: crm-v1-prd
+    runs-on: windows-latest
+    steps:
+      - name: Check out trusted validator from the protected base
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+          path: trusted
+      - name: Check out the exact pull request head as data
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          path: candidate
+      - name: Verify the candidate with protected-base code
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          & "$env:GITHUB_WORKSPACE/trusted/tools/Test-CrmV1Prd.ps1" `
+            -RepositoryRoot "$env:GITHUB_WORKSPACE/candidate" `
+            -VerifyGitHubEvidence
+
+  verify-main:
+    if: github.event_name == 'push'
+    name: crm-v1-prd
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - name: Verify approved CRM V1 product requirements on main
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}

@@ -1,12 +1,18 @@
 [CmdletBinding()]
 param(
-    [switch] $VerifyGitHubEvidence
+    [switch] $VerifyGitHubEvidence,
+    [string] $RepositoryRoot
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$root = if ([string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+}
+else {
+    (Resolve-Path -LiteralPath $RepositoryRoot).Path
+}
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $failures = New-Object 'System.Collections.Generic.List[string]'
 
@@ -314,30 +320,51 @@ Assert-Contains $prdPath @(
     'Full Journey：观察窗口、Conversion/OrderRequest 最小样本'
 )
 Assert-Contains $prdPath $approvalConclusionTexts
-$publicBaselineScanFiles = @(
-    $prdPath,
-    'docs/crm/CRM-COMPETITIVE-ANALYSIS.md',
-    'docs/crm/README.md',
-    'README.md',
-    $aggregatePath,
-    $historyPath,
-    'docs/project-memory/PROJECT_STATE.md',
-    'docs/project-memory/05-Completed.md',
-    'docs/project-memory/06-Todo.md',
-    'docs/project-memory/CHANGELOG-AI.md'
-)
 $expectedPublicDisclosureSurfaceSha256 = [ordered]@{
+    'docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md' = 'bb72e0955e7beb8a0d82529830d2c31db8c8e040452c0bcde52cb2ed651cc818'
     'docs/crm/CRM-V1-PRD.md' = 'e63ebb6dfadbfe04750a24ff3bd6d53de67bfd0d4226e872f753a25158996da7'
     'docs/crm/CRM-COMPETITIVE-ANALYSIS.md' = '4881b2a3e212d0b57446915b3a60139b71877263e201b6e8222782436f8d6d4a'
+    'docs/crm/CRM-M0-READINESS.md' = '9d301a01c3028eb27d49c391c03d9cbead55267e95fbc8f2eab4ad1a7518076e'
+    'docs/crm/CRM-PRODUCT-FRAMEWORK.md' = 'd6c47066e233b607780a084f66d39b484e2f578f7430908ce252c6458cf97bfb'
+    'docs/crm/CRM-V1-EXECUTABLE-SPEC.md' = '2365c5e28d2cc346d25f53a9739e6d2f34fede4537cd51afddccb6907e10e3f2'
+    'docs/crm/CRM-V1-SPEC.md' = '7d1a08c891dc2ba8b522f00aad91445ce6f04a1f3ed815cc86992c36487062bd'
     'docs/crm/README.md' = '9543bc859003469dd5773bd4992d884f356e176b04e96c3b7fda68b0fcf3089d'
-    'README.md' = '8e02d5a1363bf32d1ca882c999022039a1eb6d564f103016814315141860da4d'
     'docs/crm/approvals/cp6-crm-v1-prd.json' = 'cec71e7e5b0435f4b6740f259b0bada95649a15e56a406fd3d2de4b876a9b891'
+    'docs/crm/approvals/cp6-saas-v1-public-contract.json' = '946ba40573ff98012cf9a1520099b58aad8d55ba2e63bb473f669c5b4f9361d6'
     'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' = '76b3d5d481ad6c128f70abc7ceb770e430907fed97ca8bdd986873dc492720b3'
-    'docs/project-memory/PROJECT_STATE.md' = '72c45cbbe9599e444b1f8779bed7045fff2aa1782f0d8ca92650ede55772be20'
-    'docs/project-memory/05-Completed.md' = 'e50b0b0c632ee6a34637087f5a47069e19b033a6bd703f2769e3cb973a6b0c5a'
-    'docs/project-memory/06-Todo.md' = 'ac6653b51575a1706e9904cf76360af135e7526b57c9e8dde9dcd7eb45e603d0'
-    'docs/project-memory/CHANGELOG-AI.md' = 'afd9d53e3a29b8b392e5a0cd00612f62a835e4f0f763f59286395ec0dcc3834d'
+    'docs/crm/approvals/history/2026-08-26-cp6-saas-v1-public-contract-program-owner.json' = 'fab7d44920dc8528940c610f6f426cbfc26e75123fbb58a3189be347d0b680dc'
 }
+$expectedCrmDisclosurePaths = @(
+    $expectedPublicDisclosureSurfaceSha256.Keys |
+        Where-Object { $_.StartsWith('docs/crm/', [StringComparison]::Ordinal) } |
+        Sort-Object
+)
+$crmRoot = Join-Path $root 'docs/crm'
+$discoveredCrmDisclosurePaths = @(
+    if (Test-Path -LiteralPath $crmRoot -PathType Container) {
+        Get-ChildItem -LiteralPath $crmRoot -Recurse -File |
+            ForEach-Object {
+                [IO.Path]::GetRelativePath($root, $_.FullName).Replace('\', '/')
+            } |
+            Sort-Object -Unique
+    }
+)
+foreach ($difference in @(Compare-Object $expectedCrmDisclosurePaths $discoveredCrmDisclosurePaths)) {
+    if ($difference.SideIndicator -eq '=>') {
+        Fail "Unregistered public CRM disclosure file: $($difference.InputObject)"
+    }
+    else {
+        Fail "Registered public CRM disclosure file is missing: $($difference.InputObject)"
+    }
+}
+$ancillaryDisclosureScanFiles = @(
+    'README.md'
+    'docs/project-memory/PROJECT_STATE.md'
+    'docs/project-memory/05-Completed.md'
+    'docs/project-memory/06-Todo.md'
+    'docs/project-memory/CHANGELOG-AI.md'
+)
+$publicBaselineScanFiles = @($discoveredCrmDisclosurePaths) + $ancillaryDisclosureScanFiles
 $privateCommercialPatterns = @(
     '(?i)\d+\s*家[^\n]{0,80}(中国|北美|设计伙伴)',
     '(?i)(中国|北美)[^\n]{0,40}设计伙伴',
@@ -353,9 +380,12 @@ $privateCommercialPatterns = @(
     '(?i)(Eligible\s*Lead|Conversion|OrderRequest)[^\n]{0,50}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+|(?i)(至少|最多|不超过|>=|≥|<=|≤)\s*\d+[^\n]{0,50}(Eligible\s*Lead|Conversion|OrderRequest)',
     '(?i)(adoption|采用)[^\n]{0,60}(within|at\s*least|no\s*more\s*than)?\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|forty|fifty|sixty|ninety)\s*(business\s*)?(day|days|week|weeks|month|months)',
     '(?i)(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|forty|fifty|sixty|ninety)\s*(business\s*)?(day|days|week|weeks|month|months)[^\n]{0,60}(adoption|采用)',
-    '(?im)^\s*(?:[-*]\s*)?Pilot\s*[:：]\s*\S|Pilot\s+customer\s+list\s*[:：]|\b[A-Z][A-Za-z0-9.-]{2,}\s+(enters|joins)\s+Pilot',
+    '(?im)^\s*(?:[-*]\s*)?Pilot\s*[:：]\s*(?!sha256\b)\S|Pilot\s+customer\s+list\s*[:：]|\b[A-Z][A-Za-z0-9.-]{2,}\s+(enters|joins)\s+Pilot',
     '(?i)(Eligible\s*Lead|Conversion|OrderRequest)[^\n]{0,40}(sample|denominator|minimum|target|[:=])\s*\d+',
-    '(?i)(signup[-_\s]*(to|到)[-_\s]*activation|trial[-_\s]*(to|到)[-_\s]*paid|weekly[-_\s]*active[-_\s]*org)[^\n]{0,40}(target|minimum|denominator|[:=]|至少|>=|≥)\s*\d+%?'
+    '(?i)(signup[-_\s]*(to|到)[-_\s]*activation|trial[-_\s]*(to|到)[-_\s]*paid|weekly[-_\s]*active[-_\s]*org)[^\n]{0,40}(target|minimum|denominator|[:=]|至少|>=|≥)\s*\d+%?',
+    '(?i)\|\s*(Observation|Pilot\s*UAT)\s*\|[^\n]*\d+[^\n]*(人|名|部门|任务|Lead|事件|工作日|自然日|秒|%)',
+    '(?i)(Pilot|试点)[^\n]{0,100}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+\s*(个\s*)?(任务|样本|名|人|部门)',
+    '(?i)(采用|adoption)[^\n]{0,80}(至少|最多|不超过)?\s*(\d+|[一二三四五六七八九十百千万两〇零]+)\s*(个\s*)?(整改|版本|窗口)'
 )
 foreach ($file in $publicBaselineScanFiles) {
     $text = Read-NormalizedText $file
@@ -394,19 +424,6 @@ if ($null -ne $prdText) {
 }
 
 $expectedControlledDisclosureLineHashes = @(
-    '4a4272137ceb9ac6ef77c05754db035fa251211025a115ee8432b7aa9a8a829f',
-    '6fa0097d64c67b7d10105a2e572bb8dde1ea4bfb633ab15c5f90f05b699b08b7',
-    '844e7fafd39892364be0eb5cde1c683d18936b6af4af6898ac96a751368cff16',
-    '1270679808fa373d84cbe80e3d788555a07994e70f35bd019764a7e24158a9fa',
-    '95c14fd7a3564f9e85e637eaa4981db0541b480c4df06a8a4f596084875d6b31',
-    '9e59a16d31f9e45abcb8660fb836e7015e771bfd83bca6da3da00355f2679b4d',
-    'd866e24be22e203c23de59d631788e5fb78999b9be52d87ecbe0b1fc2a2a2d39',
-    '7152aebfe0c71f99acb7717ffe68019426d89ed092789c8b30de796d6932f1b0',
-    'abf667bab0efb8b3d5bc3582effb44a54db0b7b2aa309a8627cdd01ed453d2f6',
-    '096e72a9ff7a020921e68c8e184f7251fb8c2e22f4787389c5ecf3dbf2ba14a9',
-    '193047cf321e348fe416c5498f0bef3df42a0d15b53189534b888b40fbb46d6b',
-    'd6805c4415b3729be45c6b456c2f261684259e3da5f3dd8ec485b1536579d874',
-    '9fd7bf9ba9f4b1bba83b3cc0772f7a687c255c2b77b76886c284231f2f3e7059',
     'cedb9baee5aac60bbd7167804b364aa960619b9c5530160766f4c8cc1b446b97',
     'b49367ad5e1ab251746fa8aa220040d49876c7fb3a0bdb446182569d0dfb644f',
     '8715ce9b73cf71d9f6bff8956abae2dc7e606aa7d768667e733f6996a8b48874',
@@ -420,7 +437,7 @@ $expectedControlledDisclosureLineHashes = @(
     'cbd380000f9f29c87ab2e55b1333d4e0558da262421ffd9fcd7d939dde66c812'
 )
 $actualControlledDisclosureLineHashes = New-Object 'System.Collections.Generic.List[string]'
-foreach ($file in $publicBaselineScanFiles) {
+foreach ($file in $ancillaryDisclosureScanFiles) {
     $text = Read-NormalizedText $file
     if ($null -eq $text) { continue }
     foreach ($line in $text.Split("`n")) {

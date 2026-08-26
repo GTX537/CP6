@@ -6,6 +6,8 @@
 
 - 合入前审查发现三次未合并 payload 仍公开了应保留在私有仓的商业 cohort、精确推广时间表或私有数值采用门禁；三次预审批均作废。
 - 从最新 `main` 新建不继承旧敏感提交祖先的干净候选分支，并扩大脱敏范围到 PRD、竞品基线和项目记忆；旧证据仅保留在未合并 PR 审计轨迹中。
+- 最终审查继续移除公开 M0 Readiness、产品框架和可执行 Spec 中遗留的 Pilot 样本、采用窗口与 KPI 数字；自动发现并锁定全部 `docs/crm/**` 文件，新建未登记 CRM 文档失败关闭。
+- `crm-v1-prd` 工作流拆为 PR head 诊断和受保护 base 验证；required context 只由 `pull_request_target` 的只读 base validator 对精确 PR head 产生，引导 PR 不把自带脚本当作独立信任边界。
 - 唯一 ProgramOwner 已批准完整脱敏 payload、候选 commit/blob 和五项产品结论；当前状态为 `Approved product requirements baseline`，Public Contract Sync 保持 Complete，M0 保持 No-Go，没有实现或部署副作用。
 
 ## 2026-08-26：发布权威与 Registry 决策

@@ -86,6 +86,37 @@ function Test-NegativeCase(
     }
 }
 
+function Test-NewFileNegativeCase(
+    [string] $Name,
+    [string] $RelativePath,
+    [string] $Content,
+    [string] $ExpectedFailure
+) {
+    $path = Join-Path $fixtureRoot $RelativePath
+    if (Test-Path -LiteralPath $path) {
+        throw "$Name fixture path already exists."
+    }
+    try {
+        [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($path)) | Out-Null
+        [IO.File]::WriteAllText($path, $Content, $utf8)
+        $result = Invoke-Validator
+        if ($result.ExitCode -eq 0) {
+            throw "$Name did not fail closed."
+        }
+        if ($result.Output.IndexOf($ExpectedFailure, [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+            throw "$Name failed for the wrong reason. Expected '$ExpectedFailure'. Output: $($result.Output)"
+        }
+        $global:LASTEXITCODE = 0
+        $script:passed++
+        Write-Host "PASS: $Name"
+    }
+    finally {
+        if (Test-Path -LiteralPath $path) {
+            Remove-Item -LiteralPath $path -Force
+        }
+    }
+}
+
 try {
     & git clone --quiet --shared --no-checkout $root $fixtureRoot
     if ($LASTEXITCODE -ne 0) { throw 'Unable to create the isolated PRD Git fixture.' }
@@ -148,15 +179,19 @@ try {
     Test-NegativeCase -Name 'weekly active org target injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nweekly-active-org target: 42%" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
     Test-NegativeCase -Name 'trial to paid target injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`ntrial_to_paid: 23%" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
     Test-NegativeCase -Name 'unknown public disclosure wording drift' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nOpaque disclosure wording" -ExpectedFailure 'Public disclosure surface digest mismatch'
+    Test-NewFileNegativeCase -Name 'unregistered public CRM document injection' -RelativePath 'docs/crm/CRM-PILOT.md' -Content "# Pilot`nOpaque disclosure wording" -ExpectedFailure 'Unregistered public CRM disclosure file'
+    Test-NegativeCase -Name 'legacy M0 Pilot sample regression' -RelativePath 'docs/crm/CRM-M0-READINESS.md' -Before '版本化任务类别' -After '至少 73 个版本化任务' -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'legacy Observation table regression' -RelativePath 'docs/crm/CRM-PRODUCT-FRAMEWORK.md' -Before '| Observation Gate | 脱敏定性观察、定量事件基线、角色与部门类别 |' -After '| Observation Gate | 4 人/19 条 Lead 定性观察；7 名用户、3 个部门、91 个事件、12 个工作日脱敏定量基线 |' -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'legacy adoption remediation count regression' -RelativePath 'docs/crm/CRM-V1-EXECUTABLE-SPEC.md' -Before '整改窗口和重新立项/终止条件由私有 Adoption Manifest 冻结' -After '采用失败后最多七个固定版本整改窗口' -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
     Test-NegativeCase -Name 'current history sanitization drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' -Before '"containsCommercialCohortCounts": false' -After '"containsCommercialCohortCounts": true' -ExpectedFailure 'history record content digest mismatch'
     Test-NegativeCase -Name 'public numeric scope history drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' -Before '"containsPublicProductOrTechnicalAcceptanceNumbers": true' -After '"containsPublicProductOrTechnicalAcceptanceNumbers": false' -ExpectedFailure 'history record content digest mismatch'
     Test-NegativeCase -Name 'aggregate invalidated approval count drift' -RelativePath 'docs/crm/approvals/cp6-crm-v1-prd.json' -Before '"invalidatedPreMergeApprovals": 3' -After '"invalidatedPreMergeApprovals": 2' -ExpectedFailure 'invalidated pre-merge approval count mismatch'
     Test-NegativeCase -Name 'history clean ancestry claim drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' -Before '"invalidatedCommitsExcluded": true' -After '"invalidatedCommitsExcluded": false' -ExpectedFailure 'history record content digest mismatch'
 
-    if ($passed -ne 50) {
-        throw "Expected 50 CRM V1 PRD tests; passed $passed."
+    if ($passed -ne 54) {
+        throw "Expected 54 CRM V1 PRD tests; passed $passed."
     }
-    Write-Host "CRM V1 PRD negative tests passed: $passed/50"
+    Write-Host "CRM V1 PRD negative tests passed: $passed/54"
 }
 finally {
     if (Test-Path -LiteralPath $fixtureRoot) {

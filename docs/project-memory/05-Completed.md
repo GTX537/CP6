@@ -4,6 +4,7 @@
 
 - 将详细 CRM V1 PRD v0.2 与公开竞品研究迁移到最新主线，并与 Frozen 产品摘要、已完成公共合同和四仓权威边界统一。
 - 合并前审查移除商业 cohort 数量/地域/名单、精确推广计划、数值 Pilot UAT 和私有数值商业/采用门禁，并从最新 `main` 建立不继承旧敏感提交祖先的干净候选分支。
+- 最终全披露面审查同时清理 M0 Readiness、产品框架和可执行 Spec 中遗留的 Pilot/采用数值，自动发现并锁定全部公开 `docs/crm/**` 文件；新增未登记 CRM 文档失败关闭。工作流把 head 诊断与只读的受保护 base validator 分离，避免把 PR 自带脚本冒充独立 required check。
 - 三次未合并的预审批尝试因脱敏声明不完整而作废；唯一 ProgramOwner 已批准 payload SHA-256 `5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`、候选 commit/blob 和五项产品结论。M0 继续 No-Go；未创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也未解锁 CRM01。
 
 ## 2026-08-26 发布权威与 Registry 决策
