@@ -1,15 +1,8 @@
 name: crm-saas-public-contract
 
 on:
+  # This workflow is a required check, so it must report a result for every PR.
   pull_request:
-    paths:
-      - ".github/workflows/crm-saas-public-contract.yml"
-      - "docs/crm/**"
-      - "docs/devops/**"
-      - "docs/project-memory/**"
-      - "README.md"
-      - "tools/Test-CrmSaasPublicContract.ps1"
-      - "tools/Test-CrmSaasPublicContract.Tests.ps1"
   push:
     branches: [main]
     paths:
