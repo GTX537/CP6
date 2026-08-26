@@ -384,7 +384,7 @@ $privateCommercialPatterns = @(
     '(?i)(Eligible\s*Lead|Conversion|OrderRequest)[^\n]{0,40}(sample|denominator|minimum|target|[:=])\s*\d+',
     '(?i)(signup[-_\s]*(to|到)[-_\s]*activation|trial[-_\s]*(to|到)[-_\s]*paid|weekly[-_\s]*active[-_\s]*org)[^\n]{0,40}(target|minimum|denominator|[:=]|至少|>=|≥)\s*\d+%?',
     '(?i)\|\s*(Observation|Pilot\s*UAT)\s*\|[^\n]*\d+[^\n]*(人|名|部门|任务|Lead|事件|工作日|自然日|秒|%)',
-    '(?i)(Pilot|试点)[^\n]{0,100}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+\s*(个\s*)?(任务|样本|名|人|部门)',
+    '(?i)(Pilot|试点)[^\n]{0,100}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+\s*(个\s*)?(版本化)?(任务|样本|名|人|部门)',
     '(?i)(采用|adoption)[^\n]{0,80}(至少|最多|不超过)?\s*(\d+|[一二三四五六七八九十百千万两〇零]+)\s*(个\s*)?(整改|版本|窗口)'
 )
 foreach ($file in $publicBaselineScanFiles) {
