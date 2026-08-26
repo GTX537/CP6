@@ -1,15 +1,15 @@
 # CP6 CRM V1 产品需求文档
 
-<!-- crm-v1-prd-status: Approved -->
+<!-- crm-v1-prd-status: Candidate -->
 
 - 文档 ID：`CP6-CRM-V1-PRD`
 - 版本：`0.2`
-- 状态：**Approved product requirements baseline**
+- 状态：**Candidate for Product Approval**
 - 日期：2026-08-26
 - 产品决策源：[`CP6-SAAS-V1` Frozen 产品主档](https://github.com/GTX537/CP6.CRM/blob/main/docs/product/CP6-SAAS-V1-PRODUCT-FREEZE.md)
 - 产品决策摘要：`e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`
 - 公开工程契约：`CP6-SAAS-V1-PUBLIC-CONTRACT` / `Complete` / `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`
-- 审批状态：**ProgramOwner approved exact payload digest**
+- 审批状态：**Pending corrected exact-digest ProgramOwner approval**
 - M0：**No-Go**
 - 工程约束源：[`CRM-V1-EXECUTABLE-SPEC.md`](./CRM-V1-EXECUTABLE-SPEC.md) 与私有仓 `CP6-SAAS-V1-SYSTEM-SPEC` Candidate
 - 当前实现基线：[`CRM-V1-SPEC.md`](./CRM-V1-SPEC.md)
@@ -21,7 +21,7 @@
 
 本 PRD 把已冻结的 SaaS V1 产品方向转换为 CRM 可评审、可拆票、可验收的前后端产品合同。它回答四个问题：用户看到什么、用户能完成什么、后端必须保证什么、未来升级时哪些语义不得破坏。
 
-本版本是等待精确摘要批准的产品候选，不表示已经允许开发、迁移或上线。Public Contract Sync 已为 Complete，M0 仍为 No-Go。评审通过后，必须把状态改为 `Approved product requirements baseline`，记录唯一 ProgramOwner 的不可变审批证据、候选 commit 和 blob；此后任何改变 V1 范围、状态语义、商业规则或数据主权的修改都必须升版本并重新审批。
+本 PRD 的 `Approved product requirements baseline` 状态只冻结产品需求，不表示已经允许开发、迁移或上线。Public Contract Sync 已为 Complete，M0 仍为 No-Go。每次批准都必须记录唯一 ProgramOwner 对精确 payload 摘要的不可变证据、候选 commit 和 blob；此后任何改变 V1 范围、状态语义、商业规则或数据主权的修改都必须升版本并重新审批。
 
 权威顺序如下：
 
@@ -589,10 +589,10 @@ StageHistory、MergeRecord、ExternalSaleRecord、Audit、Inbox、发布证据�
 
 ### 14.4 上市与采用
 
-- 顺序：CP6 自用、3 家中国和 3 家北美设计伙伴、公开 Web GA、30 日内移动 GA。
+- 顺序：CP6 自用验证、受控设计伙伴 Pilot、Web GA、移动 GA。商业 cohort 的数量、地域、名单和精确推广时间表保留在私有采用 Manifest，本公开 PRD 只约束阶段顺序和不可跳过的证据门禁。
 - Lead Adoption：至少 10 个工作日且至少 200 条 Eligible Lead；Website/Manual 100% 进入新 CRM，旧写入为 0，至少 90% 在 30 分钟内分配或进入可见异常队列，至少 85% 在 4 个业务小时内首次响应。
 - Full Journey：最多 30 个自然日，至少 20 个 Conversion 和 10 个 OrderRequest；自然发生的转换和订单请求都在 CRM 完成，ERP 零丢失/重复，报表与 canonical SQL 100% 对账。
-- GA 后 90 天：signup 到 activation 至少 35%，trial 到 paid 至少 15%，90 日付费 Logo retention 至少 85%，weekly active org 至少 60%，支持首次响应达标至少 90%。
+- GA 采用评估覆盖 signup-to-activation、trial-to-paid、付费留存、weekly active org 和支持首次响应；数值阈值保留在受控私有采用 Manifest，公开关闭证据只记录是否达到当前已批准阈值及对应 Manifest 摘要。
 
 ## 15. 交付切片与依赖
 
@@ -673,17 +673,17 @@ PRD requirement
 Public Contract Sync 已完成；产品批准后仍必须取得 M0 Go。M0 未完成时，产品批准仍不构成实施或上线授权。
 <!-- crm-v1-prd-payload:end -->
 
-## 产品批准证据
+## 已被修正版取代的批准证据
 
-- 批准角色：`ProgramOwner`
-- 批准决定：`Approved product requirements baseline`
-- 批准 payload SHA-256：`128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53`
+- 旧批准 payload SHA-256：`128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53`
 - 候选 commit：`ef29aef21ee241d0af49808ec16299d0b66395e3`
 - 候选 PRD blob：`b91af0e69d95aa78c8151bae17b3ef02c04a5d92`
-- GitHub 评论证据：[PR #33 comment 5422991497](https://github.com/GTX537/CP6/pull/33#issuecomment-5422991497)
+- 旧 GitHub 评论证据：[PR #33 comment 5422991497](https://github.com/GTX537/CP6/pull/33#issuecomment-5422991497)
 - 批准时间：`2026-08-26T09:00:05Z`
 - 规范化评论正文 SHA-256：`9ac80797566fe3a456cf7f74ae32a476c431ff5c1bdda7fa448b9adbaa0dfa92`
-- Append-only 历史记录：[2026-08-26 ProgramOwner approval](./approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner.json)
+- Append-only 旧历史记录：[2026-08-26 ProgramOwner approval](./approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner.json)
+- 取代理由：合并前审查发现公开 payload 暴露商业 cohort 数量/地域且保留候选期措辞；旧评论和历史不删除、不编辑，但不再批准当前修正版摘要。
+- 当前修正版 payload SHA-256：`6d6ee4e4a8abff80a7b1f8beed1152e914d072e751adb7f3fa43ba3d7aecbac7`，等待新的精确摘要批准。
 - M0 保持：`No-Go`；本批准不授权 CRM01、实现、迁移、部署、Pilot、UAT 或生产。
 
 ## 相关文档
