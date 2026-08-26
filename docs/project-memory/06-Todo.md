@@ -5,6 +5,7 @@
 - `CP6-SAAS-V1-PUBLIC-CONTRACT` 已由 ProgramOwner 对精确摘要批准并同步为 Complete；下一步把公开 merge commit、摘要和审批证据回写私有聚合记录。公开同步完成本身不构成 M0 Go。
 - M0 唯一人类批准角色是 `ProgramOwner`。依次关闭 `DEC-001`、`DEC-003` 至 `DEC-009` 的合同和专业证据，复核 `DEC-000`/`DEC-002`，并强制 Critical/High 清零、分支保护及必需检查；SQL 容量模型和真实 Pilot cohort 未冻结时必须保持 Pending。
 - 私有 `CP6.CRM` 仍因 GitHub 账户方案限制无法启用 required checks；在 GitHub Pro 生效并回读保护规则前，M0 必须保持 No-Go。只有 M0 Go 后才能解锁 CRM01。
+
 ## P0：白天临时家庭测试环境的外部边界
 
 - 本机完整编译内存风险已通过 GitHub hosted build + Azure 轻量 Artifact 桥关闭；main #118、自动关闭门 #119、Manual #120/#121 均已成功，三次手动验收达到 3/3。继续保持本机 CI 不编译，除非另有等价隔离与容量证明。
