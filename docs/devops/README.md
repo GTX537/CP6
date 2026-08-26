@@ -2,7 +2,7 @@
 
 本目录保存 CP6 的项目级 DevOps 上下文，供开发者、Codex 和发布负责人共同使用。它回答三个问题：当前流水线已经做到了什么、目标发布链是什么、下一步按什么顺序实施。
 
-> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。未经显式迁移验收，不得删除、绕过或弱化现有 R2 门禁。
+> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。CRM V1 的私有 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已 Accepted，公开 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 镜像已同步为 Complete；P09/P10 未完成前不得声称候选对象身份 Gap 已关闭。
 
 ## 文档地图
 
@@ -17,6 +17,7 @@
 | [DEV 双模式发布](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 配置手动/自动 `CP6 DEV CD`、部署前备份、独立 Tunnel 和安全数据旁路导入 |
 | [发布流程](./RELEASE-PROCESS.md) | How-to | 说明从代码到 DEV、审批和 PROD 的标准操作顺序 |
 | [环境策略](./ENVIRONMENT-STRATEGY.md) | Explanation / Reference | 定义 DEV、UAT、PROD 的用途、权限、配置和证据边界 |
+| [DevOps ADR 索引](./adr/README.md) | Normative mirror / Index | CRM R00 发布权威、候选对象身份、Manifest 与回退工程合同 |
 | [WMS R2 生产就绪主规范](../client/r2/README.md) | Normative | 当前生产候选、部署和现场试点的唯一规范源 |
 
 ## 当前事实
@@ -53,6 +54,7 @@
 | 白天测试公网 | 工具已交付，切换待执行 | `cp6-public-tunnel` 只连接 `cp6-dev_default`；切换前必须显式停止旧 `cp6-cloudflared`，Pipeline 不自动切换 Cloudflare |
 | 私人本地 `cp6`/`CP6DB` | 保持独立 | DEV CD 不操作根 Compose、`CP6DB` 或 `cp6_cp6-db-data`；DEV 数据只能手动恢复为新的 `CP6DEV_IMPORT_*` 旁路库 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |
+| CRM R00 | 私有源 Accepted；公开同步 Complete；P09/P10 Pending | GHCR/GitHub R2 已固定为 V1 唯一权威，但精确对象版本与四仓 Manifest 尚未实现 |
 
 ## 核心原则
 
@@ -69,7 +71,7 @@
 
 1. 根目录 [`AGENTS.md`](../../AGENTS.md)；
 2. 本页与 [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md)；
-3. [R2 主规范](../client/r2/README.md) 和相关生产规范；
+3. [R2 主规范](../client/r2/README.md)、[ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 和相关生产规范；
 4. 实际 `azure-pipelines.yml`、`.github/workflows/`、Dockerfile 与 `deploy/production/`。
 
 任何实现任务都必须从最新 `main` 创建单任务分支。根工作区有未提交改动时使用独立 worktree。

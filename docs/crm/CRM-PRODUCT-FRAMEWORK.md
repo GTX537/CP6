@@ -1,10 +1,12 @@
 # CP6 CRM 产品框架
 
-状态：Approved implementation-planning baseline；不得据此跳过实施、验收或生产审批
+状态：Historical planning baseline；新实施以 [CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md) 为准
 
 最后核验：2026-08-13（`main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753`）
 
-配套工程规格：[CRM-V1-EXECUTABLE-SPEC.md](./CRM-V1-EXECUTABLE-SPEC.md)
+配套历史工程规格：[CRM-V1-EXECUTABLE-SPEC.md](./CRM-V1-EXECUTABLE-SPEC.md)
+
+当前公开合同：[CP6-SAAS-V1-PUBLIC-CONTRACT.md](./CP6-SAAS-V1-PUBLIC-CONTRACT.md)
 
 审阅证据：工程/设计审阅计划 `C8574D3...01A08`、QA 测试计划 `1A6995...F281`、采用优先产品设计 `C60FA7...2DF7`。完整 SHA-256 和受控工件位置记录在本任务的项目记忆中；审批结论冻结产品和实施规划，不代表任何业务代码、仓库、云资源、迁移或部署已经完成。
 

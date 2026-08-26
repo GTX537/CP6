@@ -7,6 +7,12 @@
 - Phase 3 设计改为 `trigger: none` 的 Azure Release Shadow，输出固定 `Authority=Shadow`、`Deployable=false`；ACR 当前未批准，未来迁移必须另立 ADR 并完成三个连续候选等价验收。
 - 本任务仅修改文档和设计，没有创建 Registry/Service Connection、运行候选、拉取镜像、部署环境或切换 Cloudflare。
 
+## 2026-08-26 CP6 SaaS V1 公开工程契约同步完成
+
+- 私有产品冻结 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d`、Frozen 摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 Accepted R00 摘要继续绑定到公开契约。
+- ProgramOwner 在 PR #8 批准精确公开摘要 `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`；append-only 记录绑定 GitHub 评论、证据 commit/blob、UTC 时间与私有源，公开合同和 R00 镜像达到 Complete。
+- 同步验证器失败关闭核对批准角色、摘要、评论 URI、证据对象、私有源、脱敏声明与 M0 No-Go。该完成项不解锁 CRM01，也未创建云资源、Secret、数据库、迁移或部署。
+
 ## 2026-08-26 DEV 自动发布稳定性闭环
 
 - #129 以 31 次低内存采样证明 readiness 会在 SQL/备份前失败关闭；600 秒恢复窗口保留 2048 MiB 与 3 次连续独立 SQL 登录的安全要求。

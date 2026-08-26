@@ -1,0 +1,36 @@
+name: crm-saas-public-contract
+
+on:
+  # This workflow is a required check, so it must report a result for every PR.
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/crm-saas-public-contract.yml"
+      - "docs/crm/**"
+      - "docs/devops/**"
+      - "docs/project-memory/**"
+      - "README.md"
+      - "tools/Test-CrmSaasPublicContract.ps1"
+      - "tools/Test-CrmSaasPublicContract.Tests.ps1"
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  verify:
+    name: crm-saas-public-contract
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify sanitized CRM SaaS public contract
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./tools/Test-CrmSaasPublicContract.ps1 -VerifyGitHubEvidence
+          ./tools/Test-CrmSaasPublicContract.Tests.ps1

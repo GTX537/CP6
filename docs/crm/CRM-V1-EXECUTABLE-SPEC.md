@@ -1,6 +1,6 @@
 # CP6 CRM V1 可执行工程规格
 
-状态：Approved implementation-planning baseline；禁止据此直接上线
+状态：Historical planning baseline；新实施以 [CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md) 为准
 
 最后核验：2026-08-13
 
@@ -12,7 +12,7 @@ Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 
 本 Spec 把已经锁定的 CRM 方向转换为三仓库可执行计划。实现者不再决定仓库边界、前后端技术、身份协议、消息格式、数据主权或迁移策略；这些内容是输入约束。每个实施分支仍需把本 Spec 的里程碑拆为 1–3 天、可独立验证的子任务。
 
-本规划任务只交付规格和审阅证据，不创建新仓库、不实现服务、不创建云资源、不配置生产 Secret、不发布镜像、不执行数据迁移或部署。`GTX537/CP6.CRM` 只在本 Spec 进入最新 `main`、M0 输入关闭且 P01 runner/合同可消费后，由 `CRM01-S01` 创建为私有仓库；不得提前创建空仓，也不得把 CRM 临时实现回 CP6 单体。
+本历史规划任务当时只交付规格和审阅证据，没有实现服务、创建云资源、配置生产 Secret、发布镜像、执行数据迁移或部署。`GTX537/CP6.CRM` 后续已按产品冻结流程建立为私有仓库；仓库存在不等于业务实现获准开始，当前开工状态以公开工程契约和 M0 Readiness 为准，也不得把 CRM 临时实现回 CP6 单体。
 
 批准证据：
 
