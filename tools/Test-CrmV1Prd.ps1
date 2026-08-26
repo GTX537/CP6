@@ -326,6 +326,18 @@ $publicBaselineScanFiles = @(
     'docs/project-memory/06-Todo.md',
     'docs/project-memory/CHANGELOG-AI.md'
 )
+$expectedPublicDisclosureSurfaceSha256 = [ordered]@{
+    'docs/crm/CRM-V1-PRD.md' = 'e63ebb6dfadbfe04750a24ff3bd6d53de67bfd0d4226e872f753a25158996da7'
+    'docs/crm/CRM-COMPETITIVE-ANALYSIS.md' = '4881b2a3e212d0b57446915b3a60139b71877263e201b6e8222782436f8d6d4a'
+    'docs/crm/README.md' = '9543bc859003469dd5773bd4992d884f356e176b04e96c3b7fda68b0fcf3089d'
+    'README.md' = '8e02d5a1363bf32d1ca882c999022039a1eb6d564f103016814315141860da4d'
+    'docs/crm/approvals/cp6-crm-v1-prd.json' = 'cec71e7e5b0435f4b6740f259b0bada95649a15e56a406fd3d2de4b876a9b891'
+    'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' = '76b3d5d481ad6c128f70abc7ceb770e430907fed97ca8bdd986873dc492720b3'
+    'docs/project-memory/PROJECT_STATE.md' = '72c45cbbe9599e444b1f8779bed7045fff2aa1782f0d8ca92650ede55772be20'
+    'docs/project-memory/05-Completed.md' = 'e50b0b0c632ee6a34637087f5a47069e19b033a6bd703f2769e3cb973a6b0c5a'
+    'docs/project-memory/06-Todo.md' = 'ac6653b51575a1706e9904cf76360af135e7526b57c9e8dde9dcd7eb45e603d0'
+    'docs/project-memory/CHANGELOG-AI.md' = 'afd9d53e3a29b8b392e5a0cd00612f62a835e4f0f763f59286395ec0dcc3834d'
+}
 $privateCommercialPatterns = @(
     '(?i)\d+\s*家[^\n]{0,80}(中国|北美|设计伙伴)',
     '(?i)(中国|北美)[^\n]{0,40}设计伙伴',
@@ -338,7 +350,12 @@ $privateCommercialPatterns = @(
     '(?i)(\d+|[一二三四五六七八九十百千万两〇零]+)\s*(个\s*)?(工作日|自然日|日|天|周|月)[^\n]{0,60}(采用|adoption)',
     '(?i)(Pilot|试点)[^\n]{0,50}(位于|来自|地区|区域|region|中国|北美|欧洲|亚太)|(?i)(位于|来自|地区|区域|region|中国|北美|欧洲|亚太)[^\n]{0,50}(Pilot|试点)',
     '(?i)(公司|集团|Inc\.?|LLC|Ltd\.?|科技|包装)[^\n]{0,50}(Pilot|试点)|(?i)(Pilot|试点)[^\n]{0,50}(公司|集团|Inc\.?|LLC|Ltd\.?|科技|包装)',
-    '(?i)(Eligible\s*Lead|Conversion|OrderRequest)[^\n]{0,50}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+|(?i)(至少|最多|不超过|>=|≥|<=|≤)\s*\d+[^\n]{0,50}(Eligible\s*Lead|Conversion|OrderRequest)'
+    '(?i)(Eligible\s*Lead|Conversion|OrderRequest)[^\n]{0,50}(至少|最多|不超过|>=|≥|<=|≤)\s*\d+|(?i)(至少|最多|不超过|>=|≥|<=|≤)\s*\d+[^\n]{0,50}(Eligible\s*Lead|Conversion|OrderRequest)',
+    '(?i)(adoption|采用)[^\n]{0,60}(within|at\s*least|no\s*more\s*than)?\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|forty|fifty|sixty|ninety)\s*(business\s*)?(day|days|week|weeks|month|months)',
+    '(?i)(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|forty|fifty|sixty|ninety)\s*(business\s*)?(day|days|week|weeks|month|months)[^\n]{0,60}(adoption|采用)',
+    '(?im)^\s*(?:[-*]\s*)?Pilot\s*[:：]\s*\S|Pilot\s+customer\s+list\s*[:：]|\b[A-Z][A-Za-z0-9.-]{2,}\s+(enters|joins)\s+Pilot',
+    '(?i)(Eligible\s*Lead|Conversion|OrderRequest)[^\n]{0,40}(sample|denominator|minimum|target|[:=])\s*\d+',
+    '(?i)(signup[-_\s]*(to|到)[-_\s]*activation|trial[-_\s]*(to|到)[-_\s]*paid|weekly[-_\s]*active[-_\s]*org)[^\n]{0,40}(target|minimum|denominator|[:=]|至少|>=|≥)\s*\d+%?'
 )
 foreach ($file in $publicBaselineScanFiles) {
     $text = Read-NormalizedText $file
@@ -348,6 +365,12 @@ foreach ($file in $publicBaselineScanFiles) {
             Fail "Private commercial cohort, rollout schedule, or numeric KPI detail found in $file"
         }
     }
+}
+
+foreach ($entry in $expectedPublicDisclosureSurfaceSha256.GetEnumerator()) {
+    $text = Read-NormalizedText $entry.Key
+    if ($null -eq $text) { continue }
+    Assert-Equal (Get-TextSha256 $text) $entry.Value "Public disclosure surface digest mismatch: $($entry.Key)"
 }
 
 $prdText = Read-NormalizedText $prdPath

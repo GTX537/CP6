@@ -137,15 +137,26 @@ try {
     Test-NegativeCase -Name 'Chinese adoption schedule injection outside PRD' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nLead Adoption 至少十个工作日" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
     Test-NegativeCase -Name 'company Pilot injection outside PRD' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`n示例甲公司进入 Pilot" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
     Test-NegativeCase -Name 'Full Journey sample injection outside PRD' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nFull Journey 至少 11 个 Conversion" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'English numeric adoption schedule injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nLead Adoption within 30 days" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'English word adoption schedule injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nAdoption within thirty days" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'free-form Pilot region injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nPilot: EMEA" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'Pilot customer list injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nPilot customer list: Acme" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'named company enters Pilot injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nAcme enters Pilot" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'Conversion sample injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nConversion sample: 20" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'Eligible Lead denominator injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nEligible Lead denominator = 200" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'OrderRequest minimum sample injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nOrderRequest minimum sample 10" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'weekly active org target injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nweekly-active-org target: 42%" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'trial to paid target injection' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`ntrial_to_paid: 23%" -ExpectedFailure 'Private commercial cohort, rollout schedule, or numeric KPI detail'
+    Test-NegativeCase -Name 'unknown public disclosure wording drift' -RelativePath 'docs/crm/README.md' -Before '# CP6 CRM 文档入口' -After "# CP6 CRM 文档入口`nOpaque disclosure wording" -ExpectedFailure 'Public disclosure surface digest mismatch'
     Test-NegativeCase -Name 'current history sanitization drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' -Before '"containsCommercialCohortCounts": false' -After '"containsCommercialCohortCounts": true' -ExpectedFailure 'history record content digest mismatch'
     Test-NegativeCase -Name 'public numeric scope history drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' -Before '"containsPublicProductOrTechnicalAcceptanceNumbers": true' -After '"containsPublicProductOrTechnicalAcceptanceNumbers": false' -ExpectedFailure 'history record content digest mismatch'
     Test-NegativeCase -Name 'aggregate invalidated approval count drift' -RelativePath 'docs/crm/approvals/cp6-crm-v1-prd.json' -Before '"invalidatedPreMergeApprovals": 3' -After '"invalidatedPreMergeApprovals": 2' -ExpectedFailure 'invalidated pre-merge approval count mismatch'
     Test-NegativeCase -Name 'history clean ancestry claim drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' -Before '"invalidatedCommitsExcluded": true' -After '"invalidatedCommitsExcluded": false' -ExpectedFailure 'history record content digest mismatch'
 
-    if ($passed -ne 39) {
-        throw "Expected 39 CRM V1 PRD tests; passed $passed."
+    if ($passed -ne 50) {
+        throw "Expected 50 CRM V1 PRD tests; passed $passed."
     }
-    Write-Host "CRM V1 PRD negative tests passed: $passed/39"
+    Write-Host "CRM V1 PRD negative tests passed: $passed/50"
 }
 finally {
     if (Test-Path -LiteralPath $fixtureRoot) {
