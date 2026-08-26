@@ -2,6 +2,12 @@
 
 最后更新：2026-08-25
 
+## DEV 自动发布已授权，真实验收待新 main completion（2026-08-25）
+
+- 手动 DEV 验收 3/3 后，用户明确接受继续完成自动闭环；Azure `CP6 DEV CD` 的 `CP6_DEV_AUTO_DEPLOY_ENABLED` 已由 `false` 改为 `true`，`CP6_DEV_PUBLIC_VERIFICATION_ENABLED` 继续保持 `false`，因此本次任务不切换 `cp6.uk`。
+- 当前 `main@ecbad9e1...` 的 Azure 基础 CI #122 和关闭状态 completion DEV #123 已成功。开关开启后手动重跑同一 SHA 的基础 CI #124 也成功，但观察期内没有产生第二个 completion DEV Run；#124 不作为自动部署验收，也不会用手动 DEV Run 冒充自动触发。
+- 本状态记录通过独立 PR 进入 `main` 后，将产生新的 main SHA 和 completion event；只有后续 DEV Run 的 `Build.Reason=ResourceTrigger`，且真实完成 Package、CHECKSUM/VERIFYONLY 备份、Deploy、健康/身份、证据归档及根 `cp6` 零漂移，才可写成“自动 DEV 已验收”。旧版本手动回退前仍必须先关闭自动。
+
 ## GitHub 远程构建与 Azure 轻量 Artifact 桥（2026-08-25）
 
 - 本机完整编译在 #113/#115 仍触发宿主内存或 SQL 门禁；Azure 组织 #110 又无 hosted parallelism，因此基础编译迁至 GitHub `client-contract.yml`。它在 GitHub-hosted Runner 完成 .NET、客户端、OpenAPI、Web、Android 与 R2 source 门禁，生成名称含完整 SHA、内部含逐文件 SHA-256 的 3 天 Runtime Artifact。
