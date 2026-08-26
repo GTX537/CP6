@@ -1,0 +1,28 @@
+name: crm-v1-prd-head
+
+on:
+  # Bootstrap and diagnostic validation only. This workflow never emits the
+  # required crm-v1-prd context; that name belongs to protected-base code.
+  pull_request:
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  verify:
+    name: crm-v1-prd-head
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify approved CRM V1 product requirements from the PR head
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./tools/Test-CrmV1Prd.ps1 -VerifyGitHubEvidence
+          ./tools/Test-CrmV1Prd.Tests.ps1

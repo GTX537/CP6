@@ -1,9 +1,8 @@
 name: crm-v1-prd
 
 on:
-  # Head validation bootstraps this PR and gives fast diagnostics. The required
-  # check is emitted only by protected-base code via pull_request_target.
-  pull_request:
+  # This workflow exists only on protected main after the bootstrap merge.
+  # It is the sole producer of the required crm-v1-prd context.
   pull_request_target:
   push:
     branches: [main]
@@ -21,40 +20,28 @@ permissions:
   pull-requests: read
 
 jobs:
-  verify-head:
-    if: github.event_name == 'pull_request'
-    name: crm-v1-prd-head
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          fetch-depth: 0
-      - name: Verify approved CRM V1 product requirements
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          ./tools/Test-CrmV1Prd.ps1 -VerifyGitHubEvidence
-          ./tools/Test-CrmV1Prd.Tests.ps1
-
-  verify-protected-base:
-    if: github.event_name == 'pull_request_target'
+  verify:
     name: crm-v1-prd
     runs-on: windows-latest
     steps:
       - name: Check out trusted validator from the protected base
+        if: github.event_name == 'pull_request_target'
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
           path: trusted
+          persist-credentials: false
       - name: Check out the exact pull request head as data
+        if: github.event_name == 'pull_request_target'
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           path: candidate
+          persist-credentials: false
       - name: Verify the candidate with protected-base code
+        if: github.event_name == 'pull_request_target'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -63,15 +50,14 @@ jobs:
             -RepositoryRoot "$env:GITHUB_WORKSPACE/candidate" `
             -VerifyGitHubEvidence
 
-  verify-main:
-    if: github.event_name == 'push'
-    name: crm-v1-prd
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check out main
+        if: github.event_name == 'push'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Verify approved CRM V1 product requirements on main
+        if: github.event_name == 'push'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
