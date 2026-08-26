@@ -93,7 +93,7 @@ try {
 
     Test-NegativeCase -Name 'duplicate payload start marker' -RelativePath 'docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md' -Before '<!-- public-contract-payload:start -->' -After "<!-- public-contract-payload:start -->`n<!-- public-contract-payload:start -->" -ExpectedFailure 'Payload markers must each occur exactly once'
 
-    Test-NegativeCase -Name 'invalid approval aggregate JSON' -RelativePath 'docs/crm/approvals/cp6-saas-v1-public-contract.json' -Before '"schemaVersion": 2' -After '"schemaVersion":' -ExpectedFailure 'Invalid JSON'
+    Test-NegativeCase -Name 'invalid approval aggregate JSON' -RelativePath 'docs/crm/approvals/cp6-saas-v1-public-contract.json' -Before '"schemaVersion": 2,' -After '"schemaVersion": 2,,' -ExpectedFailure 'Invalid JSON'
 
     Test-NegativeCase -Name 'R00 private source commit drift' -RelativePath 'docs/devops/adr/ADR-CRM-R00-RELEASE-AUTHORITY.md' -Before '07a7bb0b50f33b0cb70c18c14f83be77c725626d' -After '0000000000000000000000000000000000000000' -ExpectedFailure 'missing required text'
 
