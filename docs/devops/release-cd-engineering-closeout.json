@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "status": "Complete",
+  "scope": "RepositoryAndPlatformEngineering",
+  "closedAtUtc": "2026-08-26T15:01:23.917959Z",
+  "authority": {
+    "candidateAndDeployment": "GitHubR2",
+    "registry": "GHCR",
+    "azure": "Shadow"
+  },
+  "baseline": {
+    "releaseShadowMergeCommit": "9009abe687c693fdcbd650261f39b56cf8ccf8fb",
+    "azurePipelineDefinitionId": 5,
+    "azureShadowRunId": 145,
+    "azureShadowRunResult": "Succeeded"
+  },
+  "prValidation": {
+    "authority": "GitHub",
+    "azurePrTrigger": false,
+    "requiredContexts": [
+      "windows-and-web",
+      "android",
+      "sql-integration",
+      "crm-saas-public-contract",
+      "crm-v1-prd"
+    ]
+  },
+  "operationalRelease": {
+    "status": "NoGo",
+    "firstCandidateVersion": "1.0.0",
+    "candidateState": "Draft",
+    "pendingExternalInputCount": 20,
+    "githubEnvironmentCount": 0,
+    "githubRepositorySecretCount": 0,
+    "r2ReleaseCount": 0,
+    "r2WorkflowRunCount": 0
+  }
+}

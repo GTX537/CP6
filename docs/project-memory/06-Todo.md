@@ -48,21 +48,19 @@
 - PowerShell 版本差异与全局无关 schema 导致的假阳性已消除；门禁现在只哈希原生客户端路径及递归可达 schema，并使用 Node.js 稳定规范化。
 - Node 20/22 单测、真实 Swagger check、.NET/Client/Web 和 R2 source gate 均已通过。该项不再作为 CRM PR #5 的归因问题；修复合入 `main` 后应更新 PR #5 基线并重跑 GitHub Actions。
 
-## P0：Azure DevOps Release/CD 演进
+## 已完成：Release/CD 仓库与平台工程建设
 
-- 外部 Readiness Pipeline 已命名为 `CP6 Deploy Agent`；可再补全为 `CP6 Deploy Agent Readiness`，并保持 `CP6-Deploy` Pool 未对所有 Pipelines 开放。
-- Readiness Build ID `10` 及后续 #89/#105 已通过；ODBC 17 `sqlcmd`、备份目录 ACL、最小化 `cp6_dev_backup`、锁定 `CP6_DEV_DB_BACKUP_PASSWORD`、Pipeline 定向授权和 Exclusive lock 均已完成验收。
-- 当前 7 份 `.bak` 均保留且不自动删除；后续需单独确认保留数量、最小保留期、磁盘告警和可恢复证据后再实现清理策略。
-- 当前用户目录已安装并登录 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6；`CP6 DEV CD`、`CP6-Deploy`、`cp6-dev-secrets`、`cp6-dev` Environment、定向授权与 Exclusive lock 均已配置。当前自动开关为 `true`，公网验证开关为 `false`。
-- 三次手动 Run、低内存失败关闭、同 Stage 重试和最终自动 #133 已证明根 `cp6`/`CP6DB` 未受影响；自动开关保持 `true`。后续每次自动发布继续保留 readiness、备份、部署、attempt-aware Artifact 与宿主基线证据。
-- 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
-- DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。Registry/发布权威现已固定为 GitHub R2 + GHCR，Azure 不创建第二套候选；后续推广必须读取同一 Schema 2 manifest/digest，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
-- 当前 Azure `azure-pipelines.yml` 是 `Default` self-hosted 轻量 Artifact 桥、`main` trigger、`pr: none`；完整编译/测试在 GitHub `client-contract`。仍需补 Agent 运维边界和 PR 门禁归属，不把 Artifact 绿灯描述为上线。
-- CP6 通用 `ADR-DEVOPS-001` 已冻结 GHCR/R2 唯一权威、Schema 2 candidate chain、Azure 非权威 Shadow、等价矩阵和回退；CRM Draft PR #7 的多仓 System Manifest/M0 审批仍是独立范围，不能用通用 ADR 冒充 CRM named approval。
-- Azure Release Shadow S0 仓库合同已实现：手动 YAML、固定 fixture、严格 parser、1 个有效/10 个失败关闭场景及无 Build/Push/Pull/Tag/Deploy/Service Connection 的静态门禁均已建立；仍须合并并在无 Secret Azure Run 中保留一次可复现 S0 Artifact 证据。
-- 下一张 DevOps 单任务卡是 S1 真实候选只读元数据：先审批最小只读 evidence/GitHub 身份，再验证现有 candidate result → manifest → freeze/spec → annotated Tag/main 绑定；之后依次另立 GHCR digest 验证、独立 Agent 同 digest SBOM/Trivy 对比、三个连续候选等价报告和同一 digest 的 DEV/UAT/PROD 推广。
-- 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。
-- CRM V1 全周期固定使用 GitHub R2/GHCR 作为候选权威；Azure 即使达到等价也只能消费相同 digest 或做非权威验证。未来任何 ACR/权威切换都必须另立 ADR，不得在产品实现票中重开。
+- GitHub PR/main 验证、Azure 轻量 Artifact 桥、DEV 自动链、GHCR/GitHub R2 唯一权威、生产候选/部署工作流与模板、Azure Shadow S0 均已闭环；PR #32、`main@9009abe6` 和 Azure Definition #5 / Run #145 构成最新证据。
+- Phase 1 剩余治理项已关闭：GitHub 是唯一 PR 绿灯，Azure 保持 `pr: none`；CI/R2/Space 门禁责任矩阵和 self-hosted Agent 运维/隔离规则已写入结案报告。
+- 该项不再作为长期 P0。完整结案口径与机器证据见 `docs/devops/RELEASE-CD-ENGINEERING-CLOSEOUT.md` 和 `release-cd-engineering-closeout.json`。
+
+## P0：首个 R2 生产发行执行（事件触发）
+
+- 当前没有可执行的 S1 或 PROD 任务：GitHub 无 R2 Release、受保护版本 Tag、R2 workflow Run、Environment 或仓库 Secret；`v1.0.0` 为 Draft，20 项生产/签名/设备/Pilot 输入均 Pending，Freeze gate 按预期失败关闭。
+- 真实 Owner 批准并补齐 `candidate.yaml` 后，依次执行 Freeze → `vX.Y.Z` protected Tag → R2 candidate → Compose DEV/UAT → R2A/R2B；不得创建模拟 Secret、空批准或虚构候选来“结案”。
+- 首个权威 candidate result/manifest 出现后，另开 S1 只读元数据任务；S1 之后的 GHCR digest、SBOM/Trivy 对比和三个候选等价报告继续逐卡验收。
+- 当前 7 份 DEV `.bak` 不自动删除；保留数量、最小保留期、磁盘告警和恢复证据由独立运维任务批准后再实现清理策略。
+- 全阶段继续遵守 Build once、同 digest 推广、前向迁移、环境侧审批、CI/Deploy 身份分离和不可变证据规则。
 
 ## P0：CRM V1 端到端交付
 

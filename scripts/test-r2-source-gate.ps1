@@ -393,6 +393,7 @@ $releaseScripts = @(
     "scripts\test-r2-source-gate.ps1",
     "scripts\Test-Cp6ReleaseShadowCandidate.ps1",
     "scripts\test-release-shadow-contract.ps1",
+    "scripts\test-release-cd-engineering-closeout.ps1",
     "scripts\test-r2-pilot-contract.ps1",
     "scripts\test-r2-pilot-orchestration-contract.ps1",
     "scripts\install-k6-portable.ps1",
@@ -428,6 +429,7 @@ foreach ($relativeScript in $releaseScripts) {
 }
 
 & (Join-Path $repoRoot "scripts\test-release-shadow-contract.ps1")
+& (Join-Path $repoRoot "scripts\test-release-cd-engineering-closeout.ps1")
 & (Join-Path $repoRoot "scripts\test-r2-deployment-contract.ps1")
 & (Join-Path $repoRoot "scripts\test-r2-release-readiness.ps1") `
     -SpecPath (

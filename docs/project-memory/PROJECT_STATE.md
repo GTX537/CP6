@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## Release/CD 仓库与平台工程结案（2026-08-26）
+
+- PR #32 已把 Azure Release Shadow S0 合入 `main@9009abe687c693fdcbd650261f39b56cf8ccf8fb`；GitHub required checks、额外 Space/CRM 守卫和本地 1 个有效/10 个失败关闭场景全部通过。
+- Azure 已创建 `CP6 Release Shadow` Definition #5，只定向授权现有 GitHub endpoint 与 `Default` queue；Run #145 绑定上述完整 SHA，在无 Variable Group、无 Registry/Environment 权限下输出 `Authority=Shadow`、`Deployable=false` 的辅助 Artifact `cp6-release-shadow-s0-145`，结果为 `Succeeded`。
+- Phase 1 PR 归属固定为 GitHub，Azure 保持 `pr: none`；OpenAPI/SDK、Android、WMS SQL、候选 E2E/供应链与 Space 独立门禁的责任矩阵，以及 self-hosted Agent 更新/磁盘/离线/单并发/身份隔离规则均已固化。
+- Release/CD 的工程建设状态改为 `Complete`；首个生产发行仍为独立的 `No-Go` 执行门禁。实时审计确认 GitHub 无 R2 Release、受保护版本 Tag、R2 workflow Run、Environment 或仓库 Secret，`v1.0.0` 仍是 Draft 且 20 项输入 Pending，Freeze gate 按预期拒绝。
+- Phase 3 S1 和 Phase 4～7 只在真实候选、外部环境、批准人或 Pilot 到位后按事件重开单任务卡；不得以 fixture、空 Environment、Azure DEV 成功或工程结案冒充生产上线。完整依据见 `docs/devops/RELEASE-CD-ENGINEERING-CLOSEOUT.md`。
+
 ## CRM V1 PRD 完整脱敏产品基线批准（2026-08-26）
 
 - `docs/crm/CRM-V1-PRD.md` v0.2 已迁移到最新 `main` 基线，并移除商业 cohort 数量/地域/名单、精确推广时间表、私有数值商业 KPI、数值 Pilot UAT 和采用门禁；候选期措辞改为不随状态漂移的批准规则，批准的 payload SHA-256 为 `5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`。

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：Release/CD 仓库与平台工程结案
+
+- Shadow S0 经 PR #32 合入 `main@9009abe6`；Azure 新建定向授权的 `CP6 Release Shadow` Definition #5，Run #145 绑定同一 SHA 并在无 Secret、无 Registry/Environment 权限下完成离线验证，结果为 `Succeeded`，Artifact 为 `cp6-release-shadow-s0-145`。
+- PR 验证唯一归属 GitHub；Azure 继续 `pr: none`。补齐 CI/R2/Space 责任矩阵和 `CP6-Windows` / `CP6-Deploy` 更新、离线、单并发、磁盘、clean checkout 与身份隔离规则。
+- 新增人类/机器可读结案证据及失败关闭合同：工程状态为 Complete 时仍强制 `v1.0.0` 保持 Draft、20 项发行输入 Pending、生产状态 No-Go，避免用工程结案冒充候选或部署成功。
+- 当前 GitHub R2 外部状态为零 Release、零受保护版本 Tag、零 R2 workflow Run、零 Environment、零仓库 Secret；S1、UAT/PROD、灾备和多仓推广仅在真实候选/环境/批准人到位后按事件建立单任务卡。
+
 ## 2026-08-26：CRM V1 PRD 完整脱敏产品基线批准
 
 - 合入前审查发现三次未合并 payload 仍公开了应保留在私有仓的商业 cohort、精确推广时间表或私有数值采用门禁；三次预审批均作废。
