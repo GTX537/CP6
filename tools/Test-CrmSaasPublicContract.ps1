@@ -79,6 +79,25 @@ function Assert-Equal([object] $Actual, [object] $Expected, [string] $Message) {
     }
 }
 
+function Assert-UniqueFieldLine(
+    [string] $RelativePath,
+    [string] $Prefix,
+    [string] $ExpectedLine
+) {
+    $text = Read-NormalizedText $RelativePath
+    if ($null -eq $text) { return }
+    $matchingLines = @($text.Split("`n") | Where-Object {
+        $_.StartsWith($Prefix, [StringComparison]::Ordinal)
+    })
+    if ($matchingLines.Count -ne 1) {
+        Fail "$RelativePath field '$Prefix' must occur exactly once; found $($matchingLines.Count)"
+        return
+    }
+    if ($matchingLines[0] -cne $ExpectedLine) {
+        Fail "$RelativePath field '$Prefix' must equal '$ExpectedLine'; actual '$($matchingLines[0])'"
+    }
+}
+
 function ConvertTo-UtcEvidenceTimestamp([object] $Value) {
     if ($null -eq $Value) { return $null }
     try {
@@ -282,6 +301,18 @@ if ($null -ne $publicText -and $null -ne $publicDigest) {
     }
 }
 
+Assert-UniqueFieldLine $publicPath '<!-- public-contract-status:' '<!-- public-contract-status: Complete -->'
+Assert-UniqueFieldLine $publicPath '- 状态：' '- 状态：**Complete**'
+Assert-UniqueFieldLine $publicPath '- 私有源合并提交：' ('- 私有源合并提交：`' + $sourceMergeCommit + '`')
+Assert-UniqueFieldLine $publicPath '- 私有产品决策：' ('- 私有产品决策：`CP6-SAAS-V1` / `' + $sourceProductDigest + '` / `Frozen`')
+Assert-UniqueFieldLine $publicPath '- 私有发布决策：' ('- 私有发布决策：`CP6-SAAS-R00` / `' + $sourceR00Digest + '` / `Accepted`')
+Assert-UniqueFieldLine $publicPath '- 当前状态：' '- 当前状态：Complete'
+Assert-UniqueFieldLine $publicPath '- 当前 `decisionPayloadSha256`：' ('- 当前 `decisionPayloadSha256`：`' + $approvedPublicDigest + '`')
+Assert-UniqueFieldLine $publicPath '- 私有产品源：' '- 私有产品源：Frozen'
+Assert-UniqueFieldLine $publicPath '- 私有 R00 源：' '- 私有 R00 源：Accepted'
+Assert-UniqueFieldLine $publicPath '- 公开同步：' '- 公开同步：Complete'
+Assert-UniqueFieldLine $publicPath '- M0：' '- M0：No-Go'
+
 Assert-Contains $publicPath @(
     $sourceRepository,
     $sourceMergeCommit,
@@ -311,6 +342,17 @@ Assert-Contains $r00Path @(
     '公开同步：Complete',
     'M0：No-Go'
 )
+Assert-UniqueFieldLine $r00Path '<!-- public-r00-mirror-status:' '<!-- public-r00-mirror-status: Complete -->'
+Assert-UniqueFieldLine $r00Path '- 镜像状态：' '- 镜像状态：**Complete**'
+Assert-UniqueFieldLine $r00Path '- 私有源状态：' '- 私有源状态：**Accepted**'
+Assert-UniqueFieldLine $r00Path '- 私有决策 ID：' '- 私有决策 ID：`CP6-SAAS-R00`'
+Assert-UniqueFieldLine $r00Path '- 私有 `decisionPayloadSha256`：' ('- 私有 `decisionPayloadSha256`：`' + $sourceR00Digest + '`')
+Assert-UniqueFieldLine $r00Path '- 私有源合并提交：' ('- 私有源合并提交：`' + $sourceMergeCommit + '`')
+Assert-UniqueFieldLine $r00Path '- 私有 R00：' '- 私有 R00：Accepted'
+Assert-UniqueFieldLine $r00Path '- 公开工程镜像：' '- 公开工程镜像：Complete'
+Assert-UniqueFieldLine $r00Path '- 公开同步：' '- 公开同步：Complete'
+Assert-UniqueFieldLine $r00Path '- P09/P10 implementation：' '- P09/P10 implementation：Pending'
+Assert-UniqueFieldLine $r00Path '- M0：' '- M0：No-Go'
 Assert-Contains $m0Path @(
     'approved_human_role_ids == { ProgramOwner }',
     'DEC-001',
@@ -319,6 +361,10 @@ Assert-Contains $m0Path @(
     'M2/M5/M6/CRM12',
     'NO-GO'
 )
+Assert-UniqueFieldLine $m0Path '<!-- crm-m0-status:' '<!-- crm-m0-status: No-Go -->'
+Assert-UniqueFieldLine $m0Path '- 状态：' '- 状态：**NO-GO**'
+Assert-UniqueFieldLine $m0Path '- 产品源：' ('- 产品源：私有 `CP6-SAAS-V1` / `' + $sourceProductDigest + '` / Frozen')
+Assert-UniqueFieldLine $m0Path '- 发布源：' ('- 发布源：私有 `CP6-SAAS-R00` / `' + $sourceR00Digest + '` / Accepted')
 Assert-NotContains $m0Path @(
     'approved_human_role_ids == { Sponsor',
     'all_M0_hard_gate_named_roles',
@@ -326,14 +372,20 @@ Assert-NotContains $m0Path @(
 )
 $m0Text = Read-NormalizedText $m0Path
 if ($null -ne $m0Text) {
-    foreach ($approvedDecisionId in @('DEC-000', 'DEC-002')) {
-        if ($m0Text -notmatch "(?m)^\|\s*$approvedDecisionId\s*\|[^\n]*\|\s*Approved\s*\|\s*$") {
-            Fail "$approvedDecisionId must remain Approved in $m0Path"
-        }
+    $expectedDecisionStatuses = [ordered]@{
+        'DEC-000' = 'Approved'; 'DEC-001' = 'Pending'; 'DEC-002' = 'Approved'
+        'DEC-003' = 'Pending'; 'DEC-004' = 'Pending'; 'DEC-005' = 'Pending'
+        'DEC-006' = 'Pending'; 'DEC-007' = 'Pending'; 'DEC-008' = 'Pending'; 'DEC-009' = 'Pending'
     }
-    foreach ($pendingDecisionId in @('DEC-001', 'DEC-003', 'DEC-004', 'DEC-005', 'DEC-006', 'DEC-007', 'DEC-008', 'DEC-009')) {
-        if ($m0Text -notmatch "(?m)^\|\s*$pendingDecisionId\s*\|[^\n]*\|\s*Pending\s*\|\s*$") {
-            Fail "$pendingDecisionId must remain Pending in $m0Path"
+    foreach ($decisionId in $expectedDecisionStatuses.Keys) {
+        $matches = [regex]::Matches($m0Text, "(?m)^\|\s*$decisionId\s*\|[^\n]*\|\s*(?<status>[^|]+?)\s*\|\s*$")
+        if ($matches.Count -ne 1) {
+            Fail "$decisionId must occur exactly once in $m0Path; found $($matches.Count)"
+            continue
+        }
+        $actualStatus = $matches[0].Groups['status'].Value.Trim()
+        if ($actualStatus -ne $expectedDecisionStatuses[$decisionId]) {
+            Fail "$decisionId must remain $($expectedDecisionStatuses[$decisionId]) in $m0Path; actual $actualStatus"
         }
     }
 }
@@ -360,8 +412,10 @@ if ($null -ne $approval) {
     if ($approval.m0Status -ne 'No-Go') { Fail 'Public sync must not change M0 away from No-Go' }
     if ($approval.sourcePrivate.repository -ne $sourceRepository) { Fail 'Private source repository mismatch' }
     if ($approval.sourcePrivate.mergeCommitSha -ne $sourceMergeCommit) { Fail 'Private source merge commit mismatch' }
+    if ($approval.sourcePrivate.productDecisionId -ne 'CP6-SAAS-V1') { Fail 'Private product decision ID mismatch' }
     if ($approval.sourcePrivate.productDecisionPayloadSha256 -ne $sourceProductDigest) { Fail 'Private product digest mismatch' }
     if ($approval.sourcePrivate.productStatus -ne 'Frozen') { Fail 'Private product status must be Frozen' }
+    if ($approval.sourcePrivate.r00DecisionId -ne 'CP6-SAAS-R00') { Fail 'Private R00 decision ID mismatch' }
     if ($approval.sourcePrivate.r00DecisionPayloadSha256 -ne $sourceR00Digest) { Fail 'Private R00 digest mismatch' }
     if ($approval.sourcePrivate.r00Status -ne 'Accepted') { Fail 'Private R00 status must be Accepted' }
     if ($approval.status -ne 'Complete') { Fail 'Approved public synchronization status must be Complete' }
@@ -455,6 +509,9 @@ Assert-Contains $m0Path @('<!-- crm-m0-status: No-Go -->')
 $sanitizedFiles = @(
     'README.md',
     'docs/crm/README.md',
+    'docs/crm/CRM-PRODUCT-FRAMEWORK.md',
+    'docs/crm/CRM-V1-EXECUTABLE-SPEC.md',
+    'docs/crm/CRM-V1-SPEC.md',
     $publicPath,
     $approvalPath,
     $approvalHistoryPath,

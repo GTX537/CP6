@@ -28,6 +28,7 @@ permissions:
 
 jobs:
   verify:
+    name: crm-saas-public-contract
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
