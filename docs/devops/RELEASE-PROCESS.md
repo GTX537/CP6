@@ -1,13 +1,13 @@
 # How to 发布 CP6
 
-本指南描述 CP6 接通完整 Azure Release/CD 后的标准流程。当前 Azure 已完成基础 CI，并运行了一条不具生产权威的本机 DEV 学习链；下列 Registry Release/UAT/PROD 步骤仍是目标操作规程，不是已经可执行的生产声明。在 Azure 迁移验收前，生产发布继续遵循 [WMS R2 主规范](../client/r2/README.md)。
+本指南描述 CP6 从权威候选到环境推广的标准流程。当前 [ADR-DEVOPS-001](./adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md) 固定 GitHub R2 + GHCR 为唯一候选权威；Azure 已完成基础 CI 和不具生产权威的本机 DEV 学习链，下一阶段只做只读 Shadow 验证。下列 UAT/PROD 步骤仍是目标操作规程，不是已经可执行的生产声明；生产发布继续遵循 [WMS R2 主规范](../client/r2/README.md)。
 
 ## 前置条件
 
 - 任务改动已在从最新 `main` 创建的独立分支完成并验证。
 - PR 门禁通过，且变更已按仓库规则合入 `main`。
 - 版本使用 `major.minor.patch`；当前仓库约定受保护 Tag 为 `vX.Y.Z`。
-- 唯一 Registry、候选清单和发布权威已获批准。
+- 唯一 Registry 为 GHCR，候选权威为 GitHub R2，候选链为 Schema 2 manifest + candidate result；Azure Shadow 输出不可部署。
 - DEV/UAT/PROD Azure Environments、Service Connections、审批人和 Secret 已由资源 Owner 配置。
 - 生产配置、域名、证书、外部服务和证据位置已按 R2 输入规范冻结。
 

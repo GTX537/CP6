@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：发布权威与 Registry 决策
+
+- 新增 `ADR-DEVOPS-001`：当前 CP6 唯一候选 Registry 为 GHCR，唯一候选/部署权威为 GitHub R2；Schema 2 `release-manifest.json` + `candidate-result.json` 是唯一候选链。
+- Azure Phase 3 收敛为只读 Release Shadow，不 Build/Push/签名/生成第二清单/部署；输出必须标记 `Authority=Shadow`、`Deployable=false`。
+- 记录现有 R2 门禁与 Azure 影子要求的等价矩阵、GitHub/GHCR/evidence/Azure Artifact 最小权限、S0/S1/S2 验收、30 分钟回退及未来 ACR 切换硬门禁。
+- 当前未创建 ACR、Service Connection 或生产资源，未运行候选、镜像操作、部署或 Cloudflare 切换；下一任务是无 Secret 的 Shadow S0 离线合同。
+
 ## 2026-08-26：DEV 自动发布稳定性闭环
 
 - #131 attempt 1 在 61 次低内存采样后于 SQL/备份前失败；同 Run 重试 Deploy 后实际完成备份、迁移、健康与 `50a1db6d...` 身份，只因 attempt 1/2 复用固定 Artifact 名而最终失败。证据 Artifact 现按只读 `System.StageAttempt` 命名，保留每次尝试且不冲突。
