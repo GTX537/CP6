@@ -341,16 +341,18 @@ Lead Pilot 固定采用已批准的 C 分栏工作台：宽屏左侧是按 SLA �
 
 ### 7.4 采用门禁
 
-| 门禁 | 最低样本/时长 | 硬通过条件 |
+公开基线只冻结门禁顺序、证据类别、不可改写口径和不可豁免原则。参与者与 cohort 构成、任务/业务样本量、观察窗口、完成率、耗时、缺陷和采用 KPI 的数值阈值全部保留在私有 Pilot Acceptance Manifest 或 Adoption Manifest；公开关闭证据只记录门禁结果与受控 Manifest 摘要。
+
+| 门禁 | 公开冻结输入 | 公开关闭证据 |
 | --- | --- | --- |
-| Observation Gate | 3 人/15 条 Lead 定性观察；8 名用户、2 个部门、100 个事件、10 个工作日脱敏定量基线 | Sponsor、Product Owner、Sales Operations Owner、cohort、任务 manifest 和基线证据均实名冻结 |
-| Pilot UAT | 8–12 名销售、2 个部门、至少 2 名主管；固定 manifest 至少 120 个任务且每人至少 10 个 | 正常路径无引导完成率 ≥90%，成功任务 median ≤60 秒、p90 ≤120 秒；预期拒绝与恢复结果各 100%；正确性、租户隔离和 PII 隔离 100%；0 开放 P0/P1 或主流程 P2 |
-| Lead Adoption Gate | 生产切换后至少 10 个工作日且至少 200 条 Eligible Lead | Website/Manual 100% 进入新 CRM且旧写为 0；≥90% 30 分钟内分配 Owner 或进入可见异常队列；≥85% 在 4 个业务小时内首次响应；各部门 Eligible Active User-Day 的真实业务动作率均 ≥80%；0 P0/P1 数据、安全或集成事故 |
-| Full Journey Gate | 最多 30 个自然日；至少 20 个 Conversion 和 10 个 OrderRequest | 所有自然发生的 Qualified→Converted、Accepted→OrderRequest 在 CRM 完成；ERP 零丢失/重复订单，失败/重试/冲突有证据，Dashboard/归因/漏斗与 canonical SQL 100% 对账 |
+| Observation Gate | 脱敏定性观察、定量事件基线、角色与部门类别 | Sponsor、Product Owner、Sales Operations Owner、cohort、任务 Manifest 和基线证据均冻结；具体规模与窗口见私有 Manifest |
+| Pilot UAT | 正常、预期拒绝和恢复任务类别，以及角色、组织、租户和 PII 覆盖类别 | 业务正确性、无引导完成、耗时、拒绝/恢复、租户/PII 隔离和缺陷门禁均通过；数值阈值见私有 Pilot Acceptance Manifest |
+| Lead Adoption Gate | 生产切换后的 Eligible Lead、Website/Manual、旧写入退出、分配/异常队列、首次响应和真实业务动作 | 采用与数据/安全/集成门禁均通过，并绑定 canonical SQL 与私有 Adoption Manifest |
+| Full Journey Gate | 自然发生的 Conversion、OrderRequest、ERP 结果、Dashboard、归因和漏斗样本 | CRM/ERP/报表对账与失败、重试、冲突证据门禁均通过；观察窗口、样本和阈值见私有 Adoption Manifest |
 
-Pilot manifest 至少包含 Website/Manual 各 20、重复候选 15、跨部门移交 15、无 Owner 10、并发冲突 10、跨非工作时段 SLA 10 个任务。`Eligible Active User-Day` 是“启用且需要 CRM 完成职责的 cohort 用户，在当天存在其权限范围内可行动工作”的用户日。只允许预先批准的休假、账号停用、正式入职/培训期和无可行动工作排除；临时声称培训不足、性能慢、用户绕过系统或数据错误不是排除理由。
+Pilot Manifest 必须覆盖 Website/Manual、重复候选、跨部门移交、无 Owner、并发冲突和跨非工作时段 SLA；各类别样本量保留在私有 Pilot Acceptance Manifest。`Eligible Active User-Day` 是“启用且需要 CRM 完成职责的 cohort 用户，在当天存在其权限范围内可行动工作”的用户日。只允许预先批准的休假、账号停用、正式入职/培训期和无可行动工作排除；临时声称培训不足、性能慢、用户绕过系统或数据错误不是排除理由。
 
-所有采用阈值不可豁免。门禁失败后系统继续运行、旧系统保持只读，只允许修复并冻结新范围/候选；最多两个固定版本整改窗口，期间 CRM V1 Epic 保持 blocked。第二次仍失败时必须由 Sponsor 重新立项或终止，不得降低阈值追认通过。
+所有采用阈值不可豁免。门禁失败后系统继续运行、旧系统保持只读，只允许修复并冻结新范围/候选；整改窗口和重新立项/终止条件由私有 Adoption Manifest 冻结，期间 CRM V1 Epic 保持 blocked，不得降低阈值追认通过。
 
 ## 8. 产品验收场景
 
