@@ -109,6 +109,12 @@
 - 五个测试辅助函数现在都只在完成正/负向退出码与错误码断言后清除已消费的子进程状态，并在各自套件汇总前断言全局退出码必须为 `0`。没有放宽任何 GA 证据规则、错误码或 `NoGo` 条件。
 - 本地按 Actions 顺序运行全部 Space GA 门禁：当前状态校验通过，Attestation 36/36、Pilot 21/21、Golden CAD 31/31、Kickoff 28/28、Development Personnel Seed 8/8；全部独立 `pwsh` 进程退出码为 `0`。
 
+## CP6 SaaS V1 公开工程契约同步完成（2026-08-26）
+
+- 私有 `GTX537/CP6.CRM` 的 Frozen 产品 merge commit 为 `07a7bb0b50f33b0cb70c18c14f83be77c725626d`，产品摘要为 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`；R00 `CP6-SAAS-R00` 摘要为 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`。
+- 公开 `CP6-SAAS-V1-PUBLIC-CONTRACT` 的规范化摘要固定为 `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`；ProgramOwner 已在 PR #8 对该精确摘要批准，append-only 记录绑定评论、证据 commit/blob 和私有源摘要，公开合同与 R00 镜像同步为 Complete。
+- 公开文件只同步四仓职责、领域/API/事件、安全、发布与 M0 开工规则；价格、支付供应商、商业 cohort、私有个人审批身份和内部风险记录不公开。M0 保持 No-Go；DEC-001、DEC-003 至 DEC-009、专业证据、Critical/High、私有仓库分支保护和必需检查仍不可豁免。
+
 ## 仓库分支整顿与当前开发基线（2026-08-24）
 
 - 分支整顿当时的集成基线为 `main@0a14581f87ac1955678bdb664911183fc5a2a2a1`；根工作区已从落后 172 个提交且含 43 个 tracked 修改/4 个 untracked 文件的旧 WIP 分支切回干净主线。整顿前完整引用、脏 worktree patch、原始未跟踪文件与校验清单保存在本机 `D:\CP6-archives\2026-08-24-branch-consolidation`，不得在完成独立备份前删除。

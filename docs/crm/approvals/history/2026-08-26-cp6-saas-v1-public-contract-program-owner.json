@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "recordId": "CP6-SAAS-V1-PUBLIC-CONTRACT-APPROVAL-20260826-001",
+  "decisionId": "CP6-SAAS-V1-PUBLIC-CONTRACT",
+  "decisionPath": "docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md",
+  "roleId": "ProgramOwner",
+  "decision": "Approved",
+  "decisionPayloadSha256": "8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9",
+  "approvedAtUtc": "2026-08-26T08:10:43Z",
+  "approvalEvidence": {
+    "type": "GitHubPullRequestComment",
+    "repository": "GTX537/CP6",
+    "pullRequestNumber": 8,
+    "commentId": 5422466809,
+    "commentUri": "https://github.com/GTX537/CP6/pull/8#issuecomment-5422466809",
+    "supersedesCommentUri": "https://github.com/GTX537/CP6/pull/8#issuecomment-5422419376",
+    "authorLogin": "GTX537",
+    "evidenceCommitSha": "b0c0edff2415984c4875d818e6a4db42b8fbdc0d",
+    "evidenceBlobSha": "1ced3f50363059b3df3fb7b216b525fd817b0af1",
+    "commentBodySha256": "68fc9f1c0c8bf525b4e1edfbf1ce11f753d2de5e1ff716ad9a32dd4c1759661b"
+  },
+  "sourcePrivate": {
+    "repository": "GTX537/CP6.CRM",
+    "mergeCommitSha": "07a7bb0b50f33b0cb70c18c14f83be77c725626d",
+    "productDecisionId": "CP6-SAAS-V1",
+    "productDecisionPayloadSha256": "e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b",
+    "productStatus": "Frozen",
+    "r00DecisionId": "CP6-SAAS-R00",
+    "r00DecisionPayloadSha256": "64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03",
+    "r00Status": "Accepted"
+  },
+  "sanitization": {
+    "containsCommercialTerms": false,
+    "containsPaymentProviderSelection": false,
+    "containsPilotCohort": false,
+    "containsPrivatePersonalApproverIdentity": false
+  },
+  "m0Status": "No-Go"
+}
