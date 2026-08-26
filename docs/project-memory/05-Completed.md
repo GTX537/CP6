@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-26 单人 BUG 管理闭环
+
+- 以 GitHub Issues 作为活动 BUG 唯一真相源，固定 P0/P1/P2 与 Open/Closed；不引入 Project 看板、多成员指派和重复状态维护。
+- 新增 BUG Issue Form、极简 PR 模板和一页管理规则；README、AGENTS 与 KnownIssues 的职责边界已对齐。
+- 首张 BUG 为 Issue #38，记录首次改密后旧认证 Cookie 导致的重新登录死锁；修复继续作为独立分支任务处理。
+
 ## 2026-08-26 CRM V1 PRD 完整脱敏产品基线批准
 
 - 将详细 CRM V1 PRD v0.2 与公开竞品研究迁移到最新主线，并与 Frozen 产品摘要、已完成公共合同和四仓权威边界统一。
