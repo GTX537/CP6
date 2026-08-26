@@ -140,13 +140,14 @@ SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；�
 | `#120` / `dev-20260825.12` | Manual；Succeeded | **是，2/3** | 复用 main #118 Artifact；独立 CHECKSUM/VERIFYONLY 备份、迁移、API/Web 身份、健康与证据 Artifact 全部成功 |
 | `#121` / `dev-20260825.13` | Manual；Succeeded | **是，3/3** | 再次独立分类、验证/封装、备份、部署和证据发布；SQL/公网七容器基线保持不变 |
 | `#123` / `dev-20260825.14` | completion trigger；Succeeded | 否 | 选择 main CI #122；当时自动开关仍为 `false`，Package/Deploy 安全跳过 |
-| `#124` / `20260826.1` | 基础 CI Manual；Succeeded | 否 | 自动开关改为 `true` 后重跑同一 main SHA；观察期内没有出现第二个 completion DEV Run，不用手动 DEV 冒充自动验收 |
+| `#124` / `20260826.1` | 基础 CI Manual；Succeeded | 否 | 自动开关改为 `true` 后重跑同一 main SHA；它是被选择的基础 CI，不是 DEV Run |
+| `#125` / `dev-20260826.1` | completion trigger；Succeeded | **自动验收通过** | #124 完成约 6 秒后以 `ResourceTrigger` 排队；真实完成 Package、备份/VERIFYONLY、Deploy、身份/健康与 2 文件证据发布，根环境零漂移 |
 
 Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
 分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。Run #101 恢复后的根基线为
 `cp6-db` RestartCount `2` / StartedAt `2026-08-25T15:06:55Z`、`cp6-api` RestartCount `3` /
 StartedAt `2026-08-25T15:07:03Z`；接下来的合格 Run 必须保持这组基线不变。
-当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`、`CP6_DEV_PUBLIC_VERIFICATION_ENABLED=false`。新的 main completion 仍须完成一次真实自动 DEV 发布验收。
+当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`、`CP6_DEV_PUBLIC_VERIFICATION_ENABLED=false`。#125 已完成一次真实自动 DEV 发布验收；第 5 份备份 SHA-256 为 `bcd9f228...a574`，DEV API/Web 为 `main@ecbad9e1...` 且 Healthy。
 
 每次手动发布都必须保存：
 
@@ -155,7 +156,7 @@ StartedAt `2026-08-25T15:07:03Z`；接下来的合格 Run 必须保持这组基�
 - `cp6-dev-evidence/deployment.json`：触发模式、CI/CD Run、镜像 ID、迁移和本机/公网验证；
 - `19991` live/ready/release 与 `18080/release.json` 的一致完整 SHA。
 
-#95/#120/#121 已满足连续三次独立成功、exclusive lock、生效备份和根 `cp6` 零漂移门禁。用户已明确授权启用自动，当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`；只有新的 main completion 真实执行一次自动 Package/Deploy 并通过全部证据门禁后，才能写成“自动 DEV 已验收”。任何旧版本手动回退前先重新关闭自动。
+#95/#120/#121 已满足连续三次独立成功、exclusive lock、生效备份和根 `cp6` 零漂移门禁；#125 又以真实 `ResourceTrigger` 完成自动 Package/Deploy 和全部证据门禁。当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`。任何旧版本手动回退前先重新关闭自动。
 
 ## 公网 Tunnel 的一次性切换
 
@@ -196,4 +197,4 @@ DEV CD 不会自动切换 Cloudflare。切换前 `cp6.uk` 仍可能指向根 `cp
 
 ## 当前完成口径
 
-仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness 和三次手动 DEV 发布均已完成，可描述为“手动 DEV 验收 3/3”。自动开关已启用但真实 completion 发布仍待验收；独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“DEV 自动部署已验收”或“cp6.uk 已切到 cp6-dev”。
+仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness、手动 DEV 3/3 和 #125 自动 DEV 发布均已完成，可描述为“DEV 手动/自动双模式已验收”。独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“cp6.uk 已切到 cp6-dev”。

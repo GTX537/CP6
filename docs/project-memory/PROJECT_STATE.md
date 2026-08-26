@@ -2,11 +2,12 @@
 
 最后更新：2026-08-25
 
-## DEV 自动发布已授权，真实验收待新 main completion（2026-08-25）
+## DEV 自动发布真实验收完成（2026-08-25）
 
-- 手动 DEV 验收 3/3 后，用户明确接受继续完成自动闭环；Azure `CP6 DEV CD` 的 `CP6_DEV_AUTO_DEPLOY_ENABLED` 已由 `false` 改为 `true`，`CP6_DEV_PUBLIC_VERIFICATION_ENABLED` 继续保持 `false`，因此本次任务不切换 `cp6.uk`。
-- 当前 `main@ecbad9e1...` 的 Azure 基础 CI #122 和关闭状态 completion DEV #123 已成功。开关开启后手动重跑同一 SHA 的基础 CI #124 也成功，但观察期内没有产生第二个 completion DEV Run；#124 不作为自动部署验收，也不会用手动 DEV Run 冒充自动触发。
-- 本状态记录通过独立 PR 进入 `main` 后，将产生新的 main SHA 和 completion event；只有后续 DEV Run 的 `Build.Reason=ResourceTrigger`，且真实完成 Package、CHECKSUM/VERIFYONLY 备份、Deploy、健康/身份、证据归档及根 `cp6` 零漂移，才可写成“自动 DEV 已验收”。旧版本手动回退前仍必须先关闭自动。
+- 手动 DEV 验收 3/3 后，用户明确接受继续完成自动闭环；Azure `CP6 DEV CD` 的 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`，`CP6_DEV_PUBLIC_VERIFICATION_ENABLED=false`，因此自动模式已开启但本次没有切换 `cp6.uk`。
+- 基础 CI #124 成功后约 6 秒自动排队 DEV #125 / `dev-20260826.1`。Azure REST 确认 `reason=resourceTrigger`、`pipelineTriggerType=PipelineCompletion`、来源 `GTX537.CP6` #124 / `main@ecbad9e1...`；Classify、587 文件 Artifact 校验、runtime-only Package、锁内 freshness、Backup、Deploy 和证据发布全部 Succeeded。
+- #125 生成第 5 份备份 `CP6_DEV_20260826_012133_290_2a3d7daf_UTC.bak`，2,572,288 bytes，SHA-256 `bcd9f2282bd747b61d292852570fdc8df3e7329e012473de6a1ad6171ba3a574`；Pipeline 日志记录 `BACKUP CHECKSUM` / `verifyOnly=passed`，本机重新计算哈希一致，`cp6-dev-evidence` 成功归档 2 个文件。
+- DEV API/Web 现均为 `0.0.0-dev.ecbad9e1...` 且 Healthy，运行 image ID 分别为 `sha256:c8d2a559...145d2` / `sha256:d9d03015...24b4c`，最新迁移仍为 `20260811030108_CrmFoundation`。根 `cp6-api`/`cp6-db` 的容器 ID、StartedAt、RestartCount `3/2` 完全不变，旧 `cp6-cloudflared` 继续运行。任何旧版本手动回退前仍必须先关闭自动。
 
 ## GitHub 远程构建与 Azure 轻量 Artifact 桥（2026-08-25）
 

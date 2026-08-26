@@ -63,7 +63,7 @@
 
 状态：**待 Phase 3**。
 
-学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选哈希 Runtime Artifact 封装本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；自动 Run #119 在关闭开关时安全跳过，Manual #95/#120/#121 已完成 3/3。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；自动开关和 Tunnel 切换仍须单独授权。
+学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选哈希 Runtime Artifact 封装本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；Manual #95/#120/#121 已完成 3/3，自动 #125 已以真实 `ResourceTrigger` 完成 Package/Deploy 和全部证据门禁。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；Tunnel 切换仍须单独授权。
 
 - [x] 创建 `cp6-dev` Azure Environment，并只授权 `CP6 DEV CD`；Exclusive lock 与 Run #95 部署历史已验证。
 - [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和强化后的 Readiness Run #89 已验证。

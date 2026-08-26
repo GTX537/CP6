@@ -2,11 +2,11 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-25：DEV 自动发布开关启用
+## 2026-08-25：DEV 自动发布真实验收
 
-- 三次独立 Manual DEV 验收 3/3 后，用户明确授权继续自动闭环；Azure `CP6_DEV_AUTO_DEPLOY_ENABLED` 已设为 `true`，公网验证仍为 `false`。
-- 基础 CI #124 在当前 main 同一 SHA 上手动重跑成功，但未产生新的 completion DEV Run，因此不计自动验收。通过本状态 PR 形成新的 main SHA 后，再以真实 `ResourceTrigger` Run 验证 Package、备份、部署、健康/身份、证据和根环境零漂移。
-- 生产发布权威仍是 GitHub R2/GHCR；本机 DEV 自动模式不推广到 UAT/PROD，旧版本手动回退前仍须先关闭自动。
+- 三次独立 Manual DEV 验收 3/3 后，用户明确授权继续自动闭环；Azure `CP6_DEV_AUTO_DEPLOY_ENABLED=true`，公网验证仍为 `false`。
+- 基础 CI #124 completion 真实触发 DEV #125 / `resourceTrigger`；Artifact 校验/封装、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份和 2 文件证据均成功。第 5 份备份为 2,572,288 bytes，SHA-256 `bcd9f228...a574`，本机复算一致。
+- DEV 已运行 `main@ecbad9e1...` 且 Healthy，根 API/DB 基线零漂移。生产发布权威仍是 GitHub R2/GHCR；本机 DEV 自动模式不推广到 UAT/PROD，旧版本手动回退前仍须先关闭自动。
 
 ## 2026-08-25：DEV 三次独立 Manual 验收 3/3
 

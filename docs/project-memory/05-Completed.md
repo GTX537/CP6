@@ -1,10 +1,10 @@
 # 已完成能力与近期里程碑
 
-## 2026-08-25 DEV 自动发布启用决策
+## 2026-08-25 DEV 自动发布真实验收闭环
 
-- 在 #95/#120/#121 三次独立 Manual 成功后，用户明确授权启用 DEV 自动模式；Azure Pipeline 变量 `CP6_DEV_AUTO_DEPLOY_ENABLED=true` 已生效，公网验证继续为 `false`。
-- 当前 main 基础 CI #124 的同 SHA 手动重跑成功，但没有把它或任何手动 DEV Run 计作自动验收；新的 main completion 必须触发真实 `ResourceTrigger` 发布并完成全部部署证据门禁。
-- GitHub R2/GHCR 生产权威、根 `cp6`/`CP6DB` 隔离、旧版本手动回退前关闭自动的规则均未改变。
+- 在 #95/#120/#121 三次独立 Manual 成功后，用户明确授权启用 DEV 自动模式；`CP6_DEV_AUTO_DEPLOY_ENABLED=true` 生效，公网验证继续为 `false`。
+- 基础 CI #124 completion 自动触发 DEV #125；REST 元数据证明它是 `resourceTrigger`，并真实完成 Artifact 校验/封装、CHECKSUM/VERIFYONLY 备份、迁移、API/Web 身份健康和 2 文件证据 Artifact，未用 Manual Run 冒充自动验收。
+- 第 5 份备份为 2,572,288 bytes，SHA-256 `bcd9f228...a574`，本机重算一致。DEV 运行 `main@ecbad9e1...` 且 Healthy，根 API/DB 三项基线零漂移。GitHub R2/GHCR 生产权威、根 `cp6`/`CP6DB` 隔离和旧版本手动回退前关闭自动的规则均未改变。
 
 ## 2026-08-25 DEV 三次独立 Manual 验收闭环
 
