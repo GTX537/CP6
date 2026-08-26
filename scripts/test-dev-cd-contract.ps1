@@ -72,7 +72,7 @@ $requiredPatterns = [ordered]@{
     'trigger evidence' = 'trigger\s*=\s*\[ordered\]'
     'backup evidence' = 'databaseBackup\s*=\s*\$databaseBackup'
     'backup readiness evidence' = 'backupReadiness\s*=\s*\$backupReadiness'
-    'non-secret evidence artifact' = "artifact:\s*'cp6-dev-evidence'"
+    'retry-distinct non-secret evidence artifact' = "artifact:\s*'cp6-dev-evidence-attempt-\$\(System\.StageAttempt\)'"
 }
 
 foreach ($entry in $requiredPatterns.GetEnumerator()) {

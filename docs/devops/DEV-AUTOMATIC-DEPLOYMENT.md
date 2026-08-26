@@ -56,7 +56,7 @@ GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 s
   → 启动 API，校验运行容器 image ID 与 live/ready/release
   → 启动 Web，校验运行容器 image ID 与 release.json
   → 可选校验 cp6.uk/api.cp6.uk
-  → 发布 cp6-dev-evidence
+  → 发布 cp6-dev-evidence-attempt-<System.StageAttempt>
 ```
 
 预计维护窗口为 1～3 分钟。迁移失败或新 API 无法就绪时失败关闭；脚本不会把旧 API 自动套回已经前移的 Schema。处理方式是保留备份证据、修复问题并前滚。若确需数据库恢复，必须另行人工授权和停机，不由 Pipeline 自动执行。
@@ -153,6 +153,8 @@ SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；�
 | `#126` / `20260826.2` | 基础 CI；Succeeded | 否 | PR #26 合入后的 main Artifact 桥成功，并自动触发 #127 |
 | `#127` / `dev-20260826.2` | completion trigger；Failed | 否 | Package 成功后宿主内存使用 95.16%，SQL prelogin 超时；备份前失败关闭，无新备份/迁移/切换，暴露并促成备份前就绪门禁 |
 | `#129` / `dev-20260826.3` | completion trigger；Failed | 安全门禁验收 | 绑定 main CI #128 / `318bcb2d...`；31 次采样仅 1328～1861 MiB，SQL/备份均未启动，备份/迁移/切换全部 Skipped。主机在门禁结束约 3 分 36 秒后自然恢复到 2 GiB 以上，因此等待窗口由 300 调整为 600 秒，不降低阈值 |
+| `#130` / `20260826.4` | 基础 CI；Succeeded | 否 | 绑定 main `50a1db6d...`，同 SHA GitHub Runtime Artifact 下载、逐文件校验和 Azure Artifact 发布全部成功，并自动触发 #131 |
+| `#131` / `dev-20260826.4` | completion trigger；Failed | 部署成功、证据重试缺口 | 首次 Deploy attempt 的 61 次采样仅 1254～1756 MiB，在 SQL/备份前失败；关闭非关键应用并重试同一 `DeployDev` 后，就绪、CHECKSUM/VERIFYONLY 备份、迁移、健康与 `50a1db6d...` 身份均成功，根 API/DB 未漂移。Run 最终仅因 attempt 1 已占用固定 `cp6-dev-evidence` 名称，attempt 2 发布同名 Artifact 被拒绝而失败；证据名现加入 `System.StageAttempt` 防重名 |
 
 Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
 分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。Run #101 恢复后的根基线为
@@ -163,10 +165,13 @@ StartedAt `2026-08-25T15:07:03Z`；接下来的合格 Run 必须保持这组基�
 每次手动发布都必须保存：
 
 - Azure Run ID 和 Environment deployment history；
-- `cp6-dev-evidence/backup-readiness.json`：每次内存、SQL 登录和连续成功计数，以及通过/失败原因；
-- `cp6-dev-evidence/database-backup.json`：文件长度、SHA-256、CHECKSUM 和 VERIFYONLY 结果；
-- `cp6-dev-evidence/deployment.json`：触发模式、CI/CD Run、镜像 ID、迁移和本机/公网验证；
+- `cp6-dev-evidence-attempt-<N>/backup-readiness.json`：每次内存、SQL 登录和连续成功计数，以及通过/失败原因；
+- `cp6-dev-evidence-attempt-<N>/database-backup.json`：文件长度、SHA-256、CHECKSUM 和 VERIFYONLY 结果；
+- `cp6-dev-evidence-attempt-<N>/deployment.json`：触发模式、CI/CD Run、镜像 ID、迁移和本机/公网验证；
 - `19991` live/ready/release 与 `18080/release.json` 的一致完整 SHA。
+
+`<N>` 是只读的 `System.StageAttempt`。正常首次执行发布 `attempt-1`；同一 Run 重试
+`DeployDev` 时递增为 `attempt-2`、`attempt-3`，保留每次失败/成功证据且不会覆盖或冲突。
 
 #95/#120/#121 已满足连续三次独立成功、exclusive lock、生效备份和根 `cp6` 零漂移门禁。用户已明确授权启用自动，当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`；只有新的 main completion 真实执行一次自动 Package/Deploy 并通过全部证据门禁后，才能写成“自动 DEV 已验收”。任何旧版本手动回退前先重新关闭自动。
 
