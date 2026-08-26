@@ -2,13 +2,14 @@
 
 本目录保存 CP6 的项目级 DevOps 上下文，供开发者、Codex 和发布负责人共同使用。它回答三个问题：当前流水线已经做到了什么、目标发布链是什么、下一步按什么顺序实施。
 
-> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。CRM V1 的私有 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已 Accepted，公开 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 镜像已同步为 Complete；P09/P10 未完成前不得声称候选对象身份 Gap 已关闭。
+> 当前状态：Release/CD 的仓库与平台工程范围已经结案；GitHub R2 + GHCR 是唯一生产候选/部署权威，Azure 只承担 CI Artifact 桥、DEV 学习链和非权威 Shadow。首个 WMS R2 `v1.0.0` 仍是 Draft/No-Go，真实候选、UAT/PROD 和现场试点继续由 [`docs/client/r2`](../client/r2/README.md) 的发行执行门禁管理，不能把工程结案描述为生产上线。CRM V1 的私有 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已 Accepted，公开 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 镜像已同步为 Complete；P09/P10 未完成前不得声称候选对象身份 Gap 已关闭。
 
 ## 文档地图
 
 | 文档 | 类型 | 用途 |
 | --- | --- | --- |
 | [CI/CD 架构](./CI-CD-ARCHITECTURE.md) | Explanation | 解释当前双流水线边界、目标架构和关键取舍 |
+| [Release/CD 工程结案](./RELEASE-CD-ENGINEERING-CLOSEOUT.md) | Closeout / Evidence | 固定工程完成范围、真实外部状态、Agent 运维边界和重新打开条件 |
 | [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md) | Reference / Roadmap | 记录阶段、任务、完成定义和迁移门禁 |
 | [发布权威与 Registry ADR](./adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md) | Accepted ADR | 固定 GitHub R2/GHCR 唯一候选权威和 Azure 只读影子边界 |
 | [Azure Release Shadow 设计](./AZURE-DOCKER-RELEASE-SHADOW-DESIGN.md) | Design / Contract | 设计 Phase 3 的只读候选链验证、失败关闭和 Shadow 证据 |
@@ -40,15 +41,16 @@
 - 候选制品、GHCR 镜像、SBOM、漏洞扫描和签名：`.github/workflows/r2-candidate.yml`。
 - 受保护环境、数据库初始化、digest 部署和运行身份验证：`.github/workflows/r2-deploy.yml`。
 
-Azure Release Shadow S0 已有独立仓库实现：根目录 [`azure-pipelines-release-shadow.yml`](../../azure-pipelines-release-shadow.yml) 固定 `trigger: none`、`pr: none`，只在无 Secret 环境验证仓库内固定 fixture。`scripts/Test-Cp6ReleaseShadowCandidate.ps1` 逐层校验 candidate result、Schema 2 manifest、freeze/spec 哈希、GHCR allowlist/digest、供应链、签名和 ForwardOnly 元数据；输出固定为 `Authority=Shadow`、`Deployable=false`。S0 不访问真实 R2/GHCR，不拉取镜像，也未在 Azure 创建 Pipeline definition 或 Service Connection。
+Azure Release Shadow S0 已完成仓库与 Azure 执行闭环：根目录 [`azure-pipelines-release-shadow.yml`](../../azure-pipelines-release-shadow.yml) 固定 `trigger: none`、`pr: none`，只在无 Secret 环境验证仓库内固定 fixture。`scripts/Test-Cp6ReleaseShadowCandidate.ps1` 逐层校验 candidate result、Schema 2 manifest、freeze/spec 哈希、GHCR allowlist/digest、供应链、签名和 ForwardOnly 元数据；输出固定为 `Authority=Shadow`、`Deployable=false`。PR #32 已合入 `main@9009abe6`，Azure `CP6 Release Shadow` Definition #5 的 Run #145 绑定同一完整 SHA 并成功发布辅助 Shadow Artifact；S0 没有访问真实 R2/GHCR、拉取镜像或获得部署权限。
 
 ## 当前完成与未完成
 
 | 层次 | 状态 | 准确描述 |
 | --- | --- | --- |
 | CI 代码验证 | 已配置并已接通 | GitHub-hosted `client-contract` 执行完整编译/测试；Azure self-hosted Agent 只桥接经 SHA/摘要验证的运行包 |
+| Release/CD 工程建设 | 已结案 | CI 责任、唯一发布权威、生产工作流/模板、DEV 自动链、Shadow S0 和 Agent 运维边界均已固化；结案证据见 `RELEASE-CD-ENGINEERING-CLOSEOUT.md` |
 | 发布权威与 Registry | 已决策 | GitHub R2 + GHCR 是唯一候选权威；Schema 2 manifest + candidate result 是唯一候选链；Azure 只允许非权威 Shadow 验证 |
-| Azure Release Shadow | S0 仓库合同已实现；S1 未开始 | 手动 YAML、离线 parser/fixture、10 个失败关闭场景和静态能力门禁已建立；尚未读取真实候选、GHCR 或外部证据 |
+| Azure Release Shadow | S0 已完成；S1 等待首个真实候选 | 手动 YAML、离线 parser/fixture、10 个失败关闭场景、静态能力门禁和无 Secret Azure Run 已通过；S1 只能在权威 R2 candidate 存在后按事件启动 |
 | 发布制品 | Azure 不重复构建；GitHub R2 已有实现 | Azure 不为同一版本产出 `cp6-api` / `cp6-web` 镜像或第二份清单；ACR 当前未批准 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |

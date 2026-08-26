@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-26 Release/CD 仓库与平台工程结案
+
+- PR #32 已把 Shadow S0 合入 `main@9009abe6`；Azure Definition #5 / Run #145 以同一完整 SHA 在无 Secret、无 Registry/Environment 权限下完成离线 Shadow 验证并发布 `cp6-release-shadow-s0-145`，结果为 `Succeeded`。
+- GitHub 已固定为唯一 PR 验证入口，Azure 保持 `pr: none`；CI/R2/Space 门禁责任矩阵和 self-hosted Agent 更新、磁盘、离线、单并发、clean checkout 与身份隔离规则已关闭 Phase 1 剩余治理项。
+- Release/CD 工程状态为 Complete，但生产发行没有被伪造为完成：GitHub 当前无 R2 Release/版本 Tag/R2 Run/Environment/Secret，`v1.0.0` 仍是 Draft 且 20 项输入 Pending。S1、真实 DEV/UAT/PROD、灾备和多仓推广改为按候选/环境事件启动的发行执行任务。
+
 ## 2026-08-26 CRM V1 PRD 完整脱敏产品基线批准
 
 - 将详细 CRM V1 PRD v0.2 与公开竞品研究迁移到最新主线，并与 Frozen 产品摘要、已完成公共合同和四仓权威边界统一。

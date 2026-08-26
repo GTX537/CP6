@@ -2,6 +2,8 @@
 
 本计划把 Azure DevOps 从当前 CI 扩展到可追踪的 Release/CD。每一阶段都必须单独交付、验证和记录，不允许一次提交同时改完 Registry、DEV 和 PROD。
 
+> 2026-08-26 结案口径：CI 基线、发布权威、现有生产工作流/模板、DEV 自动链与 Azure Shadow S0 的仓库/平台工程已经完成。Phase 3 S1 及 Phase 4～7 的未勾选项需要真实 R2 候选、外部服务、受保护环境、审批人或现场试点，归入版本化发行执行，不再让一个无条件开放的“Release/CD 建设”任务长期保持进行中。详见 [Release/CD 工程结案](./RELEASE-CD-ENGINEERING-CLOSEOUT.md)。
+
 ## 状态标记
 
 - `[x]`：仓库或用户提供的 Azure 运行上下文已确认完成。
@@ -10,7 +12,7 @@
 
 ## Phase 1：CI 基线
 
-状态：**远程构建 + 本机轻量 Artifact 桥已验证，待 main 及稳定性闭环**。
+状态：**完成**。
 
 - [x] GitHub 仓库已连接 Azure DevOps。
 - [x] 根目录存在 `azure-pipelines.yml`。
@@ -21,9 +23,9 @@
 - [x] 确认本机编译与 SQL/Docker 共存不安全：#109/#111/#113/#115 均按内存或 SQL 门禁取消；Microsoft-hosted [`Run #110`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=110) 证明 Azure 组织当前没有 hosted parallelism，未启用计费。
 - [x] 将 Azure 基础流水线收敛为轻量 Artifact 桥。分支 [`Run #117`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=117) 已从 GitHub 成功下载并验证工作流来源、完整 SHA、归档 SHA-256 与内部 manifest，再发布 Azure Pipeline Artifact；本机 SQL/公网容器基线不变。
 - [x] `main@a5c6b5fa...` 的 GitHub client-contract 与 Azure [`Run #118`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=118) 成功；Manual DEV #120/#121 复用同一 Artifact，分别完成独立备份、部署、身份验证与证据发布，三次手动验收达到 3/3。
-- [ ] 决定 PR 验证归属：启用 Azure PR trigger，或明确只依赖现有 GitHub PR 门禁；当前 `pr: none`。
-- [ ] 比较 Azure CI 与 `client-contract.yml`/`wms-production-sql.yml`，登记未覆盖的 Space、OpenAPI/SDK、SQL、E2E、安全和 Android 门禁。
-- [ ] 为 self-hosted Agent 定义更新、磁盘清理、离线告警、并发和工作区隔离规则。
+- [x] PR 验证归属固定为 GitHub：`main` required contexts 为 `windows-and-web`、`android`、`sql-integration`、`crm-saas-public-contract`、`crm-v1-prd`；Azure 保持 `pr: none`，不产生第二套 PR 绿灯。
+- [x] GitHub/Azure/R2 覆盖矩阵已登记在工程结案报告：OpenAPI/SDK、Android、WMS SQL 和候选 E2E/供应链均有唯一 Owner；Space GA 保持独立门禁，不冒充 WMS R2 候选检查。
+- [x] Self-hosted Agent 更新、磁盘、离线、单并发、clean checkout 和 CI/Deploy 身份隔离规则已固定；离线任务排队，不得回退到部署 Agent 或放宽资源授权。
 
 `GATE`：Azure CI 连续运行稳定，失败能定位到具体门禁；任务分支仍按仓库规则经 PR/验证合入 `main`，不得恢复日常直接 Push `main`。
 
@@ -44,12 +46,13 @@
 
 ## Phase 3：Azure Release Shadow
 
-状态：**S0 仓库合同已实现；S1 真实只读候选验证尚未开始**。
+状态：**S0 已完成仓库与 Azure 执行验收；S1 等待首个真实 R2 候选**。
 
 - [x] 设计独立 YAML 结构，初始固定 `trigger: none`、`pr: none`，只允许手动验证既有候选。
 - [x] 设计 candidate result → Schema 2 manifest → freeze/spec/evidence → GHCR digest 的逐层验证顺序。
 - [x] 定义 `Authority=Shadow`、`Deployable=false` 的唯一 Azure 输出语义。
 - [x] 实现 S0 fixture/parser/YAML 合同：1 个有效 fixture、10 个失败关闭场景和静态能力门禁；不连接真实 GHCR 或证据存储。
+- [x] PR #32 合入 `main@9009abe687c693fdcbd650261f39b56cf8ccf8fb`；Azure Definition #5 / Run #145 在无 Variable Group、无 Registry/Environment 权限下生成 `Authority=Shadow`、`Deployable=false` 的辅助 Artifact。
 - [ ] 实现 S1 真实候选只读元数据和 GHCR digest 验证，发布 Shadow report。
 - [ ] 为完整镜像 pull/SBOM/Trivy 对比准备独立容量受控 Agent；不得与本机 SQL/Docker 公网环境争抢资源。
 - [ ] 连续三个不同 SemVer 候选通过 Shadow 验收并形成等价报告。
@@ -109,18 +112,17 @@
 - [ ] 保持 digest、pre-deploy db-init Job、TLS、探针、PDB、资源限制和拓扑分散。
 - [ ] 每个仓库独立重跑 Go/No-Go 与环境门禁。
 
-## 当前下一张任务卡
+## 下一次重新打开条件
 
-**任务：Azure Release Shadow S1 真实候选只读元数据**
+当前没有无条件开放的 Release/CD 工程任务。以下事件发生时再建立独立任务卡：
 
-范围：
+1. 首个真实 R2 candidate result/manifest 已由 GitHub R2 产生：启动 S1 只读元数据验证；
+2. S1 通过且有独立容量 Agent：启动同 digest 的 GHCR/SBOM/Trivy 对比；
+3. 三个真实 SemVer 候选完成等价报告：评估 Azure Shadow 是否继续、暂停或扩大；
+4. 外部 DEV/UAT/PROD 输入和批准人齐全：按同一 manifest/digest 执行 Phase 4～6；
+5. ACR、AKS、Registry 或发布权威变化：先新立 ADR，再开始工程实现。
 
-1. 以 S0 parser/报告 Schema 为基础，手动选择一个已经存在的 R2 候选；
-2. 设计并审批 R2 evidence reader 与 GitHub metadata reader 的只读身份，不授予 Registry/Tag/Environment 写权限；
-3. 按权威 URI 读取 candidate result/manifest/freeze/spec，逐层重算 SHA-256，并验证 annotated Tag、完整 Git SHA 与冻结 main 关系；
-4. 仍不拉取大型镜像、不重跑 SBOM/Trivy、不部署；GHCR digest 只读解析另立后续切片。
-
-完成定义：一个真实、已存在候选在最小只读身份下生成 `Authority=Shadow`、`Deployable=false` 报告；对象来源/hash/Tag/SHA 任一不一致均失败关闭，且 Azure 没有创建 Tag、Package、manifest 或 deployment。
+触发前保持 `v1.0.0` Draft/No-Go，禁止以 fixture、空 Environment 或模拟 Secret 冒充发行证据。
 
 ## 相关文档
 
