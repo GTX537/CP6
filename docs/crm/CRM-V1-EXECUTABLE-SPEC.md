@@ -1265,7 +1265,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 4. **M2 Lead Pilot**：只解锁 CRM04 的 Website/Manual Intake、Needs Review、双 SLA、稳定 attempt/BFF 信任边界、Emergency Intake、Lead 队列、assignment、first-response activity/SLA 子集和 C 分栏工作台；通过两租户负向矩阵、真实 Dapr/Kafka Intake 回放、§14.5 性能 Smoke 和 Pilot UAT。
 5. **M3–M5 完整旅程**：Pilot 通过后才解锁 CRM04 余项、CRM05–CRM10、真实 ERP 全旅程、报表与 CMS；CRM09 前先通过高保真设计门禁。
 6. **M6 候选**：完成 P08–P10、C04A、CRM11 脱敏生产恢复副本演练，以及 CRM12 SLO/安全/故障/候选门禁；DEC-CRM-008 批准单次生产切换。
-7. **M7 生产采用**：执行 CRM11 切换与 CRM12 生产验证，然后依次通过 Lead Adoption（≥10 个工作日/≥200 Eligible Lead）和最多 30 日 Full Journey Gate；两者未通过时 Epic 保持 blocked。
+7. **M7 生产采用**：执行 CRM11 切换与 CRM12 生产验证，然后依次通过 Lead Adoption 和 Full Journey Gate；观察窗口、Eligible Lead 分母、Conversion/OrderRequest 样本与数值阈值见私有 Adoption Manifest，两项未通过时 Epic 保持 blocked。
 8. **M8 旧模型解除**：只读观察周期和完整采用门禁结束后完成 C04B；旧表物理删除另立受控任务。
 
 上游出口证据未完成时，下游只允许合同原型和测试夹具，不允许发布候选。Pilot 未通过时 CRM04 余项、CRM05–CRM11 和候选发布保持锁定；采用失败时系统保持运行、旧系统保持只读，只允许固定版本修复。
@@ -1314,18 +1314,20 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 
 ### 18.4 采用证据合同
 
-| Gate | 冻结输入 | 硬阈值/输出 |
-| --- | --- | --- |
-| Observation | 3 人/15 Lead 观察脚本；8 人、2 部门、100 事件、10 工作日脱敏基线 | named Sponsor/Owner/cohort、摩擦排序、冻结的 Pilot task manifest |
-| Pilot UAT | 8–12 名销售、2 部门、≥2 主管、≥120 个固定任务且每人 ≥10；正常/拒绝/恢复任务预标记 | 正常路径无引导完成 ≥90%，成功 normal 任务 median ≤60 秒/p90 ≤120 秒；拒绝/恢复各 100%；业务正确性、两租户与 PII 隔离 100%；0 开放 P0/P1 或主流程 P2 |
-| Lead Adoption | 切换后 ≥10 工作日、≥200 Eligible Lead；冻结版本、cohort、BusinessCalendar 与 canonical SQL | Website/Manual 100% 进新 CRM且旧写 0；≥90% 在 30 分钟内有 Owner/可见异常；≥85% 在 4 业务小时内首次响应；各部门 Eligible Active User-Day 真实业务动作率 ≥80%；0 P0/P1 数据/安全/集成事故 |
-| Full Journey | 切换后最多 30 自然日、≥20 Conversion、≥10 OrderRequest；转换、Accepted、ERP result、报表 manifest | 所有自然样本在 CRM 完成；CRM/ERP canonical SQL、事件和报表 100% 对账；零无订单 Won、零重复订单、零租户/PII 泄露，失败/重试/冲突可复现 |
+公开 Spec 只冻结门禁顺序、输入/输出类别、证据不可改写和不可豁免原则。角色与 cohort 构成、任务/业务样本量、观察窗口、效率、正确性、缺陷和采用 KPI 的数值阈值全部保留在私有 Pilot Acceptance Manifest 或 Adoption Manifest；公开证据只记录门禁结果与受控 Manifest 摘要。
 
-Pilot 的 120 个任务至少包含 Website/Manual 各 20、重复候选 15、跨部门移交 15、无 Owner 10、并发冲突 10、跨非工作时段 SLA 10。`Eligible Active User-Day` 只要求用户启用、角色需要 CRM 且当天存在其授权范围内可行动工作。排除项仅限预先批准的休假、账号停用、正式入职/培训期和无可行动工作；临时培训不足、性能问题、绕开系统、失败任务、夜间/周末创建和数据错误不能事后排除。manifest 固定 release digest、cohort、任务/事件 ID、期望结果、排除原因 allowlist、canonical SQL SHA、UTC 区间和签名；修复后必须以新的固定版本重跑，不能改写旧证据。
+| Gate | 公开冻结输入 | 公开输出 |
+| --- | --- | --- |
+| Observation | 脱敏观察脚本、事件基线、角色与部门类别 | named Sponsor/Owner/cohort、摩擦排序与冻结的 Pilot task Manifest；规模和窗口见私有 Manifest |
+| Pilot UAT | 正常、预期拒绝和恢复路径，以及角色、组织、租户和 PII 覆盖类别 | 无引导完成、耗时、拒绝/恢复、业务正确性、隔离和缺陷门禁均通过；数值阈值见私有 Pilot Acceptance Manifest |
+| Lead Adoption | 切换版本、Eligible Lead、cohort、BusinessCalendar、Website/Manual 和 canonical SQL | 旧写入退出、分配/异常队列、首次响应、真实业务动作及数据/安全/集成门禁均通过；窗口、分母和 KPI 见私有 Adoption Manifest |
+| Full Journey | Conversion、Accepted、OrderRequest、ERP result、事件和报表 Manifest | CRM/ERP canonical SQL 与报表对账，以及丢失、重复、隔离、失败/重试/冲突门禁均通过；窗口、样本和阈值见私有 Adoption Manifest |
+
+Pilot 任务必须覆盖 Website/Manual、重复候选、跨部门移交、无 Owner、并发冲突和跨非工作时段 SLA；各类别样本量见私有 Pilot Acceptance Manifest。`Eligible Active User-Day` 只要求用户启用、角色需要 CRM 且当天存在其授权范围内可行动工作。排除项仅限预先批准的休假、账号停用、正式入职/培训期和无可行动工作；临时培训不足、性能问题、绕开系统、失败任务、夜间/周末创建和数据错误不能事后排除。Manifest 固定 release digest、cohort、任务/事件 ID、期望结果、排除原因 allowlist、canonical SQL SHA、UTC 区间和签名；修复后必须以新的固定版本重跑，不能改写旧证据。
 
 `Scenario manifest` 在执行前冻结 `ScenarioId`、`PathClass`（normal/expected-rejection/recovery）、`ExpectedOutcome`、执行用户与脱敏数据引用，执行后只追加结果。真实业务动作只包括有 Audit 的 create-lead、assign、contact、qualify、convert、accept-quotation、request-order；登录、查询和打开页面不计。成功 Contact 必须满足 §8.3 的单事务不变量。效率使用 nearest-rank，仅统计成功 normal 任务；浏览器用同一页面进程的 `performance.now()` 从可交互到成功响应，不能与服务端时钟相减。只有带 IncidentId 的基础设施故障可从效率分位数排除，仍需单列；用户错误、权限拒绝和 412 恢复保留在各自准确率/恢复报告中。
 
-所有门禁不可豁免。失败后系统继续运行、旧系统保持只读、范围和候选冻结，只允许修复；最多两个固定版本整改窗口。第二次仍失败时 Sponsor 必须重新立项或终止，Epic 保持 blocked，不能降低阈值或把失败样本重分类。
+所有门禁不可豁免。失败后系统继续运行、旧系统保持只读、范围和候选冻结，只允许修复；整改窗口和重新立项/终止条件由私有 Adoption Manifest 冻结，Epic 保持 blocked，不能降低阈值或把失败样本重分类。
 
 ### 18.5 依赖图
 
@@ -1365,7 +1367,7 @@ flowchart LR
 3. CRM03 安全底座通过后只启动 CRM04 Pilot 子集；Pilot UAT 未通过时不得实现 CRM04 余项或进入 CRM05–CRM11。
 4. Pilot 通过后 CRM05→CRM06→CRM07 保持交易主链顺序；CRM08/CRM10 按已完成 API slice 增量交付，但不提前启用死链接菜单。
 5. CRM09 仅在 CRM04 Intake 契约和批准高保真稿完成后启动，不以未编号的“CMS 部分”绕过前置。
-6. CRM02 migration map 完成后先交付 C04A；CRM11 在业务 Schema 冻结后演练并切换。CRM12 从第一天持续接入，在候选阶段收敛技术门禁，在生产阶段收敛 Lead/Full Journey 采用证据。
+6. CRM02 migration map 完成后先交付 C04A；CRM11 在业务 Schema 冻结后演练并切换。CRM12 从项目启动持续接入，在候选阶段收敛技术门禁，在生产阶段收敛 Lead/Full Journey 采用证据。
 7. 单次切换后先完成 Lead Adoption，再完成 Full Journey；两项均通过且经过一个只读观察周期后才交付 C04B。旧表物理删除继续另立任务。
 
 ## 19. Definition of Done

@@ -146,7 +146,7 @@ npm run e2e
 | 文档 | 用途 |
 | --- | --- |
 | [DevOps 与 CI/CD](docs/devops/README.md) | Azure DevOps 当前状态、CI/CD 架构、Registry 决策、发布流程和环境演进计划 |
-| [CRM SaaS V1 公开工程契约](docs/crm/README.md) | 私有 Frozen 产品与 Accepted R00 的脱敏四仓合同；公开同步已为 Complete、M0 仍为 No-Go，不代表业务功能已实现 |
+| [CRM 产品需求与公开工程契约](docs/crm/README.md) | 私有 Frozen 产品、已批准 CRM V1 PRD 完整脱敏基线与 Accepted R00 的四仓合同；公开同步已为 Complete、M0 仍为 No-Go，不代表业务功能已实现 |
 | [WMS R2 生产就绪主规范](docs/client/r2/README.md) | 候选制品、签名、部署、R2A/R2B 试点、退出标准与现场证据的唯一规范源 |
 | [原生 WMS 客户端](docs/client/README.md) | Web、WPF、Android 客户端边界、共享契约与生产行为 |
 | [Space 设计总纲](docs/space/README.md) | 空间数字底座的边界、架构、建模、发布、WMS 集成与阶段范围 |

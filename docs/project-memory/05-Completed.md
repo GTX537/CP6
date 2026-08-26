@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-26 CRM V1 PRD 完整脱敏产品基线批准
+
+- 将详细 CRM V1 PRD v0.2 与公开竞品研究迁移到最新主线，并与 Frozen 产品摘要、已完成公共合同和四仓权威边界统一。
+- 合并前审查移除商业 cohort 数量/地域/名单、精确推广计划、数值 Pilot UAT 和私有数值商业/采用门禁，并从最新 `main` 建立不继承旧敏感提交祖先的干净候选分支。
+- 最终全披露面审查同时清理 M0 Readiness、产品框架和可执行 Spec 中遗留的 Pilot/采用数值，自动发现并锁定全部公开 `docs/crm/**` 文件；新增未登记 CRM 文档失败关闭。工作流把 head 诊断与只读的受保护 base validator 分离，避免把 PR 自带脚本冒充独立 required check。
+- 三次未合并的预审批尝试因脱敏声明不完整而作废；唯一 ProgramOwner 已批准 payload SHA-256 `5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`、候选 commit/blob 和五项产品结论。M0 继续 No-Go；未创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也未解锁 CRM01。
+
 ## 2026-08-26 发布权威与 Registry 决策
 
 - 选择继续由 GitHub R2 + GHCR 作为当前 CP6 唯一候选权威；Schema 2 manifest + candidate result 是唯一候选链，Azure 不为同一版本重新 Build 或生成第二份候选。
@@ -62,6 +69,13 @@
 - Azure 外部资源闭环：`CP6 DEV CD` Definition ID `4`、定向 Pool/Variable Group/Environment 权限、Exclusive lock、两项 `false` 开关、最小权限 `cp6_dev_backup`/锁定 Secret，以及 Readiness Run #89 全部完成。自动 Run #93 已证明关闭状态只分类并跳过部署。
 - Manual Run #94 正确失败关闭：先完成 CHECKSUM/VERIFYONLY 备份，再因宿主 SQL 已有 701/17300 内存耗尽事件而在 db-init 超时；未启动 API/Web。重启 `KOUSQLSERVER` 后，Manual Run #95 成功发布 `0.0.0-dev.92` / 完整 SHA `47ca8441...9dbe9c18`，健康、迁移、不可变镜像和 `cp6-dev-evidence` 均通过。
 - Run #95 新备份长度 2,453,504 bytes、SHA-256 `58c6ff73...5079c23`、VERIFYONLY passed。根 `cp6` 七个容器与 `CP6DB` 未变；自动/公网开关继续关闭，当前手动验收计数为 1/3。
+## 2026-08-25 CRM 公开产品对比与 PRD v0.2
+
+- 新增 `docs/crm/CRM-COMPETITIVE-ANALYSIS.md`，以 Salesforce、HubSpot、Dynamics 365、Pipedrive、Zoho、Odoo、SAP Sales Cloud、纷享销客和销售易的官方公开资料为证据，归纳轻量销售、增长平台、企业平台、ERP 邻接和中国企业连接型五类产品。
+- 将竞品观察冻结为 `CRM-COMP-001`～`007` 决策，明确 Lead Pilot 行动优先、稳定对象/状态、来源与 SLA、CRM/ERP 成交权威、公海/连接器 VNext、AI 权限边界和不按 Lead 制造漏记激励。
+- `CRM-V1-PRD.md` 升为 v0.2 并建立竞品结论到现有 PRD ID 的追踪；状态仍为 Draft，Public Contract Sync、M0、业务代码和上线状态均未改变。
+
+## 2026-08-24 CRM V1 产品需求草案
 
 ## 2026-08-25 DEV 首次运行前置审计与 sqlcmd 可发现性修复
 
@@ -102,6 +116,11 @@
 - 新增可双击菜单 `cp6-daytime-server.bat` 及 PowerShell 控制器，统一提供 `start`、`start-build`、`status`、`close`、`stop` 五个入口；启动前检查 Docker、`.env`、Compose、Tunnel 配置和本机凭证文件。
 - `close` 只停止 Compose 内的 `cp6-cloudflared`，保留本机 API/Web/基础服务；`stop` 使用 `docker compose stop` 安全停止全栈并保留所有命名卷。脚本不会自动结束主机上的其他 cloudflared 进程，也不会修改 Windows 睡眠或电源设置。
 - 合同测试覆盖 PowerShell 语法、动作/入口映射、四个 HTTP 地址、Tunnel 单独关闭、数据保留停止、凭证预检和禁止电源修改；实机只读状态检查确认 7 个服务及本机/公网 Web/API 全部就绪、HTTP 200。为避免中断当前使用者，没有执行现场启停或重建。
+## 2026-08-24 CRM V1 产品需求草案
+
+- 完成 `docs/crm/CRM-V1-PRD.md` v0.1，把 Frozen SaaS V1 与当前 Foundation、旧三仓规划和 Lead Pilot 批准设计对齐为一份可评审产品合同。
+- 文档明确前端 IA/页面状态/Lead Pilot 交互、后端状态机/事务/权限/幂等/并发/错误、四仓数据主权、CP6 ERP 与 ExternalEvidence 成交路径，以及 API/event/custom-field/channel 的升级边界。
+- CRM 文档入口已补充 PRD，并更正私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only 的事实。该里程碑只表示需求草案完成，不表示产品批准、Public Contract Sync、M0、业务代码或上线完成。
 
 ## 2026-08-24 Space GA 退出码假红修复
 

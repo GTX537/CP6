@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "recordId": "CP6-CRM-V1-PRD-APPROVAL-20260826-004",
+  "decisionId": "CP6-CRM-V1-PRD",
+  "version": "0.2",
+  "status": "Approved",
+  "documentPath": "docs/crm/CRM-V1-PRD.md",
+  "payloadSha256": "5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a",
+  "productSource": {
+    "repository": "GTX537/CP6.CRM",
+    "decisionId": "CP6-SAAS-V1",
+    "mergeCommit": "07a7bb0b50f33b0cb70c18c14f83be77c725626d",
+    "payloadSha256": "e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b",
+    "status": "Frozen"
+  },
+  "publicContract": {
+    "decisionId": "CP6-SAAS-V1-PUBLIC-CONTRACT",
+    "mergeCommit": "d1b5ceeb7c33de70114b934c23f71075057ec436",
+    "payloadSha256": "8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9",
+    "status": "Complete"
+  },
+  "approval": {
+    "roleId": "ProgramOwner",
+    "decision": "Approved product requirements baseline",
+    "approverLogin": "GTX537",
+    "approvedAt": "2026-08-26T09:50:21Z"
+  },
+  "approvalEvidence": {
+    "type": "GitHubPullRequestComment",
+    "repository": "GTX537/CP6",
+    "pullRequestNumber": 35,
+    "commentId": 5423567483,
+    "commentUri": "https://github.com/GTX537/CP6/pull/35#issuecomment-5423567483",
+    "commentBodySha256": "4092bc5ec3338be408292c5f240579ed036dcd1033858b4d237dc38d39608de1",
+    "candidateCommit": "00fa3aea66045cb2b949b691824f0fbb830cc739",
+    "candidateBlob": "b6f8da119bf700340616e8a2d3cc01ceb0dd38d6"
+  },
+  "approvedConclusions": [
+    {
+      "id": "PRD-APPROVAL-01",
+      "text": "长期 V1 使用 Frozen SaaS 四仓边界，Portal/移动/双区域/商业化属于产品 V1，但按门禁分切片交付。"
+    },
+    {
+      "id": "PRD-APPROVAL-02",
+      "text": "第一可见结果是 Lead Pilot C 分栏工作台，不以 Dashboard 或全菜单铺开替代。"
+    },
+    {
+      "id": "PRD-APPROVAL-03",
+      "text": "前端不复制状态机、权限、DataScope、PII 或 Entitlement；所有写入使用后端命令、幂等和 ETag。"
+    },
+    {
+      "id": "PRD-APPROVAL-04",
+      "text": "Opportunity 同时支持 Cp6Erp 与 ExternalEvidence，但 Won 必须有合法且不可变的成交依据。"
+    },
+    {
+      "id": "PRD-APPROVAL-05",
+      "text": "后续升级通过版本化 API、事件、字段定义、原因 code 和连接器边界扩展，不破坏稳定业务语义。"
+    }
+  ],
+  "sanitization": {
+    "containsCommercialCohortCounts": false,
+    "containsCommercialCohortRegions": false,
+    "containsCommercialCohortNames": false,
+    "containsExactCommercialRolloutSchedule": false,
+    "containsNumericPilotUatThresholds": false,
+    "containsPrivateNumericCommercialOrAdoptionThresholds": false,
+    "containsPublicProductOrTechnicalAcceptanceNumbers": true
+  },
+  "cleanAncestry": {
+    "baseCommit": "d1b5ceeb7c33de70114b934c23f71075057ec436",
+    "invalidatedPreMergeApprovalCount": 3,
+    "invalidatedCommitsExcluded": true,
+    "invalidatedObjectReferencesPublished": false
+  },
+  "m0Status": "No-Go"
+}

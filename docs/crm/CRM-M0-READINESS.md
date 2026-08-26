@@ -44,7 +44,7 @@ M0 冻结但不创建区域/订阅/资源命名、组织数据库目录、elasti
 
 Emergency Intake 只能是同源 BFF 后的受控加密 spool，保留 attempt/tenant/site/form/config/privacy/calendar/SLA anchor，不可人工改写，限时保留，恢复后幂等导入并 100% 对账；它永不成为 CRM/ERP 权威。
 
-M0 的 Pilot 输入只包括固定 cohort、角色/部门范围、至少 120 个版本化任务、评价/失败整改口径、UTC 窗口、canonical SQL 和证据合同。真实 Dapr/Kafka、C03、隔离 ERP SQL、两租户环境、运行事件与性能 smoke 属于 M2，不参与 M0 关闭。
+M0 的 Pilot 输入只包括固定 cohort、角色/部门覆盖、版本化任务类别、评价/失败整改口径、UTC 窗口、canonical SQL 和证据合同；参与者构成、样本量、数值阈值与具体窗口保留在私有 Pilot Acceptance Manifest。真实 Dapr/Kafka、C03、隔离 ERP SQL、两租户环境、运行事件与性能 smoke 属于 M2，不参与 M0 关闭。
 
 ## 5. 关闭公式
 

@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：CRM V1 PRD 完整脱敏产品基线批准
+
+- 合入前审查发现三次未合并 payload 仍公开了应保留在私有仓的商业 cohort、精确推广时间表或私有数值采用门禁；三次预审批均作废。
+- 从最新 `main` 新建不继承旧敏感提交祖先的干净候选分支，并扩大脱敏范围到 PRD、竞品基线和项目记忆；旧证据仅保留在未合并 PR 审计轨迹中。
+- 最终审查继续移除公开 M0 Readiness、产品框架和可执行 Spec 中遗留的 Pilot 样本、采用窗口与 KPI 数字；自动发现并锁定全部 `docs/crm/**` 文件，新建未登记 CRM 文档失败关闭。
+- `crm-v1-prd` 工作流拆为 PR head 诊断和受保护 base 验证；required context 只由 `pull_request_target` 的只读 base validator 对精确 PR head 产生，引导 PR 不把自带脚本当作独立信任边界。
+- 唯一 ProgramOwner 已批准完整脱敏 payload、候选 commit/blob 和五项产品结论；当前状态为 `Approved product requirements baseline`，Public Contract Sync 保持 Complete，M0 保持 No-Go，没有实现或部署副作用。
+
 ## 2026-08-26：发布权威与 Registry 决策
 
 - 新增 `ADR-DEVOPS-001`：当前 CP6 唯一候选 Registry 为 GHCR，唯一候选/部署权威为 GitHub R2；Schema 2 `release-manifest.json` + `candidate-result.json` 是唯一候选链。
@@ -68,6 +76,13 @@
 - `CP6 DEV CD`、定向 Pool/Variable Group/Environment 权限、Exclusive lock、两项关闭开关、`cp6_dev_backup` Secret/权限和 Readiness Run #89 已完成；completion Run #93 成功证明自动关闭时 Build/Deploy 安全跳过。
 - Manual Run #94 在备份通过后因宿主 SQL Server 已有 701/17300 内存耗尽事件而失败关闭；重启数据引擎后，Manual Run #95 成功发布 `0.0.0-dev.92` / `47ca8441...9dbe9c18`，备份、迁移、不可变镜像、本机健康与证据 Artifact 均验证通过。
 - 根 `cp6`/`CP6DB`/旧 Tunnel 未修改；自动和公网验证仍关闭，当前手动 DEV 验收为 1/3，未宣称 UAT/PROD 或公网切换完成。
+## 2026-08-25：CRM 竞品分析与 PRD v0.2
+
+- 新增 `docs/crm/CRM-COMPETITIVE-ANALYSIS.md`，使用 9 个公开 CRM 的官方产品和价格页面建立市场分型、业务主链、横向能力及商业成本假设。
+- 新增 `CRM-COMP-001`～`007` 决策追踪，将行动优先 Lead Pilot、稳定语义、来源/SLA、CRM/ERP 权威、VNext 连接器、AI 边界和套餐原则映射到 PRD。
+- `CRM-V1-PRD.md` 升为 v0.2，仍为 `Draft for Product Review`；本次只补产品研究和决策依据，不改变 M0 `No-Go`、Public Contract Sync 或实现状态。
+
+## 2026-08-24：CRM V1 产品需求草案
 
 ## 2026-08-25：DEV 首次运行前置审计与 sqlcmd 路径修复
 
@@ -104,6 +119,11 @@
 - 新增 `cp6-daytime-server.bat` 与 PowerShell 控制器，提供复用镜像启动、重建启动、状态检查、仅关闭公网 Tunnel 和安全停止全栈；启动前失败关闭检查 Docker、Compose、`.env` 及 Cloudflare Tunnel 配置/本机凭证。
 - 停止流程只使用 Compose `stop` 并保留容器和命名卷；关闭公网只影响 `cp6-cloudflared`。没有加入 Windows 防睡眠、电源计划、计划任务或自动结束主机 cloudflared 的行为。
 - 新增静态合同测试；实机只读验收确认 7 个 Compose 服务就绪，本机及公网 Web/API 均返回 HTTP 200。当前运行环境未被重启或重建；`estimate` Worker Git 集成仍为独立外部待办。
+## 2026-08-24：CRM V1 产品需求草案
+
+- 新增 `docs/crm/CRM-V1-PRD.md` v0.1，按 Frozen SaaS V1 长期范围和 Lead Pilot 首个切片，定义 CRM 前端效果、后端命令/状态、数据主权、权限/PII/Entitlement、失败恢复、验收和升级接口。
+- 更新 CRM 文档入口与项目状态，明确私有 CRM 仓目前为 docs-only，当前 `main` 仍只有 Foundation；产品草案不冒充已实现功能。
+- PRD 状态为 Draft。Public Contract Sync 仍 Pending，M0 仍 No-Go；必须先完成产品评审和治理门禁，才可拆实施票。
 
 ## 2026-08-24：Space GA 退出码假红修复
 

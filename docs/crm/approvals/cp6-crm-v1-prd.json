@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "CP6-CRM-V1-PRD",
+  "version": "0.2",
+  "status": "Approved",
+  "documentPath": "docs/crm/CRM-V1-PRD.md",
+  "payloadSha256": "5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a",
+  "productSource": {
+    "repository": "GTX537/CP6.CRM",
+    "decisionId": "CP6-SAAS-V1",
+    "mergeCommit": "07a7bb0b50f33b0cb70c18c14f83be77c725626d",
+    "payloadSha256": "e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b",
+    "status": "Frozen"
+  },
+  "publicContract": {
+    "decisionId": "CP6-SAAS-V1-PUBLIC-CONTRACT",
+    "payloadSha256": "8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9",
+    "status": "Complete"
+  },
+  "requiredApproverRole": "ProgramOwner",
+  "approval": {
+    "roleId": "ProgramOwner",
+    "decision": "Approved product requirements baseline",
+    "approverLogin": "GTX537",
+    "approvedAt": "2026-08-26T09:50:21Z"
+  },
+  "approvalEvidence": {
+    "type": "GitHubPullRequestComment",
+    "repository": "GTX537/CP6",
+    "pullRequestNumber": 35,
+    "commentId": 5423567483,
+    "commentUri": "https://github.com/GTX537/CP6/pull/35#issuecomment-5423567483",
+    "commentBodySha256": "4092bc5ec3338be408292c5f240579ed036dcd1033858b4d237dc38d39608de1",
+    "candidateCommit": "00fa3aea66045cb2b949b691824f0fbb830cc739",
+    "candidateBlob": "b6f8da119bf700340616e8a2d3cc01ceb0dd38d6"
+  },
+  "approvedConclusions": [
+    "PRD-APPROVAL-01",
+    "PRD-APPROVAL-02",
+    "PRD-APPROVAL-03",
+    "PRD-APPROVAL-04",
+    "PRD-APPROVAL-05"
+  ],
+  "approvalHistory": {
+    "path": "docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json",
+    "recordSha256": "76b3d5d481ad6c128f70abc7ceb770e430907fed97ca8bdd986873dc492720b3"
+  },
+  "invalidatedPreMergeApprovals": 3,
+  "invalidatedEvidenceLocation": "Unmerged pull request audit trail; excluded from main ancestry and public product baseline",
+  "m0Status": "No-Go"
+}
