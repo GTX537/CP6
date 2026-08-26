@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：发布权威与 Registry 决策
+
+- 新增 `ADR-DEVOPS-001`：当前 CP6 唯一候选 Registry 为 GHCR，唯一候选/部署权威为 GitHub R2；Schema 2 `release-manifest.json` + `candidate-result.json` 是唯一候选链。
+- Azure Phase 3 收敛为只读 Release Shadow，不 Build/Push/签名/生成第二清单/部署；输出必须标记 `Authority=Shadow`、`Deployable=false`。
+- 记录现有 R2 门禁与 Azure 影子要求的等价矩阵、GitHub/GHCR/evidence/Azure Artifact 最小权限、S0/S1/S2 验收、30 分钟回退及未来 ACR 切换硬门禁。
+- 当前未创建 ACR、Service Connection 或生产资源，未运行候选、镜像操作、部署或 Cloudflare 切换；下一任务是无 Secret 的 Shadow S0 离线合同。
+
 ## 2026-08-26：CP6 SaaS V1 公开工程契约同步完成
 
 - ProgramOwner 已在 PR #8 批准 `CP6-SAAS-V1-PUBLIC-CONTRACT` 精确摘要 `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`；append-only 记录固定评论 URI、UTC、证据 commit/blob、私有 Frozen 产品摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 R00 摘要。

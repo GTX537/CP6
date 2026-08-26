@@ -10,6 +10,8 @@
 | --- | --- | --- |
 | [CI/CD 架构](./CI-CD-ARCHITECTURE.md) | Explanation | 解释当前双流水线边界、目标架构和关键取舍 |
 | [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md) | Reference / Roadmap | 记录阶段、任务、完成定义和迁移门禁 |
+| [发布权威与 Registry ADR](./adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md) | Accepted ADR | 固定 GitHub R2/GHCR 唯一候选权威和 Azure 只读影子边界 |
+| [Azure Release Shadow 设计](./AZURE-DOCKER-RELEASE-SHADOW-DESIGN.md) | Design / Contract | 设计 Phase 3 的只读候选链验证、失败关闭和 Shadow 证据 |
 | [Azure Environments 设置](./AZURE-ENVIRONMENTS-SETUP.md) | How-to / Checklist | 创建并验收 DEV、UAT、PROD-LAB 逻辑环境 |
 | [部署 Agent Readiness](./DEPLOY-AGENT-READINESS.md) | How-to / Gate | 验证专用部署身份、Docker Desktop 和本机 SQL TCP 能力 |
 | [DEV 双模式发布](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 配置手动/自动 `CP6 DEV CD`、部署前备份、独立 Tunnel 和安全数据旁路导入 |
@@ -43,7 +45,8 @@
 | 层次 | 状态 | 准确描述 |
 | --- | --- | --- |
 | CI 代码验证 | 已配置并已接通 | GitHub-hosted `client-contract` 执行完整编译/测试；Azure self-hosted Agent 只桥接经 SHA/摘要验证的运行包 |
-| 发布制品 | Azure 未完成；GitHub R2 已有实现 | Azure 尚未产出 `cp6-api` / `cp6-web` 镜像或不可变清单 |
+| 发布权威与 Registry | 已决策 | GitHub R2 + GHCR 是唯一候选权威；Schema 2 manifest + candidate result 是唯一候选链；Azure 只允许非权威 Shadow 验证 |
+| 发布制品 | Azure 不重复构建；GitHub R2 已有实现 | Azure 不为同一版本产出 `cp6-api` / `cp6-web` 镜像或第二份清单；ACR 当前未批准 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |
 | 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；最新 Readiness [`Run #89`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=89) 验证身份、Docker、Compose、SQL TCP、`sqlcmd` 与备份目录 |
@@ -60,7 +63,7 @@
 3. **发布身份可追溯**：至少记录版本、完整 Git SHA、镜像 digest、Pipeline Run ID、批准人、部署时间和验证证据。
 4. **数据库只前向迁移**：初始化先于 API/Web；回退应用前先证明 Schema 兼容，数据库故障用更高版本迁移前滚修复。
 5. **审批不由 YAML 作者控制**：PROD Approval/Checks 放在 Azure Environment 或其他受保护资源上。
-6. **不产生双重真相源**：CRM V1 已固定使用 GHCR/GitHub R2；Azure 只能做非权威验证或消费同一 digest。ACR 或其他 Registry 迁移必须另立 ADR，不得在本 Epic 内重建同版本候选。
+6. **不产生双重真相源**：当前唯一 Registry 是 GHCR，唯一候选权威是 GitHub R2；Azure 只读验证同一 digest。ACR 迁移必须通过新的 ADR 和等价验收。
 
 ## Codex 接手顺序
 

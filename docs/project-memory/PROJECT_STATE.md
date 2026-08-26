@@ -2,6 +2,13 @@
 
 最后更新：2026-08-26
 
+## 发布权威与 Registry 决策完成（2026-08-26）
+
+- `ADR-DEVOPS-001` 已固定当前 CP6 唯一候选 Registry 为 GHCR、唯一候选/部署权威为 GitHub R2；API/Web 只由受保护 `vX.Y.Z` Tag 触发的 R2 candidate 一次构建，Schema 2 `release-manifest.json` 与 `candidate-result.json` 构成唯一候选链。
+- Azure 下一阶段改为非权威 Release Shadow：只读验证同一 Tag、完整 Git SHA、manifest/freeze/spec/证据哈希和 GHCR digest，输出固定 `Authority=Shadow`、`Deployable=false`；禁止重新 Build、Push、签名、生成第二份清单或部署。
+- R2/Azure 等价矩阵、只读 Service Connection 权限、S0/S1/S2 影子期、30 分钟回退和未来 ACR 硬门禁已记录；当前不创建 ACR、不购买资源、不接触生产 Secret/环境。
+- Phase 3 下一张单任务卡是 Shadow S0：只实现离线 parser/fixture/YAML 合同，`trigger: none`、`pr: none`，无真实凭据、候选、镜像拉取或环境副作用。
+
 ## DEV 自动发布稳定性闭环完成（2026-08-26）
 
 - #129 以 31 次 1328～1861 MiB 采样证明 2048 MiB + 3 次连续 SQL readiness 会在备份前失败关闭；依据本机约 8 分 40 秒恢复实测，等待窗口保持安全阈值不变并扩为 600 秒。

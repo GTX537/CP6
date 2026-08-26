@@ -29,39 +29,38 @@
 
 ## Phase 2：发布权威与 Registry 决策
 
-状态：**待决策，必须先于 Docker Release**。
+状态：**决策完成；实现边界已冻结**。
 
-- [ ] 决定唯一候选 Registry：继续 GHCR，或迁移到 ACR。
-- [ ] 若选择 ACR，创建/审批 Azure Container Registry 和最小权限 Service Connection；不把凭据写入 YAML/Git。
-- [ ] 决定 Azure 与 GitHub R2 的迁移模式：影子验证、候选复制或最终切换。
-- [ ] 确定版本入口，默认沿用受保护 `vX.Y.Z` Tag 和当前 `main` 校验。
-- [ ] 确定候选清单的唯一格式和存储位置，避免 Azure/GitHub 各产一份冲突清单。
-- [ ] 写出 GitHub R2 退出条件和一键恢复旧发布链的时限。
+- [x] 唯一候选 Registry 继续使用 GHCR：`cp6-api` / `cp6-web`。
+- [x] ACR 当前不创建、不授权；未来迁移必须另立 ADR，不能在实现票中隐式切换。
+- [x] GitHub R2 保持唯一候选/部署权威；Azure 只允许读取同一候选进行非权威 Shadow 验证。
+- [x] 版本入口沿用 Freeze 创建、指向当前 `main` 的受保护 annotated `vX.Y.Z` Tag。
+- [x] 唯一组件候选链为 Schema 2 `release-manifest.json` + `candidate-result.json` 根指针及其 Object Lock 证据。
+- [x] 已记录 R2/Azure 等价矩阵、只读 Service Connection 边界、30 分钟 Shadow 回退和未来 ACR 切换门禁。
 
-建议：Azure Release 先以影子模式产出非生产候选并比较 digest、SBOM、扫描和清单；通过等价验收后再切换唯一权威。不要让两个系统对同一版本分别 Build。
+权威决策见 [ADR-DEVOPS-001](./adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md)。Phase 3 只实现 [Azure Release Shadow](./AZURE-DOCKER-RELEASE-SHADOW-DESIGN.md)，不让两个系统对同一版本分别 Build。
 
-`GATE`：Registry、候选清单和发布权威均有唯一答案，并通过安全/运维评审。
+`GATE`：**已关闭**。Registry、候选清单和发布权威均有唯一答案；任何 ACR/权威切换需重新打开为独立 ADR。
 
-## Phase 3：Docker Release
+## Phase 3：Azure Release Shadow
 
-状态：**下一实现阶段，尚未开始**。
+状态：**设计完成，实现尚未开始**。
 
-- [ ] 新增独立 Release stage/job，只在完整 CI 和版本冻结通过后运行。
-- [ ] API 使用根构建上下文与 `CP6.WebApi/Dockerfile`。
-- [ ] Web 使用仓库根构建上下文与 `cp6.web/Dockerfile`，确保可读取版本化 TypeScript SDK。
-- [ ] 传入 `RELEASE_VERSION` 与完整 `GIT_SHA`。
-- [ ] 为两个镜像保存 SemVer、Git SHA 和 Pipeline 追踪标签。
-- [ ] 生成 provenance、SBOM 和 High/Critical 漏洞门禁，至少与现行 R2 等价。
-- [ ] Push 后读取并验证 Registry digest；候选清单保存 `repository@sha256:digest`。
-- [ ] 发布测试结果、镜像元数据和安全报告，定义保留期。
+- [x] 设计独立 YAML 结构，初始固定 `trigger: none`、`pr: none`，只允许手动验证既有候选。
+- [x] 设计 candidate result → Schema 2 manifest → freeze/spec/evidence → GHCR digest 的逐层验证顺序。
+- [x] 定义 `Authority=Shadow`、`Deployable=false` 的唯一 Azure 输出语义。
+- [ ] 实现 S0 fixture/parser/YAML 合同，不连接真实 GHCR 或证据存储。
+- [ ] 实现 S1 真实候选只读元数据和 GHCR digest 验证，发布 Shadow report。
+- [ ] 为完整镜像 pull/SBOM/Trivy 对比准备独立容量受控 Agent；不得与本机 SQL/Docker 公网环境争抢资源。
+- [ ] 连续三个不同 SemVer 候选通过 Shadow 验收并形成等价报告。
 
-实现注意：CP6 需要 Docker build arguments；不要直接使用会忽略 `arguments` 的 `Docker@2 buildAndPush` 组合模式。应拆成 build/push，或使用登录后的受控 Buildx 脚本。
+实现注意：Azure 禁止调用 `docker build`、`Docker@2 buildAndPush`、ACR Build/Import 或部署脚本；provenance、SBOM、扫描和 digest 只读取 GitHub R2 的权威候选，独立重扫结果仅作对比证据。
 
-`GATE`：同一 Pipeline Run 只生成一组 API/Web digest；从 Registry 可按 digest 拉取；扫描和候选清单验证通过。
+`GATE`：Shadow 能证明同一 Tag/SHA/manifest/digest/证据链，且没有 Registry 写入、第二份候选或部署权限；完成不等于 Azure 获得发布权威。
 
 ## Phase 4：DEV 自动部署
 
-状态：**待 Phase 3**。
+状态：**生产等价路径待 Phase 3；本机学习链已独立验收**。
 
 学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选哈希 Runtime Artifact 封装本机 SHA 镜像，锁内最多等待 600 秒取得至少 2 GiB 可用内存及 3 次连续独立 SQL 登录，再对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY、停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；Manual #95/#120/#121 已完成 3/3，#129 已证明低内存会在 SQL/备份前失败关闭，#131 的同 Stage 重试又暴露并修复固定证据 Artifact 名冲突。main CI #132 随后以 `main@08813896...` 自动触发 DEV #133，600 秒门禁、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份与 `cp6-dev-evidence-attempt-1` 全部成功，根 `cp6`/`CP6DB` 零漂移。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；Tunnel 切换仍须单独授权。
 
@@ -112,20 +111,22 @@
 
 ## 当前下一张任务卡
 
-**任务：Azure Release Authority & Registry Decision**
+**任务：Azure Release Shadow S0 合同**
 
 范围：
 
-1. 输出 GHCR 与 ACR 的选择记录；
-2. 定义 Azure/GitHub 影子期和唯一候选清单；
-3. 盘点现有 R2 门禁，形成 Azure 等价矩阵；
-4. 设计 Phase 3 YAML，但暂不触发生产部署。
+1. 新增独立 `azure-pipelines-release-shadow.yml`，保持手动且无外部写权限；
+2. 实现 candidate result/manifest/freeze/spec 的离线 fixture parser；
+3. 对错误来源、版本、SHA、hash、repository/digest 和 `Deployable` 语义建立失败关闭合同；
+4. 不创建 Service Connection，不访问真实候选，不拉取镜像，不部署。
 
-完成定义：评审通过的决策文档、等价矩阵、Service Connection 权限边界和可回退迁移方案。没有该决策，不直接实现 ACR Push。
+完成定义：YAML/解析器/fixture 合同可在无 Secret 环境通过；静态门禁证明没有 Build/Push/Tag/Deploy 命令；相对 main 的 diff 只包含 S0 范围。
 
 ## 相关文档
 
 - [CI/CD 架构](./CI-CD-ARCHITECTURE.md)
+- [发布权威与 Registry ADR](./adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md)
+- [Azure Release Shadow 设计](./AZURE-DOCKER-RELEASE-SHADOW-DESIGN.md)
 - [发布流程](./RELEASE-PROCESS.md)
 - [环境策略](./ENVIRONMENT-STRATEGY.md)
 - [R2 签名与候选制品](../client/r2/02-signing-candidate-artifacts.md)

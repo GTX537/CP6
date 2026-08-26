@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-26 发布权威与 Registry 决策
+
+- 选择继续由 GitHub R2 + GHCR 作为当前 CP6 唯一候选权威；Schema 2 manifest + candidate result 是唯一候选链，Azure 不为同一版本重新 Build 或生成第二份候选。
+- 完成 R2/Azure 20 项等价矩阵、Shadow S0/S1/S2 阶段、只读 GitHub/GHCR/evidence/Azure Artifact 权限边界和 30 分钟回退设计。
+- Phase 3 设计改为 `trigger: none` 的 Azure Release Shadow，输出固定 `Authority=Shadow`、`Deployable=false`；ACR 当前未批准，未来迁移必须另立 ADR 并完成三个连续候选等价验收。
+- 本任务仅修改文档和设计，没有创建 Registry/Service Connection、运行候选、拉取镜像、部署环境或切换 Cloudflare。
+
 ## 2026-08-26 CP6 SaaS V1 公开工程契约同步完成
 
 - 私有产品冻结 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d`、Frozen 摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 Accepted R00 摘要继续绑定到公开契约。
