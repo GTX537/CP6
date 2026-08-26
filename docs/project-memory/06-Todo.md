@@ -4,7 +4,7 @@
 
 - 本机完整编译内存风险已通过 GitHub hosted build + Azure 轻量 Artifact 桥关闭；main #118、自动关闭门 #119、Manual #120/#121 均已成功，三次手动验收达到 3/3。继续保持本机 CI 不编译，除非另有等价隔离与容量证明。
 - 本机必须保持开机、未睡眠，且 Docker Desktop 与网络正常；这是当前白天临时测试方案的可用性边界。若需要夜间、无人值守或稳定 SLA，仍须另选真实云主机/托管容器平台并完成生产部署设计，不能把本机 Tunnel 描述为高可用云部署。
-- #95/#120/#121 已完成手动 3/3，自动 #125 也以真实 `ResourceTrigger` 完成首次验收。#127 随后在主机内存 95.16% 时发生 SQL prelogin 超时并在备份前失败；新的 main completion 必须验证新增的 2 GiB + 3 次连续 SQL 登录门禁、备份/VERIFYONLY、Deploy、健康/身份、证据 Artifact 和根环境零漂移。旧版本手动回退前必须先关闭自动。
+- #95/#120/#121 已完成手动 3/3，自动 #125 也以真实 `ResourceTrigger` 完成首次验收。#129 已验证 2 GiB + 3 次连续 SQL 登录门禁在低内存时会于 SQL/备份前失败；新的 main completion 必须验证扩展至 600 秒的恢复窗口、备份/VERIFYONLY、Deploy、健康/身份、证据 Artifact 和根环境零漂移。旧版本手动回退前必须先关闭自动。
 - 首次切换 `cp6.uk` 前，运行 `Invoke-Cp6PublicTunnel.ps1 -Action Validate`、显式停止旧 `cp6-cloudflared`、启动 `cp6-public-tunnel` 并核对完整 SHA；确认后才设置 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED=true`。旧/新 connector 禁止同时运行。
 - 给同事开放测试前，确认 `cp6-dev` 的 `19991`/`18080` 与公网 release identity 一致；同事只使用 `https://cp6.uk` 的应用账号，不共享 `.env`、Tunnel JSON、数据库/RabbitMQ/Kafka 管理端口或基础设施凭证。根 `cp6` 继续作为私人开发环境。
 - Cloudflare Workers 的 `estimate` Git 集成仍需在 Cloudflare 控制台单独断开或改正 Build 配置。它与 `cp6-cloudflared` Tunnel 不在同一部署链；当前家庭测试服务器不依赖 `estimate`，也没有修复其外部构建失败。
@@ -48,7 +48,7 @@
 - Readiness Build ID `10` 及后续 #89/#105 已通过；ODBC 17 `sqlcmd`、备份目录 ACL、最小化 `cp6_dev_backup`、锁定 `CP6_DEV_DB_BACKUP_PASSWORD`、Pipeline 定向授权和 Exclusive lock 均已完成验收。
 - 首次三次手动验收同时记录备份目录容量增长；当前不自动删除 `.bak`，后续需单独确认保留数量、最小保留期、磁盘告警和可恢复证据后再实现清理策略。
 - 当前用户目录已安装并登录 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6；`CP6 DEV CD`、`CP6-Deploy`、`cp6-dev-secrets`、`cp6-dev` Environment、定向授权与 Exclusive lock 均已配置。当前自动开关为 `true`，公网验证开关为 `false`。
-- 三次手动 Run 与首次自动 #125 已完成并证明根 `cp6`/`CP6DB` 未受影响；自动开关保持 `true`。下一步以修复合入后的新 main completion 验证打包后主机/SQL 就绪门禁和完整自动发布，并持续保留每次 readiness、备份、部署与宿主基线证据。
+- 三次手动 Run 与首次自动 #125 已完成并证明根 `cp6`/`CP6DB` 未受影响；#129 又证明低内存会在 SQL/备份前失败关闭。自动开关保持 `true`；下一步以 600 秒窗口合入后的新 main completion 验证完整自动发布，并持续保留每次 readiness、备份、部署与宿主基线证据。
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 是 `Default` self-hosted 轻量 Artifact 桥、`main` trigger、`pr: none`；完整编译/测试在 GitHub `client-contract`。仍需补 Agent 运维边界和 PR 门禁归属，不把 Artifact 绿灯描述为上线。

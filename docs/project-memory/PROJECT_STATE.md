@@ -6,7 +6,7 @@
 
 - 自动 DEV #125 以 `ResourceTrigger` 绑定成功 CI #124，完整完成 Artifact 封装、CHECKSUM/VERIFYONLY 备份、迁移、API/Web 健康与完整 SHA 身份核对；备份为 2,572,288 bytes，SHA-256 `bcd9f228...a3a574`，根 `cp6-api`/`cp6-db` ID、StartedAt、RestartCount 未变，首次自动验收成立。
 - PR #26 合入后的 main CI #126 成功并触发自动 #127；#127 Package 成功，但 Agent 在此前已报告主机内存使用 `95.16%`，首次 `cp6_dev_backup` 新登录在 SQL prelogin 阶段超时。Run 在备份前失败，没有新增 `.bak`、迁移或容器替换；既有 #125 DEV 版本保持 Healthy。失败后的 8/8 独立 SQL 新连接均在 54～98 ms 内成功，排除持久 Secret、权限或数据库状态错误。
-- 根因是流水线在本机 Docker 封装后直接进入备份，缺少主机恢复与独立 SQL 登录门禁。修复增加最多 300 秒的锁内等待，要求至少 2048 MiB 可用内存和 3 次连续新 SQL 登录成功；超时在备份/迁移前失败关闭，并发布 `backup-readiness.json`。下一步只用新的 main completion 验证该门禁，不直接重跑未修复的 #127。
+- 根因是流水线在本机 Docker 封装后直接进入备份，缺少主机恢复与独立 SQL 登录门禁。main CI #128 成功后，自动 #129 真实验证门禁：31 次采样仅 1328～1861 MiB，SQL 探测、备份、迁移和容器切换均未启动，`backup-readiness.json` 成功归档。主机在门禁结束约 3 分 36 秒后才恢复到 2141 MiB，即封装结束约 8 分 40 秒后达到阈值；因此保持 2048 MiB + 3 次连续 SQL 成功不变，只把锁内有界等待由 300 扩为 600 秒。下一步以新的 main completion 完成实际部署。
 
 ## DEV 自动发布已授权，真实验收待新 main completion（2026-08-25）
 

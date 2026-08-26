@@ -72,7 +72,7 @@ GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 s
 2026-08-26 自动 Run #127 在候选封装期间收到主机内存已使用 `95.16%` 的 Agent 告警，随后首次
 `cp6_dev_backup` 登录在 SQL prelogin 阶段超时。它在备份前失败，没有新 `.bak`、迁移或容器替换，
 既有 #125 DEV 版本保持 Healthy；失败后的 8/8 独立 SQL 新连接均在 54～98 ms 内成功，排除了持久
-Secret、权限或数据库状态错误。流水线现于锁内、备份前最多等待 300 秒：只有可用内存不少于
+Secret、权限或数据库状态错误。流水线现于锁内、备份前最多等待 600 秒：只有可用内存不少于
 2048 MiB 且 3 次连续独立 SQL 登录成功才继续；否则失败关闭并发布 `backup-readiness.json`，不会
 通过重试有副作用的 BACKUP 来掩盖宿主机压力。
 
@@ -152,6 +152,7 @@ SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；�
 | `#125` / `dev-20260826.1` | completion trigger；Succeeded | 自动验收 | `ResourceTrigger` 绑定 CI #124，完整完成 Package、CHECKSUM/VERIFYONLY 备份、Deploy、健康/身份与证据；根 API/DB 基线未漂移 |
 | `#126` / `20260826.2` | 基础 CI；Succeeded | 否 | PR #26 合入后的 main Artifact 桥成功，并自动触发 #127 |
 | `#127` / `dev-20260826.2` | completion trigger；Failed | 否 | Package 成功后宿主内存使用 95.16%，SQL prelogin 超时；备份前失败关闭，无新备份/迁移/切换，暴露并促成备份前就绪门禁 |
+| `#129` / `dev-20260826.3` | completion trigger；Failed | 安全门禁验收 | 绑定 main CI #128 / `318bcb2d...`；31 次采样仅 1328～1861 MiB，SQL/备份均未启动，备份/迁移/切换全部 Skipped。主机在门禁结束约 3 分 36 秒后自然恢复到 2 GiB 以上，因此等待窗口由 300 调整为 600 秒，不降低阈值 |
 
 Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
 分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。Run #101 恢复后的根基线为
@@ -208,4 +209,4 @@ DEV CD 不会自动切换 Cloudflare。切换前 `cp6.uk` 仍可能指向根 `cp
 
 ## 当前完成口径
 
-仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness、三次手动 DEV 发布和 #125 首次真实自动发布均已完成。#127 证明连续自动运行仍需要打包后恢复保护；备份前主机/SQL 就绪门禁必须在新的 main completion 中通过后，才关闭本轮稳定性缺口。独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“cp6.uk 已切到 cp6-dev”。
+仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness、三次手动 DEV 发布和 #125 首次真实自动发布均已完成。#129 已证明新门禁在持续低内存时会完整阻止 SQL/备份/迁移；实测恢复时间要求 600 秒窗口。该窗口仍须在新的 main completion 中通过并完成实际部署，才关闭本轮稳定性缺口。独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“cp6.uk 已切到 cp6-dev”。

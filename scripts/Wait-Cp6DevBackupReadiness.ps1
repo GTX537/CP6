@@ -7,7 +7,7 @@ param(
     [int]$RequiredConsecutiveSuccesses = 3,
 
     [ValidateRange(0, 86400)]
-    [int]$MaxWaitSeconds = 300,
+    [int]$MaxWaitSeconds = 600,
 
     [ValidateRange(1, 3600)]
     [int]$PollIntervalSeconds = 10,
