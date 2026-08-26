@@ -227,7 +227,7 @@
 - 规范任务从 `main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753` 创建独立 `codex/crm-v1-spec-approval-20260812` 分支；只修订 CRM 规范与项目记忆，不修改旧根工作区、业务代码、仓库、云资源、数据或部署。
 - `CRM-PRODUCT-FRAMEWORK.md` 与 `CRM-V1-EXECUTABLE-SPEC.md` 已升级为 Approved implementation-planning baseline。审阅证据为工程/设计计划 `C8574D3BE11C5492C2CFFA8797917FE4898328E16B25A832267714C719701A08`、QA 计划 `1A6995F45DAD2CD4DD511B7D6CF2E5FA760123C63DD597D1E0F5975D91C5F281`、采用/产品设计 `C60FA78E3F876D0682CB39814EEB9383FBAEC17D1E285DC59D2BB9256C322DF7`。
 - 本轮冻结 Lead 创建/Assignment/Activity/Merge 的幂等与并发、412 保文/差异/显式重试、4 个租户业务小时 SLA、C 分栏 Pilot、公开站点 IA/视觉/受控 CMS、加密有界回执 Cookie、真实隔离 ERP UAT，以及 Pilot/CRM12 分层性能门禁。
-- Observation、Pilot UAT、Lead Adoption 和 Full Journey Adoption 都是不可豁免硬门禁；最多两个固定版本整改窗口。CRM V1 唯一 Registry/候选权威固定为 GHCR/GitHub R2，Azure 只能做 CI、DEV 学习、影子验证或消费同一 digest；ACR 迁移独立立项。
+- Observation、Pilot UAT、Lead Adoption 和 Full Journey Adoption 都是不可豁免硬门禁；整改窗口与重新立项/终止条件保留在私有 Adoption Manifest。CRM V1 唯一 Registry/候选权威固定为 GHCR/GitHub R2，Azure 只能做 CI、DEV 学习、影子验证或消费同一 digest；ACR 迁移独立立项。
 - 该状态只表示 T1 规范批准，不表示 CRM 端到端实现完成。下一张票据是 M0/R00 DevOps ADR；Sponsor、Product/Sales Operations/Security/ERP/Data/SRE/Release Owner、Pilot cohort 和 Observation 证据缺失时自动 No-Go。
 - 最新基线复核确认 20 个 CRM DbSet、无 CRM Controller/前端路由、JWT 仍为 HMAC SHA-256 且旧租户上下文仍回退 A1；`dotnet test CP6.Tests/CP6.Tests.csproj -c Release --filter "FullyQualifiedName~CP6.Tests.Crm" --nologo` 为 16/16 passed、0 failed、0 skipped。Markdown 相对链接和 `git diff --check` 通过。
 
