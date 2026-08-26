@@ -19,6 +19,19 @@ if (-not $fixtureRoot.StartsWith($tempRoot, [StringComparison]::OrdinalIgnoreCas
 
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $validatorRelativePath = 'tools/Test-CrmSaasPublicContract.ps1'
+$fixtureDirectories = @(
+    'tools',
+    'docs/crm',
+    'docs/client',
+    'docs/devops',
+    'docs/approval',
+    'docs/finance',
+    'docs/project-memory',
+    'docs/procurement',
+    'docs/pub',
+    'docs/space/acceptance',
+    'docs/space/requirements'
+)
 $passed = 0
 
 function Invoke-Validator {
@@ -77,7 +90,11 @@ function Test-NegativeCase(
 try {
     & git clone --quiet --shared --no-checkout $root $fixtureRoot
     if ($LASTEXITCODE -ne 0) { throw 'Unable to create the isolated Git fixture.' }
-    & git -C $fixtureRoot checkout --quiet --detach $sourceCommit
+    & git -C $fixtureRoot sparse-checkout init --cone
+    if ($LASTEXITCODE -ne 0) { throw 'Unable to initialize the isolated sparse fixture.' }
+    & git -C $fixtureRoot sparse-checkout set @fixtureDirectories
+    if ($LASTEXITCODE -ne 0) { throw 'Unable to select CRM public contract fixture files.' }
+    & git -C $fixtureRoot -c core.longpaths=true -c filter.lfs.smudge= -c filter.lfs.required=false checkout --quiet --detach $sourceCommit
     if ($LASTEXITCODE -ne 0) { throw 'Unable to check out the source commit in the isolated Git fixture.' }
 
     $baseline = Invoke-Validator
