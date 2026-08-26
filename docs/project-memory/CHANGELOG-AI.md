@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-25：DEV 自动发布开关启用
+
+- 三次独立 Manual DEV 验收 3/3 后，用户明确授权继续自动闭环；Azure `CP6_DEV_AUTO_DEPLOY_ENABLED` 已设为 `true`，公网验证仍为 `false`。
+- 基础 CI #124 在当前 main 同一 SHA 上手动重跑成功，但未产生新的 completion DEV Run，因此不计自动验收。通过本状态 PR 形成新的 main SHA 后，再以真实 `ResourceTrigger` Run 验证 Package、备份、部署、健康/身份、证据和根环境零漂移。
+- 生产发布权威仍是 GitHub R2/GHCR；本机 DEV 自动模式不推广到 UAT/PROD，旧版本手动回退前仍须先关闭自动。
+
 ## 2026-08-25：DEV 三次独立 Manual 验收 3/3
 
 - PR #24 合入 `main@a5c6b5fa...`；GitHub main client-contract 与 Azure #118 成功，自动 completion #119 在 `CP6_DEV_AUTO_DEPLOY_ENABLED=false` 时安全跳过 Package/Deploy。
