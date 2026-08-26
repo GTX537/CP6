@@ -518,5 +518,5 @@ stages:
             condition: always()
             inputs:
               targetPath: '$(Pipeline.Workspace)\cp6-dev-evidence'
-              artifact: 'cp6-dev-evidence'
+              artifact: 'cp6-dev-evidence-attempt-$(System.StageAttempt)'
               publishLocation: 'pipeline'
