@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## CRM V1 PRD 脱敏审批候选（2026-08-26）
+
+- `docs/crm/CRM-V1-PRD.md` v0.2 已迁移到最新 `main` 基线，并移除商业 cohort 数量/地域/名单、精确推广时间表、私有数值商业 KPI、数值 Pilot UAT 和采用门禁；候选期措辞改为不随状态漂移的批准规则，候选 payload SHA-256 为 `5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`。
+- 三次未合并的预审批尝试因脱敏声明不完整而作废；相关证据仅保留在未合并 PR 审计轨迹中，新的干净分支不继承旧敏感提交祖先，也不把旧对象引用写入公开产品基线。
+- 当前状态为 `Candidate for Product Approval`，Public Contract Sync 为 Complete，M0 仍为 No-Go。本候选没有创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也不解锁 CRM01。
+
 最后更新：2026-08-26
 
 ## 发布权威与 Registry 决策完成（2026-08-26）
@@ -54,6 +60,12 @@
 - Manual Run #95 成功发布 `0.0.0-dev.92`：API/Web 均对应完整 SHA `47ca8441898af69d1e66bc1acb6c51129dbe9c18`，`19991` live/ready 与 `18080` release identity 一致，最新迁移为 `20260811030108_CrmFoundation`。新备份 `CP6_DEV_20260825_123030_332_9b7cd05d_UTC.bak` 为 2,453,504 bytes，SHA-256 `58c6ff73...5079c23`，CHECKSUM/VERIFYONLY 通过；`cp6-dev-evidence` 已发布。
 - 根 `cp6` 七个容器 ID、Docker `CP6DB` 与既有 Cloudflare connector 全程未变。当前口径是手动 DEV 验收 **1/3**；自动与公网验证仍关闭，未切换 Tunnel，另两次成功 Run、宿主机内存治理和公网身份验收仍是后续门禁。
 
+## CRM 公开产品对比与 PRD v0.2（2026-08-25）
+
+- `docs/crm/CRM-COMPETITIVE-ANALYSIS.md` 已对比 Salesforce、HubSpot、Dynamics 365、Pipedrive、Zoho、Odoo、SAP Sales Cloud、纷享销客和销售易，按获客、Lead 执行、客户/商机、报价成交、ERP 权威、治理扩展及商业模式建立同口径分析。
+- 竞品研究没有扩大 V1：`CRM-COMP-001`～`007` 固定 Lead Pilot 行动优先、稳定对象/状态、来源与 SLA、CP6 ERP/ExternalEvidence 成交权威，并把公海、企微/钉钉、邮件/日历、移动拜访、评分和 AI 保留为后续受控扩展。
+- `CRM-V1-PRD.md` 已升为 v0.2，并把竞品结论映射到目标、旅程、前端、后端、升级和验收合同。该 2026-08-25 里程碑当时仍是产品评审草案；当前审批候选与 Public Contract 状态以上方 2026-08-26 记录为准，M0 始终保持 `No-Go`。
+
 ## 本机 DEV 外部首次运行就绪审计（2026-08-25）
 
 - 只读审计确认 Docker Desktop 29.3.1、Compose 5.1.1、`MSSQL$KOUSQLSERVER` 和专用 Azure Agent `vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS` 正常运行；`CP6_DEV` 已存在，根 `cp6` 七个容器、`CP6DB` 与 `cp6_cp6-db-data` 保持运行且未被修改。
@@ -95,6 +107,13 @@
 - 流程不会修改 Windows 睡眠、电源计划或计划任务。电脑睡眠、关机、Docker Desktop 停止或网络中断时，`cp6.uk` 暂时不可访问是预期行为；恢复后由用户手动启动/检查。
 - 2026-08-24 只读实机验收确认 7 个服务运行，DB/Redis/MQ/Kafka 健康；本机 Web/API 与公网 Web/API 四个地址均为 HTTP 200。为保护正在使用的环境，本任务没有执行重启、重建或停止。
 - Cloudflare Workers 中名为 `estimate` 的 Git 集成仍是独立外部清理项，不参与本机 Docker + Tunnel 运行链，也不因本流程交付而视为已修复。
+
+## CRM V1 产品需求草案（2026-08-24）
+
+- 新增 `docs/crm/CRM-V1-PRD.md` v0.1，状态为 `Draft for Product Review`。文档以 2026-08-14 私有 `GTX537/CP6.CRM` Frozen SaaS V1 为长期产品目标，并把已批准的 Lead Pilot C 分栏工作台定义为第一可见交付。
+- PRD 已统一 Website/Manual/Import Intake、Lead/Opportunity/PublicSubmission/IntegrationProcess 状态、22 个权限动作、DataScope/PII/Entitlement、幂等/ETag/412、CP6 ERP 与 ExternalEvidence 两种成交权威、Site/CMS、Portal、移动端、KPI、采用门禁和未来升级接口。
+- 当前代码事实不变：`main` 只有 20 表 Foundation、状态机、迁移、6 个禁用菜单和 22 个动作；没有 CRM Controller、独立 API、Next.js/React Native 客户端或可用 CRM 页面。私有 CRM 仓当前为 docs-only。
+- 本条记录 2026-08-24 的草案事实；Public Contract Sync 后续已由 PR #8 完成。PRD 产品批准仍不把 M0 从 No-Go 改为 Go，只有 M0 Go 后才可按 Lead Pilot 切片拆实施票。
 
 ## Space GA 退出码假红修复（2026-08-24）
 

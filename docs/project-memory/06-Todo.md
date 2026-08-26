@@ -21,7 +21,7 @@
 - 登录体验恢复已关闭：大幅模板重排已完成组件、全量 Web、类型、生产构建和桌面/移动浏览器验收；折叠 Tenant 焦点、虚假健康状态、语言语义与并发认证问题均有回归覆盖。后续新增实时服务状态时必须接入真实健康检查与失败/未知状态，不能恢复静态“正常”宣称。
 - Kafka Dispose 恢复已关闭：刷新异常仍释放 producer、关闭异常只告警不阻断 Host、剩余队列可观测且重复调用幂等；4 个聚焦行为测试和 `CP6.Tests` 全量回归通过。
 - 日期时间恢复的 P4/P5 已关闭：不恢复多余且弱类型的 Vue shim；普通业务日期时间固定到分钟精度并完成五语言回归。若后续审计日志明确要求秒/毫秒，必须新建立独立精确格式任务，不得修改全局 `long` 合同。
-- CRM Draft PR #7 和 #8 已基于当前 `main`，继续等待各自产品/治理确认与 CI。PR #7 的 Cloudflare Workers 外部构建失败需单独归因；PR #8 公共契约校验已通过。两者保持 Draft，不纳入本次干净 `main`。
+- CRM 旧 Draft PR #7 已关闭，替代 PR #8 已合并且公共契约主线冒烟通过。Cloudflare Workers `estimate` 外部失败继续单独归因，不影响受保护的 CRM 合同、Windows/Web、Android 和 SQL 必需检查。
 - 完成整顿后把本机归档复制到第二介质，再考虑清理 `D:\CP6-archives\2026-08-24-branch-consolidation`；在此之前禁止删除 bundle、patch、原始未跟踪文件或 SHA-256 清单。
 
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
@@ -66,14 +66,14 @@
 
 ## P0：CRM V1 端到端交付
 
-- 产品框架和三仓可执行 Spec 已批准为 implementation-planning baseline，入口为 `docs/crm/README.md`；Foundation 的 20 张表、固定状态机、迁移、6 个禁用菜单节点和 22 个动作只作为迁移源与兼容语义，不是目标服务实现。
-- 先完成 M0/R00 ADR，冻结 GHCR/R2 权威、Azure SQL/Emergency Intake、System Manifest 整体回退，并取得 Sponsor、Product、Sales Operations、Architecture、Security、Data、ERP、SRE、QA、Release 的 named Owner、Pilot cohort 与 Observation Gate 证据；缺失即 No-Go。
-- 不要现在建立 `GTX537/CP6.CRM` 空仓。只有 T1 已在最新 main、M0 输入关闭且 P01 runner/合同可消费后，才由 CRM01-S01 创建私有仓库；V1 不实现软件产品目录、商城、订阅或客户产品中心。
-- 第一阶段可并行推进 Platform P01–P07、CP6 C01–C03、CRM01–CRM03；随后只实现 CRM04 的 Lead Pilot 子集、C 分栏工作台、真实 Dapr/Kafka Intake、两租户负向与 Pilot 性能 Smoke。Pilot UAT 通过后才解锁 CRM04 余项、CRM05–CRM10、完整 ERP/CMS 旅程，再进入 P08–P10、C04A、CRM11/CRM12。
-- Intake 必须覆盖人工录入、同源 BFF 官网提交、稳定 attempt、Needs Review release/reject/expiry、原 ReceivedAt 首次响应 SLA、Emergency Intake、线索池、分配/移交、协作人、活动时间线、重复候选与受控合并；数据范围按负责人、协作人、部门和管理员显式校验。
-- 后续能力为企业/联系人/商机转化、报价接受和 ERP 订单桥接、独立 CRM Next.js 工作台、营销官网 CMS/多语言 SSR/ISR、PII 24 个月匿名化、SLA 通知及漏斗/来源报表。
-- CRM09 开始前必须批准首页、能力/行业和联系/回执的桌面/平板/移动高保真稿与受控 CMS Schema；完整 UAT 必须使用真实 C03 handler 和隔离 ERP SQL，Mock 只允许单元测试。
-- 单次生产切换后依次执行 ≥10 工作日/≥200 Eligible Lead 的 Lead Adoption 和最多 30 日 Full Journey Gate；技术绿灯、部署成功或菜单可见都不能关闭 Epic。两项通过并完成只读观察后才执行 C04B，旧表物理删除另立任务。
+- 对干净分支中的脱敏 `docs/crm/CRM-V1-PRD.md` v0.2 候选取得唯一 `ProgramOwner` 对精确摘要、候选 commit/blob 和五项产品结论的新批准；三次未合并预审批均已作废，不得复用。
+- Public Contract Sync 已由 PR #8 完成并合入主线；继续以公开摘要 `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9` 作为工程边界，不得选择性恢复历史三仓范围。
+- R00 已 Accepted 且公开镜像 Complete。M0 继续关闭 Azure SQL/Emergency Intake、System Manifest 整体回退、各专业证据 DRI、Pilot cohort、Observation Gate、Critical/High、私有仓保护和必需检查；任一缺失即 No-Go。
+- 当前 `main` 的 20 表、状态机、迁移、6 个禁用菜单和 22 个动作只作为迁移源与兼容语义；私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only，不得把仓库存在或菜单种子描述为应用开工。
+- M0 Go 后先交付每组织数据库、身份/授权/Entitlement 投影、Website/Manual Intake 和 Lead Pilot：SLA 队列、分配/移交、客户面对型 Activity、412 草稿恢复、两租户负向和真实 SQL/Kafka/Dapr 性能 Smoke。Pilot UAT 通过前不铺开完整菜单。
+- Pilot 后交付 Account/Contact、转换、Opportunity、CP6 ERP/ExternalEvidence、Dashboard/报表、Import/Export、Site/CMS/Offering、Portal 商业协作和五语言；所有读写共享 Organization、DataScope、PII、Entitlement、幂等和审计语义。
+- CRM09/对应产品切片开始前批准公开站点、管理台和移动端关键流程高保真稿；完整 UAT 使用真实 C03 与隔离 ERP SQL，Mock 只用于单元测试。
+- 单次切换后依次完成设计伙伴、Web GA、移动 GA、Lead Adoption、Full Journey 和最终采用门禁；精确推广时间表与数值窗口保留在私有采用 Manifest。技术绿灯、部署成功或菜单可见都不能关闭 V1 Epic。
 
 ## 已完成：Space `CodeEngineService` Zone 级 rackSeq
 
