@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "status": "Approved",
+  "releaseVersion": "1.2.3",
+  "tag": "v1.2.3",
+  "gitSha": "0123456789abcdef0123456789abcdef01234567",
+  "repositoryPath": "docs/client/r2/releases/v1.2.3/candidate.yaml",
+  "specSha256": "9CEAA373697C49AF42F26D5B4E4DEA211A059CB257E4837E8346CDE249E27483",
+  "changeTicket": "CHG-CP6-123",
+  "approvedAt": "2026-08-26T00:00:00Z",
+  "approvalExpiresAt": "2027-08-26T00:00:00Z",
+  "generatedAtUtc": "2026-08-26T00:01:00Z",
+  "generatedBy": "cp6-release-owner",
+  "workflowRunUri": "https://github.com/GTX537/CP6/actions/runs/123456789",
+  "evidenceRootUri": "s3://cp6-release-evidence/releases/v1.2.3",
+  "environments": {
+    "freeze": "r2-release-freeze",
+    "candidate": "r2-candidate",
+    "compose": "r2-pilot-compose"
+  },
+  "runners": {
+    "freeze": ["self-hosted", "Windows", "X64", "cp6-release"],
+    "candidate": ["self-hosted", "Windows", "X64", "cp6-release"],
+    "compose": ["self-hosted", "Windows", "X64", "cp6-deploy"]
+  },
+  "deployment": {
+    "target": "Compose",
+    "environment": "r2-pilot-compose",
+    "evidenceRootUri": "s3://cp6-release-evidence/releases/v1.2.3"
+  },
+  "inputs": [
+    {
+      "id": "storage",
+      "status": "Approved",
+      "evidenceUri": "s3://cp6-release-evidence/inputs/storage.json"
+    }
+  ]
+}

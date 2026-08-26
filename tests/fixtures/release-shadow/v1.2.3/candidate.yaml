@@ -1,0 +1,8 @@
+schemaVersion: 1
+release:
+  version: 1.2.3
+  tag: v1.2.3
+  state: Approved
+  changeTicket: CHG-CP6-123
+deployment:
+  evidenceRootUri: s3://cp6-release-evidence/releases/v1.2.3

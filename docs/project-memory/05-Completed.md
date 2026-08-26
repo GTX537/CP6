@@ -7,6 +7,12 @@
 - 最终全披露面审查同时清理 M0 Readiness、产品框架和可执行 Spec 中遗留的 Pilot/采用数值，自动发现并锁定全部公开 `docs/crm/**` 文件；新增未登记 CRM 文档失败关闭。工作流把 head 诊断与只读的受保护 base validator 分离，避免把 PR 自带脚本冒充独立 required check。
 - 三次未合并的预审批尝试因脱敏声明不完整而作废；唯一 ProgramOwner 已批准 payload SHA-256 `5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`、候选 commit/blob 和五项产品结论。M0 继续 No-Go；未创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也未解锁 CRM01。
 
+## 2026-08-26 Azure Release Shadow S0 仓库合同
+
+- 新增手动、无 Secret 的独立 Azure YAML 与固定 v1.2.3 fixture；S0 只做本地 JSON/YAML 读取、SHA-256 和 Schema/身份合同验证，未连接真实 R2/GHCR 或创建 Azure Pipeline definition。
+- parser 严格绑定 candidate result → Schema 2 manifest → freeze/spec，验证完整 Git SHA、GHCR allowlist/digest、签名制品、SBOM/漏洞/source/SQL 元数据与 ForwardOnly db-init，并硬编码 `Authority=Shadow`、`Deployable=false`。
+- 行为合同完成 1 个有效和 10 个失败关闭场景；静态门禁拒绝自动触发、Service Connection、外部 fetch、镜像 Build/Pull/Push/Tag、ACR 和部署命令。R2 source gate 已纳入脚本解析与 S0 合同。
+
 ## 2026-08-26 发布权威与 Registry 决策
 
 - 选择继续由 GitHub R2 + GHCR 作为当前 CP6 唯一候选权威；Schema 2 manifest + candidate result 是唯一候选链，Azure 不为同一版本重新 Build 或生成第二份候选。

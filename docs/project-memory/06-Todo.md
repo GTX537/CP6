@@ -59,8 +59,8 @@
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。Registry/发布权威现已固定为 GitHub R2 + GHCR，Azure 不创建第二套候选；后续推广必须读取同一 Schema 2 manifest/digest，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 是 `Default` self-hosted 轻量 Artifact 桥、`main` trigger、`pr: none`；完整编译/测试在 GitHub `client-contract`。仍需补 Agent 运维边界和 PR 门禁归属，不把 Artifact 绿灯描述为上线。
 - CP6 通用 `ADR-DEVOPS-001` 已冻结 GHCR/R2 唯一权威、Schema 2 candidate chain、Azure 非权威 Shadow、等价矩阵和回退；CRM Draft PR #7 的多仓 System Manifest/M0 审批仍是独立范围，不能用通用 ADR 冒充 CRM named approval。
-- 下一张 DevOps 单任务卡是 Azure Release Shadow S0：新增无自动触发、无 Secret 的离线 parser/fixture/YAML 合同，证明错误来源/版本/SHA/hash/repository/digest 会失败关闭，且静态拒绝 Build/Push/Tag/Deploy 命令。
-- S0 合入后再按独立任务推进 S1 真实候选只读元数据 → GHCR digest 验证 → 独立 Agent 上同 digest SBOM/Trivy 对比 → 三个连续候选等价报告 → 同一 digest 的 DEV/UAT/PROD 推广。
+- Azure Release Shadow S0 仓库合同已实现：手动 YAML、固定 fixture、严格 parser、1 个有效/10 个失败关闭场景及无 Build/Push/Pull/Tag/Deploy/Service Connection 的静态门禁均已建立；仍须合并并在无 Secret Azure Run 中保留一次可复现 S0 Artifact 证据。
+- 下一张 DevOps 单任务卡是 S1 真实候选只读元数据：先审批最小只读 evidence/GitHub 身份，再验证现有 candidate result → manifest → freeze/spec → annotated Tag/main 绑定；之后依次另立 GHCR digest 验证、独立 Agent 同 digest SBOM/Trivy 对比、三个连续候选等价报告和同一 digest 的 DEV/UAT/PROD 推广。
 - 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。
 - CRM V1 全周期固定使用 GitHub R2/GHCR 作为候选权威；Azure 即使达到等价也只能消费相同 digest 或做非权威验证。未来任何 ACR/权威切换都必须另立 ADR，不得在产品实现票中重开。
 

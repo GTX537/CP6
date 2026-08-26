@@ -10,12 +10,19 @@
 
 最后更新：2026-08-26
 
+## Azure Release Shadow S0 仓库合同完成（2026-08-26）
+
+- 新增独立 `azure-pipelines-release-shadow.yml`，固定手动 `trigger: none` / `pr: none`；只运行仓库内固定 `v1.2.3` fixture 合同并发布辅助 `shadow` Artifact，没有 Variable Group、Service Connection、外部下载或自动触发。
+- 新增 `Test-Cp6ReleaseShadowCandidate.ps1`，严格验证 Schema 1 candidate result、Schema 2 release manifest、Schema 1 freeze snapshot、version/Tag/完整 Git SHA、manifest/freeze/spec SHA-256、GHCR repository allowlist/完整 digest、三类原生签名制品、供应链证据和 ForwardOnly db-init 元数据。
+- Shadow 报告语义在解析器内固定为 `Authority=Shadow`、`Deployable=false`；候选不能通过输入覆盖。合同包含 1 个有效场景与错误来源、版本、SHA、可变 Tag、manifest/spec hash、repository、digest、freeze 绑定和 Deployable 越权共 10 个失败关闭场景。
+- `test-r2-source-gate.ps1` 已纳入 S0 PowerShell 解析与行为合同。静态门禁拒绝 Build/Push/Pull/Tag、ACR、外部 fetch、Service Connection、自动 trigger 和部署命令。当前未访问真实 R2/GHCR、未拉取镜像、未创建 Azure Pipeline/连接、未部署；下一单任务卡是 S1 真实候选只读元数据。
+
 ## 发布权威与 Registry 决策完成（2026-08-26）
 
 - `ADR-DEVOPS-001` 已固定当前 CP6 唯一候选 Registry 为 GHCR、唯一候选/部署权威为 GitHub R2；API/Web 只由受保护 `vX.Y.Z` Tag 触发的 R2 candidate 一次构建，Schema 2 `release-manifest.json` 与 `candidate-result.json` 构成唯一候选链。
 - Azure 下一阶段改为非权威 Release Shadow：只读验证同一 Tag、完整 Git SHA、manifest/freeze/spec/证据哈希和 GHCR digest，输出固定 `Authority=Shadow`、`Deployable=false`；禁止重新 Build、Push、签名、生成第二份清单或部署。
 - R2/Azure 等价矩阵、只读 Service Connection 权限、S0/S1/S2 影子期、30 分钟回退和未来 ACR 硬门禁已记录；当前不创建 ACR、不购买资源、不接触生产 Secret/环境。
-- Phase 3 下一张单任务卡是 Shadow S0：只实现离线 parser/fixture/YAML 合同，`trigger: none`、`pr: none`，无真实凭据、候选、镜像拉取或环境副作用。
+- Phase 3 S0 仓库合同已完成；下一张单任务卡是 Shadow S1 真实候选只读元数据，需先审批最小只读身份，仍不得 Build/Push/Tag/Deploy。
 
 ## DEV 自动发布稳定性闭环完成（2026-08-26）
 

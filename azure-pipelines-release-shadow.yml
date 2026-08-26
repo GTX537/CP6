@@ -1,0 +1,49 @@
+trigger: none
+pr: none
+
+name: cp6-release-shadow-s0-$(Date:yyyyMMdd).$(Rev:r)
+
+pool:
+  name: Default
+
+stages:
+  - stage: ValidateOfflineShadowContract
+    displayName: Validate offline Release Shadow contract
+    jobs:
+      - job: ValidateFixture
+        displayName: Validate fixed candidate fixture without external access
+        timeoutInMinutes: 10
+        steps:
+          - checkout: self
+            clean: true
+            fetchDepth: 1
+            persistCredentials: false
+
+          - task: PowerShell@2
+            displayName: Run fail-closed Shadow contract tests
+            inputs:
+              targetType: filePath
+              filePath: scripts/test-release-shadow-contract.ps1
+              pwsh: true
+
+          - task: PowerShell@2
+            displayName: Create non-deployable offline Shadow report
+            inputs:
+              targetType: filePath
+              filePath: scripts/Test-Cp6ReleaseShadowCandidate.ps1
+              arguments: >-
+                -ExpectedVersion 1.2.3
+                -CandidateResultUri s3://cp6-release-evidence/releases/v1.2.3/candidate-result.json
+                -AllowedEvidenceRootUri s3://cp6-release-evidence/releases
+                -FixtureDirectory tests/fixtures/release-shadow/v1.2.3
+                -OutputReportPath "$(Build.ArtifactStagingDirectory)/release-shadow/azure-shadow-report.json"
+                -AzureRunId "$(Build.BuildId)"
+                -AzurePipelineName "CP6 Release Shadow S0"
+              pwsh: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish auxiliary Shadow evidence
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)/release-shadow
+              artifact: cp6-release-shadow-s0-$(Build.BuildId)
+              publishLocation: pipeline

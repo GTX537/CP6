@@ -44,12 +44,12 @@
 
 ## Phase 3：Azure Release Shadow
 
-状态：**设计完成，实现尚未开始**。
+状态：**S0 仓库合同已实现；S1 真实只读候选验证尚未开始**。
 
 - [x] 设计独立 YAML 结构，初始固定 `trigger: none`、`pr: none`，只允许手动验证既有候选。
 - [x] 设计 candidate result → Schema 2 manifest → freeze/spec/evidence → GHCR digest 的逐层验证顺序。
 - [x] 定义 `Authority=Shadow`、`Deployable=false` 的唯一 Azure 输出语义。
-- [ ] 实现 S0 fixture/parser/YAML 合同，不连接真实 GHCR 或证据存储。
+- [x] 实现 S0 fixture/parser/YAML 合同：1 个有效 fixture、10 个失败关闭场景和静态能力门禁；不连接真实 GHCR 或证据存储。
 - [ ] 实现 S1 真实候选只读元数据和 GHCR digest 验证，发布 Shadow report。
 - [ ] 为完整镜像 pull/SBOM/Trivy 对比准备独立容量受控 Agent；不得与本机 SQL/Docker 公网环境争抢资源。
 - [ ] 连续三个不同 SemVer 候选通过 Shadow 验收并形成等价报告。
@@ -111,16 +111,16 @@
 
 ## 当前下一张任务卡
 
-**任务：Azure Release Shadow S0 合同**
+**任务：Azure Release Shadow S1 真实候选只读元数据**
 
 范围：
 
-1. 新增独立 `azure-pipelines-release-shadow.yml`，保持手动且无外部写权限；
-2. 实现 candidate result/manifest/freeze/spec 的离线 fixture parser；
-3. 对错误来源、版本、SHA、hash、repository/digest 和 `Deployable` 语义建立失败关闭合同；
-4. 不创建 Service Connection，不访问真实候选，不拉取镜像，不部署。
+1. 以 S0 parser/报告 Schema 为基础，手动选择一个已经存在的 R2 候选；
+2. 设计并审批 R2 evidence reader 与 GitHub metadata reader 的只读身份，不授予 Registry/Tag/Environment 写权限；
+3. 按权威 URI 读取 candidate result/manifest/freeze/spec，逐层重算 SHA-256，并验证 annotated Tag、完整 Git SHA 与冻结 main 关系；
+4. 仍不拉取大型镜像、不重跑 SBOM/Trivy、不部署；GHCR digest 只读解析另立后续切片。
 
-完成定义：YAML/解析器/fixture 合同可在无 Secret 环境通过；静态门禁证明没有 Build/Push/Tag/Deploy 命令；相对 main 的 diff 只包含 S0 范围。
+完成定义：一个真实、已存在候选在最小只读身份下生成 `Authority=Shadow`、`Deployable=false` 报告；对象来源/hash/Tag/SHA 任一不一致均失败关闭，且 Azure 没有创建 Tag、Package、manifest 或 deployment。
 
 ## 相关文档
 

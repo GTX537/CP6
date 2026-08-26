@@ -7,5 +7,9 @@ migration/database/*.bak filter=lfs diff=lfs merge=lfs -text
 # normalization would invalidate their manifest SHA-256 values on checkout.
 CP6.Tests/TestData/Space/Acceptance/** binary
 
+# Release Shadow fixtures contain hashes of sibling files. Preserve exact bytes
+# across Windows and hosted Linux checkouts so the offline contract is stable.
+tests/fixtures/release-shadow/** -text
+
 # Main-sync SQL hashes are deployment evidence and must stay byte-stable.
 deploy/production/sql/main-sync-*/**.sql text eol=lf

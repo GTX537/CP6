@@ -10,6 +10,13 @@
 - `crm-v1-prd` 工作流拆为 PR head 诊断和受保护 base 验证；required context 只由 `pull_request_target` 的只读 base validator 对精确 PR head 产生，引导 PR 不把自带脚本当作独立信任边界。
 - 唯一 ProgramOwner 已批准完整脱敏 payload、候选 commit/blob 和五项产品结论；当前状态为 `Approved product requirements baseline`，Public Contract Sync 保持 Complete，M0 保持 No-Go，没有实现或部署副作用。
 
+## 2026-08-26：Azure Release Shadow S0 仓库合同
+
+- 新增 `azure-pipelines-release-shadow.yml`：固定手动触发，在无 Secret 条件下验证仓库内固定 fixture 并只发布非权威 Shadow Artifact；未加入 Service Connection、网络下载、镜像或部署能力。
+- 新增严格 candidate parser，逐层验证 Schema 1 candidate result、Schema 2 manifest、freeze/spec SHA-256、版本/Tag/Git SHA、GHCR allowlist/digest、签名/供应链/db-init 元数据，并固定输出 `Authority=Shadow`、`Deployable=false`。
+- 新增 1 个有效与 10 个失败关闭场景，覆盖错误来源/版本/SHA/Tag/hash/repository/digest/freeze/Deployable 越权；R2 source gate 同步执行脚本解析和静态无 Build/Push/Pull/Tag/Deploy 能力合同。
+- 当前只完成仓库 S0，不代表 Azure 已创建 Pipeline、读过真实候选或获得发布权限；S1 真实候选只读元数据仍是下一独立任务。
+
 ## 2026-08-26：发布权威与 Registry 决策
 
 - 新增 `ADR-DEVOPS-001`：当前 CP6 唯一候选 Registry 为 GHCR，唯一候选/部署权威为 GitHub R2；Schema 2 `release-manifest.json` + `candidate-result.json` 是唯一候选链。

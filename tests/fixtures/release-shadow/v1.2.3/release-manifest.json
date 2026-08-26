@@ -1,0 +1,95 @@
+{
+  "SchemaVersion": 2,
+  "ReleaseVersion": "1.2.3",
+  "GitSha": "0123456789abcdef0123456789abcdef01234567",
+  "GeneratedAtUtc": "2026-08-26T00:02:00Z",
+  "EvidenceRootUri": "s3://cp6-release-evidence/releases/v1.2.3",
+  "ExecutionSpec": {
+    "Version": 1,
+    "RepositoryPath": "docs/client/r2/releases/v1.2.3/candidate.yaml",
+    "SpecSha256": "9CEAA373697C49AF42F26D5B4E4DEA211A059CB257E4837E8346CDE249E27483",
+    "FreezeSnapshotUri": "s3://cp6-release-evidence/releases/v1.2.3/release-freeze.json",
+    "FreezeSnapshotSha256": "28B4DB592ECC193024F43770B1D82F05591A5D205D50F3E3C83D0D0ACA08C217",
+    "ChangeTicket": "CHG-CP6-123",
+    "ApprovedAt": "2026-08-26T00:00:00Z"
+  },
+  "Artifacts": [
+    {
+      "Kind": "windows-msix",
+      "FileName": "CP6.Desktop_1.2.3.0_x64.msix",
+      "Bytes": 1001,
+      "Sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "DownloadUrl": "https://downloads.cp6.example/windows/CP6.Desktop_1.2.3.0_x64.msix",
+      "Signer": {
+        "Type": "Authenticode",
+        "Identity": "CN=CP6 Release",
+        "CertificateThumbprint": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      }
+    },
+    {
+      "Kind": "windows-appinstaller",
+      "FileName": "CP6.Desktop.appinstaller",
+      "Bytes": 1002,
+      "Sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "DownloadUrl": "https://downloads.cp6.example/windows/CP6.Desktop.appinstaller",
+      "Signer": {
+        "Type": "MSIXReference",
+        "Identity": "CN=CP6 Release",
+        "CertificateThumbprint": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      }
+    },
+    {
+      "Kind": "android-apk",
+      "FileName": "CP6.Mobile-1.2.3-Signed.apk",
+      "Bytes": 1003,
+      "Sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "DownloadUrl": "https://downloads.cp6.example/android/CP6.Mobile-1.2.3-Signed.apk",
+      "Signer": {
+        "Type": "APK",
+        "Identity": "CN=CP6 Android Release",
+        "CertificateSha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+      }
+    }
+  ],
+  "Images": {
+    "Api": {
+      "Repository": "ghcr.io/gtx537/cp6-api",
+      "Digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "Web": {
+      "Repository": "ghcr.io/gtx537/cp6-web",
+      "Digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  },
+  "SupplyChain": {
+    "Sbom": {
+      "FileName": "sbom.json",
+      "Bytes": 2001,
+      "Sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+    },
+    "VulnerabilityReport": {
+      "FileName": "vulnerability-report.json",
+      "Bytes": 2002,
+      "Sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+    },
+    "SourceGateReport": {
+      "FileName": "source-gate.txt",
+      "Bytes": 2003,
+      "Sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+    },
+    "SqlIntegrationReport": {
+      "FileName": "wms-sql.trx",
+      "Bytes": 2004,
+      "Sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+    }
+  },
+  "Database": {
+    "LatestMigration": "20260811030108_CrmFoundation",
+    "InitializationArtifact": {
+      "FileName": "cp6-db-init-1.2.3.zip",
+      "Bytes": 3001,
+      "Sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+    },
+    "MigrationPolicy": "ForwardOnly"
+  }
+}
