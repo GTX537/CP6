@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "CP6-CRM-V1-PRD",
+  "version": "0.2",
+  "status": "Candidate",
+  "documentPath": "docs/crm/CRM-V1-PRD.md",
+  "payloadSha256": "3edd1fa3ed841376124c18a2f81d805a48e57870f77832fc44dad6cde3fd94ec",
+  "productSource": {
+    "repository": "GTX537/CP6.CRM",
+    "decisionId": "CP6-SAAS-V1",
+    "mergeCommit": "07a7bb0b50f33b0cb70c18c14f83be77c725626d",
+    "payloadSha256": "e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b",
+    "status": "Frozen"
+  },
+  "publicContract": {
+    "decisionId": "CP6-SAAS-V1-PUBLIC-CONTRACT",
+    "payloadSha256": "8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9",
+    "status": "Complete"
+  },
+  "requiredApproverRole": "ProgramOwner",
+  "approval": null,
+  "approvalEvidence": null,
+  "invalidatedPreMergeApprovals": 2,
+  "invalidatedEvidenceLocation": "Unmerged pull request audit trail; excluded from main ancestry and public product baseline",
+  "m0Status": "No-Go"
+}
