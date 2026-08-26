@@ -148,9 +148,9 @@ const columns = computed<ListColumn<SampleStock>[]>(() => [
     map: (v, row) => ({ label: `${formatQty(v as number)} ${(row as SampleStock).unitCd ?? ''}` }) },
   { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
   { prop: 'lentTo', label: t('wms.sample.fld.lentTo'), width: 140 },
-  { prop: 'lentAt', label: t('wms.sample.fld.lentAt'), width: 170 },
+  { prop: 'lentAt', label: t('wms.sample.fld.lentAt'), kind: 'datetime', width: 180 },
   { prop: 'expectedReturnDate', label: t('wms.sample.fld.expReturn'), width: 130 },
-  { prop: 'returnedAt', label: t('wms.sample.fld.returnedAt'), width: 170 },
+  { prop: 'returnedAt', label: t('wms.sample.fld.returnedAt'), kind: 'datetime', width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 240, fixed: 'right' },
 ])
 

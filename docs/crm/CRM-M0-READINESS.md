@@ -7,7 +7,7 @@
 - 产品源：私有 `CP6-SAAS-V1` / `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` / Frozen
 - 发布源：私有 `CP6-SAAS-R00` / `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` / Accepted
 - 公开合同：[CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md)
-- 更新日期：2026-08-14
+- 更新日期：2026-08-26
 
 ## 1. M0 的边界
 
@@ -65,8 +65,8 @@ M0_GO =
 ## 6. 当前 No-Go 原因
 
 - 产品摘要已 Frozen，R00 已 Accepted；这不满足其余 M0 条件。
-- 本公开工程契约仍为 Candidate，尚未达到 Complete。
-- DEC-001、DEC-003 至 DEC-009、专业证据和 ProgramOwner 批准仍 Pending。
-- 公开与私有仓库的分支保护和必需检查尚未形成可验证的强制证据。
+- 本公开工程契约已由 ProgramOwner 对精确摘要批准并达到 Complete；这只关闭公开同步条件。
+- DEC-001、DEC-003 至 DEC-009 和对应专业证据仍 Pending，SQL 容量模型与真实 Pilot cohort 均未冻结。
+- 公开仓库已执行严格分支保护；私有 `CP6.CRM` 仍因 GitHub 账户方案限制无法启用 required checks，尚未形成可验证的强制证据。
 
 这些 No-Go 原因不要求提前创建真实云资源或 Pilot 环境。`CP6.CRM` 仓库已存在也不解锁业务实现。

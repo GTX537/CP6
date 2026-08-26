@@ -10,14 +10,17 @@
 
 ## Phase 1：CI 基线
 
-状态：**已接入，待补强**。
+状态：**远程构建 + 本机轻量 Artifact 桥已验证，待 main 及稳定性闭环**。
 
 - [x] GitHub 仓库已连接 Azure DevOps。
 - [x] 根目录存在 `azure-pipelines.yml`。
 - [x] 使用 `Default` self-hosted agent pool。
-- [x] 配置 .NET 8、Node.js 22、后端/客户端测试和 Web 检查。
+- [x] GitHub `client-contract.yml` 配置 .NET 8、Node.js 22、后端/客户端、OpenAPI、Web、Android 和 R2 source 检查，并创建完整 SHA 绑定的 DEV 运行包。
 - [x] `main` 提交触发 CI。
-- [ ] 记录 Azure Pipeline 成功运行 URL/Run ID 和 Agent 能力清单。
+- [x] 记录 Azure Pipeline 成功运行 URL/Run ID 和 Agent 能力清单：[`Run #92`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=92)，`CP6-Windows` / `Default`。
+- [x] 确认本机编译与 SQL/Docker 共存不安全：#109/#111/#113/#115 均按内存或 SQL 门禁取消；Microsoft-hosted [`Run #110`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=110) 证明 Azure 组织当前没有 hosted parallelism，未启用计费。
+- [x] 将 Azure 基础流水线收敛为轻量 Artifact 桥。分支 [`Run #117`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=117) 已从 GitHub 成功下载并验证工作流来源、完整 SHA、归档 SHA-256 与内部 manifest，再发布 Azure Pipeline Artifact；本机 SQL/公网容器基线不变。
+- [x] `main@a5c6b5fa...` 的 GitHub client-contract 与 Azure [`Run #118`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=118) 成功；Manual DEV #120/#121 复用同一 Artifact，分别完成独立备份、部署、身份验证与证据发布，三次手动验收达到 3/3。
 - [ ] 决定 PR 验证归属：启用 Azure PR trigger，或明确只依赖现有 GitHub PR 门禁；当前 `pr: none`。
 - [ ] 比较 Azure CI 与 `client-contract.yml`/`wms-production-sql.yml`，登记未覆盖的 Space、OpenAPI/SDK、SQL、E2E、安全和 Android 门禁。
 - [ ] 为 self-hosted Agent 定义更新、磁盘清理、离线告警、并发和工作区隔离规则。
@@ -60,10 +63,10 @@
 
 状态：**待 Phase 3**。
 
-学习环境旁路（不计入 Phase 4 生产门禁）：仓库已新增 `azure-pipelines-dev.yml`，在 `GTX537.CP6` 的 `main` CI 成功后，于唯一 `CP6-Deploy` Agent 上按完整 Git SHA 构建一次本机镜像并部署 `cp6-dev`。它用于练习 completion trigger、Variable Group、deployment job 和证据归档；没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成。`cp6-dev-secrets` 已由 2026-08-11 外部截图确认创建；外部 `CP6 DEV CD`、三类资源授权和首次成功 Run 仍待验收。
+学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选哈希 Runtime Artifact 封装本机 SHA 镜像，锁内最多等待 600 秒取得至少 2 GiB 可用内存及 3 次连续独立 SQL 登录，再对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY、停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；Manual #95/#120/#121 已完成 3/3，#129 已证明低内存会在 SQL/备份前失败关闭，#131 的同 Stage 重试又暴露并修复固定证据 Artifact 名冲突。main CI #132 随后以 `main@08813896...` 自动触发 DEV #133，600 秒门禁、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份与 `cp6-dev-evidence-attempt-1` 全部成功，根 `cp6`/`CP6DB` 零漂移。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；Tunnel 切换仍须单独授权。
 
-- [x] 创建 `cp6-dev` Azure Environment。（2026-08-11 外部截图验证；Pipeline 权限仍待配置。）
-- [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和 Readiness Run Build ID `10` 已验证。
+- [x] 创建 `cp6-dev` Azure Environment，并只授权 `CP6 DEV CD`；Exclusive lock 与 Run #95 部署历史已验证。
+- [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和强化后的 Readiness Run #89 已验证。
 - [ ] 配置外部 SQL Server、Redis、消息服务和 S3；不把它们塞进生产 Compose。
 - [ ] 从候选清单读取 digest，不从源码重新 Build。
 - [ ] 复用 `deploy/production/compose/compose.yaml` 与受控部署/验证脚本，或记录与其等价的新实现。

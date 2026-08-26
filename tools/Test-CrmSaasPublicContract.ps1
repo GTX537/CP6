@@ -1,5 +1,7 @@
 [CmdletBinding()]
-param()
+param(
+    [switch] $VerifyGitHubEvidence
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -10,12 +12,23 @@ $failures = New-Object 'System.Collections.Generic.List[string]'
 
 $publicPath = 'docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md'
 $approvalPath = 'docs/crm/approvals/cp6-saas-v1-public-contract.json'
+$approvalHistoryPath = 'docs/crm/approvals/history/2026-08-26-cp6-saas-v1-public-contract-program-owner.json'
 $m0Path = 'docs/crm/CRM-M0-READINESS.md'
 $r00Path = 'docs/devops/adr/ADR-CRM-R00-RELEASE-AUTHORITY.md'
+$approvedPublicDigest = '8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9'
 $sourceRepository = 'GTX537/CP6.CRM'
 $sourceMergeCommit = '07a7bb0b50f33b0cb70c18c14f83be77c725626d'
 $sourceProductDigest = 'e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b'
 $sourceR00Digest = '64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03'
+$approvalRepository = 'GTX537/CP6'
+$approvalPullRequestNumber = 8
+$approvalCommentId = 5422466809L
+$approvalCommentUri = 'https://github.com/GTX537/CP6/pull/8#issuecomment-5422466809'
+$supersededCommentUri = 'https://github.com/GTX537/CP6/pull/8#issuecomment-5422419376'
+$approvalAuthorLogin = 'GTX537'
+$approvalEvidenceCommit = 'b0c0edff2415984c4875d818e6a4db42b8fbdc0d'
+$approvalEvidenceBlob = '1ced3f50363059b3df3fb7b216b525fd817b0af1'
+$approvalTimestamp = '2026-08-26T08:10:43Z'
 
 function Fail([string] $Message) {
     $script:failures.Add($Message)
@@ -33,6 +46,110 @@ function Read-NormalizedText([string] $RelativePath) {
         $text = $text.Substring(1)
     }
     return $text.Replace("`r`n", "`n").Replace("`r", "`n")
+}
+
+function Read-JsonFile([string] $RelativePath) {
+    $text = Read-NormalizedText $RelativePath
+    if ($null -eq $text) { return $null }
+    try {
+        return $text | ConvertFrom-Json
+    }
+    catch {
+        Fail "Invalid JSON in $RelativePath : $($_.Exception.Message)"
+        return $null
+    }
+}
+
+function Assert-Equal([object] $Actual, [object] $Expected, [string] $Message) {
+    if ($Actual -ne $Expected) {
+        Fail "$Message. Expected '$Expected'; actual '$Actual'"
+    }
+}
+
+function ConvertTo-UtcEvidenceTimestamp([object] $Value) {
+    if ($null -eq $Value) { return $null }
+    try {
+        $timestamp = [DateTimeOffset]::Parse(
+            $Value.ToString(),
+            [Globalization.CultureInfo]::InvariantCulture,
+            [Globalization.DateTimeStyles]::AssumeUniversal
+        )
+        return $timestamp.ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture)
+    }
+    catch {
+        return $Value.ToString()
+    }
+}
+
+function Test-GitEvidenceObject([string] $CommitSha, [string] $BlobSha) {
+    if ($CommitSha -notmatch '^[0-9a-f]{40}$') {
+        Fail 'Approval evidence commit must be a full lowercase Git SHA'
+        return
+    }
+    if ($BlobSha -notmatch '^[0-9a-f]{40}$') {
+        Fail 'Approval evidence blob must be a full lowercase Git SHA-1'
+        return
+    }
+
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    $actualBlob = & git -C $root rev-parse "$CommitSha`:$publicPath" 2>&1
+    $gitExitCode = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
+    if ($gitExitCode -ne 0) {
+        Fail "Approval evidence commit does not contain $publicPath : $($actualBlob -join ' ')"
+        return
+    }
+    if (($actualBlob | Select-Object -First 1).Trim() -ne $BlobSha) {
+        Fail "Approval evidence blob mismatch. Expected $BlobSha; actual $actualBlob"
+    }
+}
+
+function Test-GitHubApprovalComment() {
+    if (-not $VerifyGitHubEvidence) { return }
+    $ghCommand = Get-Command gh -ErrorAction SilentlyContinue
+    if ($null -eq $ghCommand) {
+        Fail 'GitHub evidence verification requires the gh CLI'
+        return
+    }
+
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    $commentJson = & gh api "repos/GTX537/CP6/issues/comments/$approvalCommentId" 2>&1
+    $ghExitCode = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
+    if ($ghExitCode -ne 0) {
+        Fail "Unable to read GitHub approval comment $approvalCommentId : $($commentJson -join ' ')"
+        return
+    }
+
+    try {
+        $comment = ($commentJson -join "`n") | ConvertFrom-Json
+    }
+    catch {
+        Fail "Invalid GitHub approval comment response: $($_.Exception.Message)"
+        return
+    }
+
+    Assert-Equal $comment.id $approvalCommentId 'GitHub approval comment ID mismatch'
+    Assert-Equal $comment.html_url $approvalCommentUri 'GitHub approval comment URI mismatch'
+    Assert-Equal $comment.user.login $approvalAuthorLogin 'GitHub approval comment author mismatch'
+    Assert-Equal (ConvertTo-UtcEvidenceTimestamp $comment.created_at) $approvalTimestamp 'GitHub approval comment timestamp mismatch'
+    Assert-Equal (ConvertTo-UtcEvidenceTimestamp $comment.updated_at) $approvalTimestamp 'GitHub approval comment was edited after approval'
+    foreach ($requiredText in @(
+        'Decision ID: CP6-SAAS-V1-PUBLIC-CONTRACT',
+        "supersedes $supersededCommentUri",
+        'Role ID: ProgramOwner',
+        'Decision: Approved',
+        "Decision payload SHA-256: $approvedPublicDigest",
+        "Evidence commit: $approvalEvidenceCommit",
+        "Evidence blob: $approvalEvidenceBlob",
+        'M0 status after this approval: No-Go'
+    )) {
+        if ($comment.body.IndexOf($requiredText, [StringComparison]::Ordinal) -lt 0) {
+            Fail "GitHub approval comment is missing required text: $requiredText"
+        }
+    }
 }
 
 function Get-PayloadDigest(
@@ -120,6 +237,9 @@ function Test-RelativeLinks([string[]] $RelativePaths) {
 $publicDigest = Get-PayloadDigest $publicPath '<!-- public-contract-payload:start -->' '<!-- public-contract-payload:end -->'
 $r00Digest = Get-PayloadDigest $r00Path '<!-- release-decision-payload:start -->' '<!-- release-decision-payload:end -->'
 
+if ($publicDigest -ne $approvedPublicDigest) {
+    Fail "Public contract digest mismatch. Expected approved digest $approvedPublicDigest; actual $publicDigest"
+}
 if ($r00Digest -ne $sourceR00Digest) {
     Fail "Public R00 mirror digest mismatch. Expected $sourceR00Digest; actual $r00Digest"
 }
@@ -180,16 +300,11 @@ Assert-Contains 'docs/project-memory/05-Completed.md' @($sourceMergeCommit, $sou
 Assert-Contains 'docs/project-memory/06-Todo.md' @('Complete', 'ProgramOwner', 'DEC-001')
 Assert-Contains 'docs/project-memory/CHANGELOG-AI.md' @('CP6-SAAS-V1-PUBLIC-CONTRACT', $sourceProductDigest)
 
-$approvalFile = Join-Path $root $approvalPath
-try {
-    $approval = Get-Content -LiteralPath $approvalFile -Raw -Encoding utf8 | ConvertFrom-Json
-}
-catch {
-    Fail "Invalid JSON in $approvalPath : $($_.Exception.Message)"
-    $approval = $null
-}
+$approval = Read-JsonFile $approvalPath
+$approvalHistory = Read-JsonFile $approvalHistoryPath
 
 if ($null -ne $approval) {
+    if ($approval.schemaVersion -ne 2) { Fail 'Complete approval aggregate schemaVersion must be 2' }
     if ($approval.decisionId -ne 'CP6-SAAS-V1-PUBLIC-CONTRACT') { Fail 'Approval decisionId mismatch' }
     if ($approval.decisionPath -ne $publicPath) { Fail 'Approval decisionPath mismatch' }
     if ($approval.decisionPayloadSha256 -ne $publicDigest) { Fail 'Approval public digest mismatch' }
@@ -218,23 +333,86 @@ if ($null -ne $approval) {
     if ($approval.status -eq 'Complete') {
         Assert-Contains $publicPath @('<!-- public-contract-status: Complete -->')
         Assert-Contains $r00Path @('<!-- public-r00-mirror-status: Complete -->')
+        if (@($approval.approvals).Count -ne 1) { Fail 'Complete must contain exactly one approval record' }
         $validApprovals = @($approval.approvals | Where-Object {
+            $_.recordId -eq 'CP6-SAAS-V1-PUBLIC-CONTRACT-APPROVAL-20260826-001' -and
+            $_.recordPath -eq $approvalHistoryPath -and
             $_.roleId -eq 'ProgramOwner' -and
             $_.decision -eq 'Approved' -and
-            $_.decisionPayloadSha256 -eq $publicDigest
+            $_.decisionPayloadSha256 -eq $publicDigest -and
+            (ConvertTo-UtcEvidenceTimestamp $_.approvedAtUtc) -eq $approvalTimestamp
         })
         if ($validApprovals.Count -ne 1) { Fail 'Complete requires exactly one matching ProgramOwner approval' }
         if ($null -eq $approval.approvalEvidence) { Fail 'Complete requires immutable approvalEvidence' }
+        else {
+            Assert-Equal $approval.approvalEvidence.type 'GitHubPullRequestComment' 'Approval evidence type mismatch'
+            Assert-Equal $approval.approvalEvidence.repository $approvalRepository 'Approval evidence repository mismatch'
+            Assert-Equal $approval.approvalEvidence.pullRequestNumber $approvalPullRequestNumber 'Approval evidence pull request mismatch'
+            Assert-Equal $approval.approvalEvidence.commentId $approvalCommentId 'Approval evidence comment ID mismatch'
+            Assert-Equal $approval.approvalEvidence.commentUri $approvalCommentUri 'Approval evidence comment URI mismatch'
+            Assert-Equal $approval.approvalEvidence.supersedesCommentUri $supersededCommentUri 'Approval evidence superseded comment URI mismatch'
+            Assert-Equal $approval.approvalEvidence.authorLogin $approvalAuthorLogin 'Approval evidence author mismatch'
+            Assert-Equal $approval.approvalEvidence.evidenceCommitSha $approvalEvidenceCommit 'Approval evidence commit mismatch'
+            Assert-Equal $approval.approvalEvidence.evidenceBlobSha $approvalEvidenceBlob 'Approval evidence blob mismatch'
+        }
     }
 }
 
+if ($null -ne $approvalHistory) {
+    Assert-Equal $approvalHistory.schemaVersion 1 'Approval history schemaVersion mismatch'
+    Assert-Equal $approvalHistory.recordId 'CP6-SAAS-V1-PUBLIC-CONTRACT-APPROVAL-20260826-001' 'Approval history recordId mismatch'
+    Assert-Equal $approvalHistory.decisionId 'CP6-SAAS-V1-PUBLIC-CONTRACT' 'Approval history decisionId mismatch'
+    Assert-Equal $approvalHistory.decisionPath $publicPath 'Approval history decisionPath mismatch'
+    Assert-Equal $approvalHistory.roleId 'ProgramOwner' 'Approval history roleId mismatch'
+    Assert-Equal $approvalHistory.decision 'Approved' 'Approval history decision mismatch'
+    Assert-Equal $approvalHistory.decisionPayloadSha256 $publicDigest 'Approval history public digest mismatch'
+    Assert-Equal (ConvertTo-UtcEvidenceTimestamp $approvalHistory.approvedAtUtc) $approvalTimestamp 'Approval history timestamp mismatch'
+    Assert-Equal $approvalHistory.m0Status 'No-Go' 'Approval history must preserve M0 No-Go'
+
+    Assert-Equal $approvalHistory.approvalEvidence.type 'GitHubPullRequestComment' 'History evidence type mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.repository $approvalRepository 'History evidence repository mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.pullRequestNumber $approvalPullRequestNumber 'History evidence pull request mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.commentId $approvalCommentId 'History evidence comment ID mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.commentUri $approvalCommentUri 'History evidence comment URI mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.supersedesCommentUri $supersededCommentUri 'History evidence superseded comment URI mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.authorLogin $approvalAuthorLogin 'History evidence author mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.evidenceCommitSha $approvalEvidenceCommit 'History evidence commit mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.evidenceBlobSha $approvalEvidenceBlob 'History evidence blob mismatch'
+
+    Assert-Equal $approvalHistory.sourcePrivate.repository $sourceRepository 'History private source repository mismatch'
+    Assert-Equal $approvalHistory.sourcePrivate.mergeCommitSha $sourceMergeCommit 'History private source merge commit mismatch'
+    Assert-Equal $approvalHistory.sourcePrivate.productDecisionId 'CP6-SAAS-V1' 'History private product decision ID mismatch'
+    Assert-Equal $approvalHistory.sourcePrivate.productDecisionPayloadSha256 $sourceProductDigest 'History private product digest mismatch'
+    Assert-Equal $approvalHistory.sourcePrivate.productStatus 'Frozen' 'History private product status mismatch'
+    Assert-Equal $approvalHistory.sourcePrivate.r00DecisionId 'CP6-SAAS-R00' 'History private R00 decision ID mismatch'
+    Assert-Equal $approvalHistory.sourcePrivate.r00DecisionPayloadSha256 $sourceR00Digest 'History private R00 digest mismatch'
+    Assert-Equal $approvalHistory.sourcePrivate.r00Status 'Accepted' 'History private R00 status mismatch'
+
+    foreach ($propertyName in @(
+        'containsCommercialTerms',
+        'containsPaymentProviderSelection',
+        'containsPilotCohort',
+        'containsPrivatePersonalApproverIdentity'
+    )) {
+        if ($approvalHistory.sanitization.$propertyName -ne $false) {
+            Fail "Approval history sanitization flag must be false: $propertyName"
+        }
+    }
+}
+
+if ($env:GITHUB_ACTIONS -eq 'true' -and -not $VerifyGitHubEvidence) {
+    Fail 'GitHub Actions must run with -VerifyGitHubEvidence'
+}
+Test-GitEvidenceObject $approvalEvidenceCommit $approvalEvidenceBlob
+Test-GitHubApprovalComment
+
 Assert-Contains $m0Path @('<!-- crm-m0-status: No-Go -->')
 
-$sanitizedFiles = @($publicPath, $approvalPath, $m0Path, $r00Path)
+$sanitizedFiles = @($publicPath, $approvalPath, $approvalHistoryPath, $m0Path, $r00Path)
 $forbiddenCommercialPatterns = @(
     '(?i)USD\s+[0-9]',
     '(?i)CNY\s+[0-9]',
-    '(?i)Stripe|PayPal',
+    '(?i)Stripe|PayPal|Airwallex|Alipay|WeChat\s*Pay',
     '\u652F\u4ED8\u5B9D',
     '\u5FAE\u4FE1\u652F\u4ED8'
 )

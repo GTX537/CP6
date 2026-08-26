@@ -19,6 +19,11 @@ on:
       - "README.md"
       - "tools/Test-CrmSaasPublicContract.ps1"
 
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
 jobs:
   verify:
     runs-on: windows-latest
@@ -28,4 +33,6 @@ jobs:
           fetch-depth: 0
       - name: Verify sanitized CRM SaaS public contract
         shell: pwsh
-        run: ./tools/Test-CrmSaasPublicContract.ps1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./tools/Test-CrmSaasPublicContract.ps1 -VerifyGitHubEvidence

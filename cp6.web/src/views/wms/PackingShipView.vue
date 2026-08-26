@@ -135,7 +135,7 @@
           <template #default="{ row }">{{ carrierMap[row.carrierCd] || row.carrierCd || '—' }}</template>
         </el-table-column>
         <el-table-column prop="trackingNo" :label="t('wms.pack.fld.trackingNo')" width="180" />
-        <el-table-column prop="departureTime" label="Departure" width="170" />
+        <el-table-column prop="departureTime" label="Departure" width="180" :formatter="formatDateTimeCell" />
       </el-table>
     </el-card>
   </div>
@@ -149,7 +149,7 @@ import { useI18n } from 'vue-i18n'
 import http from '@/api/http'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
 import type { OutboundOrder, ShipRequest, WmsApi } from '@/types/wms/wms'
-import { formatQty as fmtQty } from '@/utils/format'
+import { formatQty as fmtQty, formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 const saving = ref(false)

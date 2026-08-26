@@ -29,7 +29,7 @@
 ## CP6 DevOps 上下文
 
 - DevOps 入口为 `docs/devops/README.md`；处理 CI、Release、Registry、部署或环境任务前必须阅读该目录，并交叉核对 `docs/client/r2/README.md`。
-- 当前 `azure-pipelines.yml` 只完成 CI：`main` 触发、`pr: none`、`Default` self-hosted pool，执行 .NET 8/Node 22 的 restore、build、test、Vue type-check/test/build。它尚未构建镜像或部署任何环境。
+- 当前 `azure-pipelines.yml` 是轻量 CI Artifact 桥：`main` 触发、`pr: none`、`Default` self-hosted pool；它从成功的 GitHub `client-contract.yml` 运行下载与完整 Git SHA 绑定的 `cp6-dev-runtime`，验证 GitHub 工作流来源、结论、归档 SHA-256 和内部逐文件清单后转存为 Azure Pipeline Artifact。本机不再执行 .NET/Node 编译；它仍不构建生产镜像或部署任何环境。
 - 现有 GitHub R2 流水线仍是生产候选与部署的权威实现，包含受保护 Tag、SQL/E2E、镜像、SBOM、漏洞扫描、签名、不可变证据、digest 部署和运行身份核对。Azure 迁移未通过等价验收前不得删除、绕过或弱化这些门禁。
 - Release 必须遵守 **Build once, deploy many**：API/Web 镜像只构建一次，DEV/UAT/PROD 推广同一 `repository@sha256:digest`；SemVer 和 Git SHA 用于追踪，不以可变 Tag 作为生产身份。
 - 聊天规划建议 ACR，但仓库当前 R2 使用 GHCR。实现 Azure Docker Release 前必须先确定唯一 Registry、候选清单、迁移期和回退方案，禁止两套系统对同一版本分别 Build 并同时宣称权威。

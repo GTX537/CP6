@@ -99,7 +99,7 @@
         <el-table-column prop="physicalQty" :label="t('wms.report.monthly.physical')" width="120" align="right">
           <template #default="{ row }">{{ fmtQty(row.physicalQty) }}</template>
         </el-table-column>
-        <el-table-column prop="lastMovedAt" :label="t('wms.report.dead.lastMoved')" width="150" />
+        <el-table-column prop="lastMovedAt" :label="t('wms.report.dead.lastMoved')" width="180" :formatter="formatDateTimeCell" />
         <el-table-column prop="idleDays" :label="t('wms.report.dead.idleDays')" width="120" align="right">
           <template #default="{ row }">
             <CpTag :tone="row.idleDays > 180 ? 'danger' : row.idleDays > 90 ? 'warn' : 'info'">{{ row.idleDays }}</CpTag>
@@ -113,7 +113,7 @@
       <!-- InboundHistory / OutboundHistory -->
       <el-table v-if="(reportType === 'inbound' || reportType === 'outbound') && rows.length > 0" :data="rows" border stripe size="small" max-height="650">
         <el-table-column prop="txnNo" :label="t('wms.report.hist.txnNo')" width="200" />
-        <el-table-column prop="txnDateTime" :label="t('wms.report.hist.dateTime')" width="170" />
+        <el-table-column prop="txnDateTime" :label="t('wms.report.hist.dateTime')" width="180" :formatter="formatDateTimeCell" />
         <el-table-column prop="warehouseCd" :label="t('wms.report.fld.warehouse')" width="90" />
         <el-table-column prop="locationCd" :label="t('wms.common.location')" width="130" />
         <el-table-column prop="productCd" :label="t('wms.report.fld.product')" width="130" />
@@ -138,7 +138,7 @@ import { useI18n } from 'vue-i18n'
 import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import { reportApi } from '@/api/wms/reportCenter'
-import { formatQty, formatCurrency } from '@/utils/format'
+import { formatQty, formatCurrency, formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
 

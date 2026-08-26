@@ -3,90 +3,70 @@ trigger:
     include:
       - main
 
-
 pr: none
 
 pool:
   name: 'Default'
 
-variables:
-  buildConfiguration: 'Release'
-
 stages:
 - stage: CI
-  displayName: 'CP6 CI'
+  displayName: 'CP6 CI artifact bridge'
 
   jobs:
-  - job: BuildAndTest
-    displayName: 'Build and Test CP6'
+  - job: BridgeVerifiedRuntime
+    displayName: 'Bridge verified GitHub runtime artifact'
+    timeoutInMinutes: 40
+
+    workspace:
+      clean: all
 
     steps:
     - checkout: self
+      clean: true
       fetchDepth: 0
-
-    # =========================
-    # Environment
-    # =========================
-
-    - task: UseDotNet@2
-      displayName: 'Install .NET 8 SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '8.x'
-
-    - task: NodeTool@0
-      displayName: 'Install Node.js 22'
-      inputs:
-        versionSpec: '22.x'
-
-    # =========================
-    # .NET Backend
-    # =========================
+      persistCredentials: true
 
     - powershell: |
-        dotnet restore CP6.WebApi/CP6.WebApi.csproj
-        dotnet restore CP6.Tests/CP6.Tests.csproj
-        dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj
-      displayName: 'Restore .NET Projects'
+        $ErrorActionPreference = 'Stop'
+        .\scripts\test-azure-ci-runtime-artifact-contract.ps1
+        .\scripts\test-cp6-dev-runtime-artifact.ps1
+        .\scripts\test-cp6-github-runtime-artifact-bridge.ps1
+      displayName: 'Verify runtime artifact contracts'
 
     - powershell: |
-        dotnet build CP6.WebApi/CP6.WebApi.csproj `
-          -c $(buildConfiguration) `
-          --no-restore
-      displayName: 'Build CP6 API'
+        $ErrorActionPreference = 'Stop'
+        $authorizationHeader = & git config --get-all "http.https://github.com/$env:CP6_GITHUB_REPOSITORY.extraheader" |
+          Where-Object { $_ -match '^(?i)AUTHORIZATION:\s+.+' } |
+          Select-Object -First 1
+        if ([string]::IsNullOrWhiteSpace($authorizationHeader)) {
+            throw 'The authorized GitHub checkout did not retain a repository credential for artifact download.'
+        }
 
-    - powershell: |
-        dotnet test CP6.Tests/CP6.Tests.csproj `
-          -c $(buildConfiguration) `
-          --no-restore
-      displayName: 'Run Backend Tests'
+        try {
+            [Environment]::SetEnvironmentVariable(
+                'CP6_GITHUB_AUTHORIZATION',
+                $authorizationHeader,
+                'Process')
+            & .\scripts\Receive-Cp6GitHubRuntimeArtifact.ps1 `
+              -Repository 'GTX537/CP6' `
+              -GitSha $env:CP6_GIT_SHA `
+              -OutputRoot $env:CP6_RUNTIME_ARTIFACT_ROOT `
+              -MaxWaitSeconds 1800 `
+              -PollIntervalSeconds 20 |
+              Out-Null
+        }
+        finally {
+            [Environment]::SetEnvironmentVariable(
+                'CP6_GITHUB_AUTHORIZATION',
+                $null,
+                'Process')
+        }
+      displayName: 'Download verified GitHub runtime artifact'
+      env:
+        CP6_GITHUB_REPOSITORY: 'GTX537/CP6'
+        CP6_GIT_SHA: '$(Build.SourceVersion)'
+        CP6_RUNTIME_ARTIFACT_ROOT: '$(Build.ArtifactStagingDirectory)\cp6-dev-runtime'
 
-    - powershell: |
-        dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj `
-          -c $(buildConfiguration) `
-          --no-restore
-      displayName: 'Run Client Tests'
-
-    # =========================
-    # Vue Frontend
-    # =========================
-
-    - powershell: |
-        npm ci
-      workingDirectory: 'cp6.web'
-      displayName: 'Install Vue Dependencies'
-
-    - powershell: |
-        npm run type-check
-      workingDirectory: 'cp6.web'
-      displayName: 'Vue Type Check'
-
-    - powershell: |
-        npm test -- --maxWorkers=4
-      workingDirectory: 'cp6.web'
-      displayName: 'Vue Unit Tests'
-
-    - powershell: |
-        npm run build-only
-      workingDirectory: 'cp6.web'
-      displayName: 'Build Vue Production'
+    - publish: '$(Build.ArtifactStagingDirectory)\cp6-dev-runtime'
+      artifact: 'cp6-dev-runtime'
+      displayName: 'Publish DEV runtime artifact'

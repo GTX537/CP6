@@ -199,7 +199,7 @@ const columns = computed<ListColumn<QcInspection>[]>(() => [
   { prop: 'finalJudgement', label: t('wms.qc.fld.judgement'), width: 120 },
   { prop: 'inboundNo', label: t('wms.inbound.fld.no'), width: 180 },
   { prop: 'supplierName', label: t('wms.inbound.fld.supplierName'), minWidth: 160, overflowTooltip: true },
-  { prop: 'arrivalDateTime', label: t('wms.qc.fld.arrivalDateTime'), width: 160 },
+  { prop: 'arrivalDateTime', label: t('wms.qc.fld.arrivalDateTime'), kind: 'datetime', width: 180 },
   { prop: 'generatedReceiptNo', label: t('wms.qc.fld.generatedReceipt'), width: 180 },
   { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
 ])

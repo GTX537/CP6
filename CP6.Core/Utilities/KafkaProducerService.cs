@@ -22,6 +22,7 @@ public class KafkaProducerService : IOperLogTransport, IDisposable
     private readonly ILogger<KafkaProducerService> _logger;
     private readonly string _topic;
     private readonly bool _configured;
+    private int _disposed;
 
     public KafkaProducerService(IConfiguration config, ILogger<KafkaProducerService> logger)
     {
@@ -63,6 +64,17 @@ public class KafkaProducerService : IOperLogTransport, IDisposable
         }
     }
 
+    internal KafkaProducerService(
+        IProducer<string, string> producer,
+        ILogger<KafkaProducerService> logger,
+        string topic = "cp6.operlog")
+    {
+        _producer = producer;
+        _logger = logger;
+        _topic = topic;
+        _configured = true;
+    }
+
     public string Name => "Kafka";
 
     /// <summary>已配置且生产者创建成功即视为就绪。</summary>
@@ -95,8 +107,34 @@ public class KafkaProducerService : IOperLogTransport, IDisposable
 
     public void Dispose()
     {
-        // 等待在途消息发完（最多 5s），再释放
-        _producer?.Flush(TimeSpan.FromSeconds(5));
-        _producer?.Dispose();
+        if (Interlocked.Exchange(ref _disposed, 1) != 0 || _producer is null)
+        {
+            return;
+        }
+
+        try
+        {
+            // 等待在途消息发完（最多 5s），再释放
+            var remaining = _producer.Flush(TimeSpan.FromSeconds(5));
+            if (remaining > 0)
+            {
+                _logger.LogWarning(
+                    "Kafka 生产者关闭时仍有 {Remaining} 条消息等待投递",
+                    remaining);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Kafka 生产者关闭前刷新失败，继续释放资源");
+        }
+
+        try
+        {
+            _producer.Dispose();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Kafka 生产者资源释放失败，主机继续退出");
+        }
     }
 }

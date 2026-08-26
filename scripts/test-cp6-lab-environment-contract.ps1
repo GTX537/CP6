@@ -201,8 +201,51 @@ try {
         $labScript -notmatch 'CP6_JWT_SECRET') {
         throw "Lab script does not support the complete Pipeline Secret contract."
     }
-    if ($labScript -notmatch '-t \$WebImage \$repoRoot') {
-        throw "Lab Web image build does not use the repository root context."
+    if ($labScript -notmatch '\[string\]\$SourceRoot = ""' -or
+        $labScript -notmatch '\[string\]\$RuntimeArtifactRoot = ""' -or
+        $labScript -notmatch 'Test-Cp6DevRuntimeArtifact\.ps1' -or
+        $labScript -notmatch 'Packaging the verified runtime artifact from the selected CI run' -or
+        $labScript -notmatch '(?s)& dotnet restore.*?--disable-build-servers.*?--disable-parallel' -or
+        $labScript -notmatch '--disable-build-servers' -or
+        $labScript -notmatch '-m:1' -or
+        $labScript -notmatch '-p:BuildInParallel=false' -or
+        $labScript -notmatch '-p:UseSharedCompilation=false' -or
+        $labScript -notmatch '& npm\.cmd ci --no-audit --no-fund' -or
+        $labScript -notmatch '& npm\.cmd run build-only' -or
+        $labScript -notmatch '--max-old-space-size=768' -or
+        $labScript -notmatch '\$apiBuildArguments \+= \$apiRuntimeContext' -or
+        $labScript -notmatch '\$webBuildArguments \+= \$webRuntimeContext' -or
+        $labScript -notmatch '\$apiBuildArguments \+= @\("--iidfile"' -or
+        $labScript -notmatch '\$webBuildArguments \+= @\("--iidfile"') {
+        throw "Lab image build does not prebuild selected-source artifacts outside Docker."
+    }
+    if ($labScript -notmatch 'cp6-runtime-build-' -or
+        $labScript -notmatch '\$resolvedRuntimeBuildRoot\.StartsWith\(' -or
+        $labScript -notmatch 'Remove-Item -LiteralPath \$resolvedRuntimeBuildRoot -Recurse -Force') {
+        throw "Lab runtime packaging does not safely clean its dedicated temporary context."
+    }
+    if ($labScript -notmatch 'Global\\CP6_\$\(\$settings\.ProjectName\)_deploy' -or
+        $labScript -notmatch '\$deploymentMutex\.WaitOne\(0\)' -or
+        $labScript -notmatch '\$deploymentMutex\.ReleaseMutex\(\)') {
+        throw "Lab deployment does not enforce a host-wide deployment mutex."
+    }
+    $imageAssertionDefinitionIndex = $labScript.IndexOf('function Assert-ComposeServiceImage')
+    $apiImageAssertionIndex = $labScript.IndexOf('Assert-ComposeServiceImage -Service "api"')
+    $webImageAssertionIndex = $labScript.IndexOf('Assert-ComposeServiceImage -Service "web"')
+    if ($imageAssertionDefinitionIndex -lt 0 -or
+        $apiImageAssertionIndex -le $imageAssertionDefinitionIndex -or
+        $webImageAssertionIndex -le $apiImageAssertionIndex) {
+        throw "Lab deployment does not verify the immutable image used by each running container."
+    }
+    $stopIndex = $labScript.IndexOf('@("stop", "web", "api")')
+    $migrationIndex = $labScript.IndexOf('@("--profile", "migration", "run", "--rm", "db-init")')
+    $apiStartIndex = $labScript.IndexOf('@("up", "-d", "--wait", "--wait-timeout", "240", "api")')
+    $webStartIndex = $labScript.IndexOf('@("up", "-d", "--wait", "--wait-timeout", "240", "web")')
+    if ($stopIndex -lt 0 -or
+        $migrationIndex -le $stopIndex -or
+        $apiStartIndex -le $migrationIndex -or
+        $webStartIndex -le $apiStartIndex) {
+        throw "Lab deployment does not enforce stop, migrate, API verify, then Web start order."
     }
 
     $webDockerfile = [IO.File]::ReadAllText(
@@ -211,6 +254,19 @@ try {
     if ($webDockerfile -notmatch 'COPY sdk/typescript/space-design-v1/' -or
         $webDockerfile -notmatch 'WORKDIR /src/cp6\.web') {
         throw "Web Dockerfile does not preserve the repository-level SDK layout."
+    }
+
+    $apiRuntimeDockerfile = [IO.File]::ReadAllText(
+        (Join-Path $repoRoot "deploy\lab\images\api-runtime.Dockerfile"),
+        [Text.Encoding]::UTF8)
+    $webRuntimeDockerfile = [IO.File]::ReadAllText(
+        (Join-Path $repoRoot "deploy\lab\images\web-runtime.Dockerfile"),
+        [Text.Encoding]::UTF8)
+    if ($apiRuntimeDockerfile -match 'dotnet/sdk' -or
+        $apiRuntimeDockerfile -notmatch 'COPY publish/' -or
+        $webRuntimeDockerfile -match 'FROM node:' -or
+        $webRuntimeDockerfile -notmatch 'COPY dist/') {
+        throw "Lab runtime Dockerfiles must package prebuilt payloads without SDK or Node builds."
     }
 
     $r2Workflow = [IO.File]::ReadAllText(

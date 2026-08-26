@@ -12,6 +12,11 @@ param(
     [string]$WebImage = "cp6-web:lab-local",
     [string]$ReleaseVersion = "0.0.0-lab",
     [string]$GitSha = "",
+    [string]$SourceRoot = "",
+    [string]$RuntimeArtifactRoot = "",
+    [string]$ApiImageIdFile = "",
+    [string]$WebImageIdFile = "",
+    [switch]$AllowPromotedGitSha,
     [int]$SqlPort = 0,
     [string]$SqlHost = "host.docker.internal",
     [string]$DbVaultPath = (Join-Path `
@@ -24,6 +29,12 @@ param(
 
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$resolvedSourceRoot = if ([string]::IsNullOrWhiteSpace($SourceRoot)) {
+    $repoRoot
+}
+else {
+    [IO.Path]::GetFullPath($SourceRoot)
+}
 $composePath = Join-Path $repoRoot "deploy\lab\compose\compose.yaml"
 
 $environmentSettings = @{
@@ -64,6 +75,18 @@ $environmentSettings = @{
 
 if ($ReleaseVersion -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
     throw "ReleaseVersion must be a SemVer-compatible version."
+}
+if ($AllowPromotedGitSha -and $Action -ne "Deploy") {
+    throw "AllowPromotedGitSha is only valid for deployment of an already-built candidate."
+}
+if ($Action -ne "Build" -and
+    (-not [string]::IsNullOrWhiteSpace($ApiImageIdFile) -or
+     -not [string]::IsNullOrWhiteSpace($WebImageIdFile))) {
+    throw "Image ID output files are only valid for Build."
+}
+if ($Action -ne "Build" -and
+    -not [string]::IsNullOrWhiteSpace($RuntimeArtifactRoot)) {
+    throw "RuntimeArtifactRoot is only valid for Build."
 }
 
 function New-RandomSecret {
@@ -222,9 +245,9 @@ function Get-LabRecord {
 }
 
 function Get-ReleaseGitSha {
-    $repositorySha = (& git -C $repoRoot rev-parse HEAD).Trim()
+    $repositorySha = (& git -C $resolvedSourceRoot rev-parse HEAD).Trim()
     if ($LASTEXITCODE -ne 0 -or $repositorySha -notmatch '^[A-Fa-f0-9]{40}$') {
-        throw "Unable to resolve the repository Git SHA."
+        throw "Unable to resolve the source Git SHA at '$resolvedSourceRoot'."
     }
     if ([string]::IsNullOrWhiteSpace($GitSha)) {
         return $repositorySha.ToLowerInvariant()
@@ -232,7 +255,8 @@ function Get-ReleaseGitSha {
     if ($GitSha -notmatch '^[A-Fa-f0-9]{40}$') {
         throw "GitSha must be a complete 40-character commit SHA."
     }
-    if (-not $repositorySha.Equals($GitSha, [StringComparison]::OrdinalIgnoreCase)) {
+    if (-not $AllowPromotedGitSha -and
+        -not $repositorySha.Equals($GitSha, [StringComparison]::OrdinalIgnoreCase)) {
         throw "GitSha '$GitSha' does not match checked-out commit '$repositorySha'."
     }
     return $GitSha.ToLowerInvariant()
@@ -381,6 +405,36 @@ function Invoke-Compose {
     }
 }
 
+function Assert-ComposeServiceImage {
+    param(
+        [Parameter(Mandatory = $true)][string]$Service,
+        [Parameter(Mandatory = $true)][string]$ExpectedImage
+    )
+
+    $expectedImageId = @(& docker image inspect --format "{{.Id}}" $ExpectedImage 2>$null) |
+        Select-Object -First 1
+    if ($LASTEXITCODE -ne 0 -or $expectedImageId -notmatch '^sha256:[0-9a-f]{64}$') {
+        throw "Unable to resolve the immutable image ID for '$ExpectedImage'."
+    }
+
+    $containerId = @(& docker compose `
+        -f $composePath `
+        -p $settings.ProjectName `
+        ps -q $Service 2>$null) | Select-Object -First 1
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($containerId)) {
+        throw "Compose service '$Service' does not have a running container."
+    }
+
+    $runningImageId = @(& docker inspect --format "{{.Image}}" $containerId 2>$null) |
+        Select-Object -First 1
+    if ($LASTEXITCODE -ne 0 -or
+        -not ([string]$runningImageId).Equals(
+            [string]$expectedImageId,
+            [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Compose service '$Service' is not running the promoted immutable image."
+    }
+}
+
 function Assert-DockerDaemon {
     & docker info --format "{{.ServerVersion}}" 1>$null 2>$null
     if ($LASTEXITCODE -ne 0) {
@@ -418,18 +472,150 @@ if ($Action -eq "Initialize") {
 if ($Action -eq "Build") {
     Assert-DockerDaemon
     $releaseGitSha = Get-ReleaseGitSha
-    & docker build -f (Join-Path $repoRoot "CP6.WebApi\Dockerfile") `
-        --build-arg "RELEASE_VERSION=$ReleaseVersion" `
-        --build-arg "GIT_SHA=$releaseGitSha" `
-        -t $ApiImage $repoRoot
-    if ($LASTEXITCODE -ne 0) { throw "API image build failed." }
-    & docker build -f (Join-Path $repoRoot "cp6.web\Dockerfile") `
-        --build-arg "RELEASE_VERSION=$ReleaseVersion" `
-        --build-arg "GIT_SHA=$releaseGitSha" `
-        -t $WebImage $repoRoot
-    if ($LASTEXITCODE -ne 0) { throw "Web image build failed." }
-    Write-Host "Built '$ApiImage' and '$WebImage' from $releaseGitSha."
-    exit 0
+    $useRuntimeArtifact = -not [string]::IsNullOrWhiteSpace($RuntimeArtifactRoot)
+    $runtimeBuildRoot = Join-Path `
+        ([IO.Path]::GetTempPath()) `
+        "cp6-runtime-build-$([Guid]::NewGuid().ToString('N'))"
+    $apiRuntimeContext = Join-Path $runtimeBuildRoot "api"
+    $apiPublishRoot = Join-Path $apiRuntimeContext "publish"
+    $webRuntimeContext = Join-Path $runtimeBuildRoot "web"
+    $webDistPayloadRoot = Join-Path $webRuntimeContext "dist"
+    $apiProjectPath = Join-Path $resolvedSourceRoot "CP6.WebApi\CP6.WebApi.csproj"
+    $webSourceRoot = Join-Path $resolvedSourceRoot "cp6.web"
+    $webSourceDist = Join-Path $webSourceRoot "dist"
+    $apiRuntimeDockerfile = Join-Path `
+        $resolvedSourceRoot `
+        "deploy\lab\images\api-runtime.Dockerfile"
+    $webRuntimeDockerfile = Join-Path `
+        $resolvedSourceRoot `
+        "deploy\lab\images\web-runtime.Dockerfile"
+    $previousReleaseVersion = [Environment]::GetEnvironmentVariable(
+        "CP6_RELEASE_VERSION",
+        "Process")
+    $previousGitSha = [Environment]::GetEnvironmentVariable("CP6_GIT_SHA", "Process")
+    $previousNodeOptions = [Environment]::GetEnvironmentVariable("NODE_OPTIONS", "Process")
+    $previousNpmJobs = [Environment]::GetEnvironmentVariable("npm_config_jobs", "Process")
+
+    try {
+        [IO.Directory]::CreateDirectory($apiPublishRoot) | Out-Null
+        [IO.Directory]::CreateDirectory($webDistPayloadRoot) | Out-Null
+        if ($useRuntimeArtifact) {
+            $resolvedRuntimeArtifactRoot = [IO.Path]::GetFullPath($RuntimeArtifactRoot)
+            & (Join-Path $repoRoot "scripts\Test-Cp6DevRuntimeArtifact.ps1") `
+                -ArtifactRoot $resolvedRuntimeArtifactRoot `
+                -ExpectedReleaseVersion $ReleaseVersion `
+                -ExpectedGitSha $releaseGitSha |
+                Out-Null
+            Get-ChildItem `
+                -LiteralPath (Join-Path $resolvedRuntimeArtifactRoot "api\publish") `
+                -Force |
+                Copy-Item -Destination $apiPublishRoot -Recurse -Force
+            Get-ChildItem `
+                -LiteralPath (Join-Path $resolvedRuntimeArtifactRoot "web\dist") `
+                -Force |
+                Copy-Item -Destination $webDistPayloadRoot -Recurse -Force
+            Copy-Item `
+                -LiteralPath (Join-Path $resolvedRuntimeArtifactRoot "web\nginx.conf") `
+                -Destination (Join-Path $webRuntimeContext "nginx.conf") `
+                -Force
+            Write-Host "Packaging the verified runtime artifact from the selected CI run."
+        }
+        else {
+            & dotnet restore `
+                $apiProjectPath `
+                --disable-build-servers `
+                --disable-parallel
+            if ($LASTEXITCODE -ne 0) { throw "API host restore failed." }
+            & dotnet publish `
+                $apiProjectPath `
+                -c Release `
+                -o $apiPublishRoot `
+                --no-restore `
+                --disable-build-servers `
+                -m:1 `
+                -p:BuildInParallel=false `
+                -p:UseSharedCompilation=false `
+                "-p:Version=$ReleaseVersion" `
+                "-p:InformationalVersion=$ReleaseVersion+$releaseGitSha"
+            if ($LASTEXITCODE -ne 0) { throw "API host publish failed." }
+
+            [Environment]::SetEnvironmentVariable(
+                "CP6_RELEASE_VERSION",
+                $ReleaseVersion,
+                "Process")
+            [Environment]::SetEnvironmentVariable("CP6_GIT_SHA", $releaseGitSha, "Process")
+            [Environment]::SetEnvironmentVariable(
+                "NODE_OPTIONS",
+                "--max-old-space-size=768",
+                "Process")
+            [Environment]::SetEnvironmentVariable("npm_config_jobs", "1", "Process")
+            Push-Location $webSourceRoot
+            try {
+                & npm.cmd ci --no-audit --no-fund
+                if ($LASTEXITCODE -ne 0) { throw "Web host dependency restore failed." }
+                & npm.cmd run build-only
+                if ($LASTEXITCODE -ne 0) { throw "Web host build failed." }
+            }
+            finally {
+                Pop-Location
+            }
+
+            Get-ChildItem -LiteralPath $webSourceDist -Force |
+                Copy-Item -Destination $webDistPayloadRoot -Recurse -Force
+            Copy-Item `
+                -LiteralPath (Join-Path $webSourceRoot "nginx.conf") `
+                -Destination (Join-Path $webRuntimeContext "nginx.conf") `
+                -Force
+        }
+
+        $apiBuildArguments = @(
+            "build",
+            "-f", $apiRuntimeDockerfile,
+            "-t", $ApiImage
+        )
+        if (-not [string]::IsNullOrWhiteSpace($ApiImageIdFile)) {
+            $apiBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($ApiImageIdFile))
+        }
+        $apiBuildArguments += $apiRuntimeContext
+        & docker @apiBuildArguments
+        if ($LASTEXITCODE -ne 0) { throw "API runtime image packaging failed." }
+
+        $webBuildArguments = @(
+            "build",
+            "-f", $webRuntimeDockerfile,
+            "-t", $WebImage
+        )
+        if (-not [string]::IsNullOrWhiteSpace($WebImageIdFile)) {
+            $webBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($WebImageIdFile))
+        }
+        $webBuildArguments += $webRuntimeContext
+        & docker @webBuildArguments
+        if ($LASTEXITCODE -ne 0) { throw "Web runtime image packaging failed." }
+        Write-Host "Built '$ApiImage' and '$WebImage' from $releaseGitSha."
+        exit 0
+    }
+    finally {
+        [Environment]::SetEnvironmentVariable(
+            "CP6_RELEASE_VERSION",
+            $previousReleaseVersion,
+            "Process")
+        [Environment]::SetEnvironmentVariable("CP6_GIT_SHA", $previousGitSha, "Process")
+        [Environment]::SetEnvironmentVariable("NODE_OPTIONS", $previousNodeOptions, "Process")
+        [Environment]::SetEnvironmentVariable("npm_config_jobs", $previousNpmJobs, "Process")
+
+        $resolvedRuntimeBuildRoot = [IO.Path]::GetFullPath($runtimeBuildRoot)
+        $resolvedSystemTemp = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
+        $runtimeBuildLeaf = Split-Path -Leaf $resolvedRuntimeBuildRoot
+        if ($resolvedRuntimeBuildRoot.StartsWith(
+            $resolvedSystemTemp,
+            [StringComparison]::OrdinalIgnoreCase
+        ) -and $runtimeBuildLeaf.StartsWith(
+            "cp6-runtime-build-",
+            [StringComparison]::OrdinalIgnoreCase
+        ) -and (Test-Path -LiteralPath $resolvedRuntimeBuildRoot)) {
+            Remove-Item -LiteralPath $resolvedRuntimeBuildRoot -Recurse -Force
+        }
+    }
 }
 
 if (-not $usePipelineSecrets) {
@@ -438,8 +624,24 @@ if (-not $usePipelineSecrets) {
 $temporaryRoot = Join-Path `
     ([IO.Path]::GetTempPath()) `
     "cp6-lab-$([Guid]::NewGuid().ToString('N'))"
+$deploymentMutex = $null
+$deploymentMutexAcquired = $false
 
 try {
+    if ($Action -eq "Deploy") {
+        $mutexName = "Global\CP6_$($settings.ProjectName)_deploy"
+        $deploymentMutex = [Threading.Mutex]::new($false, $mutexName)
+        try {
+            $deploymentMutexAcquired = $deploymentMutex.WaitOne(0)
+        }
+        catch [Threading.AbandonedMutexException] {
+            $deploymentMutexAcquired = $true
+        }
+        if (-not $deploymentMutexAcquired) {
+            throw "Another '$($settings.ProjectName)' deployment already holds the host lock."
+        }
+    }
+
     [IO.Directory]::CreateDirectory($temporaryRoot) | Out-Null
     $resolvedPort = Get-SqlPort
     Set-ComposeEnvironment -Settings $settings -TemporaryRoot $temporaryRoot -Port $resolvedPort
@@ -452,13 +654,31 @@ try {
         "Deploy" {
             Assert-DockerDaemon
             Invoke-Compose -Arguments @("up", "-d", "--wait", "--wait-timeout", "240", "redis", "rabbitmq", "kafka")
+            # Keep the schema transition inside an explicit maintenance window.
+            # Never run a forward-only migration while the old API/Web are serving traffic.
+            Invoke-Compose -Arguments @("stop", "web", "api")
             Invoke-Compose -Arguments @("--profile", "migration", "run", "--rm", "db-init")
-            Invoke-Compose -Arguments @("up", "-d", "--wait", "--wait-timeout", "240", "api", "web")
+            Invoke-Compose -Arguments @("up", "-d", "--wait", "--wait-timeout", "240", "api")
+            Assert-ComposeServiceImage -Service "api" -ExpectedImage $ApiImage
 
             $live = Invoke-RestMethod -Uri "http://127.0.0.1:$($settings.ApiPort)/health/live"
             $ready = Invoke-RestMethod -Uri "http://127.0.0.1:$($settings.ApiPort)/health/ready"
             $release = Invoke-RestMethod -Uri "http://127.0.0.1:$($settings.ApiPort)/health/release"
+            if ($live.status -ne "Healthy" -or $ready.status -ne "Healthy") {
+                throw "API did not become healthy after the database migration."
+            }
+            if ($release.version -ne $ReleaseVersion -or
+                $release.gitSha -ne $env:CP6_GIT_SHA) {
+                throw "API release identity does not match the promoted candidate."
+            }
+
+            Invoke-Compose -Arguments @("up", "-d", "--wait", "--wait-timeout", "240", "web")
+            Assert-ComposeServiceImage -Service "web" -ExpectedImage $WebImage
             $webRelease = Invoke-RestMethod -Uri "http://127.0.0.1:$($settings.WebPort)/release.json"
+            if ($webRelease.version -ne $ReleaseVersion -or
+                $webRelease.gitSha -ne $env:CP6_GIT_SHA) {
+                throw "Web release identity does not match the promoted candidate."
+            }
             [pscustomobject]@{
                 Environment = $Environment
                 Live = $live.status
@@ -476,12 +696,22 @@ try {
     }
 }
 finally {
-    $resolvedTemporaryRoot = [IO.Path]::GetFullPath($temporaryRoot)
-    $resolvedSystemTemp = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
-    if ($resolvedTemporaryRoot.StartsWith(
-        $resolvedSystemTemp,
-        [StringComparison]::OrdinalIgnoreCase
-    ) -and (Test-Path -LiteralPath $resolvedTemporaryRoot)) {
-        Remove-Item -LiteralPath $resolvedTemporaryRoot -Recurse -Force
+    try {
+        $resolvedTemporaryRoot = [IO.Path]::GetFullPath($temporaryRoot)
+        $resolvedSystemTemp = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
+        if ($resolvedTemporaryRoot.StartsWith(
+            $resolvedSystemTemp,
+            [StringComparison]::OrdinalIgnoreCase
+        ) -and (Test-Path -LiteralPath $resolvedTemporaryRoot)) {
+            Remove-Item -LiteralPath $resolvedTemporaryRoot -Recurse -Force
+        }
+    }
+    finally {
+        if ($deploymentMutexAcquired) {
+            $deploymentMutex.ReleaseMutex()
+        }
+        if ($null -ne $deploymentMutex) {
+            $deploymentMutex.Dispose()
+        }
     }
 }

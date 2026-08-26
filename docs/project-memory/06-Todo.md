@@ -2,15 +2,24 @@
 
 ## P0：CRM V1 公开同步与 M0
 
-- `CP6-SAAS-V1-PUBLIC-CONTRACT` 当前仍为 Candidate；先完成公开同步审核，再把公开摘要和 merge commit 回写私有聚合记录。仓库或文档存在本身不构成 M0 Go。
-- M0 唯一人类批准角色是 `ProgramOwner`。依次关闭 `DEC-001`、`DEC-003` 至 `DEC-009` 的合同和专业证据，复核 `DEC-000`/`DEC-002`，并强制 Critical/High 清零、分支保护及必需检查；任何硬门禁不得豁免。
-- 只有公开同步 Complete 且 M0 Go 后才能解锁 CRM01；此前 Draft PR #8 只作为候选继续评审。
+- `CP6-SAAS-V1-PUBLIC-CONTRACT` 已由 ProgramOwner 对精确摘要批准并同步为 Complete；下一步把公开 merge commit、摘要和审批证据回写私有聚合记录。公开同步完成本身不构成 M0 Go。
+- M0 唯一人类批准角色是 `ProgramOwner`。依次关闭 `DEC-001`、`DEC-003` 至 `DEC-009` 的合同和专业证据，复核 `DEC-000`/`DEC-002`，并强制 Critical/High 清零、分支保护及必需检查；SQL 容量模型和真实 Pilot cohort 未冻结时必须保持 Pending。
+- 私有 `CP6.CRM` 仍因 GitHub 账户方案限制无法启用 required checks；在 GitHub Pro 生效并回读保护规则前，M0 必须保持 No-Go。只有 M0 Go 后才能解锁 CRM01。
+## P0：白天临时家庭测试环境的外部边界
+
+- 本机完整编译内存风险已通过 GitHub hosted build + Azure 轻量 Artifact 桥关闭；main #118、自动关闭门 #119、Manual #120/#121 均已成功，三次手动验收达到 3/3。继续保持本机 CI 不编译，除非另有等价隔离与容量证明。
+- 本机必须保持开机、未睡眠，且 Docker Desktop 与网络正常；这是当前白天临时测试方案的可用性边界。若需要夜间、无人值守或稳定 SLA，仍须另选真实云主机/托管容器平台并完成生产部署设计，不能把本机 Tunnel 描述为高可用云部署。
+- #95/#120/#121 手动 3/3、#129 低内存失败关闭、#131 Stage retry 与 #132→#133 最终自动发布均已验收；600 秒 readiness、备份/VERIFYONLY、Deploy、健康/身份、attempt-aware 证据 Artifact 和根环境零漂移已由真实 Run 证明。`CP6_DEV_AUTO_DEPLOY_ENABLED=true` 继续生效；任何旧版本手动回退前必须先关闭自动。
+- 首次切换 `cp6.uk` 前，运行 `Invoke-Cp6PublicTunnel.ps1 -Action Validate`、显式停止旧 `cp6-cloudflared`、启动 `cp6-public-tunnel` 并核对完整 SHA；确认后才设置 `CP6_DEV_PUBLIC_VERIFICATION_ENABLED=true`。旧/新 connector 禁止同时运行。
+- 给同事开放测试前，确认 `cp6-dev` 的 `19991`/`18080` 与公网 release identity 一致；同事只使用 `https://cp6.uk` 的应用账号，不共享 `.env`、Tunnel JSON、数据库/RabbitMQ/Kafka 管理端口或基础设施凭证。根 `cp6` 继续作为私人开发环境。
+- Cloudflare Workers 的 `estimate` Git 集成仍需在 Cloudflare 控制台单独断开或改正 Build 配置。它与 `cp6-cloudflared` Tunnel 不在同一部署链；当前家庭测试服务器不依赖 `estimate`，也没有修复其外部构建失败。
+- `MSSQLLaunchpad$KOUSQLSERVER`、`SQLPBENGINE$KOUSQLSERVER`、`SQLPBDMS$KOUSQLSERVER` 在故障恢复后保持 Stopped，但 StartMode 仍为 Automatic。确认 CP6 与其他本机工作负载均不使用这些功能后，另立管理员任务决定是否禁用；Pipeline 不得自行修改 Windows 服务启动类型。
+
 ## P0：整顿后的仓库治理与续开发边界
 
-- 独立修复 `tools/Test-SpaceGaEvidence.Tests.ps1`：目前 36/36 断言通过，但预期失败的最后一个子进程把 `$LASTEXITCODE=1` 泄漏为脚本最终退出码，导致 GA CI 假红。必须新增退出码回归并在单独分支/PR完成，不得通过放宽 GA 校验绕过。
-- `codex/login-experience-recovery-20260824@1a5a58f`：补 LoginView 组件/浏览器验收、审查大幅模板重排与可访问性后再提 PR；当前只有 helper 6/6 和 Vue type-check 证据。
-- `codex/datetime-normalization-recovery-20260824@fd0b64fc`：审查 35 文件跨域修改与日期语义，补项目记忆/变更说明；当前 Web 174 文件/886 测试、Vue type-check 和 production build 已通过，是三个恢复分支中最接近可合并的一支。
-- `codex/kafka-dispose-recovery-20260824@1ee78fa6`：补 Dispose/异常/日志策略的行为测试并确认生命周期语义；当前仅 CP6.Core Release build 0 warning/0 error，不得直接合并。
+- 登录体验恢复已关闭：大幅模板重排已完成组件、全量 Web、类型、生产构建和桌面/移动浏览器验收；折叠 Tenant 焦点、虚假健康状态、语言语义与并发认证问题均有回归覆盖。后续新增实时服务状态时必须接入真实健康检查与失败/未知状态，不能恢复静态“正常”宣称。
+- Kafka Dispose 恢复已关闭：刷新异常仍释放 producer、关闭异常只告警不阻断 Host、剩余队列可观测且重复调用幂等；4 个聚焦行为测试和 `CP6.Tests` 全量回归通过。
+- 日期时间恢复的 P4/P5 已关闭：不恢复多余且弱类型的 Vue shim；普通业务日期时间固定到分钟精度并完成五语言回归。若后续审计日志明确要求秒/毫秒，必须新建立独立精确格式任务，不得修改全局 `long` 合同。
 - CRM Draft PR #7 和 #8 已基于当前 `main`，继续等待各自产品/治理确认与 CI。PR #7 的 Cloudflare Workers 外部构建失败需单独归因；PR #8 公共契约校验已通过。两者保持 Draft，不纳入本次干净 `main`。
 - 完成整顿后把本机归档复制到第二介质，再考虑清理 `D:\CP6-archives\2026-08-24-branch-consolidation`；在此之前禁止删除 bundle、patch、原始未跟踪文件或 SHA-256 清单。
 
@@ -41,11 +50,13 @@
 ## P0：Azure DevOps Release/CD 演进
 
 - 外部 Readiness Pipeline 已命名为 `CP6 Deploy Agent`；可再补全为 `CP6 Deploy Agent Readiness`，并保持 `CP6-Deploy` Pool 未对所有 Pipelines 开放。
-- Readiness Build ID `10` 已通过；`cp6-dev-secrets` Variable Group 和四个锁定 Secret 已由截图确认创建。下一步从 `/azure-pipelines-dev.yml` 创建 `CP6 DEV CD`，只对它授权 `CP6-Deploy`、`cp6-dev-secrets` 与 `cp6-dev`，再用最新成功的 `GTX537.CP6/main` Run 完成首次部署验收。
-- 首次 DEV Run 必须保存 Build/Run ID、Environment deployment history 和 `cp6-dev-evidence`；在这些外部证据齐全前，只能称为“仓库配置已交付”，不能称为“DEV 自动部署已成功”。
+- Readiness Build ID `10` 及后续 #89/#105 已通过；ODBC 17 `sqlcmd`、备份目录 ACL、最小化 `cp6_dev_backup`、锁定 `CP6_DEV_DB_BACKUP_PASSWORD`、Pipeline 定向授权和 Exclusive lock 均已完成验收。
+- 当前 7 份 `.bak` 均保留且不自动删除；后续需单独确认保留数量、最小保留期、磁盘告警和可恢复证据后再实现清理策略。
+- 当前用户目录已安装并登录 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6；`CP6 DEV CD`、`CP6-Deploy`、`cp6-dev-secrets`、`cp6-dev` Environment、定向授权与 Exclusive lock 均已配置。当前自动开关为 `true`，公网验证开关为 `false`。
+- 三次手动 Run、低内存失败关闭、同 Stage 重试和最终自动 #133 已证明根 `cp6`/`CP6DB` 未受影响；自动开关保持 `true`。后续每次自动发布继续保留 readiness、备份、部署、attempt-aware Artifact 与宿主基线证据。
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
-- 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。
+- 当前 Azure `azure-pipelines.yml` 是 `Default` self-hosted 轻量 Artifact 桥、`main` trigger、`pr: none`；完整编译/测试在 GitHub `client-contract`。仍需补 Agent 运维边界和 PR 门禁归属，不把 Artifact 绿灯描述为上线。
 - 下一张 CRM 相关任务卡为 M0/R00：把 CRM V1 已锁定的 GHCR/R2 唯一权威、候选清单、Azure 非权威影子边界、等价矩阵和回退写入 ADR；不得重新选择 Registry。ACR 迁移与其他产品的长期 Azure Registry 决策独立立项。
 - 决策通过后按独立任务推进：Docker Release（版本/SHA、provenance、SBOM、扫描、digest）→ DEV Environment/健康与身份核对 → UAT → PROD 资源侧审批 → 回滚/前滚演练 → AKS 多仓。
 - 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。

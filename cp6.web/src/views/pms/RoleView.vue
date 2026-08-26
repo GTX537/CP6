@@ -19,6 +19,6 @@ const columns = computed<ColumnConfig[]>(() => [
   { prop: 'description', label: t('role.description'), formType: 'textarea' },
   { prop: 'orderNo', label: t('role.orderNo'), width: 80 },
   { prop: 'enable', label: t('role.enable'), width: 100, type: 'switch', formType: 'switch' },
-  { prop: 'createDate', label: t('role.createDate'), width: 180, formType: 'none' }
+  { prop: 'createDate', label: t('role.createDate'), width: 180, type: 'datetime', formType: 'none' }
 ])
 </script>

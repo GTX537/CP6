@@ -338,6 +338,23 @@ describe('CpListPage 契约扩展（Milestone C）', () => {
     // 第二行日期单元格为空（null → ''，不出现 "null"）
     expect(w.text()).not.toContain('null')
   })
+
+  it("kind:'datetime'：.NET 高精度时间按当前语言显示且不扩散小数秒", async () => {
+    const c: ListColumn[] = [
+      { prop: 'no', label: '单号', kind: 'mono' },
+      { prop: 'createdAt', label: '创建时间', kind: 'datetime' }
+    ]
+    const f = vi.fn().mockResolvedValue({
+      rows: [{ no: 'A', createdAt: '2026-04-08T22:06:21.1795134' }],
+      total: 1
+    })
+    const w = mount(CpListPage, { props: { columns: c, fetch: f } })
+    await flushPromises()
+
+    expect(w.text()).toContain('2026')
+    expect(w.text()).not.toContain('T22:06:21.1795134')
+    expect(w.text()).not.toContain('.179')
+  })
 })
 
 // —— 契约扩展三轮（ERP批次1 复盘 #18 lazy / #19 sortable:'custom'）——

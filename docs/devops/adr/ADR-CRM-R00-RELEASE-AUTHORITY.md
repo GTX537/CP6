@@ -1,8 +1,8 @@
 # ADR-CRM-R00：CP6 SaaS V1 发布权威公开镜像
 
-<!-- public-r00-mirror-status: Candidate -->
+<!-- public-r00-mirror-status: Complete -->
 
-- 镜像状态：**Candidate**
+- 镜像状态：**Complete**
 - 私有源状态：**Accepted**
 - 私有决策 ID：`CP6-SAAS-R00`
 - 私有 `decisionPayloadSha256`：`64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`
@@ -11,7 +11,7 @@
 - 适用仓库：`CP6`、`CP6.Platform`、`CP6.CRM`、`CP6.Portal`
 - 公开合同：[CP6 SaaS V1 公开工程契约](../../crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md)
 
-下列标记内正文与私有已批准 R00 载荷逐字一致。公开镜像不复制个人审批身份；其摘要必须独立复算为上述私有 R00 摘要。公开合同达到 Complete 前，本镜像保持 Candidate；P09/P10 实现仍为 Pending。
+下列标记内正文与私有已批准 R00 载荷逐字一致。公开镜像不复制私有个人审批身份；其摘要必须独立复算为上述私有 R00 摘要。公开合同已由 ProgramOwner 对精确摘要批准并同步为 Complete；P09/P10 实现仍为 Pending。
 
 <!-- release-decision-payload:start -->
 ## 1. 决策
@@ -74,7 +74,7 @@ R00 只有在以下条件全部满足后可从 Proposed 变为 Accepted：
 ## 公开状态镜像（不进入私有 R00 载荷）
 
 - 私有 R00：Accepted
-- 公开工程镜像：Candidate
-- 公开同步：Pending
+- 公开工程镜像：Complete
+- 公开同步：Complete
 - P09/P10 implementation：Pending
 - M0：No-Go

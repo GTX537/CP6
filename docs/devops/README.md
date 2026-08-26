@@ -2,7 +2,7 @@
 
 本目录保存 CP6 的项目级 DevOps 上下文，供开发者、Codex 和发布负责人共同使用。它回答三个问题：当前流水线已经做到了什么、目标发布链是什么、下一步按什么顺序实施。
 
-> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。CRM V1 的私有 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已 Accepted，公开 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 镜像仍为 Candidate；P09/P10 未完成前不得声称候选对象身份 Gap 已关闭。
+> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。CRM V1 的私有 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已 Accepted，公开 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 镜像已同步为 Complete；P09/P10 未完成前不得声称候选对象身份 Gap 已关闭。
 
 ## 文档地图
 
@@ -12,7 +12,7 @@
 | [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md) | Reference / Roadmap | 记录阶段、任务、完成定义和迁移门禁 |
 | [Azure Environments 设置](./AZURE-ENVIRONMENTS-SETUP.md) | How-to / Checklist | 创建并验收 DEV、UAT、PROD-LAB 逻辑环境 |
 | [部署 Agent Readiness](./DEPLOY-AGENT-READINESS.md) | How-to / Gate | 验证专用部署身份、Docker Desktop 和本机 SQL TCP 能力 |
-| [DEV 自动部署](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 创建受限 `CP6 DEV CD`，完成本机学习环境的首次 deployment job 验收 |
+| [DEV 双模式发布](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 配置手动/自动 `CP6 DEV CD`、部署前备份、独立 Tunnel 和安全数据旁路导入 |
 | [发布流程](./RELEASE-PROCESS.md) | How-to | 说明从代码到 DEV、审批和 PROD 的标准操作顺序 |
 | [环境策略](./ENVIRONMENT-STRATEGY.md) | Explanation / Reference | 定义 DEV、UAT、PROD 的用途、权限、配置和证据边界 |
 | [DevOps ADR 索引](./adr/README.md) | Normative mirror / Index | CRM R00 发布权威、候选对象身份、Manifest 与回退工程合同 |
@@ -23,11 +23,11 @@
 仓库内可直接验证的 Azure CI 配置位于根目录 [`azure-pipelines.yml`](../../azure-pipelines.yml)：
 
 - `main` 提交触发；`pr: none`，当前不承担 PR 验证。
-- 使用 Azure DevOps `Default` self-hosted agent pool；YAML 没有绑定具体 Agent 名称。
-- 安装 .NET 8 SDK 和 Node.js 22。
-- 还原、构建并测试 `CP6.WebApi`、`CP6.Tests`、`CP6.Client.Tests`。
-- 执行 Vue 类型检查、Vitest 和生产构建。
-- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 负责本机 DEV 学习链，外部首次 Run 尚待验收。
+- 使用 Azure DevOps `Default` self-hosted agent pool；YAML 没有绑定具体 Agent 名称。该 Agent 只执行合同、受认证下载、摘要/清单验证和 Azure Artifact 发布，不再运行 .NET/Node 编译。
+- GitHub `.github/workflows/client-contract.yml` 在 GitHub-hosted Runner 完成 .NET、客户端、OpenAPI、Web、Android 与 R2 source 门禁，并生成名称含完整 Git SHA、内部逐文件 SHA-256 的 `cp6-dev-runtime-<sha>`；保留期为 3 天。
+- Azure 只接受同一仓库、同一完整 SHA、指定工作流路径、`push`/`workflow_dispatch` 事件且结论为 `success` 的未过期 Artifact；下载归档还必须匹配 GitHub SHA-256，解压后再次验证内部 manifest。
+- Azure [`Run #116`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=116) 因错误查询非仓库专属 Checkout extraheader 在下载前失败，Publish 被跳过；修复后分支 [`Run #117`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=117) 与 main [`Run #118`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=118) 均成功下载、验证并发布 Azure `cp6-dev-runtime`。SQL 与公网七容器基线未变。
+- 该桥自身不构建/推送生产镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 下载并验证所选成功 `main` Azure Artifact 后只做 runtime-only 镜像封装。Manual DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95)、[`#120`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=120)、[`#121`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=121) 已完成 3/3。#129 证明 2 GiB + 3 次 SQL 门禁会在备份前失败关闭；#131 证明同 Stage 重试必须按 `System.StageAttempt` 区分证据 Artifact。修复后基础 CI [`#132`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=132) 自动触发 DEV [`#133`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=133)，600 秒 readiness、备份、部署、健康/身份和 `cp6-dev-evidence-attempt-1` 均成功。自动开关保持开启，公网验证仍关闭。
 
 项目上下文确认 self-hosted Agent 已接通并能执行该 CI。具体 Agent 名称、在线状态和历史运行结果属于 Azure DevOps 外部运行证据，不能只靠仓库文件推断。
 
@@ -42,14 +42,16 @@
 
 | 层次 | 状态 | 准确描述 |
 | --- | --- | --- |
-| CI 代码验证 | 已配置并已接通 | Azure self-hosted Agent 可执行后端/客户端测试与 Web 检查 |
+| CI 代码验证 | 已配置并已接通 | GitHub-hosted `client-contract` 执行完整编译/测试；Azure self-hosted Agent 只桥接经 SHA/摘要验证的运行包 |
 | 发布制品 | Azure 未完成；GitHub R2 已有实现 | Azure 尚未产出 `cp6-api` / `cp6-web` 镜像或不可变清单 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
-| Azure 逻辑 Environments | 已创建 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已由 2026-08-11 外部截图验证，当前均为 `Never deployed` |
-| 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；Azure Build ID `10` 验证身份、Docker、Compose 与 SQL TCP |
-| Azure DEV 自动部署 | 仓库配置已交付，Azure 运行待验收 | `azure-pipelines-dev.yml` 已定义 CI completion trigger、SHA 镜像、`cp6-dev` deployment job 和非敏感证据；外部 Pipeline 创建、资源授权与首次成功 Run 仍待完成 |
+| Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |
+| 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；最新 Readiness [`Run #89`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=89) 验证身份、Docker、Compose、SQL TCP、`sqlcmd` 与备份目录 |
+| Azure DEV 双模式发布 | 手动/自动均已验收 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；#95/#120/#121 Manual 3/3，#129 证明低内存失败关闭，#131 暴露并修复重试证据命名，#132→#133 最终自动发布成功。7 份备份均保留，最新 CHECKSUM/VERIFYONLY 与本机 SHA-256 复核通过；公网验证保持关闭，根环境基线不变 |
+| 白天测试公网 | 工具已交付，切换待执行 | `cp6-public-tunnel` 只连接 `cp6-dev_default`；切换前必须显式停止旧 `cp6-cloudflared`，Pipeline 不自动切换 Cloudflare |
+| 私人本地 `cp6`/`CP6DB` | 保持独立 | DEV CD 不操作根 Compose、`CP6DB` 或 `cp6_cp6-db-data`；DEV 数据只能手动恢复为新的 `CP6DEV_IMPORT_*` 旁路库 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |
-| CRM R00 | 私有源 Accepted；公开同步 Candidate；P09/P10 Pending | GHCR/GitHub R2 已固定为 V1 唯一权威，但精确对象版本与四仓 Manifest 尚未实现 |
+| CRM R00 | 私有源 Accepted；公开同步 Complete；P09/P10 Pending | GHCR/GitHub R2 已固定为 V1 唯一权威，但精确对象版本与四仓 Manifest 尚未实现 |
 
 ## 核心原则
 

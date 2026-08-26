@@ -1,9 +1,9 @@
 # CP6 SaaS V1 公开工程契约
 
-<!-- public-contract-status: Candidate -->
+<!-- public-contract-status: Complete -->
 
 - 决策 ID：`CP6-SAAS-V1-PUBLIC-CONTRACT`
-- 状态：**Candidate**
+- 状态：**Complete**
 - `decisionPayloadSha256`：`8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`
 - 私有源仓库：`GTX537/CP6.CRM`
 - 私有源合并提交：`07a7bb0b50f33b0cb70c18c14f83be77c725626d`
@@ -111,9 +111,9 @@ CP6 是面向包装及相邻离散制造企业的模块化 B2B SaaS 平台，CRM
 
 ## 状态镜像（不进入公开工程载荷）
 
-- 当前状态：Candidate
+- 当前状态：Complete
 - 当前 `decisionPayloadSha256`：`8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`
 - 私有产品源：Frozen
 - 私有 R00 源：Accepted
-- 公开同步：Pending
+- 公开同步：Complete
 - M0：No-Go

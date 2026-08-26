@@ -1,10 +1,106 @@
 # 已完成能力与近期里程碑
 
-## 2026-08-24 CP6 SaaS V1 公开工程契约候选续接当前主线
+## 2026-08-26 CP6 SaaS V1 公开工程契约同步完成
 
-- 私有产品冻结 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d`、Frozen 摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 R00 摘要继续绑定到公开契约候选。
-- Draft PR #8 已合并 `main@0a14581f`，保留脱敏合同、R00/M0 镜像、审批 JSON、失败关闭验证器和专用 GitHub Actions；旧主线快照没有覆盖 2026-08-16 之后的 Space 与项目记忆。
-- 本项只完成候选内容向当前主线的续接，不代表公开同步 Complete 或 M0 Go，也没有解锁 CRM 业务开发。
+- 私有产品冻结 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d`、Frozen 摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 Accepted R00 摘要继续绑定到公开契约。
+- ProgramOwner 在 PR #8 批准精确公开摘要 `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`；append-only 记录绑定 GitHub 评论、证据 commit/blob、UTC 时间与私有源，公开合同和 R00 镜像达到 Complete。
+- 同步验证器失败关闭核对批准角色、摘要、评论 URI、证据对象、私有源、脱敏声明与 M0 No-Go。该完成项不解锁 CRM01，也未创建云资源、Secret、数据库、迁移或部署。
+## 2026-08-26 DEV 自动发布稳定性闭环
+
+- #129 以 31 次低内存采样证明 readiness 会在 SQL/备份前失败关闭；600 秒恢复窗口保留 2048 MiB 与 3 次连续独立 SQL 登录的安全要求。
+- #131 同 Stage 重试真实完成 readiness、备份、迁移和部署，但固定证据 Artifact 名在 attempt 2 冲突；PR #30 使用只读 `System.StageAttempt` 生成 `cp6-dev-evidence-attempt-<N>`，合同测试先红后绿，全部本地 DevOps 回归通过。
+- PR #30 合入 `main@08813896...` 后，GitHub client-contract/SQL、Azure 基础 CI #132 与自动 DEV #133 全部成功；#133 的 `pipelineTriggerType=PipelineCompletion` 精确绑定 #132 和同一 main SHA。
+- #133 readiness 为 2184/2383/2411 MiB 且三次 SQL=True；第 7 份 CHECKSUM/VERIFYONLY 备份为 2,600,960 bytes，SHA-256 `af4f48fd...d804c9de`。API/Web Healthy、完整 SHA 身份一致，`cp6-dev-evidence-attempt-1` 发布成功，根 API/DB 基线零漂移。
+
+## 2026-08-26 DEV 备份前主机与 SQL 就绪门禁
+
+- #127 在候选封装后、备份前因宿主内存使用 95.16% 导致 SQL prelogin 超时；无新备份、迁移或容器切换，失败后的 8/8 新 SQL 连接正常，定位为瞬时宿主压力而非 Secret/权限/数据库持久故障。
+- 新增可测试的锁内就绪门禁：至少 2048 MiB 可用内存、3 次连续独立 `cp6_dev_backup` 登录、最多等待 600 秒；不满足时失败关闭且不执行有副作用的 BACKUP。
+- 门禁保存逐次内存/SQL/连续成功证据，成功部署的 Schema 3 `deployment.json` 引用该证据；5 场景行为测试、7 场景 sqlcmd 测试和 DEV CD/数据安全合同均通过。
+- 自动 #129 真实完成失败关闭验收：31 次采样为 1328～1861 MiB，SQL/备份/迁移/切换均未开始；主机随后自然恢复到 2 GiB 的总耗时约 8 分 40 秒，为 600 秒窗口提供实测依据。
+
+## 2026-08-25 DEV 自动发布启用决策
+
+- 在 #95/#120/#121 三次独立 Manual 成功后，用户明确授权启用 DEV 自动模式；`CP6_DEV_AUTO_DEPLOY_ENABLED=true` 生效，公网验证继续为 `false`。
+- 基础 CI #124 completion 自动触发 DEV #125；REST 元数据证明它是 `resourceTrigger`，并真实完成 Artifact 校验/封装、CHECKSUM/VERIFYONLY 备份、迁移、API/Web 身份健康和 2 文件证据 Artifact，未用 Manual Run 冒充自动验收。
+- 第 5 份备份为 2,572,288 bytes，SHA-256 `bcd9f228...a574`，本机重算一致。DEV 运行 `main@ecbad9e1...` 且 Healthy，根 API/DB 三项基线零漂移。GitHub R2/GHCR 生产权威、根 `cp6`/`CP6DB` 隔离和旧版本手动回退前关闭自动的规则均未改变。
+
+## 2026-08-25 DEV 三次独立 Manual 验收闭环
+
+- PR #24 合入 `main@a5c6b5fa...`；GitHub client-contract 与 Azure #118 成功生成/桥接同 SHA Runtime Artifact，自动 #119 在关闭状态安全跳过。
+- Manual #120/#121 分别成功，和既有 #95 合计 3/3。两次都独立完成 Artifact 验证、runtime-only 封装、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份验证和 2 文件证据 Artifact；备份目录由 2 份增至 4 份。
+- 最终 API/Web 均为 `0.0.0-dev.a5c6b5fa...59e6`，live/ready Healthy；8/8 SQL 查询成功，无新增 701/17300。公网七容器基线完全不变，自动/公网开关仍为 `false`，未切换 Tunnel。
+
+## 2026-08-25 GitHub 远程构建与 Azure Artifact 桥分支验证
+
+- `client-contract.yml` 现可手动运行并在 GitHub-hosted Runner 完成 .NET/客户端/OpenAPI/Web/Android/R2 source 门禁，发布与完整 Git SHA 绑定、3 天保留的 DEV Runtime Artifact。
+- Azure 基础流水线不再本机编译；它使用授权 Checkout 凭证，验证 GitHub 工作流来源、成功结论、完整 SHA、归档 SHA-256、ZIP 路径和内部逐文件 manifest 后转存 Azure `cp6-dev-runtime`。
+- Azure #116 在下载前失败并跳过 Publish，定位到 extraheader 查询缺少仓库路径；修复后 GitHub Run 32881647447 与 Azure #117 真实成功。全过程 SQL 与公网七容器基线未变，无部署副作用。main 与两次 Manual DEV 验收仍待完成。
+
+## 2026-08-25 DEV 候选 CI Artifact 隔离
+
+- 默认 self-hosted CI 在 #109/#111 两次触及本机内存/SQL门禁后均于 Artifact/Deploy 前取消；#110 证明当前 Azure 组织没有 hosted parallelism，未开启计费。低内存分支 #112 以非并行 restore、单节点 build/test、禁用持久/共享编译服务器和两个 Vue test worker 完整成功，发布哈希 Runtime Artifact；最低观测可用内存约 2.22 GiB，SQL 和根/旧 DEV 容器基线不变。该分支只验证实现，合并前不作为 DEV 候选。
+- 首次主线 CI #108 在 `Verify runtime artifact contracts` 打印 passed 后仍被陈旧 `$LASTEXITCODE` 判为失败；所有 restore/build/test/artifact 步骤均跳过，根环境与 `CP6_DEV` 无变化。基础 CI 与 DEV 合同 Step 现统一依靠 PowerShell terminating error，并由静态回归禁止在 `.ps1` 成功后读取继承的 `$LASTEXITCODE`。
+- Manual Run #98 在 API publish 内存达到 96.03% 后于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。Docker OOM 造成根 `cp6-db`/`cp6-api` 自动重启，因此该 Run 不计验收并保留为失败证据。
+- API Docker publish 改为单 MSBuild 节点并关闭项目并行、共享编译服务器后，Manual Run #101 仍在 Docker VM 95.83% 使用率时于 Deploy 前取消；没有备份、迁移或 DEV 镜像切换。根 `cp6-db`/`cp6-api` RestartCount 分别增至 2/3，因此同样不计验收。
+- DEV 候选现由部署 Agent 使用 .NET 8/Node 22 在 Windows 宿主机串行构建，Docker 只用两个 runtime-only Dockerfile 封装 publish/dist；Web 堆上限 768 MiB，Readiness 与 DEV CD 均固定工具版本并有合同覆盖。生产 R2 Dockerfile/工作流未改。
+- 提交 `72ec0e70` 的本机完整构建成功生成 API/Web 不可变 image ID，临时上下文清零；Docker VM 采样始终保留约 1.9 GiB 以上，根 API/DB 的 ID、StartedAt、RestartCount 不变，宿主 SQL 无新增 701/17300。六组契约、PowerShell 解析、差异与凭据扫描通过；自动/公网仍关闭，手动验收仍为 1/3。
+- CI #102、completion DEV #104 和 Readiness #105 均成功；Manual #106 因资源版本输入错误在 YAML 解析前失败。Manual #107 正确绑定 CI #102，但宿主重复 publish 达约 4.18 GiB 工作集并导致 `CP6_DEV` 连接超时，按门禁取消；没有备份/迁移/镜像切换，根 API/DB 不变，旧 DEV API RestartCount 16→17，因此不计验收。
+- 基础 CI 现从同一次已通过测试的 API/Web build 生成带完整身份与逐文件 SHA-256 的 `cp6-dev-runtime` Artifact；DEV 只下载、验证并用 runtime-only Dockerfile 封装，不再重复编译。587 文件真实产物本机封装约 17 秒完成，根 API/DB、旧 DEV API 与 SQL 均保持稳定；篡改、清单外文件和身份错配回归均失败关闭。GH R2/生产候选权威未改。
+
+## 2026-08-25 Azure CI 与首次手动 DEV 发布外部闭环
+
+- Azure CI Run #92 在 `main@47ca8441` 完整成功；通用 `CP6-Windows` Agent 的 `.NET Restore` 假失败已定位为 PowerShell 7 `PSModulePath` 继承污染。新增安全前台启动器及合同测试，固定核对 `C:\agent`、Agent 名称和 `Default` Pool，并只隔离 Agent 子进程环境。
+- Azure 外部资源闭环：`CP6 DEV CD` Definition ID `4`、定向 Pool/Variable Group/Environment 权限、Exclusive lock、两项 `false` 开关、最小权限 `cp6_dev_backup`/锁定 Secret，以及 Readiness Run #89 全部完成。自动 Run #93 已证明关闭状态只分类并跳过部署。
+- Manual Run #94 正确失败关闭：先完成 CHECKSUM/VERIFYONLY 备份，再因宿主 SQL 已有 701/17300 内存耗尽事件而在 db-init 超时；未启动 API/Web。重启 `KOUSQLSERVER` 后，Manual Run #95 成功发布 `0.0.0-dev.92` / 完整 SHA `47ca8441...9dbe9c18`，健康、迁移、不可变镜像和 `cp6-dev-evidence` 均通过。
+- Run #95 新备份长度 2,453,504 bytes、SHA-256 `58c6ff73...5079c23`、VERIFYONLY passed。根 `cp6` 七个容器与 `CP6DB` 未变；自动/公网开关继续关闭，当前手动验收计数为 1/3。
+
+## 2026-08-25 DEV 首次运行前置审计与 sqlcmd 可发现性修复
+
+- 实机确认专用 Agent、Docker、Compose、宿主机 SQL Server、`CP6_DEV` 与 TCP 端点存在；根 `cp6`/`CP6DB`/`cp6_cp6-db-data` 只读核对后保持原状。
+- 创建 `C:\CP6Backups\CP6_DEV`，以显式 ACL 只授予 SQL Server 服务写入、部署 Agent 读取，以及维护身份/SYSTEM/Administrators 管理权限；未生成或删除任何 `.bak`。
+- 修复服务身份不继承交互用户 PATH 时找不到 `sqlcmd` 的门禁缺口：备份脚本和 Readiness Pipeline 会探测 PATH 与三类标准安装路径。新增 7 场景无数据库副作用行为回归，覆盖 PATH、相对/缺失绝对路径、全候选缺失、标准目录回退、Secret 前置门和执行失败后的 `SQLCMDPASSWORD` 恢复；数据安全、Readiness、DEV CD 三组合同测试同步通过。
+- 本节记录当时的前置审计；同日后续已完成 `cp6_dev_backup`、Azure Secret/Lock/变量、Readiness 重跑和首次手动发布。三次手动验收当前为 1/3。
+
+## 2026-08-25 本机 DEV 双模式发布仓库闭环
+
+- `CP6 DEV CD` 以单一 YAML 支持自动/手动两种入口，自动初始关闭；所选 CI Run 会经 Azure REST 核对成功状态、`main` 分支和完整 SHA，旧自动任务在分类阶段与 DEV 锁内跳过，旧版本手动回退要求先关闭自动。
+- 从所选提交的隔离 worktree 构建 SHA 镜像并捕获不可变 Docker image ID；部署受 Azure 顺序锁和本机互斥锁保护。对 `CP6_DEV` 执行 CHECKSUM 备份和 VERIFYONLY 后，停止旧 Web/API、运行一次性 db-init、先验证 API 再启动/验证 Web。发布证据新增 trigger、备份 SHA-256、镜像与本机/可选公网身份。
+- 新增专用 `cp6-public-tunnel` 控制器和 `CP6DEV_IMPORT_*` 旁路恢复工具；旧/新 Tunnel connector 不得同时运行，数据导入拒绝覆盖或合并 `CP6DB`。根 `cp6` 和 `cp6_cp6-db-data` 不在自动化作用域。
+- Lab、DEV CD、数据安全和 Tunnel 四组契约测试已建立并通过；本任务没有运行真实部署、数据库备份/恢复、容器启停或 Cloudflare 切换，外部三次手动验收仍为待办。
+
+## 2026-08-24 登录体验恢复与可访问性闭环
+
+- 恢复包装制造运营登录页及五语言产品文案，保留账号密码、租户识别、SSO、2FA、菜单和登录后路由合同，并完成桌面/移动响应式布局验收。
+- 修复 CSS 折叠 Tenant 输入仍可被 Tab 聚焦的问题：关闭时使用 `inert`/`aria-hidden`，主动展开或 `needTenant` 时聚焦组织输入；语言菜单采用按钮组语义。
+- 密码登录与 SSO 使用同一互斥忙碌状态，阻止认证请求重入；无真实健康检查的“系统正常”动态状态改为中性安全访问标识。
+- 门禁：组件聚焦 10/10、Web 全量 176 文件/902 测试、Vue 类型检查、production build；Chromium 1440×900 与 390×844 均无横向溢出，折叠/展开 Tenant 键盘焦点行为通过。
+
+## 2026-08-24 Kafka 生产者安全退出
+
+- 修复 Kafka Singleton 关闭顺序：`Flush` 与 producer handle 释放分别保护，刷新失败也保证继续释放；重复 `Dispose()` 幂等，不重复等待或释放。
+- 关闭阶段的 Flush/Dispose 异常不会让 WebApi Host 退出失败，但会保留 Warning；5 秒刷新后仍未发送的队列长度也会被记录，避免原 WIP 静默吞错。
+- 新增 4 个生命周期行为测试；聚焦 4/4、`CP6.Tests` 全量 2,938 passed / 19 项既有环境门禁 skipped / 0 failed。
+
+## 2026-08-24 日期时间规范化恢复与 P4/P5 关闭
+
+- 确认 P4 的通配 Vue SFC shim 对当前 Vue 3.5 + TypeScript 6 + `vue-tsc` 3.2 工具链并非必需；最新 `main` 在无 shim 时干净类型检查通过，因此不恢复会引入 `any` 的旧声明。
+- 共享日期时间工具新增 Element Plus 单元格适配器；OA/PMS/WMS/Space 页面及 `VolTable`、`CpListPage` 的 datetime 列统一本地化，替代原始 ISO、直接 `toLocaleString()` 和分散截断。
+- P5 不再把 `.sss` 加到全局 `long` 格式。普通业务 UI 固定为日期 + 时:分；高精度 .NET 输入会被解析但不向所有页面扩散秒/小数秒，未来精确审计格式须独立立项。
+- 门禁：P4 干净基线 `vue-tsc --build`；日期时间聚焦 3 文件/53 测试、Web 全量 175 文件/892 测试、Vue 类型检查和 production build 全部通过。
+
+## 2026-08-24 白天临时家庭测试服务器控制流程
+
+- 新增可双击菜单 `cp6-daytime-server.bat` 及 PowerShell 控制器，统一提供 `start`、`start-build`、`status`、`close`、`stop` 五个入口；启动前检查 Docker、`.env`、Compose、Tunnel 配置和本机凭证文件。
+- `close` 只停止 Compose 内的 `cp6-cloudflared`，保留本机 API/Web/基础服务；`stop` 使用 `docker compose stop` 安全停止全栈并保留所有命名卷。脚本不会自动结束主机上的其他 cloudflared 进程，也不会修改 Windows 睡眠或电源设置。
+- 合同测试覆盖 PowerShell 语法、动作/入口映射、四个 HTTP 地址、Tunnel 单独关闭、数据保留停止、凭证预检和禁止电源修改；实机只读状态检查确认 7 个服务及本机/公网 Web/API 全部就绪、HTTP 200。为避免中断当前使用者，没有执行现场启停或重建。
+
+## 2026-08-24 Space GA 退出码假红修复
+
+- 根因是五个 Space GA 负向测试辅助函数已正确消费预期失败的 validator 退出码，但都未清除 PowerShell 全局 `$LASTEXITCODE`；末项负向用例因此让 Actions 在断言全绿后仍返回 `1`。
+- Attestation、Pilot、Golden CAD、Kickoff 和人员种子套件现在都先完成期望退出码与稳定错误码断言，再将已消费状态归零；各自汇总前新增全局退出码回归断言。真实 validator 失败仍会抛错，GA 证据失败关闭语义未改变。
+- 直接 Actions 风格调用和独立进程调用均得到 Attestation 36/36、退出码 `0`；完整 Space GA 工作流另通过 Pilot 21/21、Golden CAD 31/31、Kickoff 28/28 和人员种子 8/8。
+
 ## 2026-08-24 仓库分支整顿与 WIP 恢复
 
 - 建立整顿前全引用 Git bundle、各脏 worktree 状态/patch/原始未跟踪文件与 SHA-256 清单；根工作区安全恢复为干净 `main@0a14581f`，没有通过 reset/覆盖丢弃用户数据。
