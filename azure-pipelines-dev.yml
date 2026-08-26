@@ -158,6 +158,7 @@ stages:
           & .\scripts\test-dev-cd-contract.ps1
           & .\scripts\test-cp6-dev-release-plan.ps1
           & .\scripts\test-cp6-sqlcmd-resolution.ps1
+          & .\scripts\test-cp6-dev-backup-readiness.ps1
           & .\scripts\test-cp6-dev-data-safety-contract.ps1
           & .\scripts\test-cp6-public-tunnel-contract.ps1
           & .\scripts\test-cp6-dev-runtime-artifact.ps1
@@ -283,6 +284,26 @@ stages:
                     Write-Host 'Automatic DEV deployment skipped because main advanced while this run waited for the lock.'
                 }
                 Write-Host "##vso[task.setvariable variable=CP6_DEPLOY_ALLOWED]$($deployAllowed.ToString().ToLowerInvariant())"
+
+          - task: PowerShell@2
+            displayName: 'Wait for safe CP6_DEV backup readiness'
+            condition: and(succeeded(), eq(variables['CP6_DEPLOY_ALLOWED'], 'true'))
+            env:
+              CP6_DEV_DB_BACKUP_PASSWORD: '$(CP6_DEV_DB_BACKUP_PASSWORD)'
+              CP6_EVIDENCE_DIRECTORY: '$(Pipeline.Workspace)\cp6-dev-evidence'
+            inputs:
+              targetType: 'inline'
+              pwsh: false
+              script: |
+                $ErrorActionPreference = 'Stop'
+                New-Item -ItemType Directory -Path $env:CP6_EVIDENCE_DIRECTORY -Force | Out-Null
+                & .\scripts\Wait-Cp6DevBackupReadiness.ps1 `
+                    -MinimumFreeMemoryMiB 2048 `
+                    -RequiredConsecutiveSuccesses 3 `
+                    -MaxWaitSeconds 300 `
+                    -PollIntervalSeconds 10 `
+                    -EvidencePath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'backup-readiness.json') |
+                    Out-Null
 
           - task: PowerShell@2
             displayName: 'Backup and verify CP6_DEV before migration'
@@ -435,9 +456,12 @@ stages:
                 $databaseBackup = Get-Content `
                     -LiteralPath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'database-backup.json') `
                     -Raw | ConvertFrom-Json
+                $backupReadiness = Get-Content `
+                    -LiteralPath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'backup-readiness.json') `
+                    -Raw | ConvertFrom-Json
 
                 [ordered]@{
-                    schemaVersion = 2
+                    schemaVersion = 3
                     environment = 'cp6-dev'
                     deployedAtUtc = [DateTime]::UtcNow.ToString('o')
                     releaseVersion = $releaseVersion
@@ -456,6 +480,7 @@ stages:
                         runId = $env:CP6_CD_RUN_ID
                         runName = $env:CP6_CD_RUN_NAME
                     }
+                    backupReadiness = $backupReadiness
                     databaseBackup = $databaseBackup
                     images = [ordered]@{
                         api = [ordered]@{
