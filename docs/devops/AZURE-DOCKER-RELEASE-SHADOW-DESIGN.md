@@ -111,7 +111,7 @@ Artifact 名固定包含 `shadow` 和 Run ID，保留期可比权威证据短，
 
 ## 6. 后续实现切片
 
-1. **S0 合同**：fixture + parser + 静态 YAML contract，无外部凭据。
+1. **S0 合同（仓库实现完成）**：`azure-pipelines-release-shadow.yml` + 固定 fixture + PowerShell parser + 10 个失败关闭场景 + 静态 YAML 能力门禁；无外部凭据，尚未创建 Azure Pipeline definition。
 2. **S1 元数据**：真实 candidate chain 只读验证，发布 Shadow report。
 3. **S1 Registry**：GHCR digest 只读解析，验证 API/Web OCI 身份。
 4. **S2 对比**：独立 Agent 对同一 digest 重跑 SBOM/漏洞扫描并登记差异。

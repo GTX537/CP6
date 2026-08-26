@@ -39,12 +39,15 @@
 - 候选制品、GHCR 镜像、SBOM、漏洞扫描和签名：`.github/workflows/r2-candidate.yml`。
 - 受保护环境、数据库初始化、digest 部署和运行身份验证：`.github/workflows/r2-deploy.yml`。
 
+Azure Release Shadow S0 已有独立仓库实现：根目录 [`azure-pipelines-release-shadow.yml`](../../azure-pipelines-release-shadow.yml) 固定 `trigger: none`、`pr: none`，只在无 Secret 环境验证仓库内固定 fixture。`scripts/Test-Cp6ReleaseShadowCandidate.ps1` 逐层校验 candidate result、Schema 2 manifest、freeze/spec 哈希、GHCR allowlist/digest、供应链、签名和 ForwardOnly 元数据；输出固定为 `Authority=Shadow`、`Deployable=false`。S0 不访问真实 R2/GHCR，不拉取镜像，也未在 Azure 创建 Pipeline definition 或 Service Connection。
+
 ## 当前完成与未完成
 
 | 层次 | 状态 | 准确描述 |
 | --- | --- | --- |
 | CI 代码验证 | 已配置并已接通 | GitHub-hosted `client-contract` 执行完整编译/测试；Azure self-hosted Agent 只桥接经 SHA/摘要验证的运行包 |
 | 发布权威与 Registry | 已决策 | GitHub R2 + GHCR 是唯一候选权威；Schema 2 manifest + candidate result 是唯一候选链；Azure 只允许非权威 Shadow 验证 |
+| Azure Release Shadow | S0 仓库合同已实现；S1 未开始 | 手动 YAML、离线 parser/fixture、10 个失败关闭场景和静态能力门禁已建立；尚未读取真实候选、GHCR 或外部证据 |
 | 发布制品 | Azure 不重复构建；GitHub R2 已有实现 | Azure 不为同一版本产出 `cp6-api` / `cp6-web` 镜像或第二份清单；ACR 当前未批准 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |

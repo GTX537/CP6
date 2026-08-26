@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：Azure Release Shadow S0 仓库合同
+
+- 新增 `azure-pipelines-release-shadow.yml`：固定手动触发，在无 Secret 条件下验证仓库内固定 fixture 并只发布非权威 Shadow Artifact；未加入 Service Connection、网络下载、镜像或部署能力。
+- 新增严格 candidate parser，逐层验证 Schema 1 candidate result、Schema 2 manifest、freeze/spec SHA-256、版本/Tag/Git SHA、GHCR allowlist/digest、签名/供应链/db-init 元数据，并固定输出 `Authority=Shadow`、`Deployable=false`。
+- 新增 1 个有效与 10 个失败关闭场景，覆盖错误来源/版本/SHA/Tag/hash/repository/digest/freeze/Deployable 越权；R2 source gate 同步执行脚本解析和静态无 Build/Push/Pull/Tag/Deploy 能力合同。
+- 当前只完成仓库 S0，不代表 Azure 已创建 Pipeline、读过真实候选或获得发布权限；S1 真实候选只读元数据仍是下一独立任务。
+
 ## 2026-08-26：发布权威与 Registry 决策
 
 - 新增 `ADR-DEVOPS-001`：当前 CP6 唯一候选 Registry 为 GHCR，唯一候选/部署权威为 GitHub R2；Schema 2 `release-manifest.json` + `candidate-result.json` 是唯一候选链。

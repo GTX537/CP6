@@ -1,0 +1,13 @@
+{
+  "SchemaVersion": 1,
+  "ReleaseVersion": "1.2.3",
+  "Tag": "v1.2.3",
+  "GitSha": "0123456789abcdef0123456789abcdef01234567",
+  "GeneratedAtUtc": "2026-08-26T00:03:00Z",
+  "ManifestUri": "s3://cp6-release-evidence/releases/v1.2.3/release-manifest.json",
+  "ManifestSha256": "6F02AEF2E6D95CBF6B59BBB759C3CA9C1C3CE051CE2EE32A2655C5D435F15998",
+  "FreezeSnapshotUri": "s3://cp6-release-evidence/releases/v1.2.3/release-freeze.json",
+  "FreezeSnapshotSha256": "28B4DB592ECC193024F43770B1D82F05591A5D205D50F3E3C83D0D0ACA08C217",
+  "ExecutionSpecPath": "docs/client/r2/releases/v1.2.3/candidate.yaml",
+  "ExecutionSpecSha256": "9CEAA373697C49AF42F26D5B4E4DEA211A059CB257E4837E8346CDE249E27483"
+}
