@@ -50,12 +50,13 @@
 - 当前用户目录已安装并登录 Azure CLI 2.89.1 与 Azure DevOps 扩展 1.0.6；`CP6 DEV CD`、`CP6-Deploy`、`cp6-dev-secrets`、`cp6-dev` Environment、定向授权与 Exclusive lock 均已配置。当前自动开关为 `true`，公网验证开关为 `false`。
 - 三次手动 Run、低内存失败关闭、同 Stage 重试和最终自动 #133 已证明根 `cp6`/`CP6DB` 未受影响；自动开关保持 `true`。后续每次自动发布继续保留 readiness、备份、部署、attempt-aware Artifact 与宿主基线证据。
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
-- DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
+- DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。Registry/发布权威现已固定为 GitHub R2 + GHCR，Azure 不创建第二套候选；后续推广必须读取同一 Schema 2 manifest/digest，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 是 `Default` self-hosted 轻量 Artifact 桥、`main` trigger、`pr: none`；完整编译/测试在 GitHub `client-contract`。仍需补 Agent 运维边界和 PR 门禁归属，不把 Artifact 绿灯描述为上线。
-- 下一张 CRM 相关任务卡为 M0/R00：把 CRM V1 已锁定的 GHCR/R2 唯一权威、候选清单、Azure 非权威影子边界、等价矩阵和回退写入 ADR；不得重新选择 Registry。ACR 迁移与其他产品的长期 Azure Registry 决策独立立项。
-- 决策通过后按独立任务推进：Docker Release（版本/SHA、provenance、SBOM、扫描、digest）→ DEV Environment/健康与身份核对 → UAT → PROD 资源侧审批 → 回滚/前滚演练 → AKS 多仓。
+- CP6 通用 `ADR-DEVOPS-001` 已冻结 GHCR/R2 唯一权威、Schema 2 candidate chain、Azure 非权威 Shadow、等价矩阵和回退；CRM Draft PR #7 的多仓 System Manifest/M0 审批仍是独立范围，不能用通用 ADR 冒充 CRM named approval。
+- 下一张 DevOps 单任务卡是 Azure Release Shadow S0：新增无自动触发、无 Secret 的离线 parser/fixture/YAML 合同，证明错误来源/版本/SHA/hash/repository/digest 会失败关闭，且静态拒绝 Build/Push/Tag/Deploy 命令。
+- S0 合入后再按独立任务推进 S1 真实候选只读元数据 → GHCR digest 验证 → 独立 Agent 上同 digest SBOM/Trivy 对比 → 三个连续候选等价报告 → 同一 digest 的 DEV/UAT/PROD 推广。
 - 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。
-- CRM V1 全周期固定使用 GitHub R2/GHCR 作为候选权威；Azure 即使达到等价也只能在本 Epic 内消费相同 digest 或做非权威验证。其他产品的未来显式切换继续按 `docs/devops/AZURE-PIPELINES-PLAN.md` 独立决策。
+- CRM V1 全周期固定使用 GitHub R2/GHCR 作为候选权威；Azure 即使达到等价也只能消费相同 digest 或做非权威验证。未来任何 ACR/权威切换都必须另立 ADR，不得在产品实现票中重开。
 
 ## P0：CRM V1 端到端交付
 

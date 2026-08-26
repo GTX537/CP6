@@ -68,11 +68,9 @@ main CI -------------------------------+
                  健康、身份、迁移与证据核对
 ```
 
-目标中的“唯一受控 Registry”尚未最终切换。聊天规划建议 ACR，但仓库现行 R2 使用 GHCR。实施 Azure Release 前必须记录选择：
+目标中的“唯一受控 Registry”已由 [ADR-DEVOPS-001](./adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md) 固定为 GHCR，GitHub R2 是唯一候选权威。Azure 只读取同一候选做非权威 Shadow 验证，不另建同版本镜像、不生成第二份清单、不部署。
 
-- 若选择 ACR，定义从 GHCR/R2 到 ACR/Azure 的迁移期、镜像复制或重建禁令、清单格式和回退条件。
-- 若暂时保留 GHCR，Azure Pipelines 只消费/推广现有候选，不另建同版本镜像。
-- 不允许 GitHub 与 Azure 对同一个版本号各自重新 Build，并都声称是生产候选。
+未来若迁移 ACR，必须以新的 ADR 定义等价门禁、受控 digest 复制、单一写权威、切换窗口和 30 分钟回退；不能在普通 YAML 任务中隐式改变。
 
 ## 职责边界
 
@@ -95,7 +93,7 @@ Release 负责：
 - 生成镜像 digest、SBOM、漏洞报告、来源证明和候选清单；
 - 推送到唯一受控 Registry。
 
-CP6 的两个 Dockerfile 都支持 `RELEASE_VERSION`/`GIT_SHA`。由于 Azure `Docker@2` 的 `buildAndPush` 模式会忽略 `arguments`，实现时应拆分 build/push，或先登录再用受控 `docker buildx build`，确保版本参数、provenance、SBOM 和扫描门禁都实际执行。
+CP6 的两个 Dockerfile 都支持 `RELEASE_VERSION`/`GIT_SHA`，当前由 GitHub R2 Buildx 工作流注入。Azure Shadow 不调用 Docker Build/Push；若未来新 ADR 允许 Azure 成为构建权威，必须重新证明 build arguments、provenance、SBOM 和扫描门禁真实执行。
 
 ### CD
 
@@ -143,6 +141,8 @@ PROD 审批应配置在 Azure Environment/Service Connection 等受保护资源�
 ## 相关文档
 
 - [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md)
+- [发布权威与 Registry ADR](./adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md)
+- [Azure Release Shadow 设计](./AZURE-DOCKER-RELEASE-SHADOW-DESIGN.md)
 - [发布流程](./RELEASE-PROCESS.md)
 - [环境策略](./ENVIRONMENT-STRATEGY.md)
 - [R2 生产就绪主规范](../client/r2/README.md)
