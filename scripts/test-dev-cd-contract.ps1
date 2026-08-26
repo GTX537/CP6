@@ -32,6 +32,7 @@ $requiredPatterns = [ordered]@{
     'release policy resolver' = 'Resolve-Cp6DevReleasePlan\.ps1'
     'release behavior test' = 'test-cp6-dev-release-plan\.ps1'
     'sqlcmd resolution behavior test' = 'test-cp6-sqlcmd-resolution\.ps1'
+    'backup readiness behavior test' = 'test-cp6-dev-backup-readiness\.ps1'
     'automatic deployment switch' = 'CP6_DEV_AUTO_DEPLOY_ENABLED'
     'successful CI REST validation' = "selectedRun\.result\s*-ne\s*'succeeded'"
     'current main freshness input' = '-CurrentMainCommit \$currentMain'
@@ -55,6 +56,10 @@ $requiredPatterns = [ordered]@{
     'RabbitMQ secret mapping' = "CP6_RABBITMQ_PASSWORD:\s*'\$\(CP6_DEV_RABBITMQ_PASSWORD\)'"
     'JWT secret mapping' = "CP6_JWT_SECRET:\s*'\$\(CP6_DEV_JWT_SECRET\)'"
     'verified database backup' = 'Backup-Cp6DevDatabase\.ps1'
+    'post-package backup readiness gate' = 'Wait-Cp6DevBackupReadiness\.ps1'
+    'two GiB backup memory threshold' = '-MinimumFreeMemoryMiB 2048'
+    'three consecutive readiness successes' = '-RequiredConsecutiveSuccesses 3'
+    'bounded backup readiness wait' = '(?s)-MaxWaitSeconds 300.*?-PollIntervalSeconds 10'
     'in-lock freshness revalidation' = 'Revalidate automatic freshness inside DEV lock'
     'superseded automatic evidence' = 'deployment-skipped\.json'
     'conditional protected tasks' = "condition: and\(succeeded\(\), eq\(variables\['CP6_DEPLOY_ALLOWED'\], 'true'\)\)"
@@ -66,6 +71,7 @@ $requiredPatterns = [ordered]@{
     'optional public verification switch' = 'CP6_DEV_PUBLIC_VERIFICATION_ENABLED'
     'trigger evidence' = 'trigger\s*=\s*\[ordered\]'
     'backup evidence' = 'databaseBackup\s*=\s*\$databaseBackup'
+    'backup readiness evidence' = 'backupReadiness\s*=\s*\$backupReadiness'
     'non-secret evidence artifact' = "artifact:\s*'cp6-dev-evidence'"
 }
 
@@ -79,13 +85,15 @@ $planStageIndex = $pipeline.IndexOf('- stage: PlanRelease')
 $buildStageIndex = $pipeline.IndexOf('- stage: BuildCandidate')
 $deployStageIndex = $pipeline.IndexOf('- stage: DeployDev')
 $groupIndex = $pipeline.IndexOf('- group: cp6-dev-secrets')
+$readinessIndex = $pipeline.IndexOf('Wait-Cp6DevBackupReadiness.ps1')
 $backupIndex = $pipeline.IndexOf('Backup-Cp6DevDatabase.ps1')
 $deployActionIndex = $pipeline.IndexOf('-Action Deploy')
 if ($planStageIndex -lt 0 -or
     $buildStageIndex -le $planStageIndex -or
     $deployStageIndex -le $buildStageIndex -or
     $groupIndex -le $deployStageIndex -or
-    $backupIndex -le $groupIndex -or
+    $readinessIndex -le $groupIndex -or
+    $backupIndex -le $readinessIndex -or
     $deployActionIndex -le $backupIndex) {
     throw 'DEV CD stage, secret, backup, and deployment order is unsafe.'
 }

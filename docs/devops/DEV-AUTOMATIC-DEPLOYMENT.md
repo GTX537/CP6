@@ -1,6 +1,6 @@
 # DEV 双模式发布（本机白天测试环境）
 
-`azure-pipelines-dev.yml` 把已成功的 `GTX537.CP6/main` CI Run 发布到本机 Docker Compose 项目 `cp6-dev`。同一条 Pipeline 同时支持自动与手动模式，但初始只开放手动发布。
+`azure-pipelines-dev.yml` 把已成功的 `GTX537.CP6/main` CI Run 发布到本机 Docker Compose 项目 `cp6-dev`。同一条 Pipeline 同时支持自动与手动模式；三次手动验收完成后，自动开关已启用。
 
 这是一条本机学习/白天同事测试链，不是生产发布权威，不替代 GitHub R2/GHCR，也不能把本机重新构建的镜像推广到 UAT 或 PROD。
 
@@ -47,6 +47,7 @@ GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 s
   → 用 runtime-only Dockerfile 各封装一次 commit-addressed 镜像并捕获不可变 image ID
   → 进入 Azure Environment cp6-dev 的 exclusive lock
   → 锁内再次检查自动 Run 是否仍对应当前 main
+  → 等待宿主机至少 2048 MiB 可用内存，并取得 3 次连续独立 SQL 登录成功
   → BACKUP CP6_DEV WITH COPY_ONLY, COMPRESSION, CHECKSUM
   → RESTORE VERIFYONLY WITH CHECKSUM
   → 启动并等待 Redis/RabbitMQ/Kafka
@@ -67,6 +68,13 @@ GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 s
 `KOUSQLSERVER` 能完成真实 SQL 查询；端口监听或 Windows Service 显示 `Running` 不能替代查询验证。
 若 Application 日志出现 MSSQL 701/17300，或登录前握手/简单元数据查询超时，先停止发布并恢复 SQL
 实例，禁止连续重试 db-init。2026-08-25 的首次失败正是服务进程仍在但已无法创建新系统任务。
+
+2026-08-26 自动 Run #127 在候选封装期间收到主机内存已使用 `95.16%` 的 Agent 告警，随后首次
+`cp6_dev_backup` 登录在 SQL prelogin 阶段超时。它在备份前失败，没有新 `.bak`、迁移或容器替换，
+既有 #125 DEV 版本保持 Healthy；失败后的 8/8 独立 SQL 新连接均在 54～98 ms 内成功，排除了持久
+Secret、权限或数据库状态错误。流水线现于锁内、备份前最多等待 300 秒：只有可用内存不少于
+2048 MiB 且 3 次连续独立 SQL 登录成功才继续；否则失败关闭并发布 `backup-readiness.json`，不会
+通过重试有副作用的 BACKUP 来掩盖宿主机压力。
 
 CP6 当前不使用 PolyBase/Launchpad；故障恢复后这三个依赖服务保持停止以释放内存，但 StartMode 仍为
 Automatic。是否永久禁用属于独立的宿主机管理决定，不能由 Pipeline 或本仓库脚本静默修改。
@@ -141,6 +149,9 @@ SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；�
 | `#121` / `dev-20260825.13` | Manual；Succeeded | **是，3/3** | 再次独立分类、验证/封装、备份、部署和证据发布；SQL/公网七容器基线保持不变 |
 | `#123` / `dev-20260825.14` | completion trigger；Succeeded | 否 | 选择 main CI #122；当时自动开关仍为 `false`，Package/Deploy 安全跳过 |
 | `#124` / `20260826.1` | 基础 CI Manual；Succeeded | 否 | 自动开关改为 `true` 后重跑同一 main SHA；观察期内没有出现第二个 completion DEV Run，不用手动 DEV 冒充自动验收 |
+| `#125` / `dev-20260826.1` | completion trigger；Succeeded | 自动验收 | `ResourceTrigger` 绑定 CI #124，完整完成 Package、CHECKSUM/VERIFYONLY 备份、Deploy、健康/身份与证据；根 API/DB 基线未漂移 |
+| `#126` / `20260826.2` | 基础 CI；Succeeded | 否 | PR #26 合入后的 main Artifact 桥成功，并自动触发 #127 |
+| `#127` / `dev-20260826.2` | completion trigger；Failed | 否 | Package 成功后宿主内存使用 95.16%，SQL prelogin 超时；备份前失败关闭，无新备份/迁移/切换，暴露并促成备份前就绪门禁 |
 
 Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
 分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。Run #101 恢复后的根基线为
@@ -151,6 +162,7 @@ StartedAt `2026-08-25T15:07:03Z`；接下来的合格 Run 必须保持这组基�
 每次手动发布都必须保存：
 
 - Azure Run ID 和 Environment deployment history；
+- `cp6-dev-evidence/backup-readiness.json`：每次内存、SQL 登录和连续成功计数，以及通过/失败原因；
 - `cp6-dev-evidence/database-backup.json`：文件长度、SHA-256、CHECKSUM 和 VERIFYONLY 结果；
 - `cp6-dev-evidence/deployment.json`：触发模式、CI/CD Run、镜像 ID、迁移和本机/公网验证；
 - `19991` live/ready/release 与 `18080/release.json` 的一致完整 SHA。
@@ -196,4 +208,4 @@ DEV CD 不会自动切换 Cloudflare。切换前 `cp6.uk` 仍可能指向根 `cp
 
 ## 当前完成口径
 
-仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness 和三次手动 DEV 发布均已完成，可描述为“手动 DEV 验收 3/3”。自动开关已启用但真实 completion 发布仍待验收；独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“DEV 自动部署已验收”或“cp6.uk 已切到 cp6-dev”。
+仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness、三次手动 DEV 发布和 #125 首次真实自动发布均已完成。#127 证明连续自动运行仍需要打包后恢复保护；备份前主机/SQL 就绪门禁必须在新的 main completion 中通过后，才关闭本轮稳定性缺口。独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“cp6.uk 已切到 cp6-dev”。

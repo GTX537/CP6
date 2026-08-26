@@ -2,6 +2,12 @@
 
 最后更新：2026-08-25
 
+## 自动 #125 成功、#127 备份前内存/SQL 缺口修复中（2026-08-26）
+
+- 自动 DEV #125 以 `ResourceTrigger` 绑定成功 CI #124，完整完成 Artifact 封装、CHECKSUM/VERIFYONLY 备份、迁移、API/Web 健康与完整 SHA 身份核对；备份为 2,572,288 bytes，SHA-256 `bcd9f228...a3a574`，根 `cp6-api`/`cp6-db` ID、StartedAt、RestartCount 未变，首次自动验收成立。
+- PR #26 合入后的 main CI #126 成功并触发自动 #127；#127 Package 成功，但 Agent 在此前已报告主机内存使用 `95.16%`，首次 `cp6_dev_backup` 新登录在 SQL prelogin 阶段超时。Run 在备份前失败，没有新增 `.bak`、迁移或容器替换；既有 #125 DEV 版本保持 Healthy。失败后的 8/8 独立 SQL 新连接均在 54～98 ms 内成功，排除持久 Secret、权限或数据库状态错误。
+- 根因是流水线在本机 Docker 封装后直接进入备份，缺少主机恢复与独立 SQL 登录门禁。修复增加最多 300 秒的锁内等待，要求至少 2048 MiB 可用内存和 3 次连续新 SQL 登录成功；超时在备份/迁移前失败关闭，并发布 `backup-readiness.json`。下一步只用新的 main completion 验证该门禁，不直接重跑未修复的 #127。
+
 ## DEV 自动发布已授权，真实验收待新 main completion（2026-08-25）
 
 - 手动 DEV 验收 3/3 后，用户明确接受继续完成自动闭环；Azure `CP6 DEV CD` 的 `CP6_DEV_AUTO_DEPLOY_ENABLED` 已由 `false` 改为 `true`，`CP6_DEV_PUBLIC_VERIFICATION_ENABLED` 继续保持 `false`，因此本次任务不切换 `cp6.uk`。

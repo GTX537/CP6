@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：DEV 备份前主机/SQL 就绪门禁
+
+- 自动 #125 已真实完成首次 `ResourceTrigger` 发布；随后 #127 在 runtime-only 镜像封装后收到主机内存使用 95.16% 告警，首次 SQL prelogin 超时并在备份前失败。无新备份、迁移或容器切换，旧 DEV 健康；失败后 8/8 新连接快速成功，根因锁定为瞬时宿主压力与缺少恢复门禁。
+- DEV 锁内现最多等待 300 秒，要求至少 2048 MiB 可用内存和 3 次连续独立备份身份 SQL 登录；不满足即在 BACKUP 前失败，并归档逐次 `backup-readiness.json`，不重试有副作用的备份。
+- 成功部署证据升级为 Schema 3 并嵌入 readiness 记录；行为、sqlcmd、DEV CD 与数据安全回归通过。生产 R2/GHCR、公网开关和根 `cp6`/`CP6DB` 边界未改变。
+
 ## 2026-08-25：DEV 自动发布开关启用
 
 - 三次独立 Manual DEV 验收 3/3 后，用户明确授权继续自动闭环；Azure `CP6_DEV_AUTO_DEPLOY_ENABLED` 已设为 `true`，公网验证仍为 `false`。
