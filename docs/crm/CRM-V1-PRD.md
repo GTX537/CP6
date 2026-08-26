@@ -1,15 +1,15 @@
 # CP6 CRM V1 产品需求文档
 
-<!-- crm-v1-prd-status: Candidate -->
+<!-- crm-v1-prd-status: Approved -->
 
 - 文档 ID：`CP6-CRM-V1-PRD`
 - 版本：`0.2`
-- 状态：**Candidate for Product Approval**
+- 状态：**Approved product requirements baseline**
 - 日期：2026-08-26
 - 产品决策源：[`CP6-SAAS-V1` Frozen 产品主档](https://github.com/GTX537/CP6.CRM/blob/main/docs/product/CP6-SAAS-V1-PRODUCT-FREEZE.md)
 - 产品决策摘要：`e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`
 - 公开工程契约：`CP6-SAAS-V1-PUBLIC-CONTRACT` / `Complete` / `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`
-- 审批状态：**Pending exact-digest ProgramOwner approval**
+- 审批状态：**ProgramOwner approved exact payload digest**
 - M0：**No-Go**
 - 工程约束源：[`CRM-V1-EXECUTABLE-SPEC.md`](./CRM-V1-EXECUTABLE-SPEC.md) 与私有仓 `CP6-SAAS-V1-SYSTEM-SPEC` Candidate
 - 当前实现基线：[`CRM-V1-SPEC.md`](./CRM-V1-SPEC.md)
@@ -673,10 +673,24 @@ PRD requirement
 Public Contract Sync 已完成；产品批准后仍必须取得 M0 Go。M0 未完成时，产品批准仍不构成实施或上线授权。
 <!-- crm-v1-prd-payload:end -->
 
+## 产品批准证据
+
+- 批准角色：`ProgramOwner`
+- 批准决定：`Approved product requirements baseline`
+- 批准 payload SHA-256：`128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53`
+- 候选 commit：`ef29aef21ee241d0af49808ec16299d0b66395e3`
+- 候选 PRD blob：`b91af0e69d95aa78c8151bae17b3ef02c04a5d92`
+- GitHub 评论证据：[PR #33 comment 5422991497](https://github.com/GTX537/CP6/pull/33#issuecomment-5422991497)
+- 批准时间：`2026-08-26T09:00:05Z`
+- 规范化评论正文 SHA-256：`9ac80797566fe3a456cf7f74ae32a476c431ff5c1bdda7fa448b9adbaa0dfa92`
+- Append-only 历史记录：[2026-08-26 ProgramOwner approval](./approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner.json)
+- M0 保持：`No-Go`；本批准不授权 CRM01、实现、迁移、部署、Pilot、UAT 或生产。
+
 ## 相关文档
 
 - [CRM 文档入口](./README.md)
 - [CRM 公开产品对比与业务决策基线](./CRM-COMPETITIVE-ANALYSIS.md)
+- [PRD 审批聚合记录](./approvals/cp6-crm-v1-prd.json)
 - [CRM 产品框架](./CRM-PRODUCT-FRAMEWORK.md)
 - [CRM V1 可执行工程规格](./CRM-V1-EXECUTABLE-SPEC.md)
 - [CRM V1 Foundation 基线](./CRM-V1-SPEC.md)

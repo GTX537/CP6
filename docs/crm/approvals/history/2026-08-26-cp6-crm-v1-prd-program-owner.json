@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "recordId": "CP6-CRM-V1-PRD-APPROVAL-20260826-001",
   "decisionId": "CP6-CRM-V1-PRD",
   "version": "0.2",
   "status": "Approved",
@@ -17,7 +18,6 @@
     "payloadSha256": "8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9",
     "status": "Complete"
   },
-  "requiredApproverRole": "ProgramOwner",
   "approval": {
     "roleId": "ProgramOwner",
     "decision": "Approved product requirements baseline",
@@ -35,15 +35,26 @@
     "candidateBlob": "b91af0e69d95aa78c8151bae17b3ef02c04a5d92"
   },
   "approvedConclusions": [
-    "PRD-APPROVAL-01",
-    "PRD-APPROVAL-02",
-    "PRD-APPROVAL-03",
-    "PRD-APPROVAL-04",
-    "PRD-APPROVAL-05"
+    {
+      "id": "PRD-APPROVAL-01",
+      "text": "长期 V1 使用 Frozen SaaS 四仓边界，Portal/移动/双区域/商业化属于产品 V1，但按门禁分切片交付。"
+    },
+    {
+      "id": "PRD-APPROVAL-02",
+      "text": "第一可见结果是 Lead Pilot C 分栏工作台，不以 Dashboard 或全菜单铺开替代。"
+    },
+    {
+      "id": "PRD-APPROVAL-03",
+      "text": "前端不复制状态机、权限、DataScope、PII 或 Entitlement；所有写入使用后端命令、幂等和 ETag。"
+    },
+    {
+      "id": "PRD-APPROVAL-04",
+      "text": "Opportunity 同时支持 Cp6Erp 与 ExternalEvidence，但 Won 必须有合法且不可变的成交依据。"
+    },
+    {
+      "id": "PRD-APPROVAL-05",
+      "text": "后续升级通过版本化 API、事件、字段定义、原因 code 和连接器边界扩展，不破坏稳定业务语义。"
+    }
   ],
-  "approvalHistory": {
-    "path": "docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner.json",
-    "recordSha256": "fe832dba00cc79f5f4a50d1777fff6954cc9cd2f8f8854a693561ab82d1da85b"
-  },
   "m0Status": "No-Go"
 }

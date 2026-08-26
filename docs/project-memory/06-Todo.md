@@ -66,7 +66,7 @@
 
 ## P0：CRM V1 端到端交付
 
-- 对 `docs/crm/CRM-V1-PRD.md` v0.2 候选摘要 `128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53` 完成唯一 `ProgramOwner` 的不可变审批；审批必须逐项同意五个产品结论，并绑定候选 commit/blob。未完成前状态保持 Candidate。
+- `docs/crm/CRM-V1-PRD.md` v0.2 已由唯一 `ProgramOwner` 对摘要 `128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53` 和五个产品结论形成不可变批准；任何改变 V1 范围、状态语义、商业规则或数据主权的修改必须升版本并重新审批。
 - Public Contract Sync 已由 PR #8 完成并合入主线；继续以公开摘要 `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9` 作为工程边界，不得选择性恢复历史三仓范围。
 - R00 已 Accepted 且公开镜像 Complete。M0 继续关闭 Azure SQL/Emergency Intake、System Manifest 整体回退、各专业证据 DRI、Pilot cohort、Observation Gate、Critical/High、私有仓保护和必需检查；任一缺失即 No-Go。
 - 当前 `main` 的 20 表、状态机、迁移、6 个禁用菜单和 22 个动作只作为迁移源与兼容语义；私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only，不得把仓库存在或菜单种子描述为应用开工。

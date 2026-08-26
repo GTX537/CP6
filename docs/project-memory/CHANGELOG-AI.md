@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：CRM V1 PRD 产品基线批准
+
+- 合入 CRM V1 PRD v0.2 与公开竞品研究，规范 payload SHA-256 固定为 `128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53`。
+- ProgramOwner 在 PR #33 明确批准五项产品结论；append-only 证据绑定候选 commit `ef29aef2...`、PRD blob `b91af0e6...`、评论正文摘要和历史记录摘要。
+- 状态更新为 `Approved product requirements baseline`；Public Contract Sync 保持 Complete，M0 保持 No-Go，没有实现或部署副作用。
+
 ## 2026-08-26：发布权威与 Registry 决策
 
 - 新增 `ADR-DEVOPS-001`：当前 CP6 唯一候选 Registry 为 GHCR，唯一候选/部署权威为 GitHub R2；Schema 2 `release-manifest.json` + `candidate-result.json` 是唯一候选链。

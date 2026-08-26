@@ -1,10 +1,10 @@
 # 项目当前状态
 
-## CRM V1 PRD 精确摘要审批候选（2026-08-26）
+## CRM V1 PRD 产品基线批准（2026-08-26）
 
 - `docs/crm/CRM-V1-PRD.md` v0.2 已迁移到最新 `main`，与 `CRM-COMP-001`～`007` 研究基线、Frozen 产品主档和已完成公开合同统一；规范 payload SHA-256 为 `128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53`。
-- 当前状态为 `Candidate for Product Approval`，只等待唯一 `ProgramOwner` 对精确摘要和五项产品结论形成不可变 PR 评论证据；批准证据必须绑定候选 commit/blob，并以 append-only 历史记录保存。
-- Public Contract Sync 已为 Complete，M0 仍为 No-Go。本候选没有创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也不解锁 CRM01。
+- 唯一 `ProgramOwner` 已在 PR #33 明确同意五项产品结论，并把批准绑定候选 commit `ef29aef21ee241d0af49808ec16299d0b66395e3`、PRD blob `b91af0e69d95aa78c8151bae17b3ef02c04a5d92` 和规范化评论摘要 `9ac80797566fe3a456cf7f74ae32a476c431ff5c1bdda7fa448b9adbaa0dfa92`；append-only 历史记录摘要为 `fe832dba00cc79f5f4a50d1777fff6954cc9cd2f8f8854a693561ab82d1da85b`。
+- PRD 状态为 `Approved product requirements baseline`，Public Contract Sync 为 Complete，M0 仍为 No-Go。本批准没有创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也不解锁 CRM01。
 
 最后更新：2026-08-26
 

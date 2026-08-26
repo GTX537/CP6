@@ -1,0 +1,35 @@
+name: crm-v1-prd
+
+on:
+  # This workflow is a required check, so it must report a result for every PR.
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/crm-v1-prd.yml"
+      - "docs/crm/**"
+      - "docs/project-memory/**"
+      - "README.md"
+      - "tools/Test-CrmV1Prd.ps1"
+      - "tools/Test-CrmV1Prd.Tests.ps1"
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  verify:
+    name: crm-v1-prd
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify approved CRM V1 product requirements
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./tools/Test-CrmV1Prd.ps1 -VerifyGitHubEvidence
+          ./tools/Test-CrmV1Prd.Tests.ps1

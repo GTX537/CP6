@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-26 CRM V1 PRD 产品基线批准
+
+- 将详细 CRM V1 PRD v0.2 与 9 个公开竞品研究基线迁移到最新主线，并与 Frozen 产品摘要、已完成公共合同和四仓权威边界统一。
+- 唯一 `ProgramOwner` 在 PR #33 对 payload SHA-256 `128bda13277a50fa024c8912676d7ed9e842fd6837b7de11d6055eb8e176fc53` 及五项产品结论形成不可变批准；证据绑定候选 commit/blob、评论正文摘要和 append-only 历史记录。
+- 该批准只冻结产品需求。M0 继续 No-Go；未创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也未解锁 CRM01。
+
 ## 2026-08-26 发布权威与 Registry 决策
 
 - 选择继续由 GitHub R2 + GHCR 作为当前 CP6 唯一候选权威；Schema 2 manifest + candidate result 是唯一候选链，Azure 不为同一版本重新 Build 或生成第二份候选。
