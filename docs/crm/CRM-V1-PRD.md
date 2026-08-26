@@ -1,15 +1,15 @@
 # CP6 CRM V1 产品需求文档
 
-<!-- crm-v1-prd-status: Candidate -->
+<!-- crm-v1-prd-status: Approved -->
 
 - 文档 ID：`CP6-CRM-V1-PRD`
 - 版本：`0.2`
-- 状态：**Candidate for Product Approval**
+- 状态：**Approved product requirements baseline**
 - 日期：2026-08-26
 - 产品决策源：[`CP6-SAAS-V1` Frozen 产品主档](https://github.com/GTX537/CP6.CRM/blob/main/docs/product/CP6-SAAS-V1-PRODUCT-FREEZE.md)
 - 产品决策摘要：`e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`
 - 公开工程契约：`CP6-SAAS-V1-PUBLIC-CONTRACT` / `Complete` / `8950c63c9ed37d01a8c39c4e7df9267e69596057340eb48fbd668049eeca06d9`
-- 审批状态：**Pending sanitized exact-digest ProgramOwner approval**
+- 审批状态：**ProgramOwner approved fully sanitized clean payload digest**
 - M0：**No-Go**
 - 工程约束源：[`CRM-V1-EXECUTABLE-SPEC.md`](./CRM-V1-EXECUTABLE-SPEC.md) 与私有仓 `CP6-SAAS-V1-SYSTEM-SPEC` Candidate
 - 当前实现基线：[`CRM-V1-SPEC.md`](./CRM-V1-SPEC.md)
@@ -670,13 +670,19 @@ PRD requirement
 Public Contract Sync 已完成；产品批准后仍必须取得 M0 Go。M0 未完成时，产品批准仍不构成实施或上线授权。
 <!-- crm-v1-prd-payload:end -->
 
-## 审批候选
+## 当前产品批准证据
 
-- 所需角色：`ProgramOwner`
-- 候选 payload SHA-256：`5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`
-- 候选必须绑定本文件 payload 的精确 SHA-256、候选 commit 与 PRD blob。
-- 任何批准只冻结产品需求；M0 保持 `No-Go`，不授权 CRM01、实现、迁移、部署、Pilot、UAT 或生产。
-- 三次未合并的预审批尝试因脱敏声明不完整而作废；相关记录仅保留在未合并 PR 的审计轨迹中，不进入 `main` 提交祖先或公开产品基线。
+- 批准角色：`ProgramOwner`
+- 批准决定：`Approved product requirements baseline`
+- 批准 payload SHA-256：`5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`
+- 候选 commit：`00fa3aea66045cb2b949b691824f0fbb830cc739`
+- 候选 PRD blob：`b6f8da119bf700340616e8a2d3cc01ceb0dd38d6`
+- GitHub 评论证据：[PR #35 comment 5423567483](https://github.com/GTX537/CP6/pull/35#issuecomment-5423567483)
+- 批准时间：`2026-08-26T09:50:21Z`
+- 规范化评论正文 SHA-256：`4092bc5ec3338be408292c5f240579ed036dcd1033858b4d237dc38d39608de1`
+- Append-only 当前历史记录：[2026-08-26 ProgramOwner fully sanitized clean approval](./approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json)
+- 三次未合并预审批因脱敏声明不完整而作废；只保留未合并 PR 审计轨迹，不进入 `main` 提交祖先或公开产品基线。
+- M0 保持：`No-Go`；当前批准不授权 CRM01、实现、迁移、部署、Pilot、UAT 或生产。
 
 ## 相关文档
 

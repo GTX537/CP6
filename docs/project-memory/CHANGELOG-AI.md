@@ -2,11 +2,11 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-26：CRM V1 PRD 脱敏审批候选
+## 2026-08-26：CRM V1 PRD 完整脱敏产品基线批准
 
 - 合入前审查发现三次未合并 payload 仍公开了应保留在私有仓的商业 cohort、精确推广时间表或私有数值采用门禁；三次预审批均作废。
 - 从最新 `main` 新建不继承旧敏感提交祖先的干净候选分支，并扩大脱敏范围到 PRD、竞品基线和项目记忆；旧证据仅保留在未合并 PR 审计轨迹中。
-- 当前状态为 `Candidate for Product Approval`；Public Contract Sync 保持 Complete，M0 保持 No-Go，没有实现或部署副作用。
+- 唯一 ProgramOwner 已批准完整脱敏 payload、候选 commit/blob 和五项产品结论；当前状态为 `Approved product requirements baseline`，Public Contract Sync 保持 Complete，M0 保持 No-Go，没有实现或部署副作用。
 
 ## 2026-08-26：发布权威与 Registry 决策
 
