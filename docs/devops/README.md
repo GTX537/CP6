@@ -26,7 +26,7 @@
 - GitHub `.github/workflows/client-contract.yml` 在 GitHub-hosted Runner 完成 .NET、客户端、OpenAPI、Web、Android 与 R2 source 门禁，并生成名称含完整 Git SHA、内部逐文件 SHA-256 的 `cp6-dev-runtime-<sha>`；保留期为 3 天。
 - Azure 只接受同一仓库、同一完整 SHA、指定工作流路径、`push`/`workflow_dispatch` 事件且结论为 `success` 的未过期 Artifact；下载归档还必须匹配 GitHub SHA-256，解压后再次验证内部 manifest。
 - Azure [`Run #116`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=116) 因错误查询非仓库专属 Checkout extraheader 在下载前失败，Publish 被跳过；修复后分支 [`Run #117`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=117) 与 main [`Run #118`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=118) 均成功下载、验证并发布 Azure `cp6-dev-runtime`。SQL 与公网七容器基线未变。
-- 该桥自身不构建/推送生产镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 下载并验证所选成功 `main` Azure Artifact 后只做 runtime-only 镜像封装。Manual DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95)、[`#120`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=120)、[`#121`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=121) 已完成 3/3；自动 [`Run #125`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=125) 又以 `ResourceTrigger` 真实完成 Package/Deploy 和全部证据门禁。自动开关保持开启，公网验证仍关闭。
+- 该桥自身不构建/推送生产镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 下载并验证所选成功 `main` Azure Artifact 后只做 runtime-only 镜像封装。Manual DEV [`Run #95`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=95)、[`#120`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=120)、[`#121`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=121) 已完成 3/3。#129 证明 2 GiB + 3 次 SQL 门禁会在备份前失败关闭；#131 证明同 Stage 重试必须按 `System.StageAttempt` 区分证据 Artifact。修复后基础 CI [`#132`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=132) 自动触发 DEV [`#133`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=133)，600 秒 readiness、备份、部署、健康/身份和 `cp6-dev-evidence-attempt-1` 均成功。自动开关保持开启，公网验证仍关闭。
 
 项目上下文确认 self-hosted Agent 已接通并能执行该 CI。具体 Agent 名称、在线状态和历史运行结果属于 Azure DevOps 外部运行证据，不能只靠仓库文件推断。
 
@@ -46,7 +46,7 @@
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |
 | 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；最新 Readiness [`Run #89`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=89) 验证身份、Docker、Compose、SQL TCP、`sqlcmd` 与备份目录 |
-| Azure DEV 双模式发布 | 手动/自动均已验收 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；#95/#120/#121 Manual 3/3，#125 `ResourceTrigger` 真实自动发布成功。5 份备份均保留，最新 CHECKSUM/VERIFYONLY 与本机哈希复核通过；公网验证保持关闭，根环境基线不变 |
+| Azure DEV 双模式发布 | 手动/自动均已验收 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；#95/#120/#121 Manual 3/3，#129 证明低内存失败关闭，#131 暴露并修复重试证据命名，#132→#133 最终自动发布成功。7 份备份均保留，最新 CHECKSUM/VERIFYONLY 与本机 SHA-256 复核通过；公网验证保持关闭，根环境基线不变 |
 | 白天测试公网 | 工具已交付，切换待执行 | `cp6-public-tunnel` 只连接 `cp6-dev_default`；切换前必须显式停止旧 `cp6-cloudflared`，Pipeline 不自动切换 Cloudflare |
 | 私人本地 `cp6`/`CP6DB` | 保持独立 | DEV CD 不操作根 Compose、`CP6DB` 或 `cp6_cp6-db-data`；DEV 数据只能手动恢复为新的 `CP6DEV_IMPORT_*` 旁路库 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |

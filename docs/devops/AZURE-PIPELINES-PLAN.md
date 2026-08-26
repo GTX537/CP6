@@ -63,7 +63,7 @@
 
 状态：**待 Phase 3**。
 
-学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选哈希 Runtime Artifact 封装本机 SHA 镜像，先对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY，再停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；Manual #95/#120/#121 已完成 3/3，自动 #125 已以真实 `ResourceTrigger` 完成 Package/Deploy 和全部证据门禁。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；Tunnel 切换仍须单独授权。
+学习环境旁路（不计入 Phase 4 生产门禁）：`azure-pipelines-dev.yml` 现以同一实现支持手动发布和受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制的 completion trigger。它只接受成功的 `GTX537.CP6/main` Run，自动跳过 superseded commit；从所选哈希 Runtime Artifact 封装本机 SHA 镜像，锁内最多等待 600 秒取得至少 2 GiB 可用内存及 3 次连续独立 SQL 登录，再对 `CP6_DEV` 执行 CHECKSUM 备份/VERIFYONLY、停旧 API/Web、前向迁移并逐层验证。独立 `cp6-public-tunnel` 和 `CP6DEV_IMPORT_*` 旁路导入不会触碰根 `cp6`/`CP6DB`。外部 Secret、定向资源权限和 Exclusive lock 已配置；Manual #95/#120/#121 已完成 3/3，#129 已证明低内存会在 SQL/备份前失败关闭，#131 的同 Stage 重试又暴露并修复固定证据 Artifact 名冲突。main CI #132 随后以 `main@08813896...` 自动触发 DEV #133，600 秒门禁、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份与 `cp6-dev-evidence-attempt-1` 全部成功，根 `cp6`/`CP6DB` 零漂移。该链没有 Registry/SBOM/签名，不能推广到 UAT/PROD-LAB，也不能把 Phase 3/4 标为完成；Tunnel 切换仍须单独授权。
 
 - [x] 创建 `cp6-dev` Azure Environment，并只授权 `CP6 DEV CD`；Exclusive lock 与 Run #95 部署历史已验证。
 - [x] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool、`cp6_deploy_agent` 服务身份和强化后的 Readiness Run #89 已验证。

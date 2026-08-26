@@ -2,7 +2,21 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-25：DEV 自动发布真实验收
+## 2026-08-26：DEV 自动发布稳定性闭环
+
+- #131 attempt 1 在 61 次低内存采样后于 SQL/备份前失败；同 Run 重试 Deploy 后实际完成备份、迁移、健康与 `50a1db6d...` 身份，只因 attempt 1/2 复用固定 Artifact 名而最终失败。证据 Artifact 现按只读 `System.StageAttempt` 命名，保留每次尝试且不冲突。
+- PR #30 合入 `main@08813896...` 后，GitHub client-contract/SQL 与 Azure 基础 CI #132 成功；#132 通过 Pipeline Completion 自动触发 #133，同 SHA、main 与来源 CI 关联均通过分类和锁内新鲜度检查。
+- 自动 #133 readiness 三次为 2184/2383/2411 MiB 且 SQL=True；第 7 份 CHECKSUM/VERIFYONLY 备份为 2,600,960 bytes、SHA-256 `af4f48fd...d804c9de`。API/Web Healthy、完整 SHA 身份一致，`cp6-dev-evidence-attempt-1` 发布成功，根 API/DB ID、StartedAt、RestartCount 未变。
+- 自动开关保持 `true`，公网验证保持 `false`；没有切换 Cloudflare，生产发布权威仍为 GitHub R2/GHCR，本机 DEV 结论不外推到 UAT/PROD。
+
+## 2026-08-26：DEV 备份前主机/SQL 就绪门禁
+
+- 自动 #125 已真实完成首次 `ResourceTrigger` 发布；随后 #127 在 runtime-only 镜像封装后收到主机内存使用 95.16% 告警，首次 SQL prelogin 超时并在备份前失败。无新备份、迁移或容器切换，旧 DEV 健康；失败后 8/8 新连接快速成功，根因锁定为瞬时宿主压力与缺少恢复门禁。
+- DEV 锁内现最多等待 600 秒，要求至少 2048 MiB 可用内存和 3 次连续独立备份身份 SQL 登录；不满足即在 BACKUP 前失败，并归档逐次 `backup-readiness.json`，不重试有副作用的备份。
+- 成功部署证据升级为 Schema 3 并嵌入 readiness 记录；行为、sqlcmd、DEV CD 与数据安全回归通过。生产 R2/GHCR、公网开关和根 `cp6`/`CP6DB` 边界未改变。
+- main CI #128 成功后，自动 #129 的 31 次采样始终只有 1328～1861 MiB；SQL/备份/迁移/切换全部未启动，证明门禁真实失败关闭。主机约 8 分 40 秒后才恢复到 2 GiB，因此等待窗口由 300 扩为 600 秒而不降低安全阈值。
+
+## 2026-08-25：DEV 自动发布开关启用
 
 - 三次独立 Manual DEV 验收 3/3 后，用户明确授权继续自动闭环；Azure `CP6_DEV_AUTO_DEPLOY_ENABLED=true`，公网验证仍为 `false`。
 - 基础 CI #124 completion 真实触发 DEV #125 / `resourceTrigger`；Artifact 校验/封装、CHECKSUM/VERIFYONLY 备份、迁移、健康/身份和 2 文件证据均成功。第 5 份备份为 2,572,288 bytes，SHA-256 `bcd9f228...a574`，本机复算一致。

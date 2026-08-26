@@ -5,6 +5,8 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 
 $backupPath = Join-Path $PSScriptRoot 'Backup-Cp6DevDatabase.ps1'
+$backupReadinessPath = Join-Path $PSScriptRoot 'Wait-Cp6DevBackupReadiness.ps1'
+$backupReadinessTestPath = Join-Path $PSScriptRoot 'test-cp6-dev-backup-readiness.ps1'
 $sqlcmdModulePath = Join-Path $PSScriptRoot 'Cp6.Sqlcmd.psm1'
 $sqlcmdTestPath = Join-Path $PSScriptRoot 'test-cp6-sqlcmd-resolution.ps1'
 $exportPath = Join-Path $PSScriptRoot 'Export-Cp6DevSnapshot.ps1'
@@ -14,6 +16,8 @@ $pipelinePath = Join-Path $repoRoot 'azure-pipelines-dev.yml'
 
 foreach ($path in @(
     $backupPath,
+    $backupReadinessPath,
+    $backupReadinessTestPath,
     $sqlcmdModulePath,
     $sqlcmdTestPath,
     $exportPath,
@@ -27,6 +31,8 @@ foreach ($path in @(
 }
 
 $backup = Get-Content -LiteralPath $backupPath -Raw -Encoding utf8
+$backupReadiness = Get-Content -LiteralPath $backupReadinessPath -Raw -Encoding utf8
+$backupReadinessTest = Get-Content -LiteralPath $backupReadinessTestPath -Raw -Encoding utf8
 $sqlcmdModule = Get-Content -LiteralPath $sqlcmdModulePath -Raw -Encoding utf8
 $sqlcmdTest = Get-Content -LiteralPath $sqlcmdTestPath -Raw -Encoding utf8
 $export = Get-Content -LiteralPath $exportPath -Raw -Encoding utf8
@@ -78,6 +84,35 @@ if ($backup -match '(?m)(?:^|\s)-P(?:\s|$)' -or $backup -match 'CP6DB') {
     throw 'CP6_DEV backup must not put a password on the command line or address CP6DB.'
 }
 
+foreach ($pattern in @(
+    "\[ValidateSet\('CP6_DEV'\)\]",
+    "\[ValidateSet\('cp6_dev_backup'\)\]",
+    'MinimumFreeMemoryMiB',
+    'RequiredConsecutiveSuccesses',
+    'SQLCMDPASSWORD',
+    '-l 5',
+    '-t 5',
+    "\[ValidateSet\('passed', 'failed'\)\]",
+    'Write-ReadinessEvidence'
+)) {
+    if ($backupReadiness -notmatch $pattern) {
+        throw "CP6_DEV backup readiness contract is missing '$pattern'."
+    }
+}
+foreach ($pattern in @(
+    'three consecutive safe samples',
+    'transient SQL failure',
+    'fail closed before SQL access',
+    '5 scenarios'
+)) {
+    if ($backupReadinessTest -notmatch $pattern) {
+        throw "CP6_DEV backup readiness behavior test is missing '$pattern'."
+    }
+}
+if ($backupReadiness -match '(?m)(?:^|\s)-P(?:\s|$)' -or $backupReadiness -match 'CP6DB') {
+    throw 'CP6_DEV backup readiness must not expose a password or address CP6DB.'
+}
+
 if ($export -notmatch 'Get-Credential' -or
     $export -notmatch "Credential\.UserName -ne 'cp6_dev_backup'" -or
     $export -notmatch 'Backup-Cp6DevDatabase\.ps1') {
@@ -124,10 +159,13 @@ if ($infraIndex -lt 0 -or
     throw 'Lab deploy must start infrastructure, stop Web/API, migrate, verify API, then start Web.'
 }
 
+$pipelineReadinessIndex = $pipeline.IndexOf('Wait-Cp6DevBackupReadiness.ps1')
 $pipelineBackupIndex = $pipeline.IndexOf('Backup-Cp6DevDatabase.ps1')
 $pipelineDeployIndex = $pipeline.IndexOf('-Action Deploy')
-if ($pipelineBackupIndex -lt 0 -or $pipelineDeployIndex -le $pipelineBackupIndex) {
-    throw 'Pipeline must complete the verified CP6_DEV backup before app stop/migration.'
+if ($pipelineReadinessIndex -lt 0 -or
+    $pipelineBackupIndex -le $pipelineReadinessIndex -or
+    $pipelineDeployIndex -le $pipelineBackupIndex) {
+    throw 'Pipeline must pass readiness and the verified CP6_DEV backup before app stop/migration.'
 }
 
 Write-Host 'CP6 DEV backup and side-by-side import safety contract passed.'

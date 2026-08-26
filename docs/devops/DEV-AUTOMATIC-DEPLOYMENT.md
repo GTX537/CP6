@@ -1,6 +1,6 @@
 # DEV 双模式发布（本机白天测试环境）
 
-`azure-pipelines-dev.yml` 把已成功的 `GTX537.CP6/main` CI Run 发布到本机 Docker Compose 项目 `cp6-dev`。同一条 Pipeline 同时支持自动与手动模式，但初始只开放手动发布。
+`azure-pipelines-dev.yml` 把已成功的 `GTX537.CP6/main` CI Run 发布到本机 Docker Compose 项目 `cp6-dev`。同一条 Pipeline 同时支持自动与手动模式；三次手动验收完成后，自动开关已启用。
 
 这是一条本机学习/白天同事测试链，不是生产发布权威，不替代 GitHub R2/GHCR，也不能把本机重新构建的镜像推广到 UAT 或 PROD。
 
@@ -47,6 +47,7 @@ GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 s
   → 用 runtime-only Dockerfile 各封装一次 commit-addressed 镜像并捕获不可变 image ID
   → 进入 Azure Environment cp6-dev 的 exclusive lock
   → 锁内再次检查自动 Run 是否仍对应当前 main
+  → 等待宿主机至少 2048 MiB 可用内存，并取得 3 次连续独立 SQL 登录成功
   → BACKUP CP6_DEV WITH COPY_ONLY, COMPRESSION, CHECKSUM
   → RESTORE VERIFYONLY WITH CHECKSUM
   → 启动并等待 Redis/RabbitMQ/Kafka
@@ -55,7 +56,7 @@ GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 s
   → 启动 API，校验运行容器 image ID 与 live/ready/release
   → 启动 Web，校验运行容器 image ID 与 release.json
   → 可选校验 cp6.uk/api.cp6.uk
-  → 发布 cp6-dev-evidence
+  → 发布 cp6-dev-evidence-attempt-<System.StageAttempt>
 ```
 
 预计维护窗口为 1～3 分钟。迁移失败或新 API 无法就绪时失败关闭；脚本不会把旧 API 自动套回已经前移的 Schema。处理方式是保留备份证据、修复问题并前滚。若确需数据库恢复，必须另行人工授权和停机，不由 Pipeline 自动执行。
@@ -67,6 +68,13 @@ GitHub `client-contract` 在 hosted Runner 完成 API/Web/客户端/Android/R2 s
 `KOUSQLSERVER` 能完成真实 SQL 查询；端口监听或 Windows Service 显示 `Running` 不能替代查询验证。
 若 Application 日志出现 MSSQL 701/17300，或登录前握手/简单元数据查询超时，先停止发布并恢复 SQL
 实例，禁止连续重试 db-init。2026-08-25 的首次失败正是服务进程仍在但已无法创建新系统任务。
+
+2026-08-26 自动 Run #127 在候选封装期间收到主机内存已使用 `95.16%` 的 Agent 告警，随后首次
+`cp6_dev_backup` 登录在 SQL prelogin 阶段超时。它在备份前失败，没有新 `.bak`、迁移或容器替换，
+既有 #125 DEV 版本保持 Healthy；失败后的 8/8 独立 SQL 新连接均在 54～98 ms 内成功，排除了持久
+Secret、权限或数据库状态错误。流水线现于锁内、备份前最多等待 600 秒：只有可用内存不少于
+2048 MiB 且 3 次连续独立 SQL 登录成功才继续；否则失败关闭并发布 `backup-readiness.json`，不会
+通过重试有副作用的 BACKUP 来掩盖宿主机压力。
 
 CP6 当前不使用 PolyBase/Launchpad；故障恢复后这三个依赖服务保持停止以释放内存，但 StartMode 仍为
 Automatic。是否永久禁用属于独立的宿主机管理决定，不能由 Pipeline 或本仓库脚本静默修改。
@@ -140,23 +148,34 @@ SQL Server 服务账号还必须对 `C:\CP6Backups\CP6_DEV` 有读写权限；�
 | `#120` / `dev-20260825.12` | Manual；Succeeded | **是，2/3** | 复用 main #118 Artifact；独立 CHECKSUM/VERIFYONLY 备份、迁移、API/Web 身份、健康与证据 Artifact 全部成功 |
 | `#121` / `dev-20260825.13` | Manual；Succeeded | **是，3/3** | 再次独立分类、验证/封装、备份、部署和证据发布；SQL/公网七容器基线保持不变 |
 | `#123` / `dev-20260825.14` | completion trigger；Succeeded | 否 | 选择 main CI #122；当时自动开关仍为 `false`，Package/Deploy 安全跳过 |
-| `#124` / `20260826.1` | 基础 CI Manual；Succeeded | 否 | 自动开关改为 `true` 后重跑同一 main SHA；它是被选择的基础 CI，不是 DEV Run |
-| `#125` / `dev-20260826.1` | completion trigger；Succeeded | **自动验收通过** | #124 完成约 6 秒后以 `ResourceTrigger` 排队；真实完成 Package、备份/VERIFYONLY、Deploy、身份/健康与 2 文件证据发布，根环境零漂移 |
+| `#124` / `20260826.1` | 基础 CI Manual；Succeeded | 否 | 自动开关改为 `true` 后重跑同一 main SHA；观察期内没有出现第二个 completion DEV Run，不用手动 DEV 冒充自动验收 |
+| `#125` / `dev-20260826.1` | completion trigger；Succeeded | 自动验收 | `ResourceTrigger` 绑定 CI #124，完整完成 Package、CHECKSUM/VERIFYONLY 备份、Deploy、健康/身份与证据；根 API/DB 基线未漂移 |
+| `#126` / `20260826.2` | 基础 CI；Succeeded | 否 | PR #26 合入后的 main Artifact 桥成功，并自动触发 #127 |
+| `#127` / `dev-20260826.2` | completion trigger；Failed | 否 | Package 成功后宿主内存使用 95.16%，SQL prelogin 超时；备份前失败关闭，无新备份/迁移/切换，暴露并促成备份前就绪门禁 |
+| `#129` / `dev-20260826.3` | completion trigger；Failed | 安全门禁验收 | 绑定 main CI #128 / `318bcb2d...`；31 次采样仅 1328～1861 MiB，SQL/备份均未启动，备份/迁移/切换全部 Skipped。主机在门禁结束约 3 分 36 秒后自然恢复到 2 GiB 以上，因此等待窗口由 300 调整为 600 秒，不降低阈值 |
+| `#130` / `20260826.4` | 基础 CI；Succeeded | 否 | 绑定 main `50a1db6d...`，同 SHA GitHub Runtime Artifact 下载、逐文件校验和 Azure Artifact 发布全部成功，并自动触发 #131 |
+| `#131` / `dev-20260826.4` | completion trigger；Failed | 部署成功、证据重试缺口 | 首次 Deploy attempt 的 61 次采样仅 1254～1756 MiB，在 SQL/备份前失败；关闭非关键应用并重试同一 `DeployDev` 后，就绪、CHECKSUM/VERIFYONLY 备份、迁移、健康与 `50a1db6d...` 身份均成功，根 API/DB 未漂移。Run 最终仅因 attempt 1 已占用固定 `cp6-dev-evidence` 名称，attempt 2 发布同名 Artifact 被拒绝而失败；证据名现加入 `System.StageAttempt` 防重名 |
+| `#132` / `20260826.5` | 基础 CI；Succeeded | 否 | PR #30 合入 `main@08813896...` 后以 `individualCI` 自动运行；下载同 SHA GitHub Runtime Artifact、验证并发布 Azure Artifact，随后自动触发 #133 |
+| `#133` / `dev-20260826.5` | completion trigger；Succeeded | **最终自动验收通过** | `pipelineTriggerType=PipelineCompletion` 绑定 CI #132；readiness 三次为 2184/2383/2411 MiB 且 SQL=True，随后完成第 7 份 CHECKSUM/VERIFYONLY 备份、迁移、API/Web 健康/完整 SHA 身份与 `cp6-dev-evidence-attempt-1` 发布，根 API/DB 基线未漂移 |
 
 Run #95 发布 `0.0.0-dev.92` / `47ca8441898af69d1e66bc1acb6c51129dbe9c18`；API/Web
 分别在 `127.0.0.1:19991` / `127.0.0.1:18080` Healthy。Run #101 恢复后的根基线为
 `cp6-db` RestartCount `2` / StartedAt `2026-08-25T15:06:55Z`、`cp6-api` RestartCount `3` /
 StartedAt `2026-08-25T15:07:03Z`；接下来的合格 Run 必须保持这组基线不变。
-当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`、`CP6_DEV_PUBLIC_VERIFICATION_ENABLED=false`。#125 已完成一次真实自动 DEV 发布验收；第 5 份备份 SHA-256 为 `bcd9f228...a574`，DEV API/Web 为 `main@ecbad9e1...` 且 Healthy。
+当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`、`CP6_DEV_PUBLIC_VERIFICATION_ENABLED=false`。#133 已完成 600 秒恢复窗口与 retry-safe Artifact 修复后的最终自动 DEV 发布验收；第 7 份备份 SHA-256 为 `af4f48fd19daeeb2461411a4210a1cb384c649a4fd01322b82b74555d804c9de`，DEV API/Web 为 `main@08813896...` 且 Healthy。
 
 每次手动发布都必须保存：
 
 - Azure Run ID 和 Environment deployment history；
-- `cp6-dev-evidence/database-backup.json`：文件长度、SHA-256、CHECKSUM 和 VERIFYONLY 结果；
-- `cp6-dev-evidence/deployment.json`：触发模式、CI/CD Run、镜像 ID、迁移和本机/公网验证；
+- `cp6-dev-evidence-attempt-<N>/backup-readiness.json`：每次内存、SQL 登录和连续成功计数，以及通过/失败原因；
+- `cp6-dev-evidence-attempt-<N>/database-backup.json`：文件长度、SHA-256、CHECKSUM 和 VERIFYONLY 结果；
+- `cp6-dev-evidence-attempt-<N>/deployment.json`：触发模式、CI/CD Run、镜像 ID、迁移和本机/公网验证；
 - `19991` live/ready/release 与 `18080/release.json` 的一致完整 SHA。
 
-#95/#120/#121 已满足连续三次独立成功、exclusive lock、生效备份和根 `cp6` 零漂移门禁；#125 又以真实 `ResourceTrigger` 完成自动 Package/Deploy 和全部证据门禁。当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`。任何旧版本手动回退前先重新关闭自动。
+`<N>` 是只读的 `System.StageAttempt`。正常首次执行发布 `attempt-1`；同一 Run 重试
+`DeployDev` 时递增为 `attempt-2`、`attempt-3`，保留每次失败/成功证据且不会覆盖或冲突。
+
+#95/#120/#121 已满足连续三次独立成功、exclusive lock、生效备份和根 `cp6` 零漂移门禁；#133 又以真实 Pipeline Completion 完成 600 秒 readiness、自动 Package/Deploy、完整身份与 `attempt-1` 证据发布。当前 `CP6_DEV_AUTO_DEPLOY_ENABLED=true`，自动 DEV 已验收。任何旧版本手动回退前先重新关闭自动。
 
 ## 公网 Tunnel 的一次性切换
 
@@ -197,4 +216,4 @@ DEV CD 不会自动切换 Cloudflare。切换前 `cp6.uk` 仍可能指向根 `cp
 
 ## 当前完成口径
 
-仓库能力、Azure 定向权限/Secret/Exclusive lock、Readiness、手动 DEV 3/3 和 #125 自动 DEV 发布均已完成，可描述为“DEV 手动/自动双模式已验收”。独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“cp6.uk 已切到 cp6-dev”。
+仓库能力、Azure 定向权限/Secret/Exclusive lock、三次手动 DEV 发布、低内存失败关闭、600 秒恢复窗口和 retry-safe 证据发布均已通过真实 Run；#132→#133 关闭本轮自动 DEV 稳定性缺口，可描述为“DEV 手动/自动双模式已验收”。独立 Tunnel 未切换且公网身份未验证，因此仍不得写成“cp6.uk 已切到 cp6-dev”。
