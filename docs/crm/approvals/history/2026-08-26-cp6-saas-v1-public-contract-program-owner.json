@@ -16,7 +16,8 @@
     "supersedesCommentUri": "https://github.com/GTX537/CP6/pull/8#issuecomment-5422419376",
     "authorLogin": "GTX537",
     "evidenceCommitSha": "b0c0edff2415984c4875d818e6a4db42b8fbdc0d",
-    "evidenceBlobSha": "1ced3f50363059b3df3fb7b216b525fd817b0af1"
+    "evidenceBlobSha": "1ced3f50363059b3df3fb7b216b525fd817b0af1",
+    "commentBodySha256": "68fc9f1c0c8bf525b4e1edfbf1ce11f753d2de5e1ff716ad9a32dd4c1759661b"
   },
   "sourcePrivate": {
     "repository": "GTX537/CP6.CRM",

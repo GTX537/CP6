@@ -29,6 +29,8 @@ $approvalAuthorLogin = 'GTX537'
 $approvalEvidenceCommit = 'b0c0edff2415984c4875d818e6a4db42b8fbdc0d'
 $approvalEvidenceBlob = '1ced3f50363059b3df3fb7b216b525fd817b0af1'
 $approvalTimestamp = '2026-08-26T08:10:43Z'
+$approvalCommentBodySha256 = '68fc9f1c0c8bf525b4e1edfbf1ce11f753d2de5e1ff716ad9a32dd4c1759661b'
+$approvalHistoryRecordSha256 = 'fab7d44920dc8528940c610f6f426cbfc26e75123fbb58a3189be347d0b680dc'
 
 function Fail([string] $Message) {
     $script:failures.Add($Message)
@@ -58,6 +60,17 @@ function Read-JsonFile([string] $RelativePath) {
         Fail "Invalid JSON in $RelativePath : $($_.Exception.Message)"
         return $null
     }
+}
+
+function Get-TextSha256([string] $Text) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        $hash = $sha.ComputeHash($utf8.GetBytes($Text))
+    }
+    finally {
+        $sha.Dispose()
+    }
+    return ([BitConverter]::ToString($hash)).Replace('-', '').ToLowerInvariant()
 }
 
 function Assert-Equal([object] $Actual, [object] $Expected, [string] $Message) {
@@ -150,6 +163,8 @@ function Test-GitHubApprovalComment() {
             Fail "GitHub approval comment is missing required text: $requiredText"
         }
     }
+    $normalizedBody = $comment.body.Replace("`r`n", "`n").Replace("`r", "`n")
+    Assert-Equal (Get-TextSha256 $normalizedBody) $approvalCommentBodySha256 'GitHub approval comment body digest mismatch'
 }
 
 function Get-PayloadDigest(
@@ -169,6 +184,18 @@ function Get-PayloadDigest(
     if ($text.IndexOf($StartMarker, $start + $StartMarker.Length, [StringComparison]::Ordinal) -ge 0 -or
         $text.IndexOf($EndMarker, $end + $EndMarker.Length, [StringComparison]::Ordinal) -ge 0) {
         Fail "Payload markers must each occur exactly once in $RelativePath"
+        return $null
+    }
+
+    if (($start -gt 0 -and $text[$start - 1] -ne "`n") -or
+        ($start + $StartMarker.Length -ge $text.Length) -or
+        $text[$start + $StartMarker.Length] -ne "`n") {
+        Fail "Start marker must occupy its own line in $RelativePath"
+        return $null
+    }
+    if (($end -eq 0 -or $text[$end - 1] -ne "`n") -or
+        ($end + $EndMarker.Length -lt $text.Length -and $text[$end + $EndMarker.Length] -ne "`n")) {
+        Fail "End marker must occupy its own line in $RelativePath"
         return $null
     }
 
@@ -269,13 +296,20 @@ Assert-Contains $publicPath @(
     'No-Go'
 )
 Assert-Contains $r00Path @(
+    '<!-- public-r00-mirror-status: Complete -->',
+    '镜像状态：**Complete**',
+    '私有源状态：**Accepted**',
+    $sourceMergeCommit,
+    $sourceR00Digest,
     'Partial / Gap',
     'first-writer-wins',
     'bucket + key + VersionId + SHA-256',
     'CandidateLocator',
     'Lead Adoption',
     'P09/P10',
-    'Pending'
+    'P09/P10 implementation：Pending',
+    '公开同步：Complete',
+    'M0：No-Go'
 )
 Assert-Contains $m0Path @(
     'approved_human_role_ids == { ProgramOwner }',
@@ -290,6 +324,19 @@ Assert-NotContains $m0Path @(
     'all_M0_hard_gate_named_roles',
     'M0 GO'
 )
+$m0Text = Read-NormalizedText $m0Path
+if ($null -ne $m0Text) {
+    foreach ($approvedDecisionId in @('DEC-000', 'DEC-002')) {
+        if ($m0Text -notmatch "(?m)^\|\s*$approvedDecisionId\s*\|[^\n]*\|\s*Approved\s*\|\s*$") {
+            Fail "$approvedDecisionId must remain Approved in $m0Path"
+        }
+    }
+    foreach ($pendingDecisionId in @('DEC-001', 'DEC-003', 'DEC-004', 'DEC-005', 'DEC-006', 'DEC-007', 'DEC-008', 'DEC-009')) {
+        if ($m0Text -notmatch "(?m)^\|\s*$pendingDecisionId\s*\|[^\n]*\|\s*Pending\s*\|\s*$") {
+            Fail "$pendingDecisionId must remain Pending in $m0Path"
+        }
+    }
+}
 Assert-Contains 'docs/crm/CRM-PRODUCT-FRAMEWORK.md' @('Historical planning baseline', 'CP6-SAAS-V1-PUBLIC-CONTRACT.md')
 Assert-Contains 'docs/crm/CRM-V1-EXECUTABLE-SPEC.md' @('Historical planning baseline', 'CP6-SAAS-V1-PUBLIC-CONTRACT.md')
 Assert-Contains 'docs/crm/CRM-V1-SPEC.md' @('Historical Foundation baseline', 'CP6-SAAS-V1-PUBLIC-CONTRACT.md')
@@ -309,6 +356,7 @@ if ($null -ne $approval) {
     if ($approval.decisionPath -ne $publicPath) { Fail 'Approval decisionPath mismatch' }
     if ($approval.decisionPayloadSha256 -ne $publicDigest) { Fail 'Approval public digest mismatch' }
     if ($approval.approvalModel -ne 'SingleProgramOwner') { Fail 'Approval model must be SingleProgramOwner' }
+    Assert-Equal $approval.approvalHistoryRecordSha256 $approvalHistoryRecordSha256 'Approval history record digest declaration mismatch'
     if ($approval.m0Status -ne 'No-Go') { Fail 'Public sync must not change M0 away from No-Go' }
     if ($approval.sourcePrivate.repository -ne $sourceRepository) { Fail 'Private source repository mismatch' }
     if ($approval.sourcePrivate.mergeCommitSha -ne $sourceMergeCommit) { Fail 'Private source merge commit mismatch' }
@@ -316,20 +364,13 @@ if ($null -ne $approval) {
     if ($approval.sourcePrivate.productStatus -ne 'Frozen') { Fail 'Private product status must be Frozen' }
     if ($approval.sourcePrivate.r00DecisionPayloadSha256 -ne $sourceR00Digest) { Fail 'Private R00 digest mismatch' }
     if ($approval.sourcePrivate.r00Status -ne 'Accepted') { Fail 'Private R00 status must be Accepted' }
-    if ($approval.status -notin @('Candidate', 'Complete')) { Fail 'Approval status must be Candidate or Complete' }
+    if ($approval.status -ne 'Complete') { Fail 'Approved public synchronization status must be Complete' }
 
     $requiredRoles = @($approval.requiredForComplete)
     if ($requiredRoles.Count -ne 1 -or $requiredRoles[0] -ne 'ProgramOwner') {
         Fail 'requiredForComplete must contain exactly ProgramOwner'
     }
 
-    if ($approval.status -eq 'Candidate' -and @($approval.approvals).Count -ne 0) {
-        Fail 'Candidate must not contain effective approvals'
-    }
-    if ($approval.status -eq 'Candidate') {
-        Assert-Contains $publicPath @('<!-- public-contract-status: Candidate -->')
-        Assert-Contains $r00Path @('<!-- public-r00-mirror-status: Candidate -->')
-    }
     if ($approval.status -eq 'Complete') {
         Assert-Contains $publicPath @('<!-- public-contract-status: Complete -->')
         Assert-Contains $r00Path @('<!-- public-r00-mirror-status: Complete -->')
@@ -354,11 +395,13 @@ if ($null -ne $approval) {
             Assert-Equal $approval.approvalEvidence.authorLogin $approvalAuthorLogin 'Approval evidence author mismatch'
             Assert-Equal $approval.approvalEvidence.evidenceCommitSha $approvalEvidenceCommit 'Approval evidence commit mismatch'
             Assert-Equal $approval.approvalEvidence.evidenceBlobSha $approvalEvidenceBlob 'Approval evidence blob mismatch'
+            Assert-Equal $approval.approvalEvidence.commentBodySha256 $approvalCommentBodySha256 'Approval evidence comment body digest mismatch'
         }
     }
 }
 
 if ($null -ne $approvalHistory) {
+    Assert-Equal (Get-TextSha256 (Read-NormalizedText $approvalHistoryPath)) $approvalHistoryRecordSha256 'Approval history record content digest mismatch'
     Assert-Equal $approvalHistory.schemaVersion 1 'Approval history schemaVersion mismatch'
     Assert-Equal $approvalHistory.recordId 'CP6-SAAS-V1-PUBLIC-CONTRACT-APPROVAL-20260826-001' 'Approval history recordId mismatch'
     Assert-Equal $approvalHistory.decisionId 'CP6-SAAS-V1-PUBLIC-CONTRACT' 'Approval history decisionId mismatch'
@@ -378,6 +421,7 @@ if ($null -ne $approvalHistory) {
     Assert-Equal $approvalHistory.approvalEvidence.authorLogin $approvalAuthorLogin 'History evidence author mismatch'
     Assert-Equal $approvalHistory.approvalEvidence.evidenceCommitSha $approvalEvidenceCommit 'History evidence commit mismatch'
     Assert-Equal $approvalHistory.approvalEvidence.evidenceBlobSha $approvalEvidenceBlob 'History evidence blob mismatch'
+    Assert-Equal $approvalHistory.approvalEvidence.commentBodySha256 $approvalCommentBodySha256 'History evidence comment body digest mismatch'
 
     Assert-Equal $approvalHistory.sourcePrivate.repository $sourceRepository 'History private source repository mismatch'
     Assert-Equal $approvalHistory.sourcePrivate.mergeCommitSha $sourceMergeCommit 'History private source merge commit mismatch'
@@ -408,7 +452,21 @@ Test-GitHubApprovalComment
 
 Assert-Contains $m0Path @('<!-- crm-m0-status: No-Go -->')
 
-$sanitizedFiles = @($publicPath, $approvalPath, $approvalHistoryPath, $m0Path, $r00Path)
+$sanitizedFiles = @(
+    'README.md',
+    'docs/crm/README.md',
+    $publicPath,
+    $approvalPath,
+    $approvalHistoryPath,
+    $m0Path,
+    'docs/devops/README.md',
+    $r00Path,
+    'docs/devops/adr/README.md',
+    'docs/project-memory/PROJECT_STATE.md',
+    'docs/project-memory/05-Completed.md',
+    'docs/project-memory/06-Todo.md',
+    'docs/project-memory/CHANGELOG-AI.md'
+)
 $forbiddenCommercialPatterns = @(
     '(?i)USD\s+[0-9]',
     '(?i)CNY\s+[0-9]',
@@ -451,7 +509,12 @@ $gitDiffChecks = @(
     @('diff', '--cached', '--check')
 )
 if ($env:GITHUB_ACTIONS -eq 'true') {
-    $gitDiffChecks += ,@('diff', '--check', 'HEAD^', 'HEAD')
+    if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_BASE_REF)) {
+        $gitDiffChecks += ,@('diff', '--check', "origin/$($env:GITHUB_BASE_REF)...HEAD")
+    }
+    else {
+        $gitDiffChecks += ,@('diff', '--check', 'HEAD^', 'HEAD')
+    }
 }
 foreach ($arguments in $gitDiffChecks) {
     $previousErrorActionPreference = $ErrorActionPreference

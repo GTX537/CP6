@@ -51,6 +51,7 @@ function Test-NegativeCase(
         if ($result.Output.IndexOf($ExpectedFailure, [StringComparison]::OrdinalIgnoreCase) -lt 0) {
             throw "$Name failed for the wrong reason. Expected '$ExpectedFailure'. Output: $($result.Output)"
         }
+        $global:LASTEXITCODE = 0
         $script:passed++
         Write-Host "PASS: $Name"
     }
@@ -86,13 +87,42 @@ try {
 
     Test-NegativeCase -Name 'sanitization claim drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-saas-v1-public-contract-program-owner.json' -Before '"containsPaymentProviderSelection": false' -After '"containsPaymentProviderSelection": true' -ExpectedFailure 'sanitization flag must be false'
 
-    if ($passed -ne 8) {
-        throw "Expected 8 CRM public contract tests; passed $passed."
+    Test-NegativeCase -Name 'Complete rollback to Candidate' -RelativePath 'docs/crm/approvals/cp6-saas-v1-public-contract.json' -Before '"status": "Complete"' -After '"status": "Candidate"' -ExpectedFailure 'status must be Complete'
+
+    Test-NegativeCase -Name 'payload start marker trailing text' -RelativePath 'docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md' -Before '<!-- public-contract-payload:start -->' -After '<!-- public-contract-payload:start --> trailing' -ExpectedFailure 'Start marker must occupy its own line'
+
+    Test-NegativeCase -Name 'duplicate payload start marker' -RelativePath 'docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md' -Before '<!-- public-contract-payload:start -->' -After "<!-- public-contract-payload:start -->`n<!-- public-contract-payload:start -->" -ExpectedFailure 'Payload markers must each occur exactly once'
+
+    Test-NegativeCase -Name 'invalid approval aggregate JSON' -RelativePath 'docs/crm/approvals/cp6-saas-v1-public-contract.json' -Before '"schemaVersion": 2' -After '"schemaVersion":' -ExpectedFailure 'Invalid JSON'
+
+    Test-NegativeCase -Name 'R00 private source commit drift' -RelativePath 'docs/devops/adr/ADR-CRM-R00-RELEASE-AUTHORITY.md' -Before '07a7bb0b50f33b0cb70c18c14f83be77c725626d' -After '0000000000000000000000000000000000000000' -ExpectedFailure 'missing required text'
+
+    Test-NegativeCase -Name 'M0 DEC-001 status row missing' -RelativePath 'docs/crm/CRM-M0-READINESS.md' -Before '| DEC-001 |' -After '| DEC-001-REMOVED |' -ExpectedFailure 'DEC-001 must remain Pending'
+
+    Test-NegativeCase -Name 'approval comment body digest drift' -RelativePath 'docs/crm/approvals/cp6-saas-v1-public-contract.json' -Before '68fc9f1c0c8bf525b4e1edfbf1ce11f753d2de5e1ff716ad9a32dd4c1759661b' -After '0000000000000000000000000000000000000000000000000000000000000000' -ExpectedFailure 'comment body digest mismatch'
+
+    Test-NegativeCase -Name 'approval history schema drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-saas-v1-public-contract-program-owner.json' -Before '"schemaVersion": 1' -After '"schemaVersion": 99' -ExpectedFailure 'Approval history schemaVersion mismatch'
+
+    Test-NegativeCase -Name 'append-only approval history content drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-saas-v1-public-contract-program-owner.json' -Before 'CP6-SAAS-V1-PUBLIC-CONTRACT-APPROVAL-20260826-001' -After 'CP6-SAAS-V1-PUBLIC-CONTRACT-APPROVAL-ALTERED' -ExpectedFailure 'Approval history record content digest mismatch'
+
+    Test-NegativeCase -Name 'private PSP detail injection' -RelativePath 'docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md' -Before '本文件只公开跨仓实现' -After 'Airwallex 本文件只公开跨仓实现' -ExpectedFailure 'Private commercial detail found'
+
+    Test-NegativeCase -Name 'broken CRM documentation link' -RelativePath 'docs/crm/README.md' -Before './CP6-SAAS-V1-PUBLIC-CONTRACT.md' -After './MISSING-PUBLIC-CONTRACT.md' -ExpectedFailure 'Broken relative link'
+
+    Test-NegativeCase -Name 'approval history timestamp drift' -RelativePath 'docs/crm/approvals/history/2026-08-26-cp6-saas-v1-public-contract-program-owner.json' -Before '2026-08-26T08:10:43Z' -After 'not-a-timestamp' -ExpectedFailure 'Approval history timestamp mismatch'
+
+    if ($passed -ne 20) {
+        throw "Expected 20 CRM public contract tests; passed $passed."
     }
-    Write-Host "CRM SaaS public contract negative tests passed: $passed/8"
+    Write-Host "CRM SaaS public contract negative tests passed: $passed/20"
 }
 finally {
     if (Test-Path -LiteralPath $fixtureRoot) {
         Remove-Item -LiteralPath $fixtureRoot -Recurse -Force
     }
 }
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Consumed negative validator exit code leaked from the test suite: $LASTEXITCODE"
+}
+$global:LASTEXITCODE = 0
