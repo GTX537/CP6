@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：单人 BUG 管理闭环
+
+- GitHub Issues 成为活动 BUG 唯一真相源；流程压缩为 P0/P1/P2、Open/Closed、单 Issue/单分支和验证后关闭。
+- 新增必填 BUG Issue Form、极简 PR 模板和一页管理规则，README/AGENTS/KnownIssues 已对齐入口与职责。
+- Issue #38 成为首张活动 BUG，记录首次改密后旧认证 Cookie 导致的重新登录死锁；本次未修改认证代码。
+
 ## 2026-08-26：CRM V1 PRD 完整脱敏产品基线批准
 
 - 合入前审查发现三次未合并 payload 仍公开了应保留在私有仓的商业 cohort、精确推广时间表或私有数值采用门禁；三次预审批均作废。

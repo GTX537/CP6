@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 单人 BUG 管理闭环建立（2026-08-26）
+
+- GitHub Issues 成为活动 BUG 的唯一真相源；单人开发只使用 P0/P1/P2 与 Open/Closed，不建立 Project 看板、多人指派或重复状态标签。
+- 仓库新增必填 BUG Issue Form、极简 PR 模板和 `docs/quality/BUG-MANAGEMENT.md`，并从 README 与 AGENTS 暴露入口；关闭必须具备根因、回归或不可自动化说明、复测证据和远端 `main` 包含关系。
+- 首张活动 BUG 已登记为 GitHub Issue #38，跟踪首次改密后旧认证 Cookie 导致的重新登录死锁；本治理任务只建立流程，不包含该认证代码修复。
+
 ## CRM V1 PRD 完整脱敏产品基线批准（2026-08-26）
 
 - `docs/crm/CRM-V1-PRD.md` v0.2 已迁移到最新 `main` 基线，并移除商业 cohort 数量/地域/名单、精确推广时间表、私有数值商业 KPI、数值 Pilot UAT 和采用门禁；候选期措辞改为不随状态漂移的批准规则，批准的 payload SHA-256 为 `5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a`。
