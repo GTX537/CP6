@@ -64,7 +64,7 @@
 
 - `docs/crm/CRM-COMPETITIVE-ANALYSIS.md` 已对比 Salesforce、HubSpot、Dynamics 365、Pipedrive、Zoho、Odoo、SAP Sales Cloud、纷享销客和销售易，按获客、Lead 执行、客户/商机、报价成交、ERP 权威、治理扩展及商业模式建立同口径分析。
 - 竞品研究没有扩大 V1：`CRM-COMP-001`～`007` 固定 Lead Pilot 行动优先、稳定对象/状态、来源与 SLA、CP6 ERP/ExternalEvidence 成交权威，并把公海、企微/钉钉、邮件/日历、移动拜访、评分和 AI 保留为后续受控扩展。
-- `CRM-V1-PRD.md` 已升为 v0.2，并把竞品结论映射到目标、旅程、前端、后端、升级和验收合同。该 2026-08-25 里程碑当时仍是产品评审草案；当前审批候选与 Public Contract 状态以上方 2026-08-26 记录为准，M0 始终保持 `No-Go`。
+- `CRM-V1-PRD.md` 已升为 v0.2，并把竞品结论映射到目标、旅程、前端、后端、升级和验收合同。该 2026-08-25 里程碑当时仍是产品评审草案；当前批准状态与 Public Contract 状态以上方 2026-08-26 记录为准，M0 始终保持 `No-Go`。
 
 ## 本机 DEV 外部首次运行就绪审计（2026-08-25）
 
