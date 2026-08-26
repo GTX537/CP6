@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-26 DEV 自动发布稳定性闭环
+
+- #129 以 31 次低内存采样证明 readiness 会在 SQL/备份前失败关闭；600 秒恢复窗口保留 2048 MiB 与 3 次连续独立 SQL 登录的安全要求。
+- #131 同 Stage 重试真实完成 readiness、备份、迁移和部署，但固定证据 Artifact 名在 attempt 2 冲突；PR #30 使用只读 `System.StageAttempt` 生成 `cp6-dev-evidence-attempt-<N>`，合同测试先红后绿，全部本地 DevOps 回归通过。
+- PR #30 合入 `main@08813896...` 后，GitHub client-contract/SQL、Azure 基础 CI #132 与自动 DEV #133 全部成功；#133 的 `pipelineTriggerType=PipelineCompletion` 精确绑定 #132 和同一 main SHA。
+- #133 readiness 为 2184/2383/2411 MiB 且三次 SQL=True；第 7 份 CHECKSUM/VERIFYONLY 备份为 2,600,960 bytes，SHA-256 `af4f48fd...d804c9de`。API/Web Healthy、完整 SHA 身份一致，`cp6-dev-evidence-attempt-1` 发布成功，根 API/DB 基线零漂移。
+
 ## 2026-08-26 DEV 备份前主机与 SQL 就绪门禁
 
 - #127 在候选封装后、备份前因宿主内存使用 95.16% 导致 SQL prelogin 超时；无新备份、迁移或容器切换，失败后的 8/8 新 SQL 连接正常，定位为瞬时宿主压力而非 Secret/权限/数据库持久故障。
@@ -9,9 +16,9 @@
 
 ## 2026-08-25 DEV 自动发布启用决策
 
-- 在 #95/#120/#121 三次独立 Manual 成功后，用户明确授权启用 DEV 自动模式；Azure Pipeline 变量 `CP6_DEV_AUTO_DEPLOY_ENABLED=true` 已生效，公网验证继续为 `false`。
-- 当前 main 基础 CI #124 的同 SHA 手动重跑成功，但没有把它或任何手动 DEV Run 计作自动验收；新的 main completion 必须触发真实 `ResourceTrigger` 发布并完成全部部署证据门禁。
-- GitHub R2/GHCR 生产权威、根 `cp6`/`CP6DB` 隔离、旧版本手动回退前关闭自动的规则均未改变。
+- 在 #95/#120/#121 三次独立 Manual 成功后，用户明确授权启用 DEV 自动模式；`CP6_DEV_AUTO_DEPLOY_ENABLED=true` 生效，公网验证继续为 `false`。
+- 基础 CI #124 completion 自动触发 DEV #125；REST 元数据证明它是 `resourceTrigger`，并真实完成 Artifact 校验/封装、CHECKSUM/VERIFYONLY 备份、迁移、API/Web 身份健康和 2 文件证据 Artifact，未用 Manual Run 冒充自动验收。
+- 第 5 份备份为 2,572,288 bytes，SHA-256 `bcd9f228...a574`，本机重算一致。DEV 运行 `main@ecbad9e1...` 且 Healthy，根 API/DB 三项基线零漂移。GitHub R2/GHCR 生产权威、根 `cp6`/`CP6DB` 隔离和旧版本手动回退前关闭自动的规则均未改变。
 
 ## 2026-08-25 DEV 三次独立 Manual 验收闭环
 
