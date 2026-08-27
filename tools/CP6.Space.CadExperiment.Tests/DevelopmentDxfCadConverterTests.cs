@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
@@ -163,6 +164,56 @@ public sealed class DevelopmentDxfCadConverterTests
 
         await Assert.ThrowsAsync<InvalidDataException>(
             () => new DevelopmentDxfCadConverter().ConvertAsync(request, stream, sink));
+    }
+
+    [Fact]
+    public async Task Converter_accepts_50_MiB_DXF_capacity_envelope()
+    {
+        using var fixture = new TemporaryDirectory();
+        var input = Path.Combine(fixture.Path, "fifty-mib.dxf");
+        const long targetBytes = 50L * 1024L * 1024L;
+        await WritePaddedDxfAsync(input, targetBytes);
+        Assert.Equal(targetBytes, new FileInfo(input).Length);
+        var sourceSha256 = await DatasetAuditor.ComputeSha256Async(input);
+        var request = Request(sourceSha256);
+        var sink = new DevelopmentCadIrFileSink(
+            request,
+            Path.Combine(fixture.Path, "fifty-mib.json"));
+        await using var stream = File.OpenRead(input);
+
+        var result = await new DevelopmentDxfCadConverter().ConvertAsync(
+            request,
+            stream,
+            sink);
+
+        Assert.Equal(sourceSha256, result.SourceSha256);
+        Assert.Equal(1, result.Summary.EntityCount);
+        Assert.Equal(sourceSha256, sink.Package!.Document.SourceSha256);
+    }
+
+    [Fact]
+    public async Task Converter_rejects_seekable_input_over_64_MiB_before_parsing()
+    {
+        using var fixture = new TemporaryDirectory();
+        var input = Path.Combine(fixture.Path, "oversized.dxf");
+        await using (var output = new FileStream(
+                         input,
+                         FileMode.CreateNew,
+                         FileAccess.Write,
+                         FileShare.None))
+        {
+            output.SetLength(
+                DevelopmentDxfCadConverter.MaximumDevelopmentInputBytes + 1L);
+        }
+        var request = Request(new string('a', 64));
+        var outputPath = Path.Combine(fixture.Path, "oversized.json");
+        var sink = new DevelopmentCadIrFileSink(request, outputPath);
+        await using var stream = File.OpenRead(input);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            new DevelopmentDxfCadConverter().ConvertAsync(request, stream, sink));
+
+        Assert.False(File.Exists(outputPath));
     }
 
     [Fact]
@@ -890,6 +941,32 @@ public sealed class DevelopmentDxfCadConverterTests
             SpaceCadSourceFormat.Dxf,
             DevelopmentDxfCadConverter.ConverterId,
             DevelopmentDxfCadConverter.ConverterVersion);
+
+    private static async Task WritePaddedDxfAsync(string path, long targetBytes)
+    {
+        var eofIndex = ValidDxf.LastIndexOf("0\nEOF\n", StringComparison.Ordinal);
+        var prefix = Encoding.UTF8.GetBytes(ValidDxf[..eofIndex] + "999\n");
+        var suffix = Encoding.UTF8.GetBytes("\n0\nEOF\n");
+        var paddingBytes = checked(targetBytes - prefix.LongLength - suffix.LongLength);
+        if (paddingBytes < 1)
+            throw new ArgumentOutOfRangeException(nameof(targetBytes));
+        var buffer = Enumerable.Repeat((byte)'X', 64 * 1024).ToArray();
+        await using var output = new FileStream(
+            path,
+            FileMode.CreateNew,
+            FileAccess.Write,
+            FileShare.None,
+            64 * 1024,
+            FileOptions.Asynchronous | FileOptions.SequentialScan);
+        await output.WriteAsync(prefix);
+        while (paddingBytes > 0)
+        {
+            var count = (int)Math.Min(buffer.LongLength, paddingBytes);
+            await output.WriteAsync(buffer.AsMemory(0, count));
+            paddingBytes -= count;
+        }
+        await output.WriteAsync(suffix);
+    }
 
     private static SpaceCadCoordinateConfirmationV1 CoordinateConfirmation(
         string sourceSha256) =>

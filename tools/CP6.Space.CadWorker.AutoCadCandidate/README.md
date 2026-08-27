@@ -9,7 +9,7 @@ if its per-attempt raw-data directory cannot be deleted.
 DWG runs through the exact Core Console executable and then the managed DXF
 parser. Native DXF runs directly through that same managed parser without
 starting AutoCAD. The advertised candidate version binds both the executable
-version and `cp6-dxf-1.0.0`, so either side of the chain requires a new Site
+version and `cp6-dxf-1.1.0`, so either side of the chain requires a new Site
 qualification.
 
 It is a **candidate**, not an approved production Provider. Do not enable the

@@ -1,11 +1,18 @@
 # 项目当前状态
 
+## Space 托管 DXF Parser 50 MiB 容量（2026-08-27）
+
+- DXF Parser 从 25 MiB 整文件 byte[]/整文本/Split 数组升级为严格 UTF-8 逐行解析，底层流同步执行原始字节计数与 SHA-256；无语义的 999 注释会完整验证但不驻留，当前失败关闭上限为 64 MiB。
+- 精确 50 MiB 合法 DXF 合成容量包络通过并生成 1 个实体；64 MiB+1 seekable 输入在解析前拒绝且没有工件。Converter 升为 `cp6-development-dxf/1.1.0`，AutoCAD 组合 Provider Version 自动变为 `{core}+cp6-dxf-1.1.0`，旧认证不能静默复用。
+- 完整 CAD Experiment 在真实 Core Console 环境为 47/47、0 skipped；既有 DWG 指标保持 29/19/4,424/4,422，测试根残留 CAD/Attempt 为 0。
+- 50 MiB 文件是有效 DXF + 999 注释的合成容量包络，不是授权真实复杂 CAD，也没有 Ready P95/CPU/峰值内存/准确率证据。真实 50 MiB Primary/Backup 黄金集、Release、批准和部署仍 Pending；WP3/整体继续 Partial/Pending、72% / `NoGo`。
+
 ## Space AutoCAD 候选 Worker DWG/DXF 双格式（2026-08-27）
 
 - AutoCAD 隔离 Worker 候选现以组合链 Provider 身份同时接受 DWG/DXF：DWG 经精确 Core Console 后进入托管 DXF Parser，原生 DXF 直接进入同一 Parser且不会启动 AutoCAD；外层和内层 Converter 均经统一合同执行器。
-- Provider Key 改为 `cp6-autocad-worker-development`，Version 同时绑定 Core Console 文件版本和 `cp6-dxf-1.0.0`；旧的单一 AutoCAD 版本请求在落盘前拒绝，任一链版本变化都强制重新评分与 Site 认证。
+- Provider Key 改为 `cp6-autocad-worker-development`；组合 Version 当前已由上方容量任务升为 `{core}+cp6-dxf-1.1.0`（初始双格式里程碑为 `1.0.0`），任一链版本变化都强制重新评分与 Site 认证。
 - 候选聚焦 4/4、真实安装环境完整 CAD Experiment 45/45、0 skipped；Core Console 样例仍为 29 图层/19 块/4,424 实体/4,422 支持实体，原生 DXF 断言 0 次 Exporter 调用，测试根残留 DWG/DXF 与 Attempt 均为 0。
-- 这只关闭 Primary 候选的 DXF 仓库路径。原生 DXF 仍是 fixture、托管 Parser 当前开发上限 25 MiB；非 development Release、授权 20 份黄金集/50 MiB、独立 Backup、许可证/Site 批准和生产 mTLS 隔离/Failover 仍缺。WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
+- 这只关闭 Primary 候选的 DXF 仓库路径。原生 DXF 仍是 fixture；上方任务虽已把托管 Parser 上限提升到 64 MiB 并通过 50 MiB 合成容量包络，但非 development Release、授权 20 份黄金集/真实 50 MiB、独立 Backup、许可证/Site 批准和生产 mTLS 隔离/Failover 仍缺。WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
 
 ## Space Studio WP3 远程隔离 CAD Worker Provider（2026-08-27）
 

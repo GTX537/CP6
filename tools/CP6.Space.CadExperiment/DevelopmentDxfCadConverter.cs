@@ -9,8 +9,8 @@ namespace CP6.Space.CadExperiment;
 public sealed class DevelopmentDxfCadConverter : ICadConverter
 {
     public const string ConverterId = "cp6-development-dxf";
-    public const string ConverterVersion = "1.0.0";
-    public const int MaximumDevelopmentInputBytes = 25 * 1024 * 1024;
+    public const string ConverterVersion = "1.1.0";
+    public const int MaximumDevelopmentInputBytes = 64 * 1024 * 1024;
 
     public async Task<SpaceCadConversionResult> ConvertAsync(
         SpaceCadConversionRequest request,
@@ -35,12 +35,12 @@ public sealed class DevelopmentDxfCadConverter : ICadConverter
                 $"The development converter identity must be {ConverterId}/{ConverterVersion}.");
         }
 
-        var bytes = await ReadBoundedAsync(source, cancellationToken);
-        var actualHash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+        var (pairs, actualHash) = await ParsePairsAndHashAsync(
+            source,
+            cancellationToken);
         if (!actualHash.Equals(request.SourceSha256, StringComparison.Ordinal))
             throw new InvalidDataException("The DXF bytes do not match the requested source SHA-256.");
 
-        var pairs = ParsePairs(bytes);
         var issues = new List<SpaceCadConversionIssueV1>();
         var cadVersion = HeaderValue(pairs, "$ACADVER", 1) ?? "UNKNOWN";
         var unitCode = HeaderValue(pairs, "$INSUNITS", 70);
@@ -102,56 +102,151 @@ public sealed class DevelopmentDxfCadConverter : ICadConverter
             issues);
     }
 
-    private static async Task<byte[]> ReadBoundedAsync(
-        Stream source,
-        CancellationToken cancellationToken)
+    private static async Task<(IReadOnlyList<DxfPair> Pairs, string Sha256)>
+        ParsePairsAndHashAsync(
+            Stream source,
+            CancellationToken cancellationToken)
     {
-        using var output = new MemoryStream();
-        var buffer = new byte[64 * 1024];
-        while (true)
+        if (source.CanSeek &&
+            checked(source.Length - source.Position) > MaximumDevelopmentInputBytes)
         {
-            var read = await source.ReadAsync(buffer, cancellationToken);
-            if (read == 0)
-                break;
-            if (output.Length + read > MaximumDevelopmentInputBytes)
+            throw InputTooLarge();
+        }
+
+        using var bounded = new BoundedHashingReadStream(
+            source,
+            MaximumDevelopmentInputBytes);
+        using var reader = new StreamReader(
+            bounded,
+            new UTF8Encoding(
+                encoderShouldEmitUTF8Identifier: false,
+                throwOnInvalidBytes: true),
+            detectEncodingFromByteOrderMarks: false,
+            bufferSize: 64 * 1024,
+            leaveOpen: true);
+        var pairs = new List<DxfPair>();
+        long lineNumber = 0;
+        while (await reader.ReadLineAsync(cancellationToken) is { } groupCodeLine)
+        {
+            lineNumber++;
+            var valueLine = await reader.ReadLineAsync(cancellationToken);
+            if (valueLine is null)
             {
                 throw new InvalidDataException(
-                    $"Development DXF input exceeds {MaximumDevelopmentInputBytes} bytes.");
+                    "DXF does not contain paired group-code/value lines.");
             }
-            await output.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
-        }
-        return output.ToArray();
-    }
-
-    private static IReadOnlyList<DxfPair> ParsePairs(byte[] bytes)
-    {
-        var text = new UTF8Encoding(false, true).GetString(bytes);
-        var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal)
-            .Replace('\r', '\n')
-            .Split('\n');
-        if (lines.Length > 0 && lines[^1].Length == 0)
-            lines = lines[..^1];
-        if (lines.Length % 2 != 0)
-            throw new InvalidDataException("DXF does not contain paired group-code/value lines.");
-
-        var pairs = new List<DxfPair>(lines.Length / 2);
-        for (var index = 0; index < lines.Length; index += 2)
-        {
+            lineNumber++;
             if (!int.TryParse(
-                    lines[index].Trim(),
+                    groupCodeLine.Trim(),
                     NumberStyles.Integer,
                     CultureInfo.InvariantCulture,
                     out var code))
             {
-                throw new InvalidDataException($"Invalid DXF group code at line {index + 1}.");
+                throw new InvalidDataException(
+                    $"Invalid DXF group code at line {lineNumber - 1}.");
             }
-            pairs.Add(new DxfPair(code, lines[index + 1].Trim()));
+            // Group code 999 is a DXF comment. Validate its UTF-8 bytes but
+            // do not retain semantically inert comment text in memory.
+            if (code != 999)
+                pairs.Add(new DxfPair(code, valueLine.Trim()));
         }
         if (pairs.Count == 0
             || pairs[^1].Code != 0
             || !pairs[^1].Value.Equals("EOF", StringComparison.OrdinalIgnoreCase))
             throw new InvalidDataException("DXF does not end with a 0/EOF pair.");
-        return pairs;
+        return (pairs, bounded.CompleteSha256());
+    }
+
+    private static InvalidDataException InputTooLarge() =>
+        new($"Development DXF input exceeds {MaximumDevelopmentInputBytes} bytes.");
+
+    private sealed class BoundedHashingReadStream(
+        Stream inner,
+        long maximumBytes) : Stream
+    {
+        private readonly IncrementalHash _hash =
+            IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+        private long _totalBytes;
+        private bool _endOfStream;
+
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
+        public override bool CanWrite => false;
+        public override long Length => throw new NotSupportedException();
+        public override long Position
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+
+        public string CompleteSha256()
+        {
+            if (!_endOfStream)
+                throw new InvalidOperationException("The complete DXF stream was not consumed.");
+            return Convert.ToHexString(_hash.GetHashAndReset()).ToLowerInvariant();
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            var read = inner.Read(buffer, offset, count);
+            Record(buffer.AsSpan(offset, read));
+            return read;
+        }
+
+        public override async ValueTask<int> ReadAsync(
+            Memory<byte> buffer,
+            CancellationToken cancellationToken = default)
+        {
+            var read = await inner.ReadAsync(buffer, cancellationToken);
+            Record(buffer.Span[..read]);
+            return read;
+        }
+
+        public override async Task<int> ReadAsync(
+            byte[] buffer,
+            int offset,
+            int count,
+            CancellationToken cancellationToken)
+        {
+            var read = await inner.ReadAsync(
+                buffer.AsMemory(offset, count),
+                cancellationToken);
+            Record(buffer.AsSpan(offset, read));
+            return read;
+        }
+
+        public override void Flush()
+        {
+        }
+
+        public override long Seek(long offset, SeekOrigin origin) =>
+            throw new NotSupportedException();
+
+        public override void SetLength(long value) =>
+            throw new NotSupportedException();
+
+        public override void Write(byte[] buffer, int offset, int count) =>
+            throw new NotSupportedException();
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _hash.Dispose();
+            base.Dispose(disposing);
+        }
+
+        private void Record(ReadOnlySpan<byte> bytes)
+        {
+            if (bytes.IsEmpty)
+            {
+                _endOfStream = true;
+                return;
+            }
+            _totalBytes = checked(_totalBytes + bytes.Length);
+            if (_totalBytes > maximumBytes)
+                throw InputTooLarge();
+            _hash.AppendData(bytes);
+        }
     }
 
     private static string? HeaderValue(
