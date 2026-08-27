@@ -26,7 +26,7 @@
 
 ## P0：Space Studio Lean Core GA 剩余门禁
 
-- Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。正式 Core GA 采用 Schema 3；独立 Backup 与双仓 14 天 Pilot 已转为 GA 后增强。不得用 DevelopmentSeed、未批准 Provider、Mock 或 fixture 冒充正式发布演练。
+- Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。正式 Core GA 使用 Schema 3；独立 Backup 与双仓 14 天 Pilot 已转为 GA 后增强。不得用 DevelopmentSeed、未批准 Provider、Mock 或 fixture 冒充正式发布演练。
 - 唯一 DeliveryOwner 已登记为 `BUBAO.GAO`，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`，同一人拥有全部输入与 Gate；WP0 仓库实现已 Complete，但正式接受和最终签署仍 Pending。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。
 - 20 份仓库外原创 AC1032 CAD 候选已经冻结并登记为 Complete：10 DWG/10 DXF、10/5/5、L1～L5 各 4，逐份授权/脱敏/答案/问题/Mapping/规则/复核证据齐全，产品 Converter 20/20 Pass。原始 CAD 不入 Git；后续必须使用同一 Source Set SHA `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`。
 - 不再强制 ODA 或第二供应商。为选定的 Primary（当前候选为 AutoCAD Worker）补齐真实使用许可/批准引用、精确版本与哈希、隔离 Worker 身份、保留/删除和 Secret 引用；如果未来改用 ODA/云服务，再按其实际部署边界补相应批准。
