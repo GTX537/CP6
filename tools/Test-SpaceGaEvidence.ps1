@@ -18,6 +18,8 @@ $repoPrefix = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
 $pilotValidator = Join-Path $PSScriptRoot 'Test-SpaceGaPilotEvidence.ps1'
 $goldenCadValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaGoldenCadEvidence.ps1')
+$goldenCadCandidateValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaGoldenCadCandidates.ps1')
 $kickoffValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaKickoffEvidence.ps1')
 
@@ -329,11 +331,18 @@ foreach ($input in @($manifest.externalInputs)) {
                         'structured kickoff manifest itself.')
                 }
                 try {
-                    & $kickoffValidator `
-                        -ManifestPath $kickoffManifestFullPath `
-                        -InputId ([string]$input.id) `
-                        -ExpectedOwnerName ([string]$input.ownerName) |
-                        Out-Null
+                    if ($input.id -eq 'AUTHORIZED_GOLDEN_CAD_CANDIDATES') {
+                        & $goldenCadCandidateValidator `
+                            -ManifestPath $kickoffManifestFullPath |
+                            Out-Null
+                    }
+                    else {
+                        & $kickoffValidator `
+                            -ManifestPath $kickoffManifestFullPath `
+                            -InputId ([string]$input.id) `
+                            -ExpectedOwnerName ([string]$input.ownerName) |
+                            Out-Null
+                    }
                 }
                 catch {
                     Add-ValidationError (

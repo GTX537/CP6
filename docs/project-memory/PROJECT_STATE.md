@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## Space 原创黄金 CAD 候选完成（2026-08-27）
+
+- 单人开发场景已正式采用 `ApprovedOriginalWork`，不再要求不存在的客户来源或第二复核人，也不虚构客户、地址或授权关系；`BUBAO.GAO` 是 20 份原创 CAD 的作者、授权人和实名复核人。
+- AutoCAD 2025 原生引擎已在仓库外受控证据区生成并冻结正好 20 份唯一 CAD：10 DWG + 10 DXF，Calibration/Validation/Release Holdout 为 10/5/5，L1～L5 各 4，均为 AC1032；合计 14,659 个 Model Space 图元和 2,455 个带 Handle 的逻辑标准答案元素。
+- 每份文件均具有源 SHA-256、原创授权、脱敏证明、单位/坐标系/布局、DWG/DXF 版本、标准答案/预期问题、Mapping Profile/规则版本及实名复核。Source Set SHA 为 `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`，Golden Dataset SHA 为 `2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15`。
+- 产品 Converter Contract Runner 对 20/20 文件验证通过。仓库只保存脱敏 Manifest、哈希和受控 URN，原始 DWG/DXF 不入 Git；三类外部输入中的 `AUTHORIZED_GOLDEN_CAD_CANDIDATES` 已为 Complete。
+- 这不等于 WP7 接受：独立 Backup、主备批准/评分、质量与性能指标、生产联调和双仓 Pilot 仍未完成。正式 Core GA 保持 72% / `NoGo`，剩余 2 类外部输入、9 个 Gate 和 1 个 DeliveryOwner 签署 Pending。依据见 `docs/space/reports/2026-08-27-space-original-work-golden-cad-candidates.md`。
+
 ## Space Studio Development V1 100%（2026-08-27）
 
 - `CP6_SPACE_STUDIO_DEVELOPMENT_V1` 已在 RepositoryAndDevelopment 范围达到 `DevelopmentComplete` / 100%：统一 Draft/模板、CAD/Excel/手工三路径、编辑器、2D/3D Viewer、开发 CAD Worker，以及发布/WMS/安全/恢复仓库门禁共六项全部通过；唯一 Owner 为 `BUBAO.GAO`，没有多人门禁。

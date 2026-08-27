@@ -2,7 +2,7 @@
 
 适用 Gate：`WP7_GOLDEN_CAD_FORMAL_EVIDENCE`
 
-正式集合必须包含 20 份唯一、真实授权并脱敏的 DWG/DXF，按 `Calibration/Validation/ReleaseHoldout=10/5/5` 冻结，覆盖 L1～L5。每份样本由一名真实 `reviewedBy` 完成可追溯人工复核；该人可以是 `DeliveryOwner`，不要求第二标注人或独立 QA 仲裁。
+正式集合必须包含 20 份唯一、原生保存、权利可证明并脱敏的 DWG/DXF，按 `Calibration/Validation/ReleaseHoldout=10/5/5` 冻结，覆盖 L1～L5。来源可以是获授权客户派生数据 `ApprovedCustomerDerived`，也可以是 SoloDeveloper 为 CP6 原创并自持权利的 `ApprovedOriginalWork`；两者都不得伪造客户身份或授权。每份样本由一名真实 `reviewedBy` 完成可追溯人工复核；该人可以是 `DeliveryOwner`，不要求第二标注人或独立 QA 仲裁。
 
 以下结果门禁保持不变：
 

@@ -24,13 +24,20 @@
       "ownerRole": "BusinessDataOwner",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1_WEEK_2",
-      "status": "Pending",
+      "status": "Complete",
       "evidenceFormat": [
         "Authorized 20-file candidate register",
         "Source SHA-256 and authorization reference per file"
       ],
-      "verificationManifest": null,
-      "evidence": []
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/authorized-golden-cad-candidates-v1.0.0.json",
+      "evidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/authorized-golden-cad-candidates-v1.0.0.json",
+          "sha256": "813630db234d06519a2e84321ae340233334c15cf40820914f661d5d7d28e657",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:06:30Z"
+        }
+      ]
     },
     {
       "id": "PROVIDER_APPROVALS_AND_ISOLATED_WORKER",

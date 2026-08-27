@@ -327,8 +327,8 @@ foreach ($sample in $samples) {
     $ownerId = if (Test-GoldenText $sampleRef) { $sampleRef } else { 'Golden sample' }
     if ($sampleRef -notmatch '^urn:cp6-space-golden-cad:[A-Za-z0-9][A-Za-z0-9:._-]{0,200}$' -or
         !(Test-GoldenSha256 $sample.sourceSha256) -or
-        $sample.license -ne 'ApprovedCustomerDerived') {
-        Add-GoldenValidationError "SPACE_GA_GOLDEN_SAMPLE_INVALID: $ownerId must use an opaque reference, unique source hash and ApprovedCustomerDerived license."
+        $sample.license -notin @('ApprovedCustomerDerived', 'ApprovedOriginalWork')) {
+        Add-GoldenValidationError "SPACE_GA_GOLDEN_SAMPLE_INVALID: $ownerId must use an opaque reference, unique source hash and an approved customer-derived or original-work license."
     }
     $sourceSize = ConvertTo-GoldenInteger $sample.sourceSizeBytes
     if ($null -eq $sourceSize -or $sourceSize -le 0) {
