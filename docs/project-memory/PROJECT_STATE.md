@@ -5,7 +5,7 @@
 - 可运行 Worker Host 不再以 development Provider 启动；发布后的可执行文件生成 Schema 1 Release Manifest，固定全部 Payload 文件、源提交、Runtime、真实 Core Console 完整哈希/文件版本和 DXF Converter 版本，启动时再由外部 SHA-256 锚定并逐项复核。
 - 通过后派生 `cp6-autocad-worker/{semver}+worker.{manifest-prefix}.autocad.{core}.dxf.{parser}`；远程协议升为 Schema 2，部署批准 Manifest 的完整 Worker Release SHA 会进入每次 API 请求、在 Worker 落盘前核对并由响应回显验证，12 位版本前缀不能替代完整哈希。`/health/live` 同时返回完整 SHA、源提交和 Runtime；每次 DWG 转换前还会复核 Core Console 完整哈希。
 - 真实本机 `win-x64` 发布演练封存 18 个文件，Schema 机器验证通过，Core Console 为 `25.0.58.0.0`；完整 CAD Experiment 含真实安装门禁 57/57、0 skipped，远程协议专项 6/6，`CP6.Tests` 2,939/19/0，整仓 0 warning / 0 error，残留 CAD/非空 Attempt 为 0。
-- 演练版本明确为 `0.0.0-rehearsal`，且任务当时尚未合并，不能作为正式 Release/批准证据。仍须从合并后的精确提交重建正式 SemVer、取得许可证/Site 批准、部署生产等价隔离环境、接入独立 Backup 并运行授权黄金集；WP3/整体继续 Partial/Pending、72% / `NoGo`。
+- PR #46 已在 7/7 required checks 后合并为 `main@4375c7c2fc1e297bf3fe845873b1af5af2cb5d66`；合并后用 `0.0.0-rehearsal.postmerge` 从该精确提交重建 18 文件 Payload，Schema 通过，完整 Worker Release SHA 为 `c51c2ce8925f7bf2bf647dd2d958270d7903e6adc212eee37a668bfe9d82dc84`。这只证明主干可重现密封，不是正式 Release/批准证据；仍须用批准 SemVer 重建、取得许可证/Site 批准、部署生产等价隔离环境、接入独立 Backup 并运行授权黄金集。WP3/整体继续 Partial/Pending、72% / `NoGo`。
 
 ## Space 托管 DXF Parser 50 MiB 容量（2026-08-27）
 

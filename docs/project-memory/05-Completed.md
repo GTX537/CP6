@@ -5,7 +5,8 @@
 - 可运行 Host 改为强制非 development Release：清单完整固定 Payload、源提交、Runtime、Core Console 哈希/版本和 DXF Converter 版本，并由外部完整 SHA 锚定。
 - 启动前拒绝 Manifest/Payload/Core/Runtime/版本漂移；每次 DWG 供应商调用前再次复核 Core 完整哈希。远程协议 Schema 2 把部署批准 Manifest 的完整 Release SHA 贯穿 API 请求、Worker 前置核对和响应回显，健康端点也暴露完整身份。
 - 真实 `win-x64` 发布演练封存 18 文件并通过 Schema；完整安装环境 CAD Experiment 57/57、远程协议 6/6、残留 0，主测试 2,939/19/0，整仓 0 warning / 0 error。
-- `0.0.0-rehearsal` 不是正式 Release/批准证据；正式合并提交构建、许可证/Site/隔离部署、独立 Backup 与黄金集仍 Pending，WP3/GA 状态不变。
+- PR #46 以 7/7 required checks 合并；合并后从精确 `main@4375c7c2fc1e297bf3fe845873b1af5af2cb5d66` 重建 `0.0.0-rehearsal.postmerge`，18 文件 Schema 通过，完整 Worker Release SHA 为 `c51c2ce8925f7bf2bf647dd2d958270d7903e6adc212eee37a668bfe9d82dc84`；post-merge Release/协议专项为 10/10 与 6/6。
+- 两个 `rehearsal` 都不是正式 Release/批准证据；批准 SemVer、许可证/Site/隔离部署、独立 Backup 与黄金集仍 Pending，WP3/GA 状态不变。
 
 ## 2026-08-27 Space DXF 50 MiB 容量合同
 

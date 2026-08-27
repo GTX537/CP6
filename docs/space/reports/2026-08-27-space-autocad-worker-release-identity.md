@@ -34,6 +34,22 @@ AutoCAD 候选 Worker 的可运行 Host 不再以 `cp6-autocad-worker-developmen
 
 演练清单的 `sourceCommit` 使用当时 `main@5a7b95c1ec5846707319659a4e097f2457899c3a`，而任务实现尚未合并，因此该演练刻意不具备正式 Release 身份。正式候选必须在本任务合并后的精确提交上重新 publish/seal，并将完整新哈希带入部署批准链。
 
+### 合并后精确主干重建
+
+PR #46 在 7/7 required checks 通过后合并为 `main@4375c7c2fc1e297bf3fe845873b1af5af2cb5d66`。随后从该精确主干重新 publish/seal，并再次执行 Schema 验证：
+
+| 项目 | 结果 |
+|---|---|
+| 演练版本 | `0.0.0-rehearsal.postmerge`（明确不可接受为正式 Release） |
+| Payload 文件 | 18 |
+| Worker Release SHA-256 | `c51c2ce8925f7bf2bf647dd2d958270d7903e6adc212eee37a668bfe9d82dc84` |
+| Provider Key | `cp6-autocad-worker` |
+| Provider Version | `0.0.0-rehearsal.postmerge+worker.c51c2ce8925f.autocad.25.0.58.0.0.dxf.1.1.0` |
+| Core Console | File Version `25.0.58.0.0`，SHA-256 `d1fd7232893094234f31c65445d0ec9259ffc1df17fb15aad99373e31545cefb` |
+| Release Schema | PowerShell `Test-Json -SchemaFile` = `True` |
+
+这证明合并后的源码可以生成与精确主干提交绑定的不可变制品；版本仍带 `rehearsal`，且没有许可证、Site 批准或生产等价隔离部署，因此不能写入正式 `acceptedEvidence`。正式候选仍须使用批准的 SemVer，从届时精确主干重建并把完整新哈希写入同版本部署批准 Manifest。
+
 ## 自动化验证
 
 | 门禁 | 结果 |
@@ -46,7 +62,7 @@ AutoCAD 候选 Worker 的可运行 Host 不再以 `cp6-autocad-worker-developmen
 | `CP6.Tests` | 2,939 passed / 19 environment-gated skipped / 0 failed |
 | `CP6.slnx` Release | 0 warning / 0 error |
 
-合并候选仍须通过 GA 证据门禁、远程 required checks 和 post-merge 冒烟；最终结果以 PR 记录为准。
+PR #46 的 7/7 required checks 已通过；合并后 Release 身份专项 10/10、远程 Schema 2 专项 6/6。GA 验证器继续正确返回 `NoGo`：3 个外部输入、9 个结果门禁和 1 个单人签署 Pending。
 
 ## 仍需真实关闭
 
