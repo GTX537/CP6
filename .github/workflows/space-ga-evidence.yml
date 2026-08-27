@@ -11,6 +11,8 @@ on:
       - 'docs/space/reports/**'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaReleaseRehearsalEvidence.ps1'
+      - 'tools/Test-SpaceGaReleaseRehearsalEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadEvidence.ps1'
@@ -39,6 +41,8 @@ on:
       - 'docs/space/reports/**'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaReleaseRehearsalEvidence.ps1'
+      - 'tools/Test-SpaceGaReleaseRehearsalEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadEvidence.ps1'
@@ -75,7 +79,11 @@ jobs:
         shell: pwsh
         run: ./tools/Test-SpaceGaEvidence.Tests.ps1
 
-      - name: Exercise two-site Pilot evidence failure modes
+      - name: Exercise Lean Core GA release rehearsal failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaReleaseRehearsalEvidence.Tests.ps1
+
+      - name: Exercise optional post-GA two-site Pilot failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaPilotEvidence.Tests.ps1
 

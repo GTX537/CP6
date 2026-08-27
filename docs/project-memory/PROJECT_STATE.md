@@ -1,12 +1,19 @@
 # 项目当前状态
 
+## Space Lean Core GA Schema 3（2026-08-27）
+
+- 首版 Core GA 已移除独立 Backup Provider、Greenfield/Retrofit 双仓、各 14 天 Pilot、客户来源 CAD 和额外人员确认等过度流程门禁；Backup 与现场 Pilot 转为 GA 后韧性/推广增强，不再阻断单人开发结案。
+- 硬质量门禁不降：20 份冻结 CAD 与 Holdout、防泄漏、单一 Primary 的真实许可和隔离 Worker、资格分/质量/Wilson/人工操作/性能阈值，以及 SQL Server + CP6 WMS + Published-only Viewer + 恢复 + 安全发布演练全部保留。
+- GA 索引升级为 Schema 3：外部输入由三类收敛为 `AUTHORIZED_GOLDEN_CAD_CANDIDATES` 与 `PRIMARY_PROVIDER_AND_ISOLATED_WORKER` 两类，WP3 改为单 Primary，WP8 改为一次内容哈希固定的受控发布演练和单一 DeliveryOwner 签署。
+- 当前 CAD 输入已 Complete；剩余 1 类外部输入、9 个正式接受 Gate 和 1 个签署 Pending，派生状态保持 72% / `NoGo`。本次没有伪造 Provider 批准、发布演练或生产部署。依据见 `docs/space/reports/2026-08-27-space-lean-core-ga-reset.md`。
+
 ## Space 原创黄金 CAD 候选完成（2026-08-27）
 
 - 单人开发场景已正式采用 `ApprovedOriginalWork`，不再要求不存在的客户来源或第二复核人，也不虚构客户、地址或授权关系；`BUBAO.GAO` 是 20 份原创 CAD 的作者、授权人和实名复核人。
 - AutoCAD 2025 原生引擎已在仓库外受控证据区生成并冻结正好 20 份唯一 CAD：10 DWG + 10 DXF，Calibration/Validation/Release Holdout 为 10/5/5，L1～L5 各 4，均为 AC1032；合计 14,659 个 Model Space 图元和 2,455 个带 Handle 的逻辑标准答案元素。
 - 每份文件均具有源 SHA-256、原创授权、脱敏证明、单位/坐标系/布局、DWG/DXF 版本、标准答案/预期问题、Mapping Profile/规则版本及实名复核。Source Set SHA 为 `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`，Golden Dataset SHA 为 `2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15`。
 - 产品 Converter Contract Runner 对 20/20 文件验证通过。仓库只保存脱敏 Manifest、哈希和受控 URN，原始 DWG/DXF 不入 Git；三类外部输入中的 `AUTHORIZED_GOLDEN_CAD_CANDIDATES` 已为 Complete。
-- 这不等于 WP7 接受：独立 Backup、主备批准/评分、质量与性能指标、生产联调和双仓 Pilot 仍未完成。正式 Core GA 保持 72% / `NoGo`，剩余 2 类外部输入、9 个 Gate 和 1 个 DeliveryOwner 签署 Pending。依据见 `docs/space/reports/2026-08-27-space-original-work-golden-cad-candidates.md`。
+- 这不等于 WP7 接受：按后续 Lean Schema 3，单一 Primary 批准/评分、质量与性能、受控发布演练和最终签署仍未完成。正式 Core GA 保持 72% / `NoGo`，剩余 1 类外部输入、9 个 Gate 和 1 个 DeliveryOwner 签署 Pending。依据见 `docs/space/reports/2026-08-27-space-original-work-golden-cad-candidates.md` 与 Lean 重置报告。
 
 ## Space Studio Development V1 100%（2026-08-27）
 
@@ -34,7 +41,7 @@
 - DXF Parser 从 25 MiB 整文件 byte[]/整文本/Split 数组升级为严格 UTF-8 逐行解析，底层流同步执行原始字节计数与 SHA-256；无语义的 999 注释会完整验证但不驻留，当前失败关闭上限为 64 MiB。
 - 精确 50 MiB 合法 DXF 合成容量包络通过并生成 1 个实体；64 MiB+1 seekable 输入在解析前拒绝且没有工件。Converter 升为 `cp6-development-dxf/1.1.0`，AutoCAD 组合 Provider Version 自动变为 `{core}+cp6-dxf-1.1.0`，旧认证不能静默复用。
 - 完整 CAD Experiment 在真实 Core Console 环境为 47/47、0 skipped；既有 DWG 指标保持 29/19/4,424/4,422，测试根残留 CAD/Attempt 为 0。
-- 50 MiB 文件是有效 DXF + 999 注释的合成容量包络，不是授权真实复杂 CAD，也没有 Ready P95/CPU/峰值内存/准确率证据。真实 50 MiB Primary/Backup 黄金集、从合并提交生成的正式 Release、批准和部署仍 Pending；WP3/整体继续 Partial/Pending、72% / `NoGo`。
+- 50 MiB 文件是有效 DXF + 999 注释的合成容量包络，不是正式黄金集性能结果。按 Lean Schema 3，仍需 Primary 的真实 50 MiB/Ready P95、正式 Release、批准和受控发布演练；WP3/整体继续 Partial/Pending、72% / `NoGo`。
 
 ## Space AutoCAD 候选 Worker DWG/DXF 双格式（2026-08-27）
 
@@ -59,9 +66,10 @@
 
 ## Space Studio 单人交付门禁（2026-08-26）
 
+- 本节记录 Schema 2 当时口径；当前阻断项已由本文顶部 Lean Core GA Schema 3 取代。
 - 核心 GA 治理已从多人角色门禁改为单一 `DeliveryOwner`：同一实名开发者可兼任产品、开发、QA、UX、架构、安全和 WMS 联调，自验收并签署；不再要求 2 Backend + 2 Frontend3D + 1 QA、五角色实名签字、不同复核人或第二人审批。
 - `ga-evidence-index.json` 与开工/黄金 CAD Manifest 升为 Schema 2；外部输入由 5 类减为 3 类（授权 CAD、Provider/隔离 Worker、双仓/WMS 窗口），签字由 5 个角色减为 1 个 DeliveryOwner，黄金 CAD 每份样本由一个实名 `reviewedBy` 复核。
-- 真实数据和运行结果门禁未降低：20 份授权 CAD、主备 Provider、真实 SQL/WMS/Published Viewer、性能、恢复、安全负向和两仓各 14 天 Pilot 仍失败关闭。因此当前派生状态仍为 72% / `NoGo`，但不再因只有一名开发者而阻塞。
+- Schema 2 当时仍要求主备 Provider 与两仓 14 天 Pilot；Schema 3 已把它们改为单 Primary + 一次受控发布演练，同时保留数据、质量、性能、恢复和安全结果门禁。
 - 自动化已证明单一 Owner 可以拥有并接受全部外部输入、复核全部黄金样本并签署 GA；模板、fixture、原始客户 CAD、哈希错误、占位身份和未达技术指标仍会被拒绝。本文下方及历史报告中旧的 2+2+1、五方签字、双标注/独立 QA、独立 UX/安全或第二人审批表述只保留作当时审计，均由本节与 Schema 2 合同取代，不再是当前门禁。
 
 ## Release/CD 仓库与平台工程结案（2026-08-26）

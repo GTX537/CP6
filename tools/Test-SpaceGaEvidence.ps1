@@ -15,7 +15,8 @@ $repoFullPath = [System.IO.Path]::GetFullPath($repo).TrimEnd(
     [System.IO.Path]::DirectorySeparatorChar,
     [System.IO.Path]::AltDirectorySeparatorChar)
 $repoPrefix = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
-$pilotValidator = Join-Path $PSScriptRoot 'Test-SpaceGaPilotEvidence.ps1'
+$releaseRehearsalValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaReleaseRehearsalEvidence.ps1')
 $goldenCadValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaGoldenCadEvidence.ps1')
 $goldenCadCandidateValidator = Join-Path $PSScriptRoot (
@@ -183,8 +184,8 @@ function Test-AttestedEvidence {
     }
 }
 
-if ($manifest.schemaVersion -ne 2) {
-    Add-ValidationError 'schemaVersion must be 2.'
+if ($manifest.schemaVersion -ne 3) {
+    Add-ValidationError 'schemaVersion must be 3.'
 }
 if ($manifest.programId -ne 'CP6_SPACE_STUDIO_V1_CORE_GA') {
     Add-ValidationError 'programId is not the frozen Core GA program.'
@@ -240,15 +241,14 @@ foreach ($signer in @($manifest.signers)) {
 
 $requiredInputIds = @(
     'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
-    'PROVIDER_APPROVALS_AND_ISOLATED_WORKER',
-    'TWO_PILOT_SITES_AND_WMS_WINDOWS'
+    'PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
 )
 $inputIds = @($manifest.externalInputs | ForEach-Object { $_.id })
 if (@($inputIds | Sort-Object -Unique).Count -ne $inputIds.Count) {
     Add-ValidationError 'External input ids must be unique.'
 }
 if ($inputIds.Count -ne $requiredInputIds.Count) {
-    Add-ValidationError 'The frozen external input set cannot be expanded or reduced.'
+    Add-ValidationError 'The Lean Core GA external input set cannot be expanded or reduced.'
 }
 foreach ($inputId in $requiredInputIds) {
     if ($inputId -notin $inputIds) {
@@ -358,12 +358,12 @@ $requiredGateIds = @(
     'WP0_BASELINE_AND_GOVERNANCE',
     'WP1_DESIGN_V1_MANUAL_MODELING',
     'WP2_CAD_START_WIZARD',
-    'WP3_SITE_PRIMARY_BACKUP_PROVIDERS',
+    'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER',
     'WP4_THREE_PATH_END_TO_END',
     'WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE',
     'WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY',
     'WP7_GOLDEN_CAD_FORMAL_EVIDENCE',
-    'WP8_TWO_SITE_PILOT_AND_SIGNOFF'
+    'WP8_RELEASE_REHEARSAL_AND_SIGNOFF'
 )
 $gateIds = @($manifest.gates | ForEach-Object { $_.id })
 if (@($gateIds | Sort-Object -Unique).Count -ne $gateIds.Count) {
@@ -414,13 +414,13 @@ foreach ($gate in @($manifest.gates)) {
         if ($gate.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE') {
             $requiredInputIdsForWp7 = @(
                 'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
-                'PROVIDER_APPROVALS_AND_ISOLATED_WORKER')
+                'PRIMARY_PROVIDER_AND_ISOLATED_WORKER')
             $incompleteInputs = @($manifest.externalInputs | Where-Object {
                 $_.id -in $requiredInputIdsForWp7 -and
                 $_.status -ne 'Complete'
             })
             $providerGate = @($manifest.gates | Where-Object {
-                $_.id -eq 'WP3_SITE_PRIMARY_BACKUP_PROVIDERS'
+                $_.id -eq 'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
             })[0]
             if ($incompleteInputs.Count -gt 0 -or
                 $providerGate.acceptanceStatus -ne 'Accepted') {
@@ -494,73 +494,90 @@ foreach ($gate in @($manifest.gates)) {
                 }
             }
         }
-        if ($gate.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF') {
+        if ($gate.id -eq 'WP8_RELEASE_REHEARSAL_AND_SIGNOFF') {
+            $primaryInput = @($manifest.externalInputs | Where-Object {
+                $_.id -eq 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
+            })[0]
+            $requiredAcceptedGates = @(
+                'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER',
+                'WP7_GOLDEN_CAD_FORMAL_EVIDENCE')
+            $pendingPrerequisiteGates = @($manifest.gates | Where-Object {
+                $_.id -in $requiredAcceptedGates -and
+                $_.acceptanceStatus -ne 'Accepted'
+            })
+            if ($primaryInput.status -ne 'Complete' -or
+                $pendingPrerequisiteGates.Count -gt 0) {
+                Add-ValidationError (
+                    'SPACE_GA_REHEARSAL_PREREQUISITES_INCOMPLETE: WP8 ' +
+                    'requires the approved Primary input plus Accepted WP3 and WP7.')
+            }
             if (@($manifest.signers | Where-Object {
                 $_.status -ne 'Signed'
             }).Count -gt 0) {
                 Add-ValidationError (
-                    'SPACE_GA_PILOT_SIGNERS_INCOMPLETE: WP8 cannot be ' +
+                    'SPACE_GA_REHEARSAL_SIGNER_INCOMPLETE: WP8 cannot be ' +
                     'Accepted before the DeliveryOwner is Signed.')
             }
-            $pilotManifestReference = [string]$gate.verificationManifest
-            if (!(Test-Text $pilotManifestReference)) {
+            $rehearsalManifestReference = [string]$gate.verificationManifest
+            if (!(Test-Text $rehearsalManifestReference)) {
                 Add-ValidationError (
-                    'SPACE_GA_PILOT_MANIFEST_REQUIRED: Accepted WP8 ' +
-                    'requires a structured Pilot evidence manifest.')
+                    'SPACE_GA_REHEARSAL_MANIFEST_REQUIRED: Accepted WP8 ' +
+                    'requires a structured release rehearsal manifest.')
             }
-            elseif ([System.IO.Path]::IsPathRooted($pilotManifestReference)) {
+            elseif ([System.IO.Path]::IsPathRooted($rehearsalManifestReference)) {
                 Add-ValidationError (
-                    'SPACE_GA_PILOT_MANIFEST_ABSOLUTE: WP8 Pilot manifest ' +
+                    'SPACE_GA_REHEARSAL_MANIFEST_ABSOLUTE: WP8 release rehearsal manifest ' +
                     'must use a repository-relative path.')
             }
             else {
-                $pilotManifestFullPath = [System.IO.Path]::GetFullPath(
-                    (Join-Path $repo $pilotManifestReference))
-                $isInsideRepository = $pilotManifestFullPath.StartsWith(
+                $rehearsalManifestFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $rehearsalManifestReference))
+                $isInsideRepository = $rehearsalManifestFullPath.StartsWith(
                     $repoPrefix,
                     [System.StringComparison]::OrdinalIgnoreCase)
-                $normalizedReference = $pilotManifestReference.Replace('\', '/')
+                $normalizedReference = $rehearsalManifestReference.Replace('\', '/')
                 $isTemplateOrFixture =
                     $normalizedReference -match '(^|/)tools/test-fixtures/' -or
                     $normalizedReference.EndsWith(
-                        '/pilot-evidence-template.json',
+                        '/release-rehearsal-evidence-template.json',
                         [System.StringComparison]::OrdinalIgnoreCase)
                 if (!$isInsideRepository) {
                     Add-ValidationError (
-                        'SPACE_GA_PILOT_MANIFEST_ESCAPE: WP8 Pilot manifest ' +
+                        'SPACE_GA_REHEARSAL_MANIFEST_ESCAPE: WP8 release rehearsal manifest ' +
                         'escapes the repository root.')
                 }
                 elseif ($isTemplateOrFixture) {
                     Add-ValidationError (
-                        'SPACE_GA_PILOT_MANIFEST_SYNTHETIC: WP8 cannot use ' +
-                        'a template or test fixture as Pilot evidence.')
+                        'SPACE_GA_REHEARSAL_MANIFEST_SYNTHETIC: WP8 cannot use ' +
+                        'a template or test fixture as release rehearsal evidence.')
                 }
                 elseif ([System.IO.Path]::GetExtension(
-                    $pilotManifestFullPath) -ne '.json' -or
-                    !(Test-Path -LiteralPath $pilotManifestFullPath -PathType Leaf)) {
+                    $rehearsalManifestFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $rehearsalManifestFullPath -PathType Leaf)) {
                     Add-ValidationError (
-                        'SPACE_GA_PILOT_MANIFEST_MISSING: WP8 Pilot manifest ' +
-                        "does not exist as JSON: $pilotManifestReference")
+                        'SPACE_GA_REHEARSAL_MANIFEST_MISSING: WP8 release rehearsal manifest ' +
+                        "does not exist as JSON: $rehearsalManifestReference")
                 }
                 else {
                     $manifestIsAttested = @($gate.acceptedEvidence |
                         Where-Object {
                             ([string]$_.uri).Equals(
-                                $pilotManifestReference,
+                                $rehearsalManifestReference,
                                 [System.StringComparison]::OrdinalIgnoreCase)
                         }).Count -gt 0
                     if (!$manifestIsAttested) {
                         Add-ValidationError (
-                            'SPACE_GA_PILOT_MANIFEST_UNATTESTED: WP8 accepted ' +
-                            'evidence must attest the structured Pilot manifest itself.')
+                            'SPACE_GA_REHEARSAL_MANIFEST_UNATTESTED: WP8 accepted ' +
+                            'evidence must attest the structured release rehearsal manifest itself.')
                     }
                     try {
-                        & $pilotValidator `
-                            -ManifestPath $pilotManifestFullPath | Out-Null
+                        & $releaseRehearsalValidator `
+                            -ManifestPath $rehearsalManifestFullPath `
+                            -ExpectedOwnerName ([string]$gate.ownerName) | Out-Null
                     }
                     catch {
                         Add-ValidationError (
-                            'SPACE_GA_PILOT_EVIDENCE_INVALID: ' +
+                            'SPACE_GA_REHEARSAL_EVIDENCE_INVALID: ' +
                             $_.Exception.Message)
                     }
                 }

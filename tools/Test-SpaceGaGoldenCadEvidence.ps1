@@ -267,8 +267,8 @@ if (!$manifestFullPath.StartsWith(
 $manifest = Get-Content -LiteralPath $manifestFullPath -Raw |
     ConvertFrom-SpaceGaJson
 
-if ($manifest.schemaVersion -ne 2) {
-    Add-GoldenValidationError 'SPACE_GA_GOLDEN_SCHEMA_INVALID: schemaVersion must be 2.'
+if ($manifest.schemaVersion -ne 3) {
+    Add-GoldenValidationError 'SPACE_GA_GOLDEN_SCHEMA_INVALID: schemaVersion must be 3.'
 }
 if ($manifest.programId -ne 'CP6_SPACE_STUDIO_V1_CORE_GA') {
     Add-GoldenValidationError 'SPACE_GA_GOLDEN_PROGRAM_INVALID: programId is not the frozen Core GA program.'
@@ -399,32 +399,12 @@ if ($samples.Count -eq 20 -and (Test-GoldenSha256 $dataset.sourceSetSha256)) {
 }
 
 $providers = @($manifest.providers)
-if ($providers.Count -ne 2) {
-    Add-GoldenValidationError 'SPACE_GA_GOLDEN_PROVIDER_SET_INVALID: exactly two evaluated Providers are required.'
+if ($providers.Count -ne 1) {
+    Add-GoldenValidationError 'SPACE_GA_GOLDEN_PROVIDER_SET_INVALID: exactly one evaluated Primary Provider is required for Core GA.'
 }
 $providerRoles = @($providers | ForEach-Object { [string]$_.role })
-$providerIdentities = @($providers | ForEach-Object {
-    ([string]$_.providerKey) + '@' + ([string]$_.providerVersion)
-})
-if (@($providerRoles | Sort-Object -Unique).Count -ne 2 -or
-    'Primary' -notin $providerRoles -or 'Backup' -notin $providerRoles -or
-    @($providerIdentities | Sort-Object -Unique).Count -ne $providers.Count) {
-    Add-GoldenValidationError 'SPACE_GA_GOLDEN_PROVIDER_ROLES_INVALID: one distinct Primary and one distinct Backup are required.'
-}
-if ($providers.Count -eq 2) {
-    $primaryProvider = @($providers | Where-Object { $_.role -eq 'Primary' })[0]
-    $backupProvider = @($providers | Where-Object { $_.role -eq 'Backup' })[0]
-    if ($null -ne $primaryProvider -and $null -ne $backupProvider -and
-        (ConvertTo-GoldenInteger $primaryProvider.qualificationScore) -le
-        (ConvertTo-GoldenInteger $backupProvider.qualificationScore)) {
-        Add-GoldenValidationError 'SPACE_GA_GOLDEN_PROVIDER_RANK_INVALID: Primary qualification score must be strictly higher than Backup.'
-    }
-    $standardCadHashes = @($providers | ForEach-Object {
-        [string]$_.performance.standardCadSha256
-    })
-    if (@($standardCadHashes | Sort-Object -Unique).Count -ne 1) {
-        Add-GoldenValidationError 'SPACE_GA_GOLDEN_PERFORMANCE_SOURCE_MISMATCH: Primary and Backup must use the same 50 MiB standard CAD.'
-    }
+if ($providerRoles.Count -ne 1 -or $providerRoles[0] -ne 'Primary') {
+    Add-GoldenValidationError 'SPACE_GA_GOLDEN_PROVIDER_ROLES_INVALID: the Core GA Provider must have role Primary.'
 }
 
 foreach ($provider in $providers) {

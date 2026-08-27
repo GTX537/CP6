@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
   "scope": "CoreGA",
   "deliveryMode": "SoloDeveloper",
@@ -40,27 +40,14 @@
       ]
     },
     {
-      "id": "PROVIDER_APPROVALS_AND_ISOLATED_WORKER",
+      "id": "PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
       "ownerRole": "SecurityProcurementDevOps",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1_WEEK_2",
       "status": "Pending",
       "evidenceFormat": [
-        "Licensing, security, data-region, retention and deletion approvals",
+        "Primary Provider licensing, security, retention and deletion approval",
         "Controlled isolated worker deployment and secret references"
-      ],
-      "verificationManifest": null,
-      "evidence": []
-    },
-    {
-      "id": "TWO_PILOT_SITES_AND_WMS_WINDOWS",
-      "ownerRole": "ProductImplementationWMS",
-      "ownerName": "BUBAO.GAO",
-      "deadlineMilestone": "M1_WEEK_4",
-      "status": "Pending",
-      "evidenceFormat": [
-        "Named greenfield and retrofit Sites",
-        "Business owner, implementation owner and CP6 WMS test window"
       ],
       "verificationManifest": null,
       "evidence": []
@@ -83,12 +70,13 @@
         "docs/project-memory/PROJECT_STATE.md",
         "docs/space/reports/2026-08-14-ga-evidence-attestation.md",
         "docs/space/reports/2026-08-15-space-ga-repository-completion-audit.md",
-        "docs/space/reports/2026-08-27-space-ga-owner-and-cad-intake.md"
+        "docs/space/reports/2026-08-27-space-ga-owner-and-cad-intake.md",
+        "docs/space/reports/2026-08-27-space-lean-core-ga-reset.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
         "One delivery owner is named; no distinct-person or staffing-quorum gate applies",
-        "Golden CAD, Provider experiment and Pilot owners are named",
+        "Golden CAD and Primary Provider owners are named",
         "Kickoff and target GA dates are recorded"
       ]
     },
@@ -143,7 +131,7 @@
       ]
     },
     {
-      "id": "WP3_SITE_PRIMARY_BACKUP_PROVIDERS",
+      "id": "WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
       "ownerName": "BUBAO.GAO",
@@ -151,9 +139,9 @@
       "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
-        "Two Site-approved Provider certifications",
-        "Frozen-worker scorecards at or above 80 of 100",
-        "Failover and no-unapproved-cloud evidence"
+        "One approved Primary Provider certification",
+        "Frozen-worker scorecard at or above 80 of 100",
+        "Isolation, retention/deletion and no-unapproved-cloud evidence"
       ],
       "evidencePaths": [
         "docs/space/reports/2026-08-14-cad-provider-routing.md",
@@ -171,8 +159,8 @@
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
-        "Each CAD-enabled Site has an approved primary and backup chain",
-        "Both chains cover real DWG and DXF",
+        "The Core GA candidate has one approved Primary Provider chain",
+        "The Primary chain covers real DWG and DXF",
         "Provider credentials remain secret references"
       ]
     },
@@ -291,7 +279,7 @@
       "acceptedEvidence": [],
       "acceptanceCriteria": [
         "Exactly 20 authorized immutable samples use the 10/5/5 split and cover L1 through L5 plus DWG and DXF",
-        "Primary and Backup use the same source set, frozen Worker and 50 MiB standard CAD; Primary scores strictly higher and both evaluation reports are release eligible",
+        "Primary uses the frozen source set, Worker and 50 MiB standard CAD; its evaluation report is release eligible and its qualification score is at least 80",
         "Coverage is at least 80 percent",
         "Overall accuracy is at least 90 percent",
         "High-confidence precision is at least 95 percent",
@@ -301,34 +289,31 @@
       ]
     },
     {
-      "id": "WP8_TWO_SITE_PILOT_AND_SIGNOFF",
+      "id": "WP8_RELEASE_REHEARSAL_AND_SIGNOFF",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
       "ownerName": "BUBAO.GAO",
-      "deadlineMilestone": "M4",
+      "deadlineMilestone": "M2",
       "implementationStatus": "ExternalExecution",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
-        "Greenfield Site 14-day immutable run log",
-        "Retrofit Site 14-day immutable run log",
-        "Defect closure, business outcome and delivery-owner signoff pack"
+        "One content-hash-attested controlled release rehearsal",
+        "SQL Server, CP6 WMS, Published Viewer, recovery and security results",
+        "Defect closure and DeliveryOwner signoff"
       ],
       "evidencePaths": [
-        "docs/space/acceptance/v1.3-ga/pilot-evidence-protocol.md",
-        "docs/space/acceptance/v1.3-ga/pilot-evidence-template.json",
-        "docs/space/reports/2026-08-14-space-ga-pilot-evidence-guard.md"
+        "docs/space/acceptance/v1.3-ga/release-rehearsal-evidence-protocol.md",
+        "docs/space/acceptance/v1.3-ga/release-rehearsal-evidence-template.json"
       ],
       "verificationManifest": null,
       "acceptedEvidence": [],
       "acceptanceCriteria": [
-        "Each Site runs continuously for 14 days",
-        "There are zero S1 and S2 defects",
-        "Every S3 has a usable workaround and is closed before signoff",
-        "2D, 3D, object-list and WMS consistency are 100 percent",
+        "One controlled rehearsal binds the tested commit, frozen source set, golden dataset and Worker environment",
+        "DWG/DXF, three authoring paths, Publish/WMS, Published/Draft isolation, recovery and security checks all pass",
+        "There are zero open S1, S2 or blocking S3 defects",
         "Automatic recovery is at most 15 minutes and manual recovery at most 240 minutes",
-        "Old Published remains available, Viewer is Published-only and there is no long-term dual write",
-        "Customer warehouse representatives and implementation leads confirm both Site outcomes",
-        "The structured Pilot manifest is content-hash attested and passes the WP8 validator",
+        "Old Published remains available, Viewer is Published-only and retries produce no duplicate writes",
+        "The structured release rehearsal manifest is content-hash attested and passes the WP8 validator",
         "The delivery owner is Signed"
       ]
     }

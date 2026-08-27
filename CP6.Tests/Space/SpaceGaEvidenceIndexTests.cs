@@ -19,7 +19,7 @@ public sealed class SpaceGaEvidenceIndexTests
         using var document = JsonDocument.Parse(File.ReadAllText(ManifestPath));
         var root = document.RootElement;
 
-        Assert.Equal(2, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal(
             "CP6_SPACE_STUDIO_V1_CORE_GA",
             root.GetProperty("programId").GetString());
@@ -36,7 +36,7 @@ public sealed class SpaceGaEvidenceIndexTests
         Assert.All(signers, signer =>
         {
             Assert.Equal("Pending", signer.GetProperty("status").GetString());
-            Assert.Equal(JsonValueKind.Null, signer.GetProperty("name").ValueKind);
+            Assert.Equal("BUBAO.GAO", signer.GetProperty("name").GetString());
             Assert.Empty(signer.GetProperty("evidence").EnumerateArray());
         });
 
@@ -47,19 +47,21 @@ public sealed class SpaceGaEvidenceIndexTests
             new[]
             {
                 "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
-                "PROVIDER_APPROVALS_AND_ISOLATED_WORKER",
-                "TWO_PILOT_SITES_AND_WMS_WINDOWS",
+                "PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
             },
             inputs.Select(item => item.GetProperty("id").GetString()).ToArray());
         Assert.All(inputs, input =>
         {
-            Assert.Equal("Pending", input.GetProperty("status").GetString());
             Assert.False(string.IsNullOrWhiteSpace(
                 input.GetProperty("ownerRole").GetString()));
             Assert.False(string.IsNullOrWhiteSpace(
                 input.GetProperty("deadlineMilestone").GetString()));
             Assert.NotEmpty(input.GetProperty("evidenceFormat").EnumerateArray());
         });
+        Assert.Equal("Complete", inputs[0].GetProperty("status").GetString());
+        Assert.NotEmpty(inputs[0].GetProperty("evidence").EnumerateArray());
+        Assert.Equal("Pending", inputs[1].GetProperty("status").GetString());
+        Assert.Empty(inputs[1].GetProperty("evidence").EnumerateArray());
 
         var gates = root.GetProperty("gates").EnumerateArray().ToArray();
         Assert.Equal(
@@ -68,12 +70,12 @@ public sealed class SpaceGaEvidenceIndexTests
                 "WP0_BASELINE_AND_GOVERNANCE",
                 "WP1_DESIGN_V1_MANUAL_MODELING",
                 "WP2_CAD_START_WIZARD",
-                "WP3_SITE_PRIMARY_BACKUP_PROVIDERS",
+                "WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
                 "WP4_THREE_PATH_END_TO_END",
                 "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
                 "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY",
                 "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
-                "WP8_TWO_SITE_PILOT_AND_SIGNOFF",
+                "WP8_RELEASE_REHEARSAL_AND_SIGNOFF",
             },
             gates.Select(item => item.GetProperty("id").GetString()).ToArray());
         Assert.All(gates, gate =>
@@ -120,6 +122,7 @@ public sealed class SpaceGaEvidenceIndexTests
 
         Assert.Equal(
             [
+                "WP0_BASELINE_AND_GOVERNANCE",
                 "WP1_DESIGN_V1_MANUAL_MODELING",
                 "WP2_CAD_START_WIZARD",
                 "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",

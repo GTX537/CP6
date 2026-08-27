@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP8_RELEASE_REHEARSAL",
+  "conclusion": "Pending",
+  "ownerName": null,
+  "executedAtUtc": null,
+  "applicationCommitSha": null,
+  "sourceSetSha256": null,
+  "goldenDatasetSha256": null,
+  "workerEnvironmentSha256": null,
+  "environment": {
+    "mode": "ControlledReleaseRehearsal",
+    "databaseEngine": "SQLServer",
+    "wmsSystem": "CP6_WMS",
+    "publishedViewerOnly": false,
+    "secretsByReferenceOnly": false
+  },
+  "results": {
+    "cadDwgDxfEndToEndPassed": false,
+    "threeAuthoringPathsPassed": false,
+    "publishAndWmsPassed": false,
+    "publishedDraftIsolationPassed": false,
+    "recoveryPassed": false,
+    "securityNegativePassed": false,
+    "noDuplicateWrites": false
+  },
+  "recovery": {
+    "automaticRecoveryMaxMinutes": null,
+    "manualRecoveryMaxMinutes": null,
+    "oldPublishedRemainedAvailable": false
+  },
+  "defects": {
+    "s1Open": null,
+    "s2Open": null,
+    "blockingS3Open": null
+  },
+  "evidence": {
+    "execution": {},
+    "publishWms": {},
+    "viewer": {},
+    "recovery": {},
+    "security": {}
+  }
+}

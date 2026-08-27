@@ -288,9 +288,10 @@ function Test-AuthorizedGoldenCadCandidates {
         if ($sampleRef -notmatch '^urn:cp6-space-golden-cad:[A-Za-z0-9][A-Za-z0-9:._-]{0,200}$' -or
             !(Test-KickoffSha256 $candidate.sourceSha256) -or
             $null -eq $size -or $size -le 0 -or
-            $candidate.license -ne 'ApprovedCustomerDerived' -or
+            $candidate.license -notin @(
+                'ApprovedCustomerDerived', 'ApprovedOriginalWork') -or
             $candidate.authorizedForGoldenEvaluation -ne $true) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_CAD_CANDIDATE_INVALID: $ownerId must be a real authorized customer-derived candidate with opaque identity, hash and byte length."
+            Add-KickoffValidationError "SPACE_GA_KICKOFF_CAD_CANDIDATE_INVALID: $ownerId must be an authorized original-work or customer-derived candidate with opaque identity, hash and byte length."
         }
         if ($format -notin @('DWG', 'DXF')) {
             Add-KickoffValidationError "SPACE_GA_KICKOFF_CAD_FORMAT_INVALID: $ownerId must be DWG or DXF."
@@ -330,17 +331,13 @@ function Test-ProviderApprovalsAndWorker {
     param($Section)
 
     if (!(Test-KickoffSectionHeader `
-        -RequiredInputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -RequiredInputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
         -Section $Section)) {
         return
     }
     $providers = @($Section.candidateProviders)
-    if ($providers.Count -lt 2) {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_PROVIDER_COUNT_INVALID: at least two approved candidate Provider chains are required.'
-    }
-    $providerKeys = @($providers | ForEach-Object { [string]$_.providerKey })
-    if (@($providerKeys | Sort-Object -Unique).Count -ne $providers.Count) {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_PROVIDER_DUPLICATE: candidate chains must use distinct Provider keys, not multiple versions of one Provider.'
+    if ($providers.Count -ne 1 -or $providers[0].role -ne 'Primary') {
+        Add-KickoffValidationError 'SPACE_GA_KICKOFF_PROVIDER_COUNT_INVALID: Core GA requires exactly one approved Primary Provider chain.'
     }
     foreach ($provider in $providers) {
         $providerId = ([string]$provider.providerKey) + '@' +
@@ -353,13 +350,11 @@ function Test-ProviderApprovalsAndWorker {
         }
         if ($provider.licensingApproved -ne $true -or
             $provider.securityApproved -ne $true -or
-            $provider.dataRegionApproved -ne $true -or
             $provider.retentionDeletionApproved -ne $true) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_PROVIDER_APPROVALS_INCOMPLETE: $providerId is missing licensing, security, data-region or retention/deletion approval."
+            Add-KickoffValidationError "SPACE_GA_KICKOFF_PROVIDER_APPROVALS_INCOMPLETE: $providerId is missing licensing, security or retention/deletion approval."
         }
         Test-KickoffEvidence -OwnerId "$providerId licensing" -Evidence $provider.licensingEvidence
         Test-KickoffEvidence -OwnerId "$providerId security" -Evidence $provider.securityEvidence
-        Test-KickoffEvidence -OwnerId "$providerId data region" -Evidence $provider.dataRegionEvidence
         Test-KickoffEvidence -OwnerId "$providerId retention and deletion" -Evidence $provider.retentionDeletionEvidence
         if ($provider.dataBoundary -eq 'ApprovedCloud') {
             if ($provider.cloudApprovals.tenantApproved -ne $true -or
@@ -385,58 +380,6 @@ function Test-ProviderApprovalsAndWorker {
     Test-KickoffEvidence -OwnerId 'Isolated Worker readiness' -Evidence $worker.readinessEvidence
 }
 
-function Test-TwoPilotSitesAndWmsWindows {
-    param($Section)
-
-    if (!(Test-KickoffSectionHeader `
-        -RequiredInputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
-        -Section $Section)) {
-        return
-    }
-    $sites = @($Section.sites)
-    $siteTypes = @($sites | ForEach-Object { [string]$_.siteType })
-    $siteRefs = @($sites | ForEach-Object { [string]$_.siteRef })
-    if ($sites.Count -ne 2 -or
-        @($siteTypes | Sort-Object -Unique).Count -ne 2 -or
-        'Greenfield' -notin $siteTypes -or 'Retrofit' -notin $siteTypes -or
-        @($siteRefs | Sort-Object -Unique).Count -ne 2) {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_PILOT_SITE_SET_INVALID: exactly one distinct Greenfield and one distinct Retrofit Site are required.'
-    }
-    foreach ($site in $sites) {
-        $siteRef = [string]$site.siteRef
-        $ownerId = if (Test-KickoffText $siteRef) { $siteRef } else { 'Pilot Site' }
-        $windowStart = ConvertTo-KickoffUtcTimestamp $site.wmsWindowStartUtc
-        $windowEnd = ConvertTo-KickoffUtcTimestamp $site.wmsWindowEndUtc
-        $pilotStart = ConvertTo-KickoffDate $site.plannedPilotStartDate
-        $pilotEnd = ConvertTo-KickoffDate $site.plannedPilotEndDate
-        if ($siteRef -notmatch '^urn:cp6-space-ga-site:[A-Za-z0-9][A-Za-z0-9:._-]{0,200}$' -or
-            !(Test-KickoffPersonName $site.businessOwner) -or
-            !(Test-KickoffPersonName $site.implementationOwner) -or
-            !(Test-KickoffPersonName $site.wmsOwner) -or
-            $site.wmsSystem -ne 'CP6_WMS' -or
-            $site.pilotWindowConfirmed -ne $true) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_PILOT_SITE_INVALID: $ownerId requires opaque identity, three real owners, CP6 WMS and a confirmed window."
-        }
-        if ($null -eq $windowStart -or $null -eq $windowEnd -or
-            $windowEnd -le $windowStart) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_WMS_WINDOW_INVALID: $ownerId must record an ordered CP6 WMS test window."
-        }
-        if ($null -eq $pilotStart -or $null -eq $pilotEnd -or
-            $pilotEnd -lt $pilotStart -or
-            ($pilotEnd - $pilotStart).Days + 1 -lt 14) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_PILOT_DURATION_INVALID: $ownerId planned Pilot must cover at least 14 consecutive calendar days."
-        }
-        if ($null -ne $windowStart -and $null -ne $windowEnd -and
-            $null -ne $pilotStart -and $null -ne $pilotEnd -and
-            ($windowStart.UtcDateTime.Date -gt $pilotStart -or
-             $windowEnd.UtcDateTime -lt $pilotEnd.AddDays(1))) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_WMS_WINDOW_COVERAGE_INVALID: $ownerId CP6 WMS window must cover the complete planned Pilot."
-        }
-        Test-KickoffEvidence -OwnerId "$ownerId selection" -Evidence $site.selectionEvidence
-        Test-KickoffEvidence -OwnerId "$ownerId WMS window" -Evidence $site.wmsWindowEvidence
-    }
-}
-
 if (!(Test-Path -LiteralPath $manifestFullPath -PathType Leaf)) {
     throw "Kickoff evidence manifest was not found: $manifestFullPath"
 }
@@ -450,12 +393,11 @@ $manifest = Get-Content -LiteralPath $manifestFullPath -Raw |
     ConvertFrom-SpaceGaJson
 $requiredInputIds = @(
     'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
-    'PROVIDER_APPROVALS_AND_ISOLATED_WORKER',
-    'TWO_PILOT_SITES_AND_WMS_WINDOWS')
+    'PRIMARY_PROVIDER_AND_ISOLATED_WORKER')
 if ((Test-KickoffText $InputId) -and $InputId -notin $requiredInputIds) {
     Add-KickoffValidationError "SPACE_GA_KICKOFF_INPUT_INVALID: unsupported external input id $InputId."
 }
-if ($manifest.schemaVersion -ne 2 -or
+if ($manifest.schemaVersion -ne 3 -or
     $manifest.programId -ne 'CP6_SPACE_STUDIO_V1_CORE_GA' -or
     $manifest.deliveryMode -ne 'SoloDeveloper' -or
     $manifest.evidenceClass -ne 'M0_EXTERNAL_INPUT_READINESS') {
@@ -479,8 +421,7 @@ if ($null -eq $kickoffDate -or $null -eq $targetGaDate -or
 
 $sections = [ordered]@{
     AUTHORIZED_GOLDEN_CAD_CANDIDATES = $manifest.authorizedGoldenCadCandidates
-    PROVIDER_APPROVALS_AND_ISOLATED_WORKER = $manifest.providerApprovalsAndIsolatedWorker
-    TWO_PILOT_SITES_AND_WMS_WINDOWS = $manifest.twoPilotSitesAndWmsWindows
+    PRIMARY_PROVIDER_AND_ISOLATED_WORKER = $manifest.primaryProviderAndIsolatedWorker
 }
 $inputsToValidate = if (Test-KickoffText $InputId) {
     @($InputId)
@@ -493,11 +434,8 @@ foreach ($currentInputId in $inputsToValidate) {
         'AUTHORIZED_GOLDEN_CAD_CANDIDATES' {
             Test-AuthorizedGoldenCadCandidates $sections[$currentInputId]
         }
-        'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' {
+        'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' {
             Test-ProviderApprovalsAndWorker $sections[$currentInputId]
-        }
-        'TWO_PILOT_SITES_AND_WMS_WINDOWS' {
-            Test-TwoPilotSitesAndWmsWindows $sections[$currentInputId]
         }
     }
 }
