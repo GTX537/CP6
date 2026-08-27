@@ -16,5 +16,6 @@
   <Project Path="CP6.Tests/CP6.Tests.csproj" />
   <Project Path="CP6.WebApi/CP6.WebApi.csproj" />
   <Project Path="tools/CP6.Space.OpenApiGenerator/CP6.Space.OpenApiGenerator.csproj" />
+  <Project Path="tools/CP6.Space.CadWorker.AutoCadCandidate/CP6.Space.CadWorker.AutoCadCandidate.csproj" />
   <Project Path="tools/CP6.Space.StandardWarehouseGenerator/CP6.Space.StandardWarehouseGenerator.csproj" />
 </Solution>

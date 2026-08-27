@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space Studio WP3 远程隔离 CAD Worker Provider（2026-08-27）
+
+- 已补齐生产侧远程 CAD Provider 接入：Design API 不加载供应商 SDK 或启动 CAD 进程，只通过 mTLS 向隔离 Worker 发送原始 CAD、源 SHA-256、格式和精确 Provider 身份；Tenant/Site/用户/模型/数据库/Mapping/Object Storage 身份均不跨边界。
+- 运行注册默认关闭；只有外部哈希固定且未过期的部署批准 Manifest、精确 Provider/版本/格式/部署与数据边界、有效客户端证书、CA/主机名验证和服务端证书 SHA-256 Pin 全部通过时才启动。Mapping Profile 精确版本、完整 Override Replay、语义、诊断和 PreviewSet 仍在 CP6 内生成，Worker 不能选择 Mapping 或写 Draft。
+- 新增可运行的 AutoCAD Core Console DWG 候选 Worker；本机真实调用 `accoreconsole.exe 25.0.58.0.0` 处理 Autodesk 样例，得到 29 图层、19 块、4,424 实体/4,422 支持实体，Provider 身份和 Attempt 原始/派生清理合同通过。该样例不是授权黄金 CAD，只计开发候选证据。
+- 远程 Provider 4/4、既有路由 16/16、候选安装测试 1/1、Space Unit 550/550、Space Integration + LocalDB 462/462 和完整 solution 0 warning / 0 error 已通过。仓库生产接入层与候选 Host 已完成，但许可证/客户/Site 批准、真实 mTLS 无出口部署、DXF、独立 Backup、20 份黄金集评分和生产等价 Failover 尚缺；WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
+
 ## Space Studio WP1 仓库实现闭环（2026-08-27）
 
 - WP1 Design V1 手工建模的仓库实现已从 Partial 推进为 Complete：同一向导支持 Blank、Published、System Template 和 Tenant Template，模板模式按密封预览幂等初始化全部楼层，版本持久保存来源、模板版本和内容 SHA-256。

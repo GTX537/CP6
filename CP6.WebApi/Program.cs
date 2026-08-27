@@ -158,6 +158,21 @@ builder.Services.AddSpaceDesignV1Persistence(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
         "DefaultConnection is required for Space Design v1."));
+var remoteCadWorker = builder.Configuration
+    .GetSection(SpaceCadRemoteWorkerOptions.SectionName)
+    .Get<SpaceCadRemoteWorkerOptions>();
+if (remoteCadWorker?.Enabled == true)
+{
+    if (!Path.IsPathRooted(remoteCadWorker.ApprovalManifestPath))
+    {
+        remoteCadWorker.ApprovalManifestPath = Path.Combine(
+            builder.Environment.ContentRootPath,
+            remoteCadWorker.ApprovalManifestPath);
+    }
+
+    builder.Services.AddSpaceCadRemoteWorkerProvider(remoteCadWorker);
+}
+
 var spaceFileRoot = builder.Configuration["Space:Files:RootPath"];
 if (string.IsNullOrWhiteSpace(spaceFileRoot))
 {

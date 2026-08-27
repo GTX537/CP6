@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space Studio WP3 远程隔离 CAD Worker Provider
+
+- 新增最小化 CAD-only Worker 协议、受限 HTTPS 流客户端和生产 Provider；跨边界只传原始 CAD、SHA-256、格式、Attempt 与精确 Provider 身份，不传 CP6 业务/数据身份。
+- 运行时默认关闭；启用时以外部 SHA 固定批准 Manifest，严格核对版本、资格分、黄金集/环境/Worker Release 哈希、审批引用、有效期、mTLS、无出口/无业务凭据、清理和合同执行器声明；客户端另做 CA/主机名、吊销与服务端证书 SHA-256 Pin。
+- Mapping Profile 精确版本、完整 Layer Override Replay、语义、诊断和 PreviewSet 留在 CP6；隔离 Worker 不能选择 Mapping 或写 Draft。
+- 新增可运行的 AutoCAD Core Console DWG 候选 Worker；真实安装型测试通过完整 Worker 边界并清除 Attempt 原始/派生 CAD。它仍是开发候选，不支持真实 DXF，也没有许可证/Site/隔离部署/Backup/20 份黄金集正式证据。
+- 仓库切片验证覆盖远程 Provider 4、路由 16、候选 Worker、Space Unit 550、Space Integration + LocalDB 462 和完整 solution。WP3 保持 Partial/Pending，`acceptedEvidence` 为空，整体保持 72% / NoGo。
+
 ## 2026-08-27：Space Studio WP1 统一建模与模板制作
 
 - Design V1 统一支持 Blank、PublishedVersion、SystemTemplate、TenantTemplate；模板模式核对当前不可变版本和密封 ProposalHash，并幂等初始化全部楼层。

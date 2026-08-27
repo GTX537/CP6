@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space Studio WP3 远程 CAD Worker 仓库切片
+
+- 完成 CAD-only 远程 Worker 协议、HTTPS 流式客户端、生产 Provider 和显式运行注册；主 API 默认不注册供应商运行时，启用时严格绑定审批 Manifest 外部 SHA、精确 Provider/版本、mTLS 双证书和证书 Pin。
+- Worker 边界不包含 Tenant/Site/用户/模型/数据库/Mapping/对象存储身份；冻结 Mapping Profile、完整 Override Replay、语义、诊断和 PreviewSet 均在 CP6 内复核生成，Worker 无 Draft 写权限。
+- 交付可运行的 AutoCAD Core Console DWG 候选 Host，完整源 SHA 核对后才经统一合同执行器转换，响应前清除 Attempt 原始/派生目录；本机真实安装测试得到 29 图层、19 块、4,424 实体/4,422 支持实体。
+- 远程 Provider 4/4、路由 16/16、候选安装 1/1、Space Unit 550/550、Space Integration + LocalDB 462/462 和完整 solution 通过。这里只完成 WP3 仓库切片；真实批准/隔离部署、DXF、独立 Backup、授权黄金集和 Site Failover 仍 Pending，因此 WP3 仍 Partial、GA 仍 72% / NoGo。
+
 ## 2026-08-27 Space Studio WP1 统一建模与模板制作
 
 - 完成 Blank、PublishedVersion、SystemTemplate、TenantTemplate 四模式统一 Draft 创建；模板版本、Scope 和密封 ProposalHash 在服务端复核，全部楼层通过既有 Lease/Revision/Idempotency Fence 初始化。
