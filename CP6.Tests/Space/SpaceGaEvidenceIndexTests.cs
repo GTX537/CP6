@@ -19,7 +19,7 @@ public sealed class SpaceGaEvidenceIndexTests
         using var document = JsonDocument.Parse(File.ReadAllText(ManifestPath));
         var root = document.RootElement;
 
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(2, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal(
             "CP6_SPACE_STUDIO_V1_CORE_GA",
             root.GetProperty("programId").GetString());
@@ -29,7 +29,7 @@ public sealed class SpaceGaEvidenceIndexTests
 
         var signers = root.GetProperty("signers").EnumerateArray().ToArray();
         Assert.Equal(
-            new[] { "Architecture", "Product", "QA", "Security", "WMS" },
+            new[] { "DeliveryOwner" },
             signers.Select(item => item.GetProperty("role").GetString())
                 .Order(StringComparer.Ordinal)
                 .ToArray());
@@ -46,8 +46,6 @@ public sealed class SpaceGaEvidenceIndexTests
         Assert.Equal(
             new[]
             {
-                "NAMED_GA_SIGNERS",
-                "CORE_TEAM_ALLOCATION",
                 "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
                 "PROVIDER_APPROVALS_AND_ISOLATED_WORKER",
                 "TWO_PILOT_SITES_AND_WMS_WINDOWS",
@@ -122,6 +120,7 @@ public sealed class SpaceGaEvidenceIndexTests
 
         Assert.Equal(
             [
+                "WP1_DESIGN_V1_MANUAL_MODELING",
                 "WP2_CAD_START_WIZARD",
                 "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
                 "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY"
@@ -133,10 +132,16 @@ public sealed class SpaceGaEvidenceIndexTests
                 gate.GetProperty("id").GetString() ==
                     "WP1_DESIGN_V1_MANUAL_MODELING" &&
                 gate.GetProperty("implementationStatus").GetString() ==
-                    "Partial");
+                    "Complete" &&
+                gate.GetProperty("acceptanceStatus").GetString() ==
+                    "Pending");
         Assert.False(IsGaReady(root));
         Assert.Contains(
-            "every blocking gate is Accepted",
+            "every blocking result gate is Accepted",
+            root.GetProperty("progressPolicy").GetString(),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "single delivery owner is Signed",
             root.GetProperty("progressPolicy").GetString(),
             StringComparison.Ordinal);
     }
