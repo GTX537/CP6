@@ -7,7 +7,8 @@
 - 新增 Schema 1 Worker Release Manifest 与生成/启动复核：完整封存 Payload、源提交、Runtime、Core Console 哈希/版本及 DXF Converter 版本；可运行 Host 只广告 `cp6-autocad-worker` 非 development 身份。
 - Manifest 外部完整 SHA 是权威身份，Provider Version 只嵌入 12 位可见前缀；Schema 2 远程协议把完整 SHA 贯穿批准运行时、请求、Worker 前置核对和响应回显。每次 DWG 转换前还会再次核对 Core 完整哈希。
 - 真实 `win-x64` 演练封存 18 文件，Schema 通过；安装 CAD Experiment 57/57、远程协议 6/6，主测试 2,939/19/0，整仓 0 warning / 0 error，测试残留 0。
-- 演练刻意使用 `0.0.0-rehearsal`，不写 `acceptedEvidence`。正式合并提交 Release、许可证/Site/部署、独立 Backup 与授权黄金集仍缺，整体保持 72% / NoGo。
+- PR #46 在 7/7 required checks 后合并；从精确 `main@4375c7c2fc1e297bf3fe845873b1af5af2cb5d66` 重建的 `0.0.0-rehearsal.postmerge` 再次封存 18 文件并通过 Schema，完整 Worker Release SHA 为 `c51c2ce8925f7bf2bf647dd2d958270d7903e6adc212eee37a668bfe9d82dc84`，合并后专项 10/10 与 6/6。
+- 两次演练都不写 `acceptedEvidence`。批准 SemVer、许可证/Site/部署、独立 Backup 与授权黄金集仍缺，整体保持 72% / NoGo。
 
 ## 2026-08-27：Space DXF 50 MiB 受控容量
 
