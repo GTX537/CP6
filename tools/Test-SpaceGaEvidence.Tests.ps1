@@ -3,6 +3,12 @@ $repo = Split-Path -Parent $PSScriptRoot
 $validator = Join-Path $PSScriptRoot 'Test-SpaceGaEvidence.ps1'
 $baseManifestPath = Join-Path $repo (
     'docs\space\acceptance\v1.3-ga\ga-evidence-index.json')
+$candidateReference = (
+    'docs/space/acceptance/v1.3-ga/' +
+    'authorized-golden-cad-candidates-v1.0.0.json')
+$candidatePath = Join-Path $repo $candidateReference
+$candidateSha256 = (Get-FileHash -LiteralPath $candidatePath `
+    -Algorithm SHA256).Hash.ToLowerInvariant()
 $fixtureReference = 'tools/test-fixtures/space-ga-evidence/attestation-fixture.txt'
 $fixturePath = Join-Path $repo $fixtureReference
 $fixtureSha256 = (Get-FileHash -LiteralPath $fixturePath -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -112,7 +118,7 @@ function Complete-Wp7Prerequisites {
     )
 
     $inputOwners = [ordered]@{
-        AUTHORIZED_GOLDEN_CAD_CANDIDATES = 'Zhang Wei'
+        AUTHORIZED_GOLDEN_CAD_CANDIDATES = 'BUBAO.GAO'
         PROVIDER_APPROVALS_AND_ISOLATED_WORKER = 'Zhang Wei'
     }
     foreach ($inputId in $inputOwners.Keys) {
@@ -121,11 +127,17 @@ function Complete-Wp7Prerequisites {
         })[0]
         $input.ownerName = $inputOwners[$inputId]
         $input.status = 'Complete'
-        $input.verificationManifest = $KickoffReference
+        $verificationReference = $KickoffReference
+        $verificationSha256 = $KickoffSha256
+        if ($inputId -eq 'AUTHORIZED_GOLDEN_CAD_CANDIDATES') {
+            $verificationReference = $script:candidateReference
+            $verificationSha256 = $script:candidateSha256
+        }
+        $input.verificationManifest = $verificationReference
         $input.evidence = @(
             (New-Attestation `
-                -Uri $KickoffReference `
-                -Sha256 $KickoffSha256 `
+                -Uri $verificationReference `
+                -Sha256 $verificationSha256 `
                 -AcceptedBy $input.ownerName))
     }
     $providerGate = @($Manifest.gates | Where-Object {
@@ -337,9 +349,9 @@ try {
         Set-ExternalInputComplete `
             -Manifest $manifest `
             -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
-            -OwnerName 'Zhang Wei' `
-            -KickoffReference $kickoffAcceptanceReference `
-            -KickoffSha256 $kickoffAcceptanceSha256
+            -OwnerName 'BUBAO.GAO' `
+            -KickoffReference $candidateReference `
+            -KickoffSha256 $candidateSha256
     }
     Invoke-ValidatorCase `
         -Name 'local evidence with matching content hash' `
@@ -387,6 +399,7 @@ try {
         })[0]
         $input.ownerName = 'Zhang Wei'
         $input.status = 'Complete'
+        $input.verificationManifest = $null
         $input.evidence = @($localAttestation)
     }
     Invoke-ValidatorCase `
@@ -400,9 +413,9 @@ try {
         Set-ExternalInputComplete `
             -Manifest $manifest `
             -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
-            -OwnerName 'Zhang Wei' `
-            -KickoffReference $kickoffAcceptanceReference `
-            -KickoffSha256 $kickoffAcceptanceSha256
+            -OwnerName 'BUBAO.GAO' `
+            -KickoffReference $candidateReference `
+            -KickoffSha256 $candidateSha256
         $input = @($manifest.externalInputs | Where-Object {
             $_.id -eq 'AUTHORIZED_GOLDEN_CAD_CANDIDATES'
         })[0]
@@ -416,12 +429,12 @@ try {
 
     $invalidKickoffReference = $kickoffAcceptanceReference.Replace(
         'kickoff-evidence.json',
-        'invalid-kickoff-evidence.json')
+        'invalid-cad-candidates.json')
     $invalidKickoffPath = Join-Path $repo $invalidKickoffReference
-    $invalidKickoff = Get-Content -LiteralPath $kickoffAcceptancePath -Raw |
+    $invalidKickoff = Get-Content -LiteralPath $candidatePath -Raw |
         ConvertFrom-Json
-    $invalidKickoff.authorizedGoldenCadCandidates.candidates = @(
-        $invalidKickoff.authorizedGoldenCadCandidates.candidates |
+    $invalidKickoff.dataset.samples = @(
+        $invalidKickoff.dataset.samples |
             Select-Object -First 19)
     $invalidKickoff | ConvertTo-Json -Depth 100 |
         Set-Content -LiteralPath $invalidKickoffPath -Encoding UTF8

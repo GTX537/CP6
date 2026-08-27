@@ -11,5 +11,8 @@ CP6.Tests/TestData/Space/Acceptance/** binary
 # across Windows and hosted Linux checkouts so the offline contract is stable.
 tests/fixtures/release-shadow/** -text
 
+# Sanitized Space GA candidate manifests are content-addressed evidence.
+docs/space/acceptance/v1.3-ga/authorized-golden-cad-candidates-*.json binary
+
 # Main-sync SQL hashes are deployment evidence and must stay byte-stable.
 deploy/production/sql/main-sync-*/**.sql text eol=lf

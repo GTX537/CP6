@@ -341,6 +341,15 @@ try {
         -ManifestPath $formatPath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_FORMAT_COVERAGE_INVALID'
 
+    $originalWorkPath = New-GoldenTestManifest 'original-work-license' {
+        param($manifest)
+        foreach ($sample in $manifest.dataset.samples) {
+            $sample.license = 'ApprovedOriginalWork'
+        }
+    }
+    Invoke-GoldenValidatorCase -Name 'approved original work can count' `
+        -ManifestPath $originalWorkPath -ShouldPass $true
+
     $licensePath = New-GoldenTestManifest 'license' {
         param($manifest)
         $manifest.dataset.samples[0].license = 'Synthetic'

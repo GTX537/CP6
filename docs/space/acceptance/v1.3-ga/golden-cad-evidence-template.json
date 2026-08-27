@@ -27,7 +27,7 @@
         "sourceFormat": "DWG|DXF",
         "split": "Calibration|Validation|ReleaseHoldout",
         "layoutFamily": "L1|L2|L3|L4|L5",
-        "license": "ApprovedCustomerDerived",
+        "license": "ApprovedOriginalWork|ApprovedCustomerDerived",
         "usedForTuning": false,
         "authorizationEvidence": {},
         "deidentificationEvidence": {},

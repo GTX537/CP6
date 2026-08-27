@@ -1,0 +1,1057 @@
+{
+  "schemaVersion": 3,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
+  "conclusion": "Pass",
+  "dataset": {
+    "datasetVersion": "1.0.0",
+    "eligibilityBasis": "ApprovedOriginalWork",
+    "goldenDatasetSha256": "2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15",
+    "sourceSetSha256": "7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955",
+    "frozenAtUtc": "2026-08-27T14:02:48Z",
+    "holdoutFrozenAtUtc": "2026-08-27T14:02:48Z",
+    "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+    "ruleSetVersion": "space-v1.0.0-original-cad",
+    "expectedAnswerVersion": "1.0.0",
+    "reviewer": "BUBAO.GAO",
+    "isImmutable": true,
+    "rawCadCommittedToGit": false,
+    "samples": [
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-c01",
+        "sampleId": "L1-C01",
+        "sourceSha256": "c9338360df1df80a46bf83c7ca3bd0e4dd05bc4b4cefb34e9130272e8b4a2ca4",
+        "sourceSizeBytes": 43128,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L1",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-c01:authorization",
+          "sha256": "3403ae0c1b1109b990db2aacaeb35dd5e099d54c9db992e15a2cca7b1988f625",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-c01:deidentification",
+          "sha256": "cdf37825008f3f1cb0781a890f102ab00132a5ebc768fbc3e52e70cc95c9adcf",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-c01:annotation",
+            "sha256": "4062293adc2bedc2f0f453f0562b031a941d3f3dd2124754690f266da8db6b9f",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "c9338360df1df80a46bf83c7ca3bd0e4dd05bc4b4cefb34e9130272e8b4a2ca4",
+          "metadataSha256": "f1c4ae36f812c6c6d1c782d1e5852fc820182e32dbedc84235c0ebb40c23ee18",
+          "expectedElementsSha256": "cbec66fac609121529ab8ba65610483c6f2770ac11668a6431bad0379a40e071",
+          "expectedIssuesSha256": "a579f9d605f5528bd61a1847ee3cbea7aa827d612e9209906f95b8391d00b618",
+          "mappingProfileSha256": "60bc71155b400d747bfba84f5a5a9aa1cc776bff784b40d1db2a158764ff7b20",
+          "providerIrSha256": "752df21ab0e8e9418466e9b27d48815824d890411c5756c7a18d6c48e8c7e5fc",
+          "authorizationSha256": "3403ae0c1b1109b990db2aacaeb35dd5e099d54c9db992e15a2cca7b1988f625",
+          "deidentificationSha256": "cdf37825008f3f1cb0781a890f102ab00132a5ebc768fbc3e52e70cc95c9adcf",
+          "annotationSha256": "4062293adc2bedc2f0f453f0562b031a941d3f3dd2124754690f266da8db6b9f",
+          "autoCadStatsSha256": "429709afc709273dddac44eb6146b9a7e20bca6e5d92d2d0ac8cfe476f10eba0"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-c02",
+        "sampleId": "L1-C02",
+        "sourceSha256": "a426a21806cddffdc6b400b61b23a5330e6ec52bb2be0de8af8ca326b3e6b3ba",
+        "sourceSizeBytes": 258714,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L1",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-c02:authorization",
+          "sha256": "16102fad4d33466c3d2b2c432b56f36347bc91a150fc864ef7b0b2ee83513b89",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-c02:deidentification",
+          "sha256": "14a7266bde4b6b6874363035e711184bf63421ebfa7a435edda9ef48d7923ecf",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-c02:annotation",
+            "sha256": "b725cb656f754d18afdfedd12e6a4da4e189ba14064a5da171a8856581ab9624",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "a426a21806cddffdc6b400b61b23a5330e6ec52bb2be0de8af8ca326b3e6b3ba",
+          "metadataSha256": "76a65875a3f49ab0750eb5b62287a5d447fa6b4a2144e6d689aa7265182f994a",
+          "expectedElementsSha256": "541aaa0a6160fec0432ac948e6189a298578236812f70033f610b364e8276728",
+          "expectedIssuesSha256": "63b747f96ccc25fd2733c1191c414c0bf20aa4cd8c04347731be619cdc045ab5",
+          "mappingProfileSha256": "76ebd5785d58172dcc70918d4f70cf0ea7ae4c73b80b2229383b165e7fd0b0f2",
+          "providerIrSha256": "46c504030d1f66364d100b9e08f8a64417f58da8f1dc0262ab7e74d14e721a7e",
+          "authorizationSha256": "16102fad4d33466c3d2b2c432b56f36347bc91a150fc864ef7b0b2ee83513b89",
+          "deidentificationSha256": "14a7266bde4b6b6874363035e711184bf63421ebfa7a435edda9ef48d7923ecf",
+          "annotationSha256": "b725cb656f754d18afdfedd12e6a4da4e189ba14064a5da171a8856581ab9624",
+          "autoCadStatsSha256": "0020c92359ba8e71b510982d651be3efdabe9c50074612fea5b0d4a3dce60030"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-v01",
+        "sampleId": "L1-V01",
+        "sourceSha256": "a7d0da77fc00838a2c140edfdad06ff6578a93c307fa3353b2c5414c310104eb",
+        "sourceSizeBytes": 48666,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Validation",
+        "layoutFamily": "L1",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-v01:authorization",
+          "sha256": "7025e414379d4e6fe076207bc68115250b2596fefb88d728bbab2506337af9a8",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-v01:deidentification",
+          "sha256": "982f87aed2449e64e219d22ff258b28b8c6a6c6c6784f202a8d9de967a9c5f4a",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-v01:annotation",
+            "sha256": "35a57508c4e8506e832f6388770729201f8c8196b1b18bc7f3119a743748e43b",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "a7d0da77fc00838a2c140edfdad06ff6578a93c307fa3353b2c5414c310104eb",
+          "metadataSha256": "5ac1aa19260026d8a7c45dbf09bc69c20230f331374a0b0e4f28df48b9cd19e1",
+          "expectedElementsSha256": "62d1006b65e48da8f7bbb16b86439ac7024b0d0d531d795202c755f1a8cbe1f8",
+          "expectedIssuesSha256": "b8207f4205b119f89452ce9a3c75227afa6f78b7d881c1c53f2a871a9c71aa6c",
+          "mappingProfileSha256": "505b17130ca4dc05b9841c30d2b0431ae99a6bc72f5af02845b8b604f31dd1cf",
+          "providerIrSha256": "d517a6a3b9ca65a0c7c627078d81d6038b9d40dfde6eafe5abdd57a00eb71fd4",
+          "authorizationSha256": "7025e414379d4e6fe076207bc68115250b2596fefb88d728bbab2506337af9a8",
+          "deidentificationSha256": "982f87aed2449e64e219d22ff258b28b8c6a6c6c6784f202a8d9de967a9c5f4a",
+          "annotationSha256": "35a57508c4e8506e832f6388770729201f8c8196b1b18bc7f3119a743748e43b",
+          "autoCadStatsSha256": "d9e68f68b46eb5366406f1c0e6c1837f08228c44111b4a3ee6943b2a9d3da936"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-h01",
+        "sampleId": "L1-H01",
+        "sourceSha256": "ce1b47ab19a19ded3a88c7a6fe19dc49912705b5ce6f15f2794d069dae3b5339",
+        "sourceSizeBytes": 326845,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "ReleaseHoldout",
+        "layoutFamily": "L1",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-h01:authorization",
+          "sha256": "a7abdbf98c5c915282b4f85162a64b394a012af983d9c9b8d2e920889b609b68",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-h01:deidentification",
+          "sha256": "f38d02bab8610d63b2cdd961534b10bd3773ec8b9d07fcca29517f358c9c2159",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l1-h01:annotation",
+            "sha256": "3556578fc591f173561f2eaf3f8a619fb9f6ff9b8510b4b718f676c6de2af167",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "ce1b47ab19a19ded3a88c7a6fe19dc49912705b5ce6f15f2794d069dae3b5339",
+          "metadataSha256": "2e98caccbc06c74d4685dd464be04d4740df3c4ad524990cd6d2e514451ab074",
+          "expectedElementsSha256": "38c938611c2fc6e8d3a94ba579de5de34af39f12df94ca9ecd537253c27dcec7",
+          "expectedIssuesSha256": "284ab3507b2e9377a7875902fd252d93c50d28324bf90df38a52e628bd3c1c4e",
+          "mappingProfileSha256": "124ac1fa61faa93f84c51f5218ad01448da3801fd3c6a1dfe43effcb387e054e",
+          "providerIrSha256": "974c75154c0a782ceafc19b2c058a7aeb95a3601711b405465aae39e6bb3f569",
+          "authorizationSha256": "a7abdbf98c5c915282b4f85162a64b394a012af983d9c9b8d2e920889b609b68",
+          "deidentificationSha256": "f38d02bab8610d63b2cdd961534b10bd3773ec8b9d07fcca29517f358c9c2159",
+          "annotationSha256": "3556578fc591f173561f2eaf3f8a619fb9f6ff9b8510b4b718f676c6de2af167",
+          "autoCadStatsSha256": "2caeec304a9a7ca9f0daaacb1b21291c2a939f3f50a0e8901650f4ddc110fce9"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l2-c01",
+        "sampleId": "L2-C01",
+        "sourceSha256": "15c56355960f4d5e29e0d2866f80bbe4c21d80a2f45e39e73acd125f480322a3",
+        "sourceSizeBytes": 233864,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L2",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-c01:authorization",
+          "sha256": "83bcb027ce4608c2d7a70723f83d2a4b55b2729e068b025c0c8b26fb3c704f59",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-c01:deidentification",
+          "sha256": "fb37aced5c3e6a76c8b4e60cd1ff9d49ca4cc5e76f39bde1cc9e9b32f6cb893e",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-c01:annotation",
+            "sha256": "e80de3d7b7b6932a2638f318a06cdd1069e7a4d161d9e395da814aa024b5ef43",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "15c56355960f4d5e29e0d2866f80bbe4c21d80a2f45e39e73acd125f480322a3",
+          "metadataSha256": "51ecd58843a0275f34462b5a7fa323dcbf81c9a9bdc5ac43d7bf6271be44557a",
+          "expectedElementsSha256": "d081c65c631f842a5e394fa786f3cc02d1c6c15f91be4fe65ba633c88bf05de5",
+          "expectedIssuesSha256": "f2211ae12e89d29c415adb70c474f32778a5e665a89e3e8672283244f2938f96",
+          "mappingProfileSha256": "33316f0f5d19cae75571fd4ffbc1df3c6220edffca83918360ac883ce89ca0ed",
+          "providerIrSha256": "d83a640e307982847121f918bbb73e4ebb9122a114ae3a9eb886a2656185924c",
+          "authorizationSha256": "83bcb027ce4608c2d7a70723f83d2a4b55b2729e068b025c0c8b26fb3c704f59",
+          "deidentificationSha256": "fb37aced5c3e6a76c8b4e60cd1ff9d49ca4cc5e76f39bde1cc9e9b32f6cb893e",
+          "annotationSha256": "e80de3d7b7b6932a2638f318a06cdd1069e7a4d161d9e395da814aa024b5ef43",
+          "autoCadStatsSha256": "22913ef7a92680b4c852ccf20b1b1cea6ff42486838831fb02fc6ff89cfc3a39"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l2-c02",
+        "sampleId": "L2-C02",
+        "sourceSha256": "4e6893d1b5313a6ea2c688763b98999418969208a10f5efc3b10492d9d7289db",
+        "sourceSizeBytes": 48762,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L2",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-c02:authorization",
+          "sha256": "102782543ea9517ec771201c3144c2d17e8a3f803f5cbde7a265efd09b764677",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-c02:deidentification",
+          "sha256": "76128b54eede4f2ff0d553cc3e18c5a12e6362875502f6bd0d634d1c57d98df4",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-c02:annotation",
+            "sha256": "c2afb3617df592a03687df118ab95867e9aeb9ab691774cca17a5f7e1ba59e07",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "4e6893d1b5313a6ea2c688763b98999418969208a10f5efc3b10492d9d7289db",
+          "metadataSha256": "6fe86860fd2e22cdd4210697a9c0d3dc1724bf77df0dc848dd99dc7aa7797896",
+          "expectedElementsSha256": "0627af088202a788023f4a54a5cb564051bfd8c351e03dd09ce7ec95d621a02b",
+          "expectedIssuesSha256": "011a1190f13e84ecf5695f7804ea44d84496e63833bdd50c63f92d08414efc93",
+          "mappingProfileSha256": "a2b80491e672a5836b9935d8fee0881248dccbb01e39d3d23582fc5b0cca8143",
+          "providerIrSha256": "56bc051d54287850b5615d96ff9493d45a8237111df0b070fabaec581dcbe34d",
+          "authorizationSha256": "102782543ea9517ec771201c3144c2d17e8a3f803f5cbde7a265efd09b764677",
+          "deidentificationSha256": "76128b54eede4f2ff0d553cc3e18c5a12e6362875502f6bd0d634d1c57d98df4",
+          "annotationSha256": "c2afb3617df592a03687df118ab95867e9aeb9ab691774cca17a5f7e1ba59e07",
+          "autoCadStatsSha256": "1a46466c4f0f8378f85014a49692a4d1198d850e2a30912170eb73ab4b5e231f"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l2-v01",
+        "sampleId": "L2-V01",
+        "sourceSha256": "2cbb8842bf667990fa037f2c1508a81a913cf3572ed875de31bbd365e44fe31c",
+        "sourceSizeBytes": 310900,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "Validation",
+        "layoutFamily": "L2",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-v01:authorization",
+          "sha256": "a41b3db23489ba402387300dc341f5826e24ebafc2fd981319a718136895b2dd",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-v01:deidentification",
+          "sha256": "09bfb42fcb727c6ee1528e39fe21764a66982adcaa07209aabe7b090f76a9f5e",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-v01:annotation",
+            "sha256": "7f5aee90b5fa8f255d78eb731e322f58b65d087f2dfa3077c8205fae5fbf506b",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "2cbb8842bf667990fa037f2c1508a81a913cf3572ed875de31bbd365e44fe31c",
+          "metadataSha256": "45ff985170a93482c025d94221527996f264010b81d233706b73194787f51601",
+          "expectedElementsSha256": "1c68ab968e2b67628c7bfb4977626a224562e851d892ec3fbc5c4148869bd549",
+          "expectedIssuesSha256": "874583de495f572405c4ae5665399e6a2d5a4ba8590c658327b4953716f4c299",
+          "mappingProfileSha256": "dfaa2af97377d5c238c0bc6893b59c66829ca47290af058ddc3e4b1a3d253b64",
+          "providerIrSha256": "a4f15d251e97b0347a1acf050acff5d8aebb7be86457efdef3f538ab15d0e715",
+          "authorizationSha256": "a41b3db23489ba402387300dc341f5826e24ebafc2fd981319a718136895b2dd",
+          "deidentificationSha256": "09bfb42fcb727c6ee1528e39fe21764a66982adcaa07209aabe7b090f76a9f5e",
+          "annotationSha256": "7f5aee90b5fa8f255d78eb731e322f58b65d087f2dfa3077c8205fae5fbf506b",
+          "autoCadStatsSha256": "6cbcd758ef0f06262d27c2d1e5b6cb720b671cca8de186bff3c657b6e4b02af9"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l2-h01",
+        "sampleId": "L2-H01",
+        "sourceSha256": "708e08261268b0ec516b76daa4a4137df7ba96b0cae6e827df9a924af7314c49",
+        "sourceSizeBytes": 69317,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "ReleaseHoldout",
+        "layoutFamily": "L2",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-h01:authorization",
+          "sha256": "7032c8cc81123a12aa3f29260d51e8d779d46d647aba0a249bd9af4efcbb320f",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-h01:deidentification",
+          "sha256": "5d99191f50ccce9a6dc746e0189631fb160d2c0623ffee86884570257d839355",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l2-h01:annotation",
+            "sha256": "e1eedcd97e79b67fa75415e426563d3b7d5efc7301191fc080eb617202bf90d4",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "708e08261268b0ec516b76daa4a4137df7ba96b0cae6e827df9a924af7314c49",
+          "metadataSha256": "d441906258e7e0f06e15ae37e8a76098bbc83e3037745666f6cc0d33ce3304e5",
+          "expectedElementsSha256": "4202bf5ef918c2e691e7f1263add3bcfeff82107f1450528ae046ad1602b8871",
+          "expectedIssuesSha256": "18efe0dc4bed231842092639a25725d1b52e7fcd4e3b9b1f1a8edf179231897f",
+          "mappingProfileSha256": "047a41c8e19fb73e88a5c84c529bd5d31f8b905dc6e26beb3ddbab2989f5fb24",
+          "providerIrSha256": "4af48fced94536cbe3cf69a4fbc0b218e0c07ae8a61e4f5debd88bca5b008988",
+          "authorizationSha256": "7032c8cc81123a12aa3f29260d51e8d779d46d647aba0a249bd9af4efcbb320f",
+          "deidentificationSha256": "5d99191f50ccce9a6dc746e0189631fb160d2c0623ffee86884570257d839355",
+          "annotationSha256": "e1eedcd97e79b67fa75415e426563d3b7d5efc7301191fc080eb617202bf90d4",
+          "autoCadStatsSha256": "3518d0da35501f8ddf2344fc665ddd74559594c5d9e22c295354e6dad22d90e4"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l3-c01",
+        "sampleId": "L3-C01",
+        "sourceSha256": "4a8a3795e3b7d12a4e2686e7116e1be46fd3041068674b4c089eab6275415450",
+        "sourceSizeBytes": 46581,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L3",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-c01:authorization",
+          "sha256": "534587c5dbb118cea9c111fc9ddcee1fa49bda61353ecdf80c3699110b44d4f6",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-c01:deidentification",
+          "sha256": "40a47527d69c56f7e3c8482a9d82ff7954779819bd7df3a94e749da9c46dfbe3",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-c01:annotation",
+            "sha256": "28d77e1a91f9a2e09002b97d05f32bbc9c85a34e310a193aa0318b5ba0482269",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "4a8a3795e3b7d12a4e2686e7116e1be46fd3041068674b4c089eab6275415450",
+          "metadataSha256": "cbdc1a83de1cd383ccd2d2af0e480189e1e00aefd6cd86f08111544210a208ba",
+          "expectedElementsSha256": "f1f133f6d003e8a36d8dbabffbce9417dcf95bd4ec20cb9f5e865cb62f626b04",
+          "expectedIssuesSha256": "4fe635f857957f06de6717e29abd08dae56e6bce1a210151dacef50ace461d61",
+          "mappingProfileSha256": "915a412939fde30c660ba39997c2d848a9aef6b375144decda326e4d805d97bd",
+          "providerIrSha256": "035e348f8351ebc23cf6f24f9b1983c71fa7710a4b8c1ecc685e7f945ccd727b",
+          "authorizationSha256": "534587c5dbb118cea9c111fc9ddcee1fa49bda61353ecdf80c3699110b44d4f6",
+          "deidentificationSha256": "40a47527d69c56f7e3c8482a9d82ff7954779819bd7df3a94e749da9c46dfbe3",
+          "annotationSha256": "28d77e1a91f9a2e09002b97d05f32bbc9c85a34e310a193aa0318b5ba0482269",
+          "autoCadStatsSha256": "ef361f7bd3a93316b38fccd4dc5815b62c668235d9e5237060195aa50dc1c798"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l3-c02",
+        "sampleId": "L3-C02",
+        "sourceSha256": "cb7f04f634118aab0774f97e99a83ddae855bb13a241ce0f0807efcc27b05e06",
+        "sourceSizeBytes": 256339,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L3",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-c02:authorization",
+          "sha256": "ff75e7fa882d206832382caa0155c8b74e2d8a43ec72c1526f5550eb6a1dae76",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-c02:deidentification",
+          "sha256": "ca5979bd6cd08529989483c3841134104d8008b789087e665b6a442130ad2cb5",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-c02:annotation",
+            "sha256": "94ef426d858761dcf15fcd1c7d2f12d4f18c5a357333b2b09e6fee3c98fbb022",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "cb7f04f634118aab0774f97e99a83ddae855bb13a241ce0f0807efcc27b05e06",
+          "metadataSha256": "13e481454e6c0d96036ba6a78d14c1ce7b600c1ff247654abf71e008cc49bad9",
+          "expectedElementsSha256": "53c5a8ed187a22d128f4b713875d6c82fbd8daaded3daabb7903b3911eab66e0",
+          "expectedIssuesSha256": "ae7906ff69ca870b4ec082cb973dfe7e63a922f2b58409581d9884a7aa442918",
+          "mappingProfileSha256": "4d488603aef3f65cdb7aade694c87778c6c21d2e37b9ba8f93910fbb3292ba52",
+          "providerIrSha256": "5826cfcd311318b9c75edc22e69b3b457d1698878d630ebaf2cf771f37eee4a5",
+          "authorizationSha256": "ff75e7fa882d206832382caa0155c8b74e2d8a43ec72c1526f5550eb6a1dae76",
+          "deidentificationSha256": "ca5979bd6cd08529989483c3841134104d8008b789087e665b6a442130ad2cb5",
+          "annotationSha256": "94ef426d858761dcf15fcd1c7d2f12d4f18c5a357333b2b09e6fee3c98fbb022",
+          "autoCadStatsSha256": "80083a7b28b98e3b1b5a9d634ff5629323093f68827fd168bc78f030ae40ff44"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l3-v01",
+        "sampleId": "L3-V01",
+        "sourceSha256": "1db1b6cfc1439433b7ba03a4f515e25c1b32938dd93bdbe7d755d2db8cada478",
+        "sourceSizeBytes": 54039,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Validation",
+        "layoutFamily": "L3",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-v01:authorization",
+          "sha256": "1146aced2660e861c15fe96e017f76cac13b4158f43e3253c67e9aab0ca55a53",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-v01:deidentification",
+          "sha256": "4bc8e185955d6fdde1785235924d27199a64d12b99c54572475156040cd43267",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-v01:annotation",
+            "sha256": "2a8e120ea95dea55fd1213e49a86b1e9e6ba646eacd0b84b782870d98d20a2eb",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "1db1b6cfc1439433b7ba03a4f515e25c1b32938dd93bdbe7d755d2db8cada478",
+          "metadataSha256": "edd82f92f4ef7923439534cf91c27251c2e66b02b5eefd7d0887a561532ab9fd",
+          "expectedElementsSha256": "8b8f2cf6774130ccfad56a0311b48a2d676dbf40f1e0c28ab47358b57efabc88",
+          "expectedIssuesSha256": "094b759601ffba48554b9be91938ef082a2ec9afcf4bf40eef3e53d13253218f",
+          "mappingProfileSha256": "acb10c3a460be81ca50997a63325ac4a69b9a22a5a8ecfe0026aec32758ad8b2",
+          "providerIrSha256": "3c86ec8c8aec7294ac995d0d9ba34d033d23e5dbf7f7460380c5d592d7b77f29",
+          "authorizationSha256": "1146aced2660e861c15fe96e017f76cac13b4158f43e3253c67e9aab0ca55a53",
+          "deidentificationSha256": "4bc8e185955d6fdde1785235924d27199a64d12b99c54572475156040cd43267",
+          "annotationSha256": "2a8e120ea95dea55fd1213e49a86b1e9e6ba646eacd0b84b782870d98d20a2eb",
+          "autoCadStatsSha256": "7ff4e68ba894fa2a520771e1a0205a914215432e49c0878cc784248a9fa55f0d"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l3-h01",
+        "sampleId": "L3-H01",
+        "sourceSha256": "6627a3aa90fc344f50f602c5ea038c7ff7864efa0adbda834c343ff4f3ce0ea9",
+        "sourceSizeBytes": 323100,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "ReleaseHoldout",
+        "layoutFamily": "L3",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-h01:authorization",
+          "sha256": "97c94fdcb5b11edf4189d9a09ea95536aad1cca84d2dca7f5853756d0e29efb0",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-h01:deidentification",
+          "sha256": "fec256bd66534c05bc4ba7c9cb0814bf2a8cb3b0869ac5dda42856882aae1349",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l3-h01:annotation",
+            "sha256": "9d7b5bd48e285b35ef0c84e863cf3055df2478fb0209c0be7d7338fa6fd1cfd0",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "6627a3aa90fc344f50f602c5ea038c7ff7864efa0adbda834c343ff4f3ce0ea9",
+          "metadataSha256": "4cb4e0607e068e832ea8ae5b68c2dcd692322c549a1d16d45f54db7baba51b17",
+          "expectedElementsSha256": "b6aa67fade848d24b74fe2fdf120960fb545b8ba52d3d25d6b625b730b66b9a3",
+          "expectedIssuesSha256": "580204bee8a941941fb30c01c7908da293ddf4c77450aa90f45318a4cbb56ff6",
+          "mappingProfileSha256": "c5d4269e416868ec6a000199e40366a7553c275c3f186b6c7d0db345f23350fe",
+          "providerIrSha256": "be516050fae787f3fed6d22026efc7050ab6eccee06cfea72f9abe11ad9c6f99",
+          "authorizationSha256": "97c94fdcb5b11edf4189d9a09ea95536aad1cca84d2dca7f5853756d0e29efb0",
+          "deidentificationSha256": "fec256bd66534c05bc4ba7c9cb0814bf2a8cb3b0869ac5dda42856882aae1349",
+          "annotationSha256": "9d7b5bd48e285b35ef0c84e863cf3055df2478fb0209c0be7d7338fa6fd1cfd0",
+          "autoCadStatsSha256": "1db06a424443ada6be5cab298228d6bb0029abf3406d270e12fed06a5573dcb7"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l4-c01",
+        "sampleId": "L4-C01",
+        "sourceSha256": "d0ceafa4d265df10a634d8fb10c1191ac2caf0f754d02cc7b69391a87d6792b6",
+        "sourceSizeBytes": 257828,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L4",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-c01:authorization",
+          "sha256": "449a2b44e030cbfb315e46ef4f20af6ef4db1fcde2fe9fcdf8247555b8d8d05a",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-c01:deidentification",
+          "sha256": "541d80dcce6f8ac10bb0cc8c091ccd72bd45ec517accef4a7c830a1528e9c1e9",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-c01:annotation",
+            "sha256": "d47922c7f099e46c1670c53e43714d39e0dd1216d9cc4ffcf8db2d5fd5bfc9e9",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "d0ceafa4d265df10a634d8fb10c1191ac2caf0f754d02cc7b69391a87d6792b6",
+          "metadataSha256": "4efd1e14cf7a80760b7e17ae8d321653daba895b356627dbd80528792ed0b65e",
+          "expectedElementsSha256": "8512b335d234559e516991e90097be112ed1c54563029e558a22b50efdb95ef4",
+          "expectedIssuesSha256": "782aded3ff0480a75e53261eeca45646b24729f134fe91fcd18fc05d881daabf",
+          "mappingProfileSha256": "1de0b29c3d7b9775ccfbd442a58ee6236c6d4604e46d390e31137f6f70eccdfc",
+          "providerIrSha256": "f4a8b9d35b2a9e16b8d86633fe1e31010becf82cb0b170489e3c1ea40985845e",
+          "authorizationSha256": "449a2b44e030cbfb315e46ef4f20af6ef4db1fcde2fe9fcdf8247555b8d8d05a",
+          "deidentificationSha256": "541d80dcce6f8ac10bb0cc8c091ccd72bd45ec517accef4a7c830a1528e9c1e9",
+          "annotationSha256": "d47922c7f099e46c1670c53e43714d39e0dd1216d9cc4ffcf8db2d5fd5bfc9e9",
+          "autoCadStatsSha256": "8d695d68e1a4ac38291e2cd46424f3b1d44fc2829dddbaff91d2e485445bdf8a"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l4-c02",
+        "sampleId": "L4-C02",
+        "sourceSha256": "2e6f263c3b9caf61a79938c284d37bcc56b4a54e53c8ad45470b6b101107c6a1",
+        "sourceSizeBytes": 49559,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L4",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-c02:authorization",
+          "sha256": "edda5b747c092879e78b1c917efc3db5b2589987a776acf064fb170e9d7a467b",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-c02:deidentification",
+          "sha256": "b6cf0b43a8742b22ff4cafe5dbb7d720935e94474b3cdc7f4a59084cb2cd0e52",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-c02:annotation",
+            "sha256": "eb455fc8147d7ad124d3489af26223df5967853a50d95c28811e191943fb1a8d",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "2e6f263c3b9caf61a79938c284d37bcc56b4a54e53c8ad45470b6b101107c6a1",
+          "metadataSha256": "76e4cbbce52f5bbc395622fee9f498ca4690dfbe9b4f56793776262428849812",
+          "expectedElementsSha256": "f01bd67855ea9edecd339d80309e6c5e158df9c158cc01f090157ace166eac3a",
+          "expectedIssuesSha256": "bf44e5a3fd4a0ccbdc7f0eee22bc26f301711d3a788dcf7872b280bb4d8fae29",
+          "mappingProfileSha256": "e802ad390730f5f74c59926ab4c00b62481b89b3e5a71267d377e48ce28bed95",
+          "providerIrSha256": "71d73298aa87505e0820953f485484a2239f2d82f25979741d9f7a12d07ef548",
+          "authorizationSha256": "edda5b747c092879e78b1c917efc3db5b2589987a776acf064fb170e9d7a467b",
+          "deidentificationSha256": "b6cf0b43a8742b22ff4cafe5dbb7d720935e94474b3cdc7f4a59084cb2cd0e52",
+          "annotationSha256": "eb455fc8147d7ad124d3489af26223df5967853a50d95c28811e191943fb1a8d",
+          "autoCadStatsSha256": "77310b2c6367453eeacd0bd3727f827df57af7137a3c599dc277ada3c8a65bd1"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l4-v01",
+        "sampleId": "L4-V01",
+        "sourceSha256": "6e47bc1a7ff609bc94dc9e8b021e27f338da095073445e9e2659a68dfe4ab837",
+        "sourceSizeBytes": 324161,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "Validation",
+        "layoutFamily": "L4",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-v01:authorization",
+          "sha256": "1512740134ad4437b5fb7dd731a1744c5a6f83646bbba73aaa762090d63d42cb",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-v01:deidentification",
+          "sha256": "2da7eb3a41c9fce2491746ef2a2af6b658395d4cc2465aefccceecd44cf1c878",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-v01:annotation",
+            "sha256": "43a196377f46fea18aeae96ced8766c983b396b4c95d3c3d6967b789c475591d",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "6e47bc1a7ff609bc94dc9e8b021e27f338da095073445e9e2659a68dfe4ab837",
+          "metadataSha256": "55e0568d55dd57df2d4f86588ea1d4aa266ab9010db3d3781fdb2f80e025f597",
+          "expectedElementsSha256": "328fed2b1d216736527483f3fb0578f8c5472e3b5872fa987b4f77ecbfc65c83",
+          "expectedIssuesSha256": "a5955d007ef08c29bf1d75744ea24a8e47efc1a14c8fe1eaeece70209842b009",
+          "mappingProfileSha256": "caed6d644dca892d377693a8d85ef0b5f4190c68432db17aff30f7b4140492bc",
+          "providerIrSha256": "328b9fc5fd8a5aafba7e6aaef18f8199c2825ce148e64a72fbad5a2b9f77e692",
+          "authorizationSha256": "1512740134ad4437b5fb7dd731a1744c5a6f83646bbba73aaa762090d63d42cb",
+          "deidentificationSha256": "2da7eb3a41c9fce2491746ef2a2af6b658395d4cc2465aefccceecd44cf1c878",
+          "annotationSha256": "43a196377f46fea18aeae96ced8766c983b396b4c95d3c3d6967b789c475591d",
+          "autoCadStatsSha256": "1c6fb3f06d46c953ba860504c3aba8d0e435b601190503e0a167991e874617b0"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l4-h01",
+        "sampleId": "L4-H01",
+        "sourceSha256": "8d99b6e0db33763c7da47df5ab86804ab88d86a1698dafeaa5fd64cb608805b2",
+        "sourceSizeBytes": 57637,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "ReleaseHoldout",
+        "layoutFamily": "L4",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-h01:authorization",
+          "sha256": "03889f432180dcce09aeaec71e75d920b6ddb3b40cc0c50821741d674a3e912f",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-h01:deidentification",
+          "sha256": "87ecaabefb5958a9e6d1d2c9a4c28928f69abf8aa9212215ab43a4a848d8daf4",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l4-h01:annotation",
+            "sha256": "d08de9ff4303041ec4b755e9c773029334dacb9325f23390a22c5d9fe1493068",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "8d99b6e0db33763c7da47df5ab86804ab88d86a1698dafeaa5fd64cb608805b2",
+          "metadataSha256": "38173edb02cea7f401df1e60f147a76c6c6f8b43bb1083a460a668ed0b890e75",
+          "expectedElementsSha256": "2ed2d4af26e32c137eeebffc6680de7b9467e7aaa0cd9a2399da158f343f63dd",
+          "expectedIssuesSha256": "6d6d6f1bd5f24e3f3763e06a79ea1c1113c790d4fd25328194d13fd704232f39",
+          "mappingProfileSha256": "50a8e9bbd340190a5be37013760e3303865e69f1af4064f8d8958f69a8eb4164",
+          "providerIrSha256": "33d99f81dd529ff40fda30ec8b369bcba0185d1f5cc22d233a090a6d22ebda42",
+          "authorizationSha256": "03889f432180dcce09aeaec71e75d920b6ddb3b40cc0c50821741d674a3e912f",
+          "deidentificationSha256": "87ecaabefb5958a9e6d1d2c9a4c28928f69abf8aa9212215ab43a4a848d8daf4",
+          "annotationSha256": "d08de9ff4303041ec4b755e9c773029334dacb9325f23390a22c5d9fe1493068",
+          "autoCadStatsSha256": "6c697f272b5c0c1256cca58510d8d7d671fe4682f2d5477bfc87fdfb0c58d9ca"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l5-c01",
+        "sampleId": "L5-C01",
+        "sourceSha256": "2e5117c79d8f5766cbf376f35a7ceab368147a264d262b44b067617662cecd1c",
+        "sourceSizeBytes": 44118,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L5",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-c01:authorization",
+          "sha256": "d88b6a8fccc06b39bf13fb86141e8389e7a7805fe76e7ed57573790fbbd1f903",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-c01:deidentification",
+          "sha256": "c94331ad63e8914ff69d9970609ab0d81e73095764d630fc6a7597bd19de81be",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-c01:annotation",
+            "sha256": "031497817a7a46bf0a6460521adfeb8ce0bf230c271f4ce486281d6f819844e8",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "2e5117c79d8f5766cbf376f35a7ceab368147a264d262b44b067617662cecd1c",
+          "metadataSha256": "d7f5be863ee0f1efe2b084ca9d743b13268a65ca1d54b1c6c4ec6ee4b4e315c2",
+          "expectedElementsSha256": "8125891d750670a706e6fc4a067253c1636e7305ee9bcc6589d47535336a9597",
+          "expectedIssuesSha256": "46cee2fa5827a662ef51082223aa70c390452ae91897a91a4a7fe1386ff4f390",
+          "mappingProfileSha256": "c08ce2451a25639248252b22bffdaf7d0d7d908ba44d3514367635f7cefd1fe9",
+          "providerIrSha256": "a4b3bc78f043609bcd8971f44fc40c404a5c20b7cdd5aa1956cefc3628f4c99e",
+          "authorizationSha256": "d88b6a8fccc06b39bf13fb86141e8389e7a7805fe76e7ed57573790fbbd1f903",
+          "deidentificationSha256": "c94331ad63e8914ff69d9970609ab0d81e73095764d630fc6a7597bd19de81be",
+          "annotationSha256": "031497817a7a46bf0a6460521adfeb8ce0bf230c271f4ce486281d6f819844e8",
+          "autoCadStatsSha256": "996f8614865716cee851d54d127e805d90ac5c9df66e2c51b0c56e8573255d64"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l5-c02",
+        "sampleId": "L5-C02",
+        "sourceSha256": "3f026d10fcc0f5a4fa7896d6ef1d9bb444ee4ba749aa8ec426d630f7e91baf36",
+        "sourceSizeBytes": 239713,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "Calibration",
+        "layoutFamily": "L5",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": true,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-c02:authorization",
+          "sha256": "56d34e9b518020dcce6855cd1f5dc95ed66f07108a56bdaa6a42d9b8cfc9c3aa",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-c02:deidentification",
+          "sha256": "59f7957ed4e9bd9c48a5e49b97934f25a99ccb36e883ae758633b2e271ba7247",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-c02:annotation",
+            "sha256": "37c6f6f354b0d3a883bcb43938812efd652bccf457281567183c25db8253d12b",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "3f026d10fcc0f5a4fa7896d6ef1d9bb444ee4ba749aa8ec426d630f7e91baf36",
+          "metadataSha256": "26295103e1a939f6b1e116c9e5eb6df5191d40b2790faf0accc6233366ae21ab",
+          "expectedElementsSha256": "a742c89ec50b5b6ef561095f63ba469f81c8eceb8a5b3981ea04b6f058e02459",
+          "expectedIssuesSha256": "966ade1bba802806e315d1d014827ef895959c10ef49cf68916664c86e7bcffa",
+          "mappingProfileSha256": "59ca85ff6dc37103ffaf1a251b137cf8de2a91d0fadc74d670d580cf89196047",
+          "providerIrSha256": "6facaf40dd67a3ea1a233f2fb7c5ed8333c5e8690bae15c4bbb065f95d4de652",
+          "authorizationSha256": "56d34e9b518020dcce6855cd1f5dc95ed66f07108a56bdaa6a42d9b8cfc9c3aa",
+          "deidentificationSha256": "59f7957ed4e9bd9c48a5e49b97934f25a99ccb36e883ae758633b2e271ba7247",
+          "annotationSha256": "37c6f6f354b0d3a883bcb43938812efd652bccf457281567183c25db8253d12b",
+          "autoCadStatsSha256": "69d80a73c66cc7674975d99b8aa9d43496bcdcf0c90a194fcda7580a632a43a4"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l5-v01",
+        "sampleId": "L5-V01",
+        "sourceSha256": "7e9f96524b25919cd82905c70d6b0898741ec4c5fe312f8321a231d3eee11e5b",
+        "sourceSizeBytes": 49334,
+        "sourceFormat": "DWG",
+        "cadVersion": "AC1032",
+        "split": "Validation",
+        "layoutFamily": "L5",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-v01:authorization",
+          "sha256": "1f84ffe0e51d8521de27c23eb70fc26438d4022f77152ec92aa489136c35654e",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-v01:deidentification",
+          "sha256": "a3237dfee77039136966af270a9523c0971948287af79949804a476c44388eb1",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-v01:annotation",
+            "sha256": "82138d9a2ab7ae15c7a178968398c5141587e9034367f853829d6ecd40dd630d",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "7e9f96524b25919cd82905c70d6b0898741ec4c5fe312f8321a231d3eee11e5b",
+          "metadataSha256": "08371882609a2ce354afe2d2e603e4d9c98182203c180b4ad66aaf4645ef6fed",
+          "expectedElementsSha256": "648d4858228dae4267a8e6fb730914f40faca6109cd06583e9daad062c2a5332",
+          "expectedIssuesSha256": "24ece067bdd7aa2658df7083ef3445e4e5f97b09f959341c71ec4a5fe82399b1",
+          "mappingProfileSha256": "7d2096fb7a08c3581efd26ac4a94a7525cf9451dd96a3997b7acbac85b14cf9a",
+          "providerIrSha256": "bcb80e094a3ad1ab250ea29d86ea0db51c0003e03632a4936d516fcd0f4dadc9",
+          "authorizationSha256": "1f84ffe0e51d8521de27c23eb70fc26438d4022f77152ec92aa489136c35654e",
+          "deidentificationSha256": "a3237dfee77039136966af270a9523c0971948287af79949804a476c44388eb1",
+          "annotationSha256": "82138d9a2ab7ae15c7a178968398c5141587e9034367f853829d6ecd40dd630d",
+          "autoCadStatsSha256": "1c25f2f02b8fe18cb6fa988cdafa1ad2636e50ab5fa8867d4d77b09d19f8be75"
+        }
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l5-h01",
+        "sampleId": "L5-H01",
+        "sourceSha256": "05120dd7f4ab9696354b26afbcf4723473bcafe0412c56c54517077d5a8ad833",
+        "sourceSizeBytes": 294505,
+        "sourceFormat": "DXF",
+        "cadVersion": "AC1032",
+        "split": "ReleaseHoldout",
+        "layoutFamily": "L5",
+        "license": "ApprovedOriginalWork",
+        "usedForTuning": false,
+        "unit": "Millimeter",
+        "coordinateSystem": "FloorLocal-ZUp",
+        "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+        "ruleSetVersion": "space-v1.0.0-original-cad",
+        "expectedAnswerVersion": "1.0.0",
+        "authorizationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-h01:authorization",
+          "sha256": "1449b893d70be455a42fa696783a556820d77a982b2ebfb6505f3e7d80080452",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "deidentificationEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-h01:deidentification",
+          "sha256": "553b0080b93b5913e858f10f0202d45cc761f186ee9ef9a2ba819ea1b34498ff",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T14:02:48Z"
+        },
+        "annotation": {
+          "reviewedBy": "BUBAO.GAO",
+          "reviewMethod": "SoloReview",
+          "evidence": {
+            "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:l5-h01:annotation",
+            "sha256": "2e4e761cc8e3455ee168968d40e7bb22897dc86328e0f5ec47b87c3dc127ad52",
+            "acceptedBy": "BUBAO.GAO",
+            "acceptedAtUtc": "2026-08-27T14:02:48Z"
+          }
+        },
+        "artifacts": {
+          "sourceSha256": "05120dd7f4ab9696354b26afbcf4723473bcafe0412c56c54517077d5a8ad833",
+          "metadataSha256": "f2480983a405db45c80024fd1f0716b9087fa154da6291b3d33d10f82184424d",
+          "expectedElementsSha256": "0e0e597b4988e3e59b4f4957f37c5e53d2e96230493a9a72a6251c39b9a5f34c",
+          "expectedIssuesSha256": "c838d27fefe29a06ac3febf5431f9a995408b5c139400e107cda6f5698cba5b2",
+          "mappingProfileSha256": "e10e59a56516316252dd343058e6d6ae639ec1b78bf5cdd1effbabd89da465eb",
+          "providerIrSha256": "cf2823fa0f6e89a4dde8dcccaba48d1d27922a2a2fd35bf197e148f40de78c34",
+          "authorizationSha256": "1449b893d70be455a42fa696783a556820d77a982b2ebfb6505f3e7d80080452",
+          "deidentificationSha256": "553b0080b93b5913e858f10f0202d45cc761f186ee9ef9a2ba819ea1b34498ff",
+          "annotationSha256": "2e4e761cc8e3455ee168968d40e7bb22897dc86328e0f5ec47b87c3dc127ad52",
+          "autoCadStatsSha256": "03f4fe61b3c503c37d8d4ef4ae6d794e5f2e57d54c73329fc0ffef7cb8a2516e"
+        }
+      }
+    ],
+    "integrityAuditPassed": true,
+    "integrityAuditEvidence": {
+      "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:dataset:integrity-audit",
+      "sha256": "efd943ed0fd4999a74dc7d6c34dfc2816d7ad2fda450886af6e960a52d013ecd",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-27T14:05:24Z"
+    },
+    "conversionValidationPassed": true,
+    "conversionValidationEvidence": {
+      "uri": "urn:cp6-space-ga-evidence:golden-cad:v1.0.0:dataset:converter-contract-validation",
+      "sha256": "c9ab4724b79c9495ea30957d5c75189c388b5275b47b197458bff6b2a62f9a1d",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-27T14:05:24Z"
+    }
+  }
+}

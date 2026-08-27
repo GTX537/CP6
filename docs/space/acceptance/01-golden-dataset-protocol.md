@@ -52,7 +52,7 @@
   "coordinateSystem": "FloorLocal-ZUp",
   "mappingProfileVersion": "space-cad-mapping-v1",
   "ruleSetVersion": "space-v1",
-  "license": "Synthetic|ApprovedCustomerDerived",
+  "license": "Synthetic|ApprovedOriginalWork|ApprovedCustomerDerived",
   "deidentificationEvidence": "<reference>",
   "expectedAnswerVersion": "1.0.0"
 }
@@ -68,6 +68,7 @@
 - 关系必须显式记录 Floor、Zone、Aisle、Rack 和 Location 父子关系。
 - 不确定对象进入 Expected Issue，不得为了提高准确率从分母中删除。
 - 一名实名复核人完成可追溯标注复核；发现不一致时提升答案版本并重跑，不要求第二标注人或独立 QA。
+- SoloDeveloper 可使用开发者原创、由 AutoCAD 原生保存且权利声明完整的 `ApprovedOriginalWork`；不得伪装为客户来源。`ApprovedCustomerDerived` 仅用于确有客户授权来源的样本。
 
 ## 7. 匹配与容差
 

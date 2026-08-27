@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space 原创黄金 CAD 候选
+
+- 将单人开发的数据资格明确为 `ApprovedOriginalWork`：CAD 由 `BUBAO.GAO` 原创、授权并实名复核，不要求不存在的客户或第二复核人，也禁止虚构客户来源。
+- AutoCAD 2025 原生生成并在仓库外冻结 20 份唯一 AC1032 CAD，10 DWG / 10 DXF、10/5/5、L1～L5 各 4；合计 14,659 个 Model Space 图元和 2,455 个标准答案元素。
+- 每份源 SHA、授权、脱敏、单位/坐标、格式/版本、答案/问题、Mapping/规则和复核证据已绑定；Source Set SHA 为 `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`，Golden Dataset SHA 为 `2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15`。
+- 产品 Converter Contract Runner 20/20 Pass；新增脱敏候选 Manifest、独立失败关闭验证器/测试和总 GA 组合校验，原始 DWG/DXF 不进入 Git。`AUTHORIZED_GOLDEN_CAD_CANDIDATES` 改为 Complete。
+- 该完成项不自动接受 WP7；Provider/隔离 Worker、生产联调、质量/性能、Pilot 和签署仍 Pending，Core GA 保持 72% / NoGo（2/9/1 Pending）。
+
 ## 2026-08-27：Space Studio Development V1 100%
 
 - 建立与正式 GA 隔离的 `CP6_SPACE_STUDIO_DEVELOPMENT_V1`：六个开发 Gate 全部 Passed，派生 `DevelopmentComplete` / 100%；唯一 Owner 为 `BUBAO.GAO`，没有多人门禁。
