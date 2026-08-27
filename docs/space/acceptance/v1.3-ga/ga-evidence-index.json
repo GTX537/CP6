@@ -3,7 +3,7 @@
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
   "scope": "CoreGA",
   "deliveryMode": "SoloDeveloper",
-  "asOfDate": "2026-08-26",
+  "asOfDate": "2026-08-27",
   "declaredStatus": "NoGo",
   "baselinePercent": 72,
   "gaPercent": 100,
@@ -90,7 +90,7 @@
       "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M1",
-      "implementationStatus": "Partial",
+      "implementationStatus": "Complete",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Automated blank-canvas modeling and code Preview/Apply results",
@@ -102,6 +102,7 @@
         "docs/space/reports/2026-08-15-space-system-template-catalog.md",
         "docs/space/reports/2026-08-15-space-design-floor-shell.md",
         "docs/space/reports/2026-08-15-space-design-blank-draft.md",
+        "docs/space/reports/2026-08-27-space-unified-draft-and-template-authoring.md",
         "docs/space/reports/2026-08-14-space-studio-3d-interaction.md",
         "docs/space/reports/2026-08-14-space-studio-canvas-drag.md",
         "docs/project-memory/05-Completed.md"

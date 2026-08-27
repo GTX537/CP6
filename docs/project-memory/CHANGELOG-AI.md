@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space Studio WP1 统一建模与模板制作
+
+- Design V1 统一支持 Blank、PublishedVersion、SystemTemplate、TenantTemplate；模板模式核对当前不可变版本和密封 ProposalHash，并幂等初始化全部楼层。
+- 版本新增创建来源、模板 ID/版本/内容 SHA-256 持久化及 SQL 一致性约束；当前 Draft 可经零写入预览创建租户私有不可变整仓模板。
+- 空白首层显式采集宽度/深度，模板创建只接受可无损表达的规则布局；重试不会覆盖已被修改的未完成楼层。
+- LocalDB 17/17、10,000 库位 System Template、Tenant Scope、OpenAPI 57/57、Web 19/19、完整 solution、EF/SDK/type-check/production build 通过。WP1 实现改为 Complete，但接受和整体 GA 继续 Pending / 72% / NoGo。
+
 ## 2026-08-26：Space Studio 单人交付门禁
 
 - 核心 GA 证据合同升为 Schema 2：正式签字收敛为一个 `DeliveryOwner`，删除五角色实名签字及 2 Backend + 2 Frontend3D + 1 QA 人力配额。

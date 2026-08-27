@@ -21,7 +21,7 @@ vi.mock('@/api/space/designProject', () => ({
     getModel: vi.fn(),
     getVersion: vi.fn(),
     getFloors: vi.fn(),
-    createBlankVersion: vi.fn(),
+    createVersion: vi.fn(),
     createFloor: vi.fn(),
     getWarehouseTemplates: vi.fn(),
     previewWarehouseTemplate: vi.fn(),
@@ -147,7 +147,7 @@ describe('SpaceDesignStartView', () => {
     })
     vi.mocked(designProjectApi.getVersion).mockResolvedValue(version)
     vi.mocked(designProjectApi.getFloors).mockResolvedValue([])
-    vi.mocked(designProjectApi.createBlankVersion).mockResolvedValue({
+    vi.mocked(designProjectApi.createVersion).mockResolvedValue({
       id: 'version-1',
       siteId: 'site-1',
       versionNo: 'V2',
@@ -174,12 +174,21 @@ describe('SpaceDesignStartView', () => {
     await wrapper.get('[data-testid="floor-level"]').setValue('1')
     await wrapper.get('[data-testid="floor-elevation"]').setValue('0')
     await wrapper.get('[data-testid="floor-height"]').setValue('6000')
+    await wrapper.get('[data-testid="floor-width"]').setValue('120000')
+    await wrapper.get('[data-testid="floor-depth"]').setValue('80000')
     await wrapper.get('[data-testid="create-floor"]').trigger('submit')
     await flushPromises()
 
-    expect(designProjectApi.createBlankVersion).toHaveBeenCalledWith(
+    expect(designProjectApi.createVersion).toHaveBeenCalledWith(
       'site-1',
-      'Blank warehouse',
+      {
+        name: 'Blank warehouse',
+        basedOnVersionId: undefined,
+        createMode: 'Blank',
+        templateId: undefined,
+        templateVersionId: undefined,
+        templateProposalHash: undefined,
+      },
     )
     expect(designProjectApi.createFloor).toHaveBeenCalledWith(
       'version-1',
@@ -190,6 +199,8 @@ describe('SpaceDesignStartView', () => {
         elevation: 0,
         height: 6000,
         expectedContentRevision: 0,
+        width: 120000,
+        depth: 80000,
       },
     )
     expect(push).toHaveBeenCalledWith({
@@ -233,6 +244,45 @@ describe('SpaceDesignStartView', () => {
     expect(wrapper.text()).toContain('预览已密封，未写入 Draft')
     expect(wrapper.text()).toContain('10000 库位')
     expect(wrapper.text()).toContain('b'.repeat(64))
+  })
+
+  it('creates a complete Draft from the sealed system template mode', async () => {
+    vi.mocked(designProjectApi.getModel).mockResolvedValue({
+      ...model,
+      activeDraftVersionId: undefined,
+    })
+    vi.mocked(designProjectApi.createVersion).mockResolvedValue({
+      id: 'version-1',
+      siteId: 'site-1',
+      versionNo: 'V2',
+      status: 'Draft',
+      rowVersion: 'rv-version',
+      jobId: 'job-1',
+      jobStatusUrl: '/jobs/job-1',
+      idempotentReplay: false,
+    })
+
+    const wrapper = mount(SpaceDesignStartView)
+    await flushPromises()
+    await wrapper.get('[data-testid="create-mode"]').setValue('SystemTemplate')
+    await wrapper.get('[data-testid="create-template-select"]').setValue('template-1')
+    await wrapper.get('[data-testid="seal-create-template"]').trigger('click')
+    await flushPromises()
+    await wrapper.get('[data-testid="draft-name"]').setValue('System warehouse')
+    await wrapper.get('[data-testid="create-draft"]').trigger('submit')
+    await flushPromises()
+
+    expect(designProjectApi.createVersion).toHaveBeenCalledWith(
+      'site-1',
+      {
+        name: 'System warehouse',
+        basedOnVersionId: undefined,
+        createMode: 'SystemTemplate',
+        templateId: 'template-1',
+        templateVersionId: 'template-version-1',
+        templateProposalHash: 'b'.repeat(64),
+      },
+    )
   })
 
   it('keeps Blank creation available when the template catalog fails', async () => {

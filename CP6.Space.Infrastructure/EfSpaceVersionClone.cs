@@ -179,13 +179,21 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
                 model.Id,
                 nextVersionNo,
                 request.Name,
-                request.OperationId);
+                request.OperationId,
+                request.CreationSource,
+                request.SourceTemplateId,
+                request.SourceTemplateVersionId,
+                request.SourceTemplateContentHash);
             model.ReserveDraft(target);
 
             var payload = new SpaceBlankVersionPayload(
                 model.Id,
                 target.Id,
-                request.OperationId);
+                request.OperationId,
+                request.CreationSource,
+                request.SourceTemplateId,
+                request.SourceTemplateVersionId,
+                request.SourceTemplateContentHash);
             var businessKey = SpaceJobBusinessKey.Create(
                 new SpaceJobEnqueueRequest(
                     SpaceJobType.InitializeVersion,
@@ -250,6 +258,13 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
 
         if (!string.Equals(version.Name, request.Name, StringComparison.Ordinal) ||
             version.BasedOnVersionId.HasValue ||
+            version.CreationSource != request.CreationSource ||
+            version.SourceTemplateId != request.SourceTemplateId ||
+            version.SourceTemplateVersionId != request.SourceTemplateVersionId ||
+            !string.Equals(
+                version.SourceTemplateContentHash,
+                request.SourceTemplateContentHash,
+                StringComparison.Ordinal) ||
             version.Status != SpaceVersionStatus.Draft)
         {
             throw new SpaceVersionConflictException(

@@ -20,9 +20,14 @@ public sealed class SpaceDesignV1Service :
     private const int MaxPageSize = 200;
     private const string BlankVersionMode = "Blank";
     private const string PublishedVersionMode = "PublishedVersion";
+    private const string SystemTemplateVersionMode = "SystemTemplate";
+    private const string TenantTemplateVersionMode = "TenantTemplate";
     private const string CodingDecisionModify = "modify";
     private const string CodingDecisionUnchanged = "unchanged";
     private const string CodingDecisionProtected = "protected";
+
+    private static readonly TimeSpan TemplateInitializationLeaseDuration =
+        TimeSpan.FromMinutes(5);
 
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -211,7 +216,9 @@ public sealed class SpaceDesignV1Service :
             request.Level,
             request.Elevation,
             request.Height,
-            request.ExpectedContentRevision);
+            request.ExpectedContentRevision,
+            request.Width,
+            request.Depth);
         if (normalizedRequest.Height < 0)
         {
             throw Invalid(
@@ -223,6 +230,14 @@ public sealed class SpaceDesignV1Service :
             throw Invalid(
                 "expectedContentRevision",
                 "expectedContentRevision must be greater than or equal to zero.");
+        }
+        if (normalizedRequest.Width.HasValue != normalizedRequest.Depth.HasValue ||
+            normalizedRequest.Width is <= 0 ||
+            normalizedRequest.Depth is <= 0)
+        {
+            throw Invalid(
+                "floorBoundary",
+                "width and depth must either both be omitted or both be positive millimeter values.");
         }
 
         var operation = $"create-floor:{versionId:D}";
@@ -304,6 +319,15 @@ public sealed class SpaceDesignV1Service :
                 normalizedRequest.Name,
                 normalizedRequest.Elevation,
                 normalizedRequest.Height);
+            if (normalizedRequest.Width.HasValue &&
+                normalizedRequest.Depth.HasValue)
+            {
+                floor.ConfigureBoundary(
+                    RectangularBoundary(
+                        normalizedRequest.Width.Value,
+                        normalizedRequest.Depth.Value),
+                    "LOCAL_MM_Z_UP");
+            }
             _context.FloorRevisions.Add(floor);
             version.TouchContent();
             await _context.SaveChangesAsync(cancellationToken);
@@ -2603,6 +2627,240 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
+    public async Task<SpaceDraftWarehouseTemplatePreviewDto>
+        PreviewTenantWarehouseTemplateFromDraftAsync(
+            Guid versionId,
+            PreviewTenantSpaceWarehouseTemplateFromDraftRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var plan = await BuildDraftWarehouseTemplatePlanAsync(
+            versionId,
+            request.ExpectedContentRevision,
+            cancellationToken);
+        return plan.Preview;
+    }
+
+    public async Task<CreateTenantSpaceWarehouseTemplateResponse>
+        CreateTenantWarehouseTemplateFromDraftAsync(
+            Guid versionId,
+            CreateTenantSpaceWarehouseTemplateFromDraftRequest request,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (!IsSha256(request.ProposalHash ?? string.Empty))
+        {
+            throw Invalid(
+                "proposalHash",
+                "A sealed Draft template proposal hash is required.");
+        }
+        var plan = await BuildDraftWarehouseTemplatePlanAsync(
+            versionId,
+            request.ExpectedContentRevision,
+            cancellationToken);
+        if (!string.Equals(
+                request.ProposalHash,
+                plan.Preview.ProposalHash,
+                StringComparison.Ordinal))
+        {
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateProposalStale,
+                "The Draft changed after the tenant template preview.",
+                "preview-draft-template-again");
+        }
+
+        return await CreateTenantWarehouseTemplateAsync(
+            new CreateTenantSpaceWarehouseTemplateRequest(
+                request.TemplateCode,
+                request.Name,
+                request.Description,
+                SpaceWarehouseTemplateContract.SchemaVersion,
+                plan.Floors,
+                plan.Zones,
+                plan.Aisles,
+                plan.Racks),
+            idempotencyKey,
+            cancellationToken);
+    }
+
+    private async Task<DraftWarehouseTemplatePlan>
+        BuildDraftWarehouseTemplatePlanAsync(
+            Guid versionId,
+            long expectedContentRevision,
+            CancellationToken cancellationToken)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        if (versionId == Guid.Empty || expectedContentRevision < 0)
+        {
+            throw Invalid(
+                "draftTemplate",
+                "A Draft version and non-negative content revision are required.");
+        }
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureWritable(model);
+        var version = await _context.Versions.AsNoTracking().SingleAsync(
+            candidate => candidate.Id == versionId,
+            cancellationToken);
+        if (version.Purpose != SpaceModelVersionPurpose.Production ||
+            version.Status != SpaceVersionStatus.Draft)
+        {
+            throw Conflict(
+                SpaceErrorCodes.VersionStateInvalid,
+                "Only a production Draft can be made into a tenant template.",
+                "open-or-create-draft");
+        }
+        if (version.ContentRevision != expectedContentRevision)
+        {
+            throw Conflict(
+                SpaceErrorCodes.ConcurrencyConflict,
+                "The Draft changed before its template preview could be sealed.",
+                "reload-design-project");
+        }
+
+        var floors = await _context.FloorRevisions.AsNoTracking()
+            .Where(candidate => candidate.ModelVersionId == versionId &&
+                                candidate.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(candidate => candidate.Level)
+            .ThenBy(candidate => candidate.FloorCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var zones = await _context.ZoneRevisions.AsNoTracking()
+            .Where(candidate => candidate.ModelVersionId == versionId &&
+                                candidate.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(candidate => candidate.ZoneCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var aisles = await _context.AisleRevisions.AsNoTracking()
+            .Where(candidate => candidate.ModelVersionId == versionId &&
+                                candidate.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(candidate => candidate.AisleCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var racks = await _context.RackRevisions.AsNoTracking()
+            .Where(candidate => candidate.ModelVersionId == versionId &&
+                                candidate.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(candidate => candidate.RackCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var rackIds = racks.Select(candidate => candidate.LogicalId).ToArray();
+        var levels = rackIds.Length == 0
+            ? []
+            : await _context.RackLevelRevisions.AsNoTracking()
+                .Where(candidate => candidate.ModelVersionId == versionId &&
+                                    rackIds.Contains(candidate.RackLogicalId) &&
+                                    candidate.LifecycleState == SpaceLifecycleState.Active)
+                .OrderBy(candidate => candidate.RackLogicalId)
+                .ThenBy(candidate => candidate.LevelNo)
+                .ToArrayAsync(cancellationToken);
+
+        try
+        {
+            var floorPlans = floors.Select(floor =>
+            {
+                var bounds = ReadRectangularBounds(
+                    floor.BoundaryJson,
+                    $"Floor {floor.FloorCode} boundary");
+                if (bounds.MinX != 0 || bounds.MinY != 0)
+                {
+                    throw new InvalidDataException(
+                        $"Floor {floor.FloorCode} boundary must start at the local origin.");
+                }
+                return new SpaceWarehouseTemplateFloorPlanDto(
+                    TemplateObjectKey("floor", floor.LogicalId),
+                    floor.FloorCode,
+                    floor.Name,
+                    floor.Level,
+                    floor.Elevation,
+                    checked(bounds.MaxX - bounds.MinX),
+                    checked(bounds.MaxY - bounds.MinY),
+                    floor.Height);
+            }).ToArray();
+            var zonePlans = zones.Select(zone =>
+            {
+                var bounds = ReadRectangularBounds(
+                    zone.PolygonJson,
+                    $"Zone {zone.ZoneCode} polygon");
+                return new SpaceWarehouseTemplateZonePlanDto(
+                    TemplateObjectKey("zone", zone.LogicalId),
+                    TemplateObjectKey("floor", zone.FloorLogicalId),
+                    zone.ZoneCode,
+                    TemplateZoneType(zone.ZoneType),
+                    bounds.MinX,
+                    bounds.MinY,
+                    bounds.MaxX,
+                    bounds.MaxY);
+            }).ToArray();
+            var aislePlans = aisles.Select(aisle =>
+            {
+                var centerline = ReadCenterline(
+                    aisle.CenterlineJson,
+                    $"Aisle {aisle.AisleCode} centerline");
+                var floorLogicalId = zones
+                    .Single(zone => zone.LogicalId == aisle.ZoneLogicalId)
+                    .FloorLogicalId;
+                return new SpaceWarehouseTemplateAislePlanDto(
+                    TemplateObjectKey("aisle", aisle.LogicalId),
+                    TemplateObjectKey("floor", floorLogicalId),
+                    TemplateObjectKey("zone", aisle.ZoneLogicalId),
+                    aisle.AisleCode,
+                    centerline.StartX,
+                    centerline.StartY,
+                    centerline.EndX,
+                    centerline.EndY);
+            }).ToArray();
+            var levelsByRack = levels
+                .GroupBy(level => level.RackLogicalId)
+                .ToDictionary(group => group.Key, group => group.ToArray());
+            var rackPlans = racks.Select(rack =>
+                BuildDraftTemplateRackPlan(rack, levelsByRack)).ToArray();
+
+            var temporaryTemplateId = OperationId(Hash(
+                $"draft-template\n{versionId:D}\n{expectedContentRevision}"));
+            var temporaryVersionId = OperationId(Hash(
+                $"draft-template-version\n{versionId:D}\n{expectedContentRevision}"));
+            var sealedPlan = SpaceWarehouseTemplatePlanCodec.Seal(
+                temporaryTemplateId,
+                temporaryVersionId,
+                SpaceWarehouseTemplateContract.SchemaVersion,
+                floorPlans,
+                zonePlans,
+                aislePlans,
+                rackPlans);
+            var proposalHash = Hash(
+                $"space-draft-template-preview-v1\n{versionId:D}\n" +
+                $"{expectedContentRevision}\n{sealedPlan.TemplateContentHash}");
+            return new DraftWarehouseTemplatePlan(
+                new SpaceDraftWarehouseTemplatePreviewDto(
+                    SpaceWarehouseTemplateContract.SchemaVersion,
+                    versionId,
+                    expectedContentRevision,
+                    sealedPlan.TemplateContentHash,
+                    proposalHash,
+                    sealedPlan.Counts,
+                    sealedPlan.Floors,
+                    WritesTemplate: false),
+                sealedPlan.Floors,
+                sealedPlan.Zones,
+                sealedPlan.Aisles,
+                sealedPlan.Racks);
+        }
+        catch (Exception exception)
+            when (exception is ArgumentException or
+                  InvalidDataException or
+                  InvalidOperationException or
+                  OverflowException)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateConflict,
+                422,
+                "The current Draft cannot be represented as a warehouse template.",
+                exception.Message,
+                "correct-draft-template-layout");
+        }
+    }
+
     public async Task<SpaceWarehouseTemplateInstantiationPreviewDto>
         PreviewWarehouseTemplateAsync(
             Guid templateId,
@@ -2848,17 +3106,27 @@ public sealed class SpaceDesignV1Service :
             createMode,
             PublishedVersionMode,
             StringComparison.Ordinal);
-        if (!isBlank && !isPublishedClone)
+        var isSystemTemplate = string.Equals(
+            createMode,
+            SystemTemplateVersionMode,
+            StringComparison.Ordinal);
+        var isTenantTemplate = string.Equals(
+            createMode,
+            TenantTemplateVersionMode,
+            StringComparison.Ordinal);
+        var isTemplate = isSystemTemplate || isTenantTemplate;
+        if (!isBlank && !isPublishedClone && !isTemplate)
         {
             throw Invalid(
                 "createMode",
-                "Supported values are Blank and PublishedVersion.");
+                "Supported values are Blank, PublishedVersion, " +
+                "SystemTemplate and TenantTemplate.");
         }
-        if (isBlank && request.BasedOnVersionId.HasValue)
+        if (!isPublishedClone && request.BasedOnVersionId.HasValue)
         {
             throw Invalid(
                 "basedOnVersionId",
-                "Blank drafts cannot specify a base version.");
+                "Only PublishedVersion drafts can specify a base version.");
         }
         if (isPublishedClone && !model.CurrentPublishedVersionId.HasValue)
         {
@@ -2877,11 +3145,65 @@ public sealed class SpaceDesignV1Service :
                 "reload-current-published-version");
         }
 
+        ResolvedWarehouseTemplate? resolvedTemplate = null;
+        if (isTemplate)
+        {
+            if (!request.TemplateId.HasValue ||
+                request.TemplateId == Guid.Empty ||
+                !request.TemplateVersionId.HasValue ||
+                request.TemplateVersionId == Guid.Empty ||
+                !IsSha256(request.TemplateProposalHash ?? string.Empty))
+            {
+                throw Invalid(
+                    "template",
+                    "Template modes require template, version and sealed proposal identities.");
+            }
+            resolvedTemplate = await ResolveWarehouseTemplateAsync(
+                request.TemplateId.Value,
+                request.TemplateVersionId.Value,
+                cancellationToken);
+            var expectedScope = isSystemTemplate ? "System" : "Tenant";
+            if (!string.Equals(
+                    resolvedTemplate.Template.Scope,
+                    expectedScope,
+                    StringComparison.Ordinal))
+            {
+                throw Invalid(
+                    "createMode",
+                    $"{createMode} cannot use a {resolvedTemplate.Template.Scope} template.");
+            }
+            if (!string.Equals(
+                    request.TemplateProposalHash,
+                    resolvedTemplate.Preview.ProposalHash,
+                    StringComparison.Ordinal))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.WarehouseTemplateProposalStale,
+                    "The warehouse template proposal changed after preview.",
+                    "preview-warehouse-template-again");
+            }
+        }
+        else if (request.TemplateId.HasValue ||
+                 request.TemplateVersionId.HasValue ||
+                 !string.IsNullOrWhiteSpace(request.TemplateProposalHash))
+        {
+            throw Invalid(
+                "template",
+                "Blank and PublishedVersion modes cannot contain template provenance.");
+        }
+
         var operation = $"create-version:{siteId:D}";
         var normalizedRequest = new CreateSpaceVersionRequest(
             name,
-            isBlank ? null : model.CurrentPublishedVersionId,
-            isBlank ? BlankVersionMode : PublishedVersionMode);
+            isPublishedClone ? model.CurrentPublishedVersionId : null,
+            isBlank
+                ? BlankVersionMode
+                : isPublishedClone
+                    ? PublishedVersionMode
+                    : createMode!,
+            resolvedTemplate?.Template.Id,
+            resolvedTemplate?.Template.LatestVersion.Id,
+            resolvedTemplate?.Preview.ProposalHash);
         var requestHash = Hash(
             JsonSerializer.Serialize(normalizedRequest, JsonOptions));
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
@@ -2912,7 +3234,7 @@ public sealed class SpaceDesignV1Service :
                 startedJobId = started.JobId;
                 startedReused = started.Reused;
             }
-            else
+            else if (isPublishedClone)
             {
                 var started = await _clone.StartAsync(
                     new SpaceVersionCloneRequest(
@@ -2923,6 +3245,32 @@ public sealed class SpaceDesignV1Service :
                 startedVersionId = started.ModelVersionId;
                 startedJobId = started.JobId;
                 startedReused = started.Reused;
+            }
+            else
+            {
+                var preview = resolvedTemplate!.Preview;
+                var started = await _clone.StartBlankAsync(
+                    new SpaceBlankVersionRequest(
+                        model.Id,
+                        name,
+                        OperationId(keyHash),
+                        requestHash,
+                        isSystemTemplate
+                            ? SpaceVersionCreationSource.SystemTemplate
+                            : SpaceVersionCreationSource.TenantTemplate,
+                        preview.TemplateId,
+                        preview.TemplateVersionId,
+                        preview.TemplateContentHash),
+                    cancellationToken);
+                startedVersionId = started.ModelVersionId;
+                startedJobId = started.JobId;
+                startedReused = started.Reused;
+                await EnsureWarehouseTemplateDraftInitializedAsync(
+                    model.SiteId,
+                    startedVersionId,
+                    preview,
+                    keyHash,
+                    cancellationToken);
             }
         }
         catch (SpaceVersionConflictException exception)
@@ -2958,6 +3306,235 @@ public sealed class SpaceDesignV1Service :
             requestHash,
             response,
             cancellationToken);
+    }
+
+    private async Task EnsureWarehouseTemplateDraftInitializedAsync(
+        Guid siteId,
+        Guid versionId,
+        SpaceWarehouseTemplateInstantiationPreviewDto preview,
+        string versionKeyHash,
+        CancellationToken cancellationToken)
+    {
+        foreach (var templateFloor in preview.Floors
+                     .OrderBy(candidate => candidate.Level)
+                     .ThenBy(candidate => candidate.FloorCode)
+                     .ThenBy(candidate => candidate.Key))
+        {
+            _context.ChangeTracker.Clear();
+            var existingFloor = await _context.FloorRevisions
+                .AsNoTracking()
+                .SingleOrDefaultAsync(
+                    candidate => candidate.ModelVersionId == versionId &&
+                                 candidate.FloorCode == templateFloor.FloorCode,
+                    cancellationToken);
+            Guid floorLogicalId;
+            if (existingFloor is null)
+            {
+                var contentRevision = await _context.Versions
+                    .AsNoTracking()
+                    .Where(candidate => candidate.Id == versionId)
+                    .Select(candidate => candidate.ContentRevision)
+                    .SingleAsync(cancellationToken);
+                var floorResult = await CreateFloorAsync(
+                    versionId,
+                    new CreateSpaceFloorRequest(
+                        templateFloor.FloorCode,
+                        templateFloor.Name,
+                        templateFloor.Level,
+                        templateFloor.Elevation,
+                        templateFloor.Height,
+                        contentRevision),
+                    $"template-floor:{versionKeyHash}:{templateFloor.Key}",
+                    cancellationToken);
+                floorLogicalId = floorResult.Floor.Revision.LogicalId;
+            }
+            else
+            {
+                if (existingFloor.Level != templateFloor.Level ||
+                    existingFloor.Name != templateFloor.Name ||
+                    existingFloor.Elevation != templateFloor.Elevation ||
+                    existingFloor.Height != templateFloor.Height ||
+                    existingFloor.Revision != 1)
+                {
+                    throw Conflict(
+                        SpaceErrorCodes.WarehouseTemplateProposalStale,
+                        "A partially initialized template floor was changed before retry.",
+                        "abandon-draft-and-create-again");
+                }
+                floorLogicalId = existingFloor.LogicalId;
+            }
+
+            var commandBatchId = OperationId(Hash(
+                $"template-command\n{versionKeyHash}\n{templateFloor.Key}"));
+            _context.ChangeTracker.Clear();
+            var completedBatch = await _context.ElementCommandBatches
+                .AsNoTracking()
+                .SingleOrDefaultAsync(
+                    candidate => candidate.Id == commandBatchId,
+                    cancellationToken);
+            if (completedBatch is not null)
+            {
+                if (completedBatch.ModelVersionId != versionId ||
+                    completedBatch.FloorLogicalId != floorLogicalId ||
+                    completedBatch.ResponseJson is null)
+                {
+                    throw Conflict(
+                        SpaceErrorCodes.IdempotencyConflict,
+                        "The template initialization command identity is inconsistent.",
+                        "contact-support");
+                }
+                continue;
+            }
+
+            var clientInstanceId = OperationId(Hash(
+                $"template-client\n{versionKeyHash}\n{templateFloor.Key}"));
+            var lease = await AcquireTemplateInitializationLeaseAsync(
+                versionId,
+                floorLogicalId,
+                clientInstanceId,
+                cancellationToken);
+
+            try
+            {
+                _context.ChangeTracker.Clear();
+                var revisions = await (
+                        from version in _context.Versions.AsNoTracking()
+                        join floor in _context.FloorRevisions.AsNoTracking()
+                            on version.Id equals floor.ModelVersionId
+                        where version.Id == versionId &&
+                              floor.LogicalId == floorLogicalId
+                        select new
+                        {
+                            Version = version.ContentRevision,
+                            Floor = floor.Revision,
+                        })
+                    .SingleAsync(cancellationToken);
+                await ApplyWarehouseTemplateFloorAsync(
+                    versionId,
+                    floorLogicalId,
+                    preview.TemplateId,
+                    new ApplySpaceWarehouseTemplateFloorRequest(
+                        SpaceWarehouseTemplateContract.SchemaVersion,
+                        siteId,
+                        preview.TemplateVersionId,
+                        preview.ProposalHash,
+                        templateFloor.Key,
+                        commandBatchId,
+                        clientInstanceId,
+                        lease.LeaseId,
+                        revisions.Floor,
+                        revisions.Version),
+                    cancellationToken);
+            }
+            finally
+            {
+                await ReleaseTemplateInitializationLeaseAsync(
+                    versionId,
+                    floorLogicalId,
+                    lease.LeaseId,
+                    clientInstanceId,
+                    cancellationToken);
+            }
+        }
+    }
+
+    private async Task<SpaceEditLease> AcquireTemplateInitializationLeaseAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        Guid clientInstanceId,
+        CancellationToken cancellationToken)
+    {
+        _context.ChangeTracker.Clear();
+        var now = RequireUtcNow();
+        var lease = await _context.EditLeases.SingleOrDefaultAsync(
+            candidate => candidate.ModelVersionId == versionId &&
+                         candidate.FloorLogicalId == floorLogicalId,
+            cancellationToken);
+        if (lease is null)
+        {
+            lease = SpaceEditLease.Create(
+                _execution.TenantId,
+                versionId,
+                floorLogicalId,
+                _execution.ActorId,
+                string.IsNullOrWhiteSpace(_execution.ActorDisplayName)
+                    ? _execution.ActorId.ToString("D")
+                    : _execution.ActorDisplayName!.Trim(),
+                clientInstanceId,
+                now,
+                TemplateInitializationLeaseDuration);
+            _context.EditLeases.Add(lease);
+        }
+        else if (lease.IsExpired(now))
+        {
+            lease.Reassign(
+                _execution.ActorId,
+                string.IsNullOrWhiteSpace(_execution.ActorDisplayName)
+                    ? _execution.ActorId.ToString("D")
+                    : _execution.ActorDisplayName!.Trim(),
+                clientInstanceId,
+                now,
+                TemplateInitializationLeaseDuration);
+        }
+        else if (lease.IsOwnedBy(_execution.ActorId, clientInstanceId))
+        {
+            lease.Renew(
+                lease.LeaseId,
+                _execution.ActorId,
+                clientInstanceId,
+                now,
+                TemplateInitializationLeaseDuration);
+        }
+        else
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.EditLeaseHeld,
+                409,
+                "The template floor is being edited in another session.",
+                recoveryAction: "retry-template-initialization",
+                retryable: true);
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return lease;
+    }
+
+    private async Task ReleaseTemplateInitializationLeaseAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        Guid leaseId,
+        Guid clientInstanceId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            _context.ChangeTracker.Clear();
+            var lease = await _context.EditLeases.SingleOrDefaultAsync(
+                candidate => candidate.ModelVersionId == versionId &&
+                             candidate.FloorLogicalId == floorLogicalId,
+                cancellationToken);
+            if (lease is null ||
+                lease.LeaseId != leaseId ||
+                !lease.IsOwnedBy(_execution.ActorId, clientInstanceId))
+            {
+                return;
+            }
+            lease.Release(
+                leaseId,
+                _execution.ActorId,
+                clientInstanceId,
+                RequireUtcNow());
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // The five-minute lease expires safely if the request is cancelled.
+        }
+        catch (DbUpdateException)
+        {
+            // A concurrent lease transition is authoritative; do not mask the
+            // completed template Apply with cleanup-only failure.
+        }
     }
 
     public async Task<SpacePage<SpaceSourceDto>> GetSourcesAsync(
@@ -4271,6 +4848,9 @@ public sealed class SpaceDesignV1Service :
 
     private static string TemplateFloorBoundary(
         SpaceWarehouseTemplateFloorPlanDto floor) =>
+        RectangularBoundary(floor.Width, floor.Depth);
+
+    private static string RectangularBoundary(int width, int depth) =>
         JsonSerializer.Serialize(
             new
             {
@@ -4279,9 +4859,9 @@ public sealed class SpaceDesignV1Service :
                 points = new[]
                 {
                     new[] { 0, 0 },
-                    new[] { floor.Width, 0 },
-                    new[] { floor.Width, floor.Depth },
-                    new[] { 0, floor.Depth },
+                    new[] { width, 0 },
+                    new[] { width, depth },
+                    new[] { 0, depth },
                 },
             },
             JsonOptions);
@@ -6437,15 +7017,28 @@ public sealed class SpaceDesignV1Service :
             RowVersion(version.RowVersion),
             version.Purpose.ToString(),
             VersionCreationSource(version),
+            version.SourceTemplateId,
+            version.SourceTemplateVersionId,
+            version.SourceTemplateContentHash,
             version.CreatedBy,
             version.CreatedAtUtc,
             version.ModifiedAtUtc ?? version.CreatedAtUtc,
             openBlockingCount);
 
     private static string VersionCreationSource(SpaceModelVersion version) =>
-        version.BasedOnVersionId.HasValue
-            ? SpaceVersionCreationSources.PublishedVersion
-            : SpaceVersionCreationSources.Blank;
+        version.CreationSource switch
+        {
+            SpaceVersionCreationSource.Blank =>
+                SpaceVersionCreationSources.Blank,
+            SpaceVersionCreationSource.PublishedVersion =>
+                SpaceVersionCreationSources.PublishedVersion,
+            SpaceVersionCreationSource.SystemTemplate =>
+                SpaceVersionCreationSources.SystemTemplate,
+            SpaceVersionCreationSource.TenantTemplate =>
+                SpaceVersionCreationSources.TenantTemplate,
+            _ => throw new InvalidDataException(
+                "The Space version creation source is unsupported."),
+        };
 
     private async Task<IReadOnlyList<SpaceSourceRemovalReferenceDto>>
         GetSourceRemovalReferencesAsync(
@@ -6827,6 +7420,146 @@ public sealed class SpaceDesignV1Service :
     private static string RowVersion(byte[] rowVersion) =>
         Convert.ToBase64String(rowVersion ?? []);
 
+    private static SpaceWarehouseTemplateRackPlanDto BuildDraftTemplateRackPlan(
+        SpaceRackRevision rack,
+        IReadOnlyDictionary<Guid, SpaceRackLevelRevision[]> levelsByRack)
+    {
+        if (!rack.AisleLogicalId.HasValue ||
+            !levelsByRack.TryGetValue(rack.LogicalId, out var levels) ||
+            levels.Length == 0)
+        {
+            throw new InvalidDataException(
+                $"Rack {rack.RackCode} requires an aisle and at least one active level.");
+        }
+        if (rack.Width <= 0 || rack.Depth <= 0 || rack.Height <= 0 ||
+            rack.Width % levels[0].BinCount != 0 ||
+            rack.Depth % levels[0].DepthCount != 0 ||
+            rack.Height % levels.Length != 0)
+        {
+            throw new InvalidDataException(
+                $"Rack {rack.RackCode} dimensions cannot form a reusable regular grid.");
+        }
+
+        var levelHeight = rack.Height / levels.Length;
+        var cellWidth = rack.Width / levels[0].BinCount;
+        var cellDepth = rack.Depth / levels[0].DepthCount;
+        for (var index = 0; index < levels.Length; index++)
+        {
+            var level = levels[index];
+            if (level.LevelNo != index + 1 ||
+                level.BottomZ != index * levelHeight ||
+                level.BeamHeight != 100 ||
+                level.ClearHeight != levelHeight - 100 ||
+                level.BinCount != levels[0].BinCount ||
+                level.DepthCount != levels[0].DepthCount ||
+                level.CellWidth != cellWidth ||
+                level.CellDepth != cellDepth)
+            {
+                throw new InvalidDataException(
+                    $"Rack {rack.RackCode} levels are not a regular template grid.");
+            }
+        }
+
+        return new SpaceWarehouseTemplateRackPlanDto(
+            TemplateObjectKey("rack", rack.LogicalId),
+            TemplateObjectKey("floor", rack.FloorLogicalId),
+            TemplateObjectKey("zone", rack.ZoneLogicalId),
+            TemplateObjectKey("aisle", rack.AisleLogicalId.Value),
+            rack.RackCode,
+            rack.X,
+            rack.Y,
+            rack.Z,
+            rack.RotationZ,
+            rack.Width,
+            rack.Depth,
+            rack.Height,
+            levels[0].BinCount,
+            levels.Length,
+            levels[0].DepthCount);
+    }
+
+    private static RectangularBounds ReadRectangularBounds(
+        string json,
+        string label)
+    {
+        var points = ReadIntegerPoints(json, label);
+        if (points.Length != 4 || points.Distinct().Count() != 4)
+            throw new InvalidDataException($"{label} must contain four unique points.");
+        var minX = points.Min(point => point.X);
+        var minY = points.Min(point => point.Y);
+        var maxX = points.Max(point => point.X);
+        var maxY = points.Max(point => point.Y);
+        if (minX >= maxX || minY >= maxY)
+            throw new InvalidDataException($"{label} has no positive area.");
+        var corners = new HashSet<(int X, int Y)>
+        {
+            (minX, minY),
+            (maxX, minY),
+            (maxX, maxY),
+            (minX, maxY),
+        };
+        if (points.Any(point => !corners.Contains(point)))
+            throw new InvalidDataException($"{label} must be an axis-aligned rectangle.");
+        return new RectangularBounds(minX, minY, maxX, maxY);
+    }
+
+    private static CenterlineBounds ReadCenterline(string json, string label)
+    {
+        var points = ReadIntegerPoints(json, label);
+        if (points.Length != 2 || points[0] == points[1])
+            throw new InvalidDataException($"{label} must contain two distinct points.");
+        return new CenterlineBounds(
+            points[0].X,
+            points[0].Y,
+            points[1].X,
+            points[1].Y);
+    }
+
+    private static (int X, int Y)[] ReadIntegerPoints(string json, string label)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(json);
+            if (document.RootElement.ValueKind != JsonValueKind.Object ||
+                !document.RootElement.TryGetProperty("points", out var points) ||
+                points.ValueKind != JsonValueKind.Array)
+            {
+                throw new InvalidDataException($"{label} does not contain a points array.");
+            }
+            return points.EnumerateArray().Select(point =>
+            {
+                if (point.ValueKind != JsonValueKind.Array ||
+                    point.GetArrayLength() != 2 ||
+                    !point[0].TryGetInt32(out var x) ||
+                    !point[1].TryGetInt32(out var y))
+                {
+                    throw new InvalidDataException(
+                        $"{label} points must use two integer millimeter coordinates.");
+                }
+                return (x, y);
+            }).ToArray();
+        }
+        catch (JsonException exception)
+        {
+            throw new InvalidDataException($"{label} is not valid JSON.", exception);
+        }
+    }
+
+    private static string TemplateObjectKey(string kind, Guid logicalId) =>
+        $"{kind}:{logicalId:N}";
+
+    private static string TemplateZoneType(short zoneType) => zoneType switch
+    {
+        1 => "Receiving",
+        2 => "Storage",
+        3 => "Shipping",
+        4 => "Picking",
+        5 => "Packing",
+        0 => "Other",
+        _ => throw new InvalidDataException(
+            $"Zone type {zoneType} is not supported by warehouse templates."),
+    };
+
     private static SpaceProblemException Invalid(
         string field,
         string detail) =>
@@ -6860,6 +7593,25 @@ public sealed class SpaceDesignV1Service :
     private sealed record ResolvedWarehouseTemplate(
         SpaceWarehouseTemplateDto Template,
         SpaceWarehouseTemplateInstantiationPreviewDto Preview);
+
+    private sealed record DraftWarehouseTemplatePlan(
+        SpaceDraftWarehouseTemplatePreviewDto Preview,
+        IReadOnlyList<SpaceWarehouseTemplateFloorPlanDto> Floors,
+        IReadOnlyList<SpaceWarehouseTemplateZonePlanDto> Zones,
+        IReadOnlyList<SpaceWarehouseTemplateAislePlanDto> Aisles,
+        IReadOnlyList<SpaceWarehouseTemplateRackPlanDto> Racks);
+
+    private sealed record RectangularBounds(
+        int MinX,
+        int MinY,
+        int MaxX,
+        int MaxY);
+
+    private sealed record CenterlineBounds(
+        int StartX,
+        int StartY,
+        int EndX,
+        int EndY);
 
     private const int HttpOk = 200;
     private const int HttpCreated = 201;

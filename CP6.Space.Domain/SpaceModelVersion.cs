@@ -12,6 +12,10 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
     public SpaceVersionStatus Status { get; private set; }
     public SpaceModelVersionPurpose Purpose { get; private set; }
     public Guid? BasedOnVersionId { get; private set; }
+    public SpaceVersionCreationSource CreationSource { get; private set; }
+    public Guid? SourceTemplateId { get; private set; }
+    public Guid? SourceTemplateVersionId { get; private set; }
+    public string? SourceTemplateContentHash { get; private set; }
     public Guid? CloneOperationId { get; private set; }
     public long ContentRevision { get; private set; }
     public string? ContentHash { get; private set; }
@@ -42,6 +46,9 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
             Status = SpaceVersionStatus.Draft,
             Purpose = SpaceModelVersionPurpose.Production,
             BasedOnVersionId = basedOnVersionId,
+            CreationSource = basedOnVersionId.HasValue
+                ? SpaceVersionCreationSource.PublishedVersion
+                : SpaceVersionCreationSource.Blank,
         };
         version.SetTenant(tenantId);
         return version;
@@ -52,7 +59,12 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
         Guid modelId,
         long versionNo,
         string name,
-        Guid initializationOperationId)
+        Guid initializationOperationId,
+        SpaceVersionCreationSource creationSource =
+            SpaceVersionCreationSource.Blank,
+        Guid? sourceTemplateId = null,
+        Guid? sourceTemplateVersionId = null,
+        string? sourceTemplateContentHash = null)
     {
         if (initializationOperationId == Guid.Empty)
         {
@@ -62,6 +74,11 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
         }
 
         var version = CreateDraft(tenantId, modelId, versionNo, name);
+        version.SetCreationSource(
+            creationSource,
+            sourceTemplateId,
+            sourceTemplateVersionId,
+            sourceTemplateContentHash);
         version.CloneOperationId = initializationOperationId;
         return version;
     }
@@ -91,6 +108,7 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
             Status = SpaceVersionStatus.Initializing,
             Purpose = SpaceModelVersionPurpose.Production,
             BasedOnVersionId = basedOnVersionId,
+            CreationSource = SpaceVersionCreationSource.PublishedVersion,
             CloneOperationId = cloneOperationId,
         };
         version.SetTenant(tenantId);
@@ -266,6 +284,60 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
         ValidatedHash = null;
         RuleSetVersion = null;
         WmsCapabilityHash = null;
+    }
+
+    private void SetCreationSource(
+        SpaceVersionCreationSource creationSource,
+        Guid? sourceTemplateId,
+        Guid? sourceTemplateVersionId,
+        string? sourceTemplateContentHash)
+    {
+        if (creationSource is SpaceVersionCreationSource.PublishedVersion)
+        {
+            throw new ArgumentException(
+                "Blank initialization cannot use a Published version source.",
+                nameof(creationSource));
+        }
+
+        var isTemplate = creationSource is
+            SpaceVersionCreationSource.SystemTemplate or
+            SpaceVersionCreationSource.TenantTemplate;
+        if (!isTemplate)
+        {
+            if (creationSource != SpaceVersionCreationSource.Blank)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(creationSource),
+                    creationSource,
+                    "Unsupported version creation source.");
+            }
+            if (sourceTemplateId.HasValue ||
+                sourceTemplateVersionId.HasValue ||
+                !string.IsNullOrWhiteSpace(sourceTemplateContentHash))
+            {
+                throw new ArgumentException(
+                    "Blank initialization cannot contain template provenance.",
+                    nameof(sourceTemplateId));
+            }
+            CreationSource = SpaceVersionCreationSource.Blank;
+            return;
+        }
+
+        if (!sourceTemplateId.HasValue || sourceTemplateId == Guid.Empty ||
+            !sourceTemplateVersionId.HasValue ||
+            sourceTemplateVersionId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Template initialization requires template and version identities.",
+                nameof(sourceTemplateId));
+        }
+
+        CreationSource = creationSource;
+        SourceTemplateId = sourceTemplateId;
+        SourceTemplateVersionId = sourceTemplateVersionId;
+        SourceTemplateContentHash = RequireHash(
+            sourceTemplateContentHash ?? string.Empty,
+            nameof(sourceTemplateContentHash));
     }
 
     private static string RequireName(string value)

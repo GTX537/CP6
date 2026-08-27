@@ -488,12 +488,28 @@ public sealed class SpaceContext : DbContext
         var entity = modelBuilder.Entity<SpaceModelVersion>();
         entity.ToTable(
             "Space_ModelVersion",
-            table => table.HasCheckConstraint(
-                "CK_Space_ModelVersion_Purpose",
-                "[Purpose] IN (0, 1) AND " +
-                "([Purpose] = 0 OR (" +
-                "[Status] NOT IN (3, 4, 5, 6) AND " +
-                "[PublishedAtUtc] IS NULL AND [PublishedBy] IS NULL))"));
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ModelVersion_Purpose",
+                    "[Purpose] IN (0, 1) AND " +
+                    "([Purpose] = 0 OR (" +
+                    "[Status] NOT IN (3, 4, 5, 6) AND " +
+                    "[PublishedAtUtc] IS NULL AND [PublishedBy] IS NULL))");
+                table.HasCheckConstraint(
+                    "CK_Space_ModelVersion_CreationSource",
+                    "[CreationSource] IN (0, 1, 2, 3) AND " +
+                    "(((([CreationSource] = 0 AND [BasedOnVersionId] IS NULL) OR " +
+                    "([CreationSource] = 1 AND [BasedOnVersionId] IS NOT NULL)) AND " +
+                    "[SourceTemplateId] IS NULL AND " +
+                    "[SourceTemplateVersionId] IS NULL AND " +
+                    "[SourceTemplateContentHash] IS NULL) OR " +
+                    "([CreationSource] IN (2, 3) AND " +
+                    "[BasedOnVersionId] IS NULL AND " +
+                    "[SourceTemplateId] IS NOT NULL AND " +
+                    "[SourceTemplateVersionId] IS NOT NULL AND " +
+                    "[SourceTemplateContentHash] IS NOT NULL))");
+            });
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
         entity.HasAlternateKey(x => new { x.TenantId, x.ModelId, x.Id })
@@ -510,6 +526,15 @@ public sealed class SpaceContext : DbContext
             .HasConversion<short>()
             .HasColumnType("smallint")
             .HasDefaultValue(SpaceModelVersionPurpose.Production);
+        entity.Property(x => x.CreationSource)
+            .HasConversion<short>()
+            .HasColumnType("smallint")
+            .HasDefaultValue(SpaceVersionCreationSource.Blank);
+        entity.Property(x => x.SourceTemplateContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
         entity.Property(x => x.ContentHash)
             .HasColumnType("char(64)")
             .IsUnicode(false)

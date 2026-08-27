@@ -125,6 +125,19 @@ public interface ISpaceDesignV1Service
             string idempotencyKey,
             CancellationToken cancellationToken = default);
 
+    Task<SpaceDraftWarehouseTemplatePreviewDto>
+        PreviewTenantWarehouseTemplateFromDraftAsync(
+            Guid versionId,
+            PreviewTenantSpaceWarehouseTemplateFromDraftRequest request,
+            CancellationToken cancellationToken = default);
+
+    Task<CreateTenantSpaceWarehouseTemplateResponse>
+        CreateTenantWarehouseTemplateFromDraftAsync(
+            Guid versionId,
+            CreateTenantSpaceWarehouseTemplateFromDraftRequest request,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default);
+
     Task<SpaceWarehouseTemplateInstantiationPreviewDto>
         PreviewWarehouseTemplateAsync(
             Guid templateId,

@@ -37,6 +37,14 @@ public enum SpaceModelVersionPurpose : short
     PlanningScenario = 1,
 }
 
+public enum SpaceVersionCreationSource : short
+{
+    Blank = 0,
+    PublishedVersion = 1,
+    SystemTemplate = 2,
+    TenantTemplate = 3,
+}
+
 public enum SpacePlanningTaskType : short
 {
     Putaway = 0,

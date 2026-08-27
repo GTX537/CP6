@@ -43,6 +43,26 @@ public sealed record CreateTenantSpaceWarehouseTemplateResponse(
     SpaceWarehouseTemplateDto Template,
     bool IdempotentReplay);
 
+public sealed record PreviewTenantSpaceWarehouseTemplateFromDraftRequest(
+    long ExpectedContentRevision);
+
+public sealed record SpaceDraftWarehouseTemplatePreviewDto(
+    int SchemaVersion,
+    Guid ModelVersionId,
+    long ContentRevision,
+    string TemplateContentHash,
+    string ProposalHash,
+    SpaceWarehouseTemplateCountsDto Counts,
+    IReadOnlyList<SpaceWarehouseTemplateFloorPlanDto> Floors,
+    bool WritesTemplate);
+
+public sealed record CreateTenantSpaceWarehouseTemplateFromDraftRequest(
+    string TemplateCode,
+    string Name,
+    string? Description,
+    long ExpectedContentRevision,
+    string ProposalHash);
+
 public sealed record PreviewSpaceWarehouseTemplateRequest(
     Guid TemplateVersionId);
 

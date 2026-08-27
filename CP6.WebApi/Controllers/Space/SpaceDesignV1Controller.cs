@@ -640,6 +640,46 @@ public sealed class SpaceDesignV1Controller(
             result);
     }
 
+    [HttpPost("versions/{versionId:guid}/tenant-template-preview")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceDraftWarehouseTemplatePreviewDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceDraftWarehouseTemplatePreviewDto>
+        PreviewTenantWarehouseTemplateFromDraft(
+            Guid versionId,
+            [FromBody, Required]
+            PreviewTenantSpaceWarehouseTemplateFromDraftRequest request,
+            CancellationToken cancellationToken) =>
+        service.PreviewTenantWarehouseTemplateFromDraftAsync(
+            versionId,
+            request,
+            cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/tenant-templates")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CreateTenantSpaceWarehouseTemplateResponse>(
+        StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateTenantWarehouseTemplateFromDraft(
+        Guid versionId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required]
+        CreateTenantSpaceWarehouseTemplateFromDraftRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CreateTenantWarehouseTemplateFromDraftAsync(
+            versionId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return CreatedAtAction(
+            nameof(GetWarehouseTemplates),
+            new { scope = "Tenant" },
+            result);
+    }
+
     [HttpGet("templates")]
     [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<IReadOnlyList<SpaceWarehouseTemplateDto>>(
