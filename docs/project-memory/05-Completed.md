@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space Studio WP1 统一建模与模板制作
+
+- 完成 Blank、PublishedVersion、SystemTemplate、TenantTemplate 四模式统一 Draft 创建；模板版本、Scope 和密封 ProposalHash 在服务端复核，全部楼层通过既有 Lease/Revision/Idempotency Fence 初始化。
+- 新增 Draft 创建来源和模板 ID/版本/内容哈希持久化与数据库一致性约束；既有 Blank/Published 版本迁移后来源可追溯。
+- 新增当前 Draft 的零写入租户模板预览和受控模板制作表单；仅规则、可无损表达的仓库布局可封装，不规则几何失败关闭。
+- SQL Server LocalDB Version Clone 17/17、10,000 库位 System Template、Tenant Scope、OpenAPI 57/57、Web 19/19、完整 solution、EF/SDK/type-check/production build 均通过。WP1 实现 Complete，正式接受与整体 GA 仍 Pending / 72% / NoGo。
+
 ## 2026-08-26 Space Studio 单人交付门禁收口
 
 - 正式 GA 由五角色签字与 2+2+1 团队配额收敛为一个实名 `DeliveryOwner`，允许同一人实现、自测、UX/可达性检查、安全负向、WMS 联调、接受证据和最终签署。

@@ -73,6 +73,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/republishes/{republishId}",
             "/api/space/design/v1/versions/{historicalVersionId}/republish",
             "/api/space/design/v1/versions/{versionId}",
+            "/api/space/design/v1/versions/{versionId}/tenant-template-preview",
+            "/api/space/design/v1/versions/{versionId}/tenant-templates",
             "/api/space/design/v1/versions/{versionId}/floors",
             "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
@@ -163,8 +165,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(148, operationIds.Length);
-        Assert.Equal(148, operationIds.Distinct().Count());
+        Assert.Equal(150, operationIds.Length);
+        Assert.Equal(150, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -232,6 +234,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateTenantWarehouseTemplate", operationIds);
         Assert.Contains("PreviewWarehouseTemplate", operationIds);
         Assert.Contains("ApplyWarehouseTemplateFloor", operationIds);
+        Assert.Contains("PreviewTenantWarehouseTemplateFromDraft", operationIds);
+        Assert.Contains("CreateTenantWarehouseTemplateFromDraft", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetSourceRemovalPreview", operationIds);
         Assert.Contains("RemoveSource", operationIds);
@@ -1558,6 +1562,19 @@ public sealed class SpaceDesignV1OpenApiTests
             "height",
             "expectedContentRevision",
         ]));
+
+        var properties = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.CreateSpaceFloorRequest")
+            .GetProperty("properties");
+        foreach (var dimension in new[] { "width", "depth" })
+        {
+            var property = properties.GetProperty(dimension);
+            Assert.Equal("integer", property.GetProperty("type").GetString());
+            Assert.True(property.GetProperty("nullable").GetBoolean());
+            Assert.DoesNotContain(dimension, required);
+        }
     }
 
     [Fact]
@@ -1614,6 +1631,60 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
+    public void Draft_template_authoring_exposes_preview_then_idempotent_create()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var preview = paths
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/tenant-template-preview")
+            .GetProperty("post");
+        Assert.Equal(
+            "PreviewTenantWarehouseTemplateFromDraft",
+            preview.GetProperty("operationId").GetString());
+        Assert.True(preview.GetProperty("requestBody")
+            .GetProperty("required")
+            .GetBoolean());
+
+        var create = paths
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/tenant-templates")
+            .GetProperty("post");
+        Assert.Equal(
+            "CreateTenantWarehouseTemplateFromDraft",
+            create.GetProperty("operationId").GetString());
+        Assert.True(create.GetProperty("requestBody")
+            .GetProperty("required")
+            .GetBoolean());
+        var idempotency = create.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        var previewProperties = Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceDraftWarehouseTemplatePreviewDto")
+            .GetProperty("properties");
+        foreach (var property in new[]
+                 {
+                     "modelVersionId",
+                     "contentRevision",
+                     "templateContentHash",
+                     "proposalHash",
+                     "writesTemplate",
+                     "counts",
+                     "floors",
+                 })
+        {
+            Assert.True(previewProperties.TryGetProperty(property, out _));
+        }
+    }
+
+    [Fact]
     public void Warehouse_template_floor_apply_is_required_and_revision_fenced()
     {
         using var document = ReadContract();
@@ -1664,6 +1735,38 @@ public sealed class SpaceDesignV1OpenApiTests
             "createdAtUtc",
             "updatedAtUtc",
             "openBlockingCount");
+
+        var versionProperties = Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceVersionDto")
+            .GetProperty("properties");
+        foreach (var property in new[]
+                 {
+                     "sourceTemplateId",
+                     "sourceTemplateVersionId",
+                     "sourceTemplateContentHash",
+                 })
+        {
+            Assert.True(versionProperties.GetProperty(property)
+                .GetProperty("nullable")
+                .GetBoolean());
+        }
+
+        var createProperties = Schema(
+                schemas,
+                "CP6.Space.Contracts.CreateSpaceVersionRequest")
+            .GetProperty("properties");
+        foreach (var property in new[]
+                 {
+                     "templateId",
+                     "templateVersionId",
+                     "templateProposalHash",
+                 })
+        {
+            Assert.True(createProperties.GetProperty(property)
+                .GetProperty("nullable")
+                .GetBoolean());
+        }
     }
 
     [Fact]

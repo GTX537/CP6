@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space Studio WP1 仓库实现闭环（2026-08-27）
+
+- WP1 Design V1 手工建模的仓库实现已从 Partial 推进为 Complete：同一向导支持 Blank、Published、System Template 和 Tenant Template，模板模式按密封预览幂等初始化全部楼层，版本持久保存来源、模板版本和内容 SHA-256。
+- 当前生产 Draft 可先零写入预览，再通过仓库人员表单创建租户私有不可变整仓模板；空白首层显式要求宽度/深度，未完成模板初始化的重试不会覆盖后来修改过的楼层。
+- SQL Server LocalDB 纵切覆盖 2 楼层、500 货架、10,000 库位及 Tenant Scope；Version Clone 全类 17/17、OpenAPI 57/57、Web 聚焦 19/19、完整 solution 0 warning / 0 error，EF/SDK/type-check/production build 门禁通过。
+- 这只关闭 WP1 的实现缺口，不构成正式接受：`acceptanceStatus`、3 类外部输入、WP0～WP8 和 DeliveryOwner 签署仍 Pending；整体继续为 72% / `NoGo`，下一工程主线是需要真实授权与环境的 WP3 Provider/隔离 Worker。
+
 ## Space Studio 单人交付门禁（2026-08-26）
 
 - 核心 GA 治理已从多人角色门禁改为单一 `DeliveryOwner`：同一实名开发者可兼任产品、开发、QA、UX、架构、安全和 WMS 联调，自验收并签署；不再要求 2 Backend + 2 Frontend3D + 1 QA、五角色实名签字、不同复核人或第二人审批。
@@ -23,7 +30,7 @@
 - 三次未合并的预审批尝试因脱敏声明不完整而作废；相关证据仅保留在未合并 PR 审计轨迹中，新的干净分支不继承旧敏感提交祖先，也不把旧对象引用写入公开产品基线。
 - 当前状态为 `Approved product requirements baseline`；批准绑定候选 commit `00fa3aea66045cb2b949b691824f0fbb830cc739`、PRD blob `b6f8da119bf700340616e8a2d3cc01ceb0dd38d6`、PR #35 ProgramOwner 评论正文摘要 `4092bc5ec3338be408292c5f240579ed036dcd1033858b4d237dc38d39608de1` 和 append-only 历史摘要 `76b3d5d481ad6c128f70abc7ceb770e430907fed97ca8bdd986873dc492720b3`。Public Contract Sync 为 Complete，M0 仍为 No-Go；没有创建业务代码、云资源、Secret、数据库、迁移、候选制品或部署，也不解锁 CRM01。
 
-最后更新：2026-08-26
+最后更新：2026-08-27
 
 ## Azure Release Shadow S0 仓库合同完成（2026-08-26）
 

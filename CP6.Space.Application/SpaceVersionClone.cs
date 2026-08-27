@@ -29,12 +29,21 @@ public sealed record SpaceBlankVersionRequest(
     Guid ModelId,
     string Name,
     Guid OperationId,
-    string InputHash);
+    string InputHash,
+    SpaceVersionCreationSource CreationSource =
+        SpaceVersionCreationSource.Blank,
+    Guid? SourceTemplateId = null,
+    Guid? SourceTemplateVersionId = null,
+    string? SourceTemplateContentHash = null);
 
 public sealed record SpaceBlankVersionPayload(
     Guid ModelId,
     Guid TargetVersionId,
-    Guid OperationId);
+    Guid OperationId,
+    SpaceVersionCreationSource CreationSource,
+    Guid? SourceTemplateId,
+    Guid? SourceTemplateVersionId,
+    string? SourceTemplateContentHash);
 
 public sealed record SpaceBlankVersionStartResult(
     Guid ModelVersionId,

@@ -61,7 +61,7 @@ describe('designProjectApi', () => {
       '/space/design/v1/sites/site-1/versions',
       {
         name: 'Blank warehouse',
-        basedOnVersionId: null,
+        basedOnVersionId: undefined,
         createMode: 'Blank',
       },
       { headers: { 'Idempotency-Key': 'version-key' } },
@@ -78,6 +78,34 @@ describe('designProjectApi', () => {
         expectedContentRevision: 0,
       },
       { headers: { 'Idempotency-Key': 'floor-key' } },
+    )
+  })
+
+  it('creates a Draft from a sealed tenant template provenance', async () => {
+    vi.mocked(http.post).mockResolvedValue({} as never)
+
+    await designProjectApi.createVersion(
+      'site-1',
+      {
+        name: 'Tenant warehouse',
+        createMode: 'TenantTemplate',
+        templateId: 'template-1',
+        templateVersionId: 'template-version-1',
+        templateProposalHash: 'a'.repeat(64),
+      },
+      'template-version-key',
+    )
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/space/design/v1/sites/site-1/versions',
+      {
+        name: 'Tenant warehouse',
+        createMode: 'TenantTemplate',
+        templateId: 'template-1',
+        templateVersionId: 'template-version-1',
+        templateProposalHash: 'a'.repeat(64),
+      },
+      { headers: { 'Idempotency-Key': 'template-version-key' } },
     )
   })
 
@@ -122,6 +150,39 @@ describe('designProjectApi', () => {
       '/space/design/v1/templates',
       request,
       { headers: { 'Idempotency-Key': 'tenant-template-key' } },
+    )
+  })
+
+  it('previews and creates a tenant template from the current Draft fence', async () => {
+    vi.mocked(http.post).mockResolvedValue({} as never)
+
+    await designProjectApi.previewTenantWarehouseTemplateFromDraft('version/1', 7)
+    await designProjectApi.createTenantWarehouseTemplateFromDraft(
+      'version/1',
+      {
+        templateCode: 'DRAFT-01',
+        name: 'Draft template',
+        expectedContentRevision: 7,
+        proposalHash: 'b'.repeat(64),
+      },
+      'draft-template-key',
+    )
+
+    expect(http.post).toHaveBeenNthCalledWith(
+      1,
+      '/space/design/v1/versions/version%2F1/tenant-template-preview',
+      { expectedContentRevision: 7 },
+    )
+    expect(http.post).toHaveBeenNthCalledWith(
+      2,
+      '/space/design/v1/versions/version%2F1/tenant-templates',
+      {
+        templateCode: 'DRAFT-01',
+        name: 'Draft template',
+        expectedContentRevision: 7,
+        proposalHash: 'b'.repeat(64),
+      },
+      { headers: { 'Idempotency-Key': 'draft-template-key' } },
     )
   })
 

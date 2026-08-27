@@ -28,15 +28,53 @@ const templateErrorText = ref('')
 const addingFloor = ref(false)
 const viewportWidth = ref(window.innerWidth)
 const draftName = ref('')
+type DraftCreateMode = 'Blank' | 'PublishedVersion' | 'SystemTemplate' | 'TenantTemplate'
+const createMode = ref<DraftCreateMode>('Blank')
+const selectedTemplateId = ref('')
 const floorForm = reactive({
   floorCode: '',
   name: '',
   level: '',
   elevation: '',
   height: '',
+  width: '',
+  depth: '',
 })
 
 const isNarrow = computed(() => viewportWidth.value < 1280)
+const templateCreateMode = computed(
+  () => createMode.value === 'SystemTemplate' || createMode.value === 'TenantTemplate',
+)
+const templatesForMode = computed(() => {
+  if (createMode.value === 'SystemTemplate')
+    return warehouseTemplates.value.filter(item => item.scope === 'System')
+  if (createMode.value === 'TenantTemplate')
+    return warehouseTemplates.value.filter(item => item.scope === 'Tenant')
+  return []
+})
+const selectedTemplate = computed(() =>
+  templatesForMode.value.find(item => item.id === selectedTemplateId.value) ?? null,
+)
+const selectedTemplatePreview = computed(() =>
+  templatePreview.value?.templateId === selectedTemplate.value?.id
+    ? templatePreview.value
+    : null,
+)
+const canCreateDraft = computed(() => {
+  if (isNarrow.value || savingDraft.value) return false
+  if (createMode.value === 'PublishedVersion')
+    return Boolean(model.value?.currentPublishedVersionId)
+  if (templateCreateMode.value)
+    return Boolean(selectedTemplate.value && selectedTemplatePreview.value)
+  return true
+})
+const createButtonLabel = computed(() => {
+  if (savingDraft.value) return '创建中…'
+  if (createMode.value === 'PublishedVersion') return '从当前 Published 创建 Draft'
+  if (createMode.value === 'SystemTemplate') return '从平台模板创建完整 Draft'
+  if (createMode.value === 'TenantTemplate') return '从租户模板创建完整 Draft'
+  return '创建空白 Draft'
+})
 const showFloorForm = computed(
   () => Boolean(draftVersion.value) && (floors.value.length === 0 || addingFloor.value),
 )
@@ -96,6 +134,8 @@ async function previewWarehouseTemplate(template: ISpaceWarehouseTemplateDto) {
   }
 
   previewingTemplateId.value = templateId
+  createMode.value = template.scope === 'Tenant' ? 'TenantTemplate' : 'SystemTemplate'
+  selectedTemplateId.value = templateId
   errorText.value = ''
   try {
     templatePreview.value = await designProjectApi.previewWarehouseTemplate(
@@ -109,7 +149,7 @@ async function previewWarehouseTemplate(template: ISpaceWarehouseTemplateDto) {
   }
 }
 
-async function createBlankDraft() {
+async function createDraft() {
   const name = draftName.value.trim()
   if (!name) {
     errorText.value = '请输入草稿名称。'
@@ -121,7 +161,24 @@ async function createBlankDraft() {
   savingDraft.value = true
   errorText.value = ''
   try {
-    const created = await designProjectApi.createBlankVersion(siteId.value, name)
+    const selected = selectedTemplate.value
+    const preview = selectedTemplatePreview.value
+    if (templateCreateMode.value && (!selected || !preview)) {
+      throw new Error('请先选择模板并生成密封预览。')
+    }
+    const created = await designProjectApi.createVersion(
+      siteId.value,
+      {
+        name,
+        basedOnVersionId: createMode.value === 'PublishedVersion'
+          ? model.value?.currentPublishedVersionId
+          : undefined,
+        createMode: createMode.value,
+        templateId: selected?.id,
+        templateVersionId: selected?.latestVersion?.id,
+        templateProposalHash: preview?.proposalHash,
+      },
+    )
     if (!created.id)
       throw new Error('服务端未返回新 Draft 标识。')
     await loadDraft(created.id)
@@ -159,12 +216,16 @@ async function createFloor() {
   let level: number
   let elevation: number
   let height: number
+  let width: number
+  let depth: number
   try {
     level = parseExplicitInteger(floorForm.level, '层级')
     elevation = parseExplicitInteger(floorForm.elevation, '标高')
     height = parseExplicitInteger(floorForm.height, '层高')
-    if (height < 0)
-      throw new Error('层高不能小于零。')
+    width = parseExplicitInteger(floorForm.width, '楼层宽度')
+    depth = parseExplicitInteger(floorForm.depth, '楼层深度')
+    if (height <= 0 || width <= 0 || depth <= 0)
+      throw new Error('层高、楼层宽度和深度必须大于零。')
   } catch (error) {
     errorText.value = errorMessage(error)
     return
@@ -182,6 +243,8 @@ async function createFloor() {
         elevation,
         height,
         expectedContentRevision: draftVersion.value.contentRevision ?? 0,
+        width,
+        depth,
       },
     )
     draftVersion.value = {
@@ -218,6 +281,8 @@ function floorLogicalIdOf(floor: ISpaceSceneFloorDto) {
 
 function creationSourceLabel(source?: string) {
   if (source === 'PublishedVersion') return '已发布版'
+  if (source === 'SystemTemplate') return '平台模板'
+  if (source === 'TenantTemplate') return '租户模板'
   if (source === 'Blank') return '空白'
   return source || '未知'
 }
@@ -280,10 +345,38 @@ onBeforeUnmount(() => {
       <section v-if="!draftVersion" class="start-panel">
         <div class="panel-copy">
           <p class="step-label">STEP 1</p>
-          <h2>从空白建立 Draft</h2>
-          <p>不会复制 Published 内容，也不会自动猜测楼层。创建后再显式填写首个楼层。</p>
+          <h2>选择 Draft 创建方式</h2>
+          <p>四种方式共用同一版本入口；模板模式会按密封预览初始化全部楼层，来源与模板哈希会持久保存。</p>
         </div>
-        <form class="form-grid one-column" @submit.prevent="createBlankDraft">
+        <form class="form-grid one-column" @submit.prevent="createDraft">
+          <label>
+            创建方式
+            <select v-model="createMode" data-testid="create-mode">
+              <option value="Blank">空白仓库</option>
+              <option value="PublishedVersion" :disabled="!model.currentPublishedVersionId">
+                当前已发布版本
+              </option>
+              <option value="SystemTemplate">平台模板</option>
+              <option value="TenantTemplate">租户模板</option>
+            </select>
+          </label>
+          <label v-if="templateCreateMode">
+            整仓模板
+            <select v-model="selectedTemplateId" data-testid="create-template-select">
+              <option value="">请选择模板</option>
+              <option v-for="item in templatesForMode" :key="item.id" :value="item.id">
+                {{ item.name }} · v{{ item.latestVersion?.versionNo }}
+              </option>
+            </select>
+          </label>
+          <button
+            v-if="templateCreateMode"
+            class="secondary-button"
+            data-testid="seal-create-template"
+            type="button"
+            :disabled="!selectedTemplate || previewingTemplateId === selectedTemplate.id"
+            @click="selectedTemplate && previewWarehouseTemplate(selectedTemplate)"
+          >{{ previewingTemplateId ? '生成中…' : '生成并核对密封预览' }}</button>
           <label>
             草稿名称
             <input
@@ -298,8 +391,8 @@ onBeforeUnmount(() => {
             class="primary-button"
             data-testid="create-draft"
             type="submit"
-            :disabled="savingDraft || isNarrow"
-          >{{ savingDraft ? '创建中…' : '创建空白 Draft' }}</button>
+            :disabled="!canCreateDraft"
+          >{{ createButtonLabel }}</button>
         </form>
       </section>
 
@@ -308,7 +401,7 @@ onBeforeUnmount(() => {
           <div>
             <p class="step-label">VERSIONED TEMPLATE CATALOG</p>
             <h2>整仓模板目录</h2>
-            <p class="template-help">系统与租户私有模板的版本和内容哈希不可变；当前仅提供布局预览，不会写入 Draft。</p>
+            <p class="template-help">系统与租户私有模板的版本和内容哈希不可变；先预览，再通过上方统一向导创建完整 Draft。</p>
           </div>
         </div>
         <div v-if="warehouseTemplates.length" class="template-list">
@@ -351,7 +444,7 @@ onBeforeUnmount(() => {
             {{ templatePreview.counts?.locations }} 库位
           </span>
           <code>{{ templatePreview.proposalHash }}</code>
-          <small>先创建 Draft 与目标楼层，再在 Space Studio「构件」中按楼层原子写入。</small>
+          <small>在上方确认创建后，服务端会逐层幂等初始化；不会直接修改 Published 或 WMS。</small>
         </div>
       </section>
 
@@ -434,6 +527,14 @@ onBeforeUnmount(() => {
             <label>
               层高（mm）
               <input v-model="floorForm.height" data-testid="floor-height" inputmode="numeric" placeholder="整数，例如 6000">
+            </label>
+            <label>
+              楼层宽度（mm）
+              <input v-model="floorForm.width" data-testid="floor-width" inputmode="numeric" placeholder="整数，例如 120000">
+            </label>
+            <label>
+              楼层深度（mm）
+              <input v-model="floorForm.depth" data-testid="floor-depth" inputmode="numeric" placeholder="整数，例如 80000">
             </label>
             <button
               class="primary-button"
@@ -531,7 +632,8 @@ h2 { font-size: 22px; line-height: 1.35; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .form-grid.one-column { grid-template-columns: 1fr; }
 label { display: grid; gap: 8px; color: var(--space-studio-muted); font-size: 14px; font-weight: 700; }
-input {
+input,
+select {
   min-height: 44px;
   box-sizing: border-box;
   border: 1px solid #365762;
@@ -543,6 +645,7 @@ input {
   outline: none;
 }
 input:focus-visible,
+select:focus-visible,
 button:focus-visible { outline: 3px solid #7df7f3; outline-offset: 2px; }
 
 button { min-height: 44px; cursor: pointer; font: inherit; font-weight: 800; }

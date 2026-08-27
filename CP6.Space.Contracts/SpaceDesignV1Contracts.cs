@@ -17,6 +17,8 @@ public static class SpaceVersionCreationSources
 {
     public const string Blank = "Blank";
     public const string PublishedVersion = "PublishedVersion";
+    public const string SystemTemplate = "SystemTemplate";
+    public const string TenantTemplate = "TenantTemplate";
 }
 
 public sealed record SpaceVersionDto(
@@ -34,6 +36,9 @@ public sealed record SpaceVersionDto(
     string RowVersion,
     string Purpose,
     string CreationSource,
+    Guid? SourceTemplateId,
+    Guid? SourceTemplateVersionId,
+    string? SourceTemplateContentHash,
     Guid? CreatedBy,
     DateTime CreatedAtUtc,
     DateTime UpdatedAtUtc,
@@ -42,7 +47,10 @@ public sealed record SpaceVersionDto(
 public sealed record CreateSpaceVersionRequest(
     string Name,
     Guid? BasedOnVersionId,
-    string CreateMode = "PublishedVersion");
+    string CreateMode = "PublishedVersion",
+    Guid? TemplateId = null,
+    Guid? TemplateVersionId = null,
+    string? TemplateProposalHash = null);
 
 public sealed record CreateSpaceVersionResponse(
     Guid Id,
@@ -60,7 +68,9 @@ public sealed record CreateSpaceFloorRequest(
     int Level,
     int Elevation,
     int Height,
-    long ExpectedContentRevision);
+    long ExpectedContentRevision,
+    int? Width = null,
+    int? Depth = null);
 
 public sealed record CreateSpaceFloorResponse(
     SpaceSceneFloorDto Floor,

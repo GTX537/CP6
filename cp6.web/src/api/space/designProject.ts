@@ -4,10 +4,13 @@ import type {
   IApplySpaceWarehouseTemplateFloorResponse,
   ICreateSpaceFloorRequest,
   ICreateSpaceFloorResponse,
+  ICreateSpaceVersionRequest,
   ICreateSpaceVersionResponse,
+  ICreateTenantSpaceWarehouseTemplateFromDraftRequest,
   ICreateTenantSpaceWarehouseTemplateRequest,
   ICreateTenantSpaceWarehouseTemplateResponse,
   ISpaceModelDto,
+  ISpaceDraftWarehouseTemplatePreviewDto,
   ISpaceSceneFloorDto,
   ISpaceVersionDto,
   ISpaceWarehouseTemplateDto,
@@ -40,13 +43,25 @@ export const designProjectApi = {
     name: string,
     idempotencyKey: string = crypto.randomUUID(),
   ) {
-    return http.post<unknown, ICreateSpaceVersionResponse>(
-      `${root}/sites/${encodeURIComponent(siteId)}/versions`,
+    return this.createVersion(
+      siteId,
       {
         name,
-        basedOnVersionId: null,
+        basedOnVersionId: undefined,
         createMode: 'Blank',
       },
+      idempotencyKey,
+    )
+  },
+
+  createVersion(
+    siteId: string,
+    request: ICreateSpaceVersionRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ICreateSpaceVersionResponse>(
+      `${root}/sites/${encodeURIComponent(siteId)}/versions`,
+      request,
       {
         headers: { 'Idempotency-Key': idempotencyKey },
       },
@@ -80,6 +95,28 @@ export const designProjectApi = {
   ) {
     return http.post<unknown, ICreateTenantSpaceWarehouseTemplateResponse>(
       `${root}/templates`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  previewTenantWarehouseTemplateFromDraft(
+    versionId: string,
+    expectedContentRevision: number,
+  ) {
+    return http.post<unknown, ISpaceDraftWarehouseTemplatePreviewDto>(
+      `${root}/versions/${encodeURIComponent(versionId)}/tenant-template-preview`,
+      { expectedContentRevision },
+    )
+  },
+
+  createTenantWarehouseTemplateFromDraft(
+    versionId: string,
+    request: ICreateTenantSpaceWarehouseTemplateFromDraftRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ICreateTenantSpaceWarehouseTemplateResponse>(
+      `${root}/versions/${encodeURIComponent(versionId)}/tenant-templates`,
       request,
       { headers: { 'Idempotency-Key': idempotencyKey } },
     )

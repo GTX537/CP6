@@ -328,6 +328,10 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.Equal(first.JobId, duplicate.JobId);
             Assert.Equal(SpaceVersionStatus.Draft, draft.Status);
             Assert.Null(draft.BasedOnVersionId);
+            Assert.Equal(SpaceVersionCreationSource.Blank, draft.CreationSource);
+            Assert.Null(draft.SourceTemplateId);
+            Assert.Null(draft.SourceTemplateVersionId);
+            Assert.Null(draft.SourceTemplateContentHash);
             Assert.Equal(operationId, draft.CloneOperationId);
             Assert.Equal(draft.Id, reloadedModel.ActiveDraftVersionId);
             Assert.Null(reloadedModel.CurrentPublishedVersionId);
@@ -339,6 +343,183 @@ public sealed class SpaceVersionCloneSqlServerTests
                 .ToArrayAsync());
             await Assert.ThrowsAsync<SpaceVersionConflictException>(() =>
                 store.StartBlankAsync(request with { Name = "Changed input" }));
+        });
+    }
+
+    [SqlServerFact]
+    public async Task System_template_mode_initializes_every_floor_and_persists_provenance()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+            var template = Assert.Single(
+                await service.GetWarehouseTemplatesAsync("System"));
+            var preview = await service.PreviewWarehouseTemplateAsync(
+                template.Id,
+                new PreviewSpaceWarehouseTemplateRequest(
+                    template.LatestVersion.Id));
+            var request = new CreateSpaceVersionRequest(
+                "System template warehouse",
+                null,
+                SpaceVersionCreationSources.SystemTemplate,
+                template.Id,
+                template.LatestVersion.Id,
+                preview.ProposalHash);
+
+            var first = await service.CreateVersionAsync(
+                model.SiteId,
+                request,
+                "system-template-version");
+            var replay = await service.CreateVersionAsync(
+                model.SiteId,
+                request,
+                "system-template-version");
+
+            context.ChangeTracker.Clear();
+            var version = await context.Versions.SingleAsync(
+                candidate => candidate.Id == first.Id);
+            Assert.Equal(
+                SpaceVersionCreationSource.SystemTemplate,
+                version.CreationSource);
+            Assert.Equal(template.Id, version.SourceTemplateId);
+            Assert.Equal(
+                template.LatestVersion.Id,
+                version.SourceTemplateVersionId);
+            Assert.Equal(
+                template.LatestVersion.ContentHash,
+                version.SourceTemplateContentHash);
+            Assert.Equal(preview.Floors.Count, await context.FloorRevisions
+                .CountAsync(candidate => candidate.ModelVersionId == version.Id));
+            Assert.Equal(preview.Counts.Zones, await context.ZoneRevisions
+                .CountAsync(candidate => candidate.ModelVersionId == version.Id));
+            Assert.Equal(preview.Counts.Aisles, await context.AisleRevisions
+                .CountAsync(candidate => candidate.ModelVersionId == version.Id));
+            Assert.Equal(preview.Counts.Racks, await context.RackRevisions
+                .CountAsync(candidate => candidate.ModelVersionId == version.Id));
+            Assert.Equal(preview.Counts.Locations, await context.LocationRevisions
+                .CountAsync(candidate => candidate.ModelVersionId == version.Id));
+            Assert.Equal(preview.Floors.Count, await context.ElementCommandBatches
+                .CountAsync(candidate => candidate.ModelVersionId == version.Id));
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(first.Id, replay.Id);
+
+            var draftTemplatePreview =
+                await service.PreviewTenantWarehouseTemplateFromDraftAsync(
+                    version.Id,
+                    new PreviewTenantSpaceWarehouseTemplateFromDraftRequest(
+                        version.ContentRevision));
+            Assert.Equal(preview.Counts, draftTemplatePreview.Counts);
+            Assert.Matches(
+                "^[0-9a-f]{64}$",
+                draftTemplatePreview.TemplateContentHash);
+            Assert.False(draftTemplatePreview.WritesTemplate);
+
+            var tenantTemplate =
+                await service.CreateTenantWarehouseTemplateFromDraftAsync(
+                    version.Id,
+                    new CreateTenantSpaceWarehouseTemplateFromDraftRequest(
+                        "ROUNDTRIP-01",
+                        "Round-trip tenant template",
+                        "Created from the active Draft after explicit preview.",
+                        version.ContentRevision,
+                        draftTemplatePreview.ProposalHash),
+                    "roundtrip-tenant-template");
+            Assert.Equal("Tenant", tenantTemplate.Template.Scope);
+            Assert.Equal(preview.Counts, tenantTemplate.Template.LatestVersion.Counts);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Tenant_template_mode_uses_only_the_current_tenant_template_scope()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+            var createdTemplate = await service.CreateTenantWarehouseTemplateAsync(
+                new CreateTenantSpaceWarehouseTemplateRequest(
+                    "TENANT-START-01",
+                    "Tenant starter",
+                    null,
+                    1,
+                    [new("floor-1", "F1", "Ground", 1, 0, 10_000, 10_000, 6_000)],
+                    [new("zone-1", "floor-1", "STORAGE", "Storage", 0, 0, 10_000, 10_000)],
+                    [new("aisle-1", "floor-1", "zone-1", "A01", 0, 5_000, 10_000, 5_000)],
+                    [new(
+                        "rack-1",
+                        "floor-1",
+                        "zone-1",
+                        "aisle-1",
+                        "R01",
+                        1_000,
+                        1_000,
+                        0,
+                        0,
+                        2_000,
+                        1_000,
+                        3_000,
+                        2,
+                        3,
+                        1)]),
+                "tenant-starter-template");
+            var preview = await service.PreviewWarehouseTemplateAsync(
+                createdTemplate.Template.Id,
+                new PreviewSpaceWarehouseTemplateRequest(
+                    createdTemplate.Template.LatestVersion.Id));
+
+            var result = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest(
+                    "Tenant template warehouse",
+                    null,
+                    SpaceVersionCreationSources.TenantTemplate,
+                    createdTemplate.Template.Id,
+                    createdTemplate.Template.LatestVersion.Id,
+                    preview.ProposalHash),
+                "tenant-template-version");
+
+            context.ChangeTracker.Clear();
+            var version = await context.Versions.SingleAsync(
+                candidate => candidate.Id == result.Id);
+            Assert.Equal(
+                SpaceVersionCreationSource.TenantTemplate,
+                version.CreationSource);
+            Assert.Equal(1, await context.FloorRevisions.CountAsync(
+                candidate => candidate.ModelVersionId == version.Id));
+            Assert.Equal(6, await context.LocationRevisions.CountAsync(
+                candidate => candidate.ModelVersionId == version.Id));
+
+            var wrongScope = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateVersionAsync(
+                    model.SiteId,
+                    new CreateSpaceVersionRequest(
+                        "Wrong scope",
+                        null,
+                        SpaceVersionCreationSources.SystemTemplate,
+                        createdTemplate.Template.Id,
+                        createdTemplate.Template.LatestVersion.Id,
+                        preview.ProposalHash),
+                    "wrong-template-scope"));
+            Assert.Equal(SpaceErrorCodes.RequestInvalid, wrongScope.Code);
         });
     }
 

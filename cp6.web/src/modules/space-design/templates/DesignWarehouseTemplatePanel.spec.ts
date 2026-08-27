@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import DesignWarehouseTemplatePanel from './DesignWarehouseTemplatePanel.vue'
 import {
+  SpaceDraftWarehouseTemplatePreviewDto,
   SpaceWarehouseTemplateDto,
   SpaceWarehouseTemplateInstantiationPreviewDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
@@ -65,6 +66,17 @@ const preview = SpaceWarehouseTemplateInstantiationPreviewDto.fromJS({
     { key: 'rack-2', floorKey: 'floor-2', columns: 4, levels: 5, depths: 1 },
   ],
   writesDraft: false,
+})
+
+const draftTemplatePreview = SpaceDraftWarehouseTemplatePreviewDto.fromJS({
+  schemaVersion: 1,
+  modelVersionId: 'version-1',
+  contentRevision: 7,
+  templateContentHash: 'c'.repeat(64),
+  proposalHash: 'd'.repeat(64),
+  counts: { floors: 2, zones: 2, aisles: 2, racks: 2, locations: 40 },
+  floors: [],
+  writesTemplate: false,
 })
 
 describe('DesignWarehouseTemplatePanel', () => {
@@ -140,5 +152,31 @@ describe('DesignWarehouseTemplatePanel', () => {
 
     await wrapper.get('[data-testid="warehouse-template-preview"]').trigger('click')
     expect(wrapper.emitted('preview')?.at(-1)?.[0]).toEqual(tenantTemplate)
+  })
+
+  it('previews and explicitly creates a tenant template from the whole Draft', async () => {
+    const wrapper = mount(DesignWarehouseTemplatePanel, {
+      props: {
+        templates: [template],
+        preview: null,
+        draftTemplatePreview,
+      },
+    })
+
+    await wrapper.get('[data-testid="open-draft-template-builder"]').trigger('click')
+    await wrapper.get('[data-testid="preview-draft-template"]').trigger('click')
+    expect(wrapper.emitted('previewDraftTemplate')).toHaveLength(1)
+    expect(wrapper.text()).toContain('2 层 · 2 货架 · 40 库位')
+
+    await wrapper.get('[data-testid="draft-template-code"]').setValue('EAST-WH-01')
+    await wrapper.get('[data-testid="draft-template-name"]').setValue('华东标准仓')
+    await wrapper.get('[data-testid="draft-template-description"]').setValue('复用布局')
+    await wrapper.get('[data-testid="create-draft-template"]').trigger('submit')
+
+    expect(wrapper.emitted('createDraftTemplate')?.[0]?.[0]).toEqual({
+      templateCode: 'EAST-WH-01',
+      name: '华东标准仓',
+      description: '复用布局',
+    })
   })
 })

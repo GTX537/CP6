@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type {
+  ISpaceDraftWarehouseTemplatePreviewDto,
   ISpaceWarehouseTemplateDto,
   ISpaceWarehouseTemplateFloorPlanDto,
   ISpaceWarehouseTemplateInstantiationPreviewDto,
@@ -16,15 +17,28 @@ const props = defineProps<{
   retryPending?: boolean
   pendingFloorKey?: string
   error?: string
+  draftTemplatePreview?: ISpaceDraftWarehouseTemplatePreviewDto | null
+  templateCreating?: boolean
+  templateCreateError?: string
 }>()
 
 const emit = defineEmits<{
   preview: [template: ISpaceWarehouseTemplateDto]
   apply: [payload: { templateId: string; templateFloorKey: string }]
+  previewDraftTemplate: []
+  createDraftTemplate: [payload: {
+    templateCode: string
+    name: string
+    description?: string
+  }]
 }>()
 
 const selectedTemplateId = ref('')
 const selectedFloorKey = ref('')
+const showTemplateBuilder = ref(false)
+const templateCode = ref('')
+const templateName = ref('')
+const templateDescription = ref('')
 
 const selectedTemplate = computed(() =>
   props.templates.find((item) => item.id === selectedTemplateId.value) ??
@@ -85,6 +99,17 @@ function applyFloor(): void {
   emit('apply', {
     templateId: template.id,
     templateFloorKey: selectedFloorKey.value,
+  })
+}
+
+function createDraftTemplate(): void {
+  const code = templateCode.value.trim()
+  const name = templateName.value.trim()
+  if (!code || !name || !props.draftTemplatePreview) return
+  emit('createDraftTemplate', {
+    templateCode: code,
+    name,
+    description: templateDescription.value.trim() || undefined,
   })
 }
 </script>
@@ -169,6 +194,84 @@ function applyFloor(): void {
         @click="applyFloor"
       >{{ busy ? '正在写入…' : retryPending ? '按原幂等请求安全重试' : '确认写入当前 Draft 楼层' }}</button>
     </template>
+
+    <div class="builder">
+      <button
+        class="secondary"
+        type="button"
+        data-testid="open-draft-template-builder"
+        :disabled="readonly || busy || templateCreating"
+        @click="showTemplateBuilder = !showTemplateBuilder"
+      >{{ showTemplateBuilder ? '收起模板制作' : '将当前 Draft 制作为租户模板' }}</button>
+
+      <template v-if="showTemplateBuilder">
+        <p class="description">
+          先检查整个 Draft 是否为可复用的矩形楼层、区域、巷道和规则货架；检查阶段零写入。
+        </p>
+        <button
+          class="secondary"
+          type="button"
+          data-testid="preview-draft-template"
+          :disabled="readonly || busy || templateCreating"
+          @click="emit('previewDraftTemplate')"
+        >检查并密封当前 Draft</button>
+        <p v-if="templateCreateError" class="error" role="alert">
+          {{ templateCreateError }}
+        </p>
+        <form
+          v-if="draftTemplatePreview"
+          class="builder-form"
+          @submit.prevent="createDraftTemplate"
+        >
+          <div class="seal" role="status">
+            <strong>Draft 模板预览已密封，尚未创建</strong>
+            <span>
+              {{ draftTemplatePreview.counts?.floors }} 层 ·
+              {{ draftTemplatePreview.counts?.racks }} 货架 ·
+              {{ draftTemplatePreview.counts?.locations }} 库位
+            </span>
+            <code :title="draftTemplatePreview.proposalHash">
+              {{ draftTemplatePreview.proposalHash }}
+            </code>
+          </div>
+          <label>
+            模板编码
+            <input
+              v-model="templateCode"
+              data-testid="draft-template-code"
+              maxlength="100"
+              autocomplete="off"
+              placeholder="例如 EAST-WH-01"
+            >
+          </label>
+          <label>
+            模板名称
+            <input
+              v-model="templateName"
+              data-testid="draft-template-name"
+              maxlength="200"
+              autocomplete="off"
+              placeholder="例如 华东标准仓"
+            >
+          </label>
+          <label>
+            说明（可选）
+            <textarea
+              v-model="templateDescription"
+              data-testid="draft-template-description"
+              maxlength="1000"
+              rows="3"
+            />
+          </label>
+          <button
+            class="apply"
+            type="submit"
+            data-testid="create-draft-template"
+            :disabled="templateCreating || !templateCode.trim() || !templateName.trim()"
+          >{{ templateCreating ? '创建中…' : '确认创建租户模板' }}</button>
+        </form>
+      </template>
+    </div>
   </section>
 </template>
 
@@ -188,13 +291,19 @@ function applyFloor(): void {
 .empty { margin: 0; color: var(--space-studio-muted, #a7bdc3); font-size: 14px; line-height: 1.55; }
 label { display: grid; gap: 7px; color: var(--space-studio-muted, #a7bdc3); font-size: 13px; font-weight: 700; }
 select,
+input,
+textarea,
 button { min-height: 44px; box-sizing: border-box; font: inherit; }
-select { border: 1px solid #365762; background: #071920; color: inherit; padding: 0 10px; }
+select,
+input,
+textarea { border: 1px solid #365762; background: #071920; color: inherit; padding: 0 10px; }
+textarea { padding-block: 10px; resize: vertical; }
 button { cursor: pointer; font-weight: 800; }
 button:disabled { cursor: not-allowed; opacity: .45; }
 button:focus-visible,
 select:focus-visible,
-input:focus-visible { outline: 3px solid #7df7f3; outline-offset: 2px; }
+input:focus-visible,
+textarea:focus-visible { outline: 3px solid #7df7f3; outline-offset: 2px; }
 .secondary { border: 1px solid #3d6670; background: transparent; color: inherit; }
 .seal { display: grid; gap: 6px; border-left: 3px solid var(--space-studio-accent, #26d7d3); background: rgb(38 215 211 / 8%); padding: 12px; }
 .seal code { overflow: hidden; color: var(--space-studio-accent, #26d7d3); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
@@ -209,4 +318,6 @@ legend { margin-bottom: 8px; font-size: 13px; font-weight: 800; }
 .floor-option em { color: var(--space-studio-accent, #26d7d3); font-size: 11px; font-style: normal; }
 .apply { border: 0; background: var(--space-studio-accent, #26d7d3); color: #032c31; padding: 0 12px; }
 .error { margin: 0; color: #ffd0d0; font-size: 14px; }
+.builder { display: grid; gap: 12px; border-top: 1px solid var(--space-studio-line, #24424c); padding-top: 16px; }
+.builder-form { display: grid; gap: 12px; }
 </style>

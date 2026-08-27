@@ -409,6 +409,16 @@ export interface ISpaceDesignV1Client {
     /**
      * @return OK
      */
+    previewTenantWarehouseTemplateFromDraft(versionId: string, body: PreviewTenantSpaceWarehouseTemplateFromDraftRequest): Promise<SpaceDraftWarehouseTemplatePreviewDto>;
+
+    /**
+     * @return Created
+     */
+    createTenantWarehouseTemplateFromDraft(versionId: string, idempotency_Key: string, body: CreateTenantSpaceWarehouseTemplateFromDraftRequest): Promise<CreateTenantSpaceWarehouseTemplateResponse>;
+
+    /**
+     * @return OK
+     */
     previewWarehouseTemplate(templateId: string, body: PreviewSpaceWarehouseTemplateRequest): Promise<SpaceWarehouseTemplateInstantiationPreviewDto>;
 
     /**
@@ -7366,6 +7376,193 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceWarehouseTemplateDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    previewTenantWarehouseTemplateFromDraft(versionId: string, body: PreviewTenantSpaceWarehouseTemplateFromDraftRequest): Promise<SpaceDraftWarehouseTemplatePreviewDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/tenant-template-preview";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPreviewTenantWarehouseTemplateFromDraft(_response);
+        });
+    }
+
+    protected processPreviewTenantWarehouseTemplateFromDraft(response: Response): Promise<SpaceDraftWarehouseTemplatePreviewDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceDraftWarehouseTemplatePreviewDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceDraftWarehouseTemplatePreviewDto>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createTenantWarehouseTemplateFromDraft(versionId: string, idempotency_Key: string, body: CreateTenantSpaceWarehouseTemplateFromDraftRequest): Promise<CreateTenantSpaceWarehouseTemplateResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/tenant-templates";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateTenantWarehouseTemplateFromDraft(_response);
+        });
+    }
+
+    protected processCreateTenantWarehouseTemplateFromDraft(response: Response): Promise<CreateTenantSpaceWarehouseTemplateResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = CreateTenantSpaceWarehouseTemplateResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateTenantSpaceWarehouseTemplateResponse>(null as any);
     }
 
     /**
@@ -17590,6 +17787,8 @@ export class CreateSpaceFloorRequest implements ICreateSpaceFloorRequest {
     elevation!: number;
     height!: number;
     expectedContentRevision!: number;
+    width?: number | undefined;
+    depth?: number | undefined;
 
     constructor(data?: ICreateSpaceFloorRequest) {
         if (data) {
@@ -17608,6 +17807,8 @@ export class CreateSpaceFloorRequest implements ICreateSpaceFloorRequest {
             this.elevation = _data["elevation"];
             this.height = _data["height"];
             this.expectedContentRevision = _data["expectedContentRevision"];
+            this.width = _data["width"];
+            this.depth = _data["depth"];
         }
     }
 
@@ -17626,6 +17827,8 @@ export class CreateSpaceFloorRequest implements ICreateSpaceFloorRequest {
         data["elevation"] = this.elevation;
         data["height"] = this.height;
         data["expectedContentRevision"] = this.expectedContentRevision;
+        data["width"] = this.width;
+        data["depth"] = this.depth;
         return data;
     }
 }
@@ -17637,6 +17840,8 @@ export interface ICreateSpaceFloorRequest {
     elevation: number;
     height: number;
     expectedContentRevision: number;
+    width?: number | undefined;
+    depth?: number | undefined;
 }
 
 export class CreateSpaceFloorResponse implements ICreateSpaceFloorResponse {
@@ -18600,6 +18805,9 @@ export class CreateSpaceVersionRequest implements ICreateSpaceVersionRequest {
     name?: string | undefined;
     basedOnVersionId?: string | undefined;
     createMode?: string | undefined;
+    templateId?: string | undefined;
+    templateVersionId?: string | undefined;
+    templateProposalHash?: string | undefined;
 
     constructor(data?: ICreateSpaceVersionRequest) {
         if (data) {
@@ -18615,6 +18823,9 @@ export class CreateSpaceVersionRequest implements ICreateSpaceVersionRequest {
             this.name = _data["name"];
             this.basedOnVersionId = _data["basedOnVersionId"];
             this.createMode = _data["createMode"];
+            this.templateId = _data["templateId"];
+            this.templateVersionId = _data["templateVersionId"];
+            this.templateProposalHash = _data["templateProposalHash"];
         }
     }
 
@@ -18630,6 +18841,9 @@ export class CreateSpaceVersionRequest implements ICreateSpaceVersionRequest {
         data["name"] = this.name;
         data["basedOnVersionId"] = this.basedOnVersionId;
         data["createMode"] = this.createMode;
+        data["templateId"] = this.templateId;
+        data["templateVersionId"] = this.templateVersionId;
+        data["templateProposalHash"] = this.templateProposalHash;
         return data;
     }
 }
@@ -18638,6 +18852,9 @@ export interface ICreateSpaceVersionRequest {
     name?: string | undefined;
     basedOnVersionId?: string | undefined;
     createMode?: string | undefined;
+    templateId?: string | undefined;
+    templateVersionId?: string | undefined;
+    templateProposalHash?: string | undefined;
 }
 
 export class CreateSpaceVersionResponse implements ICreateSpaceVersionResponse {
@@ -18702,6 +18919,58 @@ export interface ICreateSpaceVersionResponse {
     jobId?: string;
     jobStatusUrl?: string | undefined;
     idempotentReplay?: boolean;
+}
+
+export class CreateTenantSpaceWarehouseTemplateFromDraftRequest implements ICreateTenantSpaceWarehouseTemplateFromDraftRequest {
+    templateCode?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    expectedContentRevision?: number;
+    proposalHash?: string | undefined;
+
+    constructor(data?: ICreateTenantSpaceWarehouseTemplateFromDraftRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.templateCode = _data["templateCode"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.proposalHash = _data["proposalHash"];
+        }
+    }
+
+    static fromJS(data: any): CreateTenantSpaceWarehouseTemplateFromDraftRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTenantSpaceWarehouseTemplateFromDraftRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["templateCode"] = this.templateCode;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["proposalHash"] = this.proposalHash;
+        return data;
+    }
+}
+
+export interface ICreateTenantSpaceWarehouseTemplateFromDraftRequest {
+    templateCode?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    expectedContentRevision?: number;
+    proposalHash?: string | undefined;
 }
 
 export class CreateTenantSpaceWarehouseTemplateRequest implements ICreateTenantSpaceWarehouseTemplateRequest {
@@ -19614,6 +19883,42 @@ export class PreviewSpaceWarehouseTemplateRequest implements IPreviewSpaceWareho
 
 export interface IPreviewSpaceWarehouseTemplateRequest {
     templateVersionId: string;
+}
+
+export class PreviewTenantSpaceWarehouseTemplateFromDraftRequest implements IPreviewTenantSpaceWarehouseTemplateFromDraftRequest {
+    expectedContentRevision?: number;
+
+    constructor(data?: IPreviewTenantSpaceWarehouseTemplateFromDraftRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.expectedContentRevision = _data["expectedContentRevision"];
+        }
+    }
+
+    static fromJS(data: any): PreviewTenantSpaceWarehouseTemplateFromDraftRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new PreviewTenantSpaceWarehouseTemplateFromDraftRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        return data;
+    }
+}
+
+export interface IPreviewTenantSpaceWarehouseTemplateFromDraftRequest {
+    expectedContentRevision?: number;
 }
 
 export class RefreshSpaceWmsAdoptionResponse implements IRefreshSpaceWmsAdoptionResponse {
@@ -26837,6 +27142,78 @@ export class SpaceDeviceMappingPageDto implements ISpaceDeviceMappingPageDto {
 export interface ISpaceDeviceMappingPageDto {
     items: SpaceDeviceMappingDto[];
     nextCursor: string;
+}
+
+export class SpaceDraftWarehouseTemplatePreviewDto implements ISpaceDraftWarehouseTemplatePreviewDto {
+    schemaVersion?: number;
+    modelVersionId?: string;
+    contentRevision?: number;
+    templateContentHash?: string | undefined;
+    proposalHash?: string | undefined;
+    counts?: SpaceWarehouseTemplateCountsDto;
+    floors?: SpaceWarehouseTemplateFloorPlanDto[] | undefined;
+    writesTemplate?: boolean;
+
+    constructor(data?: ISpaceDraftWarehouseTemplatePreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.contentRevision = _data["contentRevision"];
+            this.templateContentHash = _data["templateContentHash"];
+            this.proposalHash = _data["proposalHash"];
+            this.counts = _data["counts"] ? SpaceWarehouseTemplateCountsDto.fromJS(_data["counts"]) : undefined as any;
+            if (Array.isArray(_data["floors"])) {
+                this.floors = [] as any;
+                for (let item of _data["floors"])
+                    this.floors!.push(SpaceWarehouseTemplateFloorPlanDto.fromJS(item));
+            }
+            this.writesTemplate = _data["writesTemplate"];
+        }
+    }
+
+    static fromJS(data: any): SpaceDraftWarehouseTemplatePreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDraftWarehouseTemplatePreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["modelVersionId"] = this.modelVersionId;
+        data["contentRevision"] = this.contentRevision;
+        data["templateContentHash"] = this.templateContentHash;
+        data["proposalHash"] = this.proposalHash;
+        data["counts"] = this.counts ? this.counts.toJSON() : undefined as any;
+        if (Array.isArray(this.floors)) {
+            data["floors"] = [];
+            for (let item of this.floors)
+                data["floors"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["writesTemplate"] = this.writesTemplate;
+        return data;
+    }
+}
+
+export interface ISpaceDraftWarehouseTemplatePreviewDto {
+    schemaVersion?: number;
+    modelVersionId?: string;
+    contentRevision?: number;
+    templateContentHash?: string | undefined;
+    proposalHash?: string | undefined;
+    counts?: SpaceWarehouseTemplateCountsDto;
+    floors?: SpaceWarehouseTemplateFloorPlanDto[] | undefined;
+    writesTemplate?: boolean;
 }
 
 export class SpaceEditLeaseDto implements ISpaceEditLeaseDto {
@@ -36625,6 +37002,9 @@ export class SpaceVersionDto implements ISpaceVersionDto {
     rowVersion?: string | undefined;
     purpose?: string | undefined;
     creationSource!: string;
+    sourceTemplateId?: string | undefined;
+    sourceTemplateVersionId?: string | undefined;
+    sourceTemplateContentHash?: string | undefined;
     createdBy?: string | undefined;
     createdAtUtc!: Date;
     updatedAtUtc!: Date;
@@ -36655,6 +37035,9 @@ export class SpaceVersionDto implements ISpaceVersionDto {
             this.rowVersion = _data["rowVersion"];
             this.purpose = _data["purpose"];
             this.creationSource = _data["creationSource"];
+            this.sourceTemplateId = _data["sourceTemplateId"];
+            this.sourceTemplateVersionId = _data["sourceTemplateVersionId"];
+            this.sourceTemplateContentHash = _data["sourceTemplateContentHash"];
             this.createdBy = _data["createdBy"];
             this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
             this.updatedAtUtc = _data["updatedAtUtc"] ? new Date(_data["updatedAtUtc"].toString()) : undefined as any;
@@ -36685,6 +37068,9 @@ export class SpaceVersionDto implements ISpaceVersionDto {
         data["rowVersion"] = this.rowVersion;
         data["purpose"] = this.purpose;
         data["creationSource"] = this.creationSource;
+        data["sourceTemplateId"] = this.sourceTemplateId;
+        data["sourceTemplateVersionId"] = this.sourceTemplateVersionId;
+        data["sourceTemplateContentHash"] = this.sourceTemplateContentHash;
         data["createdBy"] = this.createdBy;
         data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
         data["updatedAtUtc"] = this.updatedAtUtc ? this.updatedAtUtc.toISOString() : undefined as any;
@@ -36708,6 +37094,9 @@ export interface ISpaceVersionDto {
     rowVersion?: string | undefined;
     purpose?: string | undefined;
     creationSource: string;
+    sourceTemplateId?: string | undefined;
+    sourceTemplateVersionId?: string | undefined;
+    sourceTemplateContentHash?: string | undefined;
     createdBy?: string | undefined;
     createdAtUtc: Date;
     updatedAtUtc: Date;

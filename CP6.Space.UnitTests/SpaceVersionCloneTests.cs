@@ -35,6 +35,9 @@ public sealed class SpaceVersionCloneTests
         Assert.Equal(SpaceVersionStatus.Draft, clone.Status);
         Assert.Equal(42, clone.ContentRevision);
         Assert.Equal(sourceId, clone.BasedOnVersionId);
+        Assert.Equal(
+            SpaceVersionCreationSource.PublishedVersion,
+            clone.CreationSource);
         clone.TouchContent();
         Assert.Equal(43, clone.ContentRevision);
     }
@@ -52,8 +55,51 @@ public sealed class SpaceVersionCloneTests
 
         Assert.Equal(SpaceVersionStatus.Draft, draft.Status);
         Assert.Null(draft.BasedOnVersionId);
+        Assert.Equal(SpaceVersionCreationSource.Blank, draft.CreationSource);
+        Assert.Null(draft.SourceTemplateId);
         Assert.Equal(operationId, draft.CloneOperationId);
         Assert.Equal(0, draft.ContentRevision);
+    }
+
+    [Fact]
+    public void Template_draft_requires_complete_supported_provenance()
+    {
+        var templateId = Guid.NewGuid();
+        var templateVersionId = Guid.NewGuid();
+        var contentHash = new string('a', 64);
+        var draft = SpaceModelVersion.CreateBlankDraft(
+            TenantId,
+            Guid.NewGuid(),
+            1,
+            "Template warehouse",
+            Guid.NewGuid(),
+            SpaceVersionCreationSource.SystemTemplate,
+            templateId,
+            templateVersionId,
+            contentHash);
+
+        Assert.Equal(
+            SpaceVersionCreationSource.SystemTemplate,
+            draft.CreationSource);
+        Assert.Equal(templateId, draft.SourceTemplateId);
+        Assert.Equal(templateVersionId, draft.SourceTemplateVersionId);
+        Assert.Equal(contentHash, draft.SourceTemplateContentHash);
+        Assert.Throws<ArgumentException>(() =>
+            SpaceModelVersion.CreateBlankDraft(
+                TenantId,
+                Guid.NewGuid(),
+                2,
+                "Incomplete template warehouse",
+                Guid.NewGuid(),
+                SpaceVersionCreationSource.TenantTemplate));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            SpaceModelVersion.CreateBlankDraft(
+                TenantId,
+                Guid.NewGuid(),
+                3,
+                "Unsupported source warehouse",
+                Guid.NewGuid(),
+                (SpaceVersionCreationSource)99));
     }
 
     [Fact]

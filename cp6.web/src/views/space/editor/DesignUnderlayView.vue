@@ -144,6 +144,7 @@ import {
 import { screenToWorld, type ViewState } from '@/space-editor/coords'
 import type {
   ISpaceDesignSceneDto,
+  ISpaceDraftWarehouseTemplatePreviewDto,
   ISpaceExcelCadRackMatchV1,
   ISpaceExcelCadApplyDto,
   ISpaceSceneElementDto,
@@ -229,6 +230,9 @@ const warehouseTemplatePreview = ref<ISpaceWarehouseTemplateInstantiationPreview
 const warehouseTemplateLoading = ref(false)
 const warehouseTemplateApplying = ref(false)
 const warehouseTemplateError = ref('')
+const draftTemplatePreview = ref<ISpaceDraftWarehouseTemplatePreviewDto | null>(null)
+const draftTemplateCreating = ref(false)
+const draftTemplateError = ref('')
 const pendingWarehouseTemplateApply = ref<{
   templateId: string
   templateFloorKey: string
@@ -972,6 +976,87 @@ async function previewWarehouseTemplate(
     warehouseTemplateError.value = '模板预览失败，请重新加载目录后再试。'
   } finally {
     warehouseTemplateLoading.value = false
+  }
+}
+
+async function previewDraftWarehouseTemplate(): Promise<void> {
+  const contentRevision = designScene.value?.contentRevision
+  if (readonlyScene.value || warehouseTemplateApplying.value ||
+    draftTemplateCreating.value || contentRevision === undefined) return
+  draftTemplateCreating.value = true
+  draftTemplateError.value = ''
+  try {
+    draftTemplatePreview.value =
+      await designProjectApi.previewTenantWarehouseTemplateFromDraft(
+        versionId.value,
+        contentRevision,
+      )
+    ElMessage.success('当前 Draft 已通过可复用模板检查；确认创建前仍为零写入')
+  } catch (error) {
+    draftTemplatePreview.value = null
+    draftTemplateError.value = isAxiosError(error)
+      ? String(error.response?.data?.detail ?? error.message)
+      : '当前 Draft 还不能制作为租户模板。'
+  } finally {
+    draftTemplateCreating.value = false
+  }
+}
+
+async function createDraftWarehouseTemplate(payload: {
+  templateCode: string
+  name: string
+  description?: string
+}): Promise<void> {
+  const preview = draftTemplatePreview.value
+  const contentRevision = designScene.value?.contentRevision
+  if (!preview || contentRevision === undefined ||
+    readonlyScene.value || draftTemplateCreating.value) return
+  if (preview.contentRevision !== contentRevision) {
+    draftTemplatePreview.value = null
+    draftTemplateError.value = 'Draft 已变化，请重新检查并密封模板预览。'
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将当前 ${preview.counts?.floors ?? 0} 层、` +
+        `${preview.counts?.racks ?? 0} 货架的布局保存为租户私有模板。` +
+        '模板版本创建后不可修改，是否继续？',
+      '确认创建租户模板',
+      {
+        type: 'warning',
+        confirmButtonText: '确认创建',
+        cancelButtonText: '取消',
+      },
+    )
+  } catch {
+    return
+  }
+
+  draftTemplateCreating.value = true
+  draftTemplateError.value = ''
+  try {
+    const created = await designProjectApi.createTenantWarehouseTemplateFromDraft(
+      versionId.value,
+      {
+        ...payload,
+        expectedContentRevision: contentRevision,
+        proposalHash: preview.proposalHash,
+      },
+    )
+    draftTemplatePreview.value = null
+    await loadWarehouseTemplates()
+    ElMessage.success(`租户模板“${created.template.name}”已创建并加入目录`)
+  } catch (error) {
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_WAREHOUSE_TEMPLATE_PROPOSAL_STALE' ||
+      code === 'SPACE_CONCURRENCY_CONFLICT') {
+      draftTemplatePreview.value = null
+    }
+    draftTemplateError.value = isAxiosError(error)
+      ? String(error.response?.data?.detail ?? error.message)
+      : '租户模板创建失败。'
+  } finally {
+    draftTemplateCreating.value = false
   }
 }
 
@@ -3851,8 +3936,13 @@ function tabClientInstanceId(): string {
             :retry-pending="Boolean(pendingWarehouseTemplateApply)"
             :pending-floor-key="pendingWarehouseTemplateApply?.templateFloorKey"
             :error="warehouseTemplateError"
+            :draft-template-preview="draftTemplatePreview"
+            :template-creating="draftTemplateCreating"
+            :template-create-error="draftTemplateError"
             @preview="previewWarehouseTemplate"
             @apply="applyWarehouseTemplateFloor"
+            @preview-draft-template="previewDraftWarehouseTemplate"
+            @create-draft-template="createDraftWarehouseTemplate"
           />
           <DesignLayoutCreatePanel
             :zones="activeZones"
