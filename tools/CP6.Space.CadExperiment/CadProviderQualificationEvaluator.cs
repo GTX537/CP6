@@ -166,9 +166,9 @@ public static class CadProviderQualificationEvaluator
         var qualified = results.Where(item => item.Qualified).ToArray();
         CadProviderQualificationCandidateResultV1? primary = null;
         CadProviderQualificationCandidateResultV1? backup = null;
-        if (qualified.Length < 2)
+        if (qualified.Length < 1)
         {
-            globalBlockers.Add("CAD_PROVIDER_QUALIFIED_CANDIDATES_INSUFFICIENT");
+            globalBlockers.Add("CAD_PROVIDER_PRIMARY_NOT_QUALIFIED");
         }
         else
         {
@@ -180,18 +180,19 @@ public static class CadProviderQualificationEvaluator
             else
             {
                 primary = qualified[0];
-                var secondScore = qualified[1].QualificationScore;
-                if (qualified.Count(item => item.QualificationScore == secondScore) != 1)
-                    globalBlockers.Add("CAD_PROVIDER_BACKUP_SCORE_TIE");
-                else
-                    backup = qualified[1];
+                if (qualified.Length > 1)
+                {
+                    var secondScore = qualified[1].QualificationScore;
+                    if (qualified.Count(item => item.QualificationScore == secondScore) == 1)
+                        backup = qualified[1];
+                }
             }
         }
 
         var blockers = globalBlockers.Distinct(StringComparer.Ordinal)
             .OrderBy(item => item, StringComparer.Ordinal)
             .ToArray();
-        var gaReady = blockers.Length == 0 && primary is not null && backup is not null;
+        var gaReady = blockers.Length == 0 && primary is not null;
         if (!gaReady)
         {
             primary = null;
@@ -216,11 +217,25 @@ public static class CadProviderQualificationEvaluator
             blockers);
         var selectionSha256 = Hash(hashPayload);
         var certifications = gaReady
-            ? new[]
-            {
-                ToCertification(primary!, SpaceCadProviderRole.Primary, selectionSha256),
-                ToCertification(backup!, SpaceCadProviderRole.Backup, selectionSha256),
-            }
+            ? backup is null
+                ? new[]
+                {
+                    ToCertification(
+                        primary!,
+                        SpaceCadProviderRole.Primary,
+                        selectionSha256),
+                }
+                : new[]
+                {
+                    ToCertification(
+                        primary!,
+                        SpaceCadProviderRole.Primary,
+                        selectionSha256),
+                    ToCertification(
+                        backup,
+                        SpaceCadProviderRole.Backup,
+                        selectionSha256),
+                }
             : [];
 
         return new CadProviderQualificationReportV1(

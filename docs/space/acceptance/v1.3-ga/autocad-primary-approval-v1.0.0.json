@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "evidenceClass": "CP6_SPACE_AUTOCAD_PRIMARY_APPROVAL",
+  "decisionId": "CP6_SPACE_V1_AUTOCAD_PRIMARY",
+  "decision": "ApprovedForControlledReleaseRehearsal",
+  "provider": {
+    "role": "Primary",
+    "providerKey": "cp6-autocad-worker",
+    "displayName": "AutoCAD 2025 Core Console",
+    "coreConsoleVersion": "25.0.58.0.0",
+    "coreConsoleSha256": "d1fd7232893094234f31c65445d0ec9259ffc1df17fb15aad99373e31545cefb",
+    "authenticodeStatus": "Valid",
+    "authenticodeSigner": "Autodesk, Inc.",
+    "supportsDwg": true,
+    "supportsDxf": true,
+    "deploymentMode": "OnPremisesIsolatedWorker",
+    "dataBoundary": "SiteLocal"
+  },
+  "approval": {
+    "approvedBy": "BUBAO.GAO",
+    "approvedAtUtc": "2026-08-27T23:54:58Z",
+    "source": "DeliveryOwner conversation attestation",
+    "normalizedStatement": "同意将当前 AutoCAD 2025 Core Console 作为 V1 Primary Provider；合法使用依据为：我认可。",
+    "normalizedStatementSha256": "b44795b179d616158e68f10720d630fccd75c2fc850e232a2e913094ea9b8733"
+  },
+  "licensingBasis": {
+    "basisType": "DeliveryOwnerAttestationPlusActivatedLocalInstallation",
+    "licensingService": "AdskLicensingService",
+    "licensingServiceStatus": "Running",
+    "permittedScope": [
+      "CP6 internal development",
+      "CP6 validation",
+      "CP6 controlled Release Rehearsal"
+    ],
+    "excludedScope": [
+      "Autodesk software redistribution",
+      "Public SaaS hosting of AutoCAD",
+      "Production deployment",
+      "A representation that CP6 grants Autodesk rights"
+    ],
+    "vendorEntitlementDocumentCaptured": false,
+    "scopeAuthorizationConclusion": "ApprovedForControlledReleaseRehearsalOnly"
+  },
+  "runtimeEvidence": {
+    "testedRepositoryCommit": "3dbc74b6f40a51073530249683f9161e5075436f",
+    "installedContractTestsPassed": 2,
+    "installedContractTestsFailed": 0,
+    "candidateWorkerEntityCount": 4424,
+    "candidateWorkerSupportedEntityCount": 4422,
+    "completeCadExperimentTestsPassed": 58,
+    "qualificationEvaluatorTestsPassed": 9,
+    "providerRoutingTestsPassed": 17,
+    "providerSqlServerTestsPassed": 3,
+    "providerSqlServerTestsSkipped": 0,
+    "residualCadFileCount": 0,
+    "residualAttemptDirectoryCount": 0,
+    "buildWarnings": 0,
+    "buildErrors": 0
+  },
+  "inputImpact": {
+    "inputId": "PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
+    "licensingSelectionApproved": true,
+    "fullInputComplete": false,
+    "remaining": [
+      "Formal SemVer Worker release identity",
+      "Frozen environment and isolation evidence",
+      "Primary qualification scorecard on the controlled golden dataset"
+    ]
+  },
+  "rawCadCommittedToGit": false,
+  "productionDeploymentAuthorized": false
+}

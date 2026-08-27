@@ -44,6 +44,24 @@ public sealed class SpaceCadProviderRoutingTests
     }
 
     [Fact]
+    public async Task Qualified_primary_only_configuration_is_Core_GA_ready()
+    {
+        await using var fixture = Fixture.Create();
+
+        _ = await fixture.Service.ReplaceAsync(
+            fixture.SiteId,
+            Configuration(0, includeBackup: false),
+            "primary-only");
+        var read = await fixture.Service.GetAsync(fixture.SiteId);
+
+        Assert.True(read.CanPrepareCad);
+        Assert.True(read.CadGaReady);
+        Assert.Empty(read.BlockingCodes);
+        Assert.Equal("primary.local", read.Primary!.ProviderKey);
+        Assert.Null(read.Backup);
+    }
+
+    [Fact]
     public async Task Revision_conflict_preserves_the_current_configuration()
     {
         await using var fixture = Fixture.Create();

@@ -47,10 +47,18 @@
       "status": "Pending",
       "evidenceFormat": [
         "Primary Provider licensing, security, retention and deletion approval",
-        "Controlled isolated worker deployment and secret references"
+        "Controlled isolated worker deployment and secret references",
+        "DeliveryOwner Primary selection and bounded-use approval"
       ],
       "verificationManifest": null,
-      "evidence": []
+      "evidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/autocad-primary-approval-v1.0.0.json",
+          "sha256": "fa4cb082cfbbabc62cb4ae4f21a2d17cef54091f6b8a3d76d32194b109355c94",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T23:54:58Z"
+        }
+      ]
     }
   ],
   "gates": [
@@ -155,7 +163,8 @@
         "docs/space/reports/2026-08-27-space-remote-cad-worker-provider.md",
         "docs/space/reports/2026-08-27-space-autocad-candidate-worker-dxf.md",
         "docs/space/reports/2026-08-27-space-dxf-50m-streaming-capacity.md",
-        "docs/space/reports/2026-08-27-space-autocad-worker-release-identity.md"
+        "docs/space/reports/2026-08-27-space-autocad-worker-release-identity.md",
+        "docs/space/reports/2026-08-27-space-autocad-primary-approval.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [

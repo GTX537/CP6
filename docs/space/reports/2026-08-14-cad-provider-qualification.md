@@ -1,5 +1,10 @@
 # Space Studio WP3 CAD Provider 资格证据与主备排名
 
+> 当前口径：本文记录 2026-08-14 的历史双 Provider 合同。Lean Core GA
+> Schema 3 已由 2026-08-27 的单 Primary 合同取代；一个满足全部硬门禁且
+> 资格分不低于 80 的 Primary 即可令 Core GA Provider 能力 Ready，Backup
+> 仅是可选的 GA 后韧性增强。
+
 日期：2026-08-14
 
 任务分支：`codex/space-cad-provider-qualification`

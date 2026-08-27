@@ -179,13 +179,7 @@ public sealed class SpaceCadProviderCapabilityService(
         var backupDto = backup is null ? null : ToSlot(backup, now);
         var blockers = new List<string>();
         AddBlockers(primaryDto, "PRIMARY", blockers);
-        AddBlockers(backupDto, "BACKUP", blockers);
         AddRuntimeVersionBlocker(primary, "PRIMARY", blockers);
-        AddRuntimeVersionBlocker(backup, "BACKUP", blockers);
-        if (primaryDto is not null && backupDto is not null &&
-            primaryDto.ProviderKey == backupDto.ProviderKey)
-            blockers.Add("CAD_PROVIDER_KEYS_NOT_DISTINCT");
-        AddPairQualificationBlockers(primaryDto, backupDto, blockers);
         var canPrepare = primaryDto is
                 { Qualified: true, RuntimeAvailable: true, CurrentlyValid: true } &&
             (primaryDto.SupportsDwg || primaryDto.SupportsDxf) ||
@@ -193,8 +187,7 @@ public sealed class SpaceCadProviderCapabilityService(
                 { Qualified: true, RuntimeAvailable: true, CurrentlyValid: true } &&
             (backupDto.SupportsDwg || backupDto.SupportsDxf);
         var gaReady = blockers.Count == 0 &&
-            primaryDto is { SupportsDwg: true, SupportsDxf: true } &&
-            backupDto is { SupportsDwg: true, SupportsDxf: true };
+            primaryDto is { SupportsDwg: true, SupportsDxf: true };
         return new SpaceCadSiteCapabilityDto(
             configuration.SiteId,
             configuration.ConfigurationRevision,
@@ -282,34 +275,6 @@ public sealed class SpaceCadProviderCapabilityService(
             blockers.Add($"CAD_{role}_RUNTIME_UNAVAILABLE");
         if (!value.SupportsDwg || !value.SupportsDxf)
             blockers.Add($"CAD_{role}_FORMAT_COVERAGE_INCOMPLETE");
-    }
-
-    private static void AddPairQualificationBlockers(
-        SpaceCadProviderSlotDto? primary,
-        SpaceCadProviderSlotDto? backup,
-        ICollection<string> blockers)
-    {
-        if (primary is not { Qualified: true } || backup is not { Qualified: true })
-            return;
-        if (!string.Equals(
-                primary.QualificationRubricVersion,
-                backup.QualificationRubricVersion,
-                StringComparison.Ordinal) ||
-            !string.Equals(
-                primary.GoldenDatasetSha256,
-                backup.GoldenDatasetSha256,
-                StringComparison.Ordinal) ||
-            !string.Equals(
-                primary.FrozenEnvironmentSha256,
-                backup.FrozenEnvironmentSha256,
-                StringComparison.Ordinal))
-        {
-            blockers.Add("CAD_PROVIDER_QUALIFICATION_BASELINE_MISMATCH");
-        }
-        if (primary.QualificationScore == backup.QualificationScore)
-            blockers.Add("CAD_PROVIDER_QUALIFICATION_SCORE_TIE");
-        else if (primary.QualificationScore < backup.QualificationScore)
-            blockers.Add("CAD_PROVIDER_QUALIFICATION_RANKING_INVALID");
     }
 
     private NormalizedRequest Normalize(ReplaceSpaceCadProviderConfigurationRequest request)
@@ -556,7 +521,7 @@ public sealed class SpaceCadProviderCapabilityService(
             CadGaReady: false,
             Primary: null,
             Backup: null,
-            ["CAD_PRIMARY_PROVIDER_MISSING", "CAD_BACKUP_PROVIDER_MISSING"],
+            ["CAD_PRIMARY_PROVIDER_MISSING"],
             now,
             UpdatedAtUtc: null,
             UpdatedBy: null);

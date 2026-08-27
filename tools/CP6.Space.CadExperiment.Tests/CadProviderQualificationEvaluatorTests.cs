@@ -59,6 +59,22 @@ public sealed class CadProviderQualificationEvaluatorTests
     }
 
     [Fact]
+    public void Selects_one_qualified_primary_without_requiring_backup()
+    {
+        var report = CadProviderQualificationEvaluator.Evaluate(
+            Request(Candidate("candidate-a", Scores92())));
+
+        Assert.True(report.CadGaReady);
+        Assert.Empty(report.BlockingCodes);
+        Assert.Equal(1, report.QualifiedCandidateCount);
+        Assert.Equal("candidate-a", report.Primary?.ProviderKey);
+        Assert.Null(report.Backup);
+        var certification = Assert.Single(report.CertificationInputs);
+        Assert.Equal("Primary", certification.Role);
+        Assert.Equal("candidate-a", certification.ProviderKey);
+    }
+
+    [Fact]
     public void Fails_closed_when_threshold_or_hard_gate_is_missing()
     {
         var missingSecurity = Candidate("candidate-a", Scores92()) with
@@ -76,7 +92,7 @@ public sealed class CadProviderQualificationEvaluatorTests
         Assert.Empty(report.CertificationInputs);
         Assert.Equal(0, report.QualifiedCandidateCount);
         Assert.Contains(
-            "CAD_PROVIDER_QUALIFIED_CANDIDATES_INSUFFICIENT",
+            "CAD_PROVIDER_PRIMARY_NOT_QUALIFIED",
             report.BlockingCodes);
         Assert.Contains(
             "CAD_PROVIDER_SECURITY_APPROVAL_MISSING",
@@ -105,7 +121,7 @@ public sealed class CadProviderQualificationEvaluatorTests
     }
 
     [Fact]
-    public void Fails_closed_when_backup_score_is_tied()
+    public void Keeps_primary_ready_when_optional_backup_score_is_tied()
     {
         var report = CadProviderQualificationEvaluator.Evaluate(
             Request(
@@ -113,11 +129,12 @@ public sealed class CadProviderQualificationEvaluatorTests
                 Candidate("candidate-b", Scores87()),
                 Candidate("candidate-c", Scores87())));
 
-        Assert.False(report.CadGaReady);
-        Assert.Contains("CAD_PROVIDER_BACKUP_SCORE_TIE", report.BlockingCodes);
-        Assert.Null(report.Primary);
+        Assert.True(report.CadGaReady);
+        Assert.Empty(report.BlockingCodes);
+        Assert.Equal("candidate-a", report.Primary?.ProviderKey);
         Assert.Null(report.Backup);
-        Assert.Empty(report.CertificationInputs);
+        var certification = Assert.Single(report.CertificationInputs);
+        Assert.Equal("Primary", certification.Role);
     }
 
     [Fact]
@@ -176,7 +193,7 @@ public sealed class CadProviderQualificationEvaluatorTests
     }
 
     [Fact]
-    public async Task Command_writes_a_hash_bound_report_and_uses_fail_closed_exit_code()
+    public async Task Command_writes_a_hash_bound_single_primary_report()
     {
         using var fixture = new TemporaryDirectory();
         var input = fixture.Write(
@@ -192,11 +209,11 @@ public sealed class CadProviderQualificationEvaluatorTests
             await File.ReadAllTextAsync(output),
             CadExperimentJson.Options);
 
-        Assert.Equal(4, exitCode);
+        Assert.Equal(0, exitCode);
         Assert.NotNull(report);
-        Assert.False(report.CadGaReady);
+        Assert.True(report.CadGaReady);
         Assert.Equal(64, report.SelectionSha256.Length);
-        Assert.Empty(report.CertificationInputs);
+        Assert.Single(report.CertificationInputs);
     }
 
     private static CadProviderQualificationRequestV1 Request(

@@ -4,7 +4,7 @@
 
 门禁只看结果证据：自动化结果、受控 SQL/WMS、Published-only Viewer、性能样本、恢复演练、授权 CAD 和 Primary Provider 输出。角色模拟、Mock、skipped 测试或口头说明不能替代这些证据。
 
-当前仍为 `NoGo` / 72%。20 份 `ApprovedOriginalWork` 黄金 CAD 候选已经完成并登记；仍未完成的是一个 Primary Provider 的批准与评分、受控 SQL/WMS/Viewer 发布演练、九个 Gate 正式接受和最终签署。独立 Backup Provider 与双仓 14 天 Pilot 已改为 GA 后增强项。
+当前仍为 `NoGo` / 72%。20 份 `ApprovedOriginalWork` 黄金 CAD 候选已经完成并登记；`BUBAO.GAO` 已选择并批准当前 AutoCAD 2025 Core Console 作为唯一 Primary，用途严格限于本机受控 CP6 开发、验证和 Release Rehearsal。仍未完成的是正式 SemVer Worker 封存、Primary 评分、受控 SQL/WMS/Viewer 发布演练、九个 Gate 正式接受和最终签署。独立 Backup Provider 与双仓 14 天 Pilot 已改为 GA 后增强项。
 
 ## 最小流程
 
