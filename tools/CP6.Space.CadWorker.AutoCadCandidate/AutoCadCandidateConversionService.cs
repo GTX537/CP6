@@ -7,21 +7,29 @@ namespace CP6.Space.CadWorker.AutoCadCandidate;
 
 public sealed class AutoCadCandidateConversionService
 {
+    public const int MaximumWorkRootPathLength = 120;
+
     private readonly IAutoCadDwgExporter _exporter;
     private readonly string _attemptRoot;
     private readonly TimeSpan _waitLimit;
     private readonly SemaphoreSlim _capacity;
+    private readonly string _providerKey;
+    private readonly string _providerVersion;
+    private readonly string _workerReleaseSha256;
 
     public AutoCadCandidateConversionService(
-        string coreConsolePath,
+        IAutoCadDwgExporter exporter,
         string workRoot,
         TimeSpan conversionTimeout,
         int maximumConcurrency) :
         this(
-            CreateExporter(coreConsolePath, workRoot, conversionTimeout),
+            exporter ?? throw new ArgumentNullException(nameof(exporter)),
             workRoot,
             conversionTimeout,
-            maximumConcurrency)
+            maximumConcurrency,
+            AutoCadCandidateConverter.DevelopmentConverterId,
+            AutoCadCandidateConverter.VersionFor(exporter.ProviderVersion),
+            DevelopmentWorkerReleaseSha256(exporter.ProviderVersion))
     {
     }
 
@@ -29,24 +37,70 @@ public sealed class AutoCadCandidateConversionService
         IAutoCadDwgExporter exporter,
         string workRoot,
         TimeSpan conversionTimeout,
-        int maximumConcurrency)
+        int maximumConcurrency,
+        AutoCadCandidateReleaseIdentity releaseIdentity) :
+        this(
+            exporter,
+            workRoot,
+            conversionTimeout,
+            maximumConcurrency,
+            AutoCadCandidateReleaseIdentity.ProviderKey,
+            RequireReleaseProviderVersion(exporter, releaseIdentity),
+            releaseIdentity.WorkerReleaseSha256)
+    {
+    }
+
+    private AutoCadCandidateConversionService(
+        IAutoCadDwgExporter exporter,
+        string workRoot,
+        TimeSpan conversionTimeout,
+        int maximumConcurrency,
+        string providerKey,
+        string providerVersion,
+        string workerReleaseSha256)
     {
         _exporter = exporter ?? throw new ArgumentNullException(nameof(exporter));
         if (maximumConcurrency is < 1 or > 4)
             throw new ArgumentOutOfRangeException(nameof(maximumConcurrency));
         var root = Path.GetFullPath(workRoot);
+        if (root.Length > MaximumWorkRootPathLength)
+        {
+            throw new ArgumentException(
+                $"The CAD Worker root must not exceed {MaximumWorkRootPathLength} characters.",
+                nameof(workRoot));
+        }
         _attemptRoot = Path.Combine(root, "attempts");
         Directory.CreateDirectory(_attemptRoot);
         _waitLimit = conversionTimeout + TimeSpan.FromSeconds(30);
         _capacity = new SemaphoreSlim(maximumConcurrency, maximumConcurrency);
+        if (string.IsNullOrWhiteSpace(providerKey)
+            || providerKey.Length > SpaceCadConversionContract.MaximumIdentifierLength)
+        {
+            throw new ArgumentException("A bounded Worker Provider key is required.");
+        }
+        if (string.IsNullOrWhiteSpace(providerVersion)
+            || providerVersion.Length > SpaceCadConversionContract.MaximumIdentifierLength)
+        {
+            throw new ArgumentException("A bounded Worker Provider version is required.");
+        }
+        _providerKey = providerKey;
+        _providerVersion = providerVersion;
+        if (workerReleaseSha256.Length != 64 ||
+            workerReleaseSha256.Any(character =>
+                character is not (>= '0' and <= '9')
+                    and not (>= 'a' and <= 'f')))
+        {
+            throw new ArgumentException("A valid Worker Release SHA-256 is required.");
+        }
+        _workerReleaseSha256 = workerReleaseSha256;
     }
 
-    public string ProviderKey => AutoCadCandidateConverter.ConverterId;
-    public string ProviderVersion =>
-        AutoCadCandidateConverter.VersionFor(_exporter.ProviderVersion);
+    public string ProviderKey => _providerKey;
+    public string ProviderVersion => _providerVersion;
+    public string WorkerReleaseSha256 => _workerReleaseSha256;
 
-    public async Task<SpaceCadWorkerConversionResponseV1> ConvertAsync(
-        SpaceCadWorkerConversionRequestV1 request,
+    public async Task<SpaceCadWorkerConversionResponseV2> ConvertAsync(
+        SpaceCadWorkerConversionRequestV2 request,
         Stream source,
         CancellationToken cancellationToken = default)
     {
@@ -55,7 +109,8 @@ public sealed class AutoCadCandidateConversionService
         if (!source.CanRead)
             throw new ArgumentException("The CAD source stream must be readable.", nameof(source));
         if (request.ProviderKey != ProviderKey ||
-            request.ProviderVersion != ProviderVersion)
+            request.ProviderVersion != ProviderVersion ||
+            request.WorkerReleaseSha256 != WorkerReleaseSha256)
         {
             throw new InvalidDataException(
                 "The AutoCAD candidate Worker request does not match its frozen Provider.");
@@ -84,8 +139,8 @@ public sealed class AutoCadCandidateConversionService
         }
     }
 
-    private async Task<SpaceCadWorkerConversionResponseV1> ConvertInAttemptAsync(
-        SpaceCadWorkerConversionRequestV1 request,
+    private async Task<SpaceCadWorkerConversionResponseV2> ConvertInAttemptAsync(
+        SpaceCadWorkerConversionRequestV2 request,
         Stream source,
         CancellationToken cancellationToken)
     {
@@ -118,7 +173,9 @@ public sealed class AutoCadCandidateConversionService
                 request.ProviderVersion);
             var converter = new AutoCadCandidateConverter(
                 _exporter,
-                Path.Combine(attempt, "engine-attempts"));
+                Path.Combine(attempt, "engine-attempts"),
+                ProviderKey,
+                ProviderVersion);
             var sink = new DevelopmentCadIrFileSink(conversion, output);
             await using var staged = new FileStream(
                 input,
@@ -136,13 +193,14 @@ public sealed class AutoCadCandidateConversionService
             var package = sink.Package ?? throw new InvalidDataException(
                 "The AutoCAD candidate Worker did not complete a CAD IR package.");
             SpaceCadConversionContract.ValidatePackage(conversion, package);
-            var response = new SpaceCadWorkerConversionResponseV1(
+            var response = new SpaceCadWorkerConversionResponseV2(
                 SpaceCadWorkerProtocolVersions.SchemaVersion,
                 request.AttemptId,
                 request.SourceSha256,
                 request.SourceFormat,
                 request.ProviderKey,
                 request.ProviderVersion,
+                request.WorkerReleaseSha256,
                 SpaceCadWorkerProtocol.ComputePackageSha256(package),
                 package);
             SpaceCadWorkerProtocol.ValidateResponse(request, response);
@@ -220,18 +278,43 @@ public sealed class AutoCadCandidateConversionService
         directory.Delete();
     }
 
-    private static AutoCadCoreConsoleDwgExporter CreateExporter(
-        string coreConsolePath,
-        string workRoot,
-        TimeSpan conversionTimeout)
+    private static string RequireReleaseProviderVersion(
+        IAutoCadDwgExporter exporter,
+        AutoCadCandidateReleaseIdentity releaseIdentity)
     {
-        var runtimeRoot = Path.Combine(
-            Path.GetFullPath(workRoot),
-            "autodesk-runtime-cache");
-        Directory.CreateDirectory(runtimeRoot);
-        return new AutoCadCoreConsoleDwgExporter(
-            coreConsolePath,
-            runtimeRoot,
-            conversionTimeout);
+        ArgumentNullException.ThrowIfNull(exporter);
+        ArgumentNullException.ThrowIfNull(releaseIdentity);
+        if (exporter is not ReleaseBoundAutoCadDwgExporter releaseBound)
+        {
+            throw new ArgumentException(
+                "A release Worker requires a release-bound AutoCAD exporter.",
+                nameof(exporter));
+        }
+        if (!exporter.ProviderVersion.Equals(
+                releaseIdentity.Manifest.AutoCadCoreConsoleVersion,
+                StringComparison.Ordinal))
+        {
+            throw new InvalidDataException(
+                "The release-bound exporter version does not match the Worker release.");
+        }
+        if (!releaseBound.CoreConsoleSha256.Equals(
+                releaseIdentity.Manifest.AutoCadCoreConsoleSha256,
+                StringComparison.Ordinal))
+        {
+            throw new InvalidDataException(
+                "The release-bound exporter hash does not match the Worker release.");
+        }
+        return releaseIdentity.ProviderVersion;
     }
+
+    private static string DevelopmentWorkerReleaseSha256(
+        string autoCadProviderVersion)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(
+            AutoCadCandidateConverter.DevelopmentConverterId
+            + "\n"
+            + AutoCadCandidateConverter.VersionFor(autoCadProviderVersion));
+        return Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+    }
+
 }

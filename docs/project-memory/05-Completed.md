@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space AutoCAD 候选 Worker Release 身份
+
+- 可运行 Host 改为强制非 development Release：清单完整固定 Payload、源提交、Runtime、Core Console 哈希/版本和 DXF Converter 版本，并由外部完整 SHA 锚定。
+- 启动前拒绝 Manifest/Payload/Core/Runtime/版本漂移；每次 DWG 供应商调用前再次复核 Core 完整哈希。远程协议 Schema 2 把部署批准 Manifest 的完整 Release SHA 贯穿 API 请求、Worker 前置核对和响应回显，健康端点也暴露完整身份。
+- 真实 `win-x64` 发布演练封存 18 文件并通过 Schema；完整安装环境 CAD Experiment 57/57、远程协议 6/6、残留 0，主测试 2,939/19/0，整仓 0 warning / 0 error。
+- `0.0.0-rehearsal` 不是正式 Release/批准证据；正式合并提交构建、许可证/Site/隔离部署、独立 Backup 与黄金集仍 Pending，WP3/GA 状态不变。
+
 ## 2026-08-27 Space DXF 50 MiB 容量合同
 
 - 托管 Parser 改为逐行严格 UTF-8 解析，底层流同步执行 64 MiB 上限与原始字节 SHA-256；移除整文件 byte[]、整份文本和 Split 行数组的同时驻留，999 注释验证后不保留。

@@ -25,6 +25,7 @@ public sealed class SpaceCadRemoteWorkerOptions
     public string ClientCertificateStoreName { get; set; } = "My";
     public string ApprovalManifestPath { get; set; } = string.Empty;
     public string ApprovalManifestSha256 { get; set; } = string.Empty;
+    public string WorkerReleaseSha256 { get; set; } = string.Empty;
     public int TimeoutSeconds { get; set; } = 300;
     public long MaximumSourceBytes { get; set; } =
         SpaceCadWorkerProtocolVersions.MaximumSourceBytes;
@@ -124,6 +125,7 @@ public sealed class SpaceCadRemoteWorkerOptions
                 exception);
         }
         ValidateManifest(manifest, endpoint, nowUtc);
+        WorkerReleaseSha256 = manifest.WorkerReleaseSha256;
         return manifest;
     }
 

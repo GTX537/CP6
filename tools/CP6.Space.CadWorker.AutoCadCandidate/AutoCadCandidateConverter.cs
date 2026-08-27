@@ -11,20 +11,45 @@ namespace CP6.Space.CadWorker.AutoCadCandidate;
 /// </summary>
 public sealed class AutoCadCandidateConverter : ICadConverter
 {
-    public const string ConverterId = "cp6-autocad-worker-development";
+    public const string DevelopmentConverterId = "cp6-autocad-worker-development";
 
     private readonly IAutoCadDwgExporter _exporter;
     private readonly string _workingRoot;
+    private readonly string _converterId;
 
     public AutoCadCandidateConverter(
         IAutoCadDwgExporter exporter,
-        string workingRoot)
+        string workingRoot) :
+        this(
+            exporter ?? throw new ArgumentNullException(nameof(exporter)),
+            workingRoot,
+            DevelopmentConverterId,
+            VersionFor(exporter.ProviderVersion))
+    {
+    }
+
+    internal AutoCadCandidateConverter(
+        IAutoCadDwgExporter exporter,
+        string workingRoot,
+        string converterId,
+        string converterVersion)
     {
         _exporter = exporter ?? throw new ArgumentNullException(nameof(exporter));
         if (string.IsNullOrWhiteSpace(workingRoot))
             throw new ArgumentException("A candidate conversion root is required.");
         _workingRoot = Path.GetFullPath(workingRoot);
-        ConverterVersion = VersionFor(exporter.ProviderVersion);
+        if (string.IsNullOrWhiteSpace(converterId)
+            || converterId.Length > SpaceCadConversionContract.MaximumIdentifierLength)
+        {
+            throw new ArgumentException("A bounded candidate converter ID is required.");
+        }
+        if (string.IsNullOrWhiteSpace(converterVersion)
+            || converterVersion.Length > SpaceCadConversionContract.MaximumIdentifierLength)
+        {
+            throw new ArgumentException("A bounded candidate converter version is required.");
+        }
+        _converterId = converterId;
+        ConverterVersion = converterVersion;
     }
 
     public string ConverterVersion { get; }
@@ -62,7 +87,7 @@ public sealed class AutoCadCandidateConverter : ICadConverter
         ArgumentNullException.ThrowIfNull(sink);
         if (!source.CanRead)
             throw new ArgumentException("The CAD source stream must be readable.", nameof(source));
-        if (request.ConverterId != ConverterId ||
+        if (request.ConverterId != _converterId ||
             request.ConverterVersion != ConverterVersion)
         {
             throw new InvalidDataException(

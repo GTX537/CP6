@@ -7,7 +7,7 @@ namespace CP6.Space.Application;
 
 public static class SpaceCadWorkerProtocolVersions
 {
-    public const int SchemaVersion = 1;
+    public const int SchemaVersion = 2;
     public const long MaximumSourceBytes = 200L * 1024L * 1024L;
     public const long MaximumResponseBytes = 200L * 1024L * 1024L;
 }
@@ -17,21 +17,23 @@ public static class SpaceCadWorkerProtocolVersions
 /// model, user, database, mapping, and object-storage identities are
 /// deliberately excluded from this boundary.
 /// </summary>
-public sealed record SpaceCadWorkerConversionRequestV1(
-    int SchemaVersion,
-    Guid AttemptId,
-    string SourceSha256,
-    SpaceCadSourceFormat SourceFormat,
-    string ProviderKey,
-    string ProviderVersion);
-
-public sealed record SpaceCadWorkerConversionResponseV1(
+public sealed record SpaceCadWorkerConversionRequestV2(
     int SchemaVersion,
     Guid AttemptId,
     string SourceSha256,
     SpaceCadSourceFormat SourceFormat,
     string ProviderKey,
     string ProviderVersion,
+    string WorkerReleaseSha256);
+
+public sealed record SpaceCadWorkerConversionResponseV2(
+    int SchemaVersion,
+    Guid AttemptId,
+    string SourceSha256,
+    SpaceCadSourceFormat SourceFormat,
+    string ProviderKey,
+    string ProviderVersion,
+    string WorkerReleaseSha256,
     string PackageSha256,
     SpaceCadIrPackageV1 Package);
 
@@ -43,12 +45,13 @@ public static class SpaceCadWorkerProtocol
         WriteIndented = false,
     };
 
-    public static void ValidateRequest(SpaceCadWorkerConversionRequestV1 request)
+    public static void ValidateRequest(SpaceCadWorkerConversionRequestV2 request)
     {
         ArgumentNullException.ThrowIfNull(request);
         if (request.SchemaVersion != SpaceCadWorkerProtocolVersions.SchemaVersion ||
             request.AttemptId == Guid.Empty ||
             !IsSha256(request.SourceSha256) ||
+            !IsSha256(request.WorkerReleaseSha256) ||
             !Enum.IsDefined(request.SourceFormat))
         {
             throw new InvalidDataException(
@@ -59,8 +62,8 @@ public static class SpaceCadWorkerProtocol
     }
 
     public static void ValidateResponse(
-        SpaceCadWorkerConversionRequestV1 request,
-        SpaceCadWorkerConversionResponseV1 response)
+        SpaceCadWorkerConversionRequestV2 request,
+        SpaceCadWorkerConversionResponseV2 response)
     {
         ValidateRequest(request);
         ArgumentNullException.ThrowIfNull(response);
@@ -72,6 +75,10 @@ public static class SpaceCadWorkerProtocol
             response.SourceFormat != request.SourceFormat ||
             !response.ProviderKey.Equals(request.ProviderKey, StringComparison.Ordinal) ||
             !response.ProviderVersion.Equals(request.ProviderVersion, StringComparison.Ordinal) ||
+            !string.Equals(
+                response.WorkerReleaseSha256,
+                request.WorkerReleaseSha256,
+                StringComparison.Ordinal) ||
             !response.Package.Document.SourceSha256.Equals(
                 request.SourceSha256,
                 StringComparison.Ordinal) ||

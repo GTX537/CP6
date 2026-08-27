@@ -158,7 +158,8 @@
         "docs/space/reports/2026-08-15-space-autocad-core-console-development.md",
         "docs/space/reports/2026-08-27-space-remote-cad-worker-provider.md",
         "docs/space/reports/2026-08-27-space-autocad-candidate-worker-dxf.md",
-        "docs/space/reports/2026-08-27-space-dxf-50m-streaming-capacity.md"
+        "docs/space/reports/2026-08-27-space-dxf-50m-streaming-capacity.md",
+        "docs/space/reports/2026-08-27-space-autocad-worker-release-identity.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [

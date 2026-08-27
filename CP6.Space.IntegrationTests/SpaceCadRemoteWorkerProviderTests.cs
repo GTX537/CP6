@@ -13,6 +13,7 @@ public sealed class SpaceCadRemoteWorkerProviderTests
 {
     private const string ProviderKey = "approved.worker";
     private const string ProviderVersion = "25.0.58.0.0";
+    private static readonly string WorkerReleaseSha256 = new('c', 64);
 
     [Fact]
     public async Task Preparation_sends_only_minimized_CAD_identity()
@@ -44,6 +45,7 @@ public sealed class SpaceCadRemoteWorkerProviderTests
         Assert.Equal(SpaceCadSourceFormat.Dxf, request.SourceFormat);
         Assert.Equal(ProviderKey, request.ProviderKey);
         Assert.Equal(ProviderVersion, request.ProviderVersion);
+        Assert.Equal(WorkerReleaseSha256, request.WorkerReleaseSha256);
         Assert.DoesNotContain(
             "tenant",
             JsonSerializer.Serialize(request),
@@ -105,20 +107,22 @@ public sealed class SpaceCadRemoteWorkerProviderTests
     {
         var fixture = Fixture.Create();
         var attemptId = Guid.NewGuid();
-        var request = new SpaceCadWorkerConversionRequestV1(
-            1,
-            attemptId,
-            fixture.SourceSha256,
-            SpaceCadSourceFormat.Dxf,
-            ProviderKey,
-            ProviderVersion);
-        var response = new SpaceCadWorkerConversionResponseV1(
-            1,
+        var request = new SpaceCadWorkerConversionRequestV2(
+            SpaceCadWorkerProtocolVersions.SchemaVersion,
             attemptId,
             fixture.SourceSha256,
             SpaceCadSourceFormat.Dxf,
             ProviderKey,
             ProviderVersion,
+            WorkerReleaseSha256);
+        var response = new SpaceCadWorkerConversionResponseV2(
+            SpaceCadWorkerProtocolVersions.SchemaVersion,
+            attemptId,
+            fixture.SourceSha256,
+            SpaceCadSourceFormat.Dxf,
+            ProviderKey,
+            ProviderVersion,
+            WorkerReleaseSha256,
             SpaceCadWorkerProtocol.ComputePackageSha256(fixture.Package),
             fixture.Package);
         var handler = new WorkerHandler(response, fixture.SourceBytes);
@@ -129,14 +133,84 @@ public sealed class SpaceCadRemoteWorkerProviderTests
         var package = await client.ConvertAsync(request, source);
 
         Assert.Equal(fixture.Package.Document, package.Document);
-        Assert.Equal("1", handler.Headers["X-CP6-Cad-Schema"]);
+        Assert.Equal(
+            SpaceCadWorkerProtocolVersions.SchemaVersion.ToString(),
+            handler.Headers["X-CP6-Cad-Schema"]);
         Assert.Equal(attemptId.ToString("D"), handler.Headers["X-CP6-Cad-Attempt"]);
         Assert.Equal(ProviderKey, handler.Headers["X-CP6-Cad-Provider-Key"]);
         Assert.Equal(ProviderVersion, handler.Headers["X-CP6-Cad-Provider-Version"]);
+        Assert.Equal(
+            WorkerReleaseSha256,
+            handler.Headers["X-CP6-Cad-Worker-Release-Sha256"]);
         Assert.Equal(fixture.SourceBytes, handler.Body);
         Assert.Equal(
             new Uri("https://worker.internal/v1/conversions"),
             handler.RequestUri);
+    }
+
+    [Fact]
+    public async Task Http_client_rejects_a_response_from_a_different_Worker_release()
+    {
+        var fixture = Fixture.Create();
+        var attemptId = Guid.NewGuid();
+        var request = new SpaceCadWorkerConversionRequestV2(
+            SpaceCadWorkerProtocolVersions.SchemaVersion,
+            attemptId,
+            fixture.SourceSha256,
+            SpaceCadSourceFormat.Dxf,
+            ProviderKey,
+            ProviderVersion,
+            WorkerReleaseSha256);
+        var response = new SpaceCadWorkerConversionResponseV2(
+            SpaceCadWorkerProtocolVersions.SchemaVersion,
+            attemptId,
+            fixture.SourceSha256,
+            SpaceCadSourceFormat.Dxf,
+            ProviderKey,
+            ProviderVersion,
+            new string('f', 64),
+            SpaceCadWorkerProtocol.ComputePackageSha256(fixture.Package),
+            fixture.Package);
+        var handler = new WorkerHandler(response, fixture.SourceBytes);
+        using var http = new HttpClient(handler);
+        using var client = new HttpSpaceCadRemoteWorkerClient(http, Options());
+        await using var source = new MemoryStream(fixture.SourceBytes, writable: false);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            client.ConvertAsync(request, source));
+    }
+
+    [Fact]
+    public async Task Http_client_rejects_a_request_not_bound_to_the_approved_release()
+    {
+        var fixture = Fixture.Create();
+        var request = new SpaceCadWorkerConversionRequestV2(
+            SpaceCadWorkerProtocolVersions.SchemaVersion,
+            Guid.NewGuid(),
+            fixture.SourceSha256,
+            SpaceCadSourceFormat.Dxf,
+            ProviderKey,
+            ProviderVersion,
+            new string('f', 64));
+        var handler = new WorkerHandler(
+            new SpaceCadWorkerConversionResponseV2(
+                SpaceCadWorkerProtocolVersions.SchemaVersion,
+                request.AttemptId,
+                fixture.SourceSha256,
+                SpaceCadSourceFormat.Dxf,
+                ProviderKey,
+                ProviderVersion,
+                request.WorkerReleaseSha256,
+                SpaceCadWorkerProtocol.ComputePackageSha256(fixture.Package),
+                fixture.Package),
+            fixture.SourceBytes);
+        using var http = new HttpClient(handler);
+        using var client = new HttpSpaceCadRemoteWorkerClient(http, Options());
+        await using var source = new MemoryStream(fixture.SourceBytes, writable: false);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            client.ConvertAsync(request, source));
+        Assert.Null(handler.RequestUri);
     }
 
     [Fact]
@@ -165,6 +239,7 @@ public sealed class SpaceCadRemoteWorkerProviderTests
 
             Assert.Equal(ProviderKey, loaded.ProviderKey);
             Assert.Equal(80, loaded.QualificationScore);
+            Assert.Equal(WorkerReleaseSha256, options.WorkerReleaseSha256);
 
             var unsafeBytes = JsonSerializer.SerializeToUtf8Bytes(
                 Manifest(now, businessCredentialsUnavailable: false),
@@ -196,6 +271,7 @@ public sealed class SpaceCadRemoteWorkerProviderTests
         MaximumSourceBytes = 1024 * 1024,
         MaximumResponseBytes = 1024 * 1024,
         TimeoutSeconds = 30,
+        WorkerReleaseSha256 = WorkerReleaseSha256,
     };
 
     private static SpaceCadRemoteWorkerApprovalManifestV1 Manifest(
@@ -214,7 +290,7 @@ public sealed class SpaceCadRemoteWorkerProviderTests
             new string('a', 64),
             new string('B', 40),
             "vault://cad-worker/client-certificate",
-            new string('c', 64),
+            WorkerReleaseSha256,
             "identity://cad-worker/service-account",
             MutuallyAuthenticatedTls: true,
             OutboundNetworkDisabled: true,
@@ -241,10 +317,10 @@ public sealed class SpaceCadRemoteWorkerProviderTests
     private sealed class RecordingWorker(SpaceCadIrPackageV1 package) :
         ISpaceCadRemoteWorkerClient
     {
-        public List<SpaceCadWorkerConversionRequestV1> Requests { get; } = [];
+        public List<SpaceCadWorkerConversionRequestV2> Requests { get; } = [];
 
         public Task<SpaceCadIrPackageV1> ConvertAsync(
-            SpaceCadWorkerConversionRequestV1 request,
+            SpaceCadWorkerConversionRequestV2 request,
             Stream source,
             CancellationToken cancellationToken = default)
         {
@@ -271,7 +347,7 @@ public sealed class SpaceCadRemoteWorkerProviderTests
     }
 
     private sealed class WorkerHandler(
-        SpaceCadWorkerConversionResponseV1 response,
+        SpaceCadWorkerConversionResponseV2 response,
         byte[] expectedBody) : HttpMessageHandler
     {
         public Dictionary<string, string> Headers { get; } = new(StringComparer.Ordinal);

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space AutoCAD 候选 Worker 不可变 Release
+
+- 新增 Schema 1 Worker Release Manifest 与生成/启动复核：完整封存 Payload、源提交、Runtime、Core Console 哈希/版本及 DXF Converter 版本；可运行 Host 只广告 `cp6-autocad-worker` 非 development 身份。
+- Manifest 外部完整 SHA 是权威身份，Provider Version 只嵌入 12 位可见前缀；Schema 2 远程协议把完整 SHA 贯穿批准运行时、请求、Worker 前置核对和响应回显。每次 DWG 转换前还会再次核对 Core 完整哈希。
+- 真实 `win-x64` 演练封存 18 文件，Schema 通过；安装 CAD Experiment 57/57、远程协议 6/6，主测试 2,939/19/0，整仓 0 warning / 0 error，测试残留 0。
+- 演练刻意使用 `0.0.0-rehearsal`，不写 `acceptedEvidence`。正式合并提交 Release、许可证/Site/部署、独立 Backup 与授权黄金集仍缺，整体保持 72% / NoGo。
+
 ## 2026-08-27：Space DXF 50 MiB 受控容量
 
 - `DevelopmentDxfCadConverter` 从 25 MiB 整文件三重驻留改为 64 MiB bounded hashing stream + 严格 UTF-8 逐行解析；源哈希继续覆盖原始字节，999 注释不进入语义内存。

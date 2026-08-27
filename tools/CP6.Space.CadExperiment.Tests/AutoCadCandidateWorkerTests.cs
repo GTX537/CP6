@@ -110,6 +110,35 @@ public sealed class AutoCadCandidateWorkerTests
             Path.Combine(directory.Path, "attempts")));
     }
 
+    [Fact]
+    public async Task Worker_rejects_wrong_full_release_hash_before_staging()
+    {
+        using var directory = new TemporaryDirectory();
+        var exporter = new FakeExporter();
+        var service = new AutoCadCandidateConversionService(
+            exporter,
+            directory.Path,
+            TimeSpan.FromMinutes(1),
+            maximumConcurrency: 1);
+        var bytes = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
+            .GetBytes(ValidDxf);
+        var request = Request(
+            service,
+            Sha256(bytes),
+            SpaceCadSourceFormat.Dxf) with
+        {
+            WorkerReleaseSha256 = new string('b', 64),
+        };
+        await using var source = new MemoryStream(bytes, writable: false);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            service.ConvertAsync(request, source));
+
+        Assert.Equal(0, exporter.CallCount);
+        Assert.Empty(Directory.GetFileSystemEntries(
+            Path.Combine(directory.Path, "attempts")));
+    }
+
     [AutoCadCoreConsoleFact]
     public async Task Installed_core_console_runs_through_candidate_Worker_boundary()
     {
@@ -167,7 +196,7 @@ public sealed class AutoCadCandidateWorkerTests
         }
     }
 
-    private static SpaceCadWorkerConversionRequestV1 Request(
+    private static SpaceCadWorkerConversionRequestV2 Request(
         AutoCadCandidateConversionService service,
         string sha256,
         SpaceCadSourceFormat sourceFormat = SpaceCadSourceFormat.Dwg) =>
@@ -177,7 +206,8 @@ public sealed class AutoCadCandidateWorkerTests
             sha256,
             sourceFormat,
             service.ProviderKey,
-            service.ProviderVersion);
+            service.ProviderVersion,
+            service.WorkerReleaseSha256);
 
     private static string Sha256(byte[] bytes) =>
         Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();

@@ -125,6 +125,10 @@ Files:
 - `semantic-diagnostics.schema.json`: proposal evidence and spatial issue index.
 - `excel-cad-match-preview.schema.json`: read-only Excel rack association preview.
 - `cad-review-workspace.schema.json`: read-only problem/unmatched list and focus workspace.
+- `remote-worker-protocol.md`: CAD-only mTLS request/response and deployment gate.
+- `remote-worker-approval.schema.json`: deployment-owned approval evidence contract.
+- `candidate-worker-release.schema.json`: immutable candidate Worker payload and
+  exact AutoCAD Core Console release identity.
 - `examples/minimal-wall.json`: minimal valid IR package.
 - `examples/development-coordinate-confirmation.json`: confirmation for synthetic sample 13.
 - `examples/development-mapping-profile-draft.json`: system profile draft for the synthetic corpus.
