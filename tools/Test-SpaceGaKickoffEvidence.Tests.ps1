@@ -51,51 +51,6 @@ function Get-TestCandidateSetSha256 {
 }
 
 function New-ValidKickoffManifest {
-    $signerRoles = @('Product', 'QA', 'WMS', 'Architecture', 'Security')
-    $signerNames = @('Li Ming', 'Wang Fang', 'Chen Jie', 'Zhao Lei', 'Sun Yue')
-    $signers = for ($index = 0; $index -lt $signerRoles.Count; $index++) {
-        [pscustomobject]@{
-            role = $signerRoles[$index]
-            name = $signerNames[$index]
-            approvalAuthorityConfirmed = $true
-            appointmentEvidence = New-KickoffAttestation `
-                -Id "signer-$index" `
-                -AcceptedBy 'Zhang Wei'
-        }
-    }
-
-    $memberDefinitions = @(
-        @('Backend One', 'Backend', 100),
-        @('Backend Two', 'Backend', 80),
-        @('Frontend One', 'Frontend3D', 100),
-        @('Frontend Two', 'Frontend3D', 80),
-        @('Quality One', 'QA', 100))
-    $members = for ($index = 0; $index -lt $memberDefinitions.Count; $index++) {
-        $definition = $memberDefinitions[$index]
-        [pscustomobject]@{
-            name = $definition[0]
-            discipline = $definition[1]
-            allocationPercent = $definition[2]
-            startDate = '2026-08-01'
-            endDate = '2026-10-24'
-            allocationEvidence = New-KickoffAttestation `
-                -Id "member-$index" `
-                -AcceptedBy 'Zhang Wei'
-        }
-    }
-
-    $sharedRoles = @('Product', 'WMS', 'Architecture', 'Security', 'DevOps')
-    $sharedNames = @('Li Ming', 'Chen Jie', 'Zhao Lei', 'Sun Yue', 'He Qiang')
-    $sharedAssignments = for ($index = 0; $index -lt $sharedRoles.Count; $index++) {
-        [pscustomobject]@{
-            role = $sharedRoles[$index]
-            name = $sharedNames[$index]
-            assignmentEvidence = New-KickoffAttestation `
-                -Id "shared-$index" `
-                -AcceptedBy 'Zhang Wei'
-        }
-    }
-
     $candidates = for ($index = 0; $index -lt 20; $index++) {
         $ordinal = $index + 1
         [pscustomobject]@{
@@ -195,35 +150,19 @@ function New-ValidKickoffManifest {
         })
 
     return [pscustomobject]@{
-        schemaVersion = 1
+        schemaVersion = 2
         programId = 'CP6_SPACE_STUDIO_V1_CORE_GA'
+        deliveryMode = 'SoloDeveloper'
         evidenceClass = 'M0_EXTERNAL_INPUT_READINESS'
         conclusion = 'Pass'
         kickoffDate = '2026-08-01'
         targetGaDate = '2026-10-24'
-        namedGaSigners = [pscustomobject]@{
-            inputId = 'NAMED_GA_SIGNERS'
-            status = 'Complete'
-            ownerName = 'Zhang Wei'
-            completionEvidence = New-KickoffAttestation `
-                -Id 'signers-completion' -AcceptedBy 'Zhang Wei'
-            signers = $signers
-        }
-        coreTeamAllocation = [pscustomobject]@{
-            inputId = 'CORE_TEAM_ALLOCATION'
-            status = 'Complete'
-            ownerName = 'Zhang Wei'
-            completionEvidence = New-KickoffAttestation `
-                -Id 'team-completion' -AcceptedBy 'Zhang Wei'
-            members = $members
-            sharedAssignments = $sharedAssignments
-        }
         authorizedGoldenCadCandidates = [pscustomobject]@{
             inputId = 'AUTHORIZED_GOLDEN_CAD_CANDIDATES'
             status = 'Complete'
-            ownerName = 'Liu Yan'
+            ownerName = 'Zhang Wei'
             completionEvidence = New-KickoffAttestation `
-                -Id 'cad-completion' -AcceptedBy 'Liu Yan'
+                -Id 'cad-completion' -AcceptedBy 'Zhang Wei'
             candidateSetVersion = 'golden-candidates-2026-08-v1'
             candidateSetSha256 = $candidateSetSha256
             candidates = $candidates
@@ -231,9 +170,9 @@ function New-ValidKickoffManifest {
         providerApprovalsAndIsolatedWorker = [pscustomobject]@{
             inputId = 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER'
             status = 'Complete'
-            ownerName = 'Qian Lin'
+            ownerName = 'Zhang Wei'
             completionEvidence = New-KickoffAttestation `
-                -Id 'provider-completion' -AcceptedBy 'Qian Lin'
+                -Id 'provider-completion' -AcceptedBy 'Zhang Wei'
             candidateProviders = $providers
             worker = [pscustomobject]@{
                 workerRef = 'urn:cp6-space-ga-worker:isolated-01'
@@ -248,9 +187,9 @@ function New-ValidKickoffManifest {
         twoPilotSitesAndWmsWindows = [pscustomobject]@{
             inputId = 'TWO_PILOT_SITES_AND_WMS_WINDOWS'
             status = 'Complete'
-            ownerName = 'Guo Jing'
+            ownerName = 'Zhang Wei'
             completionEvidence = New-KickoffAttestation `
-                -Id 'pilot-completion' -AcceptedBy 'Guo Jing'
+                -Id 'pilot-completion' -AcceptedBy 'Zhang Wei'
             sites = $sites
         }
     }
@@ -342,7 +281,7 @@ function Invoke-KickoffValidatorCase {
 
 try {
     $validPath = New-KickoffTestManifest 'valid' { param($manifest) }
-    Invoke-KickoffValidatorCase -Name 'valid complete kickoff package' `
+    Invoke-KickoffValidatorCase -Name 'one owner may close every external input' `
         -ManifestPath $validPath -ShouldPass $true
 
     Invoke-KickoffValidatorCase `
@@ -357,96 +296,36 @@ try {
             'docs/space/acceptance/v1.3-ga/kickoff-evidence-template.json') `
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_KICKOFF_CONCLUSION_INVALID' `
-        -InputId 'CORE_TEAM_ALLOCATION' `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
         -AllowTestFixtures $false
 
     $incrementalPath = New-KickoffTestManifest 'incremental' {
         param($manifest)
         $manifest.conclusion = 'InProgress'
-        $manifest.namedGaSigners.status = 'Pending'
+        $manifest.twoPilotSitesAndWmsWindows.status = 'Pending'
     }
     Invoke-KickoffValidatorCase `
         -Name 'one input can close from an incremental package' `
         -ManifestPath $incrementalPath -ShouldPass $true `
-        -InputId 'CORE_TEAM_ALLOCATION' `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
         -ExpectedOwnerName 'Zhang Wei'
 
     Invoke-KickoffValidatorCase `
         -Name 'index owner must match section owner' `
         -ManifestPath $validPath -ShouldPass $false `
-        -InputId 'CORE_TEAM_ALLOCATION' `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
         -ExpectedOwnerName 'Different Person' `
         -ExpectedError 'SPACE_GA_KICKOFF_OWNER_MISMATCH'
 
     $numericOwnerPath = New-KickoffTestManifest 'numeric-owner' {
         param($manifest)
-        $manifest.coreTeamAllocation.ownerName = '00001'
+        $manifest.authorizedGoldenCadCandidates.ownerName = '00001'
     }
     Invoke-KickoffValidatorCase `
         -Name 'development code is not a real external input owner' `
         -ManifestPath $numericOwnerPath -ShouldPass $false `
-        -InputId 'CORE_TEAM_ALLOCATION' `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
         -ExpectedError 'SPACE_GA_KICKOFF_OWNER_INVALID'
-
-    $numericSignerPath = New-KickoffTestManifest 'numeric-signer' {
-        param($manifest)
-        $manifest.namedGaSigners.signers[0].name = '00001'
-    }
-    Invoke-KickoffValidatorCase `
-        -Name 'development code is not a formal signer' `
-        -ManifestPath $numericSignerPath -ShouldPass $false `
-        -InputId 'NAMED_GA_SIGNERS' `
-        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_INVALID'
-
-    $signerSetPath = New-KickoffTestManifest 'signer-set' {
-        param($manifest)
-        $manifest.namedGaSigners.signers = @(
-            $manifest.namedGaSigners.signers | Select-Object -First 4)
-    }
-    Invoke-KickoffValidatorCase -Name 'five signer roles are fixed' `
-        -ManifestPath $signerSetPath -ShouldPass $false `
-        -InputId 'NAMED_GA_SIGNERS' `
-        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_SET_INVALID'
-
-    $signerAuthorityPath = New-KickoffTestManifest 'signer-authority' {
-        param($manifest)
-        $manifest.namedGaSigners.signers[0].approvalAuthorityConfirmed = $false
-    }
-    Invoke-KickoffValidatorCase -Name 'signer authority is confirmed' `
-        -ManifestPath $signerAuthorityPath -ShouldPass $false `
-        -InputId 'NAMED_GA_SIGNERS' `
-        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_INVALID'
-
-    $teamCapacityPath = New-KickoffTestManifest 'team-capacity' {
-        param($manifest)
-        $manifest.coreTeamAllocation.members = @(
-            $manifest.coreTeamAllocation.members | Where-Object {
-                $_.name -ne 'Backend Two'
-            })
-    }
-    Invoke-KickoffValidatorCase -Name 'two backend allocations are required' `
-        -ManifestPath $teamCapacityPath -ShouldPass $false `
-        -InputId 'CORE_TEAM_ALLOCATION' `
-        -ExpectedError 'SPACE_GA_KICKOFF_TEAM_CAPACITY_INVALID'
-
-    $teamWindowPath = New-KickoffTestManifest 'team-window' {
-        param($manifest)
-        $manifest.coreTeamAllocation.members[0].endDate = '2026-09-30'
-    }
-    Invoke-KickoffValidatorCase -Name 'team allocation covers target GA' `
-        -ManifestPath $teamWindowPath -ShouldPass $false `
-        -InputId 'CORE_TEAM_ALLOCATION' `
-        -ExpectedError 'SPACE_GA_KICKOFF_TEAM_WINDOW_INVALID'
-
-    $sharedPath = New-KickoffTestManifest 'shared-roles' {
-        param($manifest)
-        $manifest.coreTeamAllocation.sharedAssignments = @(
-            $manifest.coreTeamAllocation.sharedAssignments | Select-Object -First 4)
-    }
-    Invoke-KickoffValidatorCase -Name 'shared roles are complete' `
-        -ManifestPath $sharedPath -ShouldPass $false `
-        -InputId 'CORE_TEAM_ALLOCATION' `
-        -ExpectedError 'SPACE_GA_KICKOFF_SHARED_ROLES_INVALID'
 
     $cadCountPath = New-KickoffTestManifest 'cad-count' {
         param($manifest)
@@ -593,11 +472,11 @@ try {
 
     $sectionEvidencePath = New-KickoffTestManifest 'section-evidence' {
         param($manifest)
-        $manifest.coreTeamAllocation.completionEvidence.acceptedBy = 'Different Person'
+        $manifest.authorizedGoldenCadCandidates.completionEvidence.acceptedBy = 'Different Person'
     }
     Invoke-KickoffValidatorCase -Name 'completion evidence binds section owner' `
         -ManifestPath $sectionEvidencePath -ShouldPass $false `
-        -InputId 'CORE_TEAM_ALLOCATION' `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
         -ExpectedError 'SPACE_GA_KICKOFF_EVIDENCE_ACCEPTOR_MISMATCH'
 
     if ($global:LASTEXITCODE -ne 0) {

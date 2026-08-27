@@ -1,71 +1,24 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
   "scope": "CoreGA",
-  "asOfDate": "2026-08-15",
+  "deliveryMode": "SoloDeveloper",
+  "asOfDate": "2026-08-26",
   "declaredStatus": "NoGo",
   "baselinePercent": 72,
   "gaPercent": 100,
   "kickoffDate": null,
   "targetGaDate": null,
-  "progressPolicy": "Progress may equal 100 only when every blocking gate is Accepted, every external input is Complete, and all five named signers are Signed.",
+  "progressPolicy": "Progress may equal 100 only when every blocking result gate is Accepted, every external input is Complete, and the single delivery owner is Signed.",
   "signers": [
     {
-      "role": "Product",
-      "name": null,
-      "status": "Pending",
-      "evidence": []
-    },
-    {
-      "role": "QA",
-      "name": null,
-      "status": "Pending",
-      "evidence": []
-    },
-    {
-      "role": "WMS",
-      "name": null,
-      "status": "Pending",
-      "evidence": []
-    },
-    {
-      "role": "Architecture",
-      "name": null,
-      "status": "Pending",
-      "evidence": []
-    },
-    {
-      "role": "Security",
+      "role": "DeliveryOwner",
       "name": null,
       "status": "Pending",
       "evidence": []
     }
   ],
   "externalInputs": [
-    {
-      "id": "NAMED_GA_SIGNERS",
-      "ownerRole": "Product",
-      "ownerName": null,
-      "deadlineMilestone": "M0",
-      "status": "Pending",
-      "evidenceFormat": [
-        "Five-role responsibility register with real names and approval authority"
-      ],
-      "verificationManifest": null,
-      "evidence": []
-    },
-    {
-      "id": "CORE_TEAM_ALLOCATION",
-      "ownerRole": "EngineeringManagement",
-      "ownerName": null,
-      "deadlineMilestone": "M0",
-      "status": "Pending",
-      "evidenceFormat": [
-        "Named allocation for two backend, two frontend/3D, one QA, and shared roles"
-      ],
-      "verificationManifest": null,
-      "evidence": []
-    },
     {
       "id": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
       "ownerRole": "BusinessDataOwner",
@@ -110,14 +63,14 @@
     {
       "id": "WP0_BASELINE_AND_GOVERNANCE",
       "blocking": true,
-      "ownerRole": "ProductQA",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M0",
       "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Remote main commit and post-merge smoke",
-        "Named owners, target dates and evidence register"
+        "Delivery owner, target dates and evidence register"
       ],
       "evidencePaths": [
         "docs/project-memory/PROJECT_STATE.md",
@@ -126,7 +79,7 @@
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
-        "All five internal signers are named",
+        "One delivery owner is named; no distinct-person or staffing-quorum gate applies",
         "Golden CAD, Provider experiment and Pilot owners are named",
         "Kickoff and target GA dates are recorded"
       ]
@@ -134,14 +87,14 @@
     {
       "id": "WP1_DESIGN_V1_MANUAL_MODELING",
       "blocking": true,
-      "ownerRole": "BackendBFrontendAQA",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M1",
       "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Automated blank-canvas modeling and code Preview/Apply results",
-        "Independent QA acceptance record"
+        "Repeatable self-review record bound to the tested commit"
       ],
       "evidencePaths": [
         "docs/space/reports/2026-08-15-space-draft-summary-metadata.md",
@@ -162,7 +115,7 @@
     {
       "id": "WP2_CAD_START_WIZARD",
       "blocking": true,
-      "ownerRole": "BackendAFrontendAQA",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M1",
       "implementationStatus": "Complete",
@@ -183,7 +136,7 @@
     {
       "id": "WP3_SITE_PRIMARY_BACKUP_PROVIDERS",
       "blocking": true,
-      "ownerRole": "BackendASecurityArchitectureDevOps",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M2",
       "implementationStatus": "Partial",
@@ -213,7 +166,7 @@
     {
       "id": "WP4_THREE_PATH_END_TO_END",
       "blocking": true,
-      "ownerRole": "FrontendABackendBQA",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M2",
       "implementationStatus": "Partial",
@@ -250,7 +203,7 @@
     {
       "id": "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
       "blocking": true,
-      "ownerRole": "FrontendBQA",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M2",
       "implementationStatus": "Complete",
@@ -258,7 +211,7 @@
       "evidenceFormat": [
         "Published-only production-equivalent Viewer E2E",
         "Iris Xe WebGL2 raw performance samples",
-        "Independent keyboard, contrast and assistive-technology signoff"
+        "Recorded keyboard, contrast and assistive-technology checks"
       ],
       "evidencePaths": [
         "docs/space/reports/2026-08-14-space-viewer-v13-ga.md",
@@ -277,7 +230,7 @@
     {
       "id": "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY",
       "blocking": true,
-      "ownerRole": "BackendBQAWMSSecurity",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M2",
       "implementationStatus": "Complete",
@@ -285,7 +238,7 @@
       "evidenceFormat": [
         "Real SQL Server and CP6 WMS recovery exercise",
         "Alert routing, backup restore and reconciliation evidence",
-        "Independent security negative test report"
+        "Repeatable security negative test report"
       ],
       "evidencePaths": [
         "docs/space/reports/2026-08-14-space-publish-warning-acknowledgement.md",
@@ -305,7 +258,7 @@
     {
       "id": "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
       "blocking": true,
-      "ownerRole": "QABusinessDataOwnerProviderEngineering",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M2",
       "implementationStatus": "ExternalExecution",
@@ -337,7 +290,7 @@
     {
       "id": "WP8_TWO_SITE_PILOT_AND_SIGNOFF",
       "blocking": true,
-      "ownerRole": "ProductImplementationQAWMS",
+      "ownerRole": "DeliveryOwner",
       "ownerName": null,
       "deadlineMilestone": "M4",
       "implementationStatus": "ExternalExecution",
@@ -345,7 +298,7 @@
       "evidenceFormat": [
         "Greenfield Site 14-day immutable run log",
         "Retrofit Site 14-day immutable run log",
-        "Defect closure, business outcome and five-role signoff pack"
+        "Defect closure, business outcome and delivery-owner signoff pack"
       ],
       "evidencePaths": [
         "docs/space/acceptance/v1.3-ga/pilot-evidence-protocol.md",
@@ -363,7 +316,7 @@
         "Old Published remains available, Viewer is Published-only and there is no long-term dual write",
         "Customer warehouse representatives and implementation leads confirm both Site outcomes",
         "The structured Pilot manifest is content-hash attested and passes the WP8 validator",
-        "All five internal signers are Signed"
+        "The delivery owner is Signed"
       ]
     }
   ]

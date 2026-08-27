@@ -267,11 +267,14 @@ if (!$manifestFullPath.StartsWith(
 $manifest = Get-Content -LiteralPath $manifestFullPath -Raw |
     ConvertFrom-SpaceGaJson
 
-if ($manifest.schemaVersion -ne 1) {
-    Add-GoldenValidationError 'SPACE_GA_GOLDEN_SCHEMA_INVALID: schemaVersion must be 1.'
+if ($manifest.schemaVersion -ne 2) {
+    Add-GoldenValidationError 'SPACE_GA_GOLDEN_SCHEMA_INVALID: schemaVersion must be 2.'
 }
 if ($manifest.programId -ne 'CP6_SPACE_STUDIO_V1_CORE_GA') {
     Add-GoldenValidationError 'SPACE_GA_GOLDEN_PROGRAM_INVALID: programId is not the frozen Core GA program.'
+}
+if ($manifest.deliveryMode -ne 'SoloDeveloper') {
+    Add-GoldenValidationError 'SPACE_GA_GOLDEN_DELIVERY_MODE_INVALID: deliveryMode must remain SoloDeveloper.'
 }
 if ($manifest.evidenceClass -ne 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE') {
     Add-GoldenValidationError 'SPACE_GA_GOLDEN_CLASS_INVALID: evidenceClass must be WP7_GOLDEN_CAD_FORMAL_EVIDENCE.'
@@ -357,25 +360,19 @@ foreach ($sample in $samples) {
     }
 
     $annotation = $sample.annotation
-    $annotatorA = [string]$annotation.annotatorA
-    $annotatorB = [string]$annotation.annotatorB
-    $arbitrator = [string]$annotation.qaArbitrator
-    if (!(Test-GoldenPersonName $annotatorA) -or
-        !(Test-GoldenPersonName $annotatorB) -or
-        !(Test-GoldenPersonName $arbitrator) -or
-        $annotatorA.Equals($annotatorB, [System.StringComparison]::OrdinalIgnoreCase) -or
-        $annotatorA.Equals($arbitrator, [System.StringComparison]::OrdinalIgnoreCase) -or
-        $annotatorB.Equals($arbitrator, [System.StringComparison]::OrdinalIgnoreCase)) {
-        Add-GoldenValidationError "SPACE_GA_GOLDEN_ANNOTATORS_INVALID: $ownerId requires two distinct annotators and a distinct QA arbitrator."
+    $reviewedBy = [string]$annotation.reviewedBy
+    if (!(Test-GoldenPersonName $reviewedBy) -or
+        [string]$annotation.reviewMethod -ne 'SoloReview') {
+        Add-GoldenValidationError "SPACE_GA_GOLDEN_REVIEWER_INVALID: $ownerId requires one real reviewer and reviewMethod=SoloReview."
     }
     Test-GoldenAttestedEvidence -OwnerId "$ownerId authorization" -Evidence $sample.authorizationEvidence
     Test-GoldenAttestedEvidence -OwnerId "$ownerId deidentification" -Evidence $sample.deidentificationEvidence
     Test-GoldenAttestedEvidence -OwnerId "$ownerId annotation" -Evidence $annotation.evidence
-    if ((Test-GoldenPersonName $arbitrator) -and
+    if ((Test-GoldenPersonName $reviewedBy) -and
         !([string]$annotation.evidence.acceptedBy).Equals(
-            $arbitrator,
+            $reviewedBy,
             [System.StringComparison]::OrdinalIgnoreCase)) {
-        Add-GoldenValidationError "SPACE_GA_GOLDEN_ARBITRATION_MISMATCH: $ownerId annotation evidence must be accepted by its QA arbitrator."
+        Add-GoldenValidationError "SPACE_GA_GOLDEN_REVIEWER_MISMATCH: $ownerId annotation evidence must be accepted by its reviewer."
     }
 }
 

@@ -254,95 +254,6 @@ function Test-KickoffSectionHeader {
     return $true
 }
 
-function Test-NamedGaSigners {
-    param($Section)
-
-    if (!(Test-KickoffSectionHeader `
-        -RequiredInputId 'NAMED_GA_SIGNERS' `
-        -Section $Section)) {
-        return
-    }
-    $requiredRoles = @('Product', 'QA', 'WMS', 'Architecture', 'Security')
-    $signers = @($Section.signers)
-    $roles = @($signers | ForEach-Object { [string]$_.role })
-    if ($signers.Count -ne 5 -or
-        @($roles | Sort-Object -Unique).Count -ne 5 -or
-        @($requiredRoles | Where-Object { $_ -notin $roles }).Count -gt 0) {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_SIGNER_SET_INVALID: exactly the five frozen GA signer roles are required.'
-    }
-    foreach ($signer in $signers) {
-        $role = [string]$signer.role
-        if (!(Test-KickoffPersonName $signer.name) -or
-            $signer.approvalAuthorityConfirmed -ne $true) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_SIGNER_INVALID: $role must have a real name and confirmed approval authority."
-        }
-        Test-KickoffEvidence `
-            -OwnerId "GA signer $role appointment" `
-            -Evidence $signer.appointmentEvidence
-    }
-}
-
-function Test-CoreTeamAllocation {
-    param(
-        $Section,
-        [Nullable[DateTime]]$Kickoff,
-        [Nullable[DateTime]]$TargetGa
-    )
-
-    if (!(Test-KickoffSectionHeader `
-        -RequiredInputId 'CORE_TEAM_ALLOCATION' `
-        -Section $Section)) {
-        return
-    }
-    $members = @($Section.members)
-    $memberNames = @($members | ForEach-Object { [string]$_.name })
-    if (@($memberNames | Sort-Object -Unique).Count -ne $members.Count) {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_TEAM_DUPLICATE: core team members must be distinct people.'
-    }
-    foreach ($member in $members) {
-        $name = [string]$member.name
-        $discipline = [string]$member.discipline
-        $allocation = ConvertTo-KickoffInteger $member.allocationPercent
-        $start = ConvertTo-KickoffDate $member.startDate
-        $end = ConvertTo-KickoffDate $member.endDate
-        if (!(Test-KickoffPersonName $name) -or
-            $discipline -notin @('Backend', 'Frontend3D', 'QA') -or
-            $null -eq $allocation -or $allocation -lt 1 -or $allocation -gt 100) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_TEAM_MEMBER_INVALID: $name must have a valid discipline and 1-100 percent allocation."
-        }
-        if ($null -eq $start -or $null -eq $end -or $end -lt $start -or
-            ($null -ne $Kickoff -and $start -gt $Kickoff) -or
-            ($null -ne $TargetGa -and $end -lt $TargetGa)) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_TEAM_WINDOW_INVALID: $name allocation must cover kickoff through target GA."
-        }
-        Test-KickoffEvidence `
-            -OwnerId "Core team allocation $name" `
-            -Evidence $member.allocationEvidence
-    }
-    if (@($members | Where-Object { $_.discipline -eq 'Backend' }).Count -lt 2 -or
-        @($members | Where-Object { $_.discipline -eq 'Frontend3D' }).Count -lt 2 -or
-        @($members | Where-Object { $_.discipline -eq 'QA' }).Count -lt 1) {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_TEAM_CAPACITY_INVALID: at least two Backend, two Frontend3D and one QA allocations are required.'
-    }
-
-    $requiredSharedRoles = @('Product', 'WMS', 'Architecture', 'Security', 'DevOps')
-    $assignments = @($Section.sharedAssignments)
-    $assignmentRoles = @($assignments | ForEach-Object { [string]$_.role })
-    if ($assignments.Count -ne 5 -or
-        @($assignmentRoles | Sort-Object -Unique).Count -ne 5 -or
-        @($requiredSharedRoles | Where-Object { $_ -notin $assignmentRoles }).Count -gt 0) {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_SHARED_ROLES_INVALID: Product, WMS, Architecture, Security and DevOps assignments are required.'
-    }
-    foreach ($assignment in $assignments) {
-        if (!(Test-KickoffPersonName $assignment.name)) {
-            Add-KickoffValidationError "SPACE_GA_KICKOFF_SHARED_OWNER_INVALID: $($assignment.role) must name a real person."
-        }
-        Test-KickoffEvidence `
-            -OwnerId "Shared assignment $($assignment.role)" `
-            -Evidence $assignment.assignmentEvidence
-    }
-}
-
 function Test-AuthorizedGoldenCadCandidates {
     param($Section)
 
@@ -538,16 +449,15 @@ if (!$manifestFullPath.StartsWith(
 $manifest = Get-Content -LiteralPath $manifestFullPath -Raw |
     ConvertFrom-SpaceGaJson
 $requiredInputIds = @(
-    'NAMED_GA_SIGNERS',
-    'CORE_TEAM_ALLOCATION',
     'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
     'PROVIDER_APPROVALS_AND_ISOLATED_WORKER',
     'TWO_PILOT_SITES_AND_WMS_WINDOWS')
 if ((Test-KickoffText $InputId) -and $InputId -notin $requiredInputIds) {
     Add-KickoffValidationError "SPACE_GA_KICKOFF_INPUT_INVALID: unsupported external input id $InputId."
 }
-if ($manifest.schemaVersion -ne 1 -or
+if ($manifest.schemaVersion -ne 2 -or
     $manifest.programId -ne 'CP6_SPACE_STUDIO_V1_CORE_GA' -or
+    $manifest.deliveryMode -ne 'SoloDeveloper' -or
     $manifest.evidenceClass -ne 'M0_EXTERNAL_INPUT_READINESS') {
     Add-KickoffValidationError 'SPACE_GA_KICKOFF_SCHEMA_INVALID: schema, program or evidence class does not match the frozen M0 contract.'
 }
@@ -568,8 +478,6 @@ if ($null -eq $kickoffDate -or $null -eq $targetGaDate -or
 }
 
 $sections = [ordered]@{
-    NAMED_GA_SIGNERS = $manifest.namedGaSigners
-    CORE_TEAM_ALLOCATION = $manifest.coreTeamAllocation
     AUTHORIZED_GOLDEN_CAD_CANDIDATES = $manifest.authorizedGoldenCadCandidates
     PROVIDER_APPROVALS_AND_ISOLATED_WORKER = $manifest.providerApprovalsAndIsolatedWorker
     TWO_PILOT_SITES_AND_WMS_WINDOWS = $manifest.twoPilotSitesAndWmsWindows
@@ -582,15 +490,6 @@ else {
 }
 foreach ($currentInputId in $inputsToValidate) {
     switch ($currentInputId) {
-        'NAMED_GA_SIGNERS' {
-            Test-NamedGaSigners $sections[$currentInputId]
-        }
-        'CORE_TEAM_ALLOCATION' {
-            Test-CoreTeamAllocation `
-                -Section $sections[$currentInputId] `
-                -Kickoff $kickoffDate `
-                -TargetGa $targetGaDate
-        }
         'AUTHORIZED_GOLDEN_CAD_CANDIDATES' {
             Test-AuthorizedGoldenCadCandidates $sections[$currentInputId]
         }

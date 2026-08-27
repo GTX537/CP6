@@ -67,7 +67,7 @@
 - 元素必须包含 `sourceRefs`，至少追踪到 Layer、Handle 或 Block。
 - 关系必须显式记录 Floor、Zone、Aisle、Rack 和 Location 父子关系。
 - 不确定对象进入 Expected Issue，不得为了提高准确率从分母中删除。
-- 两名标注人员分开标注；不一致由 QA 仲裁并提升答案版本。
+- 一名实名复核人完成可追溯标注复核；发现不一致时提升答案版本并重跑，不要求第二标注人或独立 QA。
 
 ## 7. 匹配与容差
 

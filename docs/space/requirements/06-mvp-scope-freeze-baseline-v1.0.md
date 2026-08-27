@@ -168,7 +168,7 @@ ADR 只解决技术方案，不得重新打开 D、T 或架构决策。
 - 把 AI Apply 与 Publish Saga 合并成一个动作。
 - 放宽租户隔离、原文件外发或外部用户可见范围。
 
-破坏性变更必须提交 Scope Change RFC，至少记录：原因、受影响 D/T/Epic、数据迁移、兼容期、权限影响、指标影响、估算变化、回滚方案和五方批准。
+破坏性变更必须提交 Scope Change RFC，至少记录：原因、受影响 D/T/Epic、数据迁移、兼容期、权限影响、指标影响、估算变化、回滚方案和 DeliveryOwner 确认。
 
 ## 9. 当前实现状态
 
@@ -255,7 +255,7 @@ Beta 可以仅面向内部租户用户。外部 Portal 可以试点，但不是 
 | WMS 负责人确认模拟与发布闭环 | Pending role evidence | 签字表 |
 | 安全负责人确认外发/权限边界 | Pending role evidence | 签字表 |
 
-范围已经冻结，E00/E01 可以启动。`Development Ready` 的正式发布标签在五方签字证据齐全后生效。
+范围已经冻结，E00/E01 可以启动。`Development Ready` 的正式发布标签在 DeliveryOwner 签署证据齐全后生效。
 
 ## 13. 签字记录
 

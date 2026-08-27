@@ -5,7 +5,7 @@
   "singleDeveloperMode": true,
   "operatorCount": 1,
   "formalGaEligible": false,
-  "warning": "Development-only simulated personas. They are not employees, production accounts, external evidence owners, Pilot participants, or formal GA signers.",
+  "warning": "Development-only simulated personas. They are not the real delivery owner, production accounts, external evidence owners, or Pilot participants.",
   "personas": [
     {
       "personCode": "00001",
@@ -55,9 +55,8 @@
     "Task ownership during single-developer implementation"
   ],
   "prohibitedUsage": [
-    "Formal GA signatures",
+    "Delivery-owner signature",
     "External evidence acceptance",
-    "Core team capacity proof",
     "Production access",
     "Customer or two-site Pilot confirmation"
   ]
