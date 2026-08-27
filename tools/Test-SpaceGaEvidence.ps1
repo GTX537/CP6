@@ -181,23 +181,26 @@ function Test-AttestedEvidence {
     }
 }
 
-if ($manifest.schemaVersion -ne 1) {
-    Add-ValidationError 'schemaVersion must be 1.'
+if ($manifest.schemaVersion -ne 2) {
+    Add-ValidationError 'schemaVersion must be 2.'
 }
 if ($manifest.programId -ne 'CP6_SPACE_STUDIO_V1_CORE_GA') {
     Add-ValidationError 'programId is not the frozen Core GA program.'
+}
+if ($manifest.deliveryMode -ne 'SoloDeveloper') {
+    Add-ValidationError 'deliveryMode must remain SoloDeveloper.'
 }
 if ($manifest.baselinePercent -ne 72 -or $manifest.gaPercent -ne 100) {
     Add-ValidationError 'The frozen 72-to-100 progress policy changed.'
 }
 
-$requiredSignerRoles = @('Product', 'QA', 'WMS', 'Architecture', 'Security')
+$requiredSignerRoles = @('DeliveryOwner')
 $signerRoles = @($manifest.signers | ForEach-Object { $_.role })
 if (@($signerRoles | Sort-Object -Unique).Count -ne $signerRoles.Count) {
     Add-ValidationError 'Signer roles must be unique.'
 }
 if ($signerRoles.Count -ne $requiredSignerRoles.Count) {
-    Add-ValidationError 'The five-role signer set cannot be expanded or reduced.'
+    Add-ValidationError 'Exactly one DeliveryOwner signer is required.'
 }
 foreach ($role in $requiredSignerRoles) {
     if ($role -notin $signerRoles) {
@@ -234,8 +237,6 @@ foreach ($signer in @($manifest.signers)) {
 }
 
 $requiredInputIds = @(
-    'NAMED_GA_SIGNERS',
-    'CORE_TEAM_ALLOCATION',
     'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
     'PROVIDER_APPROVALS_AND_ISOLATED_WORKER',
     'TWO_PILOT_SITES_AND_WMS_WINDOWS'
@@ -333,26 +334,6 @@ foreach ($input in @($manifest.externalInputs)) {
                         -InputId ([string]$input.id) `
                         -ExpectedOwnerName ([string]$input.ownerName) |
                         Out-Null
-                    if ($input.id -eq 'NAMED_GA_SIGNERS') {
-                        $kickoffManifest = Get-Content `
-                            -LiteralPath $kickoffManifestFullPath `
-                            -Raw | ConvertFrom-SpaceGaJson
-                        foreach ($signer in @($manifest.signers)) {
-                            $kickoffSigner = @(
-                                $kickoffManifest.namedGaSigners.signers |
-                                Where-Object { $_.role -eq $signer.role })[0]
-                            if (!(Test-PersonName $signer.name) -or
-                                $null -eq $kickoffSigner -or
-                                !([string]$signer.name).Equals(
-                                    [string]$kickoffSigner.name,
-                                    [System.StringComparison]::OrdinalIgnoreCase)) {
-                                Add-ValidationError (
-                                    'SPACE_GA_KICKOFF_SIGNER_INDEX_MISMATCH: ' +
-                                    "GA index signer $($signer.role) must match " +
-                                    'the named kickoff register.')
-                            }
-                        }
-                    }
                 }
                 catch {
                     Add-ValidationError (
@@ -510,7 +491,7 @@ foreach ($gate in @($manifest.gates)) {
             }).Count -gt 0) {
                 Add-ValidationError (
                     'SPACE_GA_PILOT_SIGNERS_INCOMPLETE: WP8 cannot be ' +
-                    'Accepted before all five internal GA signers are Signed.')
+                    'Accepted before the DeliveryOwner is Signed.')
             }
             $pilotManifestReference = [string]$gate.verificationManifest
             if (!(Test-Text $pilotManifestReference)) {

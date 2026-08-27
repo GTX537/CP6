@@ -445,7 +445,7 @@ stateDiagram-v2
 
 发布人不能仅靠 URL 猜测发布其他 Site；每一步都调用 `ISpaceAccessEvaluator`。外部组织用户永远不能访问发布、重试、来源或对账接口。
 
-高风险动作建议要求第二人审批：
+高风险动作由同一 `DeliveryOwner` 执行显式二次确认并保存前后快照、原因、结果和恢复点，不要求第二人审批：
 
 - Location 编码变更。
 - 大量 Disable。
@@ -460,7 +460,7 @@ stateDiagram-v2
 - TenantId、SiteId、Target/BaseVersionId。
 - ValidationRunId、PlanId、PlanHash、AttemptId。
 - AdapterId、CapabilityHash、Batch OperationKey。
-- Job/Attempt、CorrelationId、操作者/批准者。
+- Job/Attempt、CorrelationId、操作者/确认者（允许同一人）。
 - 逐阶段数量、耗时和错误分类。
 
 指标：

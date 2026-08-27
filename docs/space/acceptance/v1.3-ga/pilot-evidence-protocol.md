@@ -15,9 +15,9 @@
 - 自动恢复不超过 15 分钟，人工对账恢复不超过 240 分钟；没有故障时对应事件数和最大时长都写 `0`。
 - 故障期间旧 Published 持续可用，生产 Viewer 只消费 Published，Site 不进入长期双写。
 - 每仓保存真实建模时长、人工修改量、恢复、缺陷、开放问题和业务结果证据。
-- 每仓客户仓库代表与实施负责人分别实名确认，且确认人与证明对象 `acceptedBy` 一致。
+- 每仓客户仓库代表与实施负责人实名确认，且确认人与证明对象 `acceptedBy` 一致；同一位获授权人员可以兼任两项确认，不要求不同姓名。
 
-五个内部 GA 签字人继续由 `ga-evidence-index.json/signers` 管理，客户仓库代表和实施负责人不是 GA 审批人。
+唯一内部 `DeliveryOwner` 签字由 `ga-evidence-index.json/signers` 管理；现场确认只证明 Pilot 事实。
 
 ## 2. 安全的数据边界
 
@@ -46,7 +46,7 @@
 | `recovery` | 有事件时记录真实最大时长；无事件时事件数和最大时长均为零 |
 | `boundaries` | `publishedViewerOnly` 和 `noLongTermDualWrite` 均为 `true` |
 | `evidence` | 运行日志、指标、缺陷关闭、业务结果、开放问题附录五类证明对象 |
-| `confirmations` | 客户仓库代表和实施负责人实名及其独立证明对象 |
+| `confirmations` | 客户仓库代表和实施负责人实名及其证明对象；允许同一获授权人员兼任 |
 
 证明对象统一格式：
 
@@ -74,13 +74,13 @@
 2. 计算最终 Manifest 自身的 SHA-256。
 3. 在 `WP8_TWO_SITE_PILOT_AND_SIGNOFF.verificationManifest` 填入该仓库相对路径。
 4. 在该 Gate 的 `acceptedEvidence` 中至少增加一个指向同一 Manifest、哈希匹配、由真实 Gate Owner 接受的证明对象；同时保留必要的外部证明引用。
-5. 只有现场条件、两个客户/实施确认和五方内部签字全部完成后，才把 WP8 改为 `Accepted`。
+5. 只有现场条件、客户/实施确认和 `DeliveryOwner` 签字全部完成后，才把 WP8 改为 `Accepted`。
 6. 运行 `./tools/Test-SpaceGaEvidence.ps1 -RequireGaReady`。该命令会再次校验 Manifest，不接受模板或测试 fixture。
 
 ## 5. 失败处理
 
 - Pilot 中断后重新起算连续 14 天，不拼接两个不连续窗口。
 - 结束日期不能在未来；运行、指标、缺陷、业务结果、开放问题和现场确认均不得在该仓 Pilot 结束前预签。
-- 出现 S1/S2 时本轮不能签收；修复后按 QA 决定重新执行完整 Pilot 窗口。
+- 出现 S1/S2 时本轮不能签收；修复后由 `DeliveryOwner` 决定并记录是否重新执行完整 Pilot 窗口。
 - S3 未关闭、恢复超时、一致性不足、旧 Published 不可用、Viewer 读取 Draft 或存在长期双写时，Manifest 保持 `Pending`，不得手改为 `Pass`。
 - 证明对象变更必须产生新哈希；不得覆盖旧对象后保留旧 SHA。

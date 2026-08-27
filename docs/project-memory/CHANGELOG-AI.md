@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-26：Space Studio 单人交付门禁
+
+- 核心 GA 证据合同升为 Schema 2：正式签字收敛为一个 `DeliveryOwner`，删除五角色实名签字及 2 Backend + 2 Frontend3D + 1 QA 人力配额。
+- M0 外部输入从五类收敛为授权 CAD、Provider/隔离 Worker、双仓/WMS 窗口三类；同一实名 Owner 可拥有并接受全部输入。
+- 黄金 CAD 从双标注 + 独立 QA 仲裁改为单一实名 `reviewedBy`；Pilot 的客户/实施确认允许同一获授权人员兼任；高风险发布改为同一 Owner 的显式二次确认和可恢复证据。
+- 真实 CAD、主备 Provider、SQL/WMS/Published Viewer、性能、恢复、安全负向和双仓 14 天 Pilot 标准保持不变。当前仍为 72% / NoGo，但人头不足不再是阻塞项。
+- GA 总门禁 35、开工 22、黄金 CAD 31、Pilot 21、开发角色种子 8 个专项场景全部通过。
+
 ## 2026-08-26：Release/CD 仓库与平台工程结案
 
 - Shadow S0 经 PR #32 合入 `main@9009abe6`；Azure 新建定向授权的 `CP6 Release Shadow` Definition #5，Run #145 绑定同一 SHA 并在无 Secret、无 Registry/Environment 权限下完成离线验证，结果为 `Succeeded`，Artifact 为 `cp6-release-shadow-s0-145`。

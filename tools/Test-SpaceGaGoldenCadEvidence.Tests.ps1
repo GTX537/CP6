@@ -128,7 +128,6 @@ function New-ValidGoldenManifest {
         }
         $layout = 'L' + ((($index - 1) % 5) + 1)
         $format = if ($index % 2 -eq 0) { 'DWG' } else { 'DXF' }
-        $arbitrator = "QA Arbitrator $index"
         $samples.Add([pscustomobject]@{
             sampleRef = ('urn:cp6-space-golden-cad:sample-{0:d2}' -f $index)
             sourceSha256 = $index.ToString('x64')
@@ -141,12 +140,11 @@ function New-ValidGoldenManifest {
             authorizationEvidence = New-GoldenAttestation -Id "sample-$index-auth"
             deidentificationEvidence = New-GoldenAttestation -Id "sample-$index-deid"
             annotation = [pscustomobject]@{
-                annotatorA = "Annotator A $index"
-                annotatorB = "Annotator B $index"
-                qaArbitrator = $arbitrator
+                reviewedBy = 'Zhang Wei'
+                reviewMethod = 'SoloReview'
                 evidence = New-GoldenAttestation `
                     -Id "sample-$index-annotation" `
-                    -AcceptedBy $arbitrator
+                    -AcceptedBy 'Zhang Wei'
             }
         })
     }
@@ -154,8 +152,9 @@ function New-ValidGoldenManifest {
     $datasetSha256 = 'a' * 64
     $environmentSha256 = 'b' * 64
     return [pscustomobject]@{
-        schemaVersion = 1
+        schemaVersion = 2
         programId = 'CP6_SPACE_STUDIO_V1_CORE_GA'
+        deliveryMode = 'SoloDeveloper'
         evidenceClass = 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
         conclusion = 'Pass'
         dataset = [pscustomobject]@{
@@ -358,22 +357,21 @@ try {
         -ManifestPath $holdoutLeakPath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_HOLDOUT_LEAK'
 
-    $annotatorPath = New-GoldenTestManifest 'annotators' {
+    $reviewerPath = New-GoldenTestManifest 'reviewer' {
         param($manifest)
-        $manifest.dataset.samples[0].annotation.annotatorB = (
-            $manifest.dataset.samples[0].annotation.annotatorA)
+        $manifest.dataset.samples[0].annotation.reviewedBy = 'QA'
     }
-    Invoke-GoldenValidatorCase -Name 'two annotators are independent' `
-        -ManifestPath $annotatorPath -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_GOLDEN_ANNOTATORS_INVALID'
+    Invoke-GoldenValidatorCase -Name 'one real reviewer is required' `
+        -ManifestPath $reviewerPath -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_REVIEWER_INVALID'
 
-    $arbitratorPath = New-GoldenTestManifest 'arbitrator' {
+    $reviewerEvidencePath = New-GoldenTestManifest 'reviewer-evidence' {
         param($manifest)
         $manifest.dataset.samples[0].annotation.evidence.acceptedBy = 'Different Person'
     }
-    Invoke-GoldenValidatorCase -Name 'QA arbitrator signs annotation evidence' `
-        -ManifestPath $arbitratorPath -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_GOLDEN_ARBITRATION_MISMATCH'
+    Invoke-GoldenValidatorCase -Name 'reviewer signs annotation evidence' `
+        -ManifestPath $reviewerEvidencePath -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_REVIEWER_MISMATCH'
 
     $sourceSetPath = New-GoldenTestManifest 'source-set-hash' {
         param($manifest)

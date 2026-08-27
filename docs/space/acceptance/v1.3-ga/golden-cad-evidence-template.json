@@ -1,6 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
   "evidenceClass": "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
   "conclusion": "Pending",
   "dataset": {
@@ -31,9 +32,8 @@
         "authorizationEvidence": {},
         "deidentificationEvidence": {},
         "annotation": {
-          "annotatorA": null,
-          "annotatorB": null,
-          "qaArbitrator": null,
+          "reviewedBy": null,
+          "reviewMethod": "SoloReview",
           "evidence": {}
         }
       }

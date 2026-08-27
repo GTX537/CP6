@@ -112,8 +112,8 @@ function Complete-Wp7Prerequisites {
     )
 
     $inputOwners = [ordered]@{
-        AUTHORIZED_GOLDEN_CAD_CANDIDATES = 'Liu Yan'
-        PROVIDER_APPROVALS_AND_ISOLATED_WORKER = 'Qian Lin'
+        AUTHORIZED_GOLDEN_CAD_CANDIDATES = 'Zhang Wei'
+        PROVIDER_APPROVALS_AND_ISOLATED_WORKER = 'Zhang Wei'
     }
     foreach ($inputId in $inputOwners.Keys) {
         $input = @($Manifest.externalInputs | Where-Object {
@@ -330,13 +330,13 @@ try {
     $positivePath = New-TestManifest 'positive-local-attestations' {
         param($manifest)
         Set-GateAccepted -Manifest $manifest -Attestation $localAttestation
-        $signer = @($manifest.signers | Where-Object { $_.role -eq 'Product' })[0]
+        $signer = @($manifest.signers | Where-Object { $_.role -eq 'DeliveryOwner' })[0]
         $signer.name = 'Zhang Wei'
         $signer.status = 'Signed'
         $signer.evidence = @($localAttestation)
         Set-ExternalInputComplete `
             -Manifest $manifest `
-            -InputId 'CORE_TEAM_ALLOCATION' `
+            -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
             -OwnerName 'Zhang Wei' `
             -KickoffReference $kickoffAcceptanceReference `
             -KickoffSha256 $kickoffAcceptanceSha256
@@ -350,7 +350,7 @@ try {
         param($manifest)
         Set-ExternalInputComplete `
             -Manifest $manifest `
-            -InputId 'CORE_TEAM_ALLOCATION' `
+            -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
             -OwnerName '00001' `
             -KickoffReference $kickoffAcceptanceReference `
             -KickoffSha256 $kickoffAcceptanceSha256
@@ -364,7 +364,7 @@ try {
     $numericSignerPath = New-TestManifest 'numeric-development-signer' {
         param($manifest)
         $signer = @($manifest.signers | Where-Object {
-            $_.role -eq 'Product'
+            $_.role -eq 'DeliveryOwner'
         })[0]
         $signer.name = '00001'
         $signer.status = 'Signed'
@@ -383,7 +383,7 @@ try {
     $missingKickoffPath = New-TestManifest 'missing-kickoff-manifest' {
         param($manifest)
         $input = @($manifest.externalInputs | Where-Object {
-            $_.id -eq 'CORE_TEAM_ALLOCATION'
+            $_.id -eq 'AUTHORIZED_GOLDEN_CAD_CANDIDATES'
         })[0]
         $input.ownerName = 'Zhang Wei'
         $input.status = 'Complete'
@@ -399,12 +399,12 @@ try {
         param($manifest)
         Set-ExternalInputComplete `
             -Manifest $manifest `
-            -InputId 'CORE_TEAM_ALLOCATION' `
+            -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
             -OwnerName 'Zhang Wei' `
             -KickoffReference $kickoffAcceptanceReference `
             -KickoffSha256 $kickoffAcceptanceSha256
         $input = @($manifest.externalInputs | Where-Object {
-            $_.id -eq 'CORE_TEAM_ALLOCATION'
+            $_.id -eq 'AUTHORIZED_GOLDEN_CAD_CANDIDATES'
         })[0]
         $input.evidence = @($localAttestation)
     }
@@ -420,10 +420,9 @@ try {
     $invalidKickoffPath = Join-Path $repo $invalidKickoffReference
     $invalidKickoff = Get-Content -LiteralPath $kickoffAcceptancePath -Raw |
         ConvertFrom-Json
-    $invalidKickoff.coreTeamAllocation.members = @(
-        $invalidKickoff.coreTeamAllocation.members | Where-Object {
-            $_.name -ne 'Backend Two'
-        })
+    $invalidKickoff.authorizedGoldenCadCandidates.candidates = @(
+        $invalidKickoff.authorizedGoldenCadCandidates.candidates |
+            Select-Object -First 19)
     $invalidKickoff | ConvertTo-Json -Depth 100 |
         Set-Content -LiteralPath $invalidKickoffPath -Encoding UTF8
     $invalidKickoffSha256 = (Get-FileHash -LiteralPath $invalidKickoffPath `
@@ -432,7 +431,7 @@ try {
         param($manifest)
         Set-ExternalInputComplete `
             -Manifest $manifest `
-            -InputId 'CORE_TEAM_ALLOCATION' `
+            -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
             -OwnerName 'Zhang Wei' `
             -KickoffReference $invalidKickoffReference `
             -KickoffSha256 $invalidKickoffSha256
@@ -452,7 +451,7 @@ try {
         param($manifest)
         Set-ExternalInputComplete `
             -Manifest $manifest `
-            -InputId 'CORE_TEAM_ALLOCATION' `
+            -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
             -OwnerName 'Zhang Wei' `
             -KickoffReference $kickoffTemplateReference `
             -KickoffSha256 $kickoffTemplateSha256
@@ -462,30 +461,6 @@ try {
         -ManifestPath $templateKickoffPath `
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_KICKOFF_MANIFEST_SYNTHETIC'
-
-    $signerIndexPath = New-TestManifest 'kickoff-signer-index' {
-        param($manifest)
-        Set-ExternalInputComplete `
-            -Manifest $manifest `
-            -InputId 'NAMED_GA_SIGNERS' `
-            -OwnerName 'Zhang Wei' `
-            -KickoffReference $kickoffAcceptanceReference `
-            -KickoffSha256 $kickoffAcceptanceSha256
-        $kickoff = Get-Content -LiteralPath $kickoffAcceptancePath -Raw |
-            ConvertFrom-Json
-        foreach ($signer in @($manifest.signers)) {
-            $namedSigner = @($kickoff.namedGaSigners.signers | Where-Object {
-                $_.role -eq $signer.role
-            })[0]
-            $signer.name = $namedSigner.name
-        }
-        $manifest.signers[0].name = 'Different Person'
-    }
-    Invoke-ValidatorCase `
-        -Name 'GA signer index matches the kickoff register' `
-        -ManifestPath $signerIndexPath `
-        -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_INDEX_MISMATCH'
 
     $remotePath = New-TestManifest 'positive-controlled-https' {
         param($manifest)
@@ -513,7 +488,7 @@ try {
 
     $invalidSignerPath = New-TestManifest 'invalid-signer-attestation' {
         param($manifest)
-        $signer = @($manifest.signers | Where-Object { $_.role -eq 'Product' })[0]
+        $signer = @($manifest.signers | Where-Object { $_.role -eq 'DeliveryOwner' })[0]
         $signer.name = 'Zhang Wei'
         $signer.status = 'Signed'
         $signer.evidence = @('not-an-attestation-object')
@@ -527,7 +502,7 @@ try {
     $invalidInputPath = New-TestManifest 'invalid-input-attestation' {
         param($manifest)
         $input = @($manifest.externalInputs | Where-Object {
-            $_.id -eq 'CORE_TEAM_ALLOCATION'
+            $_.id -eq 'AUTHORIZED_GOLDEN_CAD_CANDIDATES'
         })[0]
         $input.ownerName = 'Zhang Wei'
         $input.status = 'Complete'
@@ -541,7 +516,7 @@ try {
 
     $placeholderSignerNamePath = New-TestManifest 'placeholder-signer-name' {
         param($manifest)
-        $signer = @($manifest.signers | Where-Object { $_.role -eq 'Product' })[0]
+        $signer = @($manifest.signers | Where-Object { $_.role -eq 'DeliveryOwner' })[0]
         $signer.name = 'Product'
         $signer.status = 'Signed'
         $signer.evidence = @($localAttestation)
@@ -555,7 +530,7 @@ try {
     $mismatchedSignerPath = New-TestManifest 'mismatched-signer-evidence' {
         param($manifest)
         $signer = @($manifest.signers | Where-Object {
-            $_.role -eq 'Product'
+            $_.role -eq 'DeliveryOwner'
         })[0]
         $signer.name = 'Zhang Wei'
         $signer.status = 'Signed'
@@ -574,7 +549,7 @@ try {
     $placeholderInputOwnerPath = New-TestManifest 'placeholder-input-owner' {
         param($manifest)
         $input = @($manifest.externalInputs | Where-Object {
-            $_.id -eq 'CORE_TEAM_ALLOCATION'
+            $_.id -eq 'AUTHORIZED_GOLDEN_CAD_CANDIDATES'
         })[0]
         $input.ownerName = 'QA'
         $input.status = 'Complete'
@@ -839,7 +814,7 @@ try {
             -PilotSha256 $pilotAcceptanceSha256
     }
     Invoke-ValidatorCase `
-        -Name 'WP8 cannot be accepted before all five internal signers' `
+        -Name 'WP8 cannot be accepted before the delivery owner signs' `
         -ManifestPath $unsignedPilotPath `
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_PILOT_SIGNERS_INCOMPLETE'

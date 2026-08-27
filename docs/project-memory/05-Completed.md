@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-26 Space Studio 单人交付门禁收口
+
+- 正式 GA 由五角色签字与 2+2+1 团队配额收敛为一个实名 `DeliveryOwner`，允许同一人实现、自测、UX/可达性检查、安全负向、WMS 联调、接受证据和最终签署。
+- 删除 `NAMED_GA_SIGNERS`、`CORE_TEAM_ALLOCATION` 两个人力外部输入；黄金 CAD 从双标注 + 独立 QA 仲裁改为单一实名复核，Pilot 的客户/实施确认允许同一位获授权人员兼任。
+- 高风险发布仍需显式二次确认、前后快照、原因、结果和恢复点，但不再要求第二人；真实 CAD、Provider、SQL/WMS、性能、恢复和双仓运行事实保持硬门禁。
+- GA、开工、黄金 CAD、Pilot 和开发角色种子专项回归全部通过；当前 72% / `NoGo` 只反映尚缺真实外部证据，不再反映人头不足。
+
 ## 2026-08-26 Release/CD 仓库与平台工程结案
 
 - PR #32 已把 Shadow S0 合入 `main@9009abe6`；Azure Definition #5 / Run #145 以同一完整 SHA 在无 Secret、无 Registry/Environment 权限下完成离线 Shadow 验证并发布 `cp6-release-shadow-s0-145`，结果为 `Succeeded`。

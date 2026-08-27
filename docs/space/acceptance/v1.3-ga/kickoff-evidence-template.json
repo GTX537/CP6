@@ -1,71 +1,11 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
   "evidenceClass": "M0_EXTERNAL_INPUT_READINESS",
   "conclusion": "Pending",
   "kickoffDate": null,
   "targetGaDate": null,
-  "namedGaSigners": {
-    "inputId": "NAMED_GA_SIGNERS",
-    "status": "Pending",
-    "ownerName": null,
-    "completionEvidence": {},
-    "signers": [
-      {
-        "role": "Product",
-        "name": null,
-        "approvalAuthorityConfirmed": false,
-        "appointmentEvidence": {}
-      },
-      {
-        "role": "QA",
-        "name": null,
-        "approvalAuthorityConfirmed": false,
-        "appointmentEvidence": {}
-      },
-      {
-        "role": "WMS",
-        "name": null,
-        "approvalAuthorityConfirmed": false,
-        "appointmentEvidence": {}
-      },
-      {
-        "role": "Architecture",
-        "name": null,
-        "approvalAuthorityConfirmed": false,
-        "appointmentEvidence": {}
-      },
-      {
-        "role": "Security",
-        "name": null,
-        "approvalAuthorityConfirmed": false,
-        "appointmentEvidence": {}
-      }
-    ]
-  },
-  "coreTeamAllocation": {
-    "inputId": "CORE_TEAM_ALLOCATION",
-    "status": "Pending",
-    "ownerName": null,
-    "completionEvidence": {},
-    "members": [
-      {
-        "name": null,
-        "discipline": "Backend|Frontend3D|QA",
-        "allocationPercent": null,
-        "startDate": null,
-        "endDate": null,
-        "allocationEvidence": {}
-      }
-    ],
-    "sharedAssignments": [
-      {
-        "role": "Product|WMS|Architecture|Security|DevOps",
-        "name": null,
-        "assignmentEvidence": {}
-      }
-    ]
-  },
   "authorizedGoldenCadCandidates": {
     "inputId": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
     "status": "Pending",

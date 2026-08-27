@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space Studio 单人交付门禁（2026-08-26）
+
+- 核心 GA 治理已从多人角色门禁改为单一 `DeliveryOwner`：同一实名开发者可兼任产品、开发、QA、UX、架构、安全和 WMS 联调，自验收并签署；不再要求 2 Backend + 2 Frontend3D + 1 QA、五角色实名签字、不同复核人或第二人审批。
+- `ga-evidence-index.json` 与开工/黄金 CAD Manifest 升为 Schema 2；外部输入由 5 类减为 3 类（授权 CAD、Provider/隔离 Worker、双仓/WMS 窗口），签字由 5 个角色减为 1 个 DeliveryOwner，黄金 CAD 每份样本由一个实名 `reviewedBy` 复核。
+- 真实数据和运行结果门禁未降低：20 份授权 CAD、主备 Provider、真实 SQL/WMS/Published Viewer、性能、恢复、安全负向和两仓各 14 天 Pilot 仍失败关闭。因此当前派生状态仍为 72% / `NoGo`，但不再因只有一名开发者而阻塞。
+- 自动化已证明单一 Owner 可以拥有并接受全部外部输入、复核全部黄金样本并签署 GA；模板、fixture、原始客户 CAD、哈希错误、占位身份和未达技术指标仍会被拒绝。本文下方及历史报告中旧的 2+2+1、五方签字、双标注/独立 QA、独立 UX/安全或第二人审批表述只保留作当时审计，均由本节与 Schema 2 合同取代，不再是当前门禁。
+
 ## Release/CD 仓库与平台工程结案（2026-08-26）
 
 - PR #32 已把 Azure Release Shadow S0 合入 `main@9009abe687c693fdcbd650261f39b56cf8ccf8fb`；GitHub required checks、额外 Space/CRM 守卫和本地 1 个有效/10 个失败关闭场景全部通过。
