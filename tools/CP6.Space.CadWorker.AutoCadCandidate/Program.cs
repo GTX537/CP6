@@ -63,7 +63,7 @@ app.MapGet("/health/live", (AutoCadCandidateConversionService worker) =>
         providerKey = worker.ProviderKey,
         providerVersion = worker.ProviderVersion,
         supportsDwg = true,
-        supportsDxf = false,
+        supportsDxf = true,
     }));
 
 app.MapPost(

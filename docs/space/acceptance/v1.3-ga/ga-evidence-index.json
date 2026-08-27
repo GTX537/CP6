@@ -156,7 +156,8 @@
         "docs/space/reports/2026-08-14-cad-converter-conformance-runner.md",
         "docs/space/reports/2026-08-14-space-cad-provider-sqlserver-gate.md",
         "docs/space/reports/2026-08-15-space-autocad-core-console-development.md",
-        "docs/space/reports/2026-08-27-space-remote-cad-worker-provider.md"
+        "docs/space/reports/2026-08-27-space-remote-cad-worker-provider.md",
+        "docs/space/reports/2026-08-27-space-autocad-candidate-worker-dxf.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [

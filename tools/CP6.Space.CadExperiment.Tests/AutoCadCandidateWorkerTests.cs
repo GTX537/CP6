@@ -54,6 +54,62 @@ public sealed class AutoCadCandidateWorkerTests
             Path.Combine(directory.Path, "attempts")));
     }
 
+    [Fact]
+    public async Task Worker_accepts_native_DXF_without_starting_AutoCAD()
+    {
+        using var directory = new TemporaryDirectory();
+        var exporter = new FakeExporter();
+        var service = new AutoCadCandidateConversionService(
+            exporter,
+            directory.Path,
+            TimeSpan.FromMinutes(1),
+            maximumConcurrency: 1);
+        var bytes = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
+            .GetBytes(ValidDxf);
+        var request = Request(service, Sha256(bytes), SpaceCadSourceFormat.Dxf);
+        await using var source = new MemoryStream(bytes, writable: false);
+
+        var response = await service.ConvertAsync(request, source);
+
+        SpaceCadWorkerProtocol.ValidateResponse(request, response);
+        Assert.Equal(0, exporter.CallCount);
+        Assert.Equal(SpaceCadSourceFormat.Dxf, response.Package.Document.SourceFormat);
+        Assert.Equal(service.ProviderKey, response.Package.Document.ConverterId);
+        Assert.Equal(service.ProviderVersion, response.Package.Document.ConverterVersion);
+        Assert.Contains("cp6-dxf-1.0.0", service.ProviderVersion, StringComparison.Ordinal);
+        Assert.Empty(Directory.GetFileSystemEntries(
+            Path.Combine(directory.Path, "attempts")));
+    }
+
+    [Fact]
+    public async Task Worker_rejects_stale_composite_version_before_staging()
+    {
+        using var directory = new TemporaryDirectory();
+        var exporter = new FakeExporter();
+        var service = new AutoCadCandidateConversionService(
+            exporter,
+            directory.Path,
+            TimeSpan.FromMinutes(1),
+            maximumConcurrency: 1);
+        var bytes = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
+            .GetBytes(ValidDxf);
+        var request = Request(
+            service,
+            Sha256(bytes),
+            SpaceCadSourceFormat.Dxf) with
+        {
+            ProviderVersion = exporter.ProviderVersion,
+        };
+        await using var source = new MemoryStream(bytes, writable: false);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            service.ConvertAsync(request, source));
+
+        Assert.Equal(0, exporter.CallCount);
+        Assert.Empty(Directory.GetFileSystemEntries(
+            Path.Combine(directory.Path, "attempts")));
+    }
+
     [AutoCadCoreConsoleFact]
     public async Task Installed_core_console_runs_through_candidate_Worker_boundary()
     {
@@ -113,12 +169,13 @@ public sealed class AutoCadCandidateWorkerTests
 
     private static SpaceCadWorkerConversionRequestV1 Request(
         AutoCadCandidateConversionService service,
-        string sha256) =>
+        string sha256,
+        SpaceCadSourceFormat sourceFormat = SpaceCadSourceFormat.Dwg) =>
         new(
             SpaceCadWorkerProtocolVersions.SchemaVersion,
             Guid.NewGuid(),
             sha256,
-            SpaceCadSourceFormat.Dwg,
+            sourceFormat,
             service.ProviderKey,
             service.ProviderVersion);
 

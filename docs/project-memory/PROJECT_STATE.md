@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space AutoCAD 候选 Worker DWG/DXF 双格式（2026-08-27）
+
+- AutoCAD 隔离 Worker 候选现以组合链 Provider 身份同时接受 DWG/DXF：DWG 经精确 Core Console 后进入托管 DXF Parser，原生 DXF 直接进入同一 Parser且不会启动 AutoCAD；外层和内层 Converter 均经统一合同执行器。
+- Provider Key 改为 `cp6-autocad-worker-development`，Version 同时绑定 Core Console 文件版本和 `cp6-dxf-1.0.0`；旧的单一 AutoCAD 版本请求在落盘前拒绝，任一链版本变化都强制重新评分与 Site 认证。
+- 候选聚焦 4/4、真实安装环境完整 CAD Experiment 45/45、0 skipped；Core Console 样例仍为 29 图层/19 块/4,424 实体/4,422 支持实体，原生 DXF 断言 0 次 Exporter 调用，测试根残留 DWG/DXF 与 Attempt 均为 0。
+- 这只关闭 Primary 候选的 DXF 仓库路径。原生 DXF 仍是 fixture、托管 Parser 当前开发上限 25 MiB；非 development Release、授权 20 份黄金集/50 MiB、独立 Backup、许可证/Site 批准和生产 mTLS 隔离/Failover 仍缺。WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
+
 ## Space Studio WP3 远程隔离 CAD Worker Provider（2026-08-27）
 
 - 已补齐生产侧远程 CAD Provider 接入：Design API 不加载供应商 SDK 或启动 CAD 进程，只通过 mTLS 向隔离 Worker 发送原始 CAD、源 SHA-256、格式和精确 Provider 身份；Tenant/Site/用户/模型/数据库/Mapping/Object Storage 身份均不跨边界。

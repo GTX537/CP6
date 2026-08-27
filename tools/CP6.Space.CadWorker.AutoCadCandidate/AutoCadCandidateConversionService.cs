@@ -41,8 +41,9 @@ public sealed class AutoCadCandidateConversionService
         _capacity = new SemaphoreSlim(maximumConcurrency, maximumConcurrency);
     }
 
-    public string ProviderKey => AutoCadCoreConsoleDevelopmentConverter.ConverterId;
-    public string ProviderVersion => _exporter.ProviderVersion;
+    public string ProviderKey => AutoCadCandidateConverter.ConverterId;
+    public string ProviderVersion =>
+        AutoCadCandidateConverter.VersionFor(_exporter.ProviderVersion);
 
     public async Task<SpaceCadWorkerConversionResponseV1> ConvertAsync(
         SpaceCadWorkerConversionRequestV1 request,
@@ -53,8 +54,7 @@ public sealed class AutoCadCandidateConversionService
         ArgumentNullException.ThrowIfNull(source);
         if (!source.CanRead)
             throw new ArgumentException("The CAD source stream must be readable.", nameof(source));
-        if (request.SourceFormat != SpaceCadSourceFormat.Dwg ||
-            request.ProviderKey != ProviderKey ||
+        if (request.ProviderKey != ProviderKey ||
             request.ProviderVersion != ProviderVersion)
         {
             throw new InvalidDataException(
@@ -95,7 +95,11 @@ public sealed class AutoCadCandidateConversionService
         Directory.CreateDirectory(attempt);
         try
         {
-            var input = Path.Combine(attempt, "source.dwg");
+            var input = Path.Combine(
+                attempt,
+                request.SourceFormat == SpaceCadSourceFormat.Dwg
+                    ? "source.dwg"
+                    : "source.dxf");
             await StageAndVerifyAsync(
                 source,
                 input,
@@ -112,7 +116,7 @@ public sealed class AutoCadCandidateConversionService
                 request.SourceFormat,
                 request.ProviderKey,
                 request.ProviderVersion);
-            var converter = new AutoCadCoreConsoleDevelopmentConverter(
+            var converter = new AutoCadCandidateConverter(
                 _exporter,
                 Path.Combine(attempt, "engine-attempts"));
             var sink = new DevelopmentCadIrFileSink(conversion, output);
