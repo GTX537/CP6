@@ -6,6 +6,8 @@ on:
       - '.github/workflows/space-ga-evidence.yml'
       - 'docs/project-memory/**'
       - 'docs/space/acceptance/v1.3-ga/**'
+      - 'docs/space/acceptance/development-v1/**'
+      - 'docs/space/acceptance/development-v2.0.0/**'
       - 'docs/space/reports/**'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
@@ -17,6 +19,8 @@ on:
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.Tests.ps1'
+      - 'tools/Test-SpaceDevelopmentV1Evidence.ps1'
+      - 'tools/Test-SpaceDevelopmentV1Evidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
       - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
@@ -28,6 +32,8 @@ on:
       - '.github/workflows/space-ga-evidence.yml'
       - 'docs/project-memory/**'
       - 'docs/space/acceptance/v1.3-ga/**'
+      - 'docs/space/acceptance/development-v1/**'
+      - 'docs/space/acceptance/development-v2.0.0/**'
       - 'docs/space/reports/**'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
@@ -39,6 +45,8 @@ on:
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.Tests.ps1'
+      - 'tools/Test-SpaceDevelopmentV1Evidence.ps1'
+      - 'tools/Test-SpaceDevelopmentV1Evidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
       - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
@@ -78,3 +86,11 @@ jobs:
       - name: Validate single-developer personnel seed boundaries
         shell: pwsh
         run: ./tools/Test-SpaceGaDevelopmentPersonnelSeed.Tests.ps1
+
+      - name: Validate Development V1 completion boundary
+        shell: pwsh
+        run: ./tools/Test-SpaceDevelopmentV1Evidence.ps1 -RequireDevelopmentComplete
+
+      - name: Exercise Development V1 failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceDevelopmentV1Evidence.Tests.ps1

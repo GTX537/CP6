@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space Studio Development V1 100%
+
+- 新增独立 `CP6_SPACE_STUDIO_DEVELOPMENT_V1` 验收轨；六个仓库/开发环境 Gate 全部 Passed，派生状态为 `DevelopmentComplete` / 100%，唯一 Owner 为 `BUBAO.GAO`，不设多人签字。
+- 再生成并审计 20 份合成 DXF，L1～L5 各 4、五个 DXF 版本齐全；50 MiB 档为 53,190,207 bytes / 670,000 实体，百万实体档为 79,517,079 bytes。两个 JSONL 的再生差异仅为 Windows CRLF，内容归一化后相同。
+- 新增失败关闭校验与 8 个正负场景：逐种子复核 SHA，禁止缺 Gate/缺证据/假 100%/改写正式快照，并阻止开发索引、合成数据与报告进入正式 GA accepted evidence；完整证据脚本 125/125、AutoCAD 安装回归 57/57、0 skipped。
+- Development V1 的 100% 不计生产 GA；正式 Ready 审计继续因无真实黄金 20、10/5/5、DWG/版本矩阵失败，Core GA 保持 72% / NoGo。
+
 ## 2026-08-27 Space GA 单人 Owner 与输入盘点
 
 - 已把 `BUBAO.GAO` 登记为唯一 DeliveryOwner 及全部输入/Gate 责任人，记录 `2026-08-27` Kickoff 与 `2026-09-27` 目标 GA；WP0 实现状态为 Complete，接受和签署仍 Pending。

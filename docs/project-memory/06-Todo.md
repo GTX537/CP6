@@ -26,6 +26,7 @@
 
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
 
+- Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。以下条目只属于正式 Core GA；在用户没有真实 CAD、授权/许可证、生产联调或 Pilot 输入时保持等待，不回退 Development V1 状态，也不把合成数据冒充生产验收。
 - 唯一 DeliveryOwner 已登记为 `BUBAO.GAO`，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`，同一人拥有全部输入与 Gate；WP0 仓库实现已 Complete，但正式接受和最终签署仍 Pending。下一步不再追问团队人数，而是定位仓库外真实授权 CAD 目录与逐文件授权/脱敏证明。
 - 仓库内 28 份 CAD 全是 DXF、DWG 为 0；`development-v2.0.0/seeds` 的 20 份小文件是明确 `countsTowardReleaseGate=false` 的合成集，不能用来关闭黄金集。须提供 20 份真实 DWG/DXF 的受控目录、10/5/5 分组、L1～L5、授权引用、脱敏证明和哈希。
 - `CP6_SPACE_ODA_LICENSE_PATH` 当前未配置，未发现 ODA Drawings SDK Windows/Linux 包；历史 File Converter 27.1 不是可集成 SDK。必须提供真实包路径/版本/哈希、许可证安全引用和 SaaS/扩缩容/灾备/托管批准；“任意”路径不能写入批准 Manifest。
