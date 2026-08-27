@@ -12,12 +12,12 @@ $candidateSha256 = (Get-FileHash -LiteralPath $candidatePath `
 $fixtureReference = 'tools/test-fixtures/space-ga-evidence/attestation-fixture.txt'
 $fixturePath = Join-Path $repo $fixtureReference
 $fixtureSha256 = (Get-FileHash -LiteralPath $fixturePath -Algorithm SHA256).Hash.ToLowerInvariant()
-$pilotFixturePath = Join-Path $repo (
-    'tools\test-fixtures\space-ga-pilot-evidence\valid-pilot-evidence.json')
 $goldenCadTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaGoldenCadEvidence.Tests.ps1')
 $kickoffTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaKickoffEvidence.Tests.ps1')
+$releaseRehearsalTestSuite = Join-Path $PSScriptRoot (
+    'Test-SpaceGaReleaseRehearsalEvidence.Tests.ps1')
 $hostExecutable = (Get-Process -Id $PID).Path
 $tempDirectory = Join-Path (
     [System.IO.Path]::GetTempPath()) (
@@ -78,18 +78,18 @@ function Set-GateAccepted {
 function Set-Wp8Accepted {
     param(
         [Parameter(Mandatory)]$Manifest,
-        [Parameter(Mandatory)][string]$PilotReference,
-        [Parameter(Mandatory)][string]$PilotSha256
+        [Parameter(Mandatory)][string]$RehearsalReference,
+        [Parameter(Mandatory)][string]$RehearsalSha256
     )
 
     $gate = @($Manifest.gates | Where-Object {
-        $_.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF'
+        $_.id -eq 'WP8_RELEASE_REHEARSAL_AND_SIGNOFF'
     })[0]
     $gate.ownerName = 'Zhang Wei'
     $gate.acceptanceStatus = 'Accepted'
-    $gate.verificationManifest = $PilotReference
+    $gate.verificationManifest = $RehearsalReference
     $gate.acceptedEvidence = @(
-        (New-Attestation -Uri $PilotReference -Sha256 $PilotSha256))
+        (New-Attestation -Uri $RehearsalReference -Sha256 $RehearsalSha256))
 }
 
 function Set-Wp7Accepted {
@@ -119,7 +119,7 @@ function Complete-Wp7Prerequisites {
 
     $inputOwners = [ordered]@{
         AUTHORIZED_GOLDEN_CAD_CANDIDATES = 'BUBAO.GAO'
-        PROVIDER_APPROVALS_AND_ISOLATED_WORKER = 'Zhang Wei'
+        PRIMARY_PROVIDER_AND_ISOLATED_WORKER = 'Zhang Wei'
     }
     foreach ($inputId in $inputOwners.Keys) {
         $input = @($Manifest.externalInputs | Where-Object {
@@ -141,11 +141,32 @@ function Complete-Wp7Prerequisites {
                 -AcceptedBy $input.ownerName))
     }
     $providerGate = @($Manifest.gates | Where-Object {
-        $_.id -eq 'WP3_SITE_PRIMARY_BACKUP_PROVIDERS'
+        $_.id -eq 'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
     })[0]
     $providerGate.ownerName = 'Zhang Wei'
     $providerGate.acceptanceStatus = 'Accepted'
     $providerGate.acceptedEvidence = @($Attestation)
+}
+
+function Complete-Wp8Prerequisites {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)]$Attestation,
+        [Parameter(Mandatory)][string]$KickoffReference,
+        [Parameter(Mandatory)][string]$KickoffSha256,
+        [Parameter(Mandatory)][string]$GoldenReference,
+        [Parameter(Mandatory)][string]$GoldenSha256
+    )
+
+    Complete-Wp7Prerequisites `
+        -Manifest $Manifest `
+        -Attestation $Attestation `
+        -KickoffReference $KickoffReference `
+        -KickoffSha256 $KickoffSha256
+    Set-Wp7Accepted `
+        -Manifest $Manifest `
+        -GoldenReference $GoldenReference `
+        -GoldenSha256 $GoldenSha256
 }
 
 function Set-ExternalInputComplete {
@@ -227,41 +248,39 @@ function Invoke-ValidatorCase {
 }
 
 try {
-    $pilotAcceptanceReference = (
+    $rehearsalAcceptanceReference = (
         'docs/space/acceptance/v1.3-ga/.tmp-' +
-        [Guid]::NewGuid().ToString('N') + '/pilot-evidence.json')
-    $pilotAcceptancePath = Join-Path $repo $pilotAcceptanceReference
-    $pilotAcceptanceDirectory = Split-Path -Parent $pilotAcceptancePath
-    [void](New-Item -ItemType Directory -Path $pilotAcceptanceDirectory)
-    $pilotAcceptance = Get-Content -LiteralPath $pilotFixturePath -Raw |
-        ConvertFrom-Json
-    $pilotNestedEvidenceReference = (
-        'docs/space/reports/2026-08-14-ga-evidence-attestation.md')
-    $pilotNestedEvidenceSha256 = (Get-FileHash `
-        -LiteralPath (Join-Path $repo $pilotNestedEvidenceReference) `
-        -Algorithm SHA256).Hash.ToLowerInvariant()
-    foreach ($site in @($pilotAcceptance.sites)) {
-        foreach ($evidenceName in @(
-            'runLog',
-            'metrics',
-            'defectClosure',
-            'businessOutcome',
-            'openIssuesAppendix')) {
-            $site.evidence.$evidenceName.uri = $pilotNestedEvidenceReference
-            $site.evidence.$evidenceName.sha256 = $pilotNestedEvidenceSha256
-        }
-        foreach ($confirmationName in @(
-            'customerWarehouseRepresentative',
-            'implementationLead')) {
-            $site.confirmations.$confirmationName.evidence.uri = (
-                $pilotNestedEvidenceReference)
-            $site.confirmations.$confirmationName.evidence.sha256 = (
-                $pilotNestedEvidenceSha256)
-        }
+        [Guid]::NewGuid().ToString('N') + '/release-rehearsal-evidence.json')
+    $rehearsalAcceptancePath = Join-Path $repo $rehearsalAcceptanceReference
+    $rehearsalAcceptanceDirectory = Split-Path -Parent $rehearsalAcceptancePath
+    [void](New-Item -ItemType Directory -Path $rehearsalAcceptanceDirectory)
+    $exportOutput = & $hostExecutable `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $releaseRehearsalTestSuite `
+        -ExportValidManifestPath $rehearsalAcceptancePath 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not export valid release rehearsal fixture.`n$exportOutput"
     }
-    $pilotAcceptance | ConvertTo-Json -Depth 100 |
-        Set-Content -LiteralPath $pilotAcceptancePath -Encoding UTF8
-    $pilotAcceptanceSha256 = (Get-FileHash -LiteralPath $pilotAcceptancePath `
+    $rehearsalAcceptance = Get-Content -LiteralPath $rehearsalAcceptancePath -Raw |
+        ConvertFrom-Json
+    foreach ($evidence in @(
+        $rehearsalAcceptance.evidence.execution,
+        $rehearsalAcceptance.evidence.publishWms,
+        $rehearsalAcceptance.evidence.viewer,
+        $rehearsalAcceptance.evidence.recovery,
+        $rehearsalAcceptance.evidence.security)) {
+        $evidence.uri = ([string]$evidence.uri).Replace(':test:', ':integration:')
+    }
+    $rehearsalAcceptance | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $rehearsalAcceptancePath -Encoding UTF8
+    $rehearsalAcceptanceSha256 = (Get-FileHash -LiteralPath $rehearsalAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
+    $sharedNestedEvidenceReference = (
+        'docs/space/reports/2026-08-14-ga-evidence-attestation.md')
+    $sharedNestedEvidenceSha256 = (Get-FileHash `
+        -LiteralPath (Join-Path $repo $sharedNestedEvidenceReference) `
         -Algorithm SHA256).Hash.ToLowerInvariant()
 
     $goldenAcceptanceReference = (
@@ -281,9 +300,9 @@ try {
     $goldenAcceptance = Get-Content -LiteralPath $goldenAcceptancePath -Raw |
         ConvertFrom-Json
     $goldenAcceptance.dataset.integrityAuditEvidence.uri = (
-        $pilotNestedEvidenceReference)
+        $sharedNestedEvidenceReference)
     $goldenAcceptance.dataset.integrityAuditEvidence.sha256 = (
-        $pilotNestedEvidenceSha256)
+        $sharedNestedEvidenceSha256)
     foreach ($sample in @($goldenAcceptance.dataset.samples)) {
         foreach ($evidence in @(
             $sample.authorizationEvidence,
@@ -804,106 +823,158 @@ try {
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_MANIFEST_SYNTHETIC'
 
-    $missingPilotManifestPath = New-TestManifest 'missing-pilot-manifest' {
+    $rehearsalPrerequisitePath = New-TestManifest 'rehearsal-prerequisites' {
         param($manifest)
+        Set-Wp8Accepted `
+            -Manifest $manifest `
+            -RehearsalReference $rehearsalAcceptanceReference `
+            -RehearsalSha256 $rehearsalAcceptanceSha256
+        Set-AllGaSignersSigned `
+            -Manifest $manifest `
+            -Attestation $localAttestation
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP8 waits for Primary, WP3 and WP7' `
+        -ManifestPath $rehearsalPrerequisitePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_REHEARSAL_PREREQUISITES_INCOMPLETE'
+
+    $missingRehearsalManifestPath = New-TestManifest 'missing-rehearsal-manifest' {
+        param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
         $gate = @($manifest.gates | Where-Object {
-            $_.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF'
+            $_.id -eq 'WP8_RELEASE_REHEARSAL_AND_SIGNOFF'
         })[0]
         $gate.ownerName = 'Zhang Wei'
         $gate.acceptanceStatus = 'Accepted'
         $gate.acceptedEvidence = @($localAttestation)
     }
     Invoke-ValidatorCase `
-        -Name 'accepted WP8 requires a structured pilot manifest' `
-        -ManifestPath $missingPilotManifestPath `
+        -Name 'accepted WP8 requires a structured release rehearsal manifest' `
+        -ManifestPath $missingRehearsalManifestPath `
         -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_PILOT_MANIFEST_REQUIRED'
+        -ExpectedError 'SPACE_GA_REHEARSAL_MANIFEST_REQUIRED'
 
-    $unsignedPilotPath = New-TestManifest 'unsigned-pilot-manifest' {
+    $unsignedRehearsalPath = New-TestManifest 'unsigned-rehearsal-manifest' {
         param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
         Set-Wp8Accepted `
             -Manifest $manifest `
-            -PilotReference $pilotAcceptanceReference `
-            -PilotSha256 $pilotAcceptanceSha256
+            -RehearsalReference $rehearsalAcceptanceReference `
+            -RehearsalSha256 $rehearsalAcceptanceSha256
     }
     Invoke-ValidatorCase `
         -Name 'WP8 cannot be accepted before the delivery owner signs' `
-        -ManifestPath $unsignedPilotPath `
+        -ManifestPath $unsignedRehearsalPath `
         -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_PILOT_SIGNERS_INCOMPLETE'
+        -ExpectedError 'SPACE_GA_REHEARSAL_SIGNER_INCOMPLETE'
 
-    $validPilotPath = New-TestManifest 'valid-pilot-manifest' {
+    $validRehearsalPath = New-TestManifest 'valid-rehearsal-manifest' {
         param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
         Set-Wp8Accepted `
             -Manifest $manifest `
-            -PilotReference $pilotAcceptanceReference `
-            -PilotSha256 $pilotAcceptanceSha256
+            -RehearsalReference $rehearsalAcceptanceReference `
+            -RehearsalSha256 $rehearsalAcceptanceSha256
         Set-AllGaSignersSigned `
             -Manifest $manifest `
             -Attestation $localAttestation
     }
     Invoke-ValidatorCase `
-        -Name 'accepted WP8 validates the pilot manifest and signers' `
-        -ManifestPath $validPilotPath `
+        -Name 'accepted WP8 validates release rehearsal and signer' `
+        -ManifestPath $validRehearsalPath `
         -ShouldPass $true
 
-    $unattestedPilotPath = New-TestManifest 'unattested-pilot-manifest' {
+    $unattestedRehearsalPath = New-TestManifest 'unattested-rehearsal-manifest' {
         param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
         Set-Wp8Accepted `
             -Manifest $manifest `
-            -PilotReference $pilotAcceptanceReference `
-            -PilotSha256 $pilotAcceptanceSha256
+            -RehearsalReference $rehearsalAcceptanceReference `
+            -RehearsalSha256 $rehearsalAcceptanceSha256
         $gate = @($manifest.gates | Where-Object {
-            $_.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF'
+            $_.id -eq 'WP8_RELEASE_REHEARSAL_AND_SIGNOFF'
         })[0]
         $gate.acceptedEvidence = @($localAttestation)
     }
     Invoke-ValidatorCase `
         -Name 'WP8 must attest the structured manifest itself' `
-        -ManifestPath $unattestedPilotPath `
+        -ManifestPath $unattestedRehearsalPath `
         -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_PILOT_MANIFEST_UNATTESTED'
+        -ExpectedError 'SPACE_GA_REHEARSAL_MANIFEST_UNATTESTED'
 
-    $invalidPilotReference = $pilotAcceptanceReference.Replace(
-        'pilot-evidence.json',
-        'invalid-pilot-evidence.json')
-    $invalidPilotPath = Join-Path $repo $invalidPilotReference
-    $invalidPilot = Get-Content -LiteralPath $pilotAcceptancePath -Raw |
+    $invalidRehearsalReference = $rehearsalAcceptanceReference.Replace(
+        'release-rehearsal-evidence.json',
+        'invalid-release-rehearsal-evidence.json')
+    $invalidRehearsalPath = Join-Path $repo $invalidRehearsalReference
+    $invalidRehearsal = Get-Content -LiteralPath $rehearsalAcceptancePath -Raw |
         ConvertFrom-Json
-    $invalidPilot.sites[0].defects.s1Count = 1
-    $invalidPilot | ConvertTo-Json -Depth 100 |
-        Set-Content -LiteralPath $invalidPilotPath -Encoding UTF8
-    $invalidPilotSha256 = (Get-FileHash -LiteralPath $invalidPilotPath `
+    $invalidRehearsal.defects.s1Open = 1
+    $invalidRehearsal | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidRehearsalPath -Encoding UTF8
+    $invalidRehearsalSha256 = (Get-FileHash -LiteralPath $invalidRehearsalPath `
         -Algorithm SHA256).Hash.ToLowerInvariant()
-    $invalidPilotGatePath = New-TestManifest 'invalid-pilot-gate' {
+    $invalidRehearsalGatePath = New-TestManifest 'invalid-rehearsal-gate' {
         param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
         Set-Wp8Accepted `
             -Manifest $manifest `
-            -PilotReference $invalidPilotReference `
-            -PilotSha256 $invalidPilotSha256
+            -RehearsalReference $invalidRehearsalReference `
+            -RehearsalSha256 $invalidRehearsalSha256
     }
     Invoke-ValidatorCase `
-        -Name 'WP8 cannot accept a semantically invalid pilot manifest' `
-        -ManifestPath $invalidPilotGatePath `
+        -Name 'WP8 cannot accept an invalid release rehearsal manifest' `
+        -ManifestPath $invalidRehearsalGatePath `
         -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_PILOT_EVIDENCE_INVALID'
+        -ExpectedError 'SPACE_GA_REHEARSAL_EVIDENCE_INVALID'
 
     $templateReference = (
-        'docs/space/acceptance/v1.3-ga/pilot-evidence-template.json')
+        'docs/space/acceptance/v1.3-ga/release-rehearsal-evidence-template.json')
     $templateSha256 = (Get-FileHash -LiteralPath (Join-Path $repo $templateReference) `
         -Algorithm SHA256).Hash.ToLowerInvariant()
-    $templatePilotPath = New-TestManifest 'template-pilot-manifest' {
+    $templateRehearsalPath = New-TestManifest 'template-rehearsal-manifest' {
         param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
         Set-Wp8Accepted `
             -Manifest $manifest `
-            -PilotReference $templateReference `
-            -PilotSha256 $templateSha256
+            -RehearsalReference $templateReference `
+            -RehearsalSha256 $templateSha256
     }
     Invoke-ValidatorCase `
-        -Name 'WP8 cannot accept the blank pilot template' `
-        -ManifestPath $templatePilotPath `
+        -Name 'WP8 cannot accept the blank rehearsal template' `
+        -ManifestPath $templateRehearsalPath `
         -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_PILOT_MANIFEST_SYNTHETIC'
+        -ExpectedError 'SPACE_GA_REHEARSAL_MANIFEST_SYNTHETIC'
 
     if ($global:LASTEXITCODE -ne 0) {
         throw "Test suite leaked child process exit code $global:LASTEXITCODE."
@@ -919,9 +990,9 @@ finally {
     if (Test-Path -LiteralPath $tempDirectory) {
         [System.IO.Directory]::Delete($tempDirectory, $true)
     }
-    if ($null -ne $pilotAcceptanceDirectory -and
-        (Test-Path -LiteralPath $pilotAcceptanceDirectory)) {
-        [System.IO.Directory]::Delete($pilotAcceptanceDirectory, $true)
+    if ($null -ne $rehearsalAcceptanceDirectory -and
+        (Test-Path -LiteralPath $rehearsalAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete($rehearsalAcceptanceDirectory, $true)
     }
     if ($null -ne $goldenAcceptanceDirectory -and
         (Test-Path -LiteralPath $goldenAcceptanceDirectory)) {

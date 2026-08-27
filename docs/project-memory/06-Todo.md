@@ -24,29 +24,28 @@
 - CRM 旧 Draft PR #7 已关闭，替代 PR #8 已合并且公共契约主线冒烟通过。Cloudflare Workers `estimate` 外部失败继续单独归因，不影响受保护的 CRM 合同、Windows/Web、Android 和 SQL 必需检查。
 - 完成整顿后把本机归档复制到第二介质，再考虑清理 `D:\CP6-archives\2026-08-24-branch-consolidation`；在此之前禁止删除 bundle、patch、原始未跟踪文件或 SHA-256 清单。
 
-## P0：Space Studio v1.3 GA 外部与扩展门禁
+## P0：Space Studio Lean Core GA 剩余门禁
 
-- Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。以下条目只属于正式 Core GA；不得用仓库内旧 DevelopmentSeed、未批准 Provider 或非生产环境结果冒充生产验收。
+- Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。正式 Core GA 使用 Schema 3；独立 Backup 与双仓 14 天 Pilot 已转为 GA 后增强。不得用 DevelopmentSeed、未批准 Provider、Mock 或 fixture 冒充正式发布演练。
 - 唯一 DeliveryOwner 已登记为 `BUBAO.GAO`，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`，同一人拥有全部输入与 Gate；WP0 仓库实现已 Complete，但正式接受和最终签署仍 Pending。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。
 - 20 份仓库外原创 AC1032 CAD 候选已经冻结并登记为 Complete：10 DWG/10 DXF、10/5/5、L1～L5 各 4，逐份授权/脱敏/答案/问题/Mapping/规则/复核证据齐全，产品 Converter 20/20 Pass。原始 CAD 不入 Git；后续必须使用同一 Source Set SHA `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`。
-- `CP6_SPACE_ODA_LICENSE_PATH` 当前未配置，未发现 ODA Drawings SDK Windows/Linux 包；历史 File Converter 27.1 不是可集成 SDK。必须提供真实包路径/版本/哈希、许可证安全引用和 SaaS/扩缩容/灾备/托管批准；“任意”路径不能写入批准 Manifest。
-- LM-FR-001/WP1 的仓库实现已完成：Blank/Published/System/Tenant 四模式统一创建、整仓模板全楼层幂等初始化、创建来源与模板哈希持久化、当前 Draft 零写入预览和租户模板制作表单均有自动化与真实 SQL 纵切。WP1 现为 Complete/Pending；剩余不是功能编码，而是 DeliveryOwner 对测试提交的可重复自审和正式接受。如需显示历史人员姓名，仍须另立受控身份显示合同，不得从缺失身份猜测。整体 GA 不因 WP1 实现完成改变，真实 Provider、授权 CAD、WMS/Viewer/恢复、黄金集和 Pilot 继续失败关闭。
+- 不再强制 ODA 或第二供应商。为选定的 Primary（当前候选为 AutoCAD Worker）补齐真实使用许可/批准引用、精确版本与哈希、隔离 Worker 身份、保留/删除和 Secret 引用；如果未来改用 ODA/云服务，再按其实际部署边界补相应批准。
+- LM-FR-001/WP1 的仓库实现已完成：Blank/Published/System/Tenant 四模式统一创建、整仓模板全楼层幂等初始化、创建来源与模板哈希持久化、当前 Draft 零写入预览和租户模板制作表单均有自动化与真实 SQL 纵切。WP1 现为 Complete/Pending；剩余不是功能编码，而是 DeliveryOwner 对测试提交的可重复自审和正式接受。整体 GA 不因 WP1 实现完成改变，获批准 Primary、黄金集正式评分和发布演练继续失败关闭。
 - WP4 详细 Spec LM-FR-017～029 的编辑器系列已有仓库实现；两点实距标定、构件库、统一历史、2D/3D 同源、选择/视角/未保存状态、四步清单、问题筛选定位和窄屏只读均有自动化。LM-FR-004 的后端 SHA-256 复用合同和当前 CAD/底图直接上传提示、LM-FR-005 的来源引用预检/双 Revision Fence/幂等软删除/文件与审计保留、LM-FR-010～011 的 DWG/DXF 输入与解析前单位/范围/异常比例显式确认、LM-FR-012 的 CAD 图层/块清单、LM-FR-013 的逐层 Override 与租户私有 Mapping Profile、LM-FR-014～016 的七类语义/来源证据/稳定质量问题、LM-FR-019/019A 的自动 Workspace、六类 Typed Changeset、静态元素原子 Apply 与业务布局 RuleOnly 交接均已闭环。当前 CAD + Excel 已可在同一工作台完成上传、扫描等待、Mapping Profile、预检、权威匹配、Lease Apply 与刷新恢复；历史 CAD Source/Parse Job 候选目录及“当前结果加载、旧结果重新解析”的显式重新关联也已闭环。三条路径主链还须审计 LM-FR-002 的模板来源后续项和 LM-FR-003 的生产等价安全扫描证据，并完成真实 Provider/文件/浏览器接受。上述仓库闭环不自动把 WP4 标回 Complete，也不得用 Mock/fixture 替代真实 DWG/DXF/Excel/PDF、Provider、WMS 与 Pilot 接受。
-- AutoCAD 2025 Core Console 候选已在远程隔离 Worker 内覆盖 DWG/DXF，托管 Parser 已用 64 MiB 上限通过精确 50 MiB 合成容量包络，可运行 Host 也已强制不可变非 development Release 身份。合并后已从精确 `main@4375c7c2fc1e297bf3fe845873b1af5af2cb5d66` 重建并密封 `0.0.0-rehearsal.postmerge`，但正式下一步仍是用批准 SemVer 重建、令完整 Worker Release SHA 与部署批准 Manifest 一致，并用授权真实 50 MiB DWG/DXF 记录 P95/资源/质量；同时确认许可证边界，证明真实 mTLS/禁网/专用身份/临时盘/清除失败关闭并取得客户/Site 批准。GUI `acad.exe` 的 `HashMismatch` 仍应通过 Autodesk 修复或批准例外处理；候选只调用签名有效的 Core Console。未完成前不得填写 `acceptedEvidence` 或关闭 WP3/WP7。
-- 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试；这些虚拟编号不能冒充真实 Owner、Pilot 参与者或 `DeliveryOwner`，但正式 GA 不再要求团队人数或多角色独立签字。
-- 核心 GA 当前派生结果为 `NoGo`：黄金 CAD 候选输入已 Complete，剩余 Provider/隔离 Worker与双仓/WMS 两类外部输入、WP0–WP8 九个结果门禁和 1 个 DeliveryOwner 签署 Pending。下一步是至少两条独立 Provider 审批链/隔离 Worker，以及 Greenfield/Retrofit 双仓和 WMS 窗口；同一实名 Owner 可以拥有、接受和签署全部内部门禁。
-- WP3 的 Site 认证/路由、资格证据、远程 Worker 协议/客户端/批准 Manifest/注册已完成仓库基础；AutoCAD Primary 候选现有 DWG/DXF 双格式合同路径。下一张 Provider 任务卡应补一个技术、供应商与故障域独立且同时覆盖 DWG/DXF 的 Backup 候选；两条链都必须只经 `SpaceCadConverterContractRunner`，不得把供应商类型写入领域层、让客户端指定任意 Provider Key，或把候选 Host 的存在冒充 Site 批准。
+- AutoCAD 2025 Core Console 候选已在远程隔离 Worker 内覆盖 DWG/DXF，托管 Parser 已用 64 MiB 上限通过精确 50 MiB 合成容量包络，可运行 Host 也已强制不可变非 development Release 身份。正式下一步是用批准 SemVer 重建、令完整 Worker Release SHA 与批准 Manifest 一致，并记录 50 MiB P95/资源/质量；同时确认许可边界，证明 mTLS/禁网/专用身份/临时盘/清除失败关闭。未完成前不得填写 `acceptedEvidence` 或关闭 WP3/WP7。
+- 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试；这些虚拟编号不能冒充真实 Owner、正式证据接受人或 `DeliveryOwner`，但正式 GA 不再要求团队人数或多角色独立签字。
+- 核心 GA 当前派生结果为 `NoGo`：黄金 CAD 候选输入已 Complete，剩余 `PRIMARY_PROVIDER_AND_ISOLATED_WORKER` 一类外部输入、WP0–WP8 九个结果门禁和 1 个 DeliveryOwner 签署 Pending。下一步先把当前 AutoCAD Primary 候选转为获批准的精确 Release/Worker 身份，再跑黄金集和一次受控发布演练。
+- WP3 的 Site 认证/路由、资格证据、远程 Worker 协议/客户端/批准 Manifest/注册已完成仓库基础；AutoCAD Primary 候选已有 DWG/DXF 双格式合同路径。下一张 Provider 任务卡只需关闭这个 Primary 的许可、批准 Release、隔离部署、精确版本和评分；Backup 另列 GA 后韧性任务。
 - Site 认证、运行注册、Preparation 输出和当前 Parse v5 已绑定同一 Provider Version；真实适配器注册必须使用被评分和批准的精确版本，升级 Worker 前必须重新评分、认证并替换 Site 配置，不得在同一 Provider Key 下静默换版。历史空版本认证按设计失效，不能手工回填猜测值。
 - Preparation → Parse 的 Mapping Replay Snapshot 与 v5 payload 已完成；真实 Provider 适配器必须加载快照绑定的不可变 Profile ID/Version、核对 Definition Hash、使用完整 Layer Overrides 重建 Mapping Preview，并在输出语义工件前执行 `SpaceCadMappingReplaySnapshot.ValidateReplay`。不得只信任期望 Preview Hash、忽略覆盖内容或让 Worker 使用当前 Profile 代替冻结版本。
-- 使用已交付的 `CP6.Space.CadExperiment qualify-providers` 在同一 20 份授权黄金集、同一冻结 Worker 和同一规则 `cad-provider-adr-0001-v1` 上评测所有真实候选；保存每个 Provider 版本、Preflight/产物/环境哈希和六维原始依据。只有工具产出唯一 Primary/Backup 且两者均不低于 80，才可把报告交给 Site 管理接口；当前没有真实评分报告，示例或人工改写 JSON 不算证据。
-- 为每个启用 CAD GA 的 Site 接入并实测一个主 DWG/DXF Provider 和一个同合同、同黄金集、同 Site 审批的备用 Provider；补齐法务、安全、数据区域、删除保留、Secret/证书/身份管理和审批证据。远程运行注册已可由部署显式开启，但仓库默认仍关闭，且没有有效批准 Manifest 或真实 Site 双链；当前能力接口继续失败关闭，不能作为真实 CAD 验收。
-- `SpaceCadProviderSqlServerTests` 已在 SQL Server LocalDB 3/3、0 skipped，关闭并发替换、唯一 Current Revision、历史追加、认证不可变、旧资格/版本失败关闭和迁移幂等的仓库真库门禁；生产等价 SQL、真实 Provider 和 Site 认证仍须随主备链外部验收执行，不能用 LocalDB 替代。
-- CAD 起始向导、sealed Preparation、parse start fence、Site 能力检查和 Rack/Element 画布拖动精调已完成仓库内闭环；拖动复用带 Lease、Floor/Content Revision 与幂等 Fence 的 Design V1 `MoveObject`，Zone/Aisle 继续走 Layout 合同，旧 `FloorEditor` 不继续发展为第二套权威。仍须由 DeliveryOwner 留下人工 UX、辅助技术和 Pilot 结果证据，不要求独立人员签字。
-- WP4 的图片底图标定入口、Excel–CAD 深链审核/确认、DWG/DXF 分格式浏览器合同及异常对象改类型/删除/合并/拆分/重画已有仓库内自动化；WP4 仍为 Partial，须继续审计统一 Typed Changeset/三路径其余详细条目，并用授权真实 DWG、DXF、Excel 和 PDF/图片在两条已认证 Provider 链及 CP6 WMS 环境完成端到端证据。Mock/fixture 结果不得计入黄金 CAD、性能、恢复或 Pilot 完成度。
-- WP7 的原创黄金 CAD 候选、正式 Manifest 协议、失败关闭专项校验和总 GA 组合门禁已完成；模板、fixture、DevelopmentSeed 和人工改写汇总仍不能冒充正式结果。下一步在已冻结的同一 Source Set/Worker 上运行批准的主备 Provider，产出 release-eligible 质量/Wilson/人工操作、Holdout Blocking 与 50 MiB/Ready P95 受控证明后，才能接受 WP7。
-- 工作台 GA 快捷键、问题定位、标准 tab 焦点、窄屏 3D 保持、字号/主要热区、2D/3D 同源选择和逐 Version+Floor 视角恢复已有仓库内自动化；Iris Xe/WebGL2/500 货架/10,000 库位正式 Viewer 性能门槛已在 `bd206ff8` 关闭。仍须在真实 SQL、已发布仓库数据和生产等价身份/部署中运行 Published/Draft 隔离与 Viewer E2E，并由 DeliveryOwner 记录 4.5:1 对比度、真实键盘/辅助技术及 1440×900/1280×720 UX 结果。输入或渲染路径实质变化时必须重跑。
-- WP6 仍须在生产等价观测链加载规则并验证通知路由，在生产等价 SQL Server 与真实 CP6 WMS 运行发布、自动恢复、部分写入对账、幂等重试、历史重发及旧 Published 持续服务证据，并完成备份恢复和真实 IdP HTTP 负向。安全检查可由 DeliveryOwner 执行并签署，不要求独立渗透人员，但证据和失败关闭标准不变。
-- WP8 仍须真实执行一个绿地仓和一个存量仓各连续 14 天 Pilot，记录逐日运行、建模/人工修改、缺陷、2D/3D/WMS 一致性、15/240 分钟恢复、业务结果和客户/实施确认，再由 DeliveryOwner 单一签署；同一位获授权人员可以兼任客户/实施确认。
+- 使用 `CP6.Space.CadExperiment qualify-providers` 在同一 20 份授权黄金集、同一冻结 Worker 和规则上评测选定的 Primary；保存精确 Provider 版本、Preflight/产物/环境哈希和六维原始依据。Primary 必须至少 80，示例或人工改写 JSON 不算证据。
+- 接入并实测一个获批准的 Primary DWG/DXF Provider；补齐许可、安全、删除保留、Secret/证书/身份和批准证据。远程运行注册继续默认关闭，没有有效批准 Manifest 时能力接口必须失败关闭。
+- `SpaceCadProviderSqlServerTests` 已在 SQL Server LocalDB 3/3、0 skipped，关闭并发替换、唯一 Current Revision、历史追加、认证不可变、旧资格/版本失败关闭和迁移幂等。正式验收可在明确标识的受控 Release Rehearsal SQL Server 环境执行，不要求生产部署，但必须绑定真实 Primary 和不可变证据。
+- CAD 起始向导、sealed Preparation、parse start fence、Site 能力检查和 Rack/Element 画布拖动精调已完成仓库内闭环；仍须由 DeliveryOwner 在发布演练中留下人工 UX、辅助技术和端到端结果证据，不要求独立人员签字。
+- WP4 的图片底图标定、Excel–CAD 深链、DWG/DXF 浏览器合同及异常对象编辑已有仓库内自动化；用授权 DWG/DXF、Excel、PDF/图片和获批准 Primary 在受控 CP6 WMS 演练环境完成三路径端到端证据。Mock/fixture 不计正式结果。
+- WP7 的原创黄金 CAD 候选、正式 Manifest 协议和失败关闭校验已完成；下一步在同一 Source Set/Worker 上运行获批准的 Primary，产出 release-eligible 质量/Wilson/人工操作、Holdout Blocking 与 50 MiB/Ready P95 证明。
+- Viewer 性能门槛已关闭；仍须在受控 SQL Server、已发布仓库数据和固定演练身份中运行 Published/Draft 隔离与 Viewer E2E，并由 DeliveryOwner 记录对比度、键盘/辅助技术及 1440×900/1280×720 结果。
+- WP6/WP8 在同一次受控发布演练中验证通知、SQL Server + CP6 WMS 发布、部分写入对账、幂等重试、旧 Published 持续服务、备份恢复、IdP HTTP 负向和 15/240 分钟恢复；五类证据完成后由 BUBAO.GAO 单一签署。生产部署和现场 Pilot 继续独立，不阻断 Core GA。
 ## 已完成：OpenAPI 原生客户端漂移门禁
 
 - PowerShell 版本差异与全局无关 schema 导致的假阳性已消除；门禁现在只哈希原生客户端路径及递归可达 schema，并使用 Node.js 稳定规范化。
@@ -129,13 +128,13 @@
 - E13-S11 已完成用户可见取消安全点、同输入重试分类、权威 CommandBatch 对账、Failed/Stale replacement Run、RuleOnly 降级和真库运维演练；生产默认 BuildScene executor 现可让 RuleOnly recovery 从权威 PreviewSet 到 AwaitingReview，且零 Provider、零 Usage、零 Draft 写入。Provider-backed 模式仍失败关闭，不能描述成真实外部 Provider 端到端完成。
 - E13-S13 已完成外部主体在 16 个 AI 操作及 Gateway 的稳定 403 拒绝、External Provider 字段/Token 外发白名单、7 个 GET 读审计和 Customer/Supplier/3PL 矩阵；生产没有真实外部 Provider，不能把门禁实现描述成网络端到端签收。
 - E13-S17 已完成加法 Migration、幂等 SQL、Tenant 清理 Job、90/365 天保留、保留锁、同租户并发租约和 forward-fix 操作说明；生产定时器仍需受控 Worker 配置专用 service principal。
-- E13-S14 的离线评估器、Calibration-only 阈值校准、样本外 Wilson 门禁、规范报告哈希和命令入口已完成；原创 20 份黄金 CAD、10/5/5、L1～L5、实名单人复核和完整性审计也已关闭。正式 S14 仍需批准的真实版本/主备 Provider 输出、人工操作实测和结果签署；S15/S19 继续等待供应商合规、影子运行与试点证据，S18 依赖 S15，不能提前签收。
+- E13-S14 的离线评估器、Calibration-only 阈值校准、样本外 Wilson 门禁、规范报告哈希和命令入口已完成；原创 20 份黄金 CAD、10/5/5、L1～L5、实名单人复核和完整性审计也已关闭。正式 S14 仍需获批准 Primary 的真实版本输出、人工操作实测和结果签署；Backup/影子双链与现场试点按 Lean Schema 3 转为 GA 后增强。
 - E13-S10 已消费 E13-S09 Decision 并原子写入 Draft；真实 Worker 的同 SourceHash、已确认 `LoadLockedFacts` 已自动接入 RuleOnly 融合并重映射名称、allowlisted 属性和父关系。不同 SourceHash 的确定性几何建议继承与人工确认仍未完成，不能用猜测匹配绕过失败关闭。
 - RackGenerationProfile 权威头/不可变版本、Tenant-only 创建、System/Tenant 读取、Run 冻结、Worker 消费和 Web 显式选择已由 `19d32650` 完成；不要再以 Asset 或任意 GUID 替代。无人工锁时的确定性 Zone 父关系推导已由 `d19a5300` 完成。下一张独立产品卡可处理不同 SourceHash 的几何匹配、建议展示与人工确认；在确认闭环完成前不得自动继承或 Apply。现有方案追加 v2、System 配置和完整管理 UI 也保持独立，仍不能发明默认尺寸或关系。
 - 继续保持批量 High Accept 默认关闭、原始 CAD 不外发、外部 Provider 默认关闭、配额失败关闭、规则路径不依赖 Provider，以及 Draft/Published/WMS/设备边界隔离。
-- E02 S01 中立实验工具已集成，20 文件原创黄金候选及 DWG/DXF 版本/实体矩阵已经提供；最终签收仍需在冻结环境完成批准 Primary/Backup 的正式运行与对比结果。
-- 法务/采购需确认 ODA 正式 Web/SaaS 授权；工程需获得校验过的 ODA Windows/Linux SDK 包。APS 备试需批准区域、DPA、删除/保留证据和非生产凭据。平台/安全需提供 8 vCPU / 32GiB 的冻结隔离 Worker。
-- 外部输入齐全后，在同一冻结环境对 ODA 与 APS 各黄金样本 5 次、50MiB/100 万实体/200MiB 上限、超时/取消/并发进行评分；低于 ADR-0001 的 80 分硬门槛不得主选，若都失败则继续阻断 DWG Beta。
+- E02 S01 中立实验工具已集成，20 文件原创黄金候选及 DWG/DXF 版本/实体矩阵已经提供；最终签收只需在冻结环境完成获批准 Primary 的正式运行。
+- 当前优先确认 AutoCAD Primary 的使用许可、Release/Worker 哈希和隔离运行边界；只有实际选择 ODA/云 Provider 时才补对应 SDK、DPA、区域和 SaaS 证据，不预先强制第二供应商。
+- 外部输入齐全后，在同一冻结环境对 Primary 运行黄金集、50 MiB、超时/取消/并发评分；低于 80 分继续阻断 Core GA。
 - 本机 `KOUSQLSERVER` 已用于 E13-S17 的迁移、重复清理、并发租约和幂等 SQL 双执行，结果 3/3、0 skipped；随后 Version Clone 缺失的 Zone/Aisle/Rack `Name` 与 Rack `RackType` 映射已修复，完整 Space Integration 现为 336/336 passed、0 skipped。该项不再是待办。
 - `0d25da4d` 中 E05–E12 是候选证据，不得整包 merge/cherry-pick；必须重新核对依赖、迁移链和产品冻结范围。
 - P2.5 已在当前主线按现行 E10 数据边界完成受控整合；历史 P2.5 分支仅保留追溯用途，不再整段 merge/cherry-pick。

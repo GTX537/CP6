@@ -71,19 +71,17 @@ function New-ValidKickoffManifest {
     }
     $candidateSetSha256 = Get-TestCandidateSetSha256 -Candidates $candidates
 
-    $providers = @(
-        [pscustomobject]@{
+    $providers = @([pscustomobject]@{
+            role = 'Primary'
             providerKey = 'provider-a'
             providerVersion = '1.0.0'
             adapterContract = 'ICadConverter'
             dataBoundary = 'ControlledIsolatedWorker'
             licensingApproved = $true
             securityApproved = $true
-            dataRegionApproved = $true
             retentionDeletionApproved = $true
             licensingEvidence = New-KickoffAttestation -Id 'provider-a-license'
             securityEvidence = New-KickoffAttestation -Id 'provider-a-security'
-            dataRegionEvidence = New-KickoffAttestation -Id 'provider-a-region'
             retentionDeletionEvidence = New-KickoffAttestation -Id 'provider-a-retention'
             cloudApprovals = [pscustomobject]@{
                 tenantApproved = $false
@@ -93,64 +91,10 @@ function New-ValidKickoffManifest {
                 customerEvidence = [pscustomobject]@{}
                 securityEvidence = [pscustomobject]@{}
             }
-        },
-        [pscustomobject]@{
-            providerKey = 'provider-b'
-            providerVersion = '2.0.0'
-            adapterContract = 'ICadConverter'
-            dataBoundary = 'ControlledIsolatedWorker'
-            licensingApproved = $true
-            securityApproved = $true
-            dataRegionApproved = $true
-            retentionDeletionApproved = $true
-            licensingEvidence = New-KickoffAttestation -Id 'provider-b-license'
-            securityEvidence = New-KickoffAttestation -Id 'provider-b-security'
-            dataRegionEvidence = New-KickoffAttestation -Id 'provider-b-region'
-            retentionDeletionEvidence = New-KickoffAttestation -Id 'provider-b-retention'
-            cloudApprovals = [pscustomobject]@{
-                tenantApproved = $false
-                customerApproved = $false
-                securityApproved = $false
-                tenantEvidence = [pscustomobject]@{}
-                customerEvidence = [pscustomobject]@{}
-                securityEvidence = [pscustomobject]@{}
-            }
-        })
-
-    $sites = @(
-        [pscustomobject]@{
-            siteRef = 'urn:cp6-space-ga-site:greenfield-01'
-            siteType = 'Greenfield'
-            businessOwner = 'Business One'
-            implementationOwner = 'Implementation One'
-            wmsOwner = 'Wms One'
-            wmsSystem = 'CP6_WMS'
-            wmsWindowStartUtc = '2026-09-01T00:00:00Z'
-            wmsWindowEndUtc = '2026-09-15T00:00:00Z'
-            plannedPilotStartDate = '2026-09-01'
-            plannedPilotEndDate = '2026-09-14'
-            pilotWindowConfirmed = $true
-            selectionEvidence = New-KickoffAttestation -Id 'greenfield-selection'
-            wmsWindowEvidence = New-KickoffAttestation -Id 'greenfield-wms-window'
-        },
-        [pscustomobject]@{
-            siteRef = 'urn:cp6-space-ga-site:retrofit-01'
-            siteType = 'Retrofit'
-            businessOwner = 'Business Two'
-            implementationOwner = 'Implementation Two'
-            wmsOwner = 'Wms Two'
-            wmsSystem = 'CP6_WMS'
-            wmsWindowStartUtc = '2026-09-01T00:00:00Z'
-            wmsWindowEndUtc = '2026-09-15T00:00:00Z'
-            plannedPilotStartDate = '2026-09-01'
-            plannedPilotEndDate = '2026-09-14'
-            pilotWindowConfirmed = $true
-            selectionEvidence = New-KickoffAttestation -Id 'retrofit-selection'
-            wmsWindowEvidence = New-KickoffAttestation -Id 'retrofit-wms-window'
         })
 
     return [pscustomobject]@{
-        schemaVersion = 2
+        schemaVersion = 3
         programId = 'CP6_SPACE_STUDIO_V1_CORE_GA'
         deliveryMode = 'SoloDeveloper'
         evidenceClass = 'M0_EXTERNAL_INPUT_READINESS'
@@ -167,8 +111,8 @@ function New-ValidKickoffManifest {
             candidateSetSha256 = $candidateSetSha256
             candidates = $candidates
         }
-        providerApprovalsAndIsolatedWorker = [pscustomobject]@{
-            inputId = 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER'
+        primaryProviderAndIsolatedWorker = [pscustomobject]@{
+            inputId = 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
             status = 'Complete'
             ownerName = 'Zhang Wei'
             completionEvidence = New-KickoffAttestation `
@@ -183,14 +127,6 @@ function New-ValidKickoffManifest {
                 outboundNetworkPolicy = 'DenyByDefault'
                 readinessEvidence = New-KickoffAttestation -Id 'worker-readiness'
             }
-        }
-        twoPilotSitesAndWmsWindows = [pscustomobject]@{
-            inputId = 'TWO_PILOT_SITES_AND_WMS_WINDOWS'
-            status = 'Complete'
-            ownerName = 'Zhang Wei'
-            completionEvidence = New-KickoffAttestation `
-                -Id 'pilot-completion' -AcceptedBy 'Zhang Wei'
-            sites = $sites
         }
     }
 }
@@ -302,7 +238,7 @@ try {
     $incrementalPath = New-KickoffTestManifest 'incremental' {
         param($manifest)
         $manifest.conclusion = 'InProgress'
-        $manifest.twoPilotSitesAndWmsWindows.status = 'Pending'
+        $manifest.primaryProviderAndIsolatedWorker.status = 'Pending'
     }
     Invoke-KickoffValidatorCase `
         -Name 'one input can close from an incremental package' `
@@ -388,87 +324,48 @@ try {
 
     $providerCountPath = New-KickoffTestManifest 'provider-count' {
         param($manifest)
-        $manifest.providerApprovalsAndIsolatedWorker.candidateProviders = @(
-            $manifest.providerApprovalsAndIsolatedWorker.candidateProviders[0])
+        $manifest.primaryProviderAndIsolatedWorker.candidateProviders = @()
     }
-    Invoke-KickoffValidatorCase -Name 'two Provider candidates are required' `
+    Invoke-KickoffValidatorCase -Name 'one Primary Provider candidate is required' `
         -ManifestPath $providerCountPath -ShouldPass $false `
-        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
         -ExpectedError 'SPACE_GA_KICKOFF_PROVIDER_COUNT_INVALID'
 
-    $providerDuplicatePath = New-KickoffTestManifest 'provider-duplicate' {
+    $providerRolePath = New-KickoffTestManifest 'provider-role' {
         param($manifest)
-        $providers = $manifest.providerApprovalsAndIsolatedWorker.candidateProviders
-        $providers[1].providerKey = $providers[0].providerKey
+        $manifest.primaryProviderAndIsolatedWorker.candidateProviders[0].role = 'Backup'
     }
-    Invoke-KickoffValidatorCase -Name 'Provider candidates are distinct' `
-        -ManifestPath $providerDuplicatePath -ShouldPass $false `
-        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
-        -ExpectedError 'SPACE_GA_KICKOFF_PROVIDER_DUPLICATE'
+    Invoke-KickoffValidatorCase -Name 'the Provider role is Primary' `
+        -ManifestPath $providerRolePath -ShouldPass $false `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
+        -ExpectedError 'SPACE_GA_KICKOFF_PROVIDER_COUNT_INVALID'
 
     $providerApprovalPath = New-KickoffTestManifest 'provider-approval' {
         param($manifest)
-        $manifest.providerApprovalsAndIsolatedWorker.candidateProviders[0].licensingApproved = $false
+        $manifest.primaryProviderAndIsolatedWorker.candidateProviders[0].licensingApproved = $false
     }
     Invoke-KickoffValidatorCase -Name 'Provider approvals are complete' `
         -ManifestPath $providerApprovalPath -ShouldPass $false `
-        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
         -ExpectedError 'SPACE_GA_KICKOFF_PROVIDER_APPROVALS_INCOMPLETE'
 
     $cloudApprovalPath = New-KickoffTestManifest 'cloud-approval' {
         param($manifest)
-        $manifest.providerApprovalsAndIsolatedWorker.candidateProviders[0].dataBoundary = 'ApprovedCloud'
+        $manifest.primaryProviderAndIsolatedWorker.candidateProviders[0].dataBoundary = 'ApprovedCloud'
     }
     Invoke-KickoffValidatorCase -Name 'cloud requires tenant customer security approvals' `
         -ManifestPath $cloudApprovalPath -ShouldPass $false `
-        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
         -ExpectedError 'SPACE_GA_KICKOFF_CLOUD_APPROVALS_INCOMPLETE'
 
     $workerPath = New-KickoffTestManifest 'worker' {
         param($manifest)
-        $manifest.providerApprovalsAndIsolatedWorker.worker.secretsByReferenceOnly = $false
+        $manifest.primaryProviderAndIsolatedWorker.worker.secretsByReferenceOnly = $false
     }
     Invoke-KickoffValidatorCase -Name 'Worker isolation boundary is enforced' `
         -ManifestPath $workerPath -ShouldPass $false `
-        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
         -ExpectedError 'SPACE_GA_KICKOFF_WORKER_INVALID'
-
-    $pilotSetPath = New-KickoffTestManifest 'pilot-set' {
-        param($manifest)
-        $manifest.twoPilotSitesAndWmsWindows.sites[1].siteType = 'Greenfield'
-    }
-    Invoke-KickoffValidatorCase -Name 'greenfield and retrofit are both required' `
-        -ManifestPath $pilotSetPath -ShouldPass $false `
-        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
-        -ExpectedError 'SPACE_GA_KICKOFF_PILOT_SITE_SET_INVALID'
-
-    $pilotDurationPath = New-KickoffTestManifest 'pilot-duration' {
-        param($manifest)
-        $manifest.twoPilotSitesAndWmsWindows.sites[0].plannedPilotEndDate = '2026-09-13'
-    }
-    Invoke-KickoffValidatorCase -Name 'planned Pilot covers fourteen days' `
-        -ManifestPath $pilotDurationPath -ShouldPass $false `
-        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
-        -ExpectedError 'SPACE_GA_KICKOFF_PILOT_DURATION_INVALID'
-
-    $wmsWindowPath = New-KickoffTestManifest 'wms-window' {
-        param($manifest)
-        $manifest.twoPilotSitesAndWmsWindows.sites[0].wmsWindowEndUtc = '2026-08-31T23:00:00Z'
-    }
-    Invoke-KickoffValidatorCase -Name 'WMS window is ordered' `
-        -ManifestPath $wmsWindowPath -ShouldPass $false `
-        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
-        -ExpectedError 'SPACE_GA_KICKOFF_WMS_WINDOW_INVALID'
-
-    $wmsCoveragePath = New-KickoffTestManifest 'wms-window-coverage' {
-        param($manifest)
-        $manifest.twoPilotSitesAndWmsWindows.sites[0].wmsWindowStartUtc = (
-            '2026-09-02T00:00:00Z')
-    }
-    Invoke-KickoffValidatorCase -Name 'WMS window covers the full Pilot' `
-        -ManifestPath $wmsCoveragePath -ShouldPass $false `
-        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
-        -ExpectedError 'SPACE_GA_KICKOFF_WMS_WINDOW_COVERAGE_INVALID'
 
     $sectionEvidencePath = New-KickoffTestManifest 'section-evidence' {
         param($manifest)

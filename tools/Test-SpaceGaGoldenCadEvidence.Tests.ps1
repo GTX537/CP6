@@ -152,7 +152,7 @@ function New-ValidGoldenManifest {
     $datasetSha256 = 'a' * 64
     $environmentSha256 = 'b' * 64
     return [pscustomobject]@{
-        schemaVersion = 2
+        schemaVersion = 3
         programId = 'CP6_SPACE_STUDIO_V1_CORE_GA'
         deliveryMode = 'SoloDeveloper'
         evidenceClass = 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
@@ -177,25 +177,15 @@ function New-ValidGoldenManifest {
                 -Sha256 $fixtureSha256
             samples = $samples.ToArray()
         }
-        providers = @(
-            (New-TestProvider `
-                -Role 'Primary' `
-                -ProviderKey 'provider-primary' `
-                -ProviderVersion '1.0.0' `
-                -QualificationScore 91 `
-                -DatasetSha256 $datasetSha256 `
-                -SourceSetSha256 $sourceSetSha256 `
-                -EnvironmentSha256 $environmentSha256 `
-                -ReportSha256 ('e' * 64)),
-            (New-TestProvider `
-                -Role 'Backup' `
-                -ProviderKey 'provider-backup' `
-                -ProviderVersion '2.0.0' `
-                -QualificationScore 86 `
-                -DatasetSha256 $datasetSha256 `
-                -SourceSetSha256 $sourceSetSha256 `
-                -EnvironmentSha256 $environmentSha256 `
-                -ReportSha256 ('f' * 64)))
+        providers = @((New-TestProvider `
+            -Role 'Primary' `
+            -ProviderKey 'provider-primary' `
+            -ProviderVersion '1.0.0' `
+            -QualificationScore 91 `
+            -DatasetSha256 $datasetSha256 `
+            -SourceSetSha256 $sourceSetSha256 `
+            -EnvironmentSha256 $environmentSha256 `
+            -ReportSha256 ('e' * 64)))
     }
 }
 
@@ -392,42 +382,41 @@ try {
 
     $providerRolePath = New-GoldenTestManifest 'provider-roles' {
         param($manifest)
-        $manifest.providers[1].role = 'Primary'
+        $manifest.providers[0].role = 'Backup'
     }
-    Invoke-GoldenValidatorCase -Name 'primary and backup are distinct' `
+    Invoke-GoldenValidatorCase -Name 'the single provider is primary' `
         -ManifestPath $providerRolePath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_PROVIDER_ROLES_INVALID'
 
     $providerScorePath = New-GoldenTestManifest 'provider-score' {
         param($manifest)
-        $manifest.providers[1].qualificationScore = 79
+        $manifest.providers[0].qualificationScore = 79
     }
-    Invoke-GoldenValidatorCase -Name 'both providers score at least eighty' `
+    Invoke-GoldenValidatorCase -Name 'the primary provider scores at least eighty' `
         -ManifestPath $providerScorePath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_PROVIDER_INVALID'
 
-    $providerRankPath = New-GoldenTestManifest 'provider-rank' {
+    $extraProviderPath = New-GoldenTestManifest 'extra-provider' {
         param($manifest)
-        $manifest.providers[0].qualificationScore = 85
-        $manifest.providers[1].qualificationScore = 85
+        $manifest.providers += $manifest.providers[0]
     }
-    Invoke-GoldenValidatorCase -Name 'primary strictly outranks backup' `
-        -ManifestPath $providerRankPath -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_GOLDEN_PROVIDER_RANK_INVALID'
+    Invoke-GoldenValidatorCase -Name 'Core GA uses exactly one primary provider' `
+        -ManifestPath $extraProviderPath -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_PROVIDER_SET_INVALID'
 
     $releaseEligiblePath = New-GoldenTestManifest 'release-eligible' {
         param($manifest)
         $manifest.providers[0].releaseEligible = $false
     }
-    Invoke-GoldenValidatorCase -Name 'both evaluation reports are release eligible' `
+    Invoke-GoldenValidatorCase -Name 'the primary evaluation report is release eligible' `
         -ManifestPath $releaseEligiblePath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_PROVIDER_INVALID'
 
     $baselinePath = New-GoldenTestManifest 'provider-baseline' {
         param($manifest)
-        $manifest.providers[1].frozenWorkerEnvironmentSha256 = '0' * 64
+        $manifest.providers[0].frozenWorkerEnvironmentSha256 = '0' * 64
     }
-    Invoke-GoldenValidatorCase -Name 'providers share frozen baseline' `
+    Invoke-GoldenValidatorCase -Name 'the primary uses the frozen baseline' `
         -ManifestPath $baselinePath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_PROVIDER_BASELINE_MISMATCH'
 
@@ -461,7 +450,7 @@ try {
 
     $blockingPath = New-GoldenTestManifest 'holdout-blocking' {
         param($manifest)
-        $manifest.providers[1].holdoutUnreportedBlockingOmissions = 1
+        $manifest.providers[0].holdoutUnreportedBlockingOmissions = 1
     }
     Invoke-GoldenValidatorCase -Name 'holdout has no unreported blocker' `
         -ManifestPath $blockingPath -ShouldPass $false `
@@ -492,14 +481,6 @@ try {
     Invoke-GoldenValidatorCase -Name 'trained user P95 is at most sixty minutes' `
         -ManifestPath $readyPath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_GOLDEN_READY_P95_FAILED'
-
-    $performanceSourcePath = New-GoldenTestManifest 'performance-source' {
-        param($manifest)
-        $manifest.providers[1].performance.standardCadSha256 = '8' * 64
-    }
-    Invoke-GoldenValidatorCase -Name 'providers use the same standard CAD' `
-        -ManifestPath $performanceSourcePath -ShouldPass $false `
-        -ExpectedError 'SPACE_GA_GOLDEN_PERFORMANCE_SOURCE_MISMATCH'
 
     $prematurePath = New-GoldenTestManifest 'premature-evidence' {
         param($manifest)

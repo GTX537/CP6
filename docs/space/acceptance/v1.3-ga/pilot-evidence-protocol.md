@@ -1,7 +1,9 @@
 # Space Studio V1 双仓 Pilot 证据协议
 
+> 状态：GA 后运营增强。自 Lean Core GA Schema 3 起，本协议不再是首版 Core GA 阻断项；如后续需要现场推广、客户采用或双仓运营验证，可继续独立使用。
+
 版本：1.0
-适用 Gate：`WP8_TWO_SITE_PILOT_AND_SIGNOFF`
+历史适用 Gate：`WP8_TWO_SITE_PILOT_AND_SIGNOFF`（不属于 Schema 3 Core GA）
 
 ## 1. 目的与边界
 

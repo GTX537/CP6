@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
   "deliveryMode": "SoloDeveloper",
   "evidenceClass": "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
@@ -42,43 +42,6 @@
   "providers": [
     {
       "role": "Primary",
-      "providerKey": null,
-      "providerVersion": null,
-      "qualificationScore": null,
-      "releaseEligible": false,
-      "providerConfigSha256": null,
-      "evaluationReportSha256": null,
-      "goldenDatasetSha256": null,
-      "evaluatedSourceSetSha256": null,
-      "frozenWorkerEnvironmentSha256": null,
-      "overallMetrics": {
-        "targetCoveragePercent": null,
-        "overallAccuracyPercent": null,
-        "highConfidencePrecisionPercent": null,
-        "highConfidenceWilsonLowerBoundPercent": null,
-        "manualOperationReductionPercent": null
-      },
-      "outOfSampleMetrics": {
-        "targetCoveragePercent": null,
-        "overallAccuracyPercent": null,
-        "highConfidencePrecisionPercent": null,
-        "highConfidenceWilsonLowerBoundPercent": null,
-        "manualOperationReductionPercent": null
-      },
-      "holdoutUnreportedBlockingOmissions": null,
-      "performance": {
-        "standardCadSizeBytes": null,
-        "standardCadSha256": null,
-        "frozenWorkerEnvironmentSha256": null,
-        "reviewReadyDurationsMinutes": [],
-        "trainedUserReadyDurationsMinutes": [],
-        "evidence": {}
-      },
-      "qualificationEvidence": {},
-      "evaluationEvidence": {}
-    },
-    {
-      "role": "Backup",
       "providerKey": null,
       "providerVersion": null,
       "qualificationScore": null,
