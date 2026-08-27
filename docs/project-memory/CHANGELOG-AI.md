@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space Studio Development V1 100%
+
+- 建立与正式 GA 隔离的 `CP6_SPACE_STUDIO_DEVELOPMENT_V1`：六个开发 Gate 全部 Passed，派生 `DevelopmentComplete` / 100%；唯一 Owner 为 `BUBAO.GAO`，没有多人门禁。
+- 20 份合成 DXF 再生与完整性审计通过，L1～L5 各 4、五个 DXF 版本齐全；53,190,207 bytes / 670,000 实体和 79,517,079 bytes / 1,000,000 实体两档容量门禁通过。两个 JSONL 仅受 Windows CRLF 检出影响，归一化内容完全一致。
+- 新增失败关闭验收校验器、8 个正负场景与 GitHub 门禁，逐种子复核 SHA、从 Gate 派生百分比，锁定验收当日正式 72%/3/9/1 快照，并禁止开发数据/报告进入正式 accepted evidence；完整证据脚本 125/125，AutoCAD 安装回归 57/57、0 skipped。
+- `formalGaEligible=false`、`countsTowardProductionGa=false`；正式 E02 Ready 负向审计仍正确失败，Core GA 保持 72% / NoGo、3/9/1 Pending。
+
 ## 2026-08-27：Space GA 单人 Owner 与外部输入盘点
 
 - `BUBAO.GAO` 已登记为唯一 DeliveryOwner、三类输入与 WP0～WP8 责任人；Kickoff/目标 GA 固定为 `2026-08-27` / `2026-09-27`。WP0 实现改为 Complete，但接受与唯一签署仍 Pending。

@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space Studio Development V1 100%（2026-08-27）
+
+- `CP6_SPACE_STUDIO_DEVELOPMENT_V1` 已在 RepositoryAndDevelopment 范围达到 `DevelopmentComplete` / 100%：统一 Draft/模板、CAD/Excel/手工三路径、编辑器、2D/3D Viewer、开发 CAD Worker，以及发布/WMS/安全/恢复仓库门禁共六项全部通过；唯一 Owner 为 `BUBAO.GAO`，没有多人门禁。
+- 20 份合成 DXF 重新生成与完整性审计通过，L1～L5 各 4，覆盖五个冻结 DXF 版本；53,190,207 bytes / 670,000 实体与 79,517,079 bytes / 1,000,000 实体两档压力资产通过。29 个文件的唯一字节差异是 Windows CRLF 检出，换行归一化后完全一致。
+- 开发版验收索引与失败关闭校验器强制 `formalGaEligible=false`、`countsTowardProductionGa=false`，并禁止开发数据/报告进入正式 accepted evidence。正式 E02 Ready 负向审计仍因 0 正式黄金、无 10/5/5、无 DWG/版本矩阵以退出码 3 失败。
+- 双轨状态固定为：Development V1 = 100% / `DevelopmentComplete`；正式 Core GA = 72% / `NoGo`。后者的 3 类外部输入、9 个接受 Gate 与 1 个签署没有被开发版替代。依据见 `docs/space/reports/2026-08-27-space-development-v1-acceptance.md`。
+
 ## Space GA 单人 Owner 与外部输入盘点（2026-08-27）
 
 - `BUBAO.GAO` 已登记为唯一 DeliveryOwner、三类外部输入和 WP0～WP8 的责任人；Kickoff 为 `2026-08-27`，目标 GA 为 `2026-09-27`。WP0 仓库实现改为 Complete，接受与唯一签署仍 Pending，不存在第二人或多人门禁。

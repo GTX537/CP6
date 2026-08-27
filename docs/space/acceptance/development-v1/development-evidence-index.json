@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_DEVELOPMENT_V1",
+  "declaredStatus": "DevelopmentComplete",
+  "completionPercent": 100,
+  "formalGaEligible": false,
+  "countsTowardProductionGa": false,
+  "deliveryMode": "SoloDeveloper",
+  "deliveryOwner": "BUBAO.GAO",
+  "evaluatedAt": "2026-08-27",
+  "sourceBaseline": "main@4927fe4d499f6c8215926a8abbb3add96d14e819",
+  "scope": {
+    "environment": "RepositoryAndDevelopment",
+    "usesSyntheticCad": true,
+    "requiresAuthorizedCustomerCad": false,
+    "requiresProductionProviderApproval": false,
+    "requiresBackupProvider": false,
+    "requiresProductionWmsWindow": false,
+    "requiresProductionPilot": false,
+    "requiresFormalHumanSignoff": false
+  },
+  "developmentDataset": {
+    "manifestPath": "docs/space/acceptance/development-v2.0.0/manifest.json",
+    "expectedVersion": "2.0.0",
+    "expectedPurpose": "DevelopmentSeed",
+    "expectedSampleCount": 20,
+    "expectedSamplesPerLayoutFamily": 4,
+    "expectedLayoutFamilies": [
+      "L1-RegularRectangular",
+      "L2-MultiFloor",
+      "L3-NonOrthogonal",
+      "L4-Comprehensive",
+      "L5-NoisyNonStandard"
+    ],
+    "expectedCadVersions": [
+      "AC1009",
+      "AC1015",
+      "AC1021",
+      "AC1027",
+      "AC1032"
+    ],
+    "countsTowardReleaseGate": false
+  },
+  "formalBoundary": {
+    "formalGaIndexPath": "docs/space/acceptance/v1.3-ga/ga-evidence-index.json",
+    "formalProgramId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+    "snapshotAtAcceptance": {
+      "declaredStatus": "NoGo",
+      "baselinePercent": 72,
+      "pendingExternalInputs": 3,
+      "pendingGates": 9,
+      "pendingSigners": 1
+    },
+    "forbiddenFormalAcceptancePrefixes": [
+      "docs/space/acceptance/development-v1/",
+      "docs/space/acceptance/development-v2.0.0/",
+      "docs/space/reports/2026-08-27-space-development-v1-acceptance"
+    ]
+  },
+  "gates": [
+    {
+      "id": "DV1_AUTHORING_AND_TEMPLATES",
+      "status": "Passed",
+      "acceptanceCriteria": [
+        "Blank, Published clone, System template and Tenant template create one authoritative Draft flow.",
+        "Floor shells, template provenance and idempotent whole-template application are repository tested."
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-27-space-unified-draft-and-template-authoring.md",
+        "docs/space/reports/2026-08-15-space-design-blank-draft.md",
+        "docs/space/reports/2026-08-15-space-system-template-floor-apply.md",
+        "docs/space/reports/2026-08-15-space-draft-summary-metadata.md"
+      ]
+    },
+    {
+      "id": "DV1_THREE_INPUT_PATHS_AND_EDITING",
+      "status": "Passed",
+      "acceptanceCriteria": [
+        "CAD, Excel and manual/underlay paths converge on the same Draft and editor contracts.",
+        "Typed changesets, split, redraw, merge, retype, delete, copy and correction history have automated coverage."
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-cad-start-wizard.md",
+        "docs/space/reports/2026-08-16-space-excel-current-cad-workflow.md",
+        "docs/space/reports/2026-08-14-space-studio-path-closure.md",
+        "docs/space/reports/2026-08-15-space-cad-exception-split.md",
+        "docs/space/reports/2026-08-15-space-cad-exception-redraw.md",
+        "docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md"
+      ]
+    },
+    {
+      "id": "DV1_CAD_WORKER_AND_SYNTHETIC_DATASET",
+      "status": "Passed",
+      "acceptanceCriteria": [
+        "The development corpus contains 20 deterministic DXF samples across L1-L5 and the five frozen DXF versions.",
+        "The isolated AutoCAD candidate Worker supports DWG and DXF with immutable release identity.",
+        "Synthetic 50 MiB and one-million-entity envelopes pass without being represented as authorized customer CAD."
+      ],
+      "evidencePaths": [
+        "docs/space/acceptance/development-v2.0.0/README.md",
+        "docs/space/acceptance/development-v2.0.0/manifest.json",
+        "docs/space/reports/e02-synthetic-development-cad-corpus.md",
+        "docs/space/reports/2026-08-15-space-autocad-core-console-development.md",
+        "docs/space/reports/2026-08-27-space-remote-cad-worker-provider.md",
+        "docs/space/reports/2026-08-27-space-autocad-candidate-worker-dxf.md",
+        "docs/space/reports/2026-08-27-space-dxf-50m-streaming-capacity.md",
+        "docs/space/reports/2026-08-27-space-autocad-worker-release-identity.md"
+      ]
+    },
+    {
+      "id": "DV1_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
+      "status": "Passed",
+      "acceptanceCriteria": [
+        "The editor and Viewer share the frozen scene contract and preserve Published-only runtime boundaries.",
+        "3D interaction, keyboard accessibility, reduced motion and the repository performance envelope are covered."
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-space-studio-3d-interaction.md",
+        "docs/space/reports/2026-08-14-space-studio-accessibility.md",
+        "docs/space/reports/2026-08-14-space-viewer-v13-ga.md",
+        "docs/space/reports/2026-08-14-space-viewer-v13-ga.json",
+        "docs/space/reports/e08-s05-10000-location-performance.md"
+      ]
+    },
+    {
+      "id": "DV1_PUBLISH_WMS_SECURITY_AND_RECOVERY",
+      "status": "Passed",
+      "acceptanceCriteria": [
+        "Repository and local SQL gates cover publish fences, warning acknowledgement, WMS adoption and recovery.",
+        "Tenant and external-subject security boundaries remain fail closed."
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-space-publish-warning-acknowledgement.md",
+        "docs/space/reports/2026-08-14-space-publish-recovery-observability.md",
+        "docs/space/reports/2026-08-14-space-publish-recovery-sql-query.md",
+        "docs/space/reports/2026-08-14-space-sqlserver-localdb-full-gate.md",
+        "docs/space/reports/2026-08-14-space-wms-cp6tests-sql-gate.md",
+        "docs/space/reports/2026-08-14-space-external-subject-security-matrix.md"
+      ]
+    },
+    {
+      "id": "DV1_ACCEPTANCE_AUTOMATION_AND_BOUNDARY",
+      "status": "Passed",
+      "acceptanceCriteria": [
+        "A fail-closed validator derives 100 percent only when all development gates and dataset integrity checks pass.",
+        "Development evidence is forbidden from formal accepted-evidence fields and cannot make the production GA ready."
+      ],
+      "evidencePaths": [
+        "docs/space/acceptance/development-v1/README.md",
+        "docs/space/acceptance/development-v1/development-evidence-index.json",
+        "docs/space/reports/2026-08-27-space-development-v1-acceptance.md",
+        "tools/Test-SpaceDevelopmentV1Evidence.ps1",
+        "tools/Test-SpaceDevelopmentV1Evidence.Tests.ps1"
+      ]
+    }
+  ]
+}
