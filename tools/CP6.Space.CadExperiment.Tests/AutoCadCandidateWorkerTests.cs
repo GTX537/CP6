@@ -76,7 +76,7 @@ public sealed class AutoCadCandidateWorkerTests
         Assert.Equal(SpaceCadSourceFormat.Dxf, response.Package.Document.SourceFormat);
         Assert.Equal(service.ProviderKey, response.Package.Document.ConverterId);
         Assert.Equal(service.ProviderVersion, response.Package.Document.ConverterVersion);
-        Assert.Contains("cp6-dxf-1.0.0", service.ProviderVersion, StringComparison.Ordinal);
+        Assert.Contains("cp6-dxf-1.1.0", service.ProviderVersion, StringComparison.Ordinal);
         Assert.Empty(Directory.GetFileSystemEntries(
             Path.Combine(directory.Path, "attempts")));
     }

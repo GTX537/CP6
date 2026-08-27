@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space DXF 50 MiB 受控容量
+
+- `DevelopmentDxfCadConverter` 从 25 MiB 整文件三重驻留改为 64 MiB bounded hashing stream + 严格 UTF-8 逐行解析；源哈希继续覆盖原始字节，999 注释不进入语义内存。
+- 新增精确 50 MiB 成功和 64 MiB+1 解析前拒绝门禁；失败不创建 CAD IR。Converter Version 升为 1.1.0，AutoCAD 组合 Provider 自动换版。
+- 安装环境完整 CAD Experiment 47/47、0 skipped；真实 Core Console DWG 指标无回归，残留 CAD/Attempt 为 0。
+- 该结果只证明合成输入容量，不替代授权真实 50 MiB 的 P95、资源、准确率、主备评分与批准；总体保持 72% / NoGo。
+
 ## 2026-08-27：Space AutoCAD 候选 Worker DWG/DXF 双格式
 
 - 新增组合 `ICadConverter`：DWG 内链为 AutoCAD Core Console，DXF 内链为托管 Parser；外层组合与两个内层都只能经 `SpaceCadConverterContractRunner`。

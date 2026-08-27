@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space DXF 50 MiB 容量合同
+
+- 托管 Parser 改为逐行严格 UTF-8 解析，底层流同步执行 64 MiB 上限与原始字节 SHA-256；移除整文件 byte[]、整份文本和 Split 行数组的同时驻留，999 注释验证后不保留。
+- 精确 50 MiB 合法 DXF 容量包络成功；64 MiB+1 输入在解析前失败且无工件。DXF Converter 升为 1.1.0，组合 Provider 身份随之换版并要求重认证。
+- 完整 CAD Experiment + 真实安装门禁 47/47、0 skipped，DWG 指标无回归，测试根残留 CAD/Attempt 为 0。
+- 这是仓库容量合同，不是授权真实 50 MiB 性能/质量证据；WP3/WP7 与总体 GA 状态不变。
+
 ## 2026-08-27 Space AutoCAD 候选 Worker DXF 路径
 
 - 同一隔离 Worker 候选现覆盖 DWG/DXF；DWG 经 Core Console + 托管 DXF Parser，原生 DXF 只运行 Parser且不启动 AutoCAD，两条内外 Converter 都经统一合同执行器。
