@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space GA 单人 Owner 与外部输入盘点
+
+- `BUBAO.GAO` 已登记为唯一 DeliveryOwner、三类输入与 WP0～WP8 责任人；Kickoff/目标 GA 固定为 `2026-08-27` / `2026-09-27`。WP0 实现改为 Complete，但接受与唯一签署仍 Pending。
+- `D:\CP6` 跟踪 CAD 为 28 DXF / 0 DWG；正好 20 份的 development corpus 明确是小型合成 DevelopmentSeed 且不计 Release Gate，正式授权/脱敏证据只找到空模板。
+- ODA 许可证变量未配置、Drawings SDK 包未发现；历史 File Converter 不是 Backup SDK。Pilot Site/WMS 窗口未知，三类外部输入、九个接受 Gate、一个签署和总体 72% / NoGo 均保持不变。
+
 ## 2026-08-27：Space AutoCAD 候选 Worker 不可变 Release
 
 - 新增 Schema 1 Worker Release Manifest 与生成/启动复核：完整封存 Payload、源提交、Runtime、Core Console 哈希/版本及 DXF Converter 版本；可运行 Host 只广告 `cp6-autocad-worker` 非 development 身份。

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space GA 单人 Owner 与输入盘点
+
+- 已把 `BUBAO.GAO` 登记为唯一 DeliveryOwner 及全部输入/Gate 责任人，记录 `2026-08-27` Kickoff 与 `2026-09-27` 目标 GA；WP0 实现状态为 Complete，接受和签署仍 Pending。
+- 已完成 `D:\CP6` CAD/授权/ODA 只读盘点：跟踪集为 28 DXF / 0 DWG；20 份同目录 CAD 被 Manifest 明确定义为 Synthetic DevelopmentSeed，不能计入 Release Gate；正式授权/脱敏证明只找到空模板。
+- ODA 许可证变量未配置、Drawings SDK 包为 0；历史 File Converter 不冒充 Backup SDK。Pilot Site/WMS 窗口未知，三类外部输入与总体 72% / NoGo 状态不变。
+
 ## 2026-08-27 Space AutoCAD 候选 Worker Release 身份
 
 - 可运行 Host 改为强制非 development Release：清单完整固定 Payload、源提交、Runtime、Core Console 哈希/版本和 DXF Converter 版本，并由外部完整 SHA 锚定。

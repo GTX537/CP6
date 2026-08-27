@@ -7,13 +7,13 @@
   "declaredStatus": "NoGo",
   "baselinePercent": 72,
   "gaPercent": 100,
-  "kickoffDate": null,
-  "targetGaDate": null,
+  "kickoffDate": "2026-08-27",
+  "targetGaDate": "2026-09-27",
   "progressPolicy": "Progress may equal 100 only when every blocking result gate is Accepted, every external input is Complete, and the single delivery owner is Signed.",
   "signers": [
     {
       "role": "DeliveryOwner",
-      "name": null,
+      "name": "BUBAO.GAO",
       "status": "Pending",
       "evidence": []
     }
@@ -22,7 +22,7 @@
     {
       "id": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
       "ownerRole": "BusinessDataOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1_WEEK_2",
       "status": "Pending",
       "evidenceFormat": [
@@ -35,7 +35,7 @@
     {
       "id": "PROVIDER_APPROVALS_AND_ISOLATED_WORKER",
       "ownerRole": "SecurityProcurementDevOps",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1_WEEK_2",
       "status": "Pending",
       "evidenceFormat": [
@@ -48,7 +48,7 @@
     {
       "id": "TWO_PILOT_SITES_AND_WMS_WINDOWS",
       "ownerRole": "ProductImplementationWMS",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1_WEEK_4",
       "status": "Pending",
       "evidenceFormat": [
@@ -64,9 +64,9 @@
       "id": "WP0_BASELINE_AND_GOVERNANCE",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M0",
-      "implementationStatus": "Partial",
+      "implementationStatus": "Complete",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Remote main commit and post-merge smoke",
@@ -75,7 +75,8 @@
       "evidencePaths": [
         "docs/project-memory/PROJECT_STATE.md",
         "docs/space/reports/2026-08-14-ga-evidence-attestation.md",
-        "docs/space/reports/2026-08-15-space-ga-repository-completion-audit.md"
+        "docs/space/reports/2026-08-15-space-ga-repository-completion-audit.md",
+        "docs/space/reports/2026-08-27-space-ga-owner-and-cad-intake.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -88,7 +89,7 @@
       "id": "WP1_DESIGN_V1_MANUAL_MODELING",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1",
       "implementationStatus": "Complete",
       "acceptanceStatus": "Pending",
@@ -117,7 +118,7 @@
       "id": "WP2_CAD_START_WIZARD",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1",
       "implementationStatus": "Complete",
       "acceptanceStatus": "Pending",
@@ -138,7 +139,7 @@
       "id": "WP3_SITE_PRIMARY_BACKUP_PROVIDERS",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
       "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
@@ -172,7 +173,7 @@
       "id": "WP4_THREE_PATH_END_TO_END",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
       "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
@@ -209,7 +210,7 @@
       "id": "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
       "implementationStatus": "Complete",
       "acceptanceStatus": "Pending",
@@ -236,7 +237,7 @@
       "id": "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
       "implementationStatus": "Complete",
       "acceptanceStatus": "Pending",
@@ -264,7 +265,7 @@
       "id": "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
       "implementationStatus": "ExternalExecution",
       "acceptanceStatus": "Pending",
@@ -296,7 +297,7 @@
       "id": "WP8_TWO_SITE_PILOT_AND_SIGNOFF",
       "blocking": true,
       "ownerRole": "DeliveryOwner",
-      "ownerName": null,
+      "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M4",
       "implementationStatus": "ExternalExecution",
       "acceptanceStatus": "Pending",

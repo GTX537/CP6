@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space GA 单人 Owner 与外部输入盘点（2026-08-27）
+
+- `BUBAO.GAO` 已登记为唯一 DeliveryOwner、三类外部输入和 WP0～WP8 的责任人；Kickoff 为 `2026-08-27`，目标 GA 为 `2026-09-27`。WP0 仓库实现改为 Complete，接受与唯一签署仍 Pending，不存在第二人或多人门禁。
+- `D:\CP6` 跟踪 CAD 共 28 份，全部为 DXF、DWG 为 0；其中正好 20 份的 `development-v2.0.0` 明确是 1.6～3.9 KiB 合成 DevelopmentSeed，`countsTowardReleaseGate=false`。其余为旧 seed/测试 fixture，均不能计入授权黄金集；授权/脱敏只找到空模板，没有正式编号、逐文件证明和 10/5/5 Manifest。
+- `CP6_SPACE_ODA_LICENSE_PATH` 未配置，常见目录没有 ODA Drawings SDK 包；`tmp` 内只有历史 File Converter 27.1 非商业示例边界，不是 Backup SDK/生产授权。Greenfield、Retrofit 和 WMS 窗口也未提供。
+- 三类外部输入、WP0～WP8 接受和 DeliveryOwner 签署均保持 Pending；整体继续 72% / `NoGo`。完整依据见 `docs/space/reports/2026-08-27-space-ga-owner-and-cad-intake.md`。
+
 ## Space AutoCAD 候选 Worker 不可变 Release 身份（2026-08-27）
 
 - 可运行 Worker Host 不再以 development Provider 启动；发布后的可执行文件生成 Schema 1 Release Manifest，固定全部 Payload 文件、源提交、Runtime、真实 Core Console 完整哈希/文件版本和 DXF Converter 版本，启动时再由外部 SHA-256 锚定并逐项复核。
