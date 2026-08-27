@@ -176,13 +176,15 @@ public sealed class SpaceCadRemoteWorkerProvider(
         Stream source,
         CancellationToken cancellationToken)
     {
-        var request = new SpaceCadWorkerConversionRequestV1(
+        var request = new SpaceCadWorkerConversionRequestV2(
             SpaceCadWorkerProtocolVersions.SchemaVersion,
             Guid.NewGuid(),
             conversion.SourceSha256,
             conversion.SourceFormat,
             options.ProviderKey,
-            options.ProviderVersion);
+            options.ProviderVersion,
+            options.WorkerReleaseSha256);
+        SpaceCadWorkerProtocol.ValidateRequest(request);
         return await worker.ConvertAsync(request, source, cancellationToken);
     }
 

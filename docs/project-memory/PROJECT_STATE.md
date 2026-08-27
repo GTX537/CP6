@@ -1,25 +1,32 @@
 # 项目当前状态
 
+## Space AutoCAD 候选 Worker 不可变 Release 身份（2026-08-27）
+
+- 可运行 Worker Host 不再以 development Provider 启动；发布后的可执行文件生成 Schema 1 Release Manifest，固定全部 Payload 文件、源提交、Runtime、真实 Core Console 完整哈希/文件版本和 DXF Converter 版本，启动时再由外部 SHA-256 锚定并逐项复核。
+- 通过后派生 `cp6-autocad-worker/{semver}+worker.{manifest-prefix}.autocad.{core}.dxf.{parser}`；远程协议升为 Schema 2，部署批准 Manifest 的完整 Worker Release SHA 会进入每次 API 请求、在 Worker 落盘前核对并由响应回显验证，12 位版本前缀不能替代完整哈希。`/health/live` 同时返回完整 SHA、源提交和 Runtime；每次 DWG 转换前还会复核 Core Console 完整哈希。
+- 真实本机 `win-x64` 发布演练封存 18 个文件，Schema 机器验证通过，Core Console 为 `25.0.58.0.0`；完整 CAD Experiment 含真实安装门禁 57/57、0 skipped，远程协议专项 6/6，`CP6.Tests` 2,939/19/0，整仓 0 warning / 0 error，残留 CAD/非空 Attempt 为 0。
+- 演练版本明确为 `0.0.0-rehearsal`，且任务当时尚未合并，不能作为正式 Release/批准证据。仍须从合并后的精确提交重建正式 SemVer、取得许可证/Site 批准、部署生产等价隔离环境、接入独立 Backup 并运行授权黄金集；WP3/整体继续 Partial/Pending、72% / `NoGo`。
+
 ## Space 托管 DXF Parser 50 MiB 容量（2026-08-27）
 
 - DXF Parser 从 25 MiB 整文件 byte[]/整文本/Split 数组升级为严格 UTF-8 逐行解析，底层流同步执行原始字节计数与 SHA-256；无语义的 999 注释会完整验证但不驻留，当前失败关闭上限为 64 MiB。
 - 精确 50 MiB 合法 DXF 合成容量包络通过并生成 1 个实体；64 MiB+1 seekable 输入在解析前拒绝且没有工件。Converter 升为 `cp6-development-dxf/1.1.0`，AutoCAD 组合 Provider Version 自动变为 `{core}+cp6-dxf-1.1.0`，旧认证不能静默复用。
 - 完整 CAD Experiment 在真实 Core Console 环境为 47/47、0 skipped；既有 DWG 指标保持 29/19/4,424/4,422，测试根残留 CAD/Attempt 为 0。
-- 50 MiB 文件是有效 DXF + 999 注释的合成容量包络，不是授权真实复杂 CAD，也没有 Ready P95/CPU/峰值内存/准确率证据。真实 50 MiB Primary/Backup 黄金集、Release、批准和部署仍 Pending；WP3/整体继续 Partial/Pending、72% / `NoGo`。
+- 50 MiB 文件是有效 DXF + 999 注释的合成容量包络，不是授权真实复杂 CAD，也没有 Ready P95/CPU/峰值内存/准确率证据。真实 50 MiB Primary/Backup 黄金集、从合并提交生成的正式 Release、批准和部署仍 Pending；WP3/整体继续 Partial/Pending、72% / `NoGo`。
 
 ## Space AutoCAD 候选 Worker DWG/DXF 双格式（2026-08-27）
 
 - AutoCAD 隔离 Worker 候选现以组合链 Provider 身份同时接受 DWG/DXF：DWG 经精确 Core Console 后进入托管 DXF Parser，原生 DXF 直接进入同一 Parser且不会启动 AutoCAD；外层和内层 Converter 均经统一合同执行器。
 - Provider Key 改为 `cp6-autocad-worker-development`；组合 Version 当前已由上方容量任务升为 `{core}+cp6-dxf-1.1.0`（初始双格式里程碑为 `1.0.0`），任一链版本变化都强制重新评分与 Site 认证。
 - 候选聚焦 4/4、真实安装环境完整 CAD Experiment 45/45、0 skipped；Core Console 样例仍为 29 图层/19 块/4,424 实体/4,422 支持实体，原生 DXF 断言 0 次 Exporter 调用，测试根残留 DWG/DXF 与 Attempt 均为 0。
-- 这只关闭 Primary 候选的 DXF 仓库路径。原生 DXF 仍是 fixture；上方任务虽已把托管 Parser 上限提升到 64 MiB 并通过 50 MiB 合成容量包络，但非 development Release、授权 20 份黄金集/真实 50 MiB、独立 Backup、许可证/Site 批准和生产 mTLS 隔离/Failover 仍缺。WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
+- 这只关闭 Primary 候选的 DXF 仓库路径。原生 DXF 仍是 fixture；Parser 容量和不可变非 development Release 机制虽已由上方任务补齐，但正式合并提交 Release、授权 20 份黄金集/真实 50 MiB、独立 Backup、许可证/Site 批准和生产 mTLS 隔离/Failover 仍缺。WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
 
 ## Space Studio WP3 远程隔离 CAD Worker Provider（2026-08-27）
 
 - 已补齐生产侧远程 CAD Provider 接入：Design API 不加载供应商 SDK 或启动 CAD 进程，只通过 mTLS 向隔离 Worker 发送原始 CAD、源 SHA-256、格式和精确 Provider 身份；Tenant/Site/用户/模型/数据库/Mapping/Object Storage 身份均不跨边界。
 - 运行注册默认关闭；只有外部哈希固定且未过期的部署批准 Manifest、精确 Provider/版本/格式/部署与数据边界、有效客户端证书、CA/主机名验证和服务端证书 SHA-256 Pin 全部通过时才启动。Mapping Profile 精确版本、完整 Override Replay、语义、诊断和 PreviewSet 仍在 CP6 内生成，Worker 不能选择 Mapping 或写 Draft。
 - 新增可运行的 AutoCAD Core Console DWG 候选 Worker；本机真实调用 `accoreconsole.exe 25.0.58.0.0` 处理 Autodesk 样例，得到 29 图层、19 块、4,424 实体/4,422 支持实体，Provider 身份和 Attempt 原始/派生清理合同通过。该样例不是授权黄金 CAD，只计开发候选证据。
-- 远程 Provider 4/4、既有路由 16/16、候选安装测试 1/1、Space Unit 550/550、Space Integration + LocalDB 462/462 和完整 solution 0 warning / 0 error 已通过。仓库生产接入层与候选 Host 已完成，但许可证/客户/Site 批准、真实 mTLS 无出口部署、DXF、独立 Backup、20 份黄金集评分和生产等价 Failover 尚缺；WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
+- 远程 Provider、路由、候选 Worker、Space Unit/Integration 和完整 solution 门禁已通过；后续任务又补齐 DWG/DXF 双格式、50 MiB Parser 容量和不可变 Release 身份机制。仓库生产接入层与候选 Host 已完成，但许可证/客户/Site 批准、真实 mTLS 无出口部署、从合并提交生成的正式 Release、独立 Backup、20 份黄金集评分和生产等价 Failover 尚缺；WP3 保持 Partial/Pending，整体保持 72% / `NoGo`。
 
 ## Space Studio WP1 仓库实现闭环（2026-08-27）
 

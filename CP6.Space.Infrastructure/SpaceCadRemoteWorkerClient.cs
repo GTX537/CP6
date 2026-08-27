@@ -11,7 +11,7 @@ namespace CP6.Space.Infrastructure;
 public interface ISpaceCadRemoteWorkerClient
 {
     Task<SpaceCadIrPackageV1> ConvertAsync(
-        SpaceCadWorkerConversionRequestV1 request,
+        SpaceCadWorkerConversionRequestV2 request,
         Stream source,
         CancellationToken cancellationToken = default);
 }
@@ -46,7 +46,7 @@ public sealed class HttpSpaceCadRemoteWorkerClient :
     }
 
     public async Task<SpaceCadIrPackageV1> ConvertAsync(
-        SpaceCadWorkerConversionRequestV1 request,
+        SpaceCadWorkerConversionRequestV2 request,
         Stream source,
         CancellationToken cancellationToken = default)
     {
@@ -54,6 +54,17 @@ public sealed class HttpSpaceCadRemoteWorkerClient :
         ArgumentNullException.ThrowIfNull(source);
         if (!source.CanRead)
             throw new ArgumentException("The CAD source stream must be readable.", nameof(source));
+        if (!request.ProviderKey.Equals(_options.ProviderKey, StringComparison.Ordinal) ||
+            !request.ProviderVersion.Equals(
+                _options.ProviderVersion,
+                StringComparison.Ordinal) ||
+            !request.WorkerReleaseSha256.Equals(
+                _options.WorkerReleaseSha256,
+                StringComparison.Ordinal))
+        {
+            throw new InvalidDataException(
+                "The CAD Worker request does not match the approved runtime release.");
+        }
         if ((request.SourceFormat == SpaceCadSourceFormat.Dwg && !_options.SupportsDwg) ||
             (request.SourceFormat == SpaceCadSourceFormat.Dxf && !_options.SupportsDxf))
         {
@@ -80,6 +91,10 @@ public sealed class HttpSpaceCadRemoteWorkerClient :
         AddHeader(message, "X-CP6-Cad-Source-Format", request.SourceFormat.ToString());
         AddHeader(message, "X-CP6-Cad-Provider-Key", request.ProviderKey);
         AddHeader(message, "X-CP6-Cad-Provider-Version", request.ProviderVersion);
+        AddHeader(
+            message,
+            "X-CP6-Cad-Worker-Release-Sha256",
+            request.WorkerReleaseSha256);
 
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(_options.TimeoutSeconds));
@@ -135,11 +150,11 @@ public sealed class HttpSpaceCadRemoteWorkerClient :
                 responseStream,
                 _options.MaximumResponseBytes,
                 timeout.Token);
-            SpaceCadWorkerConversionResponseV1 workerResponse;
+            SpaceCadWorkerConversionResponseV2 workerResponse;
             try
             {
                 workerResponse = JsonSerializer.Deserialize<
-                                     SpaceCadWorkerConversionResponseV1>(bytes, JsonOptions)
+                                     SpaceCadWorkerConversionResponseV2>(bytes, JsonOptions)
                                  ?? throw new JsonException();
             }
             catch (JsonException exception)

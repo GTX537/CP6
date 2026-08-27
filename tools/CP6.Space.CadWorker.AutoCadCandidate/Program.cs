@@ -4,9 +4,40 @@ using System.Net.Security;
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Space.Application;
+using CP6.Space.CadExperiment;
 using CP6.Space.CadWorker.AutoCadCandidate;
 using CP6.Space.Contracts;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
+
+if (args.Length > 0)
+{
+    if (args.Length != 6 ||
+        !args[0].Equals("release-manifest", StringComparison.Ordinal))
+    {
+        throw new InvalidOperationException(
+            "Usage: release-manifest <payload-root> <release-version> " +
+            "<source-commit> <runtime-identifier> <accoreconsole-path>");
+    }
+    var coreVersion = AutoCadCandidateReleaseIdentity
+        .ReadValidatedAutoCadProviderVersion(args[5]);
+    var release = await AutoCadCandidateReleaseIdentity.CreateAsync(
+        args[1],
+        args[2],
+        args[3],
+        args[4],
+        args[5],
+        coreVersion);
+    Console.WriteLine(JsonSerializer.Serialize(new
+    {
+        manifestPath = Path.Combine(
+            Path.GetFullPath(args[1]),
+            AutoCadCandidateReleaseIdentity.ManifestFileName),
+        workerReleaseSha256 = release.WorkerReleaseSha256,
+        providerKey = AutoCadCandidateReleaseIdentity.ProviderKey,
+        providerVersion = release.ProviderVersion,
+    }));
+    return;
+}
 
 var listenUrl = RequiredEnvironment("CP6_SPACE_CAD_LISTEN_URL");
 if (!Uri.TryCreate(listenUrl, UriKind.Absolute, out var listen) ||
@@ -23,6 +54,10 @@ var clientCertificateSha256 = NormalizeSha256(
     RequiredEnvironment("CP6_SPACE_CAD_CLIENT_CERT_SHA256"));
 var coreConsolePath = RequiredEnvironment("CP6_SPACE_CAD_ACCORECONSOLE_PATH");
 var workRoot = RequiredEnvironment("CP6_SPACE_CAD_WORK_ROOT");
+var releaseManifestPath = RequiredEnvironment(
+    "CP6_SPACE_CAD_WORKER_RELEASE_MANIFEST_PATH");
+var releaseManifestSha256 = NormalizeSha256(
+    RequiredEnvironment("CP6_SPACE_CAD_WORKER_RELEASE_SHA256"));
 var timeoutSeconds = IntegerEnvironment(
     "CP6_SPACE_CAD_CONVERSION_TIMEOUT_SECONDS",
     300,
@@ -33,11 +68,30 @@ var maximumConcurrency = IntegerEnvironment(
     1,
     1,
     4);
-var service = new AutoCadCandidateConversionService(
+var autoCadProviderVersion = AutoCadCandidateReleaseIdentity
+    .ReadValidatedAutoCadProviderVersion(coreConsolePath);
+var releaseIdentity = await AutoCadCandidateReleaseIdentity.LoadVerifiedAsync(
+    releaseManifestPath,
+    releaseManifestSha256,
+    AppContext.BaseDirectory,
     coreConsolePath,
+    autoCadProviderVersion,
+    AutoCadCandidateReleaseIdentity.CurrentRuntimeIdentifier());
+var coreExporter = new AutoCadCoreConsoleDwgExporter(
+    coreConsolePath,
+    Path.Combine(Path.GetFullPath(workRoot), "autodesk-runtime-cache"),
+    TimeSpan.FromSeconds(timeoutSeconds));
+var exporter = new ReleaseBoundAutoCadDwgExporter(
+    coreExporter,
+    coreConsolePath,
+    releaseIdentity.Manifest.AutoCadCoreConsoleVersion,
+    releaseIdentity.Manifest.AutoCadCoreConsoleSha256);
+var service = new AutoCadCandidateConversionService(
+    exporter,
     workRoot,
     TimeSpan.FromSeconds(timeoutSeconds),
-    maximumConcurrency);
+    maximumConcurrency,
+    releaseIdentity);
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls(listen.AbsoluteUri);
@@ -62,6 +116,9 @@ app.MapGet("/health/live", (AutoCadCandidateConversionService worker) =>
         protocolVersion = SpaceCadWorkerProtocolVersions.SchemaVersion,
         providerKey = worker.ProviderKey,
         providerVersion = worker.ProviderVersion,
+        workerReleaseSha256 = releaseIdentity.WorkerReleaseSha256,
+        sourceCommit = releaseIdentity.Manifest.SourceCommit,
+        runtimeIdentifier = releaseIdentity.Manifest.RuntimeIdentifier,
         supportsDwg = true,
         supportsDxf = true,
     }));
@@ -118,7 +175,7 @@ app.MapPost(
 
 await app.RunAsync();
 
-static SpaceCadWorkerConversionRequestV1 Request(HttpRequest request)
+static SpaceCadWorkerConversionRequestV2 Request(HttpRequest request)
 {
     if (!int.TryParse(RequiredHeader(request, "X-CP6-Cad-Schema"), out var schema) ||
         !Guid.TryParse(RequiredHeader(request, "X-CP6-Cad-Attempt"), out var attemptId) ||
@@ -129,13 +186,14 @@ static SpaceCadWorkerConversionRequestV1 Request(HttpRequest request)
     {
         throw new InvalidDataException("The CAD Worker request headers are invalid.");
     }
-    var value = new SpaceCadWorkerConversionRequestV1(
+    var value = new SpaceCadWorkerConversionRequestV2(
         schema,
         attemptId,
         RequiredHeader(request, "X-CP6-Cad-Source-Sha256"),
         format,
         RequiredHeader(request, "X-CP6-Cad-Provider-Key"),
-        RequiredHeader(request, "X-CP6-Cad-Provider-Version"));
+        RequiredHeader(request, "X-CP6-Cad-Provider-Version"),
+        RequiredHeader(request, "X-CP6-Cad-Worker-Release-Sha256"));
     SpaceCadWorkerProtocol.ValidateRequest(value);
     return value;
 }
