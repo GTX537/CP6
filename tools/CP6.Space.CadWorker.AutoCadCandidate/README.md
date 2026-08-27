@@ -1,10 +1,16 @@
 # AutoCAD Core Console candidate Worker
 
 This is the runnable, CAD-only server half of the CP6 remote Worker protocol.
-It accepts native DWG over mutually authenticated HTTPS, stages and verifies
-the complete source hash before conversion, invokes
+It accepts native DWG and DXF over mutually authenticated HTTPS, stages and
+verifies the complete source hash before conversion, invokes
 `SpaceCadConverterContractRunner`, returns CAD IR only, and fails the request
 if its per-attempt raw-data directory cannot be deleted.
+
+DWG runs through the exact Core Console executable and then the managed DXF
+parser. Native DXF runs directly through that same managed parser without
+starting AutoCAD. The advertised candidate version binds both the executable
+version and `cp6-dxf-1.0.0`, so either side of the chain requires a new Site
+qualification.
 
 It is a **candidate**, not an approved production Provider. Do not enable the
 Web API registration until the exact AutoCAD version and Worker release have

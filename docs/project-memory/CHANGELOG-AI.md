@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space AutoCAD 候选 Worker DWG/DXF 双格式
+
+- 新增组合 `ICadConverter`：DWG 内链为 AutoCAD Core Console，DXF 内链为托管 Parser；外层组合与两个内层都只能经 `SpaceCadConverterContractRunner`。
+- 候选 Provider 身份改为 `cp6-autocad-worker-development/{core-version}+cp6-dxf-1.0.0`，不把原生 DXF 冒充 AutoCAD 结果；旧版本在原始文件落盘前拒绝。
+- Worker 健康能力现声明 DWG/DXF；原生 DXF 自动化证明不会调用 Exporter，并与 DWG 一样执行源哈希、只读 staging、CAD IR-only 响应和 Attempt 清理。
+- 聚焦 4/4、安装环境 CAD Experiment 45/45、残留 CAD/Attempt 为 0。真实授权 DXF、25→50 MiB 能力、Release 身份、独立 Backup、批准与生产 Failover 仍 Pending，整体保持 72% / NoGo。
+
 ## 2026-08-27：Space Studio WP3 远程隔离 CAD Worker Provider
 
 - 新增最小化 CAD-only Worker 协议、受限 HTTPS 流客户端和生产 Provider；跨边界只传原始 CAD、SHA-256、格式、Attempt 与精确 Provider 身份，不传 CP6 业务/数据身份。

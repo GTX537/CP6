@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space AutoCAD 候选 Worker DXF 路径
+
+- 同一隔离 Worker 候选现覆盖 DWG/DXF；DWG 经 Core Console + 托管 DXF Parser，原生 DXF 只运行 Parser且不启动 AutoCAD，两条内外 Converter 都经统一合同执行器。
+- 组合 Provider Key/Version 同时绑定 Worker 链、Core Console 文件版本和 DXF Parser 版本；旧单版本请求在落盘前失败，链任一侧升级都必须重新评分和认证。
+- 聚焦 4/4、安装环境完整 CAD Experiment 45/45、0 skipped；真实 DWG 指标保持 29/19/4,424/4,422，DXF 路径 Exporter 0 调用，测试根无残留 CAD/Attempt。
+- 这里只完成 Primary 候选双格式仓库能力；真实授权 DXF、50 MiB、非 development Release、独立 Backup、批准和生产 Failover 未完成，WP3/GA 状态不变。
+
 ## 2026-08-27 Space Studio WP3 远程 CAD Worker 仓库切片
 
 - 完成 CAD-only 远程 Worker 协议、HTTPS 流式客户端、生产 Provider 和显式运行注册；主 API 默认不注册供应商运行时，启用时严格绑定审批 Manifest 外部 SHA、精确 Provider/版本、mTLS 双证书和证书 Pin。
