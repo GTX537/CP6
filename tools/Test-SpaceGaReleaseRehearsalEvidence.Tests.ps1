@@ -33,9 +33,14 @@ function New-ValidRehearsalManifest {
         workerEnvironmentSha256 = 'd' * 64
         environment = [pscustomobject]@{
             mode = 'ControlledReleaseRehearsal'
+            deploymentClass = 'LocalControlledNonProduction'
             databaseEngine = 'SQLServer'
             wmsSystem = 'CP6_WMS'
+            wmsAdapter = 'CP6.Space.Infrastructure.Cp6SpaceWmsAdapter'
+            cp6WmsDataSourceKind = 'Real'
+            controlledFaultInjection = $true
             publishedViewerOnly = $true
+            signedJwtHttpSecurity = $true
             secretsByReferenceOnly = $true
         }
         results = [pscustomobject]@{
@@ -63,6 +68,19 @@ function New-ValidRehearsalManifest {
             viewer = New-RehearsalEvidence 'viewer'
             recovery = New-RehearsalEvidence 'recovery'
             security = New-RehearsalEvidence 'security'
+        }
+        boundaries = [pscustomobject]@{
+            productionDataClaimed = $false
+            productionWmsClaimed = $false
+            productionDeploymentPerformed = $false
+            pilotRequired = $false
+            distinctPersonReviewRequired = $false
+        }
+        selfReview = [pscustomobject]@{
+            acceptedBy = 'Zhang Wei'
+            acceptedAtUtc = '2026-08-27T15:05:00Z'
+            repeatable = $true
+            distinctPersonReviewRequired = $false
         }
     }
 }
@@ -174,6 +192,14 @@ try {
     Invoke-RehearsalCase -Name 'blocking defects are closed' `
         -ManifestPath $defectPath -ShouldPass $false `
         -ExpectedError 'SPACE_GA_REHEARSAL_DEFECTS_OPEN'
+
+    $boundaryPath = New-RehearsalTestManifest 'production-boundary' {
+        param($manifest)
+        $manifest.boundaries.productionDeploymentPerformed = $true
+    }
+    Invoke-RehearsalCase -Name 'controlled rehearsal is not deployment' `
+        -ManifestPath $boundaryPath -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_REHEARSAL_BOUNDARY_INVALID'
 
     $evidenceOwnerPath = New-RehearsalTestManifest 'evidence-owner' {
         param($manifest); $manifest.evidence.viewer.acceptedBy = 'Different Person'

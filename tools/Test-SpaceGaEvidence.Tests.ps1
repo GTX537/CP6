@@ -472,6 +472,38 @@ try {
     }
     $rehearsalAcceptance = Get-Content -LiteralPath $rehearsalAcceptancePath -Raw |
         ConvertFrom-Json
+    $rehearsalAcceptance.applicationCommitSha =
+        (& git -C $repo rev-parse HEAD | Out-String).Trim()
+    $cadAcceptance = Get-Content -LiteralPath (Join-Path $repo (
+        'docs/space/acceptance/v1.3-ga/' +
+        'cad-start-formal-evidence-v1.0.0.json')) -Raw | ConvertFrom-Json
+    $threePathAcceptanceBaseline = Get-Content -LiteralPath (Join-Path $repo (
+        'docs/space/acceptance/v1.3-ga/' +
+        'three-path-formal-evidence-v1.0.0.json')) -Raw | ConvertFrom-Json
+    $rehearsalAcceptance.sourceSetSha256 = $cadAcceptance.sourceSetSha256
+    $rehearsalAcceptance.goldenDatasetSha256 =
+        $cadAcceptance.goldenDatasetSha256
+    $rehearsalAcceptance.workerEnvironmentSha256 =
+        $threePathAcceptanceBaseline.workerEnvironmentSha256
+    $rehearsalSourcePaths = @(
+        'CP6.Space.Infrastructure/SpacePublishOrchestrator.cs',
+        'CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs',
+        'CP6.Space.Infrastructure/Cp6SpaceWmsAdapter.cs',
+        'CP6.WebApi/Middleware/SpaceExecutionContextMiddleware.cs',
+        'CP6.Space.IntegrationTests/SpacePublishOrchestratorSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/Cp6SpaceWmsAdapterSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/SpaceDesignSceneSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs',
+        'CP6.Tests/Space/SpaceReleaseRehearsalHttpSecurityTests.cs',
+        'tools/Invoke-SpaceGaReleaseRehearsal.ps1')
+    $rehearsalAcceptance | Add-Member -NotePropertyName sources `
+        -NotePropertyValue @($rehearsalSourcePaths | ForEach-Object {
+            [pscustomobject]@{
+                path = $_
+                gitBlobOid = (& git -C $repo rev-parse "HEAD`:$($_)" |
+                    Out-String).Trim()
+            }
+        }) -Force
     foreach ($evidence in @(
         $rehearsalAcceptance.evidence.execution,
         $rehearsalAcceptance.evidence.publishWms,

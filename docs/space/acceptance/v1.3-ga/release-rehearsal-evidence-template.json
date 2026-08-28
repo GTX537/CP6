@@ -12,9 +12,14 @@
   "workerEnvironmentSha256": null,
   "environment": {
     "mode": "ControlledReleaseRehearsal",
+    "deploymentClass": "LocalControlledNonProduction",
     "databaseEngine": "SQLServer",
     "wmsSystem": "CP6_WMS",
+    "wmsAdapter": "CP6.Space.Infrastructure.Cp6SpaceWmsAdapter",
+    "cp6WmsDataSourceKind": "Real",
+    "controlledFaultInjection": true,
     "publishedViewerOnly": false,
+    "signedJwtHttpSecurity": false,
     "secretsByReferenceOnly": false
   },
   "results": {
@@ -42,5 +47,19 @@
     "viewer": {},
     "recovery": {},
     "security": {}
+  },
+  "sources": [],
+  "boundaries": {
+    "productionDataClaimed": false,
+    "productionWmsClaimed": false,
+    "productionDeploymentPerformed": false,
+    "pilotRequired": false,
+    "distinctPersonReviewRequired": false
+  },
+  "selfReview": {
+    "acceptedBy": null,
+    "acceptedAtUtc": null,
+    "repeatable": true,
+    "distinctPersonReviewRequired": false
   }
 }
