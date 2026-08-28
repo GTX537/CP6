@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## CRM Platform P02 已冻结可消费（2026-08-28 UTC）
+
+- `GTX537/CP6.Platform` 已通过 PR #3 合并 `main@6004decd2a4e41d9d502738dc5d9063bef9b37b7`；双平台 main run 33144068629 与 publish run 33144178346 成功，发布 `CP6.Platform.Contracts`、`CP6.Platform.Abstractions`、`CP6.Platform.AspNetCore` 三个 `0.2.0-alpha.1` 包并记录逐包 SHA-256。
+- `GTX537/CP6.CRM` 已通过 PR #21 合并 `main@72c405b4e6ab0ab708cfa1b579b8821a1402dcfe`，固定消费 `CP6.Platform.Abstractions [0.2.0-alpha.1]`，精确映射 TenantId→OrganizationId 且不允许默认租户。
+- CRM consumer PR run 33144894103（attempt 2）与 main run 33146816096 均使用短期、只读 `GITHUB_TOKEN` 完成私有包恢复、构建、12/12 .NET、39/39 Web 契约和 3/3 浏览器冒烟；P02 状态为 `Frozen / Consumable`。
+- 该结论只关闭 P02。P03 认证/Problem Details、P04 CloudEvents、CRM-F3-CONTRACT、登录和业务切片仍需各自依赖与独立授权；未创建云资源、Secret 或部署。
+
 ## Space WP1 手工建模正式接受（2026-08-28）
 
 - 正式 Manifest 绑定已合并的 `main@b0164a15cc7d0ad5716973323fcac27325bcfd5e` 和 8 个测试源 Git Blob/SHA-256；由唯一 DeliveryOwner `BUBAO.GAO` 完成可重复自验收，不设置第二人或独立 QA 门禁。

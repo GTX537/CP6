@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28 UTC：CRM Platform P02 冻结可消费
+
+- Recorded Platform PR #3 at `main@6004decd2a4e41d9d502738dc5d9063bef9b37b7`, successful dual-platform validation/publication, and three immutable `0.2.0-alpha.1` packages with per-package SHA-256 evidence.
+- Recorded CRM PR #21 at `main@72c405b4e6ab0ab708cfa1b579b8821a1402dcfe`, exact Abstractions consumption, TenantId-to-OrganizationId mapping, no-default-tenant coverage, and credential-free read-only Actions authentication.
+- Consumer PR run 33144894103 attempt 2 and main run 33146816096 passed private-package restore and the full CRM gate. P02 is now `Frozen / Consumable`; P03, login, business work, cloud resources and deployment remain outside this closure.
+
 ## 2026-08-28：Space WP1 手工建模正式接受
 
 - Added a formal single-owner WP1 evidence package bound to `main@b0164a15` and canonical Git blob/SHA-256 identities for two SQL and six Web test sources.
