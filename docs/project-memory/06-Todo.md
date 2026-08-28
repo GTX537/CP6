@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## P0：Platform P02 真实契约与首个消费证明
+
+- P01 完成证据不再要求正式包签名；正式签名治理保持在 P10。下一阶段 P02 必须交付 Abstractions、只读 RequestContext、“无默认租户”约束、自动化测试、首个真实 alpha 包和最小消费方证明，完成前继续保持 `Absent / Not Consumable`。
+
 ## P0：CRM V1 公开同步与 M0
 
 - `CP6-SAAS-V1-PUBLIC-CONTRACT` 已由 ProgramOwner 对精确摘要批准并同步为 Complete；下一步把公开 merge commit、摘要和审批证据回写私有聚合记录。公开同步完成本身不构成 M0 Go。

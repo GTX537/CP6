@@ -326,7 +326,7 @@ $expectedPublicDisclosureSurfaceSha256 = [ordered]@{
     'docs/crm/CRM-COMPETITIVE-ANALYSIS.md' = '4881b2a3e212d0b57446915b3a60139b71877263e201b6e8222782436f8d6d4a'
     'docs/crm/CRM-M0-READINESS.md' = '9d301a01c3028eb27d49c391c03d9cbead55267e95fbc8f2eab4ad1a7518076e'
     'docs/crm/CRM-PRODUCT-FRAMEWORK.md' = 'd6c47066e233b607780a084f66d39b484e2f578f7430908ce252c6458cf97bfb'
-    'docs/crm/CRM-V1-EXECUTABLE-SPEC.md' = '2365c5e28d2cc346d25f53a9739e6d2f34fede4537cd51afddccb6907e10e3f2'
+    'docs/crm/CRM-V1-EXECUTABLE-SPEC.md' = '5a9af3f9e47225964dd55b7f05d210bca2b1f042546041d1587fabf9b5c72216'
     'docs/crm/CRM-V1-SPEC.md' = '7d1a08c891dc2ba8b522f00aad91445ce6f04a1f3ed815cc86992c36487062bd'
     'docs/crm/README.md' = '9543bc859003469dd5773bd4992d884f356e176b04e96c3b7fda68b0fcf3089d'
     'docs/crm/approvals/cp6-crm-v1-prd.json' = 'cec71e7e5b0435f4b6740f259b0bada95649a15e56a406fd3d2de4b876a9b891'
@@ -400,18 +400,7 @@ foreach ($file in $publicBaselineScanFiles) {
 foreach ($entry in $expectedPublicDisclosureSurfaceSha256.GetEnumerator()) {
     $text = Read-NormalizedText $entry.Key
     if ($null -eq $text) { continue }
-    $actualDisclosureDigest = Get-TextSha256 $text
-    if ($entry.Key -eq 'docs/crm/CRM-V1-EXECUTABLE-SPEC.md') {
-        $approvedMigrationDigests = @(
-            '2365c5e28d2cc346d25f53a9739e6d2f34fede4537cd51afddccb6907e10e3f2',
-            '5a9af3f9e47225964dd55b7f05d210bca2b1f042546041d1587fabf9b5c72216'
-        )
-        if ($actualDisclosureDigest -notin $approvedMigrationDigests) {
-            Fail "Public disclosure surface digest mismatch: $($entry.Key). Expected an approved migration digest; actual '$actualDisclosureDigest'"
-        }
-        continue
-    }
-    Assert-Equal $actualDisclosureDigest $entry.Value "Public disclosure surface digest mismatch: $($entry.Key)"
+    Assert-Equal (Get-TextSha256 $text) $entry.Value "Public disclosure surface digest mismatch: $($entry.Key)"
 }
 
 $prdText = Read-NormalizedText $prdPath
