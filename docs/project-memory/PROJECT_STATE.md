@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## CRM Platform P03 已冻结可消费（2026-08-28 UTC）
+
+- `GTX537/CP6.Platform` 已通过 PR #4 合并 `main@1a39711423dbae7d869031b5d8570e649ccee8f4`；PR run 33154975361 与双平台 main run 33155123120 成功，publish run 33155315173 从该提交发布三个不可变 `0.3.0-alpha.1` 包。
+- 包 SHA-256 已固定：Contracts `4eb84481db0fc6e30104295f485d7f59c2c1fbde1a45b15cb9f84c8340efa8ca`、Abstractions `04d40464f7e9cccaf6288ea97ed715677efa8e76426ad5b5356e60104711ea66`、AspNetCore `91e4e24b011dcd2aff4ba985b58e52ceaa6bb12ad3abc495f6bda43c4c2f4202`。
+- `GTX537/CP6.CRM` 已通过 PR #23 合并 `main@16e9955b24a5c8c412839301b12d8a9275250746`，固定 Abstractions/AspNetCore 版本，复用 RS256/JWKS validator 与 RFC 9457 writer，并保持 `CRM_* / crm.error.*` 错误命名。
+- CRM consumer PR run 33156706503 与 main run 33157212604 均通过远端私有包恢复、15/15 .NET、39/39 Web 契约和 3/3 浏览器冒烟；P03 状态为 `Frozen / Consumable`。
+- 该结论只关闭 P03 合同。C01 issuer/Discovery/JWKS、P07 Gateway、C02、CRM03、真实登录和业务切片仍需各自实现与授权；CRM `Program.cs` 未启用认证，没有创建 Secret、云资源或部署。
+
 ## Space Studio V1 Core GA 100% 结案（2026-08-28）
 
 - 受控发布演练绑定应用提交 `21a81767a0155a8cc92325acc3e3cdcc076ee930`、冻结 Source Set/Golden Dataset/Worker Environment 及 10 个实现源 Git Blob；WP2/WP4/WP7/WP5 正式基线均重新校验通过。
@@ -27,7 +35,7 @@
 - `GTX537/CP6.Platform` 已通过 PR #3 合并 `main@6004decd2a4e41d9d502738dc5d9063bef9b37b7`；双平台 main run 33144068629 与 publish run 33144178346 成功，发布 `CP6.Platform.Contracts`、`CP6.Platform.Abstractions`、`CP6.Platform.AspNetCore` 三个 `0.2.0-alpha.1` 包并记录逐包 SHA-256。
 - `GTX537/CP6.CRM` 已通过 PR #21 合并 `main@72c405b4e6ab0ab708cfa1b579b8821a1402dcfe`，固定消费 `CP6.Platform.Abstractions [0.2.0-alpha.1]`，精确映射 TenantId→OrganizationId 且不允许默认租户。
 - CRM consumer PR run 33144894103（attempt 2）与 main run 33146816096 均使用短期、只读 `GITHUB_TOKEN` 完成私有包恢复、构建、12/12 .NET、39/39 Web 契约和 3/3 浏览器冒烟；P02 状态为 `Frozen / Consumable`。
-- 该结论只关闭 P02。P03 认证/Problem Details、P04 CloudEvents、CRM-F3-CONTRACT、登录和业务切片仍需各自依赖与独立授权；未创建云资源、Secret 或部署。
+- 该结论只关闭 P02；P03 的后续关闭由上方独立记录追踪。P04 CloudEvents、CRM-F3-CONTRACT、登录和业务切片仍需各自依赖与独立授权；未创建云资源、Secret 或部署。
 
 ## Space WP1 手工建模正式接受（2026-08-28）
 
