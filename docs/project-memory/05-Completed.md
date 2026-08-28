@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 UTC CRM Platform P03 冻结可消费
+
+- Platform PR #4 已合并至 `main@1a39711423dbae7d869031b5d8570e649ccee8f4`；PR/main 双平台验证与 publish run 33155315173 通过，发布三个具有逐包 SHA-256 证据的 `0.3.0-alpha.1` 包。
+- CRM PR #23 已合并至 `main@16e9955b24a5c8c412839301b12d8a9275250746`；固定 Abstractions/AspNetCore、Platform RS256/JWKS 适配、CRM RFC 9457 401/403 profile、15 项 .NET 合同测试与无仓库凭据边界完成。
+- CRM PR run 33156706503 及 main run 33157212604 均通过远端私有包恢复和完整门禁；P03 正式达到 `Frozen / Consumable`。
+- C01 issuer/Discovery/JWKS 仍为 Absent，CRM 运行时认证保持未注册；本项未授权 Gateway、登录、业务实现、Secret、云资源或部署。
+
 ## 2026-08-28 Space Studio V1 Core GA 100% 结案
 
 - 新增可重复受控发布演练：干净工作树绑定 `21a81767`、冻结 CAD/Worker 基线和 10 个源文件 Git Blob，先重验 WP2/WP4/WP7/WP5 正式 Manifest，再执行当前 SQL/WMS/恢复/安全套件。
@@ -25,7 +32,7 @@
 
 - Platform PR #3 已合并至 `main@6004decd2a4e41d9d502738dc5d9063bef9b37b7`；main/publish 流水线通过并发布三个具有逐包 SHA-256 证据的 `0.2.0-alpha.1` 包。
 - CRM PR #21 已合并至 `main@72c405b4e6ab0ab708cfa1b579b8821a1402dcfe`；固定 Abstractions 版本、TenantId→OrganizationId adapter、无默认租户负向测试与无仓库凭据的 NuGet/Actions 边界完成。
-- CRM PR run 33144894103（attempt 2）及 main run 33146816096 均通过远端私有包恢复和完整门禁；P02 正式达到 `Frozen / Consumable`，但未授权 P03、登录或业务实现。
+- CRM PR run 33144894103（attempt 2）及 main run 33146816096 均通过远端私有包恢复和完整门禁；P02 正式达到 `Frozen / Consumable`。P03 的后续关闭由独立完成记录追踪，P02 本身不授权登录或业务实现。
 
 ## 2026-08-28 Space WP1 手工建模正式接受
 

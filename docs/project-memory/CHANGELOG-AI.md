@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：CRM Platform P03 冻结可消费
+
+- `CP6.Platform main@1a39711423dbae7d869031b5d8570e649ccee8f4` 通过 PR/main 双平台门禁，并由 publish run 33155315173 发布三个不可变 `0.3.0-alpha.1` 包及逐包 SHA-256。
+- `CP6.CRM main@16e9955b24a5c8c412839301b12d8a9275250746` 固定消费 Abstractions/AspNetCore，复用 Platform RS256/JWKS 与 RFC 9457 实现，同时保持 CRM 自有错误 namespace。
+- CRM PR run 33156706503 与 main run 33157212604 通过远端包恢复、15/15 .NET、39/39 Web 与 3/3 browser smoke；P03 更新为 `Frozen / Consumable`。
+- C01/P07/C02/CRM03 与真实登录仍未实现或授权，CRM runtime authentication 保持未注册；没有创建 Secret、云资源或部署。
+
 ## 2026-08-28：Space Studio V1 Core GA 100% 结案
 
 - Added a deterministic controlled release-rehearsal runner bound to clean application commit `21a81767`, the frozen Source Set/Golden Dataset/Worker Environment, and ten exact source Git blob identities.
