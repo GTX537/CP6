@@ -1,8 +1,8 @@
 # Space Studio V1 WP6/WP8 正式发布演练证据
 
-日期：2026-08-28  
-DeliveryOwner：`BUBAO.GAO`  
-应用提交：`21a81767a0155a8cc92325acc3e3cdcc076ee930`  
+日期：2026-08-28
+DeliveryOwner：`BUBAO.GAO`
+应用提交：`21a81767a0155a8cc92325acc3e3cdcc076ee930`
 结论：`Pass`
 
 ## 结论
