@@ -165,7 +165,8 @@
         "docs/space/reports/2026-08-27-space-dxf-50m-streaming-capacity.md",
         "docs/space/reports/2026-08-27-space-autocad-worker-release-identity.md",
         "docs/space/reports/2026-08-27-space-autocad-primary-approval.md",
-        "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md"
+        "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md",
+        "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -272,7 +273,7 @@
       "ownerRole": "DeliveryOwner",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
-      "implementationStatus": "ExternalExecution",
+      "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Immutable 10/5/5 manifest with per-file hashes and authorization",
@@ -284,7 +285,8 @@
         "docs/space/acceptance/v1.3-ga/golden-cad-evidence-protocol.md",
         "docs/space/acceptance/v1.3-ga/golden-cad-evidence-template.json",
         "docs/space/reports/2026-08-14-space-ga-golden-cad-evidence-guard.md",
-        "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md"
+        "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md",
+        "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json"
       ],
       "verificationManifest": null,
       "acceptedEvidence": [],
