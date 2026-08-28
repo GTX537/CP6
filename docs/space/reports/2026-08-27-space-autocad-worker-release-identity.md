@@ -1,5 +1,9 @@
 # Space AutoCAD 候选 Worker 不可变 Release 身份
 
+> 当前口径：本文原始退出清单中的独立 Backup 是历史要求。Lean Core GA
+> Schema 3 与 `cad-provider-adr-0001-v2` 已改为一个合格 Primary 即可；
+> Release 身份、隔离、黄金集评分和质量门槛仍必须真实完成。
+
 日期：2026-08-27
 
 ## 结论

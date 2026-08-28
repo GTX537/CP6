@@ -1,5 +1,9 @@
 # Space Studio V1 M0 开工证据门禁报告
 
+> 当前口径：本文记录 2026-08-14 的历史五输入/双 Provider 门禁。
+> 2026-08-27 Lean Core GA Schema 3 已收敛为两类外部输入，Provider 只要求
+> 一个完整合格的 Primary；Backup 与双仓 Pilot 均不再阻断 V1 Core GA。
+
 日期：2026-08-14
 范围：五类外部输入的结构化语义、总 GA 组合门禁与失败关闭行为
 
