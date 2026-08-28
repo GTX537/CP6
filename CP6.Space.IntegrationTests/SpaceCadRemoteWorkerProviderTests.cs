@@ -304,7 +304,7 @@ public sealed class SpaceCadRemoteWorkerProviderTests
             "evidence://data-region/approved",
             "evidence://retention/approved",
             80,
-            "cad-provider-adr-0001-v1",
+            "cad-provider-adr-0001-v2",
             new string('d', 64),
             new string('e', 64),
             "evidence://qualification/report",

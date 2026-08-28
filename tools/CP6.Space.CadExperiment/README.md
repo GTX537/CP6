@@ -443,7 +443,7 @@ dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
 The input is schema version `1` and contains one Site, one UTC evaluation time
 and at most 16 candidates. Every candidate records its Provider/version,
 deployment and data boundary, DWG/DXF coverage, approval window, four approval
-evidence references, preflight result/hash, rubric `cad-provider-adr-0001-v1`,
+evidence references, preflight result/hash, rubric `cad-provider-adr-0001-v2`,
 golden-dataset SHA-256, frozen-environment SHA-256, qualification evidence and
 the six ADR scores with maxima `25/20/15/15/15/10`. Secret material is never an
 input; an approved cloud candidate carries only a governed secret reference.

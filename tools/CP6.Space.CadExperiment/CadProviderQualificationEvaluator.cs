@@ -94,7 +94,7 @@ public sealed record CadProviderQualificationReportV1(
 public static class CadProviderQualificationEvaluator
 {
     public const int SchemaVersion = 1;
-    public const string RubricVersion = "cad-provider-adr-0001-v1";
+    public const string RubricVersion = "cad-provider-adr-0001-v2";
     public const int MinimumScore = 80;
     private const int MaximumInputBytes = 1024 * 1024;
     private const int MaximumCandidates = 16;

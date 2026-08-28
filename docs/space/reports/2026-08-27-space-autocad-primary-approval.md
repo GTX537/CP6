@@ -11,7 +11,8 @@ Rehearsal；不扩张为 Autodesk 软件再分发、公共 SaaS 托管或生产�
 本次同时移除两处与 Lean Core GA Schema 3 冲突的遗留限制：
 
 - `qualify-providers` 现在只要求一个满足全部硬门禁、总分不低于 80 且
-  排名唯一的 Primary；Backup 存在时仍可输出，但不再阻断 Core GA。
+  排名唯一的 Primary；机器评分规则升级为 `cad-provider-adr-0001-v2`。
+  Backup 存在时仍可输出，但不再阻断 Core GA。
 - Site capability 的 `CadGaReady` 现在由合格、在有效期内、运行版本一致并
   同时支持 DWG/DXF 的 Primary 派生；缺失或失效的可选 Backup 不再产生
   Core GA 阻断码。

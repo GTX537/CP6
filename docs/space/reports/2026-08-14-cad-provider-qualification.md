@@ -24,7 +24,8 @@
 - 每条记录绑定评分规则版本、20 份黄金集 SHA、冻结 Worker/环境 SHA 和不可变资格证据引用。
 - 同一 Site 的 Primary/Backup 必须使用完全相同的规则版本、黄金集和冻结环境。
 - Primary 最终分必须严格高于 Backup；Primary 更低或两者并列均返回 `SPACE_CAD_PROVIDER_CONFIGURATION_INVALID`，零配置写入。
-- 一条合格 Primary 可用于受控准备，但没有合格 Backup 时 `CadGaReady=false`。
+- 本节以下规则是 2026-08-14 的历史行为；当前 `cad-provider-adr-0001-v2`
+  下，一条完整合格且运行版本一致的 Primary 即可令 `CadGaReady=true`。
 
 ## 兼容与迁移
 

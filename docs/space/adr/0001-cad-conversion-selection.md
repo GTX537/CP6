@@ -24,8 +24,8 @@ Space MVP 必须接受 DWG/DXF，但当前主工作树没有正式 CAD 解析链
 
 | 类别 | 门槛 |
 |---|---|
-| 格式 | 读取 MVP 兼容矩阵内的 DWG/DXF；不得要求终端安装 AutoCAD |
-| 授权 | 明确允许多租户 SaaS、Worker 扩缩容、灾备和非生产环境 |
+| 格式 | 读取 MVP 兼容矩阵内的 DWG/DXF；不得要求终端用户安装 AutoCAD，受控 Worker 可安装已批准的运行时 |
+| 授权 | 使用范围必须有实名 Owner 批准并受许可证约束；生产、多租户 SaaS、再分发或跨组织托管必须另有覆盖相应范围的明确授权 |
 | 隔离 | 在无业务凭据、无公共网络写权限的隔离 Worker/转换服务运行 |
 | 保真 | 单位、坐标、Layer、Handle、Block/Insert、属性和变换可追踪 |
 | 容量 | 平台硬上限 200MB、单图 100 万图元有可预测的拒绝和资源保护 |
@@ -67,9 +67,9 @@ Space MVP 必须接受 DWG/DXF，但当前主工作树没有正式 CAD 解析链
 | SaaS 授权和总成本 | 15 |
 | 供应商支持、版本策略和退出能力 | 10 |
 
-总分低于 80 不得进入 Site 主备候选名单。每个声明 CAD GA 的 Site 至少需要两个通过硬门槛且总分不低于 80 的候选；最高分配置为 Primary，第二名配置为 Backup。最高分并列时无法唯一确定主备，保持 No-Go，必须由同一冻结环境复测或经批准的评分仲裁形成不同最终分数。原文件不离开 CP6 受控区域、部署依赖更少仍是仲裁输入，但不得让较低最终分数覆盖较高分数成为 Primary。
+总分低于 80 不得进入 Site Provider 候选名单。每个声明 CAD GA 的 Site 至少需要一个通过全部硬门槛且总分不低于 80 的唯一最高分候选，并将其配置为 Primary。存在唯一第二名时可以配置为可选 Backup；Backup 缺失或第二名并列不阻断 V1 Core GA。最高分并列时无法唯一确定 Primary，保持 No-Go，必须由同一冻结环境复测或经批准的评分仲裁形成不同最终分数。原文件不离开 CP6 受控区域、部署依赖更少仍是仲裁输入，但不得让较低最终分数覆盖较高分数成为 Primary。
 
-机器执行规则固定为 `cad-provider-adr-0001-v1`。正式评分使用 `tools/CP6.Space.CadExperiment qualify-providers`：每个候选必须绑定同一黄金集 SHA-256、同一冻结环境 SHA-256、Provider 版本、试验 Preflight 哈希和四项硬门槛证据；六维分数超出各自权重即拒绝输入。第一名或第二名并列、合格候选不足两个、冻结基线混用或任一候选低于 80 时输出 No-Go，且不得生成认证写入输入。通过时生成的 Primary/Backup 输入由选择报告 SHA-256 绑定，仍须经受控 Site Provider 管理接口、权限与 Revision fence 写入；评分工具本身不修改 Site 配置。
+机器执行规则固定为 `cad-provider-adr-0001-v2`。正式评分使用 `tools/CP6.Space.CadExperiment qualify-providers`：每个候选必须绑定同一黄金集 SHA-256、同一冻结环境 SHA-256、Provider 版本、试验 Preflight 哈希和四项硬门槛证据；六维分数超出各自权重即拒绝输入。唯一最高分候选通过全部硬门槛且不低于 80 时生成 Primary 认证输入；存在唯一第二名时额外生成可选 Backup。最高分并列、没有合格候选或冻结基线混用时输出 No-Go，且不得生成认证写入输入。生成的认证输入由选择报告 SHA-256 绑定，仍须经受控 Site Provider 管理接口、权限与 Revision fence 写入；评分工具本身不修改 Site 配置。
 
 ## 6. 试验方法
 
@@ -103,7 +103,7 @@ Space MVP 必须接受 DWG/DXF，但当前主工作树没有正式 CAD 解析链
 
 E02-S01 完成必须附：
 
-- 主方案和备用方案的名称/版本。
+- Primary 的名称/版本；配置了可选 Backup 时一并记录。
 - 完整评分表和淘汰理由。
 - 法务/采购的 SaaS 授权结论。
 - CAD 版本/实体矩阵。

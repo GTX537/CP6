@@ -25,7 +25,7 @@
   "dataRegionApprovalReference": "replace-with-region-evidence",
   "deletionRetentionApprovalReference": "replace-with-deletion-retention-evidence",
   "qualificationScore": 0,
-  "qualificationRubricVersion": "cad-provider-adr-0001-v1",
+  "qualificationRubricVersion": "cad-provider-adr-0001-v2",
   "goldenDatasetSha256": "replace-with-authorized-dataset-sha256",
   "frozenEnvironmentSha256": "replace-with-frozen-environment-sha256",
   "qualificationEvidenceReference": "replace-with-qualification-report",
