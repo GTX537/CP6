@@ -21,6 +21,8 @@ $baselineGovernanceValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaBaselineGovernanceEvidence.ps1')
 $manualModelingValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaManualModelingEvidence.ps1')
+$cadStartValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaCadStartEvidence.ps1')
 $threePathValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaThreePathEvidence.ps1')
 $goldenCadValidator = Join-Path $PSScriptRoot (
@@ -606,6 +608,87 @@ foreach ($gate in @($manifest.gates)) {
                     catch {
                         Add-ValidationError (
                             'SPACE_GA_MANUAL_MODELING_EVIDENCE_INVALID: ' +
+                            $_.Exception.Message)
+                    }
+                }
+            }
+        }
+        if ($gate.id -eq 'WP2_CAD_START_WIZARD') {
+            $requiredAcceptedGates = @(
+                'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER',
+                'WP7_GOLDEN_CAD_FORMAL_EVIDENCE')
+            $pendingPrerequisiteGates = @($manifest.gates | Where-Object {
+                $_.id -in $requiredAcceptedGates -and
+                $_.acceptanceStatus -ne 'Accepted'
+            })
+            if ($pendingPrerequisiteGates.Count -gt 0) {
+                Add-ValidationError (
+                    'SPACE_GA_CAD_START_PREREQUISITES_INCOMPLETE: WP2 ' +
+                    'requires Accepted WP3 and WP7 so its real DWG/DXF run ' +
+                    'is bound to the approved Primary and frozen source set.')
+            }
+            $cadStartManifestReference = [string]$gate.verificationManifest
+            if (!(Test-Text $cadStartManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_CAD_START_MANIFEST_REQUIRED: Accepted WP2 ' +
+                    'requires a structured CAD Start evidence manifest.')
+            }
+            elseif ([System.IO.Path]::IsPathRooted($cadStartManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_CAD_START_MANIFEST_ABSOLUTE: WP2 manifest ' +
+                    'must use a repository-relative path.')
+            }
+            else {
+                $cadStartManifestFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $cadStartManifestReference))
+                $normalizedReference = $cadStartManifestReference.Replace('\', '/')
+                $isTemplateOrFixture =
+                    $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                    $normalizedReference.EndsWith(
+                        '/cad-start-evidence-template.json',
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                if (!$cadStartManifestFullPath.StartsWith(
+                    $repoPrefix,
+                    [System.StringComparison]::OrdinalIgnoreCase)) {
+                    Add-ValidationError (
+                        'SPACE_GA_CAD_START_MANIFEST_ESCAPE: WP2 manifest ' +
+                        'escapes the repository root.')
+                }
+                elseif ($isTemplateOrFixture) {
+                    Add-ValidationError (
+                        'SPACE_GA_CAD_START_MANIFEST_SYNTHETIC: WP2 cannot ' +
+                        'use a template or test fixture as formal evidence.')
+                }
+                elseif ([System.IO.Path]::GetExtension(
+                    $cadStartManifestFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $cadStartManifestFullPath `
+                        -PathType Leaf)) {
+                    Add-ValidationError (
+                        'SPACE_GA_CAD_START_MANIFEST_MISSING: WP2 manifest ' +
+                        "does not exist as JSON: $cadStartManifestReference")
+                }
+                else {
+                    $manifestIsAttested = @($gate.acceptedEvidence |
+                        Where-Object {
+                            ([string]$_.uri).Equals(
+                                $cadStartManifestReference,
+                                [System.StringComparison]::OrdinalIgnoreCase)
+                        }).Count -gt 0
+                    if (!$manifestIsAttested) {
+                        Add-ValidationError (
+                            'SPACE_GA_CAD_START_MANIFEST_UNATTESTED: WP2 ' +
+                            'accepted evidence must attest the structured ' +
+                            'CAD Start manifest itself.')
+                    }
+                    try {
+                        & $cadStartValidator `
+                            -ManifestPath $cadStartManifestFullPath `
+                            -ExpectedOwnerName ([string]$gate.ownerName) |
+                            Out-Null
+                    }
+                    catch {
+                        Add-ValidationError (
+                            'SPACE_GA_CAD_START_EVIDENCE_INVALID: ' +
                             $_.Exception.Message)
                     }
                 }

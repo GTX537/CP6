@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP2_CAD_START_FORMAL_EVIDENCE",
+  "conclusion": "Pending",
+  "ownerName": "<real DeliveryOwner>",
+  "executedAtUtc": null,
+  "applicationCommitSha": null,
+  "sourceSetSha256": null,
+  "goldenDatasetSha256": null,
+  "environment": {
+    "mode": "ControlledAcceptance",
+    "databaseEngine": "SQLServer",
+    "productVersion": null,
+    "edition": null,
+    "productionDataClaimed": false,
+    "productionDeploymentPerformed": false
+  },
+  "externalExecution": {
+    "uri": null,
+    "sha256": null,
+    "evidenceClass": "WP2_CAD_START_CONTROLLED_EXECUTION",
+    "conclusion": "Pending"
+  },
+  "provider": {},
+  "samples": [],
+  "verification": {},
+  "tamperTest": {},
+  "boundaries": {
+    "rawCadStoredInRepository": false,
+    "productionDataClaimed": false,
+    "productionDeploymentPerformed": false,
+    "productionWmsClaimed": false
+  },
+  "sources": [],
+  "selfReview": {
+    "acceptedBy": null,
+    "acceptedAtUtc": null,
+    "repeatable": true,
+    "distinctPersonReviewRequired": false
+  }
+}

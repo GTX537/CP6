@@ -148,15 +148,27 @@
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1",
       "implementationStatus": "Complete",
-      "acceptanceStatus": "Pending",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "DWG and DXF wizard E2E with real authorized files",
         "Preparation and parse-start audit records"
       ],
       "evidencePaths": [
+        "docs/space/acceptance/v1.3-ga/cad-start-evidence-protocol.md",
+        "docs/space/acceptance/v1.3-ga/cad-start-evidence-template.json",
+        "docs/space/acceptance/v1.3-ga/cad-start-formal-evidence-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-wp2-cad-start-acceptance.md",
         "docs/space/reports/2026-08-14-cad-start-wizard.md"
       ],
-      "acceptedEvidence": [],
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/cad-start-formal-evidence-v1.0.0.json",
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/cad-start-formal-evidence-v1.0.0.json",
+          "sha256": "03e38a47b84097b72067b30786078e3e6b6f8ab479b84a89e9007cff700b94b7",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T06:07:51Z"
+        }
+      ],
       "acceptanceCriteria": [
         "A non-developer can select floor, unit, transform and mapping profile",
         "No fake profile, hash or silent unit default is accepted"

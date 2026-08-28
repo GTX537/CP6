@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space WP2 CAD Start 正式接受
+
+- Added a standalone controlled acceptance runner that verifies the frozen authorized DWG/DXF, exact AutoCAD Primary Worker release and Core executable, then executes the product Preparation/Parse chain on disposable SQL Server.
+- Both formats passed explicit Floor/Unit/Transform/Mapping selection, zero-write Preview, sealed Preparation, Parse Start and idempotent replay; a tampered mapping hash was rejected with jobs unchanged at 2, and Worker raw-CAD/attempt residuals were zero.
+- Focused backend tests passed 21/21, Web Wizard/API tests 14/14, strict type-check passed, and the formal validator rejected 16 failure modes. The overall GA attestation suite remains green at 52/52.
+- WP2 is Complete/Accepted. Core GA remains fixed at 72% / NoGo with 0 pending inputs, 3 pending gates and 1 pending signer; no production data, WMS or deployment is claimed.
+
 ## 2026-08-28：Space WP1 手工建模正式接受
 
 - Added a formal single-owner WP1 evidence package bound to `main@b0164a15` and canonical Git blob/SHA-256 identities for two SQL and six Web test sources.

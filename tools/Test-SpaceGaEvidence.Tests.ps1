@@ -22,6 +22,8 @@ $baselineGovernanceTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1')
 $manualModelingTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaManualModelingEvidence.Tests.ps1')
+$cadStartTestSuite = Join-Path $PSScriptRoot (
+    'Test-SpaceGaCadStartEvidence.Tests.ps1')
 $threePathTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaThreePathEvidence.Tests.ps1')
 $hostExecutable = (Get-Process -Id $PID).Path
@@ -52,6 +54,13 @@ function New-TestManifest {
     $wp1.acceptanceStatus = 'Pending'
     $wp1.acceptedEvidence = @()
     $wp1 | Add-Member -MemberType NoteProperty `
+        -Name verificationManifest -Value $null -Force
+    $wp2 = @($manifest.gates | Where-Object {
+        $_.id -eq 'WP2_CAD_START_WIZARD'
+    })[0]
+    $wp2.acceptanceStatus = 'Pending'
+    $wp2.acceptedEvidence = @()
+    $wp2 | Add-Member -MemberType NoteProperty `
         -Name verificationManifest -Value $null -Force
     & $Mutation $manifest
     $path = Join-Path $tempDirectory "$Name.json"
@@ -92,7 +101,13 @@ function Set-GateAccepted {
     })[0]
     $gate.ownerName = 'Zhang Wei'
     $gate.acceptanceStatus = 'Accepted'
-    $gate.acceptedEvidence = @($Attestation)
+    $gate | Add-Member -MemberType NoteProperty `
+        -Name verificationManifest `
+        -Value $script:cadStartAcceptanceReference -Force
+    $cadStartAttestation = New-Attestation `
+        -Uri $script:cadStartAcceptanceReference `
+        -Sha256 $script:cadStartAcceptanceSha256
+    $gate.acceptedEvidence = @($Attestation, $cadStartAttestation)
 }
 
 function Set-Wp1Accepted {
@@ -392,6 +407,24 @@ try {
     }
     $manualModelingAcceptanceSha256 = (Get-FileHash `
         -LiteralPath $manualModelingAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
+    $cadStartAcceptanceReference = (
+        'docs/space/acceptance/v1.3-ga/.tmp-' +
+        [Guid]::NewGuid().ToString('N') + '/cad-start-evidence.json')
+    $cadStartAcceptancePath = Join-Path $repo $cadStartAcceptanceReference
+    $cadStartAcceptanceDirectory = Split-Path -Parent $cadStartAcceptancePath
+    [void](New-Item -ItemType Directory -Path $cadStartAcceptanceDirectory)
+    $exportOutput = & $hostExecutable `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $cadStartTestSuite `
+        -ExportValidManifestPath $cadStartAcceptancePath 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not export valid CAD Start fixture.`n$exportOutput"
+    }
+    $cadStartAcceptanceSha256 = (Get-FileHash `
+        -LiteralPath $cadStartAcceptancePath `
         -Algorithm SHA256).Hash.ToLowerInvariant()
 
     $threePathAcceptanceReference = (
@@ -1555,6 +1588,12 @@ finally {
         (Test-Path -LiteralPath $manualModelingAcceptanceDirectory)) {
         [System.IO.Directory]::Delete(
             $manualModelingAcceptanceDirectory,
+            $true)
+    }
+    if ($null -ne $cadStartAcceptanceDirectory -and
+        (Test-Path -LiteralPath $cadStartAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete(
+            $cadStartAcceptanceDirectory,
             $true)
     }
 }

@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space WP2 CAD Start 正式接受
+
+- 新增可重复的受控验收运行器，绑定精确应用 Commit、冻结 Worker Release、授权真实 DWG/DXF、SQL Server 和 7 份产品/测试源码 Git Blob。
+- 两格式均通过显式 Floor/Unit/Transform/Mapping、Preview 零写入、Preparation 封存、Parse Start 幂等重放；篡改请求零新增 Job，原始 CAD/Attempt 残留为 0。
+- 后端 21/21、Web 14/14、type-check、16 个正式失败模式与总 GA 52/52 通过；WP2 Complete/Accepted。
+- Core GA 继续 72% / NoGo（0 个输入、3 个 Gate、1 个签署 Pending），没有执行生产数据/WMS/部署声明。
+
 ## 2026-08-28 Space WP1 手工建模正式接受
 
 - 绑定 `main@b0164a15`、两份 SQL 测试源和六份 Web 测试源的 Git Blob/SHA-256，形成单人可重复自审的正式 WP1 Manifest。
