@@ -29,6 +29,11 @@ export function summarizeSamples(samples) {
   }
 }
 
+export function rendererMatchesOptionalPattern(renderer, requiredPattern) {
+  if (requiredPattern === null || requiredPattern === undefined) return true
+  return requiredPattern.test(renderer ?? '')
+}
+
 function rendererKey(run) {
   return `${run.webgl?.vendor ?? ''}|${run.webgl?.renderer ?? ''}|${run.webgl?.version ?? ''}`
 }

@@ -1,22 +1,27 @@
 <template>
-  <div class="floor-list">
+  <nav class="floor-list" :aria-label="t('楼层')">
     <div class="floor-list__header">{{ t('楼层') }}</div>
-    <div class="floor-list__items">
-      <div
+    <ul class="floor-list__items">
+      <li
         v-for="f in floors"
         :key="f.id"
-        class="floor-list__item"
-        :class="{ 'floor-list__item--active': f.id === currentFloorId }"
-        :data-floor-id="f.id"
-        @click="onFloorClick(f.id)"
       >
-        <span class="floor-list__level">F{{ f.level }}</span>
-        <span class="floor-list__name" :title="f.floorName || f.floorCode">
-          {{ f.floorName || f.floorCode }}
-        </span>
-      </div>
-    </div>
-  </div>
+        <button
+          type="button"
+          class="floor-list__item"
+          :class="{ 'floor-list__item--active': f.id === currentFloorId }"
+          :data-floor-id="f.id"
+          :aria-current="f.id === currentFloorId ? 'page' : undefined"
+          @click="onFloorClick(f.id)"
+        >
+          <span class="floor-list__level">F{{ f.level }}</span>
+          <span class="floor-list__name" :title="f.floorName || f.floorCode">
+            {{ f.floorName || f.floorCode }}
+          </span>
+        </button>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <script setup lang="ts">
@@ -69,17 +74,39 @@ onBeforeUnmount(() => { clearTimeout(debounceTimer) })
 .floor-list__items {
   flex: 1;
   overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.floor-list__items li {
+  margin: 0;
+  padding: 0;
 }
 
 .floor-list__item {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 6px;
+  min-height: 40px;
   padding: 7px 12px;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
   border-left: 2px solid transparent;
   transition: background 0.12s, border-color 0.12s;
   overflow: hidden;
+}
+
+.floor-list__item:focus-visible {
+  outline: 3px solid #ffca28;
+  outline-offset: -3px;
 }
 
 .floor-list__item:hover {

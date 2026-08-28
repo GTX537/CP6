@@ -14,10 +14,18 @@
       <canvas
         ref="canvasRef"
         class="viewer-canvas"
+        role="region"
+        tabindex="0"
+        :aria-label="t('仓库三维视图')"
+        aria-describedby="viewer-keyboard-help"
         @mousemove="onMouseMove"
         @click="onClick"
         @dblclick="onDblClick"
+        @keydown="onCanvasKeyDown"
       />
+      <p id="viewer-keyboard-help" class="sr-only">
+        {{ t('键盘快捷键：1 俯视，2 等轴，3 正视，Home 复位，O 整层概览，F 聚焦选中，P 切换投影。') }}
+      </p>
 
       <!-- Search box (top-left, barcode scanner / manual entry) -->
       <SearchBox class="viewer-searchbox" @locate="onLocate" @locate-stock="onLocateStock" />
@@ -40,39 +48,51 @@
       />
 
       <!-- Toolbar (top-center) -->
-      <div class="viewer-toolbar">
-        <button class="tb-btn" :title="t('俯视')" @click="setPreset('top')">⊙</button>
-        <button class="tb-btn" :title="t('等轴')" @click="setPreset('iso')">⬡</button>
-        <button class="tb-btn" :title="t('正视')" @click="setPreset('front')">□</button>
-        <button class="tb-btn" :title="t('复位')" @click="onHome()">⌂</button>
-        <div class="tb-sep" />
-        <button class="tb-btn" :title="t('整层概览')" @click="onOverview()">≡</button>
-        <button class="tb-btn" :title="t('聚焦选中')" @click="onFocusSelected()">⊕</button>
-        <div class="tb-sep" />
-        <button class="tb-btn" :title="t('切换投影')" @click="toggleProjection()">⟳</button>
-        <div class="tb-sep" />
+      <div class="viewer-toolbar" role="toolbar" :aria-label="t('三维视图工具栏')">
+        <button type="button" class="tb-btn" :title="t('俯视')" :aria-label="t('俯视')" aria-keyshortcuts="1" @click="setPreset('top')">⊙</button>
+        <button type="button" class="tb-btn" :title="t('等轴')" :aria-label="t('等轴')" aria-keyshortcuts="2" @click="setPreset('iso')">⬡</button>
+        <button type="button" class="tb-btn" :title="t('正视')" :aria-label="t('正视')" aria-keyshortcuts="3" @click="setPreset('front')">□</button>
+        <button type="button" class="tb-btn" :title="t('复位')" :aria-label="t('复位')" aria-keyshortcuts="Home" @click="onHome()">⌂</button>
+        <div class="tb-sep" role="separator" />
+        <button type="button" class="tb-btn" :title="t('整层概览')" :aria-label="t('整层概览')" aria-keyshortcuts="O" @click="onOverview()">≡</button>
+        <button type="button" class="tb-btn" :title="t('聚焦选中')" :aria-label="t('聚焦选中')" aria-keyshortcuts="F" @click="onFocusSelected()">⊕</button>
+        <div class="tb-sep" role="separator" />
+        <button type="button" class="tb-btn" :title="t('切换投影')" :aria-label="t('切换投影')" aria-keyshortcuts="P" @click="toggleProjection()">⟳</button>
+        <div class="tb-sep" role="separator" />
         <button
+          type="button"
           class="tb-btn tb-text"
           :class="{ on: warehouseOverviewOpen }"
           :title="t('仓库运行快照')"
+          :aria-label="t('仓库运行快照')"
+          :aria-pressed="warehouseOverviewOpen"
           @click="toggleWarehouseOverview"
         >KPI</button>
         <button
+          type="button"
           class="tb-btn tb-text"
           :class="{ on: operationsDiagnosticOpen }"
           :title="t('运营诊断')"
+          :aria-label="t('运营诊断')"
+          :aria-pressed="operationsDiagnosticOpen"
           @click="toggleOperationsDiagnostic"
         >DIAG</button>
         <button
+          type="button"
           class="tb-btn tb-text"
           :class="{ on: putawayRecommendationOpen }"
           :title="t('上架推荐')"
+          :aria-label="t('上架推荐')"
+          :aria-pressed="putawayRecommendationOpen"
           @click="togglePutawayRecommendation"
         >PUT</button>
         <button
+          type="button"
           class="tb-btn tb-text"
           :class="{ on: dispatchRecommendationOpen }"
           :title="t('人员调度建议')"
+          :aria-label="t('人员调度建议')"
+          :aria-pressed="dispatchRecommendationOpen"
           @click="toggleDispatchRecommendation"
         >DSP</button>
       </div>
@@ -191,10 +211,10 @@
         @clear-personnel-trajectory="onClearPersonnelTrajectory"
       />
 
-      <div v-if="loading" class="viewer-loading">
+      <div v-if="loading" class="viewer-loading" role="status" aria-live="polite">
         <span>{{ t('加载中') }} {{ progressText }}</span>
       </div>
-      <div v-if="errorMsg" class="viewer-error">{{ errorMsg }}</div>
+      <div v-if="errorMsg" class="viewer-error" role="alert">{{ errorMsg }}</div>
     </div>
   </div>
 </template>
@@ -454,6 +474,21 @@ function toggleProjection(): void { viewer?.toggleProjection() }
 function onHome(): void { viewer?.home() }
 function onOverview(): void { viewer?.overview() }
 function onFocusSelected(): void { viewer?.focusSelected() }
+
+function onCanvasKeyDown(event: KeyboardEvent): void {
+  const key = event.key.toLowerCase()
+  const action = key === '1' ? () => setPreset('top')
+    : key === '2' ? () => setPreset('iso')
+      : key === '3' ? () => setPreset('front')
+        : key === 'home' ? onHome
+          : key === 'o' ? onOverview
+            : key === 'f' ? onFocusSelected
+              : key === 'p' ? toggleProjection
+                : null
+  if (!action) return
+  event.preventDefault()
+  action()
+}
 
 async function toggleWarehouseOverview(): Promise<void> {
   warehouseOverviewOpen.value = !warehouseOverviewOpen.value
@@ -1518,6 +1553,24 @@ onBeforeUnmount(() => {
   cursor: crosshair;
 }
 
+.viewer-canvas:focus-visible,
+.tb-btn:focus-visible {
+  outline: 3px solid #ffca28;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .viewer-searchbox {
   position: absolute;
   top: 16px;
@@ -1571,7 +1624,9 @@ onBeforeUnmount(() => {
   color: #90caf9;
   font-size: 16px;
   cursor: pointer;
-  padding: 4px 6px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 6px;
   border-radius: 4px;
   line-height: 1;
   transition: background 0.15s;

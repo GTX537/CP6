@@ -4,6 +4,7 @@ import {
   FORMAL_SPACE_PERFORMANCE_BUDGETS as budgets,
   aggregateEvidence,
   percentile,
+  rendererMatchesOptionalPattern,
   summarizeSamples,
 } from './space-performance-evidence.mjs'
 
@@ -48,6 +49,13 @@ test('uses nearest-rank percentiles and reports P50/P95/max', () => {
     p95: 5,
     max: 5,
   })
+})
+
+test('treats a GPU brand pattern as an optional environment diagnostic', () => {
+  const renderer = 'ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU, D3D11)'
+  assert.equal(rendererMatchesOptionalPattern(renderer, null), true)
+  assert.equal(rendererMatchesOptionalPattern(renderer, /RTX\s*3060/i), true)
+  assert.equal(rendererMatchesOptionalPattern(renderer, /Iris.*Xe/i), false)
 })
 
 test('passes only complete 30-run hardware evidence with 100 successful picks per run', () => {
