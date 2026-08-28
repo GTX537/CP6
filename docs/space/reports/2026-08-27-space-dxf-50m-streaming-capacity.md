@@ -1,5 +1,9 @@
 # Space 托管 DXF Parser 50 MiB 容量合同
 
+> 当前口径：本文后续提到的 Primary/Backup 双链复测是历史要求。
+> Lean Core GA Schema 3 与 `cad-provider-adr-0001-v2` 只要求一个合格
+> Primary；50 MiB 容量和性能门槛本身不变。
+
 日期：2026-08-27
 
 ## 结论

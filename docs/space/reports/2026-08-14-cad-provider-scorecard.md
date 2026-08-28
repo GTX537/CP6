@@ -1,5 +1,10 @@
 # Space Studio WP3 CAD Provider 评分与选型工具
 
+> 当前口径：本文记录 2026-08-14 的历史 `cad-provider-adr-0001-v1`
+> 双 Provider 规则。2026-08-27 起由 ADR-0001 的
+> `cad-provider-adr-0001-v2` 取代：一个合格且唯一最高分的 Primary 即可，
+> Backup 为可选韧性增强。
+
 日期：2026-08-14
 范围：ADR-0001 评分机器化与 Site 主备认证输入生成
 接受状态：仓库实现完成；真实 Provider 选型与 Site GA 仍为 No-Go

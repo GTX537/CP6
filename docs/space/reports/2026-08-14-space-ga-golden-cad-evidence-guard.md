@@ -1,5 +1,9 @@
 # Space Studio V1 正式黄金 CAD 证据门禁
 
+> 当前口径：本文的双 Provider 描述是 2026-08-14 的历史规则。
+> 2026-08-27 起只要求一个通过 `cad-provider-adr-0001-v2` 的 Primary，
+> Backup 为可选增强；20 份黄金集与质量门槛继续保留。
+
 日期：2026-08-14
 
 范围：核心 GA / WP7 真实黄金 CAD 与双 Provider 正式证据

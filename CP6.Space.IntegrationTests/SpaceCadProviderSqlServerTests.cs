@@ -150,9 +150,6 @@ public sealed class SpaceCadProviderSqlServerTests
             Assert.Contains(
                 "CAD_PRIMARY_QUALIFICATION_INCOMPLETE",
                 capability.BlockingCodes);
-            Assert.Contains(
-                "CAD_BACKUP_QUALIFICATION_INCOMPLETE",
-                capability.BlockingCodes);
 
             var router = new SpaceCadProviderRouter(
                 context,
@@ -203,9 +200,6 @@ public sealed class SpaceCadProviderSqlServerTests
             Assert.False(capability.Backup!.Qualified);
             Assert.Contains(
                 "CAD_PRIMARY_QUALIFICATION_INCOMPLETE",
-                capability.BlockingCodes);
-            Assert.Contains(
-                "CAD_BACKUP_QUALIFICATION_INCOMPLETE",
                 capability.BlockingCodes);
         });
     }

@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space AutoCAD Primary 选择与单 Provider 合同
+
+- `BUBAO.GAO` 已把 AutoCAD 2025 Core Console 批准为 V1 唯一 Primary，范围限定为本机受控开发、验证和 Release Rehearsal；不伪造 Autodesk 订单、订阅编号或 SaaS/生产许可。
+- 固定版本/哈希/Autodesk 签名及运行中的 Licensing Service 已复核；安装型合同和候选 Worker 2/2 通过，输出 4,424/4,422 实体，测试后 0 CAD/0 Attempt 残留。
+- 资格评测与 Site capability 已与 Lean Schema 3 对齐：一个合格、唯一最高分且覆盖 DWG/DXF 的 Primary 即可 Ready；Backup 保留为可选增强。
+- 批准记录与报告已版本化；完整 Provider 输入、WP3/WP7 和 GA 仍等待正式 SemVer Worker、冻结环境和黄金集评分。
+
 ## 2026-08-27 Space Lean Core GA 门禁重置
 
 - 正式 GA 合同升级为 Schema 3：删除独立 Backup Provider、双仓各 14 天 Pilot、客户来源 CAD 和额外人员确认等首版过度流程门禁；这些能力保留为 GA 后增强。

@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space AutoCAD Primary 批准与单 Provider Ready（2026-08-27）
+
+- `BUBAO.GAO` 已批准当前 AutoCAD 2025 Core Console 作为 V1 唯一 Primary；批准范围限于本机受控 CP6 开发、验证和 Release Rehearsal，不代表 Autodesk 软件再分发、公共 SaaS 托管或生产部署授权。
+- 当前 Core Console `25.0.58.0.0`、SHA-256 `d1fd7232893094234f31c65445d0ec9259ffc1df17fb15aad99373e31545cefb`、Autodesk 签名有效，Licensing Service 正在运行；真实安装型合同/Worker 测试 2/2，4,424/4,422 实体，残留 CAD/Attempt 为 0。
+- 修正 Lean Schema 3 的运行时漂移：一个满足全部硬门禁、资格分至少 80 且唯一最高分的 Primary 即可通过 `qualify-providers`；机器规则显式升级为 `cad-provider-adr-0001-v2`，Site `CadGaReady` 也只由合格 DWG/DXF Primary 派生。Backup 可选且不阻断 Core GA。
+- Primary 选择和受控使用范围已批准，但完整外部输入仍 Pending：下一步从合并后的精确 `main` 构建正式 SemVer Worker，冻结环境并在同一 20 份 CAD 上评分。当前仍为 72% / `NoGo`，没有生产部署。
+
 ## Space Lean Core GA Schema 3（2026-08-27）
 
 - 首版 Core GA 已移除独立 Backup Provider、Greenfield/Retrofit 双仓、各 14 天 Pilot、客户来源 CAD 和额外人员确认等过度流程门禁；Backup 与现场 Pilot 转为 GA 后韧性/推广增强，不再阻断单人开发结案。

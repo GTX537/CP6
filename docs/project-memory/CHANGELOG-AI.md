@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-27：Space AutoCAD Primary 批准与单 Provider Ready
+
+- `BUBAO.GAO` 批准 AutoCAD 2025 Core Console 为 V1 唯一 Primary；范围限定为本机受控 CP6 开发、验证和 Release Rehearsal，不扩写为软件再分发、公共 SaaS 托管或生产部署授权。
+- 复核 Core `25.0.58.0.0`、固定 SHA、有效 Autodesk 签名和运行中的 Licensing Service；真实安装型合同/Worker 2/2、4,424/4,422 实体、0 CAD/Attempt 残留。
+- `qualify-providers` 与 Site `CadGaReady` 改为一个满足硬门禁、至少 80 分、唯一最高分且覆盖 DWG/DXF 的 Primary 即可 Ready；机器规则显式升级为 `cad-provider-adr-0001-v2`，可选 Backup 不阻断 Core GA。
+- 新增版本化批准记录和执行报告；外部 Provider 输入仍等待正式 SemVer Worker、冻结环境与黄金集评分，GA 仍为 72% / NoGo，未执行生产部署。
+
 ## 2026-08-27：Space Lean Core GA Schema 3
 
 - 移除首版过度流程门禁：独立 Backup Provider、Greenfield/Retrofit 双仓、各 14 天 Pilot、客户来源 CAD 和额外人员确认；Backup 与现场 Pilot 转为 GA 后增强。

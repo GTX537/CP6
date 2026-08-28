@@ -58,15 +58,17 @@ It provides a set of bounded development capabilities:
   isolation evidence are all present.
 - `qualify-providers`: applies the frozen ADR-0001 six-dimension rubric to
   bounded candidate scorecards, rejects missing hard-gate evidence, mixed
-  baselines, scores below 80 and ambiguous first/second place, then emits a
-  hash-bound report plus import-ready Site certification inputs only on Pass.
+  baselines, scores below 80 and an ambiguous first place, then emits a
+  hash-bound report plus an import-ready Primary Site certification on Pass.
+  A uniquely ranked Backup is emitted when present, but is not required by
+  Lean Core GA.
 
 The tool implements development-only `ICadConverter` paths and a small-fixture
 JSON sink. It can read native DWG only through the explicitly configured local
 AutoCAD Core Console bridge; it does not write Draft data, join `CP6.slnx`,
 register a runtime Provider or qualify as a licensed production adapter. Formal
-E02-S02 acceptance remains blocked until E02-S01 has a licensed, scored primary
-and backup selection.
+E02-S02 acceptance remains blocked until E02-S01 has one licensed, scored
+Primary selection.
 
 The tool entry never invokes `ICadConverter` directly. Its conversion goes through
 `SpaceCadConverterContractRunner`, the same vendor-neutral protocol boundary required
@@ -441,16 +443,18 @@ dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
 The input is schema version `1` and contains one Site, one UTC evaluation time
 and at most 16 candidates. Every candidate records its Provider/version,
 deployment and data boundary, DWG/DXF coverage, approval window, four approval
-evidence references, preflight result/hash, rubric `cad-provider-adr-0001-v1`,
+evidence references, preflight result/hash, rubric `cad-provider-adr-0001-v2`,
 golden-dataset SHA-256, frozen-environment SHA-256, qualification evidence and
 the six ADR scores with maxima `25/20/15/15/15/10`. Secret material is never an
 input; an approved cloud candidate carries only a governed secret reference.
 
-Exit code `0` means two or more candidates passed every hard gate and 80-point
-minimum on the same frozen baseline, with a unique highest and unique second
-score. The report then contains exactly one Primary and one Backup certification
-input, both bound to the report's `selectionSha256`. Exit code `4` writes the
-same auditable report but leaves `certificationInputs` empty. Invalid schema,
+Exit code `0` means at least one candidate passed every hard gate and the
+80-point minimum on the frozen baseline, with a unique highest score. The
+report then contains exactly one Primary certification input bound to the
+report's `selectionSha256`; when a uniquely ranked second candidate exists it
+also emits an optional Backup certification. A tied optional second place does
+not block the Primary. Exit code `4` writes the same auditable report but leaves
+`certificationInputs` empty. Invalid schema,
 unknown or duplicate properties, invalid enums/hashes and out-of-range scores
 return exit code `2`. A report is selection evidence, not proof that a Site has
 been configured or accepted for GA; the controlled management API remains the

@@ -1,5 +1,9 @@
 # Space Studio V1 核心 GA 仓库完成度审计
 
+> 当前口径：本文是 `main@3dab2826` 的历史审计。其双 Provider、双仓 Pilot
+> 和多角色输入已由 2026-08-27 Lean Core GA Schema 3 取代；当前只要求一个
+> 合格 Primary、一次受控发布演练和单一 DeliveryOwner。
+
 日期：2026-08-15
 审计基线：`main@3dab2826aa099dbe69e8cdf995c93b73cea1bc8f`
 

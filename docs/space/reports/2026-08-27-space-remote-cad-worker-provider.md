@@ -1,5 +1,9 @@
 # Space Studio WP3 远程隔离 CAD Worker Provider
 
+> 当前口径：本文交付时尚未采用 Lean Core GA Schema 3。独立 Backup 和
+> 生产故障切换现为 GA 后增强，不再阻断 V1；一个满足全部硬门禁并通过
+> `cad-provider-adr-0001-v2` 的 Primary 即可。
+
 日期：2026-08-27
 
 ## 结论
