@@ -27,6 +27,12 @@ function Get-RehearsalSha256([string]$Path) {
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 
+function Format-RehearsalUtc([DateTimeOffset]$Value) {
+    return $Value.UtcDateTime.ToString(
+        "yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'",
+        [Globalization.CultureInfo]::InvariantCulture)
+}
+
 function Invoke-RehearsalValidator {
     param(
         [Parameter(Mandatory)][string]$Script,
@@ -269,13 +275,37 @@ try {
         schemaVersion = 1
         evidenceClass = 'SPACE_RELEASE_REHEARSAL_EXECUTION'
         applicationCommitSha = $commit
-        startedAtUtc = $startedAt.ToString('O')
-        completedAtUtc = [DateTimeOffset]::UtcNow.ToString('O')
+        startedAtUtc = Format-RehearsalUtc $startedAt
+        completedAtUtc = Format-RehearsalUtc ([DateTimeOffset]::UtcNow)
         ownerName = $OwnerName
         trackedWorktreeCleanAtExecution = $true
         frozenBaselines = $baseline
-        integration = $integration | Select-Object -Property * -ExcludeProperty text
-        security = $security | Select-Object -Property * -ExcludeProperty text
+        integration = [ordered]@{
+            name = $integration.name
+            project = $integration.project
+            filter = $integration.filter
+            total = $integration.total
+            executed = $integration.executed
+            passed = $integration.passed
+            failed = $integration.failed
+            notExecuted = $integration.notExecuted
+            durationSeconds = $integration.durationSeconds
+            trx = $integration.trx
+            log = $integration.log
+        }
+        security = [ordered]@{
+            name = $security.name
+            project = $security.project
+            filter = $security.filter
+            total = $security.total
+            executed = $security.executed
+            passed = $security.passed
+            failed = $security.failed
+            notExecuted = $security.notExecuted
+            durationSeconds = $security.durationSeconds
+            trx = $security.trx
+            log = $security.log
+        }
     }
     Write-RehearsalJson $executionPath $executionEvidence
     Write-RehearsalJson $publishWmsPath ([ordered]@{
@@ -338,31 +368,31 @@ try {
             uri = "$prefix`:execution:v1"
             sha256 = Get-RehearsalSha256 $executionPath
             acceptedBy = $OwnerName
-            acceptedAtUtc = $acceptedAt.ToString('O')
+            acceptedAtUtc = Format-RehearsalUtc $acceptedAt
         }
         publishWms = [ordered]@{
             uri = "$prefix`:publish-wms:v1"
             sha256 = Get-RehearsalSha256 $publishWmsPath
             acceptedBy = $OwnerName
-            acceptedAtUtc = $acceptedAt.ToString('O')
+            acceptedAtUtc = Format-RehearsalUtc $acceptedAt
         }
         viewer = [ordered]@{
             uri = 'docs/space/acceptance/v1.3-ga/viewer-formal-evidence-v1.0.0.json'
             sha256 = Get-RehearsalSha256 $viewerPath
             acceptedBy = $OwnerName
-            acceptedAtUtc = $acceptedAt.ToString('O')
+            acceptedAtUtc = Format-RehearsalUtc $acceptedAt
         }
         recovery = [ordered]@{
             uri = "$prefix`:recovery:v1"
             sha256 = Get-RehearsalSha256 $recoveryPath
             acceptedBy = $OwnerName
-            acceptedAtUtc = $acceptedAt.ToString('O')
+            acceptedAtUtc = Format-RehearsalUtc $acceptedAt
         }
         security = [ordered]@{
             uri = "$prefix`:http-security:v1"
             sha256 = Get-RehearsalSha256 $securityPath
             acceptedBy = $OwnerName
-            acceptedAtUtc = $acceptedAt.ToString('O')
+            acceptedAtUtc = Format-RehearsalUtc $acceptedAt
         }
     }
     $candidatePath = Join-Path $evidenceFullPath (
@@ -374,7 +404,7 @@ try {
         evidenceClass = 'WP8_RELEASE_REHEARSAL'
         conclusion = 'Pass'
         ownerName = $OwnerName
-        executedAtUtc = $startedAt.ToString('O')
+        executedAtUtc = Format-RehearsalUtc $startedAt
         applicationCommitSha = $commit
         sourceSetSha256 = [string]$cad.sourceSetSha256
         goldenDatasetSha256 = [string]$cad.goldenDatasetSha256
@@ -421,7 +451,7 @@ try {
         }
         selfReview = [ordered]@{
             acceptedBy = $OwnerName
-            acceptedAtUtc = $acceptedAt.ToString('O')
+            acceptedAtUtc = Format-RehearsalUtc $acceptedAt
             repeatable = $true
             distinctPersonReviewRequired = $false
         }

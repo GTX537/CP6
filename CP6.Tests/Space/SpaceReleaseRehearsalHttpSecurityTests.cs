@@ -35,7 +35,10 @@ public sealed class SpaceReleaseRehearsalHttpSecurityTests
     [Fact]
     public async Task Signed_external_tokens_fail_closed_over_real_http()
     {
-        var builder = WebApplication.CreateBuilder();
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+        {
+            EnvironmentName = "ControlledAcceptance",
+        });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton<ITenantContext, TenantContext>();
         builder.Services.AddSingleton<SpaceExecutionContextAccessor>();
