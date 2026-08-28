@@ -18,6 +18,8 @@ $kickoffTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaKickoffEvidence.Tests.ps1')
 $releaseRehearsalTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaReleaseRehearsalEvidence.Tests.ps1')
+$threePathTestSuite = Join-Path $PSScriptRoot (
+    'Test-SpaceGaThreePathEvidence.Tests.ps1')
 $hostExecutable = (Get-Process -Id $PID).Path
 $tempDirectory = Join-Path (
     [System.IO.Path]::GetTempPath()) (
@@ -92,6 +94,24 @@ function Set-Wp8Accepted {
         (New-Attestation -Uri $RehearsalReference -Sha256 $RehearsalSha256))
 }
 
+function Set-Wp4Accepted {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)][string]$ThreePathReference,
+        [Parameter(Mandatory)][string]$ThreePathSha256
+    )
+
+    $gate = @($Manifest.gates | Where-Object {
+        $_.id -eq 'WP4_THREE_PATH_END_TO_END'
+    })[0]
+    $gate.ownerName = 'Zhang Wei'
+    $gate.acceptanceStatus = 'Accepted'
+    $gate | Add-Member -MemberType NoteProperty `
+        -Name verificationManifest -Value $ThreePathReference -Force
+    $gate.acceptedEvidence = @(
+        (New-Attestation -Uri $ThreePathReference -Sha256 $ThreePathSha256))
+}
+
 function Set-Wp7Accepted {
     param(
         [Parameter(Mandatory)]$Manifest,
@@ -107,6 +127,16 @@ function Set-Wp7Accepted {
     $gate.verificationManifest = $GoldenReference
     $gate.acceptedEvidence = @(
         (New-Attestation -Uri $GoldenReference -Sha256 $GoldenSha256))
+    $wp4 = @($Manifest.gates | Where-Object {
+        $_.id -eq 'WP4_THREE_PATH_END_TO_END'
+    })[0]
+    if ($wp4.acceptanceStatus -eq 'Accepted' -and
+        ![string]::IsNullOrWhiteSpace($script:threePathAcceptanceReference)) {
+        Set-Wp4Accepted `
+            -Manifest $Manifest `
+            -ThreePathReference $script:threePathAcceptanceReference `
+            -ThreePathSha256 $script:threePathAcceptanceSha256
+    }
 }
 
 function Complete-Wp7Prerequisites {
@@ -248,6 +278,35 @@ function Invoke-ValidatorCase {
 }
 
 try {
+    $threePathAcceptanceReference = (
+        'docs/space/acceptance/v1.3-ga/.tmp-' +
+        [Guid]::NewGuid().ToString('N') + '/three-path-evidence.json')
+    $threePathAcceptancePath = Join-Path $repo $threePathAcceptanceReference
+    $threePathAcceptanceDirectory = Split-Path -Parent $threePathAcceptancePath
+    [void](New-Item -ItemType Directory -Path $threePathAcceptanceDirectory)
+    $exportOutput = & $hostExecutable `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $threePathTestSuite `
+        -ExportValidManifestPath $threePathAcceptancePath 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not export valid three-path fixture.`n$exportOutput"
+    }
+    $threePathAcceptance = Get-Content -LiteralPath $threePathAcceptancePath -Raw |
+        ConvertFrom-Json
+    foreach ($evidence in @(
+        $threePathAcceptance.evidence.cad,
+        $threePathAcceptance.evidence.excelCad,
+        $threePathAcceptance.evidence.manualUnderlayBlankCanvas,
+        $threePathAcceptance.evidence.sqlServer)) {
+        $evidence.uri = ([string]$evidence.uri).Replace(':test:', ':integration:')
+    }
+    $threePathAcceptance | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $threePathAcceptancePath -Encoding UTF8
+    $threePathAcceptanceSha256 = (Get-FileHash `
+        -LiteralPath $threePathAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
     $rehearsalAcceptanceReference = (
         'docs/space/acceptance/v1.3-ga/.tmp-' +
         [Guid]::NewGuid().ToString('N') + '/release-rehearsal-evidence.json')
@@ -328,6 +387,39 @@ try {
     $goldenAcceptanceSha256 = (Get-FileHash -LiteralPath $goldenAcceptancePath `
         -Algorithm SHA256).Hash.ToLowerInvariant()
 
+    $threePathAcceptance.sourceSetSha256 =
+        $goldenAcceptance.dataset.sourceSetSha256
+    $threePathAcceptance.goldenDatasetSha256 =
+        $goldenAcceptance.dataset.goldenDatasetSha256
+    $threePathAcceptance.workerEnvironmentSha256 =
+        $goldenAcceptance.dataset.frozenWorkerEnvironmentSha256
+    $primary = @($goldenAcceptance.providers | Where-Object {
+        $_.role -eq 'Primary'
+    })[0]
+    $dwg = @($goldenAcceptance.dataset.samples | Where-Object {
+        $_.sourceFormat -eq 'DWG'
+    })[0]
+    $dxf = @($goldenAcceptance.dataset.samples | Where-Object {
+        $_.sourceFormat -eq 'DXF'
+    })[0]
+    $threePathAcceptance.inputs.cad = @($dwg, $dxf | ForEach-Object {
+        [pscustomobject]@{
+            sampleRef = $_.sampleRef
+            sourceFormat = $_.sourceFormat
+            license = $_.license
+            sourceSha256 = $_.sourceSha256
+            sourceSizeBytes = $_.sourceSizeBytes
+            providerPackageSha256 = '3' * 64
+            providerKey = $primary.providerKey
+            providerVersion = $primary.providerVersion
+        }
+    })
+    $threePathAcceptance | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $threePathAcceptancePath -Encoding UTF8
+    $threePathAcceptanceSha256 = (Get-FileHash `
+        -LiteralPath $threePathAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
     $kickoffAcceptanceReference = (
         'docs/space/acceptance/v1.3-ga/.tmp-' +
         [Guid]::NewGuid().ToString('N') + '/kickoff-evidence.json')
@@ -358,6 +450,152 @@ try {
     $localAttestation = New-Attestation `
         -Uri $fixtureReference `
         -Sha256 $fixtureSha256
+
+    $validThreePathPath = New-TestManifest 'valid-three-path-manifest' {
+        param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+        Set-Wp4Accepted `
+            -Manifest $manifest `
+            -ThreePathReference $threePathAcceptanceReference `
+            -ThreePathSha256 $threePathAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP4 validates formal three-path evidence' `
+        -ManifestPath $validThreePathPath `
+        -ShouldPass $true
+
+    $threePathPrerequisitePath = New-TestManifest 'three-path-prerequisite' {
+        param($manifest)
+        $goldenGate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
+        })[0]
+        $goldenGate.acceptanceStatus = 'Pending'
+        Set-Wp4Accepted `
+            -Manifest $manifest `
+            -ThreePathReference $threePathAcceptanceReference `
+            -ThreePathSha256 $threePathAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP4 requires Accepted Primary and Golden evidence' `
+        -ManifestPath $threePathPrerequisitePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_THREE_PATH_PREREQUISITES_INCOMPLETE'
+
+    $threePathUnattestedPath = New-TestManifest 'three-path-unattested' {
+        param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+        Set-Wp4Accepted `
+            -Manifest $manifest `
+            -ThreePathReference $threePathAcceptanceReference `
+            -ThreePathSha256 $threePathAcceptanceSha256
+        $gate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP4_THREE_PATH_END_TO_END'
+        })[0]
+        $gate.acceptedEvidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP4 must attest the structured manifest itself' `
+        -ManifestPath $threePathUnattestedPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_THREE_PATH_MANIFEST_UNATTESTED'
+
+    $threePathTemplateReference = (
+        'docs/space/acceptance/v1.3-ga/three-path-evidence-template.json')
+    $threePathTemplateSha256 = (Get-FileHash `
+        -LiteralPath (Join-Path $repo $threePathTemplateReference) `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $threePathTemplatePath = New-TestManifest 'three-path-template' {
+        param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+        Set-Wp4Accepted `
+            -Manifest $manifest `
+            -ThreePathReference $threePathTemplateReference `
+            -ThreePathSha256 $threePathTemplateSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP4 cannot accept the blank three-path template' `
+        -ManifestPath $threePathTemplatePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_THREE_PATH_MANIFEST_SYNTHETIC'
+
+    $invalidThreePathBaselineReference = $threePathAcceptanceReference.Replace(
+        'three-path-evidence.json',
+        'three-path-baseline-mismatch.json')
+    $invalidThreePathBaselinePath = Join-Path `
+        $repo $invalidThreePathBaselineReference
+    $invalidThreePathBaseline = $threePathAcceptance |
+        ConvertTo-Json -Depth 100 | ConvertFrom-Json
+    $invalidThreePathBaseline.sourceSetSha256 = '0' * 64
+    $invalidThreePathBaseline | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidThreePathBaselinePath -Encoding UTF8
+    $invalidThreePathBaselineSha256 = (Get-FileHash `
+        -LiteralPath $invalidThreePathBaselinePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $threePathBaselinePath = New-TestManifest 'three-path-baseline-mismatch' {
+        param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+        Set-Wp4Accepted `
+            -Manifest $manifest `
+            -ThreePathReference $invalidThreePathBaselineReference `
+            -ThreePathSha256 $invalidThreePathBaselineSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP4 must reuse the accepted WP7 baseline' `
+        -ManifestPath $threePathBaselinePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_THREE_PATH_BASELINE_MISMATCH'
+
+    $invalidThreePathCadReference = $threePathAcceptanceReference.Replace(
+        'three-path-evidence.json',
+        'three-path-cad-mismatch.json')
+    $invalidThreePathCadPath = Join-Path $repo $invalidThreePathCadReference
+    $invalidThreePathCad = $threePathAcceptance |
+        ConvertTo-Json -Depth 100 | ConvertFrom-Json
+    $invalidThreePathCad.inputs.cad[0].sourceSha256 = '0' * 64
+    $invalidThreePathCad | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidThreePathCadPath -Encoding UTF8
+    $invalidThreePathCadSha256 = (Get-FileHash `
+        -LiteralPath $invalidThreePathCadPath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $threePathCadPath = New-TestManifest 'three-path-cad-mismatch' {
+        param($manifest)
+        Complete-Wp8Prerequisites `
+            -Manifest $manifest -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256 `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+        Set-Wp4Accepted `
+            -Manifest $manifest `
+            -ThreePathReference $invalidThreePathCadReference `
+            -ThreePathSha256 $invalidThreePathCadSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP4 CAD inputs must be accepted WP7 samples' `
+        -ManifestPath $threePathCadPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_THREE_PATH_CAD_BASELINE_MISMATCH'
+
     $positivePath = New-TestManifest 'positive-local-attestations' {
         param($manifest)
         Set-GateAccepted -Manifest $manifest -Attestation $localAttestation
@@ -1012,5 +1250,9 @@ finally {
     if ($null -ne $kickoffAcceptanceDirectory -and
         (Test-Path -LiteralPath $kickoffAcceptanceDirectory)) {
         [System.IO.Directory]::Delete($kickoffAcceptanceDirectory, $true)
+    }
+    if ($null -ne $threePathAcceptanceDirectory -and
+        (Test-Path -LiteralPath $threePathAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete($threePathAcceptanceDirectory, $true)
     }
 }

@@ -211,13 +211,17 @@
       "ownerRole": "DeliveryOwner",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
-      "implementationStatus": "Partial",
-      "acceptanceStatus": "Pending",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
-        "Real DWG, DXF, Excel, PDF/image and blank-canvas E2E records",
-        "Draft to Validate, Publish, CP6 WMS and Published evidence"
+        "Authorized real DWG/DXF Primary packages and controlled Excel, PDF/image and blank-canvas records",
+        "Unified Draft and typed changeset evidence on SQL Server"
       ],
       "evidencePaths": [
+        "docs/space/acceptance/v1.3-ga/three-path-evidence-protocol.md",
+        "docs/space/acceptance/v1.3-ga/three-path-evidence-template.json",
+        "docs/space/acceptance/v1.3-ga/three-path-formal-evidence-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-three-path-formal-evidence.md",
         "docs/space/reports/2026-08-15-space-source-removal-preflight.md",
         "docs/space/reports/2026-08-15-space-upload-reuse-notice.md",
         "docs/space/reports/2026-08-14-space-studio-path-closure.md",
@@ -236,10 +240,20 @@
         "docs/space/reports/2026-08-15-space-studio-static-component-library.md",
         "docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md"
       ],
-      "acceptedEvidence": [],
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/three-path-formal-evidence-v1.0.0.json",
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/three-path-formal-evidence-v1.0.0.json",
+          "sha256": "b3c65a8aa8b34c01b3d8e2816c52bd0a1fdc6edf39ed87714f2b1e3269b23069",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T04:17:26Z"
+        }
+      ],
       "acceptanceCriteria": [
         "All import paths use the same typed changeset semantics",
-        "Draft remains unchanged before explicit Apply"
+        "Draft remains unchanged before explicit Apply",
+        "The controlled run uses real authorized DWG/DXF Primary outputs and passes SQL Server with zero failures or skips",
+        "Controlled Excel and underlay assets are not claimed as production data"
       ]
     },
     {

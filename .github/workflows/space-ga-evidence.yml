@@ -19,6 +19,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.Tests.ps1'
+      - 'tools/Test-SpaceGaThreePathEvidence.ps1'
+      - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
@@ -49,6 +51,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.Tests.ps1'
+      - 'tools/Test-SpaceGaThreePathEvidence.ps1'
+      - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
@@ -90,6 +94,10 @@ jobs:
       - name: Exercise formal golden CAD evidence failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1
+
+      - name: Exercise formal three-path evidence failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaThreePathEvidence.Tests.ps1
 
       - name: Exercise authorized golden CAD candidate failure modes
         shell: pwsh

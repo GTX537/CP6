@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP4_THREE_PATH_FORMAL_EVIDENCE",
+  "conclusion": "Pending",
+  "ownerName": null,
+  "executedAtUtc": null,
+  "applicationCommitSha": null,
+  "sourceSetSha256": null,
+  "goldenDatasetSha256": null,
+  "workerEnvironmentSha256": null,
+  "environment": {
+    "mode": "ControlledAcceptance",
+    "databaseEngine": "SQLServer",
+    "productionDeploymentPerformed": false,
+    "productionDataClaimed": false
+  },
+  "inputs": {
+    "cad": [],
+    "excel": {
+      "format": "XLSX",
+      "dataClass": "ControlledAcceptanceData",
+      "sha256": null,
+      "productionDataClaimed": false
+    },
+    "underlays": [],
+    "blankCanvasIncluded": false
+  },
+  "paths": [],
+  "sqlServer": {
+    "productVersion": null,
+    "edition": null,
+    "passed": 0,
+    "failed": null,
+    "skipped": null
+  },
+  "evidence": {
+    "cad": {},
+    "excelCad": {},
+    "manualUnderlayBlankCanvas": {},
+    "sqlServer": {}
+  }
+}
