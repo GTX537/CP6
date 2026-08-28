@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space WP7 正式黄金 CAD 接受
+
+- 新增正式业务评估器，以 Handle、类型、几何、Floor/Zone/Aisle 关系和冻结 Calibration 规则评测 20 份授权原创 CAD；Overall 覆盖率 99.0224%、准确率 98.7008%、Wilson 下界 98.1717%、人工操作下降 96.9043%，Out-of-sample 指标全部超过门槛，Holdout Blocking 遗漏为 0。
+- 用授权原创 DXF 派生精确 50 MiB 标准性能包络，执行 1 次预热 + 20 次稳定观察；到可审查提案 P95 约 2.323 秒、首次 Ready P95 约 1.937 秒、零失败，并如实标明它不代表 50 MiB 客户复杂几何。
+- 固化规则、可复现性能脚本、Manifest 生成器和正式 `golden-cad-formal-evidence-v1.0.0.json`；WP7 改为 Complete/Accepted。Core GA 继续 72% / NoGo（0 个输入、7 个 Gate、1 个签署 Pending），未执行生产部署。
+
 ## 2026-08-28 UTC CRM Platform P01/P10 签名里程碑对齐
 
 - 将 P01 完成证据中的“包签名”修正为“可重复 pack + 不发布空包”，并明确正式签名候选属于 P10，关闭 P01 已完成状态与 P10 发布治理之间的公开合同冲突。

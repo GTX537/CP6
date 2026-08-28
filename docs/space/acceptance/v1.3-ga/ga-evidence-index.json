@@ -3,7 +3,7 @@
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
   "scope": "CoreGA",
   "deliveryMode": "SoloDeveloper",
-  "asOfDate": "2026-08-27",
+  "asOfDate": "2026-08-28",
   "declaredStatus": "NoGo",
   "baselinePercent": 72,
   "gaPercent": 100,
@@ -303,8 +303,8 @@
       "ownerRole": "DeliveryOwner",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
-      "implementationStatus": "Partial",
-      "acceptanceStatus": "Pending",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "Immutable 10/5/5 manifest with per-file hashes and authorization",
         "Provider/version/config/artifact hashes and correction effort",
@@ -318,10 +318,20 @@
         "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md",
         "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json",
         "docs/space/acceptance/v1.3-ga/autocad-primary-qualification-v1.0.0.json",
-        "docs/space/reports/2026-08-28-space-autocad-primary-qualification.md"
+        "docs/space/reports/2026-08-28-space-autocad-primary-qualification.md",
+        "docs/space/acceptance/v1.3-ga/formal-golden-business-rules-v1.0.0.json",
+        "docs/space/acceptance/v1.3-ga/golden-cad-formal-evidence-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-golden-cad-formal-evidence.md"
       ],
-      "verificationManifest": null,
-      "acceptedEvidence": [],
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/golden-cad-formal-evidence-v1.0.0.json",
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/golden-cad-formal-evidence-v1.0.0.json",
+          "sha256": "892ce026cb6a4d9924ddc492c07204d5e7c5e182290d812fc81c8263c75b9a46",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T03:34:00Z"
+        }
+      ],
       "acceptanceCriteria": [
         "Exactly 20 authorized immutable samples use the 10/5/5 split and cover L1 through L5 plus DWG and DXF",
         "Primary uses the frozen source set, Worker and 50 MiB standard CAD; its evaluation report is release eligible and its qualification score is at least 80",

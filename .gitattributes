@@ -24,6 +24,8 @@ docs/space/acceptance/v1.3-ga/autocad-v1-local-boundary-approval-*.json binary
 docs/space/acceptance/v1.3-ga/autocad-primary-scorecard-*.json binary
 docs/space/acceptance/v1.3-ga/autocad-primary-qualification-*.json binary
 docs/space/acceptance/v1.3-ga/autocad-primary-input-*.json binary
+docs/space/acceptance/v1.3-ga/formal-golden-business-rules-*.json binary
+docs/space/acceptance/v1.3-ga/golden-cad-formal-evidence-*.json binary
 
 # Main-sync SQL hashes are deployment evidence and must stay byte-stable.
 deploy/production/sql/main-sync-*/**.sql text eol=lf
