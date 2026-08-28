@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 3,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "M0_EXTERNAL_INPUT_READINESS",
+  "conclusion": "InProgress",
+  "kickoffDate": "2026-08-27",
+  "targetGaDate": "2026-09-27",
+  "authorizedGoldenCadCandidates": {
+    "inputId": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
+    "status": "Complete",
+    "ownerName": "BUBAO.GAO",
+    "completionEvidence": {},
+    "candidateSetVersion": "1.0.0",
+    "candidateSetSha256": "7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955",
+    "candidates": []
+  },
+  "primaryProviderAndIsolatedWorker": {
+    "inputId": "PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
+    "status": "Complete",
+    "ownerName": "BUBAO.GAO",
+    "completionEvidence": {
+      "uri": "urn:cp6-space-ga-evidence:autocad-primary:v1.0.0:qualification-selection",
+      "sha256": "d7b9645d915f28e165209b71f69386305711301a6a2fecf7422c15cbcc2a0faa",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T01:34:53Z"
+    },
+    "candidateProviders": [
+      {
+        "role": "Primary",
+        "providerKey": "cp6-autocad-worker",
+        "providerVersion": "1.0.0+worker.c794e9c0ebbb.autocad.25.0.58.0.0.dxf.1.1.0",
+        "adapterContract": "ICadConverter",
+        "dataBoundary": "LocalControlledProcess",
+        "licensingApproved": true,
+        "securityApproved": true,
+        "retentionDeletionApproved": true,
+        "licensingEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:autocad-primary:v1.0.0:bounded-license-approval",
+          "sha256": "b44795b179d616158e68f10720d630fccd75c2fc850e232a2e913094ea9b8733",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-27T23:54:58Z"
+        },
+        "securityEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:autocad-primary:v1.0.0:local-boundary-approval",
+          "sha256": "464beecad28eed3d5b1fa3a03ababf1ee1946d4b6f3ce8e8d58843172ac50528",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T01:34:53Z"
+        },
+        "retentionDeletionEvidence": {
+          "uri": "urn:cp6-space-ga-evidence:autocad-primary:v1.0.0:evaluation-report",
+          "sha256": "97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T01:34:53Z"
+        },
+        "cloudApprovals": {
+          "tenantApproved": false,
+          "customerApproved": false,
+          "securityApproved": false,
+          "tenantEvidence": {},
+          "customerEvidence": {},
+          "securityEvidence": {}
+        }
+      }
+    ],
+    "worker": {
+      "workerRef": "urn:cp6-space-ga-worker:autocad-primary-1.0.0-c794e9c0ebbb",
+      "environmentSha256": "c9bbbe362a01e951379d60990f227fc4d5634ac9c86534f009f1d7e87d601717",
+      "isolated": false,
+      "secretsByReferenceOnly": true,
+      "rawCadRetentionMode": "Ephemeral",
+      "outboundNetworkPolicy": "OwnerAcceptedLocalBoundary",
+      "networkListenerStarted": false,
+      "businessCredentialsUnavailable": true,
+      "readinessEvidence": {
+        "uri": "urn:cp6-space-ga-evidence:autocad-primary:v1.0.0:qualification-selection",
+        "sha256": "d7b9645d915f28e165209b71f69386305711301a6a2fecf7422c15cbcc2a0faa",
+        "acceptedBy": "BUBAO.GAO",
+        "acceptedAtUtc": "2026-08-28T01:34:53Z"
+      }
+    }
+  }
+}

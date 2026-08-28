@@ -18,5 +18,12 @@ docs/space/acceptance/v1.3-ga/authorized-golden-cad-candidates-*.json binary
 # They are schema-validated separately; text normalization would alter the proof.
 docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-*.json binary
 
+# AutoCAD Primary approvals, scorecards, qualification results and incremental
+# kickoff manifests are content-addressed GA evidence. Preserve their exact bytes.
+docs/space/acceptance/v1.3-ga/autocad-v1-local-boundary-approval-*.json binary
+docs/space/acceptance/v1.3-ga/autocad-primary-scorecard-*.json binary
+docs/space/acceptance/v1.3-ga/autocad-primary-qualification-*.json binary
+docs/space/acceptance/v1.3-ga/autocad-primary-input-*.json binary
+
 # Main-sync SQL hashes are deployment evidence and must stay byte-stable.
 deploy/production/sql/main-sync-*/**.sql text eol=lf

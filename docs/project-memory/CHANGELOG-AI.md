@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space AutoCAD Primary V1 资格接受与 WP3 结案
+
+- 新增本地受控 `LocalControlledProcess` 机器合同：Owner 可接受 OS Firewall 出站策略未验证，但无网络监听、无业务凭据、临时 CAD 强制删除和可审计报告不可放宽；生产/SaaS/远程托管/再分发继续排除。
+- 正式 AutoCAD `1.0.0` Worker 以同一 20 份受控 CAD、冻结环境和不可变 Release/评测哈希完成保守六维评分 86/100；`cad-provider-adr-0001-v2` 输出 `cadGaReady=true`、唯一 Primary、0 Blocking Code。
+- 新增边界批准、评分输入、资格输出和 Provider 增量 Kickoff Manifest；外部 Provider 输入 Complete、WP3 Complete/Accepted，Backup 不作为 V1 阻断项。
+- 正式 Core GA 仍为 72% / NoGo（0 个输入、8 个 Gate、1 个签署 Pending）；WP7 业务准确率/Wilson/人工减少/受训用户时长、发布演练及最终签署没有被转换评测替代，未执行生产部署。
+
 ## 2026-08-27：Space AutoCAD Primary 正式 Release 绑定评测
 
 - 新增 `evaluate-release` 与严格报告 Schema：复核封存 Worker/Core 后，对受控 20 份 CAD 双跑并固定检查数据集身份、Package 确定性、99% 支持率、SourceRef、Blocking、120 秒上限和临时数据清理。

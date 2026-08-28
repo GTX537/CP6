@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "evidenceClass": "CP6_SPACE_V1_LOCAL_CONTROLLED_BOUNDARY_APPROVAL",
+  "decisionId": "CP6_SPACE_V1_AUTOCAD_LOCAL_BOUNDARY",
+  "decision": "ApprovedForV1ControlledLocalUse",
+  "provider": {
+    "providerKey": "cp6-autocad-worker",
+    "providerVersion": "1.0.0+worker.c794e9c0ebbb.autocad.25.0.58.0.0.dxf.1.1.0",
+    "workerReleaseSha256": "c794e9c0ebbb2c736866827e07e6682347992dd5a672218efddfe6ff5c0f202e",
+    "workerSourceCommit": "d2d0a0d1b0978a4283bd9387f4120eefe10a135d",
+    "deploymentMode": "LocalControlledProcess",
+    "dataBoundary": "SiteLocal"
+  },
+  "approval": {
+    "approvedBy": "BUBAO.GAO",
+    "approvedAtUtc": "2026-08-28T01:34:53Z",
+    "source": "DeliveryOwner conversation confirmation",
+    "normalizedStatement": "V1 不把 OS Firewall 出站禁网作为阻断门禁；以无业务凭据、无网络监听、临时 CAD 强制删除和可审计报告作为本地受控使用边界。生产或 SaaS 部署另行审批。",
+    "normalizedStatementSha256": "464beecad28eed3d5b1fa3a03ababf1ee1946d4b6f3ce8e8d58843172ac50528"
+  },
+  "requiredControls": {
+    "networkListenerStarted": false,
+    "businessCredentialsUnavailable": true,
+    "rawCadRetentionMode": "EphemeralDeleteInFinally",
+    "immutableReleaseIdentityRequired": true,
+    "sourceHashVerificationRequired": true,
+    "artifactOnlyResponseRequired": true,
+    "auditableEvaluationReportRequired": true
+  },
+  "nonBlockingObservations": {
+    "outboundNetworkPolicy": "NotVerifiedAtOsBoundary",
+    "osFirewallDenyRequiredForV1LocalUse": false
+  },
+  "evaluationEvidence": {
+    "report": "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json",
+    "reportSha256": "97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350",
+    "frozenEnvironmentSha256": "c9bbbe362a01e951379d60990f227fc4d5634ac9c86534f009f1d7e87d601717",
+    "networkListenerStarted": false,
+    "businessCredentialsUnavailable": true,
+    "residualAttemptDirectoryCount": 0,
+    "residualRawCadFileCount": 0
+  },
+  "excludedScope": [
+    "Production deployment",
+    "Public or multi-tenant SaaS hosting",
+    "Remote hosted Worker operation",
+    "Autodesk software redistribution",
+    "A representation that CP6 grants Autodesk rights"
+  ],
+  "gateImpact": {
+    "v1LocalSecurityBoundaryApproved": true,
+    "osFirewallObservationBlocksV1": false,
+    "productionSecurityApprovalGranted": false
+  },
+  "rawCadCommittedToGit": false,
+  "productionDeploymentAuthorized": false
+}

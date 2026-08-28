@@ -11,6 +11,23 @@ public sealed class CadProviderQualificationEvaluatorTests
         new(2026, 8, 14, 12, 0, 0, DateTimeKind.Utc);
 
     [Fact]
+    public void Accepts_an_Owner_approved_local_controlled_process()
+    {
+        var candidate = Candidate("candidate-a", Scores82()) with
+        {
+            DeploymentMode = "LocalControlledProcess",
+        };
+
+        var report = CadProviderQualificationEvaluator.Evaluate(
+            Request(candidate));
+        var result = Assert.Single(report.Candidates);
+
+        Assert.True(report.CadGaReady);
+        Assert.Equal("LocalControlledProcess", result.DeploymentMode);
+        Assert.Single(report.CertificationInputs);
+    }
+
+    [Fact]
     public void Selects_unique_highest_and_second_and_builds_import_contract()
     {
         var request = Request(
