@@ -17,6 +17,8 @@ $repoFullPath = [System.IO.Path]::GetFullPath($repo).TrimEnd(
 $repoPrefix = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
 $releaseRehearsalValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaReleaseRehearsalEvidence.ps1')
+$threePathValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaThreePathEvidence.ps1')
 $goldenCadValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaGoldenCadEvidence.ps1')
 $goldenCadCandidateValidator = Join-Path $PSScriptRoot (
@@ -410,6 +412,171 @@ foreach ($gate in @($manifest.gates)) {
         }
         foreach ($evidence in @($gate.acceptedEvidence)) {
             Test-AttestedEvidence -OwnerId $gate.id -Evidence $evidence
+        }
+        if ($gate.id -eq 'WP4_THREE_PATH_END_TO_END') {
+            $requiredAcceptedGates = @(
+                'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER',
+                'WP7_GOLDEN_CAD_FORMAL_EVIDENCE')
+            $pendingPrerequisiteGates = @($manifest.gates | Where-Object {
+                $_.id -in $requiredAcceptedGates -and
+                $_.acceptanceStatus -ne 'Accepted'
+            })
+            if ($pendingPrerequisiteGates.Count -gt 0) {
+                Add-ValidationError (
+                    'SPACE_GA_THREE_PATH_PREREQUISITES_INCOMPLETE: WP4 ' +
+                    'requires Accepted WP3 and WP7 so real CAD execution is ' +
+                    'bound to the approved Primary and frozen source set.')
+            }
+            $threePathManifestReference = [string]$gate.verificationManifest
+            if (!(Test-Text $threePathManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_THREE_PATH_MANIFEST_REQUIRED: Accepted WP4 ' +
+                    'requires a structured three-path evidence manifest.')
+            }
+            elseif ([System.IO.Path]::IsPathRooted($threePathManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_THREE_PATH_MANIFEST_ABSOLUTE: WP4 three-path ' +
+                    'manifest must use a repository-relative path.')
+            }
+            else {
+                $threePathManifestFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $threePathManifestReference))
+                $isInsideRepository = $threePathManifestFullPath.StartsWith(
+                    $repoPrefix,
+                    [System.StringComparison]::OrdinalIgnoreCase)
+                $normalizedReference = $threePathManifestReference.Replace('\', '/')
+                $isTemplateOrFixture =
+                    $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                    $normalizedReference.EndsWith(
+                        '/three-path-evidence-template.json',
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                if (!$isInsideRepository) {
+                    Add-ValidationError (
+                        'SPACE_GA_THREE_PATH_MANIFEST_ESCAPE: WP4 three-path ' +
+                        'manifest escapes the repository root.')
+                }
+                elseif ($isTemplateOrFixture) {
+                    Add-ValidationError (
+                        'SPACE_GA_THREE_PATH_MANIFEST_SYNTHETIC: WP4 cannot ' +
+                        'use a template or test fixture as formal evidence.')
+                }
+                elseif ([System.IO.Path]::GetExtension(
+                    $threePathManifestFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $threePathManifestFullPath -PathType Leaf)) {
+                    Add-ValidationError (
+                        'SPACE_GA_THREE_PATH_MANIFEST_MISSING: WP4 three-path ' +
+                        "manifest does not exist as JSON: $threePathManifestReference")
+                }
+                else {
+                    $manifestIsAttested = @($gate.acceptedEvidence |
+                        Where-Object {
+                            ([string]$_.uri).Equals(
+                                $threePathManifestReference,
+                                [System.StringComparison]::OrdinalIgnoreCase)
+                        }).Count -gt 0
+                    if (!$manifestIsAttested) {
+                        Add-ValidationError (
+                            'SPACE_GA_THREE_PATH_MANIFEST_UNATTESTED: WP4 ' +
+                            'accepted evidence must attest the structured ' +
+                            'three-path manifest itself.')
+                    }
+                    try {
+                        & $threePathValidator `
+                            -ManifestPath $threePathManifestFullPath `
+                            -ExpectedOwnerName ([string]$gate.ownerName) | Out-Null
+                    }
+                    catch {
+                        Add-ValidationError (
+                            'SPACE_GA_THREE_PATH_EVIDENCE_INVALID: ' +
+                            $_.Exception.Message)
+                    }
+                    $goldenGate = @($manifest.gates | Where-Object {
+                        $_.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
+                    })[0]
+                    $goldenReference = [string]$goldenGate.verificationManifest
+                    $goldenFullPath = if (
+                        (Test-Text $goldenReference) -and
+                        ![System.IO.Path]::IsPathRooted($goldenReference)) {
+                        [System.IO.Path]::GetFullPath(
+                            (Join-Path $repo $goldenReference))
+                    }
+                    else { $null }
+                    if ($null -eq $goldenFullPath -or
+                        !$goldenFullPath.StartsWith(
+                            $repoPrefix,
+                            [System.StringComparison]::OrdinalIgnoreCase) -or
+                        !(Test-Path -LiteralPath $goldenFullPath -PathType Leaf)) {
+                        Add-ValidationError (
+                            'SPACE_GA_THREE_PATH_GOLDEN_BASELINE_UNAVAILABLE: ' +
+                            'WP4 must resolve the accepted WP7 manifest.')
+                    }
+                    else {
+                        try {
+                            $threePathManifest = Get-Content `
+                                -LiteralPath $threePathManifestFullPath -Raw |
+                                ConvertFrom-SpaceGaJson
+                            $goldenManifest = Get-Content `
+                                -LiteralPath $goldenFullPath -Raw |
+                                ConvertFrom-SpaceGaJson
+                            $goldenDataset = $goldenManifest.dataset
+                            $baselineMatches =
+                                ([string]$threePathManifest.sourceSetSha256).Equals(
+                                    [string]$goldenDataset.sourceSetSha256,
+                                    [System.StringComparison]::OrdinalIgnoreCase) -and
+                                ([string]$threePathManifest.goldenDatasetSha256).Equals(
+                                    [string]$goldenDataset.goldenDatasetSha256,
+                                    [System.StringComparison]::OrdinalIgnoreCase) -and
+                                ([string]$threePathManifest.workerEnvironmentSha256).Equals(
+                                    [string]$goldenDataset.frozenWorkerEnvironmentSha256,
+                                    [System.StringComparison]::OrdinalIgnoreCase)
+                            if (!$baselineMatches) {
+                                Add-ValidationError (
+                                    'SPACE_GA_THREE_PATH_BASELINE_MISMATCH: WP4 ' +
+                                    'must reuse the accepted WP7 source set, ' +
+                                    'golden dataset and Worker environment.')
+                            }
+
+                            $primary = @($goldenManifest.providers | Where-Object {
+                                $_.role -eq 'Primary'
+                            })[0]
+                            foreach ($cad in @($threePathManifest.inputs.cad)) {
+                                $matches = @($goldenDataset.samples | Where-Object {
+                                    ([string]$_.sampleRef).Equals(
+                                        [string]$cad.sampleRef,
+                                        [System.StringComparison]::OrdinalIgnoreCase)
+                                })
+                                $sampleMatches = $matches.Count -eq 1 -and
+                                    ([string]$matches[0].sourceSha256).Equals(
+                                        [string]$cad.sourceSha256,
+                                        [System.StringComparison]::OrdinalIgnoreCase) -and
+                                    [long]$matches[0].sourceSizeBytes -eq
+                                        [long]$cad.sourceSizeBytes -and
+                                    [string]$matches[0].sourceFormat -eq
+                                        [string]$cad.sourceFormat -and
+                                    [string]$matches[0].license -eq
+                                        [string]$cad.license -and
+                                    ([string]$cad.providerKey).Equals(
+                                        [string]$primary.providerKey,
+                                        [System.StringComparison]::OrdinalIgnoreCase) -and
+                                    ([string]$cad.providerVersion).Equals(
+                                        [string]$primary.providerVersion,
+                                        [System.StringComparison]::OrdinalIgnoreCase)
+                                if (!$sampleMatches) {
+                                    Add-ValidationError (
+                                        'SPACE_GA_THREE_PATH_CAD_BASELINE_MISMATCH: ' +
+                                        'each WP4 CAD input and Primary identity ' +
+                                        'must match an accepted WP7 sample.')
+                                }
+                            }
+                        }
+                        catch {
+                            Add-ValidationError (
+                                'SPACE_GA_THREE_PATH_BASELINE_INVALID: ' +
+                                $_.Exception.Message)
+                        }
+                    }
+                }
+            }
         }
         if ($gate.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE') {
             $requiredInputIdsForWp7 = @(

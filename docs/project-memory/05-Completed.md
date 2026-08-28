@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space WP4 三路径正式接受
+
+- 复用 WP7 冻结 Source Set 和精确 AutoCAD Primary，把授权真实 DWG/DXF Package、产品内存生成 XLSX、受控 PDF/PNG 与空白画布绑定进同一正式三路径 Manifest；没有把受控数据写成生产数据。
+- SQL Server Express LocalDB `17.0.4025.3` 完整 Space Integration 为 465/465、0 failed、0 skipped，覆盖 Preview 零 Draft 写入、显式 Apply、Typed Changeset、Lease、Revision 与 Idempotency。
+- 新增三路径协议、模板、严格校验器、11 个专项失败模式测试及总 GA 组合验证；正式 Manifest 已由 `BUBAO.GAO` 接受，WP4 改为 Complete/Accepted。
+- Core GA 继续 72% / NoGo（0 个输入、6 个 Gate、1 个签署 Pending）；没有执行生产部署、生产 WMS 联调或 WP8 发布演练。
+
 ## 2026-08-28 Space WP7 正式黄金 CAD 接受
 
 - 新增正式业务评估器，以 Handle、类型、几何、Floor/Zone/Aisle 关系和冻结 Calibration 规则评测 20 份授权原创 CAD；Overall 覆盖率 99.0224%、准确率 98.7008%、Wilson 下界 98.1717%、人工操作下降 96.9043%，Out-of-sample 指标全部超过门槛，Holdout Blocking 遗漏为 0。

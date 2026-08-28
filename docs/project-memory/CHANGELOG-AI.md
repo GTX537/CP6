@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space WP4 三路径正式接受
+
+- Added a fail-closed WP4 evidence protocol and validator for exactly three authoring paths: authorized real DWG/DXF Primary output, controlled Excel–CAD, and controlled PDF/PNG underlay plus blank canvas.
+- Bound the run to `main@9468f7f6`, the frozen WP7 Source Set/Golden Dataset/Worker, exact Primary packages, a product-generated 12,466-byte XLSX, and controlled underlay hashes; no production data or deployment is claimed.
+- Ran the complete Space integration suite on SQL Server Express LocalDB 17.0.4025.3: 465 passed, 0 failed, 0 skipped. Added 11 focused validator tests and integrated WP4 prerequisite/attestation checks into the overall GA validator.
+- Accepted `three-path-formal-evidence-v1.0.0.json` under DeliveryOwner `BUBAO.GAO`; WP4 is Complete/Accepted. Core GA remains 72% / NoGo with 0 pending inputs, 6 pending gates and 1 pending signer.
+
 ## 2026-08-28：Space WP7 正式黄金 CAD 接受
 
 - Added a deterministic formal business evaluator for the frozen 20-file authorized original CAD set, including exact source/hash binding, geometry and hierarchy checks, calibration-only threshold selection, out-of-sample reporting, operation reduction and Holdout omission detection.

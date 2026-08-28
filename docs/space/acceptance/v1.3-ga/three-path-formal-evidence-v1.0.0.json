@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP4_THREE_PATH_FORMAL_EVIDENCE",
+  "conclusion": "Pass",
+  "ownerName": "BUBAO.GAO",
+  "executedAtUtc": "2026-08-28T04:15:24Z",
+  "applicationCommitSha": "9468f7f6b0a6aa82d4693f39f2f27004b5f908a9",
+  "sourceSetSha256": "7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955",
+  "goldenDatasetSha256": "2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15",
+  "workerEnvironmentSha256": "c9bbbe362a01e951379d60990f227fc4d5634ac9c86534f009f1d7e87d601717",
+  "environment": {
+    "mode": "ControlledAcceptance",
+    "databaseEngine": "SQLServer",
+    "productionDeploymentPerformed": false,
+    "productionDataClaimed": false
+  },
+  "inputs": {
+    "cad": [
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-c01",
+        "sourceFormat": "DWG",
+        "license": "ApprovedOriginalWork",
+        "sourceSha256": "c9338360df1df80a46bf83c7ca3bd0e4dd05bc4b4cefb34e9130272e8b4a2ca4",
+        "sourceSizeBytes": 43128,
+        "providerPackageSha256": "0dd5f593316cb66afd81d55b101390d8d7d5b74dc503ec43b1ebea8192a0e411",
+        "providerKey": "cp6-autocad-worker",
+        "providerVersion": "1.0.0+worker.c794e9c0ebbb.autocad.25.0.58.0.0.dxf.1.1.0"
+      },
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-c02",
+        "sourceFormat": "DXF",
+        "license": "ApprovedOriginalWork",
+        "sourceSha256": "a426a21806cddffdc6b400b61b23a5330e6ec52bb2be0de8af8ca326b3e6b3ba",
+        "sourceSizeBytes": 258714,
+        "providerPackageSha256": "760b52ddb67e377b964cf5481ee17acd2363ec1eaef702697c956e36aa302243",
+        "providerKey": "cp6-autocad-worker",
+        "providerVersion": "1.0.0+worker.c794e9c0ebbb.autocad.25.0.58.0.0.dxf.1.1.0"
+      }
+    ],
+    "excel": {
+      "format": "XLSX",
+      "dataClass": "ControlledAcceptanceData",
+      "sha256": "5efbe83c40f22acecebf9f51e4fb6ae4e9a1b9f0ce06a9fd4b2d972aad87c9a0",
+      "productionDataClaimed": false
+    },
+    "underlays": [
+      {
+        "format": "PDF",
+        "dataClass": "ControlledAcceptanceData",
+        "sha256": "47bb87d7e3679470aa9b9610c6080effe437c16a56f658b7a2fcc7120bc14603",
+        "productionDataClaimed": false
+      },
+      {
+        "format": "PNG",
+        "dataClass": "ControlledAcceptanceData",
+        "sha256": "dea1ad2e84900a93b8c395da258202c8de92fe48f0d99bff963f6a50202d1472",
+        "productionDataClaimed": false
+      }
+    ],
+    "blankCanvasIncluded": true
+  },
+  "paths": [
+    {
+      "path": "CAD",
+      "previewPassed": true,
+      "draftUnchangedBeforeApply": true,
+      "explicitApplyPassed": true,
+      "typedChangesetPassed": true,
+      "leaseRevisionIdempotencyPassed": true
+    },
+    {
+      "path": "ExcelCad",
+      "previewPassed": true,
+      "draftUnchangedBeforeApply": true,
+      "explicitApplyPassed": true,
+      "typedChangesetPassed": true,
+      "leaseRevisionIdempotencyPassed": true
+    },
+    {
+      "path": "ManualUnderlayBlankCanvas",
+      "previewPassed": true,
+      "draftUnchangedBeforeApply": true,
+      "explicitApplyPassed": true,
+      "typedChangesetPassed": true,
+      "leaseRevisionIdempotencyPassed": true
+    }
+  ],
+  "sqlServer": {
+    "productVersion": "17.0.4025.3",
+    "edition": "Express LocalDB",
+    "passed": 465,
+    "failed": 0,
+    "skipped": 0
+  },
+  "evidence": {
+    "cad": {
+      "uri": "urn:cp6-space-ga-evidence:three-path:v1:cad-real-primary",
+      "sha256": "a729996ca9209479d28fc01fda669d7bf1a0c652eecc5d7a9cd251a1d81e9fc3",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T04:17:26Z"
+    },
+    "excelCad": {
+      "uri": "urn:cp6-space-ga-evidence:three-path:v1:excel-cad-sqlserver",
+      "sha256": "a729996ca9209479d28fc01fda669d7bf1a0c652eecc5d7a9cd251a1d81e9fc3",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T04:17:26Z"
+    },
+    "manualUnderlayBlankCanvas": {
+      "uri": "urn:cp6-space-ga-evidence:three-path:v1:manual-underlay-blank",
+      "sha256": "a729996ca9209479d28fc01fda669d7bf1a0c652eecc5d7a9cd251a1d81e9fc3",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T04:17:26Z"
+    },
+    "sqlServer": {
+      "uri": "urn:cp6-space-ga-evidence:three-path:v1:sqlserver-integration-trx",
+      "sha256": "a729996ca9209479d28fc01fda669d7bf1a0c652eecc5d7a9cd251a1d81e9fc3",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T04:17:26Z"
+    }
+  }
+}

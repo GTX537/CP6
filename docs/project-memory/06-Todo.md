@@ -30,18 +30,18 @@
 
 ## P0：Space Studio Lean Core GA 剩余门禁
 
-- 当前正式派生状态为 72% / `NoGo`：两类外部输入均 Complete，WP3/WP7 已 Accepted；剩余 WP0～WP2、WP4～WP6、WP8 七个接受 Gate 和 1 个 DeliveryOwner 最终签署。下一条主线是 WP4 三路径的受控真实端到端接受，不再重复追问 Backup、Pilot、本地 OS Firewall 或重跑已冻结黄金集。
+- 当前正式派生状态为 72% / `NoGo`：两类外部输入均 Complete，WP3/WP4/WP7 已 Accepted；剩余 WP0～WP2、WP5、WP6、WP8 六个接受 Gate 和 1 个 DeliveryOwner 最终签署。下一条主线是复核并接受 WP0～WP2，再把 WP5/WP6/WP8 收口为一次受控发布演练；不再重复追问 Backup、Pilot、本地 OS Firewall 或重跑已冻结黄金集。
 - Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。正式 Core GA 使用 Schema 3；独立 Backup 与双仓 14 天 Pilot 已转为 GA 后增强。不得用 DevelopmentSeed、未批准 Provider、Mock 或 fixture 冒充正式发布演练。
 - 唯一 DeliveryOwner 已登记为 `BUBAO.GAO`，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`，同一人拥有全部输入与 Gate；WP0 仓库实现已 Complete，但正式接受和最终签署仍 Pending。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。
 - 20 份仓库外原创 AC1032 CAD 候选已经冻结并登记为 Complete：10 DWG/10 DXF、10/5/5、L1～L5 各 4，逐份授权/脱敏/答案/问题/Mapping/规则/复核证据齐全，产品 Converter 20/20 Pass。原始 CAD 不入 Git；后续必须使用同一 Source Set SHA `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`。
 - 不再强制 ODA 或第二供应商。`BUBAO.GAO` 已选择并批准当前 AutoCAD 2025 Core Console 为唯一 Primary；本机 V1 的许可、精确版本/哈希、本地安全边界、保留/删除、正式 SemVer Worker、转换评测和 86/100 资格评分均已版本化并接受。如果未来改用 ODA、云服务或远程 Worker，再按其实际部署边界补许可证、身份、证书、Secret、网络与 SaaS 批准。
 - 正式 `1.0.0` 已从精确 `main@d2d0a0d1b0978a4283bd9387f4120eefe10a135d` 封存并对 20 份 CAD 双跑通过，99.727873% 支持、P95 4.281 秒、SourceRef/Blocking/残留为 0；报告 SHA 为 `97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350`。WP7 已在其上补齐业务质量、人工操作和 Ready 性能证据；两份证据共同构成当前 Primary 基线。
 - LM-FR-001/WP1 的仓库实现已完成：Blank/Published/System/Tenant 四模式统一创建、整仓模板全楼层幂等初始化、创建来源与模板哈希持久化、当前 Draft 零写入预览和租户模板制作表单均有自动化与真实 SQL 纵切。WP1 现为 Complete/Pending；剩余不是功能编码，而是 DeliveryOwner 对测试提交的可重复自审和正式接受。整体 GA 不因 WP1 实现完成改变；发布演练继续失败关闭。
-- WP4 详细 Spec LM-FR-017～029 的编辑器系列已有仓库实现；两点实距标定、构件库、统一历史、2D/3D 同源、选择/视角/未保存状态、四步清单、问题筛选定位和窄屏只读均有自动化。LM-FR-004 的后端 SHA-256 复用合同和当前 CAD/底图直接上传提示、LM-FR-005 的来源引用预检/双 Revision Fence/幂等软删除/文件与审计保留、LM-FR-010～011 的 DWG/DXF 输入与解析前单位/范围/异常比例显式确认、LM-FR-012 的 CAD 图层/块清单、LM-FR-013 的逐层 Override 与租户私有 Mapping Profile、LM-FR-014～016 的七类语义/来源证据/稳定质量问题、LM-FR-019/019A 的自动 Workspace、六类 Typed Changeset、静态元素原子 Apply 与业务布局 RuleOnly 交接均已闭环。当前 CAD + Excel 已可在同一工作台完成上传、扫描等待、Mapping Profile、预检、权威匹配、Lease Apply 与刷新恢复；历史 CAD Source/Parse Job 候选目录及“当前结果加载、旧结果重新解析”的显式重新关联也已闭环。三条路径主链还须审计 LM-FR-002 的模板来源后续项和 LM-FR-003 的生产等价安全扫描证据，并完成真实 Provider/文件/浏览器接受。上述仓库闭环不自动把 WP4 标回 Complete，也不得用 Mock/fixture 替代真实 DWG/DXF/Excel/PDF、Provider、WMS 与 Pilot 接受。
+- WP4 已 Complete/Accepted：授权真实 DWG/DXF Primary Package、产品自身生成并解析的受控 XLSX、受控 PDF/PNG 与空白画布已绑定同一 Draft/Typed Changeset 正式 Manifest；SQL Server 完整套件 465/465、0 failed、0 skipped。该接受不包含生产数据、生产 WMS、Published-only Viewer 或发布恢复/安全演练；这些边界继续由 WP5/WP6/WP8 关闭。
 - AutoCAD 2025 Core Console 已以正式 `1.0.0` Worker 覆盖 DWG/DXF；WP7 已用同一 20 份 Source Set 完成业务准确率/精确率/Wilson、人工减少率、Holdout Blocking 和 50 MiB/Ready P95 并正式接受。后续三路径与发布演练必须复用精确 Provider Version，不得反向修改 WP7 冻结规则。
 - 当前直接评测无网络监听、无业务凭据且临时 CAD 已清除；`BUBAO.GAO` 已接受本地 V1 不以 OS Firewall 出站 Deny 阻断。该口径不得外推为生产禁网、mTLS 或 SaaS 安全证明；若改为远程/生产部署，必须另行提供这些证据。
 - 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试；这些虚拟编号不能冒充真实 Owner、正式证据接受人或 `DeliveryOwner`，但正式 GA 不再要求团队人数或多角色独立签字。
-- 核心 GA 当前派生结果为 `NoGo`：两类外部输入均 Complete，WP3/WP7 已 Accepted；WP0～WP2、WP4～WP6、WP8 七个结果门禁和 1 个 DeliveryOwner 签署 Pending。下一步推进三路径、Viewer、WMS/恢复/安全发布演练和最终签署。
+- 核心 GA 当前派生结果为 `NoGo`：两类外部输入均 Complete，WP3/WP4/WP7 已 Accepted；WP0～WP2、WP5、WP6、WP8 六个结果门禁和 1 个 DeliveryOwner 签署 Pending。下一步复核 WP0～WP2，并推进 Viewer、WMS/恢复/安全发布演练和最终签署。
 - WP3 已以精确 AutoCAD Primary、本机受控边界、正式 SemVer Release、DWG/DXF 双格式评测和 86/100 评分结案。评分工具未写 Site 配置；后续发布演练只能通过受控接口写入同一 Provider Version，Backup 另列 GA 后韧性任务。
 - Site 认证、运行注册、Preparation 输出和当前 Parse v5 已绑定同一 Provider Version；真实适配器注册必须使用被评分和批准的精确版本，升级 Worker 前必须重新评分、认证并替换 Site 配置，不得在同一 Provider Key 下静默换版。历史空版本认证按设计失效，不能手工回填猜测值。
 - Preparation → Parse 的 Mapping Replay Snapshot 与 v5 payload 已完成；真实 Provider 适配器必须加载快照绑定的不可变 Profile ID/Version、核对 Definition Hash、使用完整 Layer Overrides 重建 Mapping Preview，并在输出语义工件前执行 `SpaceCadMappingReplaySnapshot.ValidateReplay`。不得只信任期望 Preview Hash、忽略覆盖内容或让 Worker 使用当前 Profile 代替冻结版本。
@@ -49,7 +49,7 @@
 - 获批准的本地 Primary DWG/DXF Provider 已实测并接受。远程运行注册继续默认关闭；若启用远程/生产模式，没有对应部署批准 Manifest、身份和 Secret 引用时能力接口必须失败关闭。
 - `SpaceCadProviderSqlServerTests` 已在 SQL Server LocalDB 3/3、0 skipped，关闭并发替换、唯一 Current Revision、历史追加、认证不可变、旧资格/版本失败关闭和迁移幂等。正式验收可在明确标识的受控 Release Rehearsal SQL Server 环境执行，不要求生产部署，但必须绑定真实 Primary 和不可变证据。
 - CAD 起始向导、sealed Preparation、parse start fence、Site 能力检查和 Rack/Element 画布拖动精调已完成仓库内闭环；仍须由 DeliveryOwner 在发布演练中留下人工 UX、辅助技术和端到端结果证据，不要求独立人员签字。
-- WP4 的图片底图标定、Excel–CAD 深链、DWG/DXF 浏览器合同及异常对象编辑已有仓库内自动化；用授权 DWG/DXF、Excel、PDF/图片和获批准 Primary 在受控 CP6 WMS 演练环境完成三路径端到端证据。Mock/fixture 不计正式结果。
+- WP4 三路径正式证据已接受并冻结；后续只在 Source Set、Primary Version、应用基线或三路径合同变化时升版本重跑，不把 WP8 的生产 WMS/发布演练反向塞回 WP4。
 - WP7 已 Complete/Accepted：正式 Manifest 绑定同一 Source Set/Worker、冻结规则、业务总体与 OOS 指标、Holdout Blocking、50 MiB/Ready 20 次稳定观察及应用提交。未来只有数据、答案、Provider、Worker、Parser、规则或应用 Commit 改变时才升版本重跑。
 - Viewer 性能门槛已关闭；仍须在受控 SQL Server、已发布仓库数据和固定演练身份中运行 Published/Draft 隔离与 Viewer E2E，并由 DeliveryOwner 记录对比度、键盘/辅助技术及 1440×900/1280×720 结果。
 - WP6/WP8 在同一次受控发布演练中验证通知、SQL Server + CP6 WMS 发布、部分写入对账、幂等重试、旧 Published 持续服务、备份恢复、IdP HTTP 负向和 15/240 分钟恢复；五类证据完成后由 BUBAO.GAO 单一签署。生产部署和现场 Pilot 继续独立，不阻断 Core GA。

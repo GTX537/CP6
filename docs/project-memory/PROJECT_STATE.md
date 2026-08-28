@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space WP4 三路径正式接受（2026-08-28）
+
+- 复用 WP7 冻结 Source Set 与精确 AutoCAD Primary，授权真实 `L1-C01.dwg`、`L1-C02.dxf` 的 CAD IR Package 哈希已绑定；Excel–CAD 使用产品自身生成、Open XML 校验并解析的 12,466-byte 标准 XLSX，手工路径使用受控 PDF、PNG 与空白画布。受控资产均明确 `productionDataClaimed=false`。
+- 完整 `CP6.Space.IntegrationTests` 在 SQL Server Express LocalDB `17.0.4025.3` 上执行 `465 passed / 0 failed / 0 skipped`；CAD、Excel–CAD、底图/空白画布均证明 Preview 不改 Draft、显式 Apply、Typed Changeset、Lease、Revision 与 Idempotency 语义。
+- 新增正式三路径协议、失败关闭校验器、11 个专项正反向测试和总 GA 组合门禁；`three-path-formal-evidence-v1.0.0.json` 通过并由 `BUBAO.GAO` 接受，WP4 已 Complete/Accepted。
+- Core GA 仍为 72% / `NoGo`：两类外部输入均 Complete，剩余 WP0～WP2、WP5、WP6、WP8 共 6 个 Gate 和 1 个 DeliveryOwner 签署 Pending；未执行生产部署、生产 WMS 联调或 WP8 发布演练。下一主线是把可独立复核的 WP0～WP2 逐项接受，再收口 WP5/WP6/WP8。
+
 ## Space WP7 正式黄金 CAD 接受（2026-08-28）
 
 - 同一冻结 Source Set 的 20 份 `ApprovedOriginalWork` CAD 已完成正式业务评估：Overall 覆盖率 99.0224%、准确率/高置信精确率 98.7008%、Wilson 下界 98.1717%、人工操作下降 96.9043%；Out-of-sample 五项分别为 99.2352%、98.9828%、98.9828%、98.3541%、97.5781%，Holdout 未报告 Blocking 遗漏为 0。
