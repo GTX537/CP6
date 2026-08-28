@@ -11,32 +11,89 @@ using Microsoft.AspNetCore.Server.Kestrel.Https;
 
 if (args.Length > 0)
 {
-    if (args.Length != 6 ||
-        !args[0].Equals("release-manifest", StringComparison.Ordinal))
+    if (args[0].Equals("release-manifest", StringComparison.Ordinal) &&
+        args.Length == 6)
     {
-        throw new InvalidOperationException(
-            "Usage: release-manifest <payload-root> <release-version> " +
-            "<source-commit> <runtime-identifier> <accoreconsole-path>");
+        var coreVersion = AutoCadCandidateReleaseIdentity
+            .ReadValidatedAutoCadProviderVersion(args[5]);
+        var release = await AutoCadCandidateReleaseIdentity.CreateAsync(
+            args[1],
+            args[2],
+            args[3],
+            args[4],
+            args[5],
+            coreVersion);
+        Console.WriteLine(JsonSerializer.Serialize(new
+        {
+            manifestPath = Path.Combine(
+                Path.GetFullPath(args[1]),
+                AutoCadCandidateReleaseIdentity.ManifestFileName),
+            workerReleaseSha256 = release.WorkerReleaseSha256,
+            providerKey = AutoCadCandidateReleaseIdentity.ProviderKey,
+            providerVersion = release.ProviderVersion,
+        }));
+        return;
     }
-    var coreVersion = AutoCadCandidateReleaseIdentity
-        .ReadValidatedAutoCadProviderVersion(args[5]);
-    var release = await AutoCadCandidateReleaseIdentity.CreateAsync(
-        args[1],
-        args[2],
-        args[3],
-        args[4],
-        args[5],
-        coreVersion);
-    Console.WriteLine(JsonSerializer.Serialize(new
+
+    if (args[0].Equals("evaluate-release", StringComparison.Ordinal) &&
+        args.Length == 7)
     {
-        manifestPath = Path.Combine(
-            Path.GetFullPath(args[1]),
-            AutoCadCandidateReleaseIdentity.ManifestFileName),
-        workerReleaseSha256 = release.WorkerReleaseSha256,
-        providerKey = AutoCadCandidateReleaseIdentity.ProviderKey,
-        providerVersion = release.ProviderVersion,
-    }));
-    return;
+        const int evaluationTimeoutSeconds = 120;
+        var evaluationCoreVersion = AutoCadCandidateReleaseIdentity
+            .ReadValidatedAutoCadProviderVersion(args[5]);
+        var evaluationRelease = await AutoCadCandidateReleaseIdentity.LoadVerifiedAsync(
+            args[1],
+            args[2],
+            AppContext.BaseDirectory,
+            args[5],
+            evaluationCoreVersion,
+            AutoCadCandidateReleaseIdentity.CurrentRuntimeIdentifier());
+        var evaluationWorkRoot = Path.GetFullPath(args[6]);
+        var evaluationCoreExporter = new AutoCadCoreConsoleDwgExporter(
+            args[5],
+            Path.Combine(evaluationWorkRoot, "autodesk-runtime-cache"),
+            TimeSpan.FromSeconds(evaluationTimeoutSeconds));
+        var evaluationExporter = new ReleaseBoundAutoCadDwgExporter(
+            evaluationCoreExporter,
+            args[5],
+            evaluationRelease.Manifest.AutoCadCoreConsoleVersion,
+            evaluationRelease.Manifest.AutoCadCoreConsoleSha256);
+        var evaluationService = new AutoCadCandidateConversionService(
+            evaluationExporter,
+            evaluationWorkRoot,
+            TimeSpan.FromSeconds(evaluationTimeoutSeconds),
+            maximumConcurrency: 1,
+            evaluationRelease);
+        var report = await AutoCadCandidateGoldenDatasetEvaluator.EvaluateAsync(
+            args[3],
+            evaluationWorkRoot,
+            evaluationService,
+            evaluationRelease,
+            DateTime.UtcNow);
+        var reportSha256 = await AutoCadCandidateGoldenDatasetEvaluator
+            .WriteReportAsync(args[4], report);
+        Console.WriteLine(JsonSerializer.Serialize(new
+        {
+            reportPath = Path.GetFullPath(args[4]),
+            reportSha256,
+            report.Passed,
+            report.SampleCount,
+            report.ProviderKey,
+            report.ProviderVersion,
+            report.WorkerReleaseSha256,
+            report.FrozenEnvironmentSha256,
+        }));
+        if (!report.Passed)
+            Environment.ExitCode = 4;
+        return;
+    }
+
+    throw new InvalidOperationException(
+        "Usage: release-manifest <payload-root> <release-version> " +
+        "<source-commit> <runtime-identifier> <accoreconsole-path>\n" +
+        "   or: evaluate-release <release-manifest-path> " +
+        "<release-manifest-sha256> <dataset-root> <report-output-path> " +
+        "<accoreconsole-path> <work-root>");
 }
 
 var listenUrl = RequiredEnvironment("CP6_SPACE_CAD_LISTEN_URL");

@@ -28,7 +28,27 @@ dotnet publish .\tools\CP6.Space.CadWorker.AutoCadCandidate\CP6.Space.CadWorker.
 C:\cp6-space-cad-worker\1.0.0\CP6.Space.CadWorker.AutoCadCandidate.exe release-manifest C:\cp6-space-cad-worker\1.0.0 1.0.0 <40-lowercase-source-commit> win-x64 "C:\Program Files\Autodesk\AutoCAD 2025\accoreconsole.exe"
 ```
 
-The command writes `cp6-space-cad-worker-release.json` with an ordinal inventory
+Run the frozen 20-file controlled dataset twice through that exact sealed
+release before using it as qualification evidence:
+
+```powershell
+C:\cp6-space-cad-worker\1.0.0\CP6.Space.CadWorker.AutoCadCandidate.exe evaluate-release `
+  C:\cp6-space-cad-worker\1.0.0\cp6-space-cad-worker-release.json `
+  <release-manifest-sha256> `
+  D:\CP6-Controlled-CAD\space-golden-cad\v1.0.0-final `
+  D:\CP6-Cad-Evidence\autocad-primary\evaluation.json `
+  "C:\Program Files\Autodesk\AutoCAD 2025\accoreconsole.exe" `
+  D:\CP6-Cad-Work\formal-evaluation
+```
+
+The command refuses changed source hashes or a non-20/10-5-5 dataset, verifies
+the Worker/Core identities before conversion, compares package hashes on every
+replay, requires at least 99% supported entities, and reports raw-CAD/attempt
+residuals. It records `NotVerifiedAtOsBoundary` for outbound network policy;
+the direct evaluation does not start a listener and must not be presented as
+production mTLS or OS-firewall evidence.
+
+The `release-manifest` command writes `cp6-space-cad-worker-release.json` with an ordinal inventory
 of every payload file plus the exact Core Console hash/version, runtime, source
 commit and managed DXF converter version. It prints the full Manifest SHA-256,
 release Provider Key and derived Provider Version. Do not add logs, certificates,
