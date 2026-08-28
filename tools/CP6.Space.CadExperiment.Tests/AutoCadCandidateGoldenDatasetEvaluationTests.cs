@@ -78,6 +78,26 @@ public sealed class AutoCadCandidateGoldenDatasetEvaluationTests
         Assert.Contains("source size changed", exception.Message, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Rejects_an_extra_raw_CAD_file_outside_the_frozen_set()
+    {
+        using var fixture = new TemporaryDirectory();
+        var setup = await CreateSetupAsync(fixture.Path);
+        await File.WriteAllTextAsync(
+            Path.Combine(setup.DatasetRoot, "samples", "unexpected.dxf"),
+            MinimalDxf("L1-C01", "FF"));
+
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
+            AutoCadCandidateGoldenDatasetEvaluator.EvaluateAsync(
+                setup.DatasetRoot,
+                setup.WorkRoot,
+                setup.Service,
+                setup.Release,
+                EvaluatedAtUtc));
+
+        Assert.Contains("raw CAD file set", exception.Message, StringComparison.Ordinal);
+    }
+
     private static async Task<EvaluationSetup> CreateSetupAsync(string root)
     {
         var datasetRoot = Path.Combine(root, "dataset");

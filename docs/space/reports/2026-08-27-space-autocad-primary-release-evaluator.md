@@ -62,6 +62,6 @@ WP3/WP7 与 Core GA 继续 Pending/NoGo。
 
 ## 自动化
 
-- 新评测器正向 20 文件双跑与源文件篡改失败关闭：2/2。
-- 完整 CAD Experiment（含两项真实 AutoCAD 安装门禁）：60/60、0 skipped。
+- 新评测器正向 20 文件双跑、源文件篡改失败和清单外 CAD 拒绝：3/3。
+- 完整 CAD Experiment（含两项真实 AutoCAD 安装门禁）：61/61、0 skipped。
 - Worker Release Manifest 与评测报告 JSON Schema：Pass。

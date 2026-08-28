@@ -160,6 +160,7 @@ public static class AutoCadCandidateGoldenDatasetEvaluator
         RejectDuplicateProperties(manifestDocument.RootElement, "$", 0);
         var manifest = ParseManifest(manifestDocument.RootElement);
         ValidateManifest(manifest);
+        ValidateRawCadFileSet(root, manifest.Samples);
 
         var results = new List<AutoCadCandidateGoldenDatasetSampleResultV1>(
             ExpectedSampleCount);
@@ -531,6 +532,59 @@ public static class AutoCadCandidateGoldenDatasetEvaluator
         var sourceSetSha256 = Sha256(Encoding.UTF8.GetBytes(sourceSetPayload));
         if (!FixedTimeSha256Equals(sourceSetSha256, manifest.SourceSetSha256))
             throw new InvalidDataException("The controlled source-set hash is invalid.");
+    }
+
+    private static void ValidateRawCadFileSet(
+        string datasetRoot,
+        IReadOnlyList<ControlledSample> samples)
+    {
+        var expected = samples.Select(sample => Path.GetFullPath(Path.Combine(
+                datasetRoot,
+                "samples",
+                sample.SampleId,
+                "source" + (sample.SourceFormat == SpaceCadSourceFormat.Dwg
+                    ? ".dwg"
+                    : ".dxf"))))
+            .ToHashSet(
+                OperatingSystem.IsWindows()
+                    ? StringComparer.OrdinalIgnoreCase
+                    : StringComparer.Ordinal);
+        var samplesRoot = RequireDirectory(
+            Path.Combine(datasetRoot, "samples"),
+            "Golden dataset samples root");
+        var actual = new HashSet<string>(expected.Comparer);
+        var pending = new Stack<DirectoryInfo>();
+        pending.Push(new DirectoryInfo(samplesRoot));
+        while (pending.TryPop(out var directory))
+        {
+            directory.Refresh();
+            if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
+                throw new InvalidDataException(
+                    "Golden dataset sample directories cannot be reparse points.");
+            foreach (var entry in directory.EnumerateFileSystemInfos())
+            {
+                entry.Refresh();
+                if ((entry.Attributes & FileAttributes.ReparsePoint) != 0)
+                    throw new InvalidDataException(
+                        "Golden dataset sample entries cannot be reparse points.");
+                if (entry is DirectoryInfo child)
+                {
+                    pending.Push(child);
+                    continue;
+                }
+                if (entry is not FileInfo file)
+                    throw new InvalidDataException(
+                        "The golden dataset contains an unknown filesystem entry.");
+                if (file.Extension.Equals(".dwg", StringComparison.OrdinalIgnoreCase) ||
+                    file.Extension.Equals(".dxf", StringComparison.OrdinalIgnoreCase))
+                {
+                    actual.Add(Path.GetFullPath(file.FullName));
+                }
+            }
+        }
+        if (!actual.SetEquals(expected))
+            throw new InvalidDataException(
+                "The controlled dataset raw CAD file set does not match its 20 samples.");
     }
 
     private static AutoCadCandidateGoldenDatasetEnvironmentV1 EnvironmentEvidence() =>
