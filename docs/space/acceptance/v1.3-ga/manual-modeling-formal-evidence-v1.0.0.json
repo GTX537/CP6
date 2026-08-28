@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP1_MANUAL_MODELING_FORMAL_EVIDENCE",
+  "conclusion": "Pass",
+  "ownerName": "BUBAO.GAO",
+  "executedAtUtc": "2026-08-28T05:22:34Z",
+  "applicationCommitSha": "b0164a15cc7d0ad5716973323fcac27325bcfd5e",
+  "environment": {
+    "mode": "ControlledSelfReview",
+    "databaseEngine": "SQLServer",
+    "testDataClass": "DeterministicControlledTestData",
+    "productionDataClaimed": false,
+    "productionDeploymentPerformed": false
+  },
+  "sqlServer": {
+    "productVersion": "17.0.4025.3",
+    "edition": "Express Edition (64-bit)",
+    "engineEdition": 4,
+    "testProject": "CP6.Space.IntegrationTests",
+    "total": 20,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "testClasses": [
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests"
+    ],
+    "requiredCases": [
+      "Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+      "System_template_mode_initializes_every_floor_and_persists_provenance",
+      "Tenant_template_mode_uses_only_the_current_tenant_template_scope",
+      "Warehouse_template_floor_apply_is_leased_atomic_and_replayable",
+      "Layout_commands_create_coded_warehouse_atomically",
+      "Location_coding_previews_without_writes_and_applies_with_fences"
+    ]
+  },
+  "web": {
+    "runner": "Vitest",
+    "testFiles": 6,
+    "total": 25,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0,
+    "coveredSurfaces": [
+      "BlankAndTemplateStart",
+      "LayoutCreate",
+      "LayoutProperties",
+      "LayoutCommandConstruction",
+      "LocationCodePreviewApply",
+      "TenantTemplatePreviewCreate"
+    ]
+  },
+  "result": {
+    "blankDraftAndExplicitFloorPassed": true,
+    "completeCodedWarehouseBuilt": true,
+    "systemAndTenantTemplatePassed": true,
+    "templateFloorApplyPassed": true,
+    "locationCodePreviewZeroWritePassed": true,
+    "locationCodeApplyPassed": true,
+    "leaseFencePassed": true,
+    "floorRevisionFencePassed": true,
+    "contentRevisionFencePassed": true,
+    "idempotencyFencePassed": true,
+    "atomicFailureZeroWritePassed": true,
+    "publishedIsolationPassed": true,
+    "codedWarehouseCounts": {
+      "zones": 1,
+      "aisles": 1,
+      "racks": 1,
+      "rackLevels": 2,
+      "locations": 8
+    }
+  },
+  "sources": [
+    {
+      "path": "CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.cs",
+      "sha256": "e2e9a031fef84501d2155df088896871fedb724b57665fb52d8ec862be1e42c5",
+      "gitBlobOid": "efb723b119eb6f2d9db6e4ece377c79eb871cb6c"
+    },
+    {
+      "path": "CP6.Space.IntegrationTests/SpaceDesignSceneSqlServerTests.cs",
+      "sha256": "576d2fa5e682933c6c8bff3367349f02dcab4763ccd980a3e3035690f2bf4ff9",
+      "gitBlobOid": "94803e27fb2ad08168b422a2cb0a76c583765301"
+    },
+    {
+      "path": "cp6.web/src/views/space/editor/SpaceDesignStartView.spec.ts",
+      "sha256": "378fb411026310aea408b31f3f1ba223752a5b42b0f3cd177e14d04a9402e4ec",
+      "gitBlobOid": "2b1752af93edc969fe8e9a3207dd35fb4bcc1a87"
+    },
+    {
+      "path": "cp6.web/src/modules/space-design/layout/DesignLayoutCreatePanel.spec.ts",
+      "sha256": "54d26916809ef1d7e468d2fdb62576d6772a7825a4f664b586db046791dead3c",
+      "gitBlobOid": "6a55da925a73311a0d04cfeb2544270a26a2730d"
+    },
+    {
+      "path": "cp6.web/src/modules/space-design/layout/DesignLayoutPropertiesPanel.spec.ts",
+      "sha256": "2f4adbf1ce0406f99428e0f718eea28d9a6f1902f410604933994367ab653c94",
+      "gitBlobOid": "1b0de7c796368557e5857a17fcd291261eb00f79"
+    },
+    {
+      "path": "cp6.web/src/modules/space-design/layout/layoutCreate.spec.ts",
+      "sha256": "fc7b631d38e0283cbf3df4640344f3988f9f8de5287cac94cb837156e7aa54a4",
+      "gitBlobOid": "c79141c90d7c2058d054e3e7ebad876c86a44156"
+    },
+    {
+      "path": "cp6.web/src/modules/space-design/coding/DesignLocationCodingPanel.spec.ts",
+      "sha256": "a0e348204de8821b225db58d4b7af2c2176867a47ea626abce3497b4048f1ca4",
+      "gitBlobOid": "fd9c401f26942788ed146e0d42ce35d98b54a192"
+    },
+    {
+      "path": "cp6.web/src/modules/space-design/templates/DesignWarehouseTemplatePanel.spec.ts",
+      "sha256": "0a4e8f5f7f7ea0b16bd970a63114609852a75d9e6ff0b022d986fa6768812e00",
+      "gitBlobOid": "2925cc62d8f73a82e42a37dc85443b23775308c7"
+    }
+  ],
+  "selfReview": {
+    "acceptedBy": "BUBAO.GAO",
+    "acceptedAtUtc": "2026-08-28T05:23:07Z",
+    "repeatable": true,
+    "distinctPersonReviewRequired": false
+  }
+}

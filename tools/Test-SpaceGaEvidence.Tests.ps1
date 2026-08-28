@@ -20,6 +20,8 @@ $releaseRehearsalTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaReleaseRehearsalEvidence.Tests.ps1')
 $baselineGovernanceTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1')
+$manualModelingTestSuite = Join-Path $PSScriptRoot (
+    'Test-SpaceGaManualModelingEvidence.Tests.ps1')
 $threePathTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaThreePathEvidence.Tests.ps1')
 $hostExecutable = (Get-Process -Id $PID).Path
@@ -43,6 +45,13 @@ function New-TestManifest {
     $wp0.acceptanceStatus = 'Pending'
     $wp0.acceptedEvidence = @()
     $wp0 | Add-Member -MemberType NoteProperty `
+        -Name verificationManifest -Value $null -Force
+    $wp1 = @($manifest.gates | Where-Object {
+        $_.id -eq 'WP1_DESIGN_V1_MANUAL_MODELING'
+    })[0]
+    $wp1.acceptanceStatus = 'Pending'
+    $wp1.acceptedEvidence = @()
+    $wp1 | Add-Member -MemberType NoteProperty `
         -Name verificationManifest -Value $null -Force
     & $Mutation $manifest
     $path = Join-Path $tempDirectory "$Name.json"
@@ -79,11 +88,30 @@ function Set-GateAccepted {
     )
 
     $gate = @($Manifest.gates | Where-Object {
-        $_.id -eq 'WP1_DESIGN_V1_MANUAL_MODELING'
+        $_.id -eq 'WP2_CAD_START_WIZARD'
     })[0]
     $gate.ownerName = 'Zhang Wei'
     $gate.acceptanceStatus = 'Accepted'
     $gate.acceptedEvidence = @($Attestation)
+}
+
+function Set-Wp1Accepted {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)][string]$ManualModelingReference,
+        [Parameter(Mandatory)][string]$ManualModelingSha256
+    )
+    $gate = @($Manifest.gates | Where-Object {
+        $_.id -eq 'WP1_DESIGN_V1_MANUAL_MODELING'
+    })[0]
+    $gate.ownerName = 'Zhang Wei'
+    $gate.acceptanceStatus = 'Accepted'
+    $gate | Add-Member -MemberType NoteProperty `
+        -Name verificationManifest -Value $ManualModelingReference -Force
+    $gate.acceptedEvidence = @(
+        (New-Attestation `
+            -Uri $ManualModelingReference `
+            -Sha256 $ManualModelingSha256))
 }
 
 function Set-Wp0Accepted {
@@ -345,6 +373,27 @@ try {
         -LiteralPath $baselineAcceptancePath `
         -Algorithm SHA256).Hash.ToLowerInvariant()
 
+    $manualModelingAcceptanceReference = (
+        'docs/space/acceptance/v1.3-ga/.tmp-' +
+        [Guid]::NewGuid().ToString('N') + '/manual-modeling-evidence.json')
+    $manualModelingAcceptancePath = Join-Path `
+        $repo $manualModelingAcceptanceReference
+    $manualModelingAcceptanceDirectory = Split-Path -Parent `
+        $manualModelingAcceptancePath
+    [void](New-Item -ItemType Directory `
+        -Path $manualModelingAcceptanceDirectory)
+    $exportOutput = & $hostExecutable `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $manualModelingTestSuite `
+        -ExportValidManifestPath $manualModelingAcceptancePath 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not export valid manual-modeling fixture.`n$exportOutput"
+    }
+    $manualModelingAcceptanceSha256 = (Get-FileHash `
+        -LiteralPath $manualModelingAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
     $threePathAcceptanceReference = (
         'docs/space/acceptance/v1.3-ga/.tmp-' +
         [Guid]::NewGuid().ToString('N') + '/three-path-evidence.json')
@@ -517,6 +566,94 @@ try {
     $localAttestation = New-Attestation `
         -Uri $fixtureReference `
         -Sha256 $fixtureSha256
+
+    $validManualModelingPath = New-TestManifest 'valid-manual-modeling-manifest' {
+        param($manifest)
+        Set-Wp1Accepted `
+            -Manifest $manifest `
+            -ManualModelingReference $manualModelingAcceptanceReference `
+            -ManualModelingSha256 $manualModelingAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP1 validates formal manual-modeling evidence' `
+        -ManifestPath $validManualModelingPath `
+        -ShouldPass $true
+
+    $missingManualModelingPath = New-TestManifest 'missing-manual-modeling-manifest' {
+        param($manifest)
+        Set-Wp1Accepted `
+            -Manifest $manifest `
+            -ManualModelingReference $manualModelingAcceptanceReference `
+            -ManualModelingSha256 $manualModelingAcceptanceSha256
+        @($manifest.gates | Where-Object {
+            $_.id -eq 'WP1_DESIGN_V1_MANUAL_MODELING'
+        })[0].verificationManifest = $null
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP1 requires a structured Manifest' `
+        -ManifestPath $missingManualModelingPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_MANUAL_MODELING_MANIFEST_REQUIRED'
+
+    $unattestedManualModelingPath = New-TestManifest 'unattested-manual-modeling' {
+        param($manifest)
+        Set-Wp1Accepted `
+            -Manifest $manifest `
+            -ManualModelingReference $manualModelingAcceptanceReference `
+            -ManualModelingSha256 $manualModelingAcceptanceSha256
+        @($manifest.gates | Where-Object {
+            $_.id -eq 'WP1_DESIGN_V1_MANUAL_MODELING'
+        })[0].acceptedEvidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP1 must attest its structured Manifest' `
+        -ManifestPath $unattestedManualModelingPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_MANUAL_MODELING_MANIFEST_UNATTESTED'
+
+    $manualModelingTemplateReference = (
+        'docs/space/acceptance/v1.3-ga/' +
+        'manual-modeling-evidence-template.json')
+    $manualModelingTemplateSha256 = (Get-FileHash `
+        -LiteralPath (Join-Path $repo $manualModelingTemplateReference) `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $templateManualModelingPath = New-TestManifest 'template-manual-modeling' {
+        param($manifest)
+        Set-Wp1Accepted `
+            -Manifest $manifest `
+            -ManualModelingReference $manualModelingTemplateReference `
+            -ManualModelingSha256 $manualModelingTemplateSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP1 cannot accept its blank template' `
+        -ManifestPath $templateManualModelingPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_MANUAL_MODELING_MANIFEST_SYNTHETIC'
+
+    $invalidManualModelingReference = $manualModelingAcceptanceReference.Replace(
+        'manual-modeling-evidence.json',
+        'manual-modeling-invalid-result.json')
+    $invalidManualModelingPath = Join-Path $repo $invalidManualModelingReference
+    $invalidManualModeling = Get-Content `
+        -LiteralPath $manualModelingAcceptancePath -Raw | ConvertFrom-Json
+    $invalidManualModeling.result.idempotencyFencePassed = $false
+    $invalidManualModeling | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidManualModelingPath -Encoding UTF8
+    $invalidManualModelingSha256 = (Get-FileHash `
+        -LiteralPath $invalidManualModelingPath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $invalidManualModelingGatePath = New-TestManifest 'invalid-manual-modeling' {
+        param($manifest)
+        Set-Wp1Accepted `
+            -Manifest $manifest `
+            -ManualModelingReference $invalidManualModelingReference `
+            -ManualModelingSha256 $invalidManualModelingSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP1 rejects a failed write-fence result' `
+        -ManifestPath $invalidManualModelingGatePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_MANUAL_MODELING_EVIDENCE_INVALID'
 
     $validBaselinePath = New-TestManifest 'valid-baseline-governance-manifest' {
         param($manifest)
@@ -990,7 +1127,7 @@ try {
         param($manifest)
         Set-GateAccepted -Manifest $manifest -Attestation $localAttestation
         $gate = @($manifest.gates | Where-Object {
-            $_.id -eq 'WP1_DESIGN_V1_MANUAL_MODELING'
+            $_.id -eq 'WP2_CAD_START_WIZARD'
         })[0]
         $gate.ownerName = 'Architecture'
     }
@@ -1413,5 +1550,11 @@ finally {
     if ($null -ne $baselineAcceptanceDirectory -and
         (Test-Path -LiteralPath $baselineAcceptanceDirectory)) {
         [System.IO.Directory]::Delete($baselineAcceptanceDirectory, $true)
+    }
+    if ($null -ne $manualModelingAcceptanceDirectory -and
+        (Test-Path -LiteralPath $manualModelingAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete(
+            $manualModelingAcceptanceDirectory,
+            $true)
     }
 }

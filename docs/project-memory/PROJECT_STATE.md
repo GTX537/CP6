@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space WP1 手工建模正式接受（2026-08-28）
+
+- 正式 Manifest 绑定已合并的 `main@b0164a15cc7d0ad5716973323fcac27325bcfd5e` 和 8 个测试源 Git Blob/SHA-256；由唯一 DeliveryOwner `BUBAO.GAO` 完成可重复自验收，不设置第二人或独立 QA 门禁。
+- SQL Server Express LocalDB `17.0.4025.3` 最终运行 20/20、0 failed、0 skipped；覆盖 Blank/显式 Floor、System/Tenant Template、模板应用、完整编码仓库、Preview 零写入、Apply、Lease/Revision/Idempotency 与失败批次原子性。首次缺少环境变量的 17 skipped 运行已作废且未计证据。
+- Web 6 个聚焦文件 25/25；新增 WP1 正式协议、12 个独立失败模式和总 GA 组合验证，`manual-modeling-formal-evidence-v1.0.0.json` 已 Pass/Accepted。
+- Core GA 仍为 72% / `NoGo`：0 个外部输入、WP2/WP5/WP6/WP8 共 4 个 Gate 和 1 个最终签署 Pending。下一主线是 WP2 CAD 起始向导结果接受。
+
 ## Space WP0 基线与治理正式接受（2026-08-28）
 
 - 唯一 DeliveryOwner `BUBAO.GAO`、Kickoff `2026-08-27`、目标 GA `2026-09-27`、两类外部输入 Owner 与 WP0～WP8 Gate Owner 已固定；单人交付不设第二人、独立复核、角色配额或多人签字门槛。

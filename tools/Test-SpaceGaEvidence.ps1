@@ -19,6 +19,8 @@ $releaseRehearsalValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaReleaseRehearsalEvidence.ps1')
 $baselineGovernanceValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaBaselineGovernanceEvidence.ps1')
+$manualModelingValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaManualModelingEvidence.ps1')
 $threePathValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaThreePathEvidence.ps1')
 $goldenCadValidator = Join-Path $PSScriptRoot (
@@ -533,6 +535,77 @@ foreach ($gate in @($manifest.gates)) {
                     catch {
                         Add-ValidationError (
                             'SPACE_GA_BASELINE_EVIDENCE_INVALID: ' +
+                            $_.Exception.Message)
+                    }
+                }
+            }
+        }
+        if ($gate.id -eq 'WP1_DESIGN_V1_MANUAL_MODELING') {
+            $manualModelingManifestReference = [string]$gate.verificationManifest
+            if (!(Test-Text $manualModelingManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_MANUAL_MODELING_MANIFEST_REQUIRED: Accepted ' +
+                    'WP1 requires a structured manual-modeling evidence manifest.')
+            }
+            elseif ([System.IO.Path]::IsPathRooted(
+                $manualModelingManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_MANUAL_MODELING_MANIFEST_ABSOLUTE: WP1 ' +
+                    'manifest must use a repository-relative path.')
+            }
+            else {
+                $manualModelingManifestFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $manualModelingManifestReference))
+                $normalizedReference =
+                    $manualModelingManifestReference.Replace('\', '/')
+                $isTemplateOrFixture =
+                    $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                    $normalizedReference.EndsWith(
+                        '/manual-modeling-evidence-template.json',
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                if (!$manualModelingManifestFullPath.StartsWith(
+                    $repoPrefix,
+                    [System.StringComparison]::OrdinalIgnoreCase)) {
+                    Add-ValidationError (
+                        'SPACE_GA_MANUAL_MODELING_MANIFEST_ESCAPE: WP1 ' +
+                        'manifest escapes the repository root.')
+                }
+                elseif ($isTemplateOrFixture) {
+                    Add-ValidationError (
+                        'SPACE_GA_MANUAL_MODELING_MANIFEST_SYNTHETIC: WP1 ' +
+                        'cannot use a template or test fixture as formal evidence.')
+                }
+                elseif ([System.IO.Path]::GetExtension(
+                    $manualModelingManifestFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $manualModelingManifestFullPath `
+                        -PathType Leaf)) {
+                    Add-ValidationError (
+                        'SPACE_GA_MANUAL_MODELING_MANIFEST_MISSING: WP1 ' +
+                        'manifest does not exist as JSON: ' +
+                        $manualModelingManifestReference)
+                }
+                else {
+                    $manifestIsAttested = @($gate.acceptedEvidence |
+                        Where-Object {
+                            ([string]$_.uri).Equals(
+                                $manualModelingManifestReference,
+                                [System.StringComparison]::OrdinalIgnoreCase)
+                        }).Count -gt 0
+                    if (!$manifestIsAttested) {
+                        Add-ValidationError (
+                            'SPACE_GA_MANUAL_MODELING_MANIFEST_UNATTESTED: ' +
+                            'WP1 accepted evidence must attest the structured ' +
+                            'manual-modeling manifest itself.')
+                    }
+                    try {
+                        & $manualModelingValidator `
+                            -ManifestPath $manualModelingManifestFullPath `
+                            -ExpectedOwnerName ([string]$gate.ownerName) |
+                            Out-Null
+                    }
+                    catch {
+                        Add-ValidationError (
+                            'SPACE_GA_MANUAL_MODELING_EVIDENCE_INVALID: ' +
                             $_.Exception.Message)
                     }
                 }

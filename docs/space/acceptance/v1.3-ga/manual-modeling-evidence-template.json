@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP1_MANUAL_MODELING_FORMAL_EVIDENCE",
+  "conclusion": "Pending",
+  "ownerName": "<DeliveryOwner real name>",
+  "executedAtUtc": "<UTC timestamp>",
+  "applicationCommitSha": "<40 hex main commit>",
+  "environment": {
+    "mode": "ControlledSelfReview",
+    "databaseEngine": "SQLServer",
+    "testDataClass": "DeterministicControlledTestData",
+    "productionDataClaimed": false,
+    "productionDeploymentPerformed": false
+  },
+  "sqlServer": {
+    "productVersion": "<SQL Server product version>",
+    "edition": "<SQL Server edition>",
+    "engineEdition": 0,
+    "testProject": "CP6.Space.IntegrationTests",
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "testClasses": [],
+    "requiredCases": []
+  },
+  "web": {
+    "runner": "Vitest",
+    "testFiles": 0,
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "coveredSurfaces": []
+  },
+  "result": {
+    "blankDraftAndExplicitFloorPassed": false,
+    "completeCodedWarehouseBuilt": false,
+    "systemAndTenantTemplatePassed": false,
+    "templateFloorApplyPassed": false,
+    "locationCodePreviewZeroWritePassed": false,
+    "locationCodeApplyPassed": false,
+    "leaseFencePassed": false,
+    "floorRevisionFencePassed": false,
+    "contentRevisionFencePassed": false,
+    "idempotencyFencePassed": false,
+    "atomicFailureZeroWritePassed": false,
+    "publishedIsolationPassed": false,
+    "codedWarehouseCounts": {
+      "zones": 0,
+      "aisles": 0,
+      "racks": 0,
+      "rackLevels": 0,
+      "locations": 0
+    }
+  },
+  "sources": [],
+  "selfReview": {
+    "acceptedBy": "<DeliveryOwner real name>",
+    "acceptedAtUtc": "<UTC timestamp after execution>",
+    "repeatable": false,
+    "distinctPersonReviewRequired": false
+  }
+}
