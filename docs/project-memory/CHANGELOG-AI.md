@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space WP1 手工建模正式接受
+
+- Added a formal single-owner WP1 evidence package bound to `main@b0164a15` and canonical Git blob/SHA-256 identities for two SQL and six Web test sources.
+- Ran the focused SQL Server Express LocalDB 17.0.4025.3 gate at 20/20 with zero failures/skips and the six focused Web files at 25/25. The earlier environment-missing 17-skip run was explicitly discarded.
+- Proved Blank/Floor creation, System/Tenant templates, a complete coded warehouse, zero-write Preview, explicit Apply, Lease/Revision/Idempotency fences, atomic failure and Published isolation.
+- Added a 12-case standalone validator and overall WP1 attestation checks; WP1 is Complete/Accepted. Core GA remains 72% / NoGo with 0 pending inputs, 4 pending gates and 1 pending signer; no production deployment occurred.
+
 ## 2026-08-28：Space WP0 基线与治理正式接受
 
 - Added a formal WP0 baseline/governance Manifest bound to `main@162d1108`, the sole DeliveryOwner, Kickoff/target dates, both Complete external inputs, and Accepted WP3/WP4/WP7 dependencies.

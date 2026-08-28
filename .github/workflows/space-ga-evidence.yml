@@ -21,6 +21,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadCandidates.Tests.ps1'
       - 'tools/Test-SpaceGaBaselineGovernanceEvidence.ps1'
       - 'tools/Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaManualModelingEvidence.ps1'
+      - 'tools/Test-SpaceGaManualModelingEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
@@ -55,6 +57,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadCandidates.Tests.ps1'
       - 'tools/Test-SpaceGaBaselineGovernanceEvidence.ps1'
       - 'tools/Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaManualModelingEvidence.ps1'
+      - 'tools/Test-SpaceGaManualModelingEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
@@ -104,6 +108,10 @@ jobs:
       - name: Exercise formal baseline governance evidence failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1
+
+      - name: Exercise formal manual-modeling evidence failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaManualModelingEvidence.Tests.ps1
 
       - name: Exercise formal three-path evidence failure modes
         shell: pwsh

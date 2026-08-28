@@ -107,12 +107,16 @@
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1",
       "implementationStatus": "Complete",
-      "acceptanceStatus": "Pending",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "Automated blank-canvas modeling and code Preview/Apply results",
         "Repeatable self-review record bound to the tested commit"
       ],
       "evidencePaths": [
+        "docs/space/acceptance/v1.3-ga/manual-modeling-evidence-protocol.md",
+        "docs/space/acceptance/v1.3-ga/manual-modeling-evidence-template.json",
+        "docs/space/acceptance/v1.3-ga/manual-modeling-formal-evidence-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-wp1-manual-modeling-acceptance.md",
         "docs/space/reports/2026-08-15-space-draft-summary-metadata.md",
         "docs/space/reports/2026-08-15-space-system-template-floor-apply.md",
         "docs/space/reports/2026-08-15-space-system-template-catalog.md",
@@ -123,7 +127,15 @@
         "docs/space/reports/2026-08-14-space-studio-canvas-drag.md",
         "docs/project-memory/05-Completed.md"
       ],
-      "acceptedEvidence": [],
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/manual-modeling-formal-evidence-v1.0.0.json",
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/manual-modeling-formal-evidence-v1.0.0.json",
+          "sha256": "5db1acf9e964d509b53dd7d866595472fa8f1ad9de6d80e99db2e54c5f937f25",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T05:23:07Z"
+        }
+      ],
       "acceptanceCriteria": [
         "A complete coded warehouse can be built from a blank canvas",
         "All writes use lease, revision and idempotency fences"

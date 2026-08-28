@@ -30,18 +30,18 @@
 
 ## P0：Space Studio Lean Core GA 剩余门禁
 
-- 当前正式派生状态为 72% / `NoGo`：两类外部输入均 Complete，WP0/WP3/WP4/WP7 已 Accepted；剩余 WP1、WP2、WP5、WP6、WP8 五个接受 Gate 和 1 个 DeliveryOwner 最终签署。下一条主线是复核并接受 WP1 手工建模与 WP2 CAD 起始向导，再把 WP5/WP6/WP8 收口为一次受控发布演练；不再重复追问 Backup、Pilot、本地 OS Firewall 或重跑已冻结黄金集。
+- 当前正式派生状态为 72% / `NoGo`：两类外部输入均 Complete，WP0/WP1/WP3/WP4/WP7 已 Accepted；剩余 WP2、WP5、WP6、WP8 四个接受 Gate 和 1 个 DeliveryOwner 最终签署。下一条主线是接受 WP2 CAD 起始向导，再把 WP5/WP6/WP8 收口为一次受控发布演练；不再重复追问 Backup、Pilot、本地 OS Firewall 或重跑已冻结黄金集。
 - Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。正式 Core GA 使用 Schema 3；独立 Backup 与双仓 14 天 Pilot 已转为 GA 后增强。不得用 DevelopmentSeed、未批准 Provider、Mock 或 fixture 冒充正式发布演练。
-- 唯一 DeliveryOwner 已登记为 `BUBAO.GAO`，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`，同一人拥有全部输入与 Gate；WP0 仓库实现已 Complete，但正式接受和最终签署仍 Pending。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。
+- 唯一 DeliveryOwner 已登记为 `BUBAO.GAO`，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`，同一人拥有全部输入与 Gate；WP0/WP1 已正式接受，最终签署仍 Pending。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。
 - 20 份仓库外原创 AC1032 CAD 候选已经冻结并登记为 Complete：10 DWG/10 DXF、10/5/5、L1～L5 各 4，逐份授权/脱敏/答案/问题/Mapping/规则/复核证据齐全，产品 Converter 20/20 Pass。原始 CAD 不入 Git；后续必须使用同一 Source Set SHA `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`。
 - 不再强制 ODA 或第二供应商。`BUBAO.GAO` 已选择并批准当前 AutoCAD 2025 Core Console 为唯一 Primary；本机 V1 的许可、精确版本/哈希、本地安全边界、保留/删除、正式 SemVer Worker、转换评测和 86/100 资格评分均已版本化并接受。如果未来改用 ODA、云服务或远程 Worker，再按其实际部署边界补许可证、身份、证书、Secret、网络与 SaaS 批准。
 - 正式 `1.0.0` 已从精确 `main@d2d0a0d1b0978a4283bd9387f4120eefe10a135d` 封存并对 20 份 CAD 双跑通过，99.727873% 支持、P95 4.281 秒、SourceRef/Blocking/残留为 0；报告 SHA 为 `97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350`。WP7 已在其上补齐业务质量、人工操作和 Ready 性能证据；两份证据共同构成当前 Primary 基线。
-- LM-FR-001/WP1 的仓库实现已完成：Blank/Published/System/Tenant 四模式统一创建、整仓模板全楼层幂等初始化、创建来源与模板哈希持久化、当前 Draft 零写入预览和租户模板制作表单均有自动化与真实 SQL 纵切。WP1 现为 Complete/Pending；剩余不是功能编码，而是 DeliveryOwner 对测试提交的可重复自审和正式接受。整体 GA 不因 WP1 实现完成改变；发布演练继续失败关闭。
+- LM-FR-001/WP1 已 Complete/Accepted：正式 Manifest 绑定 `main@b0164a15`、8 个测试源 Git Blob/SHA-256、SQL Server 20/20 无跳过和 Web 25/25；Blank/模板/完整编码仓库及 Lease/双 Revision/Idempotency 已由 `BUBAO.GAO` 可重复自验收。确定性测试数据不宣称生产数据，生产发布和最终签署仍失败关闭。
 - WP4 已 Complete/Accepted：授权真实 DWG/DXF Primary Package、产品自身生成并解析的受控 XLSX、受控 PDF/PNG 与空白画布已绑定同一 Draft/Typed Changeset 正式 Manifest；SQL Server 完整套件 465/465、0 failed、0 skipped。该接受不包含生产数据、生产 WMS、Published-only Viewer 或发布恢复/安全演练；这些边界继续由 WP5/WP6/WP8 关闭。
 - AutoCAD 2025 Core Console 已以正式 `1.0.0` Worker 覆盖 DWG/DXF；WP7 已用同一 20 份 Source Set 完成业务准确率/精确率/Wilson、人工减少率、Holdout Blocking 和 50 MiB/Ready P95 并正式接受。后续三路径与发布演练必须复用精确 Provider Version，不得反向修改 WP7 冻结规则。
 - 当前直接评测无网络监听、无业务凭据且临时 CAD 已清除；`BUBAO.GAO` 已接受本地 V1 不以 OS Firewall 出站 Deny 阻断。该口径不得外推为生产禁网、mTLS 或 SaaS 安全证明；若改为远程/生产部署，必须另行提供这些证据。
 - 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试；这些虚拟编号不能冒充真实 Owner、正式证据接受人或 `DeliveryOwner`，但正式 GA 不再要求团队人数或多角色独立签字。
-- 核心 GA 当前派生结果为 `NoGo`：两类外部输入均 Complete，WP0/WP3/WP4/WP7 已 Accepted；WP1、WP2、WP5、WP6、WP8 五个结果门禁和 1 个 DeliveryOwner 签署 Pending。下一步复核 WP1/WP2，并推进 Viewer、WMS/恢复/安全发布演练和最终签署。
+- 核心 GA 当前派生结果为 `NoGo`：两类外部输入均 Complete，WP0/WP1/WP3/WP4/WP7 已 Accepted；WP2、WP5、WP6、WP8 四个结果门禁和 1 个 DeliveryOwner 签署 Pending。下一步接受 WP2，并推进 Viewer、WMS/恢复/安全发布演练和最终签署。
 - WP3 已以精确 AutoCAD Primary、本机受控边界、正式 SemVer Release、DWG/DXF 双格式评测和 86/100 评分结案。评分工具未写 Site 配置；后续发布演练只能通过受控接口写入同一 Provider Version，Backup 另列 GA 后韧性任务。
 - Site 认证、运行注册、Preparation 输出和当前 Parse v5 已绑定同一 Provider Version；真实适配器注册必须使用被评分和批准的精确版本，升级 Worker 前必须重新评分、认证并替换 Site 配置，不得在同一 Provider Key 下静默换版。历史空版本认证按设计失效，不能手工回填猜测值。
 - Preparation → Parse 的 Mapping Replay Snapshot 与 v5 payload 已完成；真实 Provider 适配器必须加载快照绑定的不可变 Profile ID/Version、核对 Definition Hash、使用完整 Layer Overrides 重建 Mapping Preview，并在输出语义工件前执行 `SpaceCadMappingReplaySnapshot.ValidateReplay`。不得只信任期望 Preview Hash、忽略覆盖内容或让 Worker 使用当前 Profile 代替冻结版本。

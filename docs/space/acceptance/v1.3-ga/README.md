@@ -4,7 +4,7 @@
 
 门禁只看结果证据：自动化结果、受控 SQL/WMS、Published-only Viewer、性能样本、恢复演练、授权 CAD 和 Primary Provider 输出。角色模拟、Mock、skipped 测试或口头说明不能替代这些证据。
 
-当前仍为 `NoGo` / 72%。主干基线/单人治理、20 份 `ApprovedOriginalWork` 黄金 CAD、正式 AutoCAD Primary/Worker、业务质量、50 MiB/Ready 性能，以及 CAD / Excel–CAD / 手工底图与空白画布三路径证据均已接受；WP0、WP3、WP4、WP7 已 Complete/Accepted。仍未完成的是 WP1、WP2、WP5、WP6、WP8 的结果接受及唯一 DeliveryOwner 最终签署。独立 Backup Provider 与双仓 14 天 Pilot 已改为 GA 后增强项。
+当前仍为 `NoGo` / 72%。主干基线/单人治理、手工建模、20 份 `ApprovedOriginalWork` 黄金 CAD、正式 AutoCAD Primary/Worker、业务质量、50 MiB/Ready 性能，以及 CAD / Excel–CAD / 手工底图与空白画布三路径证据均已接受；WP0、WP1、WP3、WP4、WP7 已 Complete/Accepted。仍未完成的是 WP2、WP5、WP6、WP8 的结果接受及唯一 DeliveryOwner 最终签署。独立 Backup Provider 与双仓 14 天 Pilot 已改为 GA 后增强项。
 
 ## 最小流程
 
@@ -21,6 +21,7 @@
 ./tools/Test-SpaceGaEvidence.ps1
 ./tools/Test-SpaceGaEvidence.ps1 -RequireGaReady
 ./tools/Test-SpaceGaBaselineGovernanceEvidence.ps1 -ManifestPath <WP0 基线 Manifest>
+./tools/Test-SpaceGaManualModelingEvidence.ps1 -ManifestPath <WP1 手工建模 Manifest>
 ./tools/Test-SpaceGaKickoffEvidence.ps1 -ManifestPath <开工 Manifest>
 ./tools/Test-SpaceGaGoldenCadCandidates.ps1
 ./tools/Test-SpaceGaGoldenCadEvidence.ps1 -ManifestPath <黄金 CAD Manifest>

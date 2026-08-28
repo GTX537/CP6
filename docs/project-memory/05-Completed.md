@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space WP1 手工建模正式接受
+
+- 绑定 `main@b0164a15`、两份 SQL 测试源和六份 Web 测试源的 Git Blob/SHA-256，形成单人可重复自审的正式 WP1 Manifest。
+- SQL Server Express LocalDB 17.0.4025.3 最终 20/20、0 failed、0 skipped；Web 聚焦 6 files / 25 tests 全通过。首次 17 skipped 运行已明确作废，不计验收。
+- Blank/Floor、System/Tenant Template、完整 Zone/Aisle/Rack/RackLevel/Location、编码 Preview/Apply、Lease/双 Revision/Idempotency、原子失败和 Published 隔离均通过。
+- 新增 WP1 12/12 与总 GA 组合门禁；WP1 Complete/Accepted。Core GA 继续 72% / NoGo（0 个输入、4 个 Gate、1 个签署 Pending），未执行生产部署。
+
 ## 2026-08-28 Space WP0 基线与治理正式接受
 
 - 将唯一 DeliveryOwner、Kickoff/目标 GA、全部 Gate/Input Owner、精确远端 main Commit 和 WP3/WP4/WP7 已接受依赖固化为正式结构化证据；不设置多人或独立复核门槛。
