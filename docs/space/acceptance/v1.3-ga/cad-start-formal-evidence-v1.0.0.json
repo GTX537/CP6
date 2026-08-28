@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP2_CAD_START_FORMAL_EVIDENCE",
+  "conclusion": "Pass",
+  "ownerName": "BUBAO.GAO",
+  "executedAtUtc": "2026-08-28T06:07:31.2607162Z",
+  "applicationCommitSha": "e6e93a260d8221d82edb1017c3946d259f637c70",
+  "sourceSetSha256": "7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955",
+  "goldenDatasetSha256": "2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15",
+  "environment": {
+    "mode": "ControlledAcceptance",
+    "databaseEngine": "SQLServer",
+    "productVersion": "17.0.4025.3",
+    "edition": "Express Edition (64-bit)",
+    "productionDataClaimed": false,
+    "productionDeploymentPerformed": false
+  },
+  "externalExecution": {
+    "uri": "urn:cp6-space-ga-evidence:wp2-cad-start:e6e93a26:v2",
+    "sha256": "e1398d700afab85f783c70480fe2ae8a10e345def1c940496dcdf95498a34fec",
+    "evidenceClass": "WP2_CAD_START_CONTROLLED_EXECUTION",
+    "conclusion": "Pass"
+  },
+  "provider": {
+    "providerKey": "cp6-autocad-worker",
+    "providerVersion": "1.0.0+worker.c794e9c0ebbb.autocad.25.0.58.0.0.dxf.1.1.0",
+    "workerReleaseSha256": "c794e9c0ebbb2c736866827e07e6682347992dd5a672218efddfe6ff5c0f202e",
+    "sourceCommit": "d2d0a0d1b0978a4283bd9387f4120eefe10a135d",
+    "autoCadCoreConsoleVersion": "25.0.58.0.0",
+    "autoCadCoreConsoleSha256": "d1fd7232893094234f31c65445d0ec9259ffc1df17fb15aad99373e31545cefb",
+    "managedDxfConverterVersion": "1.1.0"
+  },
+  "samples": [
+    {
+      "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-c01",
+      "sampleId": "L1-C01",
+      "sourceFormat": "DWG",
+      "license": "ApprovedOriginalWork",
+      "sourceSha256": "c9338360df1df80a46bf83c7ca3bd0e4dd05bc4b4cefb34e9130272e8b4a2ca4",
+      "sourceSizeBytes": 43128,
+      "authorizationSha256": "3403ae0c1b1109b990db2aacaeb35dd5e099d54c9db992e15a2cca7b1988f625",
+      "deidentificationSha256": "cdf37825008f3f1cb0781a890f102ab00132a5ebc768fbc3e52e70cc95c9adcf",
+      "providerPackageSha256": "e7d5a673ad933956b18f929e046617111ed6bdad58c4b1a1b436f9f3708cc48a",
+      "selection": {
+        "floorLogicalId": "1529fec3-6841-4030-8f69-b4c313c377df",
+        "floorCode": "F01",
+        "confirmedUnit": "Millimeter",
+        "transform": {
+          "sourceOriginX": 0,
+          "sourceOriginY": 0,
+          "floorOriginMillimetersX": 0,
+          "floorOriginMillimetersY": 0,
+          "rotationZDegrees": 0
+        },
+        "mappingProfileId": "22a84af8-8712-4d44-a8c8-e017db9bfec4",
+        "mappingProfileVersion": 1,
+        "mappingDefinitionSha256": "67a4a884ede673001582a1ecc9e69810a6a82ed176e5b3bad30d151311c14ed5"
+      },
+      "audit": {
+        "preparationId": "a827bdbc-d763-4cbd-8721-c0a02f0e28ac",
+        "baseContentRevision": 0,
+        "baseContentHash": null,
+        "coordinateTransformSha256": "13ae9506d9eeba72f42f4044ad5dd80f4d35796e09c6fbd93e6b1c9bf072c2d6",
+        "mappingPreviewSha256": "8edcb4e6d206cda87da2117b9f9e93b6796e5506b001a43dbe8e73fc68f1a397",
+        "semanticPreviewSha256": "e79afe2ca7387c3513d292b372e6a3a935e9e630d9d45cae85c5fce4532cef5d",
+        "jobId": "7415a4f7-fb3b-450d-849a-6a47c5a467cc",
+        "idempotentReplay": true,
+        "draftUnchangedDuringPreview": true,
+        "readyForParsing": true,
+        "expiresAtUtc": "2026-08-28T17:00:00Z"
+      }
+    },
+    {
+      "sampleRef": "urn:cp6-space-golden-cad:v1.0.0:l1-c02",
+      "sampleId": "L1-C02",
+      "sourceFormat": "DXF",
+      "license": "ApprovedOriginalWork",
+      "sourceSha256": "a426a21806cddffdc6b400b61b23a5330e6ec52bb2be0de8af8ca326b3e6b3ba",
+      "sourceSizeBytes": 258714,
+      "authorizationSha256": "16102fad4d33466c3d2b2c432b56f36347bc91a150fc864ef7b0b2ee83513b89",
+      "deidentificationSha256": "14a7266bde4b6b6874363035e711184bf63421ebfa7a435edda9ef48d7923ecf",
+      "providerPackageSha256": "4ffc211c3200bfcdcd8d79df0c38c43ee924b1fd53ad1ea07674b1747bb56d57",
+      "selection": {
+        "floorLogicalId": "1529fec3-6841-4030-8f69-b4c313c377df",
+        "floorCode": "F01",
+        "confirmedUnit": "Millimeter",
+        "transform": {
+          "sourceOriginX": 0,
+          "sourceOriginY": 0,
+          "floorOriginMillimetersX": 0,
+          "floorOriginMillimetersY": 0,
+          "rotationZDegrees": 0
+        },
+        "mappingProfileId": "22a84af8-8712-4d44-a8c8-e017db9bfec4",
+        "mappingProfileVersion": 1,
+        "mappingDefinitionSha256": "67a4a884ede673001582a1ecc9e69810a6a82ed176e5b3bad30d151311c14ed5"
+      },
+      "audit": {
+        "preparationId": "2135e484-4690-4507-9fb3-5fe313d685f8",
+        "baseContentRevision": 0,
+        "baseContentHash": null,
+        "coordinateTransformSha256": "3e62f4964127e338102f83237c992f2d5822fa34134c94e5c6d0e9005f16738d",
+        "mappingPreviewSha256": "41479d831649a977c03f8c393da7f2eca29a27a8b36caad82ca40609f82045a2",
+        "semanticPreviewSha256": "5b15ddfb361bee0f07d7d8828817fad10207b2cbddd7a6bf1b63bcefd15a3ee7",
+        "jobId": "0e3a1e6a-0632-4ef6-bf85-a1471e0536ca",
+        "idempotentReplay": true,
+        "draftUnchangedDuringPreview": true,
+        "readyForParsing": true,
+        "expiresAtUtc": "2026-08-28T17:00:00Z"
+      }
+    }
+  ],
+  "verification": {
+    "controlledRunner": {
+      "conclusion": "Pass",
+      "sampleCount": 2,
+      "dwgPassed": 1,
+      "dxfPassed": 1,
+      "residualAttemptDirectoryCount": 0,
+      "residualRawCadFileCount": 0
+    },
+    "sqlServerRegression": {
+      "testProject": "CP6.Space.IntegrationTests",
+      "total": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    "web": {
+      "runner": "Vitest",
+      "testFiles": 2,
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "typeCheckPassed": true
+    }
+  },
+  "tamperTest": {
+    "rejected": true,
+    "errorCode": "SPACE_CAD_PREPARATION_INVALID",
+    "jobsBefore": 2,
+    "jobsAfter": 2
+  },
+  "boundaries": {
+    "rawCadStoredInRepository": false,
+    "productionDataClaimed": false,
+    "productionDeploymentPerformed": false,
+    "productionWmsClaimed": false
+  },
+  "sources": [
+    {
+      "path": "tools/CP6.Space.CadStartAcceptance/Program.cs",
+      "sha256": "7f6a1c32dd7bd7db66d2b518066711f51a468f7c989ac362d639f37767e505e4",
+      "gitBlobOid": "abacd6520146bfee9f7bb5eb5271ccb6861333f7"
+    },
+    {
+      "path": "CP6.Space.Infrastructure/SpaceCadPreparationService.cs",
+      "sha256": "769207c8622d41f2481546512beba32485fc89060f79639f1aadece2f38a8a66",
+      "gitBlobOid": "d09ad3e67d599f0c6ee7a7d517a3969e997c09e3"
+    },
+    {
+      "path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "sha256": "fe72e31904199b8f91a4f9917dda701a7a1c75709596c442dbbe62585f3b2d83",
+      "gitBlobOid": "a57c2a3a48d9a792d4919a0d2447cf5f278a4d52"
+    },
+    {
+      "path": "CP6.Space.Infrastructure/SpaceCadRemoteWorkerProvider.cs",
+      "sha256": "415cf437ba13d49665626e813d89a1bd711280d71f542d4e0795fe7e1c139cf8",
+      "gitBlobOid": "72c9c829cbd98f4af97f9412458eaa00c8d830b4"
+    },
+    {
+      "path": "CP6.Space.Domain/SpaceCadParsePreparation.cs",
+      "sha256": "61a4b4ca28b73aa57ae4b8bab8681896b83ac0fc6febeaff45ab3e619b9e7c29",
+      "gitBlobOid": "e69a108b5fb3654a29927099f85be915d730fd09"
+    },
+    {
+      "path": "cp6.web/src/modules/space-design/cad-start/DesignCadStartWizard.spec.ts",
+      "sha256": "2cb87870a34e11792c2f24bfd6df9ae903f5fc70f834131fa6bc11441ffc89c1",
+      "gitBlobOid": "a250b7d1a725ebeac07fd3e7adf6395482bf3e18"
+    },
+    {
+      "path": "cp6.web/src/api/space/designCadParse.spec.ts",
+      "sha256": "a6466bdb000e3f11cc82597e8dcd8bdc1d0d43df666e377d399fef9a8907558e",
+      "gitBlobOid": "cb59277b6764a18a89d28486387049f22fd252d7"
+    }
+  ],
+  "selfReview": {
+    "acceptedBy": "BUBAO.GAO",
+    "acceptedAtUtc": "2026-08-28T06:07:51Z",
+    "repeatable": true,
+    "distinctPersonReviewRequired": false
+  }
+}

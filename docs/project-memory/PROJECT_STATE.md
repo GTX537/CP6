@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space WP2 CAD Start 正式接受（2026-08-28）
+
+- 新增独立受控验收运行器，从仓库外复算授权 `L1-C01.dwg` / `L1-C02.dxf`，验证冻结 `cp6-autocad-worker/1.0.0` Release 和 AutoCAD Core `25.0.58.0.0` 后，在 SQL Server Express LocalDB `17.0.4025.3` 调用产品 Preparation/Parse 服务。
+- 两格式均完成 Floor/Unit/Transform/Mapping 显式选择、Preview 零 Draft 写入、sealed Preparation、Parse Start 和幂等重放；篡改请求以 `SPACE_CAD_PREPARATION_INVALID` 拒绝且 Job 保持 2→2，Worker 原始 CAD/Attempt 残留为 0。
+- 后端聚焦 21/21、Web Wizard/API 14/14、严格类型检查、正式 Manifest、16 个失败模式和总 GA 52/52 均通过；WP2 已 Complete/Accepted。
+- Core GA 固定保持 72% / `NoGo`：0 个外部输入、WP5/WP6/WP8 共 3 个 Gate 和 1 个最终签署 Pending。未执行生产部署、生产 WMS 或远程 Worker 部署；下一主线是 WP5 Viewer 结果接受。
+
 ## CRM Platform P02 已冻结可消费（2026-08-28 UTC）
 
 - `GTX537/CP6.Platform` 已通过 PR #3 合并 `main@6004decd2a4e41d9d502738dc5d9063bef9b37b7`；双平台 main run 33144068629 与 publish run 33144178346 成功，发布 `CP6.Platform.Contracts`、`CP6.Platform.Abstractions`、`CP6.Platform.AspNetCore` 三个 `0.2.0-alpha.1` 包并记录逐包 SHA-256。
