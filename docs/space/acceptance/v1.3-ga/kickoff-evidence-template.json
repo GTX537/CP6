@@ -38,7 +38,7 @@
         "providerKey": null,
         "providerVersion": null,
         "adapterContract": "ICadConverter",
-        "dataBoundary": "ControlledIsolatedWorker|ApprovedCloud",
+        "dataBoundary": "ControlledIsolatedWorker|LocalControlledProcess|ApprovedCloud",
         "licensingApproved": false,
         "securityApproved": false,
         "retentionDeletionApproved": false,
@@ -61,7 +61,9 @@
       "isolated": false,
       "secretsByReferenceOnly": false,
       "rawCadRetentionMode": "Ephemeral",
-      "outboundNetworkPolicy": "DenyByDefault",
+      "outboundNetworkPolicy": "DenyByDefault|OwnerAcceptedLocalBoundary",
+      "networkListenerStarted": false,
+      "businessCredentialsUnavailable": false,
       "readinessEvidence": {}
     }
   }

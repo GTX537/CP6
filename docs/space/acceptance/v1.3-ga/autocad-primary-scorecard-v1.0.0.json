@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "siteId": "59af73ca-8aab-5e90-9f65-21957e67d092",
+  "evaluatedAtUtc": "2026-08-28T01:34:53Z",
+  "candidates": [
+    {
+      "providerKey": "cp6-autocad-worker",
+      "providerVersion": "1.0.0+worker.c794e9c0ebbb.autocad.25.0.58.0.0.dxf.1.1.0",
+      "deploymentMode": "LocalControlledProcess",
+      "dataBoundary": "SiteLocal",
+      "supportsDwg": true,
+      "supportsDxf": true,
+      "validFromUtc": "2026-08-27T23:54:58Z",
+      "expiresAtUtc": "2026-09-28T00:00:00Z",
+      "approvalEvidenceReference": "docs/space/acceptance/v1.3-ga/autocad-primary-approval-v1.0.0.json",
+      "hardGates": {
+        "licensingApprovalReference": "docs/space/acceptance/v1.3-ga/autocad-primary-approval-v1.0.0.json",
+        "securityApprovalReference": "docs/space/acceptance/v1.3-ga/autocad-v1-local-boundary-approval-v1.0.0.json",
+        "dataRegionApprovalReference": "docs/space/acceptance/v1.3-ga/autocad-v1-local-boundary-approval-v1.0.0.json",
+        "deletionRetentionApprovalReference": "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json"
+      },
+      "trialPreflightPassed": true,
+      "trialPreflightReportSha256": "97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350",
+      "qualificationRubricVersion": "cad-provider-adr-0001-v2",
+      "goldenDatasetSha256": "2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15",
+      "frozenEnvironmentSha256": "c9bbbe362a01e951379d60990f227fc4d5634ac9c86534f009f1d7e87d601717",
+      "qualificationEvidenceReference": "docs/space/reports/2026-08-28-space-autocad-primary-qualification.md",
+      "scores": {
+        "entityBlockAttributeCoverage": 24,
+        "geometryUnitCoordinateFidelity": 18,
+        "performanceMemoryStability": 13,
+        "securityIsolationOperability": 12,
+        "saasLicensingTotalCost": 11,
+        "vendorSupportVersionExit": 8
+      }
+    }
+  ]
+}

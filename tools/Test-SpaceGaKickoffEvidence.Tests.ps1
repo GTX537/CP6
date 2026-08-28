@@ -358,12 +358,62 @@ try {
         -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
         -ExpectedError 'SPACE_GA_KICKOFF_CLOUD_APPROVALS_INCOMPLETE'
 
+    $approvedCloudPath = New-KickoffTestManifest 'approved-cloud' {
+        param($manifest)
+        $provider = $manifest.primaryProviderAndIsolatedWorker.candidateProviders[0]
+        $provider.dataBoundary = 'ApprovedCloud'
+        $provider.cloudApprovals.tenantApproved = $true
+        $provider.cloudApprovals.customerApproved = $true
+        $provider.cloudApprovals.securityApproved = $true
+        $provider.cloudApprovals.tenantEvidence = $provider.securityEvidence
+        $provider.cloudApprovals.customerEvidence = $provider.securityEvidence
+        $provider.cloudApprovals.securityEvidence = $provider.securityEvidence
+    }
+    Invoke-KickoffValidatorCase -Name 'approved cloud keeps isolated boundary' `
+        -ManifestPath $approvedCloudPath -ShouldPass $true `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
+
     $workerPath = New-KickoffTestManifest 'worker' {
         param($manifest)
         $manifest.primaryProviderAndIsolatedWorker.worker.secretsByReferenceOnly = $false
     }
     Invoke-KickoffValidatorCase -Name 'Worker isolation boundary is enforced' `
         -ManifestPath $workerPath -ShouldPass $false `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
+        -ExpectedError 'SPACE_GA_KICKOFF_WORKER_INVALID'
+
+    $localBoundaryPath = New-KickoffTestManifest 'local-boundary' {
+        param($manifest)
+        $provider = $manifest.primaryProviderAndIsolatedWorker.candidateProviders[0]
+        $provider.dataBoundary = 'LocalControlledProcess'
+        $worker = $manifest.primaryProviderAndIsolatedWorker.worker
+        $worker.isolated = $false
+        $worker.outboundNetworkPolicy = 'OwnerAcceptedLocalBoundary'
+        $worker | Add-Member -NotePropertyName networkListenerStarted `
+            -NotePropertyValue $false
+        $worker | Add-Member -NotePropertyName businessCredentialsUnavailable `
+            -NotePropertyValue $true
+    }
+    Invoke-KickoffValidatorCase `
+        -Name 'Owner-approved local V1 boundary is accepted' `
+        -ManifestPath $localBoundaryPath -ShouldPass $true `
+        -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
+
+    $localListenerPath = New-KickoffTestManifest 'local-listener' {
+        param($manifest)
+        $provider = $manifest.primaryProviderAndIsolatedWorker.candidateProviders[0]
+        $provider.dataBoundary = 'LocalControlledProcess'
+        $worker = $manifest.primaryProviderAndIsolatedWorker.worker
+        $worker.isolated = $false
+        $worker.outboundNetworkPolicy = 'OwnerAcceptedLocalBoundary'
+        $worker | Add-Member -NotePropertyName networkListenerStarted `
+            -NotePropertyValue $true
+        $worker | Add-Member -NotePropertyName businessCredentialsUnavailable `
+            -NotePropertyValue $true
+    }
+    Invoke-KickoffValidatorCase `
+        -Name 'local V1 boundary rejects a network listener' `
+        -ManifestPath $localListenerPath -ShouldPass $false `
         -InputId 'PRIMARY_PROVIDER_AND_ISOLATED_WORKER' `
         -ExpectedError 'SPACE_GA_KICKOFF_WORKER_INVALID'
 

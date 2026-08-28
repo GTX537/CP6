@@ -721,6 +721,11 @@ try {
 
     $goldenPrerequisitePath = New-TestManifest 'golden-prerequisites' {
         param($manifest)
+        $providerGate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER'
+        })[0]
+        $providerGate.acceptanceStatus = 'Pending'
+        $providerGate.acceptedEvidence = @()
         Set-Wp7Accepted `
             -Manifest $manifest `
             -GoldenReference $goldenAcceptanceReference `

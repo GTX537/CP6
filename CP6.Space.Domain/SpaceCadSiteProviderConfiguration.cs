@@ -11,6 +11,7 @@ public enum SpaceCadProviderDeploymentMode
     OnPremisesIsolatedWorker = 1,
     PrivateCloudWorker = 2,
     ApprovedCloudService = 3,
+    LocalControlledProcess = 4,
 }
 
 public enum SpaceCadProviderDataBoundary

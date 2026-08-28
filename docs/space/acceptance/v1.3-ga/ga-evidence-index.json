@@ -44,19 +44,19 @@
       "ownerRole": "SecurityProcurementDevOps",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M1_WEEK_2",
-      "status": "Pending",
+      "status": "Complete",
       "evidenceFormat": [
         "Primary Provider licensing, security, retention and deletion approval",
-        "Controlled isolated worker deployment and secret references",
-        "DeliveryOwner Primary selection and bounded-use approval"
+        "Controlled isolated worker or Owner-approved local controlled process boundary",
+        "DeliveryOwner Primary selection, exact release identity and bounded-use approval"
       ],
-      "verificationManifest": null,
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/autocad-primary-input-v1.0.0.json",
       "evidence": [
         {
-          "uri": "docs/space/acceptance/v1.3-ga/autocad-primary-approval-v1.0.0.json",
-          "sha256": "fa4cb082cfbbabc62cb4ae4f21a2d17cef54091f6b8a3d76d32194b109355c94",
+          "uri": "docs/space/acceptance/v1.3-ga/autocad-primary-input-v1.0.0.json",
+          "sha256": "f7032640753277cf2568590c440ec1c91723d4edd9dc303a9d4a2d8240e75897",
           "acceptedBy": "BUBAO.GAO",
-          "acceptedAtUtc": "2026-08-27T23:54:58Z"
+          "acceptedAtUtc": "2026-08-28T01:34:53Z"
         }
       ]
     }
@@ -144,12 +144,12 @@
       "ownerRole": "DeliveryOwner",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
-      "implementationStatus": "Partial",
-      "acceptanceStatus": "Pending",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "One approved Primary Provider certification",
         "Frozen-worker scorecard at or above 80 of 100",
-        "Isolation, retention/deletion and no-unapproved-cloud evidence"
+        "Controlled isolation or Owner-approved local V1 boundary, retention/deletion and no-unapproved-cloud evidence"
       ],
       "evidencePaths": [
         "docs/space/reports/2026-08-14-cad-provider-routing.md",
@@ -166,13 +166,43 @@
         "docs/space/reports/2026-08-27-space-autocad-worker-release-identity.md",
         "docs/space/reports/2026-08-27-space-autocad-primary-approval.md",
         "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md",
-        "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json"
+        "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json",
+        "docs/space/acceptance/v1.3-ga/autocad-v1-local-boundary-approval-v1.0.0.json",
+        "docs/space/acceptance/v1.3-ga/autocad-primary-scorecard-v1.0.0.json",
+        "docs/space/acceptance/v1.3-ga/autocad-primary-qualification-v1.0.0.json",
+        "docs/space/acceptance/v1.3-ga/autocad-primary-input-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-autocad-primary-qualification.md"
       ],
-      "acceptedEvidence": [],
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/autocad-primary-input-v1.0.0.json",
+          "sha256": "f7032640753277cf2568590c440ec1c91723d4edd9dc303a9d4a2d8240e75897",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T01:34:53Z"
+        },
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/autocad-primary-qualification-v1.0.0.json",
+          "sha256": "44e834886421396f17e26025d9a13a3e131b54870c55574dc6b290321d05621c",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T01:34:53Z"
+        },
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/autocad-v1-local-boundary-approval-v1.0.0.json",
+          "sha256": "b4a2c35f82a835c2ebe90e090fb73338913c8d16508372afb13b29892e2ee85c",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T01:34:53Z"
+        },
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json",
+          "sha256": "97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T01:34:53Z"
+        }
+      ],
       "acceptanceCriteria": [
-        "The Core GA candidate has one approved Primary Provider chain",
+        "The Core GA candidate has one approved, exact-version Primary Provider chain",
         "The Primary chain covers real DWG and DXF",
-        "Provider credentials remain secret references"
+        "The local V1 process starts no network listener, has no business credentials, deletes temporary CAD and emits an auditable report"
       ]
     },
     {
@@ -286,7 +316,9 @@
         "docs/space/acceptance/v1.3-ga/golden-cad-evidence-template.json",
         "docs/space/reports/2026-08-14-space-ga-golden-cad-evidence-guard.md",
         "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md",
-        "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json"
+        "docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json",
+        "docs/space/acceptance/v1.3-ga/autocad-primary-qualification-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-autocad-primary-qualification.md"
       ],
       "verificationManifest": null,
       "acceptedEvidence": [],

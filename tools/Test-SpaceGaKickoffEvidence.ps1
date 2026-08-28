@@ -345,7 +345,10 @@ function Test-ProviderApprovalsAndWorker {
         if (!(Test-KickoffText $provider.providerKey) -or
             !(Test-KickoffText $provider.providerVersion) -or
             $provider.adapterContract -ne 'ICadConverter' -or
-            $provider.dataBoundary -notin @('ControlledIsolatedWorker', 'ApprovedCloud')) {
+            $provider.dataBoundary -notin @(
+                'ControlledIsolatedWorker',
+                'LocalControlledProcess',
+                'ApprovedCloud')) {
             Add-KickoffValidationError "SPACE_GA_KICKOFF_PROVIDER_INVALID: $providerId must bind a version, ICadConverter and an approved data boundary."
         }
         if ($provider.licensingApproved -ne $true -or
@@ -369,13 +372,26 @@ function Test-ProviderApprovalsAndWorker {
     }
 
     $worker = $Section.worker
-    if ([string]$worker.workerRef -notmatch '^urn:cp6-space-ga-worker:[A-Za-z0-9][A-Za-z0-9:._-]{0,200}$' -or
-        !(Test-KickoffSha256 $worker.environmentSha256) -or
-        $worker.isolated -ne $true -or
-        $worker.secretsByReferenceOnly -ne $true -or
-        $worker.rawCadRetentionMode -ne 'Ephemeral' -or
-        $worker.outboundNetworkPolicy -ne 'DenyByDefault') {
-        Add-KickoffValidationError 'SPACE_GA_KICKOFF_WORKER_INVALID: the controlled Worker must be opaque, environment-sealed, isolated, ephemeral, deny-by-default and use secret references only.'
+    $commonWorkerBoundaryValid =
+        [string]$worker.workerRef -match '^urn:cp6-space-ga-worker:[A-Za-z0-9][A-Za-z0-9:._-]{0,200}$' -and
+        (Test-KickoffSha256 $worker.environmentSha256) -and
+        $worker.secretsByReferenceOnly -eq $true -and
+        $worker.rawCadRetentionMode -eq 'Ephemeral'
+    $isolatedWorkerBoundaryValid =
+        $provider.dataBoundary -in @(
+            'ControlledIsolatedWorker',
+            'ApprovedCloud') -and
+        $worker.isolated -eq $true -and
+        $worker.outboundNetworkPolicy -eq 'DenyByDefault'
+    $localControlledBoundaryValid =
+        $provider.dataBoundary -eq 'LocalControlledProcess' -and
+        $worker.isolated -eq $false -and
+        $worker.outboundNetworkPolicy -eq 'OwnerAcceptedLocalBoundary' -and
+        $worker.networkListenerStarted -eq $false -and
+        $worker.businessCredentialsUnavailable -eq $true
+    if (!$commonWorkerBoundaryValid -or
+        (!$isolatedWorkerBoundaryValid -and !$localControlledBoundaryValid)) {
+        Add-KickoffValidationError 'SPACE_GA_KICKOFF_WORKER_INVALID: the Worker must use either a deny-by-default isolated boundary or an Owner-approved local V1 boundary with no listener, no business credentials, ephemeral raw CAD and auditable evidence.'
     }
     Test-KickoffEvidence -OwnerId 'Isolated Worker readiness' -Evidence $worker.readinessEvidence
 }

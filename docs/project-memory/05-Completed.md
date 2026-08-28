@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space AutoCAD Primary V1 资格接受与 WP3 结案
+
+- 将 Owner 确认的本地 V1 边界固化为机器合同：`LocalControlledProcess` 不要求 OS Firewall 出站 Deny，但必须无网络监听、无业务凭据、原始 CAD 临时保存后强制删除并输出可审计报告；生产、SaaS、远程托管和再分发继续另行审批。
+- 用正式 `1.0.0` Worker、同一 20 份受控 CAD、Golden Dataset/Frozen Environment/Release/报告哈希完成 86/100 六维评分；`qualify-providers` 返回 `cadGaReady=true`、唯一 AutoCAD Primary 和 0 Blocking Code。
+- 版本化本地边界批准、评分输入、资格输出和增量 Kickoff Manifest；`PRIMARY_PROVIDER_AND_ISOLATED_WORKER` 改为 Complete，WP3 改为 Complete/Accepted，Backup 保持可选。
+- WP7 与整体 GA 没有随之虚假关闭：业务准确率/精确率/Wilson、人工减少率、受训用户 Ready 时间、其余 8 个 Gate 和最终签署仍 Pending；派生状态为 72% / NoGo（0/8/1）。
+
 ## 2026-08-27 Space AutoCAD Primary 正式 Release 绑定评测
 
 - 新增封存 Worker 的 `evaluate-release` 命令和严格报告 Schema；固定核验 20 份 10/5/5、DWG/DXF、Source SHA、Release/Provider 身份、双跑确定性、实体支持、SourceRef、Blocking、性能及 Attempt/原始 CAD 清理。

@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space AutoCAD Primary V1 资格接受与 WP3 结案（2026-08-28）
+
+- `BUBAO.GAO` 已确认 V1 本机受控边界：OS Firewall 出站禁网不再是本地阻断门禁；无业务凭据、无网络监听、临时 CAD 强制删除和可审计报告仍为硬边界。该确认不授权生产、公共 SaaS、远程托管或 Autodesk 软件再分发。
+- 正式 `1.0.0` Worker、20 份受控 CAD Release 评测和六维评分已绑定；AutoCAD Primary 得分 86/100，`qualify-providers` 返回 `cadGaReady=true`、唯一 Primary、0 Blocking Code，选择 SHA 为 `d7b9645d915f28e165209b71f69386305711301a6a2fecf7422c15cbcc2a0faa`。
+- `PRIMARY_PROVIDER_AND_ISOLATED_WORKER` 外部输入已 Complete，WP3 已 Complete/Accepted；Backup 保持可选且不阻断 V1。评分工具未修改 Site 配置，精确 Provider Version 的实际 Site 写入须继续遵守权限、Revision Fence 和发布演练边界。
+- WP7 仍诚实保持 Partial/Pending：转换覆盖、确定性、性能和删除已证明，但业务总体准确率、高置信精确率/Wilson 下界、人工操作减少率及受训用户首次 Ready 时间尚未接受。正式 Core GA 仍为 72% / `NoGo`（0 类输入、8 个 Gate、1 个签署 Pending），没有执行生产部署。
+
 ## Space AutoCAD Primary 正式 Release 绑定评测（2026-08-27）
 
 - Release 绑定评测器已由 PR #53 在 7/7 required checks 后合并；从精确 `main@d2d0a0d1b0978a4283bd9387f4120eefe10a135d` 构建并封存正式 `1.0.0`，完整 Worker Release SHA 为 `c794e9c0ebbb2c736866827e07e6682347992dd5a672218efddfe6ff5c0f202e`。
