@@ -711,6 +711,7 @@ try {
         })[0]
         $gate.ownerName = 'Zhang Wei'
         $gate.acceptanceStatus = 'Accepted'
+        $gate.verificationManifest = $null
         $gate.acceptedEvidence = @($localAttestation)
     }
     Invoke-ValidatorCase `
@@ -830,6 +831,11 @@ try {
 
     $rehearsalPrerequisitePath = New-TestManifest 'rehearsal-prerequisites' {
         param($manifest)
+        $goldenGate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
+        })[0]
+        $goldenGate.acceptanceStatus = 'Pending'
+        $goldenGate.acceptedEvidence = @()
         Set-Wp8Accepted `
             -Manifest $manifest `
             -RehearsalReference $rehearsalAcceptanceReference `

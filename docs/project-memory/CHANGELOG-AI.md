@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space WP7 正式黄金 CAD 接受
+
+- Added a deterministic formal business evaluator for the frozen 20-file authorized original CAD set, including exact source/hash binding, geometry and hierarchy checks, calibration-only threshold selection, out-of-sample reporting, operation reduction and Holdout omission detection.
+- Overall quality passed at 99.0224% coverage, 98.7008% semantic/high-confidence precision, 98.1717% Wilson lower bound and 96.9043% manual-operation reduction; out-of-sample quality passed at 99.2352%, 98.9828%, 98.3541% and 97.5781%, with zero unreported Holdout Blocking omissions.
+- Ran one excluded warmup plus 20 stable observations against an exact 50 MiB authorized-original-derived DXF envelope; review-ready P95 was about 2.323 seconds, first-Ready P95 about 1.937 seconds, with zero failures. The evidence explicitly does not claim 50 MiB customer geometry complexity or a production deployment.
+- Added reproducible performance/manifest tooling and accepted `golden-cad-formal-evidence-v1.0.0.json`; WP7 is Complete/Accepted. Core GA remains 72% / NoGo with 0 pending inputs, 7 pending gates and 1 pending signer.
+
 ## 2026-08-28 UTC：CRM Platform P01/P10 签名里程碑对齐
 
 - Aligned the CRM V1 executable specification so P01 requires reproducible pack verification and no empty-package publication, while formal signing candidates remain a P10 release-governance responsibility.

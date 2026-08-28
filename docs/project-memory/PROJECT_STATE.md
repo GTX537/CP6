@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space WP7 正式黄金 CAD 接受（2026-08-28）
+
+- 同一冻结 Source Set 的 20 份 `ApprovedOriginalWork` CAD 已完成正式业务评估：Overall 覆盖率 99.0224%、准确率/高置信精确率 98.7008%、Wilson 下界 98.1717%、人工操作下降 96.9043%；Out-of-sample 五项分别为 99.2352%、98.9828%、98.9828%、98.3541%、97.5781%，Holdout 未报告 Blocking 遗漏为 0。
+- 精确 50 MiB 的授权原创派生性能包络执行 1 次预热和 20 次稳定观察；可审查提案 P95 0.038715917 分钟、首次 Ready P95 0.032280823 分钟、0 失败。证据明确不把 DXF `999` 注释填充冒充客户复杂几何，也没有伪造确认、Apply 或 Draft 写入。
+- `golden-cad-formal-evidence-v1.0.0.json` 通过失败关闭校验，Primary 资格分 86、`releaseEligible=true`；WP7 已 Complete/Accepted。原始 CAD、完整评估请求、性能 CAD 和 Worker 二进制仍在仓库外。
+- Core GA 仍为 72% / `NoGo`：两类外部输入均 Complete，剩余 WP0～WP2、WP4～WP6、WP8 共 7 个 Gate 和 1 个 DeliveryOwner 签署 Pending；未执行生产部署。下一主线转为 WP4 三路径的受控真实端到端接受，并复用 WP7 的同一 Primary/Source Set，不再重复黄金集评估。
+
 ## CRM Platform P01/P10 签名里程碑对齐（2026-08-28 UTC）
 
 - CRM V1 公开执行规格已消除 P01/P10 的签名冲突：P01 以空模板编译、可重复 pack、runner contract、无跨仓 ProjectReference 和“不发布空包”作为完成证据；正式 NuGet/镜像签名候选仍属于 P10 发布治理。
