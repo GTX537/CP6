@@ -33,8 +33,10 @@ function Invoke-RehearsalValidator {
         [Parameter(Mandatory)][string]$Manifest,
         [switch]$PassOwner
     )
-    $arguments = @('-ManifestPath', (Join-Path $repo $Manifest))
-    if ($PassOwner) { $arguments += @('-ExpectedOwnerName', $OwnerName) }
+    $arguments = @{
+        ManifestPath = Join-Path $repo $Manifest
+    }
+    if ($PassOwner) { $arguments.ExpectedOwnerName = $OwnerName }
     $output = & (Join-Path $PSScriptRoot $Script) @arguments 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw "$Script failed with exit code $LASTEXITCODE.`n$($output -join [Environment]::NewLine)"
