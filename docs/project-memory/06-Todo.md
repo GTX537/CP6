@@ -1,9 +1,9 @@
 # 当前待办与优先级
 
-## P0：Platform P04 与后续跨仓合同
+## P0：Platform P05/P06 与后续跨仓合同
 
-- P02/P03 已分别以不可变包、逐包 SHA-256、CRM 固定版本引用及 PR/main 远端消费证据达到 `Frozen / Consumable`；不要再把两者写成 Absent 或 Candidate。
-- 下一项 Platform 跨仓前置是 P04 CloudEvents；CRM 还需 CRM-F3-CONTRACT，登录仍需 C01/P07/C02/CRM03。每项必须有版本化 locator、实现、负向测试、不可变产物及生产者/消费者门禁，不能因 P03 完成而提前启动真实登录或业务切片。
+- P02/P03/P04 已分别以不可变包、逐包 SHA-256、CRM 固定版本引用及 PR/main 远端消费证据达到 `Frozen / Consumable`；不要再把三者写成 Absent 或 Candidate。
+- 下一项异步运行时前置是 P05 Dapr/Kafka 与 P06 Outbox/Inbox；CRM 还需 CRM-F3-CONTRACT/C02 业务事件，登录仍需 C01/P07/C02/CRM03。每项必须有版本化 locator、实现、负向测试、不可变产物及生产者/消费者门禁，不能因 P04 完成而提前启用运行时订阅、真实登录或业务切片。
 
 ## P0：CRM V1 公开同步与 M0
 

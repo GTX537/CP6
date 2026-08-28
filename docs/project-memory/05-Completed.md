@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 UTC CRM Platform P04 冻结可消费
+
+- Platform PR #6/#7 已在 `main@2c4c601228d81b300659b7773748da2e995ce433` 完成 CloudEvents 1.0 structured JSON、Draft 2020-12 内容寻址 bundle 与 exact-main 发布；run 33167927567 发布四个不可变 `0.4.0-alpha.1` 包及 artifact/package SHA-256 证据。
+- CRM PR #25 已精确固定 Abstractions/AspNetCore/Messaging，复用发布 bundle 做同 bytes 生产者/消费者验证，并在副作用前失败关闭 schema、旧别名和区域边界；PR run 33169553326 attempt 2 与 main run 33170491020 通过完整远端门禁。
+- CRM PR #26 将 locator 冻结为 `Frozen / Consumable`，合并后 `main@2a728411c6becd437bb0e1f7f4ead680a0947c52` run 33171913476 通过；Platform PR #8 合并后 `main@313f8090a0a806ab961e3590939b07fab878a77b` run 33172549942 在 Windows/Linux 通过。
+- P04 不启用运行时消息，不定义 C02/CRM-F3-CONTRACT 业务事件，也不实现 P05/P06；本项没有 Secret、云资源或部署。
+
 ## 2026-08-28 UTC CRM Platform P03 冻结可消费
 
 - Platform PR #4 已合并至 `main@1a39711423dbae7d869031b5d8570e649ccee8f4`；PR/main 双平台验证与 publish run 33155315173 通过，发布三个具有逐包 SHA-256 证据的 `0.3.0-alpha.1` 包。
