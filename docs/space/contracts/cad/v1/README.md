@@ -129,6 +129,8 @@ Files:
 - `remote-worker-approval.schema.json`: deployment-owned approval evidence contract.
 - `candidate-worker-release.schema.json`: immutable candidate Worker payload and
   exact AutoCAD Core Console release identity.
+- `autocad-primary-evaluation.schema.json`: release-bound 20-file AutoCAD
+  Primary conversion, deterministic replay, performance and cleanup evidence.
 - `examples/minimal-wall.json`: minimal valid IR package.
 - `examples/development-coordinate-confirmation.json`: confirmation for synthetic sample 13.
 - `examples/development-mapping-profile-draft.json`: system profile draft for the synthetic corpus.

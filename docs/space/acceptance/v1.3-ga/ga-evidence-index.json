@@ -164,7 +164,8 @@
         "docs/space/reports/2026-08-27-space-autocad-candidate-worker-dxf.md",
         "docs/space/reports/2026-08-27-space-dxf-50m-streaming-capacity.md",
         "docs/space/reports/2026-08-27-space-autocad-worker-release-identity.md",
-        "docs/space/reports/2026-08-27-space-autocad-primary-approval.md"
+        "docs/space/reports/2026-08-27-space-autocad-primary-approval.md",
+        "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -282,7 +283,8 @@
         "docs/space/acceptance/01-golden-dataset-protocol.md",
         "docs/space/acceptance/v1.3-ga/golden-cad-evidence-protocol.md",
         "docs/space/acceptance/v1.3-ga/golden-cad-evidence-template.json",
-        "docs/space/reports/2026-08-14-space-ga-golden-cad-evidence-guard.md"
+        "docs/space/reports/2026-08-14-space-ga-golden-cad-evidence-guard.md",
+        "docs/space/reports/2026-08-27-space-autocad-primary-release-evaluator.md"
       ],
       "verificationManifest": null,
       "acceptedEvidence": [],

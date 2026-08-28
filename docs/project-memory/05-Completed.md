@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-27 Space AutoCAD Primary Release 绑定评测器
+
+- 新增封存 Worker 的 `evaluate-release` 命令和严格报告 Schema；固定核验 20 份 10/5/5、DWG/DXF、Source SHA、Release/Provider 身份、双跑确定性、实体支持、SourceRef、Blocking、性能及 Attempt/原始 CAD 清理。
+- 加固后任务分支 `1.0.0-rc.2` 真实执行 20/20、确定性 20/20，支持实体 14,659/14,699（99.727873%），SourceRef/Blocking/残留为 0，首跑 P95 3.941 秒；完整真实 AutoCAD 回归 61/61。
+- RC 明确不是最终正式 Release，且诚实记录 OS 出站禁网尚未验证；实现合并后仍须从精确 `main` 重建 `1.0.0` 并重跑，未提前关闭 WP3/WP7/GA。
+
 ## 2026-08-27 Space AutoCAD Primary 选择与单 Provider 合同
 
 - `BUBAO.GAO` 已把 AutoCAD 2025 Core Console 批准为 V1 唯一 Primary，范围限定为本机受控开发、验证和 Release Rehearsal；不伪造 Autodesk 订单、订阅编号或 SaaS/生产许可。
