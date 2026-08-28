@@ -9,6 +9,12 @@ on:
       - 'docs/space/acceptance/development-v1/**'
       - 'docs/space/acceptance/development-v2.0.0/**'
       - 'docs/space/reports/**'
+      - 'cp6.web/src/api/space/designPublishedScene.ts'
+      - 'cp6.web/src/space-viewer/**'
+      - 'cp6.web/src/views/space/viewer/**'
+      - 'cp6.web/scripts/space-performance-*.mjs'
+      - 'cp6.web/e2e/space-viewer-ga.spec.ts'
+      - 'cp6.web/playwright.config.ts'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaReleaseRehearsalEvidence.ps1'
@@ -28,6 +34,8 @@ on:
       - 'tools/CP6.Space.CadStartAcceptance/**'
       - 'tools/Test-SpaceGaThreePathEvidence.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaViewerEvidence.ps1'
+      - 'tools/Test-SpaceGaViewerEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
@@ -48,6 +56,12 @@ on:
       - 'docs/space/acceptance/development-v1/**'
       - 'docs/space/acceptance/development-v2.0.0/**'
       - 'docs/space/reports/**'
+      - 'cp6.web/src/api/space/designPublishedScene.ts'
+      - 'cp6.web/src/space-viewer/**'
+      - 'cp6.web/src/views/space/viewer/**'
+      - 'cp6.web/scripts/space-performance-*.mjs'
+      - 'cp6.web/e2e/space-viewer-ga.spec.ts'
+      - 'cp6.web/playwright.config.ts'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaReleaseRehearsalEvidence.ps1'
@@ -67,6 +81,8 @@ on:
       - 'tools/CP6.Space.CadStartAcceptance/**'
       - 'tools/Test-SpaceGaThreePathEvidence.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaViewerEvidence.ps1'
+      - 'tools/Test-SpaceGaViewerEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
@@ -84,7 +100,7 @@ permissions:
 jobs:
   validate:
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -126,6 +142,10 @@ jobs:
       - name: Exercise formal three-path evidence failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaThreePathEvidence.Tests.ps1
+
+      - name: Exercise formal Viewer evidence failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaViewerEvidence.Tests.ps1
 
       - name: Exercise authorized golden CAD candidate failure modes
         shell: pwsh

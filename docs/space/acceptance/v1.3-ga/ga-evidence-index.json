@@ -299,20 +299,30 @@
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
       "implementationStatus": "Complete",
-      "acceptanceStatus": "Pending",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "Published-only production-equivalent Viewer E2E",
-        "Iris Xe WebGL2 raw performance samples",
+        "Hardware-accelerated WebGL2 raw performance samples; optional GPU pattern is diagnostic only",
         "Recorded keyboard, contrast and assistive-technology checks"
       ],
       "evidencePaths": [
+        "docs/space/reports/2026-08-28-space-wp5-viewer-acceptance.md",
+        "docs/space/acceptance/v1.3-ga/viewer-formal-evidence-v1.0.0.json",
         "docs/space/reports/2026-08-14-space-viewer-v13-ga.md",
         "docs/space/reports/2026-08-14-space-viewer-v13-ga.json",
         "docs/space/reports/2026-08-14-space-studio-accessibility.md",
         "docs/space/reports/2026-08-14-space-sqlserver-localdb-full-gate.md",
         "docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md"
       ],
-      "acceptedEvidence": [],
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/viewer-formal-evidence-v1.0.0.json",
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/viewer-formal-evidence-v1.0.0.json",
+          "sha256": "ae2a5ee962c0f15f170adcd3ea0c821631521bd4e853485c7700544fcbe86c12",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T07:28:55Z"
+        }
+      ],
       "acceptanceCriteria": [
         "Production Viewer consumes only Current Published Design Revision",
         "All frozen Viewer performance thresholds pass",

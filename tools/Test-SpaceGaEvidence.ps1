@@ -25,6 +25,8 @@ $cadStartValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaCadStartEvidence.ps1')
 $threePathValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaThreePathEvidence.ps1')
+$viewerValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaViewerEvidence.ps1')
 $goldenCadValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaGoldenCadEvidence.ps1')
 $goldenCadCandidateValidator = Join-Path $PSScriptRoot (
@@ -855,6 +857,73 @@ foreach ($gate in @($manifest.gates)) {
                                 'SPACE_GA_THREE_PATH_BASELINE_INVALID: ' +
                                 $_.Exception.Message)
                         }
+                    }
+                }
+            }
+        }
+        if ($gate.id -eq 'WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE') {
+            $viewerManifestReference = [string]$gate.verificationManifest
+            if (!(Test-Text $viewerManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_VIEWER_MANIFEST_REQUIRED: Accepted WP5 ' +
+                    'requires a structured Viewer evidence manifest.')
+            }
+            elseif ([System.IO.Path]::IsPathRooted($viewerManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_VIEWER_MANIFEST_ABSOLUTE: WP5 manifest ' +
+                    'must use a repository-relative path.')
+            }
+            else {
+                $viewerManifestFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $viewerManifestReference))
+                $normalizedReference = $viewerManifestReference.Replace('\', '/')
+                $isTemplateOrFixture =
+                    $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                    $normalizedReference.EndsWith(
+                        '/viewer-evidence-template.json',
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                if (!$viewerManifestFullPath.StartsWith(
+                    $repoPrefix,
+                    [System.StringComparison]::OrdinalIgnoreCase)) {
+                    Add-ValidationError (
+                        'SPACE_GA_VIEWER_MANIFEST_ESCAPE: WP5 manifest ' +
+                        'escapes the repository root.')
+                }
+                elseif ($isTemplateOrFixture) {
+                    Add-ValidationError (
+                        'SPACE_GA_VIEWER_MANIFEST_SYNTHETIC: WP5 cannot ' +
+                        'use a template or test fixture as formal evidence.')
+                }
+                elseif ([System.IO.Path]::GetExtension(
+                    $viewerManifestFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $viewerManifestFullPath -PathType Leaf)) {
+                    Add-ValidationError (
+                        'SPACE_GA_VIEWER_MANIFEST_MISSING: WP5 manifest ' +
+                        "does not exist as JSON: $viewerManifestReference")
+                }
+                else {
+                    $manifestIsAttested = @($gate.acceptedEvidence |
+                        Where-Object {
+                            ([string]$_.uri).Equals(
+                                $viewerManifestReference,
+                                [System.StringComparison]::OrdinalIgnoreCase)
+                        }).Count -gt 0
+                    if (!$manifestIsAttested) {
+                        Add-ValidationError (
+                            'SPACE_GA_VIEWER_MANIFEST_UNATTESTED: WP5 ' +
+                            'accepted evidence must attest the structured ' +
+                            'Viewer manifest itself.')
+                    }
+                    try {
+                        & $viewerValidator `
+                            -ManifestPath $viewerManifestFullPath `
+                            -ExpectedOwnerName ([string]$gate.ownerName) |
+                            Out-Null
+                    }
+                    catch {
+                        Add-ValidationError (
+                            'SPACE_GA_VIEWER_EVIDENCE_INVALID: ' +
+                            $_.Exception.Message)
                     }
                 }
             }

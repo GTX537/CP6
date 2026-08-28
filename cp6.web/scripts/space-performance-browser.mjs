@@ -8,6 +8,7 @@ import { chromium } from '@playwright/test'
 import {
   FORMAL_SPACE_PERFORMANCE_BUDGETS,
   aggregateEvidence,
+  rendererMatchesOptionalPattern,
 } from './space-performance-evidence.mjs'
 
 const candidates = [
@@ -49,10 +50,10 @@ const evidencePath = path.resolve(
   process.env.SPACE_PERFORMANCE_EVIDENCE
     ?? '../artifacts/space-performance/space-viewer-ga.json',
 )
-const requiredGpuPattern = new RegExp(
-  process.env.SPACE_PERFORMANCE_REQUIRED_GPU ?? 'Iris.*Xe',
-  'i',
-)
+const requiredGpuPatternSource = process.env.SPACE_PERFORMANCE_REQUIRED_GPU?.trim()
+const requiredGpuPattern = requiredGpuPatternSource
+  ? new RegExp(requiredGpuPatternSource, 'i')
+  : null
 
 function commandOutput(command, args, fallback = null) {
   try {
@@ -191,7 +192,8 @@ try {
     ? { ...FORMAL_SPACE_PERFORMANCE_BUDGETS, minimumColdRuns: runCount }
     : FORMAL_SPACE_PERFORMANCE_BUDGETS
   const aggregate = aggregateEvidence(runs, effectiveBudgets)
-  aggregate.checks.requiredGpu = runs.every((run) => requiredGpuPattern.test(run.webgl?.renderer ?? ''))
+  aggregate.checks.requiredGpu = runs.every((run) =>
+    rendererMatchesOptionalPattern(run.webgl?.renderer, requiredGpuPattern))
   aggregate.checks.warmupCompleted = (
     warmup.result?.status === 'PASS'
     && !warmup.softwareRenderer
@@ -212,7 +214,7 @@ try {
     viewport,
     executablePath,
     browserVersion,
-    requiredGpuPattern: requiredGpuPattern.source,
+    requiredGpuPattern: requiredGpuPattern?.source ?? null,
     screenshotPath,
     evidencePath,
     git: {

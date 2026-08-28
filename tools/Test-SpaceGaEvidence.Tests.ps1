@@ -1267,6 +1267,19 @@ try {
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_EVIDENCE_ACCEPTOR_INVALID'
 
+    $missingViewerManifestPath = New-TestManifest 'missing-viewer-manifest' {
+        param($manifest)
+        $gate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE'
+        })[0]
+        $gate.verificationManifest = $null
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP5 requires a structured Viewer manifest' `
+        -ManifestPath $missingViewerManifestPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_VIEWER_MANIFEST_REQUIRED'
+
     $missingGoldenManifestPath = New-TestManifest 'missing-golden-manifest' {
         param($manifest)
         $gate = @($manifest.gates | Where-Object {
