@@ -3,7 +3,7 @@
 ## Space AutoCAD Primary Release 绑定评测器（2026-08-27）
 
 - 候选 Worker 已新增 `evaluate-release`：完整核验封存 Release/Core 身份后，对固定 20 份受控 CAD 逐份双跑，验证数据集哈希、响应身份、Package 确定性、99% 支持率、SourceRef、Blocking、120 秒上限和临时文件清理；报告有严格 Schema 且拒绝覆盖。
-- 任务分支 `1.0.0-rc.1` 真实预演 20/20、双跑确定性 20/20；14,699/14,659 实体、99.727873% 支持，缺失 SourceRef/Blocking/残留均为 0，P95 3.952 秒。报告 SHA 为 `2c1e5482cfd0494403b6296624957f0fd2cb7cb67b279bae3f8458102030b547`。
+- 加固后任务分支 `1.0.0-rc.2` 真实预演 20/20、双跑确定性 20/20；14,699 总实体中 14,659 支持、支持率 99.727873%，缺失 SourceRef/Blocking/残留均为 0，P95 3.941 秒。报告 SHA 为 `6f8ca448502181a493aaf142fbedaa11a3261a7a622ba696aa74453d228aa597`。
 - RC 只验证评测能力，不能冒充合并后正式 Release；报告明确记录 OS 出站策略尚未验证，没有生产 mTLS/Firewall 或生产部署声明。下一步合并实现后从精确 `main` 重建 `1.0.0` 并重跑同一数据集。
 - 正式 Core GA 仍为 72% / `NoGo`（1 类输入、9 个 Gate、1 个签署 Pending），原始 CAD 与 Worker 二进制保持仓库外。
 

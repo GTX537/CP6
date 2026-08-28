@@ -5,7 +5,7 @@
 ## 2026-08-27：Space AutoCAD Primary Release 绑定评测器
 
 - 新增 `evaluate-release` 与严格报告 Schema：复核封存 Worker/Core 后，对受控 20 份 CAD 双跑并固定检查数据集身份、Package 确定性、99% 支持率、SourceRef、Blocking、120 秒上限和临时数据清理。
-- 任务分支 `1.0.0-rc.1` 真实预演 20/20、确定性 20/20；支持实体 14,659/14,699（99.727873%），SourceRef/Blocking/残留为 0，P95 3.952 秒；完整安装回归 61/61。
+- 加固后任务分支 `1.0.0-rc.2` 真实预演 20/20、确定性 20/20；支持实体 14,659/14,699（99.727873%），SourceRef/Blocking/残留为 0，P95 3.941 秒；完整安装回归 61/61。
 - RC 只证明评测实现，尚未绑定合并后 `main`；报告明确标注 OS 出站策略未验证，未冒充生产 mTLS/Firewall、正式 Provider 接受或生产部署。Core GA 保持 72% / NoGo。
 
 ## 2026-08-27：Space AutoCAD Primary 批准与单 Provider Ready

@@ -26,26 +26,27 @@ Provider Version、数据集 Manifest、Source Set、Golden Dataset 和冻结环
 
 ## 真实 RC 预演
 
-在任务分支提交 `b88e135c8067f0c7c814d25b8987e74ff02af249` 上封存
-`1.0.0-rc.1`，仅用于在合并前验证新评测器，不作为最终正式 Release：
+在加入清单外 CAD 拒绝检查后的任务分支提交
+`1dfd176734e1950cc55fd6ffc3abf7db913b8a81` 上封存 `1.0.0-rc.2`，
+仅用于在合并前验证新评测器，不作为最终正式 Release：
 
 | 项目 | 结果 |
 |---|---:|
 | Worker Payload + Manifest 文件 | 19 |
-| Worker Release SHA-256 | `b8581fb15236a005230bcc7eea33d81add3de8239d89399e78fa5c72aac5013f` |
-| Provider Version | `1.0.0-rc.1+worker.b8581fb15236.autocad.25.0.58.0.0.dxf.1.1.0` |
+| Worker Release SHA-256 | `281cef51e06b522fa191d2f8cdd52bd124dc98124fcdd6b53ea9b096b885644d` |
+| Provider Version | `1.0.0-rc.2+worker.281cef51e06b.autocad.25.0.58.0.0.dxf.1.1.0` |
 | 数据集 | 20/20，10 DWG + 10 DXF，10/5/5 |
 | 双跑确定性 | 20/20 |
 | 实体 | 14,699 总计 / 14,659 支持 / 40 个已报告 VIEWPORT |
 | 支持比例 | 99.727873% |
 | 缺失 SourceRef / Blocking Issue | 0 / 0 |
-| 首跑 P95 / Max | 3.952 秒 / 3.954 秒 |
+| 首跑 P95 / Max | 3.941 秒 / 4.562 秒 |
 | 残留 Attempt / 原始 CAD | 0 / 0 |
 | 报告 Schema | Pass |
-| 报告 SHA-256 | `2c1e5482cfd0494403b6296624957f0fd2cb7cb67b279bae3f8458102030b547` |
+| 报告 SHA-256 | `6f8ca448502181a493aaf142fbedaa11a3261a7a622ba696aa74453d228aa597` |
 
 RC 报告位于仓库外
-`D:\CP6-Cad-Evidence\space-autocad-primary\1.0.0-rc.1-b88e135c\evaluation.json`；
+`D:\CP6-Cad-Evidence\space-autocad-primary\1.0.0-rc.2-1dfd1767\evaluation.json`；
 原始 DWG/DXF 与 Worker 二进制均未提交 Git。
 
 ## 证据边界
