@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 UTC CRM Platform P05 冻结可消费
+
+- Platform PR #9/#10 已在 `main@7acb658e001e2bea4e567feeb4e0f7fb1e47eae6` 完成 Dapr invocation/PubSub、Kafka topic/key 约定、双平台及真实 Dapr/Kafka 门禁；exact-main publish run 33192773875 发布四个不可变 `0.5.0-alpha.1` 包、artifact 9694537167 及 artifact/package SHA-256 证据。
+- CRM PR #27 固定消费四个 `0.5.0-alpha.1` 包，并在副作用前组合 P04 envelope/region/legacy 与 P05 topic/key 失败关闭；PR run 33194075874 和 `main@76cf6e6eef5dd835e5d2005d9d1e22b69654c759` run 33194583713 通过完整远端门禁。
+- CRM PR #28 将 locator 冻结为 `Frozen / Consumable`；最终 `main@75fa59ffd9e31c9bffb3ec4f8dd27b996cb49c0f` run 33195879078 通过。Platform PR #11 闭环文档后，最终 `main@b0a5b472cf9554f01969f93d671658ad1aca8752` run 33196852469 的 Windows、Linux 与真实 Dapr/Kafka 三项门禁通过。
+- P05 不启用 CRM Worker 或运行时订阅，不实现 P06 Outbox/Inbox 或 C02/CRM-F3-CONTRACT 业务事件；本项没有 Secret、云资源或部署。
+
 ## 2026-08-28 UTC CRM Platform P04 冻结可消费
 
 - Platform PR #6/#7 已在 `main@2c4c601228d81b300659b7773748da2e995ce433` 完成 CloudEvents 1.0 structured JSON、Draft 2020-12 内容寻址 bundle 与 exact-main 发布；run 33167927567 发布四个不可变 `0.4.0-alpha.1` 包及 artifact/package SHA-256 证据。
