@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：CRM Platform P04 冻结可消费
+
+- `CP6.Platform main@2c4c601228d81b300659b7773748da2e995ce433` 通过实现/发布 PR、双平台门禁和 exact-main publish run 33167927567，发布四个不可变 `0.4.0-alpha.1` 包以及 artifact/package SHA-256 证据。
+- `CP6.CRM` PR #25 固定消费 Abstractions/AspNetCore/Messaging，复用发布 bundle 并增加副作用前 schema、旧别名和区域失败关闭；PR run 33169553326 attempt 2 与 main run 33170491020 通过远端恢复和完整门禁。
+- CRM PR #26 将 locator 冻结为 `Frozen / Consumable`；`main@2a728411c6becd437bb0e1f7f4ead680a0947c52` run 33171913476 通过。Platform PR #8 同步文档后，`main@313f8090a0a806ab961e3590939b07fab878a77b` run 33172549942 在 Windows/Linux 通过。
+- P05/P06、C02/CRM-F3-CONTRACT、运行时订阅、Secret、云资源和部署仍未实现或授权。
+
 ## 2026-08-28：CRM Platform P03 冻结可消费
 
 - `CP6.Platform main@1a39711423dbae7d869031b5d8570e649ccee8f4` 通过 PR/main 双平台门禁，并由 publish run 33155315173 发布三个不可变 `0.3.0-alpha.1` 包及逐包 SHA-256。
