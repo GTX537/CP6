@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## CRM Platform P05 已冻结可消费（2026-08-28 UTC）
+
+- `GTX537/CP6.Platform` 已通过实现 PR #9 与发布 PR #10，在 `main@7acb658e001e2bea4e567feeb4e0f7fb1e47eae6` 完成 Dapr service invocation、structured CloudEvent Pub/Sub、Kafka topic/partition-key 约定及真实 Dapr 1.18.2/Kafka 4.3.1 容器门禁；main run 33192565859 与 exact-main publish run 33192773875 成功。
+- publish run 发布四个不可变 `0.5.0-alpha.1` 包和 artifact 9694537167；artifact SHA-256 为 `d2135e57ffcd47695165808c5ce841a6aca6afb8641cb49a499f9b1af23d96db`。逐包 SHA-256：Contracts `b574da91d427a2573c7afd55e686bee590ab401550c057a3436db94c79c81aae`、Abstractions `add6d9e136629791a99e93522557466d4328b4ecdee2ae711f4c57dbf20cf5c0`、AspNetCore `142c7a6eabaa888603471550cc5b74b208c365a631a0cd6f6668cd8e59b6fe6e`、Messaging `3a2e934abeb419861ee8958e52a1c878c9ed988c703839c7225039981ec44fc3`。
+- `GTX537/CP6.CRM` PR #27 固定消费 `0.5.0-alpha.1`，组合 P04 envelope/region/legacy 与 P05 topic/key 校验并在副作用前失败关闭；PR run 33194075874 与合并后 `main@76cf6e6eef5dd835e5d2005d9d1e22b69654c759` run 33194583713 通过远端包恢复、28/28 .NET、39/39 Web、production build 与 3/3 Chromium smoke。
+- CRM PR #28 将 locator 冻结为 `Frozen / Consumable`；最终 `main@75fa59ffd9e31c9bffb3ec4f8dd27b996cb49c0f` run 33195879078 通过。Platform PR #11 同步三仓闭环证据后，最终 `main@b0a5b472cf9554f01969f93d671658ad1aca8752` run 33196852469 的 Windows、Linux 与真实 Dapr/Kafka 三项门禁通过。
+- 该结论只关闭 P05 通用传输合同与固定版本消费。CRM Worker、运行时订阅、P06 Outbox/Inbox、C02/CRM-F3-CONTRACT 业务事件、Secret、云资源和部署仍未实现或授权。
+
 ## CRM Platform P04 已冻结可消费（2026-08-28 UTC）
 
 - `GTX537/CP6.Platform` 已通过实现 PR #6 与发布 PR #7 合并 `main@2c4c601228d81b300659b7773748da2e995ce433`；Windows/Linux main run 33167738330 与 exact-main publish run 33167927567 成功，发布四个不可变 `0.4.0-alpha.1` 包和 artifact 9684391334。

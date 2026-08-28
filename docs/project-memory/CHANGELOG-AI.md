@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：CRM Platform P05 冻结可消费
+
+- `CP6.Platform` PR #9/#10 完成 Dapr invocation/PubSub、Kafka topic/key 约定及真实 Dapr/Kafka 门禁；`main@7acb658e001e2bea4e567feeb4e0f7fb1e47eae6` 的 exact-main publish run 33192773875 发布四个不可变 `0.5.0-alpha.1` 包、artifact 9694537167 和完整 SHA-256 证据。
+- `CP6.CRM` PR #27 固定版本消费并组合 P04+P05 副作用前失败关闭；PR run 33194075874 与合并后 main run 33194583713 通过远端恢复和完整门禁。PR #28 把 locator 冻结为 `Frozen / Consumable`，最终 `main@75fa59ffd9e31c9bffb3ec4f8dd27b996cb49c0f` run 33195879078 通过。
+- Platform PR #11 同步最终消费者证据；`main@b0a5b472cf9554f01969f93d671658ad1aca8752` run 33196852469 的 Windows、Linux 与真实 Dapr/Kafka 三项门禁通过。
+- P06 Outbox/Inbox、CRM-F3-CONTRACT/C02 业务事件、CRM Worker/运行时订阅、Secret、云资源和部署仍未实现或授权。
+
 ## 2026-08-28：CRM Platform P04 冻结可消费
 
 - `CP6.Platform main@2c4c601228d81b300659b7773748da2e995ce433` 通过实现/发布 PR、双平台门禁和 exact-main publish run 33167927567，发布四个不可变 `0.4.0-alpha.1` 包以及 artifact/package SHA-256 证据。
