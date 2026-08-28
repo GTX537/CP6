@@ -14,5 +14,9 @@ tests/fixtures/release-shadow/** -text
 # Sanitized Space GA candidate manifests are content-addressed evidence.
 docs/space/acceptance/v1.3-ga/authorized-golden-cad-candidates-*.json binary
 
+# Generated AutoCAD evaluation reports retain the evaluator's exact report SHA.
+# They are schema-validated separately; text normalization would alter the proof.
+docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-*.json binary
+
 # Main-sync SQL hashes are deployment evidence and must stay byte-stable.
 deploy/production/sql/main-sync-*/**.sql text eol=lf

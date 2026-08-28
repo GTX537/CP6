@@ -1,17 +1,18 @@
 # 已完成能力与近期里程碑
 
-## 2026-08-27 Space AutoCAD Primary Release 绑定评测器
+## 2026-08-27 Space AutoCAD Primary 正式 Release 绑定评测
 
 - 新增封存 Worker 的 `evaluate-release` 命令和严格报告 Schema；固定核验 20 份 10/5/5、DWG/DXF、Source SHA、Release/Provider 身份、双跑确定性、实体支持、SourceRef、Blocking、性能及 Attempt/原始 CAD 清理。
-- 加固后任务分支 `1.0.0-rc.2` 真实执行 20/20、确定性 20/20，支持实体 14,659/14,699（99.727873%），SourceRef/Blocking/残留为 0，首跑 P95 3.941 秒；完整真实 AutoCAD 回归 61/61。
-- RC 明确不是最终正式 Release，且诚实记录 OS 出站禁网尚未验证；实现合并后仍须从精确 `main` 重建 `1.0.0` 并重跑，未提前关闭 WP3/WP7/GA。
+- PR #53 以 7/7 required checks 合并；从精确 `main@d2d0a0d1b0978a4283bd9387f4120eefe10a135d` 封存正式 `1.0.0`，Worker Release SHA 为 `c794e9c0ebbb2c736866827e07e6682347992dd5a672218efddfe6ff5c0f202e`。
+- 正式执行 20/20、确定性 20/20，支持实体 14,659/14,699（99.727873%），SourceRef/Blocking/残留为 0，首跑 P95 4.281 秒；报告与 Release Schema 均通过，完整真实 AutoCAD 回归 61/61。
+- 报告仍诚实记录 OS 出站禁网尚未验证；本项完成正式 Release 的转换证据，但未提前关闭隔离审批、资格评分、WP3/WP7 或 GA。
 
 ## 2026-08-27 Space AutoCAD Primary 选择与单 Provider 合同
 
 - `BUBAO.GAO` 已把 AutoCAD 2025 Core Console 批准为 V1 唯一 Primary，范围限定为本机受控开发、验证和 Release Rehearsal；不伪造 Autodesk 订单、订阅编号或 SaaS/生产许可。
 - 固定版本/哈希/Autodesk 签名及运行中的 Licensing Service 已复核；安装型合同和候选 Worker 2/2 通过，输出 4,424/4,422 实体，测试后 0 CAD/0 Attempt 残留。
 - 资格评测与 Site capability 已与 Lean Schema 3 对齐：一个合格、唯一最高分且覆盖 DWG/DXF 的 Primary 即可 Ready；Backup 保留为可选增强。
-- 批准记录与报告已版本化；完整 Provider 输入、WP3/WP7 和 GA 仍等待正式 SemVer Worker、冻结环境和黄金集评分。
+- 批准记录、正式 SemVer Worker 和 Release 绑定转换报告已版本化；完整 Provider 输入、WP3/WP7 和 GA 仍等待隔离/安全依据、资格评分和业务级黄金集指标。
 
 ## 2026-08-27 Space Lean Core GA 门禁重置
 

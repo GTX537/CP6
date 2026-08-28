@@ -1,10 +1,10 @@
 # 项目当前状态
 
-## Space AutoCAD Primary Release 绑定评测器（2026-08-27）
+## Space AutoCAD Primary 正式 Release 绑定评测（2026-08-27）
 
-- 候选 Worker 已新增 `evaluate-release`：完整核验封存 Release/Core 身份后，对固定 20 份受控 CAD 逐份双跑，验证数据集哈希、响应身份、Package 确定性、99% 支持率、SourceRef、Blocking、120 秒上限和临时文件清理；报告有严格 Schema 且拒绝覆盖。
-- 加固后任务分支 `1.0.0-rc.2` 真实预演 20/20、双跑确定性 20/20；14,699 总实体中 14,659 支持、支持率 99.727873%，缺失 SourceRef/Blocking/残留均为 0，P95 3.941 秒。报告 SHA 为 `6f8ca448502181a493aaf142fbedaa11a3261a7a622ba696aa74453d228aa597`。
-- RC 只验证评测能力，不能冒充合并后正式 Release；报告明确记录 OS 出站策略尚未验证，没有生产 mTLS/Firewall 或生产部署声明。下一步合并实现后从精确 `main` 重建 `1.0.0` 并重跑同一数据集。
+- Release 绑定评测器已由 PR #53 在 7/7 required checks 后合并；从精确 `main@d2d0a0d1b0978a4283bd9387f4120eefe10a135d` 构建并封存正式 `1.0.0`，完整 Worker Release SHA 为 `c794e9c0ebbb2c736866827e07e6682347992dd5a672218efddfe6ff5c0f202e`。
+- 正式 20 份受控 CAD 双跑 20/20、确定性 20/20；14,699 总实体中 14,659 支持、支持率 99.727873%，缺失 SourceRef/Blocking/残留均为 0，P95 4.281 秒。版本化报告 SHA 为 `97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350`。
+- 正式报告完成 Release 身份、转换质量、确定性、性能和清理证据，但仍诚实记录 `outboundNetworkPolicy=NotVerifiedAtOsBoundary`；没有生产 mTLS/Firewall、Site 认证或生产部署声明。WP3/WP7 继续等待隔离审批、资格评分和完整业务准确率/操作时长证据。
 - 正式 Core GA 仍为 72% / `NoGo`（1 类输入、9 个 Gate、1 个签署 Pending），原始 CAD 与 Worker 二进制保持仓库外。
 
 ## Space AutoCAD Primary 批准与单 Provider Ready（2026-08-27）
@@ -12,7 +12,7 @@
 - `BUBAO.GAO` 已批准当前 AutoCAD 2025 Core Console 作为 V1 唯一 Primary；批准范围限于本机受控 CP6 开发、验证和 Release Rehearsal，不代表 Autodesk 软件再分发、公共 SaaS 托管或生产部署授权。
 - 当前 Core Console `25.0.58.0.0`、SHA-256 `d1fd7232893094234f31c65445d0ec9259ffc1df17fb15aad99373e31545cefb`、Autodesk 签名有效，Licensing Service 正在运行；真实安装型合同/Worker 测试 2/2，4,424/4,422 实体，残留 CAD/Attempt 为 0。
 - 修正 Lean Schema 3 的运行时漂移：一个满足全部硬门禁、资格分至少 80 且唯一最高分的 Primary 即可通过 `qualify-providers`；机器规则显式升级为 `cad-provider-adr-0001-v2`，Site `CadGaReady` 也只由合格 DWG/DXF Primary 派生。Backup 可选且不阻断 Core GA。
-- Primary 选择和受控使用范围已批准，但完整外部输入仍 Pending：下一步从合并后的精确 `main` 构建正式 SemVer Worker，冻结环境并在同一 20 份 CAD 上评分。当前仍为 72% / `NoGo`，没有生产部署。
+- Primary 选择和受控使用范围已批准，正式 SemVer Worker 与同一 20 份 CAD 的 Release 绑定转换评测也已完成；完整外部输入仍 Pending，下一步是补齐隔离/安全依据并用正式报告生成资格评分。当前仍为 72% / `NoGo`，没有生产部署。
 
 ## Space Lean Core GA Schema 3（2026-08-27）
 

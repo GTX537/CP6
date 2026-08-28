@@ -49,17 +49,46 @@ RC 报告位于仓库外
 `D:\CP6-Cad-Evidence\space-autocad-primary\1.0.0-rc.2-1dfd1767\evaluation.json`；
 原始 DWG/DXF 与 Worker 二进制均未提交 Git。
 
+## 正式 1.0.0 评测
+
+PR #53 在 7/7 required checks 通过后合并。随后从精确
+`main@d2d0a0d1b0978a4283bd9387f4120eefe10a135d` 重新 publish/seal，
+没有复用 RC Payload、Release SHA 或报告：
+
+| 项目 | 结果 |
+|---|---:|
+| Worker Payload + Manifest 文件 | 19 |
+| Worker Release SHA-256 | `c794e9c0ebbb2c736866827e07e6682347992dd5a672218efddfe6ff5c0f202e` |
+| Provider Version | `1.0.0+worker.c794e9c0ebbb.autocad.25.0.58.0.0.dxf.1.1.0` |
+| 数据集 | 20/20，10 DWG + 10 DXF，10/5/5 |
+| 双跑确定性 | 20/20 |
+| 实体 | 14,699 总计 / 14,659 支持 / 40 个已报告 VIEWPORT |
+| 支持比例 | 99.727873% |
+| 缺失 SourceRef / Blocking Issue | 0 / 0 |
+| 首跑 P95 / Max | 4.281 秒 / 4.374 秒 |
+| 残留 Attempt / 原始 CAD | 0 / 0 |
+| Release / 报告 Schema | Pass / Pass |
+| 冻结环境 SHA-256 | `c9bbbe362a01e951379d60990f227fc4d5634ac9c86534f009f1d7e87d601717` |
+| 报告 SHA-256 | `97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350` |
+
+完整、无机器路径和原始 CAD 内容的报告已版本化为
+`docs/space/acceptance/v1.3-ga/autocad-primary-evaluation-v1.0.0.json`；
+仓库外封存报告位于
+`D:\CP6-Cad-Evidence\space-autocad-primary\1.0.0-d2d0a0d1\evaluation.json`，
+两者 SHA-256 完全一致。Worker 二进制继续保留在仓库外。
+
 ## 证据边界
 
 这次命令以封存 Worker 的直接合同模式运行，没有启动网络监听；原始 CAD
 仅进入逐 Attempt 临时目录并已清除。报告诚实记录
 `outboundNetworkPolicy=NotVerifiedAtOsBoundary`：当前用户不是 Windows 管理员，
-没有创建或伪造 OS Firewall 禁网证明。因此 RC 可以证明 Release 身份、转换
+没有创建或伪造 OS Firewall 禁网证明。因此报告可以证明 Release 身份、转换
 质量、确定性、性能和删除行为，不能冒充生产 mTLS、OS 禁网或生产部署。
 
-最终 `1.0.0` 必须在本实现合并后的精确 `main` 上重新 publish/seal，并用新
-Release SHA 对同一 20 份数据重跑。完成前 `PRIMARY_PROVIDER_AND_ISOLATED_WORKER`、
-WP3/WP7 与 Core GA 继续 Pending/NoGo。
+正式 `1.0.0` 与同一 20 份数据的 Release 绑定转换评测已经完成。该报告不含
+黄金答案的业务准确率/精确率、受训用户首次 Ready 时间，也不证明 OS 隔离和
+Site 安全配置；因此 `PRIMARY_PROVIDER_AND_ISOLATED_WORKER`、WP3/WP7 与 Core GA
+继续 Pending/NoGo，不能仅凭本报告写入 `acceptedEvidence`。
 
 ## 自动化
 
