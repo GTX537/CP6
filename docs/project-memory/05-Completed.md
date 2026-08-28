@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space Studio V1 Core GA 100% 结案
+
+- 新增可重复受控发布演练：干净工作树绑定 `21a81767`、冻结 CAD/Worker 基线和 10 个源文件 Git Blob，先重验 WP2/WP4/WP7/WP5 正式 Manifest，再执行当前 SQL/WMS/恢复/安全套件。
+- SQL Server Express LocalDB `17.0.4025.3` 实测 8/8，Kestrel + 签名 JWT 实测 1/1，均 0 failed / 0 skipped；自动恢复 5 秒，CHECKSUM 备份恢复 3.6480777 秒，旧 Published、恢复后 Hash/WMS 计数、无重复写和临时资源清理全部通过。
+- `release-rehearsal-formal-evidence-v1.0.0.json` 通过专项失败关闭校验，仓库 SHA-256 为 `59bac2addb20a63eacde5779689b3acb6850a2ce4e390cba04c997c90cbe6501`；WP6/WP8 Complete/Accepted，`BUBAO.GAO` 完成最终 Signed。
+- Core GA 为 `GaReady` / 100%，0 个输入、0 个 Gate、0 个签署 Pending。该结案不声称生产数据、生产 WMS、Pilot 或生产部署；这些仍由后续独立 Release/CD 与运营任务管理。
+
 ## 2026-08-28 Space WP5 Viewer 正式接受
 
 - 绑定 `4b774bb4` 和 13 个生产/测试源 Git Blob/SHA-256，正式证明生产 Viewer 只消费 Current Published Design Revision；聚焦边界 12/12、浏览器 Published-only 请求检查通过。

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP8_RELEASE_REHEARSAL",
+  "conclusion": "Pass",
+  "ownerName": "BUBAO.GAO",
+  "executedAtUtc": "2026-08-28T08:24:36.2757344Z",
+  "applicationCommitSha": "21a81767a0155a8cc92325acc3e3cdcc076ee930",
+  "sourceSetSha256": "7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955",
+  "goldenDatasetSha256": "2b9438e09e2953b169770d0ee9292d8f9cc9ed697337111bcb61b913484b1f15",
+  "workerEnvironmentSha256": "c9bbbe362a01e951379d60990f227fc4d5634ac9c86534f009f1d7e87d601717",
+  "environment": {
+    "mode": "ControlledReleaseRehearsal",
+    "deploymentClass": "LocalControlledNonProduction",
+    "databaseEngine": "SQLServer",
+    "wmsSystem": "CP6_WMS",
+    "wmsAdapter": "CP6.Space.Infrastructure.Cp6SpaceWmsAdapter",
+    "cp6WmsDataSourceKind": "Real",
+    "controlledFaultInjection": true,
+    "publishedViewerOnly": true,
+    "signedJwtHttpSecurity": true,
+    "secretsByReferenceOnly": true
+  },
+  "results": {
+    "cadDwgDxfEndToEndPassed": true,
+    "threeAuthoringPathsPassed": true,
+    "publishAndWmsPassed": true,
+    "publishedDraftIsolationPassed": true,
+    "recoveryPassed": true,
+    "securityNegativePassed": true,
+    "noDuplicateWrites": true
+  },
+  "recovery": {
+    "automaticRecoveryMaxMinutes": 0.083333,
+    "manualRecoveryMaxMinutes": 0.060801,
+    "oldPublishedRemainedAvailable": true
+  },
+  "defects": {
+    "s1Open": 0,
+    "s2Open": 0,
+    "blockingS3Open": 0
+  },
+  "evidence": {
+    "execution": {
+      "uri": "urn:cp6-space-ga-evidence:wp8:21a81767:execution:v1",
+      "sha256": "fd7635f9f237e7af956ad4c8880c9bfba6d107818edde79942e4e75976c0bdb7",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+    },
+    "publishWms": {
+      "uri": "urn:cp6-space-ga-evidence:wp8:21a81767:publish-wms:v1",
+      "sha256": "e8f0037ee0b7783d6dd1c1dcd4642efbd306f62a15f43a691a15822c8950f177",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+    },
+    "viewer": {
+      "uri": "docs/space/acceptance/v1.3-ga/viewer-formal-evidence-v1.0.0.json",
+      "sha256": "ae2a5ee962c0f15f170adcd3ea0c821631521bd4e853485c7700544fcbe86c12",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+    },
+    "recovery": {
+      "uri": "urn:cp6-space-ga-evidence:wp8:21a81767:recovery:v1",
+      "sha256": "b94535ed012ea2ae0762abd2426bee05553e1e6c49d74155f27fc55dca5604c1",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+    },
+    "security": {
+      "uri": "urn:cp6-space-ga-evidence:wp8:21a81767:http-security:v1",
+      "sha256": "6cd0d646ca6d09d2e9371f43a94fe3388c187b8af500e11f4041bee0b7cc0a77",
+      "acceptedBy": "BUBAO.GAO",
+      "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+    }
+  },
+  "sources": [
+    {
+      "path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.cs",
+      "gitBlobOid": "de6770901064b8a75df1c4b69a85d2093b00b881"
+    },
+    {
+      "path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs",
+      "gitBlobOid": "20b7a3102f18687d882eed2dfc0a0344652a0820"
+    },
+    {
+      "path": "CP6.Space.Infrastructure/Cp6SpaceWmsAdapter.cs",
+      "gitBlobOid": "1e013c44c8007f5606bd2e9f69a61c6acd4416ae"
+    },
+    {
+      "path": "CP6.WebApi/Middleware/SpaceExecutionContextMiddleware.cs",
+      "gitBlobOid": "278db39b35445d48bb062818655a96ea2d0fc1bd"
+    },
+    {
+      "path": "CP6.Space.IntegrationTests/SpacePublishOrchestratorSqlServerTests.cs",
+      "gitBlobOid": "6d3f8d461e84ecbe85259ee503d36ffd695ba752"
+    },
+    {
+      "path": "CP6.Space.IntegrationTests/Cp6SpaceWmsAdapterSqlServerTests.cs",
+      "gitBlobOid": "7d14e2538c4b19dbd781840d0b9b39b44826b1db"
+    },
+    {
+      "path": "CP6.Space.IntegrationTests/SpaceDesignSceneSqlServerTests.cs",
+      "gitBlobOid": "94803e27fb2ad08168b422a2cb0a76c583765301"
+    },
+    {
+      "path": "CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs",
+      "gitBlobOid": "017d185f7535c5a2f22a321cf1b4d18370bda632"
+    },
+    {
+      "path": "CP6.Tests/Space/SpaceReleaseRehearsalHttpSecurityTests.cs",
+      "gitBlobOid": "8c38e60a7e72cdffdc801fc324d46c37a9e67e08"
+    },
+    {
+      "path": "tools/Invoke-SpaceGaReleaseRehearsal.ps1",
+      "gitBlobOid": "b9805a0d78a7d6055bab49d3da5d649a9dc9b1c1"
+    }
+  ],
+  "boundaries": {
+    "productionDataClaimed": false,
+    "productionWmsClaimed": false,
+    "productionDeploymentPerformed": false,
+    "pilotRequired": false,
+    "distinctPersonReviewRequired": false
+  },
+  "selfReview": {
+    "acceptedBy": "BUBAO.GAO",
+    "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z",
+    "repeatable": true,
+    "distinctPersonReviewRequired": false
+  }
+}

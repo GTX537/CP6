@@ -29,32 +29,32 @@
 - CRM 旧 Draft PR #7 已关闭，替代 PR #8 已合并且公共契约主线冒烟通过。Cloudflare Workers `estimate` 外部失败继续单独归因，不影响受保护的 CRM 合同、Windows/Web、Android 和 SQL 必需检查。
 - 完成整顿后把本机归档复制到第二介质，再考虑清理 `D:\CP6-archives\2026-08-24-branch-consolidation`；在此之前禁止删除 bundle、patch、原始未跟踪文件或 SHA-256 清单。
 
-## P0：Space Studio Lean Core GA 剩余门禁
+## P1：Space Studio V1 GA 后边界与运营增强
 
-- 当前正式派生状态为 72% / `NoGo`：两类外部输入均 Complete，WP0/WP1/WP2/WP3/WP4/WP5/WP7 已 Accepted；剩余 WP6、WP8 两个接受 Gate 和 1 个 DeliveryOwner 最终签署。下一条主线是把 WP6/WP8 收口为一次受控 SQL Server/WMS/恢复/安全发布演练；不再重复 WP2、WP5、Backup、Pilot、本地 OS Firewall 或冻结黄金集工作。
+- 当前正式派生状态为 `GaReady` / 100%：两类外部输入 Complete、WP0～WP8 全部 Accepted、唯一 DeliveryOwner Signed，Core GA 已无剩余阻断门禁。不要重复 WP2、WP5、WP6/WP8、Backup、Pilot、本地 OS Firewall 或冻结黄金集工作。
 - Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。正式 Core GA 使用 Schema 3；独立 Backup 与双仓 14 天 Pilot 已转为 GA 后增强。不得用 DevelopmentSeed、未批准 Provider、Mock 或 fixture 冒充正式发布演练。
-- 唯一 DeliveryOwner 已登记为 `BUBAO.GAO`，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`，同一人拥有全部输入与 Gate；WP0/WP1 已正式接受，最终签署仍 Pending。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。
+- 唯一 DeliveryOwner `BUBAO.GAO` 已完成最终签署，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`；同一人拥有并接受全部输入与 Gate。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。
 - 20 份仓库外原创 AC1032 CAD 候选已经冻结并登记为 Complete：10 DWG/10 DXF、10/5/5、L1～L5 各 4，逐份授权/脱敏/答案/问题/Mapping/规则/复核证据齐全，产品 Converter 20/20 Pass。原始 CAD 不入 Git；后续必须使用同一 Source Set SHA `7bc708d5a85b1da2e7f35d43c0e94e38deacda72316d9dbbf09db5e97a742955`。
 - 不再强制 ODA 或第二供应商。`BUBAO.GAO` 已选择并批准当前 AutoCAD 2025 Core Console 为唯一 Primary；本机 V1 的许可、精确版本/哈希、本地安全边界、保留/删除、正式 SemVer Worker、转换评测和 86/100 资格评分均已版本化并接受。如果未来改用 ODA、云服务或远程 Worker，再按其实际部署边界补许可证、身份、证书、Secret、网络与 SaaS 批准。
 - 正式 `1.0.0` 已从精确 `main@d2d0a0d1b0978a4283bd9387f4120eefe10a135d` 封存并对 20 份 CAD 双跑通过，99.727873% 支持、P95 4.281 秒、SourceRef/Blocking/残留为 0；报告 SHA 为 `97a9ff7f7cbd60f2c2ea34a5b16e0d645823d94980cd43581dca7129e0373350`。WP7 已在其上补齐业务质量、人工操作和 Ready 性能证据；两份证据共同构成当前 Primary 基线。
-- LM-FR-001/WP1 已 Complete/Accepted：正式 Manifest 绑定 `main@b0164a15`、8 个测试源 Git Blob/SHA-256、SQL Server 20/20 无跳过和 Web 25/25；Blank/模板/完整编码仓库及 Lease/双 Revision/Idempotency 已由 `BUBAO.GAO` 可重复自验收。确定性测试数据不宣称生产数据，生产发布和最终签署仍失败关闭。
+- LM-FR-001/WP1 已 Complete/Accepted：正式 Manifest 绑定 `main@b0164a15`、8 个测试源 Git Blob/SHA-256、SQL Server 20/20 无跳过和 Web 25/25；Blank/模板/完整编码仓库及 Lease/双 Revision/Idempotency 已由 `BUBAO.GAO` 可重复自验收。确定性测试数据不宣称生产数据，生产发布仍使用独立 Release/CD 门禁。
 - WP2 已 Complete/Accepted：授权真实 DWG/DXF 经冻结 AutoCAD Primary 重新转换，在 SQL Server 产品链完成显式 Floor/Unit/Transform/Mapping、sealed Preparation、Parse Start、幂等重放与篡改零写入；后端 21/21、Web 14/14、Worker 残留 0。后续只在 Source Set、Provider/Worker、CAD Start 合同或应用源变化时升版重跑。
-- WP4 已 Complete/Accepted：授权真实 DWG/DXF Primary Package、产品自身生成并解析的受控 XLSX、受控 PDF/PNG 与空白画布已绑定同一 Draft/Typed Changeset 正式 Manifest；SQL Server 完整套件 465/465、0 failed、0 skipped。该接受不包含生产数据、生产 WMS、Published-only Viewer 或发布恢复/安全演练；这些边界继续由 WP5/WP6/WP8 关闭。
+- WP4 已 Complete/Accepted：授权真实 DWG/DXF Primary Package、产品自身生成并解析的受控 XLSX、受控 PDF/PNG 与空白画布已绑定同一 Draft/Typed Changeset 正式 Manifest；SQL Server 完整套件 465/465、0 failed、0 skipped。Published-only Viewer 与发布恢复/安全边界已分别由 WP5 和 WP6/WP8 关闭；仍不包含生产数据或生产 WMS 声明。
 - AutoCAD 2025 Core Console 已以正式 `1.0.0` Worker 覆盖 DWG/DXF；WP7 已用同一 20 份 Source Set 完成业务准确率/精确率/Wilson、人工减少率、Holdout Blocking 和 50 MiB/Ready P95 并正式接受。后续三路径与发布演练必须复用精确 Provider Version，不得反向修改 WP7 冻结规则。
 - 当前直接评测无网络监听、无业务凭据且临时 CAD 已清除；`BUBAO.GAO` 已接受本地 V1 不以 OS Firewall 出站 Deny 阻断。该口径不得外推为生产禁网、mTLS 或 SaaS 安全证明；若改为远程/生产部署，必须另行提供这些证据。
 - 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试；这些虚拟编号不能冒充真实 Owner、正式证据接受人或 `DeliveryOwner`，但正式 GA 不再要求团队人数或多角色独立签字。
-- 核心 GA 当前派生结果为 `NoGo`：两类外部输入均 Complete，WP0/WP1/WP2/WP3/WP4/WP5/WP7 已 Accepted；WP6、WP8 两个结果门禁和 1 个 DeliveryOwner 签署 Pending。下一步推进 WMS/恢复/安全发布演练和最终签署。
+- 核心 GA 当前派生结果为 `GaReady`：两类外部输入、WP0～WP8 和唯一 DeliveryOwner 签署均已闭环。下一步如需上线，另行推进 Release/CD 生产候选、环境审批、生产 WMS 窗口和部署验证；不得把 Core GA 结案写成已上线。
 - WP3 已以精确 AutoCAD Primary、本机受控边界、正式 SemVer Release、DWG/DXF 双格式评测和 86/100 评分结案。评分工具未写 Site 配置；后续发布演练只能通过受控接口写入同一 Provider Version，Backup 另列 GA 后韧性任务。
 - Site 认证、运行注册、Preparation 输出和当前 Parse v5 已绑定同一 Provider Version；真实适配器注册必须使用被评分和批准的精确版本，升级 Worker 前必须重新评分、认证并替换 Site 配置，不得在同一 Provider Key 下静默换版。历史空版本认证按设计失效，不能手工回填猜测值。
 - Preparation → Parse 的 Mapping Replay Snapshot 与 v5 payload 已完成；真实 Provider 适配器必须加载快照绑定的不可变 Profile ID/Version、核对 Definition Hash、使用完整 Layer Overrides 重建 Mapping Preview，并在输出语义工件前执行 `SpaceCadMappingReplaySnapshot.ValidateReplay`。不得只信任期望 Preview Hash、忽略覆盖内容或让 Worker 使用当前 Profile 代替冻结版本。
 - `CP6.Space.CadExperiment qualify-providers` 已在同一 20 份授权黄金集、冻结 Worker 和规则上完成：Primary 86/100，资格选择 SHA `d7b9645d915f28e165209b71f69386305711301a6a2fecf7422c15cbcc2a0faa`。后续升级版本必须重新评分，示例或人工改写 JSON 仍不算证据。
 - 获批准的本地 Primary DWG/DXF Provider 已实测并接受。远程运行注册继续默认关闭；若启用远程/生产模式，没有对应部署批准 Manifest、身份和 Secret 引用时能力接口必须失败关闭。
 - `SpaceCadProviderSqlServerTests` 已在 SQL Server LocalDB 3/3、0 skipped，关闭并发替换、唯一 Current Revision、历史追加、认证不可变、旧资格/版本失败关闭和迁移幂等。正式验收可在明确标识的受控 Release Rehearsal SQL Server 环境执行，不要求生产部署，但必须绑定真实 Primary 和不可变证据。
-- CAD 起始向导、sealed Preparation、parse start fence、Site 能力检查和 Rack/Element 画布拖动精调已完成仓库内闭环；仍须由 DeliveryOwner 在发布演练中留下人工 UX、辅助技术和端到端结果证据，不要求独立人员签字。
+- CAD 起始向导、sealed Preparation、parse start fence、Site 能力检查和 Rack/Element 画布拖动精调已完成仓库内闭环；DeliveryOwner 的端到端、Viewer 可访问性和发布演练证据已接受，不要求独立人员签字。
 - WP4 三路径正式证据已接受并冻结；后续只在 Source Set、Primary Version、应用基线或三路径合同变化时升版本重跑，不把 WP8 的生产 WMS/发布演练反向塞回 WP4。
 - WP7 已 Complete/Accepted：正式 Manifest 绑定同一 Source Set/Worker、冻结规则、业务总体与 OOS 指标、Holdout Blocking、50 MiB/Ready 20 次稳定观察及应用提交。未来只有数据、答案、Provider、Worker、Parser、规则或应用 Commit 改变时才升版本重跑。
 - WP5 已 Complete/Accepted：Current Published-only 边界、硬件 WebGL2 30 次冷启动、两个视口、键盘、Chromium Accessibility Tree 与 4.5:1 对比度均已由 DeliveryOwner 接受。后续只有生产入口、性能输入/预算或可达合同变化时才升版重跑；不要把 WP6/WP8 的 WMS/恢复/安全演练反向塞回 WP5。
-- WP6/WP8 在同一次受控发布演练中验证通知、SQL Server + CP6 WMS 发布、部分写入对账、幂等重试、旧 Published 持续服务、备份恢复、IdP HTTP 负向和 15/240 分钟恢复；五类证据完成后由 BUBAO.GAO 单一签署。生产部署和现场 Pilot 继续独立，不阻断 Core GA。
+- WP6/WP8 已在同一次受控发布演练中完成 SQL Server + CP6 WMS 发布、部分写入对账、幂等重试、旧 Published 持续服务、备份恢复、签名 JWT HTTP 负向和 15/240 分钟恢复门禁，并由 `BUBAO.GAO` 单一签署。生产部署、生产 WMS 时间窗口、Backup 和现场 Pilot 继续作为独立增强项。
 ## 已完成：OpenAPI 原生客户端漂移门禁
 
 - PowerShell 版本差异与全局无关 schema 导致的假阳性已消除；门禁现在只哈希原生客户端路径及递归可达 schema，并使用 Node.js 稳定规范化。
