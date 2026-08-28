@@ -18,6 +18,8 @@ $kickoffTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaKickoffEvidence.Tests.ps1')
 $releaseRehearsalTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaReleaseRehearsalEvidence.Tests.ps1')
+$baselineGovernanceTestSuite = Join-Path $PSScriptRoot (
+    'Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1')
 $threePathTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaThreePathEvidence.Tests.ps1')
 $hostExecutable = (Get-Process -Id $PID).Path
@@ -35,6 +37,13 @@ function New-TestManifest {
 
     $manifest = Get-Content -LiteralPath $baseManifestPath -Raw |
         ConvertFrom-Json
+    $wp0 = @($manifest.gates | Where-Object {
+        $_.id -eq 'WP0_BASELINE_AND_GOVERNANCE'
+    })[0]
+    $wp0.acceptanceStatus = 'Pending'
+    $wp0.acceptedEvidence = @()
+    $wp0 | Add-Member -MemberType NoteProperty `
+        -Name verificationManifest -Value $null -Force
     & $Mutation $manifest
     $path = Join-Path $tempDirectory "$Name.json"
     $manifest | ConvertTo-Json -Depth 100 |
@@ -75,6 +84,25 @@ function Set-GateAccepted {
     $gate.ownerName = 'Zhang Wei'
     $gate.acceptanceStatus = 'Accepted'
     $gate.acceptedEvidence = @($Attestation)
+}
+
+function Set-Wp0Accepted {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)][string]$BaselineReference,
+        [Parameter(Mandatory)][string]$BaselineSha256
+    )
+    $gate = @($Manifest.gates | Where-Object {
+        $_.id -eq 'WP0_BASELINE_AND_GOVERNANCE'
+    })[0]
+    $gate.ownerName = 'BUBAO.GAO'
+    $gate.acceptanceStatus = 'Accepted'
+    $gate.verificationManifest = $BaselineReference
+    $gate.acceptedEvidence = @(
+        (New-Attestation `
+            -Uri $BaselineReference `
+            -Sha256 $BaselineSha256 `
+            -AcceptedBy 'BUBAO.GAO'))
 }
 
 function Set-Wp8Accepted {
@@ -278,6 +306,45 @@ function Invoke-ValidatorCase {
 }
 
 try {
+    $baselineAcceptanceReference = (
+        'docs/space/acceptance/v1.3-ga/.tmp-' +
+        [Guid]::NewGuid().ToString('N') + '/baseline-governance-evidence.json')
+    $baselineAcceptancePath = Join-Path $repo $baselineAcceptanceReference
+    $baselineAcceptanceDirectory = Split-Path -Parent $baselineAcceptancePath
+    [void](New-Item -ItemType Directory -Path $baselineAcceptanceDirectory)
+    $exportOutput = & $hostExecutable `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $baselineGovernanceTestSuite `
+        -ExportValidManifestPath $baselineAcceptancePath 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not export valid baseline governance fixture.`n$exportOutput"
+    }
+    $baselineAcceptance = Get-Content -LiteralPath $baselineAcceptancePath -Raw |
+        ConvertFrom-Json
+    $baselineAcceptance.ownerName = 'BUBAO.GAO'
+    $baselineAcceptance.kickoffDate = '2026-08-27'
+    $baselineAcceptance.targetGaDate = '2026-09-27'
+    foreach ($input in @($baselineAcceptance.externalInputs)) {
+        $inputId = [string]$input.id
+        $indexInput = (@((Get-Content -LiteralPath $baseManifestPath -Raw |
+            ConvertFrom-Json).externalInputs | Where-Object {
+                $_.id -eq $inputId
+            }))[0]
+        $input.ownerName = $indexInput.ownerName
+        $input.status = $indexInput.status
+        $input.verificationManifest = $indexInput.verificationManifest
+        $indexEvidence = (@($indexInput.evidence | Where-Object {
+            $_.uri -eq $indexInput.verificationManifest
+        }))[0]
+        $input.evidenceSha256 = $indexEvidence.sha256
+    }
+    $baselineAcceptance | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $baselineAcceptancePath -Encoding UTF8
+    $baselineAcceptanceSha256 = (Get-FileHash `
+        -LiteralPath $baselineAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
     $threePathAcceptanceReference = (
         'docs/space/acceptance/v1.3-ga/.tmp-' +
         [Guid]::NewGuid().ToString('N') + '/three-path-evidence.json')
@@ -450,6 +517,94 @@ try {
     $localAttestation = New-Attestation `
         -Uri $fixtureReference `
         -Sha256 $fixtureSha256
+
+    $validBaselinePath = New-TestManifest 'valid-baseline-governance-manifest' {
+        param($manifest)
+        Set-Wp0Accepted `
+            -Manifest $manifest `
+            -BaselineReference $baselineAcceptanceReference `
+            -BaselineSha256 $baselineAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP0 validates formal baseline governance evidence' `
+        -ManifestPath $validBaselinePath `
+        -ShouldPass $true
+
+    $baselinePrerequisitePath = New-TestManifest 'baseline-prerequisite' {
+        param($manifest)
+        Set-Wp0Accepted `
+            -Manifest $manifest `
+            -BaselineReference $baselineAcceptanceReference `
+            -BaselineSha256 $baselineAcceptanceSha256
+        @($manifest.gates | Where-Object {
+            $_.id -eq 'WP4_THREE_PATH_END_TO_END'
+        })[0].acceptanceStatus = 'Pending'
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP0 requires accepted milestone baselines' `
+        -ManifestPath $baselinePrerequisitePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_BASELINE_PREREQUISITES_INCOMPLETE'
+
+    $baselineUnattestedPath = New-TestManifest 'baseline-unattested' {
+        param($manifest)
+        Set-Wp0Accepted `
+            -Manifest $manifest `
+            -BaselineReference $baselineAcceptanceReference `
+            -BaselineSha256 $baselineAcceptanceSha256
+        @($manifest.gates | Where-Object {
+            $_.id -eq 'WP0_BASELINE_AND_GOVERNANCE'
+        })[0].acceptedEvidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP0 must attest its structured Manifest' `
+        -ManifestPath $baselineUnattestedPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_BASELINE_MANIFEST_UNATTESTED'
+
+    $baselineTemplateReference = (
+        'docs/space/acceptance/v1.3-ga/' +
+        'baseline-governance-evidence-template.json')
+    $baselineTemplateSha256 = (Get-FileHash `
+        -LiteralPath (Join-Path $repo $baselineTemplateReference) `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $baselineTemplatePath = New-TestManifest 'baseline-template' {
+        param($manifest)
+        Set-Wp0Accepted `
+            -Manifest $manifest `
+            -BaselineReference $baselineTemplateReference `
+            -BaselineSha256 $baselineTemplateSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP0 cannot accept its blank template' `
+        -ManifestPath $baselineTemplatePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_BASELINE_MANIFEST_SYNTHETIC'
+
+    $invalidBaselineReference = $baselineAcceptanceReference.Replace(
+        'baseline-governance-evidence.json',
+        'baseline-governance-input-mismatch.json')
+    $invalidBaselinePath = Join-Path $repo $invalidBaselineReference
+    $invalidBaseline = $baselineAcceptance | ConvertTo-Json -Depth 100 |
+        ConvertFrom-Json
+    $invalidBaseline.externalInputs[0].ownerName = 'Different Person'
+    $invalidBaseline | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidBaselinePath -Encoding UTF8
+    $invalidBaselineSha256 = (Get-FileHash `
+        -LiteralPath $invalidBaselinePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $baselineBindingPath = New-TestManifest 'baseline-input-binding' {
+        param($manifest)
+        Set-Wp0Accepted `
+            -Manifest $manifest `
+            -BaselineReference $invalidBaselineReference `
+            -BaselineSha256 $invalidBaselineSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP0 input bindings match the GA index' `
+        -ManifestPath $baselineBindingPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_BASELINE_INPUT_BINDING_MISMATCH'
 
     $validThreePathPath = New-TestManifest 'valid-three-path-manifest' {
         param($manifest)
@@ -1254,5 +1409,9 @@ finally {
     if ($null -ne $threePathAcceptanceDirectory -and
         (Test-Path -LiteralPath $threePathAcceptanceDirectory)) {
         [System.IO.Directory]::Delete($threePathAcceptanceDirectory, $true)
+    }
+    if ($null -ne $baselineAcceptanceDirectory -and
+        (Test-Path -LiteralPath $baselineAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete($baselineAcceptanceDirectory, $true)
     }
 }

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP0_BASELINE_GOVERNANCE_FORMAL_EVIDENCE",
+  "conclusion": "Pass",
+  "ownerName": "BUBAO.GAO",
+  "acceptedAtUtc": "2026-08-28T04:45:47Z",
+  "kickoffDate": "2026-08-27",
+  "targetGaDate": "2026-09-27",
+  "baseline": {
+    "mainCommitSha": "162d110829780e0f1a9c16e4d5b576158e03c849",
+    "branch": "main",
+    "remote": "origin",
+    "commitPresent": true,
+    "postMergeSmokePassed": true,
+    "workspaceClean": true,
+    "productionDeploymentPerformed": false
+  },
+  "governance": {
+    "singleDeliveryOwner": true,
+    "distinctPersonQuorumRequired": false,
+    "allGateOwnersAssigned": true,
+    "externalInputOwnersAssigned": true
+  },
+  "externalInputs": [
+    {
+      "id": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
+      "ownerName": "BUBAO.GAO",
+      "status": "Complete",
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/authorized-golden-cad-candidates-v1.0.0.json",
+      "evidenceSha256": "813630db234d06519a2e84321ae340233334c15cf40820914f661d5d7d28e657"
+    },
+    {
+      "id": "PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
+      "ownerName": "BUBAO.GAO",
+      "status": "Complete",
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/autocad-primary-input-v1.0.0.json",
+      "evidenceSha256": "f7032640753277cf2568590c440ec1c91723d4edd9dc303a9d4a2d8240e75897"
+    }
+  ],
+  "acceptedDependencies": [
+    "WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
+    "WP4_THREE_PATH_END_TO_END",
+    "WP7_GOLDEN_CAD_FORMAL_EVIDENCE"
+  ],
+  "smoke": {
+    "gaValidator": {
+      "passed": true,
+      "pendingInputs": 0,
+      "pendingGatesBeforeWp0Acceptance": 6,
+      "pendingSigners": 1
+    },
+    "threePathEvidenceTests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "gaEvidenceAttestationTests": {
+      "passed": 42,
+      "failed": 0
+    }
+  }
+}

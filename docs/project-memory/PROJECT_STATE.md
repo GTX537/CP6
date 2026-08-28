@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space WP0 基线与治理正式接受（2026-08-28）
+
+- 唯一 DeliveryOwner `BUBAO.GAO`、Kickoff `2026-08-27`、目标 GA `2026-09-27`、两类外部输入 Owner 与 WP0～WP8 Gate Owner 已固定；单人交付不设第二人、独立复核、角色配额或多人签字门槛。
+- 正式 Manifest 绑定 `main@162d110829780e0f1a9c16e4d5b576158e03c849`、两类 Complete 输入及已接受的 WP3/WP4/WP7；PR #59 7/7 必需检查、合并后 WP4 11/11 与总 GA 42/42 均通过，工作区干净且未执行生产部署。
+- 新增 WP0 独立失败关闭校验器 9/9，并把模板、未见证清单、缺前置、输入/Owner/日期/Commit 漂移纳入总 GA 47/47 组合门禁；WP0 已 Complete/Accepted。
+- Core GA 仍为 72% / `NoGo`：0 个外部输入、WP1/WP2/WP5/WP6/WP8 共 5 个 Gate 和 1 个最终签署 Pending。下一主线是 WP1 手工建模结果接受。
+
 ## Space WP4 三路径正式接受（2026-08-28）
 
 - 复用 WP7 冻结 Source Set 与精确 AutoCAD Primary，授权真实 `L1-C01.dwg`、`L1-C02.dxf` 的 CAD IR Package 哈希已绑定；Excel–CAD 使用产品自身生成、Open XML 校验并解析的 12,466-byte 标准 XLSX，手工路径使用受控 PDF、PNG 与空白画布。受控资产均明确 `productionDataClaimed=false`。
