@@ -7,6 +7,12 @@
 - 后端 21/21、Web 14/14、type-check、16 个正式失败模式与总 GA 52/52 通过；WP2 Complete/Accepted。
 - Core GA 继续 72% / NoGo（0 个输入、3 个 Gate、1 个签署 Pending），没有执行生产数据/WMS/部署声明。
 
+## 2026-08-28 UTC CRM Platform P02 冻结可消费
+
+- Platform PR #3 已合并至 `main@6004decd2a4e41d9d502738dc5d9063bef9b37b7`；main/publish 流水线通过并发布三个具有逐包 SHA-256 证据的 `0.2.0-alpha.1` 包。
+- CRM PR #21 已合并至 `main@72c405b4e6ab0ab708cfa1b579b8821a1402dcfe`；固定 Abstractions 版本、TenantId→OrganizationId adapter、无默认租户负向测试与无仓库凭据的 NuGet/Actions 边界完成。
+- CRM PR run 33144894103（attempt 2）及 main run 33146816096 均通过远端私有包恢复和完整门禁；P02 正式达到 `Frozen / Consumable`，但未授权 P03、登录或业务实现。
+
 ## 2026-08-28 Space WP1 手工建模正式接受
 
 - 绑定 `main@b0164a15`、两份 SQL 测试源和六份 Web 测试源的 Git Blob/SHA-256，形成单人可重复自审的正式 WP1 Manifest。

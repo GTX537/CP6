@@ -1,8 +1,9 @@
 # 当前待办与优先级
 
-## P0：Platform P02 真实契约与首个消费证明
+## P0：Platform P03 与后续跨仓合同
 
-- P01 完成证据不再要求正式包签名；正式签名治理保持在 P10。下一阶段 P02 必须交付 Abstractions、只读 RequestContext、“无默认租户”约束、自动化测试、首个真实 alpha 包和最小消费方证明，完成前继续保持 `Absent / Not Consumable`。
+- P02 已以三个 `0.2.0-alpha.1` 包、逐包 SHA-256、CRM 固定版本引用及 PR/main 远端消费证据达到 `Frozen / Consumable`；不要再把 P02 写成 Absent 或 Candidate。
+- 下一项跨仓前置是 P03 RS256/JWKS/RFC 9457 认证合同；其后仍需 P04 CloudEvents 与 CRM-F3-CONTRACT。每项必须有版本化 locator、实现、负向测试、不可变产物及生产者/消费者门禁，不能因 P02 完成而提前启动登录或业务切片。
 
 ## P0：CRM V1 公开同步与 M0
 
