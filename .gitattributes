@@ -29,6 +29,7 @@ docs/space/acceptance/v1.3-ga/golden-cad-formal-evidence-*.json binary
 docs/space/acceptance/v1.3-ga/three-path-formal-evidence-*.json binary
 docs/space/acceptance/v1.3-ga/baseline-governance-formal-evidence-*.json binary
 docs/space/acceptance/v1.3-ga/manual-modeling-formal-evidence-*.json binary
+docs/space/acceptance/v1.3-ga/cad-start-formal-evidence-*.json binary
 
 # Main-sync SQL hashes are deployment evidence and must stay byte-stable.
 deploy/production/sql/main-sync-*/**.sql text eol=lf

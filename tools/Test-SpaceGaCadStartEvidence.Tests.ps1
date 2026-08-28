@@ -107,6 +107,18 @@ function Invoke-ValidatorCase {
 }
 
 try {
+    $formalRelativePath = (
+        'docs/space/acceptance/v1.3-ga/' +
+        'cad-start-formal-evidence-v1.0.0.json')
+    $textAttribute = (& git -C $repo check-attr text -- $formalRelativePath) |
+        Out-String
+    if ($LASTEXITCODE -ne 0 -or $textAttribute -notmatch ': text: unset') {
+        throw (
+            'Formal CAD Start evidence must be marked binary in .gitattributes ' +
+            'so its attested SHA-256 survives cross-platform checkout.')
+    }
+    $passed++
+
     $validPath = New-TestManifest 'valid' { param($manifest) }
     Invoke-ValidatorCase 'valid controlled CAD Start package' $validPath $true
 
