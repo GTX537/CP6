@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space WP0 基线与治理正式接受
+
+- Added a formal WP0 baseline/governance Manifest bound to `main@162d1108`, the sole DeliveryOwner, Kickoff/target dates, both Complete external inputs, and Accepted WP3/WP4/WP7 dependencies.
+- Bound PR #59's 7/7 required checks and clean post-merge 11/11 and 42/42 evidence smoke while explicitly recording that no production deployment occurred.
+- Added a 9-case standalone validator and expanded the overall GA attestation suite to 47 cases, rejecting templates, unattested evidence, missing dependencies, and input/Owner/date/Commit drift.
+- WP0 is Complete/Accepted. Core GA remains 72% / NoGo with 0 pending inputs, 5 pending gates, and 1 pending signer.
+
 ## 2026-08-28：Space WP4 三路径正式接受
 
 - Added a fail-closed WP4 evidence protocol and validator for exactly three authoring paths: authorized real DWG/DXF Primary output, controlled Excel–CAD, and controlled PDF/PNG underlay plus blank canvas.

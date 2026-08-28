@@ -19,6 +19,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.Tests.ps1'
+      - 'tools/Test-SpaceGaBaselineGovernanceEvidence.ps1'
+      - 'tools/Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
@@ -51,6 +53,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.ps1'
       - 'tools/Test-SpaceGaGoldenCadCandidates.Tests.ps1'
+      - 'tools/Test-SpaceGaBaselineGovernanceEvidence.ps1'
+      - 'tools/Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.ps1'
       - 'tools/Test-SpaceGaThreePathEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
@@ -74,6 +78,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Validate current GA evidence state
         shell: pwsh
@@ -94,6 +100,10 @@ jobs:
       - name: Exercise formal golden CAD evidence failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1
+
+      - name: Exercise formal baseline governance evidence failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaBaselineGovernanceEvidence.Tests.ps1
 
       - name: Exercise formal three-path evidence failure modes
         shell: pwsh

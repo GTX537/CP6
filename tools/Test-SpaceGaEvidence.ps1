@@ -17,6 +17,8 @@ $repoFullPath = [System.IO.Path]::GetFullPath($repo).TrimEnd(
 $repoPrefix = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
 $releaseRehearsalValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaReleaseRehearsalEvidence.ps1')
+$baselineGovernanceValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaBaselineGovernanceEvidence.ps1')
 $threePathValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaThreePathEvidence.ps1')
 $goldenCadValidator = Join-Path $PSScriptRoot (
@@ -412,6 +414,129 @@ foreach ($gate in @($manifest.gates)) {
         }
         foreach ($evidence in @($gate.acceptedEvidence)) {
             Test-AttestedEvidence -OwnerId $gate.id -Evidence $evidence
+        }
+        if ($gate.id -eq 'WP0_BASELINE_AND_GOVERNANCE') {
+            $requiredAcceptedGates = @(
+                'WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER',
+                'WP4_THREE_PATH_END_TO_END',
+                'WP7_GOLDEN_CAD_FORMAL_EVIDENCE')
+            $pendingPrerequisites = @($manifest.gates | Where-Object {
+                $_.id -in $requiredAcceptedGates -and
+                $_.acceptanceStatus -ne 'Accepted'
+            })
+            if ($pendingPrerequisites.Count -gt 0) {
+                Add-ValidationError (
+                    'SPACE_GA_BASELINE_PREREQUISITES_INCOMPLETE: WP0 ' +
+                    'requires Accepted WP3, WP4 and WP7 baselines.')
+            }
+            $baselineReference = [string]$gate.verificationManifest
+            if (!(Test-Text $baselineReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_BASELINE_MANIFEST_REQUIRED: Accepted WP0 ' +
+                    'requires a structured baseline governance Manifest.')
+            }
+            elseif ([System.IO.Path]::IsPathRooted($baselineReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_BASELINE_MANIFEST_ABSOLUTE: WP0 Manifest ' +
+                    'must use a repository-relative path.')
+            }
+            else {
+                $baselineFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $baselineReference))
+                $normalizedReference = $baselineReference.Replace('\', '/')
+                $isTemplateOrFixture =
+                    $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                    $normalizedReference.EndsWith(
+                        '/baseline-governance-evidence-template.json',
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                if (!$baselineFullPath.StartsWith(
+                    $repoPrefix,
+                    [System.StringComparison]::OrdinalIgnoreCase)) {
+                    Add-ValidationError (
+                        'SPACE_GA_BASELINE_MANIFEST_ESCAPE: WP0 Manifest ' +
+                        'escapes the repository root.')
+                }
+                elseif ($isTemplateOrFixture) {
+                    Add-ValidationError (
+                        'SPACE_GA_BASELINE_MANIFEST_SYNTHETIC: WP0 cannot ' +
+                        'use a template or test fixture as formal evidence.')
+                }
+                elseif ([System.IO.Path]::GetExtension($baselineFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $baselineFullPath -PathType Leaf)) {
+                    Add-ValidationError (
+                        'SPACE_GA_BASELINE_MANIFEST_MISSING: WP0 Manifest ' +
+                        "does not exist as JSON: $baselineReference")
+                }
+                else {
+                    $manifestIsAttested = @($gate.acceptedEvidence | Where-Object {
+                        ([string]$_.uri).Equals(
+                            $baselineReference,
+                            [System.StringComparison]::OrdinalIgnoreCase)
+                    }).Count -gt 0
+                    if (!$manifestIsAttested) {
+                        Add-ValidationError (
+                            'SPACE_GA_BASELINE_MANIFEST_UNATTESTED: WP0 ' +
+                            'accepted evidence must attest its structured Manifest.')
+                    }
+                    try {
+                        & $baselineGovernanceValidator `
+                            -ManifestPath $baselineFullPath `
+                            -ExpectedOwnerName ([string]$gate.ownerName) `
+                            -ExpectedKickoffDate ([string]$manifest.kickoffDate) `
+                            -ExpectedTargetGaDate ([string]$manifest.targetGaDate) |
+                            Out-Null
+                        $baselineManifest = Get-Content `
+                            -LiteralPath $baselineFullPath -Raw |
+                            ConvertFrom-SpaceGaJson
+                        foreach ($indexInput in @($manifest.externalInputs)) {
+                            $boundInputs = @($baselineManifest.externalInputs |
+                                Where-Object { $_.id -eq $indexInput.id })
+                            $matchingEvidence = @($indexInput.evidence | Where-Object {
+                                ([string]$_.uri).Equals(
+                                    [string]$indexInput.verificationManifest,
+                                    [System.StringComparison]::OrdinalIgnoreCase)
+                            })
+                            $expectedEvidence = if ($matchingEvidence.Count -gt 0) {
+                                $matchingEvidence[0]
+                            }
+                            else { $null }
+                            $ownerMatches = $boundInputs.Count -eq 1 -and
+                                ([string]($boundInputs[0].ownerName)).Equals(
+                                    [string]($indexInput.ownerName),
+                                    [System.StringComparison]::OrdinalIgnoreCase)
+                            $statusMatches = $boundInputs.Count -eq 1 -and
+                                [string]($boundInputs[0].status) -eq
+                                    [string]($indexInput.status)
+                            $referenceMatches = $boundInputs.Count -eq 1 -and
+                                ([string]($boundInputs[0].verificationManifest)).Equals(
+                                    [string]($indexInput.verificationManifest),
+                                    [System.StringComparison]::OrdinalIgnoreCase)
+                            $hashMatches = $boundInputs.Count -eq 1 -and
+                                $null -ne $expectedEvidence -and
+                                ([string]($boundInputs[0].evidenceSha256)).Equals(
+                                    [string]($expectedEvidence.sha256),
+                                    [System.StringComparison]::OrdinalIgnoreCase)
+                            $bindingMatches = $boundInputs.Count -eq 1 -and
+                                $ownerMatches -and $statusMatches -and
+                                $referenceMatches -and $hashMatches
+                            if (!$bindingMatches) {
+                                Add-ValidationError (
+                                    'SPACE_GA_BASELINE_INPUT_BINDING_MISMATCH: ' +
+                                    "WP0 external input $($indexInput.id) must " +
+                                    'match the GA index ' +
+                                    "(count=$($boundInputs.Count), owner=$ownerMatches, " +
+                                    "status=$statusMatches, reference=$referenceMatches, " +
+                                    "hash=$hashMatches).")
+                            }
+                        }
+                    }
+                    catch {
+                        Add-ValidationError (
+                            'SPACE_GA_BASELINE_EVIDENCE_INVALID: ' +
+                            $_.Exception.Message)
+                    }
+                }
+            }
         }
         if ($gate.id -eq 'WP4_THREE_PATH_END_TO_END') {
             $requiredAcceptedGates = @(

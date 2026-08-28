@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP0_BASELINE_GOVERNANCE_FORMAL_EVIDENCE",
+  "conclusion": "Pending",
+  "ownerName": null,
+  "acceptedAtUtc": null,
+  "kickoffDate": null,
+  "targetGaDate": null,
+  "baseline": {
+    "mainCommitSha": null,
+    "branch": "main",
+    "remote": "origin",
+    "commitPresent": null,
+    "postMergeSmokePassed": null,
+    "workspaceClean": null,
+    "productionDeploymentPerformed": false
+  },
+  "governance": {
+    "singleDeliveryOwner": null,
+    "distinctPersonQuorumRequired": false,
+    "allGateOwnersAssigned": null,
+    "externalInputOwnersAssigned": null
+  },
+  "externalInputs": [],
+  "acceptedDependencies": [],
+  "smoke": {
+    "gaValidator": {
+      "passed": null,
+      "pendingInputs": null,
+      "pendingGatesBeforeWp0Acceptance": null,
+      "pendingSigners": null
+    },
+    "threePathEvidenceTests": {
+      "passed": null,
+      "failed": null
+    },
+    "gaEvidenceAttestationTests": {
+      "passed": null,
+      "failed": null
+    }
+  }
+}

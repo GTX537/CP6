@@ -69,19 +69,31 @@
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M0",
       "implementationStatus": "Complete",
-      "acceptanceStatus": "Pending",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "Remote main commit and post-merge smoke",
         "Delivery owner, target dates and evidence register"
       ],
       "evidencePaths": [
+        "docs/space/acceptance/v1.3-ga/baseline-governance-evidence-protocol.md",
+        "docs/space/acceptance/v1.3-ga/baseline-governance-evidence-template.json",
+        "docs/space/acceptance/v1.3-ga/baseline-governance-formal-evidence-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-wp0-baseline-governance.md",
         "docs/project-memory/PROJECT_STATE.md",
         "docs/space/reports/2026-08-14-ga-evidence-attestation.md",
         "docs/space/reports/2026-08-15-space-ga-repository-completion-audit.md",
         "docs/space/reports/2026-08-27-space-ga-owner-and-cad-intake.md",
         "docs/space/reports/2026-08-27-space-lean-core-ga-reset.md"
       ],
-      "acceptedEvidence": [],
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/baseline-governance-formal-evidence-v1.0.0.json",
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/baseline-governance-formal-evidence-v1.0.0.json",
+          "sha256": "a4f97af5765cdd172e7e1eb41af40c26771a13bc8430204880bf302cd4e1b3a1",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T04:45:47Z"
+        }
+      ],
       "acceptanceCriteria": [
         "One delivery owner is named; no distinct-person or staffing-quorum gate applies",
         "Golden CAD and Primary Provider owners are named",

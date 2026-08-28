@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space WP0 基线与治理正式接受
+
+- 将唯一 DeliveryOwner、Kickoff/目标 GA、全部 Gate/Input Owner、精确远端 main Commit 和 WP3/WP4/WP7 已接受依赖固化为正式结构化证据；不设置多人或独立复核门槛。
+- PR #59 7/7 必需检查及合并后 11/11、42/42 冒烟已绑定；生产部署明确为 false。
+- 新增 WP0 独立 9/9 与总 GA 47/47 失败关闭测试；正式 Manifest 由 `BUBAO.GAO` 接受，WP0 改为 Complete/Accepted。
+- Core GA 继续 72% / NoGo（0 个输入、5 个 Gate、1 个签署 Pending）。
+
 ## 2026-08-28 Space WP4 三路径正式接受
 
 - 复用 WP7 冻结 Source Set 和精确 AutoCAD Primary，把授权真实 DWG/DXF Package、产品内存生成 XLSX、受控 PDF/PNG 与空白画布绑定进同一正式三路径 Manifest；没有把受控数据写成生产数据。
