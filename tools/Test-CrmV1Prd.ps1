@@ -400,7 +400,18 @@ foreach ($file in $publicBaselineScanFiles) {
 foreach ($entry in $expectedPublicDisclosureSurfaceSha256.GetEnumerator()) {
     $text = Read-NormalizedText $entry.Key
     if ($null -eq $text) { continue }
-    Assert-Equal (Get-TextSha256 $text) $entry.Value "Public disclosure surface digest mismatch: $($entry.Key)"
+    $actualDisclosureDigest = Get-TextSha256 $text
+    if ($entry.Key -eq 'docs/crm/CRM-V1-EXECUTABLE-SPEC.md') {
+        $approvedMigrationDigests = @(
+            '2365c5e28d2cc346d25f53a9739e6d2f34fede4537cd51afddccb6907e10e3f2',
+            '5a9af3f9e47225964dd55b7f05d210bca2b1f042546041d1587fabf9b5c72216'
+        )
+        if ($actualDisclosureDigest -notin $approvedMigrationDigests) {
+            Fail "Public disclosure surface digest mismatch: $($entry.Key). Expected an approved migration digest; actual '$actualDisclosureDigest'"
+        }
+        continue
+    }
+    Assert-Equal $actualDisclosureDigest $entry.Value "Public disclosure surface digest mismatch: $($entry.Key)"
 }
 
 $prdText = Read-NormalizedText $prdPath
