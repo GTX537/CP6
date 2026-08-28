@@ -58,9 +58,17 @@ public static class Program
                     await SynthesizeDevelopmentAiProposalsAsync(
                         commandLine,
                         cancellation.Token),
+                "synthesize-dev-rule-only-proposals" =>
+                    await SynthesizeDevelopmentRuleOnlyProposalsAsync(
+                        commandLine,
+                        cancellation.Token),
                 "evaluate-ai-offline" => await EvaluateAiOfflineAsync(
                     commandLine,
                     cancellation.Token),
+                "evaluate-golden-cad-business" =>
+                    await EvaluateGoldenCadBusinessAsync(
+                        commandLine,
+                        cancellation.Token),
                 "seal-dev-ai-review-baseline" =>
                     await SealDevelopmentAiReviewBaselineAsync(
                         commandLine,
@@ -816,6 +824,153 @@ public static class Program
             return 3;
         return commandLine.HasFlag("--require-release-eligible")
                && !report.Gate.ReleaseEligible
+            ? 4
+            : 0;
+    }
+
+    private static async Task<int> SynthesizeDevelopmentRuleOnlyProposalsAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var semantic = await ReadRequiredJsonAsync<SpaceCadSemanticPreviewV1>(
+            commandLine.Required("--semantic"),
+            "The CAD semantic preview is empty.",
+            cancellationToken);
+        var modelVersionId = ParseRequiredGuid(commandLine, "--model-version-id");
+        var runId = ParseRequiredGuid(commandLine, "--run-id");
+        var snapshot = SpaceAiCadFeatureMinimizer.CreateRuleOnlySnapshot(
+            modelVersionId,
+            runId,
+            semantic);
+        var empty = new WarehouseGenerationResult(
+            WarehouseGenerationInput.CurrentSchemaVersion,
+            $"rule-only-{runId:N}",
+            "cp6-deterministic-rules",
+            new WarehouseGenerationUsage(0, 0),
+            [],
+            []);
+        var validated = new WarehouseGenerationOutputValidator()
+            .Validate(snapshot.ProviderInput, empty);
+        var proposalSet = await new WarehouseDraftSynthesizer().SynthesizeAsync(
+            new WarehouseDraftSynthesisRequestV1(
+                modelVersionId,
+                commandLine.Required("--rule-version"),
+                snapshot,
+                semantic,
+                validated,
+                [],
+                [],
+                []),
+            cancellationToken);
+        await WriteCanonicalJsonAsync(
+            Path.GetFullPath(commandLine.Required("--output")),
+            WarehouseDraftSynthesizer.Serialize(proposalSet),
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                proposalSet.ModelVersionId,
+                proposalSet.FloorLogicalId,
+                proposalSet.ProposalSetSha256,
+                proposalSet.Summary,
+                providerInvoked = false,
+                proposalSet.DraftWritten,
+            },
+            CadExperimentJson.Options));
+        return proposalSet.Summary.CanEnterReview ? 0 : 3;
+    }
+
+    private static async Task<int> EvaluateGoldenCadBusinessAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        if (!DateOnly.TryParseExact(
+                commandLine.Required("--acceptance-date"),
+                "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out var acceptanceDate))
+        {
+            throw new ArgumentException(
+                "Option '--acceptance-date' must use yyyy-MM-dd.");
+        }
+
+        var requestOutput = Path.GetFullPath(
+            commandLine.Required("--request-output"));
+        var reportOutput = Path.GetFullPath(
+            commandLine.Required("--report-output"));
+        var evidenceOutput = Path.GetFullPath(
+            commandLine.Required("--evidence-output"));
+        EnsureDistinctPaths(requestOutput, reportOutput, evidenceOutput);
+        var result = await GoldenCadBusinessEvaluator.EvaluateAsync(
+            commandLine.Required("--dataset-root"),
+            commandLine.Required("--cad-ir-root"),
+            commandLine.Required("--rules"),
+            commandLine.Required("--application-commit"),
+            commandLine.Required("--provider-version"),
+            acceptanceDate,
+            cancellationToken);
+        await CadExperimentJson.WriteAsync(
+            requestOutput,
+            result.Request,
+            cancellationToken);
+        await WriteCanonicalJsonAsync(
+            reportOutput,
+            SpaceAiOfflineEvaluator.Serialize(result.Report),
+            cancellationToken);
+        var requestSha256 = await DatasetAuditor.ComputeSha256Async(
+            requestOutput,
+            cancellationToken);
+        var reportSha256 = await DatasetAuditor.ComputeSha256Async(
+            reportOutput,
+            cancellationToken);
+        await CadExperimentJson.WriteAsync(
+            evidenceOutput,
+            new
+            {
+                schemaVersion = GoldenCadBusinessEvaluator.SchemaVersion,
+                evidenceClass = GoldenCadBusinessEvaluator.EvidenceClass,
+                evaluatedAtUtc = DateTime.UtcNow,
+                result.DatasetManifestSha256,
+                result.GoldenDatasetSha256,
+                result.SourceSetSha256,
+                result.RulesSha256,
+                result.CadIrSetSha256,
+                requestSha256,
+                reportSha256,
+                canonicalReportSha256 = result.Report.ReportSha256,
+                result.Report.AppliedHighConfidenceThreshold,
+                result.Report.OverallMetrics,
+                result.Report.OutOfSampleMetrics,
+                result.Report.SplitMetrics,
+                result.Report.Calibration,
+                result.Report.Gate,
+                result.HoldoutUnreportedBlockingOmissions,
+                result.Samples,
+                externalProviderInvoked = false,
+                draftWritten = false,
+            },
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                requestOutput,
+                requestSha256,
+                reportOutput,
+                reportSha256,
+                evidenceOutput,
+                result.RulesSha256,
+                result.CadIrSetSha256,
+                result.Report.OverallMetrics,
+                result.Report.OutOfSampleMetrics,
+                result.Report.Gate,
+                result.HoldoutUnreportedBlockingOmissions,
+            },
+            CadExperimentJson.Options));
+        if (!result.Report.Gate.EvaluationDataValid)
+            return 3;
+        return commandLine.HasFlag("--require-release-eligible")
+               && !result.Report.Gate.ReleaseEligible
             ? 4
             : 0;
     }
@@ -1708,8 +1863,21 @@ public static class Program
                   [--locked-facts <json-path>]
                   [--template-defaults <json-path>]
                   [--rack-profiles <json-path>]
+              synthesize-dev-rule-only-proposals --semantic <semantic-preview-json-path>
+                  --model-version-id <guid> --run-id <guid>
+                  --rule-version <token>
+                  --output <read-only-proposal-set-json-path>
               evaluate-ai-offline --input <normalized-evaluation-request-json-path>
                   --output <canonical-evaluation-report-json-path>
+                  [--require-release-eligible]
+              evaluate-golden-cad-business --dataset-root <controlled-dataset-root>
+                  --cad-ir-root <sealed-release-cad-ir-directory>
+                  --rules <frozen-business-rules-json-path>
+                  --application-commit <40-hex-sha>
+                  --provider-version <version> --acceptance-date <yyyy-MM-dd>
+                  --request-output <normalized-request-json-path>
+                  --report-output <canonical-report-json-path>
+                  --evidence-output <bound-evidence-json-path>
                   [--require-release-eligible]
               seal-dev-ai-review-baseline --input <baseline-draft-json-path>
                   --output <sealed-baseline-json-path>

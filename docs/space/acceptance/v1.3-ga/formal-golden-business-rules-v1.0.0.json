@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "parserVersion": "cp6-space-golden-business-parser-v1.0.0",
+  "mappingProfileVersion": "cp6-space-cad-original-v1.0.0",
+  "ruleSetVersion": "space-v1.0.0-original-cad",
+  "modelVersion": "cp6-rule-only-v1",
+  "doorThicknessMillimeters": 120,
+  "operationModel": "One manual create per expected target versus one batch review plus one correction per false positive or false negative.",
+  "rules": [
+    {
+      "layer": "0_misc",
+      "targetType": "Rack",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.55,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "A-AISLE",
+      "targetType": "Aisle",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.99,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "A-DOCK",
+      "targetType": "Dock",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.99,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "A-DOOR",
+      "targetType": "Door",
+      "requiredEntityType": "Line",
+      "confidence": 0.99,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "A-WALL",
+      "targetType": "Wall",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.99,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": true
+    },
+    {
+      "layer": "A-ZONE",
+      "targetType": "Zone",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.99,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "Layer 1",
+      "targetType": "Rack",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.60,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "M-EQUIP",
+      "targetType": "StaticEquipment",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.95,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "S-COLUMN",
+      "targetType": "Column",
+      "requiredEntityType": "Circle",
+      "confidence": 0.99,
+      "minimumDiameterMillimeters": 500,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "S-PALLET",
+      "targetType": "StaticEquipment",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.97,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "S-RACK",
+      "targetType": "Rack",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.99,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "S_RAK",
+      "targetType": "Rack",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.88,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    },
+    {
+      "layer": "WALLS old",
+      "targetType": "Wall",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.80,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": true
+    },
+    {
+      "layer": "rack_unknown",
+      "targetType": "Rack",
+      "requiredEntityType": "ClosedPolyline",
+      "confidence": 0.72,
+      "minimumDiameterMillimeters": null,
+      "keepLargestAtSameCenter": false
+    }
+  ]
+}
