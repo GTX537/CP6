@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-28 Space WP5 Viewer 正式接受
+
+- 绑定 `4b774bb4` 和 13 个生产/测试源 Git Blob/SHA-256，正式证明生产 Viewer 只消费 Current Published Design Revision；聚焦边界 12/12、浏览器 Published-only 请求检查通过。
+- 500 货架/10,000 库位执行 30 次冷启动，3,000/3,000 拾取、0 失败、0 console error；硬件 WebGL2 渲染器一致，全部冻结性能预算通过。GPU 品牌正则降为可选诊断，软件渲染仍禁止。
+- 1440×900、1280×720、键盘、Chromium Accessibility Tree、4.5:1 对比度和零页面错误 4/4；全量 Web 176 files / 906 tests、type-check、production build 通过。
+- WP5 Complete/Accepted；Core GA 继续 72% / NoGo（0 个输入、2 个 Gate、1 个签署 Pending），未把 Simulated UI fixture 写成生产数据，也未执行生产部署。
+
 ## 2026-08-28 Space WP2 CAD Start 正式接受
 
 - 新增可重复的受控验收运行器，绑定精确应用 Commit、冻结 Worker Release、授权真实 DWG/DXF、SQL Server 和 7 份产品/测试源码 Git Blob。

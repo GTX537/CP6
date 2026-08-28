@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "deliveryMode": "SoloDeveloper",
+  "evidenceClass": "WP5_VIEWER_FORMAL_EVIDENCE",
+  "conclusion": "Pass",
+  "ownerName": "BUBAO.GAO",
+  "executedAtUtc": "2026-08-28T07:26:05.727Z",
+  "applicationCommitSha": "4b774bb4a724613b44511f204784ea60f3ae22f7",
+  "environment": {
+    "mode": "ControlledAcceptance",
+    "operatingSystem": "Windows 11 Pro 10.0.26200",
+    "browser": "Google Chrome 151.0.7922.174",
+    "nodeVersion": "v20.19.0",
+    "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x00002560) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "trackedWorktreeCleanAtExecution": true
+  },
+  "rawEvidence": [
+    {
+      "uri": "urn:cp6-space-ga-evidence:wp5:4b774bb4:published-boundary-json:v1",
+      "sha256": "ecbc8f954857a2e0e8054984adc2c28c3db11e801ddf702a36641909980949e1",
+      "mediaType": "application/json",
+      "evidenceClass": "PUBLISHED_BOUNDARY_FORMAL"
+    },
+    {
+      "uri": "urn:cp6-space-ga-evidence:wp5:4b774bb4:performance-json:v1",
+      "sha256": "b0c969b1411034e560253a06174f6a2e9accb5615f846ad2b93f3f8d8e48b3dd",
+      "mediaType": "application/json",
+      "evidenceClass": "PERFORMANCE_FORMAL_GA"
+    },
+    {
+      "uri": "urn:cp6-space-ga-evidence:wp5:4b774bb4:performance-png:v1",
+      "sha256": "d60004a870332ae81065193b23d86825a993bc8c3f3c7046c2ab69d54593987c",
+      "mediaType": "image/png",
+      "evidenceClass": "PERFORMANCE_SCREENSHOT"
+    },
+    {
+      "uri": "urn:cp6-space-ga-evidence:wp5:4b774bb4:accessibility-json:v1",
+      "sha256": "bd661c9998198f83d8736ae0e8fb95fc511e2a413ad83955af6b7a8e7b093bc0",
+      "mediaType": "application/json",
+      "evidenceClass": "ACCESSIBILITY_FORMAL"
+    },
+    {
+      "uri": "urn:cp6-space-ga-evidence:wp5:4b774bb4:viewer-1440x900-png:v1",
+      "sha256": "e96456353474588a3b604b3e81b7d327f2cb63c59118e061e311293105a0573a",
+      "mediaType": "image/png",
+      "evidenceClass": "VIEWPORT_SCREENSHOT"
+    },
+    {
+      "uri": "urn:cp6-space-ga-evidence:wp5:4b774bb4:viewer-1280x720-png:v1",
+      "sha256": "0607d2e36873052f5e35510a2235b8214ca575ad4d9494349d9678a0473afc6c",
+      "mediaType": "image/png",
+      "evidenceClass": "VIEWPORT_SCREENSHOT"
+    }
+  ],
+  "verification": {
+    "publishedBoundary": {
+      "conclusion": "Pass",
+      "productionEntryPoint": "cp6.web/src/views/space/viewer/FloorViewer.vue",
+      "authority": "DesignRevision",
+      "versionStatus": "Published",
+      "runtimeOverlayIncluded": false,
+      "testFiles": 3,
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "performance": {
+      "conclusion": "Pass",
+      "classification": "FORMAL_GA",
+      "datasetVersion": "E08-S05-STANDARD",
+      "locationCount": 10000,
+      "rackCount": 500,
+      "coldRuns": 30,
+      "failedRuns": 0,
+      "pickHits": 3000,
+      "expectedPickHits": 3000,
+      "requiredGpuPattern": null,
+      "hardwareRenderer": true,
+      "webgl2": true,
+      "consistentRenderer": true,
+      "consoleClean": true,
+      "budgets": {
+        "maxDrawCalls": 100,
+        "maxInteractiveP95Milliseconds": 3000,
+        "maxFrameP95Milliseconds": 20,
+        "maxLabelUpdateP95Milliseconds": 16,
+        "maxPickP95Milliseconds": 150,
+        "maxStockApplyP95Milliseconds": 3000,
+        "maxVisibleLabels": 200
+      },
+      "observed": {
+        "drawCallsMax": 36,
+        "interactiveP95Milliseconds": 89.60000002384186,
+        "frameP95Milliseconds": 8.200000000000045,
+        "labelUpdateP95Milliseconds": 5.399999976158142,
+        "pickP95Milliseconds": 0.30000001192092896,
+        "stockApplyP95Milliseconds": 2.200000047683716,
+        "visibleLabelsMax": 34
+      }
+    },
+    "accessibility": {
+      "conclusion": "Pass",
+      "runner": "Playwright",
+      "project": "space-viewer-ga-mocked",
+      "fixtureClassification": "Simulated",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "viewports": [
+        "1440x900",
+        "1280x720"
+      ],
+      "publishedOnlyRequestBoundaryPassed": true,
+      "keyboardPassed": true,
+      "chromiumAccessibilityTreePassed": true,
+      "minimumContrastRatio": 4.5,
+      "contrastPassed": true,
+      "consoleClean": true
+    },
+    "repositoryRegression": {
+      "typeCheckPassed": true,
+      "productionBuildPassed": true,
+      "unitTestFiles": 176,
+      "unitTestsPassed": 906,
+      "unitTestsFailed": 0
+    }
+  },
+  "boundaries": {
+    "exactGpuBrandRequired": false,
+    "hardwareAccelerationRequired": true,
+    "softwareRendererAllowed": false,
+    "uiFixtureUsedForProductionDataClaim": false,
+    "productionDataClaimed": false,
+    "productionWmsClaimed": false,
+    "productionDeploymentPerformed": false,
+    "distinctPersonReviewRequired": false
+  },
+  "sources": [
+    {
+      "path": "cp6.web/src/api/space/designPublishedScene.ts",
+      "sha256": "393f266092722e7808721fba010f1d893432777029b699d8743f8ceeac63ed53",
+      "gitBlobOid": "82390b9848f451c54cb197bf726834d39bef80e5"
+    },
+    {
+      "path": "cp6.web/src/space-viewer/publishedBoundary.spec.ts",
+      "sha256": "66605322872f8da26f92243bc0c325ccefc0502fa96f31f781f219dc401f987f",
+      "gitBlobOid": "1c6207123671c139c07d4e1e5418df5817304294"
+    },
+    {
+      "path": "cp6.web/src/space-viewer/build/SceneBuilder.ts",
+      "sha256": "40a7ff6a376905e9a99a9835866d693399b6c329883d4d6a9457359ae6d766ee",
+      "gitBlobOid": "9881c81cecc7fab4c40265d3716bd81ac65e7ba5"
+    },
+    {
+      "path": "cp6.web/src/space-viewer/build/SceneBuilder.published.spec.ts",
+      "sha256": "cae9baf39a647c7a2339e54532ff17cc30a55d41b679726f23bbbc1d43c6b9ae",
+      "gitBlobOid": "075d3a9f3f32ecf3a50964ec03fe45348fd1130f"
+    },
+    {
+      "path": "cp6.web/src/views/space/viewer/FloorViewer.vue",
+      "sha256": "d604e275cb48153ef790eeff2ce6548b1449cc70fb8919118c8faee750c7228a",
+      "gitBlobOid": "231dc8698ea57fff287951a74742ef007b34fd58"
+    },
+    {
+      "path": "cp6.web/src/views/space/viewer/FloorList.vue",
+      "sha256": "b724426a9b349d1bb6647b4affe1d7beb62f990320dec34b9c3fb9038ea60193",
+      "gitBlobOid": "752a2253f379cdd2f2e1a3c43886526ced50bb79"
+    },
+    {
+      "path": "cp6.web/src/space-viewer/performance/standardWarehouse.ts",
+      "sha256": "7778a43fab9f20978fb9fad8adea4f891c4e6ab4bd67f84e39d9a0489f026eeb",
+      "gitBlobOid": "92e6090956940c9bff0b2a82a90577b956af0554"
+    },
+    {
+      "path": "cp6.web/src/space-viewer/performance/budgets.ts",
+      "sha256": "7eecb7139b5c56d1fefffcb4abef19449bbc41112b23a5f2bdb7320e0c1615a2",
+      "gitBlobOid": "a564a0a4356f45b14728545c933c6a4ba501769a"
+    },
+    {
+      "path": "cp6.web/src/space-viewer/performance/browserBenchmark.ts",
+      "sha256": "054d98d087d050fe717854d8970e7e19e3c6249f0ae3a09b277ceddf49433732",
+      "gitBlobOid": "579adcca07fd9dd27c32e1ca100ad21b094a8151"
+    },
+    {
+      "path": "cp6.web/scripts/space-performance-evidence.mjs",
+      "sha256": "617f52fc613d3c9583829a132043a417f9eb51c8c068e70d9380e9ed807058e8",
+      "gitBlobOid": "de7c5685e0f2c5ceaad28402428c9f8c394abc22"
+    },
+    {
+      "path": "cp6.web/scripts/space-performance-browser.mjs",
+      "sha256": "a8dbccd013384de03774fc54a0c6fa98e551049b57080e9dc4da760bcb318bfe",
+      "gitBlobOid": "e6478e717f9f16b318a0e31deb371675899e7ac3"
+    },
+    {
+      "path": "cp6.web/e2e/space-viewer-ga.spec.ts",
+      "sha256": "ddb7d4f7d08dc9145837000e9d6be2a41f5aec4a11ac424fb8666508ff198ec5",
+      "gitBlobOid": "f9790618dab1e7aa9473fc35ad2d53493cf711b1"
+    },
+    {
+      "path": "cp6.web/playwright.config.ts",
+      "sha256": "66f5a10b760e41e74ae8c523544a3af9c89492ce44380e228e207545d4d8eab2",
+      "gitBlobOid": "e69d23d6bfd18adf2878376d64cc6f04067b5bdf"
+    }
+  ],
+  "selfReview": {
+    "acceptedBy": "BUBAO.GAO",
+    "acceptedAtUtc": "2026-08-28T07:28:55Z",
+    "repeatable": true,
+    "distinctPersonReviewRequired": false
+  }
+}

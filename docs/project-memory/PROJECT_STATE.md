@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space WP5 Viewer 正式接受（2026-08-28）
+
+- 生产 Viewer 的 Current Published Design Revision 边界通过聚焦 3 文件 12/12 和浏览器请求级验证；Draft、错误 Authority、内容漂移、运行态混入和 Legacy/可变 Scene 路径继续失败关闭。
+- 正式标准仓为 500 货架/10,000 库位，30/30 冷启动、3,000/3,000 拾取命中、0 失败、0控制台错误；硬件 WebGL2/RTX 3060 全程一致，交互/帧/标签/拾取/着色/Draw Call/标签量全部低于冻结门槛。
+- 生产 Canvas、工具栏和楼层列表已补齐键盘与可达语义；1440×900、1280×720、键盘、Chromium Accessibility Tree 和关键控件 4.5:1 对比度 4/4 通过。UI fixture 明确为 Simulated，不计生产数据。
+- WP5 已 Complete/Accepted。Core GA 保持 72% / `NoGo`：0 个外部输入、WP6/WP8 共 2 个 Gate 和 1 个最终签署 Pending；下一主线是一次受控 SQL Server/WMS/恢复/安全发布演练，未执行生产部署。
+
 ## Space WP2 CAD Start 正式接受（2026-08-28）
 
 - 新增独立受控验收运行器，从仓库外复算授权 `L1-C01.dwg` / `L1-C02.dxf`，验证冻结 `cp6-autocad-worker/1.0.0` Release 和 AutoCAD Core `25.0.58.0.0` 后，在 SQL Server Express LocalDB `17.0.4025.3` 调用产品 Preparation/Parse 服务。

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space WP5 Viewer 正式接受
+
+- Added production Viewer keyboard/focus semantics and a deterministic browser gate for Current Published-only requests, 1440×900/1280×720, native keyboard operation, Chromium accessibility-tree names and 4.5:1 contrast.
+- Replaced the machine-specific default Iris Xe regex with an optional diagnostic while retaining mandatory hardware WebGL2, no software renderer, one consistent renderer, fixed absolute budgets, zero console errors and complete pick integrity.
+- Formal evidence on `4b774bb4` passed Published boundary 12/12, Viewer browser 4/4, 30/30 cold performance runs and 3,000/3,000 picks; repository regression passed 176 files / 906 tests, strict type-check and production build.
+- WP5 is Complete/Accepted. UI fixtures remain explicitly Simulated and do not claim production data/WMS; Core GA remains 72% / NoGo with 0 pending inputs, 2 pending gates and 1 pending signer, and no production deployment occurred.
+
 ## 2026-08-28：Space WP2 CAD Start 正式接受
 
 - Added a standalone controlled acceptance runner that verifies the frozen authorized DWG/DXF, exact AutoCAD Primary Worker release and Core executable, then executes the product Preparation/Parse chain on disposable SQL Server.
