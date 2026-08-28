@@ -1274,7 +1274,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 
 | ID | 交付 | 前置 | 完成证据 |
 | --- | --- | --- | --- |
-| P01 | 新仓、分层、CI、版本/包源/源码映射、标准 verify runner | DEC-CRM-001/002 | 空模板编译、可重复 pack、runner contract、无跨仓 ProjectReference；不发布空包 |
+| P01 | 新仓、分层、CI、版本/包源/源码映射、标准 verify runner | DEC-CRM-001/002 | 空模板编译、包签名、runner contract、无跨仓 ProjectReference |
 | P02 | Abstractions + 只读 RequestContext + 无默认租户 | P01 | 单元/ASP.NET 集成测试 |
 | P03 | RS256/JWKS 验证、ProblemDetails、correlation | P01 | Token 负向矩阵和轮换测试 |
 | P04 | CloudEvents + JSON Schema + contract bundle | P01 | Schema/兼容测试和示例 |
@@ -1283,7 +1283,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 | P07 | YARP Gateway、路由、header 清理、限流 | P03 | 直连/伪造头/路由 E2E |
 | P08 | OTel、健康、resiliency、Runbook | P03,P05,P06 | Trace 跨服务、故障注入 |
 | P09 | Compose/K8s Dapr 组件、订阅、Topic/ACL provision | P05,P08 | 非生产部署演练 |
-| P10 | NuGet/镜像 release、System Manifest schema、证据 | P01-P09 | 正式签名候选和消费方验证 |
+| P10 | NuGet/镜像 release、System Manifest schema、证据 | P01-P09 | 签名候选和消费方验证 |
 
 ### 18.2 CP6 C01–C04（C04 分两阶段）
 

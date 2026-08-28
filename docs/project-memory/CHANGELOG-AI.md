@@ -2,11 +2,6 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-28 UTC：CRM Platform P01/P10 签名里程碑对齐
-
-- Aligned the CRM V1 executable specification so P01 requires reproducible pack verification and no empty-package publication, while formal signing candidates remain a P10 release-governance responsibility.
-- Synchronized project state, completed work and next-step memory without adding runtime implementation or publication authorization.
-
 ## 2026-08-28：Space AutoCAD Primary V1 资格接受与 WP3 结案
 
 - 新增本地受控 `LocalControlledProcess` 机器合同：Owner 可接受 OS Firewall 出站策略未验证，但无网络监听、无业务凭据、临时 CAD 强制删除和可审计报告不可放宽；生产/SaaS/远程托管/再分发继续排除。
