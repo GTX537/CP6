@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## Space Studio V1 Core GA 100% 结案（2026-08-28）
+
+- 受控发布演练绑定应用提交 `21a81767a0155a8cc92325acc3e3cdcc076ee930`、冻结 Source Set/Golden Dataset/Worker Environment 及 10 个实现源 Git Blob；WP2/WP4/WP7/WP5 正式基线均重新校验通过。
+- SQL Server Express LocalDB `17.0.4025.3` 上实际执行 Publish/WMS/Published 隔离/恢复 8/8、0 failed、0 skipped；产品 `Cp6SpaceWmsAdapter` 使用 `Real` 数据源分类，自动恢复 5 秒，CHECKSUM 备份恢复 3.6480777 秒，`DBCC CHECKDB`、Published Hash、WMS 写入计数和临时资源清理均通过。
+- Kestrel loopback + 验签 JWT 1/1 通过；Customer/Supplier/3PL 控制面全部 403，Published Portal 只读、写入拒绝，内部主体可用。没有把 Mock、未签名角色头或合成数据作为正式安全/生产验收。
+- WP6、WP8 已 Complete/Accepted，唯一 DeliveryOwner `BUBAO.GAO` 已 Signed；两类外部输入、WP0～WP8 九个 Gate 和签署均无 Pending，Core GA 派生状态为 `GaReady` / 100%。
+- 本次仍是本机受控非生产结案：`productionDataClaimed=false`、`productionWmsClaimed=false`、`productionDeploymentPerformed=false`。生产 Release/CD、生产 WMS 窗口、现场 Pilot 和 Backup Provider 是 GA 后独立事项。
+
 ## Space WP5 Viewer 正式接受（2026-08-28）
 
 - 生产 Viewer 的 Current Published Design Revision 边界通过聚焦 3 文件 12/12 和浏览器请求级验证；Draft、错误 Authority、内容漂移、运行态混入和 Legacy/可变 Scene 路径继续失败关闭。

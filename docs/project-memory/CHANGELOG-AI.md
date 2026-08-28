@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-28：Space Studio V1 Core GA 100% 结案
+
+- Added a deterministic controlled release-rehearsal runner bound to clean application commit `21a81767`, the frozen Source Set/Golden Dataset/Worker Environment, and ten exact source Git blob identities.
+- Revalidated the accepted WP2/WP4/WP7/WP5 manifests, then passed 8/8 real SQL Server Publish/WMS/Published-isolation/recovery tests and 1/1 Kestrel signed-JWT security test with zero failures or skips.
+- Observed five-second automatic recovery and a 3.6480777-second CHECKSUM backup/restore with `DBCC CHECKDB`; verified restored Published hash/WMS write count, old-Published continuity, reconciliation, idempotency and cleanup.
+- Accepted WP6 and WP8 and recorded DeliveryOwner `BUBAO.GAO` as Signed. The derived Core GA state is now `GaReady` / 100% with 0 pending inputs, gates or signers. Production data, production WMS, Pilot and production deployment remain explicitly unclaimed and separate.
+
 ## 2026-08-28：Space WP5 Viewer 正式接受
 
 - Added production Viewer keyboard/focus semantics and a deterministic browser gate for Current Published-only requests, 1440×900/1280×720, native keyboard operation, Chromium accessibility-tree names and 4.5:1 contrast.

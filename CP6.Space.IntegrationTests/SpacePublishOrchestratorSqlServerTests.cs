@@ -10,10 +10,12 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
-public sealed class SpacePublishOrchestratorSqlServerTests
+public sealed class SpacePublishOrchestratorSqlServerTests(
+    ITestOutputHelper output)
 {
     [SqlServerFact]
     public async Task Wms_timeout_keeps_production_and_automatic_retry_completes()
@@ -93,6 +95,15 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                 Assert.Equal("Queued", waiting.JobStatus);
                 Assert.Equal(1, waiting.JobAttemptCount);
                 Assert.NotNull(waiting.NextAttemptAtUtc);
+                var automaticRecoveryDelay =
+                    waiting.NextAttemptAtUtc.Value - clock.UtcNow;
+                Assert.InRange(
+                    automaticRecoveryDelay,
+                    TimeSpan.Zero,
+                    TimeSpan.FromMinutes(15));
+                output.WriteLine(
+                    "SPACE_GA_AUTOMATIC_RECOVERY_DELAY_SECONDS={0}",
+                    automaticRecoveryDelay.TotalSeconds);
                 var recoveryMetrics =
                     await new SpacePublishRecoveryMetricsSnapshotProvider(
                             space,
@@ -116,7 +127,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests
 
                 adapter.Recovered = true;
                 executor.ClearFailure();
-                clock.Advance(TimeSpan.FromHours(1));
+                clock.Advance(automaticRecoveryDelay + TimeSpan.FromSeconds(1));
                 Assert.True(await runner.RunNextAsync(
                     SpaceJobType.Publish,
                     "test-timeout-worker"));

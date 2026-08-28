@@ -41,6 +41,7 @@ function New-TestManifest {
 
     $manifest = Get-Content -LiteralPath $baseManifestPath -Raw |
         ConvertFrom-Json
+    $manifest.declaredStatus = 'NoGo'
     $wp0 = @($manifest.gates | Where-Object {
         $_.id -eq 'WP0_BASELINE_AND_GOVERNANCE'
     })[0]
@@ -62,6 +63,21 @@ function New-TestManifest {
     $wp2.acceptedEvidence = @()
     $wp2 | Add-Member -MemberType NoteProperty `
         -Name verificationManifest -Value $null -Force
+    $wp6 = @($manifest.gates | Where-Object {
+        $_.id -eq 'WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY'
+    })[0]
+    $wp6.acceptanceStatus = 'Pending'
+    $wp6.acceptedEvidence = @()
+    $wp8 = @($manifest.gates | Where-Object {
+        $_.id -eq 'WP8_RELEASE_REHEARSAL_AND_SIGNOFF'
+    })[0]
+    $wp8.acceptanceStatus = 'Pending'
+    $wp8.acceptedEvidence = @()
+    $wp8.verificationManifest = $null
+    foreach ($signer in @($manifest.signers)) {
+        $signer.status = 'Pending'
+        $signer.evidence = @()
+    }
     & $Mutation $manifest
     $path = Join-Path $tempDirectory "$Name.json"
     $manifest | ConvertTo-Json -Depth 100 |
@@ -472,6 +488,38 @@ try {
     }
     $rehearsalAcceptance = Get-Content -LiteralPath $rehearsalAcceptancePath -Raw |
         ConvertFrom-Json
+    $rehearsalAcceptance.applicationCommitSha =
+        (& git -C $repo rev-parse HEAD | Out-String).Trim()
+    $cadAcceptance = Get-Content -LiteralPath (Join-Path $repo (
+        'docs/space/acceptance/v1.3-ga/' +
+        'cad-start-formal-evidence-v1.0.0.json')) -Raw | ConvertFrom-Json
+    $threePathAcceptanceBaseline = Get-Content -LiteralPath (Join-Path $repo (
+        'docs/space/acceptance/v1.3-ga/' +
+        'three-path-formal-evidence-v1.0.0.json')) -Raw | ConvertFrom-Json
+    $rehearsalAcceptance.sourceSetSha256 = $cadAcceptance.sourceSetSha256
+    $rehearsalAcceptance.goldenDatasetSha256 =
+        $cadAcceptance.goldenDatasetSha256
+    $rehearsalAcceptance.workerEnvironmentSha256 =
+        $threePathAcceptanceBaseline.workerEnvironmentSha256
+    $rehearsalSourcePaths = @(
+        'CP6.Space.Infrastructure/SpacePublishOrchestrator.cs',
+        'CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs',
+        'CP6.Space.Infrastructure/Cp6SpaceWmsAdapter.cs',
+        'CP6.WebApi/Middleware/SpaceExecutionContextMiddleware.cs',
+        'CP6.Space.IntegrationTests/SpacePublishOrchestratorSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/Cp6SpaceWmsAdapterSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/SpaceDesignSceneSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs',
+        'CP6.Tests/Space/SpaceReleaseRehearsalHttpSecurityTests.cs',
+        'tools/Invoke-SpaceGaReleaseRehearsal.ps1')
+    $rehearsalAcceptance | Add-Member -NotePropertyName sources `
+        -NotePropertyValue @($rehearsalSourcePaths | ForEach-Object {
+            [pscustomobject]@{
+                path = $_
+                gitBlobOid = (& git -C $repo rev-parse "HEAD`:$($_)" |
+                    Out-String).Trim()
+            }
+        }) -Force
     foreach ($evidence in @(
         $rehearsalAcceptance.evidence.execution,
         $rehearsalAcceptance.evidence.publishWms,
@@ -592,7 +640,7 @@ try {
         -Algorithm SHA256).Hash.ToLowerInvariant()
 
     Invoke-ValidatorCase `
-        -Name 'current honest NoGo manifest' `
+        -Name 'current derived GA manifest' `
         -ManifestPath $baseManifestPath `
         -ShouldPass $true
 

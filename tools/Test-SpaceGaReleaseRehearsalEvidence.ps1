@@ -22,6 +22,9 @@ function Test-RehearsalText($Value) {
 function Test-RehearsalSha($Value) {
     return [string]$Value -match '^[a-fA-F0-9]{64}$'
 }
+function Test-RehearsalGitOid($Value) {
+    return [string]$Value -match '^[a-fA-F0-9]{40}$'
+}
 function Test-RehearsalPerson($Value) {
     if (!(Test-RehearsalText $Value) -or ([string]$Value).Length -gt 200) {
         return $false
@@ -186,18 +189,57 @@ if ($null -eq $executedAt -or
     Fail-Rehearsal 'SPACE_GA_REHEARSAL_TIME_INVALID: executedAtUtc must be a non-future UTC timestamp.'
     $executedAt = [DateTimeOffset]::MinValue
 }
-if ([string]$manifest.applicationCommitSha -notmatch '^[a-fA-F0-9]{40}$' -or
+$commit = [string]$manifest.applicationCommitSha
+if (!(Test-RehearsalGitOid $commit) -or
     !(Test-RehearsalSha $manifest.sourceSetSha256) -or
     !(Test-RehearsalSha $manifest.goldenDatasetSha256) -or
     !(Test-RehearsalSha $manifest.workerEnvironmentSha256)) {
     Fail-Rehearsal 'SPACE_GA_REHEARSAL_BASELINE_INVALID: commit, source set, golden dataset and Worker hashes are required.'
 }
+elseif (!$AllowTestFixtures) {
+    & git -C $repoFullPath cat-file -e "$commit`^{commit}" 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Fail-Rehearsal 'SPACE_GA_REHEARSAL_COMMIT_MISSING: the tested commit is unavailable.'
+    }
+    else {
+        & git -C $repoFullPath merge-base --is-ancestor $commit HEAD
+        if ($LASTEXITCODE -ne 0) {
+            Fail-Rehearsal 'SPACE_GA_REHEARSAL_COMMIT_NOT_ANCESTOR: the tested commit must be an ancestor.'
+        }
+    }
+
+    $cadManifestPath = Join-Path $repo (
+        'docs\space\acceptance\v1.3-ga\cad-start-formal-evidence-v1.0.0.json')
+    $threePathManifestPath = Join-Path $repo (
+        'docs\space\acceptance\v1.3-ga\three-path-formal-evidence-v1.0.0.json')
+    $cadManifest = Get-Content -LiteralPath $cadManifestPath -Raw |
+        ConvertFrom-SpaceGaJson
+    $threePathManifest = Get-Content -LiteralPath $threePathManifestPath -Raw |
+        ConvertFrom-SpaceGaJson
+    if (!([string]$manifest.sourceSetSha256).Equals(
+            [string]$cadManifest.sourceSetSha256,
+            [System.StringComparison]::OrdinalIgnoreCase) -or
+        !([string]$manifest.goldenDatasetSha256).Equals(
+            [string]$cadManifest.goldenDatasetSha256,
+            [System.StringComparison]::OrdinalIgnoreCase) -or
+        !([string]$manifest.workerEnvironmentSha256).Equals(
+            [string]$threePathManifest.workerEnvironmentSha256,
+            [System.StringComparison]::OrdinalIgnoreCase)) {
+        Fail-Rehearsal 'SPACE_GA_REHEARSAL_BASELINE_MISMATCH: the rehearsal must reuse the accepted Source Set, Golden Dataset and Worker environment.'
+    }
+}
 if ($manifest.environment.mode -ne 'ControlledReleaseRehearsal' -or
+    $manifest.environment.deploymentClass -ne 'LocalControlledNonProduction' -or
     $manifest.environment.databaseEngine -ne 'SQLServer' -or
     $manifest.environment.wmsSystem -ne 'CP6_WMS' -or
+    $manifest.environment.wmsAdapter -ne
+        'CP6.Space.Infrastructure.Cp6SpaceWmsAdapter' -or
+    $manifest.environment.cp6WmsDataSourceKind -ne 'Real' -or
+    $manifest.environment.controlledFaultInjection -ne $true -or
     $manifest.environment.publishedViewerOnly -ne $true -or
+    $manifest.environment.signedJwtHttpSecurity -ne $true -or
     $manifest.environment.secretsByReferenceOnly -ne $true) {
-    Fail-Rehearsal 'SPACE_GA_REHEARSAL_ENVIRONMENT_INVALID: controlled SQL Server, CP6 WMS, Published-only Viewer and secret references are required.'
+    Fail-Rehearsal 'SPACE_GA_REHEARSAL_ENVIRONMENT_INVALID: controlled non-production SQL Server, the real CP6 WMS adapter, Published-only Viewer, signed-JWT HTTP security and secret references are required.'
 }
 $resultNames = @(
     'cadDwgDxfEndToEndPassed',
@@ -233,6 +275,73 @@ foreach ($evidenceName in @('execution', 'publishWms', 'viewer', 'recovery', 'se
         -Evidence $manifest.evidence.$evidenceName `
         -OwnerName $owner `
         -ExecutedAt $executedAt
+}
+
+if (!$AllowTestFixtures) {
+    $requiredSourcePaths = @(
+        'CP6.Space.Infrastructure/SpacePublishOrchestrator.cs',
+        'CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs',
+        'CP6.Space.Infrastructure/Cp6SpaceWmsAdapter.cs',
+        'CP6.WebApi/Middleware/SpaceExecutionContextMiddleware.cs',
+        'CP6.Space.IntegrationTests/SpacePublishOrchestratorSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/Cp6SpaceWmsAdapterSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/SpaceDesignSceneSqlServerTests.cs',
+        'CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs',
+        'CP6.Tests/Space/SpaceReleaseRehearsalHttpSecurityTests.cs',
+        'tools/Invoke-SpaceGaReleaseRehearsal.ps1')
+    $sources = @($manifest.sources)
+    $sourcePaths = @($sources | ForEach-Object {
+        ([string]$_.path).Replace('\', '/')
+    })
+    if ($sources.Count -ne $requiredSourcePaths.Count -or
+        @($sourcePaths | Sort-Object -Unique).Count -ne $sourcePaths.Count -or
+        @($requiredSourcePaths | Where-Object { $_ -notin $sourcePaths }).Count -gt 0) {
+        Fail-Rehearsal 'SPACE_GA_REHEARSAL_SOURCE_SET_INVALID: all release, WMS, Viewer, recovery and HTTP security sources are required exactly once.'
+    }
+    foreach ($source in $sources) {
+        $path = ([string]$source.path).Replace('\', '/')
+        $oid = [string]$source.gitBlobOid
+        if ($path -notin $requiredSourcePaths -or !(Test-RehearsalGitOid $oid)) {
+            Fail-Rehearsal 'SPACE_GA_REHEARSAL_SOURCE_IDENTITY_INVALID: every source needs a required path and Git blob OID.'
+            continue
+        }
+        $commitOid = (& git -C $repoFullPath rev-parse "$commit`:$path" 2>$null |
+            Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or !$commitOid.Equals(
+                $oid,
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            Fail-Rehearsal "SPACE_GA_REHEARSAL_SOURCE_COMMIT_DRIFT: tested source identity changed: $path"
+            continue
+        }
+        $headOid = (& git -C $repoFullPath rev-parse "HEAD`:$path" 2>$null |
+            Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or !$headOid.Equals(
+                $oid,
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            Fail-Rehearsal "SPACE_GA_REHEARSAL_SOURCE_HEAD_DRIFT: accepted rehearsal source changed after execution: $path"
+        }
+    }
+}
+
+$boundaries = $manifest.boundaries
+if ($boundaries.productionDataClaimed -ne $false -or
+    $boundaries.productionWmsClaimed -ne $false -or
+    $boundaries.productionDeploymentPerformed -ne $false -or
+    $boundaries.pilotRequired -ne $false -or
+    $boundaries.distinctPersonReviewRequired -ne $false) {
+    Fail-Rehearsal 'SPACE_GA_REHEARSAL_BOUNDARY_INVALID: controlled evidence cannot claim production data, production WMS, deployment, Pilot or multi-person review.'
+}
+$review = $manifest.selfReview
+$reviewAt = ConvertTo-RehearsalUtc $review.acceptedAtUtc
+if (!(Test-RehearsalPerson $review.acceptedBy) -or
+    !([string]$review.acceptedBy).Equals(
+        $owner,
+        [System.StringComparison]::OrdinalIgnoreCase) -or
+    $null -eq $reviewAt -or $reviewAt -lt $executedAt -or
+    $reviewAt -gt [DateTimeOffset]::UtcNow.AddMinutes(5) -or
+    $review.repeatable -ne $true -or
+    $review.distinctPersonReviewRequired -ne $false) {
+    Fail-Rehearsal 'SPACE_GA_REHEARSAL_REVIEW_INVALID: repeatable single-owner acceptance must follow execution.'
 }
 
 if ($errors.Count -gt 0) {

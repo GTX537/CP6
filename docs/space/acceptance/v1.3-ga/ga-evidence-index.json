@@ -4,7 +4,7 @@
   "scope": "CoreGA",
   "deliveryMode": "SoloDeveloper",
   "asOfDate": "2026-08-28",
-  "declaredStatus": "NoGo",
+  "declaredStatus": "GaReady",
   "baselinePercent": 72,
   "gaPercent": 100,
   "kickoffDate": "2026-08-27",
@@ -14,8 +14,15 @@
     {
       "role": "DeliveryOwner",
       "name": "BUBAO.GAO",
-      "status": "Pending",
-      "evidence": []
+      "status": "Signed",
+      "evidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/release-rehearsal-formal-evidence-v1.0.0.json",
+          "sha256": "59bac2addb20a63eacde5779689b3acb6850a2ce4e390cba04c997c90cbe6501",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+        }
+      ]
     }
   ],
   "externalInputs": [
@@ -336,7 +343,7 @@
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
       "implementationStatus": "Complete",
-      "acceptanceStatus": "Pending",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "Real SQL Server and CP6 WMS recovery exercise",
         "Alert routing, backup restore and reconciliation evidence",
@@ -348,9 +355,18 @@
         "docs/space/reports/2026-08-14-space-publish-recovery-sql-query.md",
         "docs/space/reports/2026-08-14-space-sqlserver-localdb-full-gate.md",
         "docs/space/reports/2026-08-14-space-wms-cp6tests-sql-gate.md",
-        "docs/space/reports/2026-08-14-space-external-subject-security-matrix.md"
+        "docs/space/reports/2026-08-14-space-external-subject-security-matrix.md",
+        "docs/space/acceptance/v1.3-ga/release-rehearsal-formal-evidence-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-release-rehearsal-formal-evidence.md"
       ],
-      "acceptedEvidence": [],
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/release-rehearsal-formal-evidence-v1.0.0.json",
+          "sha256": "59bac2addb20a63eacde5779689b3acb6850a2ce4e390cba04c997c90cbe6501",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+        }
+      ],
       "acceptanceCriteria": [
         "Old Published remains available during every failure",
         "Automatic recovery is at most 15 minutes and manual recovery at most 4 hours",
@@ -409,8 +425,8 @@
       "ownerRole": "DeliveryOwner",
       "ownerName": "BUBAO.GAO",
       "deadlineMilestone": "M2",
-      "implementationStatus": "ExternalExecution",
-      "acceptanceStatus": "Pending",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Accepted",
       "evidenceFormat": [
         "One content-hash-attested controlled release rehearsal",
         "SQL Server, CP6 WMS, Published Viewer, recovery and security results",
@@ -418,10 +434,19 @@
       ],
       "evidencePaths": [
         "docs/space/acceptance/v1.3-ga/release-rehearsal-evidence-protocol.md",
-        "docs/space/acceptance/v1.3-ga/release-rehearsal-evidence-template.json"
+        "docs/space/acceptance/v1.3-ga/release-rehearsal-evidence-template.json",
+        "docs/space/acceptance/v1.3-ga/release-rehearsal-formal-evidence-v1.0.0.json",
+        "docs/space/reports/2026-08-28-space-release-rehearsal-formal-evidence.md"
       ],
-      "verificationManifest": null,
-      "acceptedEvidence": [],
+      "verificationManifest": "docs/space/acceptance/v1.3-ga/release-rehearsal-formal-evidence-v1.0.0.json",
+      "acceptedEvidence": [
+        {
+          "uri": "docs/space/acceptance/v1.3-ga/release-rehearsal-formal-evidence-v1.0.0.json",
+          "sha256": "59bac2addb20a63eacde5779689b3acb6850a2ce4e390cba04c997c90cbe6501",
+          "acceptedBy": "BUBAO.GAO",
+          "acceptedAtUtc": "2026-08-28T08:26:51.0339206Z"
+        }
+      ],
       "acceptanceCriteria": [
         "One controlled rehearsal binds the tested commit, frozen source set, golden dataset and Worker environment",
         "DWG/DXF, three authoring paths, Publish/WMS, Published/Draft isolation, recovery and security checks all pass",
