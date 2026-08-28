@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## CRM Platform P01/P10 签名里程碑对齐（2026-08-28 UTC）
+
+- CRM V1 公开执行规格已消除 P01/P10 的签名冲突：P01 以空模板编译、可重复 pack、runner contract、无跨仓 ProjectReference 和“不发布空包”作为完成证据；正式 NuGet/镜像签名候选仍属于 P10 发布治理。
+- 该修正只对齐已批准的里程碑边界，不新增运行时能力。P01 可保持 `Frozen / Producer Ready`，P02–P10 仍须分别以代码、测试、版本化产物和消费证据关闭。
+
 ## Space AutoCAD Primary V1 资格接受与 WP3 结案（2026-08-28）
 
 - `BUBAO.GAO` 已确认 V1 本机受控边界：OS Firewall 出站禁网不再是本地阻断门禁；无业务凭据、无网络监听、临时 CAD 强制删除和可审计报告仍为硬边界。该确认不授权生产、公共 SaaS、远程托管或 Autodesk 软件再分发。
