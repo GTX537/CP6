@@ -1564,9 +1564,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         public Task<SpaceWmsHealth> CheckHealthAsync(
             SpaceWmsContext context,
             CancellationToken ct = default) =>
-            Recovered
-                ? inner.CheckHealthAsync(context, ct)
-                : throw new TimeoutException("Injected WMS health timeout.");
+            inner.CheckHealthAsync(context, ct);
 
         public Task<SpaceWmsPreflightResult> PreflightAsync(
             SpaceWmsPreflightRequest request,
@@ -1576,7 +1574,9 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         public Task<SpaceWmsBatchResult> ApplyBatchAsync(
             SpaceWmsBatch batch,
             CancellationToken ct = default) =>
-            inner.ApplyBatchAsync(batch, ct);
+            Recovered
+                ? inner.ApplyBatchAsync(batch, ct)
+                : throw new TimeoutException("Injected WMS batch timeout.");
 
         public Task<SpaceWmsOperationStatus> GetOperationStatusAsync(
             SpaceWmsOperationQuery request,

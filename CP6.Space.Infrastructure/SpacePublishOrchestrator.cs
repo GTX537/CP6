@@ -1131,7 +1131,7 @@ public sealed partial class SpacePublishOrchestrator :
                     request.OperationKey,
                     request.PayloadHash,
                     JsonSerializer.Serialize(
-                        new PersistedBatchRequest(request.Items),
+                        PersistedBatchRequest.From(request.Items),
                         Json)),
                 request));
         }

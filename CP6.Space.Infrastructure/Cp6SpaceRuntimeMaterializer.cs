@@ -63,9 +63,15 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
                           "The runtime activation attempt is unavailable in the verified tenant scope.");
         var plan = await _space.PublishPlans
                        .AsNoTracking()
-                       .SingleOrDefaultAsync(
-                           value => value.Id == attempt.PublishPlanId,
-                           cancellationToken)
+                       .Where(value => value.Id == attempt.PublishPlanId)
+                       .Select(value => new
+                       {
+                           value.SiteId,
+                           value.TargetVersionId,
+                           value.BaseVersionId,
+                           value.PlanHash,
+                       })
+                       .SingleOrDefaultAsync(cancellationToken)
                    ?? throw new SpaceTenantScopeException(
                        "The runtime activation plan is unavailable in the verified tenant scope.");
         if (attempt.SiteId != request.SiteId ||
