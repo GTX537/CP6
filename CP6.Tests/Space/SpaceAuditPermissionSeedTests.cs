@@ -104,6 +104,8 @@ public sealed class SpaceAuditPermissionSeedTests
                 new[]
                 {
                     "model:validate",
+                    "model:publish",
+                    "model:rollback",
                     "model:generate-ai",
                     "model:review-ai",
                     "integration:manage",
