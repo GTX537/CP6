@@ -450,11 +450,6 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
         RuntimeSnapshot source,
         CancellationToken cancellationToken)
     {
-        var activeFloorIds = source.Floors
-            .Where(value =>
-                value.LifecycleState == SpaceLifecycleState.Active)
-            .Select(value => value.LogicalId)
-            .ToHashSet();
         var activeZoneIds = source.Zones
             .Where(value =>
                 value.LifecycleState == SpaceLifecycleState.Active)
@@ -475,32 +470,55 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
             .Where(value => value.SiteId == siteId)
             .Select(value => value.Id)
             .ToArrayAsync(cancellationToken);
-        var staleZones = await runtime.Space_Zones
-            .Where(value =>
-                siteFloorIds.Contains(value.FloorId) &&
-                !activeZoneIds.Contains(value.Id))
+        var siteZoneIds = await runtime.Space_Zones
+            .AsNoTracking()
+            .Where(value => siteFloorIds.Contains(value.FloorId))
+            .Select(value => value.Id)
             .ToArrayAsync(cancellationToken);
+        var staleZoneIds = siteZoneIds
+            .Where(value => !activeZoneIds.Contains(value))
+            .ToArray();
+        Space_Zone[] staleZones = staleZoneIds.Length == 0
+            ? []
+            : await runtime.Space_Zones
+                .Where(value => staleZoneIds.Contains(value.Id))
+                .ToArrayAsync(cancellationToken);
         foreach (var value in staleZones)
             value.Enable = false;
 
-        var staleRacks = await runtime.Space_Racks
-            .Where(value =>
-                siteFloorIds.Contains(value.FloorId) &&
-                !activeRackIds.Contains(value.Id))
+        var siteRackIds = await runtime.Space_Racks
+            .AsNoTracking()
+            .Where(value => siteFloorIds.Contains(value.FloorId))
+            .Select(value => value.Id)
             .ToArrayAsync(cancellationToken);
+        var staleRackIds = siteRackIds
+            .Where(value => !activeRackIds.Contains(value))
+            .ToArray();
+        Space_Rack[] staleRacks = staleRackIds.Length == 0
+            ? []
+            : await runtime.Space_Racks
+                .Where(value => staleRackIds.Contains(value.Id))
+                .ToArrayAsync(cancellationToken);
         foreach (var value in staleRacks)
             value.Enable = false;
 
-        var staleLocations = await runtime.Space_Locations
+        var siteLocationIds = await runtime.Space_Locations
+            .AsNoTracking()
             .Where(value =>
                 value.FloorId.HasValue &&
-                siteFloorIds.Contains(value.FloorId.Value) &&
-                !activeLocationIds.Contains(value.Id))
+                siteFloorIds.Contains(value.FloorId.Value))
+            .Select(value => value.Id)
             .ToArrayAsync(cancellationToken);
+        var staleLocationIds = siteLocationIds
+            .Where(value => !activeLocationIds.Contains(value))
+            .ToArray();
+        Space_Location[] staleLocations = staleLocationIds.Length == 0
+            ? []
+            : await runtime.Space_Locations
+                .Where(value => staleLocationIds.Contains(value.Id))
+                .ToArrayAsync(cancellationToken);
         foreach (var value in staleLocations)
             value.Status = 2;
-
-        _ = activeFloorIds;
     }
 
     private async Task MaterializeElementsAsync(
