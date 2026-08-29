@@ -7,6 +7,8 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CP6.Space.Infrastructure;
 
@@ -27,6 +29,7 @@ public sealed partial class SpacePublishOrchestrator :
     private readonly ISpaceRuntimeMaterializer _runtime;
     private readonly SpacePublishPlanEngine _planEngine;
     private readonly EfSpacePublishSnapshotReader _snapshots;
+    private readonly ILogger<SpacePublishOrchestrator> _logger;
 
     public SpacePublishOrchestrator(
         SpaceContext context,
@@ -36,7 +39,8 @@ public sealed partial class SpacePublishOrchestrator :
         ISpaceWarehouseResolver warehouses,
         ISpaceWmsAdapter adapter,
         ISpaceRuntimeMaterializer runtime,
-        SpacePublishPlanEngine planEngine)
+        SpacePublishPlanEngine planEngine,
+        ILogger<SpacePublishOrchestrator>? logger = null)
     {
         _context = context;
         _execution = execution;
@@ -47,6 +51,7 @@ public sealed partial class SpacePublishOrchestrator :
         _runtime = runtime;
         _planEngine = planEngine;
         _snapshots = new EfSpacePublishSnapshotReader(context);
+        _logger = logger ?? NullLogger<SpacePublishOrchestrator>.Instance;
     }
 
     public Task<CreateSpacePublishAttemptResponse> StartAsync(

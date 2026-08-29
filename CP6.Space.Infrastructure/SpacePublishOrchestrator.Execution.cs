@@ -3,6 +3,7 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CP6.Space.Infrastructure;
 
@@ -11,6 +12,28 @@ public sealed partial class SpacePublishOrchestrator
     public async Task<SpaceJobStepOutput> ExecuteAsync(
         SpaceJobStepExecution execution,
         CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await ExecuteCoreAsync(execution, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(
+                exception,
+                "Space publish execution failed for Job {JobId}, Attempt {AttemptId}, " +
+                "Job attempt {AttemptNo}, and Step {StepCode}.",
+                execution?.Lease.JobId,
+                execution?.Lease.SubjectId,
+                execution?.Lease.AttemptNo,
+                execution?.StepCode);
+            throw;
+        }
+    }
+
+    private async Task<SpaceJobStepOutput> ExecuteCoreAsync(
+        SpaceJobStepExecution execution,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(execution);
         EnsureExecutionContext();

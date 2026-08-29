@@ -16,7 +16,9 @@ public sealed class SpacePublishJobWorker(
     IServiceScopeFactory scopeFactory,
     ILogger<SpacePublishJobWorker> logger) : BackgroundService
 {
-    private const string WorkerActor = "space-worker:publish";
+    internal static readonly Guid WorkerActorId =
+        Guid.Parse("3e10c77d-6d82-5db3-967c-571e4cd2b60f");
+    internal const string WorkerActorName = "space-worker:publish";
     private const int MaximumJobsPerTenantPass = 8;
     internal static IReadOnlyList<SpaceJobType> JobTypes { get; } =
         Array.AsReadOnly(
@@ -55,13 +57,15 @@ public sealed class SpacePublishJobWorker(
                 using var activity = new Activity("Space.PublishJob")
                     .SetIdFormat(ActivityIdFormat.W3C)
                     .Start();
-                var context = SpaceExecutionContext.ForSystem(
-                    tenantId,
-                    WorkerActor,
+                var context = new SpaceExecutionContext(
                     Guid.NewGuid(),
                     activity.TraceId.ToHexString(),
-                    jobId: Guid.NewGuid(),
-                    runId: Guid.NewGuid());
+                    tenantId,
+                    SpaceExecutionContext.SystemActor,
+                    WorkerActorId.ToString("D"),
+                    WorkerActorName,
+                    JobId: Guid.NewGuid(),
+                    RunId: Guid.NewGuid());
                 var manager = services.GetRequiredService<
                     ISpaceExecutionContextManager>();
                 using var executionScope = manager.Push(context);
