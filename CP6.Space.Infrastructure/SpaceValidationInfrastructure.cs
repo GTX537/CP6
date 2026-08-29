@@ -36,12 +36,17 @@ public sealed class DefaultSpaceValidationProfileProvider :
                 nameof(correlationId));
         }
 
+        var warehouse = await _services
+            .GetRequiredService<ISpaceWarehouseResolver>()
+            .ResolveAsync(siteId, cancellationToken)
+            ?? throw new InvalidOperationException(
+                "SPACE_WMS_WAREHOUSE_NOT_FOUND");
         var adapter = _services.GetRequiredService<ISpaceWmsAdapter>();
         var snapshot = await adapter.GetCapabilitiesAsync(
             new SpaceWmsContext(
                 tenantId,
                 siteId,
-                siteId.ToString("N"),
+                warehouse.WarehouseCode,
                 correlationId),
             cancellationToken);
         return SpaceValidationProfile.FromCapabilities(snapshot);
