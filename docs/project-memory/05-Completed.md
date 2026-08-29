@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-29 UTC CRM Platform P06 冻结可消费
+
+- Platform PR #12/#13 已在 `main@3b1669a05f9b265f9b3fb14ade4d656018cbf6b5` 完成 EF Outbox/Inbox、lease/retention/DLQ/replay、双平台、真实 SQL Server 与 P05 Dapr/Kafka 回归；exact-main publish run 33242264497 发布五个不可变 `0.6.0-alpha.1` 包、artifact 9711742920 及 artifact/package SHA-256 证据。
+- CRM PR #29 固定消费四个 Platform 包，复用 P04/P05 失败关闭，并用 pinned SQL Server 证明事务回滚、重复/hash 冲突/乱序拒绝和 poison DLQ；PR run 33243227124 attempt 3 与 `main@910804f5e7fa02569da958ae325997e10c0ffbc0` run 33244344319 通过完整远端门禁。
+- CRM PR #30 将 locator 冻结为 `Frozen / Consumable`；PR run 33244749522 与最终 `main@744ca5d9d06db4470d18a4d8ce3ecfbae42f1d2c` run 33245027773 通过真实 SQL 和完整 CRM 门禁。
+- P06 不创建 CRM-F3-CONTRACT/C02 业务事件，不注册 Worker 或运行时订阅，也不创建 Secret、云资源、迁移或部署。
+
 ## 2026-08-28 UTC CRM Platform P05 冻结可消费
 
 - Platform PR #9/#10 已在 `main@7acb658e001e2bea4e567feeb4e0f7fb1e47eae6` 完成 Dapr invocation/PubSub、Kafka topic/key 约定、双平台及真实 Dapr/Kafka 门禁；exact-main publish run 33192773875 发布四个不可变 `0.5.0-alpha.1` 包、artifact 9694537167 及 artifact/package SHA-256 证据。

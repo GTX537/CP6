@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## CRM Platform P06 已冻结可消费（2026-08-29 UTC）
+
+- `GTX537/CP6.Platform` 通过实现 PR #12 与发布 PR #13，在 `main@3b1669a05f9b265f9b3fb14ade4d656018cbf6b5` 完成 EF Outbox/Inbox、lease、retention、DLQ/replay、真实 SQL Server 与保留的真实 Dapr/Kafka 回归门禁；实现 main run 33241821365、发布 main run 33242125202 和 exact-main publish run 33242264497 成功。
+- publish run 发布五个不可变 `0.6.0-alpha.1` 包和 artifact 9711742920；artifact SHA-256 为 `44431d7f359ea524ba9dc438f6f70d24bf34be69411729a2fe1953e3039b3b86`。逐包 SHA-256：Contracts `acb42d617635ed6ba484edf1281a6c3a049c209d0c861015e5a9e269141722a4`、Abstractions `004ff6d528e7d15a2887df51f42035105804988d49e387d87aea6f0555e4b759`、AspNetCore `1104e5319195a2ff8a59a4cf3893766fa959e8733a10486cf260998c61c020fb`、EntityFramework `63491b51b6c0302b0ec662341764181665952c36788f1ef4dcd1424ef75777e7`、Messaging `5bcbb2bec969ac463876b84c87c36d6a93b316642943ab5f3ded2103d8c6c410`。
+- `GTX537/CP6.CRM` PR #29 固定消费 `0.6.0-alpha.1`，复用 P04/P05 失败关闭并在 pinned SQL Server 中证明 invalid、duplicate、payload conflict、out-of-order、failed handler 与 poison DLQ 行为；PR run 33243227124 attempt 3 和合并后 `main@910804f5e7fa02569da958ae325997e10c0ffbc0` run 33244344319 通过远端恢复、真实 SQL 和完整门禁。
+- CRM PR #30 将 locator 冻结为 `Frozen / Consumable`；PR run 33244749522 与最终 `main@744ca5d9d06db4470d18a4d8ce3ecfbae42f1d2c` run 33245027773 的真实 SQL、40/40 M0、28/28 .NET、39/39 Web、production build 与 3/3 Chromium smoke 均通过。
+- 该结论只关闭 P06 通用事务消息 substrate 与固定版本消费。CRM-F3-CONTRACT/C02 业务事件、`CP6.CRM.Worker`、运行时订阅、Secret、云资源、迁移和部署仍未实现或授权。
+
 ## CRM Platform P05 已冻结可消费（2026-08-28 UTC）
 
 - `GTX537/CP6.Platform` 已通过实现 PR #9 与发布 PR #10，在 `main@7acb658e001e2bea4e567feeb4e0f7fb1e47eae6` 完成 Dapr service invocation、structured CloudEvent Pub/Sub、Kafka topic/partition-key 约定及真实 Dapr 1.18.2/Kafka 4.3.1 容器门禁；main run 33192565859 与 exact-main publish run 33192773875 成功。
