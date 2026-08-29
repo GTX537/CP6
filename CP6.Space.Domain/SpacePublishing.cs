@@ -6,6 +6,12 @@ namespace CP6.Space.Domain;
 
 public sealed class SpacePublishPlan : SpaceTenantEntity
 {
+    // A 100,000-location warehouse template can produce roughly 60 MB of
+    // immutable publish-plan JSON. The database column is nvarchar(max), and
+    // the payload is generated internally after validation rather than read
+    // directly from the request body.
+    public const int MaximumPlanJsonLength = 64_000_000;
+
     private SpacePublishPlan() { }
 
     public Guid SiteId { get; private set; }
@@ -51,7 +57,10 @@ public sealed class SpacePublishPlan : SpaceTenantEntity
             CapabilityHash = RequireHash(capabilityHash, nameof(capabilityHash)),
             PlanHash = RequireHash(planHash, nameof(planHash)),
             ItemCount = itemCount,
-            PlanJson = RequireText(planJson, 4_000_000, nameof(planJson)),
+            PlanJson = RequireText(
+                planJson,
+                MaximumPlanJsonLength,
+                nameof(planJson)),
         };
         plan.SetTenant(tenantId);
         return plan;
