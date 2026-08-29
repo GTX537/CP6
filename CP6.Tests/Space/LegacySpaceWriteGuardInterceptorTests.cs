@@ -124,6 +124,60 @@ public class LegacySpaceWriteGuardInterceptorTests
         Assert.Equal("SPACE_AUDIT_APPEND_ONLY", error.Message);
     }
 
+    [Fact]
+    public async Task DesignV1Tenant_AllowsOperationalAnalyticsWrites()
+    {
+        var fixture = await CreateFixtureAsync();
+        await using (var db = fixture.GuardedContext())
+        {
+            db.Space_AnalyticsConfigs.Add(new Space_AnalyticsConfig());
+            await db.SaveChangesAsync();
+        }
+
+        await using (var db = fixture.GuardedContext())
+        {
+            db.Space_AbcSnapshots.Add(new Space_AbcSnapshot
+            {
+                Id = Guid.NewGuid(),
+                SiteId = DesignSiteId,
+                WarehouseCd = "DESIGN",
+                WindowFrom = DateTime.UtcNow.AddDays(-90),
+                WindowTo = DateTime.UtcNow,
+                CalculatedAt = DateTime.UtcNow,
+                ThresholdA = 0.80m,
+                ThresholdB = 0.95m,
+                Trigger = "manual",
+            });
+            await db.SaveChangesAsync();
+        }
+
+        await using var verify = fixture.GuardedContext();
+        Assert.Single(await verify.Space_AnalyticsConfigs.ToListAsync());
+        Assert.Single(await verify.Space_AbcSnapshots.ToListAsync());
+    }
+
+    [Fact]
+    public async Task CrossTenantOperationalAnalyticsWrite_RemainsDenied()
+    {
+        var fixture = await CreateFixtureAsync();
+        await using var db = fixture.GuardedContext();
+        var snapshot = new Space_AbcSnapshot
+        {
+            Id = Guid.NewGuid(),
+            TenantId = Guid.NewGuid(),
+            SiteId = DesignSiteId,
+            WarehouseCd = "DESIGN",
+            Trigger = "manual",
+        };
+        db.Space_AbcSnapshots.Attach(snapshot);
+        db.Entry(snapshot).State = EntityState.Modified;
+
+        var error = await Assert.ThrowsAsync<BizException>(() => db.SaveChangesAsync());
+
+        Assert.Equal(SpaceCompatibilityErrors.TenantScopeDenied, error.Code);
+        Assert.Equal(403, error.HttpStatus);
+    }
+
     private static async Task<Fixture> CreateFixtureAsync()
     {
         var databaseName = Guid.NewGuid().ToString();

@@ -114,6 +114,24 @@ public class SpaceAnalyticsServiceTests
     }
 
     [Fact]
+    public async Task AbcShippingTargets_AcceptsPublishedPolygonEnvelope()
+    {
+        using var db = NewDb();
+        var ids = await SeedFloorAsync(db, locationCount: 0, addShippingZone: true);
+        var shippingZone = await db.Space_Zones.SingleAsync(x => x.ZoneType == 3);
+        shippingZone.Polygon =
+            """{"schemaVersion":1,"points":[[1000,0],[1200,0],[1200,200],[1000,200]]}""";
+        await db.SaveChangesAsync();
+        var service = Service(db, new FakeStockQuery(Array.Empty<WmsStockDto>()));
+
+        var result = await service.GetAbcAsync(ids.FloorId, includeProducts: false);
+
+        var target = Assert.Single(result.ShippingTargets);
+        Assert.Equal(1100d, target.X);
+        Assert.Equal(100d, target.Y);
+    }
+
+    [Fact]
     public async Task AnalyticsConfig_IsTenantIsolated()
     {
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };

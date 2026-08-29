@@ -65,6 +65,15 @@ public sealed class LegacySpaceWriteGuardInterceptor : SaveChangesInterceptor
                 SpaceCompatibilityErrors.TenantScopeDenied,
                 403);
 
+        // Analytics configuration and snapshots are operational control-tower data,
+        // not legacy design-model writes. They remain writable after Design V1 cutover.
+        changed = changed
+            .Where(x => x is not Space_AnalyticsConfig and not Space_AbcSnapshot)
+            .ToList();
+
+        if (changed.Count == 0)
+            return;
+
         var siteIds = new HashSet<Guid>();
         var floorIds = new HashSet<Guid>();
         var rackIds = new HashSet<Guid>();

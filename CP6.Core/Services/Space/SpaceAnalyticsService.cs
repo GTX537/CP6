@@ -668,26 +668,78 @@ public sealed class SpaceAnalyticsService : ISpaceAnalyticsService
         var result = new List<SpacePointDto>();
         foreach (var polygon in polygons)
         {
-            try
-            {
-                using var doc = JsonDocument.Parse(polygon);
-                var points = doc.RootElement.EnumerateArray()
-                    .Where(x => x.ValueKind == JsonValueKind.Array && x.GetArrayLength() >= 2)
-                    .Select(x => new SpacePointDto
-                    {
-                        X = x[0].GetDouble(),
-                        Y = x[1].GetDouble(),
-                    })
-                    .ToList();
-                if (points.Count > 0)
-                    result.Add(new SpacePointDto { X = points.Average(x => x.X), Y = points.Average(x => x.Y) });
-            }
-            catch (JsonException)
-            {
-                // Invalid zone polygons are already guarded by Space master validation; ignore legacy drift here.
-            }
+            if (!TryReadPolygonPoints(polygon, out var points)) continue;
+            result.Add(new SpacePointDto { X = points.Average(x => x.X), Y = points.Average(x => x.Y) });
         }
         return result;
+    }
+
+    private static bool TryReadPolygonPoints(string polygon, out List<SpacePointDto> points)
+    {
+        points = new List<SpacePointDto>();
+        try
+        {
+            using var doc = JsonDocument.Parse(polygon);
+            var root = doc.RootElement;
+            JsonElement values;
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                values = root;
+            }
+            else if (root.ValueKind == JsonValueKind.Object
+                     && (root.TryGetProperty("points", out values)
+                         || root.TryGetProperty("outer", out values)))
+            {
+            }
+            else
+            {
+                return false;
+            }
+
+            if (values.ValueKind != JsonValueKind.Array) return false;
+            foreach (var value in values.EnumerateArray())
+            {
+                if (!TryReadPoint(value, out var point)) return false;
+                points.Add(point);
+            }
+            return points.Count > 0;
+        }
+        catch (JsonException)
+        {
+            // Invalid zone polygons are already guarded by Space master validation; ignore legacy drift here.
+            return false;
+        }
+    }
+
+    private static bool TryReadPoint(JsonElement value, out SpacePointDto point)
+    {
+        point = new SpacePointDto();
+        if (value.ValueKind == JsonValueKind.Array && value.GetArrayLength() >= 2)
+        {
+            var x = value[0];
+            var y = value[1];
+            if (x.ValueKind != JsonValueKind.Number || y.ValueKind != JsonValueKind.Number
+                || !x.TryGetDouble(out var parsedX) || !y.TryGetDouble(out var parsedY))
+                return false;
+            point.X = parsedX;
+            point.Y = parsedY;
+            return true;
+        }
+
+        if (value.ValueKind == JsonValueKind.Object
+            && value.TryGetProperty("x", out var xValue)
+            && value.TryGetProperty("y", out var yValue)
+            && xValue.ValueKind == JsonValueKind.Number
+            && yValue.ValueKind == JsonValueKind.Number
+            && xValue.TryGetDouble(out var objectX)
+            && yValue.TryGetDouble(out var objectY))
+        {
+            point.X = objectX;
+            point.Y = objectY;
+            return true;
+        }
+
+        return false;
     }
 
     private static CapacityResolution ResolveCapacity(LocationAnalyticsRow location, WmsStockDto? stock)
