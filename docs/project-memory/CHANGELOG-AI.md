@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-29：CRM Platform P07 冻结可消费
+
+- `CP6.Platform` PR #15/#16 完成 YARP allowlist、外部身份头清理、限流与后端认证边界；`main@329bf8ee82091de569cb80f1e83fc5d518f74068` 的 exact-main publish run 33262569274 发布五个不可变 `0.7.0-alpha.1` 包、artifact 9717721544 和完整 SHA-256 证据。
+- `CP6.CRM` PR #31 固定版本消费并以 11/11 loopback 测试验证 route/header/429/backend-auth；PR run 33264347561 与合并后 main run 33264676796 通过远端恢复、真实 SQL 和完整门禁。PR #32 把 locator 冻结为 `Frozen / Consumable`，最终 `main@467d95e46625d4db0bb7aa0932aff5464f64a01b` run 33265702772 通过。
+- C01/C02/CRM03、实际 CRM public route、P09 后端隔离、运行时 Gateway/auth、Secret、云资源和部署仍未实现或授权。
+
 ## 2026-08-29：CRM Platform P06 冻结可消费
 
 - `CP6.Platform` PR #12/#13 完成 EF Outbox/Inbox、lease/retention/DLQ/replay、真实 SQL Server 与保留的真实 Dapr/Kafka 门禁；`main@3b1669a05f9b265f9b3fb14ade4d656018cbf6b5` 的 exact-main publish run 33242264497 发布五个不可变 `0.6.0-alpha.1` 包、artifact 9711742920 和完整 SHA-256 证据。

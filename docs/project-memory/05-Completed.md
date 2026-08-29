@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-29 UTC CRM Platform P07 冻结可消费
+
+- Platform PR #15/#16 已在 `main@329bf8ee82091de569cb80f1e83fc5d518f74068` 完成 code-owned YARP allowlist、身份头清理、固定窗口限流、后端认证边界及双平台/真实 Dapr-Kafka/真实 SQL/Gateway E2E；exact-main publish run 33262569274 发布五个不可变 `0.7.0-alpha.1` 包、artifact 9717721544 及 artifact/package SHA-256 证据。
+- CRM PR #31 固定消费四个 Platform 包，以 11/11 loopback 测试证明 route/header/429/backend-auth 边界；PR run 33264347561 与 `main@02f7078de6a67e7f3fded6df6a84b9f6fb712a84` run 33264676796 通过远端包恢复、真实 SQL 和完整门禁。
+- CRM PR #32 将 locator 冻结为 `Frozen / Consumable`；PR run 33265394681 与最终 `main@467d95e46625d4db0bb7aa0932aff5464f64a01b` run 33265702772 通过 P01–P07 locator、真实 SQL、40/40 M0、39/39 .NET、39/39 Web、production build 与 3/3 Chromium smoke。
+- P07 不创建实际 CRM public route，不注册 Gateway/auth，不替代后端 JWT；C01/C02/CRM03、P09 隔离、Secret、云资源和部署仍是独立门禁。
+
 ## 2026-08-29 UTC CRM Platform P06 冻结可消费
 
 - Platform PR #12/#13 已在 `main@3b1669a05f9b265f9b3fb14ade4d656018cbf6b5` 完成 EF Outbox/Inbox、lease/retention/DLQ/replay、双平台、真实 SQL Server 与 P05 Dapr/Kafka 回归；exact-main publish run 33242264497 发布五个不可变 `0.6.0-alpha.1` 包、artifact 9711742920 及 artifact/package SHA-256 证据。

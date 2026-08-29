@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## CRM Platform P07 已冻结可消费（2026-08-29 UTC）
+
+- `GTX537/CP6.Platform` 通过实现 PR #15 与发布 PR #16，在 `main@329bf8ee82091de569cb80f1e83fc5d518f74068` 完成 code-owned YARP allowlist、外部身份头清理、按连接来源分区的固定窗口限流、后端独立认证边界及 loopback E2E；实现 main run 33261055327 attempt 2、发布 main run 33262410890 与 exact-main publish run 33262569274 成功。
+- publish run 发布五个不可变 `0.7.0-alpha.1` 包和 artifact 9717721544；artifact SHA-256 为 `bf6487e55d8345b1dfbe39cedc2afcb3e365c9bcdd36bbec17841996cd4e88a0`。逐包 SHA-256：Contracts `609c4f562858be6cfe45fc2d51c9eaeceb50a392ce28135a4a9ea644416054d9`、Abstractions `7149940ddb817145fe615a51c8e517fe1915516bf9188b6e2f084e21d7738479`、AspNetCore `85f0742253ebed8adaad2fcf63f2166545e5c4cf35adf739eb87c1eed63fd010`、EntityFramework `a16de9d73df5dda91c4be9e667c4352fad354c5425fb207ae922148d864b7a0e`、Messaging `b385cebe84ebd6dafac723724b273a8660999042bc95f3e6dd88af433cbbd7fd`。
+- `GTX537/CP6.CRM` PR #31 固定消费 `0.7.0-alpha.1`，以 11/11 真实 loopback 测试证明未匹配 route 不触达后端、伪造身份头被清除、429 在第二次后端调用前返回，且直连/代理均不能绕过后端认证；PR run 33264347561 与合并后 `main@02f7078de6a67e7f3fded6df6a84b9f6fb712a84` run 33264676796 通过远端包恢复、真实 SQL 与完整门禁。
+- CRM PR #32 将 locator 冻结为 `Frozen / Consumable`；PR run 33265394681 与最终 `main@467d95e46625d4db0bb7aa0932aff5464f64a01b` run 33265702772 的 P01–P07 locator、真实 SQL、40/40 M0、39/39 .NET、39/39 Web、production build 与 3/3 Chromium smoke 均通过。
+- 该结论只关闭 P07 通用 Gateway 合同与固定版本消费。C01/C02/CRM03、实际 CRM public route、P09 后端网络隔离、运行时 Gateway/auth 注册、Secret、云资源和部署仍未实现或授权。
+
 ## CRM Platform P06 已冻结可消费（2026-08-29 UTC）
 
 - `GTX537/CP6.Platform` 通过实现 PR #12 与发布 PR #13，在 `main@3b1669a05f9b265f9b3fb14ade4d656018cbf6b5` 完成 EF Outbox/Inbox、lease、retention、DLQ/replay、真实 SQL Server 与保留的真实 Dapr/Kafka 回归门禁；实现 main run 33241821365、发布 main run 33242125202 和 exact-main publish run 33242264497 成功。
