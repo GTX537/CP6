@@ -9,7 +9,11 @@ import { SceneStage } from '@/space-editor/SceneStage'
 import { genZoneArray } from '@/space-editor/generate/genZoneArray'
 import type { ZoneVO, RackVO, MarkerVO } from '@/types/space/scene'
 import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
-import { getEditorToolFeedback } from './toolFeedback'
+import {
+  EDITOR_EXPORT_SUCCESS_KEY,
+  getEditorMessageFallback,
+  getEditorToolFeedback,
+} from './toolFeedback'
 import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
 import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
 import { rectToPolygon, rectShortEdge } from '@/space-editor/interact/tools/zoneGeom'
@@ -24,7 +28,7 @@ import { connectorApi } from '@/api/space/connector'
 import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
 import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const store = useSpaceEditorStore()
@@ -65,6 +69,7 @@ const selectedRack = computed<RackVO | null>(() => {
 })
 
 const toolFeedback = computed(() => getEditorToolFeedback(activeTool.value, selectedRack.value !== null))
+const editorT = (key: string): string => t(key, getEditorMessageFallback(locale.value, key))
 
 // 选中态扩展（波5）：zone / marker 与 rack 同 selectionIds 语义，单选时按 id 反查
 const selectedZone = computed<ZoneVO | null>(() => {
@@ -140,6 +145,7 @@ onMounted(async () => {
     stageRef = new SceneStage(canvasRef.value)
     stageRef.render(res.data)
     imRef.value = new InteractionManager(stageRef, store, afterCommand)
+    if (activeTool.value !== 'select') imRef.value.switchTool(activeTool.value)
     imRef.value.setZoneRectHandler(onZoneRectDrawn)
     bindStageClick()
   }
@@ -515,7 +521,7 @@ async function handleExport(): Promise<void> {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    ElMessage.success(t('导出成功'))
+    ElMessage.success(editorT(EDITOR_EXPORT_SUCCESS_KEY))
   } catch {
     ElMessage.error(t('导出失败'))
   }
@@ -662,7 +668,6 @@ async function handleImportFile(e: Event): Promise<void> {
       <el-button
         data-test="reverse-model"
         size="small"
-        :aria-disabled="selectedRack === null"
         :title="selectedRack ? t('为所选货架绑定采纳态库位码') : t('请先选中一个货架')"
         @click="openBindDialog"
       >
@@ -683,8 +688,8 @@ async function handleImportFile(e: Event): Promise<void> {
           ]"
         />
         <div data-test="tool-hint" class="tool-hint" role="status" aria-live="polite">
-          <strong>{{ t(toolFeedback.titleKey) }}</strong>
-          <span>{{ t(toolFeedback.messageKey) }}</span>
+          <strong>{{ editorT(toolFeedback.titleKey) }}</strong>
+          <span>{{ editorT(toolFeedback.messageKey) }}</span>
         </div>
       </div>
 

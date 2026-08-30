@@ -91,16 +91,19 @@ const makeScene = (): EditorScene => ({
   zones: [], aisles: [], racks: [rack()], locations: [], markers: [],
 })
 
-const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
 let mountedWrappers: VueWrapper[] = []
 
-async function mountEditor() {
+function createTestI18n(locale: string) {
+  return createI18n({ legacy: false, locale, flatJson: true, missingWarn: false, fallbackWarn: false, messages: {} })
+}
+
+async function mountEditor(locale = 'ja') {
   const pinia = createPinia()
   setActivePinia(pinia)
   vi.mocked(sceneApi.get).mockResolvedValue({ code: 0, message: '', data: makeScene() })
 
   const wrapper = mount(FloorEditor, {
-    global: { plugins: [pinia, i18n, ElementPlus] },
+    global: { plugins: [pinia, createTestI18n(locale), ElementPlus] },
   })
   mountedWrappers.push(wrapper)
   await flushPromises()
@@ -136,8 +139,20 @@ describe('FloorEditor tool feedback', () => {
     }
   })
 
+  it.each([
+    ['ja', '選択モード', 'ラック'],
+    ['zh-CN', '选择模式', '货架'],
+  ] as const)('renders %s tool guidance from the local fallback', async (locale, title, messagePart) => {
+    const { wrapper } = await mountEditor(locale)
+
+    const hint = wrapper.find('[data-test="tool-hint"]').text()
+    expect(hint).toContain(title)
+    expect(hint).toContain(messagePart)
+    expect(hint).not.toContain('space.editor.')
+  })
+
   it('updates rotate feedback, pressed state, and canvas cursor when a rack is selected', async () => {
-    const { wrapper, store } = await mountEditor()
+    const { wrapper, store } = await mountEditor('zh-CN')
 
     await wrapper.find('[data-tool="rotate"]').trigger('click')
 
@@ -152,19 +167,43 @@ describe('FloorEditor tool feedback', () => {
     expect(wrapper.find('[data-test="tool-hint"]').text()).toContain('按住 Ctrl 可关闭 15° 吸附')
   })
 
+  it('replays a tool selected while the scene is still loading', async () => {
+    let resolveScene!: (value: { code: number; message: string; data: EditorScene }) => void
+    vi.mocked(sceneApi.get).mockReturnValue(new Promise(resolve => { resolveScene = resolve }))
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const wrapper = mount(FloorEditor, {
+      global: { plugins: [pinia, createTestI18n('ja'), ElementPlus] },
+    })
+    mountedWrappers.push(wrapper)
+
+    await wrapper.find('[data-tool="rotate"]').trigger('click')
+    expect(wrapper.find('[data-tool="rotate"]').attributes('aria-pressed')).toBe('true')
+    expect(interactionInstances).toHaveLength(0)
+
+    resolveScene({ code: 0, message: '', data: makeScene() })
+    await flushPromises()
+
+    expect(interactionInstances[0]!.switchTool).toHaveBeenCalledWith('rotate')
+  })
+
   it('keeps reverse modeling clickable without a selected rack and reports the reason', async () => {
     const warning = vi.spyOn(ElMessage, 'warning').mockImplementation(() => undefined as never)
-    const { wrapper } = await mountEditor()
+    const { wrapper } = await mountEditor('zh-CN')
     const reverseModel = wrapper.find('[data-test="reverse-model"]')
 
     expect((reverseModel.element as HTMLButtonElement).disabled).toBe(false)
-    expect(reverseModel.attributes('aria-disabled')).toBe('true')
+    expect(reverseModel.attributes('aria-disabled')).toBe('false')
+    expect(reverseModel.attributes('title')).toBe('请先选中一个货架')
     await reverseModel.trigger('click')
 
     expect(warning).toHaveBeenCalledWith('请先在画布上选中一个货架')
   })
 
-  it('exports the floor, downloads its JSON, and confirms success', async () => {
+  it.each([
+    ['ja', 'エクスポートしました'],
+    ['zh-CN', '导出成功'],
+  ] as const)('exports the floor and confirms success in %s', async (locale, successMessage) => {
     const success = vi.spyOn(ElMessage, 'success').mockImplementation(() => undefined as never)
     const anchorClick = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
     vi.mocked(sceneApi.exportScene).mockResolvedValue({
@@ -172,14 +211,14 @@ describe('FloorEditor tool feedback', () => {
       message: '',
       data: { source: makeScene().source, meta: { floorId: 'floor-1' }, zones: [], aisles: [], racks: [] },
     })
-    const { wrapper } = await mountEditor()
+    const { wrapper } = await mountEditor(locale)
 
     await wrapper.find('[data-test="export-scene"]').trigger('click')
     await flushPromises()
 
     expect(sceneApi.exportScene).toHaveBeenCalledWith('floor-1')
     expect(anchorClick).toHaveBeenCalledTimes(1)
-    expect(success).toHaveBeenCalledWith('导出成功')
+    expect(success).toHaveBeenCalledWith(successMessage)
   })
 
   it('destroys its stage and interaction manager when unmounted', async () => {
