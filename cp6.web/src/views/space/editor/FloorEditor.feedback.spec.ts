@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { flushPromises, mount } from '@vue/test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import ElementPlus, { ElMessage } from 'element-plus'
 import { createPinia, setActivePinia } from 'pinia'
@@ -86,6 +86,7 @@ const makeScene = (): EditorScene => ({
 })
 
 const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
+let mountedWrappers: VueWrapper[] = []
 
 async function mountEditor() {
   const pinia = createPinia()
@@ -95,6 +96,7 @@ async function mountEditor() {
   const wrapper = mount(FloorEditor, {
     global: { plugins: [pinia, i18n, ElementPlus] },
   })
+  mountedWrappers.push(wrapper)
   await flushPromises()
   return { wrapper, store: useSpaceEditorStore() }
 }
@@ -104,8 +106,28 @@ describe('FloorEditor tool feedback', () => {
     vi.clearAllMocks()
     sceneStageInstances.length = 0
     interactionInstances.length = 0
-    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn(() => 'blob:scene') })
-    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() })
+    vi.stubGlobal('URL', {
+      createObjectURL: vi.fn(() => 'blob:scene'),
+      revokeObjectURL: vi.fn(),
+    })
+  })
+
+  afterEach(() => {
+    try {
+      for (const wrapper of mountedWrappers) {
+        if (wrapper.exists()) wrapper.unmount()
+      }
+      for (const stage of sceneStageInstances) {
+        expect(stage.destroy).toHaveBeenCalledTimes(1)
+      }
+      for (const interaction of interactionInstances) {
+        expect(interaction.destroy).toHaveBeenCalledTimes(1)
+      }
+    } finally {
+      mountedWrappers = []
+      vi.restoreAllMocks()
+      vi.unstubAllGlobals()
+    }
   })
 
   it('updates rotate feedback, pressed state, and canvas cursor when a rack is selected', async () => {
@@ -152,5 +174,14 @@ describe('FloorEditor tool feedback', () => {
     expect(sceneApi.exportScene).toHaveBeenCalledWith('floor-1')
     expect(anchorClick).toHaveBeenCalledTimes(1)
     expect(success).toHaveBeenCalledWith('导出成功')
+  })
+
+  it('destroys its stage and interaction manager when unmounted', async () => {
+    const { wrapper } = await mountEditor()
+
+    wrapper.unmount()
+
+    expect(sceneStageInstances[0]!.destroy).toHaveBeenCalledTimes(1)
+    expect(interactionInstances[0]!.destroy).toHaveBeenCalledTimes(1)
   })
 })
