@@ -34,4 +34,21 @@ describe('getEditorToolFeedback', () => {
       cursorClass: 'tool-cursor-select',
     })
   })
+
+  it('returns fresh select guidance objects for each call', () => {
+    const first = getEditorToolFeedback('select', false)
+    first.titleKey = '被调用方修改'
+    first.messageKey = '被调用方修改'
+
+    expect(getEditorToolFeedback('select', false)).toEqual({
+      titleKey: '选择模式',
+      messageKey: '单击选择货架；拖动空白区域可框选',
+      cursorClass: 'tool-cursor-select',
+    })
+    expect(getEditorToolFeedback('unknown' as never, false)).toEqual({
+      titleKey: '选择模式',
+      messageKey: '单击选择货架；拖动空白区域可框选',
+      cursorClass: 'tool-cursor-select',
+    })
+  })
 })

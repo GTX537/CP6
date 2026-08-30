@@ -42,6 +42,6 @@ export function getEditorToolFeedback(tool: ToolType, hasSelectedRack: boolean):
       }
     case 'select':
     default:
-      return selectFeedback
+      return { ...selectFeedback }
   }
 }
