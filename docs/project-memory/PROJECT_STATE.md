@@ -1,5 +1,15 @@
 # 项目当前状态
 
+## CRM Platform P08 公共候选同步完成（S05，2026-08-30 UTC）
+
+- 当前权威阶段为 `S00-S05 complete; S06 pending`，全局状态严格保持 `Published / Consumer Candidate`。只有 Platform S06 最终审计合并且其 exact-main Windows/Linux/真实 Dapr-Kafka/真实 SQL 四项门禁全部成功后，才首次允许声明 `Frozen / Consumable`。
+- `GTX537/CP6.Platform` remediation PR #23（head `14b9bc2d41c8446f2c236094b9f2d82f1124d045`、PR run 33320438234）合并为精确发布源 `main@bfb0ebdc2e17f9a580156dbba6c0ce6cf6f3c672`，main run 33320608737 通过；publish run 33320840180 发布五个不可变 `0.8.0-alpha.2` 包，artifact 9734883916、API digest `sha256:db2e44481101dcf450cd1a0d6188572ac8c1529fc148e6ea3d094d8c772a4e61`。逐包 SHA-256：Contracts `b6a0106bdc8c60f0c49ed29263f8e538beb3ac9ad2d181227d40e7e2a8e213df`、Abstractions `842b007d3b8e7c369f7de3e22d03d2eb46746e14ad809ce5b9ce4e01ee1114ca`、AspNetCore `3564b21bd621307e002d1307c8081062e9c3743533fd4f0dac4ef7bed9ada92c`、EntityFramework `d1e7cf733693e13b34a8cb39a64077c498cc4fbb082953a5e7a0b0cb27d1acee`、Messaging `64d5878567213cfde658117e069f3e598ecbd53dbb8e0ef4cfd19ceca314b7a8`。
+- Platform PR #24（head `2c1100d57a4ddd55e8bb1b5c673ae631944548d8`、PR run 33321808533）把发布证据合并为 `main@06abda2832902641f7652f1d175d8cf69c1b6b96`，main run 33322000747 通过。不可变 `0.8.0-alpha.1` 仅保留为历史发布证据，因真实下游仍收到 baggage 而被取消消费资格，未覆盖、删除或冒充 alpha.2。
+- `GTX537/CP6.CRM` PR #33（head `e6358ad776facc4e13b313b960b650e7b1845d83`、PR run 33329003327、SQL artifact 9737092867 / `sha256:acfa2382c9878f2f4608de14cd09ab6f9620ab4171040a60c920446df835e73b`）固定消费五个 alpha.2 生产包，以 CRM 自有 24/24 P08 黑盒测试和 63/63 .NET 回归闭环；合并 `78577658159d4270c87c0d275259aeee47224711` 后 main run 33329320097 与 SQL artifact 9737180305 / `sha256:91f68ddb0cd67f102ca8c9795631fd3d009e7f85767915aff2a4abc4a51660fd` 通过。
+- CRM PR #34（head `f0b22c7415ed51b19375664d7cac83024af92986`、PR/main runs 33330377723/33330705446、merge `45d0418884b3e21e62d87315ea7ef5f595f1819a`）保留 S04 证据；其 SQL artifacts 为 9737472407 / `sha256:62e27a980c8ed2e7f1abab95332e4ca689eedc88c80381a8879eb5bbff199cc8` 和 9737563354 / `sha256:02485cb11308b9d142e73c58de056a6c43c02cc48e0d0a677bbc9fcdb72df340`。PR #35（head `8bd521860396b81d235ae6887b58ebd5718b85ad`、PR/main runs 33332328534/33332741550、merge `bc565fce5bf84904eb1bbe11e7ab13cf6a1e016a`）前向纠正过早冻结；SQL artifacts 为 9738014861 / `sha256:f28d757928959d1c4e4b06f41be773b89b618afcd650cd10cd87dbef7218a4e5` 和 9738124159 / `sha256:9b360a9f2e05b6c376acea5e2308c05f787315c4d059f005cf114c3ccc8b98bc`。
+- Platform consumer-evidence PR #25（head `e9657cb55bed6230a7ee0aec33603379c4535775`、PR run 33333573931）经复审无 Critical/Important 后合并为 `main@3bee7abe00e6f79be41bbc6af6dc2290261cb317`；exact-main run 33333782732 的四项矩阵全部成功，完成 producer/consumer/source-of-truth 对账。
+- 本阶段只同步 exporter-neutral telemetry/health/resilience/SLO evidence 合同及固定版本消费证据；没有注册真实 exporter、Collector、dashboard、alert、CRM Worker/subscription、生产 SLO、Secret、云资源或部署。
+
 ## CRM Platform P07 已冻结可消费（2026-08-29 UTC）
 
 - `GTX537/CP6.Platform` 通过实现 PR #15 与发布 PR #16，在 `main@329bf8ee82091de569cb80f1e83fc5d518f74068` 完成 code-owned YARP allowlist、外部身份头清理、按连接来源分区的固定窗口限流、后端独立认证边界及 loopback E2E；实现 main run 33261055327 attempt 2、发布 main run 33262410890 与 exact-main publish run 33262569274 成功。

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-30：CRM Platform P08 S05 公共候选同步
+
+- Platform PR #23/#24 已从 exact `main@bfb0ebdc2e17f9a580156dbba6c0ce6cf6f3c672` 发布并记录五个不可变 `0.8.0-alpha.2` 包；publish run 33320840180、artifact 9734883916 与 API digest `sha256:db2e44481101dcf450cd1a0d6188572ac8c1529fc148e6ea3d094d8c772a4e61` 已固定，alpha.1 仅保留为不合格历史证据。
+- CRM PR #33 完成五包固定消费与 24/24 P08 黑盒；PR/main runs 33329003327/33329320097 成功。PR #34 的 S04 证据继续保留；PR #35（head `8bd521860396b81d235ae6887b58ebd5718b85ad`、merge `bc565fce5bf84904eb1bbe11e7ab13cf6a1e016a`、runs 33332328534/33332741550）将过早 Frozen 前向纠正为候选。
+- Platform PR #25（head `e9657cb55bed6230a7ee0aec33603379c4535775`、PR run 33333573931）对账所有 CRM PR/main/SQL artifact 身份；合并 `main@3bee7abe00e6f79be41bbc6af6dc2290261cb317` 后 exact-main run 33333782732 四矩阵成功。
+- 公共 S05 已完成，但当前仍为 `Published / Consumer Candidate` 与 `S00-S05 complete; S06 pending`。P08-S06 Platform 最终审计通过前不得声明 Frozen，也没有注册 exporter、运行时订阅、生产 SLO 或部署。
+
 ## 2026-08-29：CRM Platform P07 冻结可消费
 
 - `CP6.Platform` PR #15/#16 完成 YARP allowlist、外部身份头清理、限流与后端认证边界；`main@329bf8ee82091de569cb80f1e83fc5d518f74068` 的 exact-main publish run 33262569274 发布五个不可变 `0.7.0-alpha.1` 包、artifact 9717721544 和完整 SHA-256 证据。
