@@ -632,10 +632,10 @@ async function handleImportFile(e: Event): Promise<void> {
       </el-button-group>
 
       <!-- Undo / Redo -->
-      <el-button size="small" :disabled="!store.canUndo" @click="handleUndo">
+      <el-button data-test="undo" size="small" :disabled="!store.canUndo" @click="handleUndo">
         {{ t('撤销') }}
       </el-button>
-      <el-button size="small" :disabled="!store.canRedo" @click="handleRedo">
+      <el-button data-test="redo" size="small" :disabled="!store.canRedo" @click="handleRedo">
         {{ t('重做') }}
       </el-button>
 

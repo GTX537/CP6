@@ -68,7 +68,13 @@ vi.mock('@/space-editor/interact/InteractionManager', () => ({
 }))
 
 vi.mock('./panels/TemplatePanel.vue', () => ({ default: { template: '<div />' } }))
-vi.mock('./panels/BindCodesDialog.vue', () => ({ default: { template: '<div />' } }))
+vi.mock('./panels/BindCodesDialog.vue', () => ({
+  default: {
+    props: ['modelValue', 'rackId'],
+    emits: ['update:modelValue', 'bound'],
+    template: '<div v-if="modelValue" data-test="bind-codes-dialog">{{ rackId }}</div>',
+  },
+}))
 vi.mock('./panels/ConnectorPanel.vue', () => ({ default: { template: '<div />' } }))
 vi.mock('./panels/PropertiesPanel.vue', () => ({ default: { template: '<div />' } }))
 vi.mock('@/api/space/connector', () => ({ connectorApi: { upsertStop: vi.fn() } }))
@@ -224,6 +230,18 @@ describe('FloorEditor tool feedback', () => {
     expect(warning).toHaveBeenCalledWith('请先在画布上选中一个货架')
   })
 
+  it('opens the existing bind-codes dialog for the selected rack', async () => {
+    const { wrapper, store } = await mountEditor('zh-CN')
+    store.setSelection(['rack-1'])
+    await flushPromises()
+
+    await wrapper.find('[data-test="reverse-model"]').trigger('click')
+
+    const dialog = wrapper.find('[data-test="bind-codes-dialog"]')
+    expect(dialog.exists()).toBe(true)
+    expect(dialog.text()).toBe('rack-1')
+  })
+
   it.each([
     ['ja', 'エクスポートしました'],
     ['zh-CN', '导出成功'],
@@ -243,6 +261,57 @@ describe('FloorEditor tool feedback', () => {
     expect(sceneApi.exportScene).toHaveBeenCalledWith('floor-1')
     expect(anchorClick).toHaveBeenCalledTimes(1)
     expect(success).toHaveBeenCalledWith(successMessage)
+  })
+
+  it.each([
+    ['API request', () => {
+      vi.mocked(sceneApi.exportScene).mockRejectedValue(new Error('export failed'))
+    }],
+    ['file generation', () => {
+      vi.mocked(sceneApi.exportScene).mockResolvedValue({
+        code: 0,
+        message: '',
+        data: { source: makeScene().source, meta: { floorId: 'floor-1' }, zones: [], aisles: [], racks: [] },
+      })
+      vi.mocked(URL.createObjectURL).mockImplementation(() => { throw new Error('blob failed') })
+    }],
+  ] as const)('reports %s export failures without a success message', async (_scenario, arrangeFailure) => {
+    const success = vi.spyOn(ElMessage, 'success').mockImplementation(() => undefined as never)
+    const error = vi.spyOn(ElMessage, 'error').mockImplementation(() => undefined as never)
+    arrangeFailure()
+    const { wrapper } = await mountEditor('zh-CN')
+
+    await wrapper.find('[data-test="export-scene"]').trigger('click')
+    await flushPromises()
+
+    expect(error).toHaveBeenCalledWith('导出失败')
+    expect(success).not.toHaveBeenCalled()
+  })
+
+  it('keeps undo and redo buttons in sync with command-stack state', async () => {
+    const { wrapper, store } = await mountEditor('zh-CN')
+    const command = { label: 'test', do: vi.fn(), undo: vi.fn() }
+    const undo = wrapper.find('[data-test="undo"]')
+    const redo = wrapper.find('[data-test="redo"]')
+
+    expect((undo.element as HTMLButtonElement).disabled).toBe(true)
+    expect((redo.element as HTMLButtonElement).disabled).toBe(true)
+
+    store.stack.exec(command, store.buildEditorContext())
+    store.updateUndoRedo()
+    await flushPromises()
+    expect((undo.element as HTMLButtonElement).disabled).toBe(false)
+    expect((redo.element as HTMLButtonElement).disabled).toBe(true)
+
+    await undo.trigger('click')
+    expect(command.undo).toHaveBeenCalledTimes(1)
+    expect((undo.element as HTMLButtonElement).disabled).toBe(true)
+    expect((redo.element as HTMLButtonElement).disabled).toBe(false)
+
+    await redo.trigger('click')
+    expect(command.do).toHaveBeenCalledTimes(2)
+    expect((undo.element as HTMLButtonElement).disabled).toBe(false)
+    expect((redo.element as HTMLButtonElement).disabled).toBe(true)
   })
 
   it('destroys its stage and interaction manager when unmounted', async () => {

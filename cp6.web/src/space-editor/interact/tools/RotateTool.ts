@@ -10,6 +10,15 @@ import { rotateAboutCenter, snapAngle } from '../rotate/rotateGeometry'
 import { applyRotateHandleStyle } from '../rotate/rotateHandleStyle'
 import type { RackVO } from '@/types/space/scene'
 
+export function getRotateTransformerNodes(
+  selectionIds: readonly string[],
+  getRackNode: (id: string) => Konva.Group | null,
+): Konva.Group[] {
+  if (selectionIds.length !== 1) return []
+  const node = getRackNode(selectionIds[0]!)
+  return node ? [node] : []
+}
+
 export class RotateTool implements ITool {
   private ctx: ToolContext
   // 旋转起始时的 from 位姿（单选）
@@ -134,9 +143,10 @@ export class RotateTool implements ITool {
   }
 
   private refreshTransformer(): void {
-    const nodes = this.ctx.store.selectionIds
-      .map((id: string) => this.ctx.stage.getRackNode(id))
-      .filter((n): n is Konva.Group => n !== null)
+    const nodes = getRotateTransformerNodes(
+      this.ctx.store.selectionIds,
+      (id) => this.ctx.stage.getRackNode(id),
+    )
     this.ctx.transformer.nodes(nodes)
     this.ctx.stage.layers.rack.batchDraw()
   }
