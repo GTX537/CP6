@@ -6,9 +6,6 @@ export const ACTIVE_ROTATE_HANDLE_STYLE = {
   anchorFill: '#10bfc8',
   anchorStroke: '#ffffff',
   anchorStrokeWidth: 3,
-  anchorShadowColor: '#075f65',
-  anchorShadowBlur: 3,
-  anchorShadowOpacity: 0.9,
   borderStroke: '#087d84',
   borderStrokeWidth: 2,
   rotateAnchorOffset: 42,
@@ -20,14 +17,26 @@ export const INACTIVE_ROTATE_HANDLE_STYLE = {
   anchorFill: '#ffffff',
   anchorStroke: '#0099ff',
   anchorStrokeWidth: 1,
-  anchorShadowColor: 'transparent',
-  anchorShadowBlur: 0,
-  anchorShadowOpacity: 0,
   borderStroke: '#0099ff',
   borderStrokeWidth: 1.5,
   rotateAnchorOffset: 50,
 } as const
 
-export function setRotateHandleVisibility(transformer: Konva.Transformer, active: boolean): void {
+const ACTIVE_ROTATE_HANDLE_SHADOW_STYLE = {
+  shadowColor: '#075f65',
+  shadowBlur: 3,
+  shadowOpacity: 0.9,
+}
+
+const INACTIVE_ROTATE_HANDLE_SHADOW_STYLE = {
+  shadowColor: 'transparent',
+  shadowBlur: 0,
+  shadowOpacity: 0,
+}
+
+export function applyRotateHandleStyle(transformer: Konva.Transformer, active: boolean): void {
   transformer.setAttrs(active ? ACTIVE_ROTATE_HANDLE_STYLE : INACTIVE_ROTATE_HANDLE_STYLE)
+  transformer.findOne('.rotater')?.setAttrs(
+    active ? ACTIVE_ROTATE_HANDLE_SHADOW_STYLE : INACTIVE_ROTATE_HANDLE_SHADOW_STYLE,
+  )
 }

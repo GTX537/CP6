@@ -7,7 +7,7 @@ import type { ITool, ToolContext } from '../InteractionManager'
 import { findRackGroup, isTransformerNode } from '../InteractionManager'
 import { RotateRackCmd, type RackPose } from '../../command/commands/RotateRackCmd'
 import { rotateAboutCenter, snapAngle } from '../rotate/rotateGeometry'
-import { setRotateHandleVisibility } from '../rotate/rotateHandleStyle'
+import { applyRotateHandleStyle } from '../rotate/rotateHandleStyle'
 import type { RackVO } from '@/types/space/scene'
 
 export class RotateTool implements ITool {
@@ -22,7 +22,7 @@ export class RotateTool implements ITool {
   }
 
   onActivate(): void {
-    setRotateHandleVisibility(this.ctx.transformer, true)
+    applyRotateHandleStyle(this.ctx.transformer, true)
     this.ctx.transformer.rotateEnabled(true)
     this.ctx.transformer.resizeEnabled(false)
     this.ctx.transformer.enabledAnchors([])
@@ -37,7 +37,7 @@ export class RotateTool implements ITool {
     this.ctx.transformer.off('transform.rt')
     this.ctx.transformer.off('transformend.rt')
     this.ctx.transformer.rotateEnabled(false)
-    setRotateHandleVisibility(this.ctx.transformer, false)
+    applyRotateHandleStyle(this.ctx.transformer, false)
     this.ctx.transformer.nodes([])
     this.clearAngleText()
     this.ctx.stage.layers.rack.batchDraw()
