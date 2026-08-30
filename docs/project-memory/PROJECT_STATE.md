@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## Space Editor 工具反馈增强已验收（2026-08-30）
+
+- 空间编辑器五种工具现提供持续上下文提示、明确光标和 `aria-pressed` 状态；旋转模式使用高对比度圆形手柄，反向建模在未单选货架时保持可点击并解释前置条件，导出完成后提供页面内成功反馈。
+- 场景加载期间选择的工具会在 `InteractionManager` 初始化后重放；组件卸载早于异步加载完成时不再写共享 Store、创建 Stage/InteractionManager 或遗留文档事件。旋转手柄只在恰好单选一个有效货架时出现，多选不会预览或提交部分旋转。
+- 新增工具文案使用稳定语义键并提供 `ja`、`zh-CN`、`zh-TW`、`en`、`ko` 本地兜底，后端语言包仍可覆盖。最终 Web 门禁为 179 个文件 / 943 项测试、严格类型检查和生产构建通过；本地 CP6DB 环境的隔离 Chrome 验收确认五工具、撤销/重做、导入取消、导出、反向建模与单选/多选旋转。登录后的编辑器验收动作阶段 `consoleErrors`、`pageErrors`、POST/PUT/PATCH/DELETE 均为 0，且未点击保存。用户已于 2026-08-30 确认验收。
+- 本任务 Git diff 只涉及前端、测试及文档，不含 Docker、数据库、API、DTO、迁移或部署文件；执行过程未运行 Docker、数据库管理或迁移命令。反向建模对话框既有的字面量 `{diff}` 未插值问题不属于本次回归，已保留为独立 P1 跟踪项。
+
 ## CRM Platform P07 已冻结可消费（2026-08-29 UTC）
 
 - `GTX537/CP6.Platform` 通过实现 PR #15 与发布 PR #16，在 `main@329bf8ee82091de569cb80f1e83fc5d518f74068` 完成 code-owned YARP allowlist、外部身份头清理、按连接来源分区的固定窗口限流、后端独立认证边界及 loopback E2E；实现 main run 33261055327 attempt 2、发布 main run 33262410890 与 exact-main publish run 33262569274 成功。

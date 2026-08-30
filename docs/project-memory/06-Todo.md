@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## P1：Space Editor 反向建模文案占位符
+
+- 当前 `BindCodesDialog.vue` 的两处既有文案直接包含字面量 `{diff}`，实际对话框会显示未插值占位符；该代码可追溯到本次工具反馈任务之前，未影响本轮按钮可操作性与对话框打开验收。
+- `diff` 已由 `computeMismatch(totalSlots, unplacedList.length)` 计算并传入模板；后续独立任务应建立稳定的 i18n 键与插值合同，补五语言及组件正反向测试后修复，不得用固定文本或空值掩盖真实差异。
+- Space Editor 五工具提示、光标、单选旋转手柄、多选时旋转手柄不显示且不提交、加载/卸载竞态、反向建模前置提示和导出反馈已于 2026-08-30 验收，不要重复实现。
+
 ## P0：Platform P08+ 与后续跨仓合同
 
 - P02/P03/P04/P05/P06/P07 已分别以不可变包、逐包 SHA-256、CRM 固定版本引用及 PR/main 远端消费证据达到 `Frozen / Consumable`；不要再把这六项写成 Absent 或 Candidate。

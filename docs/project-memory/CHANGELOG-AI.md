@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-30：Space Editor 工具反馈增强验收
+
+- 为五种编辑工具增加持续上下文提示、专用光标和可访问激活态；增强旋转手柄可见性，保持反向建模按钮可操作并解释单选前置条件，导出成功提供页面内反馈。
+- 关闭场景加载期间工具 UI/引擎分叉、卸载前异步响应副作用泄漏和多选旋转预览/部分提交风险；旋转 Transformer 现在只接受恰好一个有效货架节点。
+- 新增稳定语义 i18n 键与 `ja`、`zh-CN`、`zh-TW`、`en`、`ko` 本地兜底，并补齐反向建模、导出失败、undo/redo、生命周期及 Konva 真实对象回归。
+- 最终 Web 门禁为 179 files / 943 tests，type-check 和 production build 通过；本地 CP6DB 隔离 Chrome 验收在登录后的编辑器动作阶段记录 console/page error/POST/PUT/PATCH/DELETE 均为 0，且未点击保存，用户确认验收。本任务 Git diff 不含 Docker、数据库、API、DTO、迁移或部署文件，执行过程未运行 Docker、数据库管理或迁移命令；既有 `{diff}` 占位符另列 P1。
+
 ## 2026-08-29：CRM Platform P07 冻结可消费
 
 - `CP6.Platform` PR #15/#16 完成 YARP allowlist、外部身份头清理、限流与后端认证边界；`main@329bf8ee82091de569cb80f1e83fc5d518f74068` 的 exact-main publish run 33262569274 发布五个不可变 `0.7.0-alpha.1` 包、artifact 9717721544 和完整 SHA-256 证据。
