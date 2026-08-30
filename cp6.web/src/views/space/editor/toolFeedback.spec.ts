@@ -1,20 +1,11 @@
-import { describe, expect, it } from 'vitest'
-import { getEditorMessageFallback, getEditorToolFeedback } from './toolFeedback'
-
-const dynamicMessageKeys = [
-  'space.editor.tool.select.title',
-  'space.editor.tool.select.message',
-  'space.editor.tool.drag.title',
-  'space.editor.tool.drag.message',
-  'space.editor.tool.marker.title',
-  'space.editor.tool.marker.message',
-  'space.editor.tool.zone.title',
-  'space.editor.tool.zone.message',
-  'space.editor.tool.rotate.title',
-  'space.editor.tool.rotate.selectFirst',
-  'space.editor.tool.rotate.message',
-  'space.editor.export.success',
-] as const
+import { describe, expect, expectTypeOf, it } from 'vitest'
+import {
+  EDITOR_MESSAGE_KEYS,
+  getEditorMessageFallback,
+  getEditorToolFeedback,
+  type EditorMessageKey,
+  type EditorToolFeedback,
+} from './toolFeedback'
 
 describe('getEditorToolFeedback', () => {
   it.each([
@@ -52,8 +43,7 @@ describe('getEditorToolFeedback', () => {
 
   it('returns fresh select guidance objects for each call', () => {
     const first = getEditorToolFeedback('select', false)
-    first.titleKey = '被调用方修改'
-    first.messageKey = '被调用方修改'
+    first.cursorClass = 'tool-cursor-drag'
 
     expect(getEditorToolFeedback('select', false)).toEqual({
       titleKey: 'space.editor.tool.select.title',
@@ -70,7 +60,7 @@ describe('getEditorToolFeedback', () => {
   it.each(['ja', 'zh-CN', 'zh-TW', 'en', 'ko'] as const)(
     'provides a %s fallback for every dynamic editor message key',
     (locale) => {
-      for (const key of dynamicMessageKeys) {
+      for (const key of EDITOR_MESSAGE_KEYS) {
         expect(getEditorMessageFallback(locale, key), `${locale}:${key}`).toBeTruthy()
         expect(getEditorMessageFallback(locale, key), `${locale}:${key}`).not.toBe(key)
       }
@@ -84,5 +74,12 @@ describe('getEditorToolFeedback', () => {
     expect(getEditorMessageFallback('zh-CN', 'space.editor.tool.select.title')).toBe('选择模式')
     expect(getEditorMessageFallback('zh-CN', 'space.editor.tool.select.message')).toContain('货架')
     expect(getEditorMessageFallback('zh-CN', 'space.editor.export.success')).toBe('导出成功')
+  })
+
+  it('constrains dynamic feedback messages to the exported key union', () => {
+    expectTypeOf(EDITOR_MESSAGE_KEYS).toMatchTypeOf<readonly EditorMessageKey[]>()
+    expectTypeOf<EditorToolFeedback['titleKey']>().toEqualTypeOf<EditorMessageKey>()
+    expectTypeOf<EditorToolFeedback['messageKey']>().toEqualTypeOf<EditorMessageKey>()
+    expectTypeOf<Parameters<typeof getEditorMessageFallback>[1]>().toEqualTypeOf<EditorMessageKey>()
   })
 })

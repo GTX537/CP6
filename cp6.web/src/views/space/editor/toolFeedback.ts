@@ -102,13 +102,13 @@ function normalizeEditorLocale(locale: string): EditorLocale {
   return 'ja'
 }
 
-export function getEditorMessageFallback(locale: string, key: string): string {
-  return editorMessageFallbacks[normalizeEditorLocale(locale)][key as EditorMessageKey] ?? key
+export function getEditorMessageFallback(locale: string, key: EditorMessageKey): string {
+  return editorMessageFallbacks[normalizeEditorLocale(locale)][key] ?? key
 }
 
 export interface EditorToolFeedback {
-  titleKey: string
-  messageKey: string
+  titleKey: EditorMessageKey
+  messageKey: EditorMessageKey
   cursorClass: 'tool-cursor-select' | 'tool-cursor-drag' | 'tool-cursor-crosshair'
 }
 

@@ -187,6 +187,30 @@ describe('FloorEditor tool feedback', () => {
     expect(interactionInstances[0]!.switchTool).toHaveBeenCalledWith('rotate')
   })
 
+  it('discards a scene response that resolves after the editor is unmounted', async () => {
+    let resolveScene!: (value: { code: number; message: string; data: EditorScene }) => void
+    vi.mocked(sceneApi.get).mockReturnValue(new Promise(resolve => { resolveScene = resolve }))
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const store = useSpaceEditorStore()
+    const load = vi.spyOn(store, 'load')
+    const addDocumentListener = vi.spyOn(document, 'addEventListener')
+    const wrapper = mount(FloorEditor, {
+      global: { plugins: [pinia, createTestI18n('ja'), ElementPlus] },
+    })
+    mountedWrappers.push(wrapper)
+    const listenerCallsBeforeUnmount = addDocumentListener.mock.calls.length
+
+    wrapper.unmount()
+    resolveScene({ code: 0, message: '', data: makeScene() })
+    await flushPromises()
+
+    expect(load).not.toHaveBeenCalled()
+    expect(sceneStageInstances).toHaveLength(0)
+    expect(interactionInstances).toHaveLength(0)
+    expect(addDocumentListener).toHaveBeenCalledTimes(listenerCallsBeforeUnmount)
+  })
+
   it('keeps reverse modeling clickable without a selected rack and reports the reason', async () => {
     const warning = vi.spyOn(ElMessage, 'warning').mockImplementation(() => undefined as never)
     const { wrapper } = await mountEditor('zh-CN')

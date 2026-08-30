@@ -13,6 +13,7 @@ import {
   EDITOR_EXPORT_SUCCESS_KEY,
   getEditorMessageFallback,
   getEditorToolFeedback,
+  type EditorMessageKey,
 } from './toolFeedback'
 import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
 import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
@@ -69,7 +70,7 @@ const selectedRack = computed<RackVO | null>(() => {
 })
 
 const toolFeedback = computed(() => getEditorToolFeedback(activeTool.value, selectedRack.value !== null))
-const editorT = (key: string): string => t(key, getEditorMessageFallback(locale.value, key))
+const editorT = (key: EditorMessageKey): string => t(key, getEditorMessageFallback(locale.value, key))
 
 // 选中态扩展（波5）：zone / marker 与 rack 同 selectionIds 语义，单选时按 id 反查
 const selectedZone = computed<ZoneVO | null>(() => {
@@ -137,8 +138,15 @@ function afterCommand(): void {
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
 
+let disposed = false
+let sceneRequestGeneration = 0
+let keyboardListenersBound = false
+
 onMounted(async () => {
+  const requestGeneration = ++sceneRequestGeneration
   const res = await sceneApi.get(floorId.value)
+  if (disposed || requestGeneration !== sceneRequestGeneration) return
+
   store.load(res.data)
 
   if (canvasRef.value) {
@@ -152,11 +160,17 @@ onMounted(async () => {
 
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('keyup', onKeyup)
+  keyboardListenersBound = true
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', onKeydown)
-  document.removeEventListener('keyup', onKeyup)
+  disposed = true
+  sceneRequestGeneration += 1
+  if (keyboardListenersBound) {
+    document.removeEventListener('keydown', onKeydown)
+    document.removeEventListener('keyup', onKeyup)
+    keyboardListenersBound = false
+  }
   imRef.value?.destroy()
   stageRef?.destroy()
 })
