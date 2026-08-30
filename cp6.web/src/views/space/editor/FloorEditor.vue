@@ -9,6 +9,7 @@ import { SceneStage } from '@/space-editor/SceneStage'
 import { genZoneArray } from '@/space-editor/generate/genZoneArray'
 import type { ZoneVO, RackVO, MarkerVO } from '@/types/space/scene'
 import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
+import { getEditorToolFeedback } from './toolFeedback'
 import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
 import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
 import { rectToPolygon, rectShortEdge } from '@/space-editor/interact/tools/zoneGeom'
@@ -62,6 +63,8 @@ const selectedRack = computed<RackVO | null>(() => {
   const id = store.selectionIds[0]!
   return store.scene?.racks.find(r => r.id === id) ?? null
 })
+
+const toolFeedback = computed(() => getEditorToolFeedback(activeTool.value, selectedRack.value !== null))
 
 // 选中态扩展（波5）：zone / marker 与 rack 同 selectionIds 语义，单选时按 id 反查
 const selectedZone = computed<ZoneVO | null>(() => {
@@ -512,6 +515,7 @@ async function handleExport(): Promise<void> {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
+    ElMessage.success(t('导出成功'))
   } catch {
     ElMessage.error(t('导出失败'))
   }
@@ -574,26 +578,36 @@ async function handleImportFile(e: Event): Promise<void> {
           :type="activeTool === 'select' ? 'primary' : 'default'"
           @click="switchTool('select')"
           :title="t('选择 (S)')"
+          data-tool="select"
+          :aria-pressed="activeTool === 'select'"
         >{{ t('选择') }}</el-button>
         <el-button
           :type="activeTool === 'drag' ? 'primary' : 'default'"
           @click="switchTool('drag')"
           :title="t('拖拽 (D)')"
+          data-tool="drag"
+          :aria-pressed="activeTool === 'drag'"
         >{{ t('拖拽') }}</el-button>
         <el-button
           :type="activeTool === 'rotate' ? 'primary' : 'default'"
           @click="switchTool('rotate')"
           :title="t('旋转 (R)')"
+          data-tool="rotate"
+          :aria-pressed="activeTool === 'rotate'"
         >{{ t('旋转') }}</el-button>
         <el-button
           :type="activeTool === 'marker' ? 'primary' : 'default'"
           @click="switchTool('marker')"
           :title="t('打点 (M)')"
+          data-tool="marker"
+          :aria-pressed="activeTool === 'marker'"
         >{{ t('打点') }}</el-button>
         <el-button
           :type="activeTool === 'zone' ? 'primary' : 'default'"
           @click="switchTool('zone')"
           :title="t('拖框新建库区')"
+          data-tool="zone"
+          :aria-pressed="activeTool === 'zone'"
         >{{ t('新建库区') }}</el-button>
       </el-button-group>
 
@@ -643,11 +657,12 @@ async function handleImportFile(e: Event): Promise<void> {
       <el-button type="primary" size="small" :loading="saving" @click="handleSave">
         {{ t('保存') }}
       </el-button>
-      <el-button size="small" @click="handleExport">{{ t('导出') }}</el-button>
+      <el-button data-test="export-scene" size="small" @click="handleExport">{{ t('导出') }}</el-button>
       <el-button size="small" @click="handleImportClick">{{ t('导入') }}</el-button>
       <el-button
+        data-test="reverse-model"
         size="small"
-        :disabled="!selectedRack"
+        :aria-disabled="selectedRack === null"
         :title="selectedRack ? t('为所选货架绑定采纳态库位码') : t('请先选中一个货架')"
         @click="openBindDialog"
       >
@@ -657,10 +672,21 @@ async function handleImportFile(e: Event): Promise<void> {
 
     <!-- Editor body -->
     <div class="editor-body">
-      <div
-        ref="canvasRef"
-        :class="['canvas-container', { 'placement-mode': placementMode || connectorPlacementMode }]"
-      />
+      <div class="canvas-shell">
+        <div
+          ref="canvasRef"
+          data-test="editor-canvas"
+          :class="[
+            'canvas-container',
+            toolFeedback.cursorClass,
+            { 'placement-mode': placementMode || connectorPlacementMode },
+          ]"
+        />
+        <div data-test="tool-hint" class="tool-hint" role="status" aria-live="polite">
+          <strong>{{ t(toolFeedback.titleKey) }}</strong>
+          <span>{{ t(toolFeedback.messageKey) }}</span>
+        </div>
+      </div>
 
       <aside class="side-panel">
         <TemplatePanel @select="onTemplateSelect" />
@@ -762,13 +788,52 @@ async function handleImportFile(e: Event): Promise<void> {
   display: flex;
   overflow: hidden;
 }
-.canvas-container {
+.canvas-shell {
   flex: 1;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+.canvas-container {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: #eaeaea;
 }
+.canvas-container.tool-cursor-select {
+  cursor: default;
+}
+.canvas-container.tool-cursor-drag {
+  cursor: grab;
+}
+.canvas-container.tool-cursor-drag:active {
+  cursor: grabbing;
+}
+.canvas-container.tool-cursor-crosshair {
+  cursor: crosshair;
+}
 .canvas-container.placement-mode {
   cursor: crosshair;
+}
+.tool-hint {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: min(420px, calc(100% - 24px));
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.74);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.45;
+  pointer-events: none;
+}
+.tool-hint strong {
+  font-size: 13px;
 }
 .side-panel {
   width: 260px;
