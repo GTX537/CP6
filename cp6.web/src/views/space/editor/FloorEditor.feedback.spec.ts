@@ -10,8 +10,14 @@ import FloorEditor from './FloorEditor.vue'
 import type { EditorScene, RackVO } from '@/types/space/scene'
 
 const { sceneStageInstances, interactionInstances } = vi.hoisted(() => ({
-  sceneStageInstances: [] as Array<{ render: ReturnType<typeof vi.fn> }>,
-  interactionInstances: [] as Array<{ switchTool: ReturnType<typeof vi.fn> }>,
+  sceneStageInstances: [] as Array<{
+    render: ReturnType<typeof vi.fn>
+    destroy: ReturnType<typeof vi.fn>
+  }>,
+  interactionInstances: [] as Array<{
+    switchTool: ReturnType<typeof vi.fn>
+    destroy: ReturnType<typeof vi.fn>
+  }>,
 }))
 
 vi.mock('vue-router', () => ({
