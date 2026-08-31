@@ -111,6 +111,7 @@ export class InteractionManager {
         return target === null || (!findRackGroup(target) && !isTransformerNode(target))
       },
       onNavigationStateChange: (active) => this.navigationStateHandler(active),
+      onWheelCommitDuringPointerDown: () => this.refreshTransformer(),
     })
 
     this.bindEvents()

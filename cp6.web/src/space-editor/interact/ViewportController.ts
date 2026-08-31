@@ -14,11 +14,18 @@ export interface ViewportControllerOptions {
   getActiveTool: () => ViewportTool
   isBackground: (point: { x: number; y: number }) => boolean
   onNavigationStateChange?: (active: boolean) => void
+  onWheelCommitDuringPointerDown?: () => void
+}
+
+interface PointerCaptureTarget {
+  setPointerCapture(pointerId: number): void
+  releasePointerCapture(pointerId: number): void
 }
 
 interface PanState {
   pointerId: number
   button: number
+  buttonMask: number
   startX: number
   startY: number
   lastX: number
@@ -26,6 +33,13 @@ interface PanState {
   active: boolean
   moved: boolean
   captured: boolean
+  captureTarget: PointerCaptureTarget | null
+}
+
+interface ExternalGestureState {
+  pointerId: number
+  captured: boolean
+  captureTarget: PointerCaptureTarget | null
 }
 
 const WHEEL_COMMIT_DELAY_MS = 120
@@ -34,7 +48,7 @@ const CLICK_SUPPRESSION_MS = 250
 const WHEEL_LINE_HEIGHT_PX = 16
 const WHEEL_PAGE_FALLBACK_PX = 800
 
-type PanFinishReason = 'pointerup' | 'pointercancel' | 'lostpointercapture' | 'blur' | 'disable'
+type PanFinishReason = 'pointerup' | 'pointercancel' | 'lostpointercapture' | 'buttonsreleased' | 'blur' | 'disable'
 
 export class ViewportController {
   private readonly element: HTMLElement
@@ -45,7 +59,7 @@ export class ViewportController {
   private spaceHeld = false
   private navigationActive = false
   private pan: PanState | null = null
-  private externalPointerId: number | null = null
+  private externalGesture: ExternalGestureState | null = null
   private wheelPreviewPending = false
   private wheelTimer: ReturnType<typeof setTimeout> | null = null
   private suppressNextClick = false
@@ -77,7 +91,7 @@ export class ViewportController {
       this.clearClickSuppression()
       this.settleWheelPreview()
       this.finishPan(undefined, 'disable', true)
-      this.externalPointerId = null
+      this.finishExternalGesture(undefined, true)
     }
   }
 
@@ -115,10 +129,14 @@ export class ViewportController {
     const hasPreview = this.wheelPreviewPending || pan?.moved === true
     this.wheelPreviewPending = false
     this.pan = null
-    this.externalPointerId = null
+    const externalGesture = this.externalGesture
+    this.externalGesture = null
     if (pan?.active) this.setNavigationActive(false)
     if (hasPreview) this.host.cancelViewportPreview()
-    if (pan?.captured) this.releaseCapture(pan.pointerId)
+    if (pan?.captured) this.releaseCapture(pan.captureTarget, pan.pointerId)
+    if (externalGesture?.captured) {
+      this.releaseCapture(externalGesture.captureTarget, externalGesture.pointerId)
+    }
 
     this.element.removeEventListener('wheel', this.onWheel)
     this.element.removeEventListener('pointerdown', this.onPointerDown, true)
@@ -133,7 +151,7 @@ export class ViewportController {
   private readonly onWheel = (event: WheelEvent): void => {
     if (!this.enabled || this.destroyed || event.deltaY === 0 || !Number.isFinite(event.deltaY)) return
 
-    if (this.pan || this.externalPointerId !== null) {
+    if (this.pan || this.externalGesture !== null) {
       event.preventDefault()
       return
     }
@@ -155,9 +173,10 @@ export class ViewportController {
   private readonly onPointerDown = (event: PointerEvent): void => {
     if (!this.enabled || this.destroyed) return
 
-    this.settleWheelPreview()
+    const wheelCommitted = this.settleWheelPreview()
+    if (wheelCommitted) this.options.onWheelCommitDuringPointerDown?.()
     if (event.button === 0) this.clearClickSuppression()
-    if (this.pan || this.externalPointerId !== null) return
+    if (this.pan || this.externalGesture !== null) return
 
     const forced = event.button === 1 || (event.button === 0 && this.spaceHeld)
     const candidate = !forced
@@ -165,22 +184,29 @@ export class ViewportController {
       && this.options.getActiveTool() === 'drag'
       && this.options.isBackground(this.localPoint(event.clientX, event.clientY))
     if (!forced && !candidate) {
-      this.externalPointerId = event.pointerId
+      const capture = this.capture(event)
+      this.externalGesture = {
+        pointerId: event.pointerId,
+        captured: capture.captured,
+        captureTarget: capture.target,
+      }
       return
     }
 
+    const capture = this.capture(event)
     this.pan = {
       pointerId: event.pointerId,
       button: event.button,
+      buttonMask: this.buttonMask(event.button),
       startX: event.clientX,
       startY: event.clientY,
       lastX: event.clientX,
       lastY: event.clientY,
       active: forced,
       moved: false,
-      captured: false,
+      captured: capture.captured,
+      captureTarget: capture.target,
     }
-    this.capture(event.pointerId)
 
     if (forced) {
       this.setNavigationActive(true)
@@ -192,11 +218,13 @@ export class ViewportController {
     const pan = this.pan
     if (!pan || event.pointerId !== pan.pointerId) return
 
+    if ((event.buttons & pan.buttonMask) === 0) {
+      if (pan.active) this.finishPan(event, 'buttonsreleased', true)
+      else this.abortPanCandidate()
+      return
+    }
+
     if (!pan.active) {
-      if (pan.button === 0 && (event.buttons & 1) === 0) {
-        this.abortPanCandidate()
-        return
-      }
       const totalDx = event.clientX - pan.startX
       const totalDy = event.clientY - pan.startY
       if (Math.hypot(totalDx, totalDy) < DRAG_PAN_THRESHOLD_PX) return
@@ -219,7 +247,7 @@ export class ViewportController {
       this.finishPan(event, 'pointerup', true)
       return
     }
-    this.finishExternalGesture(event.pointerId)
+    this.finishExternalGesture(event.pointerId, true)
   }
 
   private readonly onPointerCancel = (event: PointerEvent): void => {
@@ -227,7 +255,7 @@ export class ViewportController {
       this.finishPan(event, 'pointercancel', true)
       return
     }
-    this.finishExternalGesture(event.pointerId)
+    this.finishExternalGesture(event.pointerId, true)
   }
 
   private readonly onLostPointerCapture = (event: PointerEvent): void => {
@@ -235,7 +263,7 @@ export class ViewportController {
       this.finishPan(event, 'lostpointercapture', false)
       return
     }
-    this.finishExternalGesture(event.pointerId)
+    this.finishExternalGesture(event.pointerId, false)
   }
 
   private readonly onWindowBlur = (): void => {
@@ -243,7 +271,7 @@ export class ViewportController {
     this.clearClickSuppression()
     this.settleWheelPreview()
     this.finishPan(undefined, 'blur', true)
-    this.externalPointerId = null
+    this.finishExternalGesture(undefined, true)
   }
 
   private readonly onClick = (event: MouseEvent): void => {
@@ -280,7 +308,7 @@ export class ViewportController {
     if (pan.moved && pan.button === 0 && reason === 'pointerup') this.armClickSuppression()
     else this.clearClickSuppression()
     if (pan.active) this.setNavigationActive(false)
-    if (shouldReleaseCapture && pan.captured) this.releaseCapture(pan.pointerId)
+    if (shouldReleaseCapture && pan.captured) this.releaseCapture(pan.captureTarget, pan.pointerId)
   }
 
   private abortPanCandidate(): void {
@@ -288,18 +316,24 @@ export class ViewportController {
     if (!pan || pan.active) return
     this.pan = null
     this.clearClickSuppression()
-    if (pan.captured) this.releaseCapture(pan.pointerId)
+    if (pan.captured) this.releaseCapture(pan.captureTarget, pan.pointerId)
   }
 
-  private finishExternalGesture(pointerId: number): void {
-    if (this.externalPointerId === pointerId) this.externalPointerId = null
+  private finishExternalGesture(pointerId: number | undefined, shouldReleaseCapture: boolean): void {
+    const gesture = this.externalGesture
+    if (!gesture || (pointerId !== undefined && gesture.pointerId !== pointerId)) return
+    this.externalGesture = null
+    if (shouldReleaseCapture && gesture.captured) {
+      this.releaseCapture(gesture.captureTarget, gesture.pointerId)
+    }
   }
 
-  private settleWheelPreview(): void {
+  private settleWheelPreview(): boolean {
     this.clearWheelTimer()
-    if (!this.wheelPreviewPending) return
+    if (!this.wheelPreviewPending) return false
     this.wheelPreviewPending = false
     this.host.commitViewport()
+    return true
   }
 
   private clearWheelTimer(): void {
@@ -324,23 +358,42 @@ export class ViewportController {
     this.clickSuppressionTimer = null
   }
 
-  private capture(pointerId: number): void {
-    const pan = this.pan
-    if (!pan || pan.captured) return
+  private capture(event: PointerEvent): { target: PointerCaptureTarget | null; captured: boolean } {
+    const target = this.pointerCaptureTarget(event.target)
+      ?? this.pointerCaptureTarget(this.element)
+    if (!target) return { target: null, captured: false }
     try {
-      this.element.setPointerCapture(pointerId)
-      pan.captured = true
+      target.setPointerCapture(event.pointerId)
+      return { target, captured: true }
     } catch {
       // The pointer can disappear between dispatch and capture.
+      return { target, captured: false }
     }
   }
 
-  private releaseCapture(pointerId: number): void {
+  private releaseCapture(target: PointerCaptureTarget | null, pointerId: number): void {
+    if (!target) return
     try {
-      this.element.releasePointerCapture(pointerId)
+      target.releasePointerCapture(pointerId)
     } catch {
       // Capture may already have been released by the browser.
     }
+  }
+
+  private pointerCaptureTarget(target: EventTarget | null): PointerCaptureTarget | null {
+    if (!target) return null
+    const candidate = target as Partial<PointerCaptureTarget>
+    return typeof candidate.setPointerCapture === 'function'
+      && typeof candidate.releasePointerCapture === 'function'
+      ? candidate as PointerCaptureTarget
+      : null
+  }
+
+  private buttonMask(button: number): number {
+    if (button === 0) return 1
+    if (button === 1) return 4
+    if (button === 2) return 2
+    return button >= 3 && button <= 4 ? 1 << button : 0
   }
 
   private setNavigationActive(active: boolean): void {

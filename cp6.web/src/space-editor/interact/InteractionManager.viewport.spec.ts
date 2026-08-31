@@ -10,6 +10,7 @@ const controllerMock = vi.hoisted(() => ({
       getActiveTool: () => string
       isBackground: (point: { x: number; y: number }) => boolean
       onNavigationStateChange?: (active: boolean) => void
+      onWheelCommitDuringPointerDown?: () => void
     }
     resetView: ReturnType<typeof vi.fn>
     setEnabled: ReturnType<typeof vi.fn>
@@ -36,6 +37,7 @@ vi.mock('./ViewportController', () => ({
         getActiveTool: () => string
         isBackground: (point: { x: number; y: number }) => boolean
         onNavigationStateChange?: (active: boolean) => void
+        onWheelCommitDuringPointerDown?: () => void
       },
     ) {
       controllerMock.constructed(element, host, options)
@@ -281,6 +283,10 @@ describe('InteractionManager viewport integration', () => {
     >('./ViewportController')
     const target = document.createElement('canvas')
     container.append(target)
+    Object.defineProperties(target, {
+      setPointerCapture: { configurable: true, value: vi.fn() },
+      releasePointerCapture: { configurable: true, value: vi.fn() },
+    })
     Object.defineProperties(container, {
       setPointerCapture: { configurable: true, value: vi.fn() },
       releasePointerCapture: { configurable: true, value: vi.fn() },
@@ -303,6 +309,73 @@ describe('InteractionManager viewport integration', () => {
     expect(stage.previewZoomAt).not.toHaveBeenCalled()
     expect(stage.commitViewport).not.toHaveBeenCalled()
     target.dispatchEvent(pointerEvent('pointerup', { pointerId: 50, button: 0 }))
+    realController.destroy()
+    manager.destroy()
+  })
+
+  it('reattaches the Transformer to fresh rack nodes before wheel-settling pointerdown reaches Konva', async () => {
+    const { container, controller, handlers, manager, rackNodes, stage } = createHarness(['rack-1'])
+    const { ViewportController: RealViewportController } = await vi.importActual<
+      typeof import('./ViewportController')
+    >('./ViewportController')
+    const target = document.createElement('canvas')
+    container.append(target)
+    Object.defineProperties(target, {
+      setPointerCapture: { configurable: true, value: vi.fn() },
+      releasePointerCapture: { configurable: true, value: vi.fn() },
+    })
+    manager.switchTool('rotate')
+    manager.refreshTransformer()
+    const oldRack = rackNodes.get('rack-1')!
+    let freshRack: Konva.Group | null = null
+    stage.commitViewport.mockImplementation(() => {
+      oldRack.destroy()
+      freshRack = new Konva.Group({ id: 'rack-1', name: 'rack' })
+      rackNodes.set('rack-1', freshRack)
+      handlers.get('viewportchange.im')?.({ preview: false })
+    })
+    const nodes = vi.spyOn(manager.transformer, 'nodes')
+    const assignmentCount = () => nodes.mock.calls.filter(args => args.length === 1).length
+    nodes.mockClear()
+    const seenAtInnerPointerDown: boolean[] = []
+    target.addEventListener('pointerdown', () => {
+      seenAtInnerPointerDown.push(manager.transformer.nodes()[0] === freshRack)
+    })
+    const realController = new RealViewportController(container, stage, controller.options as never)
+
+    target.dispatchEvent(new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 20,
+    }))
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 51,
+      button: 0,
+      buttons: 1,
+      clientX: 20,
+      clientY: 20,
+    }))
+
+    expect(controller.options.onWheelCommitDuringPointerDown).toBeTypeOf('function')
+    expect(stage.commitViewport).toHaveBeenCalledOnce()
+    expect(seenAtInnerPointerDown).toEqual([true])
+    expect(manager.transformer.nodes()[0]).toBe(freshRack)
+    target.dispatchEvent(pointerEvent('pointerup', { pointerId: 51, button: 0 }))
+    await Promise.resolve()
+    expect(assignmentCount()).toBe(1)
+
+    nodes.mockClear()
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 52,
+      button: 0,
+      buttons: 1,
+      clientX: 20,
+      clientY: 20,
+    }))
+    target.dispatchEvent(pointerEvent('pointerup', { pointerId: 52, button: 0 }))
+    await Promise.resolve()
+    expect(assignmentCount()).toBe(0)
+
     realController.destroy()
     manager.destroy()
   })

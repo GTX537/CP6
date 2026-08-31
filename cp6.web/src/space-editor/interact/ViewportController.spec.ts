@@ -38,9 +38,15 @@ function createHarness(options: {
 
   const setPointerCapture = vi.fn()
   const releasePointerCapture = vi.fn()
-  Object.defineProperties(container, {
+  const outerSetPointerCapture = vi.fn()
+  const outerReleasePointerCapture = vi.fn()
+  Object.defineProperties(target, {
     setPointerCapture: { configurable: true, value: setPointerCapture },
     releasePointerCapture: { configurable: true, value: releasePointerCapture },
+  })
+  Object.defineProperties(container, {
+    setPointerCapture: { configurable: true, value: outerSetPointerCapture },
+    releasePointerCapture: { configurable: true, value: outerReleasePointerCapture },
   })
 
   const calls: string[] = []
@@ -68,6 +74,8 @@ function createHarness(options: {
     host,
     isBackground,
     navigation,
+    outerReleasePointerCapture,
+    outerSetPointerCapture,
     releasePointerCapture,
     setPointerCapture,
     target,
@@ -292,6 +300,46 @@ describe('ViewportController wheel navigation', () => {
       controller.destroy()
     },
   )
+
+  it('keeps an external tool gesture captured by its inner target through an outside-style terminal', () => {
+    const {
+      controller,
+      host,
+      outerSetPointerCapture,
+      releasePointerCapture,
+      setPointerCapture,
+      target,
+    } = createHarness({ tool: 'zone' })
+    const toolUp = vi.fn()
+    target.addEventListener('pointerup', toolUp)
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 23,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+
+    // A browser retargets an outside release to the element owning pointer capture.
+    target.dispatchEvent(pointerEvent('pointerup', {
+      pointerId: 23,
+      button: 0,
+      clientX: -200,
+      clientY: -200,
+    }))
+    target.dispatchEvent(new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 20,
+    }))
+
+    expect(setPointerCapture).toHaveBeenCalledWith(23)
+    expect(outerSetPointerCapture).not.toHaveBeenCalled()
+    expect(releasePointerCapture).toHaveBeenCalledWith(23)
+    expect(toolUp).toHaveBeenCalledOnce()
+    expect(host.previewZoomAt).toHaveBeenCalledOnce()
+    controller.destroy()
+  })
 })
 
 describe('ViewportController pointer panning', () => {
@@ -325,6 +373,51 @@ describe('ViewportController pointer panning', () => {
     expect(host.previewPan).toHaveBeenCalledWith(12, 7)
     expect(host.commitViewport).toHaveBeenCalledOnce()
     expect(navigation.mock.calls).toEqual([[true], [false]])
+    controller.destroy()
+  })
+
+  it.each([
+    { name: 'primary', button: 0, startButtons: 1, chordButtons: 4, spaceHeld: true },
+    { name: 'middle', button: 1, startButtons: 4, chordButtons: 1, spaceHeld: false },
+  ])('ends a $name pan when its initiating button is released during a chord', ({
+    button,
+    chordButtons,
+    spaceHeld,
+    startButtons,
+  }) => {
+    const { controller, host, navigation, target } = createHarness()
+    const clicks = vi.fn()
+    target.addEventListener('click', clicks)
+    controller.setSpaceHeld(spaceHeld)
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 24,
+      button,
+      buttons: startButtons,
+      clientX: 120,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointermove', {
+      pointerId: 24,
+      buttons: startButtons,
+      clientX: 126,
+      clientY: 80,
+    }))
+
+    target.dispatchEvent(pointerEvent('pointermove', {
+      pointerId: 24,
+      buttons: chordButtons,
+      clientX: 150,
+      clientY: 80,
+    }))
+    const unrelatedClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(unrelatedClick)
+
+    expect(host.previewPan).toHaveBeenCalledOnce()
+    expect(host.previewPan).toHaveBeenCalledWith(6, 0)
+    expect(host.commitViewport).toHaveBeenCalledOnce()
+    expect(navigation.mock.calls).toEqual([[true], [false]])
+    expect(clicks).toHaveBeenCalledOnce()
+    expect(unrelatedClick.defaultPrevented).toBe(false)
     controller.destroy()
   })
 
@@ -377,7 +470,14 @@ describe('ViewportController pointer panning', () => {
   })
 
   it('routes a Drag-tool rack drag through unchanged', () => {
-    const { controller, host, setPointerCapture, target } = createHarness({ tool: 'drag', background: false })
+    const {
+      controller,
+      host,
+      outerSetPointerCapture,
+      releasePointerCapture,
+      setPointerCapture,
+      target,
+    } = createHarness({ tool: 'drag', background: false })
     const observed = vi.fn()
     for (const type of ['pointerdown', 'pointermove', 'pointerup', 'click']) {
       target.addEventListener(type, observed)
@@ -387,7 +487,9 @@ describe('ViewportController pointer panning', () => {
     target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
 
     expect(observed).toHaveBeenCalledTimes(4)
-    expect(setPointerCapture).not.toHaveBeenCalled()
+    expect(setPointerCapture).toHaveBeenCalledWith(7)
+    expect(releasePointerCapture).toHaveBeenCalledWith(7)
+    expect(outerSetPointerCapture).not.toHaveBeenCalled()
     expect(host.previewPan).not.toHaveBeenCalled()
     expect(host.commitViewport).not.toHaveBeenCalled()
     controller.destroy()
@@ -422,15 +524,24 @@ describe('ViewportController pointer panning', () => {
     controller.destroy()
   })
 
-  it('captures a blank Drag candidate immediately and releases an outside-like up without stealing its click', () => {
-    const { container, controller, host, releasePointerCapture, setPointerCapture, target } = createHarness({
+  it('captures a blank Drag candidate on the inner target without stealing its up or click', () => {
+    const {
+      controller,
+      host,
+      outerSetPointerCapture,
+      releasePointerCapture,
+      setPointerCapture,
+      target,
+    } = createHarness({
       tool: 'drag',
       background: true,
     })
     const clicks = vi.fn()
     const downs = vi.fn()
+    const ups = vi.fn()
     target.addEventListener('click', clicks)
     target.addEventListener('pointerdown', downs)
+    target.addEventListener('pointerup', ups)
 
     target.dispatchEvent(pointerEvent('pointerdown', {
       pointerId: 30,
@@ -439,7 +550,7 @@ describe('ViewportController pointer panning', () => {
       clientX: 120,
       clientY: 80,
     }))
-    container.dispatchEvent(pointerEvent('pointerup', {
+    target.dispatchEvent(pointerEvent('pointerup', {
       pointerId: 30,
       button: 0,
       clientX: 122,
@@ -448,7 +559,9 @@ describe('ViewportController pointer panning', () => {
     target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
 
     expect(downs).toHaveBeenCalledOnce()
+    expect(ups).toHaveBeenCalledOnce()
     expect(setPointerCapture).toHaveBeenCalledWith(30)
+    expect(outerSetPointerCapture).not.toHaveBeenCalled()
     expect(releasePointerCapture).toHaveBeenCalledWith(30)
     expect(host.previewPan).not.toHaveBeenCalled()
     expect(host.commitViewport).not.toHaveBeenCalled()
