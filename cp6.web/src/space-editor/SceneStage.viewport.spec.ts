@@ -1,8 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import type { EditorScene } from '@/types/space/scene'
 import { SceneStage } from './SceneStage'
-import { screenToWorld } from './coords'
+import { screenToWorld, worldToScreen } from './coords'
+import Konva from 'konva'
 import type { ViewportState, WorldBounds } from './viewport'
+import { toCoordinateView } from './viewport'
 
 type LayerHarness = ReturnType<typeof createLayer>
 
@@ -109,6 +111,37 @@ function expectIdentityTransform(layer: LayerHarness): void {
   expect(layer.scale).toHaveBeenLastCalledWith({ x: 1, y: 1 })
 }
 
+function configureGhostOwnership(layer: LayerHarness) {
+  type GhostNode = {
+    owner: 'tool' | 'viewport'
+    destroy: Mock<() => void>
+    position: Mock<(point: { x: number; y: number }) => void>
+  }
+  const children: GhostNode[] = []
+  const node = (owner: GhostNode['owner']): GhostNode => {
+    const item: GhostNode = {
+      owner,
+      destroy: vi.fn(() => {
+        children.splice(children.indexOf(item), 1)
+      }),
+      position: vi.fn(),
+    }
+    return item
+  }
+  const toolNode = node('tool')
+  const viewportNode = node('viewport')
+  children.push(toolNode, viewportNode)
+  layer.find.mockImplementation((selector: string) => (
+    selector === '.viewport-transient'
+      ? children.filter(item => item.owner === 'viewport')
+      : []
+  ))
+  layer.destroyChildren.mockImplementation(() => {
+    for (const item of [...children]) item.destroy()
+  })
+  return { children, toolNode, viewportNode }
+}
+
 beforeEach(() => {
   const canvasContext = {
     clearRect: vi.fn(),
@@ -146,16 +179,74 @@ describe('SceneStage viewport preview lifecycle', () => {
     )
   })
 
-  it('keeps zoom coordinate conversion anchored to the preview viewport', () => {
+  it('accepts the controller factor-anchor contract and anchors preview zoom', () => {
     const { stage } = createHarness()
     const anchor = { x: 625, y: 175 }
     const before = stage.screenToWorld(anchor)
 
-    stage.previewZoomAt(anchor.x, anchor.y, 2)
+    stage.previewZoomAt(2, anchor)
 
     expect(stage.screenToWorld(anchor)).toEqual(before)
     expect(stage.worldToScreen(before)).toEqual(anchor)
     expect(stage.view.zoom).toBe(2)
+  })
+
+  it('authors scene nodes in the committed view while preview transform is active', () => {
+    const marker = {
+      id: 'marker-preview',
+      floorId: 'floor-1',
+      x: 100,
+      y: 200,
+      z: 0,
+      markerType: 1,
+      text: 'Preview marker',
+    }
+    const { stage, layers, konvaStage } = createHarness()
+    stage.previewPan(40, 25)
+    stage.previewZoomAt(2, { x: 400, y: 300 })
+
+    stage.render(sceneWith({ markers: [marker] }))
+
+    const circle = layers.marker.add.mock.calls.at(-1)?.[0] as Konva.Circle
+    const position = layers.marker.position.mock.calls.at(-1)?.[0] as { x: number; y: number }
+    const scale = layers.marker.scale.mock.calls.at(-1)?.[0] as { x: number; y: number }
+    const finalPoint = {
+      x: circle.x() * scale.x + position.x,
+      y: circle.y() * scale.y + position.y,
+    }
+    expect(finalPoint).toEqual(worldToScreen(marker, toCoordinateView(stage.getViewportSnapshot())))
+    expect(konvaStage.fire).toHaveBeenLastCalledWith(
+      'viewportchange',
+      expect.objectContaining({ preview: true }),
+      false,
+    )
+  })
+
+  it('authors screen-space ghost helpers in the committed view during preview', () => {
+    const { stage, layers } = createHarness()
+    stage.previewPan(40, 25)
+    stage.previewZoomAt(2, { x: 400, y: 300 })
+
+    stage.showFootprintGhost({ x: 100, y: 200 }, 50, 20, true)
+
+    const rect = layers.ghost.add.mock.calls.at(-1)?.[0] as Konva.Rect
+    const position = layers.ghost.position.mock.calls.at(-1)?.[0] as { x: number; y: number }
+    const scale = layers.ghost.scale.mock.calls.at(-1)?.[0] as { x: number; y: number }
+    const expectedOrigin = worldToScreen(
+      { x: 100, y: 200 },
+      toCoordinateView(stage.getViewportSnapshot()),
+    )
+    expect({
+      x: rect.x() * scale.x + position.x,
+      y: rect.y() * scale.y + position.y,
+      width: rect.width() * scale.x,
+      height: rect.height() * scale.y,
+    }).toEqual({
+      x: expectedOrigin.x,
+      y: expectedOrigin.y - 20 * stage.view.zoom,
+      width: 50 * stage.view.zoom,
+      height: 20 * stage.view.zoom,
+    })
   })
 
   it('commits multiple preview updates with one redraw and clears transient state', () => {
@@ -164,7 +255,7 @@ describe('SceneStage viewport preview lifecycle', () => {
 
     stage.previewPan(20, 10)
     stage.previewPan(15, -5)
-    stage.previewZoomAt(400, 300, 1.25)
+    stage.previewZoomAt(1.25, { x: 400, y: 300 })
     expect(redraw).not.toHaveBeenCalled()
     for (const layer of Object.values(layers)) layer.batchDraw.mockClear()
 
@@ -173,7 +264,7 @@ describe('SceneStage viewport preview lifecycle', () => {
     expect(redraw).toHaveBeenCalledOnce()
     expect(internals.previewViewport).toBeNull()
     expect(internals.viewport).toEqual(stage.getViewportSnapshot())
-    expect(layers.ghost.destroyChildren).toHaveBeenCalledOnce()
+    expect(layers.ghost.destroyChildren).not.toHaveBeenCalled()
     for (const layer of Object.values(layers)) {
       expectIdentityTransform(layer)
       expect(layer.batchDraw).toHaveBeenCalledOnce()
@@ -202,6 +293,42 @@ describe('SceneStage viewport preview lifecycle', () => {
     expect(redraw).not.toHaveBeenCalled()
     for (const layer of Object.values(layers)) expectIdentityTransform(layer)
   })
+
+  it('does nothing when commit arrives after preview was already settled', () => {
+    const { stage, internals, konvaStage } = createHarness()
+    internals.initialSceneBounds = { minX: -1000, minY: -500, maxX: 1000, maxY: 500 }
+    stage.previewPan(80, -30)
+    internals.resize(1200, 900)
+    const settled = stage.getViewportSnapshot()
+    const redraw = vi.spyOn(internals, 'renderCurrentScene')
+    konvaStage.fire.mockClear()
+
+    stage.commitViewport()
+
+    expect(stage.getViewportSnapshot()).toEqual(settled)
+    expect(redraw).not.toHaveBeenCalled()
+    expect(konvaStage.fire).not.toHaveBeenCalled()
+  })
+
+  it.each(['commit', 'resize'] as const)(
+    'preserves tool ghost nodes and removes only viewport transients on %s',
+    (operation) => {
+      const { stage, internals, layers } = createHarness()
+      const { children, toolNode, viewportNode } = configureGhostOwnership(layers.ghost)
+      stage.previewPan(20, 10)
+
+      if (operation === 'commit') stage.commitViewport()
+      else internals.resize(1200, 900)
+
+      expect(layers.ghost.find).toHaveBeenCalledWith('.viewport-transient')
+      expect(layers.ghost.destroyChildren).not.toHaveBeenCalled()
+      expect(viewportNode.destroy).toHaveBeenCalledOnce()
+      expect(toolNode.destroy).not.toHaveBeenCalled()
+      expect(children).toEqual([toolNode])
+      toolNode.position({ x: 12, y: 34 })
+      expect(toolNode.position).toHaveBeenLastCalledWith({ x: 12, y: 34 })
+    },
+  )
 })
 
 describe('SceneStage committed rendering and fit lifecycle', () => {
@@ -303,7 +430,7 @@ describe('SceneStage committed rendering and fit lifecycle', () => {
   it('clamps zoom status to the 10%-800% range', () => {
     const { stage } = createHarness()
 
-    stage.previewZoomAt(400, 300, 1000)
+    stage.previewZoomAt(1000, { x: 400, y: 300 })
     stage.commitViewport()
     expect(stage.getViewportStatus()).toEqual({
       percent: 800,
@@ -311,12 +438,34 @@ describe('SceneStage committed rendering and fit lifecycle', () => {
       canZoomOut: true,
     })
 
-    stage.previewZoomAt(400, 300, 0.00001)
+    stage.previewZoomAt(0.00001, { x: 400, y: 300 })
     stage.commitViewport()
     expect(stage.getViewportStatus()).toEqual({
       percent: 10,
       canZoomIn: true,
       canZoomOut: false,
+    })
+  })
+
+  it('uses exact relative zoom for controls when the displayed percent rounds to a limit', () => {
+    const almostMaximum = createHarness({
+      viewport: { panX: 0, panY: 0, zoom: 7.996, canvasWidth: 800, canvasHeight: 600 },
+      initialViewport: { panX: 0, panY: 0, zoom: 1, canvasWidth: 800, canvasHeight: 600 },
+    }).stage
+    const almostMinimum = createHarness({
+      viewport: { panX: 0, panY: 0, zoom: 0.104, canvasWidth: 800, canvasHeight: 600 },
+      initialViewport: { panX: 0, panY: 0, zoom: 1, canvasWidth: 800, canvasHeight: 600 },
+    }).stage
+
+    expect(almostMaximum.getViewportStatus()).toEqual({
+      percent: 800,
+      canZoomIn: true,
+      canZoomOut: true,
+    })
+    expect(almostMinimum.getViewportStatus()).toEqual({
+      percent: 10,
+      canZoomIn: true,
+      canZoomOut: true,
     })
   })
 })
@@ -342,6 +491,33 @@ describe('SceneStage resize lifecycle', () => {
     expect(after.y).toBeCloseTo(before.y)
     expect(redraw).toHaveBeenCalledOnce()
     expect(konvaStage.size).toHaveBeenCalledWith({ width: 1200, height: 900 })
+  })
+
+  it('ignores a same-size observer delivery when no preview is pending', () => {
+    const { internals, konvaStage } = createHarness()
+    const redraw = vi.spyOn(internals, 'renderCurrentScene')
+
+    internals.resize(800, 600)
+
+    expect(konvaStage.size).not.toHaveBeenCalled()
+    expect(redraw).not.toHaveBeenCalled()
+    expect(konvaStage.fire).not.toHaveBeenCalled()
+  })
+
+  it('settles a pending preview even when observer dimensions are unchanged', () => {
+    const { stage, internals, konvaStage } = createHarness()
+    internals.initialSceneBounds = { minX: 0, minY: 0, maxX: 704, maxY: 504 }
+    stage.previewPan(40, 25)
+    const preview = stage.getViewportSnapshot()
+    const redraw = vi.spyOn(internals, 'renderCurrentScene')
+    konvaStage.fire.mockClear()
+
+    internals.resize(800, 600)
+
+    expect(stage.getViewportSnapshot()).toEqual(preview)
+    expect(internals.previewViewport).toBeNull()
+    expect(redraw).toHaveBeenCalledOnce()
+    expect(konvaStage.fire).toHaveBeenCalledOnce()
   })
 
   it('ignores zero-sized observer entries and disconnects observation on destroy', () => {
