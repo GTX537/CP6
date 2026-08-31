@@ -202,6 +202,7 @@ export class ViewportController {
   }
 
   private readonly onWindowBlur = (): void => {
+    this.spaceHeld = false
     this.finishPan(undefined, true)
   }
 

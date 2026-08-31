@@ -361,6 +361,24 @@ describe('ViewportController pointer panning', () => {
     expect(host.commitViewport).toHaveBeenCalledOnce()
     controller.destroy()
   })
+
+  it('clears a held Space modifier on blur so the next ordinary left drag passes through', () => {
+    const { controller, host, navigation, target } = createHarness({ tool: 'select' })
+    const observed = vi.fn()
+    for (const type of ['pointerdown', 'pointermove', 'pointerup']) {
+      target.addEventListener(type, observed)
+    }
+    controller.setSpaceHeld(true)
+
+    window.dispatchEvent(new Event('blur'))
+    dispatchPan(target, 0)
+
+    expect(observed).toHaveBeenCalledTimes(3)
+    expect(host.previewPan).not.toHaveBeenCalled()
+    expect(host.commitViewport).not.toHaveBeenCalled()
+    expect(navigation).not.toHaveBeenCalled()
+    controller.destroy()
+  })
 })
 
 describe('ViewportController lifecycle and commands', () => {
