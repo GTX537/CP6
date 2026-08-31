@@ -142,6 +142,13 @@ function configureGhostOwnership(layer: LayerHarness) {
   return { children, toolNode, viewportNode }
 }
 
+function attachRealGhostLayer(stage: SceneStage): Konva.Layer {
+  const ghost = new Konva.Layer()
+  vi.spyOn(ghost, 'batchDraw').mockImplementation(() => ghost)
+  stage.layers.ghost = ghost
+  return ghost
+}
+
 beforeEach(() => {
   const canvasContext = {
     clearRect: vi.fn(),
@@ -329,6 +336,90 @@ describe('SceneStage viewport preview lifecycle', () => {
       expect(toolNode.position).toHaveBeenLastCalledWith({ x: 12, y: 34 })
     },
   )
+
+  it('tags the real footprint Rect and rack Group as viewport transients', () => {
+    const { stage } = createHarness({ scene: null })
+    const ghost = attachRealGhostLayer(stage)
+
+    stage.showFootprintGhost({ x: 100, y: 200 }, 50, 20, true)
+    const footprint = ghost.getChildren()[0]
+    expect(footprint).toBeInstanceOf(Konva.Rect)
+    expect(footprint?.name()).toBe('viewport-transient')
+
+    stage.showGhost({
+      id: 'rack-ghost',
+      zoneId: 'zone-1',
+      floorId: 'floor-1',
+      rackCode: 'R-GHOST',
+      x: 100,
+      y: 200,
+      z: 0,
+      rotationZ: 0,
+      cols: 2,
+      levels: 1,
+      depthCount: 1,
+      cellW: 50,
+      cellH: 100,
+      cellD: 20,
+    })
+    const rackGhost = ghost.getChildren()[0]
+    expect(rackGhost).toBeInstanceOf(Konva.Group)
+    expect(rackGhost?.name()).toBe('viewport-transient')
+  })
+
+  it('replaces and hides real viewport helpers without detaching tool nodes', () => {
+    const { stage } = createHarness({ scene: null })
+    const ghost = attachRealGhostLayer(stage)
+    const toolNode = new Konva.Rect({ name: 'select-lasso', x: 1, y: 2, width: 3, height: 4 })
+    ghost.add(toolNode)
+
+    stage.showFootprintGhost({ x: 100, y: 200 }, 50, 20, true)
+    const footprint = ghost.getChildren().find(node => node !== toolNode)
+    expect.soft(toolNode.getParent()).toBe(ghost)
+
+    stage.showGhost({
+      id: 'rack-ghost',
+      zoneId: 'zone-1',
+      floorId: 'floor-1',
+      rackCode: 'R-GHOST',
+      x: 100,
+      y: 200,
+      z: 0,
+      rotationZ: 0,
+      cols: 2,
+      levels: 1,
+      depthCount: 1,
+      cellW: 50,
+      cellH: 100,
+      cellD: 20,
+    })
+    const rackGhost = ghost.getChildren().find(node => node !== toolNode)
+    expect.soft(footprint?.getParent()).toBeNull()
+    expect.soft(toolNode.getParent()).toBe(ghost)
+
+    stage.hideGhost()
+    expect.soft(rackGhost?.getParent()).toBeNull()
+    expect.soft(toolNode.getParent()).toBe(ghost)
+    toolNode.position({ x: 12, y: 34 })
+    expect(toolNode.position()).toEqual({ x: 12, y: 34 })
+  })
+
+  it('commits away a real viewport helper while preserving a real tool node', () => {
+    const { stage, internals } = createHarness({ scene: null })
+    const ghost = attachRealGhostLayer(stage)
+    const toolNode = new Konva.Rect({ name: 'rotate-angle', x: 1, y: 2, width: 3, height: 4 })
+    ghost.add(toolNode)
+    stage.showFootprintGhost({ x: 100, y: 200 }, 50, 20, true)
+    const helper = ghost.getChildren().find(node => node !== toolNode)
+    internals.previewViewport = { ...internals.viewport, panX: 10 }
+
+    stage.commitViewport()
+
+    expect(helper?.getParent()).toBeNull()
+    expect(toolNode.getParent()).toBe(ghost)
+    toolNode.position({ x: 56, y: 78 })
+    expect(toolNode.position()).toEqual({ x: 56, y: 78 })
+  })
 })
 
 describe('SceneStage committed rendering and fit lifecycle', () => {
@@ -467,6 +558,19 @@ describe('SceneStage committed rendering and fit lifecycle', () => {
       canZoomIn: true,
       canZoomOut: true,
     })
+  })
+
+  it('uses direct non-unit fitted zoom boundaries without floating ratio drift', () => {
+    const initialZoom = 0.05
+    const statusAt = (zoom: number) => createHarness({
+      viewport: { panX: 0, panY: 0, zoom, canvasWidth: 800, canvasHeight: 600 },
+      initialViewport: { panX: 0, panY: 0, zoom: initialZoom, canvasWidth: 800, canvasHeight: 600 },
+    }).stage.getViewportStatus()
+
+    expect(statusAt(initialZoom * 0.1).canZoomOut).toBe(false)
+    expect(statusAt(initialZoom * 0.1 + 1e-12).canZoomOut).toBe(true)
+    expect(statusAt(initialZoom * 8).canZoomIn).toBe(false)
+    expect(statusAt(initialZoom * 8 - 1e-12).canZoomIn).toBe(true)
   })
 })
 

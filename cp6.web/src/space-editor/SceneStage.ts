@@ -19,7 +19,8 @@ import {
   type ViewportState,
 } from './viewport'
 
-const VIEWPORT_TRANSIENT_SELECTOR = '.viewport-transient'
+const VIEWPORT_TRANSIENT_NAME = 'viewport-transient'
+const VIEWPORT_TRANSIENT_SELECTOR = `.${VIEWPORT_TRANSIENT_NAME}`
 
 function nodeAuthoringView(viewport: ViewportState | undefined, fallback: ViewState): ViewState {
   return viewport ? toCoordinateView(viewport) : fallback
@@ -138,12 +139,17 @@ export class SceneStage {
   }
 
   showGhost(rack: RackVO): void {
-    this.layers.ghost.destroyChildren()
+    this.destroyViewportTransients()
     const view = nodeAuthoringView(this.viewport, this.view)
     const origin = worldToScreen({ x: rack.x, y: rack.y }, view)
     const wPx = rack.cols * rack.cellW * view.zoom
     const dPx = rack.depthCount * rack.cellD * view.zoom
-    const group = new Konva.Group({ x: origin.x, y: origin.y, rotation: -rack.rotationZ })
+    const group = new Konva.Group({
+      name: VIEWPORT_TRANSIENT_NAME,
+      x: origin.x,
+      y: origin.y,
+      rotation: -rack.rotationZ,
+    })
     group.add(new Konva.Rect({
       x: 0, y: -dPx, width: wPx, height: dPx,
       fill: 'rgba(80,200,120,0.3)', stroke: '#40cc70', strokeWidth: 2, opacity: 0.7,
@@ -153,7 +159,7 @@ export class SceneStage {
   }
 
   hideGhost(): void {
-    this.layers.ghost.destroyChildren()
+    this.destroyViewportTransients()
     this.layers.ghost.batchDraw()
   }
 
@@ -162,12 +168,13 @@ export class SceneStage {
    * 与 renderRack 同向（矩形向屏幕上方延伸 dPx）。
    */
   showFootprintGhost(originWorld: XY, w: number, d: number, valid: boolean): void {
-    this.layers.ghost.destroyChildren()
+    this.destroyViewportTransients()
     const view = nodeAuthoringView(this.viewport, this.view)
     const origin = worldToScreen(originWorld, view)
     const wPx = w * view.zoom
     const dPx = d * view.zoom
     const rect = new Konva.Rect({
+      name: VIEWPORT_TRANSIENT_NAME,
       x: origin.x,
       y: origin.y - dPx,
       width: wPx,
@@ -189,11 +196,12 @@ export class SceneStage {
   getViewportStatus(): { percent: number; canZoomIn: boolean; canZoomOut: boolean } {
     const shown = this.previewViewport ?? this.viewport
     const percent = zoomPercent(shown, this.initialViewport.zoom)
-    const relativeZoom = shown.zoom / this.initialViewport.zoom
+    const minZoom = this.initialViewport.zoom * MIN_RELATIVE_ZOOM
+    const maxZoom = this.initialViewport.zoom * MAX_RELATIVE_ZOOM
     return {
       percent,
-      canZoomIn: relativeZoom < MAX_RELATIVE_ZOOM,
-      canZoomOut: relativeZoom > MIN_RELATIVE_ZOOM,
+      canZoomIn: shown.zoom < maxZoom,
+      canZoomOut: shown.zoom > minZoom,
     }
   }
 
