@@ -181,6 +181,117 @@ describe('ViewportController wheel navigation', () => {
     expect(add).toHaveBeenCalledWith('wheel', expect.any(Function), { passive: false })
     controller.destroy()
   })
+
+  it.each([
+    { name: 'pixels', deltaMode: WheelEvent.DOM_DELTA_PIXEL, multiplier: 1 },
+    { name: 'lines', deltaMode: WheelEvent.DOM_DELTA_LINE, multiplier: 16 },
+    { name: 'pages', deltaMode: WheelEvent.DOM_DELTA_PAGE, multiplier: 600 },
+  ])('normalizes $name wheel deltas to CSS pixels', ({ deltaMode, multiplier }) => {
+    const { controller, host, target } = createHarness()
+
+    target.dispatchEvent(new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      clientX: 120,
+      clientY: 80,
+      deltaY: 2,
+      deltaMode,
+    }))
+
+    expect(host.previewZoomAt).toHaveBeenCalledWith(
+      Math.exp(-(2 * multiplier) * 0.0015),
+      { x: 20, y: 30 },
+    )
+    controller.destroy()
+  })
+
+  it('commits pending wheel preview before a tool-owned pointerdown reaches the tool', () => {
+    const { calls, controller, host, target } = createHarness({ tool: 'select' })
+    const commitCountAtToolDown: number[] = []
+    const toolDown = vi.fn(() => {
+      commitCountAtToolDown.push(vi.mocked(host.commitViewport).mock.calls.length)
+      calls.push('toolDown')
+    })
+    target.addEventListener('pointerdown', toolDown)
+    target.dispatchEvent(new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 20,
+    }))
+
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 20,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+
+    expect(toolDown).toHaveBeenCalledOnce()
+    expect(commitCountAtToolDown).toEqual([1])
+    expect(calls).toEqual(['previewZoomAt', 'commitViewport', 'toolDown'])
+    vi.advanceTimersByTime(120)
+    expect(host.commitViewport).toHaveBeenCalledOnce()
+    target.dispatchEvent(pointerEvent('pointerup', { pointerId: 20, button: 0 }))
+    controller.destroy()
+  })
+
+  it('suppresses wheel viewport work while a tool-owned pointer gesture is active, then restores it', () => {
+    const { controller, host, target } = createHarness({ tool: 'zone' })
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 21,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+    const blockedWheel = new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 20,
+    })
+
+    target.dispatchEvent(blockedWheel)
+    vi.advanceTimersByTime(120)
+
+    expect(blockedWheel.defaultPrevented).toBe(true)
+    expect(host.previewZoomAt).not.toHaveBeenCalled()
+    expect(host.commitViewport).not.toHaveBeenCalled()
+
+    target.dispatchEvent(pointerEvent('pointerup', { pointerId: 21, button: 0 }))
+    target.dispatchEvent(new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 20,
+    }))
+    expect(host.previewZoomAt).toHaveBeenCalledOnce()
+    controller.destroy()
+  })
+
+  it.each(['pointercancel', 'lostpointercapture', 'blur'] as const)(
+    'restores wheel navigation after a tool-owned gesture ends by %s',
+    (finishType) => {
+      const { container, controller, host, target } = createHarness({ tool: 'select' })
+      target.dispatchEvent(pointerEvent('pointerdown', {
+        pointerId: 22,
+        button: 0,
+        buttons: 1,
+        clientX: 120,
+        clientY: 80,
+      }))
+
+      if (finishType === 'blur') window.dispatchEvent(new Event('blur'))
+      else container.dispatchEvent(pointerEvent(finishType, { pointerId: 22, button: 0 }))
+      target.dispatchEvent(new WheelEvent('wheel', {
+        bubbles: true,
+        cancelable: true,
+        deltaY: 20,
+      }))
+
+      expect(host.previewZoomAt).toHaveBeenCalledOnce()
+      controller.destroy()
+    },
+  )
 })
 
 describe('ViewportController pointer panning', () => {
@@ -303,8 +414,126 @@ describe('ViewportController pointer panning', () => {
     expect(clicks).toHaveBeenCalledOnce()
     expect(suppressedClick.defaultPrevented).toBe(true)
     expect(host.commitViewport).toHaveBeenCalledOnce()
+
+    const nextClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(nextClick)
+    expect(clicks).toHaveBeenCalledTimes(2)
+    expect(nextClick.defaultPrevented).toBe(false)
     controller.destroy()
   })
+
+  it('captures a blank Drag candidate immediately and releases an outside-like up without stealing its click', () => {
+    const { container, controller, host, releasePointerCapture, setPointerCapture, target } = createHarness({
+      tool: 'drag',
+      background: true,
+    })
+    const clicks = vi.fn()
+    const downs = vi.fn()
+    target.addEventListener('click', clicks)
+    target.addEventListener('pointerdown', downs)
+
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 30,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+    container.dispatchEvent(pointerEvent('pointerup', {
+      pointerId: 30,
+      button: 0,
+      clientX: 122,
+      clientY: 80,
+    }))
+    target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+
+    expect(downs).toHaveBeenCalledOnce()
+    expect(setPointerCapture).toHaveBeenCalledWith(30)
+    expect(releasePointerCapture).toHaveBeenCalledWith(30)
+    expect(host.previewPan).not.toHaveBeenCalled()
+    expect(host.commitViewport).not.toHaveBeenCalled()
+    expect(clicks).toHaveBeenCalledOnce()
+    controller.destroy()
+  })
+
+  it('aborts a blank Drag candidate when primary is no longer held before re-entry', () => {
+    const { controller, host, navigation, releasePointerCapture, target } = createHarness({
+      tool: 'drag',
+      background: true,
+    })
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 31,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+
+    target.dispatchEvent(pointerEvent('pointermove', {
+      pointerId: 31,
+      buttons: 0,
+      clientX: 150,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointermove', {
+      pointerId: 31,
+      buttons: 1,
+      clientX: 160,
+      clientY: 80,
+    }))
+
+    expect(releasePointerCapture).toHaveBeenCalledWith(31)
+    expect(host.previewPan).not.toHaveBeenCalled()
+    expect(host.commitViewport).not.toHaveBeenCalled()
+    expect(navigation).not.toHaveBeenCalled()
+    controller.destroy()
+  })
+
+  it('does not let a moved middle-button pan swallow the next primary click', () => {
+    const { controller, target } = createHarness()
+    const clicks = vi.fn()
+    target.addEventListener('click', clicks)
+
+    dispatchPan(target, 1)
+    const primaryClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(primaryClick)
+
+    expect(clicks).toHaveBeenCalledOnce()
+    expect(primaryClick.defaultPrevented).toBe(false)
+    controller.destroy()
+  })
+
+  it.each(['pointercancel', 'lostpointercapture', 'blur'] as const)(
+    'does not swallow an unrelated click after a moved pan ends by %s',
+    (finishType) => {
+      const { container, controller, target } = createHarness()
+      const clicks = vi.fn()
+      target.addEventListener('click', clicks)
+      controller.setSpaceHeld(true)
+      target.dispatchEvent(pointerEvent('pointerdown', {
+        pointerId: 32,
+        button: 0,
+        buttons: 1,
+        clientX: 120,
+        clientY: 80,
+      }))
+      target.dispatchEvent(pointerEvent('pointermove', {
+        pointerId: 32,
+        buttons: 1,
+        clientX: 126,
+        clientY: 80,
+      }))
+
+      if (finishType === 'blur') window.dispatchEvent(new Event('blur'))
+      else container.dispatchEvent(pointerEvent(finishType, { pointerId: 32, button: 0 }))
+      const unrelatedClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+      target.dispatchEvent(unrelatedClick)
+
+      expect(clicks).toHaveBeenCalledOnce()
+      expect(unrelatedClick.defaultPrevented).toBe(false)
+      controller.destroy()
+    },
+  )
 
   it.each(['pointerup', 'pointercancel', 'lostpointercapture', 'blur'] as const)(
     'commits the last safe preview and cleans capture on %s',
@@ -423,6 +652,22 @@ describe('ViewportController lifecycle and commands', () => {
     controller.destroy()
   })
 
+  it('commits a pending wheel preview once on blur and clears its timer', () => {
+    const { controller, host, target } = createHarness()
+    target.dispatchEvent(new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 20,
+    }))
+
+    window.dispatchEvent(new Event('blur'))
+
+    expect(host.commitViewport).toHaveBeenCalledOnce()
+    vi.advanceTimersByTime(120)
+    expect(host.commitViewport).toHaveBeenCalledOnce()
+    controller.destroy()
+  })
+
   it('destroy cancels a pending wheel preview, timer, and all listeners', () => {
     const { controller, host, target } = createHarness()
     target.dispatchEvent(new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: 20 }))
@@ -449,6 +694,64 @@ describe('ViewportController lifecycle and commands', () => {
     expect(host.cancelViewportPreview).toHaveBeenCalledOnce()
     expect(host.commitViewport).not.toHaveBeenCalled()
     expect(navigation.mock.calls).toEqual([[true], [false]])
+  })
+
+  it('expires primary-pan click suppression after a bounded delay', () => {
+    const { controller, target } = createHarness()
+    const clicks = vi.fn()
+    target.addEventListener('click', clicks)
+    controller.setSpaceHeld(true)
+    dispatchPan(target, 0)
+
+    vi.advanceTimersByTime(500)
+    const laterClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(laterClick)
+
+    expect(clicks).toHaveBeenCalledOnce()
+    expect(laterClick.defaultPrevented).toBe(false)
+    controller.destroy()
+  })
+
+  it('clears stale click suppression on a new primary pointerdown', () => {
+    const { controller, target } = createHarness({ tool: 'select' })
+    const clicks = vi.fn()
+    target.addEventListener('click', clicks)
+    controller.setSpaceHeld(true)
+    dispatchPan(target, 0)
+    controller.setSpaceHeld(false)
+
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 40,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointerup', { pointerId: 40, button: 0 }))
+    const unrelatedClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(unrelatedClick)
+
+    expect(clicks).toHaveBeenCalledOnce()
+    expect(unrelatedClick.defaultPrevented).toBe(false)
+    controller.destroy()
+  })
+
+  it.each(['disable', 'destroy'] as const)('%s clears pending click suppression state and timer', (action) => {
+    const { controller, target } = createHarness()
+    const clicks = vi.fn()
+    target.addEventListener('click', clicks)
+    controller.setSpaceHeld(true)
+    dispatchPan(target, 0)
+
+    if (action === 'disable') controller.setEnabled(false)
+    else controller.destroy()
+    const unrelatedClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(unrelatedClick)
+
+    expect(clicks).toHaveBeenCalledOnce()
+    expect(unrelatedClick.defaultPrevented).toBe(false)
+    expect(vi.getTimerCount()).toBe(0)
+    if (action === 'disable') controller.destroy()
   })
 
   it('settles pending wheel preview before delegating toolbar commands', () => {

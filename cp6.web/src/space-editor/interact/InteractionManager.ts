@@ -66,6 +66,7 @@ export class InteractionManager {
   private _ctrlHeld = false
   private _enabled = true
   private _destroyed = false
+  private viewportRefreshGeneration = 0
   private navigationStateHandler: (active: boolean) => void = () => {}
   private readonly viewportController: ViewportController
   readonly transformer: Konva.Transformer
@@ -123,6 +124,7 @@ export class InteractionManager {
     this.tools[this._activeTool].onDeactivate?.()
     this._activeTool = type
     this.tools[type].onActivate?.()
+    if (!this._enabled) this.refreshTransformer()
   }
 
   setCtrlHeld(held: boolean): void {
@@ -162,10 +164,7 @@ export class InteractionManager {
   setEnabled(enabled: boolean): void {
     this._enabled = enabled
     this.viewportController.setEnabled(enabled)
-    if (!enabled) {
-      this.transformer.nodes([])
-      this.ctx.stage.layers.rack.batchDraw()
-    }
+    this.refreshTransformer()
   }
 
   /** Select all racks in the current scene. */
@@ -197,14 +196,20 @@ export class InteractionManager {
 
   /** Re-attach transformer to current selection after a re-render. */
   refreshTransformer(): void {
-    const nodes = this._activeTool === 'rotate'
-      ? getRotateTransformerNodes(
-        this.ctx.store.selectionIds,
-        (id) => this.ctx.stage.getRackNode(id),
-      )
-      : this.ctx.store.selectionIds
-        .map((id: string) => this.ctx.stage.getRackNode(id))
-        .filter((n): n is Konva.Group => n !== null)
+    this.viewportRefreshGeneration++
+    const toolAllowsTransformer = this._activeTool === 'select'
+      || this._activeTool === 'drag'
+      || this._activeTool === 'rotate'
+    const nodes = !this._enabled || !toolAllowsTransformer
+      ? []
+      : this._activeTool === 'rotate'
+        ? getRotateTransformerNodes(
+          this.ctx.store.selectionIds,
+          (id) => this.ctx.stage.getRackNode(id),
+        )
+        : this.ctx.store.selectionIds
+          .map((id: string) => this.ctx.stage.getRackNode(id))
+          .filter((n): n is Konva.Group => n !== null)
     this.transformer.nodes(nodes)
     this.ctx.stage.layers.rack.batchDraw()
   }
@@ -230,14 +235,27 @@ export class InteractionManager {
     })
     konvaStage.on('viewportchange.im', (event) => {
       if ((event as typeof event & { preview?: boolean }).preview !== true) {
-        this.refreshTransformer()
+        this.scheduleViewportTransformerRefresh()
       }
+    })
+  }
+
+  /**
+   * SceneStage.render and command handling can synchronously request the same attachment.
+   * Defer the event path so an explicit refresh in that turn becomes canonical.
+   */
+  private scheduleViewportTransformerRefresh(): void {
+    const generation = ++this.viewportRefreshGeneration
+    queueMicrotask(() => {
+      if (this._destroyed || generation !== this.viewportRefreshGeneration) return
+      this.refreshTransformer()
     })
   }
 
   destroy(): void {
     if (this._destroyed) return
     this._destroyed = true
+    this.viewportRefreshGeneration++
     const konvaStage = this.ctx.stage.stage
     konvaStage.off('viewportchange.im')
     this.viewportController.destroy()

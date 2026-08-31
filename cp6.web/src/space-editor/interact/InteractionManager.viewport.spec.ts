@@ -54,9 +54,22 @@ const canvasContext = {
 }
 vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(canvasContext as never)
 
-function createHarness() {
+function pointerEvent(
+  type: string,
+  init: MouseEventInit & { pointerId?: number } = {},
+): PointerEvent {
+  const event = new MouseEvent(type, { bubbles: true, cancelable: true, ...init })
+  Object.defineProperty(event, 'pointerId', { value: init.pointerId ?? 1 })
+  return event as unknown as PointerEvent
+}
+
+function createHarness(initialSelection: string[] = []) {
   const handlers = new Map<string, (event: unknown) => void>()
   const container = document.createElement('div')
+  const rackNodes = new Map([
+    ['rack-1', new Konva.Group({ id: 'rack-1', name: 'rack' })],
+    ['rack-2', new Konva.Group({ id: 'rack-2', name: 'rack' })],
+  ])
   const konvaStage = {
     container: vi.fn(() => container),
     getIntersection: vi.fn(() => null as Konva.Node | null),
@@ -83,14 +96,14 @@ function createHarness() {
     zoomStep: vi.fn(),
     fitAll: vi.fn(),
     resetView: vi.fn(),
-    getRackNode: vi.fn(() => null),
+    getRackNode: vi.fn((id: string) => rackNodes.get(id) ?? null),
     screenToWorld: vi.fn((point: { x: number; y: number }) => point),
     worldToScreen: vi.fn((point: { x: number; y: number }) => point),
   }
-  let selectionIds: string[] = []
+  let selectionIds = [...initialSelection]
   const store = {
     get selectionIds() { return selectionIds },
-    scene: { racks: [], aisles: [] },
+    scene: { racks: [{ id: 'rack-1' }, { id: 'rack-2' }], aisles: [] },
     clearSelection: vi.fn(() => { selectionIds = [] }),
     setSelection: vi.fn((ids: string[]) => { selectionIds = [...ids] }),
     toggleSelection: vi.fn(),
@@ -99,7 +112,7 @@ function createHarness() {
   const manager = new InteractionManager(stage as never, store as never, vi.fn())
   const controller = controllerMock.instances.at(-1)!
 
-  return { container, controller, handlers, konvaStage, manager, stage, store }
+  return { container, controller, handlers, konvaStage, manager, rackNodes, stage, store }
 }
 
 describe('InteractionManager viewport integration', () => {
@@ -173,7 +186,7 @@ describe('InteractionManager viewport integration', () => {
     expect(konvaStage.getIntersection).toHaveBeenNthCalledWith(1, point)
   })
 
-  it('refreshes the Transformer only for committed viewport events without switching tools', () => {
+  it('refreshes the Transformer only for committed viewport events without switching tools', async () => {
     const { handlers, manager } = createHarness()
     manager.switchTool('rotate')
     const refresh = vi.spyOn(manager, 'refreshTransformer')
@@ -186,8 +199,112 @@ describe('InteractionManager viewport integration', () => {
     expect(manager.activeTool).toBe('rotate')
 
     viewportChange?.({ preview: false })
+    await Promise.resolve()
     expect(refresh).toHaveBeenCalledOnce()
     expect(manager.activeTool).toBe('rotate')
+  })
+
+  it('preserves Transformer attachment invariants across tools, disabled state, and re-enable', async () => {
+    const { handlers, manager, rackNodes, store } = createHarness(['rack-1', 'rack-2'])
+    const viewportChange = handlers.get('viewportchange.im')!
+    const attachedIds = () => manager.transformer.nodes().map(node => node.id())
+
+    viewportChange({ preview: false })
+    await Promise.resolve()
+    expect(attachedIds()).toEqual(['rack-1', 'rack-2'])
+
+    manager.switchTool('drag')
+    viewportChange({ preview: false })
+    await Promise.resolve()
+    expect(attachedIds()).toEqual(['rack-1', 'rack-2'])
+
+    manager.switchTool('rotate')
+    expect(attachedIds()).toEqual([])
+    store.setSelection(['rack-1'])
+    viewportChange({ preview: false })
+    await Promise.resolve()
+    expect(attachedIds()).toEqual(['rack-1'])
+    expect(manager.transformer.nodes()[0]).toBe(rackNodes.get('rack-1'))
+
+    manager.switchTool('marker')
+    viewportChange({ preview: false })
+    await Promise.resolve()
+    expect(attachedIds()).toEqual([])
+
+    manager.switchTool('zone')
+    viewportChange({ preview: false })
+    await Promise.resolve()
+    expect(attachedIds()).toEqual([])
+
+    manager.switchTool('select')
+    store.setSelection(['rack-1', 'rack-2'])
+    manager.refreshTransformer()
+    manager.setEnabled(false)
+    viewportChange({ preview: false })
+    await Promise.resolve()
+    expect(attachedIds()).toEqual([])
+    expect(manager.activeTool).toBe('select')
+
+    manager.switchTool('drag')
+    expect(attachedIds()).toEqual([])
+    expect(manager.activeTool).toBe('drag')
+
+    manager.setEnabled(true)
+    expect(attachedIds()).toEqual(['rack-1', 'rack-2'])
+    expect(manager.activeTool).toBe('drag')
+  })
+
+  it('deduplicates routine render plus explicit command refresh while retaining genuine viewport refresh', async () => {
+    const { handlers, manager } = createHarness(['rack-1'])
+    const viewportChange = handlers.get('viewportchange.im')!
+    const nodes = vi.spyOn(manager.transformer, 'nodes')
+    const assignmentCount = () => nodes.mock.calls.filter(args => args.length === 1).length
+    nodes.mockClear()
+
+    viewportChange({ preview: false })
+    manager.refreshTransformer()
+    await Promise.resolve()
+
+    expect(assignmentCount()).toBe(1)
+
+    nodes.mockClear()
+    viewportChange({ preview: false })
+    await Promise.resolve()
+
+    expect(assignmentCount()).toBe(1)
+  })
+
+  it('blocks wheel viewport work through the real controller and manager rack-hit seam', async () => {
+    const { container, controller, konvaStage, manager, rackNodes, stage } = createHarness(['rack-1'])
+    const { ViewportController: RealViewportController } = await vi.importActual<
+      typeof import('./ViewportController')
+    >('./ViewportController')
+    const target = document.createElement('canvas')
+    container.append(target)
+    Object.defineProperties(container, {
+      setPointerCapture: { configurable: true, value: vi.fn() },
+      releasePointerCapture: { configurable: true, value: vi.fn() },
+    })
+    konvaStage.getIntersection.mockReturnValue(rackNodes.get('rack-1')!)
+    manager.switchTool('drag')
+    const realController = new RealViewportController(container, stage, controller.options as never)
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 50,
+      button: 0,
+      buttons: 1,
+      clientX: 20,
+      clientY: 20,
+    }))
+    const wheel = new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: 20 })
+
+    target.dispatchEvent(wheel)
+
+    expect(wheel.defaultPrevented).toBe(true)
+    expect(stage.previewZoomAt).not.toHaveBeenCalled()
+    expect(stage.commitViewport).not.toHaveBeenCalled()
+    target.dispatchEvent(pointerEvent('pointerup', { pointerId: 50, button: 0 }))
+    realController.destroy()
+    manager.destroy()
   })
 
   it('destroys and unbinds the controller once, before destroying the Transformer', () => {
