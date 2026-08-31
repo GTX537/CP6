@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -55,6 +55,11 @@ const selectedZoneId = ref<string>('')
 const connectorPlacementMode = ref(false)
 const pendingConnectorId = ref<string>('')
 const connectorPanelRef = ref<InstanceType<typeof ConnectorPanel> | null>(null)
+const viewportNavigationAvailable = computed(() => (
+  imRef.value !== null
+  && !placementMode.value
+  && !connectorPlacementMode.value
+))
 
 const zones = computed<ZoneVO[]>(() => store.scene?.zones ?? [])
 const floorId = computed(() => route.params['floorId'] as string)
@@ -162,11 +167,14 @@ function syncViewportStatus(payload?: unknown): void {
   if (next) viewportStatus.value = { ...next }
 }
 
-function resetViewportNavigationState(): void {
+function releaseSpacePan(): void {
   spacePanReady.value = false
-  viewportPanning.value = false
   imRef.value?.setSpaceHeld(false)
 }
+
+watch(viewportNavigationAvailable, (available) => {
+  if (!available) releaseSpacePan()
+}, { flush: 'sync' })
 
 onMounted(async () => {
   const requestGeneration = ++sceneRequestGeneration
@@ -209,7 +217,8 @@ onBeforeUnmount(() => {
     stageRef.stage.off('viewportchange.toolbar')
     viewportToolbarBound = false
   }
-  resetViewportNavigationState()
+  releaseSpacePan()
+  viewportPanning.value = false
   imRef.value?.destroy()
   stageRef?.destroy()
 })
@@ -225,6 +234,13 @@ function onKeydown(e: KeyboardEvent): void {
   if (isEditableTarget(e.target)) return
 
   if (e.code === 'Space') {
+    if (e.defaultPrevented
+      || !viewportNavigationAvailable.value
+      || e.ctrlKey
+      || e.metaKey
+      || e.altKey
+      || e.shiftKey
+      || isInteractiveTarget(e.target)) return
     e.preventDefault()
     if (!spacePanReady.value) {
       spacePanReady.value = true
@@ -279,12 +295,12 @@ function onKeydown(e: KeyboardEvent): void {
 
 function onKeyup(e: KeyboardEvent): void {
   imRef.value?.setCtrlHeld(e.ctrlKey || e.metaKey)
-  if (e.code === 'Space') resetViewportNavigationState()
+  if (e.code === 'Space') releaseSpacePan()
 }
 
 function onWindowBlur(): void {
   imRef.value?.setCtrlHeld(false)
-  resetViewportNavigationState()
+  releaseSpacePan()
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {
@@ -300,10 +316,26 @@ function isEditableTarget(target: EventTarget | null): boolean {
   return false
 }
 
-function zoomOut(): void { imRef.value?.zoomOut() }
-function zoomIn(): void { imRef.value?.zoomIn() }
-function fitAll(): void { imRef.value?.fitAll() }
-function resetView(): void { imRef.value?.resetView() }
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false
+  return target.closest([
+    'button',
+    'a[href]',
+    'summary',
+    '[role="button"]',
+    '[role="link"]',
+    '[role="checkbox"]',
+    '[role="radio"]',
+    '[role="switch"]',
+    '[role="menuitem"]',
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(', ')) !== null
+}
+
+function zoomOut(): void { if (viewportNavigationAvailable.value) imRef.value?.zoomOut() }
+function zoomIn(): void { if (viewportNavigationAvailable.value) imRef.value?.zoomIn() }
+function fitAll(): void { if (viewportNavigationAvailable.value) imRef.value?.fitAll() }
+function resetView(): void { if (viewportNavigationAvailable.value) imRef.value?.resetView() }
 
 function deleteSelected(): void {
   const s = store.scene
@@ -660,7 +692,7 @@ async function handleImportFile(e: Event): Promise<void> {
 <template>
   <div class="floor-editor">
     <!-- Toolbar -->
-    <div class="toolbar">
+    <div class="toolbar toolbar-scrollable">
       <span class="title">{{ t('空间编辑器') }}</span>
 
       <!-- Tool switcher -->
@@ -743,13 +775,17 @@ async function handleImportFile(e: Event): Promise<void> {
         {{ t('取消放置落点') }}
       </el-button>
 
-      <div class="viewport-controls" role="group" :aria-label="t('视图控制')">
+      <div
+        class="viewport-controls"
+        role="group"
+        :aria-label="editorT('space.editor.viewport.controls')"
+      >
         <el-button
           data-test="zoom-out"
           size="small"
-          :disabled="!viewportStatus.canZoomOut"
-          :aria-label="t('缩小视图')"
-          :title="t('缩小视图')"
+          :disabled="!viewportNavigationAvailable || !viewportStatus.canZoomOut"
+          :aria-label="editorT('space.editor.viewport.zoomOut')"
+          :title="editorT('space.editor.viewport.zoomOut')"
           @click="zoomOut"
         >−</el-button>
         <span data-test="zoom-percent" class="zoom-percent" aria-live="polite">
@@ -758,28 +794,30 @@ async function handleImportFile(e: Event): Promise<void> {
         <el-button
           data-test="zoom-in"
           size="small"
-          :disabled="!viewportStatus.canZoomIn"
-          :aria-label="t('放大视图')"
-          :title="t('放大视图')"
+          :disabled="!viewportNavigationAvailable || !viewportStatus.canZoomIn"
+          :aria-label="editorT('space.editor.viewport.zoomIn')"
+          :title="editorT('space.editor.viewport.zoomIn')"
           @click="zoomIn"
         >+</el-button>
         <el-button
           data-test="fit-all"
           size="small"
-          :aria-label="t('适配全部内容')"
-          :title="t('适配全部内容')"
+          :disabled="!viewportNavigationAvailable"
+          :aria-label="editorT('space.editor.viewport.fitAllLabel')"
+          :title="editorT('space.editor.viewport.fitAllLabel')"
           @click="fitAll"
-        >{{ t('适配全部') }}</el-button>
+        >{{ editorT('space.editor.viewport.fitAll') }}</el-button>
         <el-button
           data-test="reset-view"
           size="small"
-          :aria-label="t('复位视图')"
-          :title="t('复位视图')"
+          :disabled="!viewportNavigationAvailable"
+          :aria-label="editorT('space.editor.viewport.reset')"
+          :title="editorT('space.editor.viewport.reset')"
           @click="resetView"
-        >{{ t('复位视图') }}</el-button>
+        >{{ editorT('space.editor.viewport.reset') }}</el-button>
       </div>
 
-      <div style="flex: 1" />
+      <div class="toolbar-spacer" />
 
       <el-button type="primary" size="small" :loading="saving" @click="handleSave">
         {{ t('保存') }}
@@ -908,6 +946,20 @@ async function handleImportFile(e: Event): Promise<void> {
   border-bottom: 1px solid #e0e0e0;
   gap: 8px;
   flex-shrink: 0;
+}
+.toolbar-scrollable {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+.toolbar-scrollable > :not(.toolbar-spacer) {
+  flex-shrink: 0;
+}
+.toolbar-spacer {
+  flex: 1 0 8px;
+  min-width: 8px;
 }
 .title {
   font-weight: 600;
