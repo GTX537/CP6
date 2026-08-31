@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { screenToWorld, worldToScreen } from './coords'
-import type { EditorScene } from '../types/space/scene'
+import type { EditorScene, MarkerVO, RackVO } from '../types/space/scene'
 import {
   DEFAULT_ZOOM,
   MAX_RELATIVE_ZOOM,
@@ -10,6 +10,8 @@ import {
   collectSceneBounds,
   createDefaultViewport,
   fitBounds,
+  isRenderableMarker,
+  isRenderableRack,
   panViewport,
   resizeViewport,
   toCoordinateView,
@@ -173,6 +175,114 @@ describe('viewport resize and layer transforms', () => {
 })
 
 describe('scene bounds and fitting', () => {
+  it('shares a strict runtime renderability contract for racks and markers', () => {
+    const validRack: RackVO = {
+      id: 'rack-valid',
+      zoneId: 'zone-1',
+      floorId: 'floor-1',
+      rackCode: 'VALID',
+      x: 100,
+      y: 200,
+      z: 0,
+      rotationZ: 30,
+      cols: 2,
+      levels: 1,
+      depthCount: 2,
+      cellW: 50,
+      cellH: 100,
+      cellD: 20,
+    }
+    const validMarker: MarkerVO = {
+      id: 'marker-valid',
+      floorId: 'floor-1',
+      x: 10,
+      y: 20,
+      z: 0,
+      markerType: 1,
+      text: '',
+    }
+
+    expect(isRenderableRack(validRack)).toBe(true)
+    expect(isRenderableMarker(validMarker)).toBe(true)
+    for (const invalid of [
+      { ...validRack, id: '' },
+      { ...validRack, id: 42 },
+      { ...validRack, x: Number.NaN },
+      { ...validRack, y: Number.POSITIVE_INFINITY },
+      { ...validRack, rotationZ: Number.NEGATIVE_INFINITY },
+      { ...validRack, cols: 0 },
+      { ...validRack, cols: 1.5 },
+      { ...validRack, cols: Number.MAX_SAFE_INTEGER + 1 },
+      { ...validRack, depthCount: 0 },
+      { ...validRack, depthCount: 1.5 },
+      { ...validRack, cellW: 0 },
+      { ...validRack, cellD: Number.POSITIVE_INFINITY },
+      { ...validRack, cols: 2, cellW: Number.MAX_VALUE },
+      { ...validRack, depthCount: 2, cellD: Number.MAX_VALUE },
+    ]) {
+      expect(isRenderableRack(invalid as RackVO), JSON.stringify(invalid)).toBe(false)
+    }
+    expect(isRenderableRack({
+      ...validRack,
+      cols: Number.MAX_SAFE_INTEGER,
+      cellW: 1,
+    })).toBe(true)
+
+    for (const invalid of [
+      { ...validMarker, id: '' },
+      { ...validMarker, id: 42 },
+      { ...validMarker, text: null },
+      { ...validMarker, x: Number.NaN },
+      { ...validMarker, y: Number.POSITIVE_INFINITY },
+    ]) {
+      expect(isRenderableMarker(invalid as MarkerVO), JSON.stringify(invalid)).toBe(false)
+    }
+  })
+
+  it('bounds only the same renderable racks and markers accepted by the Stage', () => {
+    const validRack: RackVO = {
+      id: 'rack-valid',
+      zoneId: 'zone-1',
+      floorId: 'floor-1',
+      rackCode: 'VALID',
+      x: 100,
+      y: 200,
+      z: 0,
+      rotationZ: 0,
+      cols: 2,
+      levels: 1,
+      depthCount: 1,
+      cellW: 50,
+      cellH: 100,
+      cellD: 20,
+    }
+    const validMarker: MarkerVO = {
+      id: 'marker-valid',
+      floorId: 'floor-1',
+      x: 250,
+      y: 300,
+      z: 0,
+      markerType: 1,
+      text: 'Valid',
+    }
+    const invalidRacks = [
+      { ...validRack, id: 'rack-fractional', x: 10_000, cols: 1.5 },
+      { ...validRack, id: 'rack-zero-depth', x: 20_000, depthCount: 0 },
+      { ...validRack, id: 'rack-overflow', x: 30_000, cols: 2, cellW: Number.MAX_VALUE },
+      { ...validRack, id: 'rack-nan', x: Number.NaN },
+    ] as RackVO[]
+    const invalidMarkers = [
+      { ...validMarker, id: '', x: 40_000 },
+      { ...validMarker, id: 'marker-text', x: 50_000, text: null },
+      { ...validMarker, id: 'marker-infinite', y: Number.POSITIVE_INFINITY },
+    ] as MarkerVO[]
+
+    expect(collectSceneBounds(sceneWith({
+      racks: [validRack, ...invalidRacks],
+      markers: [validMarker, ...invalidMarkers],
+    }))).toEqual({ minX: 100, minY: 200, maxX: 250, maxY: 300 })
+  })
+
   it('includes Schema 1 polygons, marker points, and every corner of a rotated rack', () => {
     const scene = sceneWith({
       zones: [{

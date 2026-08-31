@@ -29,6 +29,7 @@ function createLayer() {
     destroyChildren: vi.fn(),
     find: vi.fn((_selector: string): Array<{ destroy(): void }> => []),
     findOne: vi.fn(() => null),
+    getChildren: vi.fn((): Array<{ moveToTop(): void }> => []),
   }
 }
 
@@ -100,6 +101,8 @@ function createHarness(options: {
     previewViewport: null,
     currentScene: options.scene === undefined ? sceneWith() : options.scene,
     resizeObserver: null,
+    cachedSelectedRackIds: [],
+    cachedCollisionResults: [],
     stage: konvaStage,
   })
 
@@ -149,6 +152,43 @@ function attachRealGhostLayer(stage: SceneStage): Konva.Layer {
   return ghost
 }
 
+function attachRealRackLayer(stage: SceneStage): Konva.Layer {
+  const rack = new Konva.Layer()
+  vi.spyOn(rack, 'batchDraw').mockImplementation(() => rack)
+  stage.layers.rack = rack
+  return rack
+}
+
+function rack(id: string, x: number) {
+  return {
+    id,
+    zoneId: 'zone-1',
+    floorId: 'floor-1',
+    rackCode: id.toUpperCase(),
+    x,
+    y: 200,
+    z: 0,
+    rotationZ: 0,
+    cols: 2,
+    levels: 1,
+    depthCount: 1,
+    cellW: 50,
+    cellH: 100,
+    cellD: 20,
+  }
+}
+
+function expectRackStyle(
+  layer: Konva.Layer,
+  rackId: string,
+  expected: { stroke: string; strokeWidth: number },
+): void {
+  const rect = layer.findOne<Konva.Group>(`#${rackId}`)?.findOne<Konva.Rect>('Rect')
+  expect(rect, `rack ${rackId} rectangle`).toBeDefined()
+  expect(rect?.stroke()).toBe(expected.stroke)
+  expect(rect?.strokeWidth()).toBe(expected.strokeWidth)
+}
+
 beforeEach(() => {
   const canvasContext = {
     clearRect: vi.fn(),
@@ -162,6 +202,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  Konva.autoDrawEnabled = true
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
 })
@@ -476,6 +517,97 @@ describe('SceneStage committed rendering and fit lifecycle', () => {
     expect(layers.rack.destroyChildren).not.toHaveBeenCalled()
   })
 
+  it('keeps real rack helpers and Transformer above replacement racks in prior order', () => {
+    Konva.autoDrawEnabled = false
+    const scene = sceneWith({ racks: [rack('rack-new-a', 100), rack('rack-new-b', 250)] })
+    const { stage, internals } = createHarness({ scene })
+    const rackLayer = attachRealRackLayer(stage)
+    const oldRack = new Konva.Group({ id: 'rack-old', name: 'rack' })
+    oldRack.add(new Konva.Rect({ width: 10, height: 10 }))
+    const selectionHelper = new Konva.Rect({ name: 'selection-helper', width: 20, height: 20 })
+    const transformer = new Konva.Transformer({ name: 'rack-transformer' })
+    const dragHelper = new Konva.Line({ name: 'drag-helper', points: [0, 0, 5, 5] })
+    rackLayer.add(oldRack, selectionHelper, transformer, dragHelper)
+
+    internals.renderCurrentScene()
+
+    const children = rackLayer.getChildren()
+    expect(children.slice(0, 2).map(node => node.name())).toEqual(['rack', 'rack'])
+    expect(children.slice(2)).toEqual([selectionHelper, transformer, dragHelper])
+    expect(oldRack.getParent()).toBeNull()
+    expect(transformer.getParent()).toBe(rackLayer)
+    expect(transformer.isVisible()).toBe(true)
+  })
+
+  it('preserves defensive collision and selection styles across commit and resize redraws', () => {
+    Konva.autoDrawEnabled = false
+    const scene = sceneWith({
+      racks: [
+        rack('rack-red-selected', 100),
+        rack('rack-red-peer', 250),
+        rack('rack-yellow', 400),
+        rack('rack-blue', 550),
+      ],
+    })
+    const { stage, internals } = createHarness({ scene })
+    const rackLayer = attachRealRackLayer(stage)
+    internals.renderCurrentScene()
+
+    const selectedIds = ['rack-red-selected', 'rack-blue']
+    const collisionResults = [{
+      rackId: 'rack-red-selected',
+      collidingWith: ['rack-red-peer'],
+      outOfZone: true,
+    }, {
+      rackId: 'rack-yellow',
+      collidingWith: [],
+      outOfZone: true,
+    }]
+    vi.mocked(rackLayer.batchDraw).mockClear()
+    stage.applyRackStyles(selectedIds, collisionResults)
+
+    expect(rackLayer.batchDraw).toHaveBeenCalledOnce()
+    expectRackStyle(rackLayer, 'rack-red-selected', { stroke: '#ff4040', strokeWidth: 2.5 })
+    expectRackStyle(rackLayer, 'rack-red-peer', { stroke: '#ff4040', strokeWidth: 2 })
+    expectRackStyle(rackLayer, 'rack-yellow', { stroke: '#ffaa00', strokeWidth: 2 })
+    expectRackStyle(rackLayer, 'rack-blue', { stroke: '#0099ff', strokeWidth: 2.5 })
+
+    selectedIds.splice(0, selectedIds.length, 'caller-mutated-selection')
+    collisionResults[0]!.rackId = 'caller-mutated-collision'
+    collisionResults[0]!.collidingWith.splice(0)
+    const beforeCommit = rackLayer.findOne('#rack-red-selected')
+    vi.mocked(rackLayer.batchDraw).mockClear()
+    stage.previewPan(20, 10)
+    vi.mocked(rackLayer.batchDraw).mockClear()
+    stage.commitViewport()
+
+    expect(rackLayer.findOne('#rack-red-selected')).not.toBe(beforeCommit)
+    expect(rackLayer.batchDraw).toHaveBeenCalledOnce()
+    expectRackStyle(rackLayer, 'rack-red-selected', { stroke: '#ff4040', strokeWidth: 2.5 })
+    expectRackStyle(rackLayer, 'rack-red-peer', { stroke: '#ff4040', strokeWidth: 2 })
+    expectRackStyle(rackLayer, 'rack-yellow', { stroke: '#ffaa00', strokeWidth: 2 })
+    expectRackStyle(rackLayer, 'rack-blue', { stroke: '#0099ff', strokeWidth: 2.5 })
+
+    const beforeResize = rackLayer.findOne('#rack-yellow')
+    vi.mocked(rackLayer.batchDraw).mockClear()
+    internals.resize(1000, 700)
+
+    expect(rackLayer.findOne('#rack-yellow')).not.toBe(beforeResize)
+    expect(rackLayer.batchDraw).toHaveBeenCalledOnce()
+    expectRackStyle(rackLayer, 'rack-red-selected', { stroke: '#ff4040', strokeWidth: 2.5 })
+    expectRackStyle(rackLayer, 'rack-red-peer', { stroke: '#ff4040', strokeWidth: 2 })
+    expectRackStyle(rackLayer, 'rack-yellow', { stroke: '#ffaa00', strokeWidth: 2 })
+    expectRackStyle(rackLayer, 'rack-blue', { stroke: '#0099ff', strokeWidth: 2.5 })
+
+    vi.mocked(rackLayer.batchDraw).mockClear()
+    stage.render(sceneWith({ racks: [rack('rack-blue', 100), rack('rack-new', 250)] }))
+
+    expect(rackLayer.batchDraw).toHaveBeenCalledOnce()
+    expect(rackLayer.findOne('#rack-red-selected')).toBeUndefined()
+    expectRackStyle(rackLayer, 'rack-blue', { stroke: '#0099ff', strokeWidth: 2.5 })
+    expectRackStyle(rackLayer, 'rack-new', { stroke: '#4070cc', strokeWidth: 1 })
+  })
+
   it('preserves fitted content center when fit zoom is clamped and reset returns to 100%', () => {
     const initialViewport = {
       panX: 100,
@@ -538,7 +670,7 @@ describe('SceneStage committed rendering and fit lifecycle', () => {
     })
   })
 
-  it('uses exact relative zoom for controls when the displayed percent rounds to a limit', () => {
+  it('keeps boundary-adjacent percent labels consistent with enabled zoom controls', () => {
     const almostMaximum = createHarness({
       viewport: { panX: 0, panY: 0, zoom: 7.996, canvasWidth: 800, canvasHeight: 600 },
       initialViewport: { panX: 0, panY: 0, zoom: 1, canvasWidth: 800, canvasHeight: 600 },
@@ -549,15 +681,51 @@ describe('SceneStage committed rendering and fit lifecycle', () => {
     }).stage
 
     expect(almostMaximum.getViewportStatus()).toEqual({
-      percent: 800,
+      percent: 799.6,
       canZoomIn: true,
       canZoomOut: true,
     })
     expect(almostMinimum.getViewportStatus()).toEqual({
-      percent: 10,
+      percent: 10.4,
       canZoomIn: true,
       canZoomOut: true,
     })
+
+    const nextToMaximum = createHarness({
+      viewport: { panX: 0, panY: 0, zoom: 7.999999999, canvasWidth: 800, canvasHeight: 600 },
+      initialViewport: { panX: 0, panY: 0, zoom: 1, canvasWidth: 800, canvasHeight: 600 },
+    }).stage.getViewportStatus()
+    const nextToMinimum = createHarness({
+      viewport: { panX: 0, panY: 0, zoom: 0.100000000001, canvasWidth: 800, canvasHeight: 600 },
+      initialViewport: { panX: 0, panY: 0, zoom: 1, canvasWidth: 800, canvasHeight: 600 },
+    }).stage.getViewportStatus()
+
+    expect(nextToMaximum).toEqual({ percent: 799.9, canZoomIn: true, canZoomOut: true })
+    expect(nextToMinimum).toEqual({ percent: 10.1, canZoomIn: true, canZoomOut: true })
+
+    const overflowSafeMaximum = createHarness({
+      viewport: { panX: 0, panY: 0, zoom: Number.MAX_VALUE, canvasWidth: 800, canvasHeight: 600 },
+      initialViewport: {
+        panX: 0,
+        panY: 0,
+        zoom: Number.MAX_VALUE / 4,
+        canvasWidth: 800,
+        canvasHeight: 600,
+      },
+    }).stage.getViewportStatus()
+    const underflowSafeMinimum = createHarness({
+      viewport: { panX: 0, panY: 0, zoom: Number.MIN_VALUE, canvasWidth: 800, canvasHeight: 600 },
+      initialViewport: {
+        panX: 0,
+        panY: 0,
+        zoom: Number.MIN_VALUE,
+        canvasWidth: 800,
+        canvasHeight: 600,
+      },
+    }).stage.getViewportStatus()
+
+    expect(overflowSafeMaximum).toEqual({ percent: 800, canZoomIn: false, canZoomOut: true })
+    expect(underflowSafeMinimum).toEqual({ percent: 10, canZoomIn: true, canZoomOut: false })
   })
 
   it('uses direct non-unit fitted zoom boundaries without floating ratio drift', () => {

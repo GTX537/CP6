@@ -1,6 +1,6 @@
 import type { ViewState, XY } from './coords'
 import { parseEditorPolygon } from './polygon'
-import type { EditorScene } from '../types/space/scene'
+import type { EditorScene, MarkerVO, RackVO } from '../types/space/scene'
 
 export interface ViewportState {
   panX: number
@@ -27,6 +27,35 @@ export const VIEWPORT_PADDING_PX = 48
 export const MIN_RELATIVE_ZOOM = 0.1
 export const MAX_RELATIVE_ZOOM = 8
 export const DEFAULT_ZOOM = 0.05
+/** Above this combined interior-line count, render only the rack footprint. */
+export const RACK_GRID_DETAIL_LINE_BUDGET = 2_000
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0
+}
+
+export function isRenderableRack(rack: RackVO): boolean {
+  if (!rack || typeof rack !== 'object' || !isNonEmptyString(rack.id)) return false
+  if (![rack.x, rack.y, rack.rotationZ, rack.cellW, rack.cellD].every(Number.isFinite)) {
+    return false
+  }
+  if (rack.cellW <= 0 || rack.cellD <= 0) return false
+  if (!Number.isSafeInteger(rack.cols) || rack.cols <= 0) return false
+  if (!Number.isSafeInteger(rack.depthCount) || rack.depthCount <= 0) return false
+
+  const width = rack.cols * rack.cellW
+  const depth = rack.depthCount * rack.cellD
+  return Number.isFinite(width) && width > 0 && Number.isFinite(depth) && depth > 0
+}
+
+export function isRenderableMarker(marker: MarkerVO): boolean {
+  return Boolean(marker)
+    && typeof marker === 'object'
+    && isNonEmptyString(marker.id)
+    && typeof marker.text === 'string'
+    && Number.isFinite(marker.x)
+    && Number.isFinite(marker.y)
+}
 
 function safeDimension(value: number): number {
   return Number.isFinite(value) && value > 0 ? value : 1
@@ -94,7 +123,23 @@ export function clampRelativeZoom(target: number, initialZoom: number): number {
 export function zoomPercent(view: ViewportState, initialZoom: number): number {
   const baseZoom = safeInitialZoom(initialZoom)
   const zoom = Number.isFinite(view.zoom) && view.zoom > 0 ? view.zoom : baseZoom
-  return finiteOr(Math.round((zoom / baseZoom) * 100), 100)
+  const minZoom = Math.max(Number.MIN_VALUE, baseZoom * MIN_RELATIVE_ZOOM)
+  const maxZoom = Math.min(Number.MAX_VALUE, baseZoom * MAX_RELATIVE_ZOOM)
+  if (zoom <= minZoom) return MIN_RELATIVE_ZOOM * 100
+  if (zoom >= maxZoom) return MAX_RELATIVE_ZOOM * 100
+  if (zoom === baseZoom) return 100
+
+  const rawPercent = finiteOr((zoom / baseZoom) * 100, 100)
+  const roundedPercent = Math.round(rawPercent)
+  const minPercent = MIN_RELATIVE_ZOOM * 100
+  const maxPercent = MAX_RELATIVE_ZOOM * 100
+  if (roundedPercent === maxPercent) {
+    return Math.min(maxPercent - 0.1, Math.round(rawPercent * 10) / 10)
+  }
+  if (roundedPercent === minPercent) {
+    return Math.max(minPercent + 0.1, Math.round(rawPercent * 10) / 10)
+  }
+  return roundedPercent
 }
 
 export function zoomAround(
@@ -190,16 +235,15 @@ export function collectSceneBounds(scene: EditorScene): WorldBounds | null {
     for (const [x, y] of points) include(x, y)
   }
 
-  for (const marker of scene.markers) include(marker.x, marker.y)
+  for (const marker of scene.markers) {
+    if (isRenderableMarker(marker)) include(marker.x, marker.y)
+  }
 
   for (const rack of scene.racks) {
-    if (![rack.x, rack.y, rack.rotationZ, rack.cols, rack.depthCount, rack.cellW, rack.cellD]
-      .every(Number.isFinite)) continue
-    if (rack.cols <= 0 || rack.depthCount <= 0 || rack.cellW <= 0 || rack.cellD <= 0) continue
+    if (!isRenderableRack(rack)) continue
 
     const width = rack.cols * rack.cellW
     const depth = rack.depthCount * rack.cellD
-    if (!Number.isFinite(width) || !Number.isFinite(depth) || width <= 0 || depth <= 0) continue
 
     const radians = rack.rotationZ * Math.PI / 180
     const cos = Math.cos(radians)

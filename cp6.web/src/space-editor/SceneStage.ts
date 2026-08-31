@@ -6,10 +6,13 @@ import { parseEditorPolygon } from './polygon'
 import {
   MAX_RELATIVE_ZOOM,
   MIN_RELATIVE_ZOOM,
+  RACK_GRID_DETAIL_LINE_BUDGET,
   clampRelativeZoom,
   collectSceneBounds,
   createDefaultViewport,
   fitBounds,
+  isRenderableMarker,
+  isRenderableRack,
   panViewport,
   resizeViewport,
   toCoordinateView,
@@ -44,6 +47,8 @@ export class SceneStage {
   private previewViewport: ViewportState | null = null
   private currentScene: EditorScene | null = null
   private resizeObserver: ResizeObserver | null = null
+  private cachedSelectedRackIds: string[] = []
+  private cachedCollisionResults: CollisionResult[] = []
 
   get view(): ViewState {
     return toCoordinateView(this.previewViewport ?? this.viewport)
@@ -109,7 +114,11 @@ export class SceneStage {
 
     this.layers.zone.destroyChildren()
     this.layers.aisle.destroyChildren()
-    for (const node of this.layers.rack.find('.rack')) node.destroy()
+    const rackNodes = [...this.layers.rack.find('.rack')]
+    const rackNodeSet = new Set<Konva.Node>(rackNodes)
+    const preservedRackHelpers = this.layers.rack.getChildren()
+      .filter(node => !rackNodeSet.has(node))
+    for (const node of rackNodes) node.destroy()
     this.layers.marker.destroyChildren()
 
     for (const zone of scene.zones) {
@@ -124,6 +133,9 @@ export class SceneStage {
     for (const marker of scene.markers) {
       this.renderMarker(marker)
     }
+
+    for (const helper of preservedRackHelpers) helper.moveToTop()
+    this.applyCachedRackStyles()
 
     for (const layer of Object.values(this.layers)) {
       layer.batchDraw()
@@ -196,8 +208,8 @@ export class SceneStage {
   getViewportStatus(): { percent: number; canZoomIn: boolean; canZoomOut: boolean } {
     const shown = this.previewViewport ?? this.viewport
     const percent = zoomPercent(shown, this.initialViewport.zoom)
-    const minZoom = this.initialViewport.zoom * MIN_RELATIVE_ZOOM
-    const maxZoom = this.initialViewport.zoom * MAX_RELATIVE_ZOOM
+    const minZoom = Math.max(Number.MIN_VALUE, this.initialViewport.zoom * MIN_RELATIVE_ZOOM)
+    const maxZoom = Math.min(Number.MAX_VALUE, this.initialViewport.zoom * MAX_RELATIVE_ZOOM)
     return {
       percent,
       canZoomIn: shown.zoom < maxZoom,
@@ -317,6 +329,7 @@ export class SceneStage {
   }
 
   private renderRack(rack: RackVO): void {
+    if (!isRenderableRack(rack)) return
     const view = nodeAuthoringView(this.viewport, this.view)
     const origin = worldToScreen({ x: rack.x, y: rack.y }, view)
     const wPx = rack.cols * rack.cellW * view.zoom
@@ -341,20 +354,25 @@ export class SceneStage {
     })
     group.add(rect)
 
-    // Grid lines to represent locations (E-D5: no per-location nodes)
-    for (let c = 1; c < rack.cols; c++) {
-      const xPx = c * rack.cellW * view.zoom
-      group.add(new Konva.Line({ points: [xPx, -dPx, xPx, 0], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
-    }
-    for (let d = 1; d < rack.depthCount; d++) {
-      const yPx = -(d * rack.cellD * view.zoom)
-      group.add(new Konva.Line({ points: [0, yPx, wPx, yPx], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
+    // Grid lines represent locations without per-location nodes. Very large
+    // counts retain the footprint but omit detail so render work stays bounded.
+    const gridLineCount = (rack.cols - 1) + (rack.depthCount - 1)
+    if (gridLineCount <= RACK_GRID_DETAIL_LINE_BUDGET) {
+      for (let c = 1; c < rack.cols; c++) {
+        const xPx = c * rack.cellW * view.zoom
+        group.add(new Konva.Line({ points: [xPx, -dPx, xPx, 0], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
+      }
+      for (let d = 1; d < rack.depthCount; d++) {
+        const yPx = -(d * rack.cellD * view.zoom)
+        group.add(new Konva.Line({ points: [0, yPx, wPx, yPx], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
+      }
     }
 
     this.layers.rack.add(group)
   }
 
   private renderMarker(marker: MarkerVO): void {
+    if (!isRenderableMarker(marker)) return
     const view = nodeAuthoringView(this.viewport, this.view)
     const s = worldToScreen({ x: marker.x, y: marker.y }, view)
     const circle = new Konva.Circle({ x: s.x, y: s.y, radius: 6, fill: '#e05050', stroke: '#fff', strokeWidth: 1 })
@@ -372,16 +390,26 @@ export class SceneStage {
    * Priority: collision-red > out-of-zone-yellow > selected-blue > normal.
    */
   applyRackStyles(selectedIds: string[], collisionResults: CollisionResult[]): void {
+    this.cachedSelectedRackIds = [...selectedIds]
+    this.cachedCollisionResults = collisionResults.map(result => ({
+      ...result,
+      collidingWith: [...result.collidingWith],
+    }))
+    this.applyCachedRackStyles()
+    this.layers.rack.batchDraw()
+  }
+
+  private applyCachedRackStyles(): void {
     const redIds = new Set<string>()
     const yellowIds = new Set<string>()
-    for (const r of collisionResults) {
+    for (const r of this.cachedCollisionResults) {
       if (r.collidingWith.length > 0) {
         redIds.add(r.rackId)
         for (const id of r.collidingWith) redIds.add(id)
       }
       if (r.outOfZone) yellowIds.add(r.rackId)
     }
-    const selSet = new Set(selectedIds)
+    const selSet = new Set(this.cachedSelectedRackIds)
 
     for (const node of this.layers.rack.find<Konva.Group>('.rack')) {
       const rect = node.findOne<Konva.Rect>('Rect')
@@ -394,7 +422,6 @@ export class SceneStage {
       rect.stroke(red ? '#ff4040' : yellow ? '#ffaa00' : selected ? '#0099ff' : '#4070cc')
       rect.strokeWidth(selected ? 2.5 : red || yellow ? 2 : 1)
     }
-    this.layers.rack.batchDraw()
   }
 
   private preview(next: ViewportState): void {
