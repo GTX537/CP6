@@ -105,4 +105,17 @@ describe('rackInZone', () => {
     const rack = mkRack({ id: 'r', x: 11000, y: 1000, rotationZ: 0, cols: 2, depthCount: 2, cellW: 500, cellD: 500 })
     expect(rackInZone(rack, zone)).toBe(false)
   })
+
+  it('版本化 Zone 几何仍可用于越界判定', () => {
+    const versionedZone: ZoneVO = {
+      ...zone,
+      polygon: JSON.stringify({
+        schemaVersion: 1,
+        points: [[0, 0], [10000, 0], [10000, 10000], [0, 10000]],
+      }),
+    }
+    const rack = mkRack({ id: 'r', x: 1000, y: 1000, rotationZ: 0, cols: 2, depthCount: 2, cellW: 500, cellD: 500 })
+
+    expect(rackInZone(rack, versionedZone)).toBe(true)
+  })
 })

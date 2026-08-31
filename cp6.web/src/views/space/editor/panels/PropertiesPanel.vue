@@ -7,6 +7,7 @@ import { codeRuleApi } from '@/api/space/codeRule'
 import { EditZoneCmd } from '@/space-editor/command/commands/EditZoneCmd'
 import { EditMarkerCmd } from '@/space-editor/command/commands/EditMarkerCmd'
 import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
+import { parseEditorPolygon } from '@/space-editor/polygon'
 import type { ZoneVO, MarkerVO, RackVO, AisleVO, LocationVO } from '@/types/space/scene'
 
 /** 选中态描述——FloorEditor 从 selectionIds 解析后注入。三分支 zone/marker/rack + 空态(Aisle 一览)。 */
@@ -142,17 +143,13 @@ async function handleGenSingle(loc: LocationVO): Promise<void> {
 const aisles = computed<AisleVO[]>(() => store.scene?.aisles ?? [])
 
 function aisleDirection(a: AisleVO): string {
-  try {
-    const cl = JSON.parse(a.centerline) as number[][]
-    const p0 = cl[0]
-    const p1 = cl[cl.length - 1]
-    if (!p0 || !p1) return '—'
-    const dx = Math.abs((p1[0] ?? 0) - (p0[0] ?? 0))
-    const dy = Math.abs((p1[1] ?? 0) - (p0[1] ?? 0))
-    return dx >= dy ? t('横向') : t('纵向')
-  } catch {
-    return '—'
-  }
+  const cl = parseEditorPolygon(a.centerline)
+  const p0 = cl[0]
+  const p1 = cl[cl.length - 1]
+  if (!p0 || !p1) return '—'
+  const dx = Math.abs(p1[0] - p0[0])
+  const dy = Math.abs(p1[1] - p0[1])
+  return dx >= dy ? t('横向') : t('纵向')
 }
 
 function aisleZoneName(a: AisleVO): string {
@@ -161,12 +158,8 @@ function aisleZoneName(a: AisleVO): string {
 
 /** 命中库位数：库位中心(absX,absY)落入该巷道多边形者计数（几何命中，只读统计）。 */
 function aisleHitCount(a: AisleVO): number {
-  let poly: [number, number][]
-  try {
-    poly = JSON.parse(a.polygon) as [number, number][]
-  } catch {
-    return 0
-  }
+  const poly = parseEditorPolygon(a.polygon)
+  if (poly.length < 3) return 0
   const locs = store.scene?.locations ?? []
   let n = 0
   for (const l of locs) if (pointInPolygon(l.absX, l.absY, poly)) n++

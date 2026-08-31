@@ -53,6 +53,29 @@ describe('SnapEngine — 货架边角吸附', () => {
   })
 })
 
+describe('SnapEngine — 巷道中心线吸附', () => {
+  it('支持版本化中心线几何对象', () => {
+    const aisle: AisleVO = {
+      id: 'a1',
+      zoneId: 'z1',
+      aisleCode: 'A1',
+      polygon: '[]',
+      centerline: JSON.stringify({
+        schemaVersion: 1,
+        points: [[2000, 3000], [2000, 5000]],
+      }),
+    }
+    const eng = new SnapEngine({ snapStep: 10000 })
+
+    const res = eng.snap(
+      { x: 2030, y: 3990 },
+      { zoom: 0.1, racks: [], aisles: [aisle] },
+    )
+
+    expect(res).toEqual({ x: 2000, y: 4000, snapped: true })
+  })
+})
+
 describe('SnapEngine — 自定义阈值', () => {
   it('thresholdPx 可覆盖默认 8px', () => {
     // thresholdPx=4 @ zoom=0.1 → 40mm；点离格点 44mm → 不吸附
