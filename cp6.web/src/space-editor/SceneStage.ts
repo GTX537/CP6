@@ -2,6 +2,7 @@ import Konva from 'konva'
 import type { EditorScene, RackVO, ZoneVO, AisleVO, MarkerVO } from '@/types/space/scene'
 import { worldToScreen, screenToWorld, type ViewState, type XY } from './coords'
 import type { CollisionResult } from './interact/collide/CollisionHint'
+import { parseEditorPolygon } from './polygon'
 
 export class SceneStage {
   readonly stage: Konva.Stage
@@ -134,8 +135,7 @@ export class SceneStage {
   }
 
   private renderZone(zone: ZoneVO): void {
-    let pts: number[][] = []
-    try { pts = JSON.parse(zone.polygon) as number[][] } catch { return }
+    const pts = parseEditorPolygon(zone.polygon)
     if (pts.length < 2) return
     const flat: number[] = []
     for (const pt of pts) {
@@ -155,8 +155,7 @@ export class SceneStage {
   }
 
   private renderAisle(aisle: AisleVO): void {
-    let pts: number[][] = []
-    try { pts = JSON.parse(aisle.polygon) as number[][] } catch { return }
+    const pts = parseEditorPolygon(aisle.polygon)
     if (pts.length < 2) return
     const flat: number[] = []
     for (const pt of pts) {

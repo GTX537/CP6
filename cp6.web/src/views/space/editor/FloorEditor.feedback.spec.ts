@@ -13,6 +13,8 @@ const { sceneStageInstances, interactionInstances } = vi.hoisted(() => ({
   sceneStageInstances: [] as Array<{
     render: ReturnType<typeof vi.fn>
     destroy: ReturnType<typeof vi.fn>
+    handlers: Record<string, () => void>
+    showFootprintGhost: ReturnType<typeof vi.fn>
   }>,
   interactionInstances: [] as Array<{
     switchTool: ReturnType<typeof vi.fn>
@@ -35,13 +37,18 @@ vi.mock('@/api/space/scene', () => ({
 
 vi.mock('@/space-editor/SceneStage', () => ({
   SceneStage: class {
-    stage = { on: vi.fn(), off: vi.fn(), getPointerPosition: vi.fn() }
+    handlers: Record<string, () => void> = {}
+    stage = {
+      on: vi.fn((event: string, handler: () => void) => { this.handlers[event] = handler }),
+      off: vi.fn(),
+      getPointerPosition: vi.fn(() => ({ x: 1, y: 1 })),
+    }
     render = vi.fn()
     destroy = vi.fn()
     applyRackStyles = vi.fn()
     showFootprintGhost = vi.fn()
     hideGhost = vi.fn()
-    screenToWorld = vi.fn()
+    screenToWorld = vi.fn(() => ({ x: 100, y: 100 }))
 
     constructor() {
       sceneStageInstances.push(this)
@@ -67,7 +74,20 @@ vi.mock('@/space-editor/interact/InteractionManager', () => ({
   },
 }))
 
-vi.mock('./panels/TemplatePanel.vue', () => ({ default: { template: '<div />' } }))
+vi.mock('./panels/TemplatePanel.vue', () => ({
+  default: {
+    emits: ['select'],
+    template: `
+      <button
+        data-test="emit-template"
+        @click="$emit('select', {
+          template: { id: 'tpl-1', cols: 1, levels: 1, depthCount: 1, cellW: 1000, cellH: 1000, cellD: 1000 },
+          arrayParams: { rows: 1, racksPerRow: 1, rowGap: 0, rackGap: 0, aisleBetweenRows: false }
+        })"
+      />
+    `,
+  },
+}))
 vi.mock('./panels/BindCodesDialog.vue', () => ({
   default: {
     props: ['modelValue', 'rackId'],
@@ -85,7 +105,7 @@ const rack = (): RackVO => ({
   cellW: 1000, cellH: 1000, cellD: 1000,
 })
 
-const makeScene = (): EditorScene => ({
+const makeScene = (over: Partial<EditorScene> = {}): EditorScene => ({
   source: {
     kind: 'Real', dataSourceId: 'TEST_SPACE', observedAtUtc: '2026-08-30T00:00:00Z',
     isSimulated: false, isAvailable: true,
@@ -95,6 +115,7 @@ const makeScene = (): EditorScene => ({
     height: 0, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0,
   },
   zones: [], aisles: [], racks: [rack()], locations: [], markers: [],
+  ...over,
 })
 
 let mountedWrappers: VueWrapper[] = []
@@ -103,10 +124,10 @@ function createTestI18n(locale: string) {
   return createI18n({ legacy: false, locale, flatJson: true, missingWarn: false, fallbackWarn: false, messages: {} })
 }
 
-async function mountEditor(locale = 'ja') {
+async function mountEditor(locale = 'ja', scene = makeScene()) {
   const pinia = createPinia()
   setActivePinia(pinia)
-  vi.mocked(sceneApi.get).mockResolvedValue({ code: 0, message: '', data: makeScene() })
+  vi.mocked(sceneApi.get).mockResolvedValue({ code: 0, message: '', data: scene })
 
   const wrapper = mount(FloorEditor, {
     global: { plugins: [pinia, createTestI18n(locale), ElementPlus] },
@@ -228,6 +249,35 @@ describe('FloorEditor tool feedback', () => {
     await reverseModel.trigger('click')
 
     expect(warning).toHaveBeenCalledWith('请先在画布上选中一个货架')
+  })
+
+  it('模板放置预览支持版本化 Zone 几何', async () => {
+    const zone = {
+      id: 'zone-1',
+      floorId: 'floor-1',
+      zoneCode: 'Z-001',
+      zoneName: 'Zone 1',
+      zoneType: 1,
+      polygon: JSON.stringify({
+        schemaVersion: 1,
+        points: [[0, 0], [5000, 0], [5000, 5000], [0, 5000]],
+      }),
+    }
+    const { wrapper } = await mountEditor('zh-CN', makeScene({ zones: [zone] }))
+
+    const zoneSelect = wrapper.findAllComponents({ name: 'ElSelect' })[0]!
+    zoneSelect.vm.$emit('update:modelValue', 'zone-1')
+    await wrapper.find('[data-test="emit-template"]').trigger('click')
+    await flushPromises()
+
+    sceneStageInstances[0]!.handlers['mousemove.place']!()
+
+    expect(sceneStageInstances[0]!.showFootprintGhost).toHaveBeenCalledWith(
+      { x: 100, y: 100 },
+      1000,
+      1000,
+      true,
+    )
   })
 
   it('opens the existing bind-codes dialog for the selected rack', async () => {

@@ -28,6 +28,7 @@ import PropertiesPanel, { type SelectionInfo } from './panels/PropertiesPanel.vu
 import { connectorApi } from '@/api/space/connector'
 import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
 import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
+import { parseEditorPolygon } from '@/space-editor/polygon'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -426,8 +427,8 @@ function placementValid(originX: number, originY: number, w: number, d: number):
   if (!selectedZoneId.value) return false
   const zone = store.scene?.zones.find(z => z.id === selectedZoneId.value)
   if (!zone) return false
-  let poly: [number, number][]
-  try { poly = JSON.parse(zone.polygon) as [number, number][] } catch { return false }
+  const poly = parseEditorPolygon(zone.polygon)
+  if (poly.length < 3) return false
   const corners: [number, number][] = [
     [originX, originY], [originX + w, originY],
     [originX + w, originY + d], [originX, originY + d],

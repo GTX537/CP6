@@ -136,6 +136,34 @@ describe('PropertiesPanel', () => {
     expect(w.text()).toContain('A002')
   })
 
+  it('Aisle 一览支持版本化中心线和多边形统计', () => {
+    const store = useSpaceEditorStore()
+    const versionedAisle = aisle({
+      polygon: JSON.stringify({
+        schemaVersion: 1,
+        points: [[0, 0], [1000, 0], [1000, 500], [0, 500]],
+      }),
+      centerline: JSON.stringify({
+        schemaVersion: 1,
+        points: [[500, 0], [500, 500]],
+      }),
+    })
+    store.load(makeScene({
+      zones: [zone()],
+      aisles: [versionedAisle],
+      locations: [
+        locFx({ id: 'inside', absX: 500, absY: 250 }),
+        locFx({ id: 'outside', absX: 1500, absY: 250 }),
+      ],
+    }))
+
+    const w = mountPanel({ kind: 'none' })
+    const row = w.find('[data-test="aisle-row"]')
+    const cells = row.findAll('span')
+    expect(cells[1]!.text()).toBe('纵向')
+    expect(cells[3]!.text()).toBe('1')
+  })
+
   it('rack 分支只读展示尺寸', () => {
     const store = useSpaceEditorStore()
     store.load(makeScene())

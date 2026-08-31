@@ -1,6 +1,7 @@
 // CollisionHint — OBB+SAT 碰撞与越界判定（ch02 §8）
 // 纯逻辑，不引 Konva；上层渲染层读结果着色
 import type { RackVO, ZoneVO } from '@/types/space/scene'
+import { parseEditorPolygon } from '@/space-editor/polygon'
 
 // ─── 类型 ─────────────────────────────────────────────────────────────────────
 
@@ -104,16 +105,12 @@ export function pointInPolygon(px: number, py: number, poly: [number, number][])
 
 /**
  * 判断货架 4 个角是否全在 Zone 多边形内。
- * zone.polygon 须是 JSON 序列化的 [[x,y],...] 数组。
+ * zone.polygon 支持旧版 [[x,y],...] 和版本化几何对象。
  * 任一角出界 → false（越界）。
  */
 export function rackInZone(rack: RackVO, zone: ZoneVO): boolean {
-  let poly: [number, number][]
-  try {
-    poly = JSON.parse(zone.polygon) as [number, number][]
-  } catch {
-    return false  // polygon 格式错误视为越界
-  }
+  const poly = parseEditorPolygon(zone.polygon)
+  if (poly.length < 3) return false  // polygon 格式错误视为越界
   const corners = rackCorners(rack)
   return corners.every(c => pointInPolygon(c.x, c.y, poly))
 }

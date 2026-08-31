@@ -1,6 +1,7 @@
 // SnapEngine — 捕捉吸附引擎（ch02 §6）
 // 纯逻辑，不引 Konva；上层工具（DragTool）调用后包成 BatchCmd
 import type { RackVO, AisleVO } from '@/types/space/scene'
+import { parseEditorPolygon } from '@/space-editor/polygon'
 
 export interface SnapContext {
   zoom: number       // px/mm（同 ViewState.zoom）
@@ -42,20 +43,16 @@ function rackCorners(r: RackVO): Candidate[] {
 function aisleCenterCandidates(aisles: AisleVO[]): Candidate[] {
   const candidates: Candidate[] = []
   for (const a of aisles) {
-    try {
-      const pts = JSON.parse(a.centerline) as [number, number][]
-      const first = pts[0]
-      const last = pts[pts.length - 1]
-      if (first && last) {
-        // 取首末中点
-        const mid: Candidate = {
-          x: (first[0] + last[0]) / 2,
-          y: (first[1] + last[1]) / 2,
-        }
-        candidates.push(mid)
+    const pts = parseEditorPolygon(a.centerline)
+    const first = pts[0]
+    const last = pts[pts.length - 1]
+    if (first && last) {
+      // 取首末中点
+      const mid: Candidate = {
+        x: (first[0] + last[0]) / 2,
+        y: (first[1] + last[1]) / 2,
       }
-    } catch {
-      // 忽略解析失败的巷道
+      candidates.push(mid)
     }
   }
   return candidates
