@@ -209,7 +209,7 @@ export class InteractionManager {
 
   private refreshTransformerSynchronously(): void {
     this.attachTransformerNodes()
-    this.ctx.stage.layers.rack.draw()
+    this.ctx.stage.stage.draw()
   }
 
   private attachTransformerNodes(): void {

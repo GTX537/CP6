@@ -42,6 +42,7 @@ interface PanState {
 interface ExternalGestureState {
   pointerId: number
   button: number
+  buttonMask: number
   captured: boolean
   captureTarget: PointerCaptureTarget | null
 }
@@ -197,6 +198,7 @@ export class ViewportController {
       this.externalGesture = {
         pointerId: event.pointerId,
         button: event.button,
+        buttonMask: this.buttonMask(event.button),
         captured: capture.captured,
         captureTarget: capture.target,
       }
@@ -226,6 +228,14 @@ export class ViewportController {
   }
 
   private readonly onPointerMove = (event: PointerEvent): void => {
+    const externalGesture = this.externalGesture
+    if (externalGesture && event.pointerId === externalGesture.pointerId) {
+      if ((event.buttons & externalGesture.buttonMask) === 0) {
+        this.finishExternalGesture(event, true, true)
+      }
+      return
+    }
+
     const pan = this.pan
     if (!pan || event.pointerId !== pan.pointerId) return
 
@@ -404,9 +414,9 @@ export class ViewportController {
     const captureRect = gesture.captureTarget?.getBoundingClientRect?.()
     const rect = this.hasArea(captureRect) ? captureRect : this.element.getBoundingClientRect()
     return event.clientX < rect.left
-      || event.clientX > rect.right
+      || event.clientX >= rect.right
       || event.clientY < rect.top
-      || event.clientY > rect.bottom
+      || event.clientY >= rect.bottom
   }
 
   private hasArea(rect: DOMRect | undefined): rect is DOMRect {

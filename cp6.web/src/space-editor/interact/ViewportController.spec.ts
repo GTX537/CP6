@@ -398,6 +398,29 @@ describe('ViewportController wheel navigation', () => {
     expect(toolClickSuppression).not.toHaveBeenCalledWith(true)
     controller.destroy()
   })
+
+  it.each([
+    { edge: 'right', clientX: 900, clientY: 80 },
+    { edge: 'bottom', clientX: 120, clientY: 650 },
+  ])('treats the exclusive $edge edge as outside for captured releases', ({ clientX, clientY }) => {
+    const { controller, target, toolClickSuppression } = createHarness({ tool: 'marker' })
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 27,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointerup', {
+      pointerId: 27,
+      button: 0,
+      clientX,
+      clientY,
+    }))
+
+    expect(toolClickSuppression).toHaveBeenLastCalledWith(true)
+    controller.destroy()
+  })
 })
 
 describe('ViewportController pointer panning', () => {
