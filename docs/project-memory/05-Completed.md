@@ -7,6 +7,19 @@
 - 五语言本地兜底有自动化覆盖，并保留 Vue I18n 后端词条覆盖路径；组件覆盖反向建模正反路径、导出成功/失败和 undo/redo 状态。最终全量 Web 为 179 files / 943 tests，type-check、production build、独立规格/质量/整体代码审查均通过。
 - 本地 `127.0.0.1:18080` + 本地 API/CP6DB 的隔离 Chrome 验收通过；登录后的编辑器验收动作阶段控制台错误、页面错误、POST/PUT/PATCH/DELETE 均为 0，未点击保存，用户已确认。本任务 Git diff 不含 Docker、数据库、API、DTO、迁移或部署文件，执行过程未运行 Docker、数据库管理或迁移命令。
 
+## 2026-08-30 UTC CRM Platform P08 S06 冻结闭环
+
+- Platform final-audit PR #26 head `a19a12672320bab2a84d73b7fc5645f0e90ee904` 的 PR run 33336245379 通过，合并为 `main@c0dd1f7adfbab398c0231ec90152db781885d52b`；exact-main run 33336448249 的 Windows、Linux、真实 Dapr/Kafka、真实 SQL Server 四个必需作业逐项 success，首次正式形成 `Frozen / Consumable` 决定。
+- CRM final-propagation PR #36 head `bda9efde86e596e9b0b9a65c235b900c5a6900dc` 的 run 33337283054 及 SQL artifact 9739426862 / `sha256:201c1d3e7e72ad4692cfb2869d02e69bccd55f0522a772f5bc59c286cc73b726` 成功；合并 `main@8c8fa09d7b1ccf85b74d2cb3bdc4298b7455c6d0` 后 exact-main run 33337576328 与 artifact 9739516380 / `sha256:ff2234b644cefcd482200d32cc58f5caee21778ef0c52cf3347d64d64e94fc6d` 再次通过完整 CRM/真实 SQL 门禁。
+- P08 的 S00–S06 现已全部完成；历史 Candidate、过早 Frozen 与前向纠正证据均保留。真实 exporter/Collector/dashboard/alert、CRM Worker/subscription、生产 SLO、Secret、云资源、P09/P10、业务切片和部署仍未实现或授权。
+
+## 2026-08-30 UTC CRM Platform P08 S05 公共候选同步
+
+- Platform PR #23 从 `main@bfb0ebdc2e17f9a580156dbba6c0ce6cf6f3c672` 以 publish run 33320840180 发布五个不可变 `0.8.0-alpha.2` 包；artifact 9734883916 的 API digest 为 `sha256:db2e44481101dcf450cd1a0d6188572ac8c1529fc148e6ea3d094d8c772a4e61`，普通包 SHA-256 为 Contracts `b6a0106bdc8c60f0c49ed29263f8e538beb3ac9ad2d181227d40e7e2a8e213df`、Abstractions `842b007d3b8e7c369f7de3e22d03d2eb46746e14ad809ce5b9ce4e01ee1114ca`、AspNetCore `3564b21bd621307e002d1307c8081062e9c3743533fd4f0dac4ef7bed9ada92c`、EntityFramework `d1e7cf733693e13b34a8cb39a64077c498cc4fbb082953a5e7a0b0cb27d1acee`、Messaging `64d5878567213cfde658117e069f3e598ecbd53dbb8e0ef4cfd19ceca314b7a8`。Platform PR #24（head `2c1100d57a4ddd55e8bb1b5c673ae631944548d8`）及 main run 33322000747 固定了发布证据；alpha.1 继续保留但不得消费。
+- CRM PR #33（head `e6358ad776facc4e13b313b960b650e7b1845d83`）完成五包固定消费、24/24 CRM P08 黑盒和 63/63 .NET；PR/main runs 33329003327/33329320097 及 SQL artifacts 9737092867/9737180305 成功。PR #34 保留 S04 证据（head `f0b22c7415ed51b19375664d7cac83024af92986`、runs 33330377723/33330705446、merge `45d0418884b3e21e62d87315ea7ef5f595f1819a`、SQL artifacts 9737472407/9737563354）。
+- CRM PR #35（head `8bd521860396b81d235ae6887b58ebd5718b85ad`、runs 33332328534/33332741550、merge `bc565fce5bf84904eb1bbe11e7ab13cf6a1e016a`、SQL artifacts 9738014861/9738124159）前向纠正过早 Frozen。Platform PR #25（head `e9657cb55bed6230a7ee0aec33603379c4535775`、PR run 33333573931）合并为 `main@3bee7abe00e6f79be41bbc6af6dc2290261cb317`，exact-main run 33333782732 四矩阵成功。
+- S05 完成当时的状态是 `Published / Consumer Candidate`，即 `S00-S05 complete; S06 pending`；该历史阶段随后由上方 S06 闭环接续。真实 exporter/Collector/dashboard/alert、CRM Worker/subscription、生产 SLO、Secret、云资源和部署均未实现或授权。
+
 ## 2026-08-29 UTC CRM Platform P07 冻结可消费
 
 - Platform PR #15/#16 已在 `main@329bf8ee82091de569cb80f1e83fc5d518f74068` 完成 code-owned YARP allowlist、身份头清理、固定窗口限流、后端认证边界及双平台/真实 Dapr-Kafka/真实 SQL/Gateway E2E；exact-main publish run 33262569274 发布五个不可变 `0.7.0-alpha.1` 包、artifact 9717721544 及 artifact/package SHA-256 证据。

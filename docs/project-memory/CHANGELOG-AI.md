@@ -9,6 +9,19 @@
 - 新增稳定语义 i18n 键与 `ja`、`zh-CN`、`zh-TW`、`en`、`ko` 本地兜底，并补齐反向建模、导出失败、undo/redo、生命周期及 Konva 真实对象回归。
 - 最终 Web 门禁为 179 files / 943 tests，type-check 和 production build 通过；本地 CP6DB 隔离 Chrome 验收在登录后的编辑器动作阶段记录 console/page error/POST/PUT/PATCH/DELETE 均为 0，且未点击保存，用户确认验收。本任务 Git diff 不含 Docker、数据库、API、DTO、迁移或部署文件，执行过程未运行 Docker、数据库管理或迁移命令；既有 `{diff}` 占位符另列 P1。
 
+## 2026-08-30：CRM Platform P08 S06 冻结闭环
+
+- Platform final-audit PR #26 head `a19a12672320bab2a84d73b7fc5645f0e90ee904` 的 PR run 33336245379 通过并合并为 `main@c0dd1f7adfbab398c0231ec90152db781885d52b`；exact-main run 33336448249 的四个必需作业逐项 success，P08 首次正式成为 `Frozen / Consumable`。
+- CRM final-propagation PR #36 head `bda9efde86e596e9b0b9a65c235b900c5a6900dc` 合并为 `main@8c8fa09d7b1ccf85b74d2cb3bdc4298b7455c6d0`；PR/main runs 33337283054/33337576328 和 SQL artifacts 9739426862/9739516380 及 SHA-256 均已记录，完整 CRM 与真实 SQL 门禁通过。
+- P08 S00–S06 全部完成；没有借此注册 exporter/Collector、运行时订阅、生产 SLO，或授权 Secret、云资源、P09/P10、业务切片与部署。
+
+## 2026-08-30：CRM Platform P08 S05 公共候选同步
+
+- Platform PR #23/#24 已从 exact `main@bfb0ebdc2e17f9a580156dbba6c0ce6cf6f3c672` 发布并记录五个不可变 `0.8.0-alpha.2` 包；publish run 33320840180、artifact 9734883916 与 API digest `sha256:db2e44481101dcf450cd1a0d6188572ac8c1529fc148e6ea3d094d8c772a4e61` 已固定，alpha.1 仅保留为不合格历史证据。
+- CRM PR #33 完成五包固定消费与 24/24 P08 黑盒；PR/main runs 33329003327/33329320097 成功。PR #34 的 S04 证据继续保留；PR #35（head `8bd521860396b81d235ae6887b58ebd5718b85ad`、merge `bc565fce5bf84904eb1bbe11e7ab13cf6a1e016a`、runs 33332328534/33332741550）将过早 Frozen 前向纠正为候选。
+- Platform PR #25（head `e9657cb55bed6230a7ee0aec33603379c4535775`、PR run 33333573931）对账所有 CRM PR/main/SQL artifact 身份；合并 `main@3bee7abe00e6f79be41bbc6af6dc2290261cb317` 后 exact-main run 33333782732 四矩阵成功。
+- 公共 S05 完成当时仍为 `Published / Consumer Candidate` 与 `S00-S05 complete; S06 pending`；该历史阶段随后由上方 S06 闭环接续。当时未注册 exporter、运行时订阅、生产 SLO 或部署，当前边界也未改变。
+
 ## 2026-08-29：CRM Platform P07 冻结可消费
 
 - `CP6.Platform` PR #15/#16 完成 YARP allowlist、外部身份头清理、限流与后端认证边界；`main@329bf8ee82091de569cb80f1e83fc5d518f74068` 的 exact-main publish run 33262569274 发布五个不可变 `0.7.0-alpha.1` 包、artifact 9717721544 和完整 SHA-256 证据。
