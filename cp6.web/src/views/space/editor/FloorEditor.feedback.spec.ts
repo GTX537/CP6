@@ -9,7 +9,7 @@ import { sceneApi } from '@/api/space/scene'
 import FloorEditor from './FloorEditor.vue'
 import type { EditorScene, RackVO } from '@/types/space/scene'
 
-const { sceneStageInstances, interactionInstances } = vi.hoisted(() => ({
+const { sceneStageInstances, interactionInstances, viewportStatusFixture } = vi.hoisted(() => ({
   sceneStageInstances: [] as Array<{
     render: ReturnType<typeof vi.fn>
     destroy: ReturnType<typeof vi.fn>
@@ -33,6 +33,7 @@ const { sceneStageInstances, interactionInstances } = vi.hoisted(() => ({
     fitAll: ReturnType<typeof vi.fn>
     resetView: ReturnType<typeof vi.fn>
   }>,
+  viewportStatusFixture: { percent: 100, canZoomIn: true, canZoomOut: true },
 }))
 
 vi.mock('vue-router', () => ({
@@ -58,7 +59,7 @@ vi.mock('@/space-editor/SceneStage', () => ({
     }
     render = vi.fn()
     destroy = vi.fn()
-    getViewportStatus = vi.fn(() => ({ percent: 100, canZoomIn: true, canZoomOut: true }))
+    getViewportStatus = vi.fn(() => ({ ...viewportStatusFixture }))
     applyRackStyles = vi.fn()
     showFootprintGhost = vi.fn()
     hideGhost = vi.fn()
@@ -165,6 +166,7 @@ describe('FloorEditor tool feedback', () => {
     vi.clearAllMocks()
     sceneStageInstances.length = 0
     interactionInstances.length = 0
+    Object.assign(viewportStatusFixture, { percent: 100, canZoomIn: true, canZoomOut: true })
     vi.stubGlobal('URL', {
       createObjectURL: vi.fn(() => 'blob:scene'),
       revokeObjectURL: vi.fn(),
@@ -424,6 +426,18 @@ describe('FloorEditor tool feedback', () => {
     expect(markDirtyDelete).not.toHaveBeenCalled()
     expect([...store.dirty.upsert]).toEqual(['already-dirty'])
     expect([...store.dirty.del]).toEqual([['already-deleted', 'rack']])
+  })
+
+  it('renders the non-default initial viewport status reported by the stage', async () => {
+    Object.assign(viewportStatusFixture, { percent: 275, canZoomIn: false, canZoomOut: true })
+
+    const { wrapper } = await mountEditor('zh-CN')
+    const stage = sceneStageInstances[0]!
+
+    expect(stage.getViewportStatus).toHaveBeenCalledTimes(1)
+    expect(wrapper.get('[data-test="zoom-percent"]').text()).toBe('275%')
+    expect((wrapper.get('[data-test="zoom-out"]').element as HTMLButtonElement).disabled).toBe(false)
+    expect((wrapper.get('[data-test="zoom-in"]').element as HTMLButtonElement).disabled).toBe(true)
   })
 
   it('synchronizes viewport percentage and zoom limits from stage events', async () => {
