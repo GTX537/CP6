@@ -185,7 +185,9 @@ export function collectSceneBounds(scene: EditorScene): WorldBounds | null {
   }
 
   for (const polygonOwner of [...scene.zones, ...scene.aisles]) {
-    for (const [x, y] of parseEditorPolygon(polygonOwner.polygon)) include(x, y)
+    const points = parseEditorPolygon(polygonOwner.polygon)
+    if (points.length < 2) continue
+    for (const [x, y] of points) include(x, y)
   }
 
   for (const marker of scene.markers) include(marker.x, marker.y)

@@ -229,6 +229,75 @@ describe('scene bounds and fitting', () => {
     expect(bounds!.maxY).toBeCloseTo(9000)
   })
 
+  it('ignores invisible one-point zone and aisle polygons', () => {
+    const scene = sceneWith({
+      zones: [{
+        id: 'zone-visible',
+        floorId: 'floor-1',
+        zoneCode: 'VISIBLE',
+        zoneName: 'Visible Zone',
+        zoneType: 1,
+        polygon: JSON.stringify([[100, 200], [300, 400]]),
+      }, {
+        id: 'zone-singleton',
+        floorId: 'floor-1',
+        zoneCode: 'SINGLETON',
+        zoneName: 'Invisible Singleton Zone',
+        zoneType: 1,
+        polygon: JSON.stringify([[1_000_000, 1_000_000]]),
+      }],
+      aisles: [{
+        id: 'aisle-singleton',
+        zoneId: 'zone-visible',
+        aisleCode: 'SINGLETON',
+        polygon: JSON.stringify([[-1_000_000, -1_000_000]]),
+        centerline: '[]',
+      }],
+    })
+
+    expect(collectSceneBounds(scene)).toEqual({
+      minX: 100,
+      minY: 200,
+      maxX: 300,
+      maxY: 400,
+    })
+  })
+
+  it('uses all four corners for a rack-only non-axis-aligned AABB', () => {
+    const rotation = 30
+    const radians = rotation * Math.PI / 180
+    const width = 100
+    const depth = 40
+    const scene = sceneWith({
+      racks: [{
+        id: 'rack-angled',
+        zoneId: 'zone-1',
+        floorId: 'floor-1',
+        rackCode: 'ANGLED',
+        x: 100,
+        y: 200,
+        z: 0,
+        rotationZ: rotation,
+        cols: 2,
+        levels: 1,
+        depthCount: 1,
+        cellW: width / 2,
+        cellH: 100,
+        cellD: depth,
+      }],
+    })
+
+    const bounds = collectSceneBounds(scene)
+
+    expect(bounds).not.toBeNull()
+    expect(bounds!.minX).toBeCloseTo(100 - depth * Math.sin(radians))
+    expect(bounds!.minY).toBeCloseTo(200)
+    expect(bounds!.maxX).toBeCloseTo(100 + width * Math.cos(radians))
+    expect(bounds!.maxY).toBeCloseTo(
+      200 + width * Math.sin(radians) + depth * Math.cos(radians),
+    )
+  })
+
   it('fits content inside 48px canvas margins', () => {
     const bounds = { minX: -500, minY: 0, maxX: 5000, maxY: 9000 }
     const view = fitBounds(bounds, 1000, 600)
