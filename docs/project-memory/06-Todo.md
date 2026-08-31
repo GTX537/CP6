@@ -45,6 +45,7 @@
 
 ## P1：Space Studio V1 GA 后边界与运营增强
 
+- Space Editor 自由视口缺陷已关闭；既有七层 Konva 性能告警仍是独立性能评估项，只有建立场景规模基准并证明收益后才允许重构图层结构。
 - 当前正式派生状态为 `GaReady` / 100%：两类外部输入 Complete、WP0～WP8 全部 Accepted、唯一 DeliveryOwner Signed，Core GA 已无剩余阻断门禁。不要重复 WP2、WP5、WP6/WP8、Backup、Pilot、本地 OS Firewall 或冻结黄金集工作。
 - Development V1 的仓库/开发环境功能已 100% 结案，不再新增开发版功能 Gate。正式 Core GA 使用 Schema 3；独立 Backup 与双仓 14 天 Pilot 已转为 GA 后增强。不得用 DevelopmentSeed、未批准 Provider、Mock 或 fixture 冒充正式发布演练。
 - 唯一 DeliveryOwner `BUBAO.GAO` 已完成最终签署，Kickoff/目标 GA 为 `2026-08-27` / `2026-09-27`；同一人拥有并接受全部输入与 Gate。单人原创数据使用 `ApprovedOriginalWork`，不再追问不存在的客户或第二复核人。

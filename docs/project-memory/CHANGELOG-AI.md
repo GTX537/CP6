@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-31：Space Editor 自由视口
+
+- Added pure viewport/bounds math, cursor-anchored 10%–800% zoom, all-mode pan gestures, fit/reset controls and responsive center-preserving resize.
+- Added a two-phase Konva preview/commit pipeline and unified pointer controller; Drag-mode background navigation no longer conflicts with rack movement, editing tools or Transformer state.
+- Added focused and full frontend verification. Viewport state remains frontend-only and does not enter scene persistence, command history, API contracts, migrations or CP6DB.
+
 ## 2026-08-30：Space Editor 版本化几何兼容修复
 
 - 定位 Docker 编辑器空白的根因不是 API/数据库断连，而是前端仍按裸数组读取已升级为 `{ schemaVersion: 1, points }` 的 Zone/Aisle Polygon 与 Centerline。

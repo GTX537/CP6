@@ -7,6 +7,15 @@ import {
   type EditorToolFeedback,
 } from './toolFeedback'
 
+const viewportMessageKeys = {
+  controls: 'space.editor.viewport.controls',
+  zoomOut: 'space.editor.viewport.zoomOut',
+  zoomIn: 'space.editor.viewport.zoomIn',
+  fitAllLabel: 'space.editor.viewport.fitAllLabel',
+  fitAll: 'space.editor.viewport.fitAll',
+  reset: 'space.editor.viewport.reset',
+} as const
+
 describe('getEditorToolFeedback', () => {
   it.each([
     ['select', 'space.editor.tool.select.title', 'space.editor.tool.select.message', 'tool-cursor-select'],
@@ -74,6 +83,23 @@ describe('getEditorToolFeedback', () => {
     expect(getEditorMessageFallback('zh-CN', 'space.editor.tool.select.title')).toBe('选择模式')
     expect(getEditorMessageFallback('zh-CN', 'space.editor.tool.select.message')).toContain('货架')
     expect(getEditorMessageFallback('zh-CN', 'space.editor.export.success')).toBe('导出成功')
+  })
+
+  it('exports stable viewport message keys', () => {
+    expect(EDITOR_MESSAGE_KEYS).toEqual(expect.arrayContaining(Object.values(viewportMessageKeys)))
+  })
+
+  it.each([
+    ['ja', ['表示操作', '縮小', '拡大', 'すべての内容を表示', '全体表示', '表示をリセット']],
+    ['zh-CN', ['视图控制', '缩小视图', '放大视图', '适配全部内容', '适配全部', '复位视图']],
+    ['zh-TW', ['檢視控制', '縮小檢視', '放大檢視', '顯示全部內容', '顯示全部', '重設檢視']],
+    ['en', ['View controls', 'Zoom out', 'Zoom in', 'Fit all content', 'Fit all', 'Reset view']],
+    ['ko', ['보기 제어', '축소', '확대', '모든 콘텐츠 맞춤', '전체 맞춤', '보기 초기화']],
+  ] as const)('provides localized viewport labels for %s', (locale, expected) => {
+    const actual = Object.values(viewportMessageKeys).map(key => (
+      getEditorMessageFallback(locale, key as EditorMessageKey)
+    ))
+    expect(actual).toEqual(expected)
   })
 
   it('constrains dynamic feedback messages to the exported key union', () => {

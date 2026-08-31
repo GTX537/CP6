@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -42,6 +42,9 @@ let stageRef: SceneStage | null = null
 const imRef = ref<InteractionManager | null>(null)
 const activeTool = ref<ToolType>('select')
 const collisionCount = ref(0)
+const viewportStatus = ref({ percent: 100, canZoomIn: true, canZoomOut: true })
+const spacePanReady = ref(false)
+const viewportPanning = ref(false)
 
 // Placement mode state (F-3: template → place)
 const placementMode = ref(false)
@@ -52,6 +55,11 @@ const selectedZoneId = ref<string>('')
 const connectorPlacementMode = ref(false)
 const pendingConnectorId = ref<string>('')
 const connectorPanelRef = ref<InstanceType<typeof ConnectorPanel> | null>(null)
+const viewportNavigationAvailable = computed(() => (
+  imRef.value !== null
+  && !placementMode.value
+  && !connectorPlacementMode.value
+))
 
 const zones = computed<ZoneVO[]>(() => store.scene?.zones ?? [])
 const floorId = computed(() => route.params['floorId'] as string)
@@ -142,6 +150,31 @@ function afterCommand(): void {
 let disposed = false
 let sceneRequestGeneration = 0
 let keyboardListenersBound = false
+let viewportToolbarBound = false
+
+function isViewportStatus(value: unknown): value is typeof viewportStatus.value {
+  if (typeof value !== 'object' || value === null) return false
+  const candidate = value as Partial<typeof viewportStatus.value>
+  return typeof candidate.percent === 'number'
+    && Number.isFinite(candidate.percent)
+    && candidate.percent > 0
+    && typeof candidate.canZoomIn === 'boolean'
+    && typeof candidate.canZoomOut === 'boolean'
+}
+
+function syncViewportStatus(payload?: unknown): void {
+  const next = isViewportStatus(payload) ? payload : stageRef?.getViewportStatus()
+  if (next) viewportStatus.value = { ...next }
+}
+
+function releaseSpacePan(): void {
+  spacePanReady.value = false
+  imRef.value?.setSpaceHeld(false)
+}
+
+watch(viewportNavigationAvailable, (available) => {
+  if (!available) releaseSpacePan()
+}, { flush: 'sync' })
 
 onMounted(async () => {
   const requestGeneration = ++sceneRequestGeneration
@@ -154,6 +187,12 @@ onMounted(async () => {
     stageRef = new SceneStage(canvasRef.value)
     stageRef.render(res.data)
     imRef.value = new InteractionManager(stageRef, store, afterCommand)
+    syncViewportStatus()
+    stageRef.stage.on('viewportchange.toolbar', syncViewportStatus)
+    viewportToolbarBound = true
+    imRef.value.setNavigationStateHandler((active) => {
+      viewportPanning.value = active
+    })
     if (activeTool.value !== 'select') imRef.value.switchTool(activeTool.value)
     imRef.value.setZoneRectHandler(onZoneRectDrawn)
     bindStageClick()
@@ -161,6 +200,7 @@ onMounted(async () => {
 
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('keyup', onKeyup)
+  window.addEventListener('blur', onWindowBlur)
   keyboardListenersBound = true
 })
 
@@ -170,8 +210,15 @@ onBeforeUnmount(() => {
   if (keyboardListenersBound) {
     document.removeEventListener('keydown', onKeydown)
     document.removeEventListener('keyup', onKeyup)
+    window.removeEventListener('blur', onWindowBlur)
     keyboardListenersBound = false
   }
+  if (viewportToolbarBound && stageRef) {
+    stageRef.stage.off('viewportchange.toolbar')
+    viewportToolbarBound = false
+  }
+  releaseSpacePan()
+  viewportPanning.value = false
   imRef.value?.destroy()
   stageRef?.destroy()
 })
@@ -183,9 +230,24 @@ function onKeydown(e: KeyboardEvent): void {
   // Track ctrl state for snap
   im?.setCtrlHeld(e.ctrlKey || e.metaKey)
 
-  // Don't intercept when typing in an input/textarea/select
-  const tag = (e.target as HTMLElement).tagName
-  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+  // Don't intercept while typing, including descendants of contenteditable regions.
+  if (isEditableTarget(e.target)) return
+
+  if (e.code === 'Space') {
+    if (e.defaultPrevented
+      || !viewportNavigationAvailable.value
+      || e.ctrlKey
+      || e.metaKey
+      || e.altKey
+      || e.shiftKey
+      || isInteractiveTarget(e.target)) return
+    e.preventDefault()
+    if (!spacePanReady.value) {
+      spacePanReady.value = true
+      im?.setSpaceHeld(true)
+    }
+    return
+  }
 
   if (e.ctrlKey || e.metaKey) {
     if (e.key === 'z' || e.key === 'Z') {
@@ -233,7 +295,47 @@ function onKeydown(e: KeyboardEvent): void {
 
 function onKeyup(e: KeyboardEvent): void {
   imRef.value?.setCtrlHeld(e.ctrlKey || e.metaKey)
+  if (e.code === 'Space') releaseSpacePan()
 }
+
+function onWindowBlur(): void {
+  imRef.value?.setCtrlHeld(false)
+  releaseSpacePan()
+}
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false
+  if (target.closest('input, textarea, select')) return true
+
+  let current: Element | null = target
+  while (current) {
+    const editable = current.getAttribute('contenteditable')
+    if (editable !== null) return editable.toLowerCase() !== 'false'
+    current = current.parentElement
+  }
+  return false
+}
+
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false
+  return target.closest([
+    'button',
+    'a[href]',
+    'summary',
+    '[role="button"]',
+    '[role="link"]',
+    '[role="checkbox"]',
+    '[role="radio"]',
+    '[role="switch"]',
+    '[role="menuitem"]',
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(', ')) !== null
+}
+
+function zoomOut(): void { if (viewportNavigationAvailable.value) imRef.value?.zoomOut() }
+function zoomIn(): void { if (viewportNavigationAvailable.value) imRef.value?.zoomIn() }
+function fitAll(): void { if (viewportNavigationAvailable.value) imRef.value?.fitAll() }
+function resetView(): void { if (viewportNavigationAvailable.value) imRef.value?.resetView() }
 
 function deleteSelected(): void {
   const s = store.scene
@@ -590,7 +692,7 @@ async function handleImportFile(e: Event): Promise<void> {
 <template>
   <div class="floor-editor">
     <!-- Toolbar -->
-    <div class="toolbar">
+    <div class="toolbar toolbar-scrollable">
       <span class="title">{{ t('空间编辑器') }}</span>
 
       <!-- Tool switcher -->
@@ -673,7 +775,49 @@ async function handleImportFile(e: Event): Promise<void> {
         {{ t('取消放置落点') }}
       </el-button>
 
-      <div style="flex: 1" />
+      <div
+        class="viewport-controls"
+        role="group"
+        :aria-label="editorT('space.editor.viewport.controls')"
+      >
+        <el-button
+          data-test="zoom-out"
+          size="small"
+          :disabled="!viewportNavigationAvailable || !viewportStatus.canZoomOut"
+          :aria-label="editorT('space.editor.viewport.zoomOut')"
+          :title="editorT('space.editor.viewport.zoomOut')"
+          @click="zoomOut"
+        >−</el-button>
+        <span data-test="zoom-percent" class="zoom-percent" aria-live="polite">
+          {{ viewportStatus.percent }}%
+        </span>
+        <el-button
+          data-test="zoom-in"
+          size="small"
+          :disabled="!viewportNavigationAvailable || !viewportStatus.canZoomIn"
+          :aria-label="editorT('space.editor.viewport.zoomIn')"
+          :title="editorT('space.editor.viewport.zoomIn')"
+          @click="zoomIn"
+        >+</el-button>
+        <el-button
+          data-test="fit-all"
+          size="small"
+          :disabled="!viewportNavigationAvailable"
+          :aria-label="editorT('space.editor.viewport.fitAllLabel')"
+          :title="editorT('space.editor.viewport.fitAllLabel')"
+          @click="fitAll"
+        >{{ editorT('space.editor.viewport.fitAll') }}</el-button>
+        <el-button
+          data-test="reset-view"
+          size="small"
+          :disabled="!viewportNavigationAvailable"
+          :aria-label="editorT('space.editor.viewport.reset')"
+          :title="editorT('space.editor.viewport.reset')"
+          @click="resetView"
+        >{{ editorT('space.editor.viewport.reset') }}</el-button>
+      </div>
+
+      <div class="toolbar-spacer" />
 
       <el-button type="primary" size="small" :loading="saving" @click="handleSave">
         {{ t('保存') }}
@@ -699,7 +843,11 @@ async function handleImportFile(e: Event): Promise<void> {
           :class="[
             'canvas-container',
             toolFeedback.cursorClass,
-            { 'placement-mode': placementMode || connectorPlacementMode },
+            {
+              'placement-mode': placementMode || connectorPlacementMode,
+              'viewport-pan-ready': spacePanReady,
+              'viewport-panning': viewportPanning,
+            },
           ]"
         />
         <div data-test="tool-hint" class="tool-hint" role="status" aria-live="polite">
@@ -799,9 +947,39 @@ async function handleImportFile(e: Event): Promise<void> {
   gap: 8px;
   flex-shrink: 0;
 }
+.toolbar-scrollable {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+.toolbar-scrollable > :not(.toolbar-spacer) {
+  flex-shrink: 0;
+}
+.toolbar-spacer {
+  flex: 1 0 8px;
+  min-width: 8px;
+}
 .title {
   font-weight: 600;
   font-size: 15px;
+}
+.viewport-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.viewport-controls .el-button {
+  margin-left: 0;
+}
+.zoom-percent {
+  display: inline-block;
+  min-width: 4.5ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .editor-body {
   flex: 1;
@@ -834,6 +1012,12 @@ async function handleImportFile(e: Event): Promise<void> {
 }
 .canvas-container.placement-mode {
   cursor: crosshair;
+}
+.canvas-container.viewport-pan-ready {
+  cursor: grab;
+}
+.canvas-container.viewport-panning {
+  cursor: grabbing;
 }
 .tool-hint {
   position: absolute;

@@ -3,6 +3,31 @@ import type { EditorScene, RackVO, ZoneVO, AisleVO, MarkerVO } from '@/types/spa
 import { worldToScreen, screenToWorld, type ViewState, type XY } from './coords'
 import type { CollisionResult } from './interact/collide/CollisionHint'
 import { parseEditorPolygon } from './polygon'
+import {
+  MAX_RELATIVE_ZOOM,
+  MIN_RELATIVE_ZOOM,
+  RACK_GRID_DETAIL_LINE_BUDGET,
+  clampRelativeZoom,
+  collectSceneBounds,
+  createDefaultViewport,
+  fitBounds,
+  isRenderableMarker,
+  isRenderableRack,
+  panViewport,
+  resizeViewport,
+  toCoordinateView,
+  viewportLayerTransform,
+  zoomAround,
+  zoomPercent,
+  type ViewportState,
+} from './viewport'
+
+const VIEWPORT_TRANSIENT_NAME = 'viewport-transient'
+const VIEWPORT_TRANSIENT_SELECTOR = `.${VIEWPORT_TRANSIENT_NAME}`
+
+function nodeAuthoringView(viewport: ViewportState | undefined, fallback: ViewState): ViewState {
+  return viewport ? toCoordinateView(viewport) : fallback
+}
 
 export class SceneStage {
   readonly stage: Konva.Stage
@@ -15,13 +40,31 @@ export class SceneStage {
     marker: Konva.Layer
     ghost: Konva.Layer
   }
-  view: ViewState
+  private viewport: ViewportState
+  private initialViewport: ViewportState
+  private initialSceneBounds: ReturnType<typeof collectSceneBounds> = null
+  private viewportInitialized = false
+  private previewViewport: ViewportState | null = null
+  private currentScene: EditorScene | null = null
+  private resizeObserver: ResizeObserver | null = null
+  private cachedSelectedRackIds: string[] = []
+  private cachedCollisionResults: CollisionResult[] = []
+
+  get view(): ViewState {
+    return toCoordinateView(this.previewViewport ?? this.viewport)
+  }
 
   constructor(container: HTMLDivElement) {
-    const w = container.clientWidth || 800
-    const h = container.clientHeight || 600
+    const w = Number.isFinite(container.clientWidth) && container.clientWidth > 0
+      ? container.clientWidth
+      : 800
+    const h = Number.isFinite(container.clientHeight) && container.clientHeight > 0
+      ? container.clientHeight
+      : 600
     this.stage = new Konva.Stage({ container, width: w, height: h })
-    this.view = { panX: 0, panY: 0, zoom: 0.05, height: h }
+    const initial = createDefaultViewport(w, h)
+    this.viewport = initial
+    this.initialViewport = { ...initial }
     this.layers = {
       underlay: new Konva.Layer(),
       grid: new Konva.Layer(),
@@ -34,13 +77,48 @@ export class SceneStage {
     for (const layer of Object.values(this.layers)) {
       this.stage.add(layer)
     }
-    this.bindZoomPan()
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(entries => {
+        const entry = entries[0]
+        if (!entry) return
+        const width = entry.contentRect.width
+        const height = entry.contentRect.height
+        if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return
+        this.resize(width, height)
+      })
+      this.resizeObserver.observe(container)
+    }
   }
 
   render(scene: EditorScene): void {
+    this.currentScene = scene
+    if (!this.viewportInitialized) {
+      this.initialSceneBounds = collectSceneBounds(scene)
+      const fitted = fitBounds(
+        this.initialSceneBounds,
+        this.viewport.canvasWidth,
+        this.viewport.canvasHeight,
+      )
+      this.viewport = fitted
+      this.initialViewport = { ...fitted }
+      this.viewportInitialized = true
+    }
+    this.renderCurrentScene()
+    this.emitViewportChange(this.previewViewport !== null)
+  }
+
+  private renderCurrentScene(): void {
+    const scene = this.currentScene
+    if (!scene) return
+
     this.layers.zone.destroyChildren()
     this.layers.aisle.destroyChildren()
-    this.layers.rack.destroyChildren()
+    const rackNodes = [...this.layers.rack.find('.rack')]
+    const rackNodeSet = new Set<Konva.Node>(rackNodes)
+    const preservedRackHelpers = this.layers.rack.getChildren()
+      .filter(node => !rackNodeSet.has(node))
+    for (const node of rackNodes) node.destroy()
     this.layers.marker.destroyChildren()
 
     for (const zone of scene.zones) {
@@ -56,6 +134,9 @@ export class SceneStage {
       this.renderMarker(marker)
     }
 
+    for (const helper of preservedRackHelpers) helper.moveToTop()
+    this.applyCachedRackStyles()
+
     for (const layer of Object.values(this.layers)) {
       layer.batchDraw()
     }
@@ -70,11 +151,17 @@ export class SceneStage {
   }
 
   showGhost(rack: RackVO): void {
-    this.layers.ghost.destroyChildren()
-    const origin = worldToScreen({ x: rack.x, y: rack.y }, this.view)
-    const wPx = rack.cols * rack.cellW * this.view.zoom
-    const dPx = rack.depthCount * rack.cellD * this.view.zoom
-    const group = new Konva.Group({ x: origin.x, y: origin.y, rotation: -rack.rotationZ })
+    this.destroyViewportTransients()
+    const view = nodeAuthoringView(this.viewport, this.view)
+    const origin = worldToScreen({ x: rack.x, y: rack.y }, view)
+    const wPx = rack.cols * rack.cellW * view.zoom
+    const dPx = rack.depthCount * rack.cellD * view.zoom
+    const group = new Konva.Group({
+      name: VIEWPORT_TRANSIENT_NAME,
+      x: origin.x,
+      y: origin.y,
+      rotation: -rack.rotationZ,
+    })
     group.add(new Konva.Rect({
       x: 0, y: -dPx, width: wPx, height: dPx,
       fill: 'rgba(80,200,120,0.3)', stroke: '#40cc70', strokeWidth: 2, opacity: 0.7,
@@ -84,7 +171,7 @@ export class SceneStage {
   }
 
   hideGhost(): void {
-    this.layers.ghost.destroyChildren()
+    this.destroyViewportTransients()
     this.layers.ghost.batchDraw()
   }
 
@@ -93,11 +180,13 @@ export class SceneStage {
    * 与 renderRack 同向（矩形向屏幕上方延伸 dPx）。
    */
   showFootprintGhost(originWorld: XY, w: number, d: number, valid: boolean): void {
-    this.layers.ghost.destroyChildren()
-    const origin = worldToScreen(originWorld, this.view)
-    const wPx = w * this.view.zoom
-    const dPx = d * this.view.zoom
+    this.destroyViewportTransients()
+    const view = nodeAuthoringView(this.viewport, this.view)
+    const origin = worldToScreen(originWorld, view)
+    const wPx = w * view.zoom
+    const dPx = d * view.zoom
     const rect = new Konva.Rect({
+      name: VIEWPORT_TRANSIENT_NAME,
       x: origin.x,
       y: origin.y - dPx,
       width: wPx,
@@ -112,34 +201,99 @@ export class SceneStage {
     this.layers.ghost.batchDraw()
   }
 
-  zoom(delta: number): void {
-    const factor = delta > 0 ? 1.1 : 0.9
-    this.view = { ...this.view, zoom: Math.max(0.005, Math.min(2, this.view.zoom * factor)) }
-    this.layers.grid.batchDraw()
-    this.layers.rack.batchDraw()
-    this.layers.zone.batchDraw()
-    this.layers.aisle.batchDraw()
-    this.layers.marker.batchDraw()
+  getViewportSnapshot(): ViewportState {
+    return { ...(this.previewViewport ?? this.viewport) }
   }
 
-  pan(dx: number, dy: number): void {
-    this.view = {
-      ...this.view,
-      panX: this.view.panX - dx / this.view.zoom,
-      panY: this.view.panY + dy / this.view.zoom,
+  getViewportStatus(): { percent: number; canZoomIn: boolean; canZoomOut: boolean } {
+    const shown = this.previewViewport ?? this.viewport
+    const percent = zoomPercent(shown, this.initialViewport.zoom)
+    const minZoom = Math.max(Number.MIN_VALUE, this.initialViewport.zoom * MIN_RELATIVE_ZOOM)
+    const maxZoom = Math.min(Number.MAX_VALUE, this.initialViewport.zoom * MAX_RELATIVE_ZOOM)
+    return {
+      percent,
+      canZoomIn: shown.zoom < maxZoom,
+      canZoomOut: shown.zoom > minZoom,
     }
   }
 
+  previewZoomAt(factor: number, anchor: XY): void {
+    const shown = this.previewViewport ?? this.viewport
+    this.preview(zoomAround(
+      shown,
+      shown.zoom * factor,
+      anchor,
+      this.initialViewport.zoom,
+    ))
+  }
+
+  previewPan(screenDx: number, screenDy: number): void {
+    this.preview(panViewport(this.previewViewport ?? this.viewport, screenDx, screenDy))
+  }
+
+  commitViewport(): void {
+    if (!this.previewViewport) return
+    this.viewport = this.previewViewport
+    this.previewViewport = null
+    this.resetLayerTransforms()
+    this.destroyViewportTransients()
+    this.renderCurrentScene()
+    this.emitViewportChange(false)
+  }
+
+  cancelViewportPreview(): void {
+    this.previewViewport = null
+    this.resetLayerTransforms()
+    for (const layer of Object.values(this.layers)) layer.batchDraw()
+    this.emitViewportChange(false)
+  }
+
+  zoomStep(direction: 1 | -1): void {
+    this.previewZoomAt(
+      direction > 0 ? 1.1 : 0.9,
+      {
+        x: this.viewport.canvasWidth / 2,
+        y: this.viewport.canvasHeight / 2,
+      },
+    )
+    this.commitViewport()
+  }
+
+  fitAll(): void {
+    if (!this.currentScene) return
+    const fitted = fitBounds(
+      collectSceneBounds(this.currentScene),
+      this.viewport.canvasWidth,
+      this.viewport.canvasHeight,
+    )
+    const center = { x: fitted.canvasWidth / 2, y: fitted.canvasHeight / 2 }
+    this.previewViewport = zoomAround(
+      fitted,
+      clampRelativeZoom(fitted.zoom, this.initialViewport.zoom),
+      center,
+      this.initialViewport.zoom,
+    )
+    this.commitViewport()
+  }
+
+  resetView(): void {
+    this.previewViewport = { ...this.initialViewport }
+    this.commitViewport()
+  }
+
   destroy(): void {
+    this.resizeObserver?.disconnect()
+    this.resizeObserver = null
     this.stage.destroy()
   }
 
   private renderZone(zone: ZoneVO): void {
     const pts = parseEditorPolygon(zone.polygon)
     if (pts.length < 2) return
+    const view = nodeAuthoringView(this.viewport, this.view)
     const flat: number[] = []
     for (const pt of pts) {
-      const s = worldToScreen({ x: pt[0] ?? 0, y: pt[1] ?? 0 }, this.view)
+      const s = worldToScreen({ x: pt[0] ?? 0, y: pt[1] ?? 0 }, view)
       flat.push(s.x, s.y)
     }
     const poly = new Konva.Line({
@@ -157,9 +311,10 @@ export class SceneStage {
   private renderAisle(aisle: AisleVO): void {
     const pts = parseEditorPolygon(aisle.polygon)
     if (pts.length < 2) return
+    const view = nodeAuthoringView(this.viewport, this.view)
     const flat: number[] = []
     for (const pt of pts) {
-      const s = worldToScreen({ x: pt[0] ?? 0, y: pt[1] ?? 0 }, this.view)
+      const s = worldToScreen({ x: pt[0] ?? 0, y: pt[1] ?? 0 }, view)
       flat.push(s.x, s.y)
     }
     const poly = new Konva.Line({
@@ -174,9 +329,11 @@ export class SceneStage {
   }
 
   private renderRack(rack: RackVO): void {
-    const origin = worldToScreen({ x: rack.x, y: rack.y }, this.view)
-    const wPx = rack.cols * rack.cellW * this.view.zoom
-    const dPx = rack.depthCount * rack.cellD * this.view.zoom
+    if (!isRenderableRack(rack)) return
+    const view = nodeAuthoringView(this.viewport, this.view)
+    const origin = worldToScreen({ x: rack.x, y: rack.y }, view)
+    const wPx = rack.cols * rack.cellW * view.zoom
+    const dPx = rack.depthCount * rack.cellD * view.zoom
 
     const group = new Konva.Group({
       id: rack.id,
@@ -197,21 +354,27 @@ export class SceneStage {
     })
     group.add(rect)
 
-    // Grid lines to represent locations (E-D5: no per-location nodes)
-    for (let c = 1; c < rack.cols; c++) {
-      const xPx = c * rack.cellW * this.view.zoom
-      group.add(new Konva.Line({ points: [xPx, -dPx, xPx, 0], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
-    }
-    for (let d = 1; d < rack.depthCount; d++) {
-      const yPx = -(d * rack.cellD * this.view.zoom)
-      group.add(new Konva.Line({ points: [0, yPx, wPx, yPx], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
+    // Grid lines represent locations without per-location nodes. Very large
+    // counts retain the footprint but omit detail so render work stays bounded.
+    const gridLineCount = (rack.cols - 1) + (rack.depthCount - 1)
+    if (gridLineCount <= RACK_GRID_DETAIL_LINE_BUDGET) {
+      for (let c = 1; c < rack.cols; c++) {
+        const xPx = c * rack.cellW * view.zoom
+        group.add(new Konva.Line({ points: [xPx, -dPx, xPx, 0], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
+      }
+      for (let d = 1; d < rack.depthCount; d++) {
+        const yPx = -(d * rack.cellD * view.zoom)
+        group.add(new Konva.Line({ points: [0, yPx, wPx, yPx], stroke: '#4070cc', strokeWidth: 0.5, opacity: 0.5 }))
+      }
     }
 
     this.layers.rack.add(group)
   }
 
   private renderMarker(marker: MarkerVO): void {
-    const s = worldToScreen({ x: marker.x, y: marker.y }, this.view)
+    if (!isRenderableMarker(marker)) return
+    const view = nodeAuthoringView(this.viewport, this.view)
+    const s = worldToScreen({ x: marker.x, y: marker.y }, view)
     const circle = new Konva.Circle({ x: s.x, y: s.y, radius: 6, fill: '#e05050', stroke: '#fff', strokeWidth: 1 })
     const label = new Konva.Text({ x: s.x + 8, y: s.y - 8, text: marker.text, fontSize: 11, fill: '#333' })
     this.layers.marker.add(circle, label)
@@ -227,16 +390,26 @@ export class SceneStage {
    * Priority: collision-red > out-of-zone-yellow > selected-blue > normal.
    */
   applyRackStyles(selectedIds: string[], collisionResults: CollisionResult[]): void {
+    this.cachedSelectedRackIds = [...selectedIds]
+    this.cachedCollisionResults = collisionResults.map(result => ({
+      ...result,
+      collidingWith: [...result.collidingWith],
+    }))
+    this.applyCachedRackStyles()
+    this.layers.rack.batchDraw()
+  }
+
+  private applyCachedRackStyles(): void {
     const redIds = new Set<string>()
     const yellowIds = new Set<string>()
-    for (const r of collisionResults) {
+    for (const r of this.cachedCollisionResults) {
       if (r.collidingWith.length > 0) {
         redIds.add(r.rackId)
         for (const id of r.collidingWith) redIds.add(id)
       }
       if (r.outOfZone) yellowIds.add(r.rackId)
     }
-    const selSet = new Set(selectedIds)
+    const selSet = new Set(this.cachedSelectedRackIds)
 
     for (const node of this.layers.rack.find<Konva.Group>('.rack')) {
       const rect = node.findOne<Konva.Rect>('Rect')
@@ -249,26 +422,59 @@ export class SceneStage {
       rect.stroke(red ? '#ff4040' : yellow ? '#ffaa00' : selected ? '#0099ff' : '#4070cc')
       rect.strokeWidth(selected ? 2.5 : red || yellow ? 2 : 1)
     }
-    this.layers.rack.batchDraw()
   }
 
-  private bindZoomPan(): void {
-    // Scroll-wheel zoom anchored at cursor
-    this.stage.on('wheel', (e) => {
-      e.evt.preventDefault()
-      const pointer = this.stage.getPointerPosition()
-      if (!pointer) return
-      const factor = e.evt.deltaY < 0 ? 1.1 : 0.9
-      const oldZoom = this.view.zoom
-      const newZoom = Math.max(0.005, Math.min(2, oldZoom * factor))
-      const worldX = pointer.x / oldZoom + this.view.panX
-      const worldY = (this.view.height - pointer.y) / oldZoom + this.view.panY
-      this.view = {
-        zoom: newZoom,
-        panX: worldX - pointer.x / newZoom,
-        panY: worldY - (this.view.height - pointer.y) / newZoom,
-        height: this.view.height,
-      }
-    })
+  private preview(next: ViewportState): void {
+    this.previewViewport = next
+    const transform = viewportLayerTransform(this.viewport, next)
+    for (const layer of Object.values(this.layers)) {
+      layer.position({ x: transform.x, y: transform.y })
+      layer.scale({ x: transform.scale, y: transform.scale })
+      layer.batchDraw()
+    }
+    this.emitViewportChange(true)
+  }
+
+  private resize(width: number, height: number): void {
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return
+    const hasPreview = this.previewViewport !== null
+    const isSameSize = width === this.viewport.canvasWidth && height === this.viewport.canvasHeight
+    if (!hasPreview && isSameSize) return
+
+    if (this.previewViewport) {
+      this.viewport = this.previewViewport
+      this.previewViewport = null
+      this.resetLayerTransforms()
+      this.destroyViewportTransients()
+    }
+
+    this.stage.size({ width, height })
+    const resized = resizeViewport(this.viewport, width, height)
+    const nextInitial = fitBounds(this.initialSceneBounds, width, height)
+    const center = { x: resized.canvasWidth / 2, y: resized.canvasHeight / 2 }
+    this.initialViewport = nextInitial
+    this.viewport = zoomAround(
+      resized,
+      clampRelativeZoom(resized.zoom, nextInitial.zoom),
+      center,
+      nextInitial.zoom,
+    )
+    this.renderCurrentScene()
+    this.emitViewportChange(false)
+  }
+
+  private destroyViewportTransients(): void {
+    for (const node of this.layers.ghost.find(VIEWPORT_TRANSIENT_SELECTOR)) node.destroy()
+  }
+
+  private resetLayerTransforms(): void {
+    for (const layer of Object.values(this.layers)) {
+      layer.position({ x: 0, y: 0 })
+      layer.scale({ x: 1, y: 1 })
+    }
+  }
+
+  private emitViewportChange(preview: boolean): void {
+    this.stage.fire('viewportchange', { preview, ...this.getViewportStatus() }, false)
   }
 }

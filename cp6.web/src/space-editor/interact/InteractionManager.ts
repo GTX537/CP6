@@ -9,6 +9,7 @@ import { getRotateTransformerNodes, RotateTool } from './tools/RotateTool'
 import { MarkerTool } from './tools/MarkerTool'
 import { ZoneTool } from './tools/ZoneTool'
 import type { WorldRect } from './select/lassoHit'
+import { ViewportController } from './ViewportController'
 
 export type ToolType = 'select' | 'drag' | 'rotate' | 'marker' | 'zone'
 type Store = ReturnType<typeof useSpaceEditorStore>
@@ -22,6 +23,8 @@ export interface ITool {
   onDeactivate?(): void
   onEscape?(): void
 }
+
+const TOOL_CLICK_SUPPRESSION_MS = 250
 
 export interface ToolContext {
   stage: SceneStage
@@ -64,6 +67,12 @@ export class InteractionManager {
   private _activeTool: ToolType = 'select'
   private _ctrlHeld = false
   private _enabled = true
+  private _destroyed = false
+  private viewportRefreshGeneration = 0
+  private suppressNextToolClick = false
+  private toolClickSuppressionTimer: ReturnType<typeof setTimeout> | null = null
+  private navigationStateHandler: (active: boolean) => void = () => {}
+  private readonly viewportController: ViewportController
   readonly transformer: Konva.Transformer
 
   constructor(stage: SceneStage, store: Store, afterCommand: () => void) {
@@ -96,6 +105,20 @@ export class InteractionManager {
       zone: new ZoneTool(this.ctx),
     }
 
+    const viewportElement = typeof stage.stage.container === 'function'
+      ? stage.stage.container()
+      : document.createElement('div')
+    this.viewportController = new ViewportController(viewportElement, stage, {
+      getActiveTool: () => this._activeTool,
+      isBackground: (point) => {
+        const target = stage.stage.getIntersection(point)
+        return target === null || (!findRackGroup(target) && !isTransformerNode(target))
+      },
+      onNavigationStateChange: (active) => this.navigationStateHandler(active),
+      onToolClickSuppressionChange: (active) => this.setToolClickSuppression(active),
+      onWheelCommitDuringPointerDown: () => this.refreshTransformerSynchronously(),
+    })
+
     this.bindEvents()
     this.tools.select.onActivate?.()
   }
@@ -107,10 +130,35 @@ export class InteractionManager {
     this.tools[this._activeTool].onDeactivate?.()
     this._activeTool = type
     this.tools[type].onActivate?.()
+    if (!this._enabled) this.refreshTransformer()
   }
 
   setCtrlHeld(held: boolean): void {
     this._ctrlHeld = held
+  }
+
+  setSpaceHeld(held: boolean): void {
+    this.viewportController.setSpaceHeld(held)
+  }
+
+  setNavigationStateHandler(handler: (active: boolean) => void): void {
+    this.navigationStateHandler = handler
+  }
+
+  zoomIn(): void {
+    this.viewportController.zoomIn()
+  }
+
+  zoomOut(): void {
+    this.viewportController.zoomOut()
+  }
+
+  fitAll(): void {
+    this.viewportController.fitAll()
+  }
+
+  resetView(): void {
+    this.viewportController.resetView()
   }
 
   /** 注入 ZoneTool 拖框完成回调（FloorEditor 在此接手弹窗/校验/命令栈）。 */
@@ -121,10 +169,9 @@ export class InteractionManager {
   /** Disable all event handling (e.g. during placement mode). */
   setEnabled(enabled: boolean): void {
     this._enabled = enabled
-    if (!enabled) {
-      this.transformer.nodes([])
-      this.ctx.stage.layers.rack.batchDraw()
-    }
+    this.viewportController.setEnabled(enabled)
+    if (!enabled) this.clearToolClickSuppression()
+    this.refreshTransformer()
   }
 
   /** Select all racks in the current scene. */
@@ -156,16 +203,31 @@ export class InteractionManager {
 
   /** Re-attach transformer to current selection after a re-render. */
   refreshTransformer(): void {
-    const nodes = this._activeTool === 'rotate'
-      ? getRotateTransformerNodes(
-        this.ctx.store.selectionIds,
-        (id) => this.ctx.stage.getRackNode(id),
-      )
-      : this.ctx.store.selectionIds
-        .map((id: string) => this.ctx.stage.getRackNode(id))
-        .filter((n): n is Konva.Group => n !== null)
-    this.transformer.nodes(nodes)
+    this.attachTransformerNodes()
     this.ctx.stage.layers.rack.batchDraw()
+  }
+
+  private refreshTransformerSynchronously(): void {
+    this.attachTransformerNodes()
+    this.ctx.stage.stage.draw()
+  }
+
+  private attachTransformerNodes(): void {
+    this.viewportRefreshGeneration++
+    const toolAllowsTransformer = this._activeTool === 'select'
+      || this._activeTool === 'drag'
+      || this._activeTool === 'rotate'
+    const nodes = !this._enabled || !toolAllowsTransformer
+      ? []
+      : this._activeTool === 'rotate'
+        ? getRotateTransformerNodes(
+          this.ctx.store.selectionIds,
+          (id) => this.ctx.stage.getRackNode(id),
+        )
+        : this.ctx.store.selectionIds
+          .map((id: string) => this.ctx.stage.getRackNode(id))
+          .filter((n): n is Konva.Group => n !== null)
+    this.transformer.nodes(nodes)
   }
 
   private bindEvents(): void {
@@ -185,12 +247,62 @@ export class InteractionManager {
     })
     konvaStage.on('click.im', (e: Konva.KonvaEventObject<MouseEvent>) => {
       if (!this._enabled) return
+      if (this.consumeToolClickSuppression()) return
       this.tools[this._activeTool].onClick?.(e)
+    })
+    konvaStage.on('viewportchange.im', (event) => {
+      if ((event as typeof event & { preview?: boolean }).preview !== true) {
+        this.scheduleViewportTransformerRefresh()
+      }
     })
   }
 
+  /**
+   * SceneStage.render and command handling can synchronously request the same attachment.
+   * Defer the event path so an explicit refresh in that turn becomes canonical.
+   */
+  private scheduleViewportTransformerRefresh(): void {
+    const generation = ++this.viewportRefreshGeneration
+    queueMicrotask(() => {
+      if (this._destroyed || generation !== this.viewportRefreshGeneration) return
+      this.refreshTransformer()
+    })
+  }
+
+  private setToolClickSuppression(active: boolean): void {
+    if (!active) {
+      this.clearToolClickSuppression()
+      return
+    }
+    this.clearToolClickSuppression()
+    this.suppressNextToolClick = true
+    this.toolClickSuppressionTimer = setTimeout(() => {
+      this.toolClickSuppressionTimer = null
+      this.suppressNextToolClick = false
+    }, TOOL_CLICK_SUPPRESSION_MS)
+  }
+
+  private consumeToolClickSuppression(): boolean {
+    if (!this.suppressNextToolClick) return false
+    this.clearToolClickSuppression()
+    return true
+  }
+
+  private clearToolClickSuppression(): void {
+    this.suppressNextToolClick = false
+    if (this.toolClickSuppressionTimer === null) return
+    clearTimeout(this.toolClickSuppressionTimer)
+    this.toolClickSuppressionTimer = null
+  }
+
   destroy(): void {
+    if (this._destroyed) return
+    this._destroyed = true
+    this.viewportRefreshGeneration++
+    this.clearToolClickSuppression()
     const konvaStage = this.ctx.stage.stage
+    konvaStage.off('viewportchange.im')
+    this.viewportController.destroy()
     konvaStage.off('mousedown.im')
     konvaStage.off('mousemove.im')
     konvaStage.off('mouseup.im')

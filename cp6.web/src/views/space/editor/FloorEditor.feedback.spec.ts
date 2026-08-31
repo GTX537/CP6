@@ -7,19 +7,35 @@ import { createPinia, setActivePinia } from 'pinia'
 import { useSpaceEditorStore } from '@/stores/spaceEditor'
 import { sceneApi } from '@/api/space/scene'
 import FloorEditor from './FloorEditor.vue'
+import floorEditorSource from './FloorEditor.vue?raw'
 import type { EditorScene, RackVO } from '@/types/space/scene'
 
-const { sceneStageInstances, interactionInstances } = vi.hoisted(() => ({
+const { sceneStageInstances, interactionInstances, viewportStatusFixture } = vi.hoisted(() => ({
   sceneStageInstances: [] as Array<{
     render: ReturnType<typeof vi.fn>
     destroy: ReturnType<typeof vi.fn>
-    handlers: Record<string, () => void>
+    handlers: Record<string, (event?: unknown) => void>
+    stage: {
+      on: ReturnType<typeof vi.fn>
+      off: ReturnType<typeof vi.fn>
+      getPointerPosition: ReturnType<typeof vi.fn>
+    }
+    getViewportStatus: ReturnType<typeof vi.fn>
     showFootprintGhost: ReturnType<typeof vi.fn>
   }>,
   interactionInstances: [] as Array<{
     switchTool: ReturnType<typeof vi.fn>
     destroy: ReturnType<typeof vi.fn>
+    setSpaceHeld: ReturnType<typeof vi.fn>
+    setNavigationStateHandler: ReturnType<typeof vi.fn>
+    navigationStateHandler: ((active: boolean) => void) | null
+    zoomIn: ReturnType<typeof vi.fn>
+    zoomOut: ReturnType<typeof vi.fn>
+    fitAll: ReturnType<typeof vi.fn>
+    resetView: ReturnType<typeof vi.fn>
+    setEnabled: ReturnType<typeof vi.fn>
   }>,
+  viewportStatusFixture: { percent: 100, canZoomIn: true, canZoomOut: true },
 }))
 
 vi.mock('vue-router', () => ({
@@ -37,14 +53,15 @@ vi.mock('@/api/space/scene', () => ({
 
 vi.mock('@/space-editor/SceneStage', () => ({
   SceneStage: class {
-    handlers: Record<string, () => void> = {}
+    handlers: Record<string, (event?: unknown) => void> = {}
     stage = {
-      on: vi.fn((event: string, handler: () => void) => { this.handlers[event] = handler }),
+      on: vi.fn((event: string, handler: (payload?: unknown) => void) => { this.handlers[event] = handler }),
       off: vi.fn(),
       getPointerPosition: vi.fn(() => ({ x: 1, y: 1 })),
     }
     render = vi.fn()
     destroy = vi.fn()
+    getViewportStatus = vi.fn(() => ({ ...viewportStatusFixture }))
     applyRackStyles = vi.fn()
     showFootprintGhost = vi.fn()
     hideGhost = vi.fn()
@@ -63,6 +80,15 @@ vi.mock('@/space-editor/interact/InteractionManager', () => ({
     refreshTransformer = vi.fn()
     destroy = vi.fn()
     setCtrlHeld = vi.fn()
+    setSpaceHeld = vi.fn()
+    navigationStateHandler: ((active: boolean) => void) | null = null
+    setNavigationStateHandler = vi.fn((handler: (active: boolean) => void) => {
+      this.navigationStateHandler = handler
+    })
+    zoomIn = vi.fn()
+    zoomOut = vi.fn()
+    fitAll = vi.fn()
+    resetView = vi.fn()
     selectAll = vi.fn()
     escape = vi.fn()
     setEnabled = vi.fn()
@@ -95,7 +121,12 @@ vi.mock('./panels/BindCodesDialog.vue', () => ({
     template: '<div v-if="modelValue" data-test="bind-codes-dialog">{{ rackId }}</div>',
   },
 }))
-vi.mock('./panels/ConnectorPanel.vue', () => ({ default: { template: '<div />' } }))
+vi.mock('./panels/ConnectorPanel.vue', () => ({
+  default: {
+    emits: ['request-place'],
+    template: '<button data-test="emit-connector" @click="$emit(\'request-place\', \'connector-1\')" />',
+  },
+}))
 vi.mock('./panels/PropertiesPanel.vue', () => ({ default: { template: '<div />' } }))
 vi.mock('@/api/space/connector', () => ({ connectorApi: { upsertStop: vi.fn() } }))
 
@@ -130,6 +161,7 @@ async function mountEditor(locale = 'ja', scene = makeScene()) {
   vi.mocked(sceneApi.get).mockResolvedValue({ code: 0, message: '', data: scene })
 
   const wrapper = mount(FloorEditor, {
+    attachTo: document.body,
     global: { plugins: [pinia, createTestI18n(locale), ElementPlus] },
   })
   mountedWrappers.push(wrapper)
@@ -142,6 +174,7 @@ describe('FloorEditor tool feedback', () => {
     vi.clearAllMocks()
     sceneStageInstances.length = 0
     interactionInstances.length = 0
+    Object.assign(viewportStatusFixture, { percent: 100, canZoomIn: true, canZoomOut: true })
     vi.stubGlobal('URL', {
       createObjectURL: vi.fn(() => 'blob:scene'),
       revokeObjectURL: vi.fn(),
@@ -362,6 +395,436 @@ describe('FloorEditor tool feedback', () => {
     expect(command.do).toHaveBeenCalledTimes(2)
     expect((undo.element as HTMLButtonElement).disabled).toBe(false)
     expect((redo.element as HTMLButtonElement).disabled).toBe(true)
+  })
+
+  it('renders an accessible viewport toolbar and delegates controls without dirtying the scene', async () => {
+    const { wrapper, store } = await mountEditor('zh-CN')
+    const manager = interactionInstances[0]!
+    const markDirty = vi.spyOn(store, 'markDirty')
+    const markDirtyDelete = vi.spyOn(store, 'markDirtyDelete')
+    store.dirty.upsert.add('already-dirty')
+    store.dirty.del.set('already-deleted', 'rack')
+
+    const controls = wrapper.get('[role="group"][aria-label="视图控制"]')
+    const zoomOut = controls.get('[data-test="zoom-out"]')
+    const zoomPercent = controls.get('[data-test="zoom-percent"]')
+    const zoomIn = controls.get('[data-test="zoom-in"]')
+    const fitAll = controls.get('[data-test="fit-all"]')
+    const resetView = controls.get('[data-test="reset-view"]')
+
+    expect(zoomOut.attributes()).toMatchObject({ 'aria-label': '缩小视图', title: '缩小视图' })
+    expect(zoomPercent.attributes('aria-live')).toBe('polite')
+    expect(zoomPercent.text()).toBe('100%')
+    expect(zoomIn.attributes()).toMatchObject({ 'aria-label': '放大视图', title: '放大视图' })
+    expect(fitAll.attributes()).toMatchObject({ 'aria-label': '适配全部内容', title: '适配全部内容' })
+    expect(fitAll.text()).toBe('适配全部')
+    expect(resetView.attributes()).toMatchObject({ 'aria-label': '复位视图', title: '复位视图' })
+    expect(resetView.text()).toBe('复位视图')
+
+    await zoomOut.trigger('click')
+    await zoomIn.trigger('click')
+    await fitAll.trigger('click')
+    await resetView.trigger('click')
+
+    expect(manager.zoomOut).toHaveBeenCalledTimes(1)
+    expect(manager.zoomIn).toHaveBeenCalledTimes(1)
+    expect(manager.fitAll).toHaveBeenCalledTimes(1)
+    expect(manager.resetView).toHaveBeenCalledTimes(1)
+    expect(markDirty).not.toHaveBeenCalled()
+    expect(markDirtyDelete).not.toHaveBeenCalled()
+    expect([...store.dirty.upsert]).toEqual(['already-dirty'])
+    expect([...store.dirty.del]).toEqual([['already-deleted', 'rack']])
+  })
+
+  it.each([
+    ['ja', ['表示操作', '縮小', '拡大', 'すべての内容を表示', '全体表示', '表示をリセット']],
+    ['en', ['View controls', 'Zoom out', 'Zoom in', 'Fit all content', 'Fit all', 'Reset view']],
+  ] as const)('renders localized viewport labels in %s', async (locale, labels) => {
+    const { wrapper } = await mountEditor(locale)
+    const [controlsLabel, zoomOutLabel, zoomInLabel, fitAllLabel, fitAllText, resetLabel] = labels
+    const controls = wrapper.get('[role="group"]')
+
+    expect(controls.attributes('aria-label')).toBe(controlsLabel)
+    expect(controls.get('[data-test="zoom-out"]').attributes()).toMatchObject({
+      'aria-label': zoomOutLabel,
+      title: zoomOutLabel,
+    })
+    expect(controls.get('[data-test="zoom-in"]').attributes()).toMatchObject({
+      'aria-label': zoomInLabel,
+      title: zoomInLabel,
+    })
+    expect(controls.get('[data-test="fit-all"]').attributes()).toMatchObject({
+      'aria-label': fitAllLabel,
+      title: fitAllLabel,
+    })
+    expect(controls.get('[data-test="fit-all"]').text()).toBe(fitAllText)
+    expect(controls.get('[data-test="reset-view"]').attributes()).toMatchObject({
+      'aria-label': resetLabel,
+      title: resetLabel,
+    })
+    expect(controls.get('[data-test="reset-view"]').text()).toBe(resetLabel)
+  })
+
+  it('keeps every toolbar action in a horizontally scrollable strip', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const toolbar = wrapper.get('.toolbar')
+
+    expect(toolbar.classes()).toContain('toolbar-scrollable')
+    expect(toolbar.find('.toolbar-spacer').exists()).toBe(true)
+    for (const selector of ['zoom-out', 'zoom-percent', 'zoom-in', 'fit-all', 'reset-view', 'export-scene', 'reverse-model']) {
+      expect(toolbar.find(`[data-test="${selector}"]`).exists(), selector).toBe(true)
+    }
+    expect(toolbar.text()).toContain('保存')
+    expect(toolbar.text()).toContain('导入')
+    expect(floorEditorSource).toMatch(/\.toolbar-scrollable\s*\{[^}]*overflow-x:\s*auto;/s)
+  })
+
+  it('keeps viewport actions unavailable until the interaction manager is ready', async () => {
+    let resolveScene!: (value: { code: number; message: string; data: EditorScene }) => void
+    vi.mocked(sceneApi.get).mockReturnValue(new Promise(resolve => { resolveScene = resolve }))
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const wrapper = mount(FloorEditor, {
+      attachTo: document.body,
+      global: { plugins: [pinia, createTestI18n('zh-CN'), ElementPlus] },
+    })
+    mountedWrappers.push(wrapper)
+    const actionSelectors = ['zoom-out', 'zoom-in', 'fit-all', 'reset-view']
+
+    for (const selector of actionSelectors) {
+      expect((wrapper.get(`[data-test="${selector}"]`).element as HTMLButtonElement).disabled).toBe(true)
+    }
+    const space = new KeyboardEvent('keydown', {
+      code: 'Space', key: ' ', bubbles: true, cancelable: true,
+    })
+    document.dispatchEvent(space)
+    expect(space.defaultPrevented).toBe(false)
+    expect(wrapper.get('[data-test="editor-canvas"]').classes()).not.toContain('viewport-pan-ready')
+
+    resolveScene({ code: 0, message: '', data: makeScene() })
+    await flushPromises()
+
+    expect(interactionInstances).toHaveLength(1)
+    for (const selector of actionSelectors) {
+      expect((wrapper.get(`[data-test="${selector}"]`).element as HTMLButtonElement).disabled).toBe(false)
+    }
+  })
+
+  it.each([
+    ['rack placement', '[data-test="emit-template"]', '取消放置'],
+    ['connector placement', '[data-test="emit-connector"]', '取消放置落点'],
+  ] as const)(
+    'disables viewport navigation during %s and restores it after cancellation',
+    async (_mode, enterSelector, cancelLabel) => {
+      const { wrapper, store } = await mountEditor('zh-CN')
+      const manager = interactionInstances[0]!
+      const canvas = wrapper.get('[data-test="editor-canvas"]')
+      const actionSelectors = ['zoom-out', 'zoom-in', 'fit-all', 'reset-view']
+      store.dirty.upsert.add('already-dirty')
+      store.dirty.del.set('already-deleted', 'rack')
+
+      document.dispatchEvent(new KeyboardEvent('keydown', {
+        code: 'Space', key: ' ', bubbles: true, cancelable: true,
+      }))
+      manager.navigationStateHandler!(true)
+      await wrapper.get(enterSelector).trigger('click')
+      await flushPromises()
+
+      expect(manager.setEnabled).toHaveBeenLastCalledWith(false)
+      expect(manager.setSpaceHeld).toHaveBeenLastCalledWith(false)
+      expect(canvas.classes()).not.toContain('viewport-pan-ready')
+      expect(canvas.classes()).toContain('viewport-panning')
+      manager.navigationStateHandler!(false)
+      await flushPromises()
+      expect(canvas.classes()).not.toContain('viewport-panning')
+
+      manager.setSpaceHeld.mockClear()
+      manager.zoomOut.mockClear()
+      manager.zoomIn.mockClear()
+      manager.fitAll.mockClear()
+      manager.resetView.mockClear()
+      for (const selector of actionSelectors) {
+        const action = wrapper.get(`[data-test="${selector}"]`)
+        expect((action.element as HTMLButtonElement).disabled).toBe(true)
+        await action.trigger('click')
+      }
+      const unavailableSpace = new KeyboardEvent('keydown', {
+        code: 'Space', key: ' ', bubbles: true, cancelable: true,
+      })
+      document.dispatchEvent(unavailableSpace)
+      await flushPromises()
+
+      expect(unavailableSpace.defaultPrevented).toBe(false)
+      expect(manager.setSpaceHeld).not.toHaveBeenCalledWith(true)
+      expect(manager.zoomOut).not.toHaveBeenCalled()
+      expect(manager.zoomIn).not.toHaveBeenCalled()
+      expect(manager.fitAll).not.toHaveBeenCalled()
+      expect(manager.resetView).not.toHaveBeenCalled()
+      expect([...store.dirty.upsert]).toEqual(['already-dirty'])
+      expect([...store.dirty.del]).toEqual([['already-deleted', 'rack']])
+
+      const cancel = wrapper.findAll('button').find(button => button.text() === cancelLabel)
+      expect(cancel).toBeDefined()
+      await cancel!.trigger('click')
+      await flushPromises()
+
+      expect(manager.setEnabled).toHaveBeenLastCalledWith(true)
+      for (const selector of actionSelectors) {
+        expect((wrapper.get(`[data-test="${selector}"]`).element as HTMLButtonElement).disabled).toBe(false)
+      }
+      await wrapper.get('[data-test="zoom-in"]').trigger('click')
+      expect(manager.zoomIn).toHaveBeenCalledTimes(1)
+    },
+  )
+
+  it('renders the non-default initial viewport status reported by the stage', async () => {
+    Object.assign(viewportStatusFixture, { percent: 275, canZoomIn: false, canZoomOut: true })
+
+    const { wrapper } = await mountEditor('zh-CN')
+    const stage = sceneStageInstances[0]!
+
+    expect(stage.getViewportStatus).toHaveBeenCalledTimes(1)
+    expect(wrapper.get('[data-test="zoom-percent"]').text()).toBe('275%')
+    expect((wrapper.get('[data-test="zoom-out"]').element as HTMLButtonElement).disabled).toBe(false)
+    expect((wrapper.get('[data-test="zoom-in"]').element as HTMLButtonElement).disabled).toBe(true)
+  })
+
+  it('synchronizes viewport percentage and zoom limits from stage events', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const stage = sceneStageInstances[0]!
+
+    expect(stage.getViewportStatus).toHaveBeenCalledTimes(1)
+    expect(wrapper.get('[data-test="zoom-percent"]').text()).toBe('100%')
+    expect((wrapper.get('[data-test="zoom-out"]').element as HTMLButtonElement).disabled).toBe(false)
+    expect((wrapper.get('[data-test="zoom-in"]').element as HTMLButtonElement).disabled).toBe(false)
+
+    stage.handlers['viewportchange.toolbar']!({ percent: 800, canZoomIn: false, canZoomOut: true })
+    await flushPromises()
+
+    expect(wrapper.get('[data-test="zoom-percent"]').text()).toBe('800%')
+    expect((wrapper.get('[data-test="zoom-out"]').element as HTMLButtonElement).disabled).toBe(false)
+    expect((wrapper.get('[data-test="zoom-in"]').element as HTMLButtonElement).disabled).toBe(true)
+
+    stage.handlers['viewportchange.toolbar']!({ percent: 10, canZoomIn: true, canZoomOut: false })
+    await flushPromises()
+
+    expect(wrapper.get('[data-test="zoom-percent"]').text()).toBe('10%')
+    expect((wrapper.get('[data-test="zoom-out"]').element as HTMLButtonElement).disabled).toBe(true)
+    expect((wrapper.get('[data-test="zoom-in"]').element as HTMLButtonElement).disabled).toBe(false)
+  })
+
+  it('falls back to stage status for invalid viewport events and tears down its namespace before the stage', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const stage = sceneStageInstances[0]!
+    const viewportChange = stage.handlers['viewportchange.toolbar']!
+
+    stage.getViewportStatus.mockReturnValue({ percent: 125, canZoomIn: true, canZoomOut: true })
+    viewportChange()
+    await flushPromises()
+    expect(wrapper.get('[data-test="zoom-percent"]').text()).toBe('125%')
+
+    stage.getViewportStatus.mockReturnValue({ percent: 75, canZoomIn: true, canZoomOut: false })
+    viewportChange({ percent: Number.NaN, canZoomIn: false, canZoomOut: true })
+    await flushPromises()
+    expect(wrapper.get('[data-test="zoom-percent"]').text()).toBe('75%')
+    expect((wrapper.get('[data-test="zoom-out"]').element as HTMLButtonElement).disabled).toBe(true)
+
+    wrapper.unmount()
+
+    const toolbarOffCalls = stage.stage.off.mock.calls.filter(([event]) => event === 'viewportchange.toolbar')
+    expect(toolbarOffCalls).toHaveLength(1)
+    const toolbarOffIndex = stage.stage.off.mock.calls.findIndex(([event]) => event === 'viewportchange.toolbar')
+    expect(stage.stage.off.mock.invocationCallOrder[toolbarOffIndex]!)
+      .toBeLessThan(stage.destroy.mock.invocationCallOrder[0]!)
+  })
+
+  it('reflects Space readiness and manager navigation state in canvas cursor classes', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const manager = interactionInstances[0]!
+    const canvas = wrapper.get('[data-test="editor-canvas"]')
+    const firstSpaceDown = new KeyboardEvent('keydown', {
+      code: 'Space', key: ' ', bubbles: true, cancelable: true,
+    })
+
+    canvas.element.dispatchEvent(firstSpaceDown)
+    await flushPromises()
+
+    expect(firstSpaceDown.defaultPrevented).toBe(true)
+    expect(manager.setSpaceHeld).toHaveBeenCalledWith(true)
+    expect(canvas.classes()).toContain('viewport-pan-ready')
+
+    manager.navigationStateHandler!(true)
+    await flushPromises()
+    expect(canvas.classes()).toContain('viewport-pan-ready')
+    expect(canvas.classes()).toContain('viewport-panning')
+
+    document.dispatchEvent(new KeyboardEvent('keydown', {
+      code: 'Space', key: ' ', repeat: true, bubbles: true, cancelable: true,
+    }))
+    expect(manager.setSpaceHeld.mock.calls.filter(([held]) => held === true)).toHaveLength(1)
+
+    document.dispatchEvent(new KeyboardEvent('keyup', {
+      code: 'Space', key: ' ', bubbles: true, cancelable: true,
+    }))
+    await flushPromises()
+    expect(manager.setSpaceHeld).toHaveBeenLastCalledWith(false)
+    expect(canvas.classes()).not.toContain('viewport-pan-ready')
+    expect(canvas.classes()).toContain('viewport-panning')
+
+    manager.navigationStateHandler!(false)
+    await flushPromises()
+    expect(canvas.classes()).not.toContain('viewport-panning')
+  })
+
+  it('preserves native Space activation for viewport and ordinary interactive controls', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const manager = interactionInstances[0]!
+    const canvas = wrapper.get('[data-test="editor-canvas"]')
+    const ordinaryButton = document.createElement('button')
+    const ordinaryLink = document.createElement('a')
+    ordinaryLink.href = '#viewport-test'
+    document.body.append(ordinaryButton, ordinaryLink)
+
+    try {
+      const targets = [
+        wrapper.get('[data-test="zoom-in"]').element as HTMLElement,
+        ordinaryButton,
+        ordinaryLink,
+      ]
+      for (const target of targets) {
+        manager.setSpaceHeld.mockClear()
+        target.focus()
+        const event = new KeyboardEvent('keydown', {
+          code: 'Space', key: ' ', bubbles: true, cancelable: true,
+        })
+        try {
+          target.dispatchEvent(event)
+          await flushPromises()
+
+          expect(event.defaultPrevented).toBe(false)
+          expect(manager.setSpaceHeld).not.toHaveBeenCalledWith(true)
+          expect(canvas.classes()).not.toContain('viewport-pan-ready')
+        } finally {
+          target.dispatchEvent(new KeyboardEvent('keyup', {
+            code: 'Space', key: ' ', bubbles: true, cancelable: true,
+          }))
+        }
+      }
+    } finally {
+      ordinaryButton.remove()
+      ordinaryLink.remove()
+    }
+  })
+
+  it('ignores prevented and modified Space shortcuts', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const manager = interactionInstances[0]!
+    const canvas = wrapper.get('[data-test="editor-canvas"]')
+    const cases = [
+      { ctrlKey: true },
+      { metaKey: true },
+      { altKey: true },
+      { shiftKey: true },
+      { defaultPrevented: true },
+    ]
+
+    for (const options of cases) {
+      manager.setSpaceHeld.mockClear()
+      const event = new KeyboardEvent('keydown', {
+        code: 'Space', key: ' ', bubbles: true, cancelable: true,
+        ctrlKey: options.ctrlKey,
+        metaKey: options.metaKey,
+        altKey: options.altKey,
+        shiftKey: options.shiftKey,
+      })
+      if (options.defaultPrevented) event.preventDefault()
+
+      document.dispatchEvent(event)
+      await flushPromises()
+
+      expect(manager.setSpaceHeld).not.toHaveBeenCalledWith(true)
+      expect(canvas.classes()).not.toContain('viewport-pan-ready')
+      if (!options.defaultPrevented) expect(event.defaultPrevented).toBe(false)
+      document.dispatchEvent(new KeyboardEvent('keyup', {
+        code: 'Space', key: ' ', bubbles: true, cancelable: true,
+      }))
+    }
+  })
+
+  it('ignores Space while typing, including nested editable targets', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const manager = interactionInstances[0]!
+    const contentEditable = document.createElement('div')
+    contentEditable.setAttribute('contenteditable', 'true')
+    const nestedEditableTarget = document.createElement('span')
+    contentEditable.appendChild(nestedEditableTarget)
+    const targets = [
+      document.createElement('input'),
+      document.createElement('textarea'),
+      document.createElement('select'),
+      contentEditable,
+      nestedEditableTarget,
+    ]
+    for (const target of targets.slice(0, -1)) document.body.appendChild(target)
+
+    try {
+      for (const target of targets) {
+        manager.setSpaceHeld.mockClear()
+        const event = new KeyboardEvent('keydown', {
+          code: 'Space', key: ' ', bubbles: true, cancelable: true,
+        })
+        target.dispatchEvent(event)
+        await flushPromises()
+
+        expect(event.defaultPrevented).toBe(false)
+        expect(manager.setSpaceHeld).not.toHaveBeenCalledWith(true)
+        expect(wrapper.get('[data-test="editor-canvas"]').classes()).not.toContain('viewport-pan-ready')
+      }
+    } finally {
+      for (const target of targets.slice(0, -1)) target.remove()
+    }
+  })
+
+  it('clears Space state on editable keyup, window blur, and unmount', async () => {
+    const { wrapper } = await mountEditor('zh-CN')
+    const manager = interactionInstances[0]!
+    const canvas = wrapper.get('[data-test="editor-canvas"]')
+    const input = document.createElement('input')
+    document.body.appendChild(input)
+
+    document.dispatchEvent(new KeyboardEvent('keydown', {
+      code: 'Space', key: ' ', bubbles: true, cancelable: true,
+    }))
+    manager.navigationStateHandler!(true)
+    input.dispatchEvent(new KeyboardEvent('keyup', {
+      code: 'Space', key: ' ', bubbles: true, cancelable: true,
+    }))
+    await flushPromises()
+    expect(manager.setSpaceHeld).toHaveBeenLastCalledWith(false)
+    expect(canvas.classes()).not.toContain('viewport-pan-ready')
+
+    document.dispatchEvent(new KeyboardEvent('keydown', {
+      code: 'Space', key: ' ', bubbles: true, cancelable: true,
+    }))
+    manager.navigationStateHandler!(true)
+    window.dispatchEvent(new Event('blur'))
+    await flushPromises()
+    expect(manager.setSpaceHeld).toHaveBeenLastCalledWith(false)
+    expect(canvas.classes()).not.toContain('viewport-pan-ready')
+    expect(canvas.classes()).toContain('viewport-panning')
+    manager.navigationStateHandler!(false)
+    await flushPromises()
+    expect(canvas.classes()).not.toContain('viewport-panning')
+
+    document.dispatchEvent(new KeyboardEvent('keydown', {
+      code: 'Space', key: ' ', bubbles: true, cancelable: true,
+    }))
+    wrapper.unmount()
+    input.remove()
+
+    expect(manager.setSpaceHeld).toHaveBeenLastCalledWith(false)
+    expect(manager.setSpaceHeld.mock.invocationCallOrder.at(-1)!)
+      .toBeLessThan(manager.destroy.mock.invocationCallOrder[0]!)
   })
 
   it('destroys its stage and interaction manager when unmounted', async () => {
