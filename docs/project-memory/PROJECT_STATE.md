@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## Space Editor 自由视口实现完成（2026-08-31）
+
+- 二维空间编辑器已支持指针锚定滚轮缩放、Space + 左键/中键全工具平移，以及拖拽模式空白平移与货架移动分流；工具栏提供缩小、百分比、放大、适配全部和复位视图。
+- 采用两阶段 Konva 图层预览与单次提交重绘；初始适配定义为 100%，范围 10%～800%，ResizeObserver 保持世界中心，提交后刷新 Transformer 与命中状态。
+- 视口只存在于前端页面生命周期，不进入场景 DTO、命令栈、保存请求或数据库；本任务没有 API、迁移和 CP6DB 数据变更，也没有把开发 Docker 验收描述为生产发布。
+
 ## Space Editor 版本化几何兼容修复已完成候选验证（2026-08-30）
 
 - Docker 验收环境的楼层场景接口正常返回约 305 KB 数据，但 `Space_Zone.Polygon`、`Space_Aisle.Polygon` 和 `Centerline` 已是 `{ schemaVersion: 1, points: [...] }`，旧编辑器仍按裸数组遍历，触发 `TypeError: t is not iterable` 并中断画布渲染；该问题与 Design API 站点开关、数据库连接或接口可用性无关。
