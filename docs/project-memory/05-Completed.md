@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-30 Space Editor 工具反馈增强验收
+
+- 为选择、拖拽、旋转、打点和新建库区补齐持续提示、工具光标与可访问激活态；反向建模可点击解释前置条件，导出成功提供页面反馈，旋转手柄扩大并增强对比度。
+- 修复加载期间工具状态与实际引擎分叉、卸载前异步请求返回后的副作用泄漏，以及多选货架被错误挂载旋转 Transformer 的边界；仅恰好单选一个有效货架时允许旋转。
+- 五语言本地兜底有自动化覆盖，并保留 Vue I18n 后端词条覆盖路径；组件覆盖反向建模正反路径、导出成功/失败和 undo/redo 状态。最终全量 Web 为 179 files / 943 tests，type-check、production build、独立规格/质量/整体代码审查均通过。
+- 本地 `127.0.0.1:18080` + 本地 API/CP6DB 的隔离 Chrome 验收通过；登录后的编辑器验收动作阶段控制台错误、页面错误、POST/PUT/PATCH/DELETE 均为 0，未点击保存，用户已确认。本任务 Git diff 不含 Docker、数据库、API、DTO、迁移或部署文件，执行过程未运行 Docker、数据库管理或迁移命令。
+
 ## 2026-08-30 UTC CRM Platform P08 S06 冻结闭环
 
 - Platform final-audit PR #26 head `a19a12672320bab2a84d73b7fc5645f0e90ee904` 的 PR run 33336245379 通过，合并为 `main@c0dd1f7adfbab398c0231ec90152db781885d52b`；exact-main run 33336448249 的 Windows、Linux、真实 Dapr/Kafka、真实 SQL Server 四个必需作业逐项 success，首次正式形成 `Frozen / Consumable` 决定。

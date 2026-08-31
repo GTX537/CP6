@@ -5,7 +5,7 @@ import type { useSpaceEditorStore } from '@/stores/spaceEditor'
 import { SnapEngine } from './snap/SnapEngine'
 import { SelectTool } from './tools/SelectTool'
 import { DragTool } from './tools/DragTool'
-import { RotateTool } from './tools/RotateTool'
+import { getRotateTransformerNodes, RotateTool } from './tools/RotateTool'
 import { MarkerTool } from './tools/MarkerTool'
 import { ZoneTool } from './tools/ZoneTool'
 import type { WorldRect } from './select/lassoHit'
@@ -156,9 +156,14 @@ export class InteractionManager {
 
   /** Re-attach transformer to current selection after a re-render. */
   refreshTransformer(): void {
-    const nodes = this.ctx.store.selectionIds
-      .map((id: string) => this.ctx.stage.getRackNode(id))
-      .filter((n): n is Konva.Group => n !== null)
+    const nodes = this._activeTool === 'rotate'
+      ? getRotateTransformerNodes(
+        this.ctx.store.selectionIds,
+        (id) => this.ctx.stage.getRackNode(id),
+      )
+      : this.ctx.store.selectionIds
+        .map((id: string) => this.ctx.stage.getRackNode(id))
+        .filter((n): n is Konva.Group => n !== null)
     this.transformer.nodes(nodes)
     this.ctx.stage.layers.rack.batchDraw()
   }

@@ -7,7 +7,17 @@ import type { ITool, ToolContext } from '../InteractionManager'
 import { findRackGroup, isTransformerNode } from '../InteractionManager'
 import { RotateRackCmd, type RackPose } from '../../command/commands/RotateRackCmd'
 import { rotateAboutCenter, snapAngle } from '../rotate/rotateGeometry'
+import { applyRotateHandleStyle } from '../rotate/rotateHandleStyle'
 import type { RackVO } from '@/types/space/scene'
+
+export function getRotateTransformerNodes(
+  selectionIds: readonly string[],
+  getRackNode: (id: string) => Konva.Group | null,
+): Konva.Group[] {
+  if (selectionIds.length !== 1) return []
+  const node = getRackNode(selectionIds[0]!)
+  return node ? [node] : []
+}
 
 export class RotateTool implements ITool {
   private ctx: ToolContext
@@ -21,6 +31,7 @@ export class RotateTool implements ITool {
   }
 
   onActivate(): void {
+    applyRotateHandleStyle(this.ctx.transformer, true)
     this.ctx.transformer.rotateEnabled(true)
     this.ctx.transformer.resizeEnabled(false)
     this.ctx.transformer.enabledAnchors([])
@@ -35,6 +46,7 @@ export class RotateTool implements ITool {
     this.ctx.transformer.off('transform.rt')
     this.ctx.transformer.off('transformend.rt')
     this.ctx.transformer.rotateEnabled(false)
+    applyRotateHandleStyle(this.ctx.transformer, false)
     this.ctx.transformer.nodes([])
     this.clearAngleText()
     this.ctx.stage.layers.rack.batchDraw()
@@ -131,9 +143,10 @@ export class RotateTool implements ITool {
   }
 
   private refreshTransformer(): void {
-    const nodes = this.ctx.store.selectionIds
-      .map((id: string) => this.ctx.stage.getRackNode(id))
-      .filter((n): n is Konva.Group => n !== null)
+    const nodes = getRotateTransformerNodes(
+      this.ctx.store.selectionIds,
+      (id) => this.ctx.stage.getRackNode(id),
+    )
     this.ctx.transformer.nodes(nodes)
     this.ctx.stage.layers.rack.batchDraw()
   }
