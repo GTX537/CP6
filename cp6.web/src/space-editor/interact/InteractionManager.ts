@@ -9,6 +9,7 @@ import { getRotateTransformerNodes, RotateTool } from './tools/RotateTool'
 import { MarkerTool } from './tools/MarkerTool'
 import { ZoneTool } from './tools/ZoneTool'
 import type { WorldRect } from './select/lassoHit'
+import { ViewportController } from './ViewportController'
 
 export type ToolType = 'select' | 'drag' | 'rotate' | 'marker' | 'zone'
 type Store = ReturnType<typeof useSpaceEditorStore>
@@ -64,6 +65,9 @@ export class InteractionManager {
   private _activeTool: ToolType = 'select'
   private _ctrlHeld = false
   private _enabled = true
+  private _destroyed = false
+  private navigationStateHandler: (active: boolean) => void = () => {}
+  private readonly viewportController: ViewportController
   readonly transformer: Konva.Transformer
 
   constructor(stage: SceneStage, store: Store, afterCommand: () => void) {
@@ -96,6 +100,18 @@ export class InteractionManager {
       zone: new ZoneTool(this.ctx),
     }
 
+    const viewportElement = typeof stage.stage.container === 'function'
+      ? stage.stage.container()
+      : document.createElement('div')
+    this.viewportController = new ViewportController(viewportElement, stage, {
+      getActiveTool: () => this._activeTool,
+      isBackground: (point) => {
+        const target = stage.stage.getIntersection(point)
+        return target === null || (!findRackGroup(target) && !isTransformerNode(target))
+      },
+      onNavigationStateChange: (active) => this.navigationStateHandler(active),
+    })
+
     this.bindEvents()
     this.tools.select.onActivate?.()
   }
@@ -113,6 +129,30 @@ export class InteractionManager {
     this._ctrlHeld = held
   }
 
+  setSpaceHeld(held: boolean): void {
+    this.viewportController.setSpaceHeld(held)
+  }
+
+  setNavigationStateHandler(handler: (active: boolean) => void): void {
+    this.navigationStateHandler = handler
+  }
+
+  zoomIn(): void {
+    this.viewportController.zoomIn()
+  }
+
+  zoomOut(): void {
+    this.viewportController.zoomOut()
+  }
+
+  fitAll(): void {
+    this.viewportController.fitAll()
+  }
+
+  resetView(): void {
+    this.viewportController.resetView()
+  }
+
   /** 注入 ZoneTool 拖框完成回调（FloorEditor 在此接手弹窗/校验/命令栈）。 */
   setZoneRectHandler(fn: (rect: WorldRect) => void): void {
     this.ctx.onZoneRectDrawn = fn
@@ -121,6 +161,7 @@ export class InteractionManager {
   /** Disable all event handling (e.g. during placement mode). */
   setEnabled(enabled: boolean): void {
     this._enabled = enabled
+    this.viewportController.setEnabled(enabled)
     if (!enabled) {
       this.transformer.nodes([])
       this.ctx.stage.layers.rack.batchDraw()
@@ -187,10 +228,19 @@ export class InteractionManager {
       if (!this._enabled) return
       this.tools[this._activeTool].onClick?.(e)
     })
+    konvaStage.on('viewportchange.im', (event) => {
+      if ((event as typeof event & { preview?: boolean }).preview !== true) {
+        this.refreshTransformer()
+      }
+    })
   }
 
   destroy(): void {
+    if (this._destroyed) return
+    this._destroyed = true
     const konvaStage = this.ctx.stage.stage
+    konvaStage.off('viewportchange.im')
+    this.viewportController.destroy()
     konvaStage.off('mousedown.im')
     konvaStage.off('mousemove.im')
     konvaStage.off('mouseup.im')
