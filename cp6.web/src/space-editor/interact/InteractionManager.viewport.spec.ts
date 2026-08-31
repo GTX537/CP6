@@ -10,6 +10,7 @@ const controllerMock = vi.hoisted(() => ({
       getActiveTool: () => string
       isBackground: (point: { x: number; y: number }) => boolean
       onNavigationStateChange?: (active: boolean) => void
+      onToolClickSuppressionChange?: (active: boolean) => void
       onWheelCommitDuringPointerDown?: () => void
     }
     resetView: ReturnType<typeof vi.fn>
@@ -37,6 +38,7 @@ vi.mock('./ViewportController', () => ({
         getActiveTool: () => string
         isBackground: (point: { x: number; y: number }) => boolean
         onNavigationStateChange?: (active: boolean) => void
+        onToolClickSuppressionChange?: (active: boolean) => void
         onWheelCommitDuringPointerDown?: () => void
       },
     ) {
@@ -83,7 +85,7 @@ function createHarness(initialSelection: string[] = []) {
       handlers.delete(name)
     }),
   }
-  const rackLayer = { add: vi.fn(), batchDraw: vi.fn() }
+  const rackLayer = { add: vi.fn(), batchDraw: vi.fn(), draw: vi.fn() }
   const stage = {
     stage: konvaStage,
     layers: {
@@ -105,16 +107,50 @@ function createHarness(initialSelection: string[] = []) {
   let selectionIds = [...initialSelection]
   const store = {
     get selectionIds() { return selectionIds },
-    scene: { racks: [{ id: 'rack-1' }, { id: 'rack-2' }], aisles: [] },
+    scene: {
+      floor: { id: 'floor-1' },
+      racks: [{ id: 'rack-1' }, { id: 'rack-2' }],
+      aisles: [],
+    },
+    stack: { exec: vi.fn() },
+    buildEditorContext: vi.fn(() => ({})),
     clearSelection: vi.fn(() => { selectionIds = [] }),
     setSelection: vi.fn((ids: string[]) => { selectionIds = [...ids] }),
     toggleSelection: vi.fn(),
     isSelected: vi.fn(() => false),
+    updateUndoRedo: vi.fn(),
   }
   const manager = new InteractionManager(stage as never, store as never, vi.fn())
   const controller = controllerMock.instances.at(-1)!
 
-  return { container, controller, handlers, konvaStage, manager, rackNodes, stage, store }
+  return { container, controller, handlers, konvaStage, manager, rackLayer, rackNodes, stage, store }
+}
+
+function appendViewportTarget(container: HTMLElement): HTMLCanvasElement {
+  const target = document.createElement('canvas')
+  container.append(target)
+  const rect = {
+    x: 100,
+    y: 50,
+    left: 100,
+    top: 50,
+    right: 900,
+    bottom: 650,
+    width: 800,
+    height: 600,
+    toJSON: () => ({}),
+  }
+  vi.spyOn(container, 'getBoundingClientRect').mockReturnValue(rect)
+  vi.spyOn(target, 'getBoundingClientRect').mockReturnValue(rect)
+  Object.defineProperties(target, {
+    setPointerCapture: { configurable: true, value: vi.fn() },
+    releasePointerCapture: { configurable: true, value: vi.fn() },
+  })
+  return target
+}
+
+function konvaClick(target = new Konva.Rect()): Konva.KonvaEventObject<MouseEvent> {
+  return { target, evt: new MouseEvent('click') } as unknown as Konva.KonvaEventObject<MouseEvent>
 }
 
 describe('InteractionManager viewport integration', () => {
@@ -276,6 +312,176 @@ describe('InteractionManager viewport integration', () => {
     expect(assignmentCount()).toBe(1)
   })
 
+  it('suppresses the Konva semantic click after an activated Drag-background pan, but not a candidate click', async () => {
+    const { container, controller, handlers, konvaStage, manager, stage, store } = createHarness(['rack-1'])
+    const { ViewportController: RealViewportController } = await vi.importActual<
+      typeof import('./ViewportController')
+    >('./ViewportController')
+    const target = appendViewportTarget(container)
+    konvaStage.getIntersection.mockReturnValue(null)
+    manager.switchTool('drag')
+    const realController = new RealViewportController(container, stage, controller.options as never)
+    const semanticClick = handlers.get('click.im')!
+
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 40,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointermove', {
+      pointerId: 40,
+      button: 0,
+      buttons: 1,
+      clientX: 130,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointerup', {
+      pointerId: 40,
+      button: 0,
+      clientX: 130,
+      clientY: 80,
+    }))
+
+    semanticClick(konvaClick())
+    expect(store.clearSelection).not.toHaveBeenCalled()
+    semanticClick(konvaClick())
+    expect(store.clearSelection).toHaveBeenCalledOnce()
+
+    store.clearSelection.mockClear()
+    store.setSelection(['rack-1'])
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 41,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointerup', {
+      pointerId: 41,
+      button: 0,
+      clientX: 122,
+      clientY: 81,
+    }))
+    semanticClick(konvaClick())
+    expect(store.clearSelection).toHaveBeenCalledOnce()
+
+    realController.destroy()
+    manager.destroy()
+  })
+
+  it.each(['marker', 'drag', 'rotate'] as const)(
+    'suppresses one %s semantic click after an outside captured release while preserving pointerup',
+    async (tool) => {
+      const { container, controller, handlers, konvaStage, manager, rackNodes, stage, store } = createHarness(['rack-1'])
+      const { ViewportController: RealViewportController } = await vi.importActual<
+        typeof import('./ViewportController')
+      >('./ViewportController')
+      const target = appendViewportTarget(container)
+      const toolPointerUp = vi.fn()
+      target.addEventListener('pointerup', toolPointerUp)
+      if (tool === 'drag') konvaStage.getIntersection.mockReturnValue(rackNodes.get('rack-1')!)
+      manager.switchTool(tool)
+      const realController = new RealViewportController(container, stage, controller.options as never)
+      const terminal = pointerEvent('pointerup', {
+        pointerId: 42,
+        button: 0,
+        clientX: 950,
+        clientY: 700,
+      })
+
+      target.dispatchEvent(pointerEvent('pointerdown', {
+        pointerId: 42,
+        button: 0,
+        buttons: 1,
+        clientX: 120,
+        clientY: 80,
+      }))
+      target.dispatchEvent(terminal)
+
+      expect(toolPointerUp).toHaveBeenCalledOnce()
+      expect(terminal.defaultPrevented).toBe(false)
+      const semanticClick = handlers.get('click.im')!
+      semanticClick(konvaClick())
+      if (tool === 'marker') expect(store.stack.exec).not.toHaveBeenCalled()
+      else expect(store.clearSelection).not.toHaveBeenCalled()
+
+      semanticClick(konvaClick())
+      if (tool === 'marker') expect(store.stack.exec).toHaveBeenCalledOnce()
+      else expect(store.clearSelection).toHaveBeenCalledOnce()
+
+      realController.destroy()
+      manager.destroy()
+    },
+  )
+
+  it.each(['marker', 'drag', 'rotate'] as const)(
+    'allows the first %s semantic click after an inside captured release',
+    async (tool) => {
+      const { container, controller, handlers, konvaStage, manager, rackNodes, stage, store } = createHarness(['rack-1'])
+      const { ViewportController: RealViewportController } = await vi.importActual<
+        typeof import('./ViewportController')
+      >('./ViewportController')
+      const target = appendViewportTarget(container)
+      if (tool === 'drag') konvaStage.getIntersection.mockReturnValue(rackNodes.get('rack-1')!)
+      manager.switchTool(tool)
+      const realController = new RealViewportController(container, stage, controller.options as never)
+
+      target.dispatchEvent(pointerEvent('pointerdown', {
+        pointerId: 43,
+        button: 0,
+        buttons: 1,
+        clientX: 120,
+        clientY: 80,
+      }))
+      target.dispatchEvent(pointerEvent('pointerup', {
+        pointerId: 43,
+        button: 0,
+        clientX: 140,
+        clientY: 90,
+      }))
+      handlers.get('click.im')!(konvaClick())
+
+      if (tool === 'marker') expect(store.stack.exec).toHaveBeenCalledOnce()
+      else expect(store.clearSelection).toHaveBeenCalledOnce()
+      realController.destroy()
+      manager.destroy()
+    },
+  )
+
+  it('expires and clears pending tool-click suppression on disable and destroy', () => {
+    vi.useFakeTimers()
+    try {
+      const first = createHarness()
+      expect(first.controller.options.onToolClickSuppressionChange).toBeTypeOf('function')
+      first.controller.options.onToolClickSuppressionChange?.(true)
+      expect(vi.getTimerCount()).toBe(1)
+      vi.advanceTimersByTime(250)
+      expect(vi.getTimerCount()).toBe(0)
+      first.handlers.get('click.im')!(konvaClick())
+      expect(first.store.clearSelection).toHaveBeenCalledOnce()
+
+      first.store.clearSelection.mockClear()
+      first.controller.options.onToolClickSuppressionChange?.(true)
+      expect(vi.getTimerCount()).toBe(1)
+      first.manager.setEnabled(false)
+      expect(vi.getTimerCount()).toBe(0)
+      first.manager.setEnabled(true)
+      first.handlers.get('click.im')!(konvaClick())
+      expect(first.store.clearSelection).toHaveBeenCalledOnce()
+      first.manager.destroy()
+
+      const second = createHarness()
+      second.controller.options.onToolClickSuppressionChange?.(true)
+      expect(vi.getTimerCount()).toBe(1)
+      second.manager.destroy()
+      expect(vi.getTimerCount()).toBe(0)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('blocks wheel viewport work through the real controller and manager rack-hit seam', async () => {
     const { container, controller, konvaStage, manager, rackNodes, stage } = createHarness(['rack-1'])
     const { ViewportController: RealViewportController } = await vi.importActual<
@@ -314,7 +520,7 @@ describe('InteractionManager viewport integration', () => {
   })
 
   it('reattaches the Transformer to fresh rack nodes before wheel-settling pointerdown reaches Konva', async () => {
-    const { container, controller, handlers, manager, rackNodes, stage } = createHarness(['rack-1'])
+    const { container, controller, handlers, manager, rackLayer, rackNodes, stage } = createHarness(['rack-1'])
     const { ViewportController: RealViewportController } = await vi.importActual<
       typeof import('./ViewportController')
     >('./ViewportController')
@@ -337,9 +543,13 @@ describe('InteractionManager viewport integration', () => {
     const nodes = vi.spyOn(manager.transformer, 'nodes')
     const assignmentCount = () => nodes.mock.calls.filter(args => args.length === 1).length
     nodes.mockClear()
-    const seenAtInnerPointerDown: boolean[] = []
+    rackLayer.draw.mockClear()
+    const seenAtInnerPointerDown: Array<{ freshNode: boolean; hitDrawComplete: boolean }> = []
     target.addEventListener('pointerdown', () => {
-      seenAtInnerPointerDown.push(manager.transformer.nodes()[0] === freshRack)
+      seenAtInnerPointerDown.push({
+        freshNode: manager.transformer.nodes()[0] === freshRack,
+        hitDrawComplete: rackLayer.draw.mock.calls.length === 1,
+      })
     })
     const realController = new RealViewportController(container, stage, controller.options as never)
 
@@ -358,13 +568,15 @@ describe('InteractionManager viewport integration', () => {
 
     expect(controller.options.onWheelCommitDuringPointerDown).toBeTypeOf('function')
     expect(stage.commitViewport).toHaveBeenCalledOnce()
-    expect(seenAtInnerPointerDown).toEqual([true])
+    expect(seenAtInnerPointerDown).toEqual([{ freshNode: true, hitDrawComplete: true }])
     expect(manager.transformer.nodes()[0]).toBe(freshRack)
     target.dispatchEvent(pointerEvent('pointerup', { pointerId: 51, button: 0 }))
     await Promise.resolve()
     expect(assignmentCount()).toBe(1)
+    expect(rackLayer.draw).toHaveBeenCalledOnce()
 
     nodes.mockClear()
+    rackLayer.draw.mockClear()
     target.dispatchEvent(pointerEvent('pointerdown', {
       pointerId: 52,
       button: 0,
@@ -375,6 +587,7 @@ describe('InteractionManager viewport integration', () => {
     target.dispatchEvent(pointerEvent('pointerup', { pointerId: 52, button: 0 }))
     await Promise.resolve()
     expect(assignmentCount()).toBe(0)
+    expect(rackLayer.draw).not.toHaveBeenCalled()
 
     realController.destroy()
     manager.destroy()

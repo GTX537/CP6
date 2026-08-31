@@ -14,12 +14,14 @@ export interface ViewportControllerOptions {
   getActiveTool: () => ViewportTool
   isBackground: (point: { x: number; y: number }) => boolean
   onNavigationStateChange?: (active: boolean) => void
+  onToolClickSuppressionChange?: (active: boolean) => void
   onWheelCommitDuringPointerDown?: () => void
 }
 
 interface PointerCaptureTarget {
   setPointerCapture(pointerId: number): void
   releasePointerCapture(pointerId: number): void
+  getBoundingClientRect?(): DOMRect
 }
 
 interface PanState {
@@ -31,6 +33,7 @@ interface PanState {
   lastX: number
   lastY: number
   active: boolean
+  candidate: boolean
   moved: boolean
   captured: boolean
   captureTarget: PointerCaptureTarget | null
@@ -38,6 +41,7 @@ interface PanState {
 
 interface ExternalGestureState {
   pointerId: number
+  button: number
   captured: boolean
   captureTarget: PointerCaptureTarget | null
 }
@@ -89,9 +93,10 @@ export class ViewportController {
     this.enabled = enabled
     if (!enabled) {
       this.clearClickSuppression()
+      this.clearToolClickSuppression()
       this.settleWheelPreview()
       this.finishPan(undefined, 'disable', true)
-      this.finishExternalGesture(undefined, true)
+      this.finishExternalGesture(undefined, true, false)
     }
   }
 
@@ -125,6 +130,7 @@ export class ViewportController {
 
     this.clearWheelTimer()
     this.clearClickSuppression()
+    this.clearToolClickSuppression()
     const pan = this.pan
     const hasPreview = this.wheelPreviewPending || pan?.moved === true
     this.wheelPreviewPending = false
@@ -175,7 +181,10 @@ export class ViewportController {
 
     const wheelCommitted = this.settleWheelPreview()
     if (wheelCommitted) this.options.onWheelCommitDuringPointerDown?.()
-    if (event.button === 0) this.clearClickSuppression()
+    if (event.button === 0) {
+      this.clearClickSuppression()
+      this.clearToolClickSuppression()
+    }
     if (this.pan || this.externalGesture !== null) return
 
     const forced = event.button === 1 || (event.button === 0 && this.spaceHeld)
@@ -187,6 +196,7 @@ export class ViewportController {
       const capture = this.capture(event)
       this.externalGesture = {
         pointerId: event.pointerId,
+        button: event.button,
         captured: capture.captured,
         captureTarget: capture.target,
       }
@@ -203,6 +213,7 @@ export class ViewportController {
       lastX: event.clientX,
       lastY: event.clientY,
       active: forced,
+      candidate,
       moved: false,
       captured: capture.captured,
       captureTarget: capture.target,
@@ -247,7 +258,7 @@ export class ViewportController {
       this.finishPan(event, 'pointerup', true)
       return
     }
-    this.finishExternalGesture(event.pointerId, true)
+    this.finishExternalGesture(event, true, true)
   }
 
   private readonly onPointerCancel = (event: PointerEvent): void => {
@@ -255,7 +266,7 @@ export class ViewportController {
       this.finishPan(event, 'pointercancel', true)
       return
     }
-    this.finishExternalGesture(event.pointerId, true)
+    this.finishExternalGesture(event, true, false)
   }
 
   private readonly onLostPointerCapture = (event: PointerEvent): void => {
@@ -263,15 +274,16 @@ export class ViewportController {
       this.finishPan(event, 'lostpointercapture', false)
       return
     }
-    this.finishExternalGesture(event.pointerId, false)
+    this.finishExternalGesture(event, false, false)
   }
 
   private readonly onWindowBlur = (): void => {
     this.spaceHeld = false
     this.clearClickSuppression()
+    this.clearToolClickSuppression()
     this.settleWheelPreview()
     this.finishPan(undefined, 'blur', true)
-    this.finishExternalGesture(undefined, true)
+    this.finishExternalGesture(undefined, true, false)
   }
 
   private readonly onClick = (event: MouseEvent): void => {
@@ -305,8 +317,14 @@ export class ViewportController {
 
     if (pan.active && event) this.suppress(event)
     if (pan.moved) this.host.commitViewport()
-    if (pan.moved && pan.button === 0 && reason === 'pointerup') this.armClickSuppression()
+    const expectsClick = reason === 'pointerup' || reason === 'buttonsreleased'
+    if (pan.moved && pan.button === 0 && expectsClick) this.armClickSuppression()
     else this.clearClickSuppression()
+    if (pan.candidate && pan.active && pan.moved && pan.button === 0 && expectsClick) {
+      this.armToolClickSuppression()
+    } else {
+      this.clearToolClickSuppression()
+    }
     if (pan.active) this.setNavigationActive(false)
     if (shouldReleaseCapture && pan.captured) this.releaseCapture(pan.captureTarget, pan.pointerId)
   }
@@ -316,13 +334,29 @@ export class ViewportController {
     if (!pan || pan.active) return
     this.pan = null
     this.clearClickSuppression()
+    this.clearToolClickSuppression()
     if (pan.captured) this.releaseCapture(pan.captureTarget, pan.pointerId)
   }
 
-  private finishExternalGesture(pointerId: number | undefined, shouldReleaseCapture: boolean): void {
+  private finishExternalGesture(
+    event: PointerEvent | undefined,
+    shouldReleaseCapture: boolean,
+    canProduceClick: boolean,
+  ): void {
     const gesture = this.externalGesture
-    if (!gesture || (pointerId !== undefined && gesture.pointerId !== pointerId)) return
+    if (!gesture || (event !== undefined && gesture.pointerId !== event.pointerId)) return
     this.externalGesture = null
+    if (
+      canProduceClick
+      && gesture.captured
+      && gesture.button === 0
+      && event
+      && this.isOutsideGestureBounds(gesture, event)
+    ) {
+      this.armToolClickSuppression()
+    } else {
+      this.clearToolClickSuppression()
+    }
     if (shouldReleaseCapture && gesture.captured) {
       this.releaseCapture(gesture.captureTarget, gesture.pointerId)
     }
@@ -356,6 +390,33 @@ export class ViewportController {
     if (this.clickSuppressionTimer === null) return
     clearTimeout(this.clickSuppressionTimer)
     this.clickSuppressionTimer = null
+  }
+
+  private armToolClickSuppression(): void {
+    this.options.onToolClickSuppressionChange?.(true)
+  }
+
+  private clearToolClickSuppression(): void {
+    this.options.onToolClickSuppressionChange?.(false)
+  }
+
+  private isOutsideGestureBounds(gesture: ExternalGestureState, event: PointerEvent): boolean {
+    const captureRect = gesture.captureTarget?.getBoundingClientRect?.()
+    const rect = this.hasArea(captureRect) ? captureRect : this.element.getBoundingClientRect()
+    return event.clientX < rect.left
+      || event.clientX > rect.right
+      || event.clientY < rect.top
+      || event.clientY > rect.bottom
+  }
+
+  private hasArea(rect: DOMRect | undefined): rect is DOMRect {
+    return rect !== undefined
+      && Number.isFinite(rect.left)
+      && Number.isFinite(rect.top)
+      && Number.isFinite(rect.right)
+      && Number.isFinite(rect.bottom)
+      && rect.right > rect.left
+      && rect.bottom > rect.top
   }
 
   private capture(event: PointerEvent): { target: PointerCaptureTarget | null; captured: boolean } {

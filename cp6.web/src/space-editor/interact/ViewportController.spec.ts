@@ -35,6 +35,17 @@ function createHarness(options: {
     height: 600,
     toJSON: () => ({}),
   })
+  vi.spyOn(target, 'getBoundingClientRect').mockReturnValue({
+    x: 100,
+    y: 50,
+    left: 100,
+    top: 50,
+    right: 900,
+    bottom: 650,
+    width: 800,
+    height: 600,
+    toJSON: () => ({}),
+  })
 
   const setPointerCapture = vi.fn()
   const releasePointerCapture = vi.fn()
@@ -60,11 +71,13 @@ function createHarness(options: {
     resetView: vi.fn(() => calls.push('resetView')),
   }
   const navigation = vi.fn()
+  const toolClickSuppression = vi.fn()
   const isBackground = vi.fn(() => options.background ?? true)
   const controller = new ViewportController(container, host, {
     getActiveTool: () => options.tool ?? 'select',
     isBackground,
     onNavigationStateChange: navigation,
+    onToolClickSuppressionChange: toolClickSuppression,
   })
 
   return {
@@ -79,6 +92,7 @@ function createHarness(options: {
     releasePointerCapture,
     setPointerCapture,
     target,
+    toolClickSuppression,
   }
 }
 
@@ -309,6 +323,7 @@ describe('ViewportController wheel navigation', () => {
       releasePointerCapture,
       setPointerCapture,
       target,
+      toolClickSuppression,
     } = createHarness({ tool: 'zone' })
     const toolUp = vi.fn()
     target.addEventListener('pointerup', toolUp)
@@ -337,7 +352,50 @@ describe('ViewportController wheel navigation', () => {
     expect(outerSetPointerCapture).not.toHaveBeenCalled()
     expect(releasePointerCapture).toHaveBeenCalledWith(23)
     expect(toolUp).toHaveBeenCalledOnce()
+    expect(toolClickSuppression).toHaveBeenLastCalledWith(true)
     expect(host.previewZoomAt).toHaveBeenCalledOnce()
+    controller.destroy()
+  })
+
+  it('does not arm tool-click suppression for an external gesture released inside the target', () => {
+    const { controller, target, toolClickSuppression } = createHarness({ tool: 'marker' })
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 25,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+
+    target.dispatchEvent(pointerEvent('pointerup', {
+      pointerId: 25,
+      button: 0,
+      clientX: 140,
+      clientY: 90,
+    }))
+
+    expect(toolClickSuppression).not.toHaveBeenCalledWith(true)
+    controller.destroy()
+  })
+
+  it('does not arm outside-release suppression when original-target capture failed', () => {
+    const { controller, setPointerCapture, target, toolClickSuppression } = createHarness({ tool: 'rotate' })
+    setPointerCapture.mockImplementationOnce(() => { throw new Error('pointer disappeared') })
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 26,
+      button: 0,
+      buttons: 1,
+      clientX: 120,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointerup', {
+      pointerId: 26,
+      button: 0,
+      clientX: 950,
+      clientY: 700,
+    }))
+
+    expect(toolClickSuppression).not.toHaveBeenCalledWith(true)
     controller.destroy()
   })
 })
@@ -376,48 +434,79 @@ describe('ViewportController pointer panning', () => {
     controller.destroy()
   })
 
-  it.each([
-    { name: 'primary', button: 0, startButtons: 1, chordButtons: 4, spaceHeld: true },
-    { name: 'middle', button: 1, startButtons: 4, chordButtons: 1, spaceHeld: false },
-  ])('ends a $name pan when its initiating button is released during a chord', ({
-    button,
-    chordButtons,
-    spaceHeld,
-    startButtons,
-  }) => {
+  it('ends a primary pan on chord release and suppresses its first native click', () => {
     const { controller, host, navigation, target } = createHarness()
     const clicks = vi.fn()
     target.addEventListener('click', clicks)
-    controller.setSpaceHeld(spaceHeld)
+    controller.setSpaceHeld(true)
     target.dispatchEvent(pointerEvent('pointerdown', {
       pointerId: 24,
-      button,
-      buttons: startButtons,
+      button: 0,
+      buttons: 1,
       clientX: 120,
       clientY: 80,
     }))
     target.dispatchEvent(pointerEvent('pointermove', {
       pointerId: 24,
-      buttons: startButtons,
+      buttons: 1,
       clientX: 126,
       clientY: 80,
     }))
 
     target.dispatchEvent(pointerEvent('pointermove', {
       pointerId: 24,
-      buttons: chordButtons,
+      buttons: 4,
       clientX: 150,
       clientY: 80,
     }))
-    const unrelatedClick = new MouseEvent('click', { bubbles: true, cancelable: true })
-    target.dispatchEvent(unrelatedClick)
+    const generatedClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(generatedClick)
+    const nextClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(nextClick)
+
+    expect(host.previewPan).toHaveBeenCalledOnce()
+    expect(host.previewPan).toHaveBeenCalledWith(6, 0)
+    expect(host.commitViewport).toHaveBeenCalledOnce()
+    expect(navigation.mock.calls).toEqual([[true], [false]])
+    expect(generatedClick.defaultPrevented).toBe(true)
+    expect(clicks).toHaveBeenCalledOnce()
+    expect(nextClick.defaultPrevented).toBe(false)
+    controller.destroy()
+  })
+
+  it('ends a middle pan on chord release without suppressing a primary click', () => {
+    const { controller, host, navigation, target } = createHarness()
+    const clicks = vi.fn()
+    target.addEventListener('click', clicks)
+    target.dispatchEvent(pointerEvent('pointerdown', {
+      pointerId: 24,
+      button: 1,
+      buttons: 4,
+      clientX: 120,
+      clientY: 80,
+    }))
+    target.dispatchEvent(pointerEvent('pointermove', {
+      pointerId: 24,
+      buttons: 4,
+      clientX: 126,
+      clientY: 80,
+    }))
+
+    target.dispatchEvent(pointerEvent('pointermove', {
+      pointerId: 24,
+      buttons: 1,
+      clientX: 150,
+      clientY: 80,
+    }))
+    const primaryClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    target.dispatchEvent(primaryClick)
 
     expect(host.previewPan).toHaveBeenCalledOnce()
     expect(host.previewPan).toHaveBeenCalledWith(6, 0)
     expect(host.commitViewport).toHaveBeenCalledOnce()
     expect(navigation.mock.calls).toEqual([[true], [false]])
     expect(clicks).toHaveBeenCalledOnce()
-    expect(unrelatedClick.defaultPrevented).toBe(false)
+    expect(primaryClick.defaultPrevented).toBe(false)
     controller.destroy()
   })
 
