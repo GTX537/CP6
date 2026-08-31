@@ -3,6 +3,19 @@ import type { EditorScene, RackVO, ZoneVO, AisleVO, MarkerVO } from '@/types/spa
 import { worldToScreen, screenToWorld, type ViewState, type XY } from './coords'
 import type { CollisionResult } from './interact/collide/CollisionHint'
 import { parseEditorPolygon } from './polygon'
+import {
+  clampRelativeZoom,
+  collectSceneBounds,
+  createDefaultViewport,
+  fitBounds,
+  panViewport,
+  resizeViewport,
+  toCoordinateView,
+  viewportLayerTransform,
+  zoomAround,
+  zoomPercent,
+  type ViewportState,
+} from './viewport'
 
 export class SceneStage {
   readonly stage: Konva.Stage
@@ -15,13 +28,29 @@ export class SceneStage {
     marker: Konva.Layer
     ghost: Konva.Layer
   }
-  view: ViewState
+  private viewport: ViewportState
+  private initialViewport: ViewportState
+  private initialSceneBounds: ReturnType<typeof collectSceneBounds> = null
+  private viewportInitialized = false
+  private previewViewport: ViewportState | null = null
+  private currentScene: EditorScene | null = null
+  private resizeObserver: ResizeObserver | null = null
+
+  get view(): ViewState {
+    return toCoordinateView(this.previewViewport ?? this.viewport)
+  }
 
   constructor(container: HTMLDivElement) {
-    const w = container.clientWidth || 800
-    const h = container.clientHeight || 600
+    const w = Number.isFinite(container.clientWidth) && container.clientWidth > 0
+      ? container.clientWidth
+      : 800
+    const h = Number.isFinite(container.clientHeight) && container.clientHeight > 0
+      ? container.clientHeight
+      : 600
     this.stage = new Konva.Stage({ container, width: w, height: h })
-    this.view = { panX: 0, panY: 0, zoom: 0.05, height: h }
+    const initial = createDefaultViewport(w, h)
+    this.viewport = initial
+    this.initialViewport = { ...initial }
     this.layers = {
       underlay: new Konva.Layer(),
       grid: new Konva.Layer(),
@@ -34,13 +63,44 @@ export class SceneStage {
     for (const layer of Object.values(this.layers)) {
       this.stage.add(layer)
     }
-    this.bindZoomPan()
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(entries => {
+        const entry = entries[0]
+        if (!entry) return
+        const width = entry.contentRect.width
+        const height = entry.contentRect.height
+        if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return
+        this.resize(width, height)
+      })
+      this.resizeObserver.observe(container)
+    }
   }
 
   render(scene: EditorScene): void {
+    this.currentScene = scene
+    if (!this.viewportInitialized) {
+      this.initialSceneBounds = collectSceneBounds(scene)
+      const fitted = fitBounds(
+        this.initialSceneBounds,
+        this.viewport.canvasWidth,
+        this.viewport.canvasHeight,
+      )
+      this.viewport = fitted
+      this.initialViewport = { ...fitted }
+      this.viewportInitialized = true
+    }
+    this.renderCurrentScene()
+    this.emitViewportChange(false)
+  }
+
+  private renderCurrentScene(): void {
+    const scene = this.currentScene
+    if (!scene) return
+
     this.layers.zone.destroyChildren()
     this.layers.aisle.destroyChildren()
-    this.layers.rack.destroyChildren()
+    for (const node of this.layers.rack.find('.rack')) node.destroy()
     this.layers.marker.destroyChildren()
 
     for (const zone of scene.zones) {
@@ -112,25 +172,84 @@ export class SceneStage {
     this.layers.ghost.batchDraw()
   }
 
-  zoom(delta: number): void {
-    const factor = delta > 0 ? 1.1 : 0.9
-    this.view = { ...this.view, zoom: Math.max(0.005, Math.min(2, this.view.zoom * factor)) }
-    this.layers.grid.batchDraw()
-    this.layers.rack.batchDraw()
-    this.layers.zone.batchDraw()
-    this.layers.aisle.batchDraw()
-    this.layers.marker.batchDraw()
+  getViewportSnapshot(): ViewportState {
+    return { ...(this.previewViewport ?? this.viewport) }
   }
 
-  pan(dx: number, dy: number): void {
-    this.view = {
-      ...this.view,
-      panX: this.view.panX - dx / this.view.zoom,
-      panY: this.view.panY + dy / this.view.zoom,
+  getViewportStatus(): { percent: number; canZoomIn: boolean; canZoomOut: boolean } {
+    const shown = this.previewViewport ?? this.viewport
+    const percent = zoomPercent(shown, this.initialViewport.zoom)
+    return {
+      percent,
+      canZoomIn: percent < 800,
+      canZoomOut: percent > 10,
     }
   }
 
+  previewZoomAt(screenX: number, screenY: number, factor: number): void {
+    const shown = this.previewViewport ?? this.viewport
+    this.preview(zoomAround(
+      shown,
+      shown.zoom * factor,
+      { x: screenX, y: screenY },
+      this.initialViewport.zoom,
+    ))
+  }
+
+  previewPan(screenDx: number, screenDy: number): void {
+    this.preview(panViewport(this.previewViewport ?? this.viewport, screenDx, screenDy))
+  }
+
+  commitViewport(): void {
+    if (this.previewViewport) this.viewport = this.previewViewport
+    this.previewViewport = null
+    this.resetLayerTransforms()
+    this.layers.ghost.destroyChildren()
+    this.renderCurrentScene()
+    this.emitViewportChange(false)
+  }
+
+  cancelViewportPreview(): void {
+    this.previewViewport = null
+    this.resetLayerTransforms()
+    for (const layer of Object.values(this.layers)) layer.batchDraw()
+    this.emitViewportChange(false)
+  }
+
+  zoomStep(direction: 1 | -1): void {
+    this.previewZoomAt(
+      this.viewport.canvasWidth / 2,
+      this.viewport.canvasHeight / 2,
+      direction > 0 ? 1.1 : 0.9,
+    )
+    this.commitViewport()
+  }
+
+  fitAll(): void {
+    if (!this.currentScene) return
+    const fitted = fitBounds(
+      collectSceneBounds(this.currentScene),
+      this.viewport.canvasWidth,
+      this.viewport.canvasHeight,
+    )
+    const center = { x: fitted.canvasWidth / 2, y: fitted.canvasHeight / 2 }
+    this.previewViewport = zoomAround(
+      fitted,
+      clampRelativeZoom(fitted.zoom, this.initialViewport.zoom),
+      center,
+      this.initialViewport.zoom,
+    )
+    this.commitViewport()
+  }
+
+  resetView(): void {
+    this.previewViewport = { ...this.initialViewport }
+    this.commitViewport()
+  }
+
   destroy(): void {
+    this.resizeObserver?.disconnect()
+    this.resizeObserver = null
     this.stage.destroy()
   }
 
@@ -252,23 +371,50 @@ export class SceneStage {
     this.layers.rack.batchDraw()
   }
 
-  private bindZoomPan(): void {
-    // Scroll-wheel zoom anchored at cursor
-    this.stage.on('wheel', (e) => {
-      e.evt.preventDefault()
-      const pointer = this.stage.getPointerPosition()
-      if (!pointer) return
-      const factor = e.evt.deltaY < 0 ? 1.1 : 0.9
-      const oldZoom = this.view.zoom
-      const newZoom = Math.max(0.005, Math.min(2, oldZoom * factor))
-      const worldX = pointer.x / oldZoom + this.view.panX
-      const worldY = (this.view.height - pointer.y) / oldZoom + this.view.panY
-      this.view = {
-        zoom: newZoom,
-        panX: worldX - pointer.x / newZoom,
-        panY: worldY - (this.view.height - pointer.y) / newZoom,
-        height: this.view.height,
-      }
-    })
+  private preview(next: ViewportState): void {
+    this.previewViewport = next
+    const transform = viewportLayerTransform(this.viewport, next)
+    for (const layer of Object.values(this.layers)) {
+      layer.position({ x: transform.x, y: transform.y })
+      layer.scale({ x: transform.scale, y: transform.scale })
+      layer.batchDraw()
+    }
+    this.emitViewportChange(true)
+  }
+
+  private resize(width: number, height: number): void {
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return
+
+    if (this.previewViewport) {
+      this.viewport = this.previewViewport
+      this.previewViewport = null
+      this.resetLayerTransforms()
+      this.layers.ghost.destroyChildren()
+    }
+
+    this.stage.size({ width, height })
+    const resized = resizeViewport(this.viewport, width, height)
+    const nextInitial = fitBounds(this.initialSceneBounds, width, height)
+    const center = { x: resized.canvasWidth / 2, y: resized.canvasHeight / 2 }
+    this.initialViewport = nextInitial
+    this.viewport = zoomAround(
+      resized,
+      clampRelativeZoom(resized.zoom, nextInitial.zoom),
+      center,
+      nextInitial.zoom,
+    )
+    this.renderCurrentScene()
+    this.emitViewportChange(false)
+  }
+
+  private resetLayerTransforms(): void {
+    for (const layer of Object.values(this.layers)) {
+      layer.position({ x: 0, y: 0 })
+      layer.scale({ x: 1, y: 1 })
+    }
+  }
+
+  private emitViewportChange(preview: boolean): void {
+    this.stage.fire('viewportchange', { preview, ...this.getViewportStatus() }, false)
   }
 }
