@@ -2,11 +2,17 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-09-01：CRM Platform P09 S06 冻结闭环
+
+- Platform final-audit PR #31 head `bf2e929d1e45bedeb8fcd4c108348a5bb3cc561d` 合并为 `main@8f1c7283946ac98bbda078f40d95972ed01b146d`；PR/main runs 33496879686/33497448441 的 Windows、Linux、真实 Dapr/Kafka、真实 SQL Server 与真实 P09 非生产运行时五项作业全部成功，P09 producer 首次成为 `Frozen / Consumable`。
+- CRM final-propagation PR #40 head `8643a5c8b0b1ab54e480c1490f2639afe6fbcca4` 合并为 `main@116018974dc406ab060eec7ccaf34f9303a7e523`；PR/main runs 33499604406/33500324046 和 SQL artifacts 9797173880/9797446436 及 SHA-256 均已记录，完整 CRM 与真实 SQL 门禁通过。
+- P09 S01-S06 全部完成；没有借此注册 CRM runtime/Worker/subscription、连接真实集群或数据库，或授权 Secret、云资源、P10、业务切片与部署。
+
 ## 2026-09-01：CRM Platform P09 公共候选同步
 
 - `CP6.Platform` PR #29/#30 完成 P09 S01-S04；publish run 33480300468 从 exact `main@1c40f21e38929abaaa6006f69ee70d4492890661` 发布唯一不可变 `CP6.Platform.Deployment 0.9.0-alpha.1`，artifact 9789925866、Registry version 1194316756 与 package SHA-256 `e820d1771ed004b4a7089d008eef3bb2aca4fe35e4912d67057840373c4952cb` 已绑定。
 - `CP6.CRM` PR #37/#38 完成固定版本黑盒消费和证据记录；PR/main runs 33485657934 attempt 3 / 33487546660 与 33489443438 / 33490110069，以及四份真实 SQL artifact 均成功。PR #39 head `076307b442a9e40372067963c579305d45e729fb` 合并为 `main@09d90d24b1a70a24b7dbcdea5c19ab46db378544`，runs 33491408393 / 33492405597 和 SQL artifacts 9793938423 / 9794324368 关闭 S05 前向绑定。
-- P09 当前仍为 `Published / Consumer Candidate`；公共项目记忆只完成 S06 的同步部分，Platform 最终审计合并且精确 main 五项作业成功前不得冻结。未连接真实集群、注册 CRM runtime 或授权 Secret、云资源、环境部署和 P10/业务切片。
+- 公共同步完成当时 P09 仍为 `Published / Consumer Candidate`；该历史阶段随后由上方 S06 冻结闭环接续。当时未连接真实集群、注册 CRM runtime 或授权 Secret、云资源、环境部署和 P10/业务切片，当前边界也未改变。
 
 ## 2026-08-31：Space Editor 自由视口
 

@@ -1,13 +1,16 @@
 # 项目当前状态
 
-## CRM Platform P09 公共候选同步完成（S06 公共同步，2026-09-01 UTC）
+## CRM Platform P09 冻结可消费（S06 完成，2026-09-01 UTC）
 
-- 当前权威状态仍为 `Published / Consumer Candidate`。P09-S01～S05 已完成，P09-S06 的公共项目记忆同步已完成候选记录；只有后续 Platform 最终审计 PR 合并且精确 `main` 的 Windows、Linux、真实 Dapr/Kafka、真实 SQL Server 与真实 P09 非生产运行时五项作业全部成功后，才允许首次声明 `Frozen / Consumable`。
+- 当前权威阶段为 `S01-S06 complete`，全局状态为 `Frozen / Consumable`。此前公共 PR #77 记录的 `Published / Consumer Candidate` 是不可变历史；该决定只在 Platform 最终审计和 CRM 最终传播各自合并且精确 `main` 门禁全部成功后生效。
 - `GTX537/CP6.Platform` PR #29（head `914e70cae4d78114ae181515cfaece11a62a28be`、PR run 33479175077）合并为精确发布源 `main@1c40f21e38929abaaa6006f69ee70d4492890661`，exact-main run 33479705779 五项作业成功；publish run 33480300468 / job 99768201448 发布唯一不可变 `CP6.Platform.Deployment 0.9.0-alpha.1`。publication artifact 9789925866 的 digest 为 `sha256:3daad67d4a15144d5f22b64637f7e9f91bdedc4e95fec4e5e20dd09977d78f27`，普通包 SHA-256 为 `e820d1771ed004b4a7089d008eef3bb2aca4fe35e4912d67057840373c4952cb`，Registry version ID 为 1194316756。
 - Platform evidence PR #30（head `eebce761644fe77a4d9fc7b138684db7bf6e7f02`、PR run 33481868328）合并为 `main@5937761d2cb134b963493aca9ebaac792ac033e2`，exact-main run 33482389065 五项作业成功，固定 Profile、Compose、Kubernetes 与 rehearsal evidence SHA-256 以及零残留边界。
 - `GTX537/CP6.CRM` 实现 PR #37（head `3b4a291aba02b27bb1d41cd7f2330c11c9fcce62`、PR run 33485657934 attempt 3、SQL artifact 9792143475 / `sha256:5e770a8eb06306830a8ed7d03e612b49a51c4eb21a37f2c79cb628f3622941fd`）合并为 `main@13abc0785d98264436096e330260cd6d8e95687b`；exact-main run 33487546660 与 SQL artifact 9792401387 / `sha256:dac8f064370511d4c36ba71c945c70ae29f7a370e33e9a37b39f332d81053fd7` 成功。CRM 只在测试项目固定 Registry 版本，9/9 P09 黑盒和 72/72 .NET 回归通过，生产项目与 `Program.cs` 未引用或注册 Deployment 包。
 - CRM evidence PR #38（head `c283e077fa6716ab4cd22fafb7b8237e72013e88`、PR run 33489443438、SQL artifact 9793158824 / `sha256:bbe3bee7a5c23408e49a947903b1c521726c8846c6175e89986cb02a31b939de`）合并为 `main@85004c838e4179ddd67faca0532cff303e865738`；exact-main run 33490110069 与 SQL artifact 9793416744 / `sha256:d1a7c7f60a43d9dea5239407208686f4dc676700c792cb8eaf386c9e313a414e` 成功。
 - CRM evidence-closure PR #39（head `076307b442a9e40372067963c579305d45e729fb`、PR run 33491408393、SQL artifact 9793938423 / `sha256:641355a58f253bec6af58d0b62e76924012c3250ead5435270a1814b859ff78f`）合并为 `main@09d90d24b1a70a24b7dbcdea5c19ab46db378544`；exact-main run 33492405597 的完整 CRM 与真实 SQL 作业成功，SQL artifact 9794324368 / `sha256:25463a33c8e85b35a333ed46422607516b74efcfd58115d511091ea1a38cdc71` 成功绑定 S05 前向证据。
+- 公共候选 PR #77（head `8578bc1df9c64b00e0f27ae602d2960a91b8450a`）合并为 `main@ed08018a160d467342ddee823409232e6c412267`；六个 PR 工作流和五个 exact-main 工作流全部成功，只记录 Candidate 阶段而未提前冻结。
+- Platform final-audit PR #31（head `bf2e929d1e45bedeb8fcd4c108348a5bb3cc561d`、PR run 33496879686）合并为 `main@8f1c7283946ac98bbda078f40d95972ed01b146d`；exact-main run 33497448441 的 `ubuntu-p09-non-production-runtime` 99822794965、`ubuntu-latest` 99822795157、`ubuntu-dapr-kafka` 99822795183、`ubuntu-sql-server` 99822795286、`windows-latest` 99822795288 均为 success，首次使 producer 达到 `Frozen / Consumable`。
+- CRM final-propagation PR #40（head `8643a5c8b0b1ab54e480c1490f2639afe6fbcca4`、PR run 33499604406、SQL artifact 9797173880 / `sha256:1984340af54f2a485fea22b59710645fed9c324ca1fedbad26eddbd6b3102750`）合并为 `main@116018974dc406ab060eec7ccaf34f9303a7e523`；exact-main run 33500324046 的 CRM validation 99831901263 与真实 SQL 99831901244 成功，SQL artifact 9797446436 / `sha256:be1c83b021d9bb874635e22ce57a4d2201d0a4152109c2efb4e508b4ee27fdc6` 完成最终消费者传播。
 - 本阶段没有连接或修改真实 Kubernetes、DEV/UAT/PROD、CRM Gateway/Worker、业务 Topic/Subscription、Secret、数据库、迁移、云资源或生产部署，也不授权 P10、C01/C02/CRM03 或 CRM 业务切片。
 
 ## Space Editor 自由视口实现完成（2026-08-31）
