@@ -15,8 +15,9 @@
 ## P0：Platform P08+ 与后续跨仓合同
 
 - P08 已完成 S00-S06 并达到 `Frozen / Consumable`：`0.8.0-alpha.2` 不可变发布、CRM 固定版本黑盒消费、前向纠正、Platform 对账、公共 S05、Platform S06 与 CRM 最终传播均有精确 PR/head/merge/run/job/artifact/hash 记录。保留历史 Candidate 记录，不再重复执行 P08。
-- 下一阶段只能按独立授权和前置条件选择 P09 Non-production runtime、P10 Release governance、C01/C02/CRM03 或 CRM-F3-CONTRACT/业务 Worker slice；P08 完成不自动授权其中任何一项。
-- P02/P03/P04/P05/P06/P07/P08 已分别以不可变包、逐包 SHA-256、CRM 固定版本引用及 PR/main 远端消费证据达到 `Frozen / Consumable`；不要再把这七项写成 Absent 或 Candidate。
+- P09 已完成 S01-S05 以及 S06 的公共候选同步：`CP6.Platform.Deployment 0.9.0-alpha.1` 的实现、五项 exact-main、一次性发布、Registry 下载匹配、CRM 9/9 黑盒、72/72 .NET、三次 CRM PR/main 与六份真实 SQL artifact 均有精确身份；当前必须保持 `Published / Consumer Candidate`。
+- 下一步只执行 P09-S06 Platform 最终证据审计。只有最终审计 PR 合并且 exact-main Windows/Linux/真实 Dapr-Kafka/真实 SQL/真实 P09 runtime 五项门禁成功后，才可把 Platform、CRM locator 和公共项目记忆依次传播为 `Frozen / Consumable`。
+- P02/P03/P04/P05/P06/P07/P08 已达到 `Frozen / Consumable`；P09 仍是候选。P09 完成不自动授权 P10、C01/C02/CRM03、CRM-F3-CONTRACT/Worker、真实环境或部署。
 - 下一项异步业务前置是 CRM-F3-CONTRACT/C02 业务事件与单独授权的 Worker slice；登录仍需 C01/C02/CRM03、获批的实际 CRM Gateway route 及 P09 后端隔离。每项必须有版本化 locator、实现、负向测试、不可变产物及生产者/消费者门禁，不能因 P07 完成而提前启用运行时订阅、Gateway/auth、真实登录或业务切片。
 
 ## P0：CRM V1 公开同步与 M0
