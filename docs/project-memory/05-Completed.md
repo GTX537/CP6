@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-01 UTC CRM Platform P09 公共候选同步
+
+- Platform PR #29/#30 已完成 P09 非生产 Profile/Evidence、真实 Dapr/Kafka Compose、离线 Kubernetes 和不可变 Deployment 包发布；精确源 `main@1c40f21e38929abaaa6006f69ee70d4492890661` 的 publish run 33480300468 发布 `CP6.Platform.Deployment 0.9.0-alpha.1`，artifact 9789925866、Registry version 1194316756 与 package SHA-256 `e820d1771ed004b4a7089d008eef3bb2aca4fe35e4912d67057840373c4952cb` 已固定。
+- CRM PR #37 以测试项目固定版本完成 9/9 黑盒和 72/72 .NET；PR/main runs 33485657934 attempt 3 / 33487546660 及 SQL artifacts 9792143475 / 9792401387 成功。PR #38 的 runs 33489443438 / 33490110069 与 SQL artifacts 9793158824 / 9793416744 固定 S05 消费证据。
+- CRM evidence-closure PR #39 head `076307b442a9e40372067963c579305d45e729fb` 合并为 `main@09d90d24b1a70a24b7dbcdea5c19ab46db378544`；PR/main runs 33491408393 / 33492405597 和 SQL artifacts 9793938423 / 9794324368 及其 SHA-256 均成功，关闭 S05 前向证据缺口。
+- 公共同步完成后 P09 仍严格保持 `Published / Consumer Candidate`。Platform 最终审计及其 exact-main 五项作业成功前不得写成 `Frozen / Consumable`；本阶段未注册运行时、未创建业务 Topic/Secret/云资源，也未部署任何环境。
+
 ## 2026-08-31 Space Editor 自由视口
 
 - 关闭空间编辑器只能围绕固定中心查看、无法检视角落的问题；所有五种工具均可临时导航，拖拽模式能区分空白画布和货架对象。
