@@ -1,11 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-01 UTC CRM Platform P09 S06 冻结闭环
+
+- Platform final-audit PR #31 head `bf2e929d1e45bedeb8fcd4c108348a5bb3cc561d` 的 PR run 33496879686 通过，合并为 `main@8f1c7283946ac98bbda078f40d95972ed01b146d`；exact-main run 33497448441 的 Windows、Linux、真实 Dapr/Kafka、真实 SQL Server 与真实 P09 非生产运行时五项作业逐项 success，首次正式形成 `Frozen / Consumable` 决定。
+- CRM final-propagation PR #40 head `8643a5c8b0b1ab54e480c1490f2639afe6fbcca4` 的 run 33499604406 及 SQL artifact 9797173880 / `sha256:1984340af54f2a485fea22b59710645fed9c324ca1fedbad26eddbd6b3102750` 成功；合并 `main@116018974dc406ab060eec7ccaf34f9303a7e523` 后 exact-main run 33500324046 与 artifact 9797446436 / `sha256:be1c83b021d9bb874635e22ce57a4d2201d0a4152109c2efb4e508b4ee27fdc6` 再次通过完整 CRM 与真实 SQL 门禁。
+- P09 的 S01-S06 现已全部完成；历史 Candidate 证据继续保留。本阶段没有注册真实 CRM runtime、创建业务 Topic/Subscription、连接集群或数据库，也未授权 Secret、云资源、P10、业务切片和部署。
+
 ## 2026-09-01 UTC CRM Platform P09 公共候选同步
 
 - Platform PR #29/#30 已完成 P09 非生产 Profile/Evidence、真实 Dapr/Kafka Compose、离线 Kubernetes 和不可变 Deployment 包发布；精确源 `main@1c40f21e38929abaaa6006f69ee70d4492890661` 的 publish run 33480300468 发布 `CP6.Platform.Deployment 0.9.0-alpha.1`，artifact 9789925866、Registry version 1194316756 与 package SHA-256 `e820d1771ed004b4a7089d008eef3bb2aca4fe35e4912d67057840373c4952cb` 已固定。
 - CRM PR #37 以测试项目固定版本完成 9/9 黑盒和 72/72 .NET；PR/main runs 33485657934 attempt 3 / 33487546660 及 SQL artifacts 9792143475 / 9792401387 成功。PR #38 的 runs 33489443438 / 33490110069 与 SQL artifacts 9793158824 / 9793416744 固定 S05 消费证据。
 - CRM evidence-closure PR #39 head `076307b442a9e40372067963c579305d45e729fb` 合并为 `main@09d90d24b1a70a24b7dbcdea5c19ab46db378544`；PR/main runs 33491408393 / 33492405597 和 SQL artifacts 9793938423 / 9794324368 及其 SHA-256 均成功，关闭 S05 前向证据缺口。
-- 公共同步完成后 P09 仍严格保持 `Published / Consumer Candidate`。Platform 最终审计及其 exact-main 五项作业成功前不得写成 `Frozen / Consumable`；本阶段未注册运行时、未创建业务 Topic/Secret/云资源，也未部署任何环境。
+- 公共同步完成当时 P09 严格保持 `Published / Consumer Candidate`；该历史阶段随后由上方 S06 冻结闭环接续。当时未注册运行时、创建业务 Topic/Secret/云资源或部署任何环境，当前边界也未改变。
 
 ## 2026-08-31 Space Editor 自由视口
 
