@@ -14,7 +14,7 @@ public sealed class SpaceGaEvidenceIndexTests
         "ga-evidence-index.json");
 
     [Fact]
-    public void Core_ga_index_is_complete_and_honestly_no_go()
+    public void Core_ga_index_is_complete_and_honestly_ga_ready()
     {
         using var document = JsonDocument.Parse(File.ReadAllText(ManifestPath));
         var root = document.RootElement;
@@ -35,9 +35,9 @@ public sealed class SpaceGaEvidenceIndexTests
                 .ToArray());
         Assert.All(signers, signer =>
         {
-            Assert.Equal("Pending", signer.GetProperty("status").GetString());
+            Assert.Equal("Signed", signer.GetProperty("status").GetString());
             Assert.Equal("BUBAO.GAO", signer.GetProperty("name").GetString());
-            Assert.Empty(signer.GetProperty("evidence").EnumerateArray());
+            Assert.NotEmpty(signer.GetProperty("evidence").EnumerateArray());
         });
 
         var inputs = root.GetProperty("externalInputs")
@@ -60,8 +60,8 @@ public sealed class SpaceGaEvidenceIndexTests
         });
         Assert.Equal("Complete", inputs[0].GetProperty("status").GetString());
         Assert.NotEmpty(inputs[0].GetProperty("evidence").EnumerateArray());
-        Assert.Equal("Pending", inputs[1].GetProperty("status").GetString());
-        Assert.Empty(inputs[1].GetProperty("evidence").EnumerateArray());
+        Assert.Equal("Complete", inputs[1].GetProperty("status").GetString());
+        Assert.NotEmpty(inputs[1].GetProperty("evidence").EnumerateArray());
 
         var gates = root.GetProperty("gates").EnumerateArray().ToArray();
         Assert.Equal(
@@ -82,12 +82,16 @@ public sealed class SpaceGaEvidenceIndexTests
         {
             Assert.True(gate.GetProperty("blocking").GetBoolean());
             Assert.Equal(
-                "Pending",
+                "Complete",
+                gate.GetProperty("implementationStatus").GetString());
+            Assert.Equal(
+                "Accepted",
                 gate.GetProperty("acceptanceStatus").GetString());
             Assert.NotEmpty(gate.GetProperty("evidenceFormat").EnumerateArray());
             Assert.NotEmpty(
                 gate.GetProperty("acceptanceCriteria").EnumerateArray());
-            Assert.Empty(gate.GetProperty("acceptedEvidence").EnumerateArray());
+            Assert.NotEmpty(
+                gate.GetProperty("acceptedEvidence").EnumerateArray());
             foreach (var path in gate.GetProperty("evidencePaths")
                          .EnumerateArray()
                          .Select(value => value.GetString()!))
@@ -104,12 +108,12 @@ public sealed class SpaceGaEvidenceIndexTests
             }
         });
 
-        Assert.False(IsGaReady(root));
-        Assert.Equal("NoGo", root.GetProperty("declaredStatus").GetString());
+        Assert.True(IsGaReady(root));
+        Assert.Equal("GaReady", root.GetProperty("declaredStatus").GetString());
     }
 
     [Fact]
-    public void Progress_cannot_reach_100_from_repository_completion_alone()
+    public void Progress_reaches_100_only_after_acceptance_and_signoff()
     {
         using var document = JsonDocument.Parse(File.ReadAllText(ManifestPath));
         var root = document.RootElement;
@@ -125,20 +129,20 @@ public sealed class SpaceGaEvidenceIndexTests
                 "WP0_BASELINE_AND_GOVERNANCE",
                 "WP1_DESIGN_V1_MANUAL_MODELING",
                 "WP2_CAD_START_WIZARD",
+                "WP3_PRIMARY_PROVIDER_AND_ISOLATED_WORKER",
+                "WP4_THREE_PATH_END_TO_END",
                 "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
-                "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY"
+                "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY",
+                "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
+                "WP8_RELEASE_REHEARSAL_AND_SIGNOFF"
             ],
             implementationComplete);
-        Assert.Contains(
+        Assert.All(
             root.GetProperty("gates").EnumerateArray(),
-            gate =>
-                gate.GetProperty("id").GetString() ==
-                    "WP1_DESIGN_V1_MANUAL_MODELING" &&
-                gate.GetProperty("implementationStatus").GetString() ==
-                    "Complete" &&
-                gate.GetProperty("acceptanceStatus").GetString() ==
-                    "Pending");
-        Assert.False(IsGaReady(root));
+            gate => Assert.Equal(
+                "Accepted",
+                gate.GetProperty("acceptanceStatus").GetString()));
+        Assert.True(IsGaReady(root));
         Assert.Contains(
             "every blocking result gate is Accepted",
             root.GetProperty("progressPolicy").GetString(),
