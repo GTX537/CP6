@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-03 UTC P10 R2/cosign 外部前置切片
+
+- PR #80 head `17dc0407f58750d729d7207dfa0f59f79182a4c5` 合并为 `main@da54076861b30e710a3eceb9e08023fbc6f9ff87`；六项 PR 门禁及 exact-main runs 33706881271 / 33706881477 全部成功。`p10-platform-candidate` 已固定 owner reviewer、`prevent_self_review=false` 和唯一 `main` deployment branch policy，八个约定 Environment secret 名称均已绑定且未进入仓库。
+- Cloudflare R2 Standard bucket `cp6-release` 保持非公开；publisher/consumer 分别为 bucket-only Object Read & Write / Object Read Only。900 秒 actions-only 临时凭据只含四项操作和 `candidates/platform/`、`objects/sha256/` 两个前缀，非写入 `GetBucketLocation` 预检成功，未创建诊断对象。
+- 公开 trust instance `eng/p10/trust/pinned-trust-store.v1.json` 的 SHA-256 为 `0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9`；分离的 locator/OCI ECDSA P-256 key IDs 分别为 `sha256:9c0fd05b3159651cc2e9138555f32387988c6961889ee00211139e710f1febaa` 与 `sha256:eb623d784fc55294e942fa49062477769a34943d5997fdbdd483ad0fb0103c21`。仓库 secret/private-key/JWT/presigned-URL 扫描为零。
+- 完成范围仅为 P10 外部前置切片。双 runner RFC3161 门禁仍待完成，`S04_EXTERNAL_PREREQUISITES_READY` 仍为 `false`；没有 candidate/Locator/package/image 发布、R2 对象写入或环境/生产部署。
+
 ## 2026-09-01 UTC CRM Platform P09 S06 冻结闭环
 
 - Platform final-audit PR #31 head `bf2e929d1e45bedeb8fcd4c108348a5bb3cc561d` 的 PR run 33496879686 通过，合并为 `main@8f1c7283946ac98bbda078f40d95972ed01b146d`；exact-main run 33497448441 的 Windows、Linux、真实 Dapr/Kafka、真实 SQL Server 与真实 P09 非生产运行时五项作业逐项 success，首次正式形成 `Frozen / Consumable` 决定。

@@ -16,8 +16,9 @@
 
 - P08 已完成 S00-S06 并达到 `Frozen / Consumable`：`0.8.0-alpha.2` 不可变发布、CRM 固定版本黑盒消费、前向纠正、Platform 对账、公共 S05、Platform S06 与 CRM 最终传播均有精确 PR/head/merge/run/job/artifact/hash 记录。保留历史 Candidate 记录，不再重复执行 P08。
 - P09 已完成 S01-S06 并达到 `Frozen / Consumable`：`CP6.Platform.Deployment 0.9.0-alpha.1` 的实现、一次性发布、Registry 下载匹配、CRM 9/9 黑盒与 72/72 .NET、公共候选同步、Platform 最终审计、CRM 最终传播以及各自 exact-main/真实 SQL 证据均有精确身份。保留历史 Candidate 记录，不再重复执行 P09。
-- 下一阶段必须作为独立、显式授权的 P10 或 CRM 业务合同/Worker 切片启动；不得把 P09 的完成解释为对运行时注册、订阅、Gateway/auth、真实环境或部署的自动授权。
-- P02/P03/P04/P05/P06/P07/P08/P09 已达到 `Frozen / Consumable`。P10、C01/C02/CRM03、CRM-F3-CONTRACT/Worker、真实环境和部署仍未实现或授权。
+- P10 已显式启动；R2/cosign 外部前置切片通过 PR #80 合并为 `main@da54076861b30e710a3eceb9e08023fbc6f9ff87`，其 exact-main runs 33706881271 / 33706881477 成功。受保护 Environment、八个 secret 槽位、bucket-only publisher/consumer、双用途分离公钥、canonical trust instance 和非写入临时凭据预检已关闭，不要重复创建或轮换这些输入。
+- P10 下一项硬门是独立双 runner RFC3161 一致性/证据验证；该门完成并记录前，`S04_EXTERNAL_PREREQUISITES_READY` 必须保持 `false`。继续实施时应消费 `main` 上 SHA-256 为 `0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9` 的 trust instance，不得从截图、OneNote 或本机临时文件重新构造凭据。
+- P02/P03/P04/P05/P06/P07/P08/P09 已达到 `Frozen / Consumable`。P10 整体、C01/C02/CRM03、CRM-F3-CONTRACT/Worker、真实环境和部署仍未完成；P10 前置切片不授权 candidate/Locator/package/image 发布、R2 写入、公有 bucket 或生产部署。
 - 下一项异步业务前置是 CRM-F3-CONTRACT/C02 业务事件与单独授权的 Worker slice；登录仍需 C01/C02/CRM03、获批的实际 CRM Gateway route 及 P09 后端隔离。每项必须有版本化 locator、实现、负向测试、不可变产物及生产者/消费者门禁，不能因 P07 完成而提前启用运行时订阅、Gateway/auth、真实登录或业务切片。
 
 ## P0：CRM V1 公开同步与 M0
