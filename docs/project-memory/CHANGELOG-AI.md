@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-09-03：P10 R2/cosign 外部前置切片闭环
+
+- CP6 PR #80 head `17dc0407f58750d729d7207dfa0f59f79182a4c5` 经六项 PR 门禁后合并为 `main@da54076861b30e710a3eceb9e08023fbc6f9ff87`；exact-main runs 33706881271 / 33706881477 的真实 SQL、Android、Windows 与 Web 作业全部成功。
+- 建立只允许 `main` 且需要 owner reviewer 的 `p10-platform-candidate` Environment，绑定八个约定 secret 名称；Cloudflare R2 `cp6-release` 使用 bucket-only publisher/consumer 权限，900 秒 actions-only 临时凭据完成非写入 `GetBucketLocation` 预检且未上传对象。
+- canonical trust instance SHA-256 为 `0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9`，locator/OCI 公钥 key IDs 为 `sha256:9c0fd05b3159651cc2e9138555f32387988c6961889ee00211139e710f1febaa` / `sha256:eb623d784fc55294e942fa49062477769a34943d5997fdbdd483ad0fb0103c21`，仓库未记录私钥或 R2 secret。
+- P10 整体尚未完成：独立双 runner RFC3161 门禁仍待关闭，`S04_EXTERNAL_PREREQUISITES_READY=false`；本切片没有发布 candidate、Locator、package、image，没有公开 bucket、写入/删除云对象或执行部署。
+
 ## 2026-09-01：CRM Platform P09 S06 冻结闭环
 
 - Platform final-audit PR #31 head `bf2e929d1e45bedeb8fcd4c108348a5bb3cc561d` 合并为 `main@8f1c7283946ac98bbda078f40d95972ed01b146d`；PR/main runs 33496879686/33497448441 的 Windows、Linux、真实 Dapr/Kafka、真实 SQL Server 与真实 P09 非生产运行时五项作业全部成功，P09 producer 首次成为 `Frozen / Consumable`。

@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## P10 R2/cosign 外部前置切片已完成（2026-09-03 UTC）
+
+- `GTX537/CP6` PR #80（head `17dc0407f58750d729d7207dfa0f59f79182a4c5`）经六项 PR 门禁成功后正常合并为 `main@da54076861b30e710a3eceb9e08023fbc6f9ff87`；exact-main runs 33706881271 / 33706881477 的真实 SQL、Android、Windows 与 Web 作业全部成功。公开 trust blob 与本地审计对象一致。
+- 受保护 GitHub Environment `p10-platform-candidate` 只有一条 `main` deployment branch policy，required reviewer 为仓库 owner `GTX537`，`prevent_self_review=false`；八个 Environment secret 名称已确认：`P10_LOCATOR_COSIGN_PRIVATE_KEY`、`P10_LOCATOR_COSIGN_PASSWORD`、`P10_OCI_COSIGN_PRIVATE_KEY`、`P10_OCI_COSIGN_PASSWORD`、`P10_R2_PUBLISH_ACCESS_KEY_ID`、`P10_R2_PUBLISH_SECRET_ACCESS_KEY`、`P10_R2_CONSUMER_ACCESS_KEY_ID`、`P10_R2_CONSUMER_SECRET_ACCESS_KEY`。仓库未记录任何对应私值。
+- 权威 trust instance 为 `eng/p10/trust/pinned-trust-store.v1.json`，SHA-256 `0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9`；`candidate-locator` key ID 为 `sha256:9c0fd05b3159651cc2e9138555f32387988c6961889ee00211139e710f1febaa`，`oci` key ID 为 `sha256:eb623d784fc55294e942fa49062477769a34943d5997fdbdd483ad0fb0103c21`。两把 ECDSA P-256 公钥用途分离，私钥只存在于 Environment secrets。
+- R2 authority `cp6-release-r2-v1` 固定到 `cloudflare-r2` / account `30c4a8d1697ffd3de6a1e0a88376607c` / bucket `cp6-release` / jurisdiction `default` / prefixes `candidates/platform/`、`objects/sha256/`。publisher parent token 仅有该 bucket 的 Object Read & Write，consumer token 仅有 Object Read Only；900 秒 actions-only session 已以 `PutObject`、`HeadObject`、`GetObject`、`GetBucketLocation` 和两个前缀生成并通过非写入 `GetBucketLocation`，未上传诊断对象。
+- 该切片只关闭 P10 的 R2/cosign 外部输入准备，不等于 P10 S04 或 S06 完成。独立双 runner RFC3161 门禁仍未完成，故 `S04_EXTERNAL_PREREQUISITES_READY` 必须保持 `false`；没有发布 candidate、Locator、NuGet 包、GHCR image，没有公开 R2 bucket、覆盖/删除云对象或执行任何环境/生产部署。
+
 ## CRM Platform P09 冻结可消费（S06 完成，2026-09-01 UTC）
 
 - 当前权威阶段为 `S01-S06 complete`，全局状态为 `Frozen / Consumable`。此前公共 PR #77 记录的 `Published / Consumer Candidate` 是不可变历史；该决定只在 Platform 最终审计和 CRM 最终传播各自合并且精确 `main` 门禁全部成功后生效。

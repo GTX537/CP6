@@ -125,8 +125,8 @@ rotate both values for that purpose before retrying.
   files, plus the exact-main Platform trust validator.
 - [x] Review the complete diff against `main`, run a secret/private-key scan,
   and stage only this plan and the public trust policy.
-- [ ] Commit, push, open a PR, wait for all required checks, and merge normally.
-- [ ] Verify the merge commit on remote `main` and wait for the exact-main
+- [x] Commit, push, open a PR, wait for all required checks, and merge normally.
+- [x] Verify the merge commit on remote `main` and wait for the exact-main
   workflow result before using the trust hashes as an S04 prerequisite.
 
 ## Task 6: Hand off the remaining external gate
@@ -145,3 +145,30 @@ read-only pair is bound, and the separate two-runner RFC3161 gate is complete.
 This plan does not authorize formal NuGet publication, S06 candidate/Locator
 publication, GHCR changes, production deployment, or deletion/overwrite of any
 cloud object.
+
+## Outcome (2026-09-03 UTC)
+
+- PR #80 head `17dc0407f58750d729d7207dfa0f59f79182a4c5` merged normally as
+  `main@da54076861b30e710a3eceb9e08023fbc6f9ff87` after all six PR checks
+  passed. Exact-main runs 33706881271 and 33706881477 passed the real-SQL,
+  Android, Windows, and Web jobs.
+- `p10-platform-candidate` has required reviewer `GTX537`,
+  `prevent_self_review=false`, custom branch policies, and exactly one `main`
+  branch policy. All eight fixed Environment secret names are present; no
+  private value is recorded in Git.
+- The canonical trust-policy SHA-256 is
+  `0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9`.
+  The locator and OCI key IDs are respectively
+  `sha256:9c0fd05b3159651cc2e9138555f32387988c6961889ee00211139e710f1febaa`
+  and
+  `sha256:eb623d784fc55294e942fa49062477769a34943d5997fdbdd483ad0fb0103c21`.
+- R2 authority `cp6-release-r2-v1` remains bound to account
+  `30c4a8d1697ffd3de6a1e0a88376607c`, bucket `cp6-release`, jurisdiction
+  `default`, and the two fixed prefixes. Live temporary-credential validation
+  established that explicit `actions` and `scope` must not be sent together;
+  the accepted 900-second request used only the four actions plus path
+  restrictions. Its non-mutating `GetBucketLocation` preflight returned 200,
+  and no object was uploaded.
+- The separate two-runner RFC3161 gate remains pending, so
+  `S04_EXTERNAL_PREREQUISITES_READY` remains `false`. No publication,
+  cloud-object mutation, or deployment was performed.
