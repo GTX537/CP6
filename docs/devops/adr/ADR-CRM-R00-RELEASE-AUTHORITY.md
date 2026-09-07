@@ -13,6 +13,8 @@
 
 下列标记内正文与私有已批准 R00 载荷逐字一致。公开镜像不复制私有个人审批身份；其摘要必须独立复算为上述私有 R00 摘要。公开合同已由 ProgramOwner 对精确摘要批准并同步为 Complete；P09/P10 实现仍为 Pending。
 
+> P10 执行说明：下方冻结载荷包含原先对 R2 VersionId/Object Lock 的假定；Cloudflare R2 的实际能力与 P10 替代协议见文末“P10 S06 Cloudflare R2 勘误”。原载荷保持逐字不变，不以该历史假定证明能力已就绪。
+
 <!-- release-decision-payload:start -->
 ## 1. 决策
 
@@ -70,6 +72,18 @@ R00 只有在以下条件全部满足后可从 Proposed 变为 Accepted：
 3. 状态镜像更新不改变载荷摘要；只验证页首、批准记录和镜像中的摘要仍等于批准值。
 4. 标记内正文变化必须重算摘要并使旧批准 Expired。
 <!-- release-decision-payload:end -->
+
+## P10 S06 Cloudflare R2 勘误（2026-09-07，不进入私有 R00 载荷）
+
+本节落实已批准的 [P10 发布治理设计第 2、8、12–14 节](https://github.com/GTX537/CP6.Platform/blob/3ff27e26962dcfd722887afb80a4306010dd9ee1/docs/superpowers/specs/2026-09-01-p10-release-governance-design.md)。上方冻结正文保留为原决策镜像；本节没有重写或重新批准私有 R00 载荷，其摘要继续为 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`。
+
+- 平台事实：截至本次核对，Cloudflare R2 的 [S3 API 兼容表](https://developers.cloudflare.com/r2/api/s3/api/) 将 S3 bucket versioning、Object Lock configuration 和对象 retention/legal-hold headers 标为未实现；`PutObject` 支持条件请求。不得把原表的 “Existing” 当作该 R2 存储权威已具备这些 S3 保证的运行证据，也不得用空值、`null` 或伪造值冒充有效 `VersionId`。
+- P10 对象身份：使用预先固定的 `storageAuthority` 映射，加精确 `key + SHA-256 + byteLength + mediaType`；对象采用 content-addressed key，读取后重新校验完整字节。这里不宣称 S3 VersionId 或 S3 Object Lock 保证。
+- P10 写入规则：受管对象必须满足 4 MiB 上限，使用单次 `PutObject(If-None-Match: *)` 创建，不使用 multipart，也不回退为无条件覆盖。内容寻址对象冲突时复核已有完整字节；签名 bundle 冲突时验证已有 bundle 是否签署同一预定 Locator。
+- P10 权威发现：使用固定路径的签名 CandidateLocator 及相邻 sigstore bundle。先完成独立验证工作流，再上传主体/证据、签署精确 Locator 字节并通过干净的 pre-commit verifier；最后一次条件式 Locator 创建才是权威提交点。消费者先按带外固定的公钥/策略验证 Locator，再读取并验证全部必需对象；不得通过 listing、孤立对象或未限定的 latest 宣称候选已发布。
+- P10 失败语义：原始 Locator 意图及其字节不能在重试中改变；只有字节相同且签名/策略检查通过才可幂等复用。冲突或 post-commit 验证失败保留原对象并废弃该候选身份，前向修正必须使用新身份。完成 post-commit 确认和跨仓审计前，不得标为 Frozen。
+- 保持的边界：GitHub R2/GHCR 唯一权威、Build once/deploy many、digest 身份、签名、SBOM、漏洞扫描、真实门禁和受保护审批均不改变。本勘误不删除或绕过现有 WMS R2/Shadow 的 VersionId、Object Lock 或其他门禁；这些旧路径若缺少其所要求的真实能力，仍是 No-Go，不能借用 P10 的替代协议直接验收。
+- 当前交付状态：本节只是 S06 的文档实施，不是 R2 实际写入、OCI 发布、候选冻结或生产部署证据。P10 的 `PlatformReference` 候选保持 `deployable=false`；完整验证、发布和跨仓审计仍须分别完成。
 
 ## 公开状态镜像（不进入私有 R00 载荷）
 
