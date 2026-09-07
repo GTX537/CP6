@@ -1,6 +1,6 @@
 # MES 製造執行 · 代码级实现手册
 
-> **这是什么**：把 MES（製造執行）的**每个页面功能**，从前端到后端逐文件、逐行、带真实代码片段和错误码地讲清楚。与 [`docs/codemap-erp/`](../codemap-erp/README.md) 同一套模板，是 [`docs/CODEMAP.md`](../CODEMAP.md) 地图的"放大镜"续篇。
+> **这是什么**：把 MES（製造執行）的**每个页面功能**，从前端到后端逐文件、逐行、带真实代码片段和错误码地讲清楚。与 [`docs/codemap-erp/`](../codemap-erp/README.md) 同一套模板，是 [`docs/architecture/CODEMAP.md`](../architecture/CODEMAP.md) 地图的"放大镜"续篇。
 >
 > **公共机制不重复**：`http.ts`、实体基类链（`BaseEntity→BaseTenantEntity→BaseBizEntity`）、`{code,message,data}` 形状、乐观锁全链路、软删除——这些在 [`codemap-erp/README.md` §0](../codemap-erp/README.md) 已讲过，本册只讲 MES **不一样的地方**。
 >

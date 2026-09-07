@@ -14,7 +14,7 @@
 - 记账一律走 `IJournalEntryService.AutoPostAsync`（自动凭证）或 `AutoVoucherEngine.GenerateAsync`；**禁手工 new 凭证绕过借贷平衡/锁期校验**（AutoPostAsync 内已兜底 E-FIN-112/113 + ValidateBalance）。
 - 幂等：所有自动凭证用 `Source + SourceDocNo` 幂等（引擎已按 `Source+SourceDocNo+Posted` 查重）；`SourceDocNo` 用业务单号（TxnNo/出库号/工单号/期间）。
 - 科目按 `GlAccount.Role`（`a.Role==role && a.IsActive`）解析，缺失 `Fail("E-FIN-141", role)`。可用 Role：`INVENTORY/WIP/FG/COGS/DIRECT_MATERIAL/DIRECT_LABOR/MFG_OVERHEAD/REVENUE/TAX_OUTPUT/AR_CONTROL/RETAINED_EARNINGS`；本年利润科目 COA 已有 `3103 本年利润`（Equity/Credit，无 Role）+ `3104 未分配利润`（Role=`RETAINED_EARNINGS`）。
-- 横切（权限/审计/i18n/错误码）按 `docs/00-横切接线规范.md`：新写端点贴 `[RequirePermission("fin-xxx","action")]`（连字符键）+ 逐租户 MenuAction/RoleAction 种子；E-FIN 错误码水位对照现有码表续号（现有到 E-FIN-150）。
+- 横切（权限/审计/i18n/错误码）按 `docs/architecture/00-横切接线规范.md`：新写端点贴 `[RequirePermission("fin-xxx","action")]`（连字符键）+ 逐租户 MenuAction/RoleAction 种子；E-FIN 错误码水位对照现有码表续号（现有到 E-FIN-150）。
 - **两拍板（已固化 spec §5，commit 542bb61）**：①反冲负库存不足=允许负库存+告警（非拒绝报工）②成本差异月末=结转 COGS（科目月末清零）。
 
 ---

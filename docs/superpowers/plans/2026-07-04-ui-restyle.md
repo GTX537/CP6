@@ -12,7 +12,7 @@
 
 | 文档 | 作用 |
 |---|---|
-| `docs/CP6_Design_System_v1.0.md` | 唯一视觉事实来源：全部 token 值、组件规范、命名规范。**本计划中所有色值/圆角/阴影以它为准** |
+| `docs/architecture/CP6_Design_System_v1.0.md` | 唯一视觉事实来源：全部 token 值、组件规范、命名规范。**本计划中所有色值/圆角/阴影以它为准** |
 | `picture/mockup-final-a-dashboard.html` | 仪表盘视觉基准（已入库）。LayoutView 侧栏/顶栏与 Dashboard 的 CSS 精确值直接从此文件对应 class 抄 |
 | `picture/mockup-final-b-wms-list.html` | 列表页视觉基准。CpListPage/CpFilterBar/CpStatusStrip/表格样式的 CSS 精确值来源 |
 | `docs/superpowers/specs/2026-07-04-ui-restyle-design.md` | 决策背景与非目标 |
@@ -48,7 +48,7 @@
 
 - [ ] **Step 1: 创建 tokens.css**
 
-内容 = 设计系统 `docs/CP6_Design_System_v1.0.md` **附录 A 代码块原样拷贝**，并在文件末尾追加工具类与 body 氛围背景：
+内容 = 设计系统 `docs/architecture/CP6_Design_System_v1.0.md` **附录 A 代码块原样拷贝**，并在文件末尾追加工具类与 body 氛围背景：
 
 ```css
 /* 附录 A 的 :root{...} 原样在上方 …… 以下为追加部分 */

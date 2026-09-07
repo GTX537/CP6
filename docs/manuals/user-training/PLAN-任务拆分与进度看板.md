@@ -190,7 +190,7 @@ docs/manuals/user-training/
 | 产出对象 | 必读真实代码 |
 |---|---|
 | 任一页面 SOP | `views/<模块>/<页面>.vue`(+子组件) · `api/<模块>/*.ts` · `Controllers/<域>/<X>Controller.cs` · `Services/<域>/<X>Service.cs` · `DomainModels/<域>/<实体>.cs` · `DTOs/<域>/*` · `router/index.ts` · `docs/codemap-<域>/`(如有) |
-| 模块总册 | 上述全模块汇总 + `docs/PROJECT_STRUCTURE.md` + `docs/CODEMAP.md` |
+| 模块总册 | 上述全模块汇总 + `docs/architecture/PROJECT_STRUCTURE.md` + `docs/architecture/CODEMAP.md` |
 
 ---
 

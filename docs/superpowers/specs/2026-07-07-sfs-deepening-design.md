@@ -42,7 +42,7 @@ SFS 运行时内核扎实（schema 驱动渲染、前后端同语义规则引擎
 
 ## 6. 横切与错误码
 
-- 全按 `docs/00-横切接线规范.md`（权限点：`oa_form_designer:publish` 高危独立；审计：Wf_FormDef 贴 IAuditable；五语词条种子）。
+- 全按 `docs/architecture/00-横切接线规范.md`（权限点：`oa_form_designer:publish` 高危独立；审计：Wf_FormDef 贴 IAuditable；五语词条种子）。
 - 错误码锁号（承接审批解耦包 E-WF-031~035 之后）：**E-WF-036** 发起失败：该表单无 Published 版本 / **E-WF-037** Published 版本不可变 / **E-WF-038** 附件引用无效或不可访问 / **E-WF-039** 字段查询条件非法（字段不在 schema 白名单）。
 - 测试：明细校验（行内必填/类型/行号定位）、聚合注入前后端等价、copy-on-write 与不可变守卫、无 Published fail-closed、JSON_VALUE 查询（含注入尝试拒绝）、附件引用往返。前端补 ruleEngine.spec（顺带偿还零单测欠账）+ DynamicForm 子表格组件测试。
 

@@ -4,7 +4,7 @@
 M-ERP 横切接线波第三任务(branch=feat/m-erp-crosscutting)。T1 已产出权限键真相源,T2 已完成菜单 MenuKey 锚定。本任务只做控制器贴点;权限种子由 T3b 单独任务完成。
 
 ## 必读(按顺序)
-1. `docs/00-横切接线规范.md`(P1 横切规范,本任务是其机械执行)
+1. `docs/architecture/00-横切接线规范.md`(P1 横切规范,本任务是其机械执行)
 2. `docs/seeds/erp-permission-keys.md`(T1 真相源——键值以此为准逐字使用,46 行:35 真写端点×键 + 11 只读 POST 豁免)
 3. 样板: M-WMS T3a 先例 commit 8aecc71(git show 8aecc71 看典型贴法)
 

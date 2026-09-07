@@ -1,6 +1,6 @@
 # 模块修复波执行计划（M-WMS → M-ERP → M-MES → M-OA/WF → M-PUR → M-PLAN/PUB）
 
-> **For agentic workers:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development，逐任务派发，编码代理=Opus 4.8。**每个任务实现前必读 `docs/00-横切接线规范.md`（P1）——本计划的所有横切任务都是它的机械执行，样板文件索引在其第七章。**
+> **For agentic workers:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development，逐任务派发，编码代理=Opus 4.8。**每个任务实现前必读 `docs/architecture/00-横切接线规范.md`（P1）——本计划的所有横切任务都是它的机械执行，样板文件索引在其第七章。**
 
 **Goal:** 按模块收口全局审计的 T2（授权崩塌）/T3（可达性）/T5（审计与测试盲区）缺陷。每波交付后该模块过 P1 第六章 DoD。
 

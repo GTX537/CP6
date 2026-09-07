@@ -143,6 +143,8 @@ npm run e2e
 
 ## 文档入口
 
+完整分类、阅读路线和资料状态从 [文档中心](docs/README.md) 开始；新增或移动文档遵循 [文档维护规则](docs/CONTRIBUTING.md)。
+
 | 文档 | 用途 |
 | --- | --- |
 | [DevOps 与 CI/CD](docs/devops/README.md) | Azure DevOps 当前状态、CI/CD 架构、Registry 决策、发布流程和环境演进计划 |
@@ -156,7 +158,7 @@ npm run e2e
 | [采购模块](docs/procurement/README.md) | 采购闭环设计与实现说明 |
 | [审批 / OA 引擎](docs/approval/README.md) | 工作流、表单、审批路由与业务接缝 |
 | [PUB 公共平台](docs/pub/README.md) | 权限、组织和公共能力设计说明 |
-| [项目结构参考](docs/PROJECT_STRUCTURE.md) | 较细的目录与代码导航；若版本号或统计口径冲突，以项目文件和本 README 为准 |
+| [项目结构参考](docs/architecture/PROJECT_STRUCTURE.md) | 较细的目录与代码导航；若版本号或统计口径冲突，以项目文件和本 README 为准 |
 
 ## 当前发布边界
 

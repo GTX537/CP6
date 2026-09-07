@@ -606,7 +606,7 @@ flowchart TB
 ## 最后更新来源
 
 - 代码：见 §11（`Integration` 后端逐行实测[IntegrationEvent/BridgeHookBase/各 Hook/RetryWorker/DeadLetterNotifier/BridgeHealthService] + `Program.cs` 开关 + `appsettings.json` 重試参数 + `BridgeHealthView.vue` 前端实读 + codemap-erp/mes/wms 接缝权威）。
-- 文档：`docs/codemap-{erp,mes,wms}/`、`docs/CODEMAP.md`、`docs/manuals/user-training/{01,02,03}-…`（M04/M05/M06 三册接缝触发页面）。
+- 文档：`docs/codemap-{erp,mes,wms}/`、`docs/architecture/CODEMAP.md`、`docs/manuals/user-training/{01,02,03}-…`（M04/M05/M06 三册接缝触发页面）。
 - 基准：分支 `feat/training-m07`（基于 `main` `9f56591`），盘点日 2026-06-29（codemap 实测快照 2026-06-22；后端 Integration/前端看板 2026-06-29 本会话实读）。
 - 覆盖：1 张独立页(§5.1 14 小节[核心含 5.1.1a~1e]) + 8 段 E2E 链路(§5.2~5.9) + 全接缝目录(§3.1)+看板盲区(§3.2) + 模块场景(8)/测试矩阵(18)/可执行用例(12)/验收(14)/术语/待确认(11)/来源/待补/培训脚本(10 阶段)。
 </content>

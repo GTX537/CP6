@@ -23,7 +23,7 @@
 
 ### 0.1 现状盘点（为什么是"增量"不是"从零"）
 
-WMS 已 feature-complete（2026-06-26 核对当前代码）：32 控制器 / 66 服务 / 39 实体 / 39 视图 / 23 测试，核心是**库存写入铁律 `IStockMovementService`**，ERP↔MES↔WMS 闭环 Bridge 已通。需求规格 `docs/MSBBWM_Requirements.txt` 规划的 Phase WM-1~14 + 扩展 WM100~330 + WM-RPT 已逐章落地，记忆里曾经的唯一空缺（RF 手持 WM300）已补齐。
+WMS 已 feature-complete（2026-06-26 核对当前代码）：32 控制器 / 66 服务 / 39 实体 / 39 视图 / 23 测试，核心是**库存写入铁律 `IStockMovementService`**，ERP↔MES↔WMS 闭环 Bridge 已通。需求规格 `docs/requirements/legacy/MSBBWM_Requirements.txt` 规划的 Phase WM-1~14 + 扩展 WM100~330 + WM-RPT 已逐章落地，记忆里曾经的唯一空缺（RF 手持 WM300）已补齐。
 
 因此本项目是在已完整的出库链**之上**叠加一个新能力，而非重写。
 

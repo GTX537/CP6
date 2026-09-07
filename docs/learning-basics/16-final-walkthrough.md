@@ -450,8 +450,8 @@ SELECT WebOrderNo, ShippedQty, ShipDate, ShipStatus FROM T_OrderDetail WHERE ...
 ## 📚 想再学一点
 
 - 高级版本第 16 章：[60 道模拟面试题](../learning/16-mock-interview.md)
-- 项目内：[`docs/PROJECT_STRUCTURE.md`](../PROJECT_STRUCTURE.md) §三业务流程
-- 项目内：[`docs/business-flow-walkthrough.md`](../business-flow-walkthrough.md)（如果存在）
+- 项目内：[`docs/architecture/PROJECT_STRUCTURE.md`](../architecture/PROJECT_STRUCTURE.md) §三业务流程
+- 项目内：[业务流走读](../manuals/business-flow-walkthrough.md)（历史业务流程背景）
 
 ---
 

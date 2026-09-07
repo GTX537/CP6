@@ -2,7 +2,7 @@
 
 > **状态**: SPEC（未实装）
 > **生成于**: 2026-06-03，via gstack `/spec` skill
-> **关联文档**: [PROJECT_IMPROVEMENT_PLAN.md](./PROJECT_IMPROVEMENT_PLAN.md) §三 Phase 6 / [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) §2.3 Bridge Hook
+> **关联文档**: [PROJECT_IMPROVEMENT_PLAN.md](./PROJECT_IMPROVEMENT_PLAN.md) §三 Phase 6 / [PROJECT_STRUCTURE.md](../../architecture/PROJECT_STRUCTURE.md) §2.3 Bridge Hook
 > **前置闭环**: Phase 1-4 Bridge Hook 已落地（参照 memory `project_closed_loop.md`）
 > **明确不做**: mcframe7 連携（Phase 5）；与本期无关
 
@@ -564,7 +564,7 @@ public class DeadLetterNotifier : IDeadLetterNotifier
 | `CP6.WebApi/Controllers/OrderController.cs` | 加 `DELETE /api/orders/{webOrderNo}/cancel` 端点 |
 | `cp6.web/src/api/order.ts` | 加 `cancelOrder(webOrderNo, reason, force)` 方法 |
 | `cp6.web/src/views/erp/OrderListView.vue` | 列表行加「取消」按钮 → 弹 `OrderCancelDialog` |
-| `docs/PROJECT_STRUCTURE.md` §2.3 | 加 `IOrderCancelBridgeHook` 一行 |
+| `docs/architecture/PROJECT_STRUCTURE.md` §2.3 | 加 `IOrderCancelBridgeHook` 一行 |
 | `docs/business-flow-walkthrough.md` | 补「取消路径」章节 |
 
 ---
@@ -608,7 +608,7 @@ public class DeadLetterNotifier : IDeadLetterNotifier
 ## Related
 
 - [PROJECT_IMPROVEMENT_PLAN.md](./PROJECT_IMPROVEMENT_PLAN.md) — 完整改进路线 Phase 6-10
-- [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) — Phase 1-4 闭环架构
+- [PROJECT_STRUCTURE.md](../../architecture/PROJECT_STRUCTURE.md) — Phase 1-4 闭环架构
 - memory `project_closed_loop.md` — Bridge Hook Phase 1-4 实装记录
 
 ---

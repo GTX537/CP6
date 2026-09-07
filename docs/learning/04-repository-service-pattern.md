@@ -330,7 +330,7 @@ CP6 的 `RepositoryBase` 这里有个**已知设计缺陷**：暴露了 orderBy 
 query = query.OrderBy(orderBy);   // "Status asc, CreateDate desc"
 ```
 
-或者上 [QuerySort.cs](../../CP6.Core/Services/QuerySort.cs) 这种手卷的排序解析器（CP6 实际有这个文件）。
+或者上 [QuerySort.cs](../../CP6.Core/Services/Common/QuerySort.cs) 这种手卷的排序解析器（CP6 实际有这个文件）。
 
 ---
 

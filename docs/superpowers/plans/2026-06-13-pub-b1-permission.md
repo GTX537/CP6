@@ -468,7 +468,7 @@ git commit -m "feat(pub): field perm UI + three-power integration (4-granularity
 - **章01**：Sys_UserRole 多角色(A-1) ✅ / UserPermissionContext + 聚合框架(A-2) ✅ / 合并口径并集·最宽·最宽(A-2/B-2/C-1/D-1) ✅ / 缓存+失效(A-3) ✅ / 分配+主角色+迁移 UI(A-4) ✅ / 权限并集求解(A-2 GetAllRoleIds) ✅
 - **章02**：MenuAction/RoleAction(B-1) ✅ / 资源键 MenuKey:action(A-1 补 MenuKey + B-2) ✅ / [RequirePermission] 403(B-3) ✅ / IPermissionService(B-2) ✅ / v-permission + 授权 UI(B-4) ✅ / ActionCode 字典(B-4 操作点维护) ✅
 - **章03**：Sys_RoleDataScope(C-1) ✅ / IDataScoped(C-1) ✅ / 五范围 + 子树注入(C-2) ✅ / 最宽聚合 + 自定义并集(C-1) ✅ / 资源注册(C-2/C-3) ✅ / 配置 UI(C-3) ✅ / ctx 扩展 UserName/DeptId/DeptPath(A-2/C-1) ✅
-- **章04**：Sys_RoleFieldPerm(D-1) ✅ / 序列化掩码 MaskHidden(D-2) ✅ / 只读拒写 StripReadOnly(D-2) ✅ / 最宽=MIN 聚合(D-1) ✅ / 字段注册(D-1) ✅ / [FieldMask](D-2) ✅ / 配置 UI(D-3) ✅ / 三权合一(D-3 集成测) ✅
+- **章04**：Sys_RoleFieldPerm(D-1) ✅ / 序列化掩码 MaskHidden(D-2) ✅ / 只读拒写 StripReadOnly(D-2) ✅ / 最宽=MIN 聚合(D-1) ✅ / 字段注册(D-1) ✅ / `[FieldMask]`（D-2）✅ / 配置 UI(D-3) ✅ / 三权合一(D-3 集成测) ✅
 
 **已知缺口/推迟（已标注）：**
 1. **TenantId**（B1-D3）—— 章09 统一给 Sys 全族。

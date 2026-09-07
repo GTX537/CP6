@@ -2,7 +2,7 @@
 
 ## Mission
 
-Implement the **backend** for the "Unshipped Orders" dashboard widget (Phase 8 Gap 3.4 per `docs/PROJECT_IMPROVEMENT_PLAN.md`). The widget shows orders that are placed but not fully shipped, joined with the current MES and WMS status. **Frontend Vue widget is OUT OF SCOPE** — backend service + controller + tests only.
+Implement the **backend** for the "Unshipped Orders" dashboard widget (Phase 8 Gap 3.4 per `docs/archive/erp-integration-202606/PROJECT_IMPROVEMENT_PLAN.md`). The widget shows orders that are placed but not fully shipped, joined with the current MES and WMS status. **Frontend Vue widget is OUT OF SCOPE** — backend service + controller + tests only.
 
 Working dir: `D:\CP6`. Must not break any existing test.
 

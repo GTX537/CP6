@@ -123,7 +123,7 @@ P0-T2: complete (commit a34a337, Spec ✅ + Approved[sonnet审,独立复grep]; �
 P0-T3: complete (commits 09c5c3a+9abdf19修复, Approved after fix[opus审+复审]; 两处被迫偏离经审查核实全部属实且正确: ①Sys_Role int主键不继承BaseTenantEntity→照Sys_OperLog先例手动TenantId+复合PK(TenantId,RoleId)+HasQueryFilter+StampTenant ②回填保号复制零重指[全部真子表已带TenantId,Sys_RoleMenu无TenantId使brief的remap不可行]; 迁移SysRoleTenantize schema零漂移+手写SQL归户→复制→THROW 50001校验[5子表超集]; 修复=审查Important: Sys_RoleMenu租户化补口(SysRoleMenuTenantize迁移+THROW 50002+filter/stamp接线,RoleController两站点自动收口,ImpersonationService钉租户IgnoreQueryFilters与MenuController全租户purge两例外裁决sound,CreateAsync复制默认租户RoleId=1菜单集+启动网仅零映射租户补种); 全量1577绿[基线1570+7新隔离测试]. Minor记终审: 租户admin全删菜单启动会复活[启发式无法区分]/增量菜单种子仅默认租户[pre-existing,记横切规范票]/docs/seeds旧SQL无TenantId重跑=不可见非串号/真SQL Server迁移执行与前端PMS Role冒烟→T4)
 
 # ═══ M-WMS 横切接线波（授权粒度收口，branch=feat/m-wms-crosscutting, base=8f01b2c）2026-07-10 ═══
-# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md + docs/00-横切接线规范.md
+# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md + docs/architecture/00-横切接线规范.md
 # 7任务: T1权限键清单→T2菜单种子+MenuKey→T3贴RequirePermission+种子→T4反射测试→T5前端v-permission+CJK→T6 IAuditable→T7测试补网
 # 用户2026-07-10授权自主推进(离开), FIN油路因待拍板搁置, 从P0授权粒度M-WMS起跑
 M-WMS T1: complete (commit 5813552, Spec ✅ + Approved[opus审]; 125写端点/30 menu_key/36高危键/1只读豁免; 全量计数125/125精确吻合+11控制器方法级双向验证零缺漏零GET误列; 高危拆分逐一佐证[StockTake approve=写盘盈亏/RMA judge=不可逆处置]; wms_stock_qc菜单缺已标待T2补. 真相源=docs/seeds/wms-permission-keys.md)
@@ -174,7 +174,7 @@ FIN 波E: complete (commit 3cf01e8, Spec ✅ + Approved[sonnet审]; 四链全从
 FIN G.1: complete (commits 0d3a18c+3e632d3, Spec ✅ + Approved[opus审]; 四件全落: ①fin-period权限=菜单604 RoutePath派生fin-period[Fin局部回填块在种子前re-run关掉M-WMS时序命门]+逐租户种子逐行匹配WmsPermissionSeed样板+PeriodController fail-closed反射测试 ②COA回填=StandardScheme非空列定scheme不可能跨插+只插不改不删+三风险测试真载荷 ③INTL 3103同码同义D.1定位不改 ④operator透传可选尾参零破坏五桥落Creator; 1678绿[1669+9]. Minor: 回填行Creator/CreateDate缺省[审计化妆差]/close-reopen存量默认租户块归M-FIN[已周知]
 
 # ═══ M-ERP 横切接线波（branch=feat/m-erp-crosscutting, base=0c8d4d3）2026-07-12 ═══
-# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md M-ERP段 + docs/00-横切接线规范.md; 基线1683绿
+# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md M-ERP段 + docs/architecture/00-横切接线规范.md; 基线1683绿
 # 任务重排(照M-WMS学得): T1权限键清单→T2菜单MenuKey锚定+五孤儿路由收编(原计划T4前置并入,T3b种子依赖菜单行)→T3a贴RequirePermission→T3b逐租户MenuAction/RoleAction种子→T4 fail-closed反射测试→T5 IAuditable(BP/Product/价表/Order)→T6测试补网(Quotation报价/Order建单算价)
 M-ERP T1: complete (commits fe644b8+af80923修复, Spec ✅ + Approved[opus审全量重数46/46双向零缺漏+豁免11条逐Service读证无写库+高危拆分实证]; 15控制器/35真写+11只读POST豁免=46行/14 menu-key(erp-*连字符)/2高危(order:cancel force级联+sheet-unit-price:correct)+6状态键; 修复=豁免计数12→11自洽订正. 真相源=docs/seeds/erp-permission-keys.md. 🔴T2硬前置(审查者独立实证): ERP菜单201-215 RoutePath裸路径(无erp/段)→回填键无erp-前缀全体失配, T2须显式赋MenuKey且先于回填块. ⚠T3裁决点: EstimateCalcController.Calculate挂[AllowAnonymous](:136), 主控倾向保留+反射测试显式豁免+记终审票用户裁处. 备忘: credit-note在ERP无写端点(签发在FIN域,计划点名的高危不存在系计划口径误差); 6域「一覧+登録」双菜单行共键,T2需定唯一锚定行))
 M-ERP T2: complete (commit 70f99e3, Spec ✅ + Approved[opus补审,上会话实现后中断本会话补审]; 三具名风险全证伪: ①14键与T1真相源§二逐字一致[9既有锚202/204/206/208/209/210/212/213/215+5孤儿216-220=14精确] ②Program.cs:832种子确在:888-895回填块前且每启动无条件跑 ③216-220段位Seed全目录grep无碰撞[FinCoa 2204/3103系科目码非MenuId]; 登録页承键一覧留null正确应对IS NOT NULL唯一索引[否决T1§六.2两行同赋并在anchor.md记裁决]; 防御矫正块严限14锚定行; 6测试真实断言删实现会红; 1689绿[1683+6]. Minor×3记档: 唯一键测试InMemory不证生产约束/菜单复活与WmsMenuSeed先例一致[设计一致性]/SQL对照(A)块无条件UPDATE与C#正本兼顾缺行语义差[文件头已声明SQL仅文书对照])
@@ -196,7 +196,7 @@ FIN 部署: complete (publish→删Local/Dev配置→薄镜像build 488MB→comp
 撤匿名: complete (EstimateCalc.Calculate删AllowAnonymous回落类级Authorize不贴权限键仍留只读豁免; T4测试改写为防回潮断言(不再挂匿名+仍无RequirePermission+仍在豁免); 真相源§六#3记裁决; 前端grep=走共享axios withCredentials不破坏; 1716绿计数不变; 镜像立即重建部署, 线上验证calculate无认证403生效)
 
 # ═══ M-MES 横切接线波(branch=feat/m-mes-crosscutting, base=ba33712)2026-07-12 ═══
-# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md M-MES段 + docs/00-横切接线规范.md; 基线1716绿
+# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md M-MES段 + docs/architecture/00-横切接线规范.md; 基线1716绿
 # 任务重排(照M-ERP): T1权限键清单→T2菜单MenuKey锚定+孤儿路由→T3a贴RequirePermission→T3b逐租户种子→T4反射测试→T5 IAuditable(WorkOrder/ProductionResult+顺手收跨波票Wms PlateMoldStock.MadeCost)→T6测试补网(报工状态机/PlanningBoard排产改期; 反冲测试F1已有)
 # 教训前置: T5审计豁免须字段级实查(M-ERP两轮返工); Mes目录实有11控制器(计划口径10, 以实扫为准)
 M-MES T1: complete (commit f7a70cb, Spec ✅ + Approved[opus审,独立全量重数11控制器30端点零偏差]; 30非GET=28真写+2豁免(PlanAchievement Summary/ExportCsv全类AsNoTracking读证)/10 menu-key/26资源键去重/9状态键/2高危(oee:recalculate写库不豁免·process-cost-rate提级经CostCollectService:100直喂完工成本归集佐证成立留降级出口); 计划点名三高危(工单强制关闭/报工修正/报废判定)实扫无直接HTTP端点系盘点差异[WorkOrderService.CancelAsync:351存在但未暴露,受erp-order:cancel管辖]; 真相源=docs/seeds/mes-permission-keys.md. 🔴T2硬前置(审查坐实): ①回填块:894在MES菜单插入:1519-1608之前→洁净部署首启MenuKey=null全403,须显式MenuKey前置 ②菜单310 RoutePath=/mes/machine-list回填得mes-machine-list≠表内mes-machine错配须显式赋值. 利好: RoutePath带mes/前缀+零孤儿路由(15前端页全映射). Minor: §六.1行号近似:1511实为:1519/action新词7个系MES域正当扩展)
@@ -210,7 +210,7 @@ M-MES 全支终审: complete (fable终审 Ready=Yes零必修——质量高于ER
 M-MES 合并+部署: complete (main=afe9252 --no-ff已push, 分支留远端; 镜像重建部署; 线上实证: 10锚定键300段就位[310=mes-machine错配已矫,非锚定行回填*-list后缀不碰撞设计内]/Sys_RoleAction MES段100=25元组×4租户精确/两高危端点无认证403(production-results/complete + process-cost-rate/upsert)/admin+CSRF穿透业务层(complete→400 ME-MSG-001/upsert→400模型校验); Important#1落地=scripts/audit-log-monitor.ps1+计划任务CP6-AuditLog-Monitor每4h容量告警[基线835行/0.6MB,阈值100万行/500MB],归档策略本体留票待用户裁决. M-MES 波完成. 下一波=M-OA/WF)
 
 # ═══ M-OA/WF 横切接线波(branch=feat/m-oawf-crosscutting, base=2041b3a)2026-07-12 ═══
-# 依据: plan M-OA/WF段 + docs/00-横切接线规范.md; 基线1758绿; Oa 11控制器+Wf 5控制器
+# 依据: plan M-OA/WF段 + docs/architecture/00-横切接线规范.md; 基线1758绿; Oa 11控制器+Wf 5控制器
 # 任务重排(照M-ERP/M-MES): T1权限键清单→T2菜单MenuKey锚定→T3a贴RequirePermission→T3b逐租户种子→T4反射测试→T5 IAuditable(Wf_FlowDef/Wf_ApprovalBinding)→T6按需(计划无测试补网任务)
 # ⚠计划T4孤儿路由(/wf/form-designer /wf/flow-designer)新旧双栈裁决须问用户——旧栈退役则删路由而非补菜单; T1先摸清现状留档,裁决点等用户回来拍板,不阻塞其余任务
 # 计划周知: 与审批解耦包对齐(IApprovalService+Wf_ApprovalBinding已落地非待建,无并行冲突)
@@ -226,7 +226,7 @@ M-OA/WF 全支终审: complete (fable终审 Ready=Yes零代码必修, 1796绿终
 M-OA/WF 合并+部署: complete (main=5f3819a --no-ff已push, 分支留远端; 镜像重建部署; 线上实证: 733-739七oa-*键就位/740 null/741-742收编行在且回填派生wf-*-designer键[无害推理线上证实]/Sys_RoleAction OA段80=20元组×4租户精确/两高危端点无认证403(inbox/batch + designer/save)/admin+CSRF穿透模型校验层(双400); 普通角色授权按终审硬序**暂缓**——引擎归属校验票(plan M-OA/WF票#1)落地前维持admin-only安全态. M-OA/WF 波完成. 剩余波: M-PUR→M-PLAN/PUB)
 
 # ═══ M-PUR 横切接线波(branch=feat/m-pur-crosscutting, base=e10e86c)2026-07-12 ═══
-# 依据: plan M-PUR段(T1补齐裸控制器) + docs/00-横切接线规范.md; 基线1796绿
+# 依据: plan M-PUR段(T1补齐裸控制器) + docs/architecture/00-横切接线规范.md; 基线1796绿
 # 实况: Pur 8控制器, 4已部分贴点(PurchaseOrder3/GoodsReceipt2/SupplierPrice2/ThreeWayMatch3=10处), 4裸(PurchaseRequest/Rfq/Subcontract+计划未点名的PurReconcile); Pur菜单701-704有局部回填块(:1499一带)
 # 小波压缩三任务: T1真相源(含既有10贴点键面审计+裸4定键) → T2贴点+菜单锚定+逐租户种子(一体) → T3反射测试+403拒绝用例
 M-PUR T1: complete (commit 0a20284+标题数直修, Spec 5项全✅ + Approved[opus审,独立枚举24非GET端点双向闭环/10既有键面逐字核/豁免Service实读零写证真/两§六硬前置亲验Program.cs成立: ①回填:1513只盖701-704且全局:922早于Pur插入:1385→705-707首启MenuKey=null 403 ②内联种子:1518-1531仅默认租户RoleId=1]; 键面24=既有10+新14全连字符锚定701-707, 高危7/状态5/豁免1; 唯一Minor=§3b标题共4个应为5→主控直修; concerns: 5边界端点分级属判断留§五改判口径/租户数以运行时Sys_Tenants为准)

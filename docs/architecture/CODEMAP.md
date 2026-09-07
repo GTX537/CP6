@@ -13,7 +13,7 @@
 > | **本文 `CODEMAP.md`** | 🗺️ **地图 / 索引** | 你在哪、周围有什么、该往哪走 |
 > | `docs/learning/`（16 篇丛书） | 🔬 **精读** | 每章拆 1~2 个真实文件讲"为什么这么写" |
 > | `DEVELOPMENT-GUIDE.md` | 🛠️ **教程** | 从零把这个项目搭起来的步骤 |
-> | `docs/PROJECT_STRUCTURE.md` | 📐 **参考手册** | ER 图 + 业务流 + 模块清单（偏 ERP/MES/WMS，部分已被本文更新） |
+> | `docs/architecture/PROJECT_STRUCTURE.md` | 📐 **参考手册** | ER 图 + 业务流 + 模块清单（偏 ERP/MES/WMS，部分已被本文更新） |
 > | `README.md` | 🚪 **入口** | 项目是什么 + 文档地图导航 |
 >
 > 👉 **建议把本文当目录**：看到感兴趣的点，顺着链接跳进对应源码或精读章节。
@@ -329,7 +329,7 @@ cp6.web/src/
 
 > 🎯 **学习建议**：把上面这 10 个文件按顺序读一遍，你就完整走通了一个功能的"前端→后端→数据库→联动"。之后看 WMS 入库、财务凭证、采购 PO，全是同一条竖线换业务。
 >
-> 📚 **想要逐行、带真实代码片段和错误码的"代码级"版本**？11 个业务域已全部覆盖：[`codemap-erp`](codemap-erp/README.md) / [`mes`](codemap-mes/README.md) / [`wms`](codemap-wms/README.md) / [`fin`](codemap-fin/README.md) / [`pur`](codemap-pur/README.md) / [`wf`](codemap-wf/README.md) / [`pub`](codemap-pub/README.md) / [`plan`](codemap-plan/README.md)（均在 `docs/codemap-*/`）。把**每个页面动作**都拆到了真实源码行。本节是"地图级"的受注一例，那些是"放大镜级"。
+> 📚 **想要逐行、带真实代码片段和错误码的"代码级"版本**？11 个业务域已全部覆盖：[`codemap-erp`](../codemap-erp/README.md) / [`mes`](../codemap-mes/README.md) / [`wms`](../codemap-wms/README.md) / [`fin`](../codemap-fin/README.md) / [`pur`](../codemap-pur/README.md) / [`wf`](../codemap-wf/README.md) / [`pub`](../codemap-pub/README.md) / [`plan`](../codemap-plan/README.md)（均在 `docs/codemap-*/`）。把**每个页面动作**都拆到了真实源码行。本节是"地图级"的受注一例，那些是"放大镜级"。
 
 ---
 
@@ -367,7 +367,7 @@ sequenceDiagram
 | `IErpBridgeHook` | 出荷確定 / RMA確認 | 出荷実績回写 / 信用票据 |
 | `IOrderCancelBridgeHook` | 受注取消 | 反向级联取消 Outbound + WorkOrder |
 
-详细机制看精读丛书 [`docs/learning/06-bridge-hook-pattern.md`](learning/06-bridge-hook-pattern.md)。
+详细机制看精读丛书 [`docs/learning/06-bridge-hook-pattern.md`](../learning/06-bridge-hook-pattern.md)。
 
 ### 5.2 跨子系统的"连接键"
 
@@ -406,7 +406,7 @@ sequenceDiagram
 
 这些是"碰了就出事"的硬规则，加新代码前务必遵守：
 
-1. **库存写入唯一入口** — `T_Stock` 严禁直接 `Add`/`Update`，必经 `IStockMovementService.ApplyAsync/MoveAsync`，由它同步写 `T_StockTransaction`（不变日志）。👉 精读 [`05-stock-invariant.md`](learning/05-stock-invariant.md)
+1. **库存写入唯一入口** — `T_Stock` 严禁直接 `Add`/`Update`，必经 `IStockMovementService.ApplyAsync/MoveAsync`，由它同步写 `T_StockTransaction`（不变日志）。👉 精读 [`05-stock-invariant.md`](../learning/05-stock-invariant.md)
 2. **采番统一接口** — 业务编号经 `IWmsSequenceService` / `IMesSequenceService` / 财务采番等，禁手工拼字符串。
 3. **Controller 返回形状固定** — 所有 API 返回 `{code, message, data}`，前端 `http.ts` 统一解包。别自创返回结构。
 4. **跨模块只走接口** — 主线联动经 `I*BridgeHook`，中后台经适配器接口，禁直接 `using` 对方 Service 命名空间。
@@ -425,13 +425,13 @@ sequenceDiagram
 
 | 天 | 目标 | 做什么 |
 |---|---|---|
-| **D1·建心智模型** | 看清骨架 | 读本文 §0~§2 + 精读 [`01-architecture-layering.md`](learning/01-architecture-layering.md)。把仓库每个文件夹点开扫一眼。 |
+| **D1·建心智模型** | 看清骨架 | 读本文 §0~§2 + 精读 [`01-architecture-layering.md`](../learning/01-architecture-layering.md)。把仓库每个文件夹点开扫一眼。 |
 | **D2·跑起来** | 环境能动 | 照 `DEVELOPMENT-GUIDE.md` 起后端（`dotnet run --project CP6.WebApi`）+ 前端（`cd cp6.web && npm i && npm run dev`），登录进去点几下。 |
 | **D3·走通一条竖线** | 看懂一个功能全程 | 照本文 §4，把"受注"那 10 个文件按顺序读一遍，对照页面操作。 |
-| **D4·CRUD 套路** | 会自己加功能 | 精读 [`04-repository-service-pattern.md`](learning/04-repository-service-pattern.md)。读 `BaseProvider/` + 一个简单 master（`BusinessPartnerService`）。 |
-| **D5·横切关注点** | 懂"看不见的连接" | 读本文 §5。精读 [`02-di-and-program.md`](learning/02-di-and-program.md)（看 `Program.cs` 怎么接线）+ [`07-jwt-and-operlog-filter.md`](learning/07-jwt-and-operlog-filter.md)。 |
-| **D6·跨模块闭环** | 懂业务联动 | 读本文 §5.1 + 精读 [`06-bridge-hook-pattern.md`](learning/06-bridge-hook-pattern.md)。跟一遍 ERP→MES→WMS。 |
-| **D7·前端 + 测试** | 补全两翼 | 精读 [`09-vue3-frontend.md`](learning/09-vue3-frontend.md) + [`11-testing.md`](learning/11-testing.md)。读 `http.ts` / `router/index.ts` / 一个 `*Tests.cs`。 |
+| **D4·CRUD 套路** | 会自己加功能 | 精读 [`04-repository-service-pattern.md`](../learning/04-repository-service-pattern.md)。读 `BaseProvider/` + 一个简单 master（`BusinessPartnerService`）。 |
+| **D5·横切关注点** | 懂"看不见的连接" | 读本文 §5。精读 [`02-di-and-program.md`](../learning/02-di-and-program.md)（看 `Program.cs` 怎么接线）+ [`07-jwt-and-operlog-filter.md`](../learning/07-jwt-and-operlog-filter.md)。 |
+| **D6·跨模块闭环** | 懂业务联动 | 读本文 §5.1 + 精读 [`06-bridge-hook-pattern.md`](../learning/06-bridge-hook-pattern.md)。跟一遍 ERP→MES→WMS。 |
+| **D7·前端 + 测试** | 补全两翼 | 精读 [`09-vue3-frontend.md`](../learning/09-vue3-frontend.md) + [`11-testing.md`](../learning/11-testing.md)。读 `http.ts` / `router/index.ts` / 一个 `*Tests.cs`。 |
 
 > `docs/learning-basics/` 是同样 16 章的**基础版**（语法门槛更低），`docs/learning/` 是**进阶版**（讲设计取舍、面试怎么问）。基础薄就先 basics，想冲高级岗就读 learning。
 
@@ -443,7 +443,7 @@ sequenceDiagram
 | **前端开发** | §1→§2.3→§4（前端段）＋ 精读 09→10，读 `http.ts`/`router/index.ts`/`stores/` |
 | **加一个新业务模块** | §3 找最像的域抄结构 ＋ §6 十条约定 ＋ §4 竖线 ＋ `DEVELOPMENT-GUIDE.md` |
 | **排查跨模块联动问题** | §5.1 ＋ `appsettings*.json` 的 `*Bridge:Enabled` ＋ Integration 域 + 死信告警 |
-| **面试准备** | 精读 [`16-mock-interview.md`](learning/16-mock-interview.md)（60 题） |
+| **面试准备** | 精读 [`16-mock-interview.md`](../learning/16-mock-interview.md)（60 题） |
 
 ### 7.3 "我想加一个新页面/新接口"——最短路径
 
@@ -514,19 +514,19 @@ sequenceDiagram
 ## 9. 继续深入的延伸阅读
 
 - **代码级实现手册**（本文的"放大镜"续篇，逐页逐行+真实代码片段+错误码）：
-  - [`docs/codemap-erp/`](codemap-erp/README.md) —— ERP 販売主线（見積→御見積→製品→受注→出荷回写）
-  - [`docs/codemap-mes/`](codemap-mes/README.md) —— MES 製造執行（製造指図→製造実績→品質→設備/OEE→計画板）
-  - [`docs/codemap-wms/`](codemap-wms/README.md) —— WMS 倉庫管理（库存铁律→入庫→出庫/出荷→棚卸/期限→紙器特化→業界連携）
-  - [`docs/codemap-fin/`](codemap-fin/README.md) —— Fin 财务会计（总账内核→往来AP/AR→三表/成本/对账→资产/预算）
-  - [`docs/codemap-pur/`](codemap-pur/README.md) —— Pur 采购（主数据/PO/收货/三单匹配→申请/询价/外注/对账）
-  - [`docs/codemap-wf/`](codemap-wf/README.md) —— Wf OA审批引擎（流程引擎/业务回调接缝/高级流程/审批人解析）
-  - [`docs/codemap-pub/`](codemap-pub/README.md) —— Pub 权限平台（四粒度权限/组织/采番/附件/代码生成/Excel）
-  - [`docs/codemap-plan/`](codemap-plan/README.md) —— Plan 计划中台（物料策略/MRP净需求/计划转单）
+  - [`docs/codemap-erp/`](../codemap-erp/README.md) —— ERP 販売主线（見積→御見積→製品→受注→出荷回写）
+  - [`docs/codemap-mes/`](../codemap-mes/README.md) —— MES 製造執行（製造指図→製造実績→品質→設備/OEE→計画板）
+  - [`docs/codemap-wms/`](../codemap-wms/README.md) —— WMS 倉庫管理（库存铁律→入庫→出庫/出荷→棚卸/期限→紙器特化→業界連携）
+  - [`docs/codemap-fin/`](../codemap-fin/README.md) —— Fin 财务会计（总账内核→往来AP/AR→三表/成本/对账→资产/预算）
+  - [`docs/codemap-pur/`](../codemap-pur/README.md) —— Pur 采购（主数据/PO/收货/三单匹配→申请/询价/外注/对账）
+  - [`docs/codemap-wf/`](../codemap-wf/README.md) —— Wf OA审批引擎（流程引擎/业务回调接缝/高级流程/审批人解析）
+  - [`docs/codemap-pub/`](../codemap-pub/README.md) —— Pub 权限平台（四粒度权限/组织/采番/附件/代码生成/Excel）
+  - [`docs/codemap-plan/`](../codemap-plan/README.md) —— Plan 计划中台（物料策略/MRP净需求/计划转单）
 - **精读 16 章**：`docs/learning/`（进阶）/ `docs/learning-basics/`（基础）—— 每章拆真实文件讲设计
 - **从零搭建**：`DEVELOPMENT-GUIDE.md`
-- **ER 图 + 业务流参考**：`docs/PROJECT_STRUCTURE.md`、`docs/MSBBWM_ER_Diagram.md`
-- **需求规格底稿**：`docs/MSBBWM_Requirements.txt`、`docs/MES_Requirements.txt`、`docs/detailed-spec/`
-- **战略 / 路线**：`docs/00-功能盘点.md`、`docs/00-执行计划总盘.md`、`docs/00-product-blueprint.md`
+- **ER 图 + 业务流参考**：`docs/architecture/PROJECT_STRUCTURE.md`、`docs/requirements/legacy/MSBBWM_ER_Diagram.md`
+- **需求规格底稿**：`docs/requirements/legacy/MSBBWM_Requirements.txt`、`docs/requirements/legacy/MES_Requirements.txt`、`docs/detailed-spec/`
+- **战略 / 路线**：`docs/product/00-功能盘点.md`、`docs/product/00-执行计划总盘.md`、`docs/product/00-product-blueprint.md`
 - **各新模块设计丛书**：`docs/{finance,procurement,oa,pub,approval,space}/`
 
 ---

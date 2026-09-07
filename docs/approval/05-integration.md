@@ -181,7 +181,7 @@ CP6 财务模块走 Phase 6 **异步事件**（IntegrationEvent + 重试/死信�
 - [ ] 回调失败/重复回调分别怎么处理？为什么不能静默吞？
 - [ ] 采购总纲的 `IApprovalService` 桩，怎么在这一章零大改地换成实现？
 
-全部能答 → **MVP 闭合**：审批引擎从"自己能跑"升级为"让采购/财务受益"，采购的 `IApprovalService` 立住。后续 [06 规则](./06-rule-engine.md)、[07 高级流程](./07-advanced-flow.md) 接真实复杂审批，[09 集成](./09-integration.md) 收口四接口与 Phase 6 边界。
+全部能答 → **MVP 闭合**：审批引擎从"自己能跑"升级为"让采购/财务受益"，采购的 `IApprovalService` 立住。后续 [06 规则](./06-rule-engine.md)、[07 高级流程](./07-advanced-flow.md) 接真实复杂审批。原稿提到的 `09-integration.md` 在本目录中不存在；集成边界先以[审批总纲](./README.md)与本文“为什么同步回调，而不是 Phase 6 事件”为准。
 
 ---
 

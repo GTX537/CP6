@@ -1,7 +1,7 @@
 # MES 写端点 × 権限键清单（M-MES Task 1 真相源）
 
 > 生成于 2026-07-12。本表是 **M-MES 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填/显式赋值）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试）均以本表为准。
-> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/erp-permission-keys.md` / `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 MES 菜单种子 `CP6.WebApi/Program.cs` MenuId 300–315 + 逐 Service 实现读证的只读 POST 豁免判定。
+> 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/erp-permission-keys.md` / `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 MES 菜单种子 `CP6.WebApi/Program.cs` MenuId 300–315 + 逐 Service 实现读证的只读 POST 豁免判定。
 > 扫描范围：`CP6.WebApi/Controllers/Mes/` 下 **全部 11 个控制器**（计划口径 10，实扫 11，差异见 §七）。
 > **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
 

@@ -1,7 +1,7 @@
 # ERP 写端点 × 権限键清单（M-ERP Task 1 真相源）
 
 > 生成于 2026-07-12。本表是 **M-ERP 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填）与 T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试 + 收编五条孤儿路由菜单）均以本表为准。
-> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 样板 `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 ERP 菜单种子 `CP6.WebApi/Program.cs` MenuId 200–215（**16 行均缺 MenuKey，且 RoutePath 为裸路径无 `erp/` 前缀**——见 §六 头号命门）+ 逐 Service 实现读证的只读 POST 豁免判定。
+> 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 样板 `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 ERP 菜单种子 `CP6.WebApi/Program.cs` MenuId 200–215（**16 行均缺 MenuKey，且 RoutePath 为裸路径无 `erp/` 前缀**——见 §六 头号命门）+ 逐 Service 实现读证的只读 POST 豁免判定。
 > 扫描范围：`CP6.WebApi/Controllers/Erp/` 下 **全部 15 个控制器**。
 > **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
 

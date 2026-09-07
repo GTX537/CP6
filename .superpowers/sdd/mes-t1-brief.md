@@ -4,7 +4,7 @@
 M-MES 横切接线波首任务(branch=feat/m-mes-crosscutting)。本波按 M-WMS/M-ERP 同型流程收口授权粒度: T1 产出「端点×权限键」真相源,是后续 T2 菜单锚定/T3a 贴点/T3b 种子/T4 反射测试的唯一依据——**键错一字全链 403,清单质量决定整波**。
 
 ## 必读(按顺序)
-1. `docs/00-横切接线规范.md`(命门: 键连字符非下划线/资源键=锚定菜单 MenuKey/RoleAction 逐租户)
+1. `docs/architecture/00-横切接线规范.md`(命门: 键连字符非下划线/资源键=锚定菜单 MenuKey/RoleAction 逐租户)
 2. 同型先例: `docs/seeds/erp-permission-keys.md`(M-ERP T1 交付物——结构、豁免论证方式、§七扫描面口径照此)与 `docs/seeds/wms-permission-keys.md`
 3. 扫描对象: `CP6.WebApi/Controllers/Mes/` 全部控制器(实有 11 个: DefectRecord/Machine/MesDashboard/Oee/PlanAchievement/PlanningBoard/ProcessCostRate/ProductionResult/QualityInspection/WorkCenter/WorkOrder;计划口径 10,以实扫为准并在 §七 说明差异)
 

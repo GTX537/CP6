@@ -40,7 +40,7 @@ CP6.Tests   ──────────────────┘
 cp6.web ── HTTP / WebSocket ──→ CP6.WebApi
 ```
 
-### 各层职责（取自 `docs/PROJECT_STRUCTURE.md` §2.2 并精炼）
+### 各层职责（取自 `docs/architecture/PROJECT_STRUCTURE.md` §2.2 并精炼）
 
 | 项目 | 角色 | 一句话定义 | 它**不**做什么 |
 |---|---|---|---|
@@ -152,4 +152,4 @@ CP6 用 `TestHelper.cs` 里的 `CreateInMemoryContext()` 工厂规避，但更�
 - [.NET Solution File Format (.slnx)](https://learn.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file) — 官方迁移指南
 - [Onion Architecture (Jeffrey Palermo, 2008)](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/) — 洋葱架构原文
 - [Clean Architecture (Robert C. Martin)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — 依赖反转的总纲
-- 项目内：[`docs/PROJECT_STRUCTURE.md`](../PROJECT_STRUCTURE.md) §1, §2
+- 项目内：[`docs/architecture/PROJECT_STRUCTURE.md`](../architecture/PROJECT_STRUCTURE.md) §1, §2

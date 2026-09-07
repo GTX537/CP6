@@ -1,7 +1,7 @@
 # 采购(Pur)写端点 × 権限键清单（M-PUR Task 1 真相源）
 
 > 生成于 2026-07-12。本表是 **M-PUR 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 显式赋值/回填）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、反射 fail-closed 测试 + 403 用例均以本表为准。
-> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/oawf-permission-keys.md`（§一~§七 结构照抄）+ 现有 Pur 菜单种子 `CP6.WebApi/Program.cs` MenuId 700–708 + 逐 Service 实现读证的只读 POST 豁免判定。
+> 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/oawf-permission-keys.md`（§一~§七 结构照抄）+ 现有 Pur 菜单种子 `CP6.WebApi/Program.cs` MenuId 700–708 + 逐 Service 实现读证的只读 POST 豁免判定。
 > 扫描范围：`CP6.WebApi/Controllers/Pur/`（**8 控制器全量**：SupplierPrice / PurchaseOrder / GoodsReceipt / ThreeWayMatch / PurchaseRequest / Rfq / Subcontract / PurReconcile）。
 > **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
 

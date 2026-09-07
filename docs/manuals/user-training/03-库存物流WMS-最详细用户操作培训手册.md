@@ -1318,7 +1318,7 @@ flowchart TB
 ## 最后更新来源
 
 - 代码：见 §11（codemap-wms 逐行权威[README+01~06] + 37 个 view 6 组并行 agent 实读 + types/wms 枚举 + Controller/Service/Hook/SignalR/实体）。
-- 文档：`docs/codemap-wms/`(README+01~06)、`docs/CODEMAP.md`、`docs/manuals/user-training/00-用户操作手册页面盘点表.md`。
+- 文档：`docs/codemap-wms/`(README+01~06)、`docs/architecture/CODEMAP.md`、`docs/manuals/user-training/00-用户操作手册页面盘点表.md`。
 - 基准：分支 `feat/wfs-inbox-core`，盘点日 2026-06-29（codemap 实测快照 2026-06-22）。
 - 覆盖：37 页（16 页 14 小节详写[7 核心含 1a~1e] + 21 页 5 组表格概述）+ 模块级场景(8)/测试矩阵(24)/可执行用例(14)/验收(14)/术语/待确认(15)/来源/待补/培训脚本(12 阶段)。
 

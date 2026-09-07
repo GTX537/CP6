@@ -50,4 +50,4 @@ ERP 受注创建后通过 Bridge Hook / IntegrationEvent 驱动 MES/WMS；MES �
 - API 类型位于 `src/types`，HTTP 封装位于 `src/api`，页面不直接创建散落 axios 实例。
 - 动态路由来自后端菜单；i18n 由 DB 键驱动。
 - 业务条件 `v-if` 与权限指令并列；权限铺设任务只加 template 指令，不改脚本和样式。
-- 设计系统见 `docs/CP6_Design_System_v1.0.md`；响应式公共逻辑优先复用 composable。
+- 设计系统见 `docs/architecture/CP6_Design_System_v1.0.md`；响应式公共逻辑优先复用 composable。

@@ -1,7 +1,7 @@
 # WFS 引擎深化 · 审批人解析高级策略设计 Spec
 
 > 版本 **v1.0**(2026-06-28) · 分支 `feat/wfs-approver-resolve`(off `main` f90a138) · 隔离 worktree `D:/CP6-wfs-approver`
-> 上游：[[2026-06-26-wfs-runtime-kernel-design]](token 内核 L0)、[[2026-06-26-wfs-form-inbox-unified-design]](OA 信箱 umbrella，**本 spec 闭其 §1.5.3 四缺口**)、[[2026-06-28-wfs-serial-signing-design]](串簽，已上 main，本 spec 与之正交，复用其 planner/forecast/设计器接缝)。
+> 上游：[token 内核 L0](2026-06-26-wfs-runtime-kernel-design.md)、[OA 信箱 umbrella](2026-06-26-wfs-form-inbox-unified-design.md)（**本 spec 闭其 §1.5.3 四缺口**）、[串簽](2026-06-28-wfs-serial-signing-design.md)（原文时点已上 main，本 spec 与之正交，复用其 planner/forecast/设计器接缝）。
 > 本 spec 在**已完成的 token 内核 + OA 电子表单信箱(A/B/C/C′/D-1) + 串簽(全上 main)**之上，扩 `IApproverResolver` 的解析能力。**不碰引擎执行态/串簽档·轮机制**。
 
 ---

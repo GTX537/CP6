@@ -5,7 +5,7 @@ M-PUR 横切接线波第二任务。T1 真相源已过审（opus 独立复核全
 
 ## 必读（按顺序）
 1. `docs/seeds/pur-permission-keys.md` —— **唯一真相源，键名/锚定/豁免逐字照抄，不得改判**（§五留的改判口径属用户裁决，本任务不动）。
-2. `docs/00-横切接线规范.md`。
+2. `docs/architecture/00-横切接线规范.md`。
 3. 逐租户种子先例：`CP6.WebApi/Seed/WmsPermissionSeed.cs`（模式照抄）及其测试；菜单种子先例参考 OawfMenuSeed。
 4. Program.cs Pur 段现状：菜单插入（:1385–1414 一带）、局部回填（:1513 一带，只盖 701–704）、内联种子（:1518–1531，仅默认租户）。
 

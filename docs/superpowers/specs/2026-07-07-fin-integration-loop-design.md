@@ -61,7 +61,7 @@
 
 ## 8. 横切与范围外
 
-- 权限/审计/i18n/错误码全按 `docs/00-横切接线规范.md`；E-FIN 错误码水位开工时对照 Fin 现有码表锁定。
+- 权限/审计/i18n/错误码全按 `docs/architecture/00-横切接线规范.md`；E-FIN 错误码水位开工时对照 Fin 现有码表锁定。
 - IntegrationEvent 补 userId（审计 T4 尾项 BridgeHookBase.cs:75 Creator="system"）随本包顺带修——发布 payload 带 operator（对齐 Space 波1 publishedBy 先例）。
 - **范围外**：现金流量表/合并报表（B1 不变）、检收基准开票、价差量差细分、多币种存货重估。
 

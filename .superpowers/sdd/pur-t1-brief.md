@@ -4,7 +4,7 @@
 M-PUR 横切接线波首任务(第五波,前四波已上线)。计划原文: 「补齐三个裸控制器(PurchaseRequest create/submit/convert、Rfq 7 POST、Subcontract 4 POST)逐端点贴 [RequirePermission]——键名对齐同目录 PurchaseOrderController 既有风格 + MenuAction 种子 + 权限拒绝用例(403 断言)」。实况: Pur 目录 8 控制器,4 个已部分贴点(10 处),裸的还有计划未点名的 PurReconcileController——一并入面。
 
 ## 必读(按顺序)
-1. `docs/00-横切接线规范.md`
+1. `docs/architecture/00-横切接线规范.md`
 2. 同型先例: `docs/seeds/oawf-permission-keys.md`(§一~§七 结构照抄)
 3. 既有风格: CP6.WebApi/Controllers/Pur/PurchaseOrderController.cs 等 4 个已贴控制器的键面(先读,新键对齐其风格)
 
