@@ -1,6 +1,6 @@
 # CP6 全栈学习丛书
 
-> **定位**：不是"项目说明书"（看 [`PROJECT_STRUCTURE.md`](../PROJECT_STRUCTURE.md)），不是"从零搭建教程"（看 [`DEVELOPMENT-GUIDE.md`](../../DEVELOPMENT-GUIDE.md)），而是 —— **拿 CP6 的真实代码当教材，学高级全栈思维**。
+> **定位**：不是"项目说明书"（看 [`PROJECT_STRUCTURE.md`](../architecture/PROJECT_STRUCTURE.md)），不是"从零搭建教程"（看 [`DEVELOPMENT-GUIDE.md`](../../DEVELOPMENT-GUIDE.md)），而是 —— **拿 CP6 的真实代码当教材，学高级全栈思维**。
 >
 > 每章拆 1~2 个真实文件，讲：**为什么这么写、不这么写会出什么事、面试官会怎么问、业界其他方案怎么对比**。
 >

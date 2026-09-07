@@ -1,6 +1,6 @@
 # Fin 财务会计 · 代码级实现手册
 
-> 同模板；公共机制见 [`codemap-erp/README.md` §0](../codemap-erp/README.md)。是 [`CODEMAP.md`](../CODEMAP.md) 的放大镜续篇。财务 23 个控制器，本册分 4 章。
+> 同模板；公共机制见 [`codemap-erp/README.md` §0](../codemap-erp/README.md)。是 [`CODEMAP.md`](../architecture/CODEMAP.md) 的放大镜续篇。财务 23 个控制器，本册分 4 章。
 
 ## 📖 目录
 | # | 功能 | 文件 | 看点 |

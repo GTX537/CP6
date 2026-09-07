@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-07 文档分类与导航整理
+
+- 建立 [文档中心](../README.md) 和 [维护规则](../CONTRIBUTING.md)，补齐主要缺失目录的入口、阅读顺序及资料状态说明。
+- 将 31 个根目录文件按用途分类，保留全部迁移附件与可审计的旧 / 新路径和原始 blob 清单；同步修复跨文档引用以及已确认的旧失效链接。
+- 本地链接检查与迁移完整性核对通过；检查器覆盖有效链接、失效相对路径、大小写、Unicode / 图片、代码示例及越界目标。具体结果见 [整理记录](../_inventory/2026-09-07-docs-organization.md)。
+- 本次是文档管理交付，不重新认定旧计划、产品实现或生产验收的完成状态。
+
 ## 2026-09-03 UTC P10 R2/cosign 外部前置切片
 
 - PR #80 head `17dc0407f58750d729d7207dfa0f59f79182a4c5` 合并为 `main@da54076861b30e710a3eceb9e08023fbc6f9ff87`；六项 PR 门禁及 exact-main runs 33706881271 / 33706881477 全部成功。`p10-platform-candidate` 已固定 owner reviewer、`prevent_self_review=false` 和唯一 `main` deployment branch policy，八个约定 Environment secret 名称均已绑定且未进入仓库。

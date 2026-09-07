@@ -4,7 +4,7 @@
 M-OA/WF 横切接线波首任务(branch=feat/m-oawf-crosscutting)。第四个同型波(M-WMS/M-ERP/M-MES 已上线)。清单质量决定全波,键错一字全链 403。
 
 ## 必读(按顺序)
-1. `docs/00-横切接线规范.md`
+1. `docs/architecture/00-横切接线规范.md`
 2. 同型先例: `docs/seeds/mes-permission-keys.md`(最新最严的一版,结构 §一~§七 照抄)
 3. 扫描对象: `CP6.WebApi/Controllers/Oa/`(11 控制器: ApproverMap/Catalog/Delegate/Designer/Draft/FlowAdmin/Forecast/Inbox/Notification/Pref/Query)+ `CP6.WebApi/Controllers/Wf/`(5 控制器: AdvancedFlow/Approval/Flow/Form/Task)
 

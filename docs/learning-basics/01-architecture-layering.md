@@ -248,4 +248,4 @@ dotnet build
 
 - 高级版同章节：[`docs/learning/01-architecture-layering.md`](../learning/01-architecture-layering.md) ——看完本章后再去，会看出更多门道
 - 关键词搜索："Clean Architecture"、"Onion Architecture"、"分层架构"
-- 项目内：通读 `docs/PROJECT_STRUCTURE.md` §1, §2，对照 CP6 的目录看
+- 项目内：通读 `docs/architecture/PROJECT_STRUCTURE.md` §1, §2，对照 CP6 的目录看

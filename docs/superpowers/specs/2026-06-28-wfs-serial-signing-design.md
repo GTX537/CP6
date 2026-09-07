@@ -2,7 +2,7 @@
 
 > 版本 **v1.1**(2026-06-28 稳定性修订,纳入用户评审 R1~R13) · 分支 `feat/wfs-serial-sign`(off `main` a462764)
 > v1.0→v1.1 关键改动:**①档位计票加 `StageRound` 维度(解 prevStage 重入计票串台)②进节点冻结 `RuntimeApprovalStage` 运行计划(解 managerChain 档位漂移)③`IApprovalStagePlanner` 服务集中展开逻辑④空审批人不静默跳过(E-WF-013)⑤DTO/索引/测试补强**。详见 §R。
-> 上游内核:[[2026-06-26-wfs-runtime-kernel-design]](token 内核 L0,本 spec 不推倒)与 [[2026-06-26-wfs-form-inbox-unified-design]](OA 信箱 umbrella)。
+> 上游内核：[token 内核 L0](2026-06-26-wfs-runtime-kernel-design.md)（本 spec 不推倒）与 [OA 信箱 umbrella](2026-06-26-wfs-form-inbox-unified-design.md)。
 > 本 spec 在**已完成的 token 内核 + OA 电子表单信箱(A/B/C/C′/D-1 全上 main)**之上,深化审批节点的**串簽**表达力。
 
 ---

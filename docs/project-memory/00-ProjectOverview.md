@@ -32,8 +32,8 @@ CP6 是面向纸箱包装制造企业的一体化 ERP / MES / WMS 与 SaaS 中�
 ## 仓库入口
 
 - `README.md`：项目与文档地图。
-- `docs/CODEMAP.md`：代码导航，结构有效但计数可能过时。
-- `docs/00-功能盘点.md`、`00-执行计划总盘.md`、`00-product-blueprint.md`：战略入口。
+- `docs/architecture/CODEMAP.md`：代码导航，结构有效但计数可能过时。
+- `docs/product/00-功能盘点.md`、`00-执行计划总盘.md`、`00-product-blueprint.md`：战略入口。
 - `docs/codemap-*`：各领域代码级手册。
 - `docs/superpowers/specs`、`plans`、`qa`：设计、执行计划和验收证据。
 - `docs/seeds`：权限键与菜单锚点的权威表。

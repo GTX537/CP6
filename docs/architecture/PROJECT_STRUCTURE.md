@@ -4,10 +4,10 @@
 > **状态**：截至 2026-06-13。代码盘点：4 个 .NET 项目 + 1 个 Vue3 前端、**66 个 Controller、~110 个前端 view**。已实现 = 进销存(MSBB)+生产(MES)+物流(WMS)+ERP→MES→WMS 闭环(Phase 1-4)。
 > **与既存/战略文档的关系**：
 > - `README.md` — 项目入口 + 文档地图导航。
-> - `docs/00-功能盘点.md` / `docs/00-执行计划总盘.md` / `docs/00-product-blueprint.md` — **战略三件套**：现状缺口 / 16 份实施计划+执行顺序 / 建设蓝图。
+> - `docs/product/00-功能盘点.md` / `docs/product/00-执行计划总盘.md` / `docs/product/00-product-blueprint.md` — **战略三件套**：现状缺口 / 16 份实施计划+执行顺序 / 建设蓝图。
 > - `DEVELOPMENT-GUIDE.md` — 教程视角（怎么搭起来）。本文是参考视角（现状有什么、怎么连）。
 > - `docs/manuals/business-flow-walkthrough.md` — Phase 1 业务流（部分过时；2026-06-13 整理后移入 docs/manuals/）。
-> - `docs/MSBBWM_Requirements.txt` / `docs/MES_Requirements.txt` — 需求规格底稿。
+> - `docs/requirements/legacy/MSBBWM_Requirements.txt` / `docs/requirements/legacy/MES_Requirements.txt` — 需求规格底稿。
 
 ---
 
@@ -25,7 +25,7 @@ D:\CP6\
 └── CP6.slnx             # .NET solution（4 个 csproj）
 ```
 
-> **文档地图（docs/，2026-06-13 整理）**：`00-{功能盘点,执行计划总盘,product-blueprint}`(战略三件套) · `superpowers/{specs,plans}`(设计spec+16份实施计划) · `{pub,finance,oa,procurement,space,approval}`(新模块丛书) · `detailed-spec`(MSBB逆向) · `seeds`(SQL种子) · `manuals`(操作手册) · `archive`(历史笔记) · `{oa,learning,learning-basics}`(教材) · `file`(原始設計書源,本地gitignore)。详见 `README.md` 文档地图表。
+> **文档导航（2026-09-07 整理）**：产品规划已集中到 `docs/product/`，架构参考集中到 `docs/architecture/`。完整分类见 [文档中心](../README.md)。`docs/file/` 同时存在 Git 已跟踪资产和本地忽略资料，不能整体视为“仅本地”；本页其余架构统计仍是 2026-06-13 快照。
 
 ### 分层依赖（严格单向）
 
@@ -229,7 +229,7 @@ sequenceDiagram
 
 ### 4.4 WMS / 倉庫管理（MSBBWM 系列）
 
-按需求规格 `docs/MSBBWM_Requirements.txt` 分核心 + 扩展 + 报表：
+按需求规格 `docs/requirements/legacy/MSBBWM_Requirements.txt` 分核心 + 扩展 + 报表：
 
 **核心（WM010~090）**
 
@@ -394,11 +394,11 @@ erDiagram
 |---|---|
 | 搭一遍 dev 环境 | `DEVELOPMENT-GUIDE.md` 一二三阶段 |
 | 跑一次端到端 demo | `docs/business-flow-walkthrough.md` 四〜七节（注：WMS 部分需对照本文档 §三 更新） |
-| 新增一个 WMS 子模块 | 本文档 §六 八条约定 + `docs/MSBBWM_Requirements.txt` 对应 WM 章节 |
+| 新增一个 WMS 子模块 | 本文档 §六 八条约定 + `docs/requirements/legacy/MSBBWM_Requirements.txt` 对应 WM 章节 |
 | 排查 ERP↔MES↔WMS 联动问题 | 本文档 §2.3 三个 Hook + `appsettings*.json` 的 `*Bridge:Enabled` 配置 |
 | 加翻译 / 加菜单 | `docs/wms-menu-seed.sql` `docs/wms-*-i18n-seed.sql` 既有 MERGE 模板 |
-| 看 ER 全貌 | 本文档 §五 + `docs/MSBBWM_ER_Diagram.md` |
-| 看 Phase 6-10 整体改进 | 本文档 §八 + `docs/PROJECT_IMPROVEMENT_PLAN.md` |
+| 看 ER 全貌 | 本文档 §五 + `docs/requirements/legacy/MSBBWM_ER_Diagram.md` |
+| 看 Phase 6-10 整体改进 | 本文档 §八 + `docs/archive/erp-integration-202606/PROJECT_IMPROVEMENT_PLAN.md` |
 
 ---
 

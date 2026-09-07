@@ -1,7 +1,7 @@
 # CP6 ERP→MES→WMS 业务功能完善设计
 
 > **生成于** 2026-06-03，基于代码盘点 + Bridge Hook 闭环 Phase 1-4 已落地后的现状。
-> **关联文档**：[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) §2.3 描述当前闭环架构；本文档列出**已知缺口 + 改进设计**。
+> **关联文档**：[PROJECT_STRUCTURE.md](../../architecture/PROJECT_STRUCTURE.md) §2.3 描述当前闭环架构；本文档列出**已知缺口 + 改进设计**。
 > **范围声明**：Phase 5 mcframe7 連携已明确不做，本文档不涉及。
 
 ---

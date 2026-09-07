@@ -1,7 +1,7 @@
 # 计划中台(Plan)+公共(Pub)写端点 × 権限键清单（M-PLAN/PUB Task 1 真相源）
 
 > 生成于 2026-07-17。本表是 **M-PLAN/PUB 横切接线波（第六波=收尾波）的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 731/732 MenuKey 首启就位修复）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、反射 fail-closed 测试 + 403 用例均以本表为准。
-> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/pur-permission-keys.md`（§一~§七 结构照抄，五波最强形态：豁免须逐条 Service 读证）+ 现有 Plan/Pub 菜单 `CP6.WebApi/Program.cs`（Pub 108–113 :966–1006 / Plan 730–732 :1526–1542）+ 逐 Service 实现读证的只读 POST 豁免判定。
+> 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/pur-permission-keys.md`（§一~§七 结构照抄，五波最强形态：豁免须逐条 Service 读证）+ 现有 Plan/Pub 菜单 `CP6.WebApi/Program.cs`（Pub 108–113 :966–1006 / Plan 730–732 :1526–1542）+ 逐 Service 实现读证的只读 POST 豁免判定。
 > 扫描范围：`CP6.WebApi/Controllers/Plan/`（**2 控制器**：Mrp / ItemPlanningPolicy）+ `CP6.WebApi/Controllers/Pub/`（**3 控制器**：Attachment / CodeGen / Seq）= **5 控制器全量**。
 > **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
 > **5 控制器均为裸控制器**：仅类级 `[Authorize]`（登录闸），**零 `[RequirePermission]` 既有贴点**（grep 实证 Plan/Pub 目录 0 命中）。全部键为新键。

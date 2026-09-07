@@ -14,7 +14,7 @@
 | 风格方向 | 以用户 demo（柔和 SaaS）为参照做专业化改造：保留青绿主色/悬浮侧栏/柔和阴影；emoji→线性图标、糖果色降级为图表与状态色、数据页高密度克制 |
 | 模板共享 | 新建 CpListPage 等 8+ 模板组件收敛 130+ 个手写 el-table 查询页；现存 VolTable/VolForm 废弃 |
 | 视觉基准 | `picture/mockup-final-a-dashboard.html`、`picture/mockup-final-b-wms-list.html`（已用户验收） |
-| 规范载体 | **《CP6 Design System v1.0》= `docs/CP6_Design_System_v1.0.md`**，为 UI 唯一事实来源，本 spec 不重复其内容 |
+| 规范载体 | **《CP6 Design System v1.0》= `docs/architecture/CP6_Design_System_v1.0.md`**，为 UI 唯一事实来源，本 spec 不重复其内容 |
 | 暗色模式 | v1.0 只建两级 token 结构与文件占位，不实现切换 |
 | 字体 | Nunito（本地打包，不依赖 CDN）只管拉丁与数字 + 系统中文栈；数字 tabular-nums |
 

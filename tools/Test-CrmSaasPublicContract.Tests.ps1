@@ -21,6 +21,7 @@ $utf8 = New-Object System.Text.UTF8Encoding($false)
 $validatorRelativePath = 'tools/Test-CrmSaasPublicContract.ps1'
 $fixtureDirectories = @(
     'tools',
+    'docs/architecture',
     'docs/crm',
     'docs/client',
     'docs/devops',

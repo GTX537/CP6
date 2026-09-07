@@ -16,8 +16,8 @@
 
 更详细的 3D Space 闭环及代码差距见：
 
-- [CP6 3D Space 端到端闭环蓝图](./CP6-Space3D-end-to-end-blueprint.svg)
-- [菜鸟案例研究、CP6 代码对照与实施路线](./CP6-Space3D-Cainiao-benchmark-and-closure.md)
+- [CP6 3D Space 端到端闭环蓝图](../space/research/CP6-Space3D-end-to-end-blueprint.svg)
+- [菜鸟案例研究、CP6 代码对照与实施路线](../space/research/CP6-Space3D-Cainiao-benchmark-and-closure.md)
 
 ## 文件
 

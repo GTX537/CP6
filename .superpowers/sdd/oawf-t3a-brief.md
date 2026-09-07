@@ -4,7 +4,7 @@
 M-OA/WF 横切接线波第三任务。T1 真相源(已含 T2 委派合一裁决)+T2 菜单锚定已过审。本任务只做贴点;种子=T3b。
 
 ## 必读(按顺序)
-1. `docs/00-横切接线规范.md`
+1. `docs/architecture/00-横切接线规范.md`
 2. `docs/seeds/oawf-permission-keys.md`(T1 真相源合一后版本——键值逐字使用: 31 真写端点×键 + 2 只读 POST 豁免[Forecast.Preview/Query.Search])
 3. 样板: M-MES T3a 先例 commit 35e90a7(git show 学贴法)
 

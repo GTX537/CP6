@@ -439,4 +439,4 @@ CP6.Core → CP6.Entity
 - [Integration Events (Microsoft eShopOnContainers)](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/multi-container-microservice-net-applications/integration-event-based-microservice-communications)
 - [Outbox Pattern](https://microservices.io/patterns/data/transactional-outbox.html) — CP6 的 IntegrationEvent + Worker 就是 Outbox 的简化版
 - [Saga Pattern](https://microservices.io/patterns/data/saga.html) — 进一步的跨服务事务模式
-- 项目内：`docs/PROJECT_STRUCTURE.md` §2.3 + §8.2、`CP6.Core/Services/BridgeHookBase.cs`、`CP6.WebApi/BackgroundServices/IntegrationEventRetryWorker.cs`
+- 项目内：`docs/architecture/PROJECT_STRUCTURE.md` §2.3 + §8.2、`CP6.Core/Services/BridgeHookBase.cs`、`CP6.WebApi/BackgroundServices/IntegrationEventRetryWorker.cs`

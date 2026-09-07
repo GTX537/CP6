@@ -1,6 +1,6 @@
 # WMS 倉庫管理 · 代码级实现手册
 
-> **这是什么**：把 WMS（倉庫管理，系统最大模块，32 控制器/39 实体）的**每个页面功能**，从前端到后端逐文件、逐行、带真实代码片段和错误码地讲清楚。与 [`docs/codemap-erp/`](../codemap-erp/README.md)、[`docs/codemap-mes/`](../codemap-mes/README.md) 同一套模板，是 [`docs/CODEMAP.md`](../CODEMAP.md) 地图的"放大镜"续篇。
+> **这是什么**：把 WMS（倉庫管理，系统最大模块，32 控制器/39 实体）的**每个页面功能**，从前端到后端逐文件、逐行、带真实代码片段和错误码地讲清楚。与 [`docs/codemap-erp/`](../codemap-erp/README.md)、[`docs/codemap-mes/`](../codemap-mes/README.md) 同一套模板，是 [`docs/architecture/CODEMAP.md`](../architecture/CODEMAP.md) 地图的"放大镜"续篇。
 >
 > **公共机制不重复**：`http.ts`、实体基类链、`{code,message,data}`、软删除——见 [`codemap-erp/README.md` §0](../codemap-erp/README.md)。本册只讲 WMS 特有的东西，核心是**库存写入铁律**。
 >

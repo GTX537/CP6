@@ -314,4 +314,4 @@ public async Task ApplyAsync_OutboundExceedsAvailable_ShouldThrow()
 
 - 高级版本同章节：[`docs/learning/05-stock-invariant.md`](../learning/05-stock-invariant.md)——讲 Event Sourcing 和并发深入
 - 关键词搜索："Domain Invariant"、"Aggregate Root DDD"
-- 项目内：`CP6.Core/Services/Wms/StockMovementService.cs`、`docs/MSBBWM_Requirements.txt` 库存章节
+- 项目内：`CP6.Core/Services/Wms/StockMovementService.cs`、`docs/requirements/legacy/MSBBWM_Requirements.txt` 库存章节

@@ -4,7 +4,7 @@
 M-MES 横切接线波第三任务。T1 真相源+T2 菜单锚定已过审。本任务只做控制器贴点;种子由 T3b 完成。
 
 ## 必读(按顺序)
-1. `docs/00-横切接线规范.md`
+1. `docs/architecture/00-横切接线规范.md`
 2. `docs/seeds/mes-permission-keys.md`(T1 真相源——键值逐字使用: 28 真写端点×键 + 2 只读 POST 豁免)
 3. 样板: M-ERP T3a 先例 commit bdbc532(git show 看贴法: attribute 位置/using/与既有 attribute 叠放)
 

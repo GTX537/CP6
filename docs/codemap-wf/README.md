@@ -1,6 +1,6 @@
 # Wf OA审批引擎 · 代码级实现手册
 
-> 与 [`codemap-erp`](../codemap-erp/README.md) 等同模板；公共机制见 [`codemap-erp/README.md` §0](../codemap-erp/README.md)。是 [`CODEMAP.md`](../CODEMAP.md) 的放大镜续篇。
+> 与 [`codemap-erp`](../codemap-erp/README.md) 等同模板；公共机制见 [`codemap-erp/README.md` §0](../codemap-erp/README.md)。是 [`CODEMAP.md`](../architecture/CODEMAP.md) 的放大镜续篇。
 
 ## 📖 目录
 | # | 功能 | 文件 | 看点 |

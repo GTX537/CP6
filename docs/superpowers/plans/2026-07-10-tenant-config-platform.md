@@ -975,7 +975,7 @@ public async Task Trim_variant_skip_quotation()   // 裁剪变体：跳见积租
 }
 ```
 
-- [ ] **Step 2: 错误码词条种子**——本计划全部错误码逐个登记五语（zh-CN/ja/en/其余两语照 LangColumn.Codes），文案含运维正道（如 E-WF-101：「流程有在途实例，禁止原地修改；请建新 FlowKey 并换绑」）。同时在 `docs/00-横切接线规范.md` 的错误码总纲登记 E-CONF/E-WF 新段（先读该文件找登记节）。
+- [ ] **Step 2: 错误码词条种子**——本计划全部错误码逐个登记五语（zh-CN/ja/en/其余两语照 LangColumn.Codes），文案含运维正道（如 E-WF-101：「流程有在途实例，禁止原地修改；请建新 FlowKey 并换绑」）。同时在 `docs/architecture/00-横切接线规范.md` 的错误码总纲登记 E-CONF/E-WF 新段（先读该文件找登记节）。
 - [ ] **Step 3: 运维须知文档**——四条拍板口径成文：跳号不回收；开关 ≤60s 最终一致；per-action（在途单行为随配置变，含「反向开回环节」在途单需过新环节）；改流程=建新 FlowKey+换绑。
 - [ ] **Step 4: IAuditable 挂接**——五个 Cfg_ 实体声明 `IAuditable`（配置变更留痕），跑一条字段审计断言测试。
 - [ ] **Step 5: 全量 dotnet test 绿（1577+新增全过）+ 前端 369 绿 + Commit + push**——`git commit -m "test(cfg): E2E金线+错误码五语登记+运维须知+审计挂接(配置基建收口)" && git push`

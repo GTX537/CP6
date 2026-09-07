@@ -328,5 +328,5 @@ flowchart LR
 - [技术 ADR](../adr/README.md)
 - [验收资产](../acceptance/README.md)
 - [AI 生成、审查与来源追踪详细设计](../design/06-ai-generation-review-provenance.md)
-- [菜鸟案例研究与闭环分析](../../CP6-Space3D-Cainiao-benchmark-and-closure.md)
-- [3D Space 端到端蓝图](../../CP6-Space3D-end-to-end-blueprint.svg)
+- [菜鸟案例研究与闭环分析](../research/CP6-Space3D-Cainiao-benchmark-and-closure.md)
+- [3D Space 端到端蓝图](../research/CP6-Space3D-end-to-end-blueprint.svg)

@@ -3969,6 +3969,6 @@ rowNo/担当/客户/案件/御見積NO/作成日/顧客品名1·2/数量·単価
 ## 最后更新来源
 
 - 代码：见 §11（前端 views/api/types/router/i18n + 后端 Controllers/Services/Entity/DTO/Hook，逐文件实测）
-- 文档：`docs/codemap-erp/`(README+01~05)、`docs/PROJECT_STRUCTURE.md`、`docs/manuals/user-training/00-用户操作手册页面盘点表.md`
+- 文档：`docs/codemap-erp/`(README+01~05)、`docs/architecture/PROJECT_STRUCTURE.md`、`docs/manuals/user-training/00-用户操作手册页面盘点表.md`
 - 基准：分支 `feat/wfs-inbox-core`，盘点日 2026-06-28
 - 覆盖：核心主链 10 页(14 小节全) + 模块级场景/测试矩阵/验收/术语/待确认/来源；剩余 9 页见 §12 待补清单

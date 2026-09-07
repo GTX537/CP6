@@ -925,6 +925,6 @@ flowchart TB
 ## 最后更新来源
 
 - 代码：见 §11（codemap-mes 逐行权威 + 18 个 view 实读 + types 枚举 + Controller/Service/Hook/Worker/迁移）。
-- 文档：`docs/codemap-mes/`(README+01~05)、`docs/CODEMAP.md`、`docs/manuals/user-training/00-用户操作手册页面盘点表.md`。
+- 文档：`docs/codemap-mes/`(README+01~05)、`docs/architecture/CODEMAP.md`、`docs/manuals/user-training/00-用户操作手册页面盘点表.md`。
 - 基准：分支 `feat/wfs-inbox-core`，盘点日 2026-06-28（codemap 实测快照 2026-06-22）。
 - 覆盖：15 页 14 小节（核心主链 4 页含 1a~1e）+ 模块级场景(6)/测试矩阵(24)/可执行用例(12)/验收(14)/术语/待确认(14)/来源/待补/培训脚本。

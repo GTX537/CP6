@@ -4,7 +4,7 @@
 - `docs/seeds/pur-permission-keys.md`（§一~§七，纯文档零代码），双向计数闭环自洽。
 
 ## 做了什么
-1. 按简报必读序读齐：`docs/00-横切接线规范.md`、同型先例 `docs/seeds/oawf-permission-keys.md`（§一~§七结构照抄）、4 个既贴控制器键面。
+1. 按简报必读序读齐：`docs/architecture/00-横切接线规范.md`、同型先例 `docs/seeds/oawf-permission-keys.md`（§一~§七结构照抄）、4 个既贴控制器键面。
 2. 全量扫描 Pur 8 控制器全部非 GET 端点 = **24 行**（既有贴点 10 + 裸控制器新增 14）。逐 Service 实读判定写/只读。
 3. 审计既有 10 贴点键面（格式/锚定/种子范围），定 4 裸控制器（PR/Rfq/Subcontract/PurReconcile）的键，含高危独立佐证与只读 POST 豁免读证。
 

@@ -198,7 +198,7 @@ CP6 当前第 2 层较完整，第 3 层已实现“货”的一部分，第 4 �
 ## 十、配套图纸
 
 - [CP6 3D Space 端到端闭环蓝图](./CP6-Space3D-end-to-end-blueprint.svg)
-- [CP6 完整 ERP 端到端蓝图](./CP6-ERP-end-to-end-blueprint.svg)
+- [CP6 完整 ERP 端到端蓝图](../../product/CP6-ERP-end-to-end-blueprint.svg)
 
 ## 十一、研究来源
 

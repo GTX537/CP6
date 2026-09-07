@@ -304,5 +304,5 @@ flowchart TD
 ## 最后更新来源
 
 - 代码：`CP6.WebApi/Controllers/Erp/OrderController.cs`、`CP6.Entity/DomainModels/Erp/Order.cs`、`cp6.web/src/api/erp/order.ts`、`cp6.web/src/views/erp/OrderListView.vue`、`cp6.web/src/router/index.ts`、`CP6.WebApi/Controllers/Erp/*`（路由 grep）
-- 文档：`docs/codemap-erp/README.md`、`docs/codemap-erp/05-受注-order.md`、`docs/PROJECT_STRUCTURE.md`（§4.2 ERP 清单）
+- 文档：`docs/codemap-erp/README.md`、`docs/codemap-erp/05-受注-order.md`、`docs/architecture/PROJECT_STRUCTURE.md`（§4.2 ERP 清单）
 - 基准：分支 `feat/wfs-inbox-core`，盘点日 2026-06-28

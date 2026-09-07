@@ -329,4 +329,4 @@ public async Task MoveAsync(...)
 - [Domain-Driven Design (Eric Evans)](https://www.domainlanguage.com/ddd/) — 不变式、聚合根的概念源头
 - [Event Sourcing (Martin Fowler)](https://martinfowler.com/eaaDev/EventSourcing.html)
 - [Optimistic vs Pessimistic Concurrency in EF Core](https://learn.microsoft.com/en-us/ef/core/saving/concurrency)
-- 项目内：`docs/MSBBWM_Requirements.txt` §在库管理章 / `CP6.Core/Services/Wms/StockMovementService.cs`
+- 项目内：`docs/requirements/legacy/MSBBWM_Requirements.txt` §在库管理章 / `CP6.Core/Services/Wms/StockMovementService.cs`
