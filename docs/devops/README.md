@@ -20,6 +20,8 @@
 | [环境策略](./ENVIRONMENT-STRATEGY.md) | Explanation / Reference | 定义 DEV、UAT、PROD 的用途、权限、配置和证据边界 |
 | [DevOps ADR 索引](./adr/README.md) | Normative mirror / Index | CRM R00 发布权威、候选对象身份、Manifest 与回退工程合同 |
 | [WMS R2 生产就绪主规范](../client/r2/README.md) | Normative | 当前生产候选、部署和现场试点的唯一规范源 |
+| [P10 Platform 候选参考](./P10-PLATFORM-REFERENCE.md) | Reference | 非部署型正式七包候选的 CLI、信任、权限、固定身份和三条工作流 |
+| [P10 验证、发布与审计操作](./HOWTO-P10-PLATFORM-CANDIDATE.md) | How-to | 执行真实验证、条件发布、只读审计与 append-only 状态留存；不授权部署 |
 
 ## 当前事实
 

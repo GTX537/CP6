@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-08 P10 S06 本地实现验证切片（非候选冻结）
+
+- 完成正式 `CP6.Platform.Release [0.10.1]` 适配器、真实包/时间戳/OCI/证据绑定、R2 条件式发布、immutable intent、清空环境的只读 pre-commit 和发布后普通读取入口；公开 R00 增加窄范围 R2 勘误，原批准载荷不变。
+- 新增 validation / candidate / audit 三条手动受保护 workflow，镜像只构建一次，发布/审计不重建；正常消费者不需要 CRM 私有日志或 signing/publisher 凭据。CLI/固定输入与操作步骤见 [P10 参考](../devops/P10-PLATFORM-REFERENCE.md)和[运行手册](../devops/HOWTO-P10-PLATFORM-CANDIDATE.md)。
+- 最新主线合并后的完整本地 Release suite 为 1528/1528，无失败、无跳过；format 和 actionlint 通过。这里只记录已完成的实现与本地验证，不声称远端集成、真实 validation/publication/audit、Frozen / Consumable 或生产部署已经完成。
+
 ## 2026-09-08 CRM 身份桥实现、安全验证与远端交付
 
 - [身份与目录桥](../crm/CRM-OIDC-FIRST-SLICE.md) 已完成代码、安全复核后的本地 97 项相关测试、22 项真实 SQL 门禁和前端检查；包含精确客户端/回调、一次性 PKCE code、真实单租户权限和全局退出。真实 refresh 服务已验证退出竞态、其他浏览器/原生会话隔离、70 次轮换与原认证版本不可升级，真实重用检测保持生效。全新隔离 fixture 的 5 组真实跨仓浏览器流程也已通过，含在线撤销 PII 与旧页面清理。
