@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## P10 Docker 冷备已核验，第二个端点隔离受系统拒绝（2026-09-08 UTC）
+
+- Owner 已批准先冷备再做不清空原盘的恢复。Docker 残留进程按身份核实后退出、两个 WSL 发行版停止；原数据盘以只读共享锁保护复制和完整 SHA-256 核验。109912784896 bytes 原盘/副本摘要一致：`56f2644ad04eca1674a131a88b73d9ce02def44eaf44e54b65a58f63cb2e4427`，原盘修改时间未变，副本设为只读。小型 WSL 系统盘和当前配置也已复制并逐一核验。
+- 备份在本机私有目录，ACL 仅当前账户/SYSTEM/Administrators；未上传。它是同盘软件恢复回退副本，不是独立介质灾备，也不证明文件系统/数据库内部完整性。
+- 已确认默认 Docker 数据目录的既有目录联接仍指向原数据盘，未迁移或修改数据路径。第一个 `Docker/run` 临时目录已改名留存而非删除；随后启动错误变为 `docker-secrets-engine/engine.sock` 无法访问，尚未启动 Linux engine。
+- Docker 再次退出后，第二个仅含该零字节端点的目录被 Windows 拒绝重命名。账户已有完全控制权限、没有 Docker 进程；没有更改 ACL、接管所有权或删除端点。下一步建议在 owner 保存其他工作后尝试完整 Windows 重启，尚未执行，不保证它必然修复。
+- 七个业务容器仍未恢复，新的时钟/Linux 全量重验未运行；P10 保持 Candidate / No-Go，未 PR/合并/dispatch。[恢复记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)保留完整结果与边界。
+
 ## P10 获批 WSL2 重启后 Docker 启动受阻（2026-09-08 UTC）
 
 - Owner 已另行批准完整 WSL2 重启。先正常停止 Docker Desktop，再执行一次 `wsl --shutdown`，确认 Ubuntu 和 docker-desktop 均 Stopped；未修改系统时间、时钟源、WSL 配置或测试门禁。
