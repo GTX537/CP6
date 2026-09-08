@@ -53,6 +53,23 @@ public sealed class ContentAddressedObjectsTests
         Assert.Throws<Cp6ReleaseContractException>(() => ContentAddress.Create(Bytes, Cp6ReleaseMediaTypes.InToto, name));
 
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Terminal_newline_is_not_a_valid_content_address_file_name(bool parse)
+    {
+        Assert.Throws<Cp6ReleaseContractException>(() =>
+        {
+            if (!parse) ContentAddress.Create(Bytes, Cp6ReleaseMediaTypes.InToto, "proof.json\n");
+            else
+            {
+                var node = JsonNode.Parse(Address().ToJson().GetRawText())!.AsObject();
+                node["key"] = Address().Key + "\n";
+                ContentAddress.Parse(JsonSerializer.SerializeToElement(node));
+            }
+        });
+    }
+
+    [Theory]
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(4194305)]

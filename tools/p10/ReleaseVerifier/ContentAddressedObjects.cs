@@ -9,7 +9,7 @@ public sealed class ContentAddress
 {
     private static readonly string[] Fields = ["byteLength", "key", "mediaType", "sha256", "storageAuthority"];
     private static readonly Regex FileNamePattern = new(
-        @"^[a-z0-9][a-z0-9.-]{0,127}\.json$", RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+        @"^[a-z0-9][a-z0-9.-]{0,127}\.json\z", RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 
     private ContentAddress(string key, string mediaType, string sha256, int byteLength)
     {
