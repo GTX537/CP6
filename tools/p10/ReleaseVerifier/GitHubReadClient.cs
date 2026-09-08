@@ -27,7 +27,7 @@ internal sealed class GitHubReadClient : IDisposable
             deadline.CancelAfter(TimeSpan.FromSeconds(30));
             using var request = GitHubWirePolicy.Request(target, _token);
             using var response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, deadline.Token);
-            return GitHubApiJson.Parse(await GitHubWirePolicy.ReadResponseAsync(response, deadline.Token));
+            return GitHubApiJson.Parse(await GitHubWirePolicy.ReadResponseAsync(response, deadline.Token, target));
         }
         catch (OperationCanceledException)
         {

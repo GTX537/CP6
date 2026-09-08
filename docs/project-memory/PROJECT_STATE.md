@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## P10 GitHub 读取安全诊断补丁（2026-09-08 UTC）
+
+- 重跑时间修复 [PR #88](https://github.com/GTX537/CP6/pull/88) 已正常合入 `main@96c5f71e3c493c61a09d5b667dc32b966508631e`；七项 PR 检查、五个 exact-main 工作流和合并后 197 项回归全部通过。
+- 新 [validation run 34229610628](https://github.com/GTX537/CP6/actions/runs/34229610628) attempt 1 获 owner 批准后，在收集输入时以 `github-http-status` 失败。SDK、工具、restore/build 成功；全量测试、OCI 构建/签名与交接上传均跳过。该旧日志没有状态码/目标，不能确认 CRM 权限故障或七包验证成功。
+- 经 owner 授权，诊断补丁仅新增固定阶段、固定 GitHub 目标类别和数字状态码 stderr；原错误码、stdout 合同、失败退出及验收策略保留。不输出凭据、路径、URL、响应正文或 headers。相关回归 **175/175**，全量真实输入 **1634/1634，零失败/零跳过**，format 通过。
+- 本补丁 PR/exact-main 合并、新源码验证及 owner 审批待继续。P10 仍 **Candidate / No-Go**，未 publication/audit/Frozen；没有生产部署、Secret/权限变更或审批降级。
+
 ## P10 S06 真实运行失败与重跑校验修复（2026-09-08 UTC）
 
 - S06 实现 [PR #87](https://github.com/GTX537/CP6/pull/87) 已正常合入 `main@af0154782c8aa73eae47c083a884e2a404ef7b64`，该 main 的五个 GitHub 工作流全部成功。P10 实际验证 [run 34221083970](https://github.com/GTX537/CP6/actions/runs/34221083970) 的两个 attempt 均获 owner 批准，但均失败，未产生验证交接或候选。

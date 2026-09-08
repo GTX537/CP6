@@ -8,6 +8,27 @@ internal sealed class GitHubReadTarget
     private GitHubReadTarget(string path) => Path = path;
     internal string Path { get; }
 
+    // Only finite labels are exposed; never emit the selected path, SHA, ID or query.
+    internal string DiagnosticCategory
+    {
+        get
+        {
+            var repository = Path.StartsWith("/repos/GTX537/CP6/", StringComparison.Ordinal) ? "cp6" :
+                Path.StartsWith("/repos/GTX537/CP6.Platform/", StringComparison.Ordinal) ? "platform" :
+                Path.StartsWith("/repos/GTX537/CP6.CRM/", StringComparison.Ordinal) ? "crm" : "unspecified";
+            var operation = Path.Contains("/contents/.github/workflows/", StringComparison.Ordinal) ? "workflow" :
+                Path.Contains("/contents/docs/delivery/p10/", StringComparison.Ordinal) ? "archive" :
+                Path.Contains("/branches/main", StringComparison.Ordinal) ? "main" :
+                Path.Contains("/compare/", StringComparison.Ordinal) ? "compare" :
+                Path.Contains("/pulls/", StringComparison.Ordinal) ? "pull-request" :
+                Path.Contains("/git/commits/", StringComparison.Ordinal) ? "commit" :
+                Path.Contains("/actions/artifacts/", StringComparison.Ordinal) ? "artifact" :
+                Path.Contains("/actions/runs/", StringComparison.Ordinal) ?
+                    (Path.Contains("/jobs?", StringComparison.Ordinal) ? "jobs" : "run") : "unspecified";
+            return repository + "." + operation;
+        }
+    }
+
     internal static GitHubReadTarget Run(string repository, long runId, long attempt) =>
         new(RunPath(repository, runId, attempt));
     internal static GitHubReadTarget Jobs(string repository, long runId, long attempt) =>

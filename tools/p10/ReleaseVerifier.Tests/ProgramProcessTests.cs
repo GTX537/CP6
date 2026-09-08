@@ -255,7 +255,9 @@ public sealed class ProgramProcessTests : IDisposable
         }, "prepare-validation", "/never-created");
         Assert.Equal(1, result.ExitCode);
         Assert.Empty(result.Output);
-        Assert.Equal("s06-current-environment", result.Error.Trim());
+        Assert.Equal("p10-validation-stage current-workflow" + Environment.NewLine + "s06-current-environment", result.Error.Trim());
+        Assert.DoesNotContain("safe-marker", result.Error);
+        Assert.DoesNotContain("prepared", result.Error);
     }
 
     [Theory]
