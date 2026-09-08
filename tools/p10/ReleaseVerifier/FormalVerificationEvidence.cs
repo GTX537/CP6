@@ -58,9 +58,12 @@ internal static class FormalVerificationEvidence
                 var retrieved = Time(claims[index], "retrievedAtUtc");
                 Require(retrieved >= actual[index].Proof.TimestampUtc && retrieved <= statement.CreatedAtUtc,
                     "s06-packages-time");
-                // Retrieval time is a historical signed observation, not part of the immutable NuGet proof.
-                // A clean consumer's current download will have a later retrieval time.
-                Require(Canonical(claims[index]).AsSpan().SequenceEqual(Canonical(Claim(actual[index], retrieved))),
+                // Retrieval time and the reviewed system-selected path are historical observations.
+                // A clean consumer may download later and build the other independently trusted path.
+                var historicalPath = claims[index].GetProperty("timestampCertificateChainSha256")
+                    .EnumerateArray().Select(value => value.GetString()!).ToArray();
+                NuGetTimestampPaths.Require(historicalPath);
+                Require(Canonical(claims[index]).AsSpan().SequenceEqual(Canonical(Claim(actual[index], retrieved, historicalPath))),
                     "s06-packages-proof");
             }
             return statement;
@@ -76,12 +79,16 @@ internal static class FormalVerificationEvidence
         Require(selected.Select(p => p.Proof.PackageId).SequenceEqual(
             S06ReleaseIdentity.PackageHashes.Keys.Order(StringComparer.Ordinal), StringComparer.Ordinal), "s06-packages-set");
         foreach (var package in selected)
+        {
             Require(package.Proof.Sha256 == S06ReleaseIdentity.PackageHashes[package.Proof.PackageId] &&
                 package.FeedServiceIndex == FormalFeedPolicy.Index, "s06-packages-proof");
+            NuGetTimestampPaths.Require(package.Proof.TimestampCertificateChainSha256);
+        }
         return selected;
     }
 
-    private static JsonElement Claim(DownloadedNuGetPackage package, DateTimeOffset retrievedAtUtc)
+    private static JsonElement Claim(DownloadedNuGetPackage package, DateTimeOffset retrievedAtUtc,
+        IReadOnlyList<string>? historicalPath = null)
     {
         var proof = package.Proof;
         return JsonSerializer.SerializeToElement(new
@@ -98,7 +105,7 @@ internal static class FormalVerificationEvidence
             internallyTrusted = proof.InternallyTrusted,
             timestampPolicyOid = proof.TimestampPolicyOid,
             timestampUtc = FormatTime(proof.TimestampUtc),
-            timestampCertificateChainSha256 = proof.TimestampCertificateChainSha256,
+            timestampCertificateChainSha256 = historicalPath ?? proof.TimestampCertificateChainSha256,
             retrievedAtUtc = FormatTime(retrievedAtUtc)
         });
     }

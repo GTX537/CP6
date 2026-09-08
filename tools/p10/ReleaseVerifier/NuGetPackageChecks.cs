@@ -12,14 +12,6 @@ namespace CP6.P10.ReleaseVerifier;
 // Production crypto component, separated from public fixed-hash selection for direct tamper regression.
 internal static class NuGetPackageChecks
 {
-    private static readonly string[] TimestampChain =
-    [
-        "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
-        "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
-        "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
-        "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
-    ];
-
     internal static async Task<NuGetCryptographyProof> VerifyAsync(PackageArchiveReader archive,
         string expectedId, Cp6PinnedNuGetTrustPolicy policy, DateTimeOffset evaluationUtc, CancellationToken cancellationToken)
     {
@@ -92,7 +84,7 @@ internal static class NuGetPackageChecks
         cancellationToken.ThrowIfCancellationRequested();
         var hashes = chain.ChainElements.Cast<X509ChainElement>()
             .Select(e => Cp6DeterministicJson.Sha256Hex(e.Certificate.RawData)).ToArray();
-        Require(hashes.SequenceEqual(TimestampChain, StringComparer.Ordinal), "nuget-timestamp-chain-binding");
+        NuGetTimestampPaths.Require(hashes);
         return new(timestamp.GeneralizedTime, hashes);
     }
 }

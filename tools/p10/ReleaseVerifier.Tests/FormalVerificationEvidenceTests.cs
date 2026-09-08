@@ -128,6 +128,73 @@ public sealed class FormalVerificationEvidenceTests
     }
 
     [Theory]
+    [InlineData("windows")]
+    [InlineData("linux")]
+    public async Task Reviewed_historical_TSA_path_may_differ_from_the_consumers_real_system_chain(string path)
+    {
+        // Alternate historical paths are unsigned policy vectors, not hosted execution evidence.
+        var actual = await Actual.Value;
+        var root = JsonNode.Parse(actual.CopyBytes())!;
+        foreach (var package in root["predicate"]!["details"]!["packages"]!.AsArray())
+            package!["timestampCertificateChainSha256"] = JsonSerializer.SerializeToNode(ReviewedPath(path));
+        _ = FormalVerificationEvidence.Read(Canonical(root), Producer, DateTimeOffset.UtcNow, actual.Packages);
+    }
+
+    [Theory]
+    [InlineData("windows", "missing")]
+    [InlineData("linux", "missing")]
+    [InlineData("windows", "leaf")]
+    [InlineData("linux", "leaf")]
+    [InlineData("windows", "intermediate")]
+    [InlineData("linux", "intermediate")]
+    [InlineData("windows", "root")]
+    [InlineData("linux", "root")]
+    [InlineData("windows", "mixed")]
+    [InlineData("linux", "mixed")]
+    [InlineData("windows", "reversed")]
+    [InlineData("linux", "reversed")]
+    [InlineData("windows", "duplicate")]
+    [InlineData("linux", "duplicate")]
+    [InlineData("windows", "uppercase")]
+    [InlineData("linux", "uppercase")]
+    [InlineData("windows", "null")]
+    [InlineData("linux", "null")]
+    [InlineData("windows", "shape")]
+    [InlineData("linux", "shape")]
+    public async Task Historical_paths_cannot_change_trust_roots_order_or_certificate_identities(string path, string mutation)
+    {
+        var actual = await Actual.Value;
+        var root = JsonNode.Parse(actual.CopyBytes())!;
+        var chain = ReviewedPath(path).ToList();
+        if (mutation == "missing") chain.RemoveAt(chain.Count - 1);
+        if (mutation == "leaf") chain[0] = new string('a', 64);
+        if (mutation == "intermediate") chain[1] = new string('a', 64);
+        if (mutation == "root") chain[^1] = new string('a', 64);
+        if (mutation == "mixed") chain[^1] = ReviewedPath(path == "windows" ? "linux" : "windows")[^1];
+        if (mutation == "reversed") chain.Reverse();
+        if (mutation == "duplicate") chain.Add(chain[^1]);
+        if (mutation == "uppercase") chain[0] = chain[0].ToUpperInvariant();
+        var package = root["predicate"]!["details"]!["packages"]![0]!;
+        package["timestampCertificateChainSha256"] = mutation switch
+        {
+            "null" => null,
+            "shape" => JsonValue.Create("not-an-array"),
+            _ => JsonSerializer.SerializeToNode(chain)
+        };
+        Assert.Throws<Cp6ReleaseContractException>(() =>
+            FormalVerificationEvidence.Read(Canonical(root), Producer, DateTimeOffset.UtcNow, actual.Packages));
+    }
+
+    private static string[] ReviewedPath(string path) => path == "windows"
+        ? ["2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+            "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+            "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+            "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"]
+        : ["2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+            "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+            "552f7bdcf1a7af9e6ce672017f4f12abf77240c78e761ac203d1d9d20ac89988"];
+
+    [Theory]
     [InlineData("empty")]
     [InlineData("missing")]
     [InlineData("duplicate")]

@@ -39,8 +39,9 @@ public sealed class FormalNuGetVerifierTests
         Assert.Equal(Fingerprint, result.SignerFingerprint);
         Assert.Equal("sha256:27ecc2239a1b3c2368610d3602aadc5260b44e26baffe896b9a2449662c696d6", result.SpkiKeyId);
         Assert.Equal("2.16.840.1.114412.7.1", result.TimestampPolicyOid);
-        Assert.Equal(package.GetProperty("timestampCertificateChainSha256").EnumerateArray().Select(e => e.GetString()),
-            result.TimestampCertificateChainSha256);
+        NuGetTimestampPaths.Require(result.TimestampCertificateChainSha256);
+        Assert.Equal(package.GetProperty("timestampCertificateChainSha256")[0].GetString(),
+            result.TimestampCertificateChainSha256[0]);
         Assert.InRange(result.TimestampUtc, DateTimeOffset.Parse("2026-09-07T13:17:00Z"), DateTimeOffset.Parse("2026-09-07T13:23:00Z"));
         Assert.False(result.PublicCaTrusted);
         Assert.True(result.InternallyTrusted);

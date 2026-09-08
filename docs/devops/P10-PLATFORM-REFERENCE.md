@@ -22,6 +22,8 @@
 
 正式作者证书使用 `PinnedSelfSigned`：`publicCaTrusted=false`、`internallyTrusted=true`，固定指纹 `1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d`。所有正式包仍要求实际 RFC3161 时间戳；作者的固定自签信任例外不适用于 TSA 链。正式发布与 CRM 证据只按精确身份消费，不能拿历史 `0.10.0`、本地重包或合成证书替代。
 
+TSA 使用系统信任、在线全链吊销检查和签署时刻验证，随后只接受 [S04 已独立核验的两条完整路径](../superpowers/plans/2026-09-08-p10-s06-cross-platform-timestamp.md)。Windows 的四证书路径与 Linux 的三证书路径共享同一叶证书和中间证书；历史生产者和当前消费者可以选择不同的已核验路径，但包摘要、作者、时间戳及其他不可变字段仍精确相等。此兼容性不允许任意信任根、混拼路径或绕过实际密码学验证。
+
 ## CLI
 
 入口是 `tools/p10/ReleaseVerifier/CP6.P10.ReleaseVerifier.csproj`，发布后的执行形式是 `dotnet CP6.P10.ReleaseVerifier.dll COMMAND ...`。参数数量和命令大小写必须精确匹配，无通用 endpoint、trust、成功标志或跳过门禁参数。

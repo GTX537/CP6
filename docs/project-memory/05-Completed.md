@@ -4,7 +4,7 @@
 
 - 完成正式 `CP6.Platform.Release [0.10.1]` 适配器、真实包/时间戳/OCI/证据绑定、R2 条件式发布、immutable intent、清空环境的只读 pre-commit 和发布后普通读取入口；公开 R00 增加窄范围 R2 勘误，原批准载荷不变。
 - 新增 validation / candidate / audit 三条手动受保护 workflow，镜像只构建一次，发布/审计不重建；正常消费者不需要 CRM 私有日志或 signing/publisher 凭据。CLI/固定输入与操作步骤见 [P10 参考](../devops/P10-PLATFORM-REFERENCE.md)和[运行手册](../devops/HOWTO-P10-PLATFORM-CANDIDATE.md)。
-- 最新主线合并后的完整本地 Release suite 为 1528/1528，无失败、无跳过；format 和 actionlint 通过。这里只记录已完成的实现与本地验证，不声称远端集成、真实 validation/publication/audit、Frozen / Consumable 或生产部署已经完成。
+- 最新主线合并及跨平台 TSA 路径回归修复后的完整本地 Release suite 为 1550/1550，无失败、无跳过；format 和 actionlint 通过。历史生产者与当前消费者允许选择两条 S04 已核验路径之一，仍各自检查实际系统信任和完整证书顺序。这里只记录已完成的实现与本地验证，不声称远端集成、真实 validation/publication/audit、Frozen / Consumable 或生产部署已经完成。
 
 ## 2026-09-08 CRM 身份桥实现、安全验证与远端交付
 

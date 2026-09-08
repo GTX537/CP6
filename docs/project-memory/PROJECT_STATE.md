@@ -5,7 +5,7 @@
 - 正式输入已前向固定为完整七包 `0.10.1`：Platform source `3ff27e26962dcfd722887afb80a4306010dd9ee1`、formal run `34126521193` attempt 1、publication record SHA-256 `8b5fc47fd77902a3433d61b4cf181b67ef61ee994b60ea8286a690ab5084c961`。CRM PR #46 的消费 merge `a31ca0e323418f7e4108cc6220c0f5fa132e7fc2`、main run `34134695003` 和 PR #47 前向留存索引 `1332bf21e4253112d457f86cdc0cba829fc58f20c3914fa738dd992d917e2914` 为 S06 的精确输入。历史 `0.10.0` 及失败记录保留，不能作为当前正式集合替代。
 - S06 适配器从正式 Release 包消费合同，已实现真实 NuGet/RFC3161、GitHub 运行/artifact、OCI/SBOM/扫描、用途分离签名、内容寻址 R2 和 Locator 验证。正式作者仍是固定 `PinnedSelfSigned`，`publicCaTrusted=false`、`internallyTrusted=true`；没有扩大 TSA 信任或公有 CA 声明。
 - 三条手动受保护 workflow 已实现：validation 一次构建唯一 `ghcr.io/gtx537/cp6-p10-verifier` 并在实际 digest 内完成收集；candidate 使用已完成同源 validation，先独立只读 pre-commit，再条件创建 Locator 和只读 postcheck；audit 在发布完成后运行普通只读验证，不重建镜像或写 R2。审批、两把私钥、bucket-only publisher/consumer 均保持既有边界。
-- 合并最新 `origin/main@c93f8608` 后，本地完整 verifier Release 测试 **1528/1528，0 failed / 0 skipped**；format 与三条 YAML 的 actionlint 通过。这些测试不冒充 hosted Linux、GHCR/R2 写入或真实候选验收；受保护实际运行、最终内容寻址审计和远端交付确认仍待完成。
+- 合并最新 `origin/main@c93f8608` 并修复审查发现的 Windows-only TSA 路径假设后，本地完整 verifier Release 测试 **1550/1550，0 failed / 0 skipped**；format 与三条 YAML 的 actionlint 通过。两条 S04 已核验系统路径均允许，实际签名、系统信任和在线吊销检查不变；[回归记录](../superpowers/plans/2026-09-08-p10-s06-cross-platform-timestamp.md)保留 RED/GREEN。这些测试不冒充 hosted Linux、GHCR/R2 写入或真实候选验收；受保护实际运行、最终内容寻址审计和远端交付确认仍待完成。
 - 操作与边界见 [P10 参考](../devops/P10-PLATFORM-REFERENCE.md)和[运行手册](../devops/HOWTO-P10-PLATFORM-CANDIDATE.md)。本节取代下方 2026-09-03 历史条目中的“下一项双 runner 前置”作为当前接手顺序，但不改写当时的事实。P10 整体尚未 Frozen，所有 Platform 候选保持 `deployable=false`；未执行生产部署或改动现有 WMS R2/Azure 路径。
 
 ## CRM 首个切片身份桥：开发交付已验证（2026-09-08 UTC）
