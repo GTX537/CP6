@@ -44,6 +44,14 @@ internal sealed class GitHubReadTarget
         new(RepositoryPath(CrmPullRequestSelection.Repository) + "/git/commits/" +
             (checkout ? CrmConsumerRecordChecks.CheckoutSha : S06ReleaseIdentity.CrmSource));
 
+    internal static GitHubReadTarget Artifact(long artifactId)
+    {
+        if (artifactId <= 0) throw GitHubWirePolicy.Error("artifact-selection");
+        return new("/repos/GTX537/CP6/actions/artifacts/" + artifactId.ToString(CultureInfo.InvariantCulture));
+    }
+
+    internal static GitHubReadTarget ArtifactZip(long artifactId) => new(Artifact(artifactId).Path + "/zip");
+
     internal static void RequireSha(string value)
     {
         if (value is null || value.Length != 40 || value.Any(c => c is not (>= '0' and <= '9' or >= 'a' and <= 'f')))
