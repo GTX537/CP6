@@ -34,6 +34,9 @@ internal sealed class GitHubReadTarget
         return new(RepositoryPath(repository) + "/contents/" + path + "?ref=" + source);
     }
 
+    internal static GitHubReadTarget Archive(PinnedReleaseDocument document) =>
+        new(RepositoryPath(PinnedReleaseDocument.Repository) + "/contents/" + document.Path + "?ref=" + PinnedReleaseDocument.CommitSha);
+
     internal static void RequireSha(string value)
     {
         if (value is null || value.Length != 40 || value.Any(c => c is not (>= '0' and <= '9' or >= 'a' and <= 'f')))
