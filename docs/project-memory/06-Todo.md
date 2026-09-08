@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## P10 最新待办：稳定 Linux 时钟后交付安全构建（2026-09-08 UTC）
+
+- [x] Owner 批准可复现 cosign 安全衍生构建及本地 Docker 诊断；两次独立构建摘要一致，完整实际镜像 HIGH/CRITICAL 均为 0，所有其他发现保留。
+- [x] Windows 1644/1644、上游 429 个测试/子测试、十项 shell 输入保护及实际只读镜像七项密码学检查通过；签名信任、漏洞阈值和本地报告拒绝策略不变。
+- [ ] 先处理实际观察到的 Docker/.NET UTC 前后跳变，再完成 Linux 全量重验；当前 1589 通过 / 55 失败，不能合并失败门禁。重启 Docker Desktop 将中断七个业务容器，须 owner 明确授权；不得自行改变系统时间、重启全部 WSL 或放宽证据时间校验。
+- [ ] 正常 PR、完整 diff 审查、所有 PR/exact-main 检查和合并冒烟通过后，再请求一个新 exact-main validation 及 owner 的真实 Environment 审批。
+- [ ] 新 validation 完整成功后，仍需 owner 选择未使用的候选 Tag，再完成受保护 publication、普通只读 audit 与跨仓最终判定。旧失败、正式包及现有生产门禁不改写，P10 仍 Candidate / No-Go。
+
 ## P10 最新阻塞：cosign 原生扫描不满足漏洞门禁（2026-09-08 UTC）
 
 - [x] 安全诊断 PR #89 正常合入 `a41711dd55a093ab0ed127d599e0e7bcf11d548d` 且七项 PR/五个 main 工作流成功；新 run `34234554610` attempt 1 定位 CRM pull-request 403，owner 调整后 attempt 2 完成真实输入收集、1634 项全量测试和 OCI push。

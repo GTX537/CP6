@@ -1,5 +1,12 @@
 # AI 可读变更日志
 
+## 2026-09-08：P10 可复现 cosign 安全构建，本地 Linux 时钟待处理
+
+- 经 owner 授权，以固定上游源码、Go 1.26.8、九项受审模块更新构建 `3.1.3-cp6.1`；两次独立 Linux/Windows 输出完全一致，保留 buildinfo、来源与许可证/修改说明。三条 workflow 和验签器固定相同摘要，不把衍生版冒充官方二进制。
+- 实际完整本地运行镜像扫描 HIGH 0 / CRITICAL 0，其余 UNKNOWN 3 / LOW 7 / MEDIUM 5 保留；实际只读非 root 镜像中七项密码学检查通过，本地原生报告仍因身份边界被拒绝，未进入候选验收。
+- Windows full suite 1644/1644、上游 429 项测试/子测试、10 项真实 shell 输入边界测试、format/actionlint 通过。Linux full suite 1589 通过、55 项共享包证据时间检查失败；独立探针捕获 UTC 秒级倒跳/前跳，单 CPU 仍复现。
+- 同步安全构建计划、HOWTO/参考及四份台账。未合并/重跑验证/部署，未修改时间信任规则或业务容器；需要 owner 批准环境重启后先重验 Linux。原始失败与本地测试环境失误均如实留存。
+
 ## 2026-09-08：P10 原生扫描参数修复与实际漏洞阻塞
 
 - PR #89 已通过全部 PR/main 门禁并交付。实际 validation `34234554610` attempt 2 在 owner 处理 CRM 专用读取授权后，通过输入收集、1634/1634 测试和 OCI push；后续因 Trivy 不接受 `--image-src registry` 失败，签名/交接未产生。

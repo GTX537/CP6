@@ -13,7 +13,9 @@
 
 ## 1. 验证最终源码并构建一次 OCI
 
-当前先停止重跑：2026-09-08 的原生预检确认已有镜像内 cosign 3.1.3 含 **1 CRITICAL / 14 HIGH** 扫描发现。官方当日最新 release 仍是 3.1.3，尚无更新的官方二进制；在完成受审依赖修复前，下列 dispatch 不能用于反复试跑。不得过滤发现、移除镜像内验签工具以避开扫描，或未经批准替换受信二进制来源。详细原始摘要、命令和证据边界见[预检记录](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)。
+2026-09-08 原生预检确认旧镜像内官方 cosign 3.1.3 含 **1 CRITICAL / 14 HIGH**。Owner 随后批准可复现安全重编译与本地 Docker 诊断；新的 `3.1.3-cp6.1` 使用固定源码/工具链/受审锁文件，两次独立构建摘要一致，本地完整运行镜像扫描为 HIGH 0 / CRITICAL 0，同时原样保留 UNKNOWN 3 / LOW 7 / MEDIUM 5。它不是官方未修改二进制，也不是 hosted 验收。详细记录见[原始预检](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)与[安全构建](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。
+
+只有该修复完成全量验证、正常 PR/exact-main 合并及必需检查后，才能对新 main 执行下列 dispatch；具体交付状态看[当前台账](../project-memory/PROJECT_STATE.md)。不要重跑旧 SHA，不能过滤发现、改写本地报告身份或把本地镜像当作候选。原 Environment 审批和所有签名/扫描门禁保留。
 
 读取远端 main 并提交验证请求：
 

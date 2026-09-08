@@ -13,7 +13,7 @@ public sealed class CosignBlobVerifierTests
     private static readonly byte[] Payload = "{ \"fixture\": \"cosign-byte-binding\" }\n"u8.ToArray();
     private static CosignBlobVerifier Verifier() => new(
         Environment.GetEnvironmentVariable("P10_COSIGN_PATH") ??
-        throw new InvalidOperationException("P10_COSIGN_PATH must name the checksum-pinned cosign v3.1.3 binary."));
+        throw new InvalidOperationException("P10_COSIGN_PATH must name the checksum-pinned cosign v3.1.3-cp6.1 binary."));
 
     [Fact]
     public async Task Actual_cosign_accepts_the_exact_bytes_signed_by_the_supplied_P256_key()
