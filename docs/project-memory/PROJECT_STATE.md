@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## P10 回到发布修复：Docker 已恢复，Linux UTC 倒退仍阻塞全量门禁（2026-09-08 UTC）
+
+- Owner 报告已启动 Docker，并明确目标仍是解决发布报错。实测七个业务容器运行，DB/MQ/Redis/Kafka healthy；Web、API live/ready 均 HTTP 200。此前冷备/启动失败记录保留为历史，不再代表当前业务状态；本轮没有再次重启、清理或改配置。
+- 对同一冻结测试程序集和安全构建二进制重新执行：Windows **1644/1644 通过**；Linux **1643 通过 / 1 失败 / 0 跳过**。唯一失败是读取 `crm-pr-linux` 原始归档时结束 UTC 比开始早约 6.341 秒，原有顺序断言正确失败；不是签名或漏洞修复回归。
+- Owner 说明本机使用太平洋时间；只读 `Get-TimeZone` 实际返回 `Eastern Standard Time`、当时 UTC−04:00。未改时区。测试比较 UTC；随后单 CPU、断网探针独立记录约 −13.522 秒/+14.149 秒跳变，显示时区差异不能解释该现象。
+- Trivy 参数修正和 cosign 安全衍生构建仍在任务分支；format、三条 workflow actionlint、完整分支 diff 检查通过。现有 PR 门禁不执行 P10 全量测试，受保护 P10 Environment 仅允许 main，不能作为分支预检的绕行入口。
+- 建议另行批准独立、人工审批、只读的托管 Linux 预检边界，再验证同一完整测试集；尚未新增 workflow/Environment、导出凭据或修改现有保护。按必需门禁失败不得合并，P10 仍 Candidate / No-Go，未 PR/合并/dispatch。报告摘要见[本轮记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。
+
 ## P10 Docker 冷备已核验，第二个端点隔离受系统拒绝（2026-09-08 UTC）
 
 - Owner 已批准先冷备再做不清空原盘的恢复。Docker 残留进程按身份核实后退出、两个 WSL 发行版停止；原数据盘以只读共享锁保护复制和完整 SHA-256 核验。109912784896 bytes 原盘/副本摘要一致：`56f2644ad04eca1674a131a88b73d9ce02def44eaf44e54b65a58f63cb2e4427`，原盘修改时间未变，副本设为只读。小型 WSL 系统盘和当前配置也已复制并逐一核验。
