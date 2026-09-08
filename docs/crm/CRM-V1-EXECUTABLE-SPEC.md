@@ -8,6 +8,63 @@
 
 Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 
+## 0. 2026-09-08 首片候选增补
+
+状态：**首片实现与本地真实服务联合验证通过；非生产验收**。下文仍为历史完整 V1 规划，其原批准 SHA 和门禁不变。本次首片依照 [PRD 首片实施增补](./CRM-V1-PRD.md) 记录当前批准行为；不能将历史规划里的“尚无 API”当作当前事实，也不能将候选代码等同 Pilot 或生产签收。
+
+首片为 11 页、29 operation、44 DTO。页面为 MSBBCR010、200、210、220、230、240、500、620、630、700、710；36 页和完整 Account/Contact/Opportunity、合格/转换/合并、Import、CMS、ERP/Portal、移动仍属后续范围。桌面双栏工作台与窄屏全屏详情保留草稿，详情支持联系人、协作、活动、内容/事实更正、可见查重与判无效。
+
+实现核对点：
+
+- 人工 add 可创建，合格录入者默认 Owner，否则 New/NULL；主管另需 assign 才可指定受管部门合格 Owner，页面切换部门清除旧选择；创建者不扩权。CreateLeadResult 的 lead 可为 null，canOpen=false 返回团队待分配安全确认。
+- SQL 在组织内按 query + 实际 Owner/Collaborator/主管管理部门裁剪所有读取/计数/分页和重放，PII 独立裁剪。Owner 失效保留 ID；有限目录不能用于推断失效。联系人/判无效是 Owner 或主管 + edit/PII；协作者维护与分配必须主管 + assign/PII，普通 Owner/edit 不扩权。目标成员原子校验，跨部门默认清协作者，Owner 不重复加入协作者。
+- Mine/Managed 与 AwaitingResponse 按 PRD 增补处理；Managed 保留已响应的所有权异常。排序用仍待完成的分配/响应风险和最早相关截止；响应 SLA 筛选/统计只表达响应时限。unassigned 只匹配 NULL。
+- Query revision 组合完整已授权筛选结果的行 ID/RowVersion/当前风险优先级、同范围计数和权限/成员投影；计算不解密 PII，页外变更也可触发提示。它不是写 ETag 或冻结快照，前端不因新 revision 自动移动选择/丢弃草稿。
+- 30/240 固定工作分钟使用冻结 IANA 日历、工作时段/假日/DST；Manual 从创建，Website 响应从原收到、分配从实际 Lead 创建起算。
+- 有效响应是 Phone/Connected、Email或Message/Sent、Meeting/Held；普通追加只首次设置，更早补录不重算。创建前首次响应保留事实并排除 SLA。内容更正只追加内容/原因；主管事实更正先预览后显式提交才重算；预览无写入，提交重新校验权限/ETag并计算，更正发生时间不得晚于原 RecordedAt，原活动不可覆盖。
+- 正常公开提交事务创建 Submission+未分配 Website Lead；风险只 NeedsReview，七天审核；拒绝/到期24小时内匿名化主记录、原因和重放快照。处置/到期竞争仅一个成功。释放保留原收到/冻结响应截止。审核状态默认 NeedsReview，可选 ConvertedToLead/Rejected/Expired/All；先状态筛选再分页，每页30，游标绑定状态，All只含曾隔离记录。
+- 固定 inquiry 表单与可信登记 siteKey/接收部门；新 attempt 绑定日历版本，版本变更的新提交409 form_updated，已成功命令/attempt仍重放原中性回执。回执Cookie验证，路径ID不授予读取。
+- 配置首次If-Match:*只创建，后续真实ETag；保存新Draft，预览无写入，计划未来生效只影响新接收；发布版本不可原地改。
+- 组织SQL、加密PII/HMAC索引、业务/非PII Audit/Outbox/幂等结果同事务；真实隔离SQL覆盖竞争、重放、权限撤销、交易回滚、日历冻结和匿名化。Outbox落库不证明Dapr/Kafka已投递或下游消费。route-mocked Playwright只验证界面/请求；真实SQL使用合成用户/数据。全新隔离fixture的5组真实CORE/Next/CRM/SQL浏览器流程已通过；浏览器使用一个组织，双组织业务隔离另由SQL测试覆盖。目标环境密钥、后台保留和生产拓扑/发布/采用门禁未因此关闭。
+
+### 0.1 当前精确 API 表面
+
+当前候选为 [OpenAPI 3.1](https://github.com/GTX537/CP6.CRM/blob/main/contracts/api/crm-v1.openapi.yaml)，由仓库 scripts/generate-crm-api.py 生成 C#/TypeScript DTO 与客户端共44个DTO；生成漂移检查不替代历史 F0-04 NSwag/OpenAPI3.0.3 consumer profile 等价验收。下文 §8.3 等完整 V1 表列出的 GET /leads、独立 /pii、qualify/merge/convert 等不属于当前已实现路径；首片以本表为准。
+
+| Method | Path | operationId |
+| --- | --- | --- |
+| GET | `/api/crm/v1/workspace` | `getWorkspace` |
+| GET | `/crm/session` | `getSession` |
+| GET | `/api/crm/v1/leads/options` | `getLeadOptions` |
+| POST | `/api/crm/v1/leads/query` | `queryLeads` |
+| POST | `/api/crm/v1/leads` | `createLead` |
+| GET | `/api/crm/v1/leads/{id}` | `getLead` |
+| PATCH | `/api/crm/v1/leads/{id}` | `updateLeadContact` |
+| POST | `/api/crm/v1/leads/{id}/assignments` | `assignLead` |
+| POST | `/api/crm/v1/leads/{id}/collaborators` | `setLeadCollaborators` |
+| POST | `/api/crm/v1/leads/{id}/activities` | `recordActivity` |
+| GET | `/api/crm/v1/leads/{id}/activities` | `getActivities` |
+| POST | `/api/crm/v1/leads/{id}/disqualify` | `disqualifyLead` |
+| GET | `/api/crm/v1/leads/{id}/history` | `getHistory` |
+| GET | `/api/crm/v1/leads/{id}/duplicates` | `getDuplicates` |
+| POST | `/api/crm/v1/leads/{id}/activities/{activityId}/content-corrections` | `correctActivityContent` |
+| POST | `/api/crm/v1/leads/{id}/activities/{activityId}/fact-corrections/preview` | `previewFactCorrection` |
+| POST | `/api/crm/v1/leads/{id}/activities/{activityId}/fact-corrections` | `correctActivityFacts` |
+| GET | `/api/crm/v1/intake/submissions` | `getSubmissions` |
+| GET | `/api/crm/v1/intake/submissions/{id}` | `getSubmission` |
+| POST | `/api/crm/v1/intake/submissions/{id}/release` | `releaseSubmission` |
+| POST | `/api/crm/v1/intake/submissions/{id}/reject` | `rejectSubmission` |
+| GET | `/api/crm/v1/configuration` | `getConfiguration` |
+| POST | `/api/crm/v1/configuration` | `saveConfiguration` |
+| POST | `/api/crm/v1/configuration/preview` | `previewCalendar` |
+| POST | `/api/crm/v1/configuration/activate` | `activateConfiguration` |
+| GET | `/api/crm/v1/notifications` | `getNotifications` |
+| GET | `/api/site/{siteKey}/forms/{formKey}` | `getPublicForm` |
+| POST | `/api/site/{siteKey}/forms/{formKey}/submissions` | `submitPublicForm` |
+| GET | `/api/site/{siteKey}/receipts/{receiptId}` | `getPublicReceipt` |
+
+精确字段、权限、分页、错误、If-Match和幂等要求以OpenAPI与 [首片手册](https://github.com/GTX537/CP6.CRM/blob/main/docs/handbook/CRM-FIRST-SLICE.md) 为准。配置/Lead/Submission响应中的版本来自持久化事实；客户端不能提交组织或系统审计事实。
+
 ## 1. 目的与交付边界
 
 本 Spec 把已经锁定的 CRM 方向转换为三仓库可执行计划。实现者不再决定仓库边界、前后端技术、身份协议、消息格式、数据主权或迁移策略；这些内容是输入约束。每个实施分支仍需把本 Spec 的里程碑拆为 1–3 天、可独立验证的子任务。

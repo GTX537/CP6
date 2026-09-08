@@ -62,6 +62,9 @@ public class CsrfMiddleware
     ///    manual-fire）走 cookie 认证，必须留在 CSRF 保护面。</summary>
     internal static bool IsExempt(string path)
         => PathMatches(path, "/api/auth/login")
+           // Confidential client authentication + PKCE; this exact endpoint never consumes ambient cookies.
+           || path.Equals("/connect/token", StringComparison.OrdinalIgnoreCase)
+           || path.Equals("/connect/end-session", StringComparison.OrdinalIgnoreCase)
            || IsNativeAnonymousAuthPath(path)
            || PathMatches(path, "/hubs")
            || IsFlowTriggerFirePath(path);

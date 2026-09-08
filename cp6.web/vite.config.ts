@@ -74,6 +74,14 @@ export default defineConfig({
     // 把 /api 请求代理到后端，避免跨域问题
     // 環境変数 VITE_API_TARGET で切替（既定: 開発時 dotnet run = 5177 / Docker = 9991）
     proxy: {
+      '/connect': {
+        target: process.env.VITE_API_TARGET || 'http://localhost:5177',
+        changeOrigin: true,
+      },
+      '/.well-known': {
+        target: process.env.VITE_API_TARGET || 'http://localhost:5177',
+        changeOrigin: true,
+      },
       '/api': {
         target: process.env.VITE_API_TARGET || 'http://localhost:5177',
         changeOrigin: true,

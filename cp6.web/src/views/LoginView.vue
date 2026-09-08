@@ -312,9 +312,19 @@ import { langOptions, changeLang } from '@/i18n'
 import { addDynamicRoutes } from '@/router'
 import { usePlatformStore } from '@/stores/platform'
 import { getLoginExperienceCopy } from './loginExperience'
+import { rememberOidcReturn, resumeOidcReturn } from './oidcReturn'
 
 const { t, locale } = useI18n()
 const router = useRouter()
+const hasOidcReturn = rememberOidcReturn(new URLSearchParams(window.location.search).get('oidc_return'))
+onMounted(async () => {
+  // A same-origin profile request can use Strict cookies omitted from the initial cross-site navigation.
+  if (!hasOidcReturn || new URLSearchParams(window.location.search).get('oidc_reauthenticate') === '1') return
+  try {
+    const profile: any = await authApi.profile()
+    if (!profile.mustChangePassword) resumeOidcReturn()
+  } catch { /* Continue the normal password/SSO/2FA login flow. */ }
+})
 const formRef = ref<FormInstance>()
 const tenantInputRef = ref<InputInstance>()
 const loading = ref(false)
@@ -456,6 +466,7 @@ async function handleLogin() {
     }
 
     sessionStorage.setItem('cp6-login-transition', 'pending')
+    if (resumeOidcReturn()) return
     router.push('/')
   } catch (err: any) {
     // 同名用户存在于多个租户时，后端要求用户补充租户编码。
