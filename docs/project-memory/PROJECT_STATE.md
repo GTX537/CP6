@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## P10 获批独立托管预检，分支代码与读取边界已就绪（2026-09-08 UTC）
+
+- Owner 同意独立 Linux 预检并要求尽快完成 P10。新增仅当前修复分支的预检 workflow、小型正式包输入工具和自动化回归；不修改既有时间/签名/漏洞门禁。云端成功仍待实际运行，不能把本机 WSL 失败改记为通过。
+- 四项新增回归先 RED 后 GREEN；输入工具七项路径/凭据拒绝检查通过，实际下载的七个正式包逐一匹配既有 SHA-256。用这些真实包重跑 Windows 全量 **1648/1648 通过、0 跳过**；locked restore/build、format 和四条 P10 workflow actionlint 通过。
+- 既有独立 `P10_CRM_ACTIONS_READ_TOKEN` Environment 原来仅存同名读取凭据且无运行历史；已新增 owner `GTX537` 审批和唯一 `codex/p10-native-scan-preflight` 分支策略。Secret 元数据时间未变、值未导出；正式候选 Environment 仍为原 main-only/owner 审批。
+- 下一步正常推送任务分支、取得实际云端审批及全量成功，再依次 PR 必需检查/合并、exact-main 冒烟和检查、正式 validation、候选发布及只读审计。候选标识仍待 owner 选择，P10 仍 Candidate / No-Go；没有发布签名、Registry/R2 写入或生产部署。[预检执行记录](../superpowers/plans/2026-09-08-p10-hosted-preflight.md)。
+
 ## P10 回到发布修复：Docker 已恢复，Linux UTC 倒退仍阻塞全量门禁（2026-09-08 UTC）
 
 - Owner 报告已启动 Docker，并明确目标仍是解决发布报错。实测七个业务容器运行，DB/MQ/Redis/Kafka healthy；Web、API live/ready 均 HTTP 200。此前冷备/启动失败记录保留为历史，不再代表当前业务状态；本轮没有再次重启、清理或改配置。

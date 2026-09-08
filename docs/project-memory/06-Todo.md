@@ -1,5 +1,14 @@
 # 当前待办与优先级
 
+## P10 当前执行链：独立预检 → 正式验证 → 发布/审计（2026-09-08 UTC）
+
+- [x] Owner 已批准独立托管 Linux 预检；分支 workflow、复用正式验证器的七包输入工具及新增测试已实现，Windows 全量 1648/1648、0 跳过。
+- [x] 独立读取环境新增 owner 审批和唯一任务分支策略；原 main-only 正式候选环境不变，凭据未导出。
+- [ ] 推送修复分支并由 owner 批准实际 preflight run；核对完整 Linux 测试结果和精确 source/run/attempt/TRX 身份。未通过不得合并。
+- [ ] 全部 PR 必需检查通过后正常合并，再核对远端 main 包含修复、合并后冒烟和 exact-main 检查。
+- [ ] 对最终 main 发起一次正式 validation，由 owner 审批并检查全流程成功；之后按 owner 选定的新候选身份发布，再只读审计和追加真实状态决定。
+- [ ] P10 Frozen/Consumable 必须由完整实际证据闭环；`deployable=false`，不授权生产部署。下方“预检尚待同意/尚未实现”为历史检查点。
+
 ## P10 当前优先：在独立 Linux 环境验证发布修复（2026-09-08 UTC）
 
 - [x] Owner 已启动 Docker；七个原业务容器运行、四依赖 healthy、Web/API 三探针 HTTP 200。下方未恢复/建议整机重启等条目为此前检查点，不再作为当前操作指令。

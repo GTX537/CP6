@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-09-08：P10 独立托管预检获批并完成本地验证
+
+- 为发布修复补充分支绑定的 Ubuntu 全量预检，不改变现有三个正式工作流的 main/审批/签名/发布边界；独立输入工具只复用真实七包下载和校验，不能生成候选证据。
+- 4 项回归 RED→GREEN，7 项路径/凭据拒绝检查、实际七包摘要核对和 Windows 1648/1648 全量通过，无跳过；locked restore/build、format、4 workflow actionlint 通过。
+- 既有独立读取 Environment 加上 owner required review 和单一任务分支策略，Secret 未导出且时间元数据未变。正式候选环境仍 main-only。托管运行和完整 P10 发布/审计尚待实际结果，状态仍 No-Go。
+
 ## 2026-09-08：P10 Docker 恢复后重验，区分时区与 UTC 倒退
 
 - Owner 明确继续解决发布报错。原七容器/四依赖健康及 Web/API 三项 HTTP 200 已核对；未再次重启、重置、清理或改时间设置。

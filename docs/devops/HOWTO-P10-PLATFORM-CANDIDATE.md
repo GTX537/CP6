@@ -11,6 +11,18 @@
 - GitHub 仓库公开不代表其 Packages 均公开。2026-09-08 逐包查询只有 `CP6.Platform.Release` 为 public，其余六包为 private；使用 CP6 的 `GITHUB_TOKEN` 时，需在各包的 **Manage Actions access** 授予 `GTX537/CP6` **Read**。Owner 已报告补齐；是否实际可读仍由新的 hosted validation 验证，不据此声称包已公开。
 - 以下示例在 PowerShell 中运行，需要已登录的 GitHub CLI；所有候选 Tag 由操作人选择，不能盲用示例身份。该 Tag 不会被推送为 Git tag。
 
+## 0. 当前修复分支的独立 Linux 预检
+
+本机 WSL 的秒级 UTC 倒退不通过修改时区或放宽断言处理。Owner 已批准独立托管预检；实现和真实进度见[预检记录](../superpowers/plans/2026-09-08-p10-hosted-preflight.md)。这不是第四条候选权威流程。
+
+- `.github/workflows/p10-platform-preflight.yml` 仅由 `codex/p10-native-scan-preflight` 的 push 或受相同源码检查约束的手动运行触发，固定 Ubuntu 24.04、完整 source SHA、SDK 和 cosign 输出摘要。
+- 复用既有独立 Environment `P10_CRM_ACTIONS_READ_TOKEN`（这是环境名称）；其唯一同名读取 Secret 不导出。平台侧已增加 owner `GTX537` required review 和唯一任务分支策略。正式 `p10-platform-candidate` 的 main-only/owner 审批保护不变。每个真实 run 仍需 owner 在 GitHub 审查后批准，助手不自批。
+- `GITHUB_TOKEN` 只有 contents/actions/packages read；跨仓读取凭据仅进入测试步骤。权限不足时核对原读取身份，不扩权或换用发布账号。YAML 权限不会自动缩减 PAT 自身权限。
+- `PreflightInputs` 单独调用现有正式下载/签名/TSA/hash 验证器，写入完整的七包新目录，再执行无过滤的全量测试。它不伪造 main、Environment 或正式 producer 身份，不生成候选验证交接。
+- 只保留精确 SHA/run/attempt 命名的 TRX 诊断 Artifact，不上传包/私有归档、不签名、不写 Registry/R2。测试失败仍令整个 job 失败，上传 TRX 不改变结论。
+
+必须先取得当前修复 head 的托管全量通过和全部 PR 必需检查，才可正常合并。后续仍按第 1–4 节完成 exact-main validation、候选发布和审计；预检成功不能直接宣称 Frozen/Consumable。将来要用于别的分支，必须先审查工作流及相应环境分支策略，不能放宽现有生产候选环境来替代。
+
 ## 1. 验证最终源码并构建一次 OCI
 
 2026-09-08 原生预检确认旧镜像内官方 cosign 3.1.3 含 **1 CRITICAL / 14 HIGH**。Owner 随后批准可复现安全重编译与本地 Docker 诊断；新的 `3.1.3-cp6.1` 使用固定源码/工具链/受审锁文件，两次独立构建摘要一致，本地完整运行镜像扫描为 HIGH 0 / CRITICAL 0，同时原样保留 UNKNOWN 3 / LOW 7 / MEDIUM 5。它不是官方未修改二进制，也不是 hosted 验收。详细记录见[原始预检](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)与[安全构建](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。
