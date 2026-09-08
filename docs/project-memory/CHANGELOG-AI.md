@@ -1,5 +1,12 @@
 # AI 可读变更日志
 
+## 2026-09-08：P10 S06 非部署型候选适配器与受保护工作流
+
+- 正式消费纠正后的完整七包 `0.10.1`，固定 Platform source `3ff27e26962dcfd722887afb80a4306010dd9ee1` / formal run `34126521193` 和 CRM S05 merge `a31ca0e323418f7e4108cc6220c0f5fa132e7fc2` / main run `34134695003` / 留存索引 hash；不复制 Platform Schema、不重新打包。
+- 增加真实签名/时间戳、当前工作流/artifact、完整 OCI 原生报告、内容寻址图与 R2 单次条件创建验证。新增三条手动受保护 workflow，分别承担一次构建验证、条件发布和完成后的只读审计；私钥和写凭据只在需要的步骤提供。
+- 增加 R00 R2 勘误和 [P10 参考](../devops/P10-PLATFORM-REFERENCE.md) / [运行手册](../devops/HOWTO-P10-PLATFORM-CANDIDATE.md)，同步四份台账。修复 Windows-only TSA 路径假设，固定接受 S04 两条已核验完整路径，新增跨平台及篡改回归；实际本地全量验证 1550/1550、零跳过，format/actionlint 通过。正式作者仍为 PinnedSelfSigned，不宣称 public CA trust，TSA 系统信任与吊销检查不变。
+- 当前是实现/本地验证切片，尚无 S06 真实候选发布和最终审计决定。整体保持 Candidate / No-Go、`deployable=false`；现有 WMS R2、Azure、数据库与生产部署不变。
+
 ## 2026-09-08：CRM 身份与目录桥实现切片
 
 - 全新隔离 fixture 的 5 组真实跨仓浏览器流程全部通过；覆盖实际密码/OIDC、业务与公开询盘、回执归属、权限遮罩/全局退出及实际撤销 PII 后清理旧页面。实际服务配合合成数据，作为本地集成证据，不扩展为真实客户或生产验收。

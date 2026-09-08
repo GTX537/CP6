@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CP6.Platform.Release" Version="[0.10.1]" GeneratePathProperty="true" />
+    <PackageReference Include="NuGet.Packaging" Version="[6.11.2]" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="[8.0.1]" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../../eng/p10/trust/pinned-trust-store.v1.json"
+                      LogicalName="CP6.P10.pinned-trust-store.v1.json" />
+    <EmbeddedResource Include="../../../eng/p10/trust/p10-formal-nuget-trust-store.v1.json"
+                      LogicalName="CP6.P10.pinned-nuget-trust-store.v1.json" />
+    <EmbeddedResource Include="../../../eng/p10/trust/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer"
+                      LogicalName="CP6.P10.formal-author.cer" />
+    <InternalsVisibleTo Include="CP6.P10.ReleaseVerifier.Tests" />
+    <EmbeddedResource Include="../../../eng/p10/verifier.Dockerfile"
+                      LogicalName="CP6.P10.verifier.Dockerfile" />
+  </ItemGroup>
+</Project>
