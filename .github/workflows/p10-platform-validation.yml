@@ -168,7 +168,7 @@ jobs:
           set -euo pipefail
           image="ghcr.io/gtx537/cp6-p10-verifier@$IMAGE_DIGEST"
           "$RUNNER_TEMP/p10-tools/syft" "registry:$image" -o "spdx-json=$RUNNER_TEMP/p10-image-inputs/spdx.json"
-          "$RUNNER_TEMP/p10-tools/trivy" image --image-src registry --scanners vuln \
+          "$RUNNER_TEMP/p10-tools/trivy" image --image-src remote --scanners vuln \
             --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --exit-code 0 --format sarif \
             --output "$RUNNER_TEMP/p10-image-inputs/sarif.json" "$image"
           # Preserve all native findings; enforce HIGH/CRITICAL before signing and again in the verifier.

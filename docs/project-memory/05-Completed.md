@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-08 P10 原生扫描预检切片（非整体完成）
+
+- PR #89 及其 exact-main 五工作流已经完成；获 owner 批准的 validation `34234554610` attempt 2 实际通过七包/CRM 收集、1634/1634 测试和 OCI push，确认之前的读取链在该 attempt 可用。
+- 复现并在任务分支修正 Trivy `registry`/`remote` 参数错误，新增先失败后成功的 8 项 wiring 回归。对同一已有镜像直接运行官方原生 Syft/Trivy，并把未改写字节交给现有生产解析器：SPDX 成功；SARIF 因 cosign 的 1 CRITICAL / 14 HIGH 正确失败。
+- 参数补丁本地完整真实输入 suite **1635/1635，无失败/跳过**，format 和三条 P10 YAML 的 actionlint 通过；原生 cosign 也接受当前签名参数，但没有执行受保护签名或容器验收。
+- 已完成的是参数修复和真实诊断，不是新 hosted validation 或远端交付；cosign 受审修复路径待 owner 决定，P10 仍 No-Go。摘要与重现命令见[记录](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)。
+
 ## 2026-09-08 P10 安全诊断补丁本地验证
 
 - 前一时间修复 PR #88 已合入 `main@96c5f71e3c493c61a09d5b667dc32b966508631e` 且 PR/main 门禁全部通过；其新 validation `34229610628` 在 prepare 报 GitHub 非 200，尚不能归因到具体仓库或权限。

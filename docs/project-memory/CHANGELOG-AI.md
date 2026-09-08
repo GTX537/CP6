@@ -1,5 +1,12 @@
 # AI 可读变更日志
 
+## 2026-09-08：P10 原生扫描参数修复与实际漏洞阻塞
+
+- PR #89 已通过全部 PR/main 门禁并交付。实际 validation `34234554610` attempt 2 在 owner 处理 CRM 专用读取授权后，通过输入收集、1634/1634 测试和 OCI push；后续因 Trivy 不接受 `--image-src registry` 失败，签名/交接未产生。
+- 任务分支仅将该参数改为 `remote`，保留 Syft `registry:` 和完整严重级别；新 regression RED 1 失败/7 通过、GREEN 8/8。官方精确版本对已有 digest 的原生只读扫描与现有解析器检查，又发现 cosign 的 1 CRITICAL / 14 HIGH，失败关闭保持有效。
+- 本地完整真实输入测试 1635/1635、零跳过，format、三条 workflow actionlint 与 diff 检查通过；这些绿色检查不取代真实漏洞门禁或远端交付。
+- 同步[预检记录](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)、操作手册和四份台账。官方 3.1.3 仍为最新，依赖修复涉及二进制来源的 owner 决策；未合并参数修复、未重跑已知失败验证、未替换信任来源、未签名/发布/部署。P10 不因此结案。
+
 ## 2026-09-08：P10 GitHub 读取安全诊断
 
 - PR #88 已完成远端 main 合并及门禁；新验证 `34229610628` 在输入收集失败，只有泛化 `github-http-status`。已确认观测信息不足，未把 CRM Token 权限猜测写成根因。

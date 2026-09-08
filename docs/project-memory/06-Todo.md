@@ -1,10 +1,12 @@
 # 当前待办与优先级
 
-## P10 最新阻塞：定位真实 GitHub 非 200（2026-09-08 UTC）
+## P10 最新阻塞：cosign 原生扫描不满足漏洞门禁（2026-09-08 UTC）
 
-- [ ] 完成安全诊断补丁 PR/exact-main 正常交付；本地 1634/1634 与 format 已通过，但不能替代 hosted 验证。
-- [ ] 对新 exact main 发起新的 validation，由 owner 重新审批；用实际 `p10-validation-stage`、固定 target 类别和 HTTP status 定位失败。不得重跑旧源码来验收新补丁，不得凭猜测扩大 CRM/Packages 权限。
-- [ ] 旧 run `34229610628` attempt 1 只有 `github-http-status`；其七包验证状态仍未建立，后续 image/sign/artifact 均跳过。保留所有失败历史。
+- [x] 安全诊断 PR #89 正常合入 `a41711dd55a093ab0ed127d599e0e7bcf11d548d` 且七项 PR/五个 main 工作流成功；新 run `34234554610` attempt 1 定位 CRM pull-request 403，owner 调整后 attempt 2 完成真实输入收集、1634 项全量测试和 OCI push。
+- [x] 复现并在任务分支修正 Trivy `--image-src registry` 为 `remote`；8/8 wiring 回归和已有镜像的原生远端扫描建立证据。未合入 main，不算完整交付。
+- [ ] 先由 owner 决定 cosign 依赖修复路径：当前官方最新 3.1.3 内存在 1 CRITICAL / 14 HIGH，尚无更新官方二进制。自建补丁版或改变分发来源需要受审供应链决定，禁止忽略、过滤或移除被扫描工具规避门禁。
+- [ ] 完成获批修复的真实扫描、签名兼容与完整 suite，再按正常 PR/exact-main 门禁交付；只有已知阻塞排除后才请求新 validation 和 owner 审批，不重复运行已知失败的组合。
+- [ ] 原 run `34234554610` attempt 2 的 sign/finalize/artifact 全部跳过；旧失败 run/正式包保留，不能把此次本地报告视为 hosted 成功或候选证据。其余历史 run 的未知状态不回溯改写。
 - [ ] 真实 validation 成功后，仍须选择未使用的候选 Tag，完成受保护 publication 和普通只读 audit 才能评估 Frozen；当前 Candidate / No-Go、deployable=false。
 
 ## CRM 首片后续环境接入（2026-09-08 UTC）

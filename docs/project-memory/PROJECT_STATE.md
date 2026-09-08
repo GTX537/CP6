@@ -1,5 +1,14 @@
 # 项目当前状态
 
+## P10 原生扫描参数修复与 cosign 依赖阻塞（2026-09-08 UTC）
+
+- 安全诊断 [PR #89](https://github.com/GTX537/CP6/pull/89) 已正常合入 `main@a41711dd55a093ab0ed127d599e0e7bcf11d548d`，七项 PR 检查、五个 exact-main 工作流及合并后 285 项回归全部通过，取代下方该补丁“待合并”的历史状态。
+- [run 34234554610](https://github.com/GTX537/CP6/actions/runs/34234554610) attempt 1 定位到 `crm.pull-request` 403；owner 保存 CRM 专用 token 的 Pull requests Read 后，获批 attempt 2 的真实输入收集、七包/CRM 验证、**1634/1634 零跳过**和 OCI push 成功，随后 Trivy 非法 `--image-src registry` 失败，sign/finalize/artifact 跳过。
+- 任务分支已把 Trivy 改为 `remote`，保留 Syft `registry:`；回归先 RED 1 失败/7 通过，再 GREEN 8/8。使用校验摘要后的精确官方工具对已有 GHCR digest 只读扫描，真实 SPDX 被现有解析器接受，真实 SARIF 因 **1 CRITICAL / 14 HIGH** 被原门禁正确拒绝。全部阻塞发现位于镜像内 cosign 3.1.3 的 Go 依赖，不是新的报告格式错误。
+- 本地完整真实输入回归 **1635/1635，零失败/零跳过**，format 与三条 P10 workflow 的 actionlint 通过。这证明参数补丁的本地兼容性，不代表含漏洞镜像已被接受。
+- 当日官方最新版仍为 3.1.3，尚无更新的官方发布二进制。自建补丁版或更换工具分发来源须 owner 决定；当前参数修复未合入 main，也未再次 dispatch 已知会失败的验证。[预检记录](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)保留 digest、报告 hash、实际计数及可复现命令。
+- P10 仍 **Candidate / No-Go**。没有降低 HIGH/CRITICAL 门禁，没有重新签名/发布候选/审计通过/生产部署，没有导出 Environment 私钥或改写历史失败与正式包。
+
 ## P10 GitHub 读取安全诊断补丁（2026-09-08 UTC）
 
 - 重跑时间修复 [PR #88](https://github.com/GTX537/CP6/pull/88) 已正常合入 `main@96c5f71e3c493c61a09d5b667dc32b966508631e`；七项 PR 检查、五个 exact-main 工作流和合并后 197 项回归全部通过。

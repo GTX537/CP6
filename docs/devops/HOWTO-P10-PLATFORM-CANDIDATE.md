@@ -13,6 +13,8 @@
 
 ## 1. 验证最终源码并构建一次 OCI
 
+当前先停止重跑：2026-09-08 的原生预检确认已有镜像内 cosign 3.1.3 含 **1 CRITICAL / 14 HIGH** 扫描发现。官方当日最新 release 仍是 3.1.3，尚无更新的官方二进制；在完成受审依赖修复前，下列 dispatch 不能用于反复试跑。不得过滤发现、移除镜像内验签工具以避开扫描，或未经批准替换受信二进制来源。详细原始摘要、命令和证据边界见[预检记录](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)。
+
 读取远端 main 并提交验证请求：
 
 ```powershell
@@ -32,6 +34,8 @@ gh run list -R GTX537/CP6 --workflow p10-platform-validation.yml --limit 20 --js
 GitHub 非 200 响应会在原有 `github-http-status` 前输出 `p10-github-read target=<固定类别> status=<数字>`。类别只含 `cp6` / `platform` / `crm` 和 `workflow` / `main` / `compare` / `run` / `jobs` / `archive` / `pull-request` / `commit` / `artifact`；缺少目标上下文时为 `unspecified`。不输出 URL、路径、SHA、请求 ID、Token、响应正文、ReasonPhrase 或 headers。stdout 合同结果、退出码、超时、取消和失败关闭门禁不变。
 
 先按真实阶段、目标类别和状态码调查，不能仅凭 403/404 就扩大权限，也不能要求粘贴 Secret。旧 [run 34229610628](https://github.com/GTX537/CP6/actions/runs/34229610628) 没有这些诊断，只能证明 GitHub 非 200；不能回溯推定其具体状态码、失败仓库或七包验证结论。使用诊断补丁的新 exact-main run 才能定位。
+
+后续 [run 34234554610](https://github.com/GTX537/CP6/actions/runs/34234554610) attempt 1 定位到 `crm.pull-request` 403；owner 调整 CRM 专用 token 的 Pull requests Read 后，attempt 2 的实际输入收集、七包/CRM 验证、1634 项全量测试及 OCI push 均成功。它随后因 Trivy `--image-src registry` 非法而失败，sign/finalize/artifact 全部跳过。Trivy 正确参数是 `--image-src remote`，Syft 则仍使用自己的 `registry:` 前缀，两者不能混用。对已有 digest 的完整原生扫描又建立了上述 cosign 漏洞阻塞；不能把参数修正或本地报告当作 hosted validation 成功。
 
 只有整个 run `completed/success` 后，才能使用它的验证 artifact。保存 run、attempt、job、artifact ID、archive digest 和 image digest。以下读取选中 run 的精确元数据，不用“最近成功”自动替换：
 
