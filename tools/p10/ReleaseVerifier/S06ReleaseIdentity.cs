@@ -58,7 +58,7 @@ internal static class S06ReleaseIdentity
         var verifier = root.GetProperty("verifier");
         var publisher = root.GetProperty("publisher");
         RequireWorkflow(verifier, "GTX537/CP6", ValidationPath, "none");
-        RequireWorkflow(publisher, "GTX537/CP6", PublicationPath, "r2-candidate");
+        RequireWorkflow(publisher, "GTX537/CP6", PublicationPath, "p10-platform-candidate");
         Require(Text(verifier, "commitSha") == Text(publisher, "commitSha") &&
             verifier.GetProperty("runId").GetInt64() != publisher.GetProperty("runId").GetInt64(), "graph-workflow-separation");
         var crm = root.GetProperty("crmConsumer");

@@ -63,7 +63,7 @@ internal sealed class EvidenceGraphFixture
             ["crmConsumer"] = Workflow("GTX537/CP6.CRM", ".github/workflows/crm-validation.yml", CrmSource,
                 "924014cb1231824a9b57ab82a6f9638f76329919", 34134695003, "none"),
             ["publisher"] = Workflow("GTX537/CP6", ".github/workflows/p10-platform-candidate.yml", PublicSource,
-                new string('4', 40), 999992, "r2-candidate"),
+                new string('4', 40), 999992, "p10-platform-candidate"),
             ["verifier"] = Workflow("GTX537/CP6", ".github/workflows/p10-platform-validation.yml", PublicSource,
                 new string('5', 40), 999991, "none"),
             ["policyVersions"] = new JsonObject { ["trust"] = 1, ["evidence"] = 1 }

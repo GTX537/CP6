@@ -18,7 +18,7 @@
 - Preserve the original publication/provenance bytes and their independent hashes. Tests carry only these public metadata bytes from immutable CRM bb1fd8b4f250fabde4476b6a450435de2d07c03f plus the reviewed public policies. The outer graph, its image digest and workflow IDs are explicitly unpublished regression data, never S06 acceptance evidence.
 - The only image is ghcr.io/gtx537/cp6-p10-verifier at a sha256 digest, bound to the public verifier source. It is not an application image and never authorizes deployment.
 - Platform source identity uses subjectKind SourceProvenance with the SHA-256 of the source-reference attestation and the actual 40-character sourceGitSha. The hash is not misrepresented as a hash of the source tree.
-- Public workflow paths are .github/workflows/p10-platform-validation.yml and .github/workflows/p10-platform-candidate.yml. Their commits must agree, their run IDs must differ, and only the publisher declares environment r2-candidate; the read-only validation identity uses environment none. External proof must establish completed successful validation before publication; a candidate never predicts publisher completion.
+- Public workflow paths are .github/workflows/p10-platform-validation.yml and .github/workflows/p10-platform-candidate.yml. Their commits must agree, their run IDs must differ, and only the publisher declares environment p10-platform-candidate, as fixed by the completed prerequisite plan; the read-only validation identity uses environment none. External proof must establish completed successful validation before publication; a candidate never predicts publisher completion.
 - crmConsumer identifies the completed original S05 main run 34134695003/1 at a31ca0e323418f7e4108cc6220c0f5fa132e7fc2, workflow blob 924014cb1231824a9b57ab82a6f9638f76329919. The CrmConsumer attestation also binds index 1332bf21e4253112d457f86cdc0cba829fc58f20c3914fa738dd992d917e2914. Independent verification of the evidence-only PR/main and subsequent CI remains a full-verifier requirement.
 - Exactly 11 ordinal evidence kinds: CrmConsumer, FormalPackagePublication, FormalPackageVerification, ImageProvenance, ImageSbom, ImageScan, NuGetTrustPolicy, OciSignature, PackageProvenance, SourceReference, TrustPolicy. Each has exactly the subjects specified by the implementation below, a RequiredPublic access class, policy 1, Success, and the exact validation producer. Own object, source, package, consumer and image subject roles cannot be substituted.
 - Gate inputs are the exact union of those full subjects, including sourceGitSha. Exactly 19 gates are required: the 11 evidence-kind names, seven NuGetSignature/<packageId> gates and VerifierPackage. Each gate binds its prescribed hash and is Success; overall Success alone is insufficient.
@@ -111,7 +111,7 @@ internal sealed class EvidenceGraphFixture
             ["crmConsumer"] = Workflow("GTX537/CP6.CRM", ".github/workflows/crm-validation.yml", CrmSource,
                 "924014cb1231824a9b57ab82a6f9638f76329919", 34134695003, "none"),
             ["publisher"] = Workflow("GTX537/CP6", ".github/workflows/p10-platform-candidate.yml", PublicSource,
-                new string('4', 40), 999992, "r2-candidate"),
+                new string('4', 40), 999992, "p10-platform-candidate"),
             ["verifier"] = Workflow("GTX537/CP6", ".github/workflows/p10-platform-validation.yml", PublicSource,
                 new string('5', 40), 999991, "none"),
             ["policyVersions"] = new JsonObject { ["trust"] = 1, ["evidence"] = 1 }
@@ -850,7 +850,7 @@ internal static class S06ReleaseIdentity
         var verifier = root.GetProperty("verifier");
         var publisher = root.GetProperty("publisher");
         RequireWorkflow(verifier, "GTX537/CP6", ValidationPath, "none");
-        RequireWorkflow(publisher, "GTX537/CP6", PublicationPath, "r2-candidate");
+        RequireWorkflow(publisher, "GTX537/CP6", PublicationPath, "p10-platform-candidate");
         Require(Text(verifier, "commitSha") == Text(publisher, "commitSha") &&
             verifier.GetProperty("runId").GetInt64() != publisher.GetProperty("runId").GetInt64(), "graph-workflow-separation");
         var crm = root.GetProperty("crmConsumer");
