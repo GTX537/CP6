@@ -27,6 +27,12 @@ gh run list -R GTX537/CP6 --workflow p10-platform-validation.yml --limit 20 --js
 
 同源失败运行可在排除原因后重跑，每个 attempt 必须重新取得实际批准。重跑记录的 `created_at` 不是执行开始时间；验证器额外读取并绑定该 run 的 attempt 1，确认原始执行已结束，再检查当前精确 attempt 和 job 的时间。若修复了源码，必须对新的 exact main 发起新 run，不能重跑旧 SHA 来验收新代码。历史失败及其 artifact 保留，不改写成功结论。
 
+输入收集失败时，先查看 stderr 的 `p10-validation-stage`：依次为 `current-workflow`、`platform-source`、`formal-packages`、`crm-consumer`、`publication-archive`、`package-provenance`、`final-current-workflow`，只有输入校验及本地写入完成才输出 `prepared`。阶段标记代表进入该阶段，不代表该阶段成功，也不是候选验收证据。
+
+GitHub 非 200 响应会在原有 `github-http-status` 前输出 `p10-github-read target=<固定类别> status=<数字>`。类别只含 `cp6` / `platform` / `crm` 和 `workflow` / `main` / `compare` / `run` / `jobs` / `archive` / `pull-request` / `commit` / `artifact`；缺少目标上下文时为 `unspecified`。不输出 URL、路径、SHA、请求 ID、Token、响应正文、ReasonPhrase 或 headers。stdout 合同结果、退出码、超时、取消和失败关闭门禁不变。
+
+先按真实阶段、目标类别和状态码调查，不能仅凭 403/404 就扩大权限，也不能要求粘贴 Secret。旧 [run 34229610628](https://github.com/GTX537/CP6/actions/runs/34229610628) 没有这些诊断，只能证明 GitHub 非 200；不能回溯推定其具体状态码、失败仓库或七包验证结论。使用诊断补丁的新 exact-main run 才能定位。
+
 只有整个 run `completed/success` 后，才能使用它的验证 artifact。保存 run、attempt、job、artifact ID、archive digest 和 image digest。以下读取选中 run 的精确元数据，不用“最近成功”自动替换：
 
 ```powershell

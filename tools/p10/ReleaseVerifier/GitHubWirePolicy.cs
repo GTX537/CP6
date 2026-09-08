@@ -48,10 +48,17 @@ internal static class GitHubWirePolicy
         return request;
     }
 
-    internal static async Task<byte[]> ReadResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    internal static async Task<byte[]> ReadResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken,
+        GitHubReadTarget? target = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (response.StatusCode != HttpStatusCode.OK) throw Error("github-http-status");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            // Safe diagnostic only: no response body, headers, reason, URL or credential.
+            Console.Error.WriteLine("p10-github-read target=" + (target?.DiagnosticCategory ?? "unspecified") +
+                " status=" + ((int)response.StatusCode).ToString(System.Globalization.CultureInfo.InvariantCulture));
+            throw Error("github-http-status");
+        }
         var content = response.Content;
         var type = content.Headers.ContentType;
         if (type?.MediaType != "application/json" || content.Headers.ContentEncoding.Count != 0 ||

@@ -15,12 +15,18 @@ internal static class S06ValidationCollector
         deadline.CancelAfter(TimeSpan.FromMinutes(15));
         try
         {
+            Console.Error.WriteLine("p10-validation-stage current-workflow");
             var current = await S06CurrentWorkflow.CaptureAsync(S06ReleaseIdentity.ValidationPath, githubReadToken, deadline.Token);
             var producer = current.Workflow;
+            Console.Error.WriteLine("p10-validation-stage platform-source");
             var source = await SourceReferenceEvidence.CreateAsync(producer, githubReadToken, deadline.Token);
+            Console.Error.WriteLine("p10-validation-stage formal-packages");
             var packages = await FormalVerificationEvidence.CollectAsync(producer, feedReadToken, deadline.Token);
+            Console.Error.WriteLine("p10-validation-stage crm-consumer");
             var crm = await CrmPublicEvidence.CreateAsync(producer, crmReadToken, deadline.Token);
+            Console.Error.WriteLine("p10-validation-stage publication-archive");
             var publication = await ReleaseArchiveSource.ReadAsync("publication", crmReadToken, deadline.Token);
+            Console.Error.WriteLine("p10-validation-stage package-provenance");
             var provenance = await ReleaseArchiveSource.ReadAsync("package-provenance", crmReadToken, deadline.Token);
             var payloads = new Dictionary<string, ReadOnlyMemory<byte>>(StringComparer.Ordinal)
             {
@@ -37,9 +43,11 @@ internal static class S06ValidationCollector
                 files.Add(S06ValidationInputs.PackagePath(package.Proof.PackageId), package.CopyPackageBytes());
             files.Add("producer.json", S06ArtifactAssembly.Canonical(Workflow(producer)));
             _ = S06ValidationInputs.ReadPreparation(files, producer);
+            Console.Error.WriteLine("p10-validation-stage final-current-workflow");
             var final = await S06CurrentWorkflow.CaptureAsync(S06ReleaseIdentity.ValidationPath, githubReadToken, deadline.Token);
             Require(final.Workflow == producer && final.JobStartedAtUtc == current.JobStartedAtUtc, "validation-current-job");
             S06LocalFiles.WriteNew(outputDirectory, files);
+            Console.Error.WriteLine("p10-validation-stage prepared");
             return producer;
         }
         catch (OperationCanceledException)

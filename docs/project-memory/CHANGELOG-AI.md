@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-09-08：P10 GitHub 读取安全诊断
+
+- PR #88 已完成远端 main 合并及门禁；新验证 `34229610628` 在输入收集失败，只有泛化 `github-http-status`。已确认观测信息不足，未把 CRM Token 权限猜测写成根因。
+- 追加固定 preparation 阶段和 GitHub 非 200 的固定目标类别/数字状态码，仅 stderr；不含响应正文、URL、路径、Token、ReasonPhrase 或 headers。原错误码、stdout、取消、退出码与验收不放宽；没有自动重试、Secret 修改或部署。
+- 测试先 RED（12 失败/1 通过）再 GREEN；扩展相关 175/175、全量真实输入 1634/1634、format 通过。同步操作说明与四份状态账本；补丁 PR/main 和新 run 审批仍待完成，不声称候选已验收。
+
 ## 2026-09-08：P10 GitHub 重跑时间校验兼容
 
 - 真实 run `34221083970` attempt 2 报 `s06-current-time`：精确 attempt 的 `created_at=12:06:31Z`、`run_started_at=12:06:29Z` 不符合旧实现假设。追加同 run attempt 1 的受认证读取和完整身份/时间绑定，区分记录创建与执行开始；运行中和完成后的检查共用策略，不引入任意时钟容差。

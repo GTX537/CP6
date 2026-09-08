@@ -1,5 +1,12 @@
 # 当前待办与优先级
 
+## P10 最新阻塞：定位真实 GitHub 非 200（2026-09-08 UTC）
+
+- [ ] 完成安全诊断补丁 PR/exact-main 正常交付；本地 1634/1634 与 format 已通过，但不能替代 hosted 验证。
+- [ ] 对新 exact main 发起新的 validation，由 owner 重新审批；用实际 `p10-validation-stage`、固定 target 类别和 HTTP status 定位失败。不得重跑旧源码来验收新补丁，不得凭猜测扩大 CRM/Packages 权限。
+- [ ] 旧 run `34229610628` attempt 1 只有 `github-http-status`；其七包验证状态仍未建立，后续 image/sign/artifact 均跳过。保留所有失败历史。
+- [ ] 真实 validation 成功后，仍须选择未使用的候选 Tag，完成受保护 publication 和普通只读 audit 才能评估 Frozen；当前 Candidate / No-Go、deployable=false。
+
 ## CRM 首片后续环境接入（2026-09-08 UTC）
 
 首片代码、公开文档同步、独立复核、真实跨仓浏览器验证及两仓库实现 PR/main 门禁已完成，见[完成记录](05-Completed.md)和[当前远端证据](PROJECT_STATE.md)。
