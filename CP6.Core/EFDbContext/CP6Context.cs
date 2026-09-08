@@ -71,6 +71,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     /// </summary>
     public DbSet<Sys_User> Sys_Users { get; set; }
 
+    public DbSet<Sys_BrowserSession> Sys_BrowserSessions { get; set; }
+
     /// <summary>
     /// DataProtection 密钥环持久化表（P0-T1）——实现 <see cref="IDataProtectionKeyContext"/>，
     /// 令 SSO/2FA/CSRF 密文所依赖的密钥落库、重启存活。非 BaseTenantEntity，不受全局租户过滤。
@@ -726,6 +728,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => x.TokenHash).IsUnique().HasDatabaseName("UX_Sys_RefreshToken_TokenHash");
             e.HasIndex(x => x.UserId);
+            e.HasIndex(x => x.BrowserSessionId);
             e.Property(x => x.RowVersion).IsRowVersion();
         });
 

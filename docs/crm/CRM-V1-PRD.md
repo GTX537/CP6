@@ -15,6 +15,36 @@
 - 当前实现基线：[`CRM-V1-SPEC.md`](./CRM-V1-SPEC.md)
 - 公开产品研究基线：[`CRM-COMPETITIVE-ANALYSIS.md`](./CRM-COMPETITIVE-ANALYSIS.md)
 
+## 首片实施增补（2026-09-08）
+
+状态：**首片实现与本地真实服务联合验证通过；非生产验收**。
+
+本增补记录本次已批准的首片业务行为与候选实现。下方 2026-08-26 的 hash-bound 产品 payload、批准摘要和 M0 历史证据保持原文；这些历史证据不用于声称本次候选或生产已经验收。本增补只解释本次首片，不替代完整 V1 范围、跨仓集成、Pilot、发布与采用门禁。
+
+候选包含 11 个 Page Function、29 个 API operation、44 个 DTO：人工/网站线索、风险隔离审核、分配/协作、双业务时限、跟进/内容与事实更正、可见查重、判无效、固定 inquiry 表单与日历。完整 Account/Contact/Opportunity、合格/转换/合并、导入、CMS、ERP/Portal、移动业务和生产发布不在本片。
+
+| 历史章节/口径 | 首片实施口径 |
+| --- | --- |
+| §6.2 人工 Lead / “Intake 异常队列” | add 可创建；合格录入者默认本人 Owner，否则 New/NULL 进入团队待分配 **Lead** 队列，不能混入 PublicSubmission 隔离审核。主管另需 assign 才可选择受管目标部门合格 Owner；页面切换部门清除旧 Owner 选择。创建者不扩权；不可读创建返回安全确认，不能进入该详情。 |
+| §6.4、PRD-UI-003 默认队列 | Mine 仅本人 Owner/Collaborator；Managed 仅主管受管部门。默认 AwaitingResponse 排除终态，但 Managed 保留未分配或 Owner 失效异常，即使 Contacted。 |
+| §6.4 effectiveDue / 双时限 | 固定 30/240 **工作分钟**。按仍待完成分配/响应超期、未分配分配临期、已分配响应临期、其余排序；两个时限同时待完成时取较早截止，再按收到时间/ID 升序。临期为未来 30 分钟；响应 SLA 筛选/统计不改成分配指标。 |
+| §6.4 Activity / PRD-AC-008 | 有效响应为 Phone/Connected、Email或Message/Sent、Meeting/Held；Note/System/Recorded 不计。普通追加只在首次响应为空时设置，后续更早补录不自动重算；允许创建前发生，禁止未来发生，创建前首次响应标记排除 SLA。 |
+| §6.4 首次响应只设置一次 | 原作者或主管可带原因追加内容更正，保留原文且不改事实。事实更正仅主管先用当前 ETag 预览，再带原因显式提交，才重新计算首次响应/活动和排除标记。预览无写入，提交重新校验权限/ETag并计算；更正发生时间不得晚于原 RecordedAt；原始活动不可覆盖。 |
+| PRD-UI-004 自动选下一条 | 桌面两栏；窄屏列表到全屏详情。刷新/412 保留可见选择和草稿；对象离开范围清除无权内容，不能因自动选择或刷新丢失输入。 |
+| Query Revision / 刷新 | revision 覆盖完整已授权筛选结果的行版本、风险优先级、计数及权限/成员投影；页外记录变化也能提示刷新，计算不解密 PII；不是写 ETag 或跨请求冻结快照。新 revision 不自动移动选择/丢弃草稿。 |
+| §8 Lead 状态 | 首片 New/Assigned/Contacted/Disqualified；判无效必须有原因，之后只读且不恢复。其余完整 V1 状态继续保留为后续目标。 |
+| §8.1、§9 公开审核 | 正常提交原子保存 Submission 与未分配 Website Lead；风险只 NeedsReview。审核读取仅主管受管接收部门 + query/PII；释放另需 add，拒绝另需 edit，均必填原因。审核状态默认 NeedsReview，可筛选 ConvertedToLead/Rejected/Expired/All；先状态筛选再分页，游标绑定状态，All 只含曾隔离记录。审核七天；拒绝/到期 24 小时内匿名化主记录、原因和幂等快照。 |
+| Website / 释放锚点 | 响应从原收到时间冻结起算 240 工作分钟；分配从实际 Lead 创建起算 30 工作分钟。释放不重置原收到时间、日历或响应截止，已超期即显示超期。 |
+| §9/§10 权限与结果 | query + 当前组织 + 实际 Owner/Collaborator/主管管理部门；PII 单独裁剪。联系人/判无效限 Owner 或主管 + edit，协作者可 edit 跟进。协作者维护与负责人分配共用主管 + assign + PII 门禁，普通 Owner 不能仅凭 edit 扩大可见成员集合。移交要求主管管理原/目标部门，同部门保留合格协作者，跨部门默认清除，显式目标协作者必须全部合格；Owner 不重复加入协作者集合。 |
+| Site/CMS 与业务日历 | 一组织一个固定 inquiry 表单和接收部门；siteKey 来自可信登记目录。GET 缺失为 404、初始值是未保存草稿；首次 If-Match:* 仅创建，之后需真实 ETag；每次保存新 Draft，预览无写入，计划未来生效后只影响新接收，已发布版本不可原地改。 |
+| §10 产品级 API 表面 | 精确当前路径以版本化 OpenAPI 为准：Lead 搜索使用 POST /leads/query；详情合并当前 PII 投影，无独立 /pii 端点；其余历史完整 V1 端点不代表首片已实现。 |
+
+公开 attempt 由同源 BFF/API 校验 Cookie、CSRF、Origin、同意与风控并绑定站点/表单/日历版本；新提交遇版本变化返回 409 crm.form_updated，成功命令或 attempt 重放原中性回执。回执 Cookie 绑定站点与回执，路径 ID 不授予读取，不公开隔离或内部 Lead 状态。
+
+页面为 MSBBCR010、200、210、220、230、240、500、620、630、700、710；其余 36 个仍未实现。前端路由可用性与交付候选/联合验收状态分别记录。route-mocked Playwright 只证明页面交互/请求；真实隔离 SQL 使用合成用户和业务数据，证明持久化/并发行为。全新隔离 fixture 的 5 组真实 CORE/Next/CRM/SQL 浏览器场景已通过，含密码/OIDC、日历与线索、询盘/回执、角色范围/PII/退出，以及实际撤销 PII 后清除旧页面。浏览器使用一个合成组织，双组织隔离由业务 SQL 覆盖；目标环境密钥、真实客户与保留任务运行仍须独立验证。业务、更正、非PII Audit/Outbox及幂等结果同事务；Outbox 落库不证明 Dapr/Kafka 已投递或消费者完成。
+
+追踪：[首片业务手册](https://github.com/GTX537/CP6.CRM/blob/main/docs/handbook/CRM-FIRST-SLICE.md)、[逐页规格](https://github.com/GTX537/CP6.CRM/blob/main/docs/page-specs/README.md)、[OpenAPI](https://github.com/GTX537/CP6.CRM/blob/main/contracts/api/crm-v1.openapi.yaml)。当前候选使用 OpenAPI 3.1 与仓库 scripts/generate-crm-api.py 生成器；既有 F0-04 NSwag/OpenAPI 3.0.3 profile 的差异/等价门禁不得以生成漂移绿灯替代。
+
 <!-- crm-v1-prd-payload:start -->
 
 ## 0. 文档地位与使用规则

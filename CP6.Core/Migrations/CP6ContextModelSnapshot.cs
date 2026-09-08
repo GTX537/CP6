@@ -12975,6 +12975,45 @@ namespace CP6.Core.Migrations
                     b.ToTable("Space_Zone");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Sys.Sys_BrowserSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AuthenticationVersion")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("LoggedOutAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sys_BrowserSessions");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Sys.Sys_Dept", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13428,6 +13467,9 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
+                    b.Property<Guid?>("BrowserSessionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ClientKind")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -13487,6 +13529,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrowserSessionId");
 
                     b.HasIndex("TokenHash")
                         .IsUnique()
@@ -13886,6 +13930,9 @@ namespace CP6.Core.Migrations
 
                     b.Property<bool>("AllowPasswordFallback")
                         .HasColumnType("bit");
+
+                    b.Property<Guid>("AuthenticationEpoch")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BadgeNo")
                         .HasMaxLength(64)

@@ -5,6 +5,7 @@ using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace CP6.Core.Services.Sys;
 
@@ -20,12 +21,14 @@ public class RefreshTokenService : IRefreshTokenService
     private readonly CP6Context _db;
     private readonly TokenOptions _t;
     private readonly ITenantContext _tenant;
+    private readonly IConfiguration? _configuration;
 
-    public RefreshTokenService(CP6Context db, IOptions<SecurityOptions> opt, ITenantContext tenant)
+    public RefreshTokenService(CP6Context db, IOptions<SecurityOptions> opt, ITenantContext tenant, IConfiguration? configuration = null)
     {
         _db = db;
         _t = opt.Value.Token;
         _tenant = tenant;
+        _configuration = configuration;
     }
 
     private static string NewRaw() => Base64Url(RandomNumberGenerator.GetBytes(32));
@@ -39,11 +42,22 @@ public class RefreshTokenService : IRefreshTokenService
         Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)
     {
         var raw = NewRaw();
+        Guid? browserSessionId = null;
+        if (_configuration?.GetValue<bool>("CrmOidc:Enabled") == true && client.ClientKind == "Web")
+        {
+            browserSessionId = Guid.NewGuid();
+            _db.Sys_BrowserSessions.Add(new Sys_BrowserSession
+            {
+                Id = browserSessionId.Value, UserId = user.Id, TenantId = user.TenantId,
+                AuthenticationVersion = AuthSessionVersion.For(user)
+            });
+        }
         _db.Sys_RefreshTokens.Add(new Sys_RefreshToken
         {
             UserId = user.Id,
             TenantId = user.TenantId,   // 显式盖租户，与 RotateAsync 对称；不依赖 SaveChanges 隐式盖章的上下文时序
             TokenHash = HashOf(raw),
+            BrowserSessionId = browserSessionId,
             ExpiresAt = DateTime.Now.AddDays(_t.RefreshTokenDays),
             CreatedIp = ip,
             UserAgent = ua,
@@ -63,9 +77,12 @@ public class RefreshTokenService : IRefreshTokenService
     {
         var hash = HashOf(rawToken);
         // 无租户上下文：按 TokenHash 跨租户查（全局唯一索引；IgnoreQueryFilters 白名单——令牌本身即凭证）
-        var row = await _db.Sys_RefreshTokens.IgnoreQueryFilters().FirstOrDefaultAsync(r => r.TokenHash == hash);
+        var row = await _db.Sys_RefreshTokens.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(r => r.TokenHash == hash);
         if (row == null || row.ExpiresAt <= DateTime.Now)
             throw new InvalidOperationException("E-SEC-007");   // 令牌无效或已过期
+
+        // An explicit family logout is not a token-reuse attack. It must never revoke another browser/device.
+        if (row.BrowserSessionId.HasValue) await RequireBrowserSessionAsync(row);
 
         if (row.RevokedAt != null)
         {
@@ -87,7 +104,7 @@ public class RefreshTokenService : IRefreshTokenService
 
         // 由令牌的 TenantId 回设上下文，后续查询/盖章按其租户正确作用域
         _tenant.CurrentTenantId = row.TenantId;
-        var user = await _db.Sys_Users.IgnoreQueryFilters().FirstAsync(u => u.Id == row.UserId);
+        var user = await _db.Sys_Users.IgnoreQueryFilters().AsNoTracking().FirstAsync(u => u.Id == row.UserId);
 
         var raw2 = NewRaw();
         var hash2 = HashOf(raw2);
@@ -98,6 +115,7 @@ public class RefreshTokenService : IRefreshTokenService
             UserId = user.Id,
             TenantId = row.TenantId,
             TokenHash = hash2,
+            BrowserSessionId = row.BrowserSessionId,
             ExpiresAt = DateTime.Now.AddDays(_t.RefreshTokenDays),
             CreatedIp = ip,
             UserAgent = ua,
@@ -114,6 +132,10 @@ public class RefreshTokenService : IRefreshTokenService
             var tx = await _db.Database.BeginTransactionAsync();
             try
             {
+                // Rotation and CRM logout take the same stable family lock before touching token rows.
+                // The stored login version is compared with current account state and never replaced.
+                if (row.BrowserSessionId.HasValue)
+                    await RequireBrowserSessionAsync(row, user, lockForRotation: true);
                 var affected = await _db.Sys_RefreshTokens.IgnoreQueryFilters()
                     .Where(r => r.Id == row.Id && r.RevokedAt == null)
                     .ExecuteUpdateAsync(s => s
@@ -125,6 +147,7 @@ public class RefreshTokenService : IRefreshTokenService
                     await tx.DisposeAsync();
                     tx = null!;
                     _db.ChangeTracker.Clear();
+                    if (row.BrowserSessionId.HasValue) await RequireBrowserSessionAsync(row);
                     await RevokeAllForUserAsync(row.UserId);
                     throw new InvalidOperationException("E-SEC-008");
                 }
@@ -145,11 +168,28 @@ public class RefreshTokenService : IRefreshTokenService
             }
         }
 
+        if (row.BrowserSessionId.HasValue) await RequireBrowserSessionAsync(row, user);
+        // The in-memory provider has no ExecuteUpdate; update its tracked instance explicitly.
+        row = await _db.Sys_RefreshTokens.IgnoreQueryFilters().FirstAsync(r => r.Id == row.Id);
         row.RevokedAt = now;
         row.ReplacedByTokenHash = hash2;
         _db.Sys_RefreshTokens.Add(replacement);
         await _db.SaveChangesAsync();
         return (raw2, user);
+    }
+
+    private async Task<Sys_BrowserSession> RequireBrowserSessionAsync(
+        Sys_RefreshToken token, Sys_User? user = null, bool lockForRotation = false)
+    {
+        var sessions = lockForRotation && _db.Database.IsSqlServer()
+            ? _db.Sys_BrowserSessions.FromSqlInterpolated($"SELECT * FROM dbo.Sys_BrowserSessions WITH (UPDLOCK,HOLDLOCK) WHERE Id={token.BrowserSessionId}")
+            : _db.Sys_BrowserSessions;
+        var session = await sessions.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(s =>
+            s.Id == token.BrowserSessionId && s.UserId == token.UserId && s.TenantId == token.TenantId);
+        if (session == null || session.LoggedOutAtUtc != null
+            || user != null && session.AuthenticationVersion != AuthSessionVersion.For(user))
+            throw new InvalidOperationException("E-SEC-007");
+        return session;
     }
 
     public async Task RevokeAsync(string rawToken)

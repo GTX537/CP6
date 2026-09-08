@@ -64,6 +64,7 @@ public class TwoFactorService : ITwoFactorService
         if (!_totp.Verify(user.TwoFactorSecret, code)) return false;
         user.TwoFactorEnabled = true;
         user.TwoFactorEnrolledAt = DateTime.Now;
+        user.AuthenticationEpoch = Guid.NewGuid();
         await _audit.LogAsync(SecurityEventType.TwoFactorEnrolled, user.Id, user.UserName, null, null, null);
         return true;
     }
@@ -121,6 +122,7 @@ public class TwoFactorService : ITwoFactorService
         user.TwoFactorEnabled = false;
         user.TwoFactorSecret = null;
         user.TwoFactorEnrolledAt = null;
+        user.AuthenticationEpoch = Guid.NewGuid();
         await _audit.LogAsync(SecurityEventType.TwoFactorReset, user.Id, user.UserName, null, null, null, reason);
     }
 

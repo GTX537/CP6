@@ -30,3 +30,15 @@ jobs:
           dotnet-version: 8.0.x
       - run: dotnet restore CP6.Tests/CP6.Tests.csproj
       - run: dotnet test CP6.Tests/CP6.Tests.csproj --no-restore --filter FullyQualifiedName~WmsProductionSqlServerTests
+      - name: Verify CRM OIDC grant and global logout SQL boundaries
+        env:
+          CP6_OIDC_TEST_SQL: ${{ env.CP6_TEST_SQLSERVER }}
+        run: >-
+          dotnet test CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj
+          --logger "trx;LogFileName=crm-oidc-sql.trx" --results-directory evidence/oidc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: crm-oidc-sql-evidence
+          path: evidence/oidc/*.trx
+          if-no-files-found: error

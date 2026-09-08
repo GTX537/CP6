@@ -13,6 +13,8 @@ on:
       - "README.md"
       - "tools/Test-CrmV1Prd.ps1"
       - "tools/Test-CrmV1Prd.Tests.ps1"
+      - "tools/CrmPublicDisclosureSurface.psm1"
+      - "tools/Test-CrmPublicDisclosureSurface.Tests.ps1"
 
 permissions:
   contents: read

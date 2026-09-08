@@ -78,6 +78,10 @@ public class Sys_User : BaseTenantEntity, IAuditable
     /// <summary>2FA 绑定时刻</summary>
     public DateTime? TwoFactorEnrolledAt { get; set; }
 
+    /// <summary>Authentication epoch advanced on 2FA transitions, including reset back to the previous state.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Guid AuthenticationEpoch { get; set; }
+
     // ───── S 类 #3 SSO：联邦身份链 + break-glass ─────
     /// <summary>联邦身份 subject（IdP 的 sub）；与 ExternalProvider 共同唯一定位。null=本地账号。</summary>
     [MaxLength(200)] public string? ExternalSubject { get; set; }

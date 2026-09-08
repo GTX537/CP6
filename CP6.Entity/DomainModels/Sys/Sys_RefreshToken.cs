@@ -26,6 +26,9 @@ public class Sys_RefreshToken : BaseTenantEntity
     /// <summary>轮换后替换本令牌的新令牌哈希（链式追踪）</summary>
     [MaxLength(128)] public string? ReplacedByTokenHash { get; set; }
 
+    /// <summary>Opt-in Web login family. Null preserves pre-bridge and native refresh behavior.</summary>
+    public Guid? BrowserSessionId { get; set; }
+
     /// <summary>签发时客户端 IP</summary>
     [MaxLength(64)] public string? CreatedIp { get; set; }
 

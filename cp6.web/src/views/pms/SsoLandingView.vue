@@ -27,6 +27,7 @@ import { useI18n } from 'vue-i18n'
 import { authApi } from '@/api/sys/auth'
 import { addDynamicRoutes } from '@/router'
 import { usePlatformStore } from '@/stores/platform'
+import { resumeOidcReturn } from '../oidcReturn'
 
 const { t, te } = useI18n()
 const route = useRoute()
@@ -57,6 +58,7 @@ onMounted(async () => {
     localStorage.setItem('menus', JSON.stringify(menus))
     addDynamicRoutes(menus)
     // SSO 登录也尊重强制改密（理论上 SSO 用户不会触发，但保持与密码登录守卫一致）
+    if (!res.mustChangePassword && resumeOidcReturn()) return
     router.replace(res.mustChangePassword ? '/sys/change-password' : '/')
   } catch {
     // profile 失败（cookie 缺失/过期）→ 视为登录失败，落错误态。

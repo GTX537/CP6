@@ -7,6 +7,9 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# The protected-base validator must load its own trusted rules, never candidate tools.
+Import-Module (Join-Path $PSScriptRoot 'CrmPublicDisclosureSurface.psm1') -Force
+
 $root = if ([string]::IsNullOrWhiteSpace($RepositoryRoot)) {
     (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 }
@@ -320,43 +323,23 @@ Assert-Contains $prdPath @(
     'Full Journey：观察窗口、Conversion/OrderRequest 最小样本'
 )
 Assert-Contains $prdPath $approvalConclusionTexts
-$expectedPublicDisclosureSurfaceSha256 = [ordered]@{
-    'docs/crm/CP6-SAAS-V1-PUBLIC-CONTRACT.md' = 'bb72e0955e7beb8a0d82529830d2c31db8c8e040452c0bcde52cb2ed651cc818'
-    'docs/crm/CRM-V1-PRD.md' = 'e63ebb6dfadbfe04750a24ff3bd6d53de67bfd0d4226e872f753a25158996da7'
-    'docs/crm/CRM-COMPETITIVE-ANALYSIS.md' = '4881b2a3e212d0b57446915b3a60139b71877263e201b6e8222782436f8d6d4a'
-    'docs/crm/CRM-M0-READINESS.md' = '9d301a01c3028eb27d49c391c03d9cbead55267e95fbc8f2eab4ad1a7518076e'
-    'docs/crm/CRM-PRODUCT-FRAMEWORK.md' = 'd6c47066e233b607780a084f66d39b484e2f578f7430908ce252c6458cf97bfb'
-    'docs/crm/CRM-V1-EXECUTABLE-SPEC.md' = '5a9af3f9e47225964dd55b7f05d210bca2b1f042546041d1587fabf9b5c72216'
-    'docs/crm/CRM-V1-SPEC.md' = '7d1a08c891dc2ba8b522f00aad91445ce6f04a1f3ed815cc86992c36487062bd'
-    'docs/crm/README.md' = '9543bc859003469dd5773bd4992d884f356e176b04e96c3b7fda68b0fcf3089d'
-    'docs/crm/approvals/cp6-crm-v1-prd.json' = 'cec71e7e5b0435f4b6740f259b0bada95649a15e56a406fd3d2de4b876a9b891'
-    'docs/crm/approvals/cp6-saas-v1-public-contract.json' = '946ba40573ff98012cf9a1520099b58aad8d55ba2e63bb473f669c5b4f9361d6'
-    'docs/crm/approvals/history/2026-08-26-cp6-crm-v1-prd-program-owner-v4.json' = '76b3d5d481ad6c128f70abc7ceb770e430907fed97ca8bdd986873dc492720b3'
-    'docs/crm/approvals/history/2026-08-26-cp6-saas-v1-public-contract-program-owner.json' = 'fab7d44920dc8528940c610f6f426cbfc26e75123fbb58a3189be347d0b680dc'
-}
-$expectedCrmDisclosurePaths = @(
-    $expectedPublicDisclosureSurfaceSha256.Keys |
-        Where-Object { $_.StartsWith('docs/crm/', [StringComparison]::Ordinal) } |
-        Sort-Object
-)
 $crmRoot = Join-Path $root 'docs/crm'
 $discoveredCrmDisclosurePaths = @(
     if (Test-Path -LiteralPath $crmRoot -PathType Container) {
-        Get-ChildItem -LiteralPath $crmRoot -Recurse -File |
+        Get-ChildItem -LiteralPath $crmRoot -Recurse -File -Force |
             ForEach-Object {
                 [IO.Path]::GetRelativePath($root, $_.FullName).Replace('\', '/')
             } |
-            Sort-Object -Unique
+            Sort-Object -CaseSensitive
     }
 )
-foreach ($difference in @(Compare-Object $expectedCrmDisclosurePaths $discoveredCrmDisclosurePaths)) {
-    if ($difference.SideIndicator -eq '=>') {
-        Fail "Unregistered public CRM disclosure file: $($difference.InputObject)"
-    }
-    else {
-        Fail "Registered public CRM disclosure file is missing: $($difference.InputObject)"
-    }
+$actualPublicDisclosureSha256 = [System.Collections.Generic.Dictionary[string, string]]::new([StringComparer]::Ordinal)
+foreach ($file in $discoveredCrmDisclosurePaths) {
+    $text = Read-NormalizedText $file
+    if ($null -ne $text) { $actualPublicDisclosureSha256.Add($file, (Get-TextSha256 $text)) }
 }
+$disclosureSurface = Test-CrmPublicDisclosureSurface -ActualSha256 $actualPublicDisclosureSha256
+foreach ($failure in $disclosureSurface.Failures) { Fail $failure }
 $ancillaryDisclosureScanFiles = @(
     'README.md'
     'docs/project-memory/PROJECT_STATE.md'
@@ -395,12 +378,6 @@ foreach ($file in $publicBaselineScanFiles) {
             Fail "Private commercial cohort, rollout schedule, or numeric KPI detail found in $file"
         }
     }
-}
-
-foreach ($entry in $expectedPublicDisclosureSurfaceSha256.GetEnumerator()) {
-    $text = Read-NormalizedText $entry.Key
-    if ($null -eq $text) { continue }
-    Assert-Equal (Get-TextSha256 $text) $entry.Value "Public disclosure surface digest mismatch: $($entry.Key)"
 }
 
 $prdText = Read-NormalizedText $prdPath
@@ -572,6 +549,7 @@ $secretScanFiles = @(
     'docs/project-memory/06-Todo.md',
     'docs/project-memory/CHANGELOG-AI.md'
 )
+$secretScanFiles = @(@($secretScanFiles) + $discoveredCrmDisclosurePaths | Sort-Object -Unique -CaseSensitive)
 $secretPatterns = @(
     '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----',
     '(?i)(client_secret|access_token|refresh_token|password)\s*[:=]\s*["''][^"'']{8,}',
@@ -624,4 +602,5 @@ if ($failures.Count -gt 0) {
 }
 
 Write-Host "CRM V1 PRD payload SHA-256: $actualPrdDigest"
+Write-Host "CRM public disclosure set: $($disclosureSurface.Name)"
 Write-Host 'CRM V1 PRD approval verification passed.'

@@ -13,12 +13,20 @@ public class PermissionAggregator : IPermissionAggregator
     private readonly CP6Context _db;
     public PermissionAggregator(CP6Context db) => _db = db;
 
-    public async Task<UserPermissionContext> BuildAsync(Guid userId)
+    public Task<UserPermissionContext> BuildAsync(Guid userId) => BuildAsync(userId, false);
+
+    /// <summary>CRM online projection excludes disabled/deleted roles without changing legacy cache behavior.</summary>
+    public Task<UserPermissionContext> BuildEnabledRolesAsync(Guid userId) => BuildAsync(userId, true);
+
+    private async Task<UserPermissionContext> BuildAsync(Guid userId, bool enabledRolesOnly)
     {
         var user = await _db.Sys_Users.FindAsync(userId)
                    ?? throw new InvalidOperationException("E-PUB-404");
 
         var roleIds = await GetAllRoleIdsAsync(userId);
+        if (enabledRolesOnly)
+            roleIds = await _db.Sys_Roles.Where(r => r.Enable && roleIds.Contains(r.RoleId))
+                .Select(r => r.RoleId).ToListAsync();
         var ctx = new UserPermissionContext
         {
             UserId = userId,
