@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## P10 S06 真实运行失败与重跑校验修复（2026-09-08 UTC）
+
+- S06 实现 [PR #87](https://github.com/GTX537/CP6/pull/87) 已正常合入 `main@af0154782c8aa73eae47c083a884e2a404ef7b64`，该 main 的五个 GitHub 工作流全部成功。P10 实际验证 [run 34221083970](https://github.com/GTX537/CP6/actions/runs/34221083970) 的两个 attempt 均获 owner 批准，但均失败，未产生验证交接或候选。
+- attempt 1 在包读取时报 `feed-http-status`；逐包 API 显示六个 private 包、一个 public Release 包，Abstractions 设置截图确认缺少 CP6 Actions 授权。Owner 已报告六包补齐 CP6 Read，但 attempt 2 在包读取前因 `s06-current-time` 失败，故权限修复尚未通过 hosted 下载验证。
+- attempt 2 的创建时间 `12:06:31Z` 晚于执行开始 `12:06:29Z`。本次修复区分重跑记录创建与执行开始，额外读取并绑定同一 run 的 attempt 1，保留全部 selected-attempt/job/source/conclusion/cutoff 校验；不会因原始 attempt 失败而将重跑判失败，也不会把失败运行当成功。固定 CRM PR attempt 1 不变。
+- 本地相关回归 **240/240**、完整 verifier suite **1615/1615，零失败/零跳过**，format 通过，含真实失败 run 的只读 API 检查和伪造/时间越界拒绝。修复 PR/exact-main 交付及新源码的真实 validation 待继续；[修复记录](../superpowers/plans/2026-09-08-p10-rerun-chronology.md)保留 RED/GREEN 与边界。
+- P10 仍为 **Candidate / No-Go**，未完成 publication/audit/Frozen；所有候选仍 `deployable=false`，没有生产部署、Secret 变更或降低审批。
+
 ## P10 S06 实现已通过本地验证，真实候选仍为 Candidate / No-Go（2026-09-08 UTC）
 
 - 正式输入已前向固定为完整七包 `0.10.1`：Platform source `3ff27e26962dcfd722887afb80a4306010dd9ee1`、formal run `34126521193` attempt 1、publication record SHA-256 `8b5fc47fd77902a3433d61b4cf181b67ef61ee994b60ea8286a690ab5084c961`。CRM PR #46 的消费 merge `a31ca0e323418f7e4108cc6220c0f5fa132e7fc2`、main run `34134695003` 和 PR #47 前向留存索引 `1332bf21e4253112d457f86cdc0cba829fc58f20c3914fa738dd992d917e2914` 为 S06 的精确输入。历史 `0.10.0` 及失败记录保留，不能作为当前正式集合替代。

@@ -45,9 +45,10 @@ internal sealed class S06CurrentWorkflow
             var file = GitHubWorkflowChecks.File(contents, workflow);
             _ = await GitHubEvidenceSource.ReadSourceAsync("GTX537/CP6", workflow.CommitSha, githubReadToken, deadline.Token);
             var run = await client.ReadAsync(GitHubReadTarget.Run("GTX537/CP6", workflow.RunId, workflow.RunAttempt), deadline.Token);
+            var firstAttempt = await GitHubRunChronology.ReadFirstAttemptAsync(client, workflow, deadline.Token);
             var jobs = await client.ReadAsync(GitHubReadTarget.Jobs("GTX537/CP6", workflow.RunId, workflow.RunAttempt), deadline.Token);
             var observed = DateTimeOffset.UtcNow;
-            var timing = S06CurrentWorkflowChecks.ReadTiming(run, jobs, workflow, observed);
+            var timing = S06CurrentWorkflowChecks.ReadTiming(run, jobs, workflow, observed, firstAttempt);
             return new(workflow, timing, file, observed);
         }
         catch (OperationCanceledException)
