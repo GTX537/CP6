@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## P10 Docker 重启后的 Linux 重验仍失败（2026-09-08 UTC）
+
+- Owner 另行明确批准 Docker Desktop 重启后，已执行一次重启；七个业务容器恢复运行，DB/MQ/Redis/Kafka 均 healthy，Web 和 API live/ready 三项本机 HTTP 探针均为 200。没有关闭全部 WSL、修改系统时间或时钟源。
+- 初次十秒时钟采样没有跳变，但随后同一冻结输入的 Linux full suite 为 **1643 通过 / 1 失败 / 0 跳过**。Messaging 实际包下载测试的开始 UTC 晚于结束 UTC 约 9.195 秒；因此不能视为环境已修复，也不能合并失败门禁。
+- 独立单 CPU、禁网 Linux 原生 `date` / `/proc/uptime` 三十秒采样又捕获约 **13.027 秒倒跳 / 14.108 秒前跳**；同期 Windows 三百次采样未发现跳变。问题不只发生在 .NET；当前 WSL2 Linux 时钟源为 `tsc`，尚未证明具体内核缺陷或更改它。
+- 当前仍未 PR/合并/再次 dispatch，P10 保持 **Candidate / No-Go**。下方“尚未重启”为重启前历史记录，已由本节取代；原始失败和本次 TRX 摘要均保留在[安全构建记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。完整 WSL2 重置会同时终止当前运行的 Ubuntu 和 Docker，必须另获 owner 授权，不能沿用只批准 Docker 重启的范围。
+
 ## P10 cosign 安全构建与本地时钟阻塞（2026-09-08 UTC）
 
 - Owner 已明确批准可复现安全重编译并启动 Docker。固定上游源码、Go 1.26.8 和九项受审依赖更新，得到明确标识的 `3.1.3-cp6.1` 衍生版；不是 Sigstore 官方未修改二进制。三条工作流共用同一隔离构建和输出摘要，原信任、公钥、签名/扫描门禁不变。

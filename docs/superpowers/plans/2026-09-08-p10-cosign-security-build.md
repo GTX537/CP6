@@ -103,4 +103,30 @@ The corrected SDK-only full-suite harness uses the pinned .NET 8.0.424 Linux amd
 
 A separate diagnostic probe in the actual runtime image observes wall clock against a monotonic stopwatch, without changing either clock or policy. It captures `2026-09-08T15:27:44.4702065Z` going backwards to `15:27:28.1445678Z` (about 16.426 seconds), then forwards by about 14.091 seconds. The feed/time probe itself fails and is not acceptance evidence. An isolated, network-disabled, single-CPU clock-only run independently sees a roughly 16.275-second forward discontinuity. A later four-second native `date` sample sees none; the problem is intermittent, not a claim that every clock read is wrong. Docker reports WSL2 kernel `6.6.87.2-microsoft-standard-WSL2`.
 
-These observations are consistent with the local time-order failure; no time tolerance, fake clock, skipped test or acceptance override is added. Before another full suite, the environment needs a stable-clock check. Docker Desktop restart is a proposed troubleshooting step, not a proven cure. It affects seven currently running business containers (`cp6-web`, `cp6-api`, `cp6-cloudflared`, `cp6-db`, `cp6-mq`, `cp6-redis`, `cp6-kafka`, all `unless-stopped`), so it requires the owner's explicit approval. No restart, global WSL shutdown, system-time change, PR/merge or new validation dispatch has been performed.
+These observations are consistent with the local time-order failure; no time tolerance, fake clock, skipped test or acceptance override is added. At this pre-restart checkpoint, Docker Desktop restart was proposed as a troubleshooting step, not a proven cure. It affects seven running business containers (`cp6-web`, `cp6-api`, `cp6-cloudflared`, `cp6-db`, `cp6-mq`, `cp6-redis`, `cp6-kafka`, all `unless-stopped`), so the agent requested separate owner approval. No restart, global WSL shutdown, system-time change, PR/merge or new validation dispatch had been performed at that checkpoint. The subsequent authorized action and actual outcome follow.
+
+## Authorized Docker-only restart and still-failing revalidation
+
+The owner separately approved restarting Docker Desktop. One `docker desktop restart --detach` was issued at approximately `2026-09-08T15:35Z`; Desktop returned to `running`, and all seven business containers recovered. DB/MQ/Redis/Kafka report healthy. Read-only HTTP probes of the existing Web endpoint and API `/health/live` and `/health/ready` all return 200. No global WSL shutdown, host clock adjustment, clocksource change or WSL configuration edit was performed.
+
+The first isolated, network-disabled, single-CPU ten-second .NET clock-only sample reported zero discontinuities. That short observation did not establish a stable environment: the same frozen SDK test inputs were then run in a new container, without rebuilding or changing any production/test code, and completed **1643 passes / 1 failure / 0 skips**. The failure is `FormalPackageSourceTests.Actual_GitHub_Packages_download_passes_independent_hash_author_and_timestamp_checks`, for `CP6.Platform.Messaging`. Its actual times are:
+
+- Test start: `2026-09-08T15:42:39.0718617Z`.
+- Package retrieval: `2026-09-08T15:42:29.8588917Z`.
+- Test end: `2026-09-08T15:42:29.8770831Z`.
+
+The end is approximately 9.195 seconds before the start. The required test correctly fails; fewer failures do not mean the clock was repaired. Crypto tests and the previous shared formal-evidence checks pass in this run, but the full suite remains red.
+
+All TRX files remain separate under `artifacts/p10-cosign-security/test-results/`:
+
+| Report | Actual result | SHA-256 |
+| --- | --- | --- |
+| `windows-security-build-final.trx` | 1644 passed / 0 failed / 0 skipped | `d542387dbc93e905dfff0c791f1956a66f2b3f7bc9143c65bc790f3cc39f1c8d` |
+| `linux-security-build-final.trx` | 1589 passed / 55 failed / 0 skipped | `ef6885ca0571bdd98d9a17cae689ecc201c14927ca7296a33b81db0034e90451` |
+| `linux-security-build-after-restart.trx` | 1643 passed / 1 failed / 0 skipped | `13f54f8697eb9149a7b88b94db8e964621bf1efac4d404b27775f7f41c4ea47f` |
+
+A subsequent independent Linux native probe compares `date +%s%N` with `/proc/uptime` for 300 samples, 100 ms apart, in the same pinned SDK image with one CPU, no network, read-only filesystem and dropped capabilities. It observes two wall/monotonic discontinuities: about **-13027 ms** (`1788882255071261099` to `1788882242143850152` nanoseconds since epoch) and **+14108 ms** (`1788882242551208204` to `1788882256759609009`). The failure therefore is not confined to the .NET clock API. A concurrent Windows UTC/Stopwatch probe of 300 samples reports zero discontinuities, ending at `2026-09-08T15:44:36.0419834Z`; this is a bounded observation, not a universal guarantee about the host.
+
+Read-only environment checks show WSL `2.6.1.0`, kernel `6.6.87.2-1`, and both `Ubuntu` and `docker-desktop` running. Linux currently selects `tsc`; available sources also include `hyperv_clocksource_tsc_page`, `hyperv_clocksource_msr` and `acpi_pm`. Filtered kernel logs show the boot transition from `tsc-early` to `tsc`; the user's `.wslconfig` is absent. These are observations, not proof of a specific kernel defect or permission to change the source.
+
+The Docker-only restart has not resolved the required gate. A full WSL2 restart is a possible next environment diagnostic, not a promised cure. Microsoft's [WSL shutdown documentation](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#shutdown) states that `wsl --shutdown` terminates all running distributions and the WSL2 utility VM. It would affect the currently running Ubuntu as well as Docker and its business containers, so it requires a new explicit owner decision beyond the Docker-only approval. No PR, merge, protected validation dispatch, candidate publication or production deployment is performed while this required gate remains unresolved.

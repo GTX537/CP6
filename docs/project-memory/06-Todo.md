@@ -1,5 +1,14 @@
 # 当前待办与优先级
 
+## P10 当前阻塞：Docker 重启不足以恢复稳定时钟（2026-09-08 UTC）
+
+- [x] 获 owner 单独批准后重启 Docker Desktop；七个业务容器恢复，四项容器健康检查和 Web/API 三项 HTTP 200 通过。
+- [x] 对同一冻结输入完成 Linux full suite 重验并保留失败：1643 通过 / 1 失败 / 0 跳过。独立 Linux 原生时钟采样也复现跳变；不能把首次十秒零跳变当作环境已修复。
+- [ ] 如继续重置整个 WSL2 环境，先获 owner 对停止当前 Ubuntu 和 Docker 的明确批准；该范围超出此前 Docker-only 重启。未执行 `wsl --shutdown`，未改变系统时间、WSL 配置、时钟源或时间门禁。
+- [ ] 在稳定环境完成 Linux 全量验证，再走正常 PR、全部 PR/exact-main 检查与合并冒烟；当前不合并、不 dispatch 已知受阻组合。发布仍需成功的受保护 validation、owner 候选 Tag 选择、publication/audit，P10 仍 Candidate / No-Go。
+
+下方重启前待办保留为历史，当前状态以本节为准。
+
 ## P10 最新待办：稳定 Linux 时钟后交付安全构建（2026-09-08 UTC）
 
 - [x] Owner 批准可复现 cosign 安全衍生构建及本地 Docker 诊断；两次独立构建摘要一致，完整实际镜像 HIGH/CRITICAL 均为 0，所有其他发现保留。
