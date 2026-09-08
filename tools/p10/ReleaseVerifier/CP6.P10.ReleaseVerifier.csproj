@@ -21,5 +21,7 @@
     <EmbeddedResource Include="../../../eng/p10/trust/certificates/1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d.cer"
                       LogicalName="CP6.P10.formal-author.cer" />
     <InternalsVisibleTo Include="CP6.P10.ReleaseVerifier.Tests" />
+    <EmbeddedResource Include="../../../eng/p10/verifier.Dockerfile"
+                      LogicalName="CP6.P10.verifier.Dockerfile" />
   </ItemGroup>
 </Project>

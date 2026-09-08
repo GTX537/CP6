@@ -35,3 +35,6 @@ docs/space/acceptance/v1.3-ga/release-rehearsal-formal-evidence-*.json binary
 
 # Main-sync SQL hashes are deployment evidence and must stay byte-stable.
 deploy/production/sql/main-sync-*/**.sql text eol=lf
+
+# P10 verifier recipe is embedded and verified by its exact LF byte hash.
+eng/p10/verifier.Dockerfile text eol=lf
