@@ -1,6 +1,10 @@
 using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CP6.Core.Services.Sys;
 
@@ -19,7 +23,12 @@ public class AuthCookieWriter : IAuthCookieWriter
     public const string RefreshPath = "/api/auth";
 
     private readonly AuthCookieOptions _c;
-    public AuthCookieWriter(IOptions<SecurityOptions> opt) => _c = opt.Value.Cookie;
+    private readonly IConfiguration? _configuration;
+    public AuthCookieWriter(IOptions<SecurityOptions> opt, IConfiguration? configuration = null)
+    {
+        _c = opt.Value.Cookie;
+        _configuration = configuration;
+    }
 
     private SameSiteMode Same => Enum.TryParse<SameSiteMode>(_c.SameSite, true, out var m) ? m : SameSiteMode.Strict;
 
@@ -29,6 +38,15 @@ public class AuthCookieWriter : IAuthCookieWriter
 
     public void WriteAuthCookies(HttpResponse resp, string accessJwt, string rawRefresh, string csrf)
     {
+        if (_configuration?.GetValue<bool>("CrmOidc:Enabled") == true)
+        {
+            // Opt-in browser session binding. Native tokens and disabled-provider legacy cookies remain unchanged.
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(accessJwt);
+            jwt.Payload["cp6_session"] = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(rawRefresh)));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
+            accessJwt = new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
+                new JwtHeader(new SigningCredentials(key, SecurityAlgorithms.HmacSha256)), jwt.Payload));
+        }
         resp.Cookies.Append(AccessCookie, accessJwt,
             new CookieOptions { HttpOnly = true, Secure = _c.Secure, SameSite = Same, Path = "/" });
         resp.Cookies.Append(RefreshCookie, rawRefresh,

@@ -64,6 +64,7 @@ import { twoFactorApi } from '@/api/sys/twoFactor'
 import type { TwoFactorMethod } from '@/types/sys/twoFactor'
 import { addDynamicRoutes } from '@/router'
 import { usePlatformStore } from '@/stores/platform'
+import { resumeOidcReturn } from '../oidcReturn'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -84,6 +85,7 @@ function completeLogin(res: any) {
   const menus = res.menus || []
   localStorage.setItem('menus', JSON.stringify(menus))
   addDynamicRoutes(menus)
+  if (!res.mustChangePassword && resumeOidcReturn()) return
   router.push(res.mustChangePassword ? '/sys/change-password' : '/')
 }
 

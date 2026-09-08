@@ -56,7 +56,8 @@ public sealed class AuthSessionService : IAuthSessionService
             user.TenantId,
             jti,
             mustChange,
-            isPlatformAdmin);
+            isPlatformAdmin,
+            authenticationVersion: AuthSessionVersion.For(user));
     }
 
     public async Task<ClientProfileDto> BuildProfileAsync(Sys_User user, bool mustChange)

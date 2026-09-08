@@ -70,6 +70,14 @@ builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(
         };
     });
 builder.Services.AddSingleton(TimeProvider.System);
+var crmOidc = builder.Configuration.GetSection("CrmOidc").Get<CP6.WebApi.Services.CrmOidcOptions>()
+    ?? new CP6.WebApi.Services.CrmOidcOptions();
+crmOidc.Validate(builder.Environment.IsDevelopment());
+builder.Services.AddSingleton(crmOidc);
+builder.Services.AddSingleton<CP6.WebApi.Services.CrmOidcCrypto>();
+builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
+builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcGrantStore>(_ =>
+    new CP6.WebApi.Services.SqlCrmOidcGrantStore(builder.Configuration.GetConnectionString("DefaultConnection")!));
 builder.Services.AddHealthChecks()
     .AddCheck(
         "self",
@@ -901,6 +909,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     var bl = ctx.HttpContext.RequestServices
                         .GetRequiredService<CP6.Core.Services.Sys.ITokenBlacklistService>();
                     if (await bl.IsBlacklistedAsync(jti)) ctx.Fail("token blacklisted");
+                }
+                if (ctx.Principal?.FindFirst("cp6_session")?.Value is { } family
+                    && Guid.TryParse(ctx.Principal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var subject)
+                    && Guid.TryParse(ctx.Principal.FindFirst("tenant_id")?.Value, out var organization))
+                {
+                    var directory = ctx.HttpContext.RequestServices.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>();
+                    if (!await directory.RefreshFamilyMatchesAsync(new CP6.WebApi.Services.CrmOidcGrant
+                        { SourceRefreshHash = family, SubjectId = subject, OrganizationId = organization }))
+                        ctx.Fail("browser session revoked");
                 }
             }
         };
