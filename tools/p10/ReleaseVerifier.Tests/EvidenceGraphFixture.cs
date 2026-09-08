@@ -65,7 +65,7 @@ internal sealed class EvidenceGraphFixture
             ["publisher"] = Workflow("GTX537/CP6", ".github/workflows/p10-platform-candidate.yml", PublicSource,
                 new string('4', 40), 999992, "p10-platform-candidate"),
             ["verifier"] = Workflow("GTX537/CP6", ".github/workflows/p10-platform-validation.yml", PublicSource,
-                new string('5', 40), 999991, "none"),
+                new string('5', 40), 999991, "p10-platform-candidate"),
             ["policyVersions"] = new JsonObject { ["trust"] = 1, ["evidence"] = 1 }
         };
         var records = new SortedDictionary<string, JsonObject>(StringComparer.Ordinal);
