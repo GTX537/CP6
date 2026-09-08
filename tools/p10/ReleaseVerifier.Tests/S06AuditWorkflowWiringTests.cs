@@ -74,4 +74,3 @@ public sealed class S06AuditWorkflowWiringTests
         throw new InvalidOperationException("P10 source checkout is required for audit-wiring tests.");
     }
 }
-
