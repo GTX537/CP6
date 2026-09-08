@@ -40,6 +40,10 @@ internal sealed class GitHubReadTarget
     internal static GitHubReadTarget CrmPullRequest(CrmPullRequestSelection selected) =>
         new(RepositoryPath(CrmPullRequestSelection.Repository) + "/pulls/" + selected.Number.ToString(CultureInfo.InvariantCulture));
 
+    internal static GitHubReadTarget CrmConsumerCommit(bool checkout) =>
+        new(RepositoryPath(CrmPullRequestSelection.Repository) + "/git/commits/" +
+            (checkout ? CrmConsumerRecordChecks.CheckoutSha : S06ReleaseIdentity.CrmSource));
+
     internal static void RequireSha(string value)
     {
         if (value is null || value.Length != 40 || value.Any(c => c is not (>= '0' and <= '9' or >= 'a' and <= 'f')))
