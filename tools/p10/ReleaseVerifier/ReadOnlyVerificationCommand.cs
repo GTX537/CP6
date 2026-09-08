@@ -72,6 +72,8 @@ internal static class ReadOnlyVerificationCommand
             {
                 state = args[0] == "confirm-platform-intent" ? "PreCommitVerified" : "PostCommitConfirmed",
                 releaseTag = confirmation.ReleaseTag, sha256 = confirmation.CandidateSha256,
+                locatorSha256 = fetched.Locator.Sha256,
+                intentArtifactId = args[0] == "confirm-platform-intent" ? (long?)artifactId : null,
                 candidateAccepted = false, deployable = false,
                 publicationWorkflowCompleted = confirmation.PublicationWorkflowCompleted,
                 validationRunId = confirmation.Validation.Workflow.RunId,
