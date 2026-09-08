@@ -29,12 +29,20 @@ internal static class GitHubWorkflowChecks
 
     internal static (DateTimeOffset Started, DateTimeOffset Completed, string Event) CompletedRun(
         JsonElement run, GitHubWorkflowIdentity expected, DateTimeOffset cutoff)
+        => CompletedRunCore(run, expected, cutoff, "main",
+            expected.Repository == "GTX537/CP6.CRM" ? "push" : "workflow_dispatch");
+
+    internal static (DateTimeOffset Started, DateTimeOffset Completed, string Event) CompletedPullRequestRun(
+        JsonElement run, CrmPullRequestSelection selected, DateTimeOffset cutoff) =>
+        CompletedRunCore(run, selected.PullRequestWorkflow, cutoff, selected.HeadBranch, "pull_request");
+
+    private static (DateTimeOffset Started, DateTimeOffset Completed, string Event) CompletedRunCore(
+        JsonElement run, GitHubWorkflowIdentity expected, DateTimeOffset cutoff, string branch, string expectedEvent)
     {
         expected.RequireValid();
         RequireCutoff(cutoff);
-        var expectedEvent = expected.Repository == "GTX537/CP6.CRM" ? "push" : "workflow_dispatch";
         Require(Number(run, "id") == expected.RunId && Number(run, "run_attempt") == expected.RunAttempt &&
-            Text(run, "head_sha") == expected.CommitSha && Text(run, "head_branch") == "main" &&
+            Text(run, "head_sha") == expected.CommitSha && Text(run, "head_branch") == branch &&
             Text(run, "path") == expected.WorkflowPath && Text(run, "event") == expectedEvent &&
             Text(Property(run, "repository"), "full_name") == expected.Repository &&
             Text(Property(run, "head_repository"), "full_name") == expected.Repository, "github-run-identity");
@@ -47,7 +55,15 @@ internal static class GitHubWorkflowChecks
     }
 
     internal static IReadOnlyList<GitHubJobObservation> Jobs(JsonElement jobs, GitHubWorkflowIdentity expected,
-        IReadOnlyCollection<string> requiredNames, DateTimeOffset runStarted, DateTimeOffset runCompleted)
+        IReadOnlyCollection<string> requiredNames, DateTimeOffset runStarted, DateTimeOffset runCompleted) =>
+        JobsCore(jobs, expected, requiredNames, runStarted, runCompleted, "main");
+
+    internal static IReadOnlyList<GitHubJobObservation> PullRequestJobs(JsonElement jobs, CrmPullRequestSelection selected,
+        DateTimeOffset runStarted, DateTimeOffset runCompleted) =>
+        JobsCore(jobs, selected.PullRequestWorkflow, CrmPullRequestSelection.RequiredJobs, runStarted, runCompleted, selected.HeadBranch);
+
+    private static IReadOnlyList<GitHubJobObservation> JobsCore(JsonElement jobs, GitHubWorkflowIdentity expected,
+        IReadOnlyCollection<string> requiredNames, DateTimeOffset runStarted, DateTimeOffset runCompleted, string branch)
     {
         expected.RequireValid();
         Require(requiredNames.Count is > 0 and <= 100 && requiredNames.Distinct(StringComparer.Ordinal).Count() == requiredNames.Count &&
@@ -64,7 +80,7 @@ internal static class GitHubWorkflowChecks
             var id = Number(job, "id");
             Require(id > 0 && ids.Add(id) && names.Add(name) && requiredNames.Contains(name, StringComparer.Ordinal), "github-job-set");
             Require(Number(job, "run_id") == expected.RunId && Number(job, "run_attempt") == expected.RunAttempt &&
-                Text(job, "head_sha") == expected.CommitSha && Text(job, "head_branch") == "main", "github-job-identity");
+                Text(job, "head_sha") == expected.CommitSha && Text(job, "head_branch") == branch, "github-job-identity");
             Require(Text(job, "status") == "completed" && Text(job, "conclusion") == "success", "github-job-conclusion");
             var started = Time(job, "started_at");
             var completed = Time(job, "completed_at");
