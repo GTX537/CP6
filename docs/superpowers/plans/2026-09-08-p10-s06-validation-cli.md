@@ -1,3 +1,38 @@
+# P10 S06 validation collector CLI implementation plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans task-by-task. The owner selected inline sequential execution; no subagents.
+
+**Goal:** Wire protected two-phase validation collection into the executable with explicit reader-only credentials and no fake completion flags.
+
+**Architecture:** Exact prepare/finalize command shapes call the real collector. Preparation alone accepts the private CRM reader; both phases reject signing and R2 publisher secrets. Output contains safe producer/hash/count summaries and never local paths or candidate acceptance.
+
+**Tech Stack:** .NET 8.0.424, existing collector/local-file adapters, canonical JSON and xUnit subprocess tests.
+
+---
+
+## Scope and self-review
+
+- `prepare-validation NEW_STAGE` reads P10_GITHUB_READ_TOKEN, P10_FEED_READ_TOKEN and P10_CRM_READ_TOKEN; all three are explicit and nonempty.
+- `finalize-validation STAGE IMAGE_INPUTS NEW_ARTIFACT` needs public GitHub/feed readers and P10_COSIGN_PATH, and refuses private CRM credentials.
+- Both commands require the real hosted current validation job through the collector, regardless of whether credentials are present.
+- No remote-write API, signing/private-key processing, skip flag, source override or final workflow-success claim.
+- Existing inspection and normal candidate verification commands remain unchanged.
+- Child process tests now also scrub the selected GitHub/runner identity fields so a CI test cannot inadvertently impersonate its own live workflow.
+- Positive hosted workflow acceptance remains open; local rejection tests cannot satisfy S06.
+
+## Files
+
+- Create: `tools/p10/ReleaseVerifier/ValidationCommand.cs`
+- Modify: `tools/p10/ReleaseVerifier/Program.cs`
+- Modify/Test: `tools/p10/ReleaseVerifier.Tests/ProgramProcessTests.cs`
+- Plan: `docs/superpowers/plans/2026-09-08-p10-s06-validation-cli.md`
+
+### Task 1: Tests and RED
+
+- [x] Apply the full test file below, add throwing collector-command scaffolds and wire Program.
+- [x] Run focused tests; require every new case to fail from the scaffold while existing cases remain green.
+
+```csharp
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
@@ -356,3 +391,161 @@ public sealed class ProgramProcessTests : IDisposable
         Directory.Delete(actual, recursive: true);
     }
 }
+```
+
+### Task 2: Program and collector command
+
+- [x] Apply the exact Program routing.
+
+```csharp
+using System.Text.Json;
+using CP6.P10.ReleaseVerifier;
+using CP6.Platform.Release;
+
+try
+{
+    if (args is ["canonicalize", var inputPath, var outputPath])
+    {
+        var bytes = Cp6DeterministicJson.Canonicalize(ContractInspection.ReadBounded(inputPath));
+        using var output = new FileStream(outputPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+        output.Write(bytes);
+        Console.WriteLine(Cp6DeterministicJson.Sha256Hex(bytes));
+        return 0;
+    }
+    if (args is ["inspect", var schemaId, var expectedHash, var path])
+    {
+        var result = ContractInspection.Inspect(ContractInspection.ReadBounded(path), schemaId, expectedHash);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(result,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(Cp6DeterministicJson.Canonicalize(bytes)));
+        return 0;
+    }
+    if (ReadOnlyVerificationCommand.Matches(args))
+    {
+        var bytes = await ReadOnlyVerificationCommand.ExecuteAsync(args);
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
+        return 0;
+    }
+    if (ValidationCommand.Matches(args))
+    {
+        var bytes = await ValidationCommand.ExecuteAsync(args);
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
+        return 0;
+    }
+    Console.Error.WriteLine("usage: canonicalize INPUT NEW_OUTPUT | inspect SCHEMA_ID EXPECTED_SHA256 INPUT | " +
+        "verify-platform TAG | confirm-platform-intent TAG ARTIFACT_ID | confirm-platform-published TAG | " +
+        "prepare-validation NEW_STAGE | finalize-validation STAGE IMAGE_INPUTS NEW_ARTIFACT");
+    return 2;
+}
+catch (Cp6ReleaseContractException error)
+{
+    Console.Error.WriteLine(error.Code);
+    return 1;
+}
+catch (Exception)
+{
+    Console.Error.WriteLine("inspection-io");
+    return 1;
+}
+```
+
+- [x] Replace the command scaffold.
+
+```csharp
+using CP6.Platform.Release;
+using static CP6.P10.ReleaseVerifier.S06InToto;
+
+namespace CP6.P10.ReleaseVerifier;
+
+// Hosted collector commands write only fresh local public handoff directories.
+// Signing/build/push remain explicit protected workflow steps; these commands have no remote-write API.
+internal static class ValidationCommand
+{
+    internal static bool Matches(string[] arguments) => arguments is ["prepare-validation", _] or
+        ["finalize-validation", _, _, _];
+
+    internal static async Task<byte[]> ExecuteAsync(string[] arguments, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var args = arguments.ToArray();
+        Require(Matches(args), "validation-command");
+        var prepare = args[0] == "prepare-validation";
+        var forbidden = ReadOnlyVerificationCommand.ForbiddenVariables
+            .Where(n => !prepare || n != "P10_CRM_READ_TOKEN");
+        Require(forbidden.All(n => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(n))), "validation-secret-scope");
+        var github = Required("P10_GITHUB_READ_TOKEN");
+        var feed = Required("P10_FEED_READ_TOKEN");
+        if (prepare)
+        {
+            var crm = Required("P10_CRM_READ_TOKEN");
+            var workflow = await S06ValidationCollector.PrepareAsync(args[1], github, crm, feed, cancellationToken);
+            return S06ArtifactAssembly.Canonical(new
+            {
+                state = "ValidationPreparationCreated", producer = Workflow(workflow),
+                fileCount = S06ValidationInputs.PreparationNames.Count, candidateAccepted = false, deployable = false
+            });
+        }
+        var cosign = new CosignBlobVerifier(Required("P10_COSIGN_PATH"));
+        var artifact = await S06ValidationCollector.FinalizeAsync(args[1], args[2], args[3], cosign, github, feed, cancellationToken);
+        return S06ArtifactAssembly.Canonical(new
+        {
+            state = "ValidationArtifactCreated", producer = Workflow(artifact.Producer),
+            indexSha256 = Cp6DeterministicJson.Sha256Hex(artifact.CopyIndexBytes()),
+            fileCount = artifact.CopyFiles().Count, candidateAccepted = false, deployable = false,
+            validationWorkflowCompleted = false
+        });
+    }
+
+    private static string Required(string name)
+    {
+        var value = Environment.GetEnvironmentVariable(name);
+        Require(value is { Length: > 0 and <= 4096 } && !value.Any(char.IsControl), "validation-credential");
+        return value!;
+    }
+}
+```
+
+- [x] Rerun focused tests and require all passing.
+
+### Task 3: Verify and commit
+
+- [x] Run full Release tests and formatting; require no failures/skips.
+- [x] Check plan/source agreement, exact four-file diff and secret/debug hygiene.
+- [ ] Stage only these files and commit `feat(p10): expose hosted validation collection commands`.
+- [ ] Exercise both commands in the real protected S06 validation workflow before final S06 acceptance.
+
+```powershell
+$env:DOTNET_ROOT = 'C:/Users/tt/.dotnet'
+$env:DOTNET_HOST_PATH = 'C:/Users/tt/.dotnet/dotnet.exe'
+$env:PATH = $env:DOTNET_ROOT + ';' + $env:PATH
+$env:P10_COSIGN_PATH = 'C:/Users/tt/AppData/Local/Temp/cp6-p10-cosign-c4ab1329239f4721a3f8f5ac741ce3c9/cosign-windows-amd64.exe'
+$env:P10_FORMAL_PACKAGE_ROOT = 'D:/CP6.Platform-worktrees/p10-formal-schema-parity/artifacts/p10-0.10.1-publication/windows/feed-readback-packages'
+$env:P10_GITHUB_READ_TOKEN = gh auth token
+$env:P10_FEED_READ_TOKEN = $env:P10_GITHUB_READ_TOKEN
+try {
+  & $env:DOTNET_HOST_PATH test ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj -c Release --no-restore --filter FullyQualifiedName~ProgramProcessTests
+  if ($LASTEXITCODE -ne 0) { throw 'Focused verification failed.' }
+  & $env:DOTNET_HOST_PATH test ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj -c Release --no-restore
+  if ($LASTEXITCODE -ne 0) { throw 'Full verification failed.' }
+  & $env:DOTNET_HOST_PATH format ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj --no-restore --verify-no-changes
+  if ($LASTEXITCODE -ne 0) { throw 'Format verification failed.' }
+} finally {
+  Remove-Item Env:P10_GITHUB_READ_TOKEN -ErrorAction SilentlyContinue
+  Remove-Item Env:P10_FEED_READ_TOKEN -ErrorAction SilentlyContinue
+}
+```
+
+```powershell
+git diff --check
+git add -- docs/superpowers/plans/2026-09-08-p10-s06-validation-cli.md tools/p10/ReleaseVerifier/ValidationCommand.cs tools/p10/ReleaseVerifier/Program.cs tools/p10/ReleaseVerifier.Tests/ProgramProcessTests.cs
+git diff --cached --check
+git diff --cached --stat
+git commit -m "feat(p10): expose hosted validation collection commands"
+```
+
+## Verification outcome (2026-09-08)
+
+- RED: 12 new cases failed from the command scaffold; 37 existing cases stayed green; no skips.
+- Focused GREEN: all 49 process cases passed.
+- Full Release suite: 1,440 passed, 0 failed, 0 skipped in 47 seconds; formatting exited 0.
+- Hosted positive preparation/finalization and real native workflow acceptance remain pending.

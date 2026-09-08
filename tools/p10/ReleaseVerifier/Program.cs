@@ -26,8 +26,15 @@ try
         Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
         return 0;
     }
+    if (ValidationCommand.Matches(args))
+    {
+        var bytes = await ValidationCommand.ExecuteAsync(args);
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
+        return 0;
+    }
     Console.Error.WriteLine("usage: canonicalize INPUT NEW_OUTPUT | inspect SCHEMA_ID EXPECTED_SHA256 INPUT | " +
-        "verify-platform TAG | confirm-platform-intent TAG ARTIFACT_ID | confirm-platform-published TAG");
+        "verify-platform TAG | confirm-platform-intent TAG ARTIFACT_ID | confirm-platform-published TAG | " +
+        "prepare-validation NEW_STAGE | finalize-validation STAGE IMAGE_INPUTS NEW_ARTIFACT");
     return 2;
 }
 catch (Cp6ReleaseContractException error)
