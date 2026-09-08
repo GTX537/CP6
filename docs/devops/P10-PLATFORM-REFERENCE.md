@@ -79,7 +79,7 @@ Artifact 名称固定为 `p10-s06-{validation|intent|audit}-{fullSHA}-{runID}-{a
 
 ## 发现、写入与状态
 
-权威发现路径为 `candidates/platform/TAG/candidate-locator.v1.json` 和相邻 `candidate-locator.v1.sigstore.json`；证据与候选对象使用 `objects/sha256/HASH`。固定 trust store 定义 R2 account/bucket/authority，候选不能指定任意 URL 或账号。
+权威发现路径为 `candidates/platform/TAG/candidate-locator.v1.json` 和相邻 `candidate-locator.v1.sigstore.json`；证据与候选对象使用 `objects/sha256/{hash前两位}/{完整hash}/{fileName}`，摘要与文件名绑定规则见 [ContentAddress](../../tools/p10/ReleaseVerifier/ContentAddressedObjects.cs)。固定 trust store 定义 R2 account/bucket/authority，候选不能指定任意 URL 或账号。
 
 每次创建都是单次 `PutObject(If-None-Match: *)`，不 multipart、不 overwrite/delete。对象冲突必须完整回读相等；bundle 可复用不同 ECDSA 字节，但必须验证它签署同一精确 Locator；Locator 冲突只有原始字节完全相等且签名/策略有效才幂等成功。[R00 勘误](adr/ADR-CRM-R00-RELEASE-AUTHORITY.md)明确本路径不声称 R2 提供 S3 VersionId/Object Lock。
 
