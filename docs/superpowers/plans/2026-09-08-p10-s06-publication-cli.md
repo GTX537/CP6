@@ -1,3 +1,32 @@
+# P10 S06 Publication CLI Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans sequentially in this task. The user already selected no delegation.
+
+**Goal:** Expose the three actual conditional-publication phases with exact arguments, explicit credentials and no acceptance or skip-verification switch.
+
+**Architecture:** PublicationCommand dispatches only prepare-publication, store-publication-bundle and commit-publication to the implemented S06Publisher. Signing and CRM private-read credentials are forbidden in these processes. Preparation needs the fixed publishing and GitHub/feed/cosign inputs; bundle and commit additionally require explicit R2 readers. Program preserves existing command behavior and emits only canonical non-acceptance phase summaries.
+
+**Tech Stack:** .NET 8, xUnit process tests, existing CP6.Platform.Release [0.10.1].
+
+---
+
+## Scope and self-review
+
+All run/attempt/artifact selectors are canonical positive integers; attempts are bounded by int.MaxValue. A tag passes the existing Platform discovery policy before any environment or I/O work. No local file replaces an immutable intent artifact and no boolean replaces the actual new read-only child. Commands reject signing/CRM credentials before reading any allowed secret. Values are bounded and control-character-free and are never echoed. Existing ProgramProcessTests erase inherited P10/signing/current-workflow variables in the test child only; these tests never invoke an actual publisher.
+
+The six-field summary is a phase result: state, releaseTag, conditionalCreate, candidateAccepted=false, deployable=false and publicationWorkflowCompleted=false. PublishedUnconfirmed applies even to a verified identical 412: final postcheck and completed publication remain separate.
+
+## Files
+
+- Create tools/p10/ReleaseVerifier/PublicationCommand.cs.
+- Modify tools/p10/ReleaseVerifier/Program.cs.
+- Extend tools/p10/ReleaseVerifier.Tests/ProgramProcessTests.cs without changing its existing cases.
+
+## Task 1: Red process tests
+
+- [ ] Add the full test file below, plus a PublicationCommand scaffold whose ExecuteAsync throws and RequiredVariables has the listed five names. Keep Program unchanged for the red run.
+
+```csharp
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
@@ -476,3 +505,198 @@ public sealed class ProgramProcessTests : IDisposable
         Directory.Delete(actual, recursive: true);
     }
 }
+```
+
+- [ ] Run the process suite and verify new recognized-command expectations fail because Program still returns usage. Existing tests and the extra-argument rejection may already pass; the precancellation case must fail against the throwing scaffold.
+
+```powershell
+dotnet test ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj -c Release --no-restore --filter FullyQualifiedName~ProgramProcessTests
+```
+
+## Task 2: Implement command and wire Program
+
+- [ ] Replace the new scaffold with this complete implementation:
+
+```csharp
+using System.Globalization;
+using static CP6.P10.ReleaseVerifier.S06InToto;
+
+namespace CP6.P10.ReleaseVerifier;
+
+// Secret-bearing publisher CLI. It never signs, accepts a verification boolean, or claims candidate acceptance.
+internal static class PublicationCommand
+{
+    internal static IReadOnlyList<string> RequiredVariables { get; } = Array.AsReadOnly(new[]
+    {
+        "P10_COSIGN_PATH", "P10_GITHUB_READ_TOKEN", "P10_FEED_READ_TOKEN",
+        "P10_R2_PUBLISH_ACCESS_KEY_ID", "P10_R2_PUBLISH_SECRET_ACCESS_KEY"
+    });
+
+    internal static bool Matches(string[] arguments) => arguments is ["prepare-publication", _, _, _, _, _] or
+        ["store-publication-bundle", _, _, _] or ["commit-publication", _, _];
+
+    internal static async Task<byte[]> ExecuteAsync(string[] arguments, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var args = arguments.ToArray();
+        Require(Matches(args), "publication-command");
+        var tag = args[1];
+        _ = R2ObjectTarget.Discovery(tag, R2DiscoveryPart.Locator);
+        long run = 0, attempt = 0, artifact = 0;
+        if (args[0] == "prepare-publication")
+        {
+            run = Positive(args[2], long.MaxValue);
+            attempt = Positive(args[3], int.MaxValue);
+            artifact = Positive(args[4], long.MaxValue);
+        }
+        if (args[0] == "commit-publication") artifact = Positive(args[2], long.MaxValue);
+        var forbidden = ReadOnlyVerificationCommand.ForbiddenVariables.Where(n =>
+            n is not ("P10_R2_PUBLISH_ACCESS_KEY_ID" or "P10_R2_PUBLISH_SECRET_ACCESS_KEY"));
+        Require(forbidden.All(n => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(n))), "publication-secret-scope");
+        var values = RequiredVariables.ToDictionary(n => n, Required, StringComparer.Ordinal);
+        var cosignPath = values["P10_COSIGN_PATH"];
+        var github = values["P10_GITHUB_READ_TOKEN"];
+        var feed = values["P10_FEED_READ_TOKEN"];
+        var publishId = values["P10_R2_PUBLISH_ACCESS_KEY_ID"];
+        var publishSecret = values["P10_R2_PUBLISH_SECRET_ACCESS_KEY"];
+        string state;
+        string? conditionalCreate = null;
+        if (args[0] == "prepare-publication")
+        {
+            await S06Publisher.PrepareAsync(tag, run, attempt, artifact, args[5],
+                new CosignBlobVerifier(cosignPath), github, feed, publishId, publishSecret, cancellationToken);
+            state = "PreparedForLocatorSigning";
+        }
+        else
+        {
+            var readId = Required("P10_R2_CONSUMER_ACCESS_KEY_ID");
+            var readSecret = Required("P10_R2_CONSUMER_SECRET_ACCESS_KEY");
+            if (args[0] == "store-publication-bundle")
+            {
+                await S06Publisher.StoreBundleAsync(tag, args[2], args[3], new CosignBlobVerifier(cosignPath),
+                    github, feed, readId, readSecret, publishId, publishSecret, cancellationToken);
+                state = "StoredBundleForIntent";
+            }
+            else
+            {
+                conditionalCreate = (await S06Publisher.CommitAsync(tag, artifact, cosignPath, github, feed,
+                    readId, readSecret, publishId, publishSecret, cancellationToken)).ToString();
+                state = "PublishedUnconfirmed";
+            }
+        }
+        return S06ArtifactAssembly.Canonical(new
+        {
+            state,
+            releaseTag = tag,
+            conditionalCreate,
+            candidateAccepted = false,
+            deployable = false,
+            publicationWorkflowCompleted = false
+        });
+    }
+
+    private static long Positive(string text, long maximum)
+    {
+        Require(long.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out var value) &&
+            value > 0 && value <= maximum && value.ToString(CultureInfo.InvariantCulture) == text, "publication-selection");
+        return value;
+    }
+
+    private static string Required(string name)
+    {
+        var value = Environment.GetEnvironmentVariable(name);
+        Require(value is { Length: > 0 and <= 4096 } && !value.Any(char.IsControl), "publication-credential");
+        return value!;
+    }
+}
+```
+
+- [ ] Replace Program with:
+
+```csharp
+using System.Text.Json;
+using CP6.P10.ReleaseVerifier;
+using CP6.Platform.Release;
+
+try
+{
+    if (args is ["canonicalize", var inputPath, var outputPath])
+    {
+        var bytes = Cp6DeterministicJson.Canonicalize(ContractInspection.ReadBounded(inputPath));
+        using var output = new FileStream(outputPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+        output.Write(bytes);
+        Console.WriteLine(Cp6DeterministicJson.Sha256Hex(bytes));
+        return 0;
+    }
+    if (args is ["inspect", var schemaId, var expectedHash, var path])
+    {
+        var result = ContractInspection.Inspect(ContractInspection.ReadBounded(path), schemaId, expectedHash);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(result,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(Cp6DeterministicJson.Canonicalize(bytes)));
+        return 0;
+    }
+    if (ReadOnlyVerificationCommand.Matches(args))
+    {
+        var bytes = await ReadOnlyVerificationCommand.ExecuteAsync(args);
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
+        return 0;
+    }
+    if (ValidationCommand.Matches(args))
+    {
+        var bytes = await ValidationCommand.ExecuteAsync(args);
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
+        return 0;
+    }
+    if (PublicationCommand.Matches(args))
+    {
+        var bytes = await PublicationCommand.ExecuteAsync(args);
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
+        return 0;
+    }
+    Console.Error.WriteLine("usage: canonicalize INPUT NEW_OUTPUT | inspect SCHEMA_ID EXPECTED_SHA256 INPUT | " +
+        "verify-platform TAG | confirm-platform-intent TAG ARTIFACT_ID | confirm-platform-published TAG | " +
+        "prepare-validation NEW_STAGE | finalize-validation STAGE IMAGE_INPUTS NEW_ARTIFACT | " +
+        "prepare-publication TAG VALIDATION_RUN VALIDATION_ATTEMPT VALIDATION_ARTIFACT NEW_STAGE | " +
+        "store-publication-bundle TAG SIGNED_STAGE NEW_INTENT | commit-publication TAG INTENT_ARTIFACT");
+    return 2;
+}
+catch (Cp6ReleaseContractException error)
+{
+    Console.Error.WriteLine(error.Code);
+    return 1;
+}
+catch (Exception)
+{
+    Console.Error.WriteLine("inspection-io");
+    return 1;
+}
+```
+
+## Task 3: Verification and scoped commit
+
+- [ ] From tools/p10 use the task's configured .NET 8 host and actual official cosign, formal signed-package readback and GitHub/feed read credentials; do not print values or skip real tests:
+
+```powershell
+dotnet test ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj -c Release --no-restore --filter FullyQualifiedName~ProgramProcessTests
+dotnet test ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj -c Release --no-restore
+dotnet format ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj --no-restore --verify-no-changes
+```
+
+Expected: all cases pass, zero skips, formatting exits 0. Check three C# blocks match actual files; review the four-file diff for sensitive values, private paths, unsupported flags, broad changes and false acceptance.
+
+- [ ] Record actual results then commit only:
+
+```powershell
+git diff --check
+git add -- docs/superpowers/plans/2026-09-08-p10-s06-publication-cli.md tools/p10/ReleaseVerifier/PublicationCommand.cs tools/p10/ReleaseVerifier/Program.cs tools/p10/ReleaseVerifier.Tests/ProgramProcessTests.cs
+git diff --cached --check
+git diff --cached --stat
+git commit -m "feat(p10): expose protected publication phases"
+```
+
+Actual hosted end-to-end publication, postconfirmation and final P10 closeout are still required.
+
+## Execution evidence
+
+2026-09-08: the red process run failed 27 new expectations (unrecognized commands or the throwing cancellation scaffold); 50 existing/extra-argument cases passed. After wiring, all 77 process cases passed. Full verification passed 1,518/1,518 with zero skips in 78 seconds; format verification exited 0. Three plan/code blocks match, and the scoped CLI diff was reviewed. No external S06 publication was attempted.
