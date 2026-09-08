@@ -28,16 +28,17 @@ internal static class GitHubWorkflowChecks
     }
 
     internal static (DateTimeOffset Started, DateTimeOffset Completed, string Event) CompletedRun(
-        JsonElement run, GitHubWorkflowIdentity expected, DateTimeOffset cutoff)
+        JsonElement run, GitHubWorkflowIdentity expected, DateTimeOffset cutoff, JsonElement? firstAttempt = null)
         => CompletedRunCore(run, expected, cutoff, "main",
-            expected.Repository == "GTX537/CP6.CRM" ? "push" : "workflow_dispatch");
+            expected.Repository == "GTX537/CP6.CRM" ? "push" : "workflow_dispatch", firstAttempt);
 
     internal static (DateTimeOffset Started, DateTimeOffset Completed, string Event) CompletedPullRequestRun(
         JsonElement run, CrmPullRequestSelection selected, DateTimeOffset cutoff) =>
         CompletedRunCore(run, selected.PullRequestWorkflow, cutoff, selected.HeadBranch, "pull_request");
 
     private static (DateTimeOffset Started, DateTimeOffset Completed, string Event) CompletedRunCore(
-        JsonElement run, GitHubWorkflowIdentity expected, DateTimeOffset cutoff, string branch, string expectedEvent)
+        JsonElement run, GitHubWorkflowIdentity expected, DateTimeOffset cutoff, string branch, string expectedEvent,
+        JsonElement? firstAttempt = null)
     {
         expected.RequireValid();
         RequireCutoff(cutoff);
@@ -47,10 +48,7 @@ internal static class GitHubWorkflowChecks
             Text(Property(run, "repository"), "full_name") == expected.Repository &&
             Text(Property(run, "head_repository"), "full_name") == expected.Repository, "github-run-identity");
         Require(Text(run, "status") == "completed" && Text(run, "conclusion") == "success", "github-run-conclusion");
-        var created = Time(run, "created_at");
-        var started = Time(run, "run_started_at");
-        var completed = Time(run, "updated_at");
-        Require(created <= started && started <= completed && completed <= cutoff, "github-proof-time");
+        var (started, completed) = GitHubRunChronology.Read(run, expected, cutoff, firstAttempt, "github-proof-time");
         return (started, completed, expectedEvent);
     }
 

@@ -43,7 +43,7 @@ internal static class S06CurrentWorkflowChecks
     }
 
     internal static S06CurrentTiming ReadTiming(JsonElement run, JsonElement jobs,
-        GitHubWorkflowIdentity expected, DateTimeOffset observedAtUtc)
+        GitHubWorkflowIdentity expected, DateTimeOffset observedAtUtc, JsonElement? firstAttempt = null)
     {
         expected.RequireValid();
         var name = JobName(expected.WorkflowPath);
@@ -55,10 +55,7 @@ internal static class S06CurrentWorkflowChecks
             Text(Property(run, "head_repository"), "full_name") == expected.Repository, "s06-current-run");
         Require(Text(run, "status") == "in_progress" && Property(run, "conclusion").ValueKind == JsonValueKind.Null,
             "s06-current-status");
-        var created = Time(run, "created_at");
-        var started = Time(run, "run_started_at");
-        var updated = Time(run, "updated_at");
-        Require(created <= started && started <= updated && updated <= observedAtUtc, "s06-current-time");
+        var (started, _) = GitHubRunChronology.Read(run, expected, observedAtUtc, firstAttempt, "s06-current-time");
         var array = Property(jobs, "jobs");
         Require(Number(jobs, "total_count") == 1 && array.ValueKind == JsonValueKind.Array && array.GetArrayLength() == 1,
             "s06-current-jobs");

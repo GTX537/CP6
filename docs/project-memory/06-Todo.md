@@ -31,7 +31,8 @@
 - P08 已完成 S00-S06 并达到 `Frozen / Consumable`：`0.8.0-alpha.2` 不可变发布、CRM 固定版本黑盒消费、前向纠正、Platform 对账、公共 S05、Platform S06 与 CRM 最终传播均有精确 PR/head/merge/run/job/artifact/hash 记录。保留历史 Candidate 记录，不再重复执行 P08。
 - P09 已完成 S01-S06 并达到 `Frozen / Consumable`：`CP6.Platform.Deployment 0.9.0-alpha.1` 的实现、一次性发布、Registry 下载匹配、CRM 9/9 黑盒与 72/72 .NET、公共候选同步、Platform 最终审计、CRM 最终传播以及各自 exact-main/真实 SQL 证据均有精确身份。保留历史 Candidate 记录，不再重复执行 P09。
 - P10 外部 R2/cosign 前置与正式七包 `0.10.1`/CRM S05 的精确证据已进入当前 S06 输入；不要重做历史 `0.10.0` 或重复轮换已有 Environment/公钥/凭据。源、run 和 hash 见[当前台账](PROJECT_STATE.md)及[P10 参考](../devops/P10-PLATFORM-REFERENCE.md)。正式作者为 `PinnedSelfSigned`，内部信任不等于 public CA trust。
-- P10 当前下一步是正常 PR/exact-main 验证，再按[运行手册](../devops/HOWTO-P10-PLATFORM-CANDIDATE.md)执行 owner 批准的 validation、同源条件 publication 和完成后的只读 audit。完整分支审查发现的 Windows-only TSA 路径已修复；本地 1550/1550 无跳过测试、format 和 actionlint 通过。这些不能代替新的真实 Linux hosted、OCI/R2 门禁或审批。
+- S06 实现已由 PR #87 合入 `main@af0154782c8aa73eae47c083a884e2a404ef7b64`。实际 validation run `34221083970` attempt 1 为 feed 权限失败，attempt 2 为重跑记录时间校验失败；两次均获批准但没有候选。六个私有包的 CP6 Read 授权由 owner 报告已补齐，仍需新的实际下载验证。
+- [重跑时间修复](../superpowers/plans/2026-09-08-p10-rerun-chronology.md)已通过本地完整 1615/1615 无跳过测试和 format。P10 当前下一步是正常 PR/exact-main 交付，然后对新的 main 发起 owner 批准的 validation，再同源条件 publication 和完成后的只读 audit。原始失败记录保留，不能重跑旧源码验收新修复，也不删除时间门禁或绕过审批。
 - 最终保留 append-only 内容寻址审计条目，绑定七包、CRM、候选/Locator/OCI hash、trust 版本及真实工作流/artifact，再同步四份台账并核对远端 main。之前 P10 整体保持 `Candidate / No-Go`；不提前声明 Frozen / Consumable。P02–P09 已冻结；P10 仅为 `deployable=false` 的 Platform 引用候选，不授权 System release、公有 bucket 或任何生产部署。C01/C02/CRM03、CRM-F3-CONTRACT/Worker 与真实环境仍按各自任务完成。
 - 下一项异步业务前置是 CRM-F3-CONTRACT/C02 业务事件与单独授权的 Worker slice；登录仍需 C01/C02/CRM03、获批的实际 CRM Gateway route 及 P09 后端隔离。每项必须有版本化 locator、实现、负向测试、不可变产物及生产者/消费者门禁，不能因 P07 完成而提前启用运行时订阅、Gateway/auth、真实登录或业务切片。
 

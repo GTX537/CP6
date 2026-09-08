@@ -8,6 +8,7 @@
 - 既有 `p10-platform-candidate` Environment 仍只允许 main，required reviewer 为 owner `GTX537`；操作人必须在 GitHub 审查并批准每个实际 run。助手不自批，不降低保护。
 - 已有九个 Environment secret 名称可用，值不导出；consumer 为 bucket-only read，publisher 为 bucket-only read/write；OCI 和 Locator 私钥分离。
 - 使用实际 `0.10.1` 七包与已核验 CRM S05 身份。缺少 feed、私有 CRM 读取、TSA、GHCR 或 R2 访问时停止处理该错误，不能以本机包/日志替代。
+- GitHub 仓库公开不代表其 Packages 均公开。2026-09-08 逐包查询只有 `CP6.Platform.Release` 为 public，其余六包为 private；使用 CP6 的 `GITHUB_TOKEN` 时，需在各包的 **Manage Actions access** 授予 `GTX537/CP6` **Read**。Owner 已报告补齐；是否实际可读仍由新的 hosted validation 验证，不据此声称包已公开。
 - 以下示例在 PowerShell 中运行，需要已登录的 GitHub CLI；所有候选 Tag 由操作人选择，不能盲用示例身份。该 Tag 不会被推送为 Git tag。
 
 ## 1. 验证最终源码并构建一次 OCI
@@ -23,6 +24,8 @@ gh run list -R GTX537/CP6 --workflow p10-platform-validation.yml --limit 20 --js
 ```
 
 在所选 run 页面完成 Environment 审批。工作流执行真实正式包和 CRM 输入验证、全量测试、一次 runtime-only image 构建、原生 SBOM/完整漏洞报告、OCI 签名，并在实际 digest 容器内完成验证。它不发布 Locator。
+
+同源失败运行可在排除原因后重跑，每个 attempt 必须重新取得实际批准。重跑记录的 `created_at` 不是执行开始时间；验证器额外读取并绑定该 run 的 attempt 1，确认原始执行已结束，再检查当前精确 attempt 和 job 的时间。若修复了源码，必须对新的 exact main 发起新 run，不能重跑旧 SHA 来验收新代码。历史失败及其 artifact 保留，不改写成功结论。
 
 只有整个 run `completed/success` 后，才能使用它的验证 artifact。保存 run、attempt、job、artifact ID、archive digest 和 image digest。以下读取选中 run 的精确元数据，不用“最近成功”自动替换：
 
@@ -98,6 +101,7 @@ dotnet CP6.P10.ReleaseVerifier.dll verify-platform TAG
 | 故障 | 处理 |
 | --- | --- |
 | `s06-current-*`、源 SHA/环境不匹配 | 检查真实 main、dispatch、job 与审批，不人工伪造环境变量 |
+| `s06-current-time`、重跑时间顺序 | 核对精确 attempt 与同 run 的 attempt 1；历史 run `34221083970` attempt 2 的记录创建比开始晚两秒，旧实现误拒绝。使用已合入重跑校验修复的新源码；不得删除时间校验或伪造原始记录 |
 | feed/CRM 401 或 403 | 核对既有读取身份的实际仓库/package 授权；不要改用宽权限生产凭据 |
 | TSA、作者指纹、包 hash 错误 | 保留错误和原包，按正式发布/信任的前向修正流程处理 |
 | SBOM/scan 格式或 HIGH/CRITICAL 不通过 | 查实际报告和镜像；修正源码/依赖后新验证，不过滤原始发现 |

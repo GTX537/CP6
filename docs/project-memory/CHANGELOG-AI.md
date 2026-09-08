@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-09-08：P10 GitHub 重跑时间校验兼容
+
+- 真实 run `34221083970` attempt 2 报 `s06-current-time`：精确 attempt 的 `created_at=12:06:31Z`、`run_started_at=12:06:29Z` 不符合旧实现假设。追加同 run attempt 1 的受认证读取和完整身份/时间绑定，区分记录创建与执行开始；运行中和完成后的检查共用策略，不引入任意时钟容差。
+- 保留首次时间顺序、选中 attempt 的成功结论、实际 job 时间、源码和截止时间约束；原始失败不是重跑成功的替代证据。CRM PR #46/#47 的固定 attempt 1 不改变。
+- 相关回归 240/240、完整 verifier suite 1615/1615 通过且零跳过，format 通过；实际失败记录的只读验证不会变成候选验收，修复远端交付继续跟进。同步运行手册、参考与四份台账，分别保留 package 权限和重跑时间两次失败。P10 仍为 Candidate / No-Go，未发布候选或部署。
+
 ## 2026-09-08：P10 S06 非部署型候选适配器与受保护工作流
 
 - 正式消费纠正后的完整七包 `0.10.1`，固定 Platform source `3ff27e26962dcfd722887afb80a4306010dd9ee1` / formal run `34126521193` 和 CRM S05 merge `a31ca0e323418f7e4108cc6220c0f5fa132e7fc2` / main run `34134695003` / 留存索引 hash；不复制 Platform Schema、不重新打包。

@@ -34,7 +34,8 @@ internal static class GitHubEvidenceSource
         deadline.CancelAfter(TimeSpan.FromMinutes(2));
         using var client = new GitHubReadClient(token);
         var run = await client.ReadAsync(GitHubReadTarget.Run(expected.Repository, expected.RunId, expected.RunAttempt), deadline.Token);
-        var timing = GitHubWorkflowChecks.CompletedRun(run, expected, completedBeforeUtc);
+        var firstAttempt = await GitHubRunChronology.ReadFirstAttemptAsync(client, expected, deadline.Token);
+        var timing = GitHubWorkflowChecks.CompletedRun(run, expected, completedBeforeUtc, firstAttempt);
         var file = GitHubWorkflowChecks.File(await client.ReadAsync(
             GitHubReadTarget.Workflow(expected.Repository, expected.WorkflowPath, expected.CommitSha), deadline.Token), expected);
         var jobs = GitHubWorkflowChecks.Jobs(await client.ReadAsync(

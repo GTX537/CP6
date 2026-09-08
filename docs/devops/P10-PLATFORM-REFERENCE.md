@@ -79,6 +79,8 @@ TSA 使用系统信任、在线全链吊销检查和签署时刻验证，随后�
 
 Artifact 名称固定为 `p10-s06-{validation|intent|audit}-{fullSHA}-{runID}-{attempt}`，保留 90 天、禁止覆盖、缺文件失败。GitHub Artifact 不是永久归档或 Object Lock；最终审计须将决策与所需公开证据持久留存。
 
+运行时间校验区分执行与 attempt 记录创建。attempt 1 保持 `created_at <= run_started_at <= updated_at <= cutoff`。重跑额外通过固定 GitHub API 读取同一 run 的 attempt 1，严格匹配 run/repository/head repository/source/branch/workflow/event，要求其已完成且原始时间顺序成立、结束不晚于选中重跑开始；重跑记录创建位于原始创建与本次更新之间。本次 `start <= updated <= cutoff`、精确 attempt/job 和成功结论仍须成立。前一次失败不等于本次失败，也不能反过来用前一次成功替代本次成功。固定 CRM PR #46/#47 仍只消费已批准的 attempt 1，不扩展选择范围。
+
 ## 发现、写入与状态
 
 权威发现路径为 `candidates/platform/TAG/candidate-locator.v1.json` 和相邻 `candidate-locator.v1.sigstore.json`；证据与候选对象使用 `objects/sha256/{hash前两位}/{完整hash}/{fileName}`，摘要与文件名绑定规则见 [ContentAddress](../../tools/p10/ReleaseVerifier/ContentAddressedObjects.cs)。固定 trust store 定义 R2 account/bucket/authority，候选不能指定任意 URL 或账号。
