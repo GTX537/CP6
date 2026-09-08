@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-08 P10 完整 WSL2 停止已执行，Docker 恢复未完成
+
+- 在 owner 单独批准后，正常停止 Docker 并完整停止 WSL2，确认两个发行版 Stopped；没有时间/配置/验收规则变更。
+- 已定位后续 Desktop 启动失败到 `dockerInference` 运行时端点，并只读确认数据盘文件仍存在；这不是业务恢复或数据完整性验收。错误窗口出现非本任务执行的恢复出厂 UI 动作记录，待 owner 核实。
+- 七个业务容器尚未恢复，Linux 重验未开始；P10 不结案，未继续发布流程。[现场记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)保留当前边界。
+
 ## 2026-09-08 P10 获批 Docker 重启与故障复验（非修复完成）
 
 - 已按 owner 的单独批准重启 Docker Desktop，并确认七个业务容器、四个容器健康检查及 Web/API 三项 HTTP 200 恢复。

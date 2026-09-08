@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## P10 获批 WSL2 重启后 Docker 启动受阻（2026-09-08 UTC）
+
+- Owner 已另行批准完整 WSL2 重启。先正常停止 Docker Desktop，再执行一次 `wsl --shutdown`，确认 Ubuntu 和 docker-desktop 均 Stopped；未修改系统时间、时钟源、WSL 配置或测试门禁。
+- Docker 命令行启动超时；随后启动已安装 Desktop 程序，后端日志定位到本地 `dockerInference` 运行时端点无法访问，初始化 Inference manager 失败。当前七个业务容器尚未恢复，本轮时钟/全量测试尚未开始。
+- 错误窗口日志还记录了 `Reset to factory defaults` UI 动作；本任务未执行该动作，不能据此推断重置完成或数据已丢失。数据盘文件仍存在，大小 109912784896 bytes，但内容完整性未验证。暂停进一步启动、删除端点或配置变更，先向 owner 核实窗口操作。
+- 下方 Docker 已恢复的记录属于前一次 Docker-only 重启，不代表本次状态。P10 仍 Candidate / No-Go，未 PR/合并/dispatch；最新事实见[安全构建记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。
+
 ## P10 Docker 重启后的 Linux 重验仍失败（2026-09-08 UTC）
 
 - Owner 另行明确批准 Docker Desktop 重启后，已执行一次重启；七个业务容器恢复运行，DB/MQ/Redis/Kafka 均 healthy，Web 和 API live/ready 三项本机 HTTP 探针均为 200。没有关闭全部 WSL、修改系统时间或时钟源。

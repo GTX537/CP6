@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-09-08：P10 完整 WSL2 停止获批执行，Docker 恢复出现独立启动故障
+
+- 新授权后先正常停止 Docker，再完整停止 WSL2，确认 Ubuntu/docker-desktop 均 Stopped。恢复时 CLI 超时，Desktop 程序后端因无法访问 `dockerInference` 本地运行时端点而退出。
+- 错误窗口日志记录了非本任务执行的恢复出厂 UI 动作；暂停进一步启动/删除/配置变更并向 owner 核实。只读确认数据盘 109912784896 bytes 仍存在，未验证内容，也未声称重置已完成或数据丢失。
+- 七个业务容器尚未恢复，本轮时钟/全量重验尚未运行；同步四份台账和现场记录，保持 No-Go，未 PR/合并/再次 dispatch。
+
 ## 2026-09-08：P10 获批 Docker 重启后仍复现 Linux 原生时钟跳变
 
 - 按 owner 新授权重启 Docker Desktop；七个业务容器恢复运行，DB/MQ/Redis/Kafka healthy，Web/API live/ready HTTP 200。没有扩大到全部 WSL 重置或系统时间变更。
