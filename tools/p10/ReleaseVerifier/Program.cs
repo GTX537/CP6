@@ -20,7 +20,14 @@ try
         Console.WriteLine(System.Text.Encoding.UTF8.GetString(Cp6DeterministicJson.Canonicalize(bytes)));
         return 0;
     }
-    Console.Error.WriteLine("usage: canonicalize INPUT NEW_OUTPUT | inspect SCHEMA_ID EXPECTED_SHA256 INPUT");
+    if (ReadOnlyVerificationCommand.Matches(args))
+    {
+        var bytes = await ReadOnlyVerificationCommand.ExecuteAsync(args);
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(bytes));
+        return 0;
+    }
+    Console.Error.WriteLine("usage: canonicalize INPUT NEW_OUTPUT | inspect SCHEMA_ID EXPECTED_SHA256 INPUT | " +
+        "verify-platform TAG | confirm-platform-intent TAG ARTIFACT_ID | confirm-platform-published TAG");
     return 2;
 }
 catch (Cp6ReleaseContractException error)
