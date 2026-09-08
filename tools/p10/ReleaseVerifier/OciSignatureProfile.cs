@@ -93,4 +93,3 @@ internal static class OciSignatureProfile
     internal static Cp6ReleaseContractException Error(string code) =>
         new(code, "OCI signature violates the pinned S06 identity and trust profile.");
 }
-
