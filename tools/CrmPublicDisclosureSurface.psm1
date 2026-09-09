@@ -27,9 +27,17 @@ $firstSliceSha256['docs/crm/CRM-V1-PRD.md'] = '95c6f99519096e0799df261d68bc519ff
 $firstSliceSha256['docs/crm/CRM-V1-EXECUTABLE-SPEC.md'] = '0278b62a2d5310f6a8f6ebad247ccf1a73c2f93a75b3acd3a209fa3f76475f3f'
 $firstSliceSha256['docs/crm/README.md'] = '2a104b73b4d420456b230e0f4e5681c7793adbbcb56b58cc13dcd533d289391c'
 $firstSliceSha256['docs/crm/CRM-OIDC-FIRST-SLICE.md'] = '1571de9422a0d6b0bd949770bc889ab113c84b2fbf208fe317eae70fe5c05356'
+# The C01 registration records the user's 2026-09-09 implementation, design,
+# and documentation authorization. It does not authorize production or private
+# commercial disclosures. Reviewed source: 2005c05fdf764ef21525d6374c1c9bf37f756050.
+$c01ServiceIdentitySha256 = [ordered]@{}
+foreach ($entry in $firstSliceSha256.GetEnumerator()) { $c01ServiceIdentitySha256.Add($entry.Key, $entry.Value) }
+$c01ServiceIdentitySha256['docs/crm/CRM-OIDC-FIRST-SLICE.md'] = 'f8f25b5f741d5a499f17b3d7ff17b881c634c9d39d6b4c32ddce903a0b2c37de'
+$c01ServiceIdentitySha256['docs/crm/C01-SERVICE-IDENTITY.md'] = '1df7019a31b0fb5c6355df476426ffaaba09af704e39dd7d4fd9a51d5ab7d42b'
 $registeredSurfaces = [ordered]@{
     'historical-20260826' = $historicalSha256
     'first-slice-20260908' = $firstSliceSha256
+    'c01-service-identity-20260909' = $c01ServiceIdentitySha256
 }
 
 function Test-CrmPublicDisclosureSurface {
@@ -60,7 +68,15 @@ function Test-CrmPublicDisclosureSurface {
     $errors = [System.Collections.Generic.List[string]]::new()
     $errors.Add('Public disclosure surface digest mismatch: no complete registered document set matches; mixed versions are not permitted.')
     # Pick one set only for diagnostics. This never authorizes per-file mixtures.
-    $diagnosticSurface = if ($actual.ContainsKey('docs/crm/CRM-OIDC-FIRST-SLICE.md')) { $firstSliceSha256 } else { $historicalSha256 }
+    $diagnosticSurface = if ($actual.ContainsKey('docs/crm/C01-SERVICE-IDENTITY.md')) {
+        $c01ServiceIdentitySha256
+    }
+    elseif ($actual.ContainsKey('docs/crm/CRM-OIDC-FIRST-SLICE.md')) {
+        $firstSliceSha256
+    }
+    else {
+        $historicalSha256
+    }
     foreach ($path in $actual.Keys) {
         if (-not (@($diagnosticSurface.Keys) -ccontains $path)) {
             $errors.Add("Unregistered public CRM disclosure file: $path")
