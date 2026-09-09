@@ -1,0 +1,20 @@
+CP6 P10 cosign security derivative 3.1.3-cp6.1
+
+Based on Sigstore cosign v3.1.3, commit 11926fa5bbbbde47e88fc006b625a17769b743b2.
+Copyright The Sigstore Authors. Licensed under Apache License 2.0; see cosign.LICENSE.
+
+This is a CP6-maintained derivative, not an unmodified upstream release or an
+endorsement by Sigstore. Upstream cryptographic source is unchanged. CP6 updates
+the Go toolchain to 1.26.8 and these dependency versions:
+golang.org/x/crypto 0.55.0; golang.org/x/mod 0.40.0; golang.org/x/net 0.58.0;
+golang.org/x/sync 0.22.0; golang.org/x/sys 0.47.0; golang.org/x/term 0.45.0;
+golang.org/x/text 0.41.0; golang.org/x/tools 0.49.0; google.golang.org/grpc 1.83.1.
+
+Both builds use CGO_ENABLED=0 and do not include the optional PIV/PKCS11 build
+tags. P10 uses file/environment-backed P-256 keys, not these hardware backends.
+Version metadata identifies the modified tree and fixes buildDate to the
+upstream source commit time for reproducibility; it is not the compilation time.
+
+The build recipe, reviewed lock files, output hashes and audit record are in
+the GTX537/CP6 repository under eng/p10/cosign and docs/superpowers/plans.
+No production or candidate acceptance is implied by this notice.

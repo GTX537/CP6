@@ -1,0 +1,122 @@
+name: P10 hosted Linux preflight
+
+on:
+  push:
+    branches: [codex/p10-native-scan-preflight]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  packages: read
+
+concurrency:
+  group: p10-platform-preflight
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    environment: P10_CRM_ACTIONS_READ_TOKEN
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+        working-directory: tools/p10
+    env:
+      DOTNET_NOLOGO: "1"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+    steps:
+      - name: Checkout exact preflight source
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Require the reviewed task branch and current exact source
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == GTX537/CP6 ]]
+          [[ "$GITHUB_EVENT_NAME" == push || "$GITHUB_EVENT_NAME" == workflow_dispatch ]]
+          [[ "$GITHUB_REF" == refs/heads/codex/p10-native-scan-preflight ]]
+          [[ "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ && "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+          [[ "$GITHUB_WORKFLOW_SHA" == "$GITHUB_SHA" ]]
+          [[ "$(gh api repos/GTX537/CP6/branches/codex%2Fp10-native-scan-preflight --jq .commit.sha)" == "$GITHUB_SHA" ]]
+
+      - name: Install pinned SDK
+        id: sdk
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: 8.0.424
+
+      - name: Reproduce the pinned cosign security build without credentials
+        id: tools
+        run: |
+          set -euo pipefail
+          bash "$GITHUB_WORKSPACE/eng/p10/cosign/build.sh" "$RUNNER_TEMP/p10-tools"
+          printf '%s  %s\n' a2bcc99765d97f1b7db0cf22afc0d2dd523e94c250900e9d8e4710b2a4a35740 \
+            "$RUNNER_TEMP/p10-tools/cosign" | sha256sum --check --status
+
+      - name: Locked restore build and format check
+        id: build
+        env:
+          NuGetPackageSourceCredentials_github: Username=GTX537;Password=${{ github.token }};ValidAuthenticationTypes=Basic
+        run: |
+          set -euo pipefail
+          [[ "$(dotnet --version)" == 8.0.424 ]]
+          for project in ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj PreflightInputs/CP6.P10.PreflightInputs.csproj; do
+            dotnet restore "$project" --locked-mode \
+              --configfile "$GITHUB_WORKSPACE/eng/p10/NuGet.formal.config" --packages "$RUNNER_TEMP/p10-nuget"
+            dotnet build "$project" -c Release --no-restore -p:UseAppHost=false
+            dotnet format "$project" --no-restore --verify-no-changes
+          done
+
+      - name: Exercise actual input boundary refusals
+        id: boundaries
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE/eng/p10/test-preflight-inputs.ps1" `
+            -CollectorDll ./PreflightInputs/bin/Release/net8.0/CP6.P10.PreflightInputs.dll `
+            -DotnetHost (Get-Command dotnet).Source
+
+      - name: Download and verify the actual seven test input packages
+        id: packages
+        env:
+          P10_FEED_READ_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          dotnet PreflightInputs/bin/Release/net8.0/CP6.P10.PreflightInputs.dll "$RUNNER_TEMP/p10-packages"
+
+      - name: Run the complete verifier suite with actual read inputs
+        id: tests
+        env:
+          P10_COSIGN_PATH: ${{ runner.temp }}/p10-tools/cosign
+          P10_FORMAL_PACKAGE_ROOT: ${{ runner.temp }}/p10-packages
+          P10_GITHUB_READ_TOKEN: ${{ secrets.P10_CRM_ACTIONS_READ_TOKEN }}
+          P10_FEED_READ_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          dotnet test ReleaseVerifier.Tests/CP6.P10.ReleaseVerifier.Tests.csproj -c Release --no-build --no-restore \
+            --logger "trx;LogFileName=p10-preflight.trx" --results-directory "$RUNNER_TEMP/p10-test-results"
+
+      - name: Preserve only diagnostic test results
+        id: artifact
+        if: ${{ !cancelled() && (steps.tests.outcome == 'success' || steps.tests.outcome == 'failure') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: p10-preflight-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/p10-test-results/p10-preflight.trx
+          if-no-files-found: error
+          overwrite: false
+          retention-days: 90
+
+      - name: Record development preflight success only
+        id: summary
+        run: |
+          set -euo pipefail
+          printf 'P10 development preflight passed: source=%s run=%s attempt=%s; candidateAccepted=false; deployable=false\n' \
+            "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_STEP_SUMMARY"

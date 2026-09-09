@@ -65,6 +65,17 @@ public sealed class S06WorkflowWiringTests
     }
 
     [Fact]
+    public void Native_scanners_use_their_distinct_registry_source_syntax()
+    {
+        var scan = Step(Read("validation"), "scan");
+        Assert.Contains("trivy\" image --image-src remote --scanners vuln", scan);
+        Assert.DoesNotContain("--image-src registry", scan);
+        Assert.Contains("syft\" \"registry:$image\"", scan);
+        Assert.Contains("--severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --exit-code 0 --format sarif", scan);
+        Assert.Contains(".properties.tags[2] != \"HIGH\" and .properties.tags[2] != \"CRITICAL\"", scan);
+    }
+
+    [Fact]
     public void Validation_secrets_are_limited_to_CRM_reads_and_the_separate_OCI_signing_step()
     {
         var text = Read("validation");

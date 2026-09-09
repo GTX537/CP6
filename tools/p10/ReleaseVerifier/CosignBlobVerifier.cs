@@ -11,8 +11,8 @@ namespace CP6.P10.ReleaseVerifier;
 public sealed class CosignBlobVerifier(string executablePath)
 {
     private const int MaximumOutputBytes = 64 * 1024;
-    private const string WindowsSha256 = "9fe59be0eca1271873ce019061335eb1ac419b7059202e797828467ddabe33be";
-    private const string LinuxSha256 = "4629c757b7618056f8ddd7e2625ae9fdd94c0372a65049520bc7d9df9efc7f71";
+    private const string WindowsSha256 = "06b2ce427089b842c7bf64fb2c22c8173f15b2f49244cf9a152fe9d95ed28d0b";
+    private const string LinuxSha256 = ImageBuildProfile.CosignSha256;
 
     public Task VerifyAsync(ReadOnlyMemory<byte> payload, ReadOnlyMemory<byte> bundle,
         Cp6PinnedTrustKey key, CancellationToken cancellationToken = default) =>

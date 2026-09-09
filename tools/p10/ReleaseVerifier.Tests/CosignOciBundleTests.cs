@@ -15,7 +15,7 @@ public sealed class CosignOciBundleTests
     private const string Digest = "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     private const string PayloadType = "application/vnd.in-toto+json";
     private static CosignBlobVerifier Verifier() => new(Environment.GetEnvironmentVariable("P10_COSIGN_PATH") ??
-        throw new InvalidOperationException("Checksum-pinned cosign v3.1.3 is required."));
+        throw new InvalidOperationException("Checksum-pinned cosign v3.1.3-cp6.1 is required."));
     private static CosignBlobVerifier MissingVerifier() => new(Path.Combine(Path.GetTempPath(), "not-a-cosign-tool"));
 
     [Fact]

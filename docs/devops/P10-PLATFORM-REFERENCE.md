@@ -18,7 +18,9 @@
 | 唯一 OCI 仓库 | `ghcr.io/gtx537/cp6-p10-verifier`；只消费 `repository@sha256:digest` |
 | Locator/OCI trust | [pinned-trust-store.v1.json](../../eng/p10/trust/pinned-trust-store.v1.json)，版本 `1`；用途分离的两把公钥 |
 | NuGet trust | [p10-formal-nuget-trust-store.v1.json](../../eng/p10/trust/p10-formal-nuget-trust-store.v1.json)，版本 `1` |
-| 构建工具 | .NET SDK `8.0.424`、cosign `3.1.3`、Syft `1.51.1`、Trivy `0.74.0`；二进制摘要由代码/YAML 固定 |
+| 构建工具 | .NET SDK `8.0.424`、cosign `3.1.3-cp6.1`、Syft `1.51.1`、Trivy `0.74.0`；二进制摘要由代码/YAML 固定 |
+
+cosign 是 owner 授权的 CP6 安全衍生构建，**不是未修改的 Sigstore 官方二进制**。固定上游签名源码 commit、Go 1.26.8、九项受审模块更新、完整 lock/hash 和隔离构建定义在 [eng/p10/cosign](../../eng/p10/cosign/README.md)。两次独立构建已复现相同 Linux/Windows 摘要。三条 workflow 都重现并校验该 helper，签名/发布 Secret 不进入编译环境；候选镜像仍只在获批 hosted validation 构建一次，publication/audit 不重建镜像。原 trust、公钥用途分离、真实签名检查及 HIGH/CRITICAL 门禁保持不变。
 
 正式作者证书使用 `PinnedSelfSigned`：`publicCaTrusted=false`、`internallyTrusted=true`，固定指纹 `1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d`。所有正式包仍要求实际 RFC3161 时间戳；作者的固定自签信任例外不适用于 TSA 链。正式发布与 CRM 证据只按精确身份消费，不能拿历史 `0.10.0`、本地重包或合成证书替代。
 

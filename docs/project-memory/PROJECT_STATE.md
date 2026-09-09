@@ -1,5 +1,60 @@
 # 项目当前状态
 
+## P10 获批独立托管预检，分支代码与读取边界已就绪（2026-09-08 UTC）
+
+- Owner 同意独立 Linux 预检并要求尽快完成 P10。新增仅当前修复分支的预检 workflow、小型正式包输入工具和自动化回归；不修改既有时间/签名/漏洞门禁。云端成功仍待实际运行，不能把本机 WSL 失败改记为通过。
+- 四项新增回归先 RED 后 GREEN；输入工具七项路径/凭据拒绝检查通过，实际下载的七个正式包逐一匹配既有 SHA-256。用这些真实包重跑 Windows 全量 **1648/1648 通过、0 跳过**；locked restore/build、format 和四条 P10 workflow actionlint 通过。
+- 既有独立 `P10_CRM_ACTIONS_READ_TOKEN` Environment 原来仅存同名读取凭据且无运行历史；已新增 owner `GTX537` 审批和唯一 `codex/p10-native-scan-preflight` 分支策略。Secret 元数据时间未变、值未导出；正式候选 Environment 仍为原 main-only/owner 审批。
+- 下一步正常推送任务分支、取得实际云端审批及全量成功，再依次 PR 必需检查/合并、exact-main 冒烟和检查、正式 validation、候选发布及只读审计。候选标识仍待 owner 选择，P10 仍 Candidate / No-Go；没有发布签名、Registry/R2 写入或生产部署。[预检执行记录](../superpowers/plans/2026-09-08-p10-hosted-preflight.md)。
+
+## P10 回到发布修复：Docker 已恢复，Linux UTC 倒退仍阻塞全量门禁（2026-09-08 UTC）
+
+- Owner 报告已启动 Docker，并明确目标仍是解决发布报错。实测七个业务容器运行，DB/MQ/Redis/Kafka healthy；Web、API live/ready 均 HTTP 200。此前冷备/启动失败记录保留为历史，不再代表当前业务状态；本轮没有再次重启、清理或改配置。
+- 对同一冻结测试程序集和安全构建二进制重新执行：Windows **1644/1644 通过**；Linux **1643 通过 / 1 失败 / 0 跳过**。唯一失败是读取 `crm-pr-linux` 原始归档时结束 UTC 比开始早约 6.341 秒，原有顺序断言正确失败；不是签名或漏洞修复回归。
+- Owner 说明本机使用太平洋时间；只读 `Get-TimeZone` 实际返回 `Eastern Standard Time`、当时 UTC−04:00。未改时区。测试比较 UTC；随后单 CPU、断网探针独立记录约 −13.522 秒/+14.149 秒跳变，显示时区差异不能解释该现象。
+- Trivy 参数修正和 cosign 安全衍生构建仍在任务分支；format、三条 workflow actionlint、完整分支 diff 检查通过。现有 PR 门禁不执行 P10 全量测试，受保护 P10 Environment 仅允许 main，不能作为分支预检的绕行入口。
+- 建议另行批准独立、人工审批、只读的托管 Linux 预检边界，再验证同一完整测试集；尚未新增 workflow/Environment、导出凭据或修改现有保护。按必需门禁失败不得合并，P10 仍 Candidate / No-Go，未 PR/合并/dispatch。报告摘要见[本轮记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。
+
+## P10 Docker 冷备已核验，第二个端点隔离受系统拒绝（2026-09-08 UTC）
+
+- Owner 已批准先冷备再做不清空原盘的恢复。Docker 残留进程按身份核实后退出、两个 WSL 发行版停止；原数据盘以只读共享锁保护复制和完整 SHA-256 核验。109912784896 bytes 原盘/副本摘要一致：`56f2644ad04eca1674a131a88b73d9ce02def44eaf44e54b65a58f63cb2e4427`，原盘修改时间未变，副本设为只读。小型 WSL 系统盘和当前配置也已复制并逐一核验。
+- 备份在本机私有目录，ACL 仅当前账户/SYSTEM/Administrators；未上传。它是同盘软件恢复回退副本，不是独立介质灾备，也不证明文件系统/数据库内部完整性。
+- 已确认默认 Docker 数据目录的既有目录联接仍指向原数据盘，未迁移或修改数据路径。第一个 `Docker/run` 临时目录已改名留存而非删除；随后启动错误变为 `docker-secrets-engine/engine.sock` 无法访问，尚未启动 Linux engine。
+- Docker 再次退出后，第二个仅含该零字节端点的目录被 Windows 拒绝重命名。账户已有完全控制权限、没有 Docker 进程；没有更改 ACL、接管所有权或删除端点。下一步建议在 owner 保存其他工作后尝试完整 Windows 重启，尚未执行，不保证它必然修复。
+- 七个业务容器仍未恢复，新的时钟/Linux 全量重验未运行；P10 保持 Candidate / No-Go，未 PR/合并/dispatch。[恢复记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)保留完整结果与边界。
+
+## P10 获批 WSL2 重启后 Docker 启动受阻（2026-09-08 UTC）
+
+- Owner 已另行批准完整 WSL2 重启。先正常停止 Docker Desktop，再执行一次 `wsl --shutdown`，确认 Ubuntu 和 docker-desktop 均 Stopped；未修改系统时间、时钟源、WSL 配置或测试门禁。
+- Docker 命令行启动超时；随后启动已安装 Desktop 程序，后端日志定位到本地 `dockerInference` 运行时端点无法访问，初始化 Inference manager 失败。当前七个业务容器尚未恢复，本轮时钟/全量测试尚未开始。
+- Owner 随后确认点击了错误窗口的 `Reset to factory defaults`；本任务未执行该动作，仍不能据此推断重置完成或数据已丢失。原数据盘文件仍为 109912784896 bytes、修改时间未变且 `vhdxfile` 标识可读，但内容完整性未验证。暂停进一步启动、删除端点或配置变更；先请求约 110 GB 的冷备，再考虑保留原盘的恢复。
+- 下方 Docker 已恢复的记录属于前一次 Docker-only 重启，不代表本次状态。P10 仍 Candidate / No-Go，未 PR/合并/dispatch；最新事实见[安全构建记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。
+
+## P10 Docker 重启后的 Linux 重验仍失败（2026-09-08 UTC）
+
+- Owner 另行明确批准 Docker Desktop 重启后，已执行一次重启；七个业务容器恢复运行，DB/MQ/Redis/Kafka 均 healthy，Web 和 API live/ready 三项本机 HTTP 探针均为 200。没有关闭全部 WSL、修改系统时间或时钟源。
+- 初次十秒时钟采样没有跳变，但随后同一冻结输入的 Linux full suite 为 **1643 通过 / 1 失败 / 0 跳过**。Messaging 实际包下载测试的开始 UTC 晚于结束 UTC 约 9.195 秒；因此不能视为环境已修复，也不能合并失败门禁。
+- 独立单 CPU、禁网 Linux 原生 `date` / `/proc/uptime` 三十秒采样又捕获约 **13.027 秒倒跳 / 14.108 秒前跳**；同期 Windows 三百次采样未发现跳变。问题不只发生在 .NET；当前 WSL2 Linux 时钟源为 `tsc`，尚未证明具体内核缺陷或更改它。
+- 当前仍未 PR/合并/再次 dispatch，P10 保持 **Candidate / No-Go**。下方“尚未重启”为重启前历史记录，已由本节取代；原始失败和本次 TRX 摘要均保留在[安全构建记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。完整 WSL2 重置会同时终止当前运行的 Ubuntu 和 Docker，必须另获 owner 授权，不能沿用只批准 Docker 重启的范围。
+
+## P10 cosign 安全构建与本地时钟阻塞（2026-09-08 UTC）
+
+- Owner 已明确批准可复现安全重编译并启动 Docker。固定上游源码、Go 1.26.8 和九项受审依赖更新，得到明确标识的 `3.1.3-cp6.1` 衍生版；不是 Sigstore 官方未修改二进制。三条工作流共用同一隔离构建和输出摘要，原信任、公钥、签名/扫描门禁不变。
+- 两个独立容器的 Linux/Windows 二进制及依赖元数据逐字节一致；完整本地运行镜像扫描保留 UNKNOWN 3 / LOW 7 / MEDIUM 5，**HIGH 0 / CRITICAL 0**。实际 UID 1654、只读、禁网镜像中七项密码学检查通过，本地报告仍被正确拒绝为非 GHCR 托管身份。[安全构建记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)保留全部摘要、原始失败和重现边界。
+- Windows 最终真实输入 suite **1644/1644，零失败/跳过**；上游 **429 个测试/子测试通过，零测试失败/跳过**，另四个包没有测试；10 项真实离线输入保护测试、format 和三条 workflow actionlint 通过。
+- Linux 最终 full suite **1589 通过 / 55 失败 / 0 跳过**；55 项均因共享的正式包证据收集在 `s06-packages-time` 时间顺序检查失败。独立只读探针实际捕获 Docker/.NET UTC **倒跳约 16.426 秒，随后前跳约 14.091 秒**；单 CPU、禁网探针又捕获前跳约 16.275 秒。未放宽或绕过时间检查，不能把该 full suite 写成通过。
+- 衍生构建保存在隔离任务分支；**尚未 PR/合并，也未再次 dispatch**。需先在稳定时钟环境完成 Linux 重验。Docker Desktop 重启会中断当前七个业务容器，必须取得 owner 的明确同意后才操作；未自行重启、修改系统时间或关闭其他 WSL 会话。
+- P10 仍 **Candidate / No-Go**；本地诊断镜像未推送、没有受保护签名/候选发布/生产部署，没有导出 Environment Secret、改变审批或改写旧失败。
+
+## P10 原生扫描参数修复与 cosign 依赖阻塞（2026-09-08 UTC）
+
+- 安全诊断 [PR #89](https://github.com/GTX537/CP6/pull/89) 已正常合入 `main@a41711dd55a093ab0ed127d599e0e7bcf11d548d`，七项 PR 检查、五个 exact-main 工作流及合并后 285 项回归全部通过，取代下方该补丁“待合并”的历史状态。
+- [run 34234554610](https://github.com/GTX537/CP6/actions/runs/34234554610) attempt 1 定位到 `crm.pull-request` 403；owner 保存 CRM 专用 token 的 Pull requests Read 后，获批 attempt 2 的真实输入收集、七包/CRM 验证、**1634/1634 零跳过**和 OCI push 成功，随后 Trivy 非法 `--image-src registry` 失败，sign/finalize/artifact 跳过。
+- 任务分支已把 Trivy 改为 `remote`，保留 Syft `registry:`；回归先 RED 1 失败/7 通过，再 GREEN 8/8。使用校验摘要后的精确官方工具对已有 GHCR digest 只读扫描，真实 SPDX 被现有解析器接受，真实 SARIF 因 **1 CRITICAL / 14 HIGH** 被原门禁正确拒绝。全部阻塞发现位于镜像内 cosign 3.1.3 的 Go 依赖，不是新的报告格式错误。
+- 本地完整真实输入回归 **1635/1635，零失败/零跳过**，format 与三条 P10 workflow 的 actionlint 通过。这证明参数补丁的本地兼容性，不代表含漏洞镜像已被接受。
+- 当日官方最新版仍为 3.1.3，尚无更新的官方发布二进制。自建补丁版或更换工具分发来源须 owner 决定；当前参数修复未合入 main，也未再次 dispatch 已知会失败的验证。[预检记录](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)保留 digest、报告 hash、实际计数及可复现命令。
+- P10 仍 **Candidate / No-Go**。没有降低 HIGH/CRITICAL 门禁，没有重新签名/发布候选/审计通过/生产部署，没有导出 Environment 私钥或改写历史失败与正式包。
+
 ## P10 GitHub 读取安全诊断补丁（2026-09-08 UTC）
 
 - 重跑时间修复 [PR #88](https://github.com/GTX537/CP6/pull/88) 已正常合入 `main@96c5f71e3c493c61a09d5b667dc32b966508631e`；七项 PR 检查、五个 exact-main 工作流和合并后 197 项回归全部通过。

@@ -1,10 +1,65 @@
 # 当前待办与优先级
 
-## P10 最新阻塞：定位真实 GitHub 非 200（2026-09-08 UTC）
+## P10 当前执行链：独立预检 → 正式验证 → 发布/审计（2026-09-08 UTC）
 
-- [ ] 完成安全诊断补丁 PR/exact-main 正常交付；本地 1634/1634 与 format 已通过，但不能替代 hosted 验证。
-- [ ] 对新 exact main 发起新的 validation，由 owner 重新审批；用实际 `p10-validation-stage`、固定 target 类别和 HTTP status 定位失败。不得重跑旧源码来验收新补丁，不得凭猜测扩大 CRM/Packages 权限。
-- [ ] 旧 run `34229610628` attempt 1 只有 `github-http-status`；其七包验证状态仍未建立，后续 image/sign/artifact 均跳过。保留所有失败历史。
+- [x] Owner 已批准独立托管 Linux 预检；分支 workflow、复用正式验证器的七包输入工具及新增测试已实现，Windows 全量 1648/1648、0 跳过。
+- [x] 独立读取环境新增 owner 审批和唯一任务分支策略；原 main-only 正式候选环境不变，凭据未导出。
+- [ ] 推送修复分支并由 owner 批准实际 preflight run；核对完整 Linux 测试结果和精确 source/run/attempt/TRX 身份。未通过不得合并。
+- [ ] 全部 PR 必需检查通过后正常合并，再核对远端 main 包含修复、合并后冒烟和 exact-main 检查。
+- [ ] 对最终 main 发起一次正式 validation，由 owner 审批并检查全流程成功；之后按 owner 选定的新候选身份发布，再只读审计和追加真实状态决定。
+- [ ] P10 Frozen/Consumable 必须由完整实际证据闭环；`deployable=false`，不授权生产部署。下方“预检尚待同意/尚未实现”为历史检查点。
+
+## P10 当前优先：在独立 Linux 环境验证发布修复（2026-09-08 UTC）
+
+- [x] Owner 已启动 Docker；七个原业务容器运行、四依赖 healthy、Web/API 三探针 HTTP 200。下方未恢复/建议整机重启等条目为此前检查点，不再作为当前操作指令。
+- [x] 重跑冻结输入：Windows 1644/1644 通过；Linux 1643 通过、1 项因 UTC 倒退失败、0 跳过。单 CPU/断网复现时间跳变；不把时区差异或单次短采样无异常当作原因排除。
+- [ ] Owner 决定是否新增独立、人工审批、只读的托管 Linux 预检；其凭据和分支边界需明确，不继承发布/签名权限，不放宽现有 main-only Environment。尚未实现或配置。
+- [ ] 在合适的 Linux 环境执行未经修改的全量门禁并通过，再完成正常 PR/必需检查/合并/exact-main 冒烟与检查；之后新 validation 仍需 owner 审批和完整成功。
+- [ ] 候选身份仍由 owner 选择；不把本地报告、Windows 通过或代码修复提交当作候选发布完成。
+
+## P10 当前优先：保存其他工作后处理 Windows 端点状态（2026-09-08 UTC）
+
+- [x] Owner 批准冷备和不清空原盘的恢复；约 110 GB 数据盘、WSL 系统盘及当前配置均已复制并核验摘要，副本只读且私有保存。
+- [x] 确认原数据目录联接保留；第一个临时通信目录已可恢复地改名隔离，未删除文件或修改数据路径。
+- [ ] 第二个 `docker-secrets-engine` 端点目录被 Windows 拒绝重命名，虽无 Docker 进程且账户已有完全控制权限。建议 owner 保存其他程序工作后尝试完整 Windows 重启；本任务未重启整机、改 ACL、接管所有权或强删端点。
+- [ ] 先恢复原七个业务容器并核对数据库/服务健康，再重验原生时钟和 Linux full suite；不可仅凭冷备 hash 声称数据完整或 P10 通过。PR/合并/新 validation 仍暂停。
+
+下方“冷备待批准/未复制”等为此前检查点，当前状态以本节为准。
+
+## P10 当前优先：确认 Docker 错误窗口操作并恢复业务（2026-09-08 UTC）
+
+- [x] 获 owner 明确批准后正常停止 Docker、完整停止 WSL2；未修改时间或配置。
+- [x] Owner 已确认点击错误窗口的恢复出厂选项。任务未执行该动作；原数据盘大小、修改时间未变且 VHDX 标识可读，内容仍未验证。
+- [ ] 先获准为原盘制作并校验约 110 GB 冷备，再考虑保留原盘的修复；目前未复制、挂载、修复或改写数据盘。不要把文件存在当作完整性结论，不自行重置、重装或删除运行时端点。
+- [ ] 处理已定位的 `dockerInference` 启动错误并恢复原七个业务容器，核对既有数据与 Web/API 健康；目前仍未恢复。
+- [ ] 恢复后重新验证原生时钟和同一冻结输入的 Linux 全量 suite。此前 1643 通过 / 1 失败仍是最新全量结果；PR/合并/新 validation 继续暂停。
+
+下方批准待办和业务恢复状态是更早检查点，当前以本节为准。
+
+## P10 当前阻塞：Docker 重启不足以恢复稳定时钟（2026-09-08 UTC）
+
+- [x] 获 owner 单独批准后重启 Docker Desktop；七个业务容器恢复，四项容器健康检查和 Web/API 三项 HTTP 200 通过。
+- [x] 对同一冻结输入完成 Linux full suite 重验并保留失败：1643 通过 / 1 失败 / 0 跳过。独立 Linux 原生时钟采样也复现跳变；不能把首次十秒零跳变当作环境已修复。
+- [ ] 如继续重置整个 WSL2 环境，先获 owner 对停止当前 Ubuntu 和 Docker 的明确批准；该范围超出此前 Docker-only 重启。未执行 `wsl --shutdown`，未改变系统时间、WSL 配置、时钟源或时间门禁。
+- [ ] 在稳定环境完成 Linux 全量验证，再走正常 PR、全部 PR/exact-main 检查与合并冒烟；当前不合并、不 dispatch 已知受阻组合。发布仍需成功的受保护 validation、owner 候选 Tag 选择、publication/audit，P10 仍 Candidate / No-Go。
+
+下方重启前待办保留为历史，当前状态以本节为准。
+
+## P10 最新待办：稳定 Linux 时钟后交付安全构建（2026-09-08 UTC）
+
+- [x] Owner 批准可复现 cosign 安全衍生构建及本地 Docker 诊断；两次独立构建摘要一致，完整实际镜像 HIGH/CRITICAL 均为 0，所有其他发现保留。
+- [x] Windows 1644/1644、上游 429 个测试/子测试、十项 shell 输入保护及实际只读镜像七项密码学检查通过；签名信任、漏洞阈值和本地报告拒绝策略不变。
+- [ ] 先处理实际观察到的 Docker/.NET UTC 前后跳变，再完成 Linux 全量重验；当前 1589 通过 / 55 失败，不能合并失败门禁。重启 Docker Desktop 将中断七个业务容器，须 owner 明确授权；不得自行改变系统时间、重启全部 WSL 或放宽证据时间校验。
+- [ ] 正常 PR、完整 diff 审查、所有 PR/exact-main 检查和合并冒烟通过后，再请求一个新 exact-main validation 及 owner 的真实 Environment 审批。
+- [ ] 新 validation 完整成功后，仍需 owner 选择未使用的候选 Tag，再完成受保护 publication、普通只读 audit 与跨仓最终判定。旧失败、正式包及现有生产门禁不改写，P10 仍 Candidate / No-Go。
+
+## P10 最新阻塞：cosign 原生扫描不满足漏洞门禁（2026-09-08 UTC）
+
+- [x] 安全诊断 PR #89 正常合入 `a41711dd55a093ab0ed127d599e0e7bcf11d548d` 且七项 PR/五个 main 工作流成功；新 run `34234554610` attempt 1 定位 CRM pull-request 403，owner 调整后 attempt 2 完成真实输入收集、1634 项全量测试和 OCI push。
+- [x] 复现并在任务分支修正 Trivy `--image-src registry` 为 `remote`；8/8 wiring 回归和已有镜像的原生远端扫描建立证据。未合入 main，不算完整交付。
+- [ ] 先由 owner 决定 cosign 依赖修复路径：当前官方最新 3.1.3 内存在 1 CRITICAL / 14 HIGH，尚无更新官方二进制。自建补丁版或改变分发来源需要受审供应链决定，禁止忽略、过滤或移除被扫描工具规避门禁。
+- [ ] 完成获批修复的真实扫描、签名兼容与完整 suite，再按正常 PR/exact-main 门禁交付；只有已知阻塞排除后才请求新 validation 和 owner 审批，不重复运行已知失败的组合。
+- [ ] 原 run `34234554610` attempt 2 的 sign/finalize/artifact 全部跳过；旧失败 run/正式包保留，不能把此次本地报告视为 hosted 成功或候选证据。其余历史 run 的未知状态不回溯改写。
 - [ ] 真实 validation 成功后，仍须选择未使用的候选 Tag，完成受保护 publication 和普通只读 audit 才能评估 Frozen；当前 Candidate / No-Go、deployable=false。
 
 ## CRM 首片后续环境接入（2026-09-08 UTC）
