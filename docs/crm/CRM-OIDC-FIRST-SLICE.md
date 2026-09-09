@@ -1,5 +1,7 @@
 # CRM 首个业务切片：CP6 身份与目录桥
 
+> 2026-09-09 C01 增量：独立 `CP6.Services` 服务签发、JWKS 公共缓存与 RSA 轮换见 [C01 服务身份](C01-SERVICE-IDENTITY.md)。下文“不提供 client-credentials”描述首个浏览器切片的历史范围；CP6.Web 用户协议继续按本页执行。
+
 用途：独立 CRM BFF 消费 CP6 现有用户、租户和权限。状态：任务分支实现与本地验证，等待跨仓集成和远端门禁；更新：2026-09-08 UTC。此实现不代表 C01/C02 全部架构、商业 Provisioning、M0、Pilot 或生产验收完成。
 
 ## 身份流程与协议

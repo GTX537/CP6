@@ -9,11 +9,15 @@ namespace CP6.WebApi.Services;
 
 public sealed class CrmOidcCrypto : IDisposable
 {
-    private readonly CrmOidcOptions _options;
+    private readonly string _issuer;
+    private readonly string _activeKeyId;
+    private readonly TimeProvider _time;
     private readonly Dictionary<string, RSA> _keys;
-    public CrmOidcCrypto(CrmOidcOptions options)
+    public CrmOidcCrypto(CrmOidcOptions options, TimeProvider? time = null)
     {
-        _options = options;
+        _issuer = options.Issuer;
+        _activeKeyId = options.ActiveKeyId;
+        _time = time ?? TimeProvider.System;
         _keys = options.Enabled ? options.Keys.ToDictionary(k => k.Kid, k =>
         {
             var rsa = RSA.Create();
@@ -35,10 +39,11 @@ public sealed class CrmOidcCrypto : IDisposable
     }).ToArray() };
     public string Sign(string audience, IEnumerable<Claim> claims, DateTimeOffset expires, string tokenType)
     {
-        var key = new RsaSecurityKey(_keys[_options.ActiveKeyId]) { KeyId = _options.ActiveKeyId };
+        var key = new RsaSecurityKey(_keys[_activeKeyId]) { KeyId = _activeKeyId };
         var header = new JwtHeader(new SigningCredentials(key, SecurityAlgorithms.RsaSha256));
         header["typ"] = tokenType;
-        var payload = new JwtPayload(_options.Issuer, audience, claims, DateTime.UtcNow, expires.UtcDateTime, DateTime.UtcNow);
+        var now = _time.GetUtcNow().UtcDateTime;
+        var payload = new JwtPayload(_issuer, audience, claims, now, expires.UtcDateTime, now);
         return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(header, payload));
     }
     public ClaimsPrincipal Validate(string raw, string audience, string tokenType, bool validateLifetime = true)
@@ -46,10 +51,22 @@ public sealed class CrmOidcCrypto : IDisposable
         var handler = new JwtSecurityTokenHandler { MapInboundClaims = false };
         return handler.ValidateToken(raw, new TokenValidationParameters
         {
-            ValidIssuer = _options.Issuer, ValidAudience = audience, ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
+            ValidIssuer = _issuer, ValidAudience = audience, ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
             ValidTypes = [tokenType], ValidateIssuer = true, ValidateAudience = true, ValidateLifetime = validateLifetime,
             ValidateIssuerSigningKey = true, RequireSignedTokens = true, RequireExpirationTime = true,
             ClockSkew = TimeSpan.Zero,
+            // IdentityModel's TimeProvider is not public in the pinned package. Keep the
+            // standard zero-skew lifetime rules while sharing the signing clock.
+            LifetimeValidator = (notBefore, expires, _, _) =>
+            {
+                if (!validateLifetime) return true;
+                if (!expires.HasValue) throw new SecurityTokenNoExpirationException("Token has no expiration.");
+                if (notBefore > expires) throw new SecurityTokenInvalidLifetimeException("Token lifetime is invalid.");
+                var now = _time.GetUtcNow().UtcDateTime;
+                if (notBefore > now) throw new SecurityTokenNotYetValidException("Token is not yet valid.");
+                if (expires < now) throw new SecurityTokenExpiredException("Token has expired.");
+                return true;
+            },
             IssuerSigningKeyResolver = (_, _, kid, _) => kid != null && _keys.TryGetValue(kid, out var rsa)
                 ? [new RsaSecurityKey(rsa) { KeyId = kid }] : []
         }, out _);

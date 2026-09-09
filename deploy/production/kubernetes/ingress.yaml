@@ -17,6 +17,22 @@ spec:
     - host: CP6_HOST
       http:
         paths:
+          # Route issuer requests from the TLS edge directly to the API. An
+          # intermediate HTTP Web proxy would replace the original scheme.
+          - path: /connect
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-api
+                port:
+                  number: 5000
+          - path: /.well-known
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-api
+                port:
+                  number: 5000
           - path: /api
             pathType: Prefix
             backend:

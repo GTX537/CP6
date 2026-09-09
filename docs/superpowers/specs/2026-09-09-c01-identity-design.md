@@ -72,6 +72,8 @@ Discovery 增加已支持的 client_credentials 与服务 scope，保持现有�
 
 用户已审阅并接受本设计；进入同一 C01 任务的实施阶段。下方基线证据仅覆盖已有行为，新能力仍须按实施计划验证。
 
+实现审查补充：HTTPS 可以在明确受信任的 TLS 入口终止。服务令牌入口仅对配置中的实际 socket IP 接受单一 `X-Forwarded-Proto: https`，默认无受信任代理，不接受 X-Forwarded-For 作为信任依据；TLS 入口直接路由到 API，避免 Web HTTP 中转覆盖原 scheme。此处理不修改用户认证或全局请求 scheme。暂时性 SQL 异常被 EF 包装时，仍按数据库原因返回通用 503；不把无关程序错误伪装成可用性故障。两项均以真实 HTTP/SQL 回归验证。
+
 ## 设计阶段基线验证
 
 2026-09-09 在本设计分支、功能代码仍为上述 main 基线时运行：
