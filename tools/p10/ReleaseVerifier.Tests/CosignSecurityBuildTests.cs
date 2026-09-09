@@ -21,9 +21,24 @@ public sealed class CosignSecurityBuildTests
     [Fact]
     public void Security_derivative_cannot_claim_the_original_upstream_binary_identity()
     {
-        Assert.Equal("3.1.3-cp6.1", ImageBuildProfile.CosignVersion);
+        Assert.Equal("3.1.3-cp6.2", ImageBuildProfile.CosignVersion);
         Assert.NotEqual("4629c757b7618056f8ddd7e2625ae9fdd94c0372a65049520bc7d9df9efc7f71",
             ImageBuildProfile.CosignSha256);
+        Assert.NotEqual("a2bcc99765d97f1b7db0cf22afc0d2dd523e94c250900e9d8e4710b2a4a35740",
+            ImageBuildProfile.CosignSha256);
+    }
+
+    [Fact]
+    public void Grpc_security_patch_is_locked_and_the_previous_vulnerable_module_is_absent()
+    {
+        var profile = Path.Combine(Root(), "eng", "p10", "cosign");
+        var module = File.ReadAllText(Path.Combine(profile, "go.mod"));
+        var sums = File.ReadAllText(Path.Combine(profile, "go.sum"));
+        Assert.Contains("google.golang.org/grpc v1.83.2 // indirect", module);
+        Assert.Contains("google.golang.org/grpc v1.83.2 h1:", sums);
+        Assert.Contains("google.golang.org/grpc v1.83.2/go.mod h1:", sums);
+        Assert.DoesNotContain("google.golang.org/grpc v1.83.1", module + sums);
+        Assert.Contains("gitVersion=v3.1.3-cp6.2", File.ReadAllText(Path.Combine(profile, "compile.sh")));
     }
 
     [Fact]
@@ -80,6 +95,7 @@ public sealed class CosignSecurityBuildTests
             System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.GetRawConstantValue();
         Assert.Contains(windows + "  cosign-windows-amd64.exe", lines);
         Assert.NotEqual("9fe59be0eca1271873ce019061335eb1ac419b7059202e797828467ddabe33be", windows);
+        Assert.NotEqual("06b2ce427089b842c7bf64fb2c22c8173f15b2f49244cf9a152fe9d95ed28d0b", windows);
     }
 
     [Fact]

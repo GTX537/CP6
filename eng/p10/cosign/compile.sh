@@ -55,7 +55,7 @@ printf 'p10-cosign-compile stage=modules\n'
 cmp -- go.mod "$profile/go.mod"
 cmp -- go.sum "$profile/go.sum"
 
-ldflags='-buildid= -X sigs.k8s.io/release-utils/version.gitVersion=v3.1.3-cp6.1 -X sigs.k8s.io/release-utils/version.gitCommit=11926fa5bbbbde47e88fc006b625a17769b743b2 -X sigs.k8s.io/release-utils/version.gitTreeState=modified -X sigs.k8s.io/release-utils/version.buildDate=2026-08-05T23:43:27Z'
+ldflags='-buildid= -X sigs.k8s.io/release-utils/version.gitVersion=v3.1.3-cp6.2 -X sigs.k8s.io/release-utils/version.gitCommit=11926fa5bbbbde47e88fc006b625a17769b743b2 -X sigs.k8s.io/release-utils/version.gitTreeState=modified -X sigs.k8s.io/release-utils/version.buildDate=2026-08-05T23:43:27Z'
 mkdir -- "$output"
 printf 'p10-cosign-compile stage=linux\n'
 "${build_env[@]}" go build -p=1 -mod=readonly -trimpath -buildvcs=false -buildmode=exe \

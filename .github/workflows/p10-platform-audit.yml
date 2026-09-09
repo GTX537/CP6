@@ -60,7 +60,7 @@ jobs:
         run: |
           set -euo pipefail
           bash "$GITHUB_WORKSPACE/eng/p10/cosign/build.sh" "$RUNNER_TEMP/p10-tools"
-          printf '%s  %s\n' a2bcc99765d97f1b7db0cf22afc0d2dd523e94c250900e9d8e4710b2a4a35740 \
+          printf '%s  %s\n' 2d46e35a21ecbe8219ef5e1dd64b302c3208ddd0e21cf1353b21bd3ac9e510f2 \
             "$RUNNER_TEMP/p10-tools/cosign" | sha256sum --check --status
           chmod 0555 "$RUNNER_TEMP/p10-tools/cosign"
 

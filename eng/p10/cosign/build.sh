@@ -25,4 +25,4 @@ done
 cp -- "$profile/UPSTREAM-LICENSE" "$output/cosign.LICENSE"
 cp -- "$profile/NOTICE" "$output/cosign.NOTICE"
 chmod 0555 "$output/cosign" "$output/cosign-windows-amd64.exe"
-printf 'p10-cosign-build verified 3.1.3-cp6.1\n'
+printf 'p10-cosign-build verified 3.1.3-cp6.2\n'
