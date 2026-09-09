@@ -321,7 +321,7 @@ onMounted(async () => {
   // A same-origin profile request can use Strict cookies omitted from the initial cross-site navigation.
   if (!hasOidcReturn || new URLSearchParams(window.location.search).get('oidc_reauthenticate') === '1') return
   try {
-    const profile: any = await authApi.profile()
+    const profile: any = await authApi.profile({ passive: true })
     if (!profile.mustChangePassword) resumeOidcReturn()
   } catch { /* Continue the normal password/SSO/2FA login flow. */ }
 })
