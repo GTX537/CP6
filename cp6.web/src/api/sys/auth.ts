@@ -1,3 +1,4 @@
+import axios from 'axios'
 import http from '../http'
 
 // S 类认证加固 T9：认证端点（token 已改 httpOnly Cookie，不再走 body）
@@ -19,7 +20,13 @@ export const authApi = {
     return http.post('/auth/change-password', data)
   },
   // #3 SSO（T9）：登录态画像（落地屏拿菜单/用户信息；同站 XHR 携 cp6_at Cookie）
-  profile() {
+  profile(options?: { passive?: boolean }) {
+    // The login page may be anonymous. Its same-origin cookie probe must not
+    // refresh, redirect, or toast on 401 through the protected-request client.
+    if (options?.passive) {
+      return axios.get('/api/auth/profile', { withCredentials: true, timeout: 10000 })
+        .then(response => response.data)
+    }
     return http.get('/auth/profile')
   }
 }

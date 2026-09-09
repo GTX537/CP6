@@ -49,8 +49,9 @@ async function bootstrap() {
 
   app.mount('#app')
 
-  // 仅在已有登录态时预拉当前用户操作权。匿名访问登录页不触发 401
-  if (localStorage.getItem('cp6_authed') === '1') {
+  // The marker can outlive cookies after CRM-wide logout. Login must not preload
+  // protected workspace permissions; its passive profile probe owns SSO detection.
+  if (window.location.pathname !== '/login' && localStorage.getItem('cp6_authed') === '1') {
     usePermissionStore().loadMyActions()
   }
 }
