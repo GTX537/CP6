@@ -12,13 +12,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CP6.WebApi.Controllers.Sys;
 
-/// <summary>Opt-in confidential CRM authorization-code provider. Legacy JWT authentication remains separate.</summary>
+/// <summary>Opt-in CRM authorization-code and service-token provider. Legacy JWT authentication remains separate.</summary>
 [ApiController]
 [AllowAnonymous]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto crypto,
     ICrmOidcGrantStore grants, CrmOidcDirectory directory, IConfiguration configuration,
-    ITokenBlacklistService blacklist, IAuthCookieWriter cookies) : ControllerBase
+    ITokenBlacklistService blacklist, IAuthCookieWriter cookies,
+    CrmOidcServiceTokens? serviceTokens = null) : ControllerBase
 {
     [HttpGet("/.well-known/openid-configuration")]
     public IActionResult Discovery() => !options.Enabled ? NotFound() : Ok(new
@@ -30,8 +31,8 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
         end_session_endpoint = options.Issuer + "/connect/end-session",
         jwks_uri = options.Issuer + "/.well-known/jwks.json",
         response_types_supported = new[] { "code" }, response_modes_supported = new[] { "query" },
-        grant_types_supported = new[] { "authorization_code" }, subject_types_supported = new[] { "public" },
-        scopes_supported = new[] { "openid", "profile", "crm" },
+        grant_types_supported = new[] { "authorization_code", "client_credentials" }, subject_types_supported = new[] { "public" },
+        scopes_supported = new[] { "openid", "profile", "crm", "cp6.services" },
         id_token_signing_alg_values_supported = new[] { "RS256" },
         token_endpoint_auth_methods_supported = new[] { "client_secret_basic" },
         code_challenge_methods_supported = new[] { "S256" },
@@ -39,7 +40,17 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
     });
 
     [HttpGet("/.well-known/jwks.json")]
-    public IActionResult Jwks() => !options.Enabled ? NotFound() : Ok(crypto.Jwks());
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
+    public IActionResult Jwks()
+    {
+        if (!options.Enabled)
+        {
+            PreventCaching();
+            return NotFound();
+        }
+        Response.Headers.CacheControl = "public, max-age=60, must-revalidate";
+        return Ok(crypto.Jwks());
+    }
 
     [HttpGet("/connect/organizations/{slug}")]
     public async Task<IActionResult> Organization(string slug, [FromQuery(Name = "client_id")] string? clientId)
@@ -109,16 +120,42 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
     }
 
     [HttpPost("/connect/token")]
-    [Consumes("application/x-www-form-urlencoded")]
     [RequestSizeLimit(8192)]
     public async Task<IActionResult> Token()
     {
         if (!options.Enabled) return NotFound();
+        PreventCaching();
+        if (!Microsoft.Net.Http.Headers.MediaTypeHeaderValue.TryParse(Request.ContentType, out var contentType)
+            || !string.Equals(contentType.MediaType.Value, "application/x-www-form-urlencoded",
+                StringComparison.OrdinalIgnoreCase)) return OAuthError("invalid_request");
+        if (Request.ContentLength > 8192) return OAuthError("invalid_request");
+        IFormCollection form;
+        try
+        {
+            form = await Request.ReadFormAsync(Request.HttpContext.RequestAborted);
+        }
+        catch (Exception ex) when (ex is InvalidDataException or BadHttpRequestException)
+        {
+            return OAuthError("invalid_request");
+        }
+        if (form.Any(f => f.Value.Count != 1)) return OAuthError("invalid_request");
+        var grantType = form["grant_type"].ToString();
+        if (grantType.Length == 0) return OAuthError("invalid_request");
+        if (grantType == "client_credentials") return await IssueServiceTokenAsync(form);
+        if (grantType != "authorization_code") return OAuthError("unsupported_grant_type");
+        return await RedeemAuthorizationCodeAsync(form);
+    }
+
+    private async Task<IActionResult> RedeemAuthorizationCodeAsync(IFormCollection form)
+    {
         var client = ReadClient();
-        if (client == null) return OAuthError("invalid_client", 401);
-        var form = await Request.ReadFormAsync();
-        if (form.Any(f => f.Value.Count != 1) || form["grant_type"] != "authorization_code"
-            || form.ContainsKey("client_secret") || form.ContainsKey("client_id")
+        if (client == null)
+        {
+            if (serviceTokens?.Authenticate(Request.Headers.Authorization).IsAuthenticated == true)
+                return OAuthError("unauthorized_client");
+            return OAuthError("invalid_client", 401);
+        }
+        if (form.ContainsKey("client_secret") || form.ContainsKey("client_id")
             || !CrmOidcCrypto.ValidVerifier(form["code_verifier"].ToString())
             || !Regex.IsMatch(form["code"].ToString(), "^[A-Za-z0-9_-]{43}$")) return OAuthError("invalid_request");
         if (!client.RedirectUris.Contains(form["redirect_uri"].ToString(), StringComparer.Ordinal)) return OAuthError("invalid_grant");
@@ -138,6 +175,33 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
             new Claim("jti", Guid.NewGuid().ToString())]), expires, "JWT");
         return Ok(new { access_token = access, id_token = identity, token_type = "Bearer",
             expires_in = Math.Max(0, (int)(expires - DateTimeOffset.UtcNow).TotalSeconds), scope = "openid profile crm" });
+    }
+
+    private async Task<IActionResult> IssueServiceTokenAsync(IFormCollection form)
+    {
+        if (form.Keys.Any(key => key is not ("grant_type" or "scope")))
+            return OAuthError("invalid_request");
+        if (!IsServiceTransportAllowed()) return OAuthError("invalid_request");
+        var authentication = serviceTokens?.Authenticate(Request.Headers.Authorization);
+        if (authentication?.IsAuthenticated != true)
+        {
+            if (ReadClient() != null) return OAuthError("unauthorized_client");
+            return OAuthError("invalid_client", 401);
+        }
+        if (form["scope"].ToString() != "cp6.services") return OAuthError("invalid_scope");
+        var issue = await serviceTokens!.IssueAsync(authentication.Client!, Request.HttpContext.RequestAborted);
+        return issue.Status switch
+        {
+            CrmOidcServiceTokenIssueStatus.Success => Ok(new
+            {
+                access_token = issue.AccessToken,
+                token_type = "Bearer",
+                expires_in = issue.ExpiresIn,
+                scope = "cp6.services"
+            }),
+            CrmOidcServiceTokenIssueStatus.Unauthorized => OAuthError("unauthorized_client"),
+            _ => OAuthError("temporarily_unavailable", StatusCodes.Status503ServiceUnavailable)
+        };
     }
 
     [HttpGet("/connect/userinfo")]
@@ -166,7 +230,12 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
     {
         if (!options.Enabled) return NotFound();
         var client = ReadClient();
-        if (client == null) return OAuthError("invalid_client", 401);
+        if (client == null)
+        {
+            if (serviceTokens?.Authenticate(Request.Headers.Authorization).IsAuthenticated == true)
+                return OAuthError("unauthorized_client");
+            return OAuthError("invalid_client", 401);
+        }
         var form = await Request.ReadFormAsync();
         if (form.Any(q => q.Value.Count != 1)) return OAuthError("invalid_request");
         ClaimsPrincipal principal;
@@ -219,19 +288,10 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
 
     private CrmOidcClient? ReadClient()
     {
-        var value = Request.Headers.Authorization.ToString();
-        if (!value.StartsWith("Basic ", StringComparison.Ordinal) || value.Length > 2048) return null;
-        try
-        {
-            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(value[6..]));
-            var separator = decoded.IndexOf(':');
-            if (separator < 1) return null;
-            var id = Uri.UnescapeDataString(decoded[..separator].Replace('+', ' '));
-            var secret = Uri.UnescapeDataString(decoded[(separator + 1)..].Replace('+', ' '));
-            var client = options.Clients.SingleOrDefault(c => c.ClientId == id);
-            return client != null && CrmOidcCrypto.EqualsSecret(secret, client.SecretSha256) ? client : null;
-        }
-        catch (FormatException) { return null; }
+        if (!CrmOidcServiceTokens.TryDecodeBasic(Request.Headers.Authorization, out var id, out var secret))
+            return null;
+        var client = options.Clients.SingleOrDefault(c => c.ClientId == id);
+        return client != null && CrmOidcCrypto.EqualsSecret(secret, client.SecretSha256) ? client : null;
     }
 
     private async Task<(Sys_User? User, ClaimsPrincipal Principal)?> ReadSourceAsync()
@@ -281,9 +341,36 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
 
     private ObjectResult OAuthError(string error, int status = 400)
     {
-        Response.Headers.CacheControl = "no-store";
-        Response.Headers.Pragma = "no-cache";
+        PreventCaching();
         if (status == 401) Response.Headers.WWWAuthenticate = error == "invalid_client" ? "Basic" : "Bearer error=\"invalid_token\"";
         return StatusCode(status, new { error });
     }
+
+    private void PreventCaching()
+    {
+        Response.Headers.CacheControl = "no-store";
+        Response.Headers.Pragma = "no-cache";
+    }
+
+    private bool IsServiceTransportAllowed()
+    {
+        if (Request.IsHttps) return true;
+        if (options.AllowInsecureLoopback
+            && Uri.TryCreate(options.Issuer, UriKind.Absolute, out var issuer)
+            && issuer.Scheme == Uri.UriSchemeHttp && issuer.IsLoopback
+            && Uri.TryCreate("http://" + Request.Host, UriKind.Absolute, out var requestOrigin)
+            && requestOrigin.IsLoopback
+            && Request.HttpContext.Connection.RemoteIpAddress is { } loopbackPeer
+            && System.Net.IPAddress.IsLoopback(loopbackPeer)) return true;
+        var remote = Request.HttpContext.Connection.RemoteIpAddress;
+        if (remote == null) return false;
+        if (remote.IsIPv4MappedToIPv6) remote = remote.MapToIPv4();
+        if (!options.TrustedTokenProxyAddresses.Any(raw =>
+                CrmOidcOptions.TryParseTrustedTokenProxyAddress(raw, out var trusted)
+                && trusted.Equals(remote))) return false;
+        var forwardedProto = Request.Headers["X-Forwarded-Proto"];
+        return forwardedProto.Count == 1
+            && string.Equals(forwardedProto[0], "https", StringComparison.OrdinalIgnoreCase);
+    }
+
 }

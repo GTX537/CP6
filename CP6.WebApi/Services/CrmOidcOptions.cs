@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
@@ -9,9 +11,11 @@ public sealed class CrmOidcOptions
     public bool Enabled { get; set; }
     public string Issuer { get; set; } = "";
     public bool AllowInsecureLoopback { get; set; }
+    public List<string> TrustedTokenProxyAddresses { get; set; } = [];
     public string ActiveKeyId { get; set; } = "";
     public List<CrmOidcKey> Keys { get; set; } = [];
     public List<CrmOidcClient> Clients { get; set; } = [];
+    public List<CrmOidcServiceClient> ServiceClients { get; set; } = [];
     public List<CrmOidcOrganization> Organizations { get; set; } = [];
 
     public void Validate(bool development)
@@ -22,8 +26,12 @@ public sealed class CrmOidcOptions
             && (u.Scheme == "https" || development && AllowInsecureLoopback && u.IsLoopback && u.Scheme == "http");
         if (!ValidUri(Issuer) || new Uri(Issuer).AbsolutePath != "/" || new Uri(Issuer).Query != "" || Issuer.EndsWith('/'))
             throw new InvalidOperationException("CrmOidc:Issuer must be an HTTPS origin without a trailing slash.");
+        var trustedProxies = new HashSet<IPAddress>();
+        if (TrustedTokenProxyAddresses.Any(raw => !TryParseTrustedTokenProxyAddress(raw, out var address)
+                || !trustedProxies.Add(address)))
+            throw new InvalidOperationException("CrmOidc trusted token proxies must be unique full IP literals and cannot be unspecified addresses.");
         if (Keys.Count == 0 || Keys.Select(k => k.Kid).Distinct(StringComparer.Ordinal).Count() != Keys.Count
-            || Keys.Any(k => !Regex.IsMatch(k.Kid, "^[A-Za-z0-9_-]{1,80}$")) || Keys.Count(k => k.Kid == ActiveKeyId) != 1)
+            || Keys.Any(k => !Regex.IsMatch(k.Kid, "\\A[A-Za-z0-9_-]{1,80}\\z")) || Keys.Count(k => k.Kid == ActiveKeyId) != 1)
             throw new InvalidOperationException("CrmOidc requires a unique RSA key ring and active key id.");
         foreach (var key in Keys)
         {
@@ -41,6 +49,39 @@ public sealed class CrmOidcOptions
             || Organizations.Any(o => o.TenantId == Guid.Empty || !Regex.IsMatch(o.Slug, "^[a-z0-9][a-z0-9-]{0,62}$")
                 || !Regex.IsMatch(o.Region, "^[a-z0-9][a-z0-9-]{0,31}$")))
             throw new InvalidOperationException("CrmOidc organization mappings require unique real tenant IDs, slugs, and regions.");
+        var browserIds = Clients.Select(c => c.ClientId).ToHashSet(StringComparer.Ordinal);
+        if (ServiceClients.Select(c => c.ClientId).Distinct(StringComparer.Ordinal).Count() != ServiceClients.Count
+            || ServiceClients.Any(c => !Regex.IsMatch(c.ClientId, "\\A[A-Za-z0-9._-]{1,80}\\z")
+                || browserIds.Contains(c.ClientId)
+                || c.TenantId == Guid.Empty
+                || !Regex.IsMatch(c.SecretSha256, "\\A[A-Fa-f0-9]{64}\\z")
+                || c.AllowedScopes.Count != 1
+                || c.AllowedScopes[0] != "cp6.services"
+                || !Organizations.Any(o => o.TenantId == c.TenantId)))
+            throw new InvalidOperationException("CrmOidc service clients require unique safe IDs, SHA-256 secrets, one mapped tenant, and only cp6.services scope.");
+    }
+
+    internal static bool TryParseTrustedTokenProxyAddress(string raw, out IPAddress address)
+    {
+        address = IPAddress.None;
+        if (string.IsNullOrEmpty(raw) || raw != raw.Trim()) return false;
+        if (raw.Contains(':'))
+        {
+            if (Uri.CheckHostName(raw) != UriHostNameType.IPv6
+                || !IPAddress.TryParse(raw, out var parsed)) return false;
+            address = parsed;
+        }
+        else
+        {
+            var segments = raw.Split('.');
+            if (segments.Length != 4 || segments.Any(segment => segment.Length == 0
+                    || segment.Length > 1 && segment[0] == '0'
+                    || !byte.TryParse(segment, NumberStyles.None, CultureInfo.InvariantCulture, out _))
+                || !IPAddress.TryParse(raw, out var parsed)) return false;
+            address = parsed;
+        }
+        if (address.IsIPv4MappedToIPv6) address = address.MapToIPv4();
+        return !address.Equals(IPAddress.Any) && !address.Equals(IPAddress.IPv6Any);
     }
 }
 
@@ -55,6 +96,14 @@ public sealed class CrmOidcClient
     public string SecretSha256 { get; set; } = "";
     public List<string> RedirectUris { get; set; } = [];
     public List<string> PostLogoutRedirectUris { get; set; } = [];
+}
+public sealed class CrmOidcServiceClient
+{
+    public string ClientId { get; set; } = "";
+    public string SecretSha256 { get; set; } = "";
+    public Guid TenantId { get; set; }
+    public bool Enabled { get; set; }
+    public List<string> AllowedScopes { get; set; } = [];
 }
 public sealed class CrmOidcOrganization
 {
