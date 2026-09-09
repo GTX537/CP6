@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-09-09：C01 服务端已交付，真实消费者验收进行中
+
+- [PR #97](https://github.com/GTX537/CP6/pull/97) 的公开文档集合登记已正常合入 `d7a8b1699cc47ebcf3f8507dd1dc1592756cedfb`，七项 PR 检查及该 main 的五条工作流均成功。下方登记和本地验证条目是历史检查点。
+- [PR #96](https://github.com/GTX537/CP6/pull/96) 的最终 head `26be785313b5562a4cd9ca1aeb216c594cc8c70f` 通过七项检查，于 2026-09-09 正常合入远端 `main@22453814f7d465abbf48ff6cb03e794765e490b1`。远端祖先关系与合并前后完整 Git tree 相同已复核；服务客户端、真实单租户签发、JWKS 缓存及密钥轮换的生产者源码交付完成。
+- 合并提交的 [client-contract](https://github.com/GTX537/CP6/actions/runs/34395263850)、[SQL integration](https://github.com/GTX537/CP6/actions/runs/34395263357)、[PRD](https://github.com/GTX537/CP6/actions/runs/34395264036)、[public contract](https://github.com/GTX537/CP6/actions/runs/34395264338) 和 [Space integrity](https://github.com/GTX537/CP6/actions/runs/34395263393) 均成功，共五条工作流、六个作业；合并后本地身份回归再次 116/116、零失败/跳过。先前全后端 3059/0/19 和真实 SQL/HTTP 48/48 的边界与记录继续保留。
+- 真实 CP6 SQL/密码登录/PKCE、实际 CRM 客户端及固定已发布 Platform `0.8.0-alpha.2` 的跨仓诊断为 7 通过、4 失败、零跳过：ID Token 作 bearer、同一可信 RSA 签名但未知 kid、两种 audience 末尾多 `/` 均错误返回 200。另一个仅观察 CRM 正常缓存的真实元数据诊断为 6 通过、2 失败、零跳过：实际 JWKS 的 60 秒 must-revalidate 及随后的退避请求误用旧缓存；独立、明确标注的宽松缓存头用例在 899 秒接受、900 秒拒绝。两项诊断都属于修复前证据，不是 C01 验收成功。
+- C01 继续实施消费端严格令牌/缓存修复，并准备新的不可变 `0.10.2` 正式包及固定真实消费验收；必须取得完整轮换、缓存/刷新/最大年龄及失败关闭的源 SHA/包摘要绑定 summary 和零跳过 JUnit 后才关闭 C01，再推进 C02/C03。C04A/B 保留迁移前置条件，本次不表示生产部署、生产密钥轮换或新包已发布。
+
 ## 2026-09-09：C01 生产者本地验证通过，待远端交付
 
 - 按用户确认的 [C01 设计](../superpowers/specs/2026-09-09-c01-identity-design.md) 实现独立服务客户端、真实单租户绑定、CP6.Services 签发、JWKS 60 秒缓存和签名密钥轮换。116 项身份回归与 48 项真实 SQL/HTTP 测试全部通过、零跳过；全后端 3059 通过、0 失败、19 个既有跳过单独记录。生产者契约和独立质量审查通过，正常 PR/main 交付继续推进；[运行手册与验证记录](../crm/C01-SERVICE-IDENTITY.md) 保留准确边界。
