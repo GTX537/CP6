@@ -71,3 +71,13 @@ Discovery 增加已支持的 client_credentials 与服务 scope，保持现有�
 4. 按依赖为 C02、C03 分别细化事件/业务契约。C04A/B 保持前置条件门禁。
 
 本分支仅保存设计及四份状态台账。设计审阅前不合并为已接受决策；尚未新增运行代码，也没有执行或通过新能力测试。
+
+## 设计阶段基线验证
+
+2026-09-09 在本设计分支、功能代码仍为上述 main 基线时运行：
+
+```powershell
+dotnet test CP6.Tests/CP6.Tests.csproj --filter "FullyQualifiedName~CrmOidcBridgeTests|FullyQualifiedName~CrmBrowserSessionTests" --logger "trx;LogFileName=c01-baseline.trx" --results-directory .artifacts/c01-baseline --verbosity quiet
+```
+
+退出码 0；38 项通过、0 失败、0 跳过。覆盖现有 RSA 验证、授权码/PKCE、真实状态重检逻辑、组织绑定及浏览器会话行为。这是现有单元测试基线；未运行真实 SQL 集成、实际 HTTP 跨仓消费者或新增服务签发测试，不能用于关闭 C01。
