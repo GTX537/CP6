@@ -1,0 +1,534 @@
+{
+  "format": "CP6.P10.CrossRepositoryAuditDecision/v1",
+  "decision": "Frozen / Consumable",
+  "state": "Frozen",
+  "deployable": false,
+  "decidedAtUtc": "2026-09-09T06:23:12.414Z",
+  "previousEntrySha256": null,
+  "releaseTag": "v0.10.1-p10.1",
+  "scope": "P10 S00-S06 non-deployable Platform reference candidate only",
+  "integrationRequirement": "Effective as the public project decision only after this entry and all four ledgers are normally merged and required exact-main checks succeed. No predicted commit or check conclusion is recorded.",
+  "candidate": {
+    "sha256": "bc3cae8ede16e26a909519ec250fbdf5989b4aa4edfcd6b39397e0958a59ea4f",
+    "byteLength": 9573,
+    "storageAuthority": "cp6-release-r2-v1",
+    "key": "objects/sha256/bc/bc3cae8ede16e26a909519ec250fbdf5989b4aa4edfcd6b39397e0958a59ea4f/platform-release-candidate.v1.json",
+    "locatorKey": "candidates/platform/v0.10.1-p10.1/candidate-locator.v1.json",
+    "locatorSha256": "114b6016b00679363e2c4964d67351c58f6d03f8ffdf562434ed88e7b53dbba3",
+    "bundleSha256": "05cead8277ab2dec00c623f1f1dfa2db70534aed98b827a368cfd1ef6ab58cb4"
+  },
+  "verification": {
+    "state": "VerifiedNonDeployable",
+    "candidateAccepted": true,
+    "deployable": false,
+    "verifiedAtUtc": "2026-09-09T06:17:34.237Z",
+    "resultSha256": "f1b4c563d1b0caf042a7dc130803c38ba79ca33e2b6f1b8916c58b497c191f90",
+    "releaseGateResultSha256": "d00f24a81b1f3eab3f0f0dd4167705b8b4ba9f0f0c543504b9834295e64101b5",
+    "gateCount": 19
+  },
+  "image": {
+    "repository": "ghcr.io/gtx537/cp6-p10-verifier",
+    "digest": "sha256:e743e911380a4ed6732685ea33694b6ffb910051c20621388b6903386947296b",
+    "source": "f992adc3295722a0edae151c454665a4be4b689b",
+    "buildOnceRunId": 34310410625,
+    "scanRuleCounts": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 3,
+      "LOW": 4,
+      "UNKNOWN": 3
+    },
+    "cosign": "3.1.3-cp6.2"
+  },
+  "platform": {
+    "source": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+    "version": "0.10.1",
+    "formalPublication": {
+      "commitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+      "environment": "p10-formal-release",
+      "repository": "GTX537/CP6.Platform",
+      "runAttempt": 1,
+      "runId": 34126521193,
+      "workflowFileSha": "01c94e11213231ef6f73d8f9a9cccd9f1563e185",
+      "workflowPath": ".github/workflows/p10-formal-packages.yml"
+    },
+    "publicationRecordSha256": "8b5fc47fd77902a3433d61b4cf181b67ef61ee994b60ea8286a690ab5084c961",
+    "packages": [
+      {
+        "authorSignedPackageSha256": "1319912dac5c3e12a5bb4885e64d92f43a6057e96d2f6c11c05db97b9fc7f1f7",
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Abstractions/0.10.1",
+        "feedTransformation": "BytePreserving",
+        "packageId": "CP6.Platform.Abstractions",
+        "publishedPackageSha256": "1319912dac5c3e12a5bb4885e64d92f43a6057e96d2f6c11c05db97b9fc7f1f7",
+        "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+        "sourceGitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+        "timestampCertificateChainSha256": [
+          "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+          "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+          "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+          "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
+        ],
+        "timestampPolicy": "Rfc3161Required",
+        "timestampPolicyOid": "2.16.840.1.114412.7.1",
+        "version": "0.10.1"
+      },
+      {
+        "authorSignedPackageSha256": "2949e2149ca2c98fa1c935b89f96ce2dcf388186daa038f8a20bbe1d57f02b71",
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.AspNetCore/0.10.1",
+        "feedTransformation": "BytePreserving",
+        "packageId": "CP6.Platform.AspNetCore",
+        "publishedPackageSha256": "2949e2149ca2c98fa1c935b89f96ce2dcf388186daa038f8a20bbe1d57f02b71",
+        "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+        "sourceGitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+        "timestampCertificateChainSha256": [
+          "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+          "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+          "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+          "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
+        ],
+        "timestampPolicy": "Rfc3161Required",
+        "timestampPolicyOid": "2.16.840.1.114412.7.1",
+        "version": "0.10.1"
+      },
+      {
+        "authorSignedPackageSha256": "e2c63dd160fe189db1fbc9090da38cab1d67bd599edd1333afc992a93f4110eb",
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Contracts/0.10.1",
+        "feedTransformation": "BytePreserving",
+        "packageId": "CP6.Platform.Contracts",
+        "publishedPackageSha256": "e2c63dd160fe189db1fbc9090da38cab1d67bd599edd1333afc992a93f4110eb",
+        "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+        "sourceGitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+        "timestampCertificateChainSha256": [
+          "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+          "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+          "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+          "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
+        ],
+        "timestampPolicy": "Rfc3161Required",
+        "timestampPolicyOid": "2.16.840.1.114412.7.1",
+        "version": "0.10.1"
+      },
+      {
+        "authorSignedPackageSha256": "a218d220bd42ada3928e45a6245558b7f0d3b96fd4ea3d9173886bbe7c91e6c0",
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Deployment/0.10.1",
+        "feedTransformation": "BytePreserving",
+        "packageId": "CP6.Platform.Deployment",
+        "publishedPackageSha256": "a218d220bd42ada3928e45a6245558b7f0d3b96fd4ea3d9173886bbe7c91e6c0",
+        "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+        "sourceGitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+        "timestampCertificateChainSha256": [
+          "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+          "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+          "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+          "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
+        ],
+        "timestampPolicy": "Rfc3161Required",
+        "timestampPolicyOid": "2.16.840.1.114412.7.1",
+        "version": "0.10.1"
+      },
+      {
+        "authorSignedPackageSha256": "90a341401f9058be2997e40f61c2dd5ad0fc4717c8b63672abc9009118fc5a71",
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.EntityFramework/0.10.1",
+        "feedTransformation": "BytePreserving",
+        "packageId": "CP6.Platform.EntityFramework",
+        "publishedPackageSha256": "90a341401f9058be2997e40f61c2dd5ad0fc4717c8b63672abc9009118fc5a71",
+        "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+        "sourceGitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+        "timestampCertificateChainSha256": [
+          "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+          "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+          "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+          "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
+        ],
+        "timestampPolicy": "Rfc3161Required",
+        "timestampPolicyOid": "2.16.840.1.114412.7.1",
+        "version": "0.10.1"
+      },
+      {
+        "authorSignedPackageSha256": "7ffa23acf9c1623cbf520d8dd7fdff104a77abf07832bd4e89102092ab9f4558",
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Messaging/0.10.1",
+        "feedTransformation": "BytePreserving",
+        "packageId": "CP6.Platform.Messaging",
+        "publishedPackageSha256": "7ffa23acf9c1623cbf520d8dd7fdff104a77abf07832bd4e89102092ab9f4558",
+        "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+        "sourceGitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+        "timestampCertificateChainSha256": [
+          "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+          "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+          "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+          "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
+        ],
+        "timestampPolicy": "Rfc3161Required",
+        "timestampPolicyOid": "2.16.840.1.114412.7.1",
+        "version": "0.10.1"
+      },
+      {
+        "authorSignedPackageSha256": "afe85eabe78965e0d7967f3f2cf54574c8adcb02141523aecd8a8bafc6d700e0",
+        "feedIdentity": "https://nuget.pkg.github.com/GTX537/index.json#CP6.Platform.Release/0.10.1",
+        "feedTransformation": "BytePreserving",
+        "packageId": "CP6.Platform.Release",
+        "publishedPackageSha256": "afe85eabe78965e0d7967f3f2cf54574c8adcb02141523aecd8a8bafc6d700e0",
+        "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+        "sourceGitSha": "3ff27e26962dcfd722887afb80a4306010dd9ee1",
+        "timestampCertificateChainSha256": [
+          "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+          "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+          "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+          "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c"
+        ],
+        "timestampPolicy": "Rfc3161Required",
+        "timestampPolicyOid": "2.16.840.1.114412.7.1",
+        "version": "0.10.1"
+      }
+    ],
+    "trust": {
+      "internallyTrusted": true,
+      "policySha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+      "policyVersion": 1,
+      "publicCaTrusted": false,
+      "signerFingerprint": "1debfb8ff286ea51192b7f259d1ac823c105c4188eac40148598d37f0e20ff0d",
+      "spkiKeyId": "sha256:27ecc2239a1b3c2368610d3602aadc5260b44e26baffe896b9a2449662c696d6",
+      "timestampPolicy": "Rfc3161Required",
+      "timestampService": "http://timestamp.digicert.com",
+      "trustModel": "PinnedSelfSigned"
+    },
+    "sourcePr": 51,
+    "sourceMainRunId": 34125176309,
+    "evidenceMain": "808a201f0cf6f877f8ca9c804e304585a29c446a",
+    "evidenceMainRunId": 34132548893
+  },
+  "crm": {
+    "source": "a31ca0e323418f7e4108cc6220c0f5fa132e7fc2",
+    "archiveSource": "bb1fd8b4f250fabde4476b6a450435de2d07c03f",
+    "indexSha256": "1332bf21e4253112d457f86cdc0cba829fc58f20c3914fa738dd992d917e2914",
+    "publicEvidenceSha256": "775d5661d563ad85f3cb06e4fba49059ef56b9d9c95ef99f40bfe4bb869fa4e4",
+    "deliveries": [
+      {
+        "pr": 46,
+        "prRun": 34133944140,
+        "prConclusion": "success",
+        "main": {
+          "commitSha": "a31ca0e323418f7e4108cc6220c0f5fa132e7fc2",
+          "environment": "none",
+          "repository": "GTX537/CP6.CRM",
+          "runAttempt": 1,
+          "runId": 34134695003,
+          "workflowFileSha": "924014cb1231824a9b57ab82a6f9638f76329919",
+          "workflowPath": ".github/workflows/crm-validation.yml"
+        },
+        "mainConclusion": "success",
+        "jobCount": 5
+      },
+      {
+        "pr": 47,
+        "prRun": 34137355910,
+        "prConclusion": "success",
+        "main": {
+          "commitSha": "bb1fd8b4f250fabde4476b6a450435de2d07c03f",
+          "environment": "none",
+          "repository": "GTX537/CP6.CRM",
+          "runAttempt": 1,
+          "runId": 34138142163,
+          "workflowFileSha": "924014cb1231824a9b57ab82a6f9638f76329919",
+          "workflowPath": ".github/workflows/crm-validation.yml"
+        },
+        "mainConclusion": "success",
+        "jobCount": 5
+      }
+    ],
+    "evidenceBasis": "Sanitized RequiredPublic evidence from authenticated hosted validation; private CRM raw logs and credentials are not retained here."
+  },
+  "cp6": {
+    "source": "f992adc3295722a0edae151c454665a4be4b689b",
+    "pr": 93,
+    "prHead": "90ecf0bb74d16fcf88709db87af33bb88487fca3",
+    "prSuccessfulChecks": 7,
+    "mainSuccessfulWorkflowRuns": [
+      34309409907,
+      34309409860,
+      34309409932,
+      34309409882,
+      34309409925
+    ],
+    "hostedFullTests": {
+      "passed": 1651,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "trust": {
+    "policyVersion": 1,
+    "evidencePolicyVersion": 1,
+    "policySha256": "0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9",
+    "locatorKeyId": "sha256:9c0fd05b3159651cc2e9138555f32387988c6961889ee00211139e710f1febaa",
+    "ociKeyId": "sha256:eb623d784fc55294e942fa49062477769a34943d5997fdbdd483ad0fb0103c21"
+  },
+  "completedWorkflows": [
+    {
+      "id": 34310410625,
+      "attempt": 1,
+      "source": "f992adc3295722a0edae151c454665a4be4b689b",
+      "path": ".github/workflows/p10-platform-validation.yml",
+      "conclusion": "success",
+      "status": "completed",
+      "startedAtUtc": "2026-09-09T04:17:46Z",
+      "updatedAtUtc": "2026-09-09T04:29:28Z",
+      "workflowFileSha": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "jobs": [
+        {
+          "id": 102335730781,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-09T04:19:42Z",
+          "completed_at": "2026-09-09T04:29:27Z"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 10088398250,
+          "name": "p10-s06-validation-f992adc3295722a0edae151c454665a4be4b689b-34310410625-1",
+          "digest": "sha256:abd1aadbfdd5ee1a5d200f66268852946e29029ed4421d082dfcda1b384b2874",
+          "expired": false,
+          "expires_at": "2026-12-08T04:17:47Z"
+        }
+      ]
+    },
+    {
+      "id": 34312917625,
+      "attempt": 3,
+      "source": "f992adc3295722a0edae151c454665a4be4b689b",
+      "path": ".github/workflows/p10-platform-candidate.yml",
+      "conclusion": "success",
+      "status": "completed",
+      "startedAtUtc": "2026-09-09T05:58:08Z",
+      "updatedAtUtc": "2026-09-09T06:06:53Z",
+      "workflowFileSha": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "jobs": [
+        {
+          "id": 102355271120,
+          "name": "publish",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-09T05:59:46Z",
+          "completed_at": "2026-09-09T06:06:52Z"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 10090617177,
+          "name": "p10-s06-intent-f992adc3295722a0edae151c454665a4be4b689b-34312917625-3",
+          "digest": "sha256:5c372e2bc02811a24742018ee60f2cff10ba30d6837099013956ab64d00cd601",
+          "expired": false,
+          "expires_at": "2026-12-08T05:58:10Z"
+        }
+      ]
+    },
+    {
+      "id": 34317792175,
+      "attempt": 1,
+      "source": "f992adc3295722a0edae151c454665a4be4b689b",
+      "path": ".github/workflows/p10-platform-audit.yml",
+      "conclusion": "success",
+      "status": "completed",
+      "startedAtUtc": "2026-09-09T06:08:52Z",
+      "updatedAtUtc": "2026-09-09T06:17:39Z",
+      "workflowFileSha": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "jobs": [
+        {
+          "id": 102357568213,
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-09T06:09:53Z",
+          "completed_at": "2026-09-09T06:17:38Z"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 10090905168,
+          "name": "p10-s06-audit-f992adc3295722a0edae151c454665a4be4b689b-34317792175-1",
+          "digest": "sha256:a7481118f8785724be1ae0a190b23e03b76fc68fef593a976c70a396179b45a0",
+          "expired": false,
+          "expires_at": "2026-12-08T06:08:53Z"
+        }
+      ]
+    }
+  ],
+  "retainedFiles": [
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/archives/10088398250.zip",
+      "sha256": "abd1aadbfdd5ee1a5d200f66268852946e29029ed4421d082dfcda1b384b2874",
+      "byteLength": 825333
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/archives/10090617177.zip",
+      "sha256": "5c372e2bc02811a24742018ee60f2cff10ba30d6837099013956ab64d00cd601",
+      "byteLength": 1286
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/archives/10090905168.zip",
+      "sha256": "a7481118f8785724be1ae0a190b23e03b76fc68fef593a976c70a396179b45a0",
+      "byteLength": 539
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/audit/f1b4c563d1b0caf042a7dc130803c38ba79ca33e2b6f1b8916c58b497c191f90.json",
+      "sha256": "f1b4c563d1b0caf042a7dc130803c38ba79ca33e2b6f1b8916c58b497c191f90",
+      "byteLength": 287
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/publication/locator.json",
+      "sha256": "114b6016b00679363e2c4964d67351c58f6d03f8ffdf562434ed88e7b53dbba3",
+      "byteLength": 631
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/publication/locator.sigstore.json",
+      "sha256": "05cead8277ab2dec00c623f1f1dfa2db70534aed98b827a368cfd1ef6ab58cb4",
+      "byteLength": 383
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/artifact-index.json",
+      "sha256": "72acdfe3df67779a4b8706b0303f7afe9e2621fb1660d1e70d361d3f466fb60b",
+      "byteLength": 4603
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/0030568ad3568fb866088b913bbc75f73aac2b90e94278f729a7f2daa931b759",
+      "sha256": "0030568ad3568fb866088b913bbc75f73aac2b90e94278f729a7f2daa931b759",
+      "byteLength": 3101
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/0a4b27ac0493fde6a8f9c7449131c1878efb158d1a1e4488774c2553a864ec88",
+      "sha256": "0a4b27ac0493fde6a8f9c7449131c1878efb158d1a1e4488774c2553a864ec88",
+      "byteLength": 2722
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9",
+      "sha256": "0a6e72951c196e612a593cc8831e294bb538c9ba8a79eada4538771a3811d8e9",
+      "byteLength": 1339
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/1aa088e58ac5938b04af7d9ded3d0d6e37d95472a8c8345be4cfcf5d7eccbe7f",
+      "sha256": "1aa088e58ac5938b04af7d9ded3d0d6e37d95472a8c8345be4cfcf5d7eccbe7f",
+      "byteLength": 58588
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/453a06ebfbe4d61618ccafc483517a6941602de544aedeef2f91729fb24f0add",
+      "sha256": "453a06ebfbe4d61618ccafc483517a6941602de544aedeef2f91729fb24f0add",
+      "byteLength": 2878
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/6885eee1db5075faeb1a321684f579ef853166a32db8af1cf861c34c79ec64a9",
+      "sha256": "6885eee1db5075faeb1a321684f579ef853166a32db8af1cf861c34c79ec64a9",
+      "byteLength": 4132
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/6ea6ddda26bfb800a55b3d8806ef978fd8cec6869c3c1acf05ffd996474f15d8",
+      "sha256": "6ea6ddda26bfb800a55b3d8806ef978fd8cec6869c3c1acf05ffd996474f15d8",
+      "byteLength": 2742
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/775d5661d563ad85f3cb06e4fba49059ef56b9d9c95ef99f40bfe4bb869fa4e4",
+      "sha256": "775d5661d563ad85f3cb06e4fba49059ef56b9d9c95ef99f40bfe4bb869fa4e4",
+      "byteLength": 26343
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/7ab6ec73a6f68ce08da13068c5afde7b02ac454f2a0e135832b873ff21a452af",
+      "sha256": "7ab6ec73a6f68ce08da13068c5afde7b02ac454f2a0e135832b873ff21a452af",
+      "byteLength": 1245
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/8b5fc47fd77902a3433d61b4cf181b67ef61ee994b60ea8286a690ab5084c961",
+      "sha256": "8b5fc47fd77902a3433d61b4cf181b67ef61ee994b60ea8286a690ab5084c961",
+      "byteLength": 7550
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/9498d1325ae1239d8b1c4a0b469c47b0d23c98cb8c2cd4e8b02e2e0fbc13c0e8",
+      "sha256": "9498d1325ae1239d8b1c4a0b469c47b0d23c98cb8c2cd4e8b02e2e0fbc13c0e8",
+      "byteLength": 8668
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/a5b2250d5575098e8f7a209d1433e41d127d9ad6c0a5663d99378a57e4f3b4b9",
+      "sha256": "a5b2250d5575098e8f7a209d1433e41d127d9ad6c0a5663d99378a57e4f3b4b9",
+      "byteLength": 1447
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/a857764ad2607ef5d2a67fcc4838897a0ef514eca29952d661b7fd32ca112d94",
+      "sha256": "a857764ad2607ef5d2a67fcc4838897a0ef514eca29952d661b7fd32ca112d94",
+      "byteLength": 944
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/b9cf0735e39804e7f885c0c16fa37de90bfc8e0899ca0278cec532256b6c0179",
+      "sha256": "b9cf0735e39804e7f885c0c16fa37de90bfc8e0899ca0278cec532256b6c0179",
+      "byteLength": 673359
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/c1bda41ab6cf137b2c9757ef91baedf2adf28f8bd144e86bb9cc3d96fea95637",
+      "sha256": "c1bda41ab6cf137b2c9757ef91baedf2adf28f8bd144e86bb9cc3d96fea95637",
+      "byteLength": 1230
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/c599d2840562da57381e968799def2dc6034ee310000b2a8680005e218f27889",
+      "sha256": "c599d2840562da57381e968799def2dc6034ee310000b2a8680005e218f27889",
+      "byteLength": 2719
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/c5c2a9e249dffa1f1784b2f5cd2ddc765b720eb9a3d1bdff6218390983b7209b",
+      "sha256": "c5c2a9e249dffa1f1784b2f5cd2ddc765b720eb9a3d1bdff6218390983b7209b",
+      "byteLength": 2412
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/c6682fc137daab8bcf60277a6d144101b7a14dbf580f477e842080e9d749fbf7",
+      "sha256": "c6682fc137daab8bcf60277a6d144101b7a14dbf580f477e842080e9d749fbf7",
+      "byteLength": 1219
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/c884158c5e91ba70cdacddea9768a531facf47334badec76f9df3aa465396415",
+      "sha256": "c884158c5e91ba70cdacddea9768a531facf47334badec76f9df3aa465396415",
+      "byteLength": 1233
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/d00f24a81b1f3eab3f0f0dd4167705b8b4ba9f0f0c543504b9834295e64101b5",
+      "sha256": "d00f24a81b1f3eab3f0f0dd4167705b8b4ba9f0f0c543504b9834295e64101b5",
+      "byteLength": 7806
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+      "sha256": "da359e3a8e9be2220541c53613d2da277cb2bb9a22a8770df30c808a033b953f",
+      "byteLength": 1035
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/f0f73300267b6003f3d8e233e1f3ea453eabf5cdbd367e398a38213b77aa68bb",
+      "sha256": "f0f73300267b6003f3d8e233e1f3ea453eabf5cdbd367e398a38213b77aa68bb",
+      "byteLength": 1219
+    },
+    {
+      "path": "docs/devops/p10-audit/evidence/v0.10.1-p10.1/validation/objects/f5a8050efc6c3ac41521588872846e359f64270a52358b4ef47387ce223146ed",
+      "sha256": "f5a8050efc6c3ac41521588872846e359f64270a52358b4ef47387ce223146ed",
+      "byteLength": 1219
+    }
+  ],
+  "retentionBoundary": "Raw downloaded archives and their public contents are retained byte-for-byte in Git. The candidate payload remains under its signed content-addressed R2 reference; this archive is not a substitute discovery endpoint or an offline/current-trust acceptance token. Ordinary consumers must continue live verification.",
+  "failedPublicationAttempts": [
+    {
+      "attempt": 1,
+      "error": "r2-credential-format",
+      "phase": "prepare-publication",
+      "locatorCommitted": false
+    },
+    {
+      "attempt": 2,
+      "error": "r2-credential-format",
+      "phase": "store-publication-bundle",
+      "locatorCommitted": false,
+      "orphanContentObjectsPreserved": true
+    }
+  ],
+  "notAuthorized": [
+    "System release",
+    "DEV/UAT/PROD deployment",
+    "database migration",
+    "CRM runtime activation",
+    "Portal identity fabrication",
+    "trust or approval weakening"
+  ]
+}
