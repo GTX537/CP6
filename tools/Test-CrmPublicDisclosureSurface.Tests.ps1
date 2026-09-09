@@ -26,6 +26,10 @@ $firstSliceChanges = [ordered]@{
     'docs/crm/README.md' = '2a104b73b4d420456b230e0f4e5681c7793adbbcb56b58cc13dcd533d289391c'
     'docs/crm/CRM-OIDC-FIRST-SLICE.md' = '1571de9422a0d6b0bd949770bc889ab113c84b2fbf208fe317eae70fe5c05356'
 }
+$c01Changes = [ordered]@{
+    'docs/crm/CRM-OIDC-FIRST-SLICE.md' = 'f8f25b5f741d5a499f17b3d7ff17b881c634c9d39d6b4c32ddce903a0b2c37de'
+    'docs/crm/C01-SERVICE-IDENTITY.md' = '1df7019a31b0fb5c6355df476426ffaaba09af704e39dd7d4fd9a51d5ab7d42b'
+}
 $passed = 0
 
 function Copy-Surface([System.Collections.IDictionary] $Source) {
@@ -47,7 +51,13 @@ function Assert-Surface([string] $Name, [System.Collections.IDictionary] $Actual
 
 $firstSlice = Copy-Surface $historical
 foreach ($entry in $firstSliceChanges.GetEnumerator()) { $firstSlice[$entry.Key] = $entry.Value }
-$fixtures = [ordered]@{ 'historical-20260826' = $historical; 'first-slice-20260908' = $firstSlice }
+$c01 = Copy-Surface $firstSlice
+foreach ($entry in $c01Changes.GetEnumerator()) { $c01[$entry.Key] = $entry.Value }
+$fixtures = [ordered]@{
+    'historical-20260826' = $historical
+    'first-slice-20260908' = $firstSlice
+    'c01-service-identity-20260909' = $c01
+}
 foreach ($fixture in $fixtures.GetEnumerator()) {
     Assert-Surface "complete $($fixture.Key)" $fixture.Value $fixture.Key
     foreach ($path in @($fixture.Value.Keys)) {
@@ -83,6 +93,71 @@ foreach ($mask in 1..14) {
     Assert-Surface "partial first-slice combination $mask" $mixed ''
 }
 
+# Both C01 changes form one reviewed disclosure set. Either change alone must fail.
+$c01ChangedPaths = @($c01Changes.Keys)
+foreach ($mask in 1..2) {
+    $mixed = Copy-Surface $firstSlice
+    for ($index = 0; $index -lt $c01ChangedPaths.Count; $index++) {
+        if (($mask -band (1 -shl $index)) -ne 0) {
+            $mixed[$c01ChangedPaths[$index]] = $c01Changes[$c01ChangedPaths[$index]]
+        }
+    }
+    Assert-Surface "partial C01 service identity combination $mask" $mixed ''
+}
+
+# Removing the new document and restoring the prior OIDC digest is the complete,
+# still-registered first-slice set rather than a rejected partial C01 surface.
+$restoredFirstSlice = Copy-Surface $c01
+$restoredFirstSlice.Remove('docs/crm/C01-SERVICE-IDENTITY.md')
+$restoredFirstSlice['docs/crm/CRM-OIDC-FIRST-SLICE.md'] = $firstSliceChanges['docs/crm/CRM-OIDC-FIRST-SLICE.md']
+Assert-Surface 'reverting both C01 changes restores the first-slice set' $restoredFirstSlice 'first-slice-20260908'
+
+# Exhaust the remaining cross-version combinations across the three historical/
+# first-slice core digests, the absent/first-slice/C01 OIDC states, and the C01 file.
+$firstSliceCorePaths = @(
+    'docs/crm/CRM-V1-PRD.md',
+    'docs/crm/CRM-V1-EXECUTABLE-SPEC.md',
+    'docs/crm/README.md'
+)
+$crossMixes = 0
+foreach ($coreMask in 0..7) {
+    foreach ($oidcState in 0..2) {
+        foreach ($includeC01File in @($false, $true)) {
+            $mixed = Copy-Surface $historical
+            for ($index = 0; $index -lt $firstSliceCorePaths.Count; $index++) {
+                if (($coreMask -band (1 -shl $index)) -ne 0) {
+                    $path = $firstSliceCorePaths[$index]
+                    $mixed[$path] = $firstSliceChanges[$path]
+                }
+            }
+            if ($oidcState -eq 1) {
+                $mixed['docs/crm/CRM-OIDC-FIRST-SLICE.md'] = $firstSliceChanges['docs/crm/CRM-OIDC-FIRST-SLICE.md']
+            }
+            elseif ($oidcState -eq 2) {
+                $mixed['docs/crm/CRM-OIDC-FIRST-SLICE.md'] = $c01Changes['docs/crm/CRM-OIDC-FIRST-SLICE.md']
+            }
+            if ($includeC01File) {
+                $mixed['docs/crm/C01-SERVICE-IDENTITY.md'] = $c01Changes['docs/crm/C01-SERVICE-IDENTITY.md']
+            }
+
+            $isRegistered =
+                ($coreMask -eq 0 -and $oidcState -eq 0 -and -not $includeC01File) -or
+                ($coreMask -eq 7 -and $oidcState -eq 1 -and -not $includeC01File) -or
+                ($coreMask -eq 7 -and $oidcState -eq 2 -and $includeC01File)
+            $coveredByFirstSliceMixtures = -not $includeC01File -and $oidcState -le 1
+            $coveredByC01Partials = $coreMask -eq 7 -and (
+                ($oidcState -eq 1 -and $includeC01File) -or
+                ($oidcState -eq 2 -and -not $includeC01File)
+            )
+            if ($isRegistered -or $coveredByFirstSliceMixtures -or $coveredByC01Partials) { continue }
+
+            Assert-Surface "cross-version mix core=$coreMask oidc=$oidcState c01=$includeC01File" $mixed ''
+            $crossMixes++
+        }
+    }
+}
+if ($crossMixes -ne 29) { throw "Expected 29 remaining cross-version mixtures; tested $crossMixes." }
+
 $workflowPath = Join-Path $PSScriptRoot '../.github/workflows/crm-v1-prd.yml'
 $workflowText = [IO.File]::ReadAllText($workflowPath)
 $pushBlock = [regex]::Match($workflowText, '(?ms)^  push:\r?\n(?<body>.*?)(?=^\S|\z)').Groups['body'].Value
@@ -93,5 +168,5 @@ foreach ($path in @('tools/CrmPublicDisclosureSurface.psm1', 'tools/Test-CrmPubl
     $passed++
 }
 
-if ($passed -ne 74) { throw "Expected 74 disclosure set/trigger checks; passed $passed." }
-Write-Host "CRM public disclosure set/trigger tests passed: $passed/74"
+if ($passed -ne 138) { throw "Expected 138 disclosure set/trigger checks; passed $passed." }
+Write-Host "CRM public disclosure set/trigger tests passed: $passed/138"
