@@ -76,6 +76,41 @@ public sealed class S06WorkflowWiringTests
     }
 
     [Fact]
+    public void Validation_logs_native_scan_phases_and_blocking_rule_ids_before_the_unchanged_gate()
+    {
+        var scan = Step(Read("validation"), "scan");
+        foreach (var phase in new[] { "syft", "trivy", "severity-check", "passed" })
+            Assert.Contains("p10-native-scan phase=" + phase, scan);
+        Assert.Contains("jq --version", scan);
+        Assert.Contains("trivy\" --version", scan);
+        Assert.Contains("severityCounts:", scan);
+        Assert.Contains("blockingRules:", scan);
+        Assert.True(scan.IndexOf("blockingRules:", StringComparison.Ordinal) < scan.IndexOf("jq -e 'all", StringComparison.Ordinal));
+        Assert.Contains(".properties.tags[2] != \"HIGH\" and .properties.tags[2] != \"CRITICAL\"", scan);
+        Assert.DoesNotContain("--ignore", scan);
+        Assert.DoesNotContain("--skip", scan);
+    }
+
+    [Fact]
+    public void Failed_scan_retains_only_native_reports_as_non_handoff_diagnostics()
+    {
+        var text = Read("validation");
+        var diagnostics = Step(text, "scan_diagnostics");
+        Assert.Contains("if: ${{ failure() && steps.scan.outcome == 'failure' }}", diagnostics);
+        Assert.Contains("name: p10-scan-diagnostics-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}", diagnostics);
+        Assert.Contains("${{ runner.temp }}/p10-image-inputs/spdx.json", diagnostics);
+        Assert.Contains("${{ runner.temp }}/p10-image-inputs/sarif.json", diagnostics);
+        Assert.Equal(2, Regex.Matches(diagnostics, @"\$\{\{ runner\.temp \}\}/").Count);
+        Assert.Contains("overwrite: false", diagnostics);
+        Assert.Contains("retention-days: 7", diagnostics);
+        Assert.DoesNotContain("secrets.", diagnostics);
+        Assert.DoesNotContain("p10-stage", diagnostics);
+        Assert.DoesNotContain("p10-s06-validation-", diagnostics);
+        Assert.DoesNotContain("continue-on-error", text);
+        Ordered(text, "scan", "scan_diagnostics", "sign", "finalize", "artifact");
+    }
+
+    [Fact]
     public void Validation_secrets_are_limited_to_CRM_reads_and_the_separate_OCI_signing_step()
     {
         var text = Read("validation");

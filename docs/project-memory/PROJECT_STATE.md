@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## P10 前端审计修复已交付，正式扫描失败待原始报告定位（2026-09-09 UTC）
+
+- [PR #91](https://github.com/GTX537/CP6/pull/91) 已正常合入远端 `main@a857d1fdfd81821904d5d5b7e3df5348dd74c530`；七项 PR 检查和六条 exact-main 工作流成功，Web 1102 项测试通过、npm 审计零漏洞。下方 Vitest 尚待验收为历史检查点。
+- Owner 批准的 [validation 34298959521](https://github.com/GTX537/CP6/actions/runs/34298959521) attempt 1 在该源码上通过真实七包/CRM 输入、cosign 复现、1648/1648 全量测试（零失败/跳过）及 OCI 构建推送，随后原生扫描步骤退出 1；签名、finalize、正式交接均未执行，未留下 Artifact。
+- 已推送但未签名的实际 digest 为 `sha256:f9362a6e10e8ba5934e3aed66c557fe4263fb7df2d6b3f14793670fe30bc00eb`。相同 Trivy 0.74.0 对它的 Windows/原生 Linux 只读复扫均未报告 HIGH/CRITICAL；这不覆盖云端失败，也不足以证明误报或具体根因。原日志缺少失败命令及 SARIF 内容，vendor severity WARN 本身不是已确认原因。
+- 独立分支补充 Syft/Trivy/严重性检查阶段、工具/DB 版本、规则级严重性计数及阻塞规则 ID，并仅在 scan 失败时保存两个原生报告，精确 SHA/run/attempt 命名、不可覆盖、七天诊断保留。原 HIGH/CRITICAL 判定、报告字节、签名/交接和审批边界不变。
+- 新增两项回归先 RED 后 GREEN，17 项相关测试、format、三条 workflow actionlint 通过；真实 SARIF 的原判定通过，内存高危负例仍退出 1。该补丁的 PR/main 交付和新获批云端验证待完成，不把诊断改善称为根因修复。P10 仍 Candidate / No-Go、`deployable=false`，候选身份仍待 owner 确认。
+
 ## P10 预检已通过并合并，前端依赖安全审计阻塞主分支复验（2026-09-09 UTC）
 
 - 独立 Linux [preflight 34254585813](https://github.com/GTX537/CP6/actions/runs/34254585813) 在 owner 批准后完整成功：精确源码 `f4ac824e86e3067a4b82df57a796bdef6f9fe53b`，1648/1648 测试通过、零失败/跳过，真实七包及两平台 cosign 摘要核验通过。诊断 Artifact `10081995323`、归档 SHA-256 `c13253c97ab78e17130453a30556cbddf94003206f9ec3c3dd52e5f0b7fba1bd`；它不是正式候选交接。

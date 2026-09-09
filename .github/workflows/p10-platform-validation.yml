@@ -167,13 +167,36 @@ jobs:
         run: |
           set -euo pipefail
           image="ghcr.io/gtx537/cp6-p10-verifier@$IMAGE_DIGEST"
+          printf 'p10-native-scan phase=syft\n'
           "$RUNNER_TEMP/p10-tools/syft" "registry:$image" -o "spdx-json=$RUNNER_TEMP/p10-image-inputs/spdx.json"
+          printf 'p10-native-scan phase=trivy\n'
           "$RUNNER_TEMP/p10-tools/trivy" image --image-src remote --scanners vuln \
             --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --exit-code 0 --format sarif \
             --output "$RUNNER_TEMP/p10-image-inputs/sarif.json" "$image"
+          printf 'p10-native-scan phase=severity-check\n'
+          "$RUNNER_TEMP/p10-tools/trivy" --version
+          jq --version
+          jq -ac '{severityCounts: ([.runs[0].tool.driver.rules[].properties.tags[2]] | group_by(.) | map({severity: .[0], rules: length})),
+            blockingRules: [.runs[0].tool.driver.rules[] | select(.properties.tags[2] == "HIGH" or .properties.tags[2] == "CRITICAL") | {id, severity: .properties.tags[2]}]}' \
+            "$RUNNER_TEMP/p10-image-inputs/sarif.json"
           # Preserve all native findings; enforce HIGH/CRITICAL before signing and again in the verifier.
           jq -e 'all(.runs[0].tool.driver.rules[]; .properties.tags[2] != "HIGH" and .properties.tags[2] != "CRITICAL")' \
             "$RUNNER_TEMP/p10-image-inputs/sarif.json" > /dev/null
+          printf 'p10-native-scan phase=passed\n'
+
+      - name: Retain failed native scans as diagnostics only
+        id: scan_diagnostics
+        if: ${{ failure() && steps.scan.outcome == 'failure' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: p10-scan-diagnostics-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/p10-image-inputs/spdx.json
+            ${{ runner.temp }}/p10-image-inputs/sarif.json
+          if-no-files-found: warn
+          overwrite: false
+          retention-days: 7
+          compression-level: 0
 
       - name: Sign the exact OCI digest with its separate protected key
         id: sign

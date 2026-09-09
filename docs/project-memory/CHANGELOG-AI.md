@@ -99,6 +99,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-09-09：P10 扫描失败诊断补丁与实际验证状态
+
+- Vitest 修复 PR #91 已经正常 PR/main 验收；正式 validation `34298959521` 的真实输入、1648 项全量、OCI push 成功，随后 scan 退出 1，未签名或形成交接。
+- 补充原生扫描阶段、工具/数据库版本及规则级计数/阻塞 ID；失败时仅保存原生 SPDX/SARIF 为七天、精确 run/attempt 的不可覆盖诊断 Artifact，不作为正式交接，不改变原漏洞判定。
+- 两项新增回归先失败后通过，17 项相关测试、format、三条 workflow actionlint 通过；真实复扫没有 HIGH/CRITICAL，但不能据此改写云端失败或声称根因已修复。PR/main 交付、新云端验证及 P10 发布/审计仍待完成。
+
 ## 2026-09-03：P10 R2/cosign 外部前置切片闭环
 
 - CP6 PR #80 head `17dc0407f58750d729d7207dfa0f59f79182a4c5` 经六项 PR 门禁后合并为 `main@da54076861b30e710a3eceb9e08023fbc6f9ff87`；exact-main runs 33706881271 / 33706881477 的真实 SQL、Android、Windows 与 Web 作业全部成功。

@@ -43,6 +43,10 @@ gh run list -R GTX537/CP6 --workflow p10-platform-validation.yml --limit 20 --js
 
 同源失败运行可在排除原因后重跑，每个 attempt 必须重新取得实际批准。重跑记录的 `created_at` 不是执行开始时间；验证器额外读取并绑定该 run 的 attempt 1，确认原始执行已结束，再检查当前精确 attempt 和 job 的时间。若修复了源码，必须对新的 exact main 发起新 run，不能重跑旧 SHA 来验收新代码。历史失败及其 artifact 保留，不改写成功结论。
 
+原生扫描失败时，查看 `p10-native-scan phase=syft|trivy|severity-check|passed`；标记表示进入阶段，仅 `passed` 表示原严重性门禁已通过。严重性检查前输出 Trivy/DB、jq 版本及 SARIF **规则级**严重性计数/阻塞规则 ID（不是逐位置漏洞结果数）。原 HIGH/CRITICAL 拒绝式保持不变。
+
+仅 scan 失败时上传 `p10-scan-diagnostics-<sha>-<run>-<attempt>`，明确限定为原生 `spdx.json` 和 `sarif.json`，七天保留、不可覆盖；报告尚未生成时可能缺失，上传不会消除原失败。不含准备目录、包、私有 CRM 归档或私钥，也不是 `p10-s06-validation-*` 正式交接。取证时对齐实际 SHA/run/attempt/image digest；不要把本机重新下载数据库后的复扫当作原云端报告。旧 [run 34298959521](https://github.com/GTX537/CP6/actions/runs/34298959521) 未保存扫描 Artifact，根因仍未证实。
+
 输入收集失败时，先查看 stderr 的 `p10-validation-stage`：依次为 `current-workflow`、`platform-source`、`formal-packages`、`crm-consumer`、`publication-archive`、`package-provenance`、`final-current-workflow`，只有输入校验及本地写入完成才输出 `prepared`。阶段标记代表进入该阶段，不代表该阶段成功，也不是候选验收证据。
 
 GitHub 非 200 响应会在原有 `github-http-status` 前输出 `p10-github-read target=<固定类别> status=<数字>`。类别只含 `cp6` / `platform` / `crm` 和 `workflow` / `main` / `compare` / `run` / `jobs` / `archive` / `pull-request` / `commit` / `artifact`；缺少目标上下文时为 `unspecified`。不输出 URL、路径、SHA、请求 ID、Token、响应正文、ReasonPhrase 或 headers。stdout 合同结果、退出码、超时、取消和失败关闭门禁不变。
