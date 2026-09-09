@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-09-09：P10 非部署型候选的 append-only 最终审计
+
+- 记录同源 `f992adc3295722a0edae151c454665a4be4b689b` 上真实成功的 validation 34310410625 / 1、publication 34312917625 / 3 和独立 audit 34317792175 / 1。
+- 候选 `v0.10.1-p10.1` / `bc3cae8ede16e26a909519ec250fbdf5989b4aa4edfcd6b39397e0958a59ea4f`，普通验证结论 VerifiedNonDeployable。新增 [审计目录](../devops/p10-audit/README.md)、内容寻址决定、三份原始 ZIP 与 27 个公开原始文件；保留完整七包/CRM/OCI/hash/trust/run 身份。
+- 同步四份台账为 Frozen / Consumable 决定及正常合并/exact-main 生效条件。只新增记录，不覆盖候选、Locator、旧失败或旧台账事实；不重建 OCI，不导出 Secret，不修改审批、扫描门禁或生产路径，`deployable=false` 不变。
+
 ## 2026-09-09：P10 cosign gRPC 1.83.2 最小安全修复
 
 - 新保留的 run `34303646636` 报告确认唯一 HIGH `CVE-2026-84445` 来自 cosign 的 gRPC `1.83.1`；全量 1650 项通过，签名与交接仍因扫描失败被跳过。

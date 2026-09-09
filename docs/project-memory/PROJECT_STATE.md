@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## P10 S00–S06 非部署型候选审计闭环（2026-09-09 UTC）
+
+- 当前决定为 **Frozen / Consumable**，候选 `v0.10.1-p10.1`；以本次审计条目和四份台账正常合入远端 main、必需 exact-main 检查成功为生效条件。下方 Candidate / No-Go 与待审批条目保留为历史检查点，不再表示当前候选状态。
+- [PR #93](https://github.com/GTX537/CP6/pull/93) 经七项检查合入 `f992adc3295722a0edae151c454665a4be4b689b`，该 main 五条 GitHub workflow / 六作业成功。三条受保护流程同源：validation **34310410625 / 1**、publication **34312917625 / 3**、独立 audit **34317792175 / 1** 均已实际成功；正式全量 1651/1651、零失败/跳过，19 项 gate Success，原生扫描 HIGH/CRITICAL 均为 0。
+- 正式七包 `0.10.1` 来自 Platform `3ff27e26962dcfd722887afb80a4306010dd9ee1`；CRM 消费 `a31ca0e323418f7e4108cc6220c0f5fa132e7fc2` 与 PR #47 前向证据均已绑定。候选 SHA-256 `bc3cae8ede16e26a909519ec250fbdf5989b4aa4edfcd6b39397e0958a59ea4f`，OCI digest `sha256:e743e911380a4ed6732685ea33694b6ffb910051c20621388b6903386947296b`。
+- [Append-only 审计与原始证据](../devops/p10-audit/README.md) 留存三份精确 Artifact ZIP 和 27 个公开内容文件，逐项 hash/长度已核对；entry `5adde0e29c8cf755d3ad8dfe6e050779d787faeb7040e584428d75dfa0f84558` 固定所有来源、workflow blob、run/attempt/job、trust v1 与对象身份。NuGet 作者仍为 PinnedSelfSigned，`publicCaTrusted=false`、`internallyTrusted=true`；正式 RFC3161 与独立签名没有豁免。
+- 只读结论为 `VerifiedNonDeployable`、`candidateAccepted=true`、`deployable=false`。只完成 P10 Platform reference；不授权 WMS/CRM System release、CRM runtime、Portal 身份补造、DEV/UAT/PROD 或迁移。历史失败/孤立对象保留，没有覆盖远端候选或导出私钥。
+
 ## P10 已定位 gRPC 高危并获批最小修复，完整本地镜像验证通过（2026-09-09 UTC）
 
 - [PR #92](https://github.com/GTX537/CP6/pull/92) 已正常合入 `2618487466ca529e261b70031d97724dae01ed5e`，七项 PR 检查、main 五条工作流/六个作业和合并后 17 项回归通过；此前“六条 main 工作流”用词在本次更正。
