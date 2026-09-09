@@ -13,6 +13,7 @@ using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -90,8 +91,11 @@ public class CrmOidcServiceTokenTests
             case "duplicate-id":
                 options.ServiceClients.Add(new CrmOidcServiceClient
                 {
-                    ClientId = client.ClientId, SecretSha256 = client.SecretSha256,
-                    TenantId = client.TenantId, Enabled = false, AllowedScopes = ["cp6.services"]
+                    ClientId = client.ClientId,
+                    SecretSha256 = client.SecretSha256,
+                    TenantId = client.TenantId,
+                    Enabled = false,
+                    AllowedScopes = ["cp6.services"]
                 });
                 break;
             case "browser-collision": client.ClientId = "CP6.Web"; break;
@@ -118,10 +122,47 @@ public class CrmOidcServiceTokenTests
         Assert.Empty(defaults.ClientId);
         Assert.Empty(defaults.SecretSha256);
         Assert.Empty(defaults.AllowedScopes);
+        Assert.Empty(new CrmOidcOptions().TrustedTokenProxyAddresses);
         new CrmOidcOptions
         {
             ServiceClients = [new() { ClientId = "invalid id", SecretSha256 = "raw-secret" }]
         }.Validate(development: false);
+    }
+
+    [Theory]
+    [InlineData("proxy.example")]
+    [InlineData("10.0.0.0/8")]
+    [InlineData("*")]
+    [InlineData(" 127.0.0.1")]
+    [InlineData("127.1")]
+    [InlineData("2130706433")]
+    [InlineData("0x7f000001")]
+    [InlineData("0.0.0.0")]
+    [InlineData("::")]
+    public void Trusted_token_proxy_configuration_rejects_nonliteral_or_unsafe_addresses(string address)
+    {
+        var options = ValidOptions();
+        options.TrustedTokenProxyAddresses = [address];
+
+        Assert.Throws<InvalidOperationException>(() => options.Validate(development: false));
+    }
+
+    [Fact]
+    public void Trusted_token_proxy_configuration_rejects_canonical_duplicates()
+    {
+        var options = ValidOptions();
+        options.TrustedTokenProxyAddresses = ["127.0.0.1", "::ffff:127.0.0.1"];
+
+        Assert.Throws<InvalidOperationException>(() => options.Validate(development: false));
+    }
+
+    [Fact]
+    public void Trusted_token_proxy_configuration_accepts_unique_full_IP_literals()
+    {
+        var options = ValidOptions();
+        options.TrustedTokenProxyAddresses = ["10.20.30.40", "2001:db8::10"];
+
+        options.Validate(development: false);
     }
 
     [Theory]
@@ -222,6 +263,56 @@ public class CrmOidcServiceTokenTests
         Assert.IsType<OkObjectResult>(await loopback.Controller.Token());
     }
 
+    [Fact]
+    public async Task Service_credentials_accept_https_only_from_the_exact_trusted_proxy_peer()
+    {
+        using var f = new Fixture();
+        f.Options.TrustedTokenProxyAddresses = ["10.20.30.40"];
+        f.ServiceForm();
+        f.Request.Scheme = "http";
+        f.Request.Host = new HostString("internal-api");
+        f.Request.HttpContext.Connection.RemoteIpAddress =
+            System.Net.IPAddress.Parse("::ffff:10.20.30.40");
+        f.Request.Headers["X-Forwarded-Proto"] = "https";
+
+        Assert.IsType<OkObjectResult>(await f.Controller.Token());
+    }
+
+    [Theory]
+    [InlineData("default")]
+    [InlineData("untrusted")]
+    [InlineData("missing-proto")]
+    [InlineData("http-proto")]
+    [InlineData("duplicate-proto")]
+    [InlineData("comma-proto")]
+    [InlineData("missing-peer")]
+    [InlineData("spoofed-forwarded-for")]
+    public async Task Service_credentials_reject_untrusted_or_ambiguous_proxy_transport(string problem)
+    {
+        using var f = new Fixture();
+        if (problem != "default") f.Options.TrustedTokenProxyAddresses = ["10.20.30.40"];
+        f.ServiceForm();
+        f.Request.Scheme = "http";
+        f.Request.Host = new HostString("internal-api");
+        f.Request.HttpContext.Connection.RemoteIpAddress = problem switch
+        {
+            "missing-peer" => null,
+            "untrusted" or "spoofed-forwarded-for" => System.Net.IPAddress.Parse("10.20.30.41"),
+            _ => System.Net.IPAddress.Parse("10.20.30.40")
+        };
+        if (problem != "missing-proto") f.Request.Headers["X-Forwarded-Proto"] = problem switch
+        {
+            "http-proto" => "http",
+            "duplicate-proto" => new StringValues(["https", "https"]),
+            "comma-proto" => "https,http",
+            _ => "https"
+        };
+        if (problem == "spoofed-forwarded-for")
+            f.Request.Headers["X-Forwarded-For"] = "10.20.30.40";
+
+        Assert.Equal("invalid_request", Error(await f.Controller.Token()));
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -280,7 +371,9 @@ public class CrmOidcServiceTokenTests
         f.Request.Method = "GET";
         f.Request.QueryString = QueryString.Create(new Dictionary<string, string?>
         {
-            ["client_id"] = "crm-worker", ["response_type"] = "code", ["redirect_uri"] = "https://crm.example/signin-oidc"
+            ["client_id"] = "crm-worker",
+            ["response_type"] = "code",
+            ["redirect_uri"] = "https://crm.example/signin-oidc"
         });
         Assert.Equal("invalid_request", Error(await f.Controller.AuthorizeClient()));
     }
@@ -316,10 +409,31 @@ public class CrmOidcServiceTokenTests
         AssertNoStore(f.Controller);
     }
 
+    [Theory]
+    [InlineData("ef-db")]
+    [InlineData("ef-timeout")]
+    [InlineData("retry-db")]
+    public async Task Recognizable_database_failure_wrappers_return_a_generic_unavailable_error(string wrapper)
+    {
+        Exception inner = wrapper == "ef-timeout" ? new TimeoutException() : new TestDbException();
+        Exception failure = wrapper == "retry-db"
+            ? new RetryLimitExceededException("retry exhausted", inner)
+            : new InvalidOperationException("database execution failed", inner);
+        using var f = new Fixture(new ThrowingDirectory(failure));
+        f.ServiceForm();
+
+        var result = await f.Controller.Token();
+
+        Assert.Equal(StatusCodes.Status503ServiceUnavailable, Assert.IsType<ObjectResult>(result).StatusCode);
+        Assert.Equal("temporarily_unavailable", Error(result));
+        AssertNoStore(f.Controller);
+    }
+
     [Fact]
     public async Task Programmer_failures_are_not_hidden_as_dependency_outages()
     {
-        using var f = new Fixture(new ThrowingDirectory(new InvalidOperationException("bug")));
+        using var f = new Fixture(new ThrowingDirectory(
+            new InvalidOperationException("bug", new ArgumentException("programmer input"))));
         f.ServiceForm();
 
         var error = await Assert.ThrowsAsync<InvalidOperationException>(() => f.Controller.Token());
@@ -345,7 +459,9 @@ public class CrmOidcServiceTokenTests
         using var rsa = RSA.Create(2048);
         return new CrmOidcOptions
         {
-            Enabled = true, Issuer = "https://cp6.example", ActiveKeyId = "current",
+            Enabled = true,
+            Issuer = "https://cp6.example",
+            ActiveKeyId = "current",
             Keys = [new() { Kid = "current", Pem = rsa.ExportRSAPrivateKeyPem() }],
             Clients = [new()
             {
@@ -386,7 +502,10 @@ public class CrmOidcServiceTokenTests
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options, tenant);
             Organization = new Sys_Tenant
             {
-                Id = TenantId, TenantCode = "acme", TenantName = "Acme", Enable = true
+                Id = TenantId,
+                TenantCode = "acme",
+                TenantName = "Acme",
+                Enable = true
             };
             Db.Sys_Tenants.Add(Organization);
             Db.SaveChanges();
@@ -397,7 +516,9 @@ public class CrmOidcServiceTokenTests
                 serviceDirectory ?? directory, time);
             var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["JWT:Secret"] = new string('s', 64), ["JWT:Issuer"] = "legacy", ["JWT:Audience"] = "legacy"
+                ["JWT:Secret"] = new string('s', 64),
+                ["JWT:Issuer"] = "legacy",
+                ["JWT:Audience"] = "legacy"
             }).Build();
             Controller = new CrmOidcController(Options, Crypto, Mock.Of<ICrmOidcGrantStore>(), directory,
                 config, blacklist, Mock.Of<IAuthCookieWriter>(), serviceTokens)

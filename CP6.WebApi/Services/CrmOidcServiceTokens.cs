@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Primitives;
 
 namespace CP6.WebApi.Services;
@@ -49,7 +50,7 @@ public sealed class CrmOidcServiceTokens
             active = await _directory.IsServiceTenantActiveAsync(client.TenantId,
                 lookupTime.UtcDateTime, cancellationToken);
         }
-        catch (Exception ex) when (ex is DbException or TimeoutException)
+        catch (Exception ex) when (IsDatabaseUnavailable(ex))
         {
             return CrmOidcServiceTokenIssue.Unavailable;
         }
@@ -67,6 +68,15 @@ public sealed class CrmOidcServiceTokens
         var expiresIn = Math.Clamp((int)Math.Floor(
             (expiresAt - _timeProvider.GetUtcNow()).TotalSeconds), 0, 300);
         return new(CrmOidcServiceTokenIssueStatus.Success, token, expiresIn);
+    }
+
+    private static bool IsDatabaseUnavailable(Exception exception)
+    {
+        if (exception is DbException or TimeoutException) return true;
+        if (exception is RetryLimitExceededException retry)
+            return retry.InnerException != null && IsDatabaseUnavailable(retry.InnerException);
+        return exception is InvalidOperationException { InnerException: { } inner }
+            && IsDatabaseUnavailable(inner);
     }
 
     internal static bool TryDecodeBasic(StringValues authorization, out string id, out string secret)

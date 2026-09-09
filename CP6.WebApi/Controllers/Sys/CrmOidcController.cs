@@ -355,13 +355,22 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
     private bool IsServiceTransportAllowed()
     {
         if (Request.IsHttps) return true;
-        if (!options.AllowInsecureLoopback
-            || !Uri.TryCreate(options.Issuer, UriKind.Absolute, out var issuer)
-            || issuer.Scheme != Uri.UriSchemeHttp || !issuer.IsLoopback
-            || !Uri.TryCreate("http://" + Request.Host, UriKind.Absolute, out var requestOrigin)
-            || !requestOrigin.IsLoopback) return false;
+        if (options.AllowInsecureLoopback
+            && Uri.TryCreate(options.Issuer, UriKind.Absolute, out var issuer)
+            && issuer.Scheme == Uri.UriSchemeHttp && issuer.IsLoopback
+            && Uri.TryCreate("http://" + Request.Host, UriKind.Absolute, out var requestOrigin)
+            && requestOrigin.IsLoopback
+            && Request.HttpContext.Connection.RemoteIpAddress is { } loopbackPeer
+            && System.Net.IPAddress.IsLoopback(loopbackPeer)) return true;
         var remote = Request.HttpContext.Connection.RemoteIpAddress;
-        return remote != null && System.Net.IPAddress.IsLoopback(remote);
+        if (remote == null) return false;
+        if (remote.IsIPv4MappedToIPv6) remote = remote.MapToIPv4();
+        if (!options.TrustedTokenProxyAddresses.Any(raw =>
+                CrmOidcOptions.TryParseTrustedTokenProxyAddress(raw, out var trusted)
+                && trusted.Equals(remote))) return false;
+        var forwardedProto = Request.Headers["X-Forwarded-Proto"];
+        return forwardedProto.Count == 1
+            && string.Equals(forwardedProto[0], "https", StringComparison.OrdinalIgnoreCase);
     }
 
 }
