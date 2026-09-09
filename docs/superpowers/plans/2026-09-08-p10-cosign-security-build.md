@@ -10,6 +10,44 @@
 
 ## Approved inputs and scope
 
+### 2026-09-09 authorized gRPC follow-up (current execution)
+
+Owner approved the minimal fix after hosted validation `34303646636` retained its actual native report. On source `2618487466ca529e261b70031d97724dae01ed5e`, all 1650 tests passed, but the unchanged severity gate rejected `CVE-2026-84445` in `opt/cp6/cosign`, `google.golang.org/grpc v1.83.1`. Artifact `10086729181` is diagnostics only; signing and completed handoff were skipped. This establishes this run's failure, not the contents of earlier unretained reports.
+
+The [upstream advisory](https://github.com/grpc/grpc-go/security/advisories/GHSA-2v4p-qf9q-27wj) identifies the xDS server missing-authority panic and the `1.83.2` patch. No exploitability claim about the cosign CLI is inferred from a module finding, and no HIGH waiver is added. Continue inline without subagents, on `codex/p10-grpc-security-patch` from the above current main, in the existing isolated worktree. Preserve historical `cp6.1` evidence below; the new derivative is `3.1.3-cp6.2`.
+
+- [x] Establish RED for the patched gRPC lock and distinct derivative version: 2 expected failures / 7 passes / 0 skips. Official Go sumdb supplies both `v1.83.2` lock checksums; compiler graph validation confirms the patch changes only that module.
+- [x] Produce Linux/Windows outputs in two independent, resource-limited clean-room builds with fresh caches; require byte-identical binaries and metadata. Keep the existing source, toolchain and cryptographic code unchanged. Freeze only observed hashes, then use the policy entry point for the second build.
+- [x] Use a fresh Trivy database at least as recent as the failed hosted scan, scan the actual full diagnostic runtime image, and require zero HIGH/CRITICAL while retaining all native findings. Record coverage, DB timestamp and report hashes. Do not replace the scan with a package-version assertion.
+- [x] Verify real signing/tampering/OCI-bundle behavior and complete Windows P10 tests with actual packages. Re-run upstream crypto/sign/verify tests. Local WSL chronology remains an acknowledged limitation; do not modify clocks or classify unrelated time failures as passes.
+- [ ] Update runtime pins, all helper consumers, notices/reference and four ledgers; correct the earlier wording to five main workflows / six jobs. Review the full diff, format/actionlint and normal PR/main gates before new formal validation. Do not ask for another approval until the preflight evidence above is ready.
+- [ ] The next formal validation still needs owner approval and its real full suite, scans, signature and digest-container success. Publication requires the owner's unused candidate identity and separate protected execution. P10 remains Candidate / No-Go and `deployable=false` until the complete chain succeeds.
+
+#### Observed cp6.2 preflight evidence
+
+Two separate containers with fresh module/compiler caches produced identical binaries and metadata, and the second used `build.sh` to verify the pins before handoff. Linux SHA-256 is `2d46e35a21ecbe8219ef5e1dd64b302c3208ddd0e21cf1353b21bd3ac9e510f2`; Windows is `14fbf7035b47dcc09a7e3bca8cc7a27b487d20009b3226d821876c2917b0765d`. Native version output is `v3.1.3-cp6.2` / Go `1.26.8` / original source commit / modified tree. Build-info comparison against `cp6.1` changes exactly the gRPC dependency line; module download/verification leaves reviewed locks unchanged. Compiler resources are limited to two CPUs and 2500 MiB; business containers are not restarted or reconfigured.
+
+The Windows full suite passes **1651 / 0 failed / 0 skipped**, including actual packages, native ephemeral-key signing and all existing evidence tests. TRX SHA-256 is `7aae16df59b6798dbf91cbb3cb4df6a7b7be36fa9177fe5a09834da58450887f`. The new lock/version test and old-binary rejection assertions each were observed failing before the relevant fix/pins, then pass in the full suite. Ten no-network input-boundary checks, .NET format and all four P10 workflow actionlint checks pass.
+
+The complete local image is explicitly diagnostic, never pushed: manifest `sha256:caecf5c27ec46ee9edd8449cf1256931fbcccdeab884306bd18541c2c878f47b`, config `sha256:24e4da08425c4d2a184e2bc3150d00ed7bd9e1cb2c3aba3f37efdb065b19d5df`. It uses the unchanged pinned Dockerfile/base and actual new verifier DLL SHA-256 `420bc7ba99cb119aa297f993447232fb27eb72ca1dcb42acb2219f903130d31f`. The immutable test snapshot carries the same verifier bytes.
+
+Fresh Trivy DB `UpdatedAt=2026-09-09T01:04:30.602849941Z`, downloaded at `03:29:28.795689448Z`, matches the failed hosted run's DB update timestamp. The native binary scan identifies 253 Go packages, gRPC `v1.83.2`, UNKNOWN 3 and HIGH/CRITICAL 0. Full image scan additionally covers nine Ubuntu packages, the app's ten .NET dependencies and the runtime dependency file; SPDX has 277 packages. All findings remain: LOW 7 / MEDIUM 5 / UNKNOWN 3 / HIGH 0 / CRITICAL 0. SARIF's unchanged rule-severity predicate also passes; neither findings nor binding fields are edited.
+
+| Raw local report | SHA-256 |
+| --- | --- |
+| Linux binary Trivy JSON | `ab0bf20bc4e0b4eeca77ff41536ce8946d49c31f085058af028ad897bb45d76a` |
+| Runtime SPDX | `30aad40bff26bb5b92b7c453b5d178e83113d046ae0878e18e9e4aeff2485b77` |
+| Runtime SARIF | `93fe6bc90d3f4078fcf627e83da9c3dada6619f12e79e0c9a9a91a3ea596d886` |
+| Runtime Trivy JSON | `abb3987b06b6037e1743599ab80caef28d176d5e310407f73b5222abc2e2e974` |
+
+Inside that exact local image, UID 1654, read-only filesystem, dropped capabilities, no network and tmpfs-only ephemeral keys are enforced. Seven maintained native signing/bundle/tampering/wrong-key checks pass; the untouched local reports remain rejected with `spdx-document-binding` and `sarif-image-binding`, rather than being promoted to hosted evidence. All diagnostic inputs/scripts/results are retained under ignored `artifacts/p10-grpc-security-20260909/`.
+
+A first task-local scanner extraction failed because dropped capabilities prohibit restoring archive-owner IDs; it never ran a vulnerability scan. Re-extraction with `tar --no-same-owner` retained dropped capabilities and produced the successful scans above. The existing WSL clock issue is not claimed fixed (local Buildx again printed a negative elapsed duration); no time policy, host setting or full hosted evidence is substituted.
+
+Upstream crypto/sign/verify regression completed with **429 test/subtest passes, zero failures/skipped tests**, across twelve tested packages. Four packages (`git`, `git/github`, `pivkey`, `pkcs11key`) contain no tests and are not counted as test coverage. Tests use the identical source/locks in a private writable copy and a fresh compiler cache; post-test lock comparisons pass. JSONL SHA-256 is `b4d46e421bd83abe01b187ce256eba60665f2153b32ecd0cd75c6f1b6a3a7cc4`. Both build/test containers exit 0 without OOM; original seven business containers remain running and four service health checks remain healthy. No hosted validation, publication or production acceptance is inferred from this preflight.
+
+### Historical cp6.1 original scope and execution
+
 - Existing task branch `codex/p10-native-scan-preflight` is isolated and clean at checkpoint `6e34683b3c33102e28a4da7f10b95255cf103236`; freshly fetched remote main remains `a41711dd55a093ab0ed127d599e0e7bcf11d548d`. Keep the prior parameter fix in this same failure-remediation task. Do not touch the root worktree or its stale local main.
 - Upstream annotated tag object `2f3a85b04907df5b770eb049d7e4d08d4b018d86` is verified and points to `11926fa5bbbbde47e88fc006b625a17769b743b2`. Go proxy `v3.1.3.info` independently identifies that commit.
 - Official module zip SHA-256: `fbf05afe62db35ca00129ff65fab6f7ad8b7851ae1cf7dbb4b1789b6ccd65db2`; sumdb module checksum: `h1:001JQRI/PJ/5T+g/kJ1KTvKFbb322+fomc+pHDZ/6sg=`. Go Linux amd64 archive SHA-256: `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`.

@@ -17,7 +17,7 @@ public sealed class OciSignatureAuthenticationTests
     private static GitHubWorkflowIdentity Workflow => new("GTX537/CP6", S06ReleaseIdentity.ValidationPath,
         new string('b', 40), 12345, 1, new string('c', 40));
     private static CosignBlobVerifier Verifier() => new(Environment.GetEnvironmentVariable("P10_COSIGN_PATH") ??
-        throw new InvalidOperationException("Checksum-pinned cosign v3.1.3-cp6.1 is required."));
+        throw new InvalidOperationException("Checksum-pinned cosign v3.1.3-cp6.2 is required."));
     private static CosignBlobVerifier MissingVerifier() => new(Path.Combine(Path.GetTempPath(), "not-a-cosign-tool"));
 
     [Fact]

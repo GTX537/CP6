@@ -10,8 +10,8 @@ internal static class ImageBuildProfile
     internal const string RuntimeVersion = "8.0.30";
     internal const string SdkVersion = "8.0.424";
     internal const string Platform = "linux/amd64";
-    internal const string CosignVersion = "3.1.3-cp6.1";
-    internal const string CosignSha256 = "a2bcc99765d97f1b7db0cf22afc0d2dd523e94c250900e9d8e4710b2a4a35740";
+    internal const string CosignVersion = "3.1.3-cp6.2";
+    internal const string CosignSha256 = "2d46e35a21ecbe8219ef5e1dd64b302c3208ddd0e21cf1353b21bd3ac9e510f2";
 
     internal static byte[] DockerfileBytes()
     {

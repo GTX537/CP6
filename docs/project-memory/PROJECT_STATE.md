@@ -1,8 +1,16 @@
 # 项目当前状态
 
+## P10 已定位 gRPC 高危并获批最小修复，完整本地镜像验证通过（2026-09-09 UTC）
+
+- [PR #92](https://github.com/GTX537/CP6/pull/92) 已正常合入 `2618487466ca529e261b70031d97724dae01ed5e`，七项 PR 检查、main 五条工作流/六个作业和合并后 17 项回归通过；此前“六条 main 工作流”用词在本次更正。
+- Owner 批准的 [validation 34303646636](https://github.com/GTX537/CP6/actions/runs/34303646636) 全量 **1650/1650，零失败/跳过**，随后原严重性门禁拒绝原生 SARIF 中唯一 HIGH `CVE-2026-84445`：`opt/cp6/cosign` 的 `google.golang.org/grpc v1.83.1`。诊断 Artifact `10086729181` 已保留；不是普通 WARN，签名/finalize/正式交接未执行。旧 run 未留存报告的根因仍不能回溯推定。
+- Owner 随后批准独立 `codex/p10-grpc-security-patch` 分支，仅将 gRPC 升为 `1.83.2`，新衍生工具标识 `3.1.3-cp6.2`；上游源码、Go 1.26.8、其余依赖与信任/扫描阈值不变。真实输出元数据只改变该依赖，旧工具摘要不作为回退接受。
+- 新产物 Windows 全量 **1651/1651，零失败/跳过**；实际完整诊断镜像覆盖 9 个系统包、应用/运行时 .NET 依赖及 253 个 Go 包，保留 LOW 7 / MEDIUM 5 / UNKNOWN 3，HIGH/CRITICAL 均为 0。数据库更新时间与失败云端相同；实际 UID 1654、只读、禁网镜像的七项密码学检查通过，两个本地报告身份仍被正确拒绝。
+- 两轮独立重建的二进制与元数据逐字节相同；上游 429 项测试/子测试通过，无测试失败/跳过（另四包无测试），十项输入保护、format、四条 workflow actionlint 通过。该补丁的 PR/main 交付及新正式 validation 尚待执行；原始 hash 与边界见[安全构建记录](../superpowers/plans/2026-09-08-p10-cosign-security-build.md)。不把本地修复证据当作候选交付；P10 仍 Candidate / No-Go、`deployable=false`，候选身份仍待 owner 确认。
+
 ## P10 前端审计修复已交付，正式扫描失败待原始报告定位（2026-09-09 UTC）
 
-- [PR #91](https://github.com/GTX537/CP6/pull/91) 已正常合入远端 `main@a857d1fdfd81821904d5d5b7e3df5348dd74c530`；七项 PR 检查和六条 exact-main 工作流成功，Web 1102 项测试通过、npm 审计零漏洞。下方 Vitest 尚待验收为历史检查点。
+- [PR #91](https://github.com/GTX537/CP6/pull/91) 已正常合入远端 `main@a857d1fdfd81821904d5d5b7e3df5348dd74c530`；七项 PR 检查和五条 exact-main 工作流（六个作业）成功，Web 1102 项测试通过、npm 审计零漏洞。下方 Vitest 尚待验收为历史检查点。
 - Owner 批准的 [validation 34298959521](https://github.com/GTX537/CP6/actions/runs/34298959521) attempt 1 在该源码上通过真实七包/CRM 输入、cosign 复现、1648/1648 全量测试（零失败/跳过）及 OCI 构建推送，随后原生扫描步骤退出 1；签名、finalize、正式交接均未执行，未留下 Artifact。
 - 已推送但未签名的实际 digest 为 `sha256:f9362a6e10e8ba5934e3aed66c557fe4263fb7df2d6b3f14793670fe30bc00eb`。相同 Trivy 0.74.0 对它的 Windows/原生 Linux 只读复扫均未报告 HIGH/CRITICAL；这不覆盖云端失败，也不足以证明误报或具体根因。原日志缺少失败命令及 SARIF 内容，vendor severity WARN 本身不是已确认原因。
 - 独立分支补充 Syft/Trivy/严重性检查阶段、工具/DB 版本、规则级严重性计数及阻塞规则 ID，并仅在 scan 失败时保存两个原生报告，精确 SHA/run/attempt 命名、不可覆盖、七天诊断保留。原 HIGH/CRITICAL 判定、报告字节、签名/交接和审批边界不变。
