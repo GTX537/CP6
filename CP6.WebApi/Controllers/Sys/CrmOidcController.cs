@@ -120,12 +120,14 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
     }
 
     [HttpPost("/connect/token")]
-    [Consumes("application/x-www-form-urlencoded")]
     [RequestSizeLimit(8192)]
     public async Task<IActionResult> Token()
     {
         if (!options.Enabled) return NotFound();
         PreventCaching();
+        if (!Microsoft.Net.Http.Headers.MediaTypeHeaderValue.TryParse(Request.ContentType, out var contentType)
+            || !string.Equals(contentType.MediaType.Value, "application/x-www-form-urlencoded",
+                StringComparison.OrdinalIgnoreCase)) return OAuthError("invalid_request");
         if (Request.ContentLength > 8192) return OAuthError("invalid_request");
         IFormCollection form;
         try
