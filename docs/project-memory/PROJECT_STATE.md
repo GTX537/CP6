@@ -1,5 +1,14 @@
 # 项目当前状态
 
+## P10 预检已通过并合并，前端依赖安全审计阻塞主分支复验（2026-09-09 UTC）
+
+- 独立 Linux [preflight 34254585813](https://github.com/GTX537/CP6/actions/runs/34254585813) 在 owner 批准后完整成功：精确源码 `f4ac824e86e3067a4b82df57a796bdef6f9fe53b`，1648/1648 测试通过、零失败/跳过，真实七包及两平台 cosign 摘要核验通过。诊断 Artifact `10081995323`、归档 SHA-256 `c13253c97ab78e17130453a30556cbddf94003206f9ec3c3dd52e5f0b7fba1bd`；它不是正式候选交接。
+- [PR #90](https://github.com/GTX537/CP6/pull/90) 的八项检查成功后正常合入 `main@241d2d3efc3da94bec8830289ad185f1725f1385`；合并树与受检源码一致，合并后 Windows P10 全量 1648/1648、零失败/跳过。下方“预检/PR 尚待执行”为历史检查点。
+- 该 main 的 Android、SQL、CRM 和 Space 检查成功；[client-contract 34293825913](https://github.com/GTX537/CP6/actions/runs/34293825913) 在 .NET/Web 测试通过后，因 R2 source gate 的 npm 审计发现 Vitest / `@vitest/mocker` 4.1.9 的两项 moderate 报告而失败。此前同一依赖锁在 PR 中审计为零；本轮没有把 P10 测试通过当作整条 main CI 成功。
+- Owner 已批准在独立分支将 Vitest 升至修复版 4.1.11，并允许适度精简门禁。实施范围限测试依赖及其必要锁文件变更；按风险不重复执行未改动的 P10 本地全量，完整 Web 验证由既有 GitHub CI 承担。npm 审计阈值、必需检查、正式托管全量、签名和人工审批均不削弱；本机业务服务与全局 Node/npm 不变。
+- 最小补丁已将 Vitest 及七个已锁定的 `@vitest/*` 包从 4.1.9 更新为 4.1.11；逐包核对 npm 官方元数据与 SHA-512，其他 460 个锁记录不变。Node 22.22.0 / npm 10.9.4 的锁文件安装预检成功，原失败命令的独立安全审计回归为零漏洞；这不代替远端实际 `npm ci`、类型检查、单测和构建。
+- 依赖修复的 PR/main 验收及新的正式 validation 尚待完成。候选标识仍待 owner 确认；P10 保持 Candidate / No-Go、`deployable=false`，没有候选发布或生产部署。
+
 ## P10 获批独立托管预检，分支代码与读取边界已就绪（2026-09-08 UTC）
 
 - Owner 同意独立 Linux 预检并要求尽快完成 P10。新增仅当前修复分支的预检 workflow、小型正式包输入工具和自动化回归；不修改既有时间/签名/漏洞门禁。云端成功仍待实际运行，不能把本机 WSL 失败改记为通过。

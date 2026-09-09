@@ -1,5 +1,14 @@
 # 当前待办与优先级
 
+## P10 当前执行链：修复前端审计阻塞，再正式验证/发布/审计（2026-09-09 UTC）
+
+- [x] Owner 批准的 Linux preflight 1648/1648、零失败/跳过；PR #90 八项检查成功并合入远端 main，合并后 Windows P10 全量通过。
+- [x] 定位 main run `34293825913` 的 npm 安全审计失败，独立只读审计复现 Vitest / `@vitest/mocker` 4.1.9 的两项 moderate 报告；owner 已批准升级至修复版 4.1.11。
+- [x] 在最新 main 的单任务分支完成 Vitest 4.1.11 最小补丁；八个家族锁记录官方元数据对账、其他 460 个锁记录不变、Node 22 安装 dry-run 和零漏洞审计通过。
+- [ ] 完成 GitHub 实际安装、类型检查、Web 单测和构建；全部必需 PR/main 检查成功后正常交付，不能把 dry-run 当作完整运行。
+- [ ] 对最终 exact main 发起新的正式 validation，取得 owner 实际审批并核验全流程；随后按 owner 确认的新候选身份条件发布，再完成普通只读审计和 append-only 状态决定。
+- [ ] 精简仅适用于未改动代码的重复本地验证；保留 npm 审计阈值、全部必需 CI、正式签名/漏洞/人工审批。P10 仍 Candidate / No-Go、`deployable=false`；下方旧待办是历史记录。
+
 ## P10 当前执行链：独立预检 → 正式验证 → 发布/审计（2026-09-08 UTC）
 
 - [x] Owner 已批准独立托管 Linux 预检；分支 workflow、复用正式验证器的七包输入工具及新增测试已实现，Windows 全量 1648/1648、0 跳过。
