@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-09 P10 托管预检与 PR #90 已交付，正式候选尚未完成
+
+- Owner 批准的 [Linux preflight](https://github.com/GTX537/CP6/actions/runs/34254585813) 完整通过，真实输入全量 1648/1648、零失败/跳过；两平台 cosign 输出复现既有固定摘要。
+- [PR #90](https://github.com/GTX537/CP6/pull/90) 八项检查成功并正常合入 `241d2d3efc3da94bec8830289ad185f1725f1385`；合并后 Windows P10 全量 1648/1648、零失败/跳过。TRX SHA-256 为 `4d8a40f3df6b40446ff5d3014f966fec67476691efde18d1846e204f24b1b581`。
+- 完成范围不包括整条 main CI：后续 npm 安全审计发现既有 Vitest 4.1.9 漏洞，新的依赖修复、正式 validation/publication/audit 仍待完成；不提前声明 Frozen/Consumable。
+- 依赖修复本地证据：八个 Vitest 家族锁记录已升级 4.1.11，其他 460 个锁记录不变；官方元数据对账、Node 22 / npm 10 安装 dry-run 通过，`npm audit --package-lock-only --audit-level=low --registry=https://registry.npmjs.org --json` 从两项 moderate 变为零漏洞。实际安装和完整 Web 验证仍等待 GitHub CI。
+
 ## 2026-09-08 P10 独立云端预检实现与读取资源约束已完成
 
 - 新增分支限定的托管 Linux 全量预检与只生成测试输入的七包收集工具；4 项回归 RED→GREEN、7 项真实拒绝检查及实际七包 hash 对账通过。
