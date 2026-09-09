@@ -1,0 +1,113 @@
+using System.Data.Common;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.Extensions.Primitives;
+
+namespace CP6.WebApi.Services;
+
+public interface ICrmOidcServiceDirectory
+{
+    Task<bool> IsServiceTenantActiveAsync(Guid tenantId, DateTime utcNow,
+        CancellationToken cancellationToken = default);
+}
+
+public sealed class CrmOidcServiceTokens
+{
+    private readonly CrmOidcOptions _options;
+    private readonly CrmOidcCrypto _crypto;
+    private readonly ICrmOidcServiceDirectory _directory;
+    private readonly TimeProvider _timeProvider;
+
+    public CrmOidcServiceTokens(CrmOidcOptions options, CrmOidcCrypto crypto,
+        ICrmOidcServiceDirectory directory, TimeProvider? timeProvider = null)
+    {
+        _options = options;
+        _crypto = crypto;
+        _directory = directory;
+        _timeProvider = timeProvider ?? TimeProvider.System;
+    }
+
+    internal CrmOidcServiceAuthentication Authenticate(StringValues authorization)
+    {
+        if (!TryDecodeBasic(authorization, out var id, out var secret))
+            return new(null);
+        var client = _options.ServiceClients.SingleOrDefault(c => c.ClientId == id);
+        return client != null && CrmOidcCrypto.EqualsSecret(secret, client.SecretSha256)
+            ? new(client)
+            : new(null);
+    }
+
+    internal async Task<CrmOidcServiceTokenIssue> IssueAsync(CrmOidcServiceClient client,
+        CancellationToken cancellationToken = default)
+    {
+        if (!client.Enabled || !client.AllowedScopes.Contains("cp6.services", StringComparer.Ordinal))
+            return CrmOidcServiceTokenIssue.Unauthorized;
+        var lookupTime = _timeProvider.GetUtcNow();
+        bool active;
+        try
+        {
+            active = await _directory.IsServiceTenantActiveAsync(client.TenantId,
+                lookupTime.UtcDateTime, cancellationToken);
+        }
+        catch (Exception ex) when (ex is DbException or TimeoutException)
+        {
+            return CrmOidcServiceTokenIssue.Unavailable;
+        }
+        if (!active) return CrmOidcServiceTokenIssue.Unauthorized;
+        var issuedAt = _timeProvider.GetUtcNow();
+        var expiresAt = issuedAt.AddSeconds(300);
+        var token = _crypto.Sign("CP6.Services",
+        [
+            new Claim("sub", "service:" + client.ClientId),
+            new Claim("client_id", client.ClientId),
+            new Claim("tenant_id", client.TenantId.ToString()),
+            new Claim("jti", Guid.NewGuid().ToString()),
+            new Claim("scope", "cp6.services")
+        ], expiresAt, "at+jwt");
+        var expiresIn = Math.Clamp((int)Math.Floor(
+            (expiresAt - _timeProvider.GetUtcNow()).TotalSeconds), 0, 300);
+        return new(CrmOidcServiceTokenIssueStatus.Success, token, expiresIn);
+    }
+
+    internal static bool TryDecodeBasic(StringValues authorization, out string id, out string secret)
+    {
+        id = "";
+        secret = "";
+        if (authorization.Count != 1) return false;
+        var value = authorization[0];
+        if (value == null || !value.StartsWith("Basic ", StringComparison.Ordinal) || value.Length > 2048)
+            return false;
+        try
+        {
+            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(value[6..]));
+            var separator = decoded.IndexOf(':');
+            if (separator < 1) return false;
+            id = Uri.UnescapeDataString(decoded[..separator].Replace('+', ' '));
+            secret = Uri.UnescapeDataString(decoded[(separator + 1)..].Replace('+', ' '));
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+}
+
+internal sealed record CrmOidcServiceAuthentication(CrmOidcServiceClient? Client)
+{
+    public bool IsAuthenticated => Client != null;
+}
+
+internal enum CrmOidcServiceTokenIssueStatus
+{
+    Success,
+    Unauthorized,
+    Unavailable
+}
+
+internal sealed record CrmOidcServiceTokenIssue(CrmOidcServiceTokenIssueStatus Status,
+    string? AccessToken = null, int ExpiresIn = 0)
+{
+    public static CrmOidcServiceTokenIssue Unauthorized { get; } = new(CrmOidcServiceTokenIssueStatus.Unauthorized);
+    public static CrmOidcServiceTokenIssue Unavailable { get; } = new(CrmOidcServiceTokenIssueStatus.Unavailable);
+}

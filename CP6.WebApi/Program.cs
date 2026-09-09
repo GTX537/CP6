@@ -76,6 +76,9 @@ crmOidc.Validate(builder.Environment.IsDevelopment());
 builder.Services.AddSingleton(crmOidc);
 builder.Services.AddSingleton<CP6.WebApi.Services.CrmOidcCrypto>();
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
+builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>
+    services.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>());
+builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcServiceTokens>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcGrantStore>(_ =>
     new CP6.WebApi.Services.SqlCrmOidcGrantStore(builder.Configuration.GetConnectionString("DefaultConnection")!));
 builder.Services.AddHealthChecks()

@@ -14,8 +14,18 @@ public sealed record CrmContextDto(Guid OrganizationId, string OrganizationSlug,
     Guid[] DepartmentIds, bool IsSupervisor, CrmOwnerDto[] EligibleOwners, CrmDepartmentDto[] Departments);
 
 public sealed class CrmOidcDirectory(CP6Context db, ITenantContext tenant, ITokenBlacklistService blacklist,
-    IPasswordPolicyService passwords, CrmOidcOptions options)
+    IPasswordPolicyService passwords, CrmOidcOptions options) : ICrmOidcServiceDirectory
 {
+    public async Task<bool> IsServiceTenantActiveAsync(Guid tenantId, DateTime utcNow,
+        CancellationToken cancellationToken = default)
+    {
+        if (!options.Enabled || !options.Organizations.Any(o => o.TenantId == tenantId && o.CrmEnabled))
+            return false;
+        var localNow = DateTime.SpecifyKind(utcNow, DateTimeKind.Utc).ToLocalTime();
+        return await db.Sys_Tenants.AsNoTracking().AnyAsync(t => t.Id == tenantId && t.Enable
+            && (t.ExpireDate == null || t.ExpireDate > localNow), cancellationToken);
+    }
+
     public async Task<object?> ResolveOrganizationAsync(string slug)
     {
         var mapping = options.Organizations.SingleOrDefault(o => o.Slug == slug && o.CrmEnabled);
