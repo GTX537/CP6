@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using System.ComponentModel.DataAnnotations;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
@@ -60,7 +61,7 @@ public class UserControllerPasswordTests
         db.Sys_RefreshTokens.Add(new Sys_RefreshToken { UserId = user.Id, TokenHash = "RT1", ExpiresAt = DateTime.Now.AddDays(7) });
         db.SaveChanges();
 
-        await ctl.Update(new Sys_User { Id = user.Id, UserName = "bob", Enable = true, Password = "NewAdmin9#" });
+        await ctl.Update(new UserUpdateRequest { Id = user.Id, UserName = "bob", Enable = true, Password = "NewAdmin9#" });
 
         db.ChangeTracker.Clear();
         var u = db.Sys_Users.Single(x => x.Id == user.Id);
@@ -70,8 +71,10 @@ public class UserControllerPasswordTests
         Assert.NotNull(rt.RevokedAt);                      // 旧刷新令牌被吊销（强制下线）
     }
 
-    [Fact]
-    public async Task Update_without_password_keeps_hash_and_does_not_force_change()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task Update_without_password_keeps_hash_and_does_not_force_change(string? password)
     {
         var (ctl, db) = Make();
         var hash = H.Hash("Keep1!pass");
@@ -79,12 +82,26 @@ public class UserControllerPasswordTests
         db.Sys_Users.Add(user);
         db.SaveChanges();
 
-        await ctl.Update(new Sys_User { Id = user.Id, UserName = "carol-renamed", Enable = true, Password = "" });
+        var request = new UserUpdateRequest { Id = user.Id, UserName = "carol-renamed", Enable = false, Password = password };
+        Assert.True(Validator.TryValidateObject(request, new ValidationContext(request), [], validateAllProperties: true));
+        await ctl.Update(request);
 
         db.ChangeTracker.Clear();
         var u = db.Sys_Users.Single(x => x.Id == user.Id);
         Assert.Equal(hash, u.Password);              // 未传密码 → 哈希原样不变
         Assert.False(u.MustChangePassword);          // 仅改资料不强制改密
         Assert.Equal("carol-renamed", u.UserName);
+        Assert.False(u.Enable);
+    }
+
+    [Fact]
+    public void Update_retains_name_and_length_validation_while_create_requires_password()
+    {
+        var request = new UserUpdateRequest();
+        Assert.False(Validator.TryValidateObject(request, new ValidationContext(request), [], validateAllProperties: true));
+        request.UserName = "valid-name"; request.Password = new string('x', 201);
+        Assert.False(Validator.TryValidateObject(request, new ValidationContext(request), [], validateAllProperties: true));
+        var create = new Sys_User { UserName = "new-user", Password = "" };
+        Assert.False(Validator.TryValidateObject(create, new ValidationContext(create), [], validateAllProperties: true));
     }
 }

@@ -1,0 +1,31 @@
+{
+  "kind": "local optional-password user update regression",
+  "sourceState": "reviewed working tree based on ec825f25",
+  "total": 5,
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "rawTrxSha256": "1ca0118fc39a4ae67629697d63e6976a20332378215d26a8a603854654107094",
+  "cases": [
+    {
+      "name": "CP6.Tests.Sys.UserControllerPasswordTests.Add_hashes_password_and_forces_first_login_change",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.UserControllerPasswordTests.Update_without_password_keeps_hash_and_does_not_force_change(password: null)",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.UserControllerPasswordTests.Update_retains_name_and_length_validation_while_create_requires_password",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.UserControllerPasswordTests.Update_without_password_keeps_hash_and_does_not_force_change(password: \"\")",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.UserControllerPasswordTests.Update_with_password_hashes_forces_change_and_revokes_refresh",
+      "passed": true
+    }
+  ]
+}
