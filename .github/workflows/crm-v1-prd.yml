@@ -1,20 +1,13 @@
 name: crm-v1-prd
 
+# Keep trusted-main validation available without automatic paid runs.
 on:
-  # This workflow exists only on protected main after the bootstrap merge.
-  # It is the sole producer of the required crm-v1-prd context.
-  pull_request_target:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/crm-v1-prd.yml"
-      - "docs/crm/**"
-      - "docs/project-memory/**"
-      - "README.md"
-      - "tools/Test-CrmV1Prd.ps1"
-      - "tools/Test-CrmV1Prd.Tests.ps1"
-      - "tools/CrmPublicDisclosureSurface.psm1"
-      - "tools/Test-CrmPublicDisclosureSurface.Tests.ps1"
+  workflow_dispatch:
+    inputs:
+      candidate_sha:
+        description: Exact candidate commit to validate as data with protected-main rules
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -26,24 +19,38 @@ jobs:
     name: crm-v1-prd
     runs-on: windows-latest
     steps:
+      - name: Require an authorized dispatch from current protected main
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:GITHUB_EVENT_NAME -ne 'workflow_dispatch' -or
+              $env:GITHUB_REF -ne 'refs/heads/main' -or
+              $env:GITHUB_WORKFLOW_SHA -ne $env:GITHUB_SHA -or
+              $env:CANDIDATE_SHA -cnotmatch '^[0-9a-f]{40}$') {
+            throw 'PRD validation requires protected-main workflow code and an exact candidate SHA.'
+          }
+          $currentMain = gh api "repos/$env:GITHUB_REPOSITORY/branches/main" --jq '.commit.sha'
+          if ($LASTEXITCODE -ne 0 -or $currentMain -ne $env:GITHUB_SHA) {
+            throw 'The dispatch source is no longer the current protected main.'
+          }
       - name: Check out trusted validator from the protected base
-        if: github.event_name == 'pull_request_target'
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
           path: trusted
           persist-credentials: false
-      - name: Check out the exact pull request head as data
-        if: github.event_name == 'pull_request_target'
+      - name: Check out the exact candidate as data
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ inputs.candidate_sha }}
           fetch-depth: 0
           path: candidate
           persist-credentials: false
       - name: Verify the candidate with protected-base code
-        if: github.event_name == 'pull_request_target'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -51,18 +58,4 @@ jobs:
           & "$env:GITHUB_WORKSPACE/trusted/tools/Test-CrmV1Prd.ps1" `
             -RepositoryRoot "$env:GITHUB_WORKSPACE/candidate" `
             -VerifyGitHubEvidence
-
-      - name: Check out main
-        if: github.event_name == 'push'
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Verify approved CRM V1 product requirements on main
-        if: github.event_name == 'push'
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          ./tools/Test-CrmV1Prd.ps1 -VerifyGitHubEvidence
-          ./tools/Test-CrmV1Prd.Tests.ps1
+          & "$env:GITHUB_WORKSPACE/trusted/tools/Test-CrmV1Prd.Tests.ps1"

@@ -26,10 +26,23 @@
 - 涉及项目状态的任务同步更新 `docs/project-memory/PROJECT_STATE.md`、`05-Completed.md`、`06-Todo.md` 和 `CHANGELOG-AI.md`。
 - 未经明确授权不得 force-push、重写共享历史、删除远端分支或执行生产部署。
 
+## 本地验证与 GitHub Actions 额度策略（强制）
+
+- 普通编译、测试和静态验证默认只在本地执行；对应 GitHub 工作流只保留 `workflow_dispatch`，不设置 `push`、`pull_request`、`pull_request_target`、定时或其他自动触发。未经用户新的明确授权，不得主动触发或重跑 GitHub Actions；额度重置、已有历史授权或本地验证失败都不自动解除此限制。
+- 每次 push、创建或更新 PR 前，检查候选分支与远端受保护分支的 `.github/workflows/`、事件过滤和相关依赖。必须避免这些操作间接启动远程编译/测试，不能仅以“没有手动运行 Actions”为依据。旧 `pull_request_target` 由受保护分支提供时，候选分支关闭触发并不足以安全创建 PR；未解决前保留已提交任务分支并说明阻塞。
+- 接手任务时检查该任务造成的排队/执行中运行，取消不必要的纯编译或测试；不要取消部署、发布、数据迁移或无法确认归属的任务。调整触发前先确认工作流用途、依赖和制品消费者；混有发布/部署的工作流必须分别分析，禁止整体禁用。
+- 日常只验证本次变更涉及的项目及必要依赖。集中完成相关修改后进行一次必要验证；文档、注释等不影响构建的改动不编译，不逐文件全量构建、全量测试或重建 Docker 镜像。
+- 同一代码、依赖与环境已有成功结果时直接复用，并保留其真实来源和适用范围。只有相关输入变化或仍有明确问题才再次验证；失败先分析原因，不盲目重跑。提交、合并或 SHA 改变本身不要求重复相同的业务验证。
+- 本地无法验证的内容必须明确记录范围和原因，不能自动改用付费远程运行器，也不能声称通过。确需 GitHub Actions 时，先向用户说明原因、运行范围及预计分钟数，等待明确授权后再运行；手动触发入口不代表已获授权。
+- 保留所有测试和真实失败记录，不伪造成功检查。2026-09-10 用户因 Actions 额度耗尽，明确授权移除普通 Actions 的必需检查，改用与变更相称的本地验证和本地发布检查后正常 PR 合并。该例外只移除 `main` 的 `windows-and-web`、`android`、`sql-integration`、`crm-saas-public-contract`、`crm-v1-prd` 五项 Actions 要求；其他分支保护、PR/会话解决要求和生产发布门禁保留，不得管理员绕过、强推或伪造远程通过状态。
+- 本地发布检查必须保留源码 SHA、发布文件哈希、实际启动/HTTP 检查和所复用验证的来源；使用隔离的本地端口与数据库。它只能证明本地验证，不作为 R2/GHCR 生产候选或 DEV/UAT/PROD 推广凭据。没有用户额外授权时，不替换既有环境、不覆盖数据库、不部署生产。
+- GitHub 普通工作流合入仅手动配置前，可暂停这些明确识别的工作流以防旧 `pull_request_target` 启动；合入并核对后恢复其手动入口。依赖 GitHub 成功 Artifact 的 Azure 桥在此期间只保留手动触发，不能用本地文件伪造 GitHub/Azure 成功制品。
+- 此策略只修改本仓库适用的配置和规则，不修改无关仓库或全局配置。任务结束时简述取消项、触发变更、本地验证和未验证范围。
+
 ## CP6 DevOps 上下文
 
 - DevOps 入口为 `docs/devops/README.md`；处理 CI、Release、Registry、部署或环境任务前必须阅读该目录，并交叉核对 `docs/client/r2/README.md`。
-- 当前 `azure-pipelines.yml` 是轻量 CI Artifact 桥：`main` 触发、`pr: none`、`Default` self-hosted pool；它从成功的 GitHub `client-contract.yml` 运行下载与完整 Git SHA 绑定的 `cp6-dev-runtime`，验证 GitHub 工作流来源、结论、归档 SHA-256 和内部逐文件清单后转存为 Azure Pipeline Artifact。本机不再执行 .NET/Node 编译；它仍不构建生产镜像或部署任何环境。
+- 当前 `azure-pipelines.yml` 是轻量 CI Artifact 桥：本地验证策略下为 `trigger: none`、`pr: none`、`Default` self-hosted pool；显式手动运行时从成功的 GitHub `client-contract.yml` 运行下载与完整 Git SHA 绑定的 `cp6-dev-runtime`，验证 GitHub 工作流来源、结论、归档 SHA-256 和内部逐文件清单后转存为 Azure Pipeline Artifact。它不执行 .NET/Node 编译，不构建生产镜像或部署任何环境；本地发布检查独立记录，不能冒充桥接制品。
 - 现有 GitHub R2 流水线仍是生产候选与部署的权威实现，包含受保护 Tag、SQL/E2E、镜像、SBOM、漏洞扫描、签名、不可变证据、digest 部署和运行身份核对。Azure 迁移未通过等价验收前不得删除、绕过或弱化这些门禁。
 - Release 必须遵守 **Build once, deploy many**：API/Web 镜像只构建一次，DEV/UAT/PROD 推广同一 `repository@sha256:digest`；SemVer 和 Git SHA 用于追踪，不以可变 Tag 作为生产身份。
 - 聊天规划建议 ACR，但仓库当前 R2 使用 GHCR。实现 Azure Docker Release 前必须先确定唯一 Registry、候选清单、迁移期和回退方案，禁止两套系统对同一版本分别 Build 并同时宣称权威。

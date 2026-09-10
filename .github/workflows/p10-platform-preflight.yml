@@ -1,8 +1,7 @@
 name: P10 hosted Linux preflight
 
+# Ordinary validation runs only after explicit user authorization.
 on:
-  push:
-    branches: [codex/p10-native-scan-preflight]
   workflow_dispatch:
 
 permissions:
@@ -41,7 +40,7 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$GITHUB_REPOSITORY" == GTX537/CP6 ]]
-          [[ "$GITHUB_EVENT_NAME" == push || "$GITHUB_EVENT_NAME" == workflow_dispatch ]]
+          [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]
           [[ "$GITHUB_REF" == refs/heads/codex/p10-native-scan-preflight ]]
           [[ "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ && "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
           [[ "$GITHUB_WORKFLOW_SHA" == "$GITHUB_SHA" ]]

@@ -1,10 +1,8 @@
 name: client-contract
 
+# Ordinary validation runs only after explicit user authorization.
 on:
   workflow_dispatch:
-  pull_request:
-  push:
-    branches: [main]
 
 jobs:
   windows-and-web:
