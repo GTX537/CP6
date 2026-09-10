@@ -2,12 +2,22 @@
 
 ## 2026-09-10：C01 跨仓真实验收 72/72 通过
 
-C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格拒绝、缓存失效/恢复和真实密钥轮换全部通过，**72 通过、0 失败、0 跳过**。Core 实际执行源 `fb55a877de8ee8f9d27fd3bf8e73c824a21549e8`；CRM 实际执行源 `37cf0e58ff146ed58582768cf2c91e3c9fbe81cf` 经 [PR #58](https://github.com/GTX537/CP6.CRM/pull/58) 正常合入 `c02055178d96acf4c15ece8c5ba0f51b01b86f2c`，包含关系及相同代码树已核对。源 PR 七项适用 CI 通过；main 六个实施/适用性作业通过，但 GitHub 计费限制阻止汇总作业启动，整体 CI 失败。恢复 Actions 后仅补跑失败作业，并正常交付本批证据；交付门禁未被豁免。Platform 七个不可变 `0.10.2` 包仍绑定发布源 `fbcd21528078a04e5b53c42c5fdfebe6ffa9655f`，发布原件 main 为 `0944d808057c6cf138867a4d2b4b96247b79e14f`。
+C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格拒绝、缓存失效/恢复和真实密钥轮换全部通过，**72 通过、0 失败、0 跳过**。Core 实际执行源 `fb55a877de8ee8f9d27fd3bf8e73c824a21549e8`；CRM 实际执行源 `37cf0e58ff146ed58582768cf2c91e3c9fbe81cf` 经 [PR #58](https://github.com/GTX537/CP6.CRM/pull/58) 正常合入 `c02055178d96acf4c15ece8c5ba0f51b01b86f2c`，包含关系及相同代码树已核对。源 PR 七项适用 CI 通过；main 六个实施/适用性作业通过，但 GitHub 计费限制阻止汇总作业启动，整体 CI 失败。用户于 2026-09-10 因 Actions 额度耗尽明确授权本地验证替代必需检查；本批证据按正常 PR 交付，复用已完成的真实验收，不补造远程成功状态。Platform 七个不可变 `0.10.2` 包仍绑定发布源 `fbcd21528078a04e5b53c42c5fdfebe6ffa9655f`，发布原件 main 为 `0944d808057c6cf138867a4d2b4b96247b79e14f`。
 
 公开[原始 summary、JUnit 与五次尝试记录](https://github.com/GTX537/CP6.CRM/tree/main/docs/delivery/c01/real-identity-2026-09-10) 保留实际执行 SHA；成功 summary SHA-256 为 `ae779716b0edbf07b6b37dfea5774ba7d564c06739286f20efa124324d0b5014`，JUnit 为 `3003542d3d98c143df6331da9cbd047877de788bfcfbe5f53acf396ce5932ff1`。真实预发布不少于 60 秒，旧键在最后实际旧令牌到期加默认 60 秒偏差后移除；入口退出 0，自有 SQL 与进程清理完成。四轮失败不改写成成功；相同代码树和输入的实际结果复用。
 
 用户于 2026-09-10 批准 C02 设计，现继续组织/权限/撤销事件的原子发布、CRM 投影与对账，之后推进 C03。C04A/B 保留原前置条件；本次是开发验收，不是生产部署。下方 C01 尚待完成的记录为历史检查点，以本条为当前状态。
 
+## 2026-09-10：用户授权本地验证替代 Actions 必需检查
+
+用户因本月 Actions 额度耗尽，进一步明确授权移除必需检查，并在本地发布检查。已仅移除 Core main 的五项 Actions required status checks，逐字段确认其他分支保护保持不变；正常 PR、会话解决、管理员约束及禁止强推/删除仍生效。七个普通工作流在合并期间暂停，配置经 [PR #99](https://github.com/GTX537/CP6/pull/99) 正常合入 `54096b3fc7f745f0199de9c20a9b7859e569d29e` 后，已恢复为仅手动入口；R2 候选、发布、部署和其他手动工作流状态未变。原始前后设置保存在 `docs/devops/evidence/local-gates-20260910/`。
+
+配置保留普通 GitHub workflow_dispatch，Azure Artifact 桥同步改为手动，防止等待不存在的 GitHub 成功产物。本地发布只作隔离验证，保留源码/发布文件哈希与实际 HTTP 证据，不覆盖既有环境或替代生产发布门禁。远端已核对包含政策提交且 Git tree 相同，七个入口均 active 且仅 workflow_dispatch；该 head 与合并提交均没有 Actions 运行。本地 Release 发布验证继续推进。下方策略尚待集成条目为历史检查点。
+
+## 2026-09-10：暂停普通 GitHub 自动验证，保留正式发布链
+
+- 根据用户要求，将 client-contract、WMS SQL、Space evidence、CRM public contract、两条 CRM PRD 及 P10 preflight 共 7 条工作流改为手动。PRD 保留当前 protected-main 可信规则与候选数据分离；发布/部署/迁移、既有测试和分支保护未改。
+- 根 `AGENTS.md` 固化本地定向验证、集中验证、复用成功结果、先诊断失败、push/PR 前检查间接触发及远程运行新授权要求。检查中无活动任务，取消 0 项；仅做本地配置检查，远端集成仍被既有必需检查与 PR 自动触发阻塞。
 
 ## 2026-09-09：C01 服务端交付证据与消费端真实回归
 
