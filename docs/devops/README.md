@@ -6,6 +6,8 @@
 
 ## 文档地图
 
+普通 GitHub 编译、测试按用户要求改为手动触发，远程运行需新的明确授权；[本地验证策略](./LOCAL-VALIDATION-POLICY.md) 记录改动、Artifact 依赖与受保护 main 的待集成限制。下方历史成功运行不构成新运行授权。
+
 | 文档 | 类型 | 用途 |
 | --- | --- | --- |
 | [CI/CD 架构](./CI-CD-ARCHITECTURE.md) | Explanation | 解释当前双流水线边界、目标架构和关键取舍 |

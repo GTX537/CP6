@@ -1,9 +1,8 @@
 name: crm-v1-prd-head
 
+# Ordinary validation runs only after explicit user authorization.
 on:
-  # Bootstrap and diagnostic validation only. This workflow never emits the
-  # required crm-v1-prd context; that name belongs to protected-base code.
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
