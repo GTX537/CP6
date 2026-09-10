@@ -1,0 +1,50 @@
+{
+  "schemaId": "cp6.local-release-check.v1",
+  "coreSourceSha": "9bc1507f65c06546ddc613b9818803f224a445f3",
+  "crmSourceSha": "e98dd44c0407d4d409d1e018054e32fc212a7f6e",
+  "releaseHttp": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "attempt": 2
+  },
+  "actualBrowser": {
+    "passed": true,
+    "attempt": 2,
+    "assertions": 3
+  },
+  "previewState": "running for owner inspection; cleanup pending until the explicit local stop file",
+  "productionDeployment": false,
+  "githubActionsTriggered": 0,
+  "publicationManifestSha256": "c703cf7ef9743d3f9da675dbef3eec35e99a14b24b433c861826ea915916b912",
+  "harnessZipSha256": "ae37d435b3497ac6de159cc43e6a25f308bd44acbea3759b4cd651181968dd09",
+  "builds": [
+    {
+      "component": "core-api",
+      "configuration": "Release",
+      "conclusion": "success",
+      "successfulAttempt": 5,
+      "failedCompilerOomAttempts": 4,
+      "unchangedSourceAnalyzersReused": true
+    },
+    {
+      "component": "crm-api",
+      "configuration": "Release",
+      "conclusion": "success",
+      "successfulAttempt": 1
+    },
+    {
+      "component": "crm-web",
+      "configuration": "production webpack, TypeScript included",
+      "conclusion": "success",
+      "successfulAttempt": 2,
+      "initialFailure": "two App Router entries exposed custom component props instead of valid Page props"
+    },
+    {
+      "component": "core-web",
+      "configuration": "production Vue",
+      "conclusion": "reused identical source and dependency subtree",
+      "buildSource": "2a116f7d1f8a48a10f9468a977ccb3516fa12fce"
+    }
+  ]
+}

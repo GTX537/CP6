@@ -64,7 +64,7 @@ Create `IdentitySnapshotReader.cs`, `IdentityBootstrapService.cs`, `CP6.WebApi/C
 - [x] Build initial snapshots for explicitly configured CRM tenants. Assign versions atomically and preserve tombstones; expose bootstrap readiness separately from process readiness.
 - [x] Run the actual Platform Outbox dispatcher for the independent priority and ordinary queue budgets. Use `ICp6OutboxPublisher` with the actual Dapr transport; retain the fixed Topic and `{tenantid}:{aggregateid}` partition key. Implement bounded retry/dead-letter handling and ownership-safe shutdown.
 - [x] Test unsigned/wrong-audience/wrong-client/cross-tenant read requests, pagination boundaries, concurrent bootstrap/event writes and priority progress during an ordinary backlog. Use the actual HTTP middleware in the SQL fixture.
-- [ ] Review the complete Core diff once, run its necessary CI, normally merge and confirm remote main. Record precise source/package/schema identities and component-only completion in the four project records.
+- [ ] Review the complete Core diff once, use the owner-authorized local verification and publication evidence, normally merge and confirm remote main. Record precise source/package/schema identities and component-only completion in the four project records.
 
 ## 4. CRM Inbox and local authorization
 
@@ -85,7 +85,7 @@ Add `IdentityReconciliationClient`, `IdentityReconciliationWorker` and persisten
 - [x] Compare Core versions/hashes every 15 minutes; mark dependent users unavailable before repair. Fetch only affected full snapshots. Apply repair and clear drift within a transaction that cannot overwrite a newer event.
 - [x] Retain failure/retry state and emit safe alert/latency metrics. A stale or unavailable reconciliation baseline cannot grant access indefinitely.
 - [x] Test the deterministic 15-minute schedule, omitted/tampered snapshot detection, failed repair, concurrent newer events and successful recovery. Reuse existing SQL results where source and inputs have not changed.
-- [ ] Review the whole CRM diff once, run applicable CI and normally deliver to remote main. Synchronize its four project records without calling component delivery complete C02.
+- [ ] Review the whole CRM diff once, use the owner-authorized local verification and publication evidence and normally deliver to remote main. Synchronize its four project records without calling component delivery complete C02.
 
 ## 6. Actual transport acceptance and records
 
@@ -109,4 +109,4 @@ The user's later verification policy supersedes all automatic CI steps above: no
 
 ## Local real-transport result (2026-09-10)
 
-Thirteen distinct cases have passed evidence, using scoped reuse across attempts 2/3/4/6; attempt 6 passed its six requested cases. Each denial category has 100/100 real samples within 30 seconds. The fixture evidence locator binds the consumer coverage index and actual source identities. Current open work is normal source/evidence delivery through required checks and remote-main verification. Production deployment and production performance are untested. No ordinary Actions or new image build was used.
+Thirteen distinct cases have passed evidence, using scoped reuse across attempts 2/3/4/6; attempt 6 passed its six requested cases. Each denial category has 100/100 real samples within 30 seconds. The fixture evidence locator binds the consumer coverage index and actual source identities. The owner later authorized local publication in place of ordinary required Actions checks. Three Release HTTP/message cases and actual production browser checks passed. Current open work is normal source/evidence PR delivery and remote-main verification without starting Actions. Production deployment and production performance are untested. No ordinary Actions or new image build was used.

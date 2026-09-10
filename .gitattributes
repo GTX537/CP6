@@ -45,3 +45,7 @@ contracts/events/platform/**/*.json text eol=lf
 # Raw C02 verifier reports retain original bytes and CRLF.
 eng/crm/identity-events-fixture/evidence/**/*.json -text whitespace=cr-at-eol
 eng/crm/identity-events-fixture/evidence/**/*.xml -text whitespace=cr-at-eol
+
+# Preserve the original local publication verification report bytes.
+docs/devops/evidence/local-release-20260910/**/*.json -text whitespace=cr-at-eol
+docs/devops/evidence/local-release-20260910/**/*.xml -text whitespace=cr-at-eol
