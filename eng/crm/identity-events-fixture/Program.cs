@@ -17,6 +17,21 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+if (args.Length == 3 && args[0] == "live-initialize")
+{
+    await IdentityLiveFixture.InitializeAsync(args[1], args[2]);
+    return;
+}
+if (args.Length == 2 && args[0] == "live-dispatch")
+{
+    await IdentityLiveFixture.DispatchAsync(args[1]);
+    return;
+}
+if (args.Length == 2 && args[0] == "live-cleanup")
+{
+    await IdentityLiveFixture.CleanupAsync(args[1]);
+    return;
+}
 if (args.Length == 3 && args[2] == "transport-probe")
 {
     Environment.ExitCode = await IdentityTransportProbe.RunAsync(args[0], args[1]);
