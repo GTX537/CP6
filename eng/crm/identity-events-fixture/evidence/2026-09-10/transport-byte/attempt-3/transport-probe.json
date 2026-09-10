@@ -1,0 +1,61 @@
+{
+  "schemaId": "cp6.c02.transport-byte-probe.v1",
+  "conclusion": "success",
+  "source": "7302f7dcc70be343de14d8825883512554b34647\u002Bworking-tree-transport-probe",
+  "scope": "Actual SDK publisher, Dapr 1.18.2 and Kafka 4.3.1; generated contract event; no SQL/CRM acceptance",
+  "assemblySha256": "d5a6ff478497a8920a1f510df58e13012336a7ff901197b784e2e0a56f1a8fdf",
+  "observations": [
+    {
+      "mode": "current-producer",
+      "passed": true,
+      "bytesEqual": true,
+      "sourceDataHash": "4f3120fc0b3e5850322f1f21930496533b1d57565405c7c10365e8159649b380",
+      "receivedDataHash": "4f3120fc0b3e5850322f1f21930496533b1d57565405c7c10365e8159649b380",
+      "metadataValid": true,
+      "topicValid": true,
+      "keyValid": true,
+      "pubsubValid": true,
+      "deliveryAccepted": true,
+      "expectedDeliveryAccepted": true,
+      "contractValid": true,
+      "contentType": "application/cloudevents\u002Bjson",
+      "sourcePayloadSha256": "3467e23c42593e0373d00fec95132da2184e699c88cae127bd310816f1c3eab1",
+      "receivedPayloadSha256": "3467e23c42593e0373d00fec95132da2184e699c88cae127bd310816f1c3eab1"
+    },
+    {
+      "mode": "reserved-header-spoof",
+      "passed": true,
+      "bytesEqual": true,
+      "sourceDataHash": "ec4ee0019f4f1b1851d9c6d32264973447683aa5efc06b563e301c8536a13cd5",
+      "receivedDataHash": "ec4ee0019f4f1b1851d9c6d32264973447683aa5efc06b563e301c8536a13cd5",
+      "metadataValid": true,
+      "topicValid": true,
+      "keyValid": true,
+      "pubsubValid": true,
+      "deliveryAccepted": true,
+      "expectedDeliveryAccepted": true,
+      "contractValid": true,
+      "contentType": "application/cloudevents\u002Bjson",
+      "sourcePayloadSha256": "6c6cdeb07f2d069e6bc2ef561539b3eec8f3bcd51e4a88f92a58ce6a748e2d8d",
+      "receivedPayloadSha256": "6c6cdeb07f2d069e6bc2ef561539b3eec8f3bcd51e4a88f92a58ce6a748e2d8d"
+    },
+    {
+      "mode": "wrong-broker-key",
+      "passed": true,
+      "bytesEqual": true,
+      "sourceDataHash": "f3b9fc46452efee52170e4b81f96baa0626933ec6dd1183019c3d46d39650491",
+      "receivedDataHash": "f3b9fc46452efee52170e4b81f96baa0626933ec6dd1183019c3d46d39650491",
+      "metadataValid": false,
+      "topicValid": true,
+      "keyValid": false,
+      "pubsubValid": true,
+      "deliveryAccepted": false,
+      "expectedDeliveryAccepted": false,
+      "contractValid": true,
+      "contentType": "application/cloudevents\u002Bjson",
+      "sourcePayloadSha256": "8017c1dfc7c55090ba41cfabeb75ef9a94dfb6721c9e14a7e45d14c3339121ea",
+      "receivedPayloadSha256": "8017c1dfc7c55090ba41cfabeb75ef9a94dfb6721c9e14a7e45d14c3339121ea"
+    }
+  ],
+  "observedAtUtc": "2026-09-10T07:11:02.9340528+00:00"
+}

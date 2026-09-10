@@ -73,9 +73,10 @@ public sealed partial class GrantStoreSqlTests : IAsyncLifetime
     {
         using var context = new CP6Context(new DbContextOptionsBuilder<CP6Context>().UseSqlServer(_connection).Options);
         var migrations = context.Database.GetMigrations().ToArray();
-        Assert.Equal("20260908011000_CrmOidcBrowserSessionFamily", migrations[^1]);
+        var familyIndex = Array.IndexOf(migrations, "20260908011000_CrmOidcBrowserSessionFamily");
+        Assert.True(familyIndex >= 2);
         Assert.False(context.Database.HasPendingModelChanges());
-        var script = context.GetService<IMigrator>().GenerateScript(migrations[^3], migrations[^1], MigrationsSqlGenerationOptions.Idempotent);
+        var script = context.GetService<IMigrator>().GenerateScript(migrations[familyIndex - 2], migrations[familyIndex], MigrationsSqlGenerationOptions.Idempotent);
         Assert.Contains("CREATE TABLE dbo.CrmOidcGrant", script);
         Assert.Contains("CREATE TABLE dbo.CrmOidcLogout", script);
         Assert.Contains("CREATE TABLE dbo.Sys_BrowserSessions", script);

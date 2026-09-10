@@ -204,6 +204,23 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
         };
     }
 
+    [HttpPost("/connect/service-revocations")]
+    [RequestSizeLimit(4096)]
+    public async Task<IActionResult> RevokeServiceToken()
+    {
+        PreventCaching();
+        if (!options.Enabled || serviceTokens?.RevocationEnabled != true) return NotFound();
+        if (!IsServiceTransportAllowed() || !Request.HasFormContentType) return OAuthError("invalid_request");
+        var authentication = serviceTokens.Authenticate(Request.Headers.Authorization);
+        if (!authentication.IsAuthenticated) return OAuthError("invalid_client", 401);
+        var form = await Request.ReadFormAsync(HttpContext.RequestAborted);
+        if (form.Count != 1 || !form.TryGetValue("jti", out var values) || values.Count != 1 ||
+            !Guid.TryParseExact(values[0], "D", out var jti) || jti == Guid.Empty || values[0] != jti.ToString("D"))
+            return OAuthError("invalid_request");
+        return await serviceTokens.RevokeAsync(authentication.Client!, values[0]!, HttpContext.RequestAborted)
+            ? Ok() : OAuthError("temporarily_unavailable", StatusCodes.Status503ServiceUnavailable);
+    }
+
     [HttpGet("/connect/userinfo")]
     public async Task<IActionResult> UserInfo()
     {

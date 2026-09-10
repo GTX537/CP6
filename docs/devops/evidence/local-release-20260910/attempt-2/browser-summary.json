@@ -1,0 +1,9 @@
+{
+  "schemaId": "cp6.local-published-browser.v1",
+  "coreSourceSha": "9bc1507f65c06546ddc613b9818803f224a445f3",
+  "crmSourceSha": "e98dd44c0407d4d409d1e018054e32fc212a7f6e",
+  "startedAtUtc": "2026-09-10T09:57:59.695Z",
+  "passed": false,
+  "assertions": [],
+  "finishedAtUtc": "2026-09-10T09:58:07.861Z"
+}

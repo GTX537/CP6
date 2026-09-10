@@ -1,0 +1,48 @@
+{
+  "schemaId": "cp6.crm.c02-real-transport.v1",
+  "conclusion": "success",
+  "scope": "actual-browser-session-and-management,business-role-membership-permission-removal-and-department-move",
+  "verificationKind": "local published Release Core/CRM APIs, production Next/Vue, real SQL, native password/PKCE and Dapr/Kafka; not a production deployment",
+  "coreSourceSha": "9bc1507f65c06546ddc613b9818803f224a445f3",
+  "crmSourceSha": "e98dd44c0407d4d409d1e018054e32fc212a7f6e",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "crmApiAssemblySha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+  "crmInfrastructureAssemblySha256": "7fb73b5c5d6deeba5afa8dad98084cc9a1c7eb763a680485bd66fb837a7fd181",
+  "total": 3,
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "actual-core-crm-sql-service-snapshot-baseline",
+      "passed": true,
+      "startedAtUtc": "2026-09-10T09:55:59.5734423+00:00",
+      "finishedAtUtc": "2026-09-10T09:56:35.4869861+00:00"
+    },
+    {
+      "name": "actual-browser-session-and-management",
+      "passed": true,
+      "startedAtUtc": "2026-09-10T09:56:35.4971782+00:00",
+      "finishedAtUtc": "2026-09-10T09:56:36.848495+00:00"
+    },
+    {
+      "name": "business-role-membership-permission-removal-and-department-move",
+      "passed": true,
+      "startedAtUtc": "2026-09-10T09:56:36.8509832+00:00",
+      "finishedAtUtc": "2026-09-10T09:56:41.4110543+00:00"
+    }
+  ],
+  "groups": [],
+  "observations": {
+    "baseline": {
+      "tenants": 2,
+      "sourceSnapshots": 119,
+      "importedSnapshots": 119,
+      "realServiceTokenRecords": 2,
+      "actualClock": true,
+      "signedReaderAuthentication": true,
+      "sourceOutboxDeliveredAndProjectionHealthy": true
+    }
+  },
+  "observedAtUtc": "2026-09-10T09:56:41.4208128+00:00"
+}

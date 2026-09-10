@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'CP6.Core' Or '$(MSBuildProjectName)' == 'CP6.Entity' Or '$(MSBuildProjectName)' == 'CP6.WebApi' Or '$(MSBuildProjectName)' == 'CP6.Tests' Or '$(MSBuildProjectName)' == 'CP6.Space.Infrastructure' Or '$(MSBuildProjectName)' == 'CP6.Space.IntegrationTests' Or '$(MSBuildProjectName)' == 'CP6.Oidc.IntegrationTests'">
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+</Project>

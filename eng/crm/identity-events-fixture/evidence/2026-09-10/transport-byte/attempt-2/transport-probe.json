@@ -1,0 +1,34 @@
+{
+  "schemaId": "cp6.c02.transport-byte-probe.v1",
+  "conclusion": "failure",
+  "source": "7302f7dcc70be343de14d8825883512554b34647\u002Bworking-tree-transport-probe",
+  "scope": "Actual SDK publisher, Dapr 1.18.2 and Kafka 4.3.1; generated contract event; no SQL/CRM acceptance",
+  "assemblySha256": "d5a6ff478497a8920a1f510df58e13012336a7ff901197b784e2e0a56f1a8fdf",
+  "observations": [
+    {
+      "mode": "current-producer",
+      "passed": true,
+      "bytesEqual": true,
+      "sourceDataHash": "c45cefbfa3c354922e970a5303b20fb0d27842dd67efaed8f6d303b0c717f77b",
+      "receivedDataHash": "c45cefbfa3c354922e970a5303b20fb0d27842dd67efaed8f6d303b0c717f77b",
+      "metadataValid": true,
+      "contractValid": true,
+      "contentType": "application/cloudevents\u002Bjson",
+      "sourcePayloadSha256": "f1d466835813f04b60ad93ebb8949ce2cdd59e483b477bf6a993adf54b860d9f",
+      "receivedPayloadSha256": "f1d466835813f04b60ad93ebb8949ce2cdd59e483b477bf6a993adf54b860d9f"
+    },
+    {
+      "mode": "explicit-raw-publish",
+      "passed": false,
+      "bytesEqual": true,
+      "sourceDataHash": "42a5bf68b966bee980f997473a58c7003df2af9a9923f9c7f939f9b6dbc4d98e",
+      "receivedDataHash": "42a5bf68b966bee980f997473a58c7003df2af9a9923f9c7f939f9b6dbc4d98e",
+      "metadataValid": false,
+      "contractValid": true,
+      "contentType": "application/cloudevents\u002Bjson",
+      "sourcePayloadSha256": "27883d5bead15ed1b88b3e72c219b19959f228e45cf7b5dcefbd68a9a45ad06c",
+      "receivedPayloadSha256": "27883d5bead15ed1b88b3e72c219b19959f228e45cf7b5dcefbd68a9a45ad06c"
+    }
+  ],
+  "observedAtUtc": "2026-09-10T07:08:23.4628913+00:00"
+}

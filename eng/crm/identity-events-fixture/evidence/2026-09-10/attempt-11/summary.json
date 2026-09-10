@@ -1,0 +1,24 @@
+{
+  "schemaId": "cp6.c02.producer-sql-verification.v1",
+  "conclusion": "failure",
+  "verificationKind": "working-tree SQL integration; not cross-repository transport acceptance",
+  "assemblySha256": "9737b19b9a0c7995ef0196a303d9bd6400216fae62e55e045bfa26d8637040e2",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "failed-command-restores-caller-owned-transaction-savepoint",
+  "expectedCases": 2,
+  "total": 2,
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "forward-migration-preserves-baseline-and-creates-both-queues",
+      "passed": true
+    },
+    {
+      "name": "failed-command-restores-caller-owned-transaction-savepoint",
+      "passed": false
+    }
+  ],
+  "observedAtUtc": "2026-09-10T05:25:37.0773611+00:00"
+}

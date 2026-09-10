@@ -8,6 +8,7 @@ using CP6.Core.Services.Sys;
 using CP6.Entity;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
+using CP6.Core.Services.CrmIdentity;
 
 namespace CP6.Core.Services.Platform;
 
@@ -30,6 +31,7 @@ public class GdprService : IGdprService
     private readonly ISecurityAuditService _audit;
     private readonly ITenantContext _tenant;
     private readonly ICurrentUserAccessor? _current;
+    private readonly CrmIdentityRuntime? _identity;
 
     private static readonly JsonSerializerOptions JsonOpts = new()
     {
@@ -44,7 +46,8 @@ public class GdprService : IGdprService
         ITokenBlacklistService blacklist,
         ISecurityAuditService audit,
         ITenantContext tenant,
-        ICurrentUserAccessor? current = null)
+        ICurrentUserAccessor? current = null,
+        CrmIdentityRuntime? identity = null)
     {
         _db = db;
         _hasher = hasher;
@@ -53,6 +56,7 @@ public class GdprService : IGdprService
         _audit = audit;
         _tenant = tenant;
         _current = current;
+        _identity = identity;
     }
 
     // ─────────────────────────── 导出（整租户）───────────────────────────
@@ -203,6 +207,19 @@ public class GdprService : IGdprService
 
         await using var tx = await _db.Database.BeginTransactionAsync();
 
+        IdentityChangeCapture? identityCapture = null;
+        if (_identity?.Options.Tenants.ContainsKey(tenantId) == true)
+        {
+            identityCapture = new IdentityChangeCapture();
+            identityCapture.AddTenantTombstones(tenantId,
+                await _db.Sys_Users.IgnoreQueryFilters().Where(x => x.TenantId == tenantId).Select(x => x.Id).ToArrayAsync(),
+                await _db.Sys_Depts.IgnoreQueryFilters().Where(x => x.TenantId == tenantId).Select(x => x.Id).ToArrayAsync(),
+                await _db.Sys_Roles.IgnoreQueryFilters().Where(x => x.TenantId == tenantId).Select(x => x.RoleId).ToArrayAsync());
+            await new IdentitySnapshotWriter(_db, _identity).RevokeTenantTokensAsync(tenantId);
+            await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE l FROM dbo.CrmOidcLogout l INNER JOIN dbo.CrmOidcGrant g ON l.GrantId=g.Id WHERE g.OrganizationId={tenantId}");
+            await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM dbo.CrmOidcGrant WHERE OrganizationId={tenantId}");
+        }
+
         // 1. 先打断自引用环：把 cycleNodes 的自指 FK 列 null 化（按 TenantId 过滤）。
         foreach (var clr in cycleNodes)
             await NullSelfReferenceAsync(clr, tenantId);
@@ -213,6 +230,12 @@ public class GdprService : IGdprService
 
         // 3. 最后删 Sys_Tenant 行本身。
         await _db.Sys_Tenants.Where(t => t.Id == tenantId).ExecuteDeleteAsync();
+
+        if (identityCapture is not null)
+        {
+            await new IdentitySnapshotWriter(_db, _identity!).WriteCapturedAsync(identityCapture);
+            await _db.SaveChangesAsync();
+        }
 
         await tx.CommitAsync();
     }

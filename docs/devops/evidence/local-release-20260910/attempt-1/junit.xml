@@ -1,0 +1,3 @@
+<testsuite name="c02-real-transport" tests="1" failures="1" skipped="0">
+  <testcase name="actual-core-crm-sql-service-snapshot-baseline"><failure message="Actual transport requirement failed; original private diagnostics retained." /></testcase>
+</testsuite>

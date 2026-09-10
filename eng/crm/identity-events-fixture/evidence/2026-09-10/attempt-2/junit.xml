@@ -1,0 +1,8 @@
+<testsuite name="c02-producer-sql" tests="6" failures="1" skipped="0">
+  <testcase name="forward-migration-preserves-baseline-and-creates-both-queues"></testcase>
+  <testcase name="business-save-produces-valid-versioned-snapshots"></testcase>
+  <testcase name="unchanged-authorization-does-not-advance-version"></testcase>
+  <testcase name="envelope-failure-rolls-back-business-version-and-outbox"></testcase>
+  <testcase name="snapshot-failure-rolls-back-priority-enqueue"></testcase>
+  <testcase name="outbox-insert-failure-rolls-back-business-and-version"><failure message="C02 SQL verification failed." /></testcase>
+</testsuite>

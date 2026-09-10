@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cp6.uk/events/platform/department-changed/v1/schema.json",
+  "type": "object",
+  "required": [
+    "specversion",
+    "id",
+    "source",
+    "type",
+    "subject",
+    "time",
+    "datacontenttype",
+    "dataschema",
+    "tenantid",
+    "correlationid",
+    "causationid",
+    "aggregateid",
+    "aggregateversion",
+    "schemaversion",
+    "region",
+    "data"
+  ],
+  "properties": {
+    "specversion": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "source": {
+      "const": "urn:cp6:platform"
+    },
+    "type": {
+      "const": "com.gtx537.platform.department.changed.v1"
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "datacontenttype": {
+      "const": "application/json"
+    },
+    "dataschema": {
+      "const": "https://contracts.cp6.uk/events/platform/department-changed/v1/schema.json"
+    },
+    "tenantid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "not": {
+        "const": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    "correlationid": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "causationid": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "aggregateid": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "aggregateversion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "schemaversion": {
+      "const": "1.0.0"
+    },
+    "region": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,31}$"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "tenantId",
+        "deptId",
+        "parentId",
+        "path",
+        "enabled",
+        "version"
+      ],
+      "properties": {
+        "tenantId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "deptId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "^(/[0-9a-f-]{36})+/$"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "leaderId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deleted": {
+          "type": "boolean"
+        }
+      },
+      "propertyNames": {
+        "not": {
+          "enum": [
+            "name",
+            "displayName",
+            "userName",
+            "nickName",
+            "email",
+            "emailAddress",
+            "phone",
+            "mobile",
+            "password",
+            "passwordHash",
+            "cookie",
+            "token",
+            "accessToken",
+            "refreshToken",
+            "clientSecret",
+            "privateKey",
+            "authorization"
+          ]
+        }
+      }
+    }
+  },
+  "propertyNames": {
+    "not": {
+      "enum": [
+        "name",
+        "displayName",
+        "userName",
+        "nickName",
+        "email",
+        "emailAddress",
+        "phone",
+        "mobile",
+        "password",
+        "passwordHash",
+        "cookie",
+        "token",
+        "accessToken",
+        "refreshToken",
+        "clientSecret",
+        "privateKey",
+        "authorization"
+      ]
+    }
+  }
+}

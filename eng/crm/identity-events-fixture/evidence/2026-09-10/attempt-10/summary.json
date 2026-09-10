@@ -1,0 +1,24 @@
+{
+  "schemaId": "cp6.c02.producer-sql-verification.v1",
+  "conclusion": "success",
+  "verificationKind": "working-tree SQL integration; not cross-repository transport acceptance",
+  "assemblySha256": "9737b19b9a0c7995ef0196a303d9bd6400216fae62e55e045bfa26d8637040e2",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "actual-http-tls-service-token-reader-authentication-and-revocation",
+  "expectedCases": 2,
+  "total": 2,
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "forward-migration-preserves-baseline-and-creates-both-queues",
+      "passed": true
+    },
+    {
+      "name": "actual-http-tls-service-token-reader-authentication-and-revocation",
+      "passed": true
+    }
+  ],
+  "observedAtUtc": "2026-09-10T05:25:11.3402168+00:00"
+}

@@ -38,3 +38,14 @@ deploy/production/sql/main-sync-*/**.sql text eol=lf
 
 # P10 verifier recipe is embedded and verified by its exact LF byte hash.
 eng/p10/verifier.Dockerfile text eol=lf
+
+# C02 local Schema/example hashes must be identical on Windows and Linux.
+contracts/events/platform/**/*.json text eol=lf
+
+# Raw C02 verifier reports retain original bytes and CRLF.
+eng/crm/identity-events-fixture/evidence/**/*.json -text whitespace=cr-at-eol
+eng/crm/identity-events-fixture/evidence/**/*.xml -text whitespace=cr-at-eol
+
+# Preserve the original local publication verification report bytes.
+docs/devops/evidence/local-release-20260910/**/*.json -text whitespace=cr-at-eol
+docs/devops/evidence/local-release-20260910/**/*.xml -text whitespace=cr-at-eol

@@ -1,0 +1,25 @@
+{
+  "specversion": "1.0",
+  "id": "event-token-revoked",
+  "source": "urn:cp6:platform",
+  "type": "com.gtx537.platform.token.revoked.v1",
+  "subject": "tenants/11111111-1111-4111-8111-111111111111/token:62e72f7c40be78057b080ff3f5b15d958aec07b55950f32b7df11915a6fe44ce:55555555-5555-4555-8555-555555555555",
+  "time": "2026-09-10T12:00:00Z",
+  "datacontenttype": "application/json",
+  "dataschema": "https://contracts.cp6.uk/events/platform/token-revoked/v1/schema.json",
+  "tenantid": "11111111-1111-4111-8111-111111111111",
+  "correlationid": "correlation-1",
+  "causationid": "command-1",
+  "aggregateid": "token:62e72f7c40be78057b080ff3f5b15d958aec07b55950f32b7df11915a6fe44ce:55555555-5555-4555-8555-555555555555",
+  "aggregateversion": 1,
+  "schemaversion": "1.0.0",
+  "region": "us",
+  "data": {
+    "tenantId": "11111111-1111-4111-8111-111111111111",
+    "issuer": "https://identity.cp6.test",
+    "jti": "55555555-5555-4555-8555-555555555555",
+    "subjectId": "user:33333333-3333-4333-8333-333333333333",
+    "expiresAtUtc": "2026-09-10T12:05:00Z",
+    "version": 1
+  }
+}

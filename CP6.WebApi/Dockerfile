@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ===== .NET Backend Multi-Stage Dockerfile =====
 #
 # 面试要点：
@@ -14,14 +15,21 @@ ARG RELEASE_VERSION=0.0.0-dev
 ARG GIT_SHA=unknown
 
 # 先复制项目文件，还原依赖（利用 Docker 层缓存）
+COPY NuGet.config Directory.Build.props ./
 COPY CP6.Entity/CP6.Entity.csproj CP6.Entity/
+COPY CP6.Entity/packages.lock.json CP6.Entity/
 COPY CP6.Core/CP6.Core.csproj CP6.Core/
+COPY CP6.Core/packages.lock.json CP6.Core/
 COPY CP6.Space.Contracts/CP6.Space.Contracts.csproj CP6.Space.Contracts/
 COPY CP6.Space.Domain/CP6.Space.Domain.csproj CP6.Space.Domain/
 COPY CP6.Space.Application/CP6.Space.Application.csproj CP6.Space.Application/
 COPY CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj CP6.Space.Infrastructure/
+COPY CP6.Space.Infrastructure/packages.lock.json CP6.Space.Infrastructure/
 COPY CP6.WebApi/CP6.WebApi.csproj CP6.WebApi/
-RUN dotnet restore CP6.WebApi/CP6.WebApi.csproj
+COPY CP6.WebApi/packages.lock.json CP6.WebApi/
+RUN --mount=type=secret,id=nuget_token,required=true \
+    NuGetPackageSourceCredentials_github="Username=GTX537;Password=$(cat /run/secrets/nuget_token);ValidAuthenticationTypes=Basic" \
+    dotnet restore CP6.WebApi/CP6.WebApi.csproj --locked-mode
 
 # 再复制全部源码，编译发布
 COPY . .

@@ -1,0 +1,4 @@
+<testsuite name="c02-producer-sql" tests="2" failures="1" skipped="0">
+  <testcase name="forward-migration-preserves-baseline-and-creates-both-queues"></testcase>
+  <testcase name="failed-command-restores-caller-owned-transaction-savepoint"><failure message="C02 SQL verification failed." /></testcase>
+</testsuite>

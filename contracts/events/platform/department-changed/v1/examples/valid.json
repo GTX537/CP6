@@ -1,0 +1,25 @@
+{
+  "specversion": "1.0",
+  "id": "event-department-changed",
+  "source": "urn:cp6:platform",
+  "type": "com.gtx537.platform.department.changed.v1",
+  "subject": "tenants/11111111-1111-4111-8111-111111111111/department:44444444-4444-4444-8444-444444444444",
+  "time": "2026-09-10T12:00:00Z",
+  "datacontenttype": "application/json",
+  "dataschema": "https://contracts.cp6.uk/events/platform/department-changed/v1/schema.json",
+  "tenantid": "11111111-1111-4111-8111-111111111111",
+  "correlationid": "correlation-1",
+  "causationid": "command-1",
+  "aggregateid": "department:44444444-4444-4444-8444-444444444444",
+  "aggregateversion": 1,
+  "schemaversion": "1.0.0",
+  "region": "us",
+  "data": {
+    "tenantId": "11111111-1111-4111-8111-111111111111",
+    "deptId": "44444444-4444-4444-8444-444444444444",
+    "parentId": null,
+    "path": "/44444444-4444-4444-8444-444444444444/",
+    "enabled": true,
+    "version": 1
+  }
+}

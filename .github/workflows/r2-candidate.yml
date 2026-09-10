@@ -16,6 +16,8 @@ concurrency:
 jobs:
   source-gate:
     runs-on: windows-latest
+    env:
+      NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     outputs:
       version: ${{ steps.release.outputs.version }}
       spec_path: ${{ steps.release.outputs.spec_path }}
@@ -95,8 +97,10 @@ jobs:
       - name: Restore release gates
         shell: pwsh
         run: |
-          dotnet restore CP6.WebApi/CP6.WebApi.csproj
-          dotnet restore CP6.Tests/CP6.Tests.csproj
+          dotnet restore CP6.WebApi/CP6.WebApi.csproj --locked-mode
+          if ($LASTEXITCODE -ne 0) { throw 'Web API locked restore failed.' }
+          dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
+          if ($LASTEXITCODE -ne 0) { throw 'Server test locked restore failed.' }
           dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj
           dotnet tool restore
           npm ci --prefix cp6.web
@@ -164,12 +168,13 @@ jobs:
           --health-retries 20
     env:
       CP6_TEST_SQLSERVER: Server=localhost,1433;Database=master;User Id=sa;Password=CP6_Test_Strong_Passw0rd!;TrustServerCertificate=True
+      NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-      - run: dotnet restore CP6.Tests/CP6.Tests.csproj
+      - run: dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
       - name: Run SQL Server production integration tests
         run: >-
           dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-restore
@@ -198,6 +203,7 @@ jobs:
         shell: bash
         env:
           VERSION: ${{ needs.source-gate.outputs.version }}
+          CP6_NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           owner="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
@@ -205,6 +211,7 @@ jobs:
           web_repo="ghcr.io/${owner}/cp6-web"
           docker buildx build . \
             --file CP6.WebApi/Dockerfile \
+            --secret id=nuget_token,env=CP6_NUGET_TOKEN \
             --platform linux/amd64 \
             --build-arg RELEASE_VERSION="$VERSION" \
             --build-arg GIT_SHA="$GITHUB_SHA" \
@@ -259,6 +266,8 @@ jobs:
     needs: [source-gate, sql-integration, images]
     runs-on: [self-hosted, Windows, X64, cp6-release]
     environment: r2-candidate
+    env:
+      NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     steps:
       - uses: actions/checkout@v4
         with:
@@ -340,7 +349,8 @@ jobs:
         env:
           VERSION: ${{ needs.source-gate.outputs.version }}
         run: |
-          dotnet restore CP6.WebApi/CP6.WebApi.csproj
+          dotnet restore CP6.WebApi/CP6.WebApi.csproj --locked-mode
+          if ($LASTEXITCODE -ne 0) { throw 'Database initialization locked restore failed.' }
           $initDir = Join-Path $env:RUNNER_TEMP "db-init"
           dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o $initDir `
             --no-restore -p:Version=$env:VERSION `

@@ -1,0 +1,4 @@
+<testsuite name="c02-producer-sql" tests="2" failures="0" skipped="0">
+  <testcase name="forward-migration-preserves-baseline-and-creates-both-queues"></testcase>
+  <testcase name="actual-http-tls-service-token-reader-authentication-and-revocation"></testcase>
+</testsuite>

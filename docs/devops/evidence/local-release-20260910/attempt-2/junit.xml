@@ -1,0 +1,5 @@
+<testsuite name="c02-real-transport" tests="3" failures="0" skipped="0">
+  <testcase name="actual-core-crm-sql-service-snapshot-baseline"></testcase>
+  <testcase name="actual-browser-session-and-management"></testcase>
+  <testcase name="business-role-membership-permission-removal-and-department-move"></testcase>
+</testsuite>

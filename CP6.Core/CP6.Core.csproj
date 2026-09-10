@@ -10,14 +10,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CP6.Platform.Messaging" Version="[0.10.2]" />
+    <PackageReference Include="CP6.Platform.EntityFramework" Version="[0.10.2]" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.511.8" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Confluent.Kafka" Version="2.6.1" />
     <PackageReference Include="Dapper" Version="2.1.72" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.30" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.30" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.12" />
     <PackageReference Include="NCrontab" Version="3.3.3" />
     <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
@@ -32,6 +34,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="../contracts/events/platform/**/*" Link="contracts/events/platform/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <!-- 字段审计（#4 T3）：暴露 CP6Context 内 internal static 纯函数（IsSecretField/Stringify）给测试工程直测 -->
   <!-- WFS（T4）：暴露 internal INodeHandler/各节点 handler 给 WebApi 做 DI 注册 -->

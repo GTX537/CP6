@@ -1,6 +1,10 @@
 using Dapper;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using CP6.Core.EFDbContext;
+using CP6.Core.Services.CrmIdentity;
+using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 namespace CP6.WebApi.Services;
 
@@ -45,7 +49,7 @@ public interface ICrmOidcGrantStore
 }
 
 /// <summary>Durable cross-replica one-use codes. All bindings participate in the atomic SQL update.</summary>
-public sealed class SqlCrmOidcGrantStore(string connectionString) : ICrmOidcGrantStore
+public sealed class SqlCrmOidcGrantStore(string connectionString, CrmIdentityRuntime? identity = null) : ICrmOidcGrantStore
 {
     public async Task SaveAsync(CrmOidcGrant grant)
     {
@@ -81,7 +85,11 @@ public sealed class SqlCrmOidcGrantStore(string connectionString) : ICrmOidcGran
     public async Task RevokeAsync(Guid id)
     {
         await using var db = new SqlConnection(connectionString);
-        await db.ExecuteAsync("UPDATE dbo.CrmOidcGrant SET Revoked=1 WHERE Id=@id", new { id });
+        await db.OpenAsync();
+        await using var transaction = await db.BeginTransactionAsync();
+        var grants = await db.QueryAsync<CrmOidcGrant>("UPDATE dbo.CrmOidcGrant SET Revoked=1 OUTPUT inserted.* WHERE Id=@id AND Revoked=0", new { id }, transaction);
+        await AppendRevocationsAsync(db, transaction, grants);
+        await transaction.CommitAsync();
     }
 
     public async Task<CrmOidcGrant?> FindForLogoutAsync(Guid id)
@@ -108,16 +116,29 @@ public sealed class SqlCrmOidcGrantStore(string connectionString) : ICrmOidcGran
             WHERE Id=@familyId AND UserId=@SubjectId AND TenantId=@OrganizationId
             """, new { familyId, grant.SubjectId, grant.OrganizationId }, transaction);
         if (boundFamily == null) throw new InvalidOperationException("Invalid original browser authentication family.");
-        await db.ExecuteAsync("""
+        var revoked = await db.QueryAsync<CrmOidcGrant>("""
             UPDATE dbo.Sys_BrowserSessions SET LoggedOutAtUtc=COALESCE(LoggedOutAtUtc,SYSUTCDATETIME()) WHERE Id=@familyId;
             UPDATE dbo.Sys_RefreshTokens SET RevokedAt=COALESCE(RevokedAt,GETDATE())
             WHERE BrowserSessionId=@familyId AND UserId=@SubjectId AND TenantId=@OrganizationId;
-            UPDATE g SET Revoked=1 FROM dbo.CrmOidcGrant g
+            UPDATE g SET Revoked=1 OUTPUT inserted.* FROM dbo.CrmOidcGrant g
             INNER JOIN dbo.Sys_RefreshTokens r ON g.SourceRefreshHash=r.TokenHash COLLATE Latin1_General_100_BIN2
             WHERE r.BrowserSessionId=@familyId AND r.UserId=@SubjectId AND r.TenantId=@OrganizationId
-                AND g.SubjectId=@SubjectId AND g.OrganizationId=@OrganizationId;
+                AND g.SubjectId=@SubjectId AND g.OrganizationId=@OrganizationId AND g.Revoked=0;
             """, new { familyId, grant.SubjectId, grant.OrganizationId }, transaction);
+        await AppendRevocationsAsync(db, transaction, revoked);
         await transaction.CommitAsync();
+    }
+
+    private async Task AppendRevocationsAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<CrmOidcGrant> revoked)
+    {
+        if (identity is null) return;
+        await using var context = new CP6Context(new DbContextOptionsBuilder<CP6Context>().UseSqlServer(connection).Options);
+        await context.Database.UseTransactionAsync(transaction);
+        var writer = new IdentitySnapshotWriter(context, identity);
+        foreach (var grant in revoked.OrderBy(x => x.OrganizationId).ThenBy(x => x.Id))
+            await writer.RevokeTokenAsync(grant.OrganizationId, grant.Id.ToString("D"), $"user:{grant.SubjectId:D}",
+                new DateTimeOffset(DateTime.SpecifyKind(grant.AccessExpiresAtUtc, DateTimeKind.Utc)));
+        await context.SaveChangesAsync();
     }
 
     public async Task SaveLogoutAsync(CrmOidcLogout ticket)

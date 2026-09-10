@@ -1,5 +1,6 @@
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore.Metadata;
+using CP6.Platform.EntityFramework;
 
 namespace CP6.Core.Services.Platform;
 
@@ -18,6 +19,10 @@ public static class TenantPurgeTopology
     private static bool IsTenantOwned(IEntityType t)
     {
         if (t.ClrType == typeof(Sys_Tenant)) return false;
+        // Retain only minimal delivery/version facts so purge itself cannot erase its revocation.
+        if (t.ClrType == typeof(CrmIdentitySnapshot) || t.ClrType == typeof(Cp6OutboxMessage) ||
+            t.ClrType == typeof(Cp6InboxMessage) || t.ClrType == typeof(Cp6InboxAggregateCheckpoint) ||
+            t.ClrType == typeof(Cp6DeadLetterRecord)) return false;
         var prop = t.FindProperty("TenantId");
         if (prop == null) return false;
         var clr = Nullable.GetUnderlyingType(prop.ClrType) ?? prop.ClrType;

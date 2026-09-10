@@ -1,4 +1,5 @@
 using CP6.Core.Auth;
+using System.ComponentModel.DataAnnotations;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels;
@@ -76,7 +77,7 @@ public class UserController : LocalizedControllerBase
 
     [HttpPut]
     [RequirePermission("user", "edit")]
-    public async Task<IActionResult> Update([FromBody] Sys_User entity)
+    public async Task<IActionResult> Update([FromBody] UserUpdateRequest entity)
     {
         var existing = await _context.Sys_Users.FindAsync(entity.Id);
         if (existing == null)
@@ -127,4 +128,18 @@ public class UserController : LocalizedControllerBase
         var count = await _context.SaveChangesAsync();
         return Ok(new { count });
     }
+}
+
+/// <summary>Editing identity attributes does not require resetting the user's password.</summary>
+public sealed class UserUpdateRequest
+{
+    public Guid Id { get; set; }
+    [Required, MaxLength(100)] public string UserName { get; set; } = "";
+    [MaxLength(200)] public string? Password { get; set; }
+    [MaxLength(100)] public string? NickName { get; set; }
+    public int? RoleId { get; set; }
+    public bool Enable { get; set; } = true;
+    public Guid? DeptId { get; set; }
+    public Guid? ManagerId { get; set; }
+    [MaxLength(100)] public string? Email { get; set; }
 }

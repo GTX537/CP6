@@ -74,13 +74,15 @@ var crmOidc = builder.Configuration.GetSection("CrmOidc").Get<CP6.WebApi.Service
     ?? new CP6.WebApi.Services.CrmOidcOptions();
 crmOidc.Validate(builder.Environment.IsDevelopment());
 builder.Services.AddSingleton(crmOidc);
+CP6.WebApi.Configuration.CrmIdentityConfiguration.AddCrmIdentityEvents(builder.Services, builder.Configuration, crmOidc);
 builder.Services.AddSingleton<CP6.WebApi.Services.CrmOidcCrypto>();
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>
     services.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>());
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcServiceTokens>();
-builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcGrantStore>(_ =>
-    new CP6.WebApi.Services.SqlCrmOidcGrantStore(builder.Configuration.GetConnectionString("DefaultConnection")!));
+builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcGrantStore>(services =>
+    new CP6.WebApi.Services.SqlCrmOidcGrantStore(builder.Configuration.GetConnectionString("DefaultConnection")!,
+        services.GetService<CP6.Core.Services.CrmIdentity.CrmIdentityRuntime>()));
 builder.Services.AddHealthChecks()
     .AddCheck(
         "self",
