@@ -1,5 +1,14 @@
 # AI 可读变更日志
 
+## 2026-09-10：C01 跨仓真实验收 72/72 通过
+
+C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格拒绝、缓存失效/恢复和真实密钥轮换全部通过，**72 通过、0 失败、0 跳过**。Core 实际执行源 `fb55a877de8ee8f9d27fd3bf8e73c824a21549e8`；CRM 实际执行源 `37cf0e58ff146ed58582768cf2c91e3c9fbe81cf` 经 [PR #58](https://github.com/GTX537/CP6.CRM/pull/58) 正常合入 `c02055178d96acf4c15ece8c5ba0f51b01b86f2c`，包含关系及相同代码树已核对。源 PR 七项适用 CI 通过；main 六个实施/适用性作业通过，但 GitHub 计费限制阻止汇总作业启动，整体 CI 失败。恢复 Actions 后仅补跑失败作业，并正常交付本批证据；交付门禁未被豁免。Platform 七个不可变 `0.10.2` 包仍绑定发布源 `fbcd21528078a04e5b53c42c5fdfebe6ffa9655f`，发布原件 main 为 `0944d808057c6cf138867a4d2b4b96247b79e14f`。
+
+公开[原始 summary、JUnit 与五次尝试记录](https://github.com/GTX537/CP6.CRM/tree/main/docs/delivery/c01/real-identity-2026-09-10) 保留实际执行 SHA；成功 summary SHA-256 为 `ae779716b0edbf07b6b37dfea5774ba7d564c06739286f20efa124324d0b5014`，JUnit 为 `3003542d3d98c143df6331da9cbd047877de788bfcfbe5f53acf396ce5932ff1`。真实预发布不少于 60 秒，旧键在最后实际旧令牌到期加默认 60 秒偏差后移除；入口退出 0，自有 SQL 与进程清理完成。四轮失败不改写成成功；相同代码树和输入的实际结果复用。
+
+用户于 2026-09-10 批准 C02 设计，现继续组织/权限/撤销事件的原子发布、CRM 投影与对账，之后推进 C03。C04A/B 保留原前置条件；本次是开发验收，不是生产部署。下方 C01 尚待完成的记录为历史检查点，以本条为当前状态。
+
+
 ## 2026-09-09：C01 服务端交付证据与消费端真实回归
 
 - [PR #97](https://github.com/GTX537/CP6/pull/97) 的公开文档集合登记已正常合入 `d7a8b1699cc47ebcf3f8507dd1dc1592756cedfb`，七项 PR 检查及该 main 的五条工作流均成功。下方登记和本地验证条目是历史检查点。
