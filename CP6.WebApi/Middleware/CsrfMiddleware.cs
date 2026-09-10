@@ -65,6 +65,9 @@ public class CsrfMiddleware
            // Confidential client authentication + PKCE; this exact endpoint never consumes ambient cookies.
            || path.Equals("/connect/token", StringComparison.OrdinalIgnoreCase)
            || path.Equals("/connect/end-session", StringComparison.OrdinalIgnoreCase)
+           // Service revocation requires explicit confidential-client authentication;
+           // its controller does not use ambient browser cookies for authorization.
+           || path.Equals("/connect/service-revocations", StringComparison.OrdinalIgnoreCase)
            || IsNativeAnonymousAuthPath(path)
            || PathMatches(path, "/hubs")
            || IsFlowTriggerFirePath(path);

@@ -1,0 +1,71 @@
+{
+  "kind": "local focused regression; actual cross-service acceptance recorded separately",
+  "sourceState": "reviewed working tree based on 0724b121",
+  "total": 15,
+  "passed": 15,
+  "failed": 0,
+  "skipped": 0,
+  "rawTrxSha256": "9bb6f94fff33953fd21980666d775f5b80371072cb3a66deceb1639be64d9bf6",
+  "cases": [
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_safe_method_passes_without_token",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_login_endpoint_is_exempt",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_service_revocation_exemption_is_exact(path: \"/connect/service-revocations\", expected: True)",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_unsafe_method_without_token_is_rejected",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_explicit_bearer_write_passes_without_cookie_token",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_cookie_write_on_native_business_route_still_requires_token",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_disabled_passes_unsafe_without_token",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_refresh_endpoint_is_NOT_exempt",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_service_revocation_exemption_is_exact(path: \"/connect/service-revocations/extra\", expected: False)",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_mismatched_token_is_rejected",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_service_revocation_exemption_is_exact(path: \"/connect/service-revocations-other\", expected: False)",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_matching_cookie_and_header_passes",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_service_revocation_exemption_is_exact(path: \"/connect\", expected: False)",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_service_revocation_exemption_is_exact(path: \"/CONNECT/SERVICE-REVOCATIONS\", expected: True)",
+      "passed": true
+    },
+    {
+      "name": "CP6.Tests.Sys.SecurityMiddlewareTests.Csrf_login_prefix_lookalike_is_NOT_exempt",
+      "passed": true
+    }
+  ]
+}

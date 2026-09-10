@@ -86,6 +86,21 @@ public class SecurityMiddlewareTests
         await Assert.ThrowsAsync<BizException>(() => Csrf(next).Invoke(Ctx("POST", "/api/auth/refresh")));
     }
 
+    [Theory]
+    [InlineData("/connect/service-revocations", true)]
+    [InlineData("/CONNECT/SERVICE-REVOCATIONS", true)]
+    [InlineData("/connect/service-revocations/extra", false)]
+    [InlineData("/connect/service-revocations-other", false)]
+    [InlineData("/connect", false)]
+    public async Task Csrf_service_revocation_exemption_is_exact(string path, bool expected)
+    {
+        var (next, called) = FakeNext();
+        var context = Ctx("POST", path);
+        if (expected) await Csrf(next).Invoke(context);
+        else await Assert.ThrowsAsync<BizException>(() => Csrf(next).Invoke(context));
+        Assert.Equal(expected, called());
+    }
+
     [Fact]
     public async Task Csrf_explicit_bearer_write_passes_without_cookie_token()
     {
