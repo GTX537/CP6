@@ -7,6 +7,7 @@ using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.CrmIdentity;
 using CP6.Entity.DomainModels.Sys;
 using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Services;
@@ -478,7 +479,7 @@ public class CrmOidcServiceTokenTests
         };
     }
 
-    private sealed class Fixture : IDisposable
+    internal sealed class Fixture : IDisposable
     {
         public const string ServiceSecret = "service-secret-with-enough-entropy-for-tests";
         public const string BrowserSecret = "browser-secret-with-enough-entropy-for-tests";
@@ -491,7 +492,7 @@ public class CrmOidcServiceTokenTests
         public readonly CrmOidcController Controller;
         public HttpRequest Request => Controller.Request;
 
-        public Fixture(ICrmOidcServiceDirectory? serviceDirectory = null)
+        public Fixture(ICrmOidcServiceDirectory? serviceDirectory = null, ICrmServiceTokenRecordStore? records = null)
         {
             Options = ValidOptions();
             TenantId = Options.ServiceClients.Single().TenantId;
@@ -513,7 +514,7 @@ public class CrmOidcServiceTokenTests
             var directory = new CrmOidcDirectory(Db, tenant, blacklist,
                 Mock.Of<IPasswordPolicyService>(), Options);
             var serviceTokens = new CrmOidcServiceTokens(Options, Crypto,
-                serviceDirectory ?? directory, time);
+                serviceDirectory ?? directory, time, records);
             var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["JWT:Secret"] = new string('s', 64),

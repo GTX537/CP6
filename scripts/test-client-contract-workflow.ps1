@@ -67,8 +67,10 @@ function Assert-StepFailsClosed {
 }
 
 $restoreCommands = [ordered]@{
-    "dotnet restore CP6.WebApi/CP6.WebApi.csproj" =
+    "dotnet restore CP6.WebApi/CP6.WebApi.csproj --locked-mode" =
         "if (`$LASTEXITCODE -ne 0) { throw 'Web API restore failed.' }"
+    "dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode" =
+        "if (`$LASTEXITCODE -ne 0) { throw 'Server test restore failed.' }"
     "dotnet restore CP6.Desktop/CP6.Desktop.csproj" =
         "if (`$LASTEXITCODE -ne 0) { throw 'Desktop restore failed.' }"
     "dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj" =
@@ -82,7 +84,7 @@ $requiredCommands = [ordered]@{
         "if (`$LASTEXITCODE -ne 0) { throw 'Web API build failed.' }"
     "dotnet build CP6.Desktop/CP6.Desktop.csproj -c Release --no-restore" =
         "if (`$LASTEXITCODE -ne 0) { throw 'Desktop build failed.' }"
-    "dotnet test CP6.Tests/CP6.Tests.csproj -c Release" =
+    "dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-restore" =
         "if (`$LASTEXITCODE -ne 0) { throw 'Server tests failed.' }"
     "dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj -c Release --no-restore" =
         "if (`$LASTEXITCODE -ne 0) { throw 'Client tests failed.' }"

@@ -1,0 +1,202 @@
+{
+  "bundleVersion": "1.0.0",
+  "cloudEventsSpecVersion": "1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "entries": [
+    {
+      "eventType": "com.gtx537.platform.tenant.changed.v1",
+      "schemaVersion": "1.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/tenant-changed/v1/schema.json",
+      "schemaPath": "tenant-changed/v1/schema.json",
+      "schemaSha256": "9da76058825e09b19ae42f148e689f14a695bbd2e81c5c7ca0af679180ad047d",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "tenant-changed/v1/examples/valid.json",
+          "valid": true,
+          "sha256": "0a6c9b151fa9da487cadc4ab3397b6fb5e388fa61bf38895d67ac664e541f979"
+        },
+        {
+          "name": "missing-required",
+          "path": "tenant-changed/v1/examples/missing-required.json",
+          "valid": false,
+          "sha256": "613ab30e47e66e333e41e76c914a741f67028f9d5cdefe48d0edb9718c79fe10"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "tenant-changed/v1/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "508da385fd5ac62558bc1fd79959c09ad983c573078809b04c15cc9255f1e5ac"
+        },
+        {
+          "name": "wrong-type",
+          "path": "tenant-changed/v1/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "8aab946b0aa7643a96c29513c41c9ccfb34eaa82d1e39ef470765042496074d7"
+        },
+        {
+          "name": "pii-negative",
+          "path": "tenant-changed/v1/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "f05ab5a2da781de55e8792c59a29c8b756a45c42a46b774f96597e7034fedecb"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.user.changed.v1",
+      "schemaVersion": "1.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/user-changed/v1/schema.json",
+      "schemaPath": "user-changed/v1/schema.json",
+      "schemaSha256": "1631b88aaa240fe20300c19b880c010e0b290e451b7999a4eeb75afe24ade9c2",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "user-changed/v1/examples/valid.json",
+          "valid": true,
+          "sha256": "f5ee090fd26f826eea3c187e1c8866ac8bdaa409c32cf7ad62f432b03ec93954"
+        },
+        {
+          "name": "missing-required",
+          "path": "user-changed/v1/examples/missing-required.json",
+          "valid": false,
+          "sha256": "f429b9d652a27124557b5992a16118f3e74975f057801d19116601b24b842e60"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "user-changed/v1/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "3fab88e05ce1469ffec89e1acfad834aada83f2322379c49838f3534d86c00ee"
+        },
+        {
+          "name": "wrong-type",
+          "path": "user-changed/v1/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "97144aa20871e8371461c005900d5fddf406ef37d3e6fc2a2433167896917690"
+        },
+        {
+          "name": "pii-negative",
+          "path": "user-changed/v1/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "7d2ed8391cc263c866f9402342e3383763c7c10f860f786fc6c229ea62fa7e32"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.department.changed.v1",
+      "schemaVersion": "1.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/department-changed/v1/schema.json",
+      "schemaPath": "department-changed/v1/schema.json",
+      "schemaSha256": "ccc83af2f626fb66288d5b2eac3505ee342380dea8c5fb527cc9bd3738cda3e7",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "department-changed/v1/examples/valid.json",
+          "valid": true,
+          "sha256": "5d1c792f40be9ffb1e25e1607a19a8e5fd43f3cb689f4e56fb790179b2780ff3"
+        },
+        {
+          "name": "missing-required",
+          "path": "department-changed/v1/examples/missing-required.json",
+          "valid": false,
+          "sha256": "72acf2376e15bc776641cbe345d90923079f11574b18dffe3312ff1a609dfa13"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "department-changed/v1/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "f28b15e3572b6577b5e1a13c0b6db9f4d6a2b1c4246d28f23cf1517ea488ef4d"
+        },
+        {
+          "name": "wrong-type",
+          "path": "department-changed/v1/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "3f3e8aa67f105e3a3b617816bc383ab572b51d757e2a33156e0f51fb18d821d0"
+        },
+        {
+          "name": "pii-negative",
+          "path": "department-changed/v1/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "c4456cf47076395d6dc735ab1b9ae0e202b46b2710d67d4c05613025a813bebc"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.permission.changed.v1",
+      "schemaVersion": "1.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/permission-changed/v1/schema.json",
+      "schemaPath": "permission-changed/v1/schema.json",
+      "schemaSha256": "230d70e4cc16df6704cda7c8cbf54d23bb64ad3e5335b3d9a26d1ef8924756b7",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "permission-changed/v1/examples/valid.json",
+          "valid": true,
+          "sha256": "a1f3a2debeb148662fb407b185af88a8785f8264a7f4355f363c3f0f65fda2b6"
+        },
+        {
+          "name": "missing-required",
+          "path": "permission-changed/v1/examples/missing-required.json",
+          "valid": false,
+          "sha256": "4e1a6b006fc08e215c3972691000ca7c16feae3b0bee3ae5bec9ff1d234e196f"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "permission-changed/v1/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "d74e8199c381f90080792c6908cf393f1156de48167d99bddf59ed81671359f9"
+        },
+        {
+          "name": "wrong-type",
+          "path": "permission-changed/v1/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "098b3ba53244dde3babf15855edf2def6da38aebc424592fa0bddf20e8f3a7e7"
+        },
+        {
+          "name": "pii-negative",
+          "path": "permission-changed/v1/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "159578b9866995c6be36e69a8815503de6db731b2cecb2c3ce0a3cd1bd6a1ee9"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.token.revoked.v1",
+      "schemaVersion": "1.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/token-revoked/v1/schema.json",
+      "schemaPath": "token-revoked/v1/schema.json",
+      "schemaSha256": "16a5ecac3ad69aca118b4a4700c33d53e7bb72a62e3e1eac072f963dd77c9165",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "token-revoked/v1/examples/valid.json",
+          "valid": true,
+          "sha256": "b34e129f5308a84b7204c14d6d31257ece3bb367874811a510b41dae6cc5978c"
+        },
+        {
+          "name": "missing-required",
+          "path": "token-revoked/v1/examples/missing-required.json",
+          "valid": false,
+          "sha256": "6c315ede5f6440414b81d64d783d011453ac073a7963f133946134a95f1efdea"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "token-revoked/v1/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "76e313a5807ca326395538b1ee4ad77a7a83f6010210ab3512e6b48981f5aa3b"
+        },
+        {
+          "name": "wrong-type",
+          "path": "token-revoked/v1/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "a36c77fecb619fb8cef70dcdd9e1e666f1d867e3b393b05b1679136a7d035489"
+        },
+        {
+          "name": "pii-negative",
+          "path": "token-revoked/v1/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "ddc1f5cd5147cbe1c892b52054377e81d4633072db433b581bba9c0c0040e513"
+        }
+      ]
+    }
+  ]
+}

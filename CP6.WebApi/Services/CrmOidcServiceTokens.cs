@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Primitives;
+using CP6.Core.Services.CrmIdentity;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Services;
 
@@ -18,14 +20,18 @@ public sealed class CrmOidcServiceTokens
     private readonly CrmOidcCrypto _crypto;
     private readonly ICrmOidcServiceDirectory _directory;
     private readonly TimeProvider _timeProvider;
+    private readonly ICrmServiceTokenRecordStore? _records;
+    internal bool RevocationEnabled => _records is not null;
 
     public CrmOidcServiceTokens(CrmOidcOptions options, CrmOidcCrypto crypto,
-        ICrmOidcServiceDirectory directory, TimeProvider? timeProvider = null)
+        ICrmOidcServiceDirectory directory, TimeProvider? timeProvider = null,
+        ICrmServiceTokenRecordStore? records = null)
     {
         _options = options;
         _crypto = crypto;
         _directory = directory;
         _timeProvider = timeProvider ?? TimeProvider.System;
+        _records = records;
     }
 
     internal CrmOidcServiceAuthentication Authenticate(StringValues authorization)
@@ -57,14 +63,25 @@ public sealed class CrmOidcServiceTokens
         if (!active) return CrmOidcServiceTokenIssue.Unauthorized;
         var issuedAt = _timeProvider.GetUtcNow();
         var expiresAt = issuedAt.AddSeconds(300);
+        var jti = Guid.NewGuid().ToString("D");
         var token = _crypto.Sign("CP6.Services",
         [
             new Claim("sub", "service:" + client.ClientId),
             new Claim("client_id", client.ClientId),
             new Claim("tenant_id", client.TenantId.ToString()),
-            new Claim("jti", Guid.NewGuid().ToString()),
+            new Claim("jti", jti),
             new Claim("scope", "cp6.services")
         ], expiresAt, "at+jwt");
+        if (_records is not null)
+        {
+            try
+            {
+                await _records.RecordAsync(_options.Issuer, client.ClientId, client.TenantId, jti,
+                    DateTimeOffset.FromUnixTimeSeconds(expiresAt.ToUnixTimeSeconds()), cancellationToken);
+            }
+            catch (Exception ex) when (IsDatabaseUnavailable(ex))
+            { return CrmOidcServiceTokenIssue.Unavailable; }
+        }
         var expiresIn = Math.Clamp((int)Math.Floor(
             (expiresAt - _timeProvider.GetUtcNow()).TotalSeconds), 0, 300);
         return new(CrmOidcServiceTokenIssueStatus.Success, token, expiresIn);
@@ -73,10 +90,22 @@ public sealed class CrmOidcServiceTokens
     private static bool IsDatabaseUnavailable(Exception exception)
     {
         if (exception is DbException or TimeoutException) return true;
+        if (exception is DbUpdateException { InnerException: { } updateInner }) return IsDatabaseUnavailable(updateInner);
         if (exception is RetryLimitExceededException retry)
             return retry.InnerException != null && IsDatabaseUnavailable(retry.InnerException);
         return exception is InvalidOperationException { InnerException: { } inner }
             && IsDatabaseUnavailable(inner);
+    }
+
+    internal async Task<bool> RevokeAsync(CrmOidcServiceClient client, string jti, CancellationToken cancellationToken)
+    {
+        if (_records is null) return false;
+        try
+        {
+            await _records.RevokeAsync(_options.Issuer, client.ClientId, client.TenantId, jti, cancellationToken);
+            return true;
+        }
+        catch (Exception ex) when (IsDatabaseUnavailable(ex)) { return false; }
     }
 
     internal static bool TryDecodeBasic(StringValues authorization, out string id, out string secret)

@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-09-10：C02 Core 已完成本地组件验证，CRM 与传输继续实施
+
+- 五类固定 Schema、版本快照、普通/优先 Outbox、业务与直接 SQL 撤销、真实服务令牌记录、初始化及租户绑定读取 API 已实现。复用签名包 `[0.10.2]`，合同索引 SHA-256 为 `24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63`。
+- 定向单元测试 123/123，最终真实 SQL/HTTPS 批次 23/23、零失败/跳过。覆盖历史迁移保真、并发版本、三种故障原子回滚、调用方外层事务、实际业务失效入口与服务 API。原始报告和前序失败保存在 [组件证据](../../eng/crm/identity-events-fixture/evidence/2026-09-10/README.md)，工作树执行事实不改标为 main 验收。
+- 本地 Linux Docker 构建已成功，签名与 locked restore、发布内容及构建秘密不进入镜像已检查；后续文档修改复用结果，不重建。Actions 的仓库包读取权限尚未验证。功能默认关闭，启用要求 SQL `MultipleActiveResultSets=False` 以支持事务保存点。
+- 用户已禁止普通验证触发 GitHub Actions；本地策略分支 `b483e62b` 已将七类普通流程改为手动，但受保护 main 的必需检查阻塞集成。C02 暂存于本地任务分支，不 push/建 PR 间接触发运行，不修改分支保护或伪造状态。CRM Inbox/投影/对账、实际 Dapr/Kafka 故障恢复与三类 30 秒传播样本尚未验收，完整 C02 不计完成。
+- C01 真实身份验收已为 72/72；CRM 源码经 PR #58 合入 `c0205517`，合并后六项实质检查成功、汇总作业因额度限制未启动。C01 三仓证据分支保留待正常集成，不重跑已成功的真实验收。
+
 ## 2026-09-10：C02 设计与实施前置
 
 - 按用户已确认的 [C02 设计](../superpowers/specs/2026-09-10-c02-identity-events-design.md) 与 [实施计划](../superpowers/plans/2026-09-10-c02-identity-events.md)，在 C01 最终真实身份验收完成后，依次交付 Core 原子事件/撤销/快照、CRM Inbox/投影/对账与真实 Dapr/Kafka 传播验收。

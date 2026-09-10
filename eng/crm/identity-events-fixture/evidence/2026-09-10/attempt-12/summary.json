@@ -1,0 +1,108 @@
+{
+  "schemaId": "cp6.c02.producer-sql-verification.v1",
+  "conclusion": "success",
+  "verificationKind": "working-tree SQL integration; not cross-repository transport acceptance",
+  "assemblySha256": "9737b19b9a0c7995ef0196a303d9bd6400216fae62e55e045bfa26d8637040e2",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "all producer SQL/HTTP cases",
+  "expectedCases": 23,
+  "total": 23,
+  "passed": 23,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "forward-migration-preserves-baseline-and-creates-both-queues",
+      "passed": true
+    },
+    {
+      "name": "business-save-produces-valid-versioned-snapshots",
+      "passed": true
+    },
+    {
+      "name": "unchanged-authorization-does-not-advance-version",
+      "passed": true
+    },
+    {
+      "name": "envelope-failure-rolls-back-business-version-and-outbox",
+      "passed": true
+    },
+    {
+      "name": "snapshot-failure-rolls-back-priority-enqueue",
+      "passed": true
+    },
+    {
+      "name": "outbox-insert-failure-rolls-back-business-and-version",
+      "passed": true
+    },
+    {
+      "name": "concurrent-commands-commit-a-dense-version-sequence",
+      "passed": true
+    },
+    {
+      "name": "savechanges-false-preserves-caller-state-with-one-write",
+      "passed": true
+    },
+    {
+      "name": "savechangesasync-false-preserves-caller-state-with-one-write",
+      "passed": true
+    },
+    {
+      "name": "native-user-disable-revokes-actual-crm-grant-jti",
+      "passed": true
+    },
+    {
+      "name": "direct-grant-revocation-is-atomic-and-idempotent",
+      "passed": true
+    },
+    {
+      "name": "service-revocation-is-bound-to-issuer-client-and-tenant",
+      "passed": true
+    },
+    {
+      "name": "bootstrap-is-idempotent-and-pagination-restarts-on-change",
+      "passed": true
+    },
+    {
+      "name": "department-move-emits-updated-descendant-paths",
+      "passed": true
+    },
+    {
+      "name": "role-membership-and-empty-permissions-are-full-snapshots",
+      "passed": true
+    },
+    {
+      "name": "password-and-two-factor-changes-revoke-real-grants",
+      "passed": true
+    },
+    {
+      "name": "refresh-rotation-preserves-grant-terminal-revoke-invalidates-family",
+      "passed": true
+    },
+    {
+      "name": "direct-family-revocation-is-atomic-across-both-sessions",
+      "passed": true
+    },
+    {
+      "name": "tenant-disable-revokes-browser-and-service-tokens",
+      "passed": true
+    },
+    {
+      "name": "gdpr-purge-preserves-tombstones-and-revocation-outbox",
+      "passed": true
+    },
+    {
+      "name": "concurrent-bootstrap-and-business-write-preserve-latest-state",
+      "passed": true
+    },
+    {
+      "name": "actual-http-tls-service-token-reader-authentication-and-revocation",
+      "passed": true
+    },
+    {
+      "name": "failed-command-restores-caller-owned-transaction-savepoint",
+      "passed": true
+    }
+  ],
+  "observedAtUtc": "2026-09-10T05:27:58.3425825+00:00"
+}

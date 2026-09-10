@@ -1,0 +1,17 @@
+<testsuite name="c02-producer-sql" tests="15" failures="1" skipped="0">
+  <testcase name="forward-migration-preserves-baseline-and-creates-both-queues"></testcase>
+  <testcase name="business-save-produces-valid-versioned-snapshots"></testcase>
+  <testcase name="unchanged-authorization-does-not-advance-version"></testcase>
+  <testcase name="envelope-failure-rolls-back-business-version-and-outbox"></testcase>
+  <testcase name="snapshot-failure-rolls-back-priority-enqueue"></testcase>
+  <testcase name="outbox-insert-failure-rolls-back-business-and-version"></testcase>
+  <testcase name="concurrent-commands-commit-a-dense-version-sequence"></testcase>
+  <testcase name="savechanges-false-preserves-caller-state-with-one-write"></testcase>
+  <testcase name="savechangesasync-false-preserves-caller-state-with-one-write"></testcase>
+  <testcase name="native-user-disable-revokes-actual-crm-grant-jti"></testcase>
+  <testcase name="direct-grant-revocation-is-atomic-and-idempotent"></testcase>
+  <testcase name="service-revocation-is-bound-to-issuer-client-and-tenant"></testcase>
+  <testcase name="bootstrap-is-idempotent-and-pagination-restarts-on-change"></testcase>
+  <testcase name="department-move-emits-updated-descendant-paths"></testcase>
+  <testcase name="role-membership-and-empty-permissions-are-full-snapshots"><failure message="C02 SQL verification failed." /></testcase>
+</testsuite>

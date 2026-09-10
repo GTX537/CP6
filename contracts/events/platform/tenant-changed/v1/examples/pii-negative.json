@@ -1,0 +1,24 @@
+{
+  "specversion": "1.0",
+  "id": "event-tenant-changed",
+  "source": "urn:cp6:platform",
+  "type": "com.gtx537.platform.tenant.changed.v1",
+  "subject": "tenants/11111111-1111-4111-8111-111111111111/tenant:11111111-1111-4111-8111-111111111111",
+  "time": "2026-09-10T12:00:00Z",
+  "datacontenttype": "application/json",
+  "dataschema": "https://contracts.cp6.uk/events/platform/tenant-changed/v1/schema.json",
+  "tenantid": "11111111-1111-4111-8111-111111111111",
+  "correlationid": "correlation-1",
+  "causationid": "command-1",
+  "aggregateid": "tenant:11111111-1111-4111-8111-111111111111",
+  "aggregateversion": 1,
+  "schemaversion": "1.0.0",
+  "region": "us",
+  "data": {
+    "tenantId": "11111111-1111-4111-8111-111111111111",
+    "enabled": true,
+    "version": 1,
+    "expiresAtUtc": null,
+    "email": "private@example.test"
+  }
+}

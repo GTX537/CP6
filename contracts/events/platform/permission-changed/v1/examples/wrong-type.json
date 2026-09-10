@@ -1,0 +1,32 @@
+{
+  "specversion": "1.0",
+  "id": "event-permission-changed",
+  "source": "urn:cp6:platform",
+  "type": "com.gtx537.platform.permission.changed.v1",
+  "subject": "tenants/11111111-1111-4111-8111-111111111111/permission:role:2",
+  "time": "2026-09-10T12:00:00Z",
+  "datacontenttype": "application/json",
+  "dataschema": "https://contracts.cp6.uk/events/platform/permission-changed/v1/schema.json",
+  "tenantid": "11111111-1111-4111-8111-111111111111",
+  "correlationid": "correlation-1",
+  "causationid": "command-1",
+  "aggregateid": "permission:role:2",
+  "aggregateversion": 1,
+  "schemaversion": "1.0.0",
+  "region": "us",
+  "data": {
+    "tenantId": "11111111-1111-4111-8111-111111111111",
+    "subjectId": "role:2",
+    "enabled": true,
+    "grants": [
+      {
+        "resource": "crm-lead",
+        "action": "query",
+        "scope": 2,
+        "deptIds": [],
+        "fields": []
+      }
+    ],
+    "version": "1"
+  }
+}

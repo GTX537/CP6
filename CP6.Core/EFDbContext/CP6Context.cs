@@ -18,6 +18,8 @@ using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DomainModels.Space;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CP6.Core.Services.CrmIdentity;
+using CP6.Platform.EntityFramework;
 
 namespace CP6.Core.EFDbContext;
 
@@ -29,20 +31,26 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 {
     private readonly ITenantContext? _tenant;
     private readonly ICurrentUserAccessor? _user;
+    private readonly CrmIdentityRuntime? _identity;
 
     /// <summary>
     /// 多租户（章10）：可选注入 <see cref="ITenantContext"/>。生产由 DI 注入请求级租户；
     /// 单测/后台用单参构造 → 回退 <see cref="TenantContext.DefaultTenant"/>，故既有测试无需改造。
     /// 字段审计（#4）：可选注入 <see cref="ICurrentUserAccessor"/>，EF Core 自动构造注入读取当前用户 claims。
     /// </summary>
-    public CP6Context(DbContextOptions<CP6Context> options, ITenantContext? tenant = null, ICurrentUserAccessor? user = null) : base(options)
+    public CP6Context(DbContextOptions<CP6Context> options, ITenantContext? tenant = null, ICurrentUserAccessor? user = null,
+        CrmIdentityRuntime? identity = null) : base(options)
     {
         _tenant = tenant;
         _user = user;
+        _identity = identity;
     }
 
     /// <summary>当前租户 Id（全局查询过滤 + 写入盖章用）。无注入则默认租户。</summary>
     public Guid CurrentTenantId => _tenant?.CurrentTenantId ?? TenantContext.DefaultTenant;
+    public DbSet<CrmIdentitySnapshot> CrmIdentitySnapshots => Set<CrmIdentitySnapshot>();
+    public DbSet<CrmServiceTokenRecord> CrmServiceTokenRecords => Set<CrmServiceTokenRecord>();
+    public DbSet<CrmIdentityBootstrapState> CrmIdentityBootstrapStates => Set<CrmIdentityBootstrapState>();
 
     // ───── CRM + public marketing site foundation ─────
     public DbSet<CrmAccount> CrmAccounts { get; set; }
@@ -624,6 +632,35 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.AddCp6TransactionalMessaging("crm_identity");
+        modelBuilder.Entity<CrmIdentityBootstrapState>(e =>
+        {
+            e.ToTable("Bootstrap", "crm_identity");
+            e.HasKey(x => x.TenantId);
+            e.Property(x => x.ContractBundleSha256).HasMaxLength(64).IsUnicode(false).IsRequired();
+            e.Property(x => x.RowVersion).IsRowVersion();
+        });
+        modelBuilder.Entity<CrmIdentitySnapshot>(e =>
+        {
+            e.ToTable("Snapshot", "crm_identity");
+            e.HasKey(x => new { x.TenantId, x.AggregateId });
+            e.Property(x => x.AggregateId).HasMaxLength(128).UseCollation("Latin1_General_100_BIN2");
+            e.Property(x => x.EventType).HasMaxLength(128).IsRequired();
+            e.Property(x => x.PayloadJson).IsRequired();
+            e.Property(x => x.PayloadSha256).HasMaxLength(64).IsUnicode(false).IsRequired();
+            e.Property(x => x.RowVersion).IsRowVersion();
+            e.HasIndex(x => new { x.TenantId, x.UpdatedAtUtc });
+        });
+        modelBuilder.Entity<CrmServiceTokenRecord>(e =>
+        {
+            e.ToTable("ServiceToken", "crm_identity");
+            e.HasKey(x => new { x.Issuer, x.Jti });
+            e.Property(x => x.Issuer).HasMaxLength(512).IsUnicode(false).UseCollation("Latin1_General_100_BIN2");
+            e.Property(x => x.Jti).HasMaxLength(36).IsUnicode(false).UseCollation("Latin1_General_100_BIN2");
+            e.Property(x => x.ClientId).HasMaxLength(128).IsRequired().UseCollation("Latin1_General_100_BIN2");
+            e.Property(x => x.RowVersion).IsRowVersion();
+            e.HasIndex(x => new { x.TenantId, x.ClientId, x.ExpiresAtUtc });
+        });
 
         // OA 章10 §7 租户注册表：租户编码全局唯一（共享表，不带 TenantId，不参与行级过滤）
         modelBuilder.Entity<Sys_Tenant>()
@@ -2858,19 +2895,36 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         RejectSpaceAuditMutation();
         StampTenant();   // SaveChanges() 经 base 路由至本重载，无需再覆盖无参版（避免重复盖章）
         var pending = CaptureFieldAuditBeforeSave();
-        if (pending.Count == 0) return base.SaveChanges(acceptAllChangesOnSuccess);   // 无审计目标 → 零开销原路径
+        var identity = _identity is null ? null : IdentityChangeCapture.Capture(this, _identity.Options);
+        if (pending.Count == 0 && identity?.HasChanges != true) return base.SaveChanges(acceptAllChangesOnSuccess);
 
         var useTx = Database.IsRelational() && Database.CurrentTransaction == null;   // InMemory 不开；已有环境事务则参与
         var tx = useTx ? Database.BeginTransaction() : null;
+        var callerTx = !useTx && identity?.HasChanges == true ? Database.CurrentTransaction : null;
+        var savepoint = callerTx is null ? null : "c02_" + Guid.NewGuid().ToString("N")[..24];
+        if (callerTx is not null && !callerTx.SupportsSavepoints) throw new InvalidOperationException("C02_REQUIRES_SQL_SAVEPOINTS");
+        var saved = false;
+        var retainedState = acceptAllChangesOnSuccess ? null : CaptureSaveState();
         try
         {
-            var result = base.SaveChanges(acceptAllChangesOnSuccess);   // 业务变更（Added 键落定）
+            if (callerTx is not null) { callerTx.CreateSavepoint(savepoint!); saved = true; }
+            if (identity?.HasChanges == true)
+                identity.ExpandBeforeSaveAsync(this, _identity!.Options, default).GetAwaiter().GetResult();
+            var result = base.SaveChanges(acceptAllChangesOnSuccess: true);   // Pipeline must not submit the business writes twice.
+            if (identity?.HasChanges == true)
+                new IdentitySnapshotWriter(this, _identity!).WriteCapturedAsync(identity).GetAwaiter().GetResult();
             WriteAuditRows(pending);
             base.SaveChanges(acceptAllChangesOnSuccess: true);          // 审计行（调 BASE 非 this → 不重入；审计行非 IAuditable）
             tx?.Commit();
+            RestoreSaveState(retainedState);
             return result;                                              // 返业务影响行数（审计行不计入）
         }
-        catch { tx?.Rollback(); throw; }
+        catch
+        {
+            if (tx is not null) tx.Rollback();
+            else if (saved) callerTx!.RollbackToSavepoint(savepoint!);
+            throw;
+        }
         finally { tx?.Dispose(); }
     }
 
@@ -2881,20 +2935,56 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         RejectSpaceAuditMutation();
         StampTenant();
         var pending = CaptureFieldAuditBeforeSave();
-        if (pending.Count == 0) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        var identity = _identity is null ? null : IdentityChangeCapture.Capture(this, _identity.Options);
+        if (pending.Count == 0 && identity?.HasChanges != true) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
         var useTx = Database.IsRelational() && Database.CurrentTransaction == null;
         var tx = useTx ? await Database.BeginTransactionAsync(cancellationToken) : null;
+        var callerTx = !useTx && identity?.HasChanges == true ? Database.CurrentTransaction : null;
+        var savepoint = callerTx is null ? null : "c02_" + Guid.NewGuid().ToString("N")[..24];
+        if (callerTx is not null && !callerTx.SupportsSavepoints) throw new InvalidOperationException("C02_REQUIRES_SQL_SAVEPOINTS");
+        var saved = false;
+        var retainedState = acceptAllChangesOnSuccess ? null : CaptureSaveState();
         try
         {
-            var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            if (callerTx is not null) { await callerTx.CreateSavepointAsync(savepoint!, cancellationToken); saved = true; }
+            if (identity?.HasChanges == true)
+                await identity.ExpandBeforeSaveAsync(this, _identity!.Options, cancellationToken);
+            var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken);
+            if (identity?.HasChanges == true)
+                await new IdentitySnapshotWriter(this, _identity!).WriteCapturedAsync(identity, cancellationToken);
             WriteAuditRows(pending);
             await base.SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken);
             if (tx != null) await tx.CommitAsync(cancellationToken);
+            RestoreSaveState(retainedState);
             return result;
         }
-        catch { if (tx != null) await tx.RollbackAsync(cancellationToken); throw; }
+        catch
+        {
+            if (tx is not null) await tx.RollbackAsync(CancellationToken.None);
+            else if (saved) await callerTx!.RollbackToSavepointAsync(savepoint!, CancellationToken.None);
+            throw;
+        }
         finally { if (tx != null) await tx.DisposeAsync(); }
+    }
+
+    private sealed record RetainedSaveState(EntityEntry Entry, EntityState State, PropertyValues Original, string[] Modified);
+    private List<RetainedSaveState> CaptureSaveState() => ChangeTracker.Entries()
+        .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
+        .Select(e => new RetainedSaveState(e, e.State, e.OriginalValues.Clone(),
+            e.Properties.Where(p => p.IsModified).Select(p => p.Metadata.Name).ToArray())).ToList();
+
+    private static void RestoreSaveState(List<RetainedSaveState>? retained)
+    {
+        if (retained is null) return;
+        foreach (var item in retained)
+        {
+            item.Entry.State = item.State;
+            item.Entry.OriginalValues.SetValues(item.Original);
+            if (item.State == EntityState.Modified)
+                foreach (var property in item.Entry.Properties)
+                    property.IsModified = item.Modified.Contains(property.Metadata.Name, StringComparer.Ordinal);
+        }
     }
 
     // 字段审计内部记录（#4 T3）：FieldChange 序列化为 Changes JSON（默认属性名 Field/Old/New）。

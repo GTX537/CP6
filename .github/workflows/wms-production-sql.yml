@@ -8,6 +8,9 @@ on:
 jobs:
   sql-integration:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     services:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
@@ -23,22 +26,35 @@ jobs:
           --health-retries 20
     env:
       CP6_TEST_SQLSERVER: Server=localhost,1433;Database=master;User Id=sa;Password=CP6_Test_Strong_Passw0rd!;TrustServerCertificate=True
+      NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-      - run: dotnet restore CP6.Tests/CP6.Tests.csproj
+      - run: dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
       - run: dotnet test CP6.Tests/CP6.Tests.csproj --no-restore --filter FullyQualifiedName~WmsProductionSqlServerTests
       - name: Verify CRM OIDC grant and global logout SQL boundaries
         env:
           CP6_OIDC_TEST_SQL: ${{ env.CP6_TEST_SQLSERVER }}
         run: >-
-          dotnet test CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj
+          dotnet test CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj -p:RestoreLockedMode=true
           --logger "trx;LogFileName=crm-oidc-sql.trx" --results-directory evidence/oidc
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: crm-oidc-sql-evidence
           path: evidence/oidc/*.trx
+          if-no-files-found: error
+      - name: Verify C02 identity transactions on real SQL
+        env:
+          CP6_C02_TEST_SQL: ${{ env.CP6_TEST_SQLSERVER }}
+        run: |
+          dotnet restore eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj --locked-mode
+          dotnet run --project eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj --no-restore -- evidence/c02-identity "$RUNNER_TEMP/c02-identity-private"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c02-identity-sql-evidence
+          path: evidence/c02-identity/
           if-no-files-found: error
