@@ -1,0 +1,53 @@
+{
+  "schemaId": "cp6.c02.local-policy-delivery.v1",
+  "observedAtUtc": "2026-09-10T10:13:09.705477+00:00",
+  "conclusion": "C01/C02 development delivery complete under owner-authorized local verification policy",
+  "repositories": [
+    {
+      "repository": "https://github.com/GTX537/CP6",
+      "pullRequest": 101,
+      "headCommit": "854e5f677259fa709632cc06df95b917355cf889",
+      "mergeCommit": "fed92b8f9b73638a9f8d7550418ffdd85df76010",
+      "tree": "958a8d527284fea87e67925d039e64a3d0c1de69",
+      "remoteContainsHead": true,
+      "identicalMergeTree": true
+    },
+    {
+      "repository": "https://github.com/GTX537/CP6.CRM",
+      "pullRequest": 60,
+      "headCommit": "125dc651021c10d389c59fb0db31099da6afb9a8",
+      "mergeCommit": "4485261addb2a4d827902a51cbc500b20a78ff08",
+      "tree": "3923cd6f7da88bca954276cbea7ecd75fa92e775",
+      "remoteContainsHead": true,
+      "identicalMergeTree": true
+    },
+    {
+      "repository": "https://github.com/GTX537/CP6.Platform",
+      "pullRequest": 57,
+      "headCommit": "25a703bb98bf3f8beb7cf26cbe538f1bc785c1cf",
+      "mergeCommit": "30bd23af6808d217a23878bd9437513043c52834",
+      "tree": "52380f89b2a567622475ecb16357b81dd924e350",
+      "remoteContainsHead": true,
+      "identicalMergeTree": true
+    }
+  ],
+  "remoteActionsClaimed": false,
+  "productionDeployment": false,
+  "actualAcceptance": {
+    "c01Passed": 72,
+    "c02DistinctCases": 13,
+    "denialCategories": 3,
+    "samplesPerCategory": 100,
+    "releaseHttpCases": 3,
+    "actualBrowserPassed": true
+  },
+  "executionSourceSha": {
+    "core": "9bc1507f65c06546ddc613b9818803f224a445f3",
+    "crm": "e98dd44c0407d4d409d1e018054e32fc212a7f6e"
+  },
+  "reuseBoundary": "Runtime source/dependency inputs unchanged after publication checks; subsequent changes are records, evidence attributes and the producer delivery locator. Original execution source and file hashes are retained.",
+  "originalReportsUnchanged": true,
+  "nextTask": "C03 ERP design and implementation",
+  "c04PrerequisitesStillRequired": true,
+  "preview": "Owned local preview remains running for inspection; cleanup is not yet claimed."
+}

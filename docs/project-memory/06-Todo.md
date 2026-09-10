@@ -1,5 +1,15 @@
 # 当前待办与优先级
 
+## 2026-09-10：C01/C02 按本地验收政策完成开发交付
+
+C02 已通过 [Core PR #101](https://github.com/GTX537/CP6/pull/101) 合入 `fed92b8f9b73638a9f8d7550418ffdd85df76010`，并通过 [CRM PR #60](https://github.com/GTX537/CP6.CRM/pull/60) 合入 `4485261addb2a4d827902a51cbc500b20a78ff08`；远端提交包含关系和完整合并 Git tree 相同均已核对。C01 的 CRM/Core 最终证据已由 PR #59 / #100 交付，Platform 最后记录由 [PR #57](https://github.com/GTX537/CP6.Platform/pull/57) 合入 `30bd23af6808d217a23878bd9437513043c52834`，未重建或覆盖七个正式 `0.10.2` 包。
+
+C01 的 72 项实际验收、C02 的 13 个不同真实传输场景和三类各 100 个拒绝样本均有原始证据。另有三个实际 Release HTTP/消息场景、生产 Vue/Next 的真实浏览器密码/PKCE、工作区及安全 Cookie 验证；1,060 个发布文件摘要已核对。执行 SHA 与合并 SHA 分别记录，未改动的源码/依赖结果复用；报告、失败历史和覆盖索引不回写成新的执行。[交付锚点与复用边界](../devops/evidence/local-release-20260910/main-delivery.json)。
+
+用户因 Actions 额度耗尽明确授权本地发布验收：Core 的五项及 Platform 的五项普通必需检查已移除，其他保护逐字段核对保留。Core 七个普通工作流与 Platform 主验证现在只手动触发；CRM 普通验证保持暂停。相关交付 head/main 均没有新 Actions 运行，不补造远程成功状态，正式发布和生产审批仍适用。
+
+**C01/C02 开发交付关闭；下一阶段为独立的 C03 ERP 设计与实施。** C04A/B 仍须满足数据迁移、切换与回退前置。当前本地预览保留给 owner 检查，独立端口、四个自有数据库及专属消息项目仍在运行；没有替换既有环境或声称完成生产部署。下方待交付条目是此前历史检查点。
+
 ## 2026-09-10：C02 本地 Release 发布与实际浏览器检查通过
 
 在用户授权的本地验收政策下，Core/CRM Release API、生产 Next Web 及同源码 Vue 产物已实际运行；三个真实 HTTP/消息场景与 Chromium 密码/PKCE、工作区和安全会话检查通过。此前 13 个真实场景及三类各 100 个拒绝样本按原执行来源复用，不重复编译或改称生产验收。发布文件逐项哈希、来源、原始失败和复现入口见 [发布检查记录](../devops/evidence/local-release-20260910/README.md)。
