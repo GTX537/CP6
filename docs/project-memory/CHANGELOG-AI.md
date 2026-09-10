@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-09-10：C02 身份事件设计草案
+## 2026-09-10：C02 身份事件设计确认与实施计划
 
-- 新增 [C02 设计草案](../superpowers/specs/2026-09-10-c02-identity-events-design.md)，明确角色完整权限、类型化聚合版本、事务 Outbox、实际 grant/service jti 撤销、失败关闭投影和对账。同步项目状态记录；未更改运行代码、合同权威或环境配置，C01/C02 尚未关闭。
+- 用户已确认 [C02 设计](../superpowers/specs/2026-09-10-c02-identity-events-design.md)，新增 [实施计划](../superpowers/plans/2026-09-10-c02-identity-events.md)，明确角色完整权限、类型化聚合版本、事务 Outbox、实际 grant/service jti 撤销、失败关闭投影和对账。同步项目状态记录；未更改运行代码、合同权威或环境配置，C01/C02 尚未关闭。
 
 ## 2026-09-09：C01 服务端交付证据与消费端真实回归
 

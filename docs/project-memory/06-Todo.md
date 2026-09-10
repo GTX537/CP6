@@ -2,7 +2,7 @@
 
 ## 2026-09-10：C02 设计与实施前置
 
-- 审阅 [C02 设计](../superpowers/specs/2026-09-10-c02-identity-events-design.md)，在 C01 最终真实身份验收完成后，依次交付 Core 原子事件/撤销/快照、CRM Inbox/投影/对账与真实 Dapr/Kafka 传播验收。
+- 按用户已确认的 [C02 设计](../superpowers/specs/2026-09-10-c02-identity-events-design.md) 与 [实施计划](../superpowers/plans/2026-09-10-c02-identity-events.md)，在 C01 最终真实身份验收完成后，依次交付 Core 原子事件/撤销/快照、CRM Inbox/投影/对账与真实 Dapr/Kafka 传播验收。
 - 开发期间只运行相关局部测试，复用未变更的固定包证据；C02 完成需要实际管理请求拒绝、真实 SQL 事务与撤销时延证据。C03、C04 不因设计准备而提前标记完成。
 
 ## 2026-09-09：C01 服务端交付闭环，消费端修复与验收待完成
