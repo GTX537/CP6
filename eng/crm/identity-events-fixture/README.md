@@ -1,5 +1,7 @@
 # C02 producer SQL and HTTP verification
 
+Delivery addendum (2026-09-10): Core PR #101 and CRM PR #60 have normally delivered the verified runtime source under the owner-authorized local validation policy. [The delivery record](../../../docs/devops/evidence/local-release-20260910/main-delivery.json) binds their verified main commits and actual Release/browser checks. Original fixture reports and the consumer locator retain their execution-time identities and pending-delivery fields; they are not rewritten as later runs.
+
 This fixture runs the actual Core save pipeline, forward migrations, SQL grant stores, service-token endpoints and internal snapshot controllers. Its HTTP case uses real loopback TCP/TLS, an in-memory generated certificate pinned only by fixture clients, live Discovery/JWKS, and published Platform `0.10.2` JWT middleware. No application authentication handler is replaced.
 
 It is component verification. CRM authorization projections, Dapr/Kafka replay and the real 30-second revocation requirement are separate C02 acceptance work.

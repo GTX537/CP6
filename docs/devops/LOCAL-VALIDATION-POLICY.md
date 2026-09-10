@@ -1,5 +1,11 @@
 # 本地验证与 GitHub Actions 触发策略
 
+## 当前交付状态（2026-09-10）
+
+Core 政策 PR #99 已合入；七个普通工作流已恢复为仅手动入口，Azure 桥保持手动。C01/C02 交付分别完成：Core PR #100/#101、CRM PR #59/#60、Platform PR #57。Platform 的五项普通必需检查按同一授权移除，主验证入口改为仅手动；CRM 普通验证保持暂停。其他分支保护、正式发布、签名和生产审批保持原要求。
+
+没有新 Actions 运行。实际本地 Release 发布、浏览器流程和消息检查已通过，来源和 1,060 个文件摘要见[发布检查](evidence/local-release-20260910/README.md)；完整交付锚点见[main 记录](evidence/local-release-20260910/main-delivery.json)。下方检查边界记录保留其执行时点，不再表示当前远端集成未完成。
+
 2026-09-10 用户明确要求暂停普通编译、测试的自动 GitHub Actions。后续是否恢复额度不改变授权边界：远程验证必须先说明原因、范围与预计分钟数，并取得新的明确授权。根目录 [AGENTS.md](../../AGENTS.md) 保存长期执行规则。
 
 同日用户进一步明确授权：从门禁移除必需的 Actions 检查，并在本地发布检查。已通过 GitHub 的专用接口仅移除 Core `main` 的五项 required status checks，其他分支保护保持不变；[变更前后记录](evidence/local-gates-20260910/)保留原始设置及普通工作流暂停状态。这里没有 GitHub Actions 成功结果，本地验证通过后使用正常 PR 合并。

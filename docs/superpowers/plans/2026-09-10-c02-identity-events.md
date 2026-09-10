@@ -64,7 +64,7 @@ Create `IdentitySnapshotReader.cs`, `IdentityBootstrapService.cs`, `CP6.WebApi/C
 - [x] Build initial snapshots for explicitly configured CRM tenants. Assign versions atomically and preserve tombstones; expose bootstrap readiness separately from process readiness.
 - [x] Run the actual Platform Outbox dispatcher for the independent priority and ordinary queue budgets. Use `ICp6OutboxPublisher` with the actual Dapr transport; retain the fixed Topic and `{tenantid}:{aggregateid}` partition key. Implement bounded retry/dead-letter handling and ownership-safe shutdown.
 - [x] Test unsigned/wrong-audience/wrong-client/cross-tenant read requests, pagination boundaries, concurrent bootstrap/event writes and priority progress during an ordinary backlog. Use the actual HTTP middleware in the SQL fixture.
-- [ ] Review the complete Core diff once, use the owner-authorized local verification and publication evidence, normally merge and confirm remote main. Record precise source/package/schema identities and component-only completion in the four project records.
+- [x] Review the complete Core diff once, use the owner-authorized local verification and publication evidence, normally merge and confirm remote main. Record precise source/package/schema identities and component-only completion in the four project records.
 
 ## 4. CRM Inbox and local authorization
 
@@ -85,17 +85,17 @@ Add `IdentityReconciliationClient`, `IdentityReconciliationWorker` and persisten
 - [x] Compare Core versions/hashes every 15 minutes; mark dependent users unavailable before repair. Fetch only affected full snapshots. Apply repair and clear drift within a transaction that cannot overwrite a newer event.
 - [x] Retain failure/retry state and emit safe alert/latency metrics. A stale or unavailable reconciliation baseline cannot grant access indefinitely.
 - [x] Test the deterministic 15-minute schedule, omitted/tampered snapshot detection, failed repair, concurrent newer events and successful recovery. Reuse existing SQL results where source and inputs have not changed.
-- [ ] Review the whole CRM diff once, use the owner-authorized local verification and publication evidence and normally deliver to remote main. Synchronize its four project records without calling component delivery complete C02.
+- [x] Review the whole CRM diff once, use the owner-authorized local verification and publication evidence and normally deliver to remote main. Synchronize its four project records without calling component delivery complete C02.
 
 ## 6. Actual transport acceptance and records
 
 Use the CRM entry `scripts/test-c02-real-transport.ps1` and `tests/CP6.CRM.C02Acceptance` with the Core identity fixture. The Core component entry remains `scripts/test-c02-identity-events.ps1`. Use private external connection/client inputs and uniquely owned SQL/transport resources. Reuse current Docker availability without altering the running development stack.
 
-- [x] Start local committed Core/CRM code, real SQL and Dapr/Kafka; execute business entry points. The user's later budget policy permits local verification before integration. Actual delivered-main acceptance remains pending under the delivery checkbox.
+- [x] Start local committed Core/CRM code, real SQL and Dapr/Kafka; execute business entry points. The user's later budget policy permits local verification before integration. Core PR #101 and CRM PR #60 now normally deliver the verified runtime inputs; original execution identities remain unchanged.
 - [x] Prove duplicate/out-of-order/failure replay, sender crash after SQL commit, receiver crash before acknowledgement, two-tenant isolation, projection outage and reconciliation recovery.
 - [x] Observe actual management HTTP denial after user disable, tenant disable and token revocation. Record every trigger/denial timestamp, sample count, failure count and p99; require at least 99% within 30 real seconds for each category.
 - [x] Write a public zero-skip summary/JUnit bound to source SHAs, fixed package and contract hashes. Missing real transport inputs or a failed requirement returns nonzero and leaves failure evidence; raw secrets and tokens remain private.
-- [ ] Normally deliver the public results and accurate Core/CRM/Platform state records. Close C02 only after all component and transport requirements pass; then proceed to the separate C03 ERP design and implementation.
+- [x] Normally deliver the public results and accurate Core/CRM/Platform state records. Close C02 only after all component and transport requirements pass; then proceed to the separate C03 ERP design and implementation.
 
 ## Verification budget
 
@@ -109,4 +109,4 @@ The user's later verification policy supersedes all automatic CI steps above: no
 
 ## Local real-transport result (2026-09-10)
 
-Thirteen distinct cases have passed evidence, using scoped reuse across attempts 2/3/4/6; attempt 6 passed its six requested cases. Each denial category has 100/100 real samples within 30 seconds. The fixture evidence locator binds the consumer coverage index and actual source identities. The owner later authorized local publication in place of ordinary required Actions checks. Three Release HTTP/message cases and actual production browser checks passed. Current open work is normal source/evidence PR delivery and remote-main verification without starting Actions. Production deployment and production performance are untested. No ordinary Actions or new image build was used.
+Thirteen distinct cases have passed evidence, using scoped reuse across attempts 2/3/4/6; attempt 6 passed its six requested cases. Each denial category has 100/100 real samples within 30 seconds. The fixture evidence locator binds the consumer coverage index and actual source identities. The owner later authorized local publication in place of ordinary required Actions checks. Three Release HTTP/message cases and actual production browser checks passed. Normal source/evidence delivery and remote-main verification are complete through Core PR #101 and CRM PR #60; Platform C01 records were completed by PR #57, without starting Actions. C02 development delivery is closed; C03 remains a separate next task. Production deployment and production performance are untested. No ordinary Actions or new image build was used.
