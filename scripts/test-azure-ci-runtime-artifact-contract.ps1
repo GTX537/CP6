@@ -10,7 +10,7 @@ if (-not (Test-Path -LiteralPath $pipelinePath -PathType Leaf)) {
 
 $pipeline = Get-Content -LiteralPath $pipelinePath -Raw -Encoding utf8
 $requiredPatterns = [ordered]@{
-    "main trigger" = '(?s)trigger:\s*branches:\s*include:\s*- main'
+    "automatic bridge disabled" = '(?m)^trigger:\s*none\s*$'
     "PR disabled" = '(?m)^pr:\s*none\s*$'
     "self-hosted bridge pool" = "(?s)pool:\s*name:\s*'Default'"
     "clean workspace" = '(?s)workspace:\s*clean:\s*all'

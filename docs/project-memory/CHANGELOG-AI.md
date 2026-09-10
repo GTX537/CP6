@@ -1,5 +1,16 @@
 # AI 可读变更日志
 
+## 2026-09-10：用户授权本地验证替代 Actions 必需检查
+
+用户因本月 Actions 额度耗尽，进一步明确授权移除必需检查，并在本地发布检查。已仅移除 Core main 的五项 Actions required status checks，逐字段确认其他分支保护保持不变；正常 PR、会话解决、管理员约束及禁止强推/删除仍生效。七个普通工作流已临时暂停，防止合并配置时旧 PR 触发器启动；R2 候选、发布、部署和其他手动工作流状态未变。原始前后设置保存在 `docs/devops/evidence/local-gates-20260910/`。
+
+配置保留普通 GitHub workflow_dispatch，Azure Artifact 桥同步改为手动，防止等待不存在的 GitHub 成功产物。本地发布只作隔离验证，保留源码/发布文件哈希与实际 HTTP 证据，不覆盖既有环境或替代生产发布门禁。源码配置正常 PR 合并、远端入口恢复和本地发布验证待继续；没有触发 Actions。
+
+## 2026-09-10：暂停普通 GitHub 自动验证，保留正式发布链
+
+- 根据用户要求，将 client-contract、WMS SQL、Space evidence、CRM public contract、两条 CRM PRD 及 P10 preflight 共 7 条工作流改为手动。PRD 保留当前 protected-main 可信规则与候选数据分离；发布/部署/迁移、既有测试和分支保护未改。
+- 根 `AGENTS.md` 固化本地定向验证、集中验证、复用成功结果、先诊断失败、push/PR 前检查间接触发及远程运行新授权要求。检查中无活动任务，取消 0 项；仅做本地配置检查，远端集成仍被既有必需检查与 PR 自动触发阻塞。
+
 ## 2026-09-09：C01 服务端交付证据与消费端真实回归
 
 - [PR #97](https://github.com/GTX537/CP6/pull/97) 的公开文档集合登记已正常合入 `d7a8b1699cc47ebcf3f8507dd1dc1592756cedfb`，七项 PR 检查及该 main 的五条工作流均成功。下方登记和本地验证条目是历史检查点。

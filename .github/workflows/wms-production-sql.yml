@@ -1,9 +1,8 @@
 name: WMS production SQL integration
 
+# Ordinary validation runs only after explicit user authorization.
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   sql-integration:

@@ -1,7 +1,6 @@
-trigger:
-  branches:
-    include:
-      - main
+# GitHub ordinary validation is manual-only under the local verification policy.
+# Keep the existing authenticated artifact bridge available by explicit manual run.
+trigger: none
 
 pr: none
 
