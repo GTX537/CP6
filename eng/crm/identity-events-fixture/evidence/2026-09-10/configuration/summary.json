@@ -1,0 +1,46 @@
+{
+  "kind": "local configuration registration regression tests",
+  "sourceState": "reviewed working tree based on 50f97acb; production binding fix included",
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "rawTrxSha256": "ff73ae8bafc39380151c145a9f67c49706c052895ba0286e49264246653f363a",
+  "cases": [
+    {
+      "name": "CP6.Tests.CrmIdentityConfigurationTests.Empty_enabled_map_fails_but_disabled_feature_preserves_existing_startup",
+      "passed": true,
+      "duration": "00:00:00.2972570"
+    },
+    {
+      "name": "CP6.Tests.CrmIdentityConfigurationTests.Invalid_tenant_entries_are_rejected_at_configuration_boundary(tenant: \"11111111111141118111111111111111\", region: \"us\")",
+      "passed": true,
+      "duration": "00:00:00.1316927"
+    },
+    {
+      "name": "CP6.Tests.CrmIdentityConfigurationTests.Invalid_tenant_entries_are_rejected_at_configuration_boundary(tenant: \"not-a-tenant\", region: \"us\")",
+      "passed": true,
+      "duration": "00:00:00.0005720"
+    },
+    {
+      "name": "CP6.Tests.CrmIdentityConfigurationTests.Later_provider_overrides_region_without_losing_other_tenants",
+      "passed": true,
+      "duration": "00:00:00.0007302"
+    },
+    {
+      "name": "CP6.Tests.CrmIdentityConfigurationTests.Invalid_tenant_entries_are_rejected_at_configuration_boundary(tenant: \"11111111-1111-4111-8111-111111111111\", region: \"\")",
+      "passed": true,
+      "duration": "00:00:00.0001817"
+    },
+    {
+      "name": "CP6.Tests.CrmIdentityConfigurationTests.Invalid_tenant_entries_are_rejected_at_configuration_boundary(tenant: \"00000000-0000-0000-0000-000000000000\", region: \"us\")",
+      "passed": true,
+      "duration": "00:00:00.0002751"
+    },
+    {
+      "name": "CP6.Tests.CrmIdentityConfigurationTests.Actual_registration_preserves_both_configured_tenants_and_reader_mapping",
+      "passed": true,
+      "duration": "00:00:00.2144538"
+    }
+  ]
+}

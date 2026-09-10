@@ -12,9 +12,29 @@ namespace CP6.WebApi.Configuration;
 
 public static class CrmIdentityConfiguration
 {
+    public static CrmIdentityOptions BindOptions(IConfiguration configuration)
+    {
+        var section = configuration.GetSection("CrmIdentity");
+        var options = section.Get<CrmIdentityOptions>() ?? new();
+        if (!options.Enabled) return options;
+        // The .NET configuration binder does not populate dictionaries with Guid keys.
+        // Parse the operator's map explicitly so JSON and environment overrides share
+        // the same validation instead of silently dropping configured tenants.
+        options.Tenants.Clear();
+        foreach (var tenant in section.GetSection("Tenants").GetChildren())
+        {
+            if (!Guid.TryParseExact(tenant.Key, "D", out var id) || id == Guid.Empty ||
+                string.IsNullOrWhiteSpace(tenant.Value) || tenant.GetChildren().Any() ||
+                !options.Tenants.TryAdd(id, tenant.Value))
+                throw new InvalidOperationException("C02_REQUIRES_VALID_TENANT_MAP");
+        }
+        if (options.Tenants.Count == 0) throw new InvalidOperationException("C02_REQUIRES_VALID_TENANT_MAP");
+        return options;
+    }
+
     public static IServiceCollection AddCrmIdentityEvents(this IServiceCollection services, IConfiguration configuration, CrmOidcOptions oidc)
     {
-        var options = configuration.GetSection("CrmIdentity").Get<CrmIdentityOptions>() ?? new();
+        var options = BindOptions(configuration);
         if (!options.Enabled) return services;
         if (!oidc.Enabled) throw new InvalidOperationException("C02_REQUIRES_ENABLED_CRM_ISSUER");
         if (new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection")).MultipleActiveResultSets)

@@ -160,7 +160,7 @@ static class IdentityLiveFixture
         if (!System.Text.RegularExpressions.Regex.IsMatch(connection.InitialCatalog, "^CP6C02Live_[a-f0-9]{32}$") ||
             Path.GetFileName(Path.GetDirectoryName(Path.GetFullPath(configPath))) != connection.InitialCatalog)
             throw new InvalidOperationException("C02_OWNED_DISPATCH_FIXTURE_REQUIRED");
-        var options = config.GetSection("CrmIdentity").Get<CrmIdentityOptions>()!;
+        var options = CP6.WebApi.Configuration.CrmIdentityConfiguration.BindOptions(config);
         var runtime = new CrmIdentityRuntime(options, new(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/platform")), options.Issuer));
         using var worker = new IdentityEventDispatchWorker(runtime, config, NullLogger<IdentityEventDispatchWorker>.Instance);
         await worker.StartAsync(CancellationToken.None);
