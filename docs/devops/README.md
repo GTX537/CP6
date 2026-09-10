@@ -6,7 +6,7 @@
 
 ## 文档地图
 
-普通 GitHub 编译、测试按用户要求改为手动触发，远程运行需新的明确授权；[本地验证策略](./LOCAL-VALIDATION-POLICY.md) 记录改动、Artifact 依赖与受保护 main 的待集成限制。下方历史成功运行不构成新运行授权。
+普通 GitHub 编译、测试按用户要求改为手动触发，远程运行需新的明确授权；用户随后授权移除五项 Actions 必需检查，改用本地验证与本地发布检查后正常 PR 合并。[本地验证策略](./LOCAL-VALIDATION-POLICY.md) 记录精确门禁变更、Artifact 依赖及保留的其他保护。Azure Artifact 桥同步只保留手动入口。下方历史成功运行不构成新运行授权。
 
 | 文档 | 类型 | 用途 |
 | --- | --- | --- |
@@ -29,7 +29,7 @@
 
 仓库内可直接验证的 Azure CI 配置位于根目录 [`azure-pipelines.yml`](../../azure-pipelines.yml)：
 
-- `main` 提交触发；`pr: none`，当前不承担 PR 验证。
+- 当前 `trigger: none`、`pr: none`；GitHub 自动验证暂停期间只保留显式手动运行，当前不承担 PR 验证。
 - 使用 Azure DevOps `Default` self-hosted agent pool；YAML 没有绑定具体 Agent 名称。该 Agent 只执行合同、受认证下载、摘要/清单验证和 Azure Artifact 发布，不再运行 .NET/Node 编译。
 - GitHub `.github/workflows/client-contract.yml` 在 GitHub-hosted Runner 完成 .NET、客户端、OpenAPI、Web、Android 与 R2 source 门禁，并生成名称含完整 Git SHA、内部逐文件 SHA-256 的 `cp6-dev-runtime-<sha>`；保留期为 3 天。
 - Azure 只接受同一仓库、同一完整 SHA、指定工作流路径、`push`/`workflow_dispatch` 事件且结论为 `success` 的未过期 Artifact；下载归档还必须匹配 GitHub SHA-256，解压后再次验证内部 manifest。

@@ -2,6 +2,8 @@
 
 2026-09-10 用户明确要求暂停普通编译、测试的自动 GitHub Actions。后续是否恢复额度不改变授权边界：远程验证必须先说明原因、范围与预计分钟数，并取得新的明确授权。根目录 [AGENTS.md](../../AGENTS.md) 保存长期执行规则。
 
+同日用户进一步明确授权：从门禁移除必需的 Actions 检查，并在本地发布检查。已通过 GitHub 的专用接口仅移除 Core `main` 的五项 required status checks，其他分支保护保持不变；[变更前后记录](evidence/local-gates-20260910/)保留原始设置及普通工作流暂停状态。这里没有 GitHub Actions 成功结果，本地验证通过后使用正常 PR 合并。
+
 ## 本次触发变更
 
 | 工作流 | 关闭的触发 | 保留的能力 |
@@ -16,15 +18,17 @@
 
 上述工作流只保留 `workflow_dispatch`，原来没有定时触发。本次保留所有测试脚本和作业，既有 `crm-v1-prd` 的受保护规则来源仍为 main；候选目录只作为数据读取，不运行其验证器。手动 PRD 运行的结果绑定其真实 dispatch 源和输入，不伪造候选提交的成功状态。
 
-R2 的受保护 Tag 候选、release freeze、受保护环境部署，以及原有手动 P10 validation/publication/audit 均保持原文件与触发条件。这些属于正式候选、发布或部署链，不因包含编译而整体停用。本次也未调整分支保护或 Azure/其他仓库/全局配置。
+R2 的受保护 Tag 候选、release freeze、受保护环境部署，以及原有手动 P10 validation/publication/audit 均保持原文件与触发条件。这些属于正式候选、发布或部署链，不因包含编译而整体停用。新的用户授权只调整下述五项 Actions 门禁及本仓库的相关自动入口，不调整其他分支保护、生产审批或全局配置。
 
-## 依赖与当前集成阻塞
+## 依赖与本地交付方式
 
-`client-contract` 同时生成 GitHub `cp6-dev-runtime-<sha>`。Azure CI 是该同源成功 Artifact 的消费者，不自行编译、也不会代替本次禁用的 GitHub 运行。改为手动后，新的 main 提交不再自动获得此 Artifact；没有实际成功 Artifact 时，Azure bridge 与后续 DEV 推广不能宣称就绪。需要这条链时，须另外说明范围和成本并取得授权；发布、部署和迁移权限仍由各自门禁控制。
+`client-contract` 同时生成 GitHub `cp6-dev-runtime-<sha>`。Azure CI 是该同源成功 Artifact 的消费者，不自行编译、也不会代替被停用的 GitHub 运行。新的 main 提交不再自动获得此 Artifact，因此 `azure-pipelines.yml` 同步改为 `trigger: none`，避免自动等待不存在的上游产物；其手动入口、受认证下载、摘要校验和原有 DEV 推广合同保持不变。没有实际成功 Artifact 时，Azure bridge 与后续 DEV 推广不能宣称就绪。本地发布证据不能冒充这一 Artifact。
 
-只读检查确认 main 仍要求 GitHub App 的 `windows-and-web`、`android`、`sql-integration`、`crm-saas-public-contract`、`crm-v1-prd` 五个成功检查。暂停自动运行不会让这些要求消失。
+按用户后续授权，已移除 GitHub App 的 `windows-and-web`、`android`、`sql-integration`、`crm-saas-public-contract`、`crm-v1-prd` 五个必需检查。PR 要求、过期审查撤销、会话解决、管理员约束、禁止强推和禁止删除等设置逐字段核对保持不变。测试文件和既有失败记录仍保留；本地必须验证受影响范围并诚实记录未覆盖项，未变化的成功结果直接复用。
 
-当前远端 main 还包含旧 `pull_request_target`，创建 PR 会读取那里的配置并启动运行；候选分支改为手动不足以阻止它。因此本次配置先保存在独立任务分支，不能在没有新授权的情况下创建 PR、重跑 CI、强行合并或宣称 main 配置已生效。后续 push 前必须再次核对实际事件、目标分支和既有 PR；受保护 Tag 或关联 PR 的推送不能沿用“新普通分支不会触发”的结论。
+迁移时先在 GitHub 暂停表中的七个普通工作流，再正常合并仅手动配置，并回读远端 main 的实际触发条件，最后恢复七个工作流的手动入口。这样旧 `pull_request_target` 不会因创建配置 PR 消耗额度。每次 push/PR 前仍须核对实际事件和工作流状态；不得从该一次性迁移推断受保护 Tag、正式候选或后续其他分支操作已获运行授权。
+
+本地发布检查使用隔离的发布目录、端口和数据库，记录源码 SHA、发布文件哈希、程序实际启动及 HTTP 行为。本地结果只用于开发交付，不替代 R2 签名候选、生产扫描、受保护环境审批或实际部署身份验证。当前任务不会覆盖既有 `cp6`/`cp6-dev` 数据或发起生产部署。
 
 ## 检查与证据边界
 

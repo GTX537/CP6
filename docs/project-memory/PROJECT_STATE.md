@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-09-10：用户授权本地验证替代 Actions 必需检查
+
+用户因本月 Actions 额度耗尽，进一步明确授权移除必需检查，并在本地发布检查。已仅移除 Core main 的五项 Actions required status checks，逐字段确认其他分支保护保持不变；正常 PR、会话解决、管理员约束及禁止强推/删除仍生效。七个普通工作流已临时暂停，防止合并配置时旧 PR 触发器启动；R2 候选、发布、部署和其他手动工作流状态未变。原始前后设置保存在 `docs/devops/evidence/local-gates-20260910/`。
+
+配置保留普通 GitHub workflow_dispatch，Azure Artifact 桥同步改为手动，防止等待不存在的 GitHub 成功产物。本地发布只作隔离验证，保留源码/发布文件哈希与实际 HTTP 证据，不覆盖既有环境或替代生产发布门禁。源码配置正常 PR 合并、远端入口恢复和本地发布验证待继续；没有触发 Actions。
+
 ## 2026-09-10：普通 CI 改为手动，本地验证优先，集成待完成
 
 - 用户要求停止普通编译/测试的自动 GitHub Actions；7 条工作流在独立任务分支改为 `workflow_dispatch`，规则写入根 `AGENTS.md`。[策略与依赖记录](../devops/LOCAL-VALIDATION-POLICY.md) 列出完整变更，正式发布、部署、分支保护保持原状。
