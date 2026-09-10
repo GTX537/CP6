@@ -63,38 +63,38 @@ Create `IdentitySnapshotReader.cs`, `IdentityBootstrapService.cs`, `CP6.WebApi/C
 - [x] Add `GET /internal/crm/identity/versions` with at most 200 rows/page and a tenant/boundary-bound cursor; add `GET /internal/crm/identity/snapshots/{aggregateId}`. Validate real CP6.Services tokens and an explicit projection-reader client allowlist. Request parameters cannot change the authenticated tenant.
 - [x] Build initial snapshots for explicitly configured CRM tenants. Assign versions atomically and preserve tombstones; expose bootstrap readiness separately from process readiness.
 - [x] Run the actual Platform Outbox dispatcher for the independent priority and ordinary queue budgets. Use `ICp6OutboxPublisher` with the actual Dapr transport; retain the fixed Topic and `{tenantid}:{aggregateid}` partition key. Implement bounded retry/dead-letter handling and ownership-safe shutdown.
-- [ ] Test unsigned/wrong-audience/wrong-client/cross-tenant read requests, pagination boundaries, concurrent bootstrap/event writes and priority progress during an ordinary backlog. Use the actual HTTP middleware in the SQL fixture.
+- [x] Test unsigned/wrong-audience/wrong-client/cross-tenant read requests, pagination boundaries, concurrent bootstrap/event writes and priority progress during an ordinary backlog. Use the actual HTTP middleware in the SQL fixture.
 - [ ] Review the complete Core diff once, run its necessary CI, normally merge and confirm remote main. Record precise source/package/schema identities and component-only completion in the four project records.
 
 ## 4. CRM Inbox and local authorization
 
 Create an isolated CRM branch from its then-current verified main. Add `src/CP6.CRM.Infrastructure/Identity` for projection entities, `IdentityProjectionStore`, `IdentityEventConsumer`, and `IdentityProjectionMigration`; add `src/CP6.CRM.Application/Identity` for the authorization reader. Copy the exact reviewed Core contract bundle and preserve its SHA in the consumer locator.
 
-- [ ] Register Platform Inbox processing and the versioned business projection tables. Unique keys include TenantId; revoke identity is `(Issuer, Jti)` and expires only after token expiry plus the configured maximum validation skew.
-- [ ] Validate exact contract/type/source/tenant/partition identities before Inbox effects. Process full snapshots transactionally. Identical redelivery is a duplicate, different payload under the same ID is a conflict, old versions do not mutate state, and version gaps mark dependent users unavailable pending reconciliation.
-- [ ] Add non-secret tenant/subject/issuer/jti metadata to durable auth-store session rows. Stop accepting the old unindexed session format when the projection feature is enabled; existing protected payloads remain protected.
-- [ ] Integrate the projection reader into `src/CP6.CRM.Api/Authentication/CrmAuthenticationService.cs` after actual identity/session validation and before returning an actor. Check current tenant/user/role/department/revocation/health on every management request; do not cache cross-request allow decisions. Consume disable/revoke events to remove affected durable sessions.
-- [ ] Preserve public-route behavior and the existing UI revalidation that removes PII/drafts after authorization loss. Test the actual management request path, not only isolated projection classes.
-- [ ] Add `tests/CP6.CRM.UnitTests/IdentityProjectionTests.cs` and real SQL fixture scenarios for duplicate/out-of-order/conflict, cross-tenant keys, missing dependencies, permission removal, session invalidation and projection unavailability.
+- [x] Register Platform Inbox processing and the versioned business projection tables. Unique keys include TenantId; revoke identity is `(Issuer, Jti)` and expires only after token expiry plus the configured maximum validation skew.
+- [x] Validate exact contract/type/source/tenant/partition identities before Inbox effects. Process full snapshots transactionally. Identical redelivery is a duplicate, different payload under the same ID is a conflict, old versions do not mutate state, and version gaps mark dependent users unavailable pending reconciliation.
+- [x] Add non-secret tenant/subject/issuer/jti metadata to durable auth-store session rows. Stop accepting the old unindexed session format when the projection feature is enabled; existing protected payloads remain protected.
+- [x] Integrate the projection reader into `src/CP6.CRM.Api/Authentication/CrmAuthenticationService.cs` after actual identity/session validation and before returning an actor. Check current tenant/user/role/department/revocation/health on every management request; do not cache cross-request allow decisions. Consume disable/revoke events to remove affected durable sessions.
+- [x] Preserve public-route behavior and the existing UI revalidation that removes PII/drafts after authorization loss. Test the actual management request path, not only isolated projection classes.
+- [x] Add `tests/CP6.CRM.UnitTests/IdentityProjectionTests.cs` and real SQL fixture scenarios for duplicate/out-of-order/conflict, cross-tenant keys, missing dependencies, permission removal, session invalidation and projection unavailability.
 
 ## 5. CRM initialization and reconciliation
 
 Add `IdentityReconciliationClient`, `IdentityReconciliationWorker` and persistent reconciliation state under `src/CP6.CRM.Infrastructure/Identity`.
 
-- [ ] Authenticate with the configured tenant-bound service client, import the consistent snapshot baseline and consume subsequent events. Keep management authorization closed until required projections are complete.
-- [ ] Compare Core versions/hashes every 15 minutes; mark dependent users unavailable before repair. Fetch only affected full snapshots. Apply repair and clear drift within a transaction that cannot overwrite a newer event.
-- [ ] Retain failure/retry state and emit safe alert/latency metrics. A stale or unavailable reconciliation baseline cannot grant access indefinitely.
-- [ ] Test the deterministic 15-minute schedule, omitted/tampered snapshot detection, failed repair, concurrent newer events and successful recovery. Reuse existing SQL results where source and inputs have not changed.
+- [x] Authenticate with the configured tenant-bound service client, import the consistent snapshot baseline and consume subsequent events. Keep management authorization closed until required projections are complete.
+- [x] Compare Core versions/hashes every 15 minutes; mark dependent users unavailable before repair. Fetch only affected full snapshots. Apply repair and clear drift within a transaction that cannot overwrite a newer event.
+- [x] Retain failure/retry state and emit safe alert/latency metrics. A stale or unavailable reconciliation baseline cannot grant access indefinitely.
+- [x] Test the deterministic 15-minute schedule, omitted/tampered snapshot detection, failed repair, concurrent newer events and successful recovery. Reuse existing SQL results where source and inputs have not changed.
 - [ ] Review the whole CRM diff once, run applicable CI and normally deliver to remote main. Synchronize its four project records without calling component delivery complete C02.
 
 ## 6. Actual transport acceptance and records
 
-Create `scripts/test-c02-identity-events.ps1` and an isolated cross-repository fixture. Use private external connection/client inputs and uniquely owned SQL/transport resources. Reuse current Docker availability without altering the running development stack.
+Use the CRM entry `scripts/test-c02-real-transport.ps1` and `tests/CP6.CRM.C02Acceptance` with the Core identity fixture. The Core component entry remains `scripts/test-c02-identity-events.ps1`. Use private external connection/client inputs and uniquely owned SQL/transport resources. Reuse current Docker availability without altering the running development stack.
 
-- [ ] Start the actual delivered Core/CRM code, real SQL and Dapr/Kafka. Execute actual tenant/user/role/department/session/service changes through their business entry points.
-- [ ] Prove duplicate/out-of-order/failure replay, sender crash after SQL commit, receiver crash before acknowledgement, two-tenant isolation, projection outage and reconciliation recovery.
-- [ ] Observe actual management HTTP denial after user disable, tenant disable and token revocation. Record every trigger/denial timestamp, sample count, failure count and p99; require at least 99% within 30 real seconds for each category.
-- [ ] Write a public zero-skip summary/JUnit bound to source SHAs, fixed package and contract hashes. Missing real transport inputs or a failed requirement returns nonzero and leaves failure evidence; raw secrets and tokens remain private.
+- [x] Start local committed Core/CRM code, real SQL and Dapr/Kafka; execute business entry points. The user's later budget policy permits local verification before integration. Actual delivered-main acceptance remains pending under the delivery checkbox.
+- [x] Prove duplicate/out-of-order/failure replay, sender crash after SQL commit, receiver crash before acknowledgement, two-tenant isolation, projection outage and reconciliation recovery.
+- [x] Observe actual management HTTP denial after user disable, tenant disable and token revocation. Record every trigger/denial timestamp, sample count, failure count and p99; require at least 99% within 30 real seconds for each category.
+- [x] Write a public zero-skip summary/JUnit bound to source SHAs, fixed package and contract hashes. Missing real transport inputs or a failed requirement returns nonzero and leaves failure evidence; raw secrets and tokens remain private.
 - [ ] Normally deliver the public results and accurate Core/CRM/Platform state records. Close C02 only after all component and transport requirements pass; then proceed to the separate C03 ERP design and implementation.
 
 ## Verification budget
@@ -103,6 +103,10 @@ While implementing, run only the named new test classes and directly affected ex
 
 ## Current local evidence (2026-09-10)
 
-Core implementation and its 123 focused unit / 23 real SQL-HTTPS cases passed. Raw attempts remain in the fixture evidence directory. The read/bootstrap HTTP portion is covered; actual priority backlog progress remains open with Dapr/Kafka acceptance. The producer is disabled by default and requires MARS disabled when activated. Docker build was completed before the new Actions budget instruction; unchanged results are reused.
+Core implementation and its 123 focused unit / 23 real SQL-HTTPS cases passed. Raw attempts remain in the fixture evidence directory. Subsequent actual startup found and fixed GUID map binding, optional update passwords and the exact service-revocation CSRF route, with focused 7/5/15-case regressions. Actual priority backlog progress is now covered by the separate Dapr/Kafka acceptance. The producer is disabled by default and requires MARS disabled when activated. Docker build was completed before the new Actions budget instruction; unchanged results are reused.
 
-The user's later verification policy supersedes all automatic CI steps above: no push/PR may indirectly trigger ordinary Actions; no rerun or paid fallback is authorized. Seven ordinary Core workflows are manual-only on the separate policy branch, whose protected-main integration is blocked by required checks. C02 Core and CRM work remains local until normal integration is possible. No required test, release gate or branch protection is waived. Therefore remote delivery checkboxes and full cross-repository acceptance remain open. CRM component implementation is saved in local commit `250e674`, with 43 focused unit cases, latest passing coverage of 28 SQL/HTTP cases, affected auth compatibility, 9 browser cases and 25 authorization checks. The local Dapr/Kafka byte probe exposed and verified the producer raw-publish fix; its three final cases passed. Actual SQL-backed Core/CRM acceptance and latency sampling remain open.
+The user's later verification policy supersedes all automatic CI steps above: no push/PR may indirectly trigger ordinary Actions; no rerun or paid fallback is authorized. Seven ordinary Core workflows are manual-only on the separate policy branch, whose protected-main integration is blocked by required checks. C02 Core and CRM work remains local until normal integration is possible. No required test, release gate or branch protection is waived. Remote delivery checkboxes therefore remain open. CRM has 43 original focused unit cases, four additional reader-cache cases, passing coverage of 32 distinct SQL/HTTP cases including four new reactive-repair cases, affected auth compatibility, nine browser cases and 25 authorization checks. The local Dapr/Kafka byte probe exposed and verified the producer raw-publish fix; its three final cases passed. Actual SQL-backed Core/CRM acceptance and latency sampling have now passed as described below.
+
+## Local real-transport result (2026-09-10)
+
+Thirteen distinct cases have passed evidence, using scoped reuse across attempts 2/3/4/6; attempt 6 passed its six requested cases. Each denial category has 100/100 real samples within 30 seconds. The fixture evidence locator binds the consumer coverage index and actual source identities. Current open work is normal source/evidence delivery through required checks and remote-main verification. Production deployment and production performance are untested. No ordinary Actions or new image build was used.

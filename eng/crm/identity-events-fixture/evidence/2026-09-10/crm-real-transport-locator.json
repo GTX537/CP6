@@ -1,0 +1,37 @@
+{
+  "schemaId": "cp6.core.c02-consumer-evidence-locator.v1",
+  "consumerRepository": "https://github.com/GTX537/CP6.CRM",
+  "consumerBranch": "codex/c02-identity-projections-20260910",
+  "consumerEvidenceCommit": "16ff8d990a028e4a209ebb609a905d50f991a832",
+  "evidencePath": "docs/delivery/c02/real-transport/2026-09-10/",
+  "coverageIndexSha256GitTextLf": "60fd257d43c5b443d36f380bd481deb46c5dbafc98eb1e05584816504014b372",
+  "coreSourceSha": "2210209ee50cf40467b10c9d5d6b912b9e568678",
+  "crmSourceSha": "7e3f7604af8b36b33d3dd746f023a6bd3ee272cb",
+  "distinctCasesPassed": 13,
+  "actualLatencySamples": 300,
+  "groups": [
+    {
+      "category": "user-disable",
+      "count": 100,
+      "failures": 0,
+      "within30Seconds": 100,
+      "p99Milliseconds": 599.2336
+    },
+    {
+      "category": "token-revocation",
+      "count": 100,
+      "failures": 0,
+      "within30Seconds": 100,
+      "p99Milliseconds": 585.9645
+    },
+    {
+      "category": "tenant-disable",
+      "count": 100,
+      "failures": 0,
+      "within30Seconds": 100,
+      "p99Milliseconds": 590.9521
+    }
+  ],
+  "normalRemoteDeliveryVerified": false,
+  "productionAcceptance": false
+}
