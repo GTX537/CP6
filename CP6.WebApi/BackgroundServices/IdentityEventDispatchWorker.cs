@@ -68,7 +68,10 @@ public sealed class IdentityDaprPublisher(ICp6DaprTransport transport, IdentityE
         if (!validator.Validate(envelope).IsValid) throw new Cp6OutboxPublishException("C02_IDENTITY_CONTRACT_INVALID", false);
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(10));
+        // The payload is already a validated structured CloudEvent. Dapr's default wrapping
+        // reparses JSON and changes the snapshot data hash used by consumer reconciliation.
         await transport.PublishAsync("cp6-kafka-pubsub", IdentityEventContracts.Topic, message.Payload,
-            Cp6CloudEventCodec.StructuredContentType, new Dictionary<string, string> { ["partitionKey"] = message.PartitionKey }, deadline.Token);
+            Cp6CloudEventCodec.StructuredContentType, new Dictionary<string, string>
+            { ["partitionKey"] = message.PartitionKey, ["rawPayload"] = "true" }, deadline.Token);
     }
 }

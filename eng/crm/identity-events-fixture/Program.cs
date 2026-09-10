@@ -17,7 +17,12 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-if (args.Length is not (2 or 3)) throw new ArgumentException("Usage: identity-events-fixture <public-output-directory> <private-diagnostic-directory> [exact-case-name]");
+if (args.Length == 3 && args[2] == "transport-probe")
+{
+    Environment.ExitCode = await IdentityTransportProbe.RunAsync(args[0], args[1]);
+    return;
+}
+if (args.Length is not (2 or 3)) throw new ArgumentException("Usage: identity-events-fixture <public-output-directory> <private-diagnostic-directory> [exact-case-name|transport-probe]");
 var evidence = new Evidence(Path.GetFullPath(args[0]), Path.GetFullPath(args[1]), args.Length == 3 ? args[2] : null);
 var fixture = new IdentitySqlFixture();
 try
