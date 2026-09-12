@@ -30,6 +30,10 @@ $c01Changes = [ordered]@{
     'docs/crm/CRM-OIDC-FIRST-SLICE.md' = 'f8f25b5f741d5a499f17b3d7ff17b881c634c9d39d6b4c32ddce903a0b2c37de'
     'docs/crm/C01-SERVICE-IDENTITY.md' = '1df7019a31b0fb5c6355df476426ffaaba09af704e39dd7d4fd9a51d5ab7d42b'
 }
+$c03Changes = [ordered]@{
+    'docs/crm/README.md' = 'dd772cf785bac1c99a981c04ff28cec13977a5b1ca1094e6d942e1a116994264'
+    'docs/crm/C03-ERP-INTEGRATION.md' = 'a0d664deeee5716064f60fd6ba16d32c2fe0fc6676c3a046f10a21dc29b80107'
+}
 $passed = 0
 
 function Copy-Surface([System.Collections.IDictionary] $Source) {
@@ -53,10 +57,13 @@ $firstSlice = Copy-Surface $historical
 foreach ($entry in $firstSliceChanges.GetEnumerator()) { $firstSlice[$entry.Key] = $entry.Value }
 $c01 = Copy-Surface $firstSlice
 foreach ($entry in $c01Changes.GetEnumerator()) { $c01[$entry.Key] = $entry.Value }
+$c03 = Copy-Surface $c01
+foreach ($entry in $c03Changes.GetEnumerator()) { $c03[$entry.Key] = $entry.Value }
 $fixtures = [ordered]@{
     'historical-20260826' = $historical
     'first-slice-20260908' = $firstSlice
     'c01-service-identity-20260909' = $c01
+    'c03-erp-integration-20260912' = $c03
 }
 foreach ($fixture in $fixtures.GetEnumerator()) {
     Assert-Surface "complete $($fixture.Key)" $fixture.Value $fixture.Key
@@ -112,6 +119,18 @@ $restoredFirstSlice.Remove('docs/crm/C01-SERVICE-IDENTITY.md')
 $restoredFirstSlice['docs/crm/CRM-OIDC-FIRST-SLICE.md'] = $firstSliceChanges['docs/crm/CRM-OIDC-FIRST-SLICE.md']
 Assert-Surface 'reverting both C01 changes restores the first-slice set' $restoredFirstSlice 'first-slice-20260908'
 
+# The C03 guide and its updated entry form one complete set; neither can drift independently.
+$c03ChangedPaths = @($c03Changes.Keys)
+foreach ($mask in 1..2) {
+    $mixed = Copy-Surface $c01
+    for ($index = 0; $index -lt $c03ChangedPaths.Count; $index++) {
+        if (($mask -band (1 -shl $index)) -ne 0) {
+            $mixed[$c03ChangedPaths[$index]] = $c03Changes[$c03ChangedPaths[$index]]
+        }
+    }
+    Assert-Surface "partial C03 ERP integration combination $mask" $mixed ''
+}
+
 # Exhaust the remaining cross-version combinations across the three historical/
 # first-slice core digests, the absent/first-slice/C01 OIDC states, and the C01 file.
 $firstSliceCorePaths = @(
@@ -160,13 +179,20 @@ if ($crossMixes -ne 29) { throw "Expected 29 remaining cross-version mixtures; t
 
 $workflowPath = Join-Path $PSScriptRoot '../.github/workflows/crm-v1-prd.yml'
 $workflowText = [IO.File]::ReadAllText($workflowPath)
-$pushBlock = [regex]::Match($workflowText, '(?ms)^  push:\r?\n(?<body>.*?)(?=^\S|\z)').Groups['body'].Value
-foreach ($path in @('tools/CrmPublicDisclosureSurface.psm1', 'tools/Test-CrmPublicDisclosureSurface.Tests.ps1')) {
-    if ($pushBlock -notmatch ('(?m)^\s+-\s+"' + [regex]::Escape($path) + '"\s*$')) {
-        throw "Main push verification does not watch $path."
-    }
-    $passed++
+# Ordinary validation is manual-only under the accepted local-validation policy.
+# The protected-base workflow still loads its own validator and disclosure module.
+$onBlock = [regex]::Match($workflowText, '(?ms)^on:\r?\n(?<body>.*?)(?=^\S|\z)').Groups['body'].Value
+$events = @([regex]::Matches($onBlock, '(?m)^  ([a-z_]+):') | ForEach-Object { $_.Groups[1].Value })
+if ($events.Count -ne 1 -or $events[0] -cne 'workflow_dispatch') {
+    throw 'PRD validation must remain manual-only.'
 }
+$passed++
+$validatorText = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Test-CrmV1Prd.ps1'))
+if (-not $workflowText.Contains('trusted/tools/Test-CrmV1Prd.ps1') -or
+    $validatorText -notmatch 'Import-Module \(Join-Path \$PSScriptRoot ''CrmPublicDisclosureSurface\.psm1''\)') {
+    throw 'Protected-base validation must use its own validator and disclosure module.'
+}
+$passed++
 
-if ($passed -ne 138) { throw "Expected 138 disclosure set/trigger checks; passed $passed." }
-Write-Host "CRM public disclosure set/trigger tests passed: $passed/138"
+if ($passed -ne 174) { throw "Expected 174 disclosure set/trigger checks; passed $passed." }
+Write-Host "CRM public disclosure set/trigger tests passed: $passed/174"

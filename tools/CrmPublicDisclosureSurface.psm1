@@ -34,10 +34,19 @@ $c01ServiceIdentitySha256 = [ordered]@{}
 foreach ($entry in $firstSliceSha256.GetEnumerator()) { $c01ServiceIdentitySha256.Add($entry.Key, $entry.Value) }
 $c01ServiceIdentitySha256['docs/crm/CRM-OIDC-FIRST-SLICE.md'] = 'f8f25b5f741d5a499f17b3d7ff17b881c634c9d39d6b4c32ddce903a0b2c37de'
 $c01ServiceIdentitySha256['docs/crm/C01-SERVICE-IDENTITY.md'] = '1df7019a31b0fb5c6355df476426ffaaba09af704e39dd7d4fd9a51d5ab7d42b'
+# The continuing C-series implementation/documentation authorization covers the
+# C03 engineering guide and its entry, reviewed at 6cc6e10fae6b097735a94645d00af68b6cc5f989.
+# This preparatory registration leaves docs/crm unchanged; it grants no private
+# commercial disclosure or production approval and preserves all frozen payloads.
+$c03ErpIntegrationSha256 = [ordered]@{}
+foreach ($entry in $c01ServiceIdentitySha256.GetEnumerator()) { $c03ErpIntegrationSha256.Add($entry.Key, $entry.Value) }
+$c03ErpIntegrationSha256['docs/crm/README.md'] = 'dd772cf785bac1c99a981c04ff28cec13977a5b1ca1094e6d942e1a116994264'
+$c03ErpIntegrationSha256['docs/crm/C03-ERP-INTEGRATION.md'] = 'a0d664deeee5716064f60fd6ba16d32c2fe0fc6676c3a046f10a21dc29b80107'
 $registeredSurfaces = [ordered]@{
     'historical-20260826' = $historicalSha256
     'first-slice-20260908' = $firstSliceSha256
     'c01-service-identity-20260909' = $c01ServiceIdentitySha256
+    'c03-erp-integration-20260912' = $c03ErpIntegrationSha256
 }
 
 function Test-CrmPublicDisclosureSurface {
@@ -68,7 +77,10 @@ function Test-CrmPublicDisclosureSurface {
     $errors = [System.Collections.Generic.List[string]]::new()
     $errors.Add('Public disclosure surface digest mismatch: no complete registered document set matches; mixed versions are not permitted.')
     # Pick one set only for diagnostics. This never authorizes per-file mixtures.
-    $diagnosticSurface = if ($actual.ContainsKey('docs/crm/C01-SERVICE-IDENTITY.md')) {
+    $diagnosticSurface = if ($actual.ContainsKey('docs/crm/C03-ERP-INTEGRATION.md')) {
+        $c03ErpIntegrationSha256
+    }
+    elseif ($actual.ContainsKey('docs/crm/C01-SERVICE-IDENTITY.md')) {
         $c01ServiceIdentitySha256
     }
     elseif ($actual.ContainsKey('docs/crm/CRM-OIDC-FIRST-SLICE.md')) {
