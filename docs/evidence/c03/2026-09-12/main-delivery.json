@@ -1,0 +1,62 @@
+{
+  "schemaId": "cp6.c03.main-delivery.v1",
+  "verifiedAtUtc": "2026-09-12T10:06:46.3955241+00:00",
+  "conclusion": "C03 local development implementation delivered through normal PR merges; C04 conditional prerequisites remain unmet",
+  "repositories": [
+    {
+      "repository": "GTX537/CP6",
+      "pullRequest": "https://github.com/GTX537/CP6/pull/105",
+      "publishedSource": "a51938f8ab055e54ebbedfec3b810e44c82e1020",
+      "validatedTaskHead": "ec75b2c6798d0f582840209609a0bca5e65321f1",
+      "remoteMain": "a9cf3abfa8fee13bda2c8f52c115c5adbf6ed917",
+      "validatedTree": "f1b8bb6a2dba7f0c5142597babed402d7d3b7304",
+      "remoteMainTree": "f1b8bb6a2dba7f0c5142597babed402d7d3b7304",
+      "taskIncluded": true,
+      "completeTreeEqual": true,
+      "publishedRuntimeInputsUnchanged": true,
+      "remoteActionsForTaskHeadAndMerge": 0
+    },
+    {
+      "repository": "GTX537/CP6.CRM",
+      "pullRequest": "https://github.com/GTX537/CP6.CRM/pull/62",
+      "publishedSource": "b3adb17dd0087c99c2d82a759d560d4bbf79a7ed",
+      "validatedTaskHead": "72d9e54c328bc70bfccb423c59b8fc44ba073d0b",
+      "remoteMain": "362e6b1794c36e6e4abf9cd7eb7708a76e46c467",
+      "validatedTree": "71de808b107a57d70077df51b1a0b7b2650222de",
+      "remoteMainTree": "71de808b107a57d70077df51b1a0b7b2650222de",
+      "taskIncluded": true,
+      "completeTreeEqual": true,
+      "publishedRuntimeInputsUnchanged": true,
+      "remoteActionsForTaskHeadAndMerge": 0
+    }
+  ],
+  "postMergeChecks": {
+    "reason": "Only merge metadata changed; all executable/dependency inputs and complete validated trees matched. Actual Release HTTP/transport and targeted local tests are reused with their original identities.",
+    "runtimeInputsMatchPublishedSources": true,
+    "verifiedArchiveFiles": 58,
+    "completeGitTreesMatchValidatedHeads": true,
+    "testRerunRequiredByMerge": false,
+    "equalContractFiles": 37
+  },
+  "evidence": {
+    "sqlPassed": 95,
+    "coreUnitAndHttpPassed": 153,
+    "transport": "transport-attempt-4/README.md",
+    "skipped": 0,
+    "crmUnitPassed": 114,
+    "releaseTransportPassed": 7,
+    "localTests": "local-test-results.json",
+    "publishedFilesVerified": 864,
+    "release": "local-release/README.md",
+    "releaseCrmHttpPassed": 3
+  },
+  "retainedBoundaries": [
+    "CRM06/07 product Account/ErpLink/IntegrationProcess/Opportunity/Won transitions",
+    "Real product approval and WMS/MES downstream acceptance",
+    "CRM12 user journeys and production performance",
+    "C04A: CRM02 approved column contract/migration map, DEC-CRM-004 and restored-copy/fence/rollback evidence",
+    "C04B: CRM11 production cutover, adoption gates and completed legacy read-only observation",
+    "R2 candidate, signing, registry promotion and production deployment"
+  ],
+  "remoteAutomation": "Core ordinary workflows remain manual; R2 remains tag-only; CRM validation remains disabled_manually. No Actions or deployment started."
+}

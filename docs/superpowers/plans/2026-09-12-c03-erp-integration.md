@@ -61,7 +61,7 @@ Files in CRM companion: `src/CP6.CRM.Infrastructure/Erp/`, unit/SQL tests, contr
 - [x] Check every §9/§12 and C03 row requirement against actual code, tests and transport evidence; record remaining CRM06/07/12 or migration prerequisites accurately rather than declaring them covered by a contract test.
 - [x] Concentrated spec/quality/security/concurrency review of the complete diff; fix substantive findings and rerun only affected verification unless scope changes.
 - [x] Update `docs/project-memory/PROJECT_STATE.md`, `05-Completed.md`, `06-Todo.md`, `CHANGELOG-AI.md` in each affected repository with evidence and remaining boundaries.
-- [ ] Save explicit task commits, verify workflows, push branches and merge normal PRs. Verify remote main includes all task commits and perform necessary post-merge smoke checks with documented reused results.
+- [x] Save explicit task commits, verify workflows, push branches and merge normal PRs. Verify remote main includes all task commits and perform necessary post-merge smoke checks with documented reused results.
 
 ## Acceptance evidence matrix
 

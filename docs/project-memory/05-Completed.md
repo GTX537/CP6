@@ -1,12 +1,14 @@
 # 已完成能力与近期里程碑
 
-## 2026-09-12：C03 实现、集中审查和 Release 本地验收已通过
+## 2026-09-12：C03 开发交付关闭，远端 main 已核验
 
 真实 SQL 联合回归 95/95、Core 单元/HTTP 153/153、CRM ERP 114/114 全部通过且无跳过。集中审查发现的行数/金额边界、报价与商品数量/计价单位、并发 Account 绑定、按租户重试、读取整体超时和权限覆盖均已修复；原始失败与结果哈希保留在[验证索引](../evidence/c03/2026-09-12/local-test-results.json)。
 
 [新一轮真实 Release 消息验收](../evidence/c03/2026-09-12/transport-attempt-4/README.md)七场景通过，新建 ERP SQL 库应用 135 个正式迁移，最终三张订单按币种对账为 JPY 600 / USD 300，并核验数量与计价单位。[本地发布证据](../evidence/c03/2026-09-12/local-release/README.md)绑定 Core `a51938f8`、CRM `b3adb17d`、864 个发布文件哈希和 3 项实际 CRM API HTTP 检查；执行后全部文件摘要一致。
 
-本地验证已闭环，当前待正常 PR 合并和远端 main 核验；此处不提前声明远端交付完成。Core 的文档精确集合已由 [PR #104](https://github.com/GTX537/CP6/pull/104) 正常合入。没有启动 Actions或替换既有预览。CRM06/07 产品状态接线、CRM12 与 WMS/MES 下游另行验收；C04A 仍需 CRM02 列合同/migration map、DEC-CRM-004 和恢复副本证据，C04B 仍需 CRM11 生产切换、采用门禁及旧表只读观察期，当前均未满足。下方为历史检查点。
+C03 已通过 [Core PR #105](https://github.com/GTX537/CP6/pull/105) 合入 `a9cf3abfa8fee13bda2c8f52c115c5adbf6ed917`，通过 [CRM PR #62](https://github.com/GTX537/CP6.CRM/pull/62) 合入 `362e6b1794c36e6e4abf9cd7eb7708a76e46c467`。[远端交付记录](../evidence/c03/2026-09-12/main-delivery.json)确认任务提交包含关系、完整 Git tree 相同、发布源码未变、37 个契约文件一致及 58 个归档摘要通过。合并 head/main 均无 Actions 运行；其他保护保留，原预览未替换。
+
+C04A 仍等待 CRM02 批准列合同/migration map、DEC-CRM-004 和真实恢复副本/围栏/回退证据；C04B 仍等待 CRM11 生产切换、采用门禁和旧表只读观察期。当前条件未满足，未启动迁移或解除旧映射。CRM06/07 产品状态接线、CRM12 与 WMS/MES 下游另行验收；本地交付不代表生产上线。下方为历史检查点。
 
 ## 2026-09-12：C03 已实现能力与本地证据
 
