@@ -1,0 +1,38 @@
+{
+  "schemaId": "cp6.c03.local-release-http.v1",
+  "sourceSha": "b3adb17dd0087c99c2d82a759d560d4bbf79a7ed",
+  "assemblySha256": "acfbcab698c8a669257abaa41adb910c9fa0d31b0fa2cf62818ad084e55f687d",
+  "startedAtUtc": "2026-09-12T09:52:29.6524843Z",
+  "observedAtUtc": "2026-09-12T09:52:31.6234959+00:00",
+  "scope": "Actual published Release CRM API startup and explicit default-off HTTP boundary. Enabled ERP client is exercised through the published transport runner; no CRM business journey claimed.",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/health/live",
+      "body": {
+        "status": "Healthy"
+      },
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "body": {
+        "service": "CP6.CRM.Api",
+        "status": "unconfigured",
+        "scope": "CRM01"
+      },
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/health/ready",
+      "body": {
+        "status": "Unhealthy"
+      },
+      "status": 503
+    }
+  ],
+  "passed": 3,
+  "failed": 0
+}

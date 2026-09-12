@@ -1,0 +1,31 @@
+{
+  "schemaId": "cp6.c03.local-release-verification.v1",
+  "observedAtUtc": "2026-09-12T09:57:42.6786649+00:00",
+  "sdk": "10.0.302",
+  "sources": {
+    "core": "a51938f8ab055e54ebbedfec3b810e44c82e1020",
+    "crm": "b3adb17dd0087c99c2d82a759d560d4bbf79a7ed"
+  },
+  "publishedFileCount": 864,
+  "allRecordedFileHashesMatchedAfterExecution": true,
+  "transport": {
+    "skipped": 0,
+    "passed": 7,
+    "summarySha256": "416063824cae340873b40ad79695f2462320c50b4598a3f296c07e2318c18657",
+    "failed": 0
+  },
+  "crmApiHttp": {
+    "passed": 3,
+    "reportSha256": "f66c005454f80ad3ea45c32aeea142fc06a30707ebda4fedf69a6251fe1c0d8d",
+    "failed": 0
+  },
+  "reusedPrepublicationTests": {
+    "index": "../local-test-results.json",
+    "sql": 95,
+    "crmUnit": 114,
+    "coreUnitAndHttp": 153
+  },
+  "remoteActionsStarted": 0,
+  "productionDeployment": false,
+  "sourceChangesAfterPublication": "Only documentation/evidence and trusted disclosure registration; executable source/dependencies reuse the recorded verification."
+}

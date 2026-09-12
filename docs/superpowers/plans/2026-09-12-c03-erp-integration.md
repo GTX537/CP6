@@ -58,9 +58,9 @@ Files in CRM companion: `src/CP6.CRM.Infrastructure/Erp/`, unit/SQL tests, contr
 
 ## 5. Review and integrate the complete task
 
-- [ ] Check every §9/§12 and C03 row requirement against actual code, tests and transport evidence; record remaining CRM06/07/12 or migration prerequisites accurately rather than declaring them covered by a contract test.
+- [x] Check every §9/§12 and C03 row requirement against actual code, tests and transport evidence; record remaining CRM06/07/12 or migration prerequisites accurately rather than declaring them covered by a contract test.
 - [x] Concentrated spec/quality/security/concurrency review of the complete diff; fix substantive findings and rerun only affected verification unless scope changes.
-- [ ] Update `docs/project-memory/PROJECT_STATE.md`, `05-Completed.md`, `06-Todo.md`, `CHANGELOG-AI.md` in each affected repository with evidence and remaining boundaries.
+- [x] Update `docs/project-memory/PROJECT_STATE.md`, `05-Completed.md`, `06-Todo.md`, `CHANGELOG-AI.md` in each affected repository with evidence and remaining boundaries.
 - [ ] Save explicit task commits, verify workflows, push branches and merge normal PRs. Verify remote main includes all task commits and perform necessary post-merge smoke checks with documented reused results.
 
 ## Acceptance evidence matrix
@@ -72,6 +72,6 @@ Files in CRM companion: `src/CP6.CRM.Infrastructure/Erp/`, unit/SQL tests, contr
 | Contract cofreeze | Same bundle bytes in producer/consumer; both reject malformed/PII messages before effects |
 | One order per opportunity | SQL concurrency across duplicate IDs and multiple request versions |
 | Transactional result | Failure injection proves no order without success Outbox and no Inbox completion without outcome |
-| Monotonic result processing | Stale failure and duplicate success leave final CRM state unchanged |
+| Monotonic result processing | Probe Inbox/version checkpoint ignores stale/duplicate results; actual CRM business state transitions remain CRM07 scope |
 | Real transport UAT | Dapr/Kafka request and result trace plus canonical SQL reconciliation |
 | Delivery | Normal merged PRs and verified remote main commits |

@@ -1,0 +1,260 @@
+{
+  "requests": [
+    {
+      "messageId": "a0375e475ea14fecb8ca9335efdfb6ed",
+      "tenantId": "31a9a27c-f54f-4748-8ab4-ac92b85c1d7f",
+      "aggregateId": "4f86e1ec-d3d2-4784-8a55-00281420a518",
+      "aggregateVersion": 1,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "1939c678e0e9f420315c389ebee9dba3f9b9e36b8394179ed8cc5fbe715d8a6f",
+      "createdAtUtc": "2026-09-12T09:54:21.3023883+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:37.8186071+00:00"
+    },
+    {
+      "messageId": "76fb1fadbbb74dfda4fa80a75c927e26",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "4de47bd1-af5c-433e-a0a6-ed9d0b102dee",
+      "aggregateVersion": 1,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "e6f81425be00a806f3509c3a23564df2d347023262af8c82741424319b59b53e",
+      "createdAtUtc": "2026-09-12T09:54:04.9035129+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:05.5477046+00:00"
+    },
+    {
+      "messageId": "89a8a9a81bb144b581943ab5d98356c5",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "18e4ae2f-e717-4c8e-8c40-eb3e829332ad",
+      "aggregateVersion": 3,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "9fdb9a624a2cf711d9eeecba03426d3c4d84988674569c4e567ce545caf35402",
+      "createdAtUtc": "2026-09-12T09:54:17.3890342+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:17.459743+00:00"
+    },
+    {
+      "messageId": "34e0bc1caafa4c62ad977c90a2ce0862",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "18e4ae2f-e717-4c8e-8c40-eb3e829332ad",
+      "aggregateVersion": 2,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "cc4f8a4dec54279cf9a0d10e6205951aed459a15d8b2acc52edf8f50a6ae4e71",
+      "createdAtUtc": "2026-09-12T09:54:12.8676539+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:13.0679766+00:00"
+    },
+    {
+      "messageId": "6d095b058ded457fb7b25cf0df6b2424",
+      "tenantId": "31a9a27c-f54f-4748-8ab4-ac92b85c1d7f",
+      "aggregateId": "67cd96f7-ce64-480b-9a22-ce2954eab0c4",
+      "aggregateVersion": 1,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "db7974a4d99d8ad2b88d27da78ae827c94db7e528a39c82660d9f35ce1fc88ce",
+      "createdAtUtc": "2026-09-12T09:54:45.5707803+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:45.7079931+00:00"
+    },
+    {
+      "messageId": "4fd8ac79ca9c41fdbad8115a4a1b00e6",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "1db478e7-784b-4a43-a6de-f0397de0bcc0",
+      "aggregateVersion": 1,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "6541fc93bfdbab4747f6fb7f818101fd359c66d42533583bf310e2cd88bbac32",
+      "createdAtUtc": "2026-09-12T09:54:41.7575135+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:41.9668758+00:00"
+    },
+    {
+      "messageId": "946645be96e84ef8aff464ef12cfef2c",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "05643639-6253-476c-a3c4-61003b6f7cc0",
+      "aggregateVersion": 1,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "2d952179a9b632a6975980b0d75ec049527854a937220a818bb5d5a04527ff23",
+      "createdAtUtc": "2026-09-12T09:54:18.2181154+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:18.298282+00:00"
+    },
+    {
+      "messageId": "b0680080d1d64a7194b410c61b7d5f46",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "18e4ae2f-e717-4c8e-8c40-eb3e829332ad",
+      "aggregateVersion": 1,
+      "status": 2,
+      "attemptCount": 1,
+      "lastErrorCode": null,
+      "payloadSha256": "095daa8b613b855d696348124502ad12d41b0df7459aedaf757040cae0dc9810",
+      "createdAtUtc": "2026-09-12T09:54:09.9840441+00:00",
+      "publishedAtUtc": "2026-09-12T09:54:10.1166125+00:00"
+    }
+  ],
+  "resultInbox": [
+    {
+      "messageId": "0597366a939d4c58be4b028fad5b55fd",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "e8e0c1a4cad21dfc2eec912f7bf783e75de24792a96abcbccefda6124cb2ec65"
+    },
+    {
+      "messageId": "10dc3e1e13e2497b8ea6fae495556bc1",
+      "tenantId": "31a9a27c-f54f-4748-8ab4-ac92b85c1d7f",
+      "status": 1,
+      "payloadSha256": "c69b39f9f2e70e8e35e5fbcb799b0034100bae7e13605c2b95ca34f75413a5b6"
+    },
+    {
+      "messageId": "76fe943b76bb4c8e9a87d29b0c4988ae",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "7f130dff9b0e3794c13d9b901be4a40cad0f8cd18dbfaae438dfc0072d732b94"
+    },
+    {
+      "messageId": "ba092e5dda7f48a185225a0493c2078c",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "1bb892581820972159ce9a113809f197cfa017004c3a6106b68d5ee784770192"
+    },
+    {
+      "messageId": "5734a43a0ddf48b393521482d9a13709",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "8d58235423dc6fd6563854bd6cf5163609a643ce45ad14193283078e37561a57"
+    },
+    {
+      "messageId": "54998cc9811b4fefb4dc7b33a4cc443c",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "ce092cc7b2873541eb845d08f10e4614ed4373ea3dee76bafc4819be5a1226cd"
+    },
+    {
+      "messageId": "7538876232e94f9cbfa2a1f6320314dc",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "c846ed7da8001e59c6d55f769089580ec97662edcc2403d222a69e7b7a24cf1e"
+    },
+    {
+      "messageId": "20c4ebb8bfa44d9ea3d28defb713b1eb",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "5b8f86d88ea84f90cb7c6550327f2e3a9d0a93cb78684de95f99f0d339d05d3f"
+    },
+    {
+      "messageId": "57a581fd57bc45558d75ef382848dc02",
+      "tenantId": "31a9a27c-f54f-4748-8ab4-ac92b85c1d7f",
+      "status": 1,
+      "payloadSha256": "7fa9fb93115ee3e234ae5530dc022063fb195abb33054f3eade9aaf915c185a4"
+    },
+    {
+      "messageId": "457f42ea392c407c912dd222da4225e4",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "5f1c74f39752da29ae5e9f525b869813beb3c5549523863caf0d544af60ec12b"
+    },
+    {
+      "messageId": "414e782b55434986884705dfcf48e2bc",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "status": 1,
+      "payloadSha256": "b82db1d6b72a784e92f4f71c1620073a20d2574165b2abfa6133400b69f4aaac"
+    }
+  ],
+  "receivedResults": [
+    {
+      "messageId": "0597366a939d4c58be4b028fad5b55fd",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "05643639-6253-476c-a3c4-61003b6f7cc0",
+      "resultVersion": 1,
+      "eventType": "com.gtx537.erp.order-failed.v1",
+      "payloadSha256": "e8e0c1a4cad21dfc2eec912f7bf783e75de24792a96abcbccefda6124cb2ec65",
+      "receivedAtUtc": "2026-09-12T09:54:19.8045246+00:00"
+    },
+    {
+      "messageId": "10dc3e1e13e2497b8ea6fae495556bc1",
+      "tenantId": "31a9a27c-f54f-4748-8ab4-ac92b85c1d7f",
+      "aggregateId": "4f86e1ec-d3d2-4784-8a55-00281420a518",
+      "resultVersion": 1,
+      "eventType": "com.gtx537.erp.business-partner-synchronized.v1",
+      "payloadSha256": "c69b39f9f2e70e8e35e5fbcb799b0034100bae7e13605c2b95ca34f75413a5b6",
+      "receivedAtUtc": "2026-09-12T09:54:41.1364911+00:00"
+    },
+    {
+      "messageId": "414e782b55434986884705dfcf48e2bc",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "1db478e7-784b-4a43-a6de-f0397de0bcc0",
+      "resultVersion": 4,
+      "eventType": "com.gtx537.erp.order-created.v1",
+      "payloadSha256": "b82db1d6b72a784e92f4f71c1620073a20d2574165b2abfa6133400b69f4aaac",
+      "receivedAtUtc": "2026-09-12T09:54:52.1483045+00:00"
+    },
+    {
+      "messageId": "457f42ea392c407c912dd222da4225e4",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "18e4ae2f-e717-4c8e-8c40-eb3e829332ad",
+      "resultVersion": 1,
+      "eventType": "com.gtx537.erp.order-created.v1",
+      "payloadSha256": "5f1c74f39752da29ae5e9f525b869813beb3c5549523863caf0d544af60ec12b",
+      "receivedAtUtc": "2026-09-12T09:54:11.8671064+00:00"
+    },
+    {
+      "messageId": "54998cc9811b4fefb4dc7b33a4cc443c",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "18e4ae2f-e717-4c8e-8c40-eb3e829332ad",
+      "resultVersion": 2,
+      "eventType": "com.gtx537.erp.order-failed.v1",
+      "payloadSha256": "ce092cc7b2873541eb845d08f10e4614ed4373ea3dee76bafc4819be5a1226cd",
+      "receivedAtUtc": "2026-09-12T09:54:17.7037641+00:00"
+    },
+    {
+      "messageId": "5734a43a0ddf48b393521482d9a13709",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "1db478e7-784b-4a43-a6de-f0397de0bcc0",
+      "resultVersion": 1,
+      "eventType": "com.gtx537.erp.order-failed.v1",
+      "payloadSha256": "8d58235423dc6fd6563854bd6cf5163609a643ce45ad14193283078e37561a57",
+      "receivedAtUtc": "2026-09-12T09:54:42.3732817+00:00"
+    },
+    {
+      "messageId": "57a581fd57bc45558d75ef382848dc02",
+      "tenantId": "31a9a27c-f54f-4748-8ab4-ac92b85c1d7f",
+      "aggregateId": "67cd96f7-ce64-480b-9a22-ce2954eab0c4",
+      "resultVersion": 1,
+      "eventType": "com.gtx537.erp.order-created.v1",
+      "payloadSha256": "7fa9fb93115ee3e234ae5530dc022063fb195abb33054f3eade9aaf915c185a4",
+      "receivedAtUtc": "2026-09-12T09:54:46.3151342+00:00"
+    },
+    {
+      "messageId": "7538876232e94f9cbfa2a1f6320314dc",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "1db478e7-784b-4a43-a6de-f0397de0bcc0",
+      "resultVersion": 3,
+      "eventType": "com.gtx537.erp.order-failed.v1",
+      "payloadSha256": "c846ed7da8001e59c6d55f769089580ec97662edcc2403d222a69e7b7a24cf1e",
+      "receivedAtUtc": "2026-09-12T09:54:45.6947917+00:00"
+    },
+    {
+      "messageId": "76fe943b76bb4c8e9a87d29b0c4988ae",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "1db478e7-784b-4a43-a6de-f0397de0bcc0",
+      "resultVersion": 2,
+      "eventType": "com.gtx537.erp.order-failed.v1",
+      "payloadSha256": "7f130dff9b0e3794c13d9b901be4a40cad0f8cd18dbfaae438dfc0072d732b94",
+      "receivedAtUtc": "2026-09-12T09:54:43.514734+00:00"
+    },
+    {
+      "messageId": "ba092e5dda7f48a185225a0493c2078c",
+      "tenantId": "6e855a21-95ea-40c5-aa9f-2407260c324d",
+      "aggregateId": "4de47bd1-af5c-433e-a0a6-ed9d0b102dee",
+      "resultVersion": 1,
+      "eventType": "com.gtx537.erp.business-partner-synchronized.v1",
+      "payloadSha256": "1bb892581820972159ce9a113809f197cfa017004c3a6106b68d5ee784770192",
+      "receivedAtUtc": "2026-09-12T09:54:09.6541968+00:00"
+    }
+  ]
+}

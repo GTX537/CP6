@@ -26,9 +26,12 @@ The trusted-main documentation gate required a preparatory exact-set registratio
 Its 174 disclosure tests and 59 PRD negative regressions passed locally. It registers the exact engineering guide/index
 from documentation commit `6cc6e10fae6b097735a94645d00af68b6cc5f989`; frozen product payloads and whole-set matching remain intact.
 
-The [seven-case transport attempt 3](transport-attempt-3/README.md) remains original historical execution evidence.
-The unit/master changes require a fresh transport attempt against published Release binaries. That publication and
-remote-main delivery are not certified by this review record alone.
+The unit/master changes were independently rechecked and the original P1 was closed. The
+[fresh seven-case transport attempt 4](transport-attempt-4/README.md) passed against actual published Release binaries,
+including final quantity/price/unit SQL reconciliation. [Local publication evidence](local-release/README.md) binds
+864 unchanged published file hashes and three additional actual CRM API HTTP checks. The earlier
+[attempt 3](transport-attempt-3/README.md) remains unchanged historical execution evidence. Remote-main delivery
+requires separate merge and ancestry/tree verification.
 
 The existing per-line ERP product/process/material queries are bounded by 500 lines but have no large-history/throughput
 production performance acceptance. Batch optimization remains a follow-up. CRM Account/ErpLink/IntegrationProcess and
