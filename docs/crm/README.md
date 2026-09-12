@@ -1,7 +1,10 @@
 # CP6 CRM 文档入口
 
+当前实现与验证状态以 [项目状态](../project-memory/PROJECT_STATE.md) 为准；本页文末的 M0/Foundation 描述保留早期基线背景。
+
 | 文档 | 地位 | 用途 |
 | --- | --- | --- |
+| [C03 ERP 集成](./C03-ERP-INTEGRATION.md) | ERP owner implementation / local SQL and transport evidence | 真实 BP/报价/订单、事务 Inbox/Outbox、服务查询、版本守卫及人工恢复；CRM 产品成交旅程另行验收 |
 | [CRM 首个切片身份与目录桥](./CRM-OIDC-FIRST-SLICE.md) | Implementation slice / local integration verified | 默认关闭的 RS256 OIDC、真实组织权限投影、绑定原 CP6 会话的全局退出、SQL 与跨仓浏览器验证 |
 | [CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md) | Complete public synchronization contract | 脱敏同步私有 Frozen 产品与 Accepted R00 的四仓边界、领域/API/事件、安全、发布和 M0 开工规则 |
 | [CRM V1 产品需求文档](./CRM-V1-PRD.md) | Approved fully sanitized product requirements baseline | 对齐 Frozen SaaS V1，定义前端效果、后端逻辑、状态/权限/失败语义、验收和升级边界；批准的 payload SHA-256 为 `5e646cc8e394c74c35f9716216be1d12fa5f4f7210e42d8d52ab9b86f4528a3a` |

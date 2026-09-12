@@ -1,0 +1,43 @@
+{
+  "schemaId": "cp6.crm.c03-real-transport.v1",
+  "conclusion": "failure",
+  "verificationKind": "isolated real Core ERP SQL/API, C01 service grant, Dapr/Kafka and CRM contract/SQL transport probe; no CRM Account/Opportunity/Won or production acceptance",
+  "coreSourceSha": "53ad3d8813b59caadee9b2fd8030cb0d2db4e741",
+  "crmSourceSha": "70d5ecac5445556375521d5ff079beb548411639",
+  "scope": "all",
+  "sourceState": "working-tree runtime; assembly and contract hashes are execution identity",
+  "crmInfrastructureAssemblySha256": "cce522cf660a201bf406790ce369cbd86913869525c4a282e068e8bb98926b8a",
+  "runnerAssemblySha256": "bbb78c2284392090c09c500330993ba870a3a7f0c30775071b10726746c3ecb8",
+  "contractBundleSha256": "758c9b853fdacf3bd18c1822fb3d8dd603354618bef0132e940ccf92ce659a20",
+  "total": 2,
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "actual-erp-sql-and-service-authenticated-dapr-reads",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:18:12.0741168+00:00",
+      "finishedAtUtc": "2026-09-12T08:18:27.5890947+00:00"
+    },
+    {
+      "name": "crm-outbox-to-real-erp-business-partner-and-result-inbox",
+      "passed": false,
+      "startedAtUtc": "2026-09-12T08:18:27.5936077+00:00",
+      "finishedAtUtc": "2026-09-12T08:20:28.3193206+00:00"
+    }
+  ],
+  "observations": {
+    "baseline": {
+      "tenants": [
+        "e17d300e-0da6-42b1-beff-b2abd264d613",
+        "f2764f04-1619-4ec9-b29e-9440788b699d"
+      ],
+      "actualServiceTokenGrant": true,
+      "authorityReadsViaDapr": true,
+      "existingErpRows": true,
+      "crmBusinessState": "not implemented by this transport probe"
+    }
+  },
+  "observedAtUtc": "2026-09-12T08:20:31.6283596+00:00"
+}

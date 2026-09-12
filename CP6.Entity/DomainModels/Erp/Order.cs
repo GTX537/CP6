@@ -19,6 +19,14 @@ public class Order : BaseBizEntity, IAuditable
     [Required, MaxLength(20)]
     public string WebOrderNo { get; set; } = string.Empty;
 
+    // Original CRM request provenance is immutable and assigned before the first order SaveChanges.
+    public Guid? CrmOpportunityId { get; set; }
+    public Guid? CrmAccountId { get; set; }
+    public Guid? CrmRequestId { get; set; }
+    public int? CrmRequestVersion { get; set; }
+    public Guid? CrmQuotationId { get; set; }
+    [MaxLength(64)] public string? CrmRequestSha256 { get; set; }
+
     // ───── 顧客・受注区分 ─────
     /// <summary>得意先コード</summary>
     [Required, MaxLength(20)]

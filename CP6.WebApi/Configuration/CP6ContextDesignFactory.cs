@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.ErpIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -16,5 +17,11 @@ public sealed class CP6ContextDesignFactory : IDesignTimeDbContextFactory<CP6Con
 public sealed class IdentityMessagingContextDesignFactory : IDesignTimeDbContextFactory<IdentityMessagingContext>
 {
     public IdentityMessagingContext CreateDbContext(string[] args) => new(new DbContextOptionsBuilder<IdentityMessagingContext>()
+        .UseSqlServer("Server=localhost;Database=CP6_Design;Integrated Security=true;TrustServerCertificate=true").Options);
+}
+
+public sealed class ErpIntegrationContextDesignFactory : IDesignTimeDbContextFactory<ErpIntegrationContext>
+{
+    public ErpIntegrationContext CreateDbContext(string[] args) => new(new DbContextOptionsBuilder<ErpIntegrationContext>()
         .UseSqlServer("Server=localhost;Database=CP6_Design;Integrated Security=true;TrustServerCertificate=true").Options);
 }

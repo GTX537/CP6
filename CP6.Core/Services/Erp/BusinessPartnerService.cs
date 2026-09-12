@@ -421,6 +421,7 @@ public class BusinessPartnerService : IBusinessPartnerService
     private static BusinessPartnerDto ToDto(BusinessPartner e) => new()
     {
         BpCd = e.BpCd, BpName = e.BpName, BpAbbrev = e.BpAbbrev, BaseCd = e.BaseCd, Status = e.Status,
+        CrmAccountId = e.CrmAccountId, CurrencyCd = e.CurrencyCd, IsFrozen = e.IsFrozen,
         StdCoCd = e.StdCoCd, Ein = e.Ein, EinType = e.EinType, LocalPublicCd = e.LocalPublicCd, DenzaiNo = e.DenzaiNo,
         ZipCd = e.ZipCd, Addr1 = e.Addr1, Addr2 = e.Addr2, Addr3 = e.Addr3, Addr4 = e.Addr4,
         Tel = e.Tel, Fax = e.Fax, AreaCd = e.AreaCd,

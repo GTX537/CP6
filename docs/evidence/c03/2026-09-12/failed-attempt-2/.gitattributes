@@ -1,0 +1,5 @@
+# Keep source report bytes stable for the SHA-256 archive.
+*.json -text whitespace=cr-at-eol
+*.xml -text whitespace=cr-at-eol
+README.md text eol=lf
+SHA256SUMS text eol=lf

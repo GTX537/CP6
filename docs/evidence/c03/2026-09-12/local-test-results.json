@@ -1,0 +1,2846 @@
+{
+  "schemaId": "cp6.c03.local-test-evidence-index.v1",
+  "kind": "Derived metadata from unchanged retained TRX; not a fresh test execution or published raw TRX",
+  "rawScope": "Raw TRX remain local because they contain machine paths. SHA-256 identifies original bytes; test names and outcomes are allowlisted here. Transport originals have their separate archive.",
+  "runs": [
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-1/c03-erp-sql.trx",
+      "sha256": "e7e0a3827eaf4813e39de9fed2dc5f6641aa88fe4feb1b77164c41c64a53a9f9",
+      "startedAt": "2026-09-12T03:28:16.3195539-04:00",
+      "finishedAt": "2026-09-12T03:28:17.2437476-04:00",
+      "total": 29,
+      "executed": 29,
+      "passed": 0,
+      "failed": 29,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Same_message_and_new_message_same_input_replay_without_rewriting_master",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"unapproved-product\", code: \"C03_QUOTATION_PRODUCT_NOT_APPROVED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Older_request_version_is_terminal_superseded_after_newer_request",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"amount\", code: \"C03_AMOUNT_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"customer\", code: \"C03_QUOTATION_CUSTOMER_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"ambiguous-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"missing-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_foreign_currency_rate_and_accepted_price_are_frozen_on_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"currency\", code: \"C03_CURRENCY_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Sql_rowversion_prevents_stale_authority_and_account_binding_is_tenant_isolated",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"incomplete\", code: \"C03_BUSINESS_PARTNER_MASTER_DATA_REQUIRED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"expired\", code: \"C03_QUOTATION_EXPIRED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"version\", code: \"C03_QUOTATION_VERSION_CHANGED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"revoked\", code: \"C03_CUSTOMER_ACCEPTANCE_REQUIRED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Same_business_key_with_conflicting_payload_emits_terminal_conflict_without_extra_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Failure_after_order_save_rolls_back_order_lines_sequence_bridge_then_same_request_retries_once",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_sql_unique_index_rejects_second_order_for_same_tenant_opportunity",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"account\", code: \"C03_BUSINESS_PARTNER_ACCOUNT_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Different_request_versions_for_one_opportunity_never_create_a_second_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"missing\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-10/c03-erp-sql.trx",
+      "sha256": "331e35b8e79c609f8f7f3aee2150bc06648a4655d44a7332c2a2b6a6065ce780",
+      "startedAt": "2026-09-12T04:35:08.4799115-04:00",
+      "finishedAt": "2026-09-12T04:35:53.0131386-04:00",
+      "total": 2,
+      "executed": 2,
+      "passed": 0,
+      "failed": 2,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ForeignExchangeSqlTests.Missing_or_nonpositive_fx_is_terminal_and_repaired_master_requires_new_request_version(nonpositive: False, expectedCode: \"C03_FX_RATE_REQUIRED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ForeignExchangeSqlTests.Missing_or_nonpositive_fx_is_terminal_and_repaired_master_requires_new_request_version(nonpositive: True, expectedCode: \"C03_FX_RATE_INVALID\")",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-11/c03-erp-sql.trx",
+      "sha256": "dacff472396c7d744d5edf126352425914dad472bb629577551323bbb3e1d0ff",
+      "startedAt": "2026-09-12T04:37:32.0012863-04:00",
+      "finishedAt": "2026-09-12T04:38:17.3103412-04:00",
+      "total": 2,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ForeignExchangeSqlTests.Missing_or_nonpositive_fx_is_terminal_and_repaired_master_requires_new_request_version(nonpositive: True, expectedCode: \"C03_FX_RATE_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ForeignExchangeSqlTests.Missing_or_nonpositive_fx_is_terminal_and_repaired_master_requires_new_request_version(nonpositive: False, expectedCode: \"C03_FX_RATE_REQUIRED\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-12/c03-erp-sql.trx",
+      "sha256": "7341254b373ab8669a19b4fde6da15a89214cb0a05f1730c2edd6ed12a9b677a",
+      "startedAt": "2026-09-12T04:48:54.4196204-04:00",
+      "finishedAt": "2026-09-12T04:49:35.6696522-04:00",
+      "total": 1,
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryLeadTimeSqlTests.Accepted_quotation_with_insufficient_delivery_lead_time_is_terminal_without_order_side_effects",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-13/c03-erp-sql.trx",
+      "sha256": "063034dae3c596f9ea37492ed616f2f0d88716fd7670160de9034cac9b93fd76",
+      "startedAt": "2026-09-12T04:51:24.6801089-04:00",
+      "finishedAt": "2026-09-12T04:52:10.0181294-04:00",
+      "total": 2,
+      "executed": 2,
+      "passed": 0,
+      "failed": 2,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"expired-tenant\", code: \"C03_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"disabled-tenant\", code: \"C03_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-14/c03-erp-sql.trx",
+      "sha256": "422c5c9a078cdb2af41d57f7dafd8a2404459203eee6e3601fcb03e36cd1373f",
+      "startedAt": "2026-09-12T05:07:11.1768592-04:00",
+      "finishedAt": "2026-09-12T05:08:14.8841337-04:00",
+      "total": 47,
+      "executed": 47,
+      "passed": 47,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"actor\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"cross-tenant\", expected: \"C03_DELIVERY_REPLAY_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Concurrent_same_operation_has_one_audit_and_changed_operation_input_cannot_reset_again(kind: \"bridge\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"disabled\", expected: \"C03_DELIVERY_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"reason\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Concurrent_same_operation_has_one_audit_and_changed_operation_input_cannot_reset_again(kind: \"result\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"stale-rowversion\", code: \"C03_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"reason\", expected: \"C03_DELIVERY_REPLAY_INPUT_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"payload\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"disabled-tenant\", code: \"C03_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"rowversion\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"completed\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"hash\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"cross-tenant\", expected: \"C03_DELIVERY_REPLAY_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Processed_receipt_cannot_be_replayed_as_a_new_operation",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Ten_real_worker_failures_exhaust_then_admin_replay_completes_same_original_order(failure: \"mes-fails\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"missing-order\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"deadletter-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"not-exhausted\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"cross-tenant\", code: \"C03_REPLAY_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Audit_storage_failure_rolls_back_requeue_and_original_deadletter(kind: \"result\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"expired-tenant\", code: \"C03_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"rowversion\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"invalid-reason\", code: \"C03_REPLAY_INPUT_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryLeadTimeSqlTests.Accepted_quotation_with_insufficient_delivery_lead_time_is_terminal_without_order_side_effects",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"rowversion\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"missing-deadletter\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"deadletter-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Ten_real_worker_failures_exhaust_then_admin_replay_completes_same_original_order(failure: \"wms-throws\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Delivery_replay_audit_is_append_only(change: \"delete\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"metadata\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Audit_storage_failure_rolls_back_requeue_and_original_deadletter(kind: \"bridge\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"active-lease\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Concurrent_workers_hold_sql_lock_across_hooks_and_do_not_dispatch_twice",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"disabled\", expected: \"C03_DELIVERY_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"hash\", code: \"C03_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"reason\", expected: \"C03_DELIVERY_REPLAY_INPUT_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.List_is_tenant_scoped_bounded_stable_and_returns_only_recovery_metadata",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Persisted_replay_audit_is_append_only(mutation: \"delete\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"hash\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Delivery_replay_audit_is_append_only(change: \"update\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Persisted_replay_audit_is_append_only(mutation: \"update\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"hash\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-15/c03-erp-sql.trx",
+      "sha256": "5d40124ac96be868524df0eed338a25a8710e6e7088b4e4cc1c7571d07f145ec",
+      "startedAt": "2026-09-12T05:17:58.4230713-04:00",
+      "finishedAt": "2026-09-12T05:18:36.2279833-04:00",
+      "total": 3,
+      "executed": 3,
+      "passed": 1,
+      "failed": 2,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderAmountBoundarySqlTests.Legacy_accepted_oversized_quote_is_terminal_before_order_sql_and_replays_unchanged",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderAmountBoundarySqlTests.Customer_acceptance_rejects_a_quote_amount_that_cannot_fit_an_order_line",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderAmountBoundarySqlTests.Largest_representable_quote_amount_creates_an_exact_order_and_result",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-16/c03-erp-sql.trx",
+      "sha256": "d6556cfe8e82ed9d1ccad93bb78536691918115a30d7844e03c45cff6d542dda",
+      "startedAt": "2026-09-12T05:27:47.8865184-04:00",
+      "finishedAt": "2026-09-12T05:28:22.5472338-04:00",
+      "total": 2,
+      "executed": 2,
+      "passed": 0,
+      "failed": 2,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerBindingConcurrencySqlTests.Concurrent_authority_bindings_of_the_same_account_in_different_tenants_both_succeed",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerBindingConcurrencySqlTests.Concurrent_authority_bindings_have_one_winner_and_a_stable_conflict_without_partial_loser_changes",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-16b/c03-erp-sql.trx",
+      "sha256": "b60729eb4dd6fdccce956d18eee2cfa1d267e5ce78c3f7a6558f89e373ffe561",
+      "startedAt": "2026-09-12T05:29:38.5821393-04:00",
+      "finishedAt": "2026-09-12T05:30:14.3560604-04:00",
+      "total": 2,
+      "executed": 2,
+      "passed": 1,
+      "failed": 1,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerBindingConcurrencySqlTests.Concurrent_authority_bindings_have_one_winner_and_a_stable_conflict_without_partial_loser_changes",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerBindingConcurrencySqlTests.Concurrent_authority_bindings_of_the_same_account_in_different_tenants_both_succeed",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-19/unit-red.trx",
+      "sha256": "1e0b4022187c7a43ff71fa080442bd491e6ccac35df1e768d366788176de7209",
+      "startedAt": "2026-09-12T05:40:05.6621056-04:00",
+      "finishedAt": "2026-09-12T05:40:44.2566373-04:00",
+      "total": 8,
+      "executed": 8,
+      "passed": 2,
+      "failed": 6,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: null, valid: False)",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: \"PCS\", valid: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: null, priceUnit: \"PCS\", valid: False)",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"kg\", quantityUnit: \"KG\", priceUnit: \"KG\", valid: False)",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"kg\", quantityUnit: \"g\", priceUnit: \"g\", valid: False)",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"kg\", quantityUnit: \"kg\", priceUnit: \"kg\", valid: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: \"BOX\", valid: False)",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: \" \", valid: False)",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-2/c03-erp-sql.trx",
+      "sha256": "d57bd2fef57f92594fe3be40359b6d843272904980371f1bb79a757fcecc23d9",
+      "startedAt": "2026-09-12T03:32:28.9368945-04:00",
+      "finishedAt": "2026-09-12T03:33:22.0549311-04:00",
+      "total": 29,
+      "executed": 29,
+      "passed": 14,
+      "failed": 15,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_sql_unique_index_rejects_second_order_for_same_tenant_opportunity",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Different_request_versions_for_one_opportunity_never_create_a_second_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"version\", code: \"C03_QUOTATION_VERSION_CHANGED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"incomplete\", code: \"C03_BUSINESS_PARTNER_MASTER_DATA_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"missing\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Failure_after_order_save_rolls_back_order_lines_sequence_bridge_then_same_request_retries_once",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Same_business_key_with_conflicting_payload_emits_terminal_conflict_without_extra_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_foreign_currency_rate_and_accepted_price_are_frozen_on_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Same_message_and_new_message_same_input_replay_without_rewriting_master",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"missing-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"account\", code: \"C03_BUSINESS_PARTNER_ACCOUNT_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"unapproved-product\", code: \"C03_QUOTATION_PRODUCT_NOT_APPROVED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"amount\", code: \"C03_AMOUNT_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"expired\", code: \"C03_QUOTATION_EXPIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"revoked\", code: \"C03_CUSTOMER_ACCEPTANCE_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"currency\", code: \"C03_CURRENCY_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"ambiguous-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Sql_rowversion_prevents_stale_authority_and_account_binding_is_tenant_isolated",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"customer\", code: \"C03_QUOTATION_CUSTOMER_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Older_request_version_is_terminal_superseded_after_newer_request",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-20/c03-erp-sql.trx",
+      "sha256": "01dc91f99b985a7d72b915ba0abf3550541ffb783e101553928bd296ac123984",
+      "startedAt": "2026-09-12T05:42:49.1059777-04:00",
+      "finishedAt": "2026-09-12T05:44:33.3519144-04:00",
+      "total": 95,
+      "executed": 95,
+      "passed": 95,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: null, valid: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"customer\", code: \"C03_QUOTATION_CUSTOMER_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"missing-order\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"incomplete\", code: \"C03_BUSINESS_PARTNER_MASTER_DATA_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: \"BOX\", valid: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"disabled\", expected: \"C03_DELIVERY_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"expired-tenant\", code: \"C03_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.CommandRetryWorkerSqlTests.One_pass_skips_removed_tenant_backlog_and_gives_each_registered_tenant_a_bounded_retry_batch",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"amount\", code: \"C03_AMOUNT_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Actual_sql_constraints_reject_duplicate_account_binding_and_request_identities",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Concurrent_workers_hold_sql_lock_across_hooks_and_do_not_dispatch_twice",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"active-lease\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Older_request_version_is_terminal_superseded_after_newer_request",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"completed\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"hash\", code: \"C03_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"account\", code: \"C03_BUSINESS_PARTNER_ACCOUNT_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"expired\", code: \"C03_QUOTATION_EXPIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"stale-rowversion\", code: \"C03_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"cross-tenant\", expected: \"C03_DELIVERY_REPLAY_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"invalid-reason\", code: \"C03_REPLAY_INPUT_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"missing\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_foreign_currency_rate_and_accepted_price_are_frozen_on_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"kg\", quantityUnit: \"kg\", priceUnit: \"kg\", valid: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"revoked\", code: \"C03_CUSTOMER_ACCEPTANCE_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"payload\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Persisted_replay_audit_is_append_only(mutation: \"delete\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Persisted_replay_audit_is_append_only(mutation: \"update\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Audit_storage_failure_rolls_back_requeue_and_original_deadletter(kind: \"bridge\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"cross-tenant\", expected: \"C03_DELIVERY_REPLAY_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Same_business_key_with_conflicting_payload_emits_terminal_conflict_without_extra_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"rowversion\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Same_message_and_new_message_same_input_replay_without_rewriting_master",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Ten_real_worker_failures_exhaust_then_admin_replay_completes_same_original_order(failure: \"mes-fails\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"hash\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderAmountBoundarySqlTests.Legacy_accepted_oversized_quote_is_terminal_before_order_sql_and_replays_unchanged",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"actor\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Processed_receipt_cannot_be_replayed_as_a_new_operation",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Bridge_cannot_revive_completed_live_or_uncommitted_work(fault: \"not-exhausted\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_sql_unique_index_rejects_second_order_for_same_tenant_opportunity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"currency\", code: \"C03_CURRENCY_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"kg\", quantityUnit: \"g\", priceUnit: \"g\", valid: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"result\", fault: \"reason\", expected: \"C03_DELIVERY_REPLAY_INPUT_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"deadletter-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"deadletter-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"reason\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"kg\", quantityUnit: \"KG\", priceUnit: \"KG\", valid: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Sql_rowversion_prevents_stale_authority_and_account_binding_is_tenant_isolated",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Delivery_replay_audit_is_append_only(change: \"update\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ForeignExchangeSqlTests.Missing_or_nonpositive_fx_is_terminal_and_repaired_master_requires_new_request_version(nonpositive: True, expectedCode: \"C03_FX_RATE_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ForeignExchangeSqlTests.Missing_or_nonpositive_fx_is_terminal_and_repaired_master_requires_new_request_version(nonpositive: False, expectedCode: \"C03_FX_RATE_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: null, priceUnit: \"PCS\", valid: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Different_request_versions_for_one_opportunity_never_create_a_second_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"reason\", expected: \"C03_DELIVERY_REPLAY_INPUT_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Equal_expected_amount_with_different_decimal_scale_replays_the_prior_business_outcome",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.List_is_tenant_scoped_bounded_stable_and_returns_only_recovery_metadata",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Failure_after_order_save_rolls_back_order_lines_sequence_bridge_then_same_request_retries_once",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: \" \", valid: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"missing-deadletter\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"cross-tenant\", code: \"C03_REPLAY_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ProductionRegistrationSqlTests.Production_registration_uses_event_tenant_fx_when_request_scope_has_default_tenant",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"rowversion\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"rowversion\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"disabled-tenant\", code: \"C03_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryLeadTimeSqlTests.Accepted_quotation_with_insufficient_delivery_lead_time_is_terminal_without_order_side_effects",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"missing-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderUnitSqlTests.Accepted_quantity_and_price_require_identical_explicit_units(quotationUnit: \"PCS\", quantityUnit: \"PCS\", priceUnit: \"PCS\", valid: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"ambiguous-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Audit_storage_failure_rolls_back_requeue_and_original_deadletter(kind: \"result\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Concurrent_same_operation_has_one_audit_and_changed_operation_input_cannot_reset_again(kind: \"result\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderAmountBoundarySqlTests.Customer_acceptance_rejects_a_quote_amount_that_cannot_fit_an_order_line",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Concurrent_same_operation_has_one_audit_and_changed_operation_input_cannot_reset_again(kind: \"bridge\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"version\", code: \"C03_QUOTATION_VERSION_CHANGED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Delivery_replay_audit_is_append_only(change: \"delete\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Corrupt_result_or_unbound_deadletter_fails_closed(fault: \"metadata\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderAmountBoundarySqlTests.Largest_representable_quote_amount_creates_an_exact_order_and_result",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerBindingConcurrencySqlTests.Concurrent_authority_bindings_have_one_winner_and_a_stable_conflict_without_partial_loser_changes",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerBindingConcurrencySqlTests.Concurrent_authority_bindings_of_the_same_account_in_different_tenants_both_succeed",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"disabled\", expected: \"C03_DELIVERY_REPLAY_TENANT_DISABLED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Ten_real_worker_failures_exhaust_then_admin_replay_completes_same_original_order(failure: \"wms-throws\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"unapproved-product\", code: \"C03_QUOTATION_PRODUCT_NOT_APPROVED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Invalid_replay_does_not_mutate_original_or_append_audit(kind: \"bridge\", fault: \"hash\", expected: \"C03_DELIVERY_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-3/c03-erp-sql.trx",
+      "sha256": "08d3c18104caf3bfa96d5086d078eebeca7fd4e9ec3b93f342bb03646f3ec779",
+      "startedAt": "2026-09-12T03:36:07.6991025-04:00",
+      "finishedAt": "2026-09-12T03:36:08.7959183-04:00",
+      "total": 29,
+      "executed": 29,
+      "passed": 0,
+      "failed": 29,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"account\", code: \"C03_BUSINESS_PARTNER_ACCOUNT_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Sql_rowversion_prevents_stale_authority_and_account_binding_is_tenant_isolated",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"ambiguous-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"customer\", code: \"C03_QUOTATION_CUSTOMER_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Failure_after_order_save_rolls_back_order_lines_sequence_bridge_then_same_request_retries_once",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"amount\", code: \"C03_AMOUNT_MISMATCH\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"version\", code: \"C03_QUOTATION_VERSION_CHANGED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"unapproved-product\", code: \"C03_QUOTATION_PRODUCT_NOT_APPROVED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_sql_unique_index_rejects_second_order_for_same_tenant_opportunity",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Same_message_and_new_message_same_input_replay_without_rewriting_master",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"incomplete\", code: \"C03_BUSINESS_PARTNER_MASTER_DATA_REQUIRED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"revoked\", code: \"C03_CUSTOMER_ACCEPTANCE_REQUIRED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Older_request_version_is_terminal_superseded_after_newer_request",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_foreign_currency_rate_and_accepted_price_are_frozen_on_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Different_request_versions_for_one_opportunity_never_create_a_second_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"expired\", code: \"C03_QUOTATION_EXPIRED\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Same_business_key_with_conflicting_payload_emits_terminal_conflict_without_extra_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"missing\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"missing-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"currency\", code: \"C03_CURRENCY_MISMATCH\")",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-4/c03-erp-sql.trx",
+      "sha256": "2c6028b6f0d2a5613efc8695c2875246e9c6e2e1c3ddf6fd1bb234d05d1763e1",
+      "startedAt": "2026-09-12T03:36:53.7703603-04:00",
+      "finishedAt": "2026-09-12T03:37:43.2831771-04:00",
+      "total": 29,
+      "executed": 29,
+      "passed": 28,
+      "failed": 1,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"currency\", code: \"C03_CURRENCY_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Same_message_and_new_message_same_input_replay_without_rewriting_master",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Same_business_key_with_conflicting_payload_emits_terminal_conflict_without_extra_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"account\", code: \"C03_BUSINESS_PARTNER_ACCOUNT_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"missing-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"cross-tenant\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"ambiguous-product\", code: \"C03_QUOTATION_PRODUCT_MAPPING_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"incomplete\", code: \"C03_BUSINESS_PARTNER_MASTER_DATA_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"amount\", code: \"C03_AMOUNT_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Older_request_version_is_terminal_superseded_after_newer_request",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"unapproved-product\", code: \"C03_QUOTATION_PRODUCT_NOT_APPROVED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"revoked\", code: \"C03_CUSTOMER_ACCEPTANCE_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_foreign_currency_rate_and_accepted_price_are_frozen_on_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Different_request_versions_for_one_opportunity_never_create_a_second_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"customer\", code: \"C03_QUOTATION_CUSTOMER_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"expired\", code: \"C03_QUOTATION_EXPIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Actual_sql_unique_index_rejects_second_order_for_same_tenant_opportunity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Invalid_commerce_inputs_are_stable_terminal_without_order_side_effects(fault: \"version\", code: \"C03_QUOTATION_VERSION_CHANGED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"frozen\", code: \"C03_BUSINESS_PARTNER_FROZEN\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Failure_after_order_save_rolls_back_order_lines_sequence_bridge_then_same_request_retries_once",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Invalid_master_has_stable_terminal_result_and_no_business_mutation(fault: \"missing\", code: \"C03_BUSINESS_PARTNER_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Sql_rowversion_prevents_stale_authority_and_account_binding_is_tenant_isolated",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-5/c03-erp-sql.trx",
+      "sha256": "abba38a6e9a71332c8ab596d7b096491f72675c3c130b5c56d81a8716c6962ea",
+      "startedAt": "2026-09-12T03:39:28.5282704-04:00",
+      "finishedAt": "2026-09-12T03:40:13.6610805-04:00",
+      "total": 1,
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-6/c03-erp-sql.trx",
+      "sha256": "52eda58fc6122b26de283497f2a64e995cbbe424935b5790c318b0b8add5d2c2",
+      "startedAt": "2026-09-12T03:48:46.3272512-04:00",
+      "finishedAt": "2026-09-12T03:49:43.8791657-04:00",
+      "total": 13,
+      "executed": 13,
+      "passed": 11,
+      "failed": 2,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"invalid-reason\", code: \"C03_REPLAY_INPUT_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Processed_receipt_cannot_be_replayed_as_a_new_operation",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"actor\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"hash\", code: \"C03_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.BusinessPartnerSqlTests.Actual_sql_constraints_reject_duplicate_account_binding_and_request_identities",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"rowversion\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Reused_replay_operation_with_changed_input_is_conflict_and_cannot_rewrite_audit(changed: \"reason\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"cross-tenant\", code: \"C03_REPLAY_NOT_FOUND\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Equal_expected_amount_with_different_decimal_scale_replays_the_prior_business_outcome",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Rejected_replay_does_not_modify_deadletter_or_create_audit(fault: \"stale-rowversion\", code: \"C03_REPLAY_PRECONDITION_FAILED\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-7/c03-erp-sql.trx",
+      "sha256": "799e8fc62dd9e3c147efd3283b3cee1df1b6375d7fceeafe8a6cd2a0b6985ac7",
+      "startedAt": "2026-09-12T03:53:35.5301044-04:00",
+      "finishedAt": "2026-09-12T03:54:31.0024711-04:00",
+      "total": 4,
+      "executed": 4,
+      "passed": 4,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Persisted_replay_audit_is_append_only(mutation: \"delete\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ReplaySqlTests.Persisted_replay_audit_is_append_only(mutation: \"update\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Unrelated_opportunities_and_ordinary_orders_share_a_unique_sql_sequence",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.ErpIntegration.SqlTests.OrderSqlTests.Equal_expected_amount_with_different_decimal_scale_replays_the_prior_business_outcome",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-8/c03-erp-sql.trx",
+      "sha256": "aa3ad74aecc06c3a6fb5adbc375a381e8d154d6ad069ccc62e2c8a879b650100",
+      "startedAt": "2026-09-12T04:28:06.1557877-04:00",
+      "finishedAt": "2026-09-12T04:28:46.9496864-04:00",
+      "total": 1,
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ProductionRegistrationSqlTests.Production_registration_uses_event_tenant_fx_when_request_scope_has_default_tenant",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/eng/crm/erp-integration-tests/TestResults/attempt-9/c03-erp-sql.trx",
+      "sha256": "275f9ef48c995c1d2932e0cae3c8e6e7796e3ef9c7b4b8f34006ed9bc2206329",
+      "startedAt": "2026-09-12T04:30:04.9219055-04:00",
+      "finishedAt": "2026-09-12T04:30:47.9555199-04:00",
+      "total": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.ProductionRegistrationSqlTests.Production_registration_uses_event_tenant_fx_when_request_scope_has_default_tenant",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/TestResults/c03-detail-limit-red/c03-detail-limit-red.trx",
+      "sha256": "ad8bfe7a0bde2ff26bf74519c45ac589fe29404f29378f880fdd278cafae2cf1",
+      "startedAt": "2026-09-12T05:12:19.4877292-04:00",
+      "finishedAt": "2026-09-12T05:12:20.5122329-04:00",
+      "total": 2,
+      "executed": 2,
+      "passed": 1,
+      "failed": 1,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Customer_acceptance_respects_the_ERP_order_detail_limit(count: 501, accepted: False)",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Customer_acceptance_respects_the_ERP_order_detail_limit(count: 500, accepted: True)",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "Core/TestResults/c03-final/c03-core-unit.trx",
+      "sha256": "b16afeff0e8d1aede1d6a231fecb6a87af7b338e89c2a24bcdbafc0a69c3a269",
+      "startedAt": "2026-09-12T05:45:22.0153807-04:00",
+      "finishedAt": "2026-09-12T05:45:35.4185687-04:00",
+      "total": 153,
+      "executed": 153,
+      "passed": 153,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Csrf_event_exemption_does_not_include_adjacent_or_child_paths(path: \"/internal/erp/v1/events/admin\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"[]\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.business-partner-synchronized.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"expectedAmount\", json: \"1e50\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationVersion\", json: \"\\\"AAAAAAAAAAE=\\\\n\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"partition\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"requestVersion\\\":1,\\\"requestVersion\\\":1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"PhoneNumber\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"C03_\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"requestVersion\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Independent_valid_callback_and_api_tokens_enable_runtime(length: 64)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.Calculate_AllowAnonymousRevoked_RequiresAuth",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Request_revision_is_independent_of_positive_crm_aggregate_revision(type: \"com.gtx537.crm.erp.order-requested.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.All_typed_factories_produce_valid_inbox_and_outbox_contracts",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"orderLines\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"null-causation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"causation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.business-partner-failed.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers\", expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"version\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Customer_acceptance_respects_the_ERP_order_detail_limit(count: 501, accepted: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c96\"···, expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Missing_or_stale_row_version_cannot_change_authority",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"quotation_lines\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"c03_lowercase\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Delivery_replay_admin_bearers_reach_the_real_service_input_guard_with_csrf_enabled(path: \"/api/erp-integration/delivery-deadletters/bridges/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Independent_valid_callback_and_api_tokens_enable_runtime(length: 4096)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"Email\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"requestId\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \" \")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"currency\", json: \"\\\"usd\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"message\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c96\"···, expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.FxRateAndOrderFreezeTests.CreateAsync_JpyCustomer_DefaultsBaseRate",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Explicit_acceptance_binds_real_terms_and_lines_and_detects_later_change",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Business_partner_binding_is_explicit_immutable_and_survives_ordinary_edits",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.accountId\", value: \"00000000-0000-0000-0000-000000000000\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"requestVersion\", json: \"0\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.All_read_routes_return_only_matching_tenant_key_and_allowlisted_projection_fields",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/hubs/mes/negotiate\", expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"billingAddress\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"{\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"null\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Financial_inconsistency_cannot_be_accepted",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"tenantid\", value: \"22222222-2222-4222-8222-222222222222\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"unit_price\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Internal_approval_does_not_supply_customer_acceptance_or_terms",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Replay_requires_human_admin_and_never_accepts_service_read_credentials",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \"\\t\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationVersion\", json: \"\\\"AAAAAAAAAAF=\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"businessPartnerKey\", json: \"\\\"BP-0001\\\\n\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/hubs/wms\", expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"future\\\":{\\\"value\\\":1,\\\"value\\\":2},\\\"requestVers\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"aggregate\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"opportunityId\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"quotationKey\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/hubs/notify/negotiate\", expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Callback_and_api_tokens_must_be_independent",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.NoReadOnlyGetAction_HasRequirePermission",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Domain_validator_enforces_the_entire_published_compatibility_matrix",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Customer_acceptance_respects_the_ERP_order_detail_limit(count: 500, accepted: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Csrf_enabled_cookie_free_event_ingress_reaches_its_sidecar_and_contract_checks(token: null, expected: Unauthorized)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"subject\", value: \"tenants/11111111-1111-4111-8111-111111111111/other\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Independent_service_scheme_validates_signature_issuer_audience_lifetime_and_claims_over_http",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"null-correlation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/api/oa/designer/save\", expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Delivery_replay_routes_reject_anonymous_nonadmin_and_nonhuman_actors(path: \"/api/erp-integration/delivery-deadletters/bridges/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.tenantId\", value: \"22222222-2222-4222-8222-222222222222\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.C03_commerce_actions_keep_their_explicit_existing_permission_and_route(methodName: \"SetBusinessPartnerProfile\", httpMethod: \"PUT\", route: \"/api/business-partners/{key}/commerce-profile\", menu: \"erp-business-partner\", action: \"edit\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Independent_valid_callback_and_api_tokens_enable_runtime(length: 32)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Erp.OrderCalcTests.CalcAmount_IndividualSalesDiv_UsesIndividualPrice",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c96\"···, expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"accountId\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"type\", value: \"com.gtx537.crm.erp.order-requested.v2\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"prices\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Delivery_replay_routes_reject_anonymous_nonadmin_and_nonhuman_actors(path: \"/api/erp-integration/delivery-deadletters\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"dataschema\", value: \"https://contracts.cp6.uk/events/erp/order-created/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Csrf_enabled_cookie_free_event_ingress_reaches_its_sidecar_and_contract_checks(token: \"valid\", expected: OK)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Erp.OrderCalcTests.CalcAmount_SetSalesDiv_UsesSetPrice",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Frozen_bundle_contains_six_event_types_with_hashed_compatibility_examples",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"requestVersion\\\":1,\\\"RequestVersion\\\":2\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Erp.QuotationCalcTests.Create_TwoDetails_ComputesLineAmountAndTotal",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Request_metadata_is_single_valued_tenant_bound_and_not_overridden_by_query",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"price\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Accepts_harmless_unknown_optional_data_without_blocking_required_amount_or_content_type",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c96\"···, expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Delivery_replay_admin_cookies_require_csrf_before_the_real_service_input_guard(path: \"/api/erp-integration/delivery-deadletters/bridges/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Business_partner_aggregate_is_the_account_identity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Erp.OrderCalcTests.BatchUpdatePrice_MultiLine_RecomputesEachAmount_AndAggregatesWfReset",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"businessPartnerKey\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"legal_name\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \"\\r\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.C03_commerce_actions_keep_their_explicit_existing_permission_and_route(methodName: \"AcceptQuotation\", httpMethod: \"POST\", route: \"/api/quotations/{key}/customer-acceptance\", menu: \"erp-quotation\", action: \"confirm\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/hubs/notify\", expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Delivery_replay_admin_bearers_reach_the_real_service_input_guard_with_csrf_enabled(path: \"/api/erp-integration/delivery-deadletters/results/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Erp.OrderCalcTests.CalcAmount_MissingDetailOrNullPrice_ReturnsZero",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.FxRateAndOrderFreezeTests.CreateAsync_ForeignCustomer_FreezesFxRate",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \"\\x1f\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c96\"···, expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/API/OA/FLOW-TRIGGERS/3FA85F64-5717-4562-B3FC-2C96\"···, expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"businessPartnerKey\", json: \"\\\"BP value\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c96\"···, expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/hubsxxx/notify\", expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Erp.QuotationCalcTests.Update_RemoveDetailAndChangeQty_RecomputesTotal",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Csrf_enabled_cookie_free_event_ingress_reaches_its_sidecar_and_contract_checks(token: \"wrong\", expected: Unauthorized)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"business rule failure\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"currency\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"expectedAmount\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.requestId\", value: \"22222222222242228222222222222222\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Read_rechecks_recorded_revocation_and_current_tenant_client_authority",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.ErpControllers_AreDiscovered",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Delivery_replay_admin_cookies_require_csrf_before_the_real_service_input_guard(path: \"/api/erp-integration/delivery-deadletters/results/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Erp.QuotationCalcTests.Create_NullQtyOrZeroPrice_LineAmountsZero_TotalCountsOnlyRealLines",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"access_token\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/api/auth/login\", expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationKey\", json: \"\\\"123456789012345678901\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption(path: \"/api/oa/flow-triggers/abc/fire\", expectExempt: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"C03_QUOTATION_EXPIRED\\n\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.C03_commerce_actions_keep_their_explicit_existing_permission_and_route(methodName: \"WithdrawQuotation\", httpMethod: \"DELETE\", route: \"/api/quotations/{key}/customer-acceptance\", menu: \"erp-quotation\", action: \"confirm\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Delivery_replay_routes_reject_anonymous_nonadmin_and_nonhuman_actors(path: \"/api/erp-integration/delivery-deadletters/results/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"id\", value: \"with space\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationVersion\", json: \"\\\"AQ==\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"tax-number\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Request_revision_is_independent_of_positive_crm_aggregate_revision(type: \"com.gtx537.crm.erp.business-partner-requested.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"source\", value: \"urn:cp6:erp\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.opportunityId\", value: \"33333333-3333-4333-8333-333333333333\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.FxRateAndOrderFreezeTests.Resolve_BaseCurrency_ReturnsJpyRate1",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \"\\n\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.order-created.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.FxRateAndOrderFreezeTests.Resolve_ForeignNoRate_Throws",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpPermissionAttributeTests.C03_commerce_actions_keep_their_explicit_existing_permission_and_route(methodName: \"SetQuotationTerms\", httpMethod: \"PUT\", route: \"/api/quotations/{key}/commerce-terms\", menu: \"erp-quotation\", action: \"edit\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.Wf.CsrfHubExemptionTests.HubPaths_AreExempt(path: \"/hubs/space/negotiate\", expectExempt: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \" \")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.requestId\", value: \"AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"aggregateid\", value: \"33333333-3333-4333-8333-333333333333\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"topic\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpRuntimeOptionsTests.Either_token_rejects_whitespace_or_control_characters(invalid: \"\\0\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"expectedAmount\", json: \"\\\"1250.50\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"correlation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.order-failed.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.FxRateAndOrderFreezeTests.Resolve_Foreign_FreezesLatestRateOnOrBeforeDate",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"requestVersion\", json: \"2147483648\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"expectedAmount\", json: \"-0.01\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpHttpAuthorizationTests.Csrf_event_exemption_does_not_include_adjacent_or_child_paths(path: \"/internal/erp/v1/events-extra\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Expiry_and_withdrawal_invalidate_accepted_quotation",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpCommerceAuthorityTests.Acceptance_hash_survives_sql_decimal_scale_and_datetime_kind_roundtrip",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"future\\\":[{\\\"value\\\":1,\\\"value\\\":2}],\\\"requestVe\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Tests.ErpIntegration.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"quotationVersion\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "CRM/TestResults/c03-final/c03-crm-unit.trx",
+      "sha256": "05aded82c2ad2de61f61ad37dec679aa8c042f0d6c4cf1db17681c12d302cc83",
+      "startedAt": "2026-09-12T05:44:42.2417945-04:00",
+      "finishedAt": "2026-09-12T05:44:51.4331816-04:00",
+      "total": 114,
+      "executed": 114,
+      "passed": 114,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"requestVersion\\\":1,\\\"requestVersion\\\":1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"business-partners\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"displayName\", value: null)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"orderLines\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"{\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Quotation_read_keeps_legacy_unaccepted_state_and_rejects_incomplete_acceptance",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Deadline_covers_stalled_token_and_ERP_response_bodies(tokenBody: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationVersion\", json: \"\\\"AAAAAAAAAAE=\\\\n\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"currency\", value: \"usd\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"expectedAmount\", json: \"\\\"1250.50\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.order-failed.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.requestId\", value: \"AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Unknown_tenant_cannot_select_another_tenants_credentials",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"subject\", value: \"tenants/11111111-1111-4111-8111-111111111111/other\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"future\\\":[{\\\"value\\\":1,\\\"value\\\":2}],\\\"requestVe\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Untrusted_transport_configuration_is_rejected(issuer: \"https://identity.test/\", sidecar: \"http://127.0.0.1:3500\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"partition\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"Email\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationKey\", json: \"\\\"123456789012345678901\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Request_revision_is_independent_of_positive_crm_aggregate_revision(type: \"com.gtx537.crm.erp.order-requested.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"dataschema\", value: \"https://contracts.cp6.uk/events/erp/order-created/\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"billingAddress\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"storage-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"requestVersion\", json: \"0\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"businessPartnerKey\", json: \"\\\"BP value\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"price\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Business_partner_aggregate_is_the_account_identity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"business rule failure\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"identity-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.order-created.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"key\", value: \"BP02\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"tax-number\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"id\", value: \"with space\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Accepts_harmless_unknown_optional_data_without_blocking_required_amount_or_content_type",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Revocation_evicts_only_used_token_without_hidden_retry(status: Unauthorized)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"C03_\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"currency\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"null-correlation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Caller_cancellation_is_preserved_during_response_body(tokenBody: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"identity\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"c03_lowercase\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"requestId\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"version\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"future\\\":{\\\"value\\\":1,\\\"value\\\":2},\\\"requestVers\"···)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Case_insensitive_duplicate_properties_are_rejected",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Slow_tenant_token_refresh_does_not_block_another_tenants_cached_read",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"auth\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"quotations\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"source\", value: \"urn:cp6:erp\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.business-partner-synchronized.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"unit_price\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"expectedAmount\", json: \"1e50\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationVersion\", json: \"\\\"AAAAAAAAAAF=\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"opportunityId\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.opportunityId\", value: \"33333333-3333-4333-8333-333333333333\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"expectedAmount\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"businessPartnerKey\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"expectedAmount\", json: \"-0.01\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.accountId\", value: \"00000000-0000-0000-0000-000000000000\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"prices\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"message\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_metadata_is_rejected_before_io(key: \"BP01\", correlation: \"contains space\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Domain_validator_enforces_the_entire_published_compatibility_matrix",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"quotationVersion\", json: \"\\\"AQ==\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"aggregate\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"accountId\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"quotationVersion\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Default_off_registration_does_not_require_ERP_credentials_or_register_a_reader",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Registered_tenant_read_uses_dapr_and_own_service_token_and_correlation",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"currency\", json: \"\\\"usd\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"quotationKey\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"requestVersion\", json: \"2147483648\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"correlation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.requestId\", value: \"22222222222242228222222222222222\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"null\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_metadata_is_rejected_before_io(key: \"../BP01\", correlation: \"unit:read-1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_cannot_omit_identity_or_financial_binding(field: \"requestVersion\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"null-causation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Revocation_evicts_only_used_token_without_hidden_retry(status: Forbidden)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Frozen_bundle_contains_six_event_types_with_hashed_compatibility_examples",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Untrusted_transport_configuration_is_rejected(issuer: \"http://identity.test\", sidecar: \"http://127.0.0.1:3500\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"type\", value: \"com.gtx537.crm.erp.order-requested.v2\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"id\", value: \"00000000-0000-0000-0000-000000000000\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Results_require_a_positive_version_equal_to_the_cloud_event_revision(type: \"com.gtx537.erp.business-partner-failed.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Untrusted_transport_configuration_is_rejected(issuer: \"https://identity.test\", sidecar: \"http://sidecar.test:3500\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"topic\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Request_revision_is_independent_of_positive_crm_aggregate_revision(type: \"com.gtx537.crm.erp.business-partner-requested.v1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"data.tenantId\", value: \"22222222-2222-4222-8222-222222222222\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Malformed_payloads_are_rejected_without_throwing(json: \"[]\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"currency\", value: \"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"version\", value: \"AA==\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Deadline_covers_stalled_token_and_ERP_response_bodies(tokenBody: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_metadata_is_rejected_before_io(key: \"BP01\", correlation: \"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"frozen\", value: null)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"access_token\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.All_typed_factories_produce_valid_inbox_and_outbox_contracts",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Caller_cancellation_is_preserved_during_response_body(tokenBody: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"tenantId\", value: \"00000000-0000-0000-0000-000000000001\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"quotation_lines\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"tenantid\", value: \"22222222-2222-4222-8222-222222222222\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"version\", value: \"AAAAAAAAAAE=\\n\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Failure_events_only_accept_bounded_stable_error_codes(error: \"C03_QUOTATION_EXPIRED\\n\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"PhoneNumber\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_duplicate_properties_at_any_depth(replacement: \"\\\"requestVersion\\\":1,\\\"RequestVersion\\\":2\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabled_production_registration_binds_the_tenant_and_constructs_its_shared_reader",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Order_read_requires_complete_integration_provenance_when_linked",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Transport_metadata_cannot_disagree_with_the_valid_cloud_event(field: \"causation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"orders\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_malformed_or_inconsistent_envelope_identity(field: \"aggregateid\", value: \"33333333-3333-4333-8333-333333333333\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Rejects_recursive_pii_secrets_and_pricing_extensions(name: \"legal_name\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpEventContractTests.Order_requests_reject_invalid_financial_values(field: \"businessPartnerKey\", json: \"\\\"BP-0001\\\\n\\\"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Missing_resource_returns_null_and_unavailability_fails_closed",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "CRM/TestResults/c03-read-boundary-green/c03-read-boundary-green.trx",
+      "sha256": "7207dfc309b632d0c0bb06254e0aef616cfda5ad1878d7a7ee5597fe717a2af8",
+      "startedAt": "2026-09-12T05:21:11.5678114-04:00",
+      "finishedAt": "2026-09-12T05:21:13.3507738-04:00",
+      "total": 37,
+      "executed": 37,
+      "passed": 37,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Registered_tenant_read_uses_dapr_and_own_service_token_and_correlation",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Missing_resource_returns_null_and_unavailability_fails_closed",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"key\", value: \"BP02\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"business-partners\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"currency\", value: \"usd\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"currency\", value: \"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Revocation_evicts_only_used_token_without_hidden_retry(status: Forbidden)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Untrusted_transport_configuration_is_rejected(issuer: \"https://identity.test/\", sidecar: \"http://127.0.0.1:3500\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Untrusted_transport_configuration_is_rejected(issuer: \"http://identity.test\", sidecar: \"http://127.0.0.1:3500\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabled_production_registration_binds_the_tenant_and_constructs_its_shared_reader",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Untrusted_transport_configuration_is_rejected(issuer: \"https://identity.test\", sidecar: \"http://sidecar.test:3500\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Caller_cancellation_is_preserved_during_response_body(tokenBody: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"storage-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"quotations\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_metadata_is_rejected_before_io(key: \"../BP01\", correlation: \"unit:read-1\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Revocation_evicts_only_used_token_without_hidden_retry(status: Unauthorized)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Quotation_read_keeps_legacy_unaccepted_state_and_rejects_incomplete_acceptance",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Unknown_tenant_cannot_select_another_tenants_credentials",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"displayName\", value: null)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"id\", value: \"00000000-0000-0000-0000-000000000000\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"version\", value: \"AA==\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Slow_tenant_token_refresh_does_not_block_another_tenants_cached_read",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"frozen\", value: null)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Order_read_requires_complete_integration_provenance_when_linked",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"identity\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"tenantId\", value: \"00000000-0000-0000-0000-000000000001\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Case_insensitive_duplicate_properties_are_rejected",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_authority_response_cannot_be_used(field: \"version\", value: \"AAAAAAAAAAE=\\n\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_metadata_is_rejected_before_io(key: \"BP01\", correlation: \"contains space\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"orders\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"auth\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Deadline_covers_stalled_token_and_ERP_response_bodies(tokenBody: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Caller_cancellation_is_preserved_during_response_body(tokenBody: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadClientTests.Invalid_metadata_is_rejected_before_io(key: \"BP01\", correlation: \"\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"identity-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Deadline_covers_stalled_token_and_ERP_response_bodies(tokenBody: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Default_off_registration_does_not_require_ERP_credentials_or_register_a_reader",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "CRM/TestResults/c03-read-boundary-red/c03-read-boundary-red.trx",
+      "sha256": "5b583355edec45c5c507fcdac02a3b3741499366c86d7e413c024acee6241cca",
+      "startedAt": "2026-09-12T05:19:22.9639086-04:00",
+      "finishedAt": "2026-09-12T05:19:30.7875859-04:00",
+      "total": 8,
+      "executed": 8,
+      "passed": 2,
+      "failed": 6,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Caller_cancellation_is_preserved_during_response_body(tokenBody: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Deadline_covers_stalled_token_and_ERP_response_bodies(tokenBody: False)",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"business-partners\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Slow_tenant_token_refresh_does_not_block_another_tenants_cached_read",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Caller_cancellation_is_preserved_during_response_body(tokenBody: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"quotations\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Contract_valid_colon_keys_roundtrip_through_encoded_Dapr_route(collection: \"orders\")",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpReadBoundaryTests.Deadline_covers_stalled_token_and_ERP_response_bodies(tokenBody: True)",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "CRM/TestResults/c03-registration/c03-registration.trx",
+      "sha256": "e6304deb60d7c14044a7fb8c9a8d0429b5442c39c333b85dc6f32c1dedf4f429",
+      "startedAt": "2026-09-12T05:06:53.8349207-04:00",
+      "finishedAt": "2026-09-12T05:06:55.4280647-04:00",
+      "total": 6,
+      "executed": 6,
+      "passed": 6,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"storage-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"identity\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabled_production_registration_binds_the_tenant_and_constructs_its_shared_reader",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"identity-tenant\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Default_off_registration_does_not_require_ERP_credentials_or_register_a_reader",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.UnitTests.ErpRegistrationTests.Enabling_without_registered_C01_C02_and_storage_tenant_fails_at_registration(missing: \"auth\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "private-retained/sql-attempt-17/command-retry-red.trx",
+      "sha256": "75c67f9a0ec926f1252966cd0f3bd468eda904297a047ea67017b4664cb5f661",
+      "startedAt": "2026-09-12T05:31:44.1670184-04:00",
+      "finishedAt": "2026-09-12T05:32:17.7063500-04:00",
+      "total": 1,
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.CommandRetryWorkerSqlTests.One_pass_skips_removed_tenant_backlog_and_gives_each_registered_tenant_a_bounded_retry_batch",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "retainedArtifact": "private-retained/sql-attempt-18/command-retry-green.trx",
+      "sha256": "c633523fa811f4ddfd4adb8bdffd0dc1f30472bb023ee29a6e01d2ce87e0b0aa",
+      "startedAt": "2026-09-12T05:35:00.9020388-04:00",
+      "finishedAt": "2026-09-12T05:35:37.6311455-04:00",
+      "total": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "notExecuted": 0,
+      "tests": [
+        {
+          "name": "CP6.ErpIntegration.SqlTests.CommandRetryWorkerSqlTests.One_pass_skips_removed_tenant_backlog_and_gives_each_registered_tenant_a_bounded_retry_batch",
+          "outcome": "Passed"
+        }
+      ]
+    }
+  ]
+}

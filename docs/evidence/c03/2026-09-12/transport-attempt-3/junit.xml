@@ -1,0 +1,9 @@
+<testsuite name="c03-real-transport" tests="7" failures="0" skipped="0">
+  <testcase name="actual-erp-sql-and-service-authenticated-dapr-reads"></testcase>
+  <testcase name="crm-outbox-to-real-erp-business-partner-and-result-inbox"></testcase>
+  <testcase name="order-commit-survives-lost-transport-ack-without-duplicate"></testcase>
+  <testcase name="terminal-errors-and-authentic-out-of-order-results"></testcase>
+  <testcase name="persisted-crm-outbox-recovers-after-owned-broker-restart"></testcase>
+  <testcase name="owned-storage-fault-deadletter-and-audited-original-message-replay"></testcase>
+  <testcase name="canonical-erp-and-crm-wire-sql-reconciliation"></testcase>
+</testsuite>

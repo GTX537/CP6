@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.ErpIntegration;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,7 @@ public class OrderService : IOrderService
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
     /// <summary>1 受注当たりの最大明細行数</summary>
-    private const int MaxDetailLimit = 500;
+    internal const int MaxDetailLimit = 500;
 
     public OrderService(
         CP6Context db,
@@ -101,7 +102,17 @@ public class OrderService : IOrderService
     //  登録（POST）
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<string> CreateAsync(OrderDto dto, string? userName)
+    public Task<string> CreateAsync(OrderDto dto, string? userName) => CreateCoreAsync(dto, userName, null);
+
+    internal Task<string> CreateForIntegrationAsync(OrderDto dto, ErpOrderOrigin origin)
+    {
+        if (!_db.Database.IsSqlServer() || _db.Database.CurrentTransaction is null || _fxRate is null ||
+            origin.TenantId != _db.CurrentTenantId)
+            throw new InvalidOperationException("C03_ORDER_REQUIRES_TENANT_SQL_TRANSACTION_AND_FX");
+        return CreateCoreAsync(dto, "crm-integration", origin);
+    }
+
+    private async Task<string> CreateCoreAsync(OrderDto dto, string? userName, ErpOrderOrigin? origin)
     {
         if (dto.Details.Count == 0)
             throw new InvalidOperationException("登録する明細がありません。");
@@ -121,7 +132,10 @@ public class OrderService : IOrderService
                 if (string.IsNullOrWhiteSpace(d.ProductCd)) continue;
                 var (ok, ltSum, msg) = await CheckDeliveryLeadTimeAsync(d.ProductCd, dto.OrderDate, d.CustomerDeliveryDate ?? dto.CustomerDeliveryDate);
                 if (!ok)
+                {
+                    if (origin is not null) throw new ErpCommerceException("C03_ORDER_DELIVERY_INVALID");
                     throw new InvalidOperationException($"明細 {d.WebOrderDetailNo} ({d.ProductCd}): {msg}");
+                }
             }
         }
 
@@ -136,11 +150,19 @@ public class OrderService : IOrderService
         {
             (currencyCd, fxRate) = await _fxRate.ResolveForCustomerAsync(dto.CustomerCd, orderDate);
         }
+        if (origin is not null && (currencyCd != origin.Currency || fxRate <= 0))
+            throw new ErpCommerceException("C03_CURRENCY_MISMATCH");
 
         // ───── ヘッダー ─────
         var header = new Order
         {
             WebOrderNo = webOrderNo,
+            CrmOpportunityId = origin?.OpportunityId,
+            CrmAccountId = origin?.AccountId,
+            CrmRequestId = origin?.RequestId,
+            CrmRequestVersion = origin?.RequestVersion,
+            CrmQuotationId = origin?.QuotationId,
+            CrmRequestSha256 = origin?.InputSha256,
             CustomerCd = dto.CustomerCd,
             OrderType = dto.OrderType,
             OrderDepartment = dto.OrderDepartment,
@@ -223,6 +245,9 @@ public class OrderService : IOrderService
         }
 
         await _db.SaveChangesAsync();
+
+        // C03 queues durable post-commit work in the caller's transaction; no bridge can escape it.
+        if (origin is not null) return webOrderNo;
 
         // WM-3.5：WMS 自動展開フック（best-effort、失敗しても受注作成は成功とする）
         await _wmsBridge.OnOrderCreatedAsync(webOrderNo, userName);

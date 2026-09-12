@@ -2,8 +2,8 @@
 
 > 生成于 2026-07-12。本表是 **M-ERP 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填）与 T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试 + 收编五条孤儿路由菜单）均以本表为准。
 > 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 样板 `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 ERP 菜单种子 `CP6.WebApi/Program.cs` MenuId 200–215（**16 行均缺 MenuKey，且 RoutePath 为裸路径无 `erp/` 前缀**——见 §六 头号命门）+ 逐 Service 实现读证的只读 POST 豁免判定。
-> 扫描范围：`CP6.WebApi/Controllers/Erp/` 下 **全部 15 个控制器**。
-> **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
+> 扫描范围：`CP6.WebApi/Controllers/Erp/` 下 **全部 16 个控制器**。
+> 2026-07-12 初版任务仅产出本文档。**2026-09-12 C03 更新**：新增 `ErpCommerceController` 的四个写动作（§一 #47–50），复用已有 `edit` / `confirm` 权限；同步更新反射守卫为 16 个控制器、50 个写方法、39 个权限贴点，11 个只读 POST 豁免不变。
 
 ## 约定
 
@@ -17,7 +17,7 @@
 
 ---
 
-## 一、写端点映射表（POST/PUT/DELETE，共 46 行）
+## 一、写端点映射表（POST/PUT/DELETE，共 50 行）
 
 | # | 控制器 | HTTP方法 + 路由 | 方法名 | 建议 menu-key | action | 高危? | 备注 |
 |---|---|---|---|---|---|---|---|
@@ -67,6 +67,10 @@
 | 44 | OtdReportController | POST `/api/otd-report/export-csv` | ExportCsv | `erp-otd-report` | view | 只读POST→view | OTD CSV 导出，纯读（§四）。**T4 需补菜单** |
 | 45 | UnshippedOrderController | POST `/api/orders/unshipped/search` | Search | `erp-order` | view | 只读POST→view | 未出荷残一覧查询，UnshippedOrderService 全类无写（§四）。归 erp-order（受注域子视图） |
 | 46 | UnshippedOrderController | POST `/api/orders/unshipped/export-csv` | ExportCsv | `erp-order` | view | 只读POST→view | 未出荷 CSV 导出，纯读（§四）。归 erp-order |
+| 47 | ErpCommerceController | PUT `/api/business-partners/{key}/commerce-profile` | SetBusinessPartnerProfile | `erp-business-partner` | edit | 否 | C03 ERP 员工维护 CRM Account 绑定、交易币种与冻结状态；复用菜单212 的 edit，校验原始 SQL rowversion |
+| 48 | ErpCommerceController | PUT `/api/quotations/{key}/commerce-terms` | SetQuotationTerms | `erp-quotation` | edit | 否 | C03 维护报价币种、有效期及下单履行条款，并清除旧客户接受记录；复用菜单204 的 edit |
+| 49 | ErpCommerceController | POST `/api/quotations/{key}/customer-acceptance` | AcceptQuotation | `erp-quotation` | confirm | 状态 | C03 记录客户接受证据，绑定当前报价内容哈希及 rowversion；客户接受与内部確定为独立业务状态，授权复用菜单204 的 confirm |
+| 50 | ErpCommerceController | DELETE `/api/quotations/{key}/customer-acceptance` | WithdrawQuotation | `erp-quotation` | confirm | 状态 | C03 撤回客户接受状态；与接受操作共用 confirm，不归报价删除 del；校验原始 SQL rowversion |
 
 > **GET-only 控制器（无 POST/PUT/DELETE，不在上表）**：
 > - `MasterDataController`（`/api/master`，全 GET 下拉/lookup）——纯查询，无写端点。
@@ -110,7 +114,7 @@
 
 ### 3b. 独立状态流转/发行动作键（`状态`，共 6 个，仍单独成键、不塞 edit）
 
-`erp-quotation:confirm`（含 cancel-confirm 归并）· `erp-quotation:issue` · `erp-fsc-checklist:issue` · `erp-sheet-unit-price:import` · `erp-backorder:close` · `erp-backorder:split`
+`erp-quotation:confirm`（含 cancel-confirm、C03 客户接受/撤回归并）· `erp-quotation:issue` · `erp-fsc-checklist:issue` · `erp-sheet-unit-price:import` · `erp-backorder:close` · `erp-backorder:split`
 
 > 非 CRUD 独立动作键合计 = 2（高危）+ 6（状态）= **8 个**。其余端点走 `add/edit/del/view` 四基粒度。
 
@@ -148,6 +152,7 @@
 5. **`del` 一致语义**：全 ERP 删除均为软删除（IsDeleted），统一 `del`。BusinessPartner.Delete 额外挂 `[Authorize(Roles="1,Admin")]`，T3 贴 `erp-business-partner:del` 后与 Roles 闸并存（双闸更严，保留）。
 6. **`status/confirm/issue` 档不提级高危的理由**：Quotation confirm/issue、Fsc issue、SheetPrice import 均**不直接动金额交易/不可逆**（confirm 可 cancel-confirm 回退），归 `状态`。仅受注 cancel（级联不可逆）与 単価訂正 correct（改已確定金额）提级 `是`。
 7. **Backorder split-to-new-order 未提级高危**：虽写新受注，但属履行状态流转（对标 WMS `from-order` 生成出库单归 add/否），归 `状态:split`。若审计视"自动生成商业单据"为高危，T2 可提级——**待 T2 审计拍板**。
+8. **C03 商务权限复用**：`ErpCommerceController` 的交易方档案使用 `erp-business-partner:edit`，报价条款使用 `erp-quotation:edit`，客户接受及撤回使用 `erp-quotation:confirm`。四个入口均为真实写入，不进入只读 POST 豁免；已有权限键、菜单锚点与种子元组数量不增加。控制器要求登录且拒绝服务身份，客户接受不会替代 ERP 内部审批。
 
 ---
 
@@ -167,11 +172,11 @@
 
 ## 七、计数收口
 
-- **扫描控制器**：15（Backorder / BusinessPartner / CreditNote / EstimateCalc / FscChecklist / FxRate / MasterData / Order / OrderTrace / OtdReport / PlateMold / Product / Quotation / SheetUnitPrice / UnshippedOrder）。
-- **含写端点控制器**：13（除 MasterData、OrderTrace 两个 GET-only）。
-- **POST/PUT/DELETE 端点行总数**：**46**（= §一表行数，精确吻合）。
+- **扫描控制器**：16（Backorder / BusinessPartner / CreditNote / ErpCommerce / EstimateCalc / FscChecklist / FxRate / MasterData / Order / OrderTrace / OtdReport / PlateMold / Product / Quotation / SheetUnitPrice / UnshippedOrder）。
+- **含写端点控制器**：14（除 MasterData、OrderTrace 两个 GET-only）。
+- **POST/PUT/DELETE 端点行总数**：**50**（= §一表行数，精确吻合）。
   - 其中**只读 POST 豁免（→view）**：**11**。
-  - **真·写端点**：**35**。
+  - **真·写端点**：**39**。
 - **menu-key（去重）**：**14**（9 有菜单 / 5 孤儿待 T4）。
 - **高危键（是）**：**2**（`erp-order:cancel`、`erp-order-price-correction:correct`）。
 - **状态键**：**6**。
@@ -193,6 +198,7 @@
 | PlateMoldController | 5（Create/Revise/Update/Delete/Label；GET 7 个不列） | 38–42 |
 | OtdReportController | 2（Summary/ExportCsv，均只读POST） | 43–44 |
 | UnshippedOrderController | 2（Search/ExportCsv，均只读POST） | 45–46 |
+| ErpCommerceController | 4（SetBusinessPartnerProfile/SetQuotationTerms/AcceptQuotation/WithdrawQuotation，均贴既有权限） | 47–50 |
 | MasterDataController | 0（全 GET） | —— |
 | OrderTraceController | 0（全 GET） | —— |
-| **合计** | **46** | **46 ✅** |
+| **合计** | **50** | **50 ✅** |

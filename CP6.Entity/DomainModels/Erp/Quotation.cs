@@ -93,6 +93,16 @@ public class Quotation : BaseBizEntity, IAuditable
     [MaxLength(100)]
     public string? ValidityPeriod { get; set; }
 
+    // Structured ERP commerce terms. Legacy free text and internal approval never imply acceptance.
+    [MaxLength(3)] public string? CurrencyCd { get; set; }
+    public DateTimeOffset? ValidUntilUtc { get; set; }
+    [MaxLength(4)] public string? OrderType { get; set; }
+    public DateTime? OrderDeliveryDate { get; set; }
+    public DateTimeOffset? CustomerAcceptedAtUtc { get; set; }
+    [MaxLength(100)] public string? CustomerAcceptanceReference { get; set; }
+    [MaxLength(100)] public string? CustomerAcceptedBy { get; set; }
+    [MaxLength(64)] public string? AcceptedContentSha256 { get; set; }
+
     // ───── 御見積書フッター区（備考01-15） ─────
     [MaxLength(200)] public string? QtnNote01 { get; set; }
     [MaxLength(200)] public string? QtnNote02 { get; set; }

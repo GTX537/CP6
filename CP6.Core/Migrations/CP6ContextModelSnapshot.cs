@@ -1843,6 +1843,9 @@ namespace CP6.Core.Migrations
                     b.Property<bool>("CreditMgmtFlg")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("CrmAccountId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CurrencyCd")
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
@@ -1976,6 +1979,9 @@ namespace CP6.Core.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFrozen")
                         .HasColumnType("bit");
 
                     b.Property<string>("LaminateAddDisplay")
@@ -2326,6 +2332,10 @@ namespace CP6.Core.Migrations
                     b.HasIndex("TenantId", "BpCd")
                         .IsUnique()
                         .HasDatabaseName("IX_T_WebBusinessPartner_BpCd");
+
+                    b.HasIndex("TenantId", "CrmAccountId")
+                        .IsUnique()
+                        .HasFilter("[CrmAccountId] IS NOT NULL");
 
                     b.ToTable("T_WebBusinessPartner");
                 });
@@ -3108,6 +3118,25 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("CrmAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CrmOpportunityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CrmQuotationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CrmRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CrmRequestSha256")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int?>("CrmRequestVersion")
+                        .HasColumnType("int");
+
                     b.Property<string>("CurrencyCd")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -3232,6 +3261,10 @@ namespace CP6.Core.Migrations
                     b.HasIndex("OrderType", "IsDeleted");
 
                     b.HasIndex("Status", "IsDeleted");
+
+                    b.HasIndex("TenantId", "CrmOpportunityId")
+                        .IsUnique()
+                        .HasFilter("[CrmOpportunityId] IS NOT NULL");
 
                     b.ToTable("T_Order");
                 });
@@ -5502,6 +5535,10 @@ namespace CP6.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AcceptedContentSha256")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<string>("BaseCd")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -5550,6 +5587,21 @@ namespace CP6.Core.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CurrencyCd")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("CustomerAcceptanceReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("CustomerAcceptedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CustomerAcceptedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -5618,6 +5670,13 @@ namespace CP6.Core.Migrations
 
                     b.Property<DateTime?>("ModifyDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("OrderDeliveryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderType")
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("PaymentCondition")
                         .HasMaxLength(100)
@@ -5731,6 +5790,9 @@ namespace CP6.Core.Migrations
 
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset?>("ValidUntilUtc")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("ValidityPeriod")
                         .HasMaxLength(100)
