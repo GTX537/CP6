@@ -31,7 +31,8 @@ The unit/master changes were independently rechecked and the original P1 was clo
 including final quantity/price/unit SQL reconciliation. [Local publication evidence](local-release/README.md) binds
 864 unchanged published file hashes and three additional actual CRM API HTTP checks. The earlier
 [attempt 3](transport-attempt-3/README.md) remains unchanged historical execution evidence. Remote-main delivery
-requires separate merge and ancestry/tree verification.
+is verified in [main-delivery.json](main-delivery.json): Core PR #105 and CRM PR #62 merged normally, their complete
+remote Git trees match the validated heads, published runtime inputs are unchanged, and contract/archive hashes match.
 
 The existing per-line ERP product/process/material queries are bounded by 500 lines but have no large-history/throughput
 production performance acceptance. Batch optimization remains a follow-up. CRM Account/ErpLink/IntegrationProcess and
