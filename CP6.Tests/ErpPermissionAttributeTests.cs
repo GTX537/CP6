@@ -11,12 +11,12 @@ namespace CP6.Tests;
 /// 反射守卫（M-ERP 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
 /// Controllers.Erp 命名空间全部 controller，锁死「未来新增 ERP 写端点漏贴权限键即红」。
 /// 与已合并的 <c>WmsPermissionAttributeTests</c>（commit 0efb717）同型三件套 + ERP 特有两处扩展。
-/// 真相源：docs/seeds/erp-permission-keys.md（15 控制器扫描面 / 46 写端点 / 35 贴点 / 11 只读 POST 豁免）。
+/// 真相源：docs/seeds/erp-permission-keys.md（16 控制器扫描面 / 50 写端点 / 39 贴点 / 11 只读 POST 豁免）。
 ///
-/// ① discovery 守卫：断言扫到 15 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
+/// ① discovery 守卫：断言扫到 16 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
 /// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
-///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 35、
-///    豁免命中数精确 == 11（46 = 35 + 11 收口）。将来谁新增 ERP 写端点忘贴权限，本用例立刻红。
+///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 39、
+///    豁免命中数精确 == 11（50 = 39 + 11 收口）。将来谁新增 ERP 写端点忘贴权限，本用例立刻红。
 /// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
 ///    ^erp-[a-z0-9-]+$（连字符，禁下划线），action **逐词相等**落在真相源实际使用的 action 集合内。
 /// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
@@ -27,7 +27,7 @@ namespace CP6.Tests;
 ///
 /// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
 /// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
-/// 继承说明：15 个 ERP 控制器中 6 个直接继承 ControllerBase，9 个经 LocalizedControllerBase
+/// 继承说明：16 个 ERP 控制器中 7 个直接继承 ControllerBase，9 个经 LocalizedControllerBase
 /// （抽象基类，仅暴露 Localizer 属性，零 [HttpXxx] action 声明）继承 ControllerBase；因各级基类
 /// 均无端点声明，写端点均为子类手写声明方法，故 BindingFlags.DeclaredOnly 反射不会漏扫端点。
 /// 若未来在共享基类（LocalizedControllerBase 或 ControllerBase 派生链上）新增 [HttpXxx] 方法，
@@ -39,7 +39,7 @@ public class ErpPermissionAttributeTests
     private static readonly Regex MenuPattern = new("^erp-[a-z0-9-]+$", RegexOptions.Compiled);
 
     /// <summary>
-    /// 真相源实际使用的 action 集合（从已贴的 35 个 [RequirePermission] grep 出的真实 action，非凭空造）。
+    /// 真相源实际使用的 action 集合（从已贴的 39 个 [RequirePermission] grep 出的真实 action，非凭空造）。
     /// 只读 POST 豁免归 view 但**不贴键**（未打属性），故本集合**不含 view**——逐词相等，多一词/少一词即红。
     /// 新 action 词若出现须显式加入本集合，否则视为疑似 typo 报错。
     /// </summary>
@@ -105,9 +105,9 @@ public class ErpPermissionAttributeTests
     [Fact]
     public void ErpControllers_AreDiscovered()
     {
-        // 守卫：CP6.WebApi.Controllers.Erp 下继承 ControllerBase 的非抽象类共 15
+        // 守卫：CP6.WebApi.Controllers.Erp 下继承 ControllerBase 的非抽象类共 16
         //      （含 MasterData / OrderTrace 两个 GET-only 控制器）。防空扫假绿。
-        Assert.Equal(15, ErpControllers.Count());
+        Assert.Equal(16, ErpControllers.Count());
     }
 
     [Fact]
@@ -147,9 +147,35 @@ public class ErpPermissionAttributeTests
         Assert.True(offenders.Count == 0,
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
-        // 收口断言：贴点 35 + 豁免命中 11 = 全 46 变更端点，精确吻合真相源 §七。
-        Assert.Equal(35, taggedCount);
+        // 收口断言：贴点 39 + 豁免命中 11 = 全 50 变更端点，精确吻合真相源 §七。
+        Assert.Equal(39, taggedCount);
         Assert.Equal(11, exemptHit.Count);
+    }
+
+    [Theory]
+    [InlineData(nameof(ErpCommerceController.SetBusinessPartnerProfile), "PUT", "/api/business-partners/{key}/commerce-profile", "erp-business-partner", "edit")]
+    [InlineData(nameof(ErpCommerceController.SetQuotationTerms), "PUT", "/api/quotations/{key}/commerce-terms", "erp-quotation", "edit")]
+    [InlineData(nameof(ErpCommerceController.AcceptQuotation), "POST", "/api/quotations/{key}/customer-acceptance", "erp-quotation", "confirm")]
+    [InlineData(nameof(ErpCommerceController.WithdrawQuotation), "DELETE", "/api/quotations/{key}/customer-acceptance", "erp-quotation", "confirm")]
+    public void C03_commerce_actions_keep_their_explicit_existing_permission_and_route(
+        string methodName, string httpMethod, string route, string menu, string action)
+    {
+        var controller = typeof(ErpCommerceController);
+        Assert.Contains(controller, ErpControllers);
+        Assert.NotEmpty(controller.GetCustomAttributes<AuthorizeAttribute>());
+        Assert.Empty(controller.GetCustomAttributes<AllowAnonymousAttribute>());
+        var method = controller.GetMethod(methodName);
+        Assert.NotNull(method);
+        Assert.True(IsMutating(method));
+        Assert.Empty(method.GetCustomAttributes<AllowAnonymousAttribute>());
+        Assert.DoesNotContain(Key(controller, method), ReadOnlyPostExemptions);
+        var endpoint = Assert.Single(method.GetCustomAttributes<Microsoft.AspNetCore.Mvc.Routing.HttpMethodAttribute>());
+        Assert.Equal(httpMethod, Assert.Single(endpoint.HttpMethods));
+        Assert.Equal(route, endpoint.Template);
+        var permission = ReadPermission(method);
+        Assert.True(permission.HasValue, Key(controller, method) + ": missing RequirePermission");
+        Assert.Equal(menu, permission.Value.menu);
+        Assert.Equal(action, permission.Value.action);
     }
 
     [Fact]

@@ -24,6 +24,11 @@ public class BusinessPartnerDto
     public string BaseCd { get; set; } = string.Empty;
     public int Status { get; set; } = 1;
 
+    // Readback only in ordinary CRUD; change through the ERP commerce-profile operation.
+    public Guid? CrmAccountId { get; set; }
+    public string? CurrencyCd { get; set; }
+    public bool IsFrozen { get; set; }
+
     // 法人 / 公的番号
     public string? StdCoCd { get; set; }
     public string? Ein { get; set; }

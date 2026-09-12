@@ -1,0 +1,4 @@
+<testsuite name="c03-real-transport" tests="2" failures="1" skipped="0">
+  <testcase name="actual-erp-sql-and-service-authenticated-dapr-reads"></testcase>
+  <testcase name="crm-outbox-to-real-erp-business-partner-and-result-inbox"><failure message="Actual C03 transport requirement failed; private diagnostics retained." /></testcase>
+</testsuite>

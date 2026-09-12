@@ -1524,6 +1524,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         modelBuilder.Entity<Order>(e =>
         {
             e.HasIndex(x => x.WebOrderNo).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.CrmOpportunityId }).IsUnique()
+                .HasFilter("[CrmOpportunityId] IS NOT NULL");
             e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
             e.HasIndex(x => new { x.OrderDate, x.IsDeleted });
             e.HasIndex(x => new { x.OrderType, x.IsDeleted });
@@ -1610,6 +1612,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         modelBuilder.Entity<BusinessPartner>(e =>
         {
             e.HasIndex(x => x.BpCd).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.CrmAccountId }).IsUnique()
+                .HasFilter("[CrmAccountId] IS NOT NULL");
             e.HasIndex(x => new { x.BaseCd, x.IsDeleted });
             e.HasIndex(x => new { x.Status, x.IsDeleted });
             e.HasIndex(x => x.SalesStaffCd);

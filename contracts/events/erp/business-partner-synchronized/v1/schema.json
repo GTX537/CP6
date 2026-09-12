@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cp6.uk/events/erp/business-partner-synchronized/v1/schema.json",
+  "$comment": "C03 frozen v1. Unknown harmless optional properties are accepted; identities, result revision equality, recursive duplicate keys and sensitive extensions are additionally checked by ErpEventValidator. Requests carry CRM aggregate revision independently of requestVersion.",
+  "type": "object",
+  "required": [
+    "specversion",
+    "id",
+    "source",
+    "type",
+    "subject",
+    "time",
+    "datacontenttype",
+    "dataschema",
+    "tenantid",
+    "correlationid",
+    "causationid",
+    "aggregateid",
+    "aggregateversion",
+    "schemaversion",
+    "region",
+    "data"
+  ],
+  "properties": {
+    "specversion": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(?![\\s\\S])"
+    },
+    "source": {
+      "const": "urn:cp6:erp"
+    },
+    "type": {
+      "const": "com.gtx537.erp.business-partner-synchronized.v1"
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z(?![\\s\\S])"
+    },
+    "datacontenttype": {
+      "const": "application/json"
+    },
+    "dataschema": {
+      "const": "https://contracts.cp6.uk/events/erp/business-partner-synchronized/v1/schema.json"
+    },
+    "tenantid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![\\s\\S])",
+      "not": {
+        "const": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    "correlationid": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(?![\\s\\S])"
+    },
+    "causationid": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(?![\\s\\S])"
+    },
+    "aggregateid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![\\s\\S])",
+      "not": {
+        "const": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    "aggregateversion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "schemaversion": {
+      "const": "1.0.0"
+    },
+    "region": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,31}(?![\\s\\S])"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "tenantId",
+        "requestId",
+        "accountId",
+        "requestVersion",
+        "resultVersion",
+        "businessPartnerKey"
+      ],
+      "properties": {
+        "tenantId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![\\s\\S])",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "requestId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![\\s\\S])",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "accountId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![\\s\\S])",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "requestVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "resultVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "businessPartnerKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(?![\\s\\S])"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "$ref": "#/$defs/safeValue"
+    }
+  ],
+  "$defs": {
+    "safeValue": {
+      "allOf": [
+        {
+          "if": {
+            "type": "object"
+          },
+          "then": {
+            "propertyNames": {
+              "not": {
+                "enum": [
+                  "name",
+                  "names",
+                  "displayName",
+                  "userName",
+                  "nickName",
+                  "firstName",
+                  "lastName",
+                  "fullName",
+                  "customerName",
+                  "companyName",
+                  "contactName",
+                  "legalName",
+                  "email",
+                  "emails",
+                  "emailAddress",
+                  "phone",
+                  "phoneNumber",
+                  "mobile",
+                  "address",
+                  "addresses",
+                  "billingAddress",
+                  "shippingAddress",
+                  "tax",
+                  "taxId",
+                  "taxNumber",
+                  "taxRate",
+                  "vatNumber",
+                  "legal",
+                  "legalEntity",
+                  "password",
+                  "passwordHash",
+                  "cookie",
+                  "token",
+                  "accessToken",
+                  "refreshToken",
+                  "idToken",
+                  "secret",
+                  "clientSecret",
+                  "privateKey",
+                  "authorization",
+                  "signingKey",
+                  "price",
+                  "prices",
+                  "unitPrice",
+                  "unitPrices",
+                  "priceList",
+                  "orderLines",
+                  "quotationLines",
+                  "lines",
+                  "bankAccount",
+                  "creditCard"
+                ]
+              }
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/safeValue"
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "array"
+          },
+          "then": {
+            "items": {
+              "$ref": "#/$defs/safeValue"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -52,6 +52,15 @@ public class QuotationDto
     public string? PaymentCondition { get; set; }
     public string? ValidityPeriod { get; set; }
 
+    // Readback only; explicit ERP commerce operations own terms and customer acceptance.
+    public string? CurrencyCd { get; set; }
+    public DateTimeOffset? ValidUntilUtc { get; set; }
+    public string? OrderType { get; set; }
+    public DateTime? OrderDeliveryDate { get; set; }
+    public DateTimeOffset? CustomerAcceptedAtUtc { get; set; }
+    public string? CustomerAcceptanceReference { get; set; }
+    public string? CustomerAcceptedBy { get; set; }
+
     // 備考01-15（15 行）
     public string?[] QtnNotes { get; set; } = new string?[15];
 

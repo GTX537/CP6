@@ -75,6 +75,7 @@ var crmOidc = builder.Configuration.GetSection("CrmOidc").Get<CP6.WebApi.Service
 crmOidc.Validate(builder.Environment.IsDevelopment());
 builder.Services.AddSingleton(crmOidc);
 CP6.WebApi.Configuration.CrmIdentityConfiguration.AddCrmIdentityEvents(builder.Services, builder.Configuration, crmOidc);
+CP6.WebApi.Configuration.ErpIntegrationConfiguration.AddErpIntegration(builder.Services, builder.Configuration, crmOidc);
 builder.Services.AddSingleton<CP6.WebApi.Services.CrmOidcCrypto>();
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>
@@ -550,6 +551,7 @@ builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 
 // 4.2 MSBBPA030/040 御見積書 相关服务
 builder.Services.AddScoped<IQuotationService, QuotationService>();
+builder.Services.AddScoped<CP6.Core.Services.ErpIntegration.ErpCommerceAuthority>();
 
 // 4.3 MSBBPA050/060 Web 製品マスタ 相关服务
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -3054,6 +3056,7 @@ app.UseMiddleware<CP6.WebApi.Middleware.MustChangePasswordMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
+CP6.WebApi.Configuration.ErpIntegrationConfiguration.MapErpIntegrationEvents(app);
 app.MapHealthChecks(
         "/health/live",
         new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions

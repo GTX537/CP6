@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.ErpIntegration;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -555,6 +556,7 @@ public class QuotationService : IQuotationService
         var now = DateTime.Now;
         entity.MasterConfirmFlg = 0;
         entity.MasterConfirmDate = null;
+        ErpQuotationAcceptance.Clear(entity);
         entity.Modifier = userName;
         entity.ModifyDate = now;
 
@@ -676,6 +678,7 @@ public class QuotationService : IQuotationService
     /// </summary>
     private static void ApplyDto(Quotation e, QuotationDto dto)
     {
+        ErpQuotationAcceptance.Clear(e);
         e.BaseCd = dto.BaseCd;
         e.StaffCd = dto.StaffCd;
         e.CustomerCd = dto.CustomerCd;
@@ -737,6 +740,13 @@ public class QuotationService : IQuotationService
         {
             QtnNo = e.QtnNo,
             RefQtnNo = e.RefQtnNo,
+            CurrencyCd = e.CurrencyCd,
+            ValidUntilUtc = e.ValidUntilUtc,
+            OrderType = e.OrderType,
+            OrderDeliveryDate = e.OrderDeliveryDate,
+            CustomerAcceptedAtUtc = e.CustomerAcceptedAtUtc,
+            CustomerAcceptanceReference = e.CustomerAcceptanceReference,
+            CustomerAcceptedBy = e.CustomerAcceptedBy,
             BaseCd = e.BaseCd,
             StaffCd = e.StaffCd,
             CustomerCd = e.CustomerCd,

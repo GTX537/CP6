@@ -1,0 +1,148 @@
+{
+  "schemaId": "cp6.crm.c03-real-transport.v1",
+  "conclusion": "success",
+  "verificationKind": "isolated real Core ERP SQL/API, C01 service grant, Dapr/Kafka and CRM contract/SQL transport probe; no CRM Account/Opportunity/Won or production acceptance",
+  "coreSourceSha": "53ad3d8813b59caadee9b2fd8030cb0d2db4e741",
+  "crmSourceSha": "70d5ecac5445556375521d5ff079beb548411639",
+  "scope": "all",
+  "sourceState": "working-tree runtime; assembly and contract hashes are execution identity",
+  "crmInfrastructureAssemblySha256": "cce522cf660a201bf406790ce369cbd86913869525c4a282e068e8bb98926b8a",
+  "runnerAssemblySha256": "9df2307c0550064b78e757d9e3e625e53d9f68b571506aa9138109a6024ef02f",
+  "contractBundleSha256": "758c9b853fdacf3bd18c1822fb3d8dd603354618bef0132e940ccf92ce659a20",
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "actual-erp-sql-and-service-authenticated-dapr-reads",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:42:50.3635662+00:00",
+      "finishedAtUtc": "2026-09-12T08:43:08.9813452+00:00"
+    },
+    {
+      "name": "crm-outbox-to-real-erp-business-partner-and-result-inbox",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:43:08.9862996+00:00",
+      "finishedAtUtc": "2026-09-12T08:43:12.9592208+00:00"
+    },
+    {
+      "name": "order-commit-survives-lost-transport-ack-without-duplicate",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:43:12.9714713+00:00",
+      "finishedAtUtc": "2026-09-12T08:43:15.4583227+00:00"
+    },
+    {
+      "name": "terminal-errors-and-authentic-out-of-order-results",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:43:15.4661183+00:00",
+      "finishedAtUtc": "2026-09-12T08:43:22.2101792+00:00"
+    },
+    {
+      "name": "persisted-crm-outbox-recovers-after-owned-broker-restart",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:43:22.2188164+00:00",
+      "finishedAtUtc": "2026-09-12T08:43:53.8084676+00:00"
+    },
+    {
+      "name": "owned-storage-fault-deadletter-and-audited-original-message-replay",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:43:53.8191423+00:00",
+      "finishedAtUtc": "2026-09-12T08:44:03.500493+00:00"
+    },
+    {
+      "name": "canonical-erp-and-crm-wire-sql-reconciliation",
+      "passed": true,
+      "startedAtUtc": "2026-09-12T08:44:03.509579+00:00",
+      "finishedAtUtc": "2026-09-12T08:44:04.4528092+00:00"
+    }
+  ],
+  "observations": {
+    "runtime-binaries": {
+      "coreApiAssemblySha256": "14c0e94d8484c022fbdb1504f306c624e92bc0d3fc01165cc3194162419ea9ce",
+      "coreAssemblySha256": "fd949583d69146ecd429a370701709eb1b4333bce3996072ee8fc63a5a5fe4a0",
+      "fixtureAssemblySha256": "4dcd336fd05995eb16a877ea6d8efa751c49366e395d57dede7695818889ba6f",
+      "fixtureCoreAssemblySha256": "fd949583d69146ecd429a370701709eb1b4333bce3996072ee8fc63a5a5fe4a0",
+      "fixtureApiAssemblySha256": "14c0e94d8484c022fbdb1504f306c624e92bc0d3fc01165cc3194162419ea9ce"
+    },
+    "baseline": {
+      "tenants": [
+        "a41622e2-5c33-4cb5-9f2b-0dead1c3e950",
+        "e0a631c3-2838-4c46-85fe-275dcbc50c0e"
+      ],
+      "actualServiceTokenGrant": true,
+      "authorityReadsViaDapr": true,
+      "existingErpRows": true,
+      "crmBusinessState": "not implemented by this transport probe"
+    },
+    "partner": {
+      "requestMessageId": "065b142f8a6d45079295b60ae9d9a6c8",
+      "resultMessageId": "6bc2ea5c24544deb9e79771f196449d4",
+      "tenantId": "a41622e2-5c33-4cb5-9f2b-0dead1c3e950",
+      "accountId": "1edf3b25-6f6a-4b7a-8357-20039db7588c",
+      "businessPartnerKey": "BPc794a6d8c1e6",
+      "originalErpRow": true
+    },
+    "lost-ack": {
+      "requestMessageId": "72bcf732784c49b68988cd5b9323cbe2",
+      "resultMessageId": "ce1baf80275845e1bc83ea11cf919a79",
+      "actualOrderId": "5301f6b9-615d-4ffd-5d73-08df10a9e21a",
+      "orderKey": "ORD2026090001",
+      "originalRequestDeliveries": 2,
+      "actualOrderCount": 1
+    },
+    "out-of-order": {
+      "source": "actual ERP Outbox bytes",
+      "olderId": "03b1c5ecbda44b74aade97ad6b4fb633",
+      "newerId": "8e05a964443e4be4bd9d370fa25cdd2b",
+      "olderDisposition": "IgnoredOutOfOrder",
+      "crmOpportunityWonAcceptance": false
+    },
+    "terminal": {
+      "requestId": "86adedf853d44240903bac3ab1a7376c",
+      "errorCode": "C03_AMOUNT_MISMATCH",
+      "actualOrders": 1
+    },
+    "broker-recovery": {
+      "requestMessageId": "6a17f9e4b4b04aa1884d5a84fdc593fe",
+      "resultMessageId": "df734806c5484c018da78e0715adb507",
+      "originalPersistedRequestRetained": true,
+      "ownedKafkaRestarted": true
+    },
+    "deadletter": {
+      "messageId": "6906bfb1195d49c885a9d8d27da9906a",
+      "sourceFailureId": "6819a66d93644f59babfebe064a65384",
+      "artificialFixtureStorageConstraint": true,
+      "expectedSqlError": 547,
+      "otherTenantCreatedRealOrder": true
+    },
+    "recovery": {
+      "operationId": "df2ff7bb-4be6-4e23-908e-dff73953de28",
+      "originalMessageId": "6906bfb1195d49c885a9d8d27da9906a",
+      "successResultId": "c8ac39d6043f40eb9597689ca62e0e68",
+      "resultVersion": 4,
+      "driver": "fixture CLI invokes actual audited replay service; HTTP authorization tested separately"
+    },
+    "canonical": {
+      "actualOrders": 3,
+      "amountsByCurrency": [
+        {
+          "CurrencyCd": "JPY",
+          "Amount": 600.00000000,
+          "Lines": 2
+        },
+        {
+          "CurrencyCd": "USD",
+          "Amount": 300.00000000,
+          "Lines": 1
+        }
+      ],
+      "noDuplicateOpportunityOrder": true,
+      "erpInboxComplete": true,
+      "bothOutboxesDrained": true,
+      "downstreamWmsMes": "pending durable bridges; not executed by this fixture",
+      "crmAccountOpportunityWon": "not covered"
+    }
+  },
+  "observedAtUtc": "2026-09-12T08:44:07.5877474+00:00"
+}

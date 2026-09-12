@@ -36,6 +36,12 @@ public class BusinessPartner : BaseBizEntity, IAuditable
     /// <summary>取引通貨CD（多通貨 Gap 4.3。null/JPY = 基軸通貨。受注時にこの通貨の当日レートを凍結）</summary>
     [MaxLength(3)] public string? CurrencyCd { get; set; }
 
+    /// <summary>ERP-owned immutable association to a CRM account; never inferred from a display name.</summary>
+    public Guid? CrmAccountId { get; set; }
+
+    /// <summary>Explicit trading hold, independent of registration/deletion status.</summary>
+    public bool IsFrozen { get; set; }
+
     /// <summary>信用额度（本位币，AR 信用控制 F2 章04 §3。null/0=不控）</summary>
     [Column(TypeName = "decimal(18,2)")] public decimal? CreditLimit { get; set; }
 
