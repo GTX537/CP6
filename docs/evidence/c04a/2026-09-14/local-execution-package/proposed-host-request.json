@@ -1,0 +1,81 @@
+{
+  "format": "CP6.C04A.PreviewRecoveryRequest.v1",
+  "runId": "90567d68-e8db-4a8e-b26c-99e000fe3313",
+  "manifestPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\c04a-proposed-run-20260914.json",
+  "manifestSha256": "a1f79d7350285d8b8b80cf92bd5d19134bbf8076eeaad80565d1b46f81df36a6",
+  "fixtureSha256": "adc7ee5f86c677df61e1880668c44695b5c831b8db3bec033c8e1c5577f4deca",
+  "inputs": [
+    {
+      "path": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "sha256": "76e6472063f53379b86fe8370203ab6c46c75d27f405b722845f0e495d8f5fd0"
+    },
+    {
+      "path": "C:\\Users\\tt\\AppData\\Local\\nvm\\v22.22.0\\node.exe",
+      "sha256": "bae898add4643fcf890a83ad8ae56e20dce7e781cab161a53991ceba70c99ffb"
+    },
+    {
+      "path": "D:\\CP6-audit-results\\20260908\\first-slice-browser\\fd3e9d01e93d4fa78313a7f741f7b0ea\\tls.pfx",
+      "sha256": "7d61f90b90188d7f5c9babe4b82ffe1e334e0918547942f99ee90fab42d60e37"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\core-api\\CP6.WebApi.deps.json",
+      "sha256": "194627bbe45bc5d95be1049f00e9aece1529e00289b1cda57a2b1fd08588944e"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\core-api\\CP6.WebApi.dll",
+      "sha256": "ed0b42d50ae9d1419e031a25e372e39bf95bcf25642a0f26727f71810814a9ca"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\core-api\\CP6.WebApi.runtimeconfig.json",
+      "sha256": "bfcd9777228f00ce830a77b9ee3d2d735afec5e998def17c549c6b004dd354cf"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\servers.cjs",
+      "sha256": "70d1b4e97600a40de9dce891b30734bf15da439124b418279b10a7b1aa197f5a"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\appsettings.Development.json",
+      "sha256": "57c6bf890bff0a2448bafe71540d1766a9ed462c19142ad166af70356a2f8148"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\appsettings.Local.json",
+      "sha256": "afbd44f27831aeb6fca209cf7b1209953cded21dc0821ce3bc8126dfd1bc53e3"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\appsettings.json",
+      "sha256": "36e468a0127f496dc12006293ff9342f8e59e6be08049362309a1101a0cd5f99"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\crm-content\\appsettings.json",
+      "sha256": "f7254b52d1d9d4124aed25a064d7076d5f1c4afb81f0ee4394769936d960608b"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\web-settings.json",
+      "sha256": "b5d4d3fb0378b0ac163572b40b64ae1b943f9651a5bb4927ad9c63218b4ce9e1"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260914\\c04a-local-execution-package\\crm-api\\CP6.CRM.Api.deps.json",
+      "sha256": "4f4be191b2f2eae082c6c2a933b71e0138cd6d252a7c708166641fc9a6f90c8d"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260914\\c04a-local-execution-package\\crm-api\\CP6.CRM.Api.dll",
+      "sha256": "bc29e64f1a09e4b80ef7af6a0ce819d4b98d169d5f7da2267f02a0ab2518b537"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260914\\c04a-local-execution-package\\crm-api\\CP6.CRM.Api.runtimeconfig.json",
+      "sha256": "bfcd9777228f00ce830a77b9ee3d2d735afec5e998def17c549c6b004dd354cf"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\bin\\Debug\\net8.0\\CP6.IdentityEvents.Fixture.deps.json",
+      "sha256": "0c1e57eb1aee13a7726fcde6f09c260aa47977fa4ac2535d7830afb11677c1c3"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\bin\\Debug\\net8.0\\CP6.IdentityEvents.Fixture.dll",
+      "sha256": "4badc3aa74a675b064c0eb4fe1391d375e09ce6db814c7aa33f83536864d59d2"
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\bin\\Debug\\net8.0\\CP6.IdentityEvents.Fixture.runtimeconfig.json",
+      "sha256": "72ebd91a0ff778e9dbc2b122aa764004f300284d1aa76ec5172eb0a00fad3f0d"
+    }
+  ]
+}
