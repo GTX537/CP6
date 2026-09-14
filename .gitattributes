@@ -45,6 +45,7 @@ contracts/events/erp/**/*.json text eol=lf
 
 # Shared C04A protocol must match the CRM repository byte for byte.
 contracts/c04a/TargetRollbackProtocol.cs text eol=lf
+contracts/c04a/TargetRollbackSet.cs text eol=lf
 
 # Raw C02 verifier reports retain original bytes and CRLF.
 eng/crm/identity-events-fixture/evidence/**/*.json -text whitespace=cr-at-eol

@@ -18,7 +18,11 @@ try
         && (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_RECOVERY_REQUEST_PATH"))
             || string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_TARGET_SQL_CONNECTION")))))
         throw new SourceFenceException("C04A_TARGET_ROLLBACK_COORDINATOR_REQUIRED");
-    if (args.Length != 1 || args[0] is not ("status" or "preflight" or "freeze" or "reopen" or "seal-forward-only" or "inspect-actual" or "freeze-actual" or "status-actual" or "reopen-actual" or "recovery-status-actual"))
+    if (args.Length == 1 && args[0] is "reopen-targets-actual" or "recovery-status-targets-actual"
+        && (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_RECOVERY_REQUEST_PATH"))
+            || string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_RECOVERY_TARGETS_PATH"))))
+        throw new SourceFenceException("C04A_TARGET_ROLLBACK_COORDINATOR_REQUIRED");
+    if (args.Length != 1 || args[0] is not ("status" or "preflight" or "freeze" or "reopen" or "seal-forward-only" or "inspect-actual" or "freeze-actual" or "status-actual" or "reopen-actual" or "recovery-status-actual" or "reopen-targets-actual" or "recovery-status-targets-actual"))
         throw new SourceFenceException("C04A_INVALID_COMMAND");
     var options = new SourceFenceOptions(Required("C04A_SQL_CONNECTION"), Required("C04A_EXPECTED_DATABASE"),
         Guid.Parse(Required("C04A_EXPECTED_DATABASE_GUID")),
@@ -27,21 +31,32 @@ try
     LocalSqlContainerBinding? localContainer = null;
     if (Environment.GetEnvironmentVariable("C04A_CONTAINER_BINDING_PATH") is { Length: > 0 } bindingPath)
     {
-        if (args[0] is not ("inspect-actual" or "freeze-actual" or "status-actual" or "reopen-actual" or "recovery-status-actual"))
+        if (args[0] is not ("inspect-actual" or "freeze-actual" or "status-actual" or "reopen-actual" or "recovery-status-actual" or "reopen-targets-actual" or "recovery-status-targets-actual"))
             throw new SourceFenceException("C04A_CONTAINER_INVALID_OPTIONS");
         localContainer = await LocalSqlContainerInspector.ReadBindingAsync(bindingPath, Required("C04A_CONTAINER_BINDING_FILE_SHA256"));
     }
     else if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_CONTAINER_BINDING_FILE_SHA256")))
         throw new SourceFenceException("C04A_CONTAINER_INVALID_OPTIONS");
-    if (args[0] is "reopen-actual" or "recovery-status-actual")
+    if (args[0] is "reopen-actual" or "recovery-status-actual" or "reopen-targets-actual" or "recovery-status-targets-actual")
     {
         var request = await ActualSourceFreezer.ReadRecoveryRequestAsync(Required("C04A_RECOVERY_REQUEST_PATH"), Required("C04A_RECOVERY_REQUEST_FILE_SHA256"));
         var freezer = new ActualSourceFreezer(new(options.ConnectionString, options.ExpectedDatabaseName,
             options.ExpectedDatabaseGuid, Required("C04A_EXPECTED_SERVER_NAME"),
             Environment.GetEnvironmentVariable("C04A_EXPECTED_SCOPE_SHA256"), options.LockTimeoutMilliseconds, options.CommandTimeoutSeconds, localContainer));
-        var target = Required("C04A_TARGET_SQL_CONNECTION");
-        Console.WriteLine(JsonSerializer.Serialize(args[0] == "reopen-actual"
-            ? await freezer.ReopenAsync(request, request.Digest(), target) : await freezer.RecoveryStatusAsync(request, request.Digest(), target), json));
+        ActualSourceRecoveryStatus recovery;
+        if (args[0] is "reopen-targets-actual" or "recovery-status-targets-actual")
+        {
+            var targets = await ActualSourceFreezer.ReadRecoveryTargetsAsync(Required("C04A_RECOVERY_TARGETS_PATH"), Required("C04A_RECOVERY_TARGETS_FILE_SHA256"));
+            recovery = args[0] == "reopen-targets-actual" ? await freezer.ReopenTargetsAsync(request, request.Digest(), targets)
+                : await freezer.RecoveryStatusTargetsAsync(request, request.Digest(), targets);
+        }
+        else
+        {
+            var target = Required("C04A_TARGET_SQL_CONNECTION");
+            recovery = args[0] == "reopen-actual" ? await freezer.ReopenAsync(request, request.Digest(), target)
+                : await freezer.RecoveryStatusAsync(request, request.Digest(), target);
+        }
+        Console.WriteLine(JsonSerializer.Serialize(recovery, json));
         return 0;
     }
     if (args[0] is "freeze-actual" or "status-actual")

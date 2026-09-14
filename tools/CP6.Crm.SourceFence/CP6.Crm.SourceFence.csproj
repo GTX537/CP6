@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../contracts/c04a/TargetRollbackProtocol.cs" Link="TargetRollbackProtocol.cs" />
+    <Compile Include="../../contracts/c04a/TargetRollbackSet.cs" Link="TargetRollbackSet.cs" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.9" />
   </ItemGroup>
 </Project>

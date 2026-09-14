@@ -37,13 +37,23 @@ public sealed partial class ActualSourceFreezer
         RecoveryMetadata ReopenedMetadata, DateTimeOffset RecordedAtUtc);
 
     public Task<ActualSourceRecoveryStatus> ReopenAsync(ActualSourceRecoveryRequest request, string expectedRequestSha256,
-        string targetConnectionString, CancellationToken token = default) => RecoverAsync(request, expectedRequestSha256, targetConnectionString, false, token);
+        string targetConnectionString, CancellationToken token = default) => RecoverAsync(request, expectedRequestSha256,
+            cancellation => RecoveryTargetProofLease.OpenSingleAsync(request, targetConnectionString, cancellation), false, token);
 
     public Task<ActualSourceRecoveryStatus> RecoveryStatusAsync(ActualSourceRecoveryRequest request, string expectedRequestSha256,
-        string targetConnectionString, CancellationToken token = default) => RecoverAsync(request, expectedRequestSha256, targetConnectionString, true, token);
+        string targetConnectionString, CancellationToken token = default) => RecoverAsync(request, expectedRequestSha256,
+            cancellation => RecoveryTargetProofLease.OpenSingleAsync(request, targetConnectionString, cancellation), true, token);
+
+    public Task<ActualSourceRecoveryStatus> ReopenTargetsAsync(ActualSourceRecoveryRequest request, string expectedRequestSha256,
+        IReadOnlyList<ActualSourceRecoveryTarget> targets, CancellationToken token = default) => RecoverAsync(request, expectedRequestSha256,
+            cancellation => RecoveryTargetProofLease.OpenTargetsAsync(request, targets, cancellation), false, token);
+
+    public Task<ActualSourceRecoveryStatus> RecoveryStatusTargetsAsync(ActualSourceRecoveryRequest request, string expectedRequestSha256,
+        IReadOnlyList<ActualSourceRecoveryTarget> targets, CancellationToken token = default) => RecoverAsync(request, expectedRequestSha256,
+            cancellation => RecoveryTargetProofLease.OpenTargetsAsync(request, targets, cancellation), true, token);
 
     private async Task<ActualSourceRecoveryStatus> RecoverAsync(ActualSourceRecoveryRequest request, string expectedRequestSha256,
-        string targetConnectionString, bool inspectOnly, CancellationToken token)
+        Func<CancellationToken, Task<RecoveryTargetProofLease>> openTargets, bool inspectOnly, CancellationToken token)
     {
         try
         {
@@ -51,18 +61,14 @@ public sealed partial class ActualSourceFreezer
             var inspector = new ActualSourceInspector(options with { ExpectedScopeSha256 = null });
             var builder = inspector.ValidateOptions();
             builder.ApplicationName = "CP6.C04A.ActualSourceRecovery";
-            // Target first, source second: retain live target locks through source COMMIT.
+            // All targets first, source second: retain every target lock through source COMMIT.
             // There is no distributed write: the target was terminally closed beforehand.
-            await using var target = await TargetRollbackProtocol.OpenLocalAsync(targetConnectionString, token);
-            await using var targetTransaction = (SqlTransaction)await target.BeginTransactionAsync(IsolationLevel.Serializable, token);
-            var proof = await TargetRollbackProtocol.ReadWithinTransactionAsync(target, targetTransaction, request.TargetRollbackReceiptSha256, token);
-            if (!proof.Permit.SourceFreezeRequestSha256s.Contains(request.SourceFreezeRequestSha256, StringComparer.Ordinal))
-                Fail("C04A_RECOVERY_SOURCE_NOT_BOUND");
+            await using var targets = await openTargets(token);
             await using var source = new SqlConnection(builder.ConnectionString);
             await source.OpenAsync(token);
             await using var transaction = (SqlTransaction)await source.BeginTransactionAsync(IsolationLevel.Serializable, token);
             var before = await inspector.CaptureWithinTransactionAsync(source, transaction, !inspectOnly, token);
-            if (before.Identity.ServerName == proof.Target.ServerName && before.Identity.DatabaseName == proof.Target.DatabaseName)
+            if (targets.ContainsSource(before.Identity))
                 Fail("C04A_RECOVERY_TARGET_IS_SOURCE");
             var frozenText = await ReadMarkerAsync(source, transaction, Marker, token);
             if (frozenText is null) Fail("C04A_ACTUAL_BINDING_MISSING");
@@ -74,7 +80,7 @@ public sealed partial class ActualSourceFreezer
             if (frozen.RequestSha256 != request.SourceFreezeRequestSha256 || frozen.Request.SourceIdentity != before.Identity)
                 Fail("C04A_ACTUAL_BINDING_DRIFT");
             VerifyExpectedBeforeScope(frozen.BeforeScopeSha256);
-            if (frozen.Request.TargetClosedEvidenceSha256 != proof.Anchor.Digest()) Fail("C04A_RECOVERY_TARGET_NOT_BOUND");
+            if (frozen.Request.TargetClosedEvidenceSha256 != targets.AnchorSha256) Fail("C04A_RECOVERY_TARGET_NOT_BOUND");
             var fence = new SourceFence(new(builder.ConnectionString, options.ExpectedDatabaseName, options.ExpectedDatabaseGuid,
                 options.LockTimeoutMilliseconds, options.CommandTimeoutSeconds));
             var state = await fence.ExecuteWithinTransactionAsync(source, transaction, "Status", Guid.Empty, 0, true, token);
@@ -117,7 +123,7 @@ public sealed partial class ActualSourceFreezer
             }
             // Recheck before the source commit. Table locks remain until target disposal;
             // changed receipts/metadata cannot be accepted as a stale file-only assertion.
-            _ = await TargetRollbackProtocol.ReadWithinTransactionAsync(target, targetTransaction, request.TargetRollbackReceiptSha256, token);
+            await targets.RecheckAsync(token);
             if (frozenText != await ReadMarkerAsync(source, transaction, Marker, token)
                 || recoveryText != await ReadMarkerAsync(source, transaction, RecoveryMarker, token)) Fail("C04A_RECOVERY_BINDING_DRIFT");
             await transaction.CommitAsync(token);
