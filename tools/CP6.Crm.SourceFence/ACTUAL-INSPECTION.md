@@ -1,5 +1,7 @@
 # Actual local source inspection
 
+The separate [actual-source freezer](ACTUAL-FREEZE.md) consumes this inspection through a request-bound entry. The inspector itself remains read-only and does not authorize that operation.
+
 `ActualSourceInspector.InspectAsync` and CLI `inspect-actual` collect the source facts needed to prepare C04A actual execution. They only read SQL data/catalogs and acquire temporary shared locks. They cannot initialize a control schema, change permissions, freeze, reopen, seal or authorize target writes. The existing `SourceFence` mutation methods still reject an actual database name.
 
 Use the same build and credential handling as [the tool README](README.md). Set `C04A_SQL_CONNECTION`, exact `C04A_EXPECTED_DATABASE`, independently observed `C04A_EXPECTED_DATABASE_GUID` (broker GUID), and exact `C04A_EXPECTED_SERVER_NAME` (`SERVERPROPERTY('ServerName')`). Optional timeouts are unchanged. Only a local, nonclustered SQL Server user database is accepted; local `tcp:` and `lpc:` endpoints are supported. Connections cannot attach files, select a failover partner or join an ambient transaction. The inspector disables pooling and identifies its own connection as `CP6.C04A.ActualSourceInspector`.

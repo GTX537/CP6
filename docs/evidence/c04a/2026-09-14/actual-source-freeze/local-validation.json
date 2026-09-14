@@ -1,0 +1,266 @@
+{
+  "codeCommit": "d662ecfd10a965bec1e67921052b6ac8c56af4a0",
+  "baseCommit": "3cda543bb19333e5b956dff33eb81137f41b6a92",
+  "goalMilestones": {
+    "completed": 3,
+    "total": 5,
+    "percent": 60
+  },
+  "uniquePassed": 20,
+  "unresolvedFailed": 0,
+  "skipped": 0,
+  "batches": [
+    {
+      "file": "results/green-01.trx",
+      "sha256": "e5ddc85f28d24d1a733937e073510cf3abb6ca1920939bc80bb20a2d44bfc687",
+      "results": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Cli_binds_exact_file_bytes_and_rejects_actual_reopen",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Exact_request_freezes_all_tables_and_replays_without_duplicate_audit",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Missing_binding_or_changed_frozen_scope_is_not_a_valid_receipt",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Actual_binding_on_rehearsal_named_catalog_cannot_be_reopened_by_legacy_entry",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Ddl_hook_cannot_bless_unreviewed_permissions_into_the_frozen_scope",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Nonempty_review_and_lock_timeout_cannot_freeze",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Failure_while_persisting_receipt_rolls_back_every_fence_change",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Changed_request_or_identity_cannot_adopt_or_overwrite_a_freeze",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Stale_review_cannot_install_any_control_objects(change: \"ALTER TABLE dbo.Crm_Account ADD ScopeProbe int NUL\"···, code: \"C04A_SCOPE_CHANGED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Stale_review_cannot_install_any_control_objects(change: \"GRANT REFERENCES ON dbo.Crm_Account TO FenceWriter\"···, code: \"C04A_SCOPE_CHANGED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Stale_review_cannot_install_any_control_objects(change: \"INSERT dbo.Crm_Account (Id,Name,NormalizedName,Cre\"···, code: \"C04A_SCOPE_CHANGED\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/green-02.trx",
+      "sha256": "02c96a002a6b22f647720c4b4866c881c14cd1826e97b77d3a7c923632c0f366",
+      "results": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFenceTests.Lifecycle_uses_monotonic_generation_new_runs_and_audit_once",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Failure_while_persisting_receipt_rolls_back_every_fence_change",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFenceTests.Immediate_reopen_replay_remains_idempotent_after_legacy_writes_resume",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceInspectorTests.Actual_inspection_is_read_only_and_binds_schema_permissions_and_programs",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/green-03.trx",
+      "sha256": "424b013a2de611a583b59d9d1db48fd9fdc92bb6abf7f754985b226d5cb9a3bd",
+      "results": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Ddl_hook_cannot_bless_unreviewed_permissions_into_the_frozen_scope",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezeRequestTests.Matching_file_hash_does_not_authorize_ambiguous_or_unknown_json(json: \"{\\\"Format\\\":\\\"unknown\\\"}\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezeRequestTests.Matching_file_hash_does_not_authorize_ambiguous_or_unknown_json(json: \"{\\\"RunId\\\":null,\\\"RunId\\\":null}\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezeRequestTests.Matching_file_hash_does_not_authorize_ambiguous_or_unknown_json(json: \"null\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Cli_binds_exact_file_bytes_and_rejects_actual_reopen",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezeRequestTests.Matching_file_hash_does_not_authorize_ambiguous_or_unknown_json(json: \"{\\\"Format\\\":null}\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Exact_request_freezes_all_tables_and_replays_without_duplicate_audit",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezeRequestTests.Matching_file_hash_does_not_authorize_ambiguous_or_unknown_json(json: \"{\\\"Unexpected\\\":1}\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/green-04.trx",
+      "sha256": "e91a1f66e9db0d4b08ebf7db947c4f0beb0fc8fedcb7c09827bf7f1c5ce2f85e",
+      "results": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Changed_nested_receipt_format_is_rejected_without_changing_frozen_state",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "file": "results/green-05.trx",
+      "sha256": "920d4012ae465ee85568bc70609b803c60fd056bce5a87517b68e98ce0363950",
+      "results": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Changed_nested_receipt_format_is_rejected_without_changing_frozen_state",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/green-06-published.trx",
+      "sha256": "216c537d0e2a2ce8939f99225c9b4ac790008df19336ee52513633048357da06",
+      "results": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Cli_binds_exact_file_bytes_and_rejects_actual_reopen",
+          "outcome": "Passed"
+        }
+      ]
+    }
+  ],
+  "sourceInputs": {
+    "tools/CP6.Crm.SourceFence/ActualSourceFreezer.cs": {
+      "rawSha256": "fc3b998e946b3f6b259603248300fca872b617065bc5988d6b6b4dffa752db22",
+      "lfSha256": "82929d763d8e63fa1cb2c3fd2ef59296edd9e918fa251b04eb7cab4207014d2c"
+    },
+    "tools/CP6.Crm.SourceFence/ActualSourceInspector.cs": {
+      "rawSha256": "948536ef7bbbb776511c73180a831350c26d9a732397bbc0c97d341f12998a30",
+      "lfSha256": "dfda853f10888bfe0cec80755c9d8ceb047a9d4242e4bfa05abdb6ccecb5de7b"
+    },
+    "tools/CP6.Crm.SourceFence/CP6.Crm.SourceFence.csproj": {
+      "rawSha256": "1a02e0f144e24fc65aa881687d720abafd820f1b4852dc8de101636b8dae8027",
+      "lfSha256": "cc27335584b5e1eb8590ae193a0fe4b94a8ca3cbc9475bc376734bd2e9c5eece"
+    },
+    "tools/CP6.Crm.SourceFence/packages.lock.json": {
+      "rawSha256": "a69b1d61d5aea108664b0b7bf2f080a98fe7bd69f229b74b0be70e09c3d15645",
+      "lfSha256": "7603e1a9bc304391c22b591caf1d8edd74e58cac7df313f10a6fe5085c539b66"
+    },
+    "tools/CP6.Crm.SourceFence/Program.cs": {
+      "rawSha256": "40f6a72a7db9b35e6fb79d6f9bd1e717d8a67c8d0f31636ccd16d2de9591d603",
+      "lfSha256": "e38ec5e9c173829e2d76ed332709cd49e6b83de0106002aa2016c23ad3ea1fe1"
+    },
+    "tools/CP6.Crm.SourceFence/SourceFence.cs": {
+      "rawSha256": "82f1cdacac47f53982ccd27ddf6e98ab2d036191572d596efb4afde115f65d1f",
+      "lfSha256": "31918f3ac1946b6acd97008ce6584471606774a8fb53538caa014b87999d4696"
+    },
+    "eng/crm/source-fence-tests/ActualSourceFreezeRequestTests.cs": {
+      "rawSha256": "eaae1ee61ff47a9ebba17f7b878c9cfb4efc19ea0a1231e245071503fb90cd46",
+      "lfSha256": "7852598a4736d5626895faf0dff6f222dcc51644a019c00b11c3f241fcf1bd1c"
+    },
+    "eng/crm/source-fence-tests/ActualSourceFreezerTests.cs": {
+      "rawSha256": "a952a9e09b0be78b721371c6960d9bbe34bcc815edad94573099d651aac1b622",
+      "lfSha256": "d5ae8989fff00111f12e9aad55624519d4d2e8b3bf15858f8ec8d610c9f99d18"
+    },
+    "eng/crm/source-fence-tests/ActualSourceInspectorTests.cs": {
+      "rawSha256": "05004eff7a4e9d7c28907f35a84c8edb2e28ce824f609cd007de57530d157c7f",
+      "lfSha256": "9121f0793160ce51ec6e7988b24ffbdedac4e4738b359e19e2ab32bcc1e9c5ae"
+    },
+    "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj": {
+      "rawSha256": "e61aabe7daa8184eb15889d30f662ea1fc7135ac9860e8fa0456d92a1a6cfede",
+      "lfSha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272"
+    },
+    "eng/crm/source-fence-tests/packages.lock.json": {
+      "rawSha256": "ab4201f44c5b8549d905afec7f6ffa1edb09e58f5121d0e963bd7e95d2bcffa3",
+      "lfSha256": "3b82e20d7b58a066d4817c815f8a04fa531efd8401c138a98832b3c6bfb8e533"
+    },
+    "eng/crm/source-fence-tests/SourceFenceTests.cs": {
+      "rawSha256": "2def3c1e9b28dcbd1ed00494003f4824bfd86a90f3c99d832fa290e0e6c2d9e3",
+      "lfSha256": "2bf8208eb94f3a6909d1f10ae25ec4bd562331c288d54a65cc0ac4d59d261268"
+    },
+    "eng/crm/source-fence-tests/SqlFixture.cs": {
+      "rawSha256": "facc6bae2ad833a2a8b259bdc5fed75b8fbb0ca44ce31c2fe1f0640b6d04a2e0",
+      "lfSha256": "2307962f12413548fa94eb4d4ecdcf6cf40b198fd1f1100aa9f1d1b40cc6ad24"
+    },
+    "CP6.Core/Migrations/20260811030108_CrmFoundation.cs": {
+      "rawSha256": "99ff1670c972b0fcd2624a75a4a15b221fa4a23743d4b02225e234d1995bbf16",
+      "lfSha256": "76de7efa9baac910813ce1594157a74a635a4fb1c27c5ced11e2301d16259771"
+    }
+  },
+  "resultApplicability": [
+    "green-01: initial new implementation, 10 passed and one invalid SQL DDL event fixture setup failed.",
+    "green-02: corrected late receipt collision fixture passed; 3 directly affected SourceFence/Inspector representatives passed. No unrelated old suites rerun.",
+    "green-03: final approved-observation metadata baseline comparison and request Format validation; positive freeze, DDL side effect, CLI and five new JSON refusals passed.",
+    "green-04: review regression failed during fixture disposal with SQL timeout; test process exited, the single owned idle database was identified and removed explicitly.",
+    "green-05: only the review regression reran using local shared-memory SQL; tampered receipt refusals and valid restoration/status/replay passed.",
+    "green-06-published: only the CLI fixture targets the independently published DLL using C04A_PUBLISHED_CLI_PATH; raw-file refusal, actual-name test freeze and actual reopen refusal.",
+    "Earlier successful results are reused by affected behavior; no claim that all results executed the final committed bytes. Raw intermediate assemblies were not retained.",
+    "Final source inputs and independently published files are recorded separately; any review-fix batches retain their actual TRX results."
+  ],
+  "failuresRetained": [
+    "red-build: expected new API absence",
+    "build-01: nullable flow diagnostic, corrected with DoesNotReturn",
+    "green-01: unsupported ADD_EXTENDED_PROPERTY fixture event; corrected to late CREATE_TRIGGER receipt collision",
+    "red-receipt: review regression reproduced missing rejection of altered nested receipt Format",
+    "green-04: failed fixture disposal timeout, owned residue explicitly cleaned after identity/session checks"
+  ],
+  "boundaries": {
+    "actualSourceChanged": false,
+    "actualActivationApproved": false,
+    "sourceFenceComplete": false,
+    "targetFirstWriteIntegrated": false,
+    "productionAcceptance": false,
+    "githubActionsTriggered": false
+  },
+  "archiveSha256": "cedcdbd9221a026ba36bc676979cd2cc6b73fb35400a3e98427e68869367fce0",
+  "archiveMembers": {
+    "build-01.log": "bb7941b58df2a8dce2a90e0958bcbcf671081536ba5b2dac9e96d39420a9aa7a",
+    "build-02.log": "7c16b1ce32f2ebb2f0a05454d68ee4aae68e8406df66df97b365269488ee7711",
+    "build-03.log": "c64744a224f9769b46fe27b4a3883090f535eac6a6d80191fbd618e454c07d41",
+    "build-04.log": "8d5084035a38b4412f483e508e568f7cccad494a61345ba618970f676099a629",
+    "build-05.log": "6c58a83c991cf2213a0d4e4477700896030a446ad065162466dabfd2ce3af324",
+    "build-06.log": "3dda352dbc4468f3f5207c9d1798da6bb13778c7d12203177297a5475836c660",
+    "build-07.log": "dfa6d5578b1c10cca0a1ccd3da244530f4ba5ea81fc71e6fcdb2ee7aaab28df0",
+    "dispose-timeout-diagnostic.json": "f75c6c88502f14df8ccb69a8ce1161546c53fa1821df67ff24b7d94954cc5321",
+    "green-01.log": "68ef71803ea71cb39ed31a102b711f2c659310a5ec890e44703cbd32e653cffb",
+    "green-02.log": "cc29a8f9c56c2fec17f603d3f9cf5617a65bcd37ac8cd57a57cb34a19dddec3f",
+    "green-03.log": "656a23cba08f33f406048f06085aa7113cf0d890692069176c4a55d2d34b43cd",
+    "green-04.log": "3d5f8a09c551a9f9f1902c8d976e5289aaab7281271c851a6997cd29d4b40df2",
+    "green-05.log": "7cabe98e0d4d9f3e32ba0d83ba3f78899f64ea1d1fa3b5835b90dd01a331f22c",
+    "green-06-published.log": "49c94ab006c055fffa696fd78528497903fd19edc03c2accafb3823761dcf96c",
+    "prd-contract.log": "3f9bde2f65be03fa87525e1957f474749e065b62f1da2c7b66120003995bc797",
+    "public-contract.log": "cd91113627bc6ec08111b4c240aba6c12d2cd505f472d3aa76f9ec9b73ecca25",
+    "publish.log": "2d094e8a88ee152f089483633d809cd0269acbbcc9ea3bef92c78d08b1b0d98c",
+    "red-build.log": "f9a3655695002808fdbdb3c0abaa0953a5786daf58784066fe76b047bd816fac",
+    "red-receipt.log": "36c5ef4e5f1aaf7883b14037289f78e99d19cc452b3832b378a29227ff8ba6bb",
+    "results/green-01.trx": "e5ddc85f28d24d1a733937e073510cf3abb6ca1920939bc80bb20a2d44bfc687",
+    "results/green-02.trx": "02c96a002a6b22f647720c4b4866c881c14cd1826e97b77d3a7c923632c0f366",
+    "results/green-03.trx": "424b013a2de611a583b59d9d1db48fd9fdc92bb6abf7f754985b226d5cb9a3bd",
+    "results/green-04.trx": "e91a1f66e9db0d4b08ebf7db947c4f0beb0fc8fedcb7c09827bf7f1c5ce2f85e",
+    "results/green-05.trx": "920d4012ae465ee85568bc70609b803c60fd056bce5a87517b68e98ce0363950",
+    "results/green-06-published.trx": "216c537d0e2a2ce8939f99225c9b4ac790008df19336ee52513633048357da06",
+    "results/red-receipt.trx": "ea5ba10bd54bf280814b6851357da7086e175f8dad365655946d0fe111b6720d"
+  }
+}

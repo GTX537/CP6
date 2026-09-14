@@ -1,5 +1,7 @@
 # C04A local source fence
 
+The separate [actual-source freezer](ACTUAL-FREEZE.md) adds request-bound first freeze and status for an explicitly identified local source. Its actual rollback/target coordinator is still pending; the commands below retain their rehearsal scope.
+
 This standalone .NET 8 library and CLI rehearses source-write fencing on **local, isolated copies**. It does not modify application startup, EF mappings, production migrations, routes, target writes, ERP/C01/C02 behavior, or release workflows. It does not close C04A.
 
 The separate [`inspect-actual` command](ACTUAL-INSPECTION.md) can read an explicitly identified actual local source. It has no mutation API and does not relax the rehearsal-only checks below. A matching inspection scope is not approval to freeze, migrate, switch routes or reopen.
