@@ -1,0 +1,439 @@
+{
+  "format": "CP6.C04A.VerifiedTargetActivation.Development.v1",
+  "codeCommits": {
+    "core": "7667b693e0264b13c36adc4e9f09331ceceb6dc5",
+    "crm": "ff0bfbcfe05e0a4ce2883bd9d4fa36dcd5bc43f1"
+  },
+  "status": "draft-required-SQL-gates-open",
+  "mergeAllowed": false,
+  "passedNewUniqueChecks": 62,
+  "passedSqlActivationChecks": 0,
+  "requiredPending": [
+    "Three published SQL activation scenarios",
+    "Two directly affected original Enable/Close scenarios"
+  ],
+  "failureSummary": "Initial SQL fixtures failed during source inspection or cleanup login. One isolated attempt reached CRM_SOURCE_PROOF_REJECTED without its Core reason. A fixed-code diagnostic was added; next attempt failed SQL login during cleanup. The proof rejection remains unclassified.",
+  "tests": [
+    {
+      "file": "results/core-proof-01.trx",
+      "sha256": "72c2d10ee233d64df28c663da25345be4c220f39f572152abff3001cb872e343",
+      "counters": {
+        "total": "49",
+        "executed": "49",
+        "passed": "49",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "tests": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_requires_each_bound_input_without_old_generic_identity_options(missing: \"C04A_REQUEST_PATH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"padded-database\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"long-server\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"too-many-ascii-bytes\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_requires_each_bound_input_without_old_generic_identity_options(missing: \"C04A_REQUEST_FILE_SHA256\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Invalid_request_anchor_or_challenge_is_rejected_before_SQL_option_parsing(scenario: \"null-request\", code: \"C04A_REQUEST_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Getter_only_values_cannot_be_forged_or_omitted(property: \"State\", value: \"Reopened\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_uses_only_bound_request_identity_and_sanitizes_refusal_before_SQL(scenario: \"malformed-challenge\", code: \"C04A_INVALID_OPTIONS\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_uses_only_bound_request_identity_and_sanitizes_refusal_before_SQL(scenario: \"empty-challenge\", code: \"C04A_SOURCE_PROOF_CHALLENGE_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Getter_only_values_cannot_be_forged_or_omitted(property: \"Format\", value: \"changed\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"wrong-case\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Invalid_request_anchor_or_challenge_is_rejected_before_SQL_option_parsing(scenario: \"wrong-anchor\", code: \"C04A_SOURCE_TARGET_SET_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Invalid_request_anchor_or_challenge_is_rejected_before_SQL_option_parsing(scenario: \"empty-challenge\", code: \"C04A_SOURCE_PROOF_CHALLENGE_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"whitespace-server\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Invalid_request_anchor_or_challenge_is_rejected_before_SQL_option_parsing(scenario: \"bad-request-hash\", code: \"C04A_REQUEST_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Getter_only_values_cannot_be_forged_or_omitted(property: \"ApprovalIndependentlyVerified\", value: \"true\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"uppercase-anchor-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"invalid-json\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"control-database\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_uses_only_bound_request_identity_and_sanitizes_refusal_before_SQL(scenario: \"unknown-request-property\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"null-request-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"null-document\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Getter_only_values_cannot_be_forged_or_omitted(property: \"SourceFrozenAtObservation\", value: \"false\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"unpaired-surrogate-server\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"nonhex-scope-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"duplicate-property\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_requires_each_bound_input_without_old_generic_identity_options(missing: \"C04A_PROOF_CHALLENGE\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"null-string\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Invalid_request_anchor_or_challenge_is_rejected_before_SQL_option_parsing(scenario: \"invalid-identity\", code: \"C04A_SOURCE_FROZEN_PROOF_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"too-many-utf8-bytes\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_uses_only_bound_request_identity_and_sanitizes_refusal_before_SQL(scenario: \"changed-file\", code: \"C04A_REQUEST_FILE_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Invalid_request_anchor_or_challenge_is_rejected_before_SQL_option_parsing(scenario: \"changed-request\", code: \"C04A_REQUEST_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"empty-challenge\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"null-server\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Getter_only_values_cannot_be_forged_or_omitted(property: \"Generation\", value: \"2\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_uses_only_bound_request_identity_and_sanitizes_refusal_before_SQL(scenario: \"wrong-anchor\", code: \"C04A_SOURCE_TARGET_SET_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Invalid_request_anchor_or_challenge_is_rejected_before_SQL_option_parsing(scenario: \"uppercase-anchor\", code: \"C04A_SOURCE_TARGET_SET_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"whitespace\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"alternate-escape\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"duplicate-getter\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"empty-database\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Getter_only_values_cannot_be_forged_or_omitted(property: \"CompleteWriteFenceVerified\", value: \"true\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Parse_accepts_only_bounded_canonical_PascalCase_bytes(scenario: \"unknown-property\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_requires_each_bound_input_without_old_generic_identity_options(missing: \"C04A_TARGET_SET_ANCHOR_SHA256\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Canonical_observation_preserves_identity_challenge_and_truthful_acceptance_flags",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"empty-run\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFrozenProofInputTests.Cli_requires_each_bound_input_without_old_generic_identity_options(missing: \"C04A_SQL_CONNECTION\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"empty-database-guid\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.SourceFrozenProofTests.Invalid_bindings_and_names_have_one_fixed_error(scenario: \"short-identity-hash\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/crm-package-01.trx",
+      "sha256": "7714afdc0ba2cf7ab095b63ef7fd7b5c66fa123f4b18d713dfacfb2c647deabc",
+      "counters": {
+        "total": "13",
+        "executed": "13",
+        "passed": "13",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "tests": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"reverse-files\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"file-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"missing-file\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"traversal\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"no-source\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"source-environment\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"extra-file\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"format\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"host-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"duplicate-file\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Package_and_source_handles_prevent_replacement_until_verifier_disposal",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"source-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.SourceProofPackageTests.Invalid_package_or_source_is_rejected_without_SQL_or_child_processes(scenario: \"source-duplicate\")",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/cross-activation-01.trx",
+      "sha256": "63522d6aa99b28bc55e9e92e2a055ba48da9ce544d5cbdfdc8f6cd4849960549",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "0",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "tests": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rolls_back_first_target_when_second_target_reuses_a_run",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_binds_three_live_sources_and_atomically_enables_two_targets_with_exact_replay",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rejects_source_drift_and_mixed_replay_without_enabling_any_remaining_target",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "file": "results/cross-rollback-02.trx",
+      "sha256": "2445fe8b03534537764fa20b821f96dbce98ed1f7624837d2667de3220239a44",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "0",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "tests": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rolls_back_first_target_when_second_target_reuses_a_run",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "file": "results/cross-rollback-03.trx",
+      "sha256": "f40f4fd8c2564baafd23361b7368d5e8e322072046ea4624cee941e3d9384214",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "0",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "tests": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rolls_back_first_target_when_second_target_reuses_a_run",
+          "outcome": "Failed"
+        }
+      ]
+    }
+  ],
+  "boundary": {
+    "currentFileCount": 444,
+    "currentSha256": "1b56c3c27130b4c53dc46fd71c8079b7209951bb31e715f1f79600e0cda75896",
+    "changedBytesUserSigned": false,
+    "actualActivation": false,
+    "productionDeployment": false
+  },
+  "cleanup": {
+    "atUtc": "2026-09-14T19:10:46.0059703+00:00",
+    "native": {
+      "atUtc": "2026-09-14T19:10:45.8701692+00:00",
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "docker": {
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "actualSourcesModified": false
+  },
+  "retainedCurrentFixtureDirectories": [
+    "CP6_C04A_Recovery_36a1531b1b1e491da58a61f192fbcf6d",
+    "CP6_C04A_Recovery_c02210bf20da49e4ac6cad1ec2c1f546"
+  ],
+  "oldAcceptedChecksReopened": false,
+  "actualActivation": false,
+  "changedBytesUserSigned": false,
+  "productionDeployment": false,
+  "goal": {
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "percent": 60
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "atCodeCommits": {
+    "core": "7667b693e0264b13c36adc4e9f09331ceceb6dc5",
+    "crm": "ff0bfbcfe05e0a4ce2883bd9d4fa36dcd5bc43f1"
+  },
+  "status": "static-review-complete; SQL behavior not accepted",
+  "reviewed": [
+    "Shared proof canonical parsing and bound original request",
+    "Exact package inventory and lifetime handles",
+    "Fixed child command, private environment and bounded output/cancellation",
+    "Single cross-database Serializable transaction and all target locks",
+    "Original Enable/Close operation reuse and whole-set replay checks",
+    "Approval/write-fence flags and actual-environment boundaries"
+  ],
+  "changedAfterInitialChecks": "Only fixed Core rejection identifiers were added to CRM child-error handling; package acceptance logic unchanged.",
+  "openFindings": [
+    "Required real SQL activation tests remain failed",
+    "Directly affected Enable/Close SQL checks not yet run"
+  ],
+  "externalTrustBoundary": "Reviewed package/activation request and local administrator/shared runtime; no production or actual-cutover approval"
+}
