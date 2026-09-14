@@ -1,0 +1,14 @@
+{
+  "status": "Passed",
+  "assemblySha256": "7860b3cc48989fad380e0022421b118b73b7f60f18469f21f7b23cfccdad4d0c",
+  "executedAtUtc": "2026-09-14T01:17:04.7110381+00:00",
+  "reusedRestoredAcceptanceSha256": "d1bc25d389c77ddbad38905a8f5c60dd54ef7709f778932d815c0c851188f6dd",
+  "checks": [
+    "actual-restored-copy-status-and-guards",
+    "actual-restored-copy-preflight",
+    "terminal-reopen-refusal"
+  ],
+  "reusedScope": "39 restored checks ran before narrow Reopened immediate-replay fix; final fix separately covered by 10 targeted SQL cases; these three commands execute final Release DLL",
+  "completeC04AAcceptance": false,
+  "sourceFenceRawSha256": "bceca897ddb33e19fb59fa7b47af15b6201962eadab9cf7ae1e3af4b7b4528f2"
+}

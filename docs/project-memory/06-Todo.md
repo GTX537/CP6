@@ -1,10 +1,20 @@
 # 当前待办与优先级
 
+## 2026-09-13：C04A 源端控制组件与真实空来源恢复演练
+
+CRM02 的本地合同确认已由 [CRM PR #68](https://github.com/GTX537/CP6.CRM/pull/68) 关闭，用户兼任三类负责人且暂无替补；后续技术工作不再重复索取这些确认。本次实现独立的[源端保护工具](../../tools/CP6.Crm.SourceFence/README.md)，只允许在本机独立恢复副本执行 20 表原子冻结、围栏前恢复、单调 generation/幂等重放及不可逆封口。
+
+[本地证据](../evidence/c04a/2026-09-13/README.md)记录 30 项真实 SQL 基础回归、审查修复后 10 项定向回归、13 项输入保护，以及实际 COPY_ONLY/CHECKSUM 备份恢复后的 39 项验证。最终 Release DLL 另执行三项真实副本冒烟。未改行为复用原执行来源，不把旧结果标为新代码重跑。源库 20 表仍为空、元数据未变，未安装源端保护；副本保留供检查。
+
+两项 P2 已修复：备份默认目录必须是无重解析点的本机固定磁盘路径；恢复写入后立即重试同一 Reopen 保持幂等。四份状态摘要移除旧 C03 技术测试金额的重复展示，以通过原有公开扫描；原验收报告、摘要与对账结论保留。
+
+**只完成源端组件和空来源恢复演练，C04A 整体仍未关闭。** 下一步继续目标物理 Schema/CRM11 适配，并补齐实际旧写入身份与作业盘点、排空、目标首笔写入接线和路由切换/回退。当前操作身份为 sysadmin，工具明确不宣称完整写入围栏；没有修改旧映射、现有预览、业务启动、生产配置或工作流。下方条目是历史检查点。
+
 ## 2026-09-12：C03 开发交付关闭，远端 main 已核验
 
 真实 SQL 联合回归 95/95、Core 单元/HTTP 153/153、CRM ERP 114/114 全部通过且无跳过。集中审查发现的行数/金额边界、报价与商品数量/计价单位、并发 Account 绑定、按租户重试、读取整体超时和权限覆盖均已修复；原始失败与结果哈希保留在[验证索引](../evidence/c03/2026-09-12/local-test-results.json)。
 
-[新一轮真实 Release 消息验收](../evidence/c03/2026-09-12/transport-attempt-4/README.md)七场景通过，新建 ERP SQL 库应用 135 个正式迁移，最终三张订单按币种对账为 JPY 600 / USD 300，并核验数量与计价单位。[本地发布证据](../evidence/c03/2026-09-12/local-release/README.md)绑定 Core `a51938f8`、CRM `b3adb17d`、864 个发布文件哈希和 3 项实际 CRM API HTTP 检查；执行后全部文件摘要一致。
+[新一轮真实 Release 消息验收](../evidence/c03/2026-09-12/transport-attempt-4/README.md)七场景通过，新建 ERP SQL 库应用 135 个正式迁移，最终三张订单已按币种完成金额对账，并核验数量与计价单位；具体金额保留在原始技术验收证据中。[本地发布证据](../evidence/c03/2026-09-12/local-release/README.md)绑定 Core `a51938f8`、CRM `b3adb17d`、864 个发布文件哈希和 3 项实际 CRM API HTTP 检查；执行后全部文件摘要一致。
 
 C03 已通过 [Core PR #105](https://github.com/GTX537/CP6/pull/105) 合入 `a9cf3abfa8fee13bda2c8f52c115c5adbf6ed917`，通过 [CRM PR #62](https://github.com/GTX537/CP6.CRM/pull/62) 合入 `362e6b1794c36e6e4abf9cd7eb7708a76e46c467`。[远端交付记录](../evidence/c03/2026-09-12/main-delivery.json)确认任务提交包含关系、完整 Git tree 相同、发布源码未变、37 个契约文件一致及 58 个归档摘要通过。合并 head/main 均无 Actions 运行；其他保护保留，原预览未替换。
 

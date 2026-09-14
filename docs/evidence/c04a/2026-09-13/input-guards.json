@@ -1,0 +1,71 @@
+{
+  "status": "Passed",
+  "checks": [
+    {
+      "name": "missing-connection",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "wrong-database",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "wrong-server",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "system-database",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "rehearsal-as-source",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "remote-server",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "existing-output",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "nonlocal-storage-7",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "nonlocal-storage-8",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "nonlocal-storage-9",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "nonlocal-storage-10",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "nonlocal-storage-11",
+      "passed": true,
+      "databaseConnected": false
+    },
+    {
+      "name": "existing-local-fixed-drive-accepted",
+      "passed": true,
+      "databaseConnected": false
+    }
+  ],
+  "createdOutputResources": false
+}
