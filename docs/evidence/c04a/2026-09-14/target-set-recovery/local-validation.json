@@ -1,0 +1,557 @@
+{
+  "format": "CP6.C04A.TargetSetRecovery.LocalValidation.v1",
+  "sourceBases": {
+    "core": "4210f3d7508338d66d8bf7594c1eff4893da0644",
+    "crm": "e930eb02c13472b177301f5103d3bb9d526e2ba4"
+  },
+  "codeCommits": {
+    "core": "0ca9e973ffb1766c46ba90d1ecfae33186e58432",
+    "crm": "8ca2f01554705527e53b570ed864f81e8a30fb7e"
+  },
+  "deliveryStatus": "draft-awaiting-required-check",
+  "newDistinctChecks": 60,
+  "newPassedChecks": 60,
+  "directlyAffectedPriorChecks": 2,
+  "directlyAffectedPassedChecks": 1,
+  "requiredChecksPending": [
+    "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Published_CLIs_recover_only_after_terminal_target_closure_and_hold_target_locks_through_source_commit"
+  ],
+  "mergeAllowed": false,
+  "skippedChecks": 0,
+  "runs": [
+    {
+      "name": "core-green-01",
+      "counters": {
+        "total": "56",
+        "executed": "56",
+        "passed": "56",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"duplicate-organization\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"unsorted\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"too-large\", code: \"C04A_REQUEST_TOO_LARGE\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_binds_every_terminal_receipt_and_its_canonical_anchor",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"null-target\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"unknown-root\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"duplicate-property\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"missing-connection\", code: \"C04A_RECOVERY_TARGET_CONNECTION_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"duplicate-receipt\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"wrong-format\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"too-many\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"unsorted\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"nested-connection\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"duplicate-organization\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"single\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"empty-variable-suffix\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"duplicate\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"null-anchor\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"empty\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"lowercase-variable\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"null-list\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"non-utc\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"literal-connection\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"duplicate-binding\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"generation\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"null-receipt\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"uppercase-binding\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"duplicate-root\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"too-many\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"unknown-target\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"empty\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Cli_rejects_bound_target_inputs_before_parsing_SQL_connections_and_sanitizes_output(operation: \"reopen-targets-actual\", scenario: \"changed-bytes\", code: \"C04A_REQUEST_FILE_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"long-variable-suffix\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"null-identity\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"wrong-targets-shape\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"protection-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"null-permit\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"too-many\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"missing-format\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"null-list\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"uppercase-receipt\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"changed-bytes\", code: \"C04A_REQUEST_FILE_MISMATCH\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"wrong-case\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Exact_file_resolves_private_environment_connections_without_serializing_them",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"permit-hash\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_has_fixed_canonical_Pascal_bytes_and_digest",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Cli_rejects_bound_target_inputs_before_parsing_SQL_connections_and_sanitizes_output(operation: \"recovery-status-targets-actual\", scenario: \"missing-connection\", code: \"C04A_RECOVERY_TARGET_CONNECTION_REQUIRED\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"empty\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"single\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Cli_rejects_bound_target_inputs_before_parsing_SQL_connections_and_sanitizes_output(operation: \"reopen-targets-actual\", scenario: \"unknown-target\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Cli_rejects_bound_target_inputs_before_parsing_SQL_connections_and_sanitizes_output(operation: \"recovery-status-targets-actual\", scenario: \"duplicate-property\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"null-document\", code: \"C04A_REQUEST_INVALID_JSON\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"unsorted\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Anchor_rejects_incomplete_or_ambiguous_sets(scenario: \"empty-organization\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTargetsInputTests.Bound_file_refuses_ambiguous_shapes_or_partial_target_sets_before_environment_resolution(scenario: \"duplicate-variable\", code: \"C04A_RECOVERY_TARGETS_INVALID\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.TargetRollbackSetTests.Receipt_validation_rejects_invalid_individual_proofs_and_sets(scenario: \"single\")",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "533637e7c34a79b7b3a52bc5b75ef010b563fa7ebb3808bb45efd474d474ddc0"
+    },
+    {
+      "name": "cross-green-01",
+      "counters": {
+        "total": "4",
+        "executed": "4",
+        "passed": "2",
+        "failed": "2",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Target_set_recovery_refuses_an_enabled_or_written_second_target_and_releases_partial_proof_locks",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Target_set_recovery_requires_source_membership_in_every_terminal_target_permit",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Target_set_recovery_binds_every_target_and_preserves_all_locks_until_source_commit(containerSource: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Target_set_recovery_binds_every_target_and_preserves_all_locks_until_source_commit(containerSource: False)",
+          "outcome": "Failed"
+        }
+      ],
+      "sha256": "5071e2cfb3617f4e9c04e24dc9645ad00470f3ed7aedfe5d5099ac6734fd9eeb"
+    },
+    {
+      "name": "cross-membership-02",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Target_set_recovery_requires_source_membership_in_every_terminal_target_permit",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "59a2725afd4486bb95128f49ff41a28b9bfe3f17e5074fe8fb0006a4dddccce5"
+    },
+    {
+      "name": "cross-native-02",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Target_set_recovery_binds_every_target_and_preserves_all_locks_until_source_commit(containerSource: False)",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "6de61ac7efe480b209a722094c98667324a486b0ed08a0ae06e9c32ba8b14f49"
+    },
+    {
+      "name": "cross-affected-01",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "0",
+        "failed": "2",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Wrong_source_binding_and_late_source_DDL_side_effects_never_release_frozen_source",
+          "outcome": "Failed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Published_CLIs_recover_only_after_terminal_target_closure_and_hold_target_locks_through_source_commit",
+          "outcome": "Failed"
+        }
+      ],
+      "sha256": "1007efe2d2c86abe763d29c778896bc598680a66f7ad897991f00e5f817d02b6"
+    },
+    {
+      "name": "cross-affected-ddl-02",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Wrong_source_binding_and_late_source_DDL_side_effects_never_release_frozen_source",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "368bce30bf3d429f9b3034c4157476bc5bc97dadfc19858438704822eef1f71d"
+    },
+    {
+      "name": "cross-affected-recovery-02",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "0",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Published_CLIs_recover_only_after_terminal_target_closure_and_hold_target_locks_through_source_commit",
+          "outcome": "Failed"
+        }
+      ],
+      "sha256": "7ae4c06a84a56cc9789737bbc80a19a16096cc039ba6c58e6fc47afa654c0a19"
+    }
+  ],
+  "review": {
+    "scope": "One concentrated read-only review across complete Core and CRM task code, followed by root delivery checks.",
+    "reviewer": "existing native_audit_review agent; no SQL/build/test execution",
+    "findings": [],
+    "unresolved": 0,
+    "covered": [
+      "Complete target set and per-target source membership",
+      "All target locks held before source open until source commit",
+      "Reverse cleanup on partial acquisition failure",
+      "No single-target downgrade of grouped sources",
+      "Strict bound JSON/env references and secret-safe diagnostics",
+      "Existing single-target canonical compatibility",
+      "Unique SQL fixture scope"
+    ]
+  },
+  "publishedFiles": 218,
+  "boundary": {
+    "protectedFiles": 438,
+    "currentSha256": "fe4d75a1a358d4d90b34cdd51ce2593b37be54b65ff33cabcfef9151d75f84ae",
+    "changedPaths": [
+      "contracts/c04a/TargetRollbackSet.cs",
+      "eng/c04a/CutoverRecoveryCliTests.cs",
+      "eng/c04a/TargetSetRecoveryCliTests.cs",
+      "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
+      "tools/Crm.CandidateAdoption/CrmCandidateOperatorCli.TargetSet.cs",
+      "tools/Crm.CandidateAdoption/CrmCandidateOperatorCli.cs"
+    ],
+    "reviewedProvisionerSha256": "cd36b470aa8965a8fbeedf2ab8dc1b1d37b41281fbb4cbaedac00e00684fc366"
+  },
+  "cleanup": {
+    "status": "pending-final-read-only-observation",
+    "verifiedFinalCleanup": false,
+    "reason": "A read-only native SQL connection timed out during the pre-login handshake; no final zero-residue observation is claimed.",
+    "previousExactOwnedDatabaseCleanup": "failed-fixture-cleanup.json",
+    "ownedTemporaryDirectoryRetained": true,
+    "temporaryDirectoryCleanupRejection": "blocked by policy",
+    "actualSourceOrTargetActivationPerformed": false
+  },
+  "setProtocolSha256": "7484d3ee8c7a5d6ec67f1c7e8ad6179d3f016b6c008ba6a992a1fb4e21421b71",
+  "intermediateFailures": [
+    "Initial four-scenario cross run passed Docker full-set recovery and Enabled/Written refusal. Two native-source scenarios failed in pre-existing source Freeze before set recovery (C04A_LOCK_TIMEOUT / C04A_SQL_FAILURE).",
+    "Both failed scenarios passed targeted re-execution with the identical published binaries, no product code or timeout changes. Read-only DMV observations during retry found no blocking session; root cause was not reproduced or proven. Original failed TRX/log retained.",
+    "The first affected-single-target run failed both cases with native pre-login handshake timeouts, including fixture cleanup. A read-only 5.1.9 client probe subsequently opened encrypted/optional shared-memory connections successfully. Four existing owned databases identified from that TRX and retained fixture configuration were removed explicitly.",
+    "The affected source-DDL atomicity check passed its unchanged-binary targeted retry. The affected single-target recovery check failed again: status expected C04A_RECOVERY_BINDING_MISSING but returned C04A_LOCK_TIMEOUT before the recovery assertions. It remains a required failed check, not a pass or skip.",
+    "SQL reported process_physical_memory_low=true with about 1 GiB available host memory. A later read-only connection also timed out during the pre-login handshake. Resource pressure is observed, but the precise cause of each timeout is not established. No product, configuration, timeout or shared-process changes were made, and no unrelated passing checks were repeated."
+  ],
+  "acceptance": {
+    "overallPercent": 60,
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "actualSourceFrozen": false,
+    "actualTargetAborted": false,
+    "actualActivation": false,
+    "changedBytesUserSigned": false,
+    "productionDeployment": false,
+    "completeWriteFenceVerified": false
+  },
+  "limitations": [
+    "One directly affected required check and the final cleanup observation remain pending; these changes must not be merged or described as delivered.",
+    "Minimal legacy columns validate multi-target coordination, not transformation of real migrated rows; Foundation schema behavior retains its previously recorded scope.",
+    "Complete set is explicitly inventoried by the execution package; code cannot infer unlisted targets or prove external administrator/process isolation.",
+    "No actual source/preview switch, CRM11 acceptance or C04B observation; forward enable and startup controls remain open."
+  ],
+  "localCleanupLimitation": {
+    "temporaryDirectoryRetained": true,
+    "reason": "Automatic approval review rejected recursive deletion of the exact owned failed-fixture directory: blocked by policy. SQL fixture databases were cleaned separately.",
+    "blocksCodeDelivery": false
+  },
+  "archiveMembers": {
+    "core-build-01.log": "1c4a37fd7fcfe91fe757c29f36032efeacb44a4c67166afeb3bfe1d1923c44d6",
+    "crm-build-01.log": "1195fb5fc09a46de87f62fe1f8a8e5a54fa6d33d469d056227404a69d6282433",
+    "core-publish-01.log": "9190b212299b4a436d5ae3fbe65263e24a8ab8590e535ccae4ae3673a162dfca",
+    "crm-publish-01.log": "bce9c4cc23a832857cec56b69e651f9792a6f1f1f808a1ef704b13beca06f24e",
+    "core-green-01.log": "971b1144ae7d563893f126686415fb426508362213cec4caf813f10f966367e1",
+    "cross-green-01.log": "84c9d04ae4f4ce718f9aea82c2ea77973983a42e52366f4e9e5a99b8896ce3df",
+    "cross-membership-02.log": "2fff09249fb28ea01979c6a7522447140e16699539227480a0475a7f418a9231",
+    "cross-native-02.log": "6213d243d0349f71147f70d55e6e662840de269a7da0fdf5f4160a821732212a",
+    "cross-affected-01.log": "f2aa69b918dd77270569d1d9c10ffec85707bcdb446a25aeef097d4d955a1274",
+    "cross-affected-ddl-02.log": "877b8bfc34e239d686d9578303a047fcc1efb1cd46fe1196d3b63b2b255ea847",
+    "cross-affected-recovery-02.log": "66f07ebeccbbd2e1c1485e43c2897132d01b6b88caec2f7e866b7dbda3e6a870",
+    "boundary-01.log": "484fd7515fea213f6a4d328ddae1b168573c164297c90f7fbdd2b493228e1f9b",
+    "run-cross.ps1": "ce8e46368ef44be3e57812f5ee84b891a0ffc018af62365da125990f98f7e66d",
+    "observe-cleanup.ps1": "494b27603e2b05646412995172f171e29c450a915b20c610d8d7a432cc871c9c",
+    "cleanup-observation.json": "b61aef2a0b2222df66cfe8d03206ac939549820aa19b50123d5b48be2eabe542",
+    "boundary-refresh.json": "28c7ce429ad7f322726ba51670abc35d68714ccaafc4444e732158a63cfc4563",
+    "review.json": "ac540c983d8f13499d1d88bf386bf444c9224426468b5e37720632cd776d17b0",
+    "publication-manifest.json": "2a402c2fdf6f1da6f53371f10d0efcc68ff576823028edb80b3254494b0aacff",
+    "container-binding.json": "e878b674e20e1a80e24ace058cde27ce6b05dc255ed7c0262c7343e8b3d72817",
+    "sql-wait-history.jsonl": "24aa3cf1a6edf548cf549bafef59cee19dfd80d7dee2c19d4f361b3938c80795",
+    "connection-probe.jsonl": "db1d498854c4a59f284275305463ae96db9438687b1a7df35f14629e1221c35e",
+    "failed-fixture-cleanup.json": "2579963017946c4d11df07c47e942c9867d5fbec1942b60b04aaf9fe86d158cc",
+    "native-memory-observation.json": "9bce650740a27ca1f3889c386661d7deb3fb9b1850d7292779ceeff29f0bccb5",
+    "native-memory-recheck.json": "503461b4e7623665b2cc9eafa3d1d666f021f02fa0aea1831b7c32206c4446db",
+    "results/core-green-01.trx": "533637e7c34a79b7b3a52bc5b75ef010b563fa7ebb3808bb45efd474d474ddc0",
+    "results/cross-green-01.trx": "5071e2cfb3617f4e9c04e24dc9645ad00470f3ed7aedfe5d5099ac6734fd9eeb",
+    "results/cross-membership-02.trx": "59a2725afd4486bb95128f49ff41a28b9bfe3f17e5074fe8fb0006a4dddccce5",
+    "results/cross-native-02.trx": "6de61ac7efe480b209a722094c98667324a486b0ed08a0ae06e9c32ba8b14f49",
+    "results/cross-affected-01.trx": "1007efe2d2c86abe763d29c778896bc598680a66f7ad897991f00e5f817d02b6",
+    "results/cross-affected-ddl-02.trx": "368bce30bf3d429f9b3034c4157476bc5bc97dadfc19858438704822eef1f71d",
+    "results/cross-affected-recovery-02.trx": "7ae4c06a84a56cc9789737bbc80a19a16096cc039ba6c58e6fc47afa654c0a19"
+  },
+  "archiveSha256": "d59a5c24b407032217c15b57675da7147e795e4b994bb9af813ccc54db6ba248"
+}
