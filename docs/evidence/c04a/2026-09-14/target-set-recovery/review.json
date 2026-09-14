@@ -1,0 +1,15 @@
+{
+  "scope": "One concentrated read-only review across complete Core and CRM task code, followed by root delivery checks.",
+  "reviewer": "existing native_audit_review agent; no SQL/build/test execution",
+  "findings": [],
+  "unresolved": 0,
+  "covered": [
+    "Complete target set and per-target source membership",
+    "All target locks held before source open until source commit",
+    "Reverse cleanup on partial acquisition failure",
+    "No single-target downgrade of grouped sources",
+    "Strict bound JSON/env references and secret-safe diagnostics",
+    "Existing single-target canonical compatibility",
+    "Unique SQL fixture scope"
+  ]
+}
