@@ -36,7 +36,7 @@ dotnet <published-directory>/CP6.Crm.SourceFence.dll status-actual
 
 四份审核材料摘要只是防漂移引用。工具不验证签名，不自行批准内容，也不证明服务、SQL Agent、管理员、容器或启动路径已被隔离。所有完整写入围栏、目标 Closed 独立验证、批准独立验证和恢复集成标志保持 false。
 
-`reopen-actual` / `seal-forward-only-actual` 明确返回 `C04A_TARGET_ROLLBACK_COORDINATOR_REQUIRED`；库没有对应公开方法。不能把人工给出的目标证据摘要当作“没有首写”的可持续证明。后续协调器须在目标关闭、首写状态和路由恢复验证下接通安全重新开放；首写之后只能前滚。
+`reopen-actual` 已由[首写前恢复协调](ACTUAL-RECOVERY.md)接通，必须提供精确恢复请求并直接核验永久终止的 CRM 目标。缺少协调输入或调用 `seal-forward-only-actual` 仍返回 `C04A_TARGET_ROLLBACK_COORDINATOR_REQUIRED`。不能把人工给出的目标摘要当作“没有首写”的可持续证明；首次写入后只能前滚，实际路由与进程恢复仍须另行控制。
 
 因此**本组件尚不能单独执行完整实际切换**。先完成跨源排空、目标门禁与路由恢复包并进行恢复验证，再让 owner 审批具体实际执行。不得用旧 rehearsal 接口、删除回执或手工撤销权限绕过这一缺口。
 
