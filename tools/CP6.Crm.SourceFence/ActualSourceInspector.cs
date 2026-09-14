@@ -130,8 +130,8 @@ public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
         if (excludeVerifiedFence)
         {
             var tableIds = string.Join(',', SourceFence.Tables.Select(t => $"OBJECT_ID(N'dbo.{t}')"));
-            var guardIds = string.Join(',', SourceFence.Tables.Select(t => $"OBJECT_ID(N'dbo.C04A_Fence_{t}')"))
-                + ",OBJECT_ID(N'crm_source_control.C04A_Audit_AppendOnly')";
+            var guardIds = string.Join(',', SourceFence.Tables.Select(t => $"COALESCE(OBJECT_ID(N'dbo.C04A_Fence_{t}'),-1)"))
+                + ",COALESCE(OBJECT_ID(N'crm_source_control.C04A_Audit_AppendOnly'),-1)";
             security = security.Replace("FROM sys.database_permissions ORDER BY", $"FROM sys.database_permissions WHERE NOT (grantee_principal_id=DATABASE_PRINCIPAL_ID(N'public') AND grantor_principal_id=1 AND minor_id=0 AND state='D' AND permission_name IN ('INSERT','UPDATE','DELETE','ALTER') AND ((class=1 AND major_id IN ({tableIds})) OR (class=3 AND major_id=SCHEMA_ID(N'crm_source_control')))) ORDER BY", StringComparison.Ordinal)
                 .Replace("FROM sys.schemas ORDER BY", "FROM sys.schemas WHERE name<>N'crm_source_control' ORDER BY", StringComparison.Ordinal);
             programs = programs.Replace("WHERE m.object_id IS NOT NULL OR o.type IN ('PC','FS','FT','TA') ORDER BY",

@@ -1,0 +1,224 @@
+{
+  "format": "CP6.C04A.CutoverRecovery.LocalValidation.v1",
+  "codeCommits": {
+    "core": "de0ac32296cb487713d5f913db9eeff6ee72d71f",
+    "crm": "b42a970a327187b82586da6eacf9447ab75e881d"
+  },
+  "sourceBases": {
+    "core": "fa0b58b405b230037563a646d98c022227391175",
+    "crm": "3dab2c45de7212a23d6116f580e683e2c97e2bd0"
+  },
+  "newDistinctChecks": 16,
+  "directlyAffectedPriorChecks": 1,
+  "skippedChecks": 0,
+  "runs": [
+    {
+      "name": "crm-green-01",
+      "counters": {
+        "total": "4",
+        "executed": "4",
+        "passed": "4",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.BusinessSqlTests.TargetRollbackFenceSqlTests.Changed_request_target_or_protection_cannot_be_replayed_or_verified",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.BusinessSqlTests.TargetRollbackFenceSqlTests.Late_receipt_failure_rolls_back_terminal_trigger_and_leaves_original_gate_valid",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.BusinessSqlTests.TargetRollbackFenceSqlTests.Terminal_close_blocks_old_enable_and_direct_control_writes_but_preserves_other_schemas",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.BusinessSqlTests.TargetRollbackFenceSqlTests.First_write_and_enabled_targets_cannot_issue_terminal_receipts",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "a10e19fb533b1c1441649ccccc649a3225d98edf46d0763d1e9cd3acd13aafb2"
+    },
+    {
+      "name": "core-green-01",
+      "counters": {
+        "total": "11",
+        "executed": "11",
+        "passed": "11",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Invalid_terminal_receipts_have_only_protocol_errors(value: \"{\\\"unknown\\\":true}\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Recovery_request_binds_exact_bytes_and_rejects_ambiguous_documents(scenario: \"duplicate\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Recovery_request_binds_exact_bytes_and_rejects_ambiguous_documents(scenario: \"format\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Recovery_request_binds_exact_bytes_and_rejects_ambiguous_documents(scenario: \"valid\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Invalid_terminal_receipts_have_only_protocol_errors(value: \"null\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Invalid_terminal_receipts_have_only_protocol_errors(value: \"{\\\"Permit\\\":null}\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Recovery_request_binds_exact_bytes_and_rejects_ambiguous_documents(scenario: \"unknown\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Missing_live_terminal_target_proof_leaves_actual_foundation_source_frozen",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Cli_binds_exact_file_bytes_and_rejects_actual_reopen",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Recovery_request_binds_exact_bytes_and_rejects_ambiguous_documents(scenario: \"empty-run\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceRecoveryTests.Recovery_request_binds_exact_bytes_and_rejects_ambiguous_documents(scenario: \"wrong-file-hash\")",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "de471bd7e5a23b235ca6535b21bf65d3f3114fab42de6536d7c06dc27990e323"
+    },
+    {
+      "name": "cross-green-01",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "2",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Published_CLIs_recover_only_after_terminal_target_closure_and_hold_target_locks_through_source_commit",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Wrong_source_binding_and_late_source_DDL_side_effects_never_release_frozen_source",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "ca1c17f6f58c11f0b0819280505fe2d64f999bd6d171d1beed99e59b31a67dc4"
+    }
+  ],
+  "review": {
+    "scope": "One concentrated read-only code review across both repositories, followed by scoped R1 fix inspection.",
+    "reviewer": "existing native_audit_review agent; no SQL/build/test execution",
+    "findings": [
+      {
+        "id": "R1",
+        "priority": "P2",
+        "issue": "New rollback request accepted ignored nested Format and duplicate case-insensitive names.",
+        "fix": "Read original bound bytes as JsonElement; recursively reject duplicate names under OrdinalIgnoreCase; validate nested Permit.Format before typed parsing.",
+        "status": "closed",
+        "validation": "Both rejection variants execute published CRM CLI in cross-green-01; original target stays Closed."
+      }
+    ],
+    "unresolved": 0,
+    "additionalRootCheck": "Core Git attributes pin mirrored protocol to LF, matching existing CRM checkout policy. No compiled content change."
+  },
+  "publishedFiles": 218,
+  "protocolSha256": "65a5a280b39fccb8bdb7d472415fe5361228926e9b63633f2cb934270b713e03",
+  "cleanup": {
+    "atUtc": "2026-09-14T16:14:39.9176011+00:00",
+    "remainingTestDatabases": 0,
+    "actualSourceControlSchemas": 0
+  },
+  "knownIntermediateFailures": [
+    "CRM initial red compile: new protocol namespace/API absent before implementation.",
+    "Local cleanup observer initially used PowerShell-adapted SqlConnectionStringBuilder property access; rejected before connection, corrected to explicit setter methods. No product or SQL changes."
+  ],
+  "acceptance": {
+    "overallPercent": 60,
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "actualSourceFrozen": false,
+    "actualTargetAborted": false,
+    "actualActivation": false,
+    "changedBytesUserSigned": false,
+    "productionDeployment": false
+  },
+  "reuse": "CRM target tests preserve their pre-CLI-fix binary scope; Core 11 checks use built DLLs; cross-repository 2 checks execute final published tools. Unaffected earlier suites retained, not rerun.",
+  "limitations": [
+    "Minimal legacy column fixture only validates coordination; Foundation source refusal test separately uses actual migration DDL.",
+    "Target SQL protection does not isolate sysadmin, process startup paths or routing. Native/Docker lifecycle and forward activation remain required.",
+    "No actual migration/cutover, CRM11 acceptance or C04B observation. No GitHub Actions started."
+  ],
+  "archiveMembers": {
+    "core-build-01.log": "0f6a5141e8d613f9982660c216243a6f2832c5a6dc62b53fd3f740387118b066",
+    "core-green-01.log": "90c986642d4503ead88367f789dfe63fb5f07f160f975259de1caf972de4a7a3",
+    "core-publish-01.log": "f4ea095b3924689c99d50d176549f12c40c785bbf0c0d204a7aba4f6602ac204",
+    "core-tests-build-01.log": "bd32cc401dbc1195630fde58d9f36dfa5c17cf0ed14c2bba641e1e512c3ed64a",
+    "crm-boundary-check.log": "d93289f6ccbfd311faa97673697eea553b893cdd706f2023ca6ea5295f1b3ce9",
+    "crm-build-01.log": "55f8be9fb380c2e7652535e17a528cdabd206dea6660855098d7c410ae2931f6",
+    "crm-green-01.log": "a43137db16f741ee163731c7146eb6e0c45ba64477423fe770c1497de4d54213",
+    "crm-publish-01.log": "d2f1ee33ede1a3284e41d009f602c07825461f3ca423308fe0abdb4f2d1a037c",
+    "crm-red-build.log": "66db7ff93eebd4d6f1c27e882bbc851245aab43bcf48993833f0d438605999e5",
+    "cross-build-01.log": "5e248fc93a1531c7c10eb936d872b8fe07e4ecec6be8cb73d70218bb76f40001",
+    "cross-build-02.log": "289932800db12b8a3af09f272c99f01ff19736affad2f62c10caa71ba4700e4e",
+    "cross-green-01.log": "c568c7048f63d11d0e974c8ee9a22c24a50d027328bb7a3637bef5d52d646cf4",
+    "results/core-green-01.trx": "de471bd7e5a23b235ca6535b21bf65d3f3114fab42de6536d7c06dc27990e323",
+    "results/crm-green-01.trx": "a10e19fb533b1c1441649ccccc649a3225d98edf46d0763d1e9cd3acd13aafb2",
+    "results/cross-green-01.trx": "ca1c17f6f58c11f0b0819280505fe2d64f999bd6d171d1beed99e59b31a67dc4",
+    "run-cross.ps1": "081ec210ca3f4d40232dd4b586d759885b543d2002796d9b9fabd1858102c62f",
+    "observe-cleanup.ps1": "4ba08820bccd1d3ff58273a0b9e7968d026ef05db41e4446087745e825fb6fa6",
+    "cleanup-observation.json": "2221dce1678c99554a30e84581c83188a06cad8abf8a8e9cd56e6c7efd8520dc",
+    "boundary-refresh.json": "6668d5cf81e39e03ad395d20755516809173cc65fe22df5b0e75cad5990de166",
+    "review.json": "e4ddbfebb58e89c7b8ae7a03e7cd90267516ec54101317cb37202a2c6b3a220e",
+    "publication-manifest.json": "05c45372e03054a384934c46e842cd4a9089c2f1dbfa4fb7dfbd2e4d77aa23e3",
+    "changed-files-check.json": "7ed9a1de939a74e67478db3b6b4fd396337a2109909d45fd7ffc3ed200e98b79"
+  },
+  "archiveSha256": "6ca7455035f09f74d20261f7e35c56909c1a26d2b68467dbbd20d17bd16aea57"
+}

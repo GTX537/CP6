@@ -27,11 +27,11 @@ public sealed record ActualSourceFreezeStatus(SourceFenceStatus Fence, string Re
 }
 
 /// <summary>
-/// Actual local source first freeze and receipt verification. Reopening is intentionally absent:
-/// an actual rollback needs a target gate / route coordinator, not an evidence hash supplied here.
+/// Actual local source freeze and recovery. Recovery requires live terminal target proof;
+/// lifecycle isolation, routing and approval remain separate execution prerequisites.
 /// The existing rehearsal entry cannot mutate any catalog carrying this actual-source receipt.
 /// </summary>
-public sealed class ActualSourceFreezer(ActualSourceInspectionOptions options)
+public sealed partial class ActualSourceFreezer(ActualSourceInspectionOptions options)
 {
     private const string Marker = "CP6.C04A.ActualSourceFreeze.v1";
     private static readonly JsonSerializerOptions StrictJson = new() { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };

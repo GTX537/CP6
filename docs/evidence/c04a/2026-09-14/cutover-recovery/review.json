@@ -1,0 +1,16 @@
+{
+  "scope": "One concentrated read-only code review across both repositories, followed by scoped R1 fix inspection.",
+  "reviewer": "existing native_audit_review agent; no SQL/build/test execution",
+  "findings": [
+    {
+      "id": "R1",
+      "priority": "P2",
+      "issue": "New rollback request accepted ignored nested Format and duplicate case-insensitive names.",
+      "fix": "Read original bound bytes as JsonElement; recursively reject duplicate names under OrdinalIgnoreCase; validate nested Permit.Format before typed parsing.",
+      "status": "closed",
+      "validation": "Both rejection variants execute published CRM CLI in cross-green-01; original target stays Closed."
+    }
+  ],
+  "unresolved": 0,
+  "additionalRootCheck": "Core Git attributes pin mirrored protocol to LF, matching existing CRM checkout policy. No compiled content change."
+}
