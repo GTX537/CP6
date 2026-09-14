@@ -1,0 +1,107 @@
+{
+  "format": "CP6.C04A.LocalStartupControl.LocalValidation.v1",
+  "sourceBaseSha": "e930eb02c13472b177301f5103d3bb9d526e2ba4",
+  "sourceCodeCommit": "5ef103922b308617b12fb9311e90b16451b68b0a",
+  "newDistinctChecks": 8,
+  "directlyAffectedPriorChecks": 1,
+  "passedChecks": 9,
+  "failedChecks": 0,
+  "skippedChecks": 0,
+  "cases": [
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.Inactive_only_cli_inventory_retires_scripts_and_assembly_copies_and_replays_without_restoring_them",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.Inactive_inspection_rejects_relative_noncanonical_and_unsupported_entry_paths",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.A_mixed_inventory_rejects_duplicate_paths_and_a_later_inactive_start_before_changing_any_member",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.Changed_inactive_bytes_reject_the_entire_inventory_without_stopping_its_active_member",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalDrainTests.Running_dotnet_assembly_is_retired_and_restart_is_blocked",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.An_owned_node_entry_is_inspected_readonly_then_persistently_retired(delimiter: True)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.Another_node_process_mentioning_a_path_as_business_data_does_not_own_that_entry",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.An_owned_node_entry_is_inspected_readonly_then_persistently_retired(delimiter: False)",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.WindowsLocalStartupControlTests.Active_only_cli_inventory_preserves_the_original_json_shape_and_evidence_digest",
+      "outcome": "Passed"
+    }
+  ],
+  "sqlUsed": false,
+  "sharedPreviewProcessesUnchanged": 6,
+  "sharedPreviewFilesUnchanged": 8,
+  "cleanup": {
+    "atUtc": "2026-09-14T18:08:40.3488525+00:00",
+    "remainingOwnedFixtureDirectories": 0,
+    "remainingOwnedFixtureProcesses": 0,
+    "sqlNotUsed": true
+  },
+  "boundary": {
+    "currentFileCount": 435,
+    "currentSha256": "38b44a1c1eba517041bb99833965f0c431f7250ee3e95e68ec0ff98a4ac7c45f",
+    "changedBytesUserSigned": false,
+    "actualActivation": false,
+    "productionDeployment": false
+  },
+  "review": {
+    "reviewer": "Root agent concentrated review of the complete task diff and test scope",
+    "unresolved": 0,
+    "findings": [],
+    "covered": [
+      "Whole-inventory prevalidation and path uniqueness",
+      "No identity fabricated for inactive entries",
+      "Node entry position and private command-line handling",
+      "Inactive startup races and persistent retirement replay",
+      "Existing JSON, marker and evidence compatibility",
+      "Owned-process and temporary-directory cleanup"
+    ]
+  },
+  "publishedFileCount": 178,
+  "acceptance": {
+    "overallPercent": 60,
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "actualActivation": false,
+    "changedBytesUserSigned": false,
+    "productionDeployment": false
+  },
+  "limitations": [
+    "Explicit inventory does not prove administrator isolation or absence of unknown startup copies, wrappers or dynamically loaded readers.",
+    "Actual preview was observed only and was not retired or switched. Recovery-host dependency compatibility and privileged-writer controls remain open.",
+    "Earlier target-set recovery draft PRs Core #112 and CRM #73 retain their failed required SQL check and final cleanup observation. This task does not pass or supersede those gates.",
+    "Verified forward enable, final execution package/approval, actual CRM11 acceptance and C04B observation remain open."
+  ],
+  "archiveSha256": "6dcfb637e0b40afa3838a62e80a05e88a93caf6e6065f6241106b2bbca3323df",
+  "archiveMembers": {
+    "build-01.log": "66f639c3717278bb78b8bf7667469667675ff459ab2fb37c1fd42112b03a834b",
+    "publish-01.log": "e1cab413b018f1eafd68702357d8518dadb573f2dffe054b70f06615ce2ea086",
+    "startup-green-01.log": "d473ff078e1bb492d7cb4539e9a9adbbd8f59d9f6869e21593b288dc951cead2",
+    "results/startup-green-01.trx": "e9a24a08c19ca8bd778088aa3c492469853d61a35e25ecc72baff51dd94999c3",
+    "boundary-01.log": "ff71063014681ade33e3a20377f476e38d9109d2c6322b8aba063cf35cba6947",
+    "boundary-refresh.json": "d8bb663f1d20ba56834c78d8c6b0ee157292add1629eb396458556db94ed7b7e",
+    "preview-before.json": "12321fc1e2421c95ebda813481955999a13f369755548dde8061ffee25860a30",
+    "preview-after.json": "ce46c74e3b2745a62781340e69a389227489f53d63572525122f5f6502a63c05",
+    "cleanup.json": "d6575755e7e4da1cb223cca0c4640068d3b8d0f0f3e114557163c6c8a36224cf",
+    "review.json": "92c1bfdce6d3d0c005cd22b5655238ef17767f85926550b4787589cad6019ea5",
+    "publication-manifest.json": "65b6587f315c7a0b5a953cff6458cc5c6d8ccbb1d886f1a5e831be75aab1fd5e",
+    "observe-preview.ps1": "e60ee3d1ef628db11c4d6de1dd3e1f9e597c40f3478e011b3be31dd97e7f5857"
+  }
+}
