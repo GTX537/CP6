@@ -1,0 +1,79 @@
+{
+  "format": "CP6.C04A.PreviewRecoveryHost.Publication.v1",
+  "crmCodeCommit": "93da582661c707c190eb51f4992d3a9e0886d336",
+  "publications": {
+    "host": {
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-preview-recovery-host\\host",
+      "fileCount": 5,
+      "files": [
+        {
+          "path": "Crm.LocalPreviewHost.deps.json",
+          "sha256": "9a86a47d353f332e96e917e4667e1a381a4b9e5014161caaa77b1419a5597d4e",
+          "size": 452
+        },
+        {
+          "path": "Crm.LocalPreviewHost.dll",
+          "sha256": "66d580bcf91b55086dd8775facc3f564ec30733a3a4ed26550ff283239683dd8",
+          "size": 62464
+        },
+        {
+          "path": "Crm.LocalPreviewHost.exe",
+          "sha256": "1727c2a72b23ff52a149d18dca1c8943ff801b1785f83a9f3d9b61fc58c4236a",
+          "size": 152064
+        },
+        {
+          "path": "Crm.LocalPreviewHost.pdb",
+          "sha256": "579d4eb5c870a35e4e19880092a5d957e62633dc3afa55b42769dbb16d8dc2cb",
+          "size": 30080
+        },
+        {
+          "path": "Crm.LocalPreviewHost.runtimeconfig.json",
+          "sha256": "9fd574d18b66ff801e2934adf8397e67d2f237ef284452251177a05dd3236350",
+          "size": 455
+        }
+      ]
+    },
+    "fixture": {
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-preview-recovery-host\\fixture",
+      "fileCount": 7,
+      "files": [
+        {
+          "path": "CP6.CRM.PreviewHostProcessFixture.deps.json",
+          "sha256": "f8571d438fb2701294e611613f415871191a56eaae9b7af684a415058bdc0931",
+          "size": 491
+        },
+        {
+          "path": "CP6.CRM.PreviewHostProcessFixture.dll",
+          "sha256": "4a535c4439d51ba3e43744dd86b6f4e9101f0f3601a05f5ff5f21ac8d785eec4",
+          "size": 14848
+        },
+        {
+          "path": "CP6.CRM.PreviewHostProcessFixture.exe",
+          "sha256": "4fd443ad368439031572b5d6a72d3aad06a5e89feca6f610ed036213f47b0bae",
+          "size": 152064
+        },
+        {
+          "path": "CP6.CRM.PreviewHostProcessFixture.pdb",
+          "sha256": "b4ead97f8e5cddfd284d0c02c71ea80171c5d28c7ec54c3331c90d3bf94e4ec5",
+          "size": 22304
+        },
+        {
+          "path": "CP6.CRM.PreviewHostProcessFixture.runtimeconfig.json",
+          "sha256": "2927e7d9a65748a82c4f265a0c9c1876a5ee233d9f5283881e0966e81ca94e14",
+          "size": 488
+        },
+        {
+          "path": "CP6.CRM.PreviewHostProcessFixture.staticwebassets.endpoints.json",
+          "sha256": "c1686417e8d5c31bba969f12b6f3d2b35e6609adb5ca42f212261a3a02771aac",
+          "size": 53
+        },
+        {
+          "path": "web.config",
+          "sha256": "fc035282ac9230d17e663b0d351775a27822d37cc7a2a7855f3606ee6fdb81fb",
+          "size": 519
+        }
+      ]
+    }
+  },
+  "hostDependencies": "shared .NET/ASP.NET frameworks only"
+}

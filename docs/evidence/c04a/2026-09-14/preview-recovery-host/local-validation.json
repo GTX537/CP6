@@ -1,0 +1,118 @@
+{
+  "format": "CP6.C04A.PreviewRecoveryHost.Development.v1",
+  "crmCodeCommit": "93da582661c707c190eb51f4992d3a9e0886d336",
+  "status": "development-validation-passed; Git delivery recorded separately",
+  "mergeAllowed": true,
+  "newChecks": 17,
+  "passed": 17,
+  "failed": 0,
+  "skipped": 0,
+  "sqlUsed": false,
+  "checks": [
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Published_host_reuses_inputs_for_four_roles_relays_exact_callbacks_and_stops_owned_processes",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Existing_live_role_record_is_preserved_and_its_process_is_not_touched",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"reverse-inputs\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Concurrent_host_is_rejected_without_modifying_the_running_owner",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Stop_during_core_startup_prevents_later_roles_and_releases_input_handles",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Child_failure_after_ready_stops_every_other_owned_role",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"missing-input\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Existing_stop_marker_prevents_every_child_and_is_never_removed",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Cancellation_during_readiness_cleans_started_child_without_clearing_stop_state",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"manifest-hash\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"input-bytes\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"fixture-hash\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Startup_child_failure_returns_fixed_error_and_cleans_host_record",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"unknown-field\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"duplicate-field\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"duplicate-input\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.PreviewHostTests.PreviewHostTests.Changed_or_ambiguous_request_is_rejected_before_any_process_starts(scenario: \"request-hash\")",
+      "outcome": "Passed"
+    }
+  ],
+  "boundary": {
+    "currentFileCount": 446,
+    "currentSha256": "7a3e6fdb14103854f8a2024fee5a405b754cc72176792b9b886f1654ed04a734",
+    "changedBytesUserSigned": false,
+    "actualActivation": false,
+    "productionDeployment": false
+  },
+  "cleanup": {
+    "atUtc": "2026-09-14T19:52:56.2674536+00:00",
+    "ownedProcesses": 0,
+    "ownedTemporaryDirectories": 0,
+    "sqlUsed": false,
+    "actualPreviewReplaced": false
+  },
+  "actualManifestReadOnlyInspection": {
+    "boundEssentialInputs": 18,
+    "sourceManifestSha256": "4e3be653593b7a361aedfbc530d7f3962e1188abc029d63e14313319d1cd093c",
+    "fixtureSha256": "adc7ee5f86c677df61e1880668c44695b5c831b8db3bec033c8e1c5577f4deca"
+  },
+  "preservedPreview": {
+    "processes": 6,
+    "publicEntryAndControlFiles": 8,
+    "unchangedComparedWithPreviousTask": true
+  },
+  "unrelatedPassingChecksRerun": false,
+  "actualActivation": false,
+  "changedBytesUserSigned": false,
+  "productionDeployment": false,
+  "pendingIndependentDrafts": [
+    "https://github.com/GTX537/CP6/pull/114",
+    "https://github.com/GTX537/CP6.CRM/pull/75"
+  ],
+  "goal": {
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "percent": 60
+  }
+}
