@@ -18,15 +18,21 @@ internal sealed class SqlFixture : IAsyncDisposable
         "Crm_PublicRoute", "Crm_PublicSubmission", "Crm_Site", "Crm_SitePage", "Crm_SourceTouch", "Crm_StageHistory"
     ];
     private readonly string admin;
-    internal string Name { get; } = "CP6_C04A_Rehearsal_Test_" + Guid.NewGuid().ToString("N");
+    private readonly string prefix;
+    internal string Name { get; }
     internal string ConnectionString { get; private set; } = "";
     internal SourceFenceOptions Options { get; private set; } = null!;
     internal SourceFence Fence => new(Options);
     private bool created;
 
-    private SqlFixture(string admin) => this.admin = admin;
+    private SqlFixture(string admin, bool inspection)
+    {
+        this.admin = admin;
+        prefix = inspection ? "CP6_C04A_Inspection_Test_" : "CP6_C04A_Rehearsal_Test_";
+        Name = prefix + Guid.NewGuid().ToString("N");
+    }
 
-    internal static async Task<SqlFixture> CreateAsync()
+    internal static async Task<SqlFixture> CreateAsync(bool inspection = false)
     {
         var admin = Environment.GetEnvironmentVariable("C04A_TEST_SQL_CONNECTION");
         if (string.IsNullOrWhiteSpace(admin))
@@ -34,7 +40,7 @@ internal sealed class SqlFixture : IAsyncDisposable
         var builder = new SqlConnectionStringBuilder(admin);
         if (!string.Equals(builder.InitialCatalog, "master", StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Test administrator connection must explicitly select master.");
-        var fixture = new SqlFixture(admin);
+        var fixture = new SqlFixture(admin, inspection);
         await using var connection = new SqlConnection(admin);
         await connection.OpenAsync();
         using var identity = new SqlCommand("SELECT CAST(SERVERPROPERTY('MachineName') AS nvarchar(128));", connection);
@@ -92,8 +98,8 @@ internal sealed class SqlFixture : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         if (!created) return;
-        if (!Name.StartsWith("CP6_C04A_Rehearsal_Test_", StringComparison.Ordinal) ||
-            !Guid.TryParseExact(Name["CP6_C04A_Rehearsal_Test_".Length..], "N", out _))
+        if (!Name.StartsWith(prefix, StringComparison.Ordinal) ||
+            !Guid.TryParseExact(Name[prefix.Length..], "N", out _))
             throw new InvalidOperationException("Refusing cleanup of an unowned database.");
         SqlConnection.ClearAllPools();
         await using var connection = new SqlConnection(admin);

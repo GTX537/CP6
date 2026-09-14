@@ -5,12 +5,21 @@ using CP6.Crm.SourceFence;
 var json = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 try
 {
-    if (args.Length != 1 || args[0] is not ("status" or "preflight" or "freeze" or "reopen" or "seal-forward-only"))
+    if (args.Length != 1 || args[0] is not ("status" or "preflight" or "freeze" or "reopen" or "seal-forward-only" or "inspect-actual"))
         throw new SourceFenceException("C04A_INVALID_COMMAND");
     var options = new SourceFenceOptions(Required("C04A_SQL_CONNECTION"), Required("C04A_EXPECTED_DATABASE"),
         Guid.Parse(Required("C04A_EXPECTED_DATABASE_GUID")),
         int.Parse(Environment.GetEnvironmentVariable("C04A_LOCK_TIMEOUT_MS") ?? "5000", CultureInfo.InvariantCulture),
         int.Parse(Environment.GetEnvironmentVariable("C04A_COMMAND_TIMEOUT_SECONDS") ?? "30", CultureInfo.InvariantCulture));
+    if (args[0] == "inspect-actual")
+    {
+        var inspector = new ActualSourceInspector(new(options.ConnectionString, options.ExpectedDatabaseName,
+            options.ExpectedDatabaseGuid, Required("C04A_EXPECTED_SERVER_NAME"),
+            Environment.GetEnvironmentVariable("C04A_EXPECTED_SCOPE_SHA256"), options.LockTimeoutMilliseconds,
+            options.CommandTimeoutSeconds));
+        Console.WriteLine(JsonSerializer.Serialize(await inspector.InspectAsync(), json));
+        return 0;
+    }
     var fence = new SourceFence(options);
     SourceFenceStatus status;
     if (args[0] == "status") status = await fence.StatusAsync();

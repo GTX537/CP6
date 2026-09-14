@@ -2,6 +2,8 @@
 
 This standalone .NET 8 library and CLI rehearses source-write fencing on **local, isolated copies**. It does not modify application startup, EF mappings, production migrations, routes, target writes, ERP/C01/C02 behavior, or release workflows. It does not close C04A.
 
+The separate [`inspect-actual` command](ACTUAL-INSPECTION.md) can read an explicitly identified actual local source. It has no mutation API and does not relax the rehearsal-only checks below. A matching inspection scope is not approval to freeze, migrate, switch routes or reopen.
+
 Only a database whose exact name starts with `CP6_C04A_Rehearsal_` is accepted. The caller must also supply its expected `sys.databases.service_broker_guid`; the connected catalog and actual SQL Server machine must match. System databases, `CP6DB`, remote SQL Server, attached files, failover partners and read-intent connections are rejected. The broker GUID survives normal restore: it checks expected identity together with the name, and is not a unique restore incarnation token. Creation/restore of the isolated copy is a separate operator action.
 
 The source profile is the exact 20 `dbo.Crm_*` tables from `20260811030108_CrmFoundation.cs`. Every row is counted, including soft-deleted rows. Freeze and preflight reject any row. Status reports reopened/uninitialized row counts; status on a fenced source rejects unexpected rows. Table inventory is checked; a full source column/index/relationship comparison is **not** implemented by this library.
