@@ -1,0 +1,18 @@
+{
+  "crmCodeCommit": "93da582661c707c190eb51f4992d3a9e0886d336",
+  "status": "static review complete",
+  "openFindings": [],
+  "reviewed": [
+    "No API/SQL/acceptance initializer dependency",
+    "Bound request/manifest/fixture and essential input bytes",
+    "Pre-start stop marker, mutex and live PID refusal",
+    "Owned process cleanup including startup failure and cancellation",
+    "Three relay paths with unchanged authentication/body/status forwarding",
+    "No actual service/database replacement"
+  ],
+  "limits": [
+    "Essential file binding is not a complete runtime/static-Web package fence",
+    "No assertion of graceful business drain or privileged-writer isolation",
+    "Real CRM 0.2 adoption/recovery remains separate acceptance"
+  ]
+}
