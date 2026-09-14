@@ -33,7 +33,7 @@ public sealed record ActualSourceInspection(DateTimeOffset ObservationStartedUtc
     public string AcceptanceScope => "point-in-time-local-source-inspection; no-approval-or-write-fence; C04A-open";
 }
 
-// Deliberately separate from SourceFence: an actual catalog can only be inspected.
+// Deliberately separate from mutation entries: this public API only inspects.
 // This type exposes no DDL, permission change, approval, freeze or reopen operation.
 public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
 {
@@ -41,69 +41,13 @@ public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
     {
         try
         {
-            var started = DateTimeOffset.UtcNow;
             var builder = ValidateOptions();
             await using var connection = new SqlConnection(builder.ConnectionString);
             await connection.OpenAsync(cancellationToken);
-            var session = new InspectionSession(connection, options.CommandTimeoutSeconds, cancellationToken);
-            // Server and msdb catalogs can silently omit rows for lesser identities.
-            // Refuse such observations instead of reporting an incomplete empty inventory.
-            if (await session.ScalarAsync<int>("SELECT CASE WHEN IS_SRVROLEMEMBER(N'sysadmin')=1 AND SUSER_SNAME()=ORIGINAL_LOGIN() THEN 1 ELSE 0 END;") != 1)
-                Fail("C04A_INSPECTION_VISIBILITY");
-            var identity = await ReadIdentityAsync(session);
             await using var transaction = (SqlTransaction)await connection.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
-            session.Transaction = transaction;
-            await session.ExecuteAsync($"SET XACT_ABORT ON; SET LOCK_TIMEOUT {options.LockTimeoutMilliseconds};");
-            var acquired = await session.ScalarAsync<int>("DECLARE @r int; EXEC @r=sys.sp_getapplock @Resource=N'CP6.C04A.SourceFence.v1',@LockMode=N'Shared',@LockOwner=N'Transaction',@LockTimeout=@timeout; SELECT @r;", ("@timeout", options.LockTimeoutMilliseconds));
-            if (acquired < 0) Fail(acquired == -1 ? "C04A_LOCK_TIMEOUT" : "C04A_LOCK_UNAVAILABLE");
-            var tables = await session.RowsAsync("SELECT s.name,t.name,t.is_memory_optimized,t.temporal_type,t.is_filetable FROM sys.tables t JOIN sys.schemas s ON s.schema_id=t.schema_id WHERE LOWER(t.name) LIKE N'crm[_]%';",
-                row => (Schema: row.GetString(0), Name: row.GetString(1), Unsupported: row.GetBoolean(2) || row.GetByte(3) != 0 || row.GetBoolean(4)));
-            if (tables.Count != SourceFence.Tables.Length || tables.Any(t => t.Schema != "dbo" || t.Unsupported) ||
-                !tables.Select(t => t.Name).OrderBy(n => n, StringComparer.Ordinal).SequenceEqual(SourceFence.Tables))
-                Fail("C04A_SOURCE_INVENTORY");
-            var rows = new SortedDictionary<string, long>(StringComparer.Ordinal);
-            foreach (var table in SourceFence.Tables)
-                rows.Add(table, await session.ScalarAsync<long>($"SELECT COUNT_BIG(*) FROM dbo.[{table}] WITH (TABLOCK,HOLDLOCK);"));
-
-            var schema = await session.JsonAsync(SchemaSql);
-            var security = await session.JsonAsync(SecuritySql);
-            var programs = await session.JsonAsync(ProgramsSql);
-            var jobs = await session.JsonAsync(JobsSql);
-            var migrations = await session.JsonAsync(MigrationSql);
-            var serverPrincipals = await session.RowsAsync("SELECT name,type_desc,CONVERT(varchar(172),sid,2),is_disabled,IS_SRVROLEMEMBER(N'sysadmin',name) FROM sys.server_principals ORDER BY principal_id;",
-                row => new SourcePrincipal(row.GetString(0), row.GetString(1), row.GetString(2), row.GetBoolean(3), row.IsDBNull(4) ? null : row.GetInt32(4) == 1));
-            var databasePrincipals = await session.RowsAsync("SELECT name,type_desc,COALESCE(CONVERT(varchar(172),sid,2),'') FROM sys.database_principals ORDER BY principal_id;",
-                row => new SourcePrincipal(row.GetString(0), row.GetString(1), row.GetString(2), false, null));
-            var sessions = await session.RowsAsync("SELECT session_id,original_login_name,host_name,program_name,DB_NAME(database_id),status FROM sys.dm_exec_sessions WHERE is_user_process=1 AND session_id<>@@SPID ORDER BY session_id;",
-                row => new SourceSession(row.GetInt16(0), row.GetString(1), row.IsDBNull(2) ? null : row.GetString(2), row.IsDBNull(3) ? null : row.GetString(3), row.IsDBNull(4) ? null : row.GetString(4), row.GetString(5)));
-            var opaque = await session.ScalarAsync<int>("SELECT COUNT(*) FROM sys.sql_modules WHERE definition IS NULL;");
-            var jobCount = await session.ScalarAsync<int>("SELECT COUNT(*) FROM msdb.dbo.sysjobs;");
-            var enabledJobs = await session.ScalarAsync<int>("SELECT COUNT(*) FROM msdb.dbo.sysjobs WHERE enabled=1;");
-
-            // Source S locks prevent concurrent source writes/DDL. Server permissions,
-            // other modules and Agent can change independently: detect observed drift.
-            // Two reads are not a continuous fence or proof against an ABA change.
-            if (security != await session.JsonAsync(SecuritySql) || programs != await session.JsonAsync(ProgramsSql) ||
-                jobs != await session.JsonAsync(JobsSql) || migrations != await session.JsonAsync(MigrationSql) ||
-                identity != await ReadIdentityAsync(session))
-                Fail("C04A_INSPECTION_DRIFT");
-            var schemaHash = Hash(schema); var securityHash = Hash(security); var programsHash = Hash(programs);
-            var jobsHash = Hash(jobs); var migrationsHash = Hash(migrations);
-            var scope = Hash(JsonSerializer.Serialize(new
-            {
-                format = "CP6.C04A.ActualSourceInspection.v1", identity, sourceRows = rows,
-                schemaSha256 = schemaHash, securitySha256 = securityHash, programsSha256 = programsHash,
-                sqlAgentSha256 = jobsHash, migrationHistorySha256 = migrationsHash
-            }));
-            if (options.ExpectedScopeSha256 is { } expected && !string.Equals(scope, expected, StringComparison.OrdinalIgnoreCase))
-                Fail("C04A_SCOPE_CHANGED");
-            var blockers = new List<string> { "C04A_APPROVAL_NOT_BOUND", "C04A_EXTERNAL_WRITERS_UNVERIFIED", "C04A_PRIVILEGED_IDENTITIES_UNISOLATED", "C04A_TARGET_FIRST_WRITE_UNBOUND" };
-            if (rows.Values.Any(count => count != 0)) blockers.Add("C04A_SOURCE_NONEMPTY");
-            if (opaque != 0) blockers.Add("C04A_OPAQUE_MODULES");
-            if (enabledJobs != 0) blockers.Add("C04A_ENABLED_AGENT_JOBS_UNCLASSIFIED");
+            var report = await CaptureWithinTransactionAsync(connection, transaction, false, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-            return new(started, DateTimeOffset.UtcNow, identity, rows, schemaHash, securityHash, programsHash, jobsHash,
-                migrationsHash, scope, serverPrincipals, databasePrincipals, sessions, jobCount, enabledJobs, opaque, blockers);
+            return report;
         }
         catch (SourceFenceException) { throw; }
         catch (OperationCanceledException) { throw new SourceFenceException("C04A_CANCELLED"); }
@@ -116,7 +60,89 @@ public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
         catch (InvalidOperationException) { throw new SourceFenceException("C04A_SQL_FAILURE"); }
     }
 
-    private SqlConnectionStringBuilder ValidateOptions()
+    internal async Task<ActualSourceInspection> CaptureWithinTransactionAsync(SqlConnection connection, SqlTransaction transaction,
+        bool exclusive, CancellationToken cancellationToken)
+    {
+        var started = DateTimeOffset.UtcNow;
+        var session = new InspectionSession(connection, options.CommandTimeoutSeconds, cancellationToken) { Transaction = transaction };
+        // Server and msdb catalogs can silently omit rows for lesser identities.
+        // Refuse such observations instead of reporting an incomplete empty inventory.
+        if (await session.ScalarAsync<int>("SELECT CASE WHEN IS_SRVROLEMEMBER(N'sysadmin')=1 AND SUSER_SNAME()=ORIGINAL_LOGIN() THEN 1 ELSE 0 END;") != 1)
+            Fail("C04A_INSPECTION_VISIBILITY");
+        var identity = await ReadIdentityAsync(session);
+        await session.ExecuteAsync($"SET XACT_ABORT ON; SET LOCK_TIMEOUT {options.LockTimeoutMilliseconds};");
+        var acquired = await session.ScalarAsync<int>("DECLARE @r int; EXEC @r=sys.sp_getapplock @Resource=N'CP6.C04A.SourceFence.v1',@LockMode=@mode,@LockOwner=N'Transaction',@LockTimeout=@timeout; SELECT @r;", ("@timeout", options.LockTimeoutMilliseconds), ("@mode", exclusive ? "Exclusive" : "Shared"));
+        if (acquired < 0) Fail(acquired == -1 ? "C04A_LOCK_TIMEOUT" : "C04A_LOCK_UNAVAILABLE");
+        var tables = await session.RowsAsync("SELECT s.name,t.name,t.is_memory_optimized,t.temporal_type,t.is_filetable FROM sys.tables t JOIN sys.schemas s ON s.schema_id=t.schema_id WHERE LOWER(t.name) LIKE N'crm[_]%';",
+            row => (Schema: row.GetString(0), Name: row.GetString(1), Unsupported: row.GetBoolean(2) || row.GetByte(3) != 0 || row.GetBoolean(4)));
+        if (tables.Count != SourceFence.Tables.Length || tables.Any(t => t.Schema != "dbo" || t.Unsupported) ||
+            !tables.Select(t => t.Name).OrderBy(n => n, StringComparer.Ordinal).SequenceEqual(SourceFence.Tables))
+            Fail("C04A_SOURCE_INVENTORY");
+        var rows = new SortedDictionary<string, long>(StringComparer.Ordinal);
+        foreach (var table in SourceFence.Tables)
+            rows.Add(table, await session.ScalarAsync<long>($"SELECT COUNT_BIG(*) FROM dbo.[{table}] WITH ({(exclusive ? "TABLOCKX" : "TABLOCK")},HOLDLOCK);"));
+
+        var schema = await session.JsonAsync(SchemaSql);
+        var security = await session.JsonAsync(SecuritySql);
+        var programs = await session.JsonAsync(ProgramsSql);
+        var jobs = await session.JsonAsync(JobsSql);
+        var migrations = await session.JsonAsync(MigrationSql);
+        var serverPrincipals = await session.RowsAsync("SELECT name,type_desc,CONVERT(varchar(172),sid,2),is_disabled,IS_SRVROLEMEMBER(N'sysadmin',name) FROM sys.server_principals ORDER BY principal_id;",
+            row => new SourcePrincipal(row.GetString(0), row.GetString(1), row.GetString(2), row.GetBoolean(3), row.IsDBNull(4) ? null : row.GetInt32(4) == 1));
+        var databasePrincipals = await session.RowsAsync("SELECT name,type_desc,COALESCE(CONVERT(varchar(172),sid,2),'') FROM sys.database_principals ORDER BY principal_id;",
+            row => new SourcePrincipal(row.GetString(0), row.GetString(1), row.GetString(2), false, null));
+        var sessions = await session.RowsAsync("SELECT session_id,original_login_name,host_name,program_name,DB_NAME(database_id),status FROM sys.dm_exec_sessions WHERE is_user_process=1 AND session_id<>@@SPID ORDER BY session_id;",
+            row => new SourceSession(row.GetInt16(0), row.GetString(1), row.IsDBNull(2) ? null : row.GetString(2), row.IsDBNull(3) ? null : row.GetString(3), row.IsDBNull(4) ? null : row.GetString(4), row.GetString(5)));
+        var opaque = await session.ScalarAsync<int>("SELECT COUNT(*) FROM sys.sql_modules WHERE definition IS NULL;");
+        var jobCount = await session.ScalarAsync<int>("SELECT COUNT(*) FROM msdb.dbo.sysjobs;");
+        var enabledJobs = await session.ScalarAsync<int>("SELECT COUNT(*) FROM msdb.dbo.sysjobs WHERE enabled=1;");
+
+        // Source S locks prevent concurrent source writes/DDL. Server permissions,
+        // other modules and Agent can change independently: detect observed drift.
+        // Two reads are not a continuous fence or proof against an ABA change.
+        if (security != await session.JsonAsync(SecuritySql) || programs != await session.JsonAsync(ProgramsSql) ||
+            jobs != await session.JsonAsync(JobsSql) || migrations != await session.JsonAsync(MigrationSql) ||
+            identity != await ReadIdentityAsync(session))
+            Fail("C04A_INSPECTION_DRIFT");
+        var schemaHash = Hash(schema); var securityHash = Hash(security); var programsHash = Hash(programs);
+        var jobsHash = Hash(jobs); var migrationsHash = Hash(migrations);
+        var scope = Hash(JsonSerializer.Serialize(new
+        {
+            format = "CP6.C04A.ActualSourceInspection.v1", identity, sourceRows = rows,
+            schemaSha256 = schemaHash, securitySha256 = securityHash, programsSha256 = programsHash,
+            sqlAgentSha256 = jobsHash, migrationHistorySha256 = migrationsHash
+        }));
+        if (options.ExpectedScopeSha256 is { } expected && !string.Equals(scope, expected, StringComparison.OrdinalIgnoreCase))
+            Fail("C04A_SCOPE_CHANGED");
+        var blockers = new List<string> { "C04A_APPROVAL_NOT_BOUND", "C04A_EXTERNAL_WRITERS_UNVERIFIED", "C04A_PRIVILEGED_IDENTITIES_UNISOLATED", "C04A_TARGET_FIRST_WRITE_UNBOUND" };
+        if (rows.Values.Any(count => count != 0)) blockers.Add("C04A_SOURCE_NONEMPTY");
+        if (opaque != 0) blockers.Add("C04A_OPAQUE_MODULES");
+        if (enabledJobs != 0) blockers.Add("C04A_ENABLED_AGENT_JOBS_UNCLASSIFIED");
+        return new(started, DateTimeOffset.UtcNow, identity, rows, schemaHash, securityHash, programsHash, jobsHash,
+            migrationsHash, scope, serverPrincipals, databasePrincipals, sessions, jobCount, enabledJobs, opaque, blockers);
+    }
+
+    internal async Task<(string Security, string Programs)> CaptureUnownedMetadataAsync(SqlConnection connection,
+        SqlTransaction transaction, bool excludeVerifiedFence, CancellationToken token)
+    {
+        var security = SecuritySql;
+        var programs = ProgramsSql;
+        if (excludeVerifiedFence)
+        {
+            var tableIds = string.Join(',', SourceFence.Tables.Select(t => $"OBJECT_ID(N'dbo.{t}')"));
+            var guardIds = string.Join(',', SourceFence.Tables.Select(t => $"OBJECT_ID(N'dbo.C04A_Fence_{t}')"))
+                + ",OBJECT_ID(N'crm_source_control.C04A_Audit_AppendOnly')";
+            security = security.Replace("FROM sys.database_permissions ORDER BY", $"FROM sys.database_permissions WHERE NOT (grantee_principal_id=DATABASE_PRINCIPAL_ID(N'public') AND grantor_principal_id=1 AND minor_id=0 AND state='D' AND permission_name IN ('INSERT','UPDATE','DELETE','ALTER') AND ((class=1 AND major_id IN ({tableIds})) OR (class=3 AND major_id=SCHEMA_ID(N'crm_source_control')))) ORDER BY", StringComparison.Ordinal)
+                .Replace("FROM sys.schemas ORDER BY", "FROM sys.schemas WHERE name<>N'crm_source_control' ORDER BY", StringComparison.Ordinal);
+            programs = programs.Replace("WHERE m.object_id IS NOT NULL OR o.type IN ('PC','FS','FT','TA') ORDER BY",
+                $"WHERE (m.object_id IS NOT NULL OR o.type IN ('PC','FS','FT','TA')) AND o.object_id NOT IN ({guardIds}) ORDER BY", StringComparison.Ordinal)
+                .Replace("m.object_id=t.object_id ORDER BY t.object_id", $"m.object_id=t.object_id WHERE t.object_id NOT IN ({guardIds}) ORDER BY t.object_id", StringComparison.Ordinal);
+        }
+        var session = new InspectionSession(connection, options.CommandTimeoutSeconds, token) { Transaction = transaction };
+        return (Hash(await session.JsonAsync(security)), Hash(await session.JsonAsync(programs)));
+    }
+
+    internal SqlConnectionStringBuilder ValidateOptions()
     {
         if (string.IsNullOrWhiteSpace(options.ExpectedDatabaseName) || string.IsNullOrWhiteSpace(options.ExpectedServerName) ||
             options.ExpectedDatabaseGuid == Guid.Empty || options.LockTimeoutMilliseconds is < 100 or > 60000 ||

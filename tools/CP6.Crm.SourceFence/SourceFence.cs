@@ -54,77 +54,9 @@ public sealed class SourceFence(SourceFenceOptions options)
             await connection.OpenAsync(token);
             await VerifyIdentityAsync(connection, token);
             await using var transaction = (SqlTransaction)await connection.BeginTransactionAsync(IsolationLevel.Serializable, token);
-            var session = new Session(connection, transaction, options.CommandTimeoutSeconds, token);
-            await session.ExecuteAsync($"SET XACT_ABORT ON; SET LOCK_TIMEOUT {options.LockTimeoutMilliseconds}; SET ANSI_NULLS ON; SET QUOTED_IDENTIFIER ON;");
-            var acquired = await session.ScalarAsync<int>("DECLARE @result int; EXEC @result=sys.sp_getapplock @Resource=N'CP6.C04A.SourceFence.v1', @LockMode=@mode, @LockOwner=N'Transaction', @LockTimeout=@timeout, @DbPrincipal=N'public'; SELECT @result;",
-                ("@mode", mutation ? "Exclusive" : "Shared"), ("@timeout", options.LockTimeoutMilliseconds));
-            if (acquired < 0) Fail(acquired == -1 ? "C04A_LOCK_TIMEOUT" : "C04A_LOCK_UNAVAILABLE");
-            await VerifySourceInventoryAsync(session);
-
-            // These locks drain every earlier writer and are retained through all DDL,
-            // permission, state and audit changes. No filtered counts / soft-delete filters.
-            var rows = new Dictionary<string, long>(StringComparer.Ordinal);
-            foreach (var table in Tables)
-                rows.Add(table, await session.ScalarAsync<long>($"SELECT COUNT_BIG(*) FROM [dbo].[{table}] WITH ({(mutation ? "TABLOCKX" : "TABLOCK")}, HOLDLOCK);"));
-
-            var metadata = await ReadAndVerifyMetadataAsync(session);
-            await VerifySourceGuardsAsync(session, metadata.State is "Frozen" or "ForwardOnly");
-            // A replay acknowledges the immediately preceding transition only.
-            // Reopened writers may already have resumed before its acknowledgement
-            // is retried; those rows do not invalidate a completed reopen.
-            var immediateReplay = mutation && metadata.Last is { } last && last.RunId == runId && last.Command == operation &&
-                last.ExpectedGeneration == expectedGeneration && metadata.Generation == expectedGeneration + 1;
-            var reopenedReplay = immediateReplay && operation == "Reopen" && metadata.State == "Reopened";
-            if (!reopenedReplay && (operation != "Status" || metadata.State is "Frozen" or "ForwardOnly") && rows.Values.Any(count => count != 0))
-                Fail("C04A_SOURCE_NONEMPTY");
-            if (!mutation)
-            {
-                await transaction.CommitAsync(token);
-                return Status(metadata, rows);
-            }
-
-            // Only the immediately preceding identical command can be replayed.
-            if (immediateReplay)
-            {
-                await transaction.CommitAsync(token);
-                return Status(metadata, rows);
-            }
-            if (metadata.Generation != expectedGeneration) Fail("C04A_CONFLICT");
-            if (metadata.State == "ForwardOnly") Fail("C04A_FORWARD_ONLY");
-            var nextState = operation switch
-            {
-                "Freeze" when metadata.State is "Uninitialized" or "Reopened" => "Frozen",
-                "Reopen" when metadata.State == "Frozen" && metadata.RunId == runId => "Reopened",
-                "SealForwardOnly" when metadata.State == "Frozen" && metadata.RunId == runId => "ForwardOnly",
-                _ => throw new SourceFenceException("C04A_CONFLICT")
-            };
-            if (operation == "Freeze" && metadata.Events.Any(entry => entry.RunId == runId)) Fail("C04A_RUN_REUSED");
-            if (metadata.State == "Uninitialized") await InitializeAsync(session);
-            if (operation == "Freeze")
-            {
-                foreach (var table in Tables)
-                {
-                    await session.ExecuteAsync(TriggerDefinition(table));
-                    await session.ExecuteAsync($"DENY INSERT, UPDATE, DELETE, ALTER ON OBJECT::[dbo].[{table}] TO [public] AS [dbo];");
-                }
-            }
-            else if (operation == "Reopen")
-            {
-                foreach (var table in Tables)
-                {
-                    await session.ExecuteAsync($"DROP TRIGGER [dbo].[C04A_Fence_{table}];");
-                    // Only the four public object denies owned by this tool are removed.
-                    // Initial conflicts and any drift were rejected before reaching here.
-                    await session.ExecuteAsync($"REVOKE INSERT, UPDATE, DELETE, ALTER ON OBJECT::[dbo].[{table}] FROM [public] AS [dbo];");
-                }
-            }
-            var generation = checked(expectedGeneration + 1);
-            await session.ExecuteAsync("INSERT [crm_source_control].[Audit] (Generation, RunId, Command, PreviousState, NextState, ExpectedGeneration, OccurredAt) VALUES (@generation,@run,@command,@previous,@next,@expected,SYSUTCDATETIME()); UPDATE [crm_source_control].[Control] SET RunId=@run, Generation=@generation, State=@next WHERE Singleton=1; IF @@ROWCOUNT=0 INSERT [crm_source_control].[Control] (Singleton,RunId,Generation,State) VALUES (1,@run,@generation,@next);",
-                ("@generation", generation), ("@run", runId), ("@command", operation), ("@previous", metadata.State), ("@next", nextState), ("@expected", expectedGeneration));
-            var after = await ReadAndVerifyMetadataAsync(session);
-            await VerifySourceGuardsAsync(session, nextState is "Frozen" or "ForwardOnly");
+            var result = await ExecuteWithinTransactionAsync(connection, transaction, operation, runId, expectedGeneration, false, token);
             await transaction.CommitAsync(token);
-            return Status(after, rows);
+            return result;
         }
         catch (SourceFenceException) { throw; }
         catch (OperationCanceledException) { throw new SourceFenceException("C04A_CANCELLED"); }
@@ -140,6 +72,84 @@ public sealed class SourceFence(SourceFenceOptions options)
         }
         catch (ArgumentException) { throw new SourceFenceException("C04A_INVALID_OPTIONS"); }
         catch (InvalidOperationException) { throw new SourceFenceException("C04A_SQL_FAILURE"); }
+    }
+
+    // Internal reuse keeps identity / authorization checks in each public entry point.
+    // The caller owns commit; the actual-source binding and guards commit together.
+    internal async Task<SourceFenceStatus> ExecuteWithinTransactionAsync(SqlConnection connection, SqlTransaction transaction,
+        string operation, Guid runId, long expectedGeneration, bool actualControl, CancellationToken token)
+    {
+        var mutation = operation is "Freeze" or "Reopen" or "SealForwardOnly";
+        var session = new Session(connection, transaction, options.CommandTimeoutSeconds, token);
+        await session.ExecuteAsync($"SET XACT_ABORT ON; SET LOCK_TIMEOUT {options.LockTimeoutMilliseconds}; SET ANSI_NULLS ON; SET QUOTED_IDENTIFIER ON;");
+        var acquired = await session.ScalarAsync<int>("DECLARE @result int; EXEC @result=sys.sp_getapplock @Resource=N'CP6.C04A.SourceFence.v1', @LockMode=@mode, @LockOwner=N'Transaction', @LockTimeout=@timeout, @DbPrincipal=N'public'; SELECT @result;",
+            ("@mode", mutation ? "Exclusive" : "Shared"), ("@timeout", options.LockTimeoutMilliseconds));
+        if (acquired < 0) Fail(acquired == -1 ? "C04A_LOCK_TIMEOUT" : "C04A_LOCK_UNAVAILABLE");
+        if (!actualControl && await session.ScalarAsync<int>("SELECT COUNT(*) FROM sys.extended_properties WHERE class=0 AND name=N'CP6.C04A.ActualSourceFreeze.v1';") != 0)
+            Fail("C04A_ACTUAL_CONTROL_REQUIRED");
+        await VerifySourceInventoryAsync(session);
+
+        // These locks drain every earlier writer and are retained through all DDL,
+        // permission, state and audit changes. No filtered counts / soft-delete filters.
+        var rows = new Dictionary<string, long>(StringComparer.Ordinal);
+        foreach (var table in Tables)
+            rows.Add(table, await session.ScalarAsync<long>($"SELECT COUNT_BIG(*) FROM [dbo].[{table}] WITH ({(mutation ? "TABLOCKX" : "TABLOCK")}, HOLDLOCK);"));
+
+        var metadata = await ReadAndVerifyMetadataAsync(session);
+        await VerifySourceGuardsAsync(session, metadata.State is "Frozen" or "ForwardOnly");
+        // A replay acknowledges the immediately preceding transition only.
+        // Reopened writers may already have resumed before its acknowledgement
+        // is retried; those rows do not invalidate a completed reopen.
+        var immediateReplay = mutation && metadata.Last is { } last && last.RunId == runId && last.Command == operation &&
+            last.ExpectedGeneration == expectedGeneration && metadata.Generation == expectedGeneration + 1;
+        var reopenedReplay = immediateReplay && operation == "Reopen" && metadata.State == "Reopened";
+        if (!reopenedReplay && (operation != "Status" || metadata.State is "Frozen" or "ForwardOnly") && rows.Values.Any(count => count != 0))
+            Fail("C04A_SOURCE_NONEMPTY");
+        if (!mutation)
+        {
+            return Status(metadata, rows);
+        }
+
+        // Only the immediately preceding identical command can be replayed.
+        if (immediateReplay)
+        {
+            return Status(metadata, rows);
+        }
+        if (metadata.Generation != expectedGeneration) Fail("C04A_CONFLICT");
+        if (metadata.State == "ForwardOnly") Fail("C04A_FORWARD_ONLY");
+        var nextState = operation switch
+        {
+            "Freeze" when metadata.State is "Uninitialized" or "Reopened" => "Frozen",
+            "Reopen" when metadata.State == "Frozen" && metadata.RunId == runId => "Reopened",
+            "SealForwardOnly" when metadata.State == "Frozen" && metadata.RunId == runId => "ForwardOnly",
+            _ => throw new SourceFenceException("C04A_CONFLICT")
+        };
+        if (operation == "Freeze" && metadata.Events.Any(entry => entry.RunId == runId)) Fail("C04A_RUN_REUSED");
+        if (metadata.State == "Uninitialized") await InitializeAsync(session);
+        if (operation == "Freeze")
+        {
+            foreach (var table in Tables)
+            {
+                await session.ExecuteAsync(TriggerDefinition(table));
+                await session.ExecuteAsync($"DENY INSERT, UPDATE, DELETE, ALTER ON OBJECT::[dbo].[{table}] TO [public] AS [dbo];");
+            }
+        }
+        else if (operation == "Reopen")
+        {
+            foreach (var table in Tables)
+            {
+                await session.ExecuteAsync($"DROP TRIGGER [dbo].[C04A_Fence_{table}];");
+                // Only the four public object denies owned by this tool are removed.
+                // Initial conflicts and any drift were rejected before reaching here.
+                await session.ExecuteAsync($"REVOKE INSERT, UPDATE, DELETE, ALTER ON OBJECT::[dbo].[{table}] FROM [public] AS [dbo];");
+            }
+        }
+        var generation = checked(expectedGeneration + 1);
+        await session.ExecuteAsync("INSERT [crm_source_control].[Audit] (Generation, RunId, Command, PreviousState, NextState, ExpectedGeneration, OccurredAt) VALUES (@generation,@run,@command,@previous,@next,@expected,SYSUTCDATETIME()); UPDATE [crm_source_control].[Control] SET RunId=@run, Generation=@generation, State=@next WHERE Singleton=1; IF @@ROWCOUNT=0 INSERT [crm_source_control].[Control] (Singleton,RunId,Generation,State) VALUES (1,@run,@generation,@next);",
+            ("@generation", generation), ("@run", runId), ("@command", operation), ("@previous", metadata.State), ("@next", nextState), ("@expected", expectedGeneration));
+        var after = await ReadAndVerifyMetadataAsync(session);
+        await VerifySourceGuardsAsync(session, nextState is "Frozen" or "ForwardOnly");
+        return Status(after, rows);
     }
 
     private static SourceFenceStatus Status(Metadata metadata, Dictionary<string, long> rows) =>
