@@ -1,0 +1,258 @@
+{
+  "sourceCommit": "4f043e2e8f78b6a323609661be804a3823e363b9",
+  "observedAtUtc": "2026-09-14T13:43:13.5306884+00:00",
+  "sourceRole": "actual-legacy-core",
+  "sourceDatabase": "CP6DB",
+  "sourceRows": {
+    "Crm_Account": 0,
+    "Crm_Activity": 0,
+    "Crm_Collaborator": 0,
+    "Crm_Contact": 0,
+    "Crm_ErpLink": 0,
+    "Crm_IntakeConfig": 0,
+    "Crm_IntakeMember": 0,
+    "Crm_Lead": 0,
+    "Crm_MediaAsset": 0,
+    "Crm_MergeRecord": 0,
+    "Crm_Opportunity": 0,
+    "Crm_PageRevision": 0,
+    "Crm_PageTranslation": 0,
+    "Crm_PublicForm": 0,
+    "Crm_PublicRoute": 0,
+    "Crm_PublicSubmission": 0,
+    "Crm_Site": 0,
+    "Crm_SitePage": 0,
+    "Crm_SourceTouch": 0,
+    "Crm_StageHistory": 0
+  },
+  "scopeSha256": "dae70d6ed5625b4cbbfac7f02aaecd27c002d1064ca21ad3360b9e49425388cc",
+  "schemaSha256": "5352dac15a5aeb261f93ebc8f8e5eb623d5f92a2bf1d19eb613152356f5720de",
+  "securitySha256": "248dcc017e4c0f523acb3561ee83e7be964e53d0d558d9b9fb7bdfbb854ef543",
+  "programsSha256": "ef880050fc86345582be8f82803cef805f35f08894ccec631208b092e92dc1cf",
+  "sqlAgentSha256": "35e35087fc609a38ec1f02209be7671d7aefd81241534eee93dfa68dd8d80c31",
+  "migrationHistorySha256": "7dc0c8b92c0fd4ca3910dec7fc6837eafa5f1a85de99304d26014a870e9bf117",
+  "serverPrincipalCount": 50,
+  "databasePrincipalCount": 17,
+  "enabledSysadminPrincipalCount": 5,
+  "observedUserSessions": 53,
+  "observedSourceCurrentDatabaseSessions": 0,
+  "sqlAgentJobCount": 1,
+  "enabledSqlAgentJobCount": 1,
+  "opaqueModuleCount": 0,
+  "blockers": [
+    "C04A_APPROVAL_NOT_BOUND",
+    "C04A_EXTERNAL_WRITERS_UNVERIFIED",
+    "C04A_PRIVILEGED_IDENTITIES_UNISOLATED",
+    "C04A_TARGET_FIRST_WRITE_UNBOUND",
+    "C04A_ENABLED_AGENT_JOBS_UNCLASSIFIED"
+  ],
+  "mutationAuthorized": false,
+  "completeWriteFenceVerified": false,
+  "existingConfigurationUnchanged": true,
+  "actualScopeMatchPassed": true,
+  "actualFreezeRefused": true,
+  "sourceBusinessWrites": false,
+  "sourceSchemaWrites": false,
+  "publishedFiles": [
+    {
+      "path": "Azure.Core.dll",
+      "length": 423456,
+      "sha256": "619cda55095bb19f09382c0a07bc16517473cb0ecf224dae7e52537d778ab022"
+    },
+    {
+      "path": "System.IdentityModel.Tokens.Jwt.dll",
+      "length": 77344,
+      "sha256": "177d4c2d2a5891ef834c46990aa76b81ed7a198f70d78229f7374c0706ba0166"
+    },
+    {
+      "path": "System.Memory.Data.dll",
+      "length": 21368,
+      "sha256": "293ca5d86358fb2ce00da02c63eefcb344689fc0c636b61c97c3f1b15a80aa51"
+    },
+    {
+      "path": "System.Runtime.Caching.dll",
+      "length": 89200,
+      "sha256": "77c77ce3b1fc7d098765af31f19195522e2c675f63248b699f64441d299f3ead"
+    },
+    {
+      "path": "System.Security.Cryptography.ProtectedData.dll",
+      "length": 20592,
+      "sha256": "d186453eebba21e19a90e4fea16c11c3df59ed9610201c5a3c6d636b9864d840"
+    },
+    {
+      "path": "System.Security.Permissions.dll",
+      "length": 104048,
+      "sha256": "62068c0f6bffb0eb4ec1c6a45a16784caee7565f6c5404d8342089f4ff4b3712"
+    },
+    {
+      "path": "System.Windows.Extensions.dll",
+      "length": 25712,
+      "sha256": "810e8767d02d70af173bc33cc1048ff31a7df015fd46cf423a309cc89c50dc69"
+    },
+    {
+      "path": "runtimes/unix/lib/net6.0/Microsoft.Data.SqlClient.dll",
+      "length": 1561208,
+      "sha256": "4e7f65622f34f4d9dd1908bc2b9269d0934b1b5f0b671609c6e0f0801f375288"
+    },
+    {
+      "path": "System.Drawing.Common.dll",
+      "length": 175216,
+      "sha256": "98d07e6b1e7d3641a8608a360b3dc273fe8a0f78926b6e1e5f679a7a074d491f"
+    },
+    {
+      "path": "runtimes/unix/lib/net6.0/System.Drawing.Common.dll",
+      "length": 427112,
+      "sha256": "89ea595ccb1fd1384480c1e30bd487c92af5d06d3b06f295323eff601acd9019"
+    },
+    {
+      "path": "runtimes/win/lib/net6.0/Microsoft.Win32.SystemEvents.dll",
+      "length": 53352,
+      "sha256": "142cce4ed8ac9da22d69c38a6f22738abfb22090dc9313e8b58e6f91978e89af"
+    },
+    {
+      "path": "runtimes/win/lib/net6.0/System.Drawing.Common.dll",
+      "length": 454248,
+      "sha256": "4d3001697df50cca54f32ed2dbbd1f3f415b48d5d756b1bf9500a43ae9b68da0"
+    },
+    {
+      "path": "runtimes/win/lib/net6.0/System.Runtime.Caching.dll",
+      "length": 91240,
+      "sha256": "2ca88a05ea536c3b9507f52378aaa69b2e67dd3c4dad2fa36426245818f6cc77"
+    },
+    {
+      "path": "runtimes/win/lib/net6.0/System.Security.Cryptography.ProtectedData.dll",
+      "length": 33904,
+      "sha256": "104cdc6d20406a144abd373ed297ef803217c15012a0f22cacf6c676421d53ee"
+    },
+    {
+      "path": "runtimes/win/lib/net6.0/System.Windows.Extensions.dll",
+      "length": 43112,
+      "sha256": "e72863f75a5adb5697158f16b00369ad3a95710235647626675a5c070f10ecd9"
+    },
+    {
+      "path": "runtimes/win-arm/native/Microsoft.Data.SqlClient.SNI.dll",
+      "length": 440368,
+      "sha256": "040f5f4e955dab5e5c47da53cbcc61af20c6621e198104f1959aa847c99f56d7"
+    },
+    {
+      "path": "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
+      "length": 549936,
+      "sha256": "f85bdd8ac148b89e42851c4a808fb3c94338fb520f72cd9f6f61168799c8f86f"
+    },
+    {
+      "path": "runtimes/win/lib/net6.0/Microsoft.Data.SqlClient.dll",
+      "length": 1645176,
+      "sha256": "db6ebccf33fdf12edd30bcb2a211515d2eeca7ee69bbbd8c137e6c2bcfcabe58"
+    },
+    {
+      "path": "System.Configuration.ConfigurationManager.dll",
+      "length": 396424,
+      "sha256": "d274bdd71f75f5005fcaec028921f71d89cb6d622022d74d2e07897a3a1d141a"
+    },
+    {
+      "path": "System.ClientModel.dll",
+      "length": 28608,
+      "sha256": "a06523028979f420abc209be62a06b3038289932a9942b1ad3cee52af2cdbc0a"
+    },
+    {
+      "path": "Microsoft.Win32.SystemEvents.dll",
+      "length": 26224,
+      "sha256": "ca495bf6c86b7f092d624928101985a941532d149dcd8acfea170f8a53be8850"
+    },
+    {
+      "path": "Azure.Identity.dll",
+      "length": 350768,
+      "sha256": "4c2babb3cebde608691d611f5c037cf73e833fe60505ff8d233175b3379bcddc"
+    },
+    {
+      "path": "CP6.Crm.SourceFence.deps.json",
+      "length": 20360,
+      "sha256": "8be52635ca7bd76ed0cbfa5c3764f86c191b61f603d7f8802a3271b1e018e521"
+    },
+    {
+      "path": "CP6.Crm.SourceFence.dll",
+      "length": 138240,
+      "sha256": "38397ffd187b00465b61a602e11865bba7a41a4d18c1fb306e77f631e36ed7dc"
+    },
+    {
+      "path": "CP6.Crm.SourceFence.exe",
+      "length": 152064,
+      "sha256": "7b79ff35d80bea1f02718f274bc3f25bfd2122a1ebe3b433d9d9b9fc3e9ae728"
+    },
+    {
+      "path": "CP6.Crm.SourceFence.pdb",
+      "length": 26120,
+      "sha256": "5fc8398a52d8f8c7db006568bea909e1ea0d7c87b1443a38e36d0b28577829e4"
+    },
+    {
+      "path": "CP6.Crm.SourceFence.runtimeconfig.json",
+      "length": 340,
+      "sha256": "28329cf08f6505e73806b17558b187c02f0c1c516fe47ebfb7a013d082aaa306"
+    },
+    {
+      "path": "Microsoft.Bcl.AsyncInterfaces.dll",
+      "length": 14720,
+      "sha256": "11c0e8fc6419910ace4f55ddd2330f1373704f996c32ae4336c3f11d589d2c34"
+    },
+    {
+      "path": "Microsoft.Data.SqlClient.dll",
+      "length": 276128,
+      "sha256": "0b8bda81d16fecfacfc73893f367241b00fbddc3b63f76b74cc6012375436b45"
+    },
+    {
+      "path": "Microsoft.Identity.Client.dll",
+      "length": 1046576,
+      "sha256": "181623347707574f8d3577fd1857f2e30182c310b29866edb8c3bcc4266d6013"
+    },
+    {
+      "path": "Microsoft.Identity.Client.Extensions.Msal.dll",
+      "length": 66592,
+      "sha256": "c6ffb3b19d6ee6f9c4e430b28feb009be5f91714f6175c74c6ba8409b5634f4f"
+    },
+    {
+      "path": "Microsoft.IdentityModel.Abstractions.dll",
+      "length": 18968,
+      "sha256": "f4694d23f05cc0263abbcb536d132e243bc9c175ae642387fa98652b880a4be0"
+    },
+    {
+      "path": "Microsoft.IdentityModel.JsonWebTokens.dll",
+      "length": 112576,
+      "sha256": "58277455122589b39c20e94f403fca7d3abcf5488bd9d8702ac75d03770f49f8"
+    },
+    {
+      "path": "Microsoft.IdentityModel.Logging.dll",
+      "length": 36792,
+      "sha256": "5de12f537fa96ec3d47e1dabcf348807da1400f0e0f5654c4b6903310d691c9a"
+    },
+    {
+      "path": "Microsoft.IdentityModel.Protocols.dll",
+      "length": 39864,
+      "sha256": "ac1f9879b7077a6fa9893dab92cd7af7b20f2f761a983941d2d184912b826908"
+    },
+    {
+      "path": "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+      "length": 114104,
+      "sha256": "034f43fec9ca10ff7d29640b2da7dd218850585827edaabd9737fae4af582520"
+    },
+    {
+      "path": "Microsoft.IdentityModel.Tokens.dll",
+      "length": 993312,
+      "sha256": "929dd15f4a58930f21ec9eb95600775348ee63a059f6547a748607ede7521a4c"
+    },
+    {
+      "path": "Microsoft.SqlServer.Server.dll",
+      "length": 23976,
+      "sha256": "a9dca1b42bc875f966b78b2c0880e62b838f0ed6567166d7f1f07ae4b76ec4bf"
+    },
+    {
+      "path": "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
+      "length": 564784,
+      "sha256": "04f90f27ef907154649722bef5a026e33e1ffb4e79d279c22b06cb7e90b45a22"
+    },
+    {
+      "path": "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll",
+      "length": 475680,
+      "sha256": "e86b856f3327dcbba2205fb041b98ff738b56b439b4159942d12d2128fe5cb2d"
+    }
+  ]
+}
