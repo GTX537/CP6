@@ -1,0 +1,111 @@
+{
+  "format": "CP6.C04A.LocalExecution.DevelopmentValidation.v1",
+  "atUtc": "2026-09-14T20:46:09.693521+00:00",
+  "codeCommit": "e065e00b9ae433e9672202463473651c31b36101",
+  "purpose": "Independent retirement command and concrete local execution-package preparation; actual cutover remains No-Go",
+  "newChecksPassed": 15,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Only_the_exact_owned_process_stops_and_an_unrelated_process_remains_running",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"approval-reference\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"organization-subset\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"request-hash\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"inventory-unknown\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"inventory-hash\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Late_changed_entry_refuses_all_retirement_before_stopping_a_known_process",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"request-unknown\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"inventory-duplicate\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.An_input_file_cannot_retire_itself_and_pre_cancellation_changes_nothing",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"primary-organization\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"configuration-hash\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Shared_deployment_is_retired_without_SQL_and_exact_replay_preserves_original_files",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"organization-reverse\")",
+      "outcome": "Passed"
+    },
+    {
+      "name": "CP6.CRM.LocalOperatorTests.DeploymentRetirementCliTests.Invalid_bound_inputs_leave_every_entry_untouched(change: \"request-duplicate\")",
+      "outcome": "Passed"
+    }
+  ],
+  "red": "retirement-red.trx: new command absent before implementation",
+  "build": "Locked restore and build/publish passed; operator build 0 warnings/0 errors",
+  "publishedCliUsed": true,
+  "preCancellationAlsoCheckedInProcess": true,
+  "sqlAccessed": false,
+  "oldPassingTestsRepeated": false,
+  "guardProvisionerAndApiSourceUnchanged": true,
+  "hostInspectionInputCount": 18,
+  "activeRetirementEntries": 3,
+  "inactiveRetirementEntries": 5,
+  "existingPreviewProcessesUnchanged": 6,
+  "existingContainersNotMutated": 5,
+  "remainingOwnedFixtureDirectories": 0,
+  "originalConfigurationAndControlUnchanged": true,
+  "additionalUnselectedPrivateManifest": true,
+  "boundary": {
+    "currentFileCount": 447,
+    "currentSha256": "07d77e2b6aa187ccf0e341d78ea496bbe0f3a88bf3dc527baec5b78a41a458b2",
+    "changedBytesUserSigned": false,
+    "actualActivation": false,
+    "productionDeployment": false
+  },
+  "pending": [
+    "Core #114 / CRM #75 SQL gates and normal integration",
+    "Final complete runtime package, source/target identities, actor and change-byte approval",
+    "Current backups and recovery-copy assurance for six actual databases",
+    "Exclusive lifecycle/privileged writer control during approved operation",
+    "Actual initial business calendar/version, C02 forward migration/baseline and closed-target startup smoke",
+    "Actual activation, CRM11 formal cutover and C04B adoption/read-only observation prerequisites"
+  ],
+  "commandDevelopmentMergeAllowed": true,
+  "executionPackageStatus": "draft-No-Go",
+  "actualActivation": false,
+  "changedBytesUserSigned": false,
+  "productionDeployment": false,
+  "goal": {
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "percent": 60
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "format": "CP6.C04A.LocalExecution.InputBindings.v1",
+  "actualExecutionApproved": false,
+  "activeManifest": {
+    "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\run.json",
+    "sha256": "4e3be653593b7a361aedfbc530d7f3962e1188abc029d63e14313319d1cd093c"
+  },
+  "proposedManifest": {
+    "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\c04a-proposed-run-20260914.json",
+    "sha256": "a1f79d7350285d8b8b80cf92bd5d19134bbf8076eeaad80565d1b46f81df36a6"
+  },
+  "changedManifestFields": [
+    "crmApiAssembly",
+    "crmSourceSha"
+  ],
+  "fixture": {
+    "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\live-fixture.json",
+    "sha256": "adc7ee5f86c677df61e1880668c44695b5c831b8db3bec033c8e1c5577f4deca"
+  },
+  "retirement": {
+    "configurationPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\crm-content\\appsettings.json",
+    "configurationSha256": "f7254b52d1d9d4124aed25a064d7076d5f1c4afb81f0ee4394769936d960608b",
+    "organizationIds": [
+      "095f3443-3163-4427-be77-1819a49cddba",
+      "09d4fb11-004f-49e0-a132-583fab65e469"
+    ],
+    "activeEntrypoints": [
+      "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\PreviewHost.dll",
+      "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll"
+    ],
+    "inactiveEntrypoints": [
+      "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "D:\\CP6-local-publish\\20260910\\harness\\invoke-published-smoke.ps1",
+      "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\PublishedSmoke.dll"
+    ]
+  },
+  "existingDatabaseIdentityObservation": {
+    "atUtc": "2026-09-14T13:03:32.6031903+00:00",
+    "sourceSha256": "5cadd8893ce598b8cca87ed671d57674c34da295dede1a9bd587d6f61dc5acb3",
+    "databases": [
+      {
+        "role": "crm-auth-identity-catalog",
+        "organizationId": null,
+        "identity": {
+          "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+          "databaseName": "CP6CrmC02Live_516b677f84b64cd1a876590a8cb54a0b",
+          "collation": "Chinese_PRC_CI_AS",
+          "compatibility_level": 160,
+          "service_broker_guid": "a8f10476-5b32-436b-9c51-13cc707ec673",
+          "create_date": "2026-09-10T05:55:59.727",
+          "observerIsSysadmin": 1
+        }
+      },
+      {
+        "role": "preview-core",
+        "organizationId": null,
+        "identity": {
+          "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+          "databaseName": "CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3",
+          "collation": "Chinese_PRC_CI_AS",
+          "compatibility_level": 160,
+          "service_broker_guid": "327cc280-8867-47f3-ae4b-588466c268ce",
+          "create_date": "2026-09-10T05:55:16.723",
+          "observerIsSysadmin": 1
+        }
+      },
+      {
+        "role": "legacy-core-source",
+        "organizationId": null,
+        "identity": {
+          "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+          "databaseName": "CP6DB",
+          "collation": "Chinese_PRC_CI_AS",
+          "compatibility_level": 160,
+          "service_broker_guid": "fa1f4dab-33ee-4027-b5d8-f5a270e5bc53",
+          "create_date": "2026-04-08T20:36:33.04",
+          "observerIsSysadmin": 1
+        }
+      },
+      {
+        "role": "crm-business",
+        "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+        "identity": {
+          "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+          "databaseName": "CP6CrmC02Live_86a709a6f627426fa23ad88f7dd2ebb9",
+          "collation": "Chinese_PRC_CI_AS",
+          "compatibility_level": 160,
+          "service_broker_guid": "561c1aa6-1c0b-4f49-9985-195a1efe3161",
+          "create_date": "2026-09-10T05:55:59.947",
+          "observerIsSysadmin": 1
+        }
+      },
+      {
+        "role": "crm-business",
+        "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+        "identity": {
+          "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+          "databaseName": "CP6CrmC02Live_4bc6bc987f8040da843caf86c0b7faf2",
+          "collation": "Chinese_PRC_CI_AS",
+          "compatibility_level": 160,
+          "service_broker_guid": "11435648-1262-4d57-a454-06fb4de336b5",
+          "create_date": "2026-09-10T05:56:00.203",
+          "observerIsSysadmin": 1
+        }
+      }
+    ]
+  },
+  "owner": {
+    "programOwner": "GTX537",
+    "domainDataSecurityOwner": "GTX537",
+    "backupOwner": null
+  },
+  "calendar": {
+    "timeZone": "America/New_York",
+    "workingDays": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "start": "09:00",
+    "end": "17:00",
+    "weekendsCount": false,
+    "holidaysMaintainedSeparately": true,
+    "initialStoredVersionVerified": false
+  },
+  "preserved": {
+    "originalPrivateConfiguration": true,
+    "keyringApplication": "CP6.CRM",
+    "controlAndRunningManifestUnchanged": true,
+    "oldBusinessDataNotInvented": true
+  },
+  "sqlAccessed": false,
+  "commandExecuted": "No mutation command; candidate manifest is an additional unselected private file."
+}
