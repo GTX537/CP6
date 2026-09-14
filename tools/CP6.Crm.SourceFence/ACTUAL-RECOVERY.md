@@ -16,6 +16,8 @@
 
 沿用实际检查的 `C04A_SQL_CONNECTION`、`C04A_EXPECTED_DATABASE`、`C04A_EXPECTED_DATABASE_GUID`、`C04A_EXPECTED_SERVER_NAME` 及超时变量。`C04A_EXPECTED_SCOPE_SHA256` 若提供仍为原冻结前 scope。新增：
 
+Docker 来源另按[本机容器绑定](LOCAL-CONTAINER.md)提供容器文件与摘要；同一 Windows 协调器保持本机 CRM 目标锁，来源通过精确 loopback 发布端口访问。原生来源的请求/身份序列化不增加 null 字段。
+
 | 变量 | 内容 |
 | --- | --- |
 | `C04A_RECOVERY_REQUEST_PATH` | 恢复请求 JSON 的绝对路径 |

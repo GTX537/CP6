@@ -2,17 +2,19 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Data.SqlClient;
 
 namespace CP6.Crm.SourceFence;
 
 public sealed record ActualSourceInspectionOptions(string ConnectionString, string ExpectedDatabaseName,
     Guid ExpectedDatabaseGuid, string ExpectedServerName, string? ExpectedScopeSha256 = null,
-    int LockTimeoutMilliseconds = 5000, int CommandTimeoutSeconds = 30);
+    int LockTimeoutMilliseconds = 5000, int CommandTimeoutSeconds = 30, LocalSqlContainerBinding? LocalContainer = null);
 
 public sealed record ActualSourceIdentity(string ServerName, string MachineName, string DatabaseName,
     Guid BrokerGuid, Guid DatabaseGuid, Guid FamilyGuid, Guid RecoveryForkGuid, DateTime CreatedAtServerLocal,
-    string OriginalLogin, string OriginalLoginSid);
+    string OriginalLogin, string OriginalLoginSid,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] LocalSqlContainerBinding? LocalContainer = null);
 public sealed record SourcePrincipal(string Name, string Type, string Sid, bool Disabled, bool? IsSysadmin);
 public sealed record SourceSession(int SessionId, string OriginalLogin, string? HostName, string? ProgramName,
     string? CurrentDatabase, string Status);
@@ -149,6 +151,7 @@ public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
             options.CommandTimeoutSeconds is < 1 or > 300 || options.ExpectedScopeSha256 is { } hash &&
             (hash.Length != 64 || !hash.All(Uri.IsHexDigit))) Fail("C04A_INVALID_OPTIONS");
         var builder = new SqlConnectionStringBuilder(options.ConnectionString);
+        if (options.LocalContainer is { } container) LocalSqlContainerInspector.ValidateConnection(container, builder);
         if (new[] { "master", "model", "msdb", "tempdb" }.Contains(options.ExpectedDatabaseName, StringComparer.OrdinalIgnoreCase) ||
             builder.InitialCatalog != options.ExpectedDatabaseName || builder.AttachDBFilename.Length != 0 ||
             builder.FailoverPartner.Length != 0 || builder.ApplicationIntent != ApplicationIntent.ReadWrite)
@@ -167,6 +170,7 @@ public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
 
     private async Task<ActualSourceIdentity> ReadIdentityAsync(InspectionSession session)
     {
+        if (options.LocalContainer is { } container) await LocalSqlContainerInspector.VerifyAsync(container, session.CancellationToken);
         var identities = await session.RowsAsync("SELECT CAST(SERVERPROPERTY('ServerName') AS nvarchar(128)),CAST(SERVERPROPERTY('MachineName') AS nvarchar(128)),d.name,d.service_broker_guid,r.database_guid,r.family_guid,r.recovery_fork_guid,d.create_date,ORIGINAL_LOGIN(),CONVERT(varchar(172),SUSER_SID(ORIGINAL_LOGIN()),2),d.database_id,CAST(SERVERPROPERTY('IsClustered') AS int) FROM sys.databases d JOIN sys.database_recovery_status r ON r.database_id=d.database_id WHERE d.database_id=DB_ID();",
             row => (Identity: new ActualSourceIdentity(row.GetString(0), row.GetString(1), row.GetString(2), row.GetGuid(3), row.GetGuid(4), row.GetGuid(5), row.GetGuid(6), row.GetDateTime(7), row.GetString(8), row.GetString(9)), DatabaseId: row.GetInt32(10), Clustered: row.GetInt32(11)));
         if (identities.Count != 1) Fail("C04A_DATABASE_IDENTITY");
@@ -174,9 +178,9 @@ public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
         if (found.DatabaseId <= 4 || found.Identity.ServerName != options.ExpectedServerName ||
             found.Identity.DatabaseName != options.ExpectedDatabaseName || found.Identity.BrokerGuid != options.ExpectedDatabaseGuid)
             Fail("C04A_DATABASE_IDENTITY");
-        if (!found.Identity.MachineName.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) || found.Clustered != 0)
+        if (!found.Identity.MachineName.Equals(options.LocalContainer?.HostName ?? Environment.MachineName, StringComparison.OrdinalIgnoreCase) || found.Clustered != 0)
             Fail("C04A_LOCAL_SOURCE_REQUIRED");
-        return found.Identity;
+        return found.Identity with { LocalContainer = options.LocalContainer };
     }
 
     private static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
@@ -234,6 +238,7 @@ public sealed class ActualSourceInspector(ActualSourceInspectionOptions options)
 
     private sealed class InspectionSession(SqlConnection connection, int timeout, CancellationToken token)
     {
+        internal CancellationToken CancellationToken => token;
         internal SqlTransaction? Transaction { get; set; }
         private SqlCommand Command(string sql, (string Name, object Value)[] parameters)
         {

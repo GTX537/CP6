@@ -44,7 +44,7 @@ dotnet <published-directory>/CP6.Crm.SourceFence.dll status-actual
 
 2026-09-14 只读核查确认：原生实例与 Docker 独立 `CP6DB` 都有完整空的 20 张旧 CRM 表；两份数据库的 broker GUID 相同。Docker 的 SQL ServerName 和当前 MachineName 也不同，API 和数据库容器的 Compose 来源不同，均配置自动重启策略。Docker API 的实际 SQL 登录是 sa/sysadmin；Docker SQL Agent 已停止且没有作业，原生实例另外存在一个维护作业。
 
-这说明库名/broker GUID、当前根 Compose 文件或一次空会话观察都不能单独界定来源。当前控制器限定 SQL MachineName 为本机 Windows 主机；Docker 来源须另行完成受控适配及生命周期隔离，不能冒充同一个原生库。去敏观察与执行证据见 [本次证据](../../docs/evidence/c04a/2026-09-14/actual-source-freeze/README.md)。
+这说明库名/broker GUID、当前根 Compose 文件或一次空会话观察都不能单独界定来源。默认控制器仍限定 SQL MachineName 为本机 Windows 主机；Docker 来源使用独立的[本机容器绑定](LOCAL-CONTAINER.md)，核验 Engine/容器/端口与 SQL 实际身份，不能冒充同一个原生库。实际生命周期隔离仍须独立完成。首次去敏观察与执行证据见 [原冻结组件证据](../../docs/evidence/c04a/2026-09-14/actual-source-freeze/README.md)。
 
 ## 验证范围
 

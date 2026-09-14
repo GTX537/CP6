@@ -1,0 +1,263 @@
+{
+  "format": "CP6.C04A.LocalContainerSource.LocalValidation.v1",
+  "sourceBases": {
+    "core": "7880a0e2b8691a13fca0221d817487d470f6c2df",
+    "crm": "f6b1e9d67f914d1d5c436ab780bbd15e40b99cd9"
+  },
+  "codeCommits": {
+    "core": "a522a5dd0b393ec1d576a4cd40057a8364c93a37",
+    "crm": "d7c61bf79a80cc568675f73042b4f53324a6004f"
+  },
+  "newDistinctChecks": 16,
+  "directlyAffectedPriorChecks": 2,
+  "skippedChecks": 0,
+  "runs": [
+    {
+      "name": "green-01",
+      "counters": {
+        "total": "17",
+        "executed": "17",
+        "passed": "17",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Live_local_container_source_uses_foundation_schema_and_rejects_binding_drift_without_touching_actual_database",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Different_SQL_endpoints_are_refused_before_connecting(endpoint: \"127.0.0.1,1434\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Nested_container_format_cannot_be_ignored_inside_a_freeze_request",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Different_SQL_endpoints_are_refused_before_connecting(endpoint: \"203.0.113.9,1433\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Different_SQL_endpoints_are_refused_before_connecting(endpoint: \"localhost,1433\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceInspectorTests.Actual_inspection_is_read_only_and_binds_schema_permissions_and_programs",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"valid\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Native_identity_and_freeze_request_keep_their_original_canonical_bytes",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"short-id\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"remote-engine\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"unknown\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"format\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"duplicate\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.ActualSourceFreezerTests.Cli_binds_exact_file_bytes_and_rejects_actual_reopen",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"missing-format\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Different_SQL_endpoints_are_refused_before_connecting(endpoint: \"lpc:localhost\\\\KOUSQLSERVER\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.Crm.SourceFence.Tests.LocalSqlContainerTests.Container_binding_files_are_byte_bound_and_reject_ambiguous_or_remote_inputs(scenario: \"wrong-hash\")",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "fac02613541b2baf92e86bb064e21be6f2bbcabe60bc7edf085f81bc8cf30b5b"
+    },
+    {
+      "name": "cross-green-01",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Published_Core_recovers_a_bound_Docker_source_while_verifying_a_native_CRM_target",
+          "outcome": "Passed"
+        }
+      ],
+      "sha256": "43779787eaecaa0010896a79df1cb1da2eeef245e8e4d1cfd71172a1574d9e51"
+    }
+  ],
+  "review": {
+    "scope": "One concentrated read-only review of Core container binding and CRM cross-repository test delta.",
+    "reviewer": "existing native_audit_review agent; no SQL/build/test execution",
+    "covered": [
+      "Local named-pipe Docker authority and exact endpoint/SQL identity",
+      "Bounded JSON handling and no secret output",
+      "Native receipt byte compatibility and strict nested format parsing",
+      "Recovery transaction target locks",
+      "Unique fixture database ownership"
+    ],
+    "findings": [],
+    "unresolved": 0,
+    "rootDeliveryChecks": "Explicit staged diff inspection, CRM protected boundary, changed-file secrets/links scan and read-only fixture cleanup. No unrelated suites rerun."
+  },
+  "publishedCoreFiles": 40,
+  "reusedUnchangedCrmOperatorFiles": 178,
+  "boundary": {
+    "protectedFiles": 435,
+    "currentSha256": "cda8d1d0d3826f51217756adc850fc885b56565e9aec7383c61d53cea179a875",
+    "changedPaths": [
+      "eng/c04a/ContainerSourceRecoveryCliTests.cs",
+      "eng/c04a/CutoverRecoveryCliTests.cs"
+    ],
+    "reviewedProvisionerSha256": "cd36b470aa8965a8fbeedf2ab8dc1b1d37b41281fbb4cbaedac00e00684fc366"
+  },
+  "actualContainerReadOnly": {
+    "observedAtUtc": "2026-09-14T12:43:39.98812-04:00",
+    "identity": {
+      "serverName": "46deb8044b4f",
+      "machineName": "505a5337f995",
+      "databaseName": "CP6DB",
+      "brokerGuid": "fa1f4dab-33ee-4027-b5d8-f5a270e5bc53",
+      "databaseGuid": "f59eda72-6fac-4056-900d-a96e254f9bc1",
+      "familyGuid": "087348f5-6af0-49cf-af22-eedae73272e0",
+      "recoveryForkGuid": "28cc4e83-7cae-4d3a-a920-2879896f8886",
+      "createdAtServerLocal": "2026-07-21T10:45:51.277",
+      "originalLogin": "sa",
+      "originalLoginSid": "01",
+      "localContainer": {
+        "enginePipeName": "dockerDesktopLinuxEngine",
+        "engineId": "4bf072d6-5461-480d-8357-8847d391797d",
+        "containerId": "505a5337f99522fd483f8db86a0e1b2d3da6755ef133d1bf341af063798f368e",
+        "imageSha256": "sha256:49b45a911dc535e9345fbfd7101a1bd8a1e190a5f29b877ef75387a061e5fcf0",
+        "containerName": "/cp6-db",
+        "hostName": "505a5337f995",
+        "startedAtUtc": "2026-09-09T14:57:20.211338742Z",
+        "sqlPort": 1433,
+        "hostPort": 1433,
+        "publishedBindingsSha256": "d74663bebda40f14a95c2f955e43258506fa990335e357a42966c9b038ae4937",
+        "mountsSha256": "b6b4feec29c01cb4c3f9778eb7ec65745e89746cb17327b5c0b08932dcb6a131",
+        "restartPolicySha256": "d3e9ea2186d7d6b13b9cbe2599852f53f21602445bb712deba843f3987bb54a0",
+        "networkMode": "cp6_default",
+        "format": "CP6.C04A.LocalSqlContainer.v1"
+      }
+    },
+    "scopeSha256": "d05cc87f3d01fde4db8e7c9dd0a8e2ce126173e1788be373c3e9043a94f4e82b",
+    "schemaSha256": "64a926743ba51b138e3e49b0e9e19dba825d5cfa1f896918eb9c187430ff1915",
+    "tableCount": 20,
+    "totalRows": 0.0,
+    "actualControlSchemasBefore": 0,
+    "mutationAuthorized": false,
+    "completeWriteFenceVerified": false,
+    "containerIdentityBound": true
+  },
+  "cleanup": {
+    "atUtc": "2026-09-14T16:49:57.0452977+00:00",
+    "native": {
+      "atUtc": "2026-09-14T16:49:56.9136165+00:00",
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "docker": {
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "actualSourcesModified": false
+  },
+  "knownIntermediateFailures": [
+    "Initial build log redirection targeted the not-yet-created audit directory; Out-File failed before dotnet ran. After creating the directory the recorded build-01 completed successfully. No product test failure."
+  ],
+  "acceptance": {
+    "overallPercent": 60,
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "actualSourceFrozen": false,
+    "actualTargetAborted": false,
+    "actualActivation": false,
+    "changedBytesUserSigned": false,
+    "productionDeployment": false,
+    "completeWriteFenceVerified": false
+  },
+  "validationScope": "15 new Core binding/format/endpoint/Foundation SQL checks, 2 directly affected native/CLI checks and 1 new published Core Docker source to unchanged native CRM target recovery scenario.",
+  "limitations": [
+    "Minimal cross-repository legacy columns validate coordination; Core container SQL separately uses Foundation DDL.",
+    "Container identity checks do not provide persistent Docker/SQL administrator isolation or complete writer lifecycle control.",
+    "Actual CP6DB and preview were not frozen or switched; no CRM11/C04B acceptance or observation completed.",
+    "Only whitelisted read-only actual summaries and preview hashes archived; private inspection, Docker Env and private run/config bytes excluded."
+  ],
+  "archiveMembers": {
+    "build-01.log": "958c51df24bbb2fbaca89d235fd5b03ca88ac75f5d33f58dcadbcd51bfefa58b",
+    "test-build-01.log": "8d210fef2ac458e19687fe1b37a5797ab460365d5345da04424cac9e8ccfc304",
+    "green-01.log": "5dc0e20cbcff1a7dca148a5e57919b84a452b20d426b661a03229ee7de2639f3",
+    "publish-01.log": "adde4f312cf65ee89d1c662d8779978051f9388229f78453bd171810768e086b",
+    "cross-build-01.log": "5ffade9805aabd684949bcd91c6a020e3127188afcce8b973934ca11970d20e7",
+    "cross-green-01.log": "45d5766ee6a72b8a1b5333e687885d56fe1eb7b82e93b3a58c230bf4d981ad46",
+    "boundary-01.log": "9cf4e8dfdb5721b75b3262a335f6255f6c27b96ca2d586057b982dcd992fca1b",
+    "run-tests.ps1": "606cee0b7108fa4b180e399f7a7a4bb26356dbb6faf5d62e0931426f05bdb2db",
+    "run-cross.ps1": "782e51d467c32d8a2d0b604e8f34d5d50377fe64abdc60cea79269c4091aa33b",
+    "observe-cleanup.ps1": "aff042f392b937ab4140e40b20dbe0f7a860bb18643eab39e92219ef96fbfe41",
+    "cleanup-observation.json": "a099a53403f76d24adc694203a8582ece5c99be2f6bce68ab73b33f4e5d85798",
+    "boundary-refresh.json": "c0176b87c71efb688b7e2df5d5a682501ae41c6e2db841a004847a09db2952b5",
+    "container-binding.json": "e878b674e20e1a80e24ace058cde27ce6b05dc255ed7c0262c7343e8b3d72817",
+    "actual-container-summary.json": "f1f43c7d5a979e1fad5ecfdd6e6bdc2a4a96111e61f9c37e458e664ce88658ae",
+    "preview-lifecycle-observation.json": "f11c0814d724669d3a418424056aca0355fc251c83ef182d2c76e220dac6249d",
+    "review.json": "d539c220f79a8dab3c63e14c14df1e77b72ede9c72a3be3e2f7ca73f0705b4a5",
+    "publication-manifest.json": "fe59eea27679bf187e332faf717c2eb78dcdac0ebd8678d4ea9a109049ab5bc9",
+    "preview-lifecycle.md": "8f4a34ab6b12a74cab4f8a3b2a35e0d2964a4f38e6177c87e281506c6621a829",
+    "results/green-01.trx": "fac02613541b2baf92e86bb064e21be6f2bbcabe60bc7edf085f81bc8cf30b5b",
+    "results/cross-green-01.trx": "43779787eaecaa0010896a79df1cb1da2eeef245e8e4d1cfd71172a1574d9e51"
+  },
+  "archiveSha256": "9344fe526b75ebfbba735b3df1ffdbc3d759ea16b2aa6df1e71737658e968387",
+  "evidenceNormalization": {
+    "file": "preview-lifecycle-observation.json",
+    "change": "CRLF to LF only; JSON values and embedded identity/file hashes unchanged. Original observer bytes retained locally.",
+    "originalSha256": "8ce5e7e5582343ee0e15193e1ba3aa092f74dd08fb827630ab63b4b42b5820f2",
+    "normalizedSha256": "f11c0814d724669d3a418424056aca0355fc251c83ef182d2c76e220dac6249d"
+  }
+}

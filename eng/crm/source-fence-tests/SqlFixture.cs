@@ -32,19 +32,25 @@ internal sealed class SqlFixture : IAsyncDisposable
         Name = prefix + Guid.NewGuid().ToString("N");
     }
 
-    internal static async Task<SqlFixture> CreateAsync(bool inspection = false)
+    internal static async Task<SqlFixture> CreateAsync(bool inspection = false, LocalSqlContainerBinding? localContainer = null)
     {
-        var admin = Environment.GetEnvironmentVariable("C04A_TEST_SQL_CONNECTION");
+        var admin = Environment.GetEnvironmentVariable(localContainer is null ? "C04A_TEST_SQL_CONNECTION" : "C04A_CONTAINER_TEST_SQL");
         if (string.IsNullOrWhiteSpace(admin))
             throw new InvalidOperationException("C04A_TEST_SQL_CONNECTION is required; SQL tests must not skip.");
         var builder = new SqlConnectionStringBuilder(admin);
+        if (localContainer is not null)
+        {
+            await LocalSqlContainerInspector.VerifyAsync(localContainer);
+            if (builder.DataSource != "127.0.0.1," + localContainer.HostPort)
+                throw new InvalidOperationException("Container fixture must use its verified loopback port.");
+        }
         if (!string.Equals(builder.InitialCatalog, "master", StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Test administrator connection must explicitly select master.");
         var fixture = new SqlFixture(admin, inspection);
         await using var connection = new SqlConnection(admin);
         await connection.OpenAsync();
         using var identity = new SqlCommand("SELECT CAST(SERVERPROPERTY('MachineName') AS nvarchar(128));", connection);
-        if (!string.Equals((string?)await identity.ExecuteScalarAsync(), Environment.MachineName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals((string?)await identity.ExecuteScalarAsync(), localContainer?.HostName ?? Environment.MachineName, StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Test SQL Server must be on the local machine.");
         using var create = new SqlCommand($"CREATE DATABASE [{fixture.Name}];", connection);
         await create.ExecuteNonQueryAsync();

@@ -1,0 +1,14 @@
+{
+  "scope": "One concentrated read-only review of Core container binding and CRM cross-repository test delta.",
+  "reviewer": "existing native_audit_review agent; no SQL/build/test execution",
+  "covered": [
+    "Local named-pipe Docker authority and exact endpoint/SQL identity",
+    "Bounded JSON handling and no secret output",
+    "Native receipt byte compatibility and strict nested format parsing",
+    "Recovery transaction target locks",
+    "Unique fixture database ownership"
+  ],
+  "findings": [],
+  "unresolved": 0,
+  "rootDeliveryChecks": "Explicit staged diff inspection, CRM protected boundary, changed-file secrets/links scan and read-only fixture cleanup. No unrelated suites rerun."
+}

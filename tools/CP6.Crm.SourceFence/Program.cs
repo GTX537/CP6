@@ -5,6 +5,15 @@ using CP6.Crm.SourceFence;
 var json = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 try
 {
+    if (args.Length == 1 && args[0] == "inspect-container")
+    {
+        var container = await LocalSqlContainerInspector.InspectAsync(Required("C04A_DOCKER_ENGINE_PIPE"), Required("C04A_DOCKER_CONTAINER_ID"),
+            int.Parse(Required("C04A_DOCKER_HOST_PORT"), CultureInfo.InvariantCulture),
+            int.Parse(Environment.GetEnvironmentVariable("C04A_DOCKER_SQL_PORT") ?? "1433", CultureInfo.InvariantCulture));
+        // This directly reusable bound-file document uses the DTO's PascalCase names.
+        Console.WriteLine(JsonSerializer.Serialize(container));
+        return 0;
+    }
     if (args.Length == 1 && (args[0] == "seal-forward-only-actual" || args[0] is "reopen-actual" or "recovery-status-actual"
         && (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_RECOVERY_REQUEST_PATH"))
             || string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_TARGET_SQL_CONNECTION")))))
@@ -15,12 +24,21 @@ try
         Guid.Parse(Required("C04A_EXPECTED_DATABASE_GUID")),
         int.Parse(Environment.GetEnvironmentVariable("C04A_LOCK_TIMEOUT_MS") ?? "5000", CultureInfo.InvariantCulture),
         int.Parse(Environment.GetEnvironmentVariable("C04A_COMMAND_TIMEOUT_SECONDS") ?? "30", CultureInfo.InvariantCulture));
+    LocalSqlContainerBinding? localContainer = null;
+    if (Environment.GetEnvironmentVariable("C04A_CONTAINER_BINDING_PATH") is { Length: > 0 } bindingPath)
+    {
+        if (args[0] is not ("inspect-actual" or "freeze-actual" or "status-actual" or "reopen-actual" or "recovery-status-actual"))
+            throw new SourceFenceException("C04A_CONTAINER_INVALID_OPTIONS");
+        localContainer = await LocalSqlContainerInspector.ReadBindingAsync(bindingPath, Required("C04A_CONTAINER_BINDING_FILE_SHA256"));
+    }
+    else if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("C04A_CONTAINER_BINDING_FILE_SHA256")))
+        throw new SourceFenceException("C04A_CONTAINER_INVALID_OPTIONS");
     if (args[0] is "reopen-actual" or "recovery-status-actual")
     {
         var request = await ActualSourceFreezer.ReadRecoveryRequestAsync(Required("C04A_RECOVERY_REQUEST_PATH"), Required("C04A_RECOVERY_REQUEST_FILE_SHA256"));
         var freezer = new ActualSourceFreezer(new(options.ConnectionString, options.ExpectedDatabaseName,
             options.ExpectedDatabaseGuid, Required("C04A_EXPECTED_SERVER_NAME"),
-            Environment.GetEnvironmentVariable("C04A_EXPECTED_SCOPE_SHA256"), options.LockTimeoutMilliseconds, options.CommandTimeoutSeconds));
+            Environment.GetEnvironmentVariable("C04A_EXPECTED_SCOPE_SHA256"), options.LockTimeoutMilliseconds, options.CommandTimeoutSeconds, localContainer));
         var target = Required("C04A_TARGET_SQL_CONNECTION");
         Console.WriteLine(JsonSerializer.Serialize(args[0] == "reopen-actual"
             ? await freezer.ReopenAsync(request, request.Digest(), target) : await freezer.RecoveryStatusAsync(request, request.Digest(), target), json));
@@ -31,7 +49,7 @@ try
         var request = await ActualSourceFreezer.ReadRequestAsync(Required("C04A_REQUEST_PATH"), Required("C04A_REQUEST_FILE_SHA256"));
         var freezer = new ActualSourceFreezer(new(options.ConnectionString, options.ExpectedDatabaseName,
             options.ExpectedDatabaseGuid, Required("C04A_EXPECTED_SERVER_NAME"),
-            Environment.GetEnvironmentVariable("C04A_EXPECTED_SCOPE_SHA256"), options.LockTimeoutMilliseconds, options.CommandTimeoutSeconds));
+            Environment.GetEnvironmentVariable("C04A_EXPECTED_SCOPE_SHA256"), options.LockTimeoutMilliseconds, options.CommandTimeoutSeconds, localContainer));
         Console.WriteLine(JsonSerializer.Serialize(args[0] == "freeze-actual"
             ? await freezer.FreezeAsync(request, request.Digest()) : await freezer.StatusAsync(request.Digest()), json));
         return 0;
@@ -41,7 +59,7 @@ try
         var inspector = new ActualSourceInspector(new(options.ConnectionString, options.ExpectedDatabaseName,
             options.ExpectedDatabaseGuid, Required("C04A_EXPECTED_SERVER_NAME"),
             Environment.GetEnvironmentVariable("C04A_EXPECTED_SCOPE_SHA256"), options.LockTimeoutMilliseconds,
-            options.CommandTimeoutSeconds));
+            options.CommandTimeoutSeconds, localContainer));
         Console.WriteLine(JsonSerializer.Serialize(await inspector.InspectAsync(), json));
         return 0;
     }
