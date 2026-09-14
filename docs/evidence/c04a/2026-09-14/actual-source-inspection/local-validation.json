@@ -1,0 +1,110 @@
+{
+  "codeCommit": "4f043e2e8f78b6a323609661be804a3823e363b9",
+  "baseCommit": "6c11dbb68cbba5e5fab6b9ec9e3c0693307e7e6e",
+  "goalMilestones": {
+    "completed": 3,
+    "total": 5,
+    "percent": 60
+  },
+  "tests": {
+    "uniquePassed": 11,
+    "skipped": 0,
+    "batches": [
+      {
+        "name": "green-01",
+        "passed": 6,
+        "scope": "initial new inspector tests"
+      },
+      {
+        "name": "green-02",
+        "passed": 5,
+        "scope": "four new boundaries plus affected non-rehearsal fixture test"
+      },
+      {
+        "name": "green-03",
+        "passed": 1,
+        "scope": "view drift after module coverage correction"
+      }
+    ],
+    "reused": "Unchanged source-fence engine and prior C01/C02/C03 acceptance; no old suites rerun."
+  },
+  "review": {
+    "blockingFindings": 1,
+    "resolved": 1,
+    "detail": "CLR method bindings added to ProgramsSql; all SQL modules including views included; targeted review closed P2. CLR runtime execution was not enabled or rehearsed."
+  },
+  "release": {
+    "lockedRestore": true,
+    "buildWarnings": 0,
+    "buildErrors": 0,
+    "actualCliChecks": [
+      "inspect-actual",
+      "inspect-actual with matching expected scope",
+      "freeze refused before actual database access"
+    ]
+  },
+  "failuresRetained": [
+    "Initial expected compile failure because the new inspector API did not exist; red-build.log retained.",
+    "PowerShell display selected properties directly from an ordered dictionary, yielding null console display after successful actual checks; persisted summary had real values and was read back. Display helper corrected without repeating SQL."
+  ],
+  "branchIsolation": "Latest remote main used as confirmed baseline. Existing local main has two unrelated commits and was preserved; task does not merge or reset them.",
+  "boundaries": {
+    "actualSourceChanged": false,
+    "actualActivationApproved": false,
+    "sourceFenceComplete": false,
+    "targetFirstWriteIntegrated": false,
+    "productionAcceptance": false
+  },
+  "sourceInputs": {
+    "tools/CP6.Crm.SourceFence/ActualSourceInspector.cs": {
+      "rawSha256": "e142b1476bf8402be7c13d0801fbba0bd22150439ba5cc2578593ebcd2a73f1c",
+      "lfSha256": "e142b1476bf8402be7c13d0801fbba0bd22150439ba5cc2578593ebcd2a73f1c"
+    },
+    "tools/CP6.Crm.SourceFence/Program.cs": {
+      "rawSha256": "5df4ef266adbd0ae03357aa2624a485de6e4d99bc7b46d0c88a58ae08adb8bde",
+      "lfSha256": "55e52c199eced67b119f769ebcb8edc0e687a3e70d90aab25067e397d9859c3f"
+    },
+    "tools/CP6.Crm.SourceFence/SourceFence.cs": {
+      "rawSha256": "80ff9107dd136230b1b15ca5bb6bd631f5fd1e2c9e8be4a84c0f0170d8bd39aa",
+      "lfSha256": "bceca897ddb33e19fb59fa7b47af15b6201962eadab9cf7ae1e3af4b7b4528f2"
+    },
+    "tools/CP6.Crm.SourceFence/CP6.Crm.SourceFence.csproj": {
+      "rawSha256": "1a02e0f144e24fc65aa881687d720abafd820f1b4852dc8de101636b8dae8027",
+      "lfSha256": "cc27335584b5e1eb8590ae193a0fe4b94a8ca3cbc9475bc376734bd2e9c5eece"
+    },
+    "tools/CP6.Crm.SourceFence/packages.lock.json": {
+      "rawSha256": "a69b1d61d5aea108664b0b7bf2f080a98fe7bd69f229b74b0be70e09c3d15645",
+      "lfSha256": "7603e1a9bc304391c22b591caf1d8edd74e58cac7df313f10a6fe5085c539b66"
+    },
+    "eng/crm/source-fence-tests/ActualSourceInspectorTests.cs": {
+      "rawSha256": "9121f0793160ce51ec6e7988b24ffbdedac4e4738b359e19e2ab32bcc1e9c5ae",
+      "lfSha256": "9121f0793160ce51ec6e7988b24ffbdedac4e4738b359e19e2ab32bcc1e9c5ae"
+    },
+    "eng/crm/source-fence-tests/SqlFixture.cs": {
+      "rawSha256": "4b0d87d347a4230b32c3802d141ebad300844247caa84570f8f2b7b5a5774f3a",
+      "lfSha256": "2307962f12413548fa94eb4d4ecdcf6cf40b198fd1f1100aa9f1d1b40cc6ad24"
+    }
+  },
+  "archiveSha256": "66b4510bbd86d54fd2d21d6188a6dbef70c140b73719344f69e721d0f5c46da0",
+  "archiveMembers": {
+    "red-build.log": "a490133bcf740f20911e87d4284679373fe841503869e6302db82a92b0022f6a",
+    "build.log": "47b87b4c4513b7fce9db67a493be796cf740573e50c262d02d4529e6408d380d",
+    "build-02.log": "6e122cf7af326741899b61ab26246bd5730fefff417a7fd9a2e0f196a18e1409",
+    "build-03.log": "ebdaad68f3ce1e6d462e7bacdbdcf2de25054b327fce49978d37ae19dbcee5b7",
+    "green-01.log": "b727e9b5680734fb587c353748394d5cecc73105b9e6de7e996251d5b64f9271",
+    "green-02.log": "a4d3a84fe84d2b606425df36f6494236002ad75aafb5f3bfb9ab46f368e7f634",
+    "green-03.log": "3bed8c221ad38849f9077735192164c62d0696bc65b888478d5bb22089c8f1ba",
+    "publish.log": "fa7ac6f2a16e946d462e913202bbe29b95f8df070413c2b549d58920b6a51e11",
+    "actual-freeze-refusal.json": "b8cec9347f777b739cecef8b69e591e2260d64718d279c72311e61a59436bc9d",
+    "results/green-01.trx": "6cd7f9c84e19ca8ac26f2bd73903fda3e757636d93afbed111ae2d87ade1be1d",
+    "results/green-02.trx": "3d3c1843ded88350eccbbfaffe81d50c0349d73fbff346df0766f1f2cc54324c",
+    "results/green-03.trx": "2ec71728378dd47bf56f4fee87c6be0228930bcc8e28979c448798082cb106fe",
+    "public-contract.log": "cd91113627bc6ec08111b4c240aba6c12d2cd505f472d3aa76f9ec9b73ecca25",
+    "prd-contract.log": "3f9bde2f65be03fa87525e1957f474749e065b62f1da2c7b66120003995bc797"
+  },
+  "documentChecks": {
+    "publicContract": "passed",
+    "prdContract": "passed",
+    "workflowChanges": false
+  }
+}
