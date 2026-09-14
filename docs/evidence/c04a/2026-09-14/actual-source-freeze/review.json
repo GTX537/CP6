@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-09-14T15:21:44.4331202Z",
+  "reviewer": "native_audit_review",
+  "worktree": "D:/CP6-worktrees/c04a-actual-write-control",
+  "baseline": "3cda543bb19333e5b956dff33eb81137f41b6a92",
+  "mode": "bounded-read-only-code-review",
+  "outcome": "no-open-findings-after-targeted-fix-review",
+  "scope": [
+    "tools/CP6.Crm.SourceFence/ActualSourceFreezer.cs",
+    "tools/CP6.Crm.SourceFence/ActualSourceInspector.cs",
+    "tools/CP6.Crm.SourceFence/SourceFence.cs",
+    "tools/CP6.Crm.SourceFence/Program.cs",
+    "eng/crm/source-fence-tests/ActualSourceFreezerTests.cs",
+    "eng/crm/source-fence-tests/ActualSourceFreezeRequestTests.cs",
+    "tools/CP6.Crm.SourceFence/ACTUAL-FREEZE.md",
+    "tools/CP6.Crm.SourceFence/ACTUAL-INSPECTION.md",
+    "tools/CP6.Crm.SourceFence/README.md",
+    "docs/superpowers/plans/2026-09-14-c04a-actual-source-freeze.md"
+  ],
+  "findings": [
+    {
+      "id": "R1",
+      "priority": "P2",
+      "status": "resolved",
+      "file": "tools/CP6.Crm.SourceFence/ActualSourceFreezer.cs",
+      "line": 67,
+      "relatedLines": [
+        69,
+        174,
+        180,
+        184
+      ],
+      "title": "Stored nested request format changes are accepted",
+      "trigger": "After a valid freeze, alter only stored Receipt.Request.Format to an unknown value, then request status or replay using the original request digest.",
+      "evidence": "Deserialize<Receipt> does not execute the top-level ActualSourceFreezeRequest Format validation. System.Text.Json ignores a changed getter-only nested Format value, and recomputed request digest uses the constant getter.",
+      "impact": "A modified stored receipt can pass the exact receipt verification contract.",
+      "suggestion": "For the tool-generated receipt, require ordinal equality between the original stored JSON and JsonSerializer.Serialize(deserializedReceipt), or explicitly validate the nested raw Request.Format before accepting the receipt.",
+      "reproduction": "Code-path review only; no SQL or tests executed by reviewer.",
+      "resolution": {
+        "reviewedAtUtc": "2026-09-14T15:23:08.7527931Z",
+        "mode": "targeted-read-only-code-and-test-review",
+        "fixFile": "tools/CP6.Crm.SourceFence/ActualSourceFreezer.cs",
+        "fixLines": [
+          67,
+          68,
+          69,
+          70
+        ],
+        "fix": "Before receipt acceptance, the stored tool-generated JSON must equal JsonSerializer.Serialize(receipt) using StringComparison.Ordinal. Changed getter-only nested Format values can no longer be silently normalized.",
+        "testFile": "eng/crm/source-fence-tests/ActualSourceFreezerTests.cs",
+        "testName": "Changed_nested_receipt_format_is_rejected_without_changing_frozen_state",
+        "testLines": [
+          153,
+          165
+        ],
+        "testCoverage": [
+          "Modified nested receipt format is rejected by status and replay.",
+          "Rejected operations preserve Frozen state and a single Audit row.",
+          "Restoring the valid receipt allows replay and status at generation 1."
+        ],
+        "parentReportedRedEvidence": "red-receipt.trx: assertion failed because the pre-fix implementation did not throw",
+        "parentGreenEvidence": "green-04 running when targeted review was requested; reviewer does not claim test completion",
+        "reviewerRanTests": false,
+        "history": "Original finding details and original review timestamp are retained."
+      }
+    }
+  ],
+  "confirmed": [
+    "Public rehearsal validation remains intact; actual receipt marker blocks legacy entries, including rehearsal-named catalogs.",
+    "Public inspector remains read-only after shared transaction extraction.",
+    "Actual source identity, original request, prior scope, frozen scope, and generation/run are bound.",
+    "First freeze keeps application/table locks, guard DDL, control/audit, and receipt in one caller-owned SQL transaction.",
+    "Normalization removes only verified owned guards and exact owned public denies; pre-change baselines use the matched observation hashes.",
+    "CLI request file hashes cover the same bytes that are parsed, and explicit unknown/duplicate JSON checks are present.",
+    "Actual reopen and seal are deliberately refused; complete write isolation, approval verification, target verification, and recovery integration remain false."
+  ],
+  "limitations": [
+    "No database, build, test, process, or Git write operations were executed by this reviewer.",
+    "Parent-reported synthetic tests are not actual environment activation evidence.",
+    "Cross-source drain, target/routing recovery coordination, privileged writers, and actual activation are intentionally outside this component and remain unfinished.",
+    "No claim that the entire C04A objective is complete."
+  ],
+  "parentReportedValidation": {
+    "newSqlAndCliCases": 11,
+    "newRequestParsingCases": 5,
+    "directlyAffectedLegacyCases": 3,
+    "independentlyRerunByReviewer": false
+  }
+}

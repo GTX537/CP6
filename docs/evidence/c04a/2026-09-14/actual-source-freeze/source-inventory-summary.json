@@ -1,0 +1,44 @@
+{
+  "sourceCount": 2,
+  "bothProfilesEmpty": true,
+  "tablesPerSource": 20,
+  "sameDatabaseName": true,
+  "sameBrokerGuid": true,
+  "sameDatabaseProven": false,
+  "dockerServerAndMachineNamesDiffer": true,
+  "dockerApiAndDatabaseComposeOriginsDiffer": true,
+  "dockerApplicationLogin": "sa",
+  "dockerApplicationIsSysadmin": true,
+  "dockerApiMatchingSessionCount": 7,
+  "dockerRestartPolicy": "unless-stopped",
+  "dockerSqlAgentState": "Stopped",
+  "dockerSqlAgentJobCount": 0,
+  "nativeSqlAgentState": "Stopped",
+  "nativeEnabledJobCount": 1,
+  "nativeJobClassification": "msdb policy maintenance",
+  "completeWriterIsolation": false,
+  "actualFreezeExecuted": false,
+  "privateObservationReferences": [
+    {
+      "file": "container-metadata.json",
+      "sha256": "0d134acb7051d615e1051d39b10f7b9ed0e0bcf6e0a9d698ec7adbbe2095cfd7",
+      "bytes": 4939
+    },
+    {
+      "file": "sql-metadata.json",
+      "sha256": "753470a8396af00a3a57391cc388b98238590c588787c440be11d338365c5a96",
+      "bytes": 11977
+    },
+    {
+      "file": "sanitized-unparsed.txt",
+      "sha256": "48a3c71c4b06203430cb509d2a39efc7f4d3785fba558b642ab22abce7e1ac0a",
+      "bytes": 7284
+    },
+    {
+      "file": "README.md",
+      "sha256": "42ddaabab7258dc6339556eb8582308c0e7fb6aa11576d01186bdb3ccbf2e715",
+      "bytes": 3729
+    }
+  ],
+  "limitations": "Point-in-time read-only metadata. Native facts retain their previous observation; this task does not repeat that inventory. Docker metadata is not a full ActualSourceInspector ScopeSha256 report."
+}
