@@ -5,6 +5,26 @@ using CP6.Crm.SourceFence;
 var json = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 try
 {
+    if (args.Length == 1 && args[0] == "prove-target-enable-actual")
+    {
+        var connection = Required("C04A_SQL_CONNECTION");
+        var requestPath = Required("C04A_REQUEST_PATH");
+        var requestFileSha256 = Required("C04A_REQUEST_FILE_SHA256");
+        var anchorSha256 = Required("C04A_TARGET_SET_ANCHOR_SHA256");
+        var challenge = Guid.Parse(Required("C04A_PROOF_CHALLENGE"));
+        var request = await ActualSourceFreezer.ReadRequestAsync(requestPath, requestFileSha256);
+        var identity = request.SourceIdentity;
+        // Source identity and Docker binding come only from the bound original request.
+        // ExpectedDatabaseGuid in the inspector is the SQL service BrokerGuid.
+        var freezer = new ActualSourceFreezer(new(connection, identity.DatabaseName, identity.BrokerGuid,
+            identity.ServerName, request.ExpectedScopeSha256,
+            int.Parse(Environment.GetEnvironmentVariable("C04A_LOCK_TIMEOUT_MS") ?? "5000", CultureInfo.InvariantCulture),
+            int.Parse(Environment.GetEnvironmentVariable("C04A_COMMAND_TIMEOUT_SECONDS") ?? "30", CultureInfo.InvariantCulture),
+            identity.LocalContainer));
+        var proof = await freezer.VerifyFrozenForTargetAsync(request, request.Digest(), anchorSha256, challenge);
+        Console.WriteLine(JsonSerializer.Serialize(proof));
+        return 0;
+    }
     if (args.Length == 1 && args[0] == "inspect-container")
     {
         var container = await LocalSqlContainerInspector.InspectAsync(Required("C04A_DOCKER_ENGINE_PIPE"), Required("C04A_DOCKER_CONTAINER_ID"),

@@ -22,7 +22,7 @@ dotnet <published-directory>/CP6.Crm.SourceFence.dll freeze-actual
 dotnet <published-directory>/CP6.Crm.SourceFence.dll status-actual
 ```
 
-库调用对应 `FreezeAsync(request, request.Digest())` 和 `StatusAsync(request.Digest())`。状态 JSON 不包含连接、请求证据文件内容或业务字段。错误仅返回 `C04A_*` 代码，退出码 2。
+库调用对应 `FreezeAsync(request, request.Digest())` 和 `StatusAsync(request.Digest())`。状态 JSON 不包含连接、请求证据文件内容或业务字段。错误仅返回 `C04A_*` 代码，退出码 2。目标协调器可使用[目标启用前的来源冻结证明](ACTUAL-FROZEN-PROOF.md)绑定本次挑战和完整目标集合。
 
 ## 事务和重放
 
