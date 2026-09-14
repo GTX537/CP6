@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "startedAtUtc": "2026-09-14T01:12:24.7537690+00:00",
+  "status": "Passed",
+  "restoreReceiptSha256": "9b7cbed310d763cffdbcdc3fdccc3b466b4a9d710b6e0c6e11ddbbade9e3afe4",
+  "assemblySha256": "9313b59a0db378e1671e3ada33a4a69cf930effc799dd58e21edeb8f0df147ff",
+  "runnerSha256": "8f4edac65a4e66ed4035d11739080a6dff80807a30c6170f90f5f5cd41a2d845",
+  "restoredDatabase": "CP6_C04A_Rehearsal_441fa518a8a74fb1818e0c7e907175dd",
+  "realSourceRestore": true,
+  "sourceProfile": "empty",
+  "completeC04AAcceptance": false,
+  "targetFirstWriteObserved": false,
+  "sourceFenceActivated": false,
+  "checks": [
+    {
+      "name": "local-restored-identity",
+      "passed": true
+    },
+    {
+      "name": "preflight-0-Uninitialized",
+      "passed": true
+    },
+    {
+      "name": "twenty-empty-tables",
+      "passed": true
+    },
+    {
+      "name": "preflight-created-no-control-schema",
+      "passed": true
+    },
+    {
+      "name": "freeze-0-Frozen",
+      "passed": true
+    },
+    {
+      "name": "all-guard-inventory-verified",
+      "passed": true
+    },
+    {
+      "name": "freeze-0-Frozen",
+      "passed": true
+    },
+    {
+      "name": "freeze-replay-audit-once",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_Account",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_Activity",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_Collaborator",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_Contact",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_ErpLink",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_IntakeConfig",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_IntakeMember",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_Lead",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_MediaAsset",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_MergeRecord",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_Opportunity",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_PageRevision",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_PageTranslation",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_PublicForm",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_PublicRoute",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_PublicSubmission",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_Site",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_SitePage",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_SourceTouch",
+      "passed": true
+    },
+    {
+      "name": "protected-and-readable-Crm_StageHistory",
+      "passed": true
+    },
+    {
+      "name": "unrelated-ERP-write-allowed",
+      "passed": true
+    },
+    {
+      "name": "mixed-ERP-CRM-transaction-rolled-back",
+      "passed": true
+    },
+    {
+      "name": "legacy-OUTPUT-blocked-while-frozen",
+      "passed": true
+    },
+    {
+      "name": "reopen-1-Reopened",
+      "passed": true
+    },
+    {
+      "name": "reopen-restored-writes-and-OUTPUT-without-retaining-fixture-data",
+      "passed": true
+    },
+    {
+      "name": "freeze-2-Frozen",
+      "passed": true
+    },
+    {
+      "name": "seal-forward-only-3-ForwardOnly",
+      "passed": true
+    },
+    {
+      "name": "forward-only-refuses-reopen",
+      "passed": true
+    },
+    {
+      "name": "status-4-ForwardOnly",
+      "passed": true
+    },
+    {
+      "name": "four-transitions-audited",
+      "passed": true
+    },
+    {
+      "name": "source-stays-frozen-after-rejected-reopen",
+      "passed": true
+    }
+  ],
+  "completedAtUtc": "2026-09-14T01:12:34.4730221+00:00"
+}

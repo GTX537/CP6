@@ -1,0 +1,92 @@
+{
+  "status": "OriginalSourceUnchangedInObservedDimensions",
+  "observedAtUtc": "2026-09-14T01:14:44.5425150+00:00",
+  "sourceDatabase": "CP6DB",
+  "metadataSha256": "e461017dfd67f19b13fa7dd1b7789a7ce19b282326e7e4c17bebf8c53ebf746e",
+  "counts": [
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_Account"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_Activity"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_Collaborator"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_Contact"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_ErpLink"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_IntakeConfig"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_IntakeMember"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_Lead"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_MediaAsset"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_MergeRecord"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_Opportunity"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_PageRevision"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_PageTranslation"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_PublicForm"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_PublicRoute"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_PublicSubmission"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_Site"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_SitePage"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_SourceTouch"
+    },
+    {
+      "rowsIncludingDeleted": 0,
+      "table": "Crm_StageHistory"
+    }
+  ],
+  "sourceControlSchemaAbsent": true,
+  "crmTableTriggers": 0,
+  "completeWriteFenceVerified": false,
+  "scope": "Read-only metadata and all-row counts after isolated freeze/reopen/seal; not a live-writer inventory or continuous fence"
+}

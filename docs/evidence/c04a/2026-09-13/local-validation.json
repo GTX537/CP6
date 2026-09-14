@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-09-14T01:22:42.617908+00:00",
+  "base_main": "e63f96f8c8071fb2d1b5391b56c68a5c182a1d48",
+  "scope": "C04A local source-control component and empty real-source restore rehearsal only",
+  "contract_prerequisite": {
+    "repository": "GTX537/CP6.CRM",
+    "main": "e78040c566ab435ce1aabc76a36a3da51cfcf21a",
+    "approval": "DEC-CRM-004-LOCAL-20260913",
+    "status": "ApprovedForLocalDevelopment",
+    "verified_artifacts": 4,
+    "verified_evidence": 3,
+    "authority_for_this_work": "User continued implementation; no live source freeze or production activation"
+  },
+  "sql_baseline": {
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "log": "sql-tests/release-complete.trx",
+    "source_fence_raw_sha256": "e0b954c75b4243a4cf8244a4933a05939df55f1cf04557d990195970b9c99968",
+    "assembly_sha256": "9313b59a0db378e1671e3ada33a4a69cf930effc799dd58e21edeb8f0df147ff"
+  },
+  "sql_after_review_fix": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "log": "sql-tests/green-reopen-replay.trx",
+    "scope": "New immediate Reopen replay after resumed writes plus affected lifecycle/nonempty/drift cases; reuses unchanged baseline cases with their original execution identities",
+    "source_fence_raw_sha256": "bceca897ddb33e19fb59fa7b47af15b6201962eadab9cf7ae1e3af4b7b4528f2",
+    "assembly_sha256": "7860b3cc48989fad380e0022421b118b73b7f60f18469f21f7b23cfccdad4d0c"
+  },
+  "real_restore": {
+    "passed": 39,
+    "failed": 0,
+    "receipt": "restored-acceptance.json",
+    "source_profile": "20 empty tables including soft-deleted rows; actual full CP6DB COPY_ONLY backup restored to a fresh local database",
+    "assembly_sha256": "9313b59a0db378e1671e3ada33a4a69cf930effc799dd58e21edeb8f0df147ff",
+    "reuse_boundary": "Executed before narrow Reopened retry fix. Actual frozen/reopened/sealed scenarios unchanged; final binary separately exercises three restored-copy smoke commands."
+  },
+  "final_release_smoke": {
+    "passed": 3,
+    "receipt": "final-release-smoke.json"
+  },
+  "input_guards": {
+    "passed": 13,
+    "receipt": "input-guards.json"
+  },
+  "reviews": {
+    "restore_helpers": "P2 UNC path accepted by fully-qualified check; fixed with local fixed-drive/no-reparse checks and 13 guard cases; incremental review passed",
+    "source_fence": "Spec passed; P2 immediate Reopen retry after resumed writes fixed from red test; quality incremental review passed"
+  },
+  "preserved_failures": [
+    "First restoration command rejected Foundation digest because ReadAllText removed its BOM; no output/DB mutation; fixed by preserving UTF-8 BOM while normalizing CRLF.",
+    "Restoration attempt 2 failed after read-only observation because PowerShell indexed property setter rejected InitialCatalog; receipt/log retained, no backup created.",
+    "Restored acceptance attempt 1 stopped at missing Release assembly before database probes; log retained.",
+    "Initial/red SQL implementation, pooling and bulk error-diagnostic corrections, metadata/cancellation failures, missing-environment failure and reopen retry regression retained.",
+    "Public contract scanner flagged repeated C03 test amounts already in main memory summaries. Removed the duplicate amounts from four summaries while retaining reconciliation result and immutable C03 evidence; scanner rules unchanged."
+  ],
+  "not_claimed": [
+    "complete C04A",
+    "live source write fence",
+    "production migration/deployment",
+    "actual writer identity coverage",
+    "target first-business-write integration",
+    "route cutover/rollback",
+    "populated migration readiness",
+    "CRM11/C04B completion"
+  ],
+  "inputs": {
+    "Directory.Build.props": {
+      "raw_sha256": "dd3c34588874b90b6e2d42aa2b51b4e7deedaf22ee34b6bc182160e3d148b739",
+      "lf_sha256": "0e9cc0316d9d617b284096544378e17d8890910d5154e0a6b9e664c7ac86015d"
+    },
+    "CP6.Core/Migrations/20260811030108_CrmFoundation.cs": {
+      "raw_sha256": "99ff1670c972b0fcd2624a75a4a15b221fa4a23743d4b02225e234d1995bbf16",
+      "lf_sha256": "76de7efa9baac910813ce1594157a74a635a4fb1c27c5ced11e2301d16259771"
+    },
+    "tools/CP6.Crm.SourceFence/CP6.Crm.SourceFence.csproj": {
+      "raw_sha256": "cc27335584b5e1eb8590ae193a0fe4b94a8ca3cbc9475bc376734bd2e9c5eece",
+      "lf_sha256": "cc27335584b5e1eb8590ae193a0fe4b94a8ca3cbc9475bc376734bd2e9c5eece"
+    },
+    "tools/CP6.Crm.SourceFence/packages.lock.json": {
+      "raw_sha256": "a69b1d61d5aea108664b0b7bf2f080a98fe7bd69f229b74b0be70e09c3d15645",
+      "lf_sha256": "7603e1a9bc304391c22b591caf1d8edd74e58cac7df313f10a6fe5085c539b66"
+    },
+    "tools/CP6.Crm.SourceFence/Program.cs": {
+      "raw_sha256": "b8c245f88531cf35dd3c2df0fe9468de8c0a34ef24458b1a41eb70d7e3c67753",
+      "lf_sha256": "b8c245f88531cf35dd3c2df0fe9468de8c0a34ef24458b1a41eb70d7e3c67753"
+    },
+    "tools/CP6.Crm.SourceFence/SourceFence.cs": {
+      "raw_sha256": "bceca897ddb33e19fb59fa7b47af15b6201962eadab9cf7ae1e3af4b7b4528f2",
+      "lf_sha256": "bceca897ddb33e19fb59fa7b47af15b6201962eadab9cf7ae1e3af4b7b4528f2"
+    },
+    "eng/crm/source-fence-tests/CP6.Crm.SourceFence.Tests.csproj": {
+      "raw_sha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272",
+      "lf_sha256": "56d838ab184c08fb3bc8952557cd5e0e4d92dac39f185ae7a7efd05052986272"
+    },
+    "eng/crm/source-fence-tests/packages.lock.json": {
+      "raw_sha256": "ab4201f44c5b8549d905afec7f6ffa1edb09e58f5121d0e963bd7e95d2bcffa3",
+      "lf_sha256": "3b82e20d7b58a066d4817c815f8a04fa531efd8401c138a98832b3c6bfb8e533"
+    },
+    "eng/crm/source-fence-tests/SourceFenceTests.cs": {
+      "raw_sha256": "2bf8208eb94f3a6909d1f10ae25ec4bd562331c288d54a65cc0ac4d59d261268",
+      "lf_sha256": "2bf8208eb94f3a6909d1f10ae25ec4bd562331c288d54a65cc0ac4d59d261268"
+    },
+    "eng/crm/source-fence-tests/SqlFixture.cs": {
+      "raw_sha256": "39b9cd3809da16e4d3d0779743abcc4e5d200af7e04424b74bf2871dcd468378",
+      "lf_sha256": "39b9cd3809da16e4d3d0779743abcc4e5d200af7e04424b74bf2871dcd468378"
+    },
+    "eng/crm/source-fence-rehearsal/Invoke-RestoredAcceptance.ps1": {
+      "raw_sha256": "8f4edac65a4e66ed4035d11739080a6dff80807a30c6170f90f5f5cd41a2d845",
+      "lf_sha256": "8f4edac65a4e66ed4035d11739080a6dff80807a30c6170f90f5f5cd41a2d845"
+    },
+    "eng/crm/source-fence-rehearsal/LocalStorage.ps1": {
+      "raw_sha256": "78616fe59ad7e846e3c93a139cb289b75eb2d8a80220d147815b245f94fb1040",
+      "lf_sha256": "78616fe59ad7e846e3c93a139cb289b75eb2d8a80220d147815b245f94fb1040"
+    },
+    "eng/crm/source-fence-rehearsal/New-SourceRestore.ps1": {
+      "raw_sha256": "f2f5c4c21116a7d1343845c47d3910bf410b3119b0ab71412d7e0a2f4f839dfc",
+      "lf_sha256": "f2f5c4c21116a7d1343845c47d3910bf410b3119b0ab71412d7e0a2f4f839dfc"
+    },
+    "eng/crm/source-fence-rehearsal/source-metadata.sql": {
+      "raw_sha256": "f1fd94f56457f3afe807eebb173a0d6f651481dc4c0ea05b442a51a1135ed7e1",
+      "lf_sha256": "b162e73f5816cfad1354253c3aba9f3115c68f2e084d15fed203cdb732b4f9f8"
+    },
+    "eng/crm/source-fence-rehearsal/Test-RestoreInputGuards.ps1": {
+      "raw_sha256": "56769b4118b4e1756399ff6ecbf729f4139e9483cf62c53aaa5bc1505582b5ee",
+      "lf_sha256": "56769b4118b4e1756399ff6ecbf729f4139e9483cf62c53aaa5bc1505582b5ee"
+    }
+  },
+  "raw_records": {
+    "sql-tests/bulk-permission-correction.log": "6b8c8f6093e67a6d461cfc3108166c7a61cf5b486f2010ff49614a5a43cfd7dd",
+    "sql-tests/bulk-permission-correction.trx": "38f1af9e395aaf67fa6f43be44e3166beca498a60da75bcb4153354184e030c0",
+    "sql-tests/green-atomicity-constraints.log": "8fe67d7b87ade9c192c7887f2558054949d36b6783c99078dd13cf50b8579263",
+    "sql-tests/green-atomicity-constraints.trx": "5a58d68f56dd476df191063a8cf383bbbd95dd3b2f8a85f58ddd762571e98b7c",
+    "sql-tests/green-reopen-replay.log": "0ab95b2168aaa37c5465dc9eedbf5da9072c013fca3b27475e454cfe292dd3ee",
+    "sql-tests/green-reopen-replay.trx": "480fdaae4405658fb7e7bb0bcf1800167d8bcbccd02a667fd4d6a51ca78c11f3",
+    "sql-tests/implementation-first.log": "8c7645b6b540ea8ee77b367e628150f418dbd6b1a54958eea9e6268d95dd01d8",
+    "sql-tests/implementation-first.trx": "1dc109cb5252d2951aadaa7d458cde320c133736265ef87b337cbdb152b315cd",
+    "sql-tests/pooling-correction.log": "5bd6ae14945e99b6e2b6ba6d31294a7df4fea7efa09a2a37c6850d2c7da28c1d",
+    "sql-tests/pooling-correction.trx": "a2516737ef5b8e0b0c7446dcef5bbd27a67f3c4a9a4d42f3265157a782506e36",
+    "sql-tests/red-atomicity-constraints.log": "1322e3c5528e05709ec27d105134cb48c97da4687940b33c3624601d50f58a3a",
+    "sql-tests/red-atomicity-constraints.trx": "f0890123e6182c3ccfcff93704d939094a4500568434f8c2b58b7efa8dc7dfc9",
+    "sql-tests/red-initial.log": "741a879103bd1aedfb8f2e690721d93ad0c0ec9e6890f5964d3d8549607d86fe",
+    "sql-tests/red-initial.trx": "d0c8e8d96a649c9f466df31181cbea711e5edefbec98d30dfea37e174dc7d656",
+    "sql-tests/red-lifecycle.log": "c57cf52d1f4a0df6fc4689977baafbc6cd8e2c7354591962afc442050239d526",
+    "sql-tests/red-lifecycle.trx": "52df034f91a9c10ae06a7b17013c1ec12ae72efaf0b38f9982b9ba19a3223a8c",
+    "sql-tests/red-reopen-replay.log": "126337dbfbdbaf015266b924584f20faa81ca23235b2959aa959d77dd946c554",
+    "sql-tests/red-reopen-replay.trx": "87795abab1231a94a61ee1d836635b8649f4ab3edabeee4317277c0b850a8237",
+    "sql-tests/release-complete.log": "a7a9186fbfc1e7743825c460e3b14c0f54a9eed6d4864d3c97364d6547c857b1",
+    "sql-tests/release-complete.trx": "130e0322f17e4dd0cabcd013cbca4fa1670abaf002473f0c94c5b8a4240d20ce",
+    "sql-tests/required-env-failure.log": "13f982fd1b4200fa5ce9e5a716960fafd5ea626320493f70b1bd5c9b3de41728",
+    "sql-tests/required-env-failure.trx": "951d7abf01af885f01a0324de587b64c0146ca6660268950e70c3da8b12ea590",
+    "c04a-restore-attempt-2/restore-receipt.json": "0af0ebc65f457f862e2b3b07a3d17739f8dfaf42b72f761027e9be1d102c58e0",
+    "c04a-restore-attempt-2/source-before-metadata.json": "b950e4125fdd4e199958a7f2713b503a5f7cd2efc104651ba67d4f3e389a6baa",
+    "c04a-restore-attempt-3/restore-receipt.json": "00873f0377f2f855f694eb3ba15b983f1fa24ef625f4ce826af81a5531428f95",
+    "c04a-restore-attempt-3/restored-metadata.json": "b950e4125fdd4e199958a7f2713b503a5f7cd2efc104651ba67d4f3e389a6baa",
+    "c04a-restore-attempt-3/source-after-metadata.json": "b950e4125fdd4e199958a7f2713b503a5f7cd2efc104651ba67d4f3e389a6baa",
+    "c04a-restore-attempt-3/source-before-metadata.json": "b950e4125fdd4e199958a7f2713b503a5f7cd2efc104651ba67d4f3e389a6baa",
+    "c04a-restore-final/restore-receipt.json": "9b7cbed310d763cffdbcdc3fdccc3b466b4a9d710b6e0c6e11ddbbade9e3afe4",
+    "c04a-restore-final/restored-metadata.json": "b950e4125fdd4e199958a7f2713b503a5f7cd2efc104651ba67d4f3e389a6baa",
+    "c04a-restore-final/source-after-metadata.json": "b950e4125fdd4e199958a7f2713b503a5f7cd2efc104651ba67d4f3e389a6baa",
+    "c04a-restore-final/source-before-metadata.json": "b950e4125fdd4e199958a7f2713b503a5f7cd2efc104651ba67d4f3e389a6baa",
+    "c04a-restored-acceptance-2/01-preflight.json": "03a7136bc469f4c20d6b4bd5e4da4fd85e1853eab37822ec316f475672658097",
+    "c04a-restored-acceptance-2/01-preflight.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-2/04-freeze.json": "bfe11aec9b7ab8c7acdf03f161572a819b5fdca7ca6ed2480670064c7a410134",
+    "c04a-restored-acceptance-2/04-freeze.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-2/06-freeze.json": "bfe11aec9b7ab8c7acdf03f161572a819b5fdca7ca6ed2480670064c7a410134",
+    "c04a-restored-acceptance-2/06-freeze.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-2/31-reopen.json": "1bdb5465df28d05277856c91a89b8e28325e5e770f161e6926464aa81ce9369c",
+    "c04a-restored-acceptance-2/31-reopen.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-2/33-freeze.json": "aaf6fb416d1a2a101737f1b9d6fd4d6a8af2dfde115feec2ca0119043e0ec11f",
+    "c04a-restored-acceptance-2/33-freeze.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-2/34-seal-forward-only.json": "0b4678d0f6b7e234d3f978cc2afd42a2b0d0f92590b36263b1c850afd399283a",
+    "c04a-restored-acceptance-2/34-seal-forward-only.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-2/36-status.json": "0b4678d0f6b7e234d3f978cc2afd42a2b0d0f92590b36263b1c850afd399283a",
+    "c04a-restored-acceptance-2/36-status.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-2/acceptance.json": "042388ce0566b513b268e1458ea45bbc24c8f5d741b99944ebc27d68a57cfe5e",
+    "c04a-restored-acceptance-2/reopen-after-seal.json": "098a5a84e98e7266ca249da12d8fa0e4a05dcacad85c555eee5935bcbefc9a10",
+    "c04a-restored-acceptance-final/01-preflight.json": "03a7136bc469f4c20d6b4bd5e4da4fd85e1853eab37822ec316f475672658097",
+    "c04a-restored-acceptance-final/01-preflight.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-final/04-freeze.json": "e5292b541724d8854ece52c9daaea85a4e9cf2897aad900fecac551e1ffb6c40",
+    "c04a-restored-acceptance-final/04-freeze.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-final/06-freeze.json": "e5292b541724d8854ece52c9daaea85a4e9cf2897aad900fecac551e1ffb6c40",
+    "c04a-restored-acceptance-final/06-freeze.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-final/31-reopen.json": "c8bcd9a66617b0d302dac8724d30d7639a44b083246991d292ad3c4bc26335ac",
+    "c04a-restored-acceptance-final/31-reopen.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-final/33-freeze.json": "1e05a5bf2afae16406e8ebd88662c4a2a489d9cfaea48fc18a9f76a2842fbf87",
+    "c04a-restored-acceptance-final/33-freeze.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-final/34-seal-forward-only.json": "079179ccbd3a7e9eff5b27de810c5431d3520fe93044bc56635d7886f9355107",
+    "c04a-restored-acceptance-final/34-seal-forward-only.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-final/36-status.json": "079179ccbd3a7e9eff5b27de810c5431d3520fe93044bc56635d7886f9355107",
+    "c04a-restored-acceptance-final/36-status.json.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "c04a-restored-acceptance-final/acceptance.json": "d1bc25d389c77ddbad38905a8f5c60dd54ef7709f778932d815c0c851188f6dd",
+    "c04a-restored-acceptance-final/reopen-after-seal.json": "098a5a84e98e7266ca249da12d8fa0e4a05dcacad85c555eee5935bcbefc9a10",
+    "c04a-release-smoke-final/preflight.json": "079179ccbd3a7e9eff5b27de810c5431d3520fe93044bc56635d7886f9355107",
+    "c04a-release-smoke-final/reopen-refused.json": "098a5a84e98e7266ca249da12d8fa0e4a05dcacad85c555eee5935bcbefc9a10",
+    "c04a-release-smoke-final/smoke.json": "827dc73e19be160843b2260bc9b454c504e1e0730e40ff2ef0acc9d244c7b6c2",
+    "c04a-release-smoke-final/status.json": "079179ccbd3a7e9eff5b27de810c5431d3520fe93044bc56635d7886f9355107",
+    "execution-logs/c04a-restore-attempt-2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "execution-logs/c04a-restore-attempt-3.log": "e9c7000a9079f7638f9e97c45fd712eb427a7e5a56b6e89ecf09d33629dffae3",
+    "execution-logs/c04a-restore-final.log": "6661f053180d082740c9d2f745142e0227d108691db45ca5a99507f0b034ea58",
+    "execution-logs/c04a-restored-acceptance-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "execution-logs/c04a-restored-acceptance-2.log": "3501267293055d1782c179db0b3bde9ee382db0d24f7a8dc4d0e1a74f21a1e20",
+    "execution-logs/c04a-restored-acceptance-final.log": "3501267293055d1782c179db0b3bde9ee382db0d24f7a8dc4d0e1a74f21a1e20",
+    "execution-logs/c04a-input-guards-1.json": "bf0825e45c4a7dccd057f5b29b4566e757d1ab47c2a4ea6ed7ad103cd5d2701a",
+    "execution-logs/c04a-input-guards-2.json": "2439939aeb263340b29798f5a35bf718dff05308d7fac02c81a536481f455ea7",
+    "execution-logs/c04a-prd-check-final.log": "3f9bde2f65be03fa87525e1957f474749e065b62f1da2c7b66120003995bc797",
+    "execution-logs/c04a-prd-check.log": "3f9bde2f65be03fa87525e1957f474749e065b62f1da2c7b66120003995bc797",
+    "execution-logs/c04a-public-contract-check-final.log": "cd91113627bc6ec08111b4c240aba6c12d2cd505f472d3aa76f9ec9b73ecca25",
+    "execution-logs/c04a-public-contract-check.log": "89001fa53723986956867a0d0edb58aa662fd0a807206f4f162b95f0b326ce62",
+    "execution-logs/c04a-locked-restore.log": "2ad9967f2280d0195ad457a92fe6a353a8492625846632386df6dfc446efe4bc",
+    "source-before-replay-fix/CP6.Crm.SourceFence.csproj": "cc27335584b5e1eb8590ae193a0fe4b94a8ca3cbc9475bc376734bd2e9c5eece",
+    "source-before-replay-fix/packages.lock.json": "a69b1d61d5aea108664b0b7bf2f080a98fe7bd69f229b74b0be70e09c3d15645",
+    "source-before-replay-fix/Program.cs": "b8c245f88531cf35dd3c2df0fe9468de8c0a34ef24458b1a41eb70d7e3c67753",
+    "source-before-replay-fix/SourceFence.cs": "e0b954c75b4243a4cf8244a4933a05939df55f1cf04557d990195970b9c99968"
+  },
+  "public_artifacts": {
+    "final-release-smoke.json": {
+      "raw_sha256": "827dc73e19be160843b2260bc9b454c504e1e0730e40ff2ef0acc9d244c7b6c2",
+      "lf_sha256": "d31baa6ee0ac59b8086e18cdbd911c19a174c56d76cc824831aa6886f1aea98f"
+    },
+    "input-guards.json": {
+      "raw_sha256": "2439939aeb263340b29798f5a35bf718dff05308d7fac02c81a536481f455ea7",
+      "lf_sha256": "22ca17b9ab6a00cb71f89ed7fe127bab901d78f812ee5e1aaf715a0c1a505226"
+    },
+    "original-execution-records.zip": {
+      "raw_sha256": "057daa0fd5dd08c02342f88de65f1654d74cd06b71dfce9dd0e24483349ab84e",
+      "lf_sha256": "51c9fa20f8bd3848815d03a600f43bb4c7b950f22d690f1b03e5c612d731b576"
+    },
+    "original-source-after.json": {
+      "raw_sha256": "6a5e3752ce1917112ef42cc6a1f3c086264f80a8a73933651a84bb461adad64e",
+      "lf_sha256": "dcfd169769bd3185292a3610946f6d52e4e901fc5401ab948798bef9cd83d516"
+    },
+    "restore-receipt.json": {
+      "raw_sha256": "9b7cbed310d763cffdbcdc3fdccc3b466b4a9d710b6e0c6e11ddbbade9e3afe4",
+      "lf_sha256": "fc1adb379c07a65ee02e0f44c82e21840f5153c1dee3b650f22b734794cff2a4"
+    },
+    "restored-acceptance.json": {
+      "raw_sha256": "d1bc25d389c77ddbad38905a8f5c60dd54ef7709f778932d815c0c851188f6dd",
+      "lf_sha256": "8f61f026be87065c3043b8cb43c3e582b691b4e1ae772a2351c20266fb9f1a5b"
+    }
+  }
+}

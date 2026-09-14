@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "startedAtUtc": "2026-09-14T01:12:12.4714487+00:00",
+  "status": "RestoredEmptySourceVerified",
+  "rehearsalId": "441fa518a8a74fb1818e0c7e907175dd",
+  "sourceDatabase": "CP6DB",
+  "restoredDatabase": "CP6_C04A_Rehearsal_441fa518a8a74fb1818e0c7e907175dd",
+  "foundationSha256": "76de7efa9baac910813ce1594157a74a635a4fb1c27c5ced11e2301d16259771",
+  "backupCopyOnly": true,
+  "backupChecksum": true,
+  "verifyOnlyPassed": true,
+  "sourceBusinessWrites": false,
+  "sourceSchemaWrites": false,
+  "sourceFenceActivated": false,
+  "completeC04AAcceptance": false,
+  "scriptInputs": [
+    {
+      "path": "New-SourceRestore.ps1",
+      "sha256": "f2f5c4c21116a7d1343845c47d3910bf410b3119b0ab71412d7e0a2f4f839dfc"
+    },
+    {
+      "path": "LocalStorage.ps1",
+      "sha256": "78616fe59ad7e846e3c93a139cb289b75eb2d8a80220d147815b245f94fb1040"
+    },
+    {
+      "path": "source-metadata.sql",
+      "sha256": "f1fd94f56457f3afe807eebb173a0d6f651481dc4c0ea05b442a51a1135ed7e1"
+    }
+  ],
+  "sourceBefore": {
+    "counts": [
+      {
+        "table": "Crm_Account",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Activity",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Collaborator",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Contact",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_ErpLink",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_IntakeConfig",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_IntakeMember",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Lead",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_MediaAsset",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_MergeRecord",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Opportunity",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PageRevision",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PageTranslation",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicForm",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicRoute",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicSubmission",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Site",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_SitePage",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_SourceTouch",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_StageHistory",
+        "rowsIncludingDeleted": 0
+      }
+    ],
+    "latestMigration": "20260811030108_CrmFoundation",
+    "metadataSha256": "e461017dfd67f19b13fa7dd1b7789a7ce19b282326e7e4c17bebf8c53ebf746e"
+  },
+  "backupSetGuid": "e401f95d-89bb-4b41-a107-1eee506200f0",
+  "backupSha256": "54c85f07249805e31b6e83f6a1fb59f5fd52267fa29dcebbcb153ae5c4e7a84a",
+  "restored": {
+    "counts": [
+      {
+        "table": "Crm_Account",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Activity",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Collaborator",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Contact",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_ErpLink",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_IntakeConfig",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_IntakeMember",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Lead",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_MediaAsset",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_MergeRecord",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Opportunity",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PageRevision",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PageTranslation",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicForm",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicRoute",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicSubmission",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Site",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_SitePage",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_SourceTouch",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_StageHistory",
+        "rowsIncludingDeleted": 0
+      }
+    ],
+    "latestMigration": "20260811030108_CrmFoundation",
+    "metadataSha256": "e461017dfd67f19b13fa7dd1b7789a7ce19b282326e7e4c17bebf8c53ebf746e"
+  },
+  "restoredServiceBrokerGuid": "fa1f4dab-33ee-4027-b5d8-f5a270e5bc53",
+  "sourceAfter": {
+    "counts": [
+      {
+        "table": "Crm_Account",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Activity",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Collaborator",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Contact",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_ErpLink",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_IntakeConfig",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_IntakeMember",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Lead",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_MediaAsset",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_MergeRecord",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Opportunity",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PageRevision",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PageTranslation",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicForm",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicRoute",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_PublicSubmission",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_Site",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_SitePage",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_SourceTouch",
+        "rowsIncludingDeleted": 0
+      },
+      {
+        "table": "Crm_StageHistory",
+        "rowsIncludingDeleted": 0
+      }
+    ],
+    "latestMigration": "20260811030108_CrmFoundation",
+    "metadataSha256": "e461017dfd67f19b13fa7dd1b7789a7ce19b282326e7e4c17bebf8c53ebf746e"
+  },
+  "completedAtUtc": "2026-09-14T01:12:24.6890455+00:00"
+}
