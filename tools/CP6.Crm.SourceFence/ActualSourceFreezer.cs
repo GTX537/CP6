@@ -197,6 +197,8 @@ public sealed partial class ActualSourceFreezer(ActualSourceInspectionOptions op
             foreach (var property in element.EnumerateObject())
             {
                 if (!seen.Add(property.Name)) Fail("C04A_REQUEST_INVALID_JSON");
+                if (property.Name == "LocalContainer" && property.Value.ValueKind != JsonValueKind.Null)
+                    _ = LocalSqlContainerInspector.ReadBindingElement(property.Value);
                 RejectDuplicateProperties(property.Value);
             }
         }
