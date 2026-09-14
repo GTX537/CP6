@@ -1,0 +1,454 @@
+{
+  "schemaVersion": 1,
+  "observedAtUtc": "2026-09-14T16:33:21.9851053Z",
+  "mode": "read-only filesystem and process observation",
+  "publicationRoot": "D:/CP6-local-publish/20260910",
+  "control": {
+    "path": "D:\\CP6-local-publish\\20260910\\preview-control.json",
+    "sha256": "5c04a01133f830830be91ebaa94682ea8153911ebdeedf6d585622e9cd09a9d5",
+    "fields": [
+      "privateRoot",
+      "stopFile",
+      "manifestPath"
+    ],
+    "privateRoot": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee",
+    "manifestPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\run.json",
+    "stopFile": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\stop-preview",
+    "stopFlagExists": false
+  },
+  "activeManifest": {
+    "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\run.json",
+    "sha256": "4e3be653593b7a361aedfbc530d7f3962e1188abc029d63e14313319d1cd093c",
+    "fields": [
+      "coreWebRoot",
+      "crmApiAssembly",
+      "privateRoot",
+      "appApiToken",
+      "webServerPath",
+      "crmRoot",
+      "crmCallbackPort",
+      "coreApiOrigin",
+      "daprGrpcEndpoint",
+      "coreApiAssembly",
+      "fixturePath",
+      "nodeCommand",
+      "dotnetCommand",
+      "crmWebRoot",
+      "keepRunning",
+      "daprHttpEndpoint",
+      "coreSourceSha",
+      "crmSourceSha",
+      "certificatePath",
+      "publicRoot",
+      "composeProject",
+      "certificatePassword",
+      "crmApiOrigin",
+      "relayPort",
+      "scope",
+      "coreRoot"
+    ],
+    "allowlistedValues": {
+      "privateRoot": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee",
+      "publicRoot": "D:\\CP6-audit-results\\20260910\\local-release-smoke\\attempt-2",
+      "coreRoot": "D:\\CP6-worktrees\\c02-identity-events-design",
+      "crmRoot": "D:\\CP6-worktrees\\c02-crm-identity-projections",
+      "fixturePath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\live-fixture.json",
+      "dotnetCommand": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "nodeCommand": "C:\\Users\\tt\\AppData\\Local\\nvm\\v22.22.0\\node.exe",
+      "coreApiAssembly": "D:\\CP6-local-publish\\20260910\\core-api\\CP6.WebApi.dll",
+      "crmApiAssembly": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "webServerPath": "D:\\CP6-local-publish\\20260910\\harness\\servers.cjs",
+      "coreWebRoot": "D:\\CP6-local-publish\\20260910\\core-web",
+      "crmWebRoot": "D:\\CP6-local-publish\\20260910\\crm-web",
+      "coreSourceSha": "9bc1507f65c06546ddc613b9818803f224a445f3",
+      "crmSourceSha": "e98dd44c0407d4d409d1e018054e32fc212a7f6e",
+      "coreContentRoot": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3",
+      "crmContentRoot": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\crm-content",
+      "webSettingsPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\web-settings.json",
+      "dispatcherAssembly": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\bin\\Debug\\net8.0\\CP6.IdentityEvents.Fixture.dll",
+      "composeFile": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\transport\\compose.yaml"
+    }
+  },
+  "privateConfigurationFiles": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\appsettings.Local.json",
+      "sha256": "afbd44f27831aeb6fca209cf7b1209953cded21dc0821ce3bc8126dfd1bc53e3",
+      "contentNotExported": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\crm-content\\appsettings.json",
+      "sha256": "f7254b52d1d9d4124aed25a064d7076d5f1c4afb81f0ee4394769936d960608b",
+      "contentNotExported": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\web-settings.json",
+      "sha256": "b5d4d3fb0378b0ac163572b40b64ae1b943f9651a5bb4927ad9c63218b4ce9e1",
+      "contentNotExported": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\live-fixture.json",
+      "sha256": "adc7ee5f86c677df61e1880668c44695b5c831b8db3bec033c8e1c5577f4deca",
+      "contentNotExported": true
+    }
+  ],
+  "knownManifests": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-662ea8a6e1d44fc4a37d8b9909f08155\\run.json",
+      "active": false,
+      "sha256": "605aa5aa95ca4cbb31127b2c05057b38cf6348f35cf9b93b0e6a7792e377994f",
+      "crmApiAssembly": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "crmSourceSha": "e98dd44c0407d4d409d1e018054e32fc212a7f6e",
+      "stopFlagExists": false
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\run.json",
+      "active": true,
+      "sha256": "4e3be653593b7a361aedfbc530d7f3962e1188abc029d63e14313319d1cd093c",
+      "crmApiAssembly": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "crmSourceSha": "e98dd44c0407d4d409d1e018054e32fc212a7f6e",
+      "stopFlagExists": false
+    }
+  ],
+  "processes": [
+    {
+      "role": "preview-supervisor",
+      "pid": 35812,
+      "parentPid": 4568,
+      "recordPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\preview-supervisor-process.json",
+      "recordedStartUtcTicks": "639246440782279271",
+      "actualStartUtc": "2026-09-10T13:34:38.2279271Z",
+      "recordIdentityMatches": true,
+      "executable": "C:\\Users\\tt\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "entryPath": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "entrySha256": "ce7d3e8b55765e222efa826f037a7e993c1ad73f12c6580007627a83fb51eb7a",
+      "commandContainsEntry": true,
+      "commandLineSha256": "684db792ae9a960a99b503f44423fe9840a94c2eb305763042567b0a55f61a2e"
+    },
+    {
+      "role": "preview-host",
+      "pid": 12944,
+      "parentPid": 35812,
+      "recordPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\preview-host-process.json",
+      "recordedStartUtcTicks": "639246440795897290",
+      "actualStartUtc": "2026-09-10T13:34:39.5897290Z",
+      "recordIdentityMatches": true,
+      "executable": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "entryPath": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\PreviewHost.dll",
+      "entrySha256": "9e2e08db097ad52cebeec78814fa2f3ce9eab2c7ea3d4803d02825ca39f9cfbe",
+      "commandContainsEntry": true,
+      "commandLineSha256": "dce7302806b0b57472aec4b2d0d9050c3b5423529f0d452f22df83c05fc69af9"
+    },
+    {
+      "role": "core",
+      "pid": 3128,
+      "parentPid": 12944,
+      "recordPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\core-process.json",
+      "recordedStartUtcTicks": "639246440808451860",
+      "actualStartUtc": "2026-09-10T13:34:40.8451860Z",
+      "recordIdentityMatches": true,
+      "executable": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "entryPath": "D:\\CP6-local-publish\\20260910\\core-api\\CP6.WebApi.dll",
+      "entrySha256": "ed0b42d50ae9d1419e031a25e372e39bf95bcf25642a0f26727f71810814a9ca",
+      "commandContainsEntry": true,
+      "commandLineSha256": "c4fe0b75ec85abae5580682c084e11186dd1e8296d9da9e4de04ab482dca0834"
+    },
+    {
+      "role": "crm",
+      "pid": 26884,
+      "parentPid": 12944,
+      "recordPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\crm-process.json",
+      "recordedStartUtcTicks": "639246440859856308",
+      "actualStartUtc": "2026-09-10T13:34:45.9856308Z",
+      "recordIdentityMatches": true,
+      "executable": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "entryPath": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "entrySha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "commandContainsEntry": true,
+      "commandLineSha256": "d19a4211188e400d1aeb60dbbe77d25bd66ff06eeb3bd123fe78c334acb940cb"
+    },
+    {
+      "role": "web",
+      "pid": 33072,
+      "parentPid": 12944,
+      "recordPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\web-process.json",
+      "recordedStartUtcTicks": "639246440877013136",
+      "actualStartUtc": "2026-09-10T13:34:47.7013136Z",
+      "recordIdentityMatches": true,
+      "executable": "C:\\Users\\tt\\AppData\\Local\\nvm\\v22.22.0\\node.exe",
+      "entryPath": "D:\\CP6-local-publish\\20260910\\harness\\servers.cjs",
+      "entrySha256": "70d1b4e97600a40de9dce891b30734bf15da439124b418279b10a7b1aa197f5a",
+      "commandContainsEntry": true,
+      "commandLineSha256": "0e405ed7e83b92f0ebba065830641719a8789a5618021b8d300f31cd52f8c5fc"
+    },
+    {
+      "role": "dispatcher",
+      "pid": 23676,
+      "parentPid": 12944,
+      "recordPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\dispatcher-process.json",
+      "recordedStartUtcTicks": "639246440902268266",
+      "actualStartUtc": "2026-09-10T13:34:50.2268266Z",
+      "recordIdentityMatches": true,
+      "executable": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "entryPath": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\bin\\Debug\\net8.0\\CP6.IdentityEvents.Fixture.dll",
+      "entrySha256": "4badc3aa74a675b064c0eb4fe1391d375e09ce6db814c7aa33f83536864d59d2",
+      "commandContainsEntry": true,
+      "commandLineSha256": "af2cb60345235a98f991c6ce1bb52159d5dd6c8aac576d2e20a171c294930d15"
+    }
+  ],
+  "knownOldCrmEntryFiles": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.runtimeconfig.json",
+      "sha256": "bfcd9777228f00ce830a77b9ee3d2d735afec5e998def17c549c6b004dd354cf",
+      "length": 557
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.exe",
+      "sha256": "991dc057bbb0f630938fc954c3698fd8a33074526f35761c3278fa95741f2be3",
+      "length": 151552
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "length": 227840
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "length": 227840
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.runtimeconfig.json",
+      "sha256": "bfcd9777228f00ce830a77b9ee3d2d735afec5e998def17c549c6b004dd354cf",
+      "length": 557
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.exe",
+      "sha256": "991dc057bbb0f630938fc954c3698fd8a33074526f35761c3278fa95741f2be3",
+      "length": 151552
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "length": 227840
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.exe",
+      "sha256": "991dc057bbb0f630938fc954c3698fd8a33074526f35761c3278fa95741f2be3",
+      "length": 151552
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.runtimeconfig.json",
+      "sha256": "bfcd9777228f00ce830a77b9ee3d2d735afec5e998def17c549c6b004dd354cf",
+      "length": 557
+    }
+  ],
+  "reviewedLifecycleFiles": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "sha256": "0ba199f1604adee149896927252e6b39db2500feb1fd12e69538182b46df9de7"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\stop-preview.ps1",
+      "sha256": "188ae02feeaea764e51e383a05c26aafc773a665004bc981889024503c1b092b"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\status-preview.ps1",
+      "sha256": "24f64d6181356aa587e4b121335f3f4884d75004d4bf6e25d497685c97029994"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "sha256": "ce7d3e8b55765e222efa826f037a7e993c1ad73f12c6580007627a83fb51eb7a"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\Program.cs",
+      "sha256": "ed2ab9eacd7edebab378fac3b3dbff486362b982d825b3307cdfcff1956abe5b"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\PreviewHost.csproj",
+      "sha256": "dd6eee499c1f343cb80d3cd053bd992327abdb3ae64d5778fb672a041bc073b4"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\Program.cs",
+      "sha256": "d4371ce8575b53958d926b104e89936a1087e62fe769d42619cb01c6844818e1"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\LiveEnvironment.cs",
+      "sha256": "0b3cfb39c0833b59815aed3715da632fe01fa39e14d16b991516187ac47c5415"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\OwnedProcess.cs",
+      "sha256": "fea2905d30357c321fb8de2a374bbba5b5780fe8e489f67dce8df96a4c8feb27"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\TransportRelay.cs",
+      "sha256": "f4a0ba8ea04a138e490935553db6549cc6a0a1711ec37db3d8cf544448f6003f"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\invoke-published-smoke.ps1",
+      "sha256": "85858bd46de83c86cc06e256477c2eeeabb73c695dbc1c4d27ace7ed08d91ec8"
+    }
+  ],
+  "lifecycle": {
+    "startCommand": "& 'D:/CP6-local-publish/20260910/start-preview.ps1'",
+    "stopCommand": "& 'D:/CP6-local-publish/20260910/stop-preview.ps1'",
+    "statusCommand": "& 'D:/CP6-local-publish/20260910/status-preview.ps1'",
+    "commandsExecuted": false,
+    "stopBehavior": "Writes stop-preview and returns immediately; it does not wait for exit.",
+    "startOrder": [
+      "start-preview launches hidden independent supervisor",
+      "supervisor docker compose up for existing manifest project",
+      "PreviewHost starts Core and waits for discovery",
+      "CRM and live-health",
+      "Web and both login pages",
+      "in-process relay",
+      "dispatcher",
+      "ready loop"
+    ],
+    "stopOrder": [
+      "Web process tree killed and awaited",
+      "dispatcher process tree killed and awaited",
+      "CRM process tree killed and awaited",
+      "Core process tree killed and awaited",
+      "in-process relay stopped",
+      "PreviewHost exits",
+      "supervisor stops owned compose transport and exits"
+    ],
+    "shutdownIsGracefulForChildApplications": false,
+    "hostFailurePolicy": "Any Core/CRM/Web/dispatcher exit ends the shared host and all remaining children; there is no restart loop.",
+    "databaseRetention": "Recovery Program.cs never calls InitializeAsync. Therefore LiveEnvironment ownedConnections stays empty and its database cleanup loop has no entries.",
+    "stopCompletionRequirement": "Require all six recorded PID/start-time identities to be gone, no new matching entry processes, and supervisor transport-stop completion. A stopped status file alone is insufficient.",
+    "transportRuntimeState": "not queried in this task"
+  },
+  "switchBoundary": {
+    "supportedManifestChanges": [
+      "crmApiAssembly",
+      "crmSourceSha"
+    ],
+    "controlFileChangeRequired": false,
+    "hostCodeChangeRequiredForPathSelection": false,
+    "unchangedInputs": [
+      "coreApiAssembly",
+      "coreRoot and dispatcher assembly",
+      "coreWebRoot",
+      "crmWebRoot",
+      "webServerPath",
+      "Core/CRM content roots",
+      "web-settings.json",
+      "certificate and keyring paths",
+      "existing transport configuration"
+    ],
+    "sourceShaFieldPurpose": "Trace metadata, not runtime binary signature verification",
+    "precondition": "Whole preview stopped; exact prior input/entry hashes checked; database compatibility/provisioning handled separately.",
+    "notAnActivationApproval": true
+  },
+  "persistentRestartGaps": [
+    "start-preview.ps1 deletes stop-preview before launching.",
+    "Direct recovery/run-preview.ps1 and PreviewHost start dependencies before checking the stop flag.",
+    "Two private run.json files point to the same old crm-api entry.",
+    "Three complete old CRM apphost/DLL/runtimeconfig sets exist in crm-api, recovery/bin/Release/net8.0 and harness/bin/Release/net8.0.",
+    "Recovery copy is also a PreviewHost project dependency; blindly deleting or replacing it may affect the host and has not been validated.",
+    "No persistent old-entry retirement or startup isolation was applied during this observation."
+  ],
+  "entryPolicy": {
+    "routineRecoveryEntrypoints": [
+      "start-preview.ps1",
+      "recovery/run-preview.ps1",
+      "recovery/bin/Release/net8.0/PreviewHost.dll"
+    ],
+    "notRecoveryEntrypoints": [
+      "harness/invoke-published-smoke.ps1",
+      "harness/bin/Release/net8.0/PublishedSmoke.dll"
+    ],
+    "harnessReason": "Harness initializes fresh SQL resources and exercises scenarios; cleanup kills owned processes and deletes owned fixture databases/transport.",
+    "existingRetirementMechanism": "D:/CP6/CP6.CRM/src/CP6.CRM.Infrastructure/Persistence/CrmWindowsLocalDrainGuard.cs moves a bound entry to .<filename>.crm-retired-<deploymentId>.bin and installs a persistent failure marker; no automatic restore API.",
+    "beforeSchemaCommit": "Only before database retirement/adoption, and after validating original bytes, the prior manifest CRM entry is a possible application-entry restoration point.",
+    "afterSchemaCommit": "CRM 0.1 must not be restored merely by reverting its DLL path: crm.Leads/Submissions/Configurations/Collaborators are retired and old code does not read normalized crm_v1 state.",
+    "coreSourceRecovery": "Core dbo.Crm_* source reopening is a distinct target-terminal-proof/source-transaction protocol. It does not undo CRM 0.1 retirement."
+  },
+  "sources": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "lines": [
+        9,
+        21,
+        25,
+        28
+      ]
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\stop-preview.ps1",
+      "lines": [
+        9
+      ]
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "lines": [
+        17,
+        19,
+        25
+      ]
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\Program.cs",
+      "lines": [
+        18,
+        19,
+        21,
+        23,
+        27,
+        28,
+        31,
+        33,
+        46
+      ]
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\LiveEnvironment.cs",
+      "lines": [
+        29,
+        45,
+        102,
+        103,
+        105,
+        110,
+        245,
+        248,
+        250
+      ]
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\OwnedProcess.cs",
+      "lines": [
+        17,
+        22,
+        34,
+        37,
+        38
+      ]
+    },
+    {
+      "path": "D:/CP6/CP6.CRM/docs/decisions/CRM02-LOCAL-ACTIVATION-PREPARATION.md",
+      "lines": [
+        40,
+        46
+      ]
+    },
+    {
+      "path": "D:/CP6/CP6.CRM/docs/decisions/CRM02-LOCAL-ADOPTION-OPERATOR.md",
+      "lines": [
+        49,
+        51,
+        53
+      ]
+    }
+  ],
+  "limitations": [
+    "No process/service/container was started or stopped; no SQL/.NET/build was run.",
+    "No credential, connection string, token, raw command line or full private JSON was exported.",
+    "Entry hashes describe files currently on disk; loaded module bytes and artifact-to-source provenance were not independently attested.",
+    "Only the requested publication directory and its bound process records were inspected; other deployments, scheduled tasks/services and administrator copies are unknown.",
+    "HTTP health, SQL state, transport container state, actual process shutdown and restart were not tested.",
+    "This observation is not an executed migration, activation or recovery record."
+  ]
+}
