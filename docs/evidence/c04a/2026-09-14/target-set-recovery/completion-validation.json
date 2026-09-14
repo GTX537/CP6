@@ -1,0 +1,87 @@
+{
+  "format": "CP6.C04A.TargetSetRecovery.CompletionValidation.v1",
+  "priorDraftEvidence": {
+    "file": "local-validation.json",
+    "sha256": "59ee2c140fb3f8db071d24bbb9bee0ac1bd4b437b78f0ee7f583b61ce1086bdb"
+  },
+  "newDistinctPassedChecks": 60,
+  "directlyAffectedPassedChecks": 2,
+  "failedRequiredChecks": 0,
+  "skippedChecks": 0,
+  "lastRequiredCheck": {
+    "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Published_CLIs_recover_only_after_terminal_target_closure_and_hold_target_locks_through_source_commit",
+    "outcome": "Passed"
+  },
+  "completedPriorPendingChecks": [
+    "affected single-target recovery",
+    "final read-only cleanup observation",
+    "combined source build and command composition"
+  ],
+  "mergedSourceCommits": {
+    "core": "628de8e53574e5553418d42b16dd1dfa7c69577a",
+    "crm": "67f6d0fc18f8ed1fec3f7d504a35c739df0e31e6"
+  },
+  "publishedFiles": 218,
+  "boundary": {
+    "currentFileCount": 438,
+    "currentSha256": "c54822bd8aee510fcb2d42329c8f152363ac520e0ceadc0141e6cf6d39e8c8fc",
+    "actualActivation": false,
+    "changedBytesUserSigned": false,
+    "productionDeployment": false
+  },
+  "cleanup": {
+    "atUtc": "2026-09-14T18:20:20.1848122+00:00",
+    "native": {
+      "atUtc": "2026-09-14T18:20:20.0929666+00:00",
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "docker": {
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "actualSourcesModified": false
+  },
+  "review": {
+    "originalConcentratedReview": "review.json",
+    "integrationReview": "Root checked full conflict resolutions: both state entries retained; boundary regenerated; accepted guard bytes and target-set protocol/implementation/test bytes unchanged; CLI contains both independent command routes.",
+    "unresolved": 0
+  },
+  "scope": "Original scoped contract/SQL results are retained. The last failed single-target check passed with its unchanged original published binaries. Combining accepted startup control only adds its already validated inventory behavior and the two target-set dispatch/help lines; target-set implementation, SQL gate code and test inputs are unchanged. The combined CRM tool was rebuilt and its command composition checked without repeating passing suites.",
+  "timeoutHistory": "Earlier failures remain in the original evidence. A fresh read-only SQL connection became available, after which the unchanged-binary remaining check passed. Physical-memory pressure was observed, but the exact cause of each timeout is not proven. No product/configuration/timeouts or shared processes were changed.",
+  "localCleanupLimitation": {
+    "temporaryDirectoryRetained": true,
+    "reason": "Automatic approval review rejected recursive deletion of the exact owned failed-fixture directory: blocked by policy. SQL fixture databases were cleaned separately.",
+    "blocksCodeDelivery": false
+  },
+  "acceptance": {
+    "overallPercent": 60,
+    "completedMilestones": 3,
+    "totalMilestones": 5,
+    "actualSourceFrozen": false,
+    "actualTargetAborted": false,
+    "actualActivation": false,
+    "changedBytesUserSigned": false,
+    "productionDeployment": false,
+    "completeWriteFenceVerified": false
+  },
+  "remainingGoalScope": [
+    "Actual startup inventory and recovery-host dependency compatibility",
+    "Privileged-writer isolation",
+    "Verified source-freeze/target-enable coordination",
+    "Concrete execution/recovery package and changed-byte approval",
+    "Actual CRM11 acceptance and C04B observation"
+  ],
+  "archiveSha256": "3cd6665b6218fc775de6ea7a9250219c1c2fb292dd1ac1ff5ceafe32a0c17451",
+  "archiveMembers": {
+    "cross-affected-recovery-03.log": "8e4a031200bb3f8cf83f198face71a4335752b228c41205acb96c780e128d827",
+    "results/cross-affected-recovery-03.trx": "d91d09c651763844ff628edb50abfd7ddcefa0d0d9a633774043c98a3ea5208b",
+    "native-memory-recheck-02.json": "c36020cdc756038c8105656ab49d4a8d554e2b86ce4ec33f888d16de21ddd3b8",
+    "cleanup-observation.json": "eec018d1967962081a4a1b0dea7546dcf6b01e24333c583a4d2ec2d6b4b41ad6",
+    "boundary-sync-01.json": "1f126280d6bb71673df92672e9ec855cf6ca83af76eee7f47ee039917cfb9139",
+    "boundary-sync-01.log": "77f0c340e7c25aea1dc2eec4d380cd6efc3014bb3bcb5a6e7e88eb3496603df5",
+    "combined-publish-01.log": "4ab939ac0842f970daec21d307078ebd78c391b71bc0aba54a9653c49b950d1d",
+    "combined-publication-manifest.json": "8225848160a8cefc6088011a9a4863f8f3bb1a53eb6e2825986e6e950d2b75d3",
+    "combined-cli-smoke.json": "1532d44886d75ffe8b3859e67ea8c237f91a2d58f82a005e8938590980cbe411"
+  }
+}
