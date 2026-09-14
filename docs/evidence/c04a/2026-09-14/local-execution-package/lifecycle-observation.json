@@ -1,0 +1,262 @@
+{
+  "format": "CP6.C04A.LocalExecution.LifecycleObservation.v1",
+  "atUtc": "2026-09-14T20:37:34.5603783+00:00",
+  "readOnly": true,
+  "previewProcesses": [
+    {
+      "role": "preview-supervisor",
+      "pid": 35812,
+      "startUtcTicks": 639246440782279271,
+      "parentPid": 4568,
+      "hostPath": "C:\\Users\\tt\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "commandLineSha256": "684db792ae9a960a99b503f44423fe9840a94c2eb305763042567b0a55f61a2e"
+    },
+    {
+      "role": "preview-host",
+      "pid": 12944,
+      "startUtcTicks": 639246440795897290,
+      "parentPid": 35812,
+      "hostPath": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "commandLineSha256": "dce7302806b0b57472aec4b2d0d9050c3b5423529f0d452f22df83c05fc69af9"
+    },
+    {
+      "role": "core",
+      "pid": 3128,
+      "startUtcTicks": 639246440808451860,
+      "parentPid": 12944,
+      "hostPath": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "commandLineSha256": "c4fe0b75ec85abae5580682c084e11186dd1e8296d9da9e4de04ab482dca0834"
+    },
+    {
+      "role": "crm",
+      "pid": 26884,
+      "startUtcTicks": 639246440859856308,
+      "parentPid": 12944,
+      "hostPath": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "commandLineSha256": "d19a4211188e400d1aeb60dbbe77d25bd66ff06eeb3bd123fe78c334acb940cb"
+    },
+    {
+      "role": "web",
+      "pid": 33072,
+      "startUtcTicks": 639246440877013136,
+      "parentPid": 12944,
+      "hostPath": "C:\\Users\\tt\\AppData\\Local\\nvm\\v22.22.0\\node.exe",
+      "commandLineSha256": "0e405ed7e83b92f0ebba065830641719a8789a5618021b8d300f31cd52f8c5fc"
+    },
+    {
+      "role": "dispatcher",
+      "pid": 23676,
+      "startUtcTicks": 639246440902268266,
+      "parentPid": 12944,
+      "hostPath": "C:\\Users\\tt\\.dotnet\\dotnet.exe",
+      "commandLineSha256": "af2cb60345235a98f991c6ce1bb52159d5dd6c8aac576d2e20a171c294930d15"
+    }
+  ],
+  "otherMatchingProcesses": [],
+  "matchingServices": [
+    {
+      "name": "SQLAgent$KOUSQLSERVER",
+      "state": "Stopped",
+      "startMode": "Manual",
+      "commandLineSha256": "9150b2a82262c46653bae465ebe8d798c0dba25aeacb6d2a0b05d89b5a748286"
+    },
+    {
+      "name": "vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS",
+      "state": "Running",
+      "startMode": "Auto",
+      "commandLineSha256": "c2f18fe8e3cf59b1205de94c4d515bc720274c886680d364b438046e72acab54"
+    }
+  ],
+  "matchingScheduledTasks": [],
+  "matchingStartupCommands": [],
+  "previewTransportProject": "cp6-c02-live-0aa59de164ad",
+  "containers": [
+    {
+      "name": "/cp6-c02-live-0aa59de164ad-publisher-dapr-1",
+      "id": "b9c3009c58bcb4fe4642a1185f682c5c462bb9e1f20d30534c9f74df0b3c04ba",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "startedAtUtc": "2026-09-10T09:56:10.746580274Z",
+      "status": "running",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "project": "cp6-c02-live-0aa59de164ad",
+      "service": "publisher-dapr",
+      "composeFiles": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\transport\\compose.yaml",
+      "workingDirectory": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\transport",
+      "configurationSha256": "81263f9bf9934a13617f9a2af615d1788c82f6ae2b17d88e46d7908806492c2b",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "ports": {
+        "3500/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "60958"
+          }
+        ],
+        "50001/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "60959"
+          }
+        ]
+      }
+    },
+    {
+      "name": "/cp6-c02-live-0aa59de164ad-receiver-dapr-1",
+      "id": "009c8d2588691183adb23addffb2e4660c70268e78971290adc7bffbd4c7217e",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "startedAtUtc": "2026-09-10T09:56:10.720661314Z",
+      "status": "running",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "project": "cp6-c02-live-0aa59de164ad",
+      "service": "receiver-dapr",
+      "composeFiles": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\transport\\compose.yaml",
+      "workingDirectory": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\transport",
+      "configurationSha256": "e2a76c71f98a30bc1dc86af5214404e62edc9ea86bbefe0ea34d5164bcdab2fa",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "ports": {}
+    },
+    {
+      "name": "/cp6-c02-live-0aa59de164ad-kafka-1",
+      "id": "9e351205c9104b1b2839a6a853d23797b60f8b62dcfd918bbe59893154de1967",
+      "imageId": "sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837",
+      "startedAtUtc": "2026-09-10T09:56:03.968493003Z",
+      "status": "running",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "project": "cp6-c02-live-0aa59de164ad",
+      "service": "kafka",
+      "composeFiles": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\transport\\compose.yaml",
+      "workingDirectory": "D:\\CP6-worktrees\\c02-identity-events-design\\eng\\crm\\identity-events-fixture\\transport",
+      "configurationSha256": "03a9ebc0e7acc584d995b50af506e19ef9459a30d15384bc4f76833b2a41beb9",
+      "mountsSha256": "bb68888991b975d33dcd7f72134771f937d6bdf9fed35ca2c61331faf91a3b40",
+      "ports": {
+        "9092/tcp": null
+      }
+    },
+    {
+      "name": "/cp6-api",
+      "id": "9f76c764f56e20239b5da3b769184f6e742e992a8baf1b20bbc027a08c0ad433",
+      "imageId": "sha256:3eac813b45fe53512e96805850da62050234ac7926b96f20a9f26c715f837a1e",
+      "startedAtUtc": "2026-09-09T14:57:53.754519172Z",
+      "status": "running",
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "project": "cp6",
+      "service": "cp6-api",
+      "composeFiles": "D:\\CP6\\.claude\\worktrees\\space-editor-free-viewport-main-20260831\\docker-compose.yml",
+      "workingDirectory": "D:\\CP6\\.claude\\worktrees\\space-editor-free-viewport-main-20260831",
+      "configurationSha256": "f7a799b98b2d1a66adda6b98f2a93a5724db7235300e093a8870f09946e42b73",
+      "mountsSha256": "85200b952ce78515100ec354d709865006b9e3347aa5d3bb04fa593d0580ba89",
+      "ports": {
+        "5000/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "9991"
+          },
+          {
+            "HostIp": "::",
+            "HostPort": "9991"
+          }
+        ]
+      }
+    },
+    {
+      "name": "/cp6-db",
+      "id": "505a5337f99522fd483f8db86a0e1b2d3da6755ef133d1bf341af063798f368e",
+      "imageId": "sha256:49b45a911dc535e9345fbfd7101a1bd8a1e190a5f29b877ef75387a061e5fcf0",
+      "startedAtUtc": "2026-09-09T14:57:20.211338742Z",
+      "status": "running",
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "project": "cp6",
+      "service": "cp6-db",
+      "composeFiles": "D:\\CP6\\docker-compose.yml",
+      "workingDirectory": "D:\\CP6",
+      "configurationSha256": "99cef0a2b4d4649d66044cd81c2f698b7ecb53ffc9b3d8a8fe896dcc6b7ef315",
+      "mountsSha256": "83b812419301079b5f21b17eaf05299d2809b78892bb706c9f1693283edbe7d8",
+      "ports": {
+        "1433/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "1433"
+          },
+          {
+            "HostIp": "::",
+            "HostPort": "1433"
+          }
+        ]
+      }
+    }
+  ],
+  "inputFiles": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\preview-control.json",
+      "sha256": "5c04a01133f830830be91ebaa94682ea8153911ebdeedf6d585622e9cd09a9d5"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\run.json",
+      "sha256": "4e3be653593b7a361aedfbc530d7f3962e1188abc029d63e14313319d1cd093c"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\live-fixture.json",
+      "sha256": "adc7ee5f86c677df61e1880668c44695b5c831b8db3bec033c8e1c5577f4deca"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "sha256": "0ba199f1604adee149896927252e6b39db2500feb1fd12e69538182b46df9de7"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\stop-preview.ps1",
+      "sha256": "188ae02feeaea764e51e383a05c26aafc773a665004bc981889024503c1b092b"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "sha256": "ce7d3e8b55765e222efa826f037a7e993c1ad73f12c6580007627a83fb51eb7a"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\PreviewHost.dll",
+      "sha256": "9e2e08db097ad52cebeec78814fa2f3ce9eab2c7ea3d4803d02825ca39f9cfbe"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\invoke-published-smoke.ps1",
+      "sha256": "85858bd46de83c86cc06e256477c2eeeabb73c695dbc1c4d27ace7ed08d91ec8"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\PublishedSmoke.dll",
+      "sha256": "48b3e214dc038ba0f2720e459993fc809531db8cda0091a5adec7a0e57073d21"
+    }
+  ],
+  "stopFlagExists": false,
+  "allMachineWritersVerified": false,
+  "privilegedWriterIsolationVerified": false,
+  "sqlAccessed": false,
+  "processesOrContainersMutated": false,
+  "limitations": [
+    "Keyword-based process/service/task observation is not proof of complete writer discovery.",
+    "Commands and private JSON are hashed as complete values; secret content is not exported.",
+    "Local administrators can create new entries or bypass controls; exclusive operation ownership remains an execution prerequisite."
+  ]
+}
