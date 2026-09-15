@@ -1,0 +1,217 @@
+{
+  "format": "CP6.C04A.VerifiedTargetActivation.CompletedSqlValidation.v1",
+  "atUtc": "2026-09-15T00:01:56.761450+00:00",
+  "status": "required-local-development-gates-passed; remote-delivery-recorded-separately",
+  "mergeAllowed": true,
+  "goalPercent": 60,
+  "coreSourceHead": "68de19167997053a0ea6410618c04ffc0235a9ed",
+  "crmTestFixCommit": "601623c19439c87c568c19142dcde20c29af5121",
+  "runtimeSourceCommits": {
+    "core": "7667b693e0264b13c36adc4e9f09331ceceb6dc5",
+    "crm": "bdaae551c3db7726c413257ea15237d308913b14"
+  },
+  "runtimePublications": {
+    "coreFiles": 40,
+    "crmFiles": 178,
+    "unchanged": true,
+    "crmManifestSha256": "c87fbb29cd15b1c561e03eb558667eeb9533da2e6a6d51507b9449b8ed14b549"
+  },
+  "originalCrossTestAssemblySha256": "4ed50bd6079d38ea10ae9bdba37e67bf00204da1739abd84950db8d4e78a9473",
+  "finalCrossTestAssemblySha256": "d9b287f9b03bca1ddbdaeeba925784f083ddd133cfb3f235fa25bbd728d7ce47",
+  "businessTestAssemblySha256": "9fe315f45f3caa2dff24d88efa326c18c68c7861ac06c0f83edb8b8f7c2aacc1",
+  "changedTestPath": "eng/c04a/VerifiedTargetActivationCliTests.cs",
+  "changedTestSha256": "210a39bd8d7882581b4779de93438b81059fab5be2b5f232f2f848598178ec0f",
+  "requiredChecksPassed": 5,
+  "newSqlChecksPassed": 3,
+  "affectedOriginalChecksPassed": 2,
+  "finalCases": {
+    "CP6.CRM.BusinessSqlTests.TargetWriteGateSqlTests.Initialization_keeps_target_closed_until_exact_operator_permit_then_records_first_commit": "Passed",
+    "CP6.CRM.BusinessSqlTests.TargetWriteGateSqlTests.Close_before_first_write_is_durable_replay_safe_and_rejects_stale_runs": "Passed",
+    "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rolls_back_first_target_when_second_target_reuses_a_run": "Passed",
+    "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rejects_source_drift_and_mixed_replay_without_enabling_any_remaining_target": "Passed",
+    "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_binds_three_live_sources_and_atomically_enables_two_targets_with_exact_replay": "Passed"
+  },
+  "runs": [
+    {
+      "file": "results/affected-user-resume-01.trx",
+      "sha256": "9669fdcb5a59c855e10910af3f203535681a51a6a7076fecbce59e60f7c981e9",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "2",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.BusinessSqlTests.TargetWriteGateSqlTests.Initialization_keeps_target_closed_until_exact_operator_permit_then_records_first_commit",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.BusinessSqlTests.TargetWriteGateSqlTests.Close_before_first_write_is_durable_replay_safe_and_rejects_stale_runs",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/cross-rollback-user-resume-01.trx",
+      "sha256": "ac29a95f066bf11100e31b65004fd6c4feaa9400210ac7e5a4280ad4aa8afdfd",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rolls_back_first_target_when_second_target_reuses_a_run",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "file": "results/cross-remaining-user-resume-01.trx",
+      "sha256": "975aed9ca130389608198f4eb3c2c101ea231a3a440b3c9c6ce04c5a86a42e03",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "1",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_rejects_source_drift_and_mixed_replay_without_enabling_any_remaining_target",
+          "outcome": "Passed"
+        },
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_binds_three_live_sources_and_atomically_enables_two_targets_with_exact_replay",
+          "outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "file": "results/cross-partition-user-resume-02.trx",
+      "sha256": "f688a37297ae1cffa72d13421eaa01ae194c16f659e981b5848a049f931f8bd5",
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "cases": [
+        {
+          "name": "CP6.CRM.CutoverRecovery.Tests.CutoverRecoveryCliTests.Verified_activation_binds_three_live_sources_and_atomically_enables_two_targets_with_exact_replay",
+          "outcome": "Passed"
+        }
+      ]
+    }
+  ],
+  "correctedFailure": {
+    "cause": "A table X lock produced 20 DMV rows across lock partitions; the pending test incorrectly required exactly one row and held the source blocker until proof timeout.",
+    "probe": {
+      "atUtc": "2026-09-14T23:55:21.5420173+00:00",
+      "cpuCount": 20,
+      "schedulerCount": 20,
+      "tableLocks": [
+        {
+          "partitions": 20,
+          "entries": 20,
+          "mode": "X"
+        }
+      ]
+    },
+    "fix": "Count one distinct transaction owner; retain both competing X-lock refusals, one shared application-lock transaction, file-handle protection, full activation/replay/first-write assertions.",
+    "productionChanged": false,
+    "timeLimitsChanged": false,
+    "onlyFailedCaseRepeated": true,
+    "reference": "https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide?view=sql-server-ver17#lock-partitioning"
+  },
+  "earlierEvidence": {
+    "pureChecksPassed": 62,
+    "path": "local-validation.json",
+    "repeated": false,
+    "scope": "Original recorded Core proof/input and CRM package/handle versions"
+  },
+  "historicalFailureNote": "Original SQL/login failures and earlier unclassified proof rejection remain archived. New passing runs do not establish every earlier failure cause.",
+  "cleanup": {
+    "atUtc": "2026-09-14T23:59:21.5818894+00:00",
+    "native": {
+      "atUtc": "2026-09-14T23:59:21.4663696+00:00",
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "docker": {
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "actualSourcesModified": false
+  },
+  "sharedPreview": {
+    "processes": 6,
+    "entryFiles": 8,
+    "identitiesAndHashesUnchanged": true
+  },
+  "boundary": {
+    "currentFileCount": 453,
+    "currentSha256": "47315a05863c8c6c6d8b62fc301c98204edc806955e9413d4dd0d6e11741f04c",
+    "changedBytesUserSigned": false,
+    "actualActivation": false,
+    "productionDeployment": false
+  },
+  "actualActivation": false,
+  "changedBytesUserSigned": false,
+  "productionDeployment": false,
+  "remainingGoalPrerequisites": [
+    "Actual local adoption/closed-target startup and execution package",
+    "Six-database backup/recovery assurance and privileged writer/lifecycle control",
+    "Initial business calendar version and changed-byte approval",
+    "CRM11 formal cutover and C04B adoption/read-only observation"
+  ]
+}

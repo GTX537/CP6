@@ -1,5 +1,7 @@
 # C04A 来源冻结与整组启用：开发草稿
 
+当前开发门禁：**已通过**。剩余三项新 SQL 与两项受影响 Enable/Close 已闭环，详见[最终 SQL 验证](sql-validation-user-resume.json)、[定向复查](review-user-resume.json)及[原始执行记录](sql-execution-user-resume.zip)。下方草稿/失败状态为历史记录；实际启用、变化字节签收和 CRM11/C04B 仍开放。
+
 Core 已实现真实 Frozen 证明；CRM 已实现固定工具包验证、完整目标持锁及同实例两库的一次事务启用。代码提交：Core `7667b693e0264b13c36adc4e9f09331ceceb6dc5`，CRM `ff0bfbcfe05e0a4ce2883bd9d4fa36dcd5bc43f1`。当前为草稿，必要 SQL 门禁尚未通过，禁止合并或实际启用。
 
 Core 49 项新输入/契约检查、CRM 13 项包清单/文件句柄检查通过，均无跳过。首轮三个新 SQL 场景在来源检查或清理登录阶段失败；单独重试一次抵达 `CRM_SOURCE_PROOF_REJECTED`，当时未保留内部 Core 代码，原因仍待定位。随后加入仅允许固定 Core 错误标识的诊断，下一次运行在 SQL 登录/清理超时。原失败日志全部保留，未放宽连接、权限或超时，未重跑既有无关通过套件。
@@ -28,3 +30,10 @@ Core 49 项新输入/契约检查、CRM 13 项包清单/文件句柄检查通过
 已合入已交付的独立恢复宿主和旧入口停用命令；唯一手工代码合并为 CLI 的两处分发/帮助追加。组合工具 178 文件已构建发布，零警告、零错误，六组命令入口通过。453 文件边界通过，Core 40 文件、两版旧 CRM 工具与宿主原发布字节均保持。详见[组合验证](integration-validation.json)、[发布清单](publication-manifest-integration.json)和[原始执行记录](integration-execution.zip)。
 
 既有 62、17、15 项结果按各自原版本范围复用；本次没有重跑测试或 SQL。三个新增 SQL 场景、两个受影响 Enable/Close 场景和早先未分类的证明拒绝仍开放，Core #114 / CRM #75 保持草稿，不允许合入 main。实际启用及变化字节签收均未完成，总体 60%（3/5）。
+
+
+## 释放内存后的必要 SQL 验证
+
+五项必要检查全部通过。最初一次完整启用场景在锁观察断言失败：本机 20 个锁分区为同一表的 X 锁产生 20 条 DMV 记录，旧断言错误要求一条。独立临时表探针已复现；只将这一未通过测试改为唯一事务持有者计数，保留竞争锁拒绝、共享事务、文件句柄及启用/重放/首写保护断言；修改后仅重跑该失败项并通过。参见 [SQL Server 锁分区说明](https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide?view=sql-server-ver17#lock-partitioning)。
+
+生产字节及超时保持，Core 40 与 CRM 178 文件发布包原样使用。此前 62 项结果和本轮先通过的四项均按原记录保留，不重跑。更新后构建零警告/错误，453 文件边界通过，原生/Docker 临时库和实际来源控制 Schema 均为零，原六个预览进程与八个入口摘要保持。早先失败原件保留，新通过不代替对所有历史失败根因的解释。正常合并、远端 main 包含性及最终命令冒烟另记交付；总目标仍为 60%（3/5）。
