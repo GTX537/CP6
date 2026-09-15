@@ -1,0 +1,111 @@
+{
+  "format": "CP6.C04A.VerifiedTargetActivation.DiagnosticFollowup.v1",
+  "atUtc": "2026-09-14T20:19:44.666868+00:00",
+  "originalPublicationManifestSha256": "538ddb202f6cb9386106bc041a206558c11483fed70847c89040b5299fe7687e",
+  "publishedPackagesUnchanged": true,
+  "changedTestPath": "eng/c04a/VerifiedTargetActivationCliTests.cs",
+  "changedTestSha256": "7d149fcbfed69cec5ec08fb11c83f651cdbdf0f3c6630661e5fdf964a4e9f65d",
+  "testAssemblySha256": "405a413a8166a127f245dac8d2906821e7762365725f647a05b5d449e2c15ef8",
+  "change": "Only the new activation test helper retains fixed C04A/CRM identifiers before fixture cleanup. No runtime behavior, SQL settings or timeout changed.",
+  "build": "crm-build-04.log: 0 warnings, 0 errors",
+  "counters": {
+    "total": "1",
+    "executed": "1",
+    "passed": "0",
+    "failed": "1",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "originalStage": "source-freeze",
+  "originalError": "C04A_SQL_FAILURE",
+  "cleanupError": "SQL pre-login timeout masked the test exception; original fixed identifier remains in TRX output.",
+  "observer": {
+    "samples": 43,
+    "waitTypes": [
+      "PAGEIOLATCH_SH",
+      "SLEEP_BPOOL_STEAL"
+    ],
+    "exit": "Diagnostic SELECT timed out; SQL connection disposed."
+  },
+  "memory": {
+    "atUtc": "2026-09-14T20:11:15.7587735+00:00",
+    "processMemory": {
+      "physical_memory_in_use_kb": 414808,
+      "virtual_address_space_committed_kb": 1159936,
+      "memory_utilization_percentage": 50,
+      "process_physical_memory_low": true,
+      "process_virtual_memory_low": false
+    },
+    "systemMemory": {
+      "total_physical_memory_kb": 16564728,
+      "available_physical_memory_kb": 1410452,
+      "system_memory_state_desc": "Available physical memory is high"
+    },
+    "configuration": [
+      {
+        "name": "max worker threads",
+        "value_in_use": 0
+      },
+      {
+        "name": "min server memory (MB)",
+        "value_in_use": 16
+      },
+      {
+        "name": "max server memory (MB)",
+        "value_in_use": 1024
+      }
+    ],
+    "edition": "Developer Edition (64-bit)"
+  },
+  "interpretation": "This attempt failed during source freeze before target enable, alongside SQL memory-buffer waits. Earlier cross-rollback-02 proof rejection remains unclassified.",
+  "cleanup": {
+    "atUtc": "2026-09-14T20:18:03.2062573+00:00",
+    "native": {
+      "atUtc": "2026-09-14T20:18:03.1084340+00:00",
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "docker": {
+      "remainingTestDatabases": 0,
+      "actualSourceControlSchemas": 0
+    },
+    "actualSourcesModified": false
+  },
+  "retainedCurrentFixtureDirectory": "CP6_C04A_Recovery_e3a38dc4c99743909c708d2f1abb8792",
+  "cleanupDetail": "First cleanup removed three business fixtures but timed out retiring source. The sole remaining exact source was then removed; no temporary fixture database remains.",
+  "previewProcessIdentitiesAndEntryHashesUnchanged": true,
+  "boundary": {
+    "currentFileCount": 444,
+    "currentSha256": "edf624c1239ad303f7c8c33b6b5eae6ba094dcb214ac27d0a3aef1401ed9ce9c",
+    "changedBytesUserSigned": false,
+    "actualActivation": false,
+    "productionDeployment": false
+  },
+  "passedNewUniqueChecksRetained": 62,
+  "passingTestsRepeated": false,
+  "passedSqlActivationChecks": 0,
+  "mergeAllowed": false,
+  "pending": [
+    "Three new SQL activation scenarios",
+    "Two directly affected original Enable/Close SQL scenarios"
+  ],
+  "independentHostDelivery": {
+    "core": "https://github.com/GTX537/CP6/pull/115",
+    "crm": "https://github.com/GTX537/CP6.CRM/pull/76",
+    "complete": true
+  },
+  "actualActivation": false,
+  "changedBytesUserSigned": false,
+  "productionDeployment": false,
+  "goalPercent": 60
+}

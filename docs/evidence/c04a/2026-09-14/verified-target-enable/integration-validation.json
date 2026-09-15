@@ -1,0 +1,116 @@
+{
+  "format": "CP6.C04A.VerifiedTargetActivation.MainIntegration.v1",
+  "atUtc": "2026-09-14T21:22:48.238997+00:00",
+  "status": "draft-required-SQL-gates-open",
+  "mergeAllowed": false,
+  "provenance": {
+    "core": {
+      "head": "c78fcb7cf69e5119dc29a61b018db289df9eb92f",
+      "draftParent": "509a004396dd912375e51e68606ff5a1cb7be1a1",
+      "integratedMain": "32f4b8e4e0d7728e81dea3f96f7b32e15c18704d",
+      "unchangedSourceFromMain": [],
+      "combinedDispatchOnly": []
+    },
+    "crm": {
+      "head": "bdaae551c3db7726c413257ea15237d308913b14",
+      "draftParent": "d522118d6cfecea5d93c230b06b993d1e931e827",
+      "integratedMain": "21e8ebb50c7a5ad88f3ed88e7002531d5d3d17d7",
+      "unchangedSourceFromMain": [
+        "tests/CP6.CRM.LocalOperatorTests/DeploymentRetirementCliTests.cs",
+        "tests/CP6.CRM.PreviewHostProcessFixture/CP6.CRM.PreviewHostProcessFixture.csproj",
+        "tests/CP6.CRM.PreviewHostProcessFixture/Program.cs",
+        "tests/CP6.CRM.PreviewHostTests/CP6.CRM.PreviewHostTests.csproj",
+        "tests/CP6.CRM.PreviewHostTests/PreviewHostTests.cs",
+        "tools/Crm.CandidateAdoption/CrmCandidateOperatorCli.Retirement.cs",
+        "tools/Crm.LocalPreviewHost/Crm.LocalPreviewHost.csproj",
+        "tools/Crm.LocalPreviewHost/PreviewConfiguration.cs",
+        "tools/Crm.LocalPreviewHost/PreviewHostCli.cs",
+        "tools/Crm.LocalPreviewHost/PreviewProcess.cs",
+        "tools/Crm.LocalPreviewHost/PreviewRelay.cs",
+        "tools/Crm.LocalPreviewHost/Program.cs"
+      ],
+      "combinedDispatchOnly": [
+        "tools/Crm.CandidateAdoption/CrmCandidateOperatorCli.cs"
+      ]
+    }
+  },
+  "build": {
+    "log": "crm-build-integration.log",
+    "warnings": 0,
+    "errors": 0,
+    "testAssemblyBuilt": true,
+    "testsExecuted": false
+  },
+  "publishedCommandSmoke": {
+    "log": "crm-help-integration.log",
+    "passed": true,
+    "commands": [
+      "retire-deployment-local",
+      "enable-targets-verified-local",
+      "target-freeze-set-anchor-local",
+      "target-abort-set-status-local",
+      "adopt-local",
+      "inspect-local"
+    ],
+    "sqlAccessed": false
+  },
+  "publicationManifestSha256": "c87fbb29cd15b1c561e03eb558667eeb9533da2e6a6d51507b9449b8ed14b549",
+  "originalPublicationsPreserved": {
+    "core": {
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-verified-target-enable\\core",
+      "fileCount": 40,
+      "unchanged": true
+    },
+    "crmInitial": {
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-verified-target-enable\\crm",
+      "fileCount": 178,
+      "unchanged": true
+    },
+    "crmCurrent": {
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-verified-target-enable\\crm-v2",
+      "fileCount": 178,
+      "unchanged": true
+    },
+    "recoveryHost": {
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-preview-recovery-host\\host",
+      "fileCount": 5,
+      "unchanged": true
+    }
+  },
+  "testAssemblySha256": "4ed50bd6079d38ea10ae9bdba37e67bf00204da1739abd84950db8d4e78a9473",
+  "reusedEvidence": [
+    {
+      "path": "local-validation.json",
+      "passed": 62,
+      "scope": "Original Core proof/input and CRM package/handle checks on their recorded versions; not newly executed on integrated package"
+    },
+    {
+      "path": "../preview-recovery-host/local-validation.json",
+      "passed": 17,
+      "scope": "Unchanged standalone host and original publication"
+    },
+    {
+      "path": "../local-execution-package/local-validation.json",
+      "passed": 15,
+      "scope": "Unchanged retirement implementation on original publication; integration only checks dispatch and build"
+    }
+  ],
+  "boundary": {
+    "currentFileCount": 453,
+    "currentSha256": "5886e72e1f6e484d1e6327c4ab5347cc20b542eca90c00e0b5cdae1cba0b81f3",
+    "changedBytesUserSigned": false,
+    "actualActivation": false,
+    "productionDeployment": false
+  },
+  "sqlTestsExecuted": false,
+  "passingTestsRepeated": false,
+  "pending": [
+    "Three new SQL activation scenarios",
+    "Two affected original Enable/Close SQL scenarios",
+    "Earlier cross-rollback-02 source-proof rejection remains unclassified"
+  ],
+  "actualActivation": false,
+  "changedBytesUserSigned": false,
+  "productionDeployment": false,
+  "goalPercent": 60
+}

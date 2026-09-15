@@ -1,0 +1,16 @@
+{
+  "atUtc": "2026-09-15T00:01:56.761450+00:00",
+  "status": "required-development-gates-passed",
+  "previousReview": "review.json",
+  "integrationReview": "integration-validation.json",
+  "finalChangedRuntimeCode": false,
+  "focusedFix": "Only pending SQL lock observation counts distinct transaction owners across partitions",
+  "requiredSqlChecksPassed": 5,
+  "originalPassingChecksRepeated": false,
+  "openDevelopmentFindings": [],
+  "existingMainIntegrated": {
+    "core": "32f4b8e4e0d7728e81dea3f96f7b32e15c18704d",
+    "crm": "21e8ebb50c7a5ad88f3ed88e7002531d5d3d17d7"
+  },
+  "externalTrustBoundary": "No actual-cutover approval, complete privileged-writer isolation, production candidate or CRM11/C04B acceptance"
+}
