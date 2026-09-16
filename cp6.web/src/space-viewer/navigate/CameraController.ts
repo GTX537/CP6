@@ -1,4 +1,12 @@
-import { Box3, PerspectiveCamera, OrthographicCamera, Sphere, Vector3 } from 'three'
+import {
+  Box3,
+  MOUSE,
+  PerspectiveCamera,
+  OrthographicCamera,
+  Sphere,
+  TOUCH,
+  Vector3,
+} from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import type { WebGLRenderer } from 'three'
 
@@ -28,6 +36,9 @@ export class CameraController {
   private readonly _controls: OrbitControls
   private _fly: FlyState | null = null
   private readonly _requestRender: () => void
+  private readonly _cancelFlyOnManualStart = (): void => {
+    this._fly = null
+  }
 
   constructor(perspective: PerspectiveCamera, renderer: WebGLRenderer, requestRender: () => void) {
     this._perspective = perspective
@@ -44,7 +55,16 @@ export class CameraController {
     this._controls.minDistance = 2
     this._controls.maxDistance = 500
     this._controls.maxPolarAngle = Math.PI / 2 + 0.15
+    this._controls.enablePan = true
+    this._controls.screenSpacePanning = true
+    this._controls.zoomToCursor = true
+    this._controls.mouseButtons.LEFT = MOUSE.ROTATE
+    this._controls.mouseButtons.MIDDLE = MOUSE.DOLLY
+    this._controls.mouseButtons.RIGHT = MOUSE.PAN
+    this._controls.touches.ONE = TOUCH.ROTATE
+    this._controls.touches.TWO = TOUCH.DOLLY_PAN
 
+    this._controls.addEventListener('start', this._cancelFlyOnManualStart)
     this._controls.addEventListener('change', requestRender)
   }
 
@@ -142,6 +162,7 @@ export class CameraController {
   }
 
   dispose(): void {
+    this._controls.removeEventListener('start', this._cancelFlyOnManualStart)
     this._controls.dispose()
   }
 }

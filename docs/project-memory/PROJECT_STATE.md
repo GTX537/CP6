@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-09-16：恢复 3D Viewer 自由相机
+
+从已确认的 `origin/main` 基线 `b807d603` 恢复遗漏的 `c703e45d`、`04d927eb`、`d747bd0d`：Viewer 明确支持屏幕空间平移、指针缩放、鼠标/触摸映射，手动开始操作立即取消相机飞行动画；画布增加操作提示、ARIA 说明及右键菜单抑制。现有编辑器视口改动不受影响。恢复的[设计](../superpowers/specs/2026-08-29-space-viewer-free-camera-design.md)和[计划](../superpowers/plans/2026-08-29-space-viewer-free-camera.md)已标明历史语境。
+
+本轮在独立 worktree、Node `22.22.0` 下重新验证：`npm run test:unit -- src/space-viewer/navigate/CameraController.spec.ts src/space-viewer/navigate/Picker.spec.ts src/space-viewer/stacked/StackedViewer.spec.ts src/views/space/viewer/FloorViewer.navigation.spec.ts` **4 文件 / 20 项通过**；`npm run type-check` 和 `npm run build-only` 均退出 0，构建仅提示 chunk 大于 600 kB。回归测试在旧实现下确认 5 项预期失败；组件测试初始化曾因 i18n mock 缺少 `createI18n` 导出失败，已修正测试替身后验证。组件测试覆盖真实模板渲染与 DOM 事件，图形引擎和 API 使用测试替身，不计作真实 WebGL 或生产验收。
+
+本条记录恢复分支的本地验证时点；远端 main 交付由总整合任务核对。未修改现有运行环境、数据库、容器或部署；未触发 Actions，未重复旧计划中的 10,000 库位浏览器验收。
+
 ## 2026-09-16：恢复 Space 首页 Design V1 楼层与语言刷新
 
 从已确认主线 `b807d603` 恢复历史遗漏提交 `22b3a9ce` 的五个源代码/测试文件，未覆盖后续主线逻辑。首页在具备 `space:model:read` 时优先汇总活动草稿或已发布版本楼层，Legacy 无模型/无读取权限时保留原路径；已发布楼层的编辑入口返回 Studio。补齐 44 个 Space 五语言词条，启动种子后清理完整包和命名空间缓存；浏览器旧缓存只用于即时显示，初始化仍刷新词条。

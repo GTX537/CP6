@@ -24,6 +24,8 @@ declare module 'three/examples/jsm/controls/OrbitControls' {
     enableZoom: boolean
     enableRotate: boolean
     enablePan: boolean
+    screenSpacePanning: boolean
+    zoomToCursor: boolean
     target: Vector3
     mouseButtons: { LEFT?: MOUSE; MIDDLE?: MOUSE; RIGHT?: MOUSE }
     touches: { ONE?: TOUCH; TWO?: TOUCH }
