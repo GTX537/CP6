@@ -124,7 +124,11 @@ function merge(lang: string, flat: Record<string, string>) {
   }
 }
 
-/** 从 localStorage 恢复已缓存的语言包到 i18n 实例（同步执行，0ms 阻塞） */
+/**
+ * 从 localStorage 恢复已缓存的语言包到 i18n 实例（同步执行，0ms 阻塞）。
+ * 缓存只用于首屏占位，不能标记为已加载；initI18n 仍须拉取最新 _core，
+ * 否则服务端新增词条会被浏览器里无版本号的旧缓存永久遮蔽。
+ */
 export function hydrateCachedLanguagePacks(targetLang?: string) {
   const lang = targetLang || localStorage.getItem('lang') || 'ja'
   const langs = [lang, ...(fallbackChain[lang] || [])]
@@ -136,7 +140,6 @@ export function hydrateCachedLanguagePacks(targetLang?: string) {
         if (flat && typeof flat === 'object') {
           const existing = (i18n.global.getLocaleMessage(l) as any) || {}
           i18n.global.setLocaleMessage(l, { ...existing, ...flat })
-          loadedPacks.add(`${l}:_core`)
         }
       }
     } catch {
