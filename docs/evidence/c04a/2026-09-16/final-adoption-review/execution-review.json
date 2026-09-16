@@ -1,0 +1,376 @@
+{
+  "format": "CP6.C04A.FinalLocalAdoptionReview.v1",
+  "runId": "d8208f83568e4b6bac285077f7701c2e",
+  "status": "no-go-admin-access-and-owner-approval-pending",
+  "observedAtUtc": "2026-09-16T03:44:28.5398676+00:00",
+  "owner": "GTX537",
+  "backupOwnerAlreadyConfirmed": false,
+  "actualExecutionApproved": false,
+  "changedBytesUserSigned": false,
+  "inputs": [
+    {
+      "role": "originalManifest",
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\run.json",
+      "sha256": "4e3be653593b7a361aedfbc530d7f3962e1188abc029d63e14313319d1cd093c"
+    },
+    {
+      "role": "proposedManifest",
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\c04a-proposed-run-20260914.json",
+      "sha256": "a1f79d7350285d8b8b80cf92bd5d19134bbf8076eeaad80565d1b46f81df36a6"
+    },
+    {
+      "role": "fixture",
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3\\live-fixture.json",
+      "sha256": "adc7ee5f86c677df61e1880668c44695b5c831b8db3bec033c8e1c5577f4deca"
+    },
+    {
+      "role": "originalCrmConfiguration",
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\crm-content\\appsettings.json",
+      "sha256": "f7254b52d1d9d4124aed25a064d7076d5f1c4afb81f0ee4394769936d960608b"
+    }
+  ],
+  "databaseInventory": [
+    {
+      "role": "native-core",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6DB",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "FA1F4DAB-33EE-4027-B5D8-F5A270E5BC53",
+        "databaseGuid": "49E6A7EF-6A3C-46A9-A389-F72315F5CB1B",
+        "familyGuid": "087348F5-6AF0-49CF-AF22-EEDAE73272E0",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "preview-core",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "327CC280-8867-47F3-AE4B-588466C268CE",
+        "databaseGuid": "4058A004-2F83-4457-BD77-A7BF37CC5FDD",
+        "familyGuid": "27089C7A-A090-49D2-BE92-0A49AE40919B",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "auth-identity-catalog",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6CrmC02Live_516b677f84b64cd1a876590a8cb54a0b",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "A8F10476-5B32-436B-9C51-13CC707EC673",
+        "databaseGuid": "F4952C19-6981-4089-9CBE-59782302C45D",
+        "familyGuid": "728FBBD1-EB4A-4BF4-AA0B-BC8CBFDC7962",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "business-primary",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6CrmC02Live_86a709a6f627426fa23ad88f7dd2ebb9",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "561C1AA6-1C0B-4F49-9985-195A1EFE3161",
+        "databaseGuid": "90736E28-58BA-4597-8CD5-DF23A3E30B55",
+        "familyGuid": "714D21DF-B7E3-4C7C-B23E-770A2D173644",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "business-isolation",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6CrmC02Live_4bc6bc987f8040da843caf86c0b7faf2",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "11435648-1262-4D57-A454-06FB4DE336B5",
+        "databaseGuid": "A6D5C651-8646-4748-BE46-681817020E21",
+        "familyGuid": "B7261456-910F-45E6-BE58-68C25E805C7C",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "docker-core",
+      "engine": "docker",
+      "identity": {
+        "serverName": "46deb8044b4f",
+        "name": "CP6DB",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "FA1F4DAB-33EE-4027-B5D8-F5A270E5BC53",
+        "databaseGuid": "F59EDA72-6FAC-4056-900D-A96E254F9BC1",
+        "familyGuid": "087348F5-6AF0-49CF-AF22-EEDAE73272E0",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    }
+  ],
+  "proposedActors": [
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "departmentId": "458f79d1-d340-473e-894e-2d131a2069da",
+      "selection": "Existing administrator used successfully on A09 restored identity data; proposed for owner review, not yet approved",
+      "enabled": true,
+      "actorId": "95bffc82-f979-4bb4-bf2e-9cbe9c9a9110",
+      "roleId": 1
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "departmentId": "f6841a23-842f-4953-b225-1195e898be1b",
+      "selection": "Existing administrator used successfully on A09 restored identity data; proposed for owner review, not yet approved",
+      "enabled": true,
+      "actorId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+      "roleId": 1
+    }
+  ],
+  "operatorActorSelection": "Existing primary-organization administrator; proposed, no impersonated audit action has occurred.",
+  "windowsRetirementEntries": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ce7d3e8b55765e222efa826f037a7e993c1ad73f12c6580007627a83fb51eb7a",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\PreviewHost.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "9e2e08db097ad52cebeec78814fa2f3ce9eab2c7ea3d4803d02825ca39f9cfbe",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "0ba199f1604adee149896927252e6b39db2500feb1fd12e69538182b46df9de7",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\invoke-published-smoke.ps1",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "85858bd46de83c86cc06e256477c2eeeabb73c695dbc1c4d27ace7ed08d91ec8",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\PublishedSmoke.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "48b3e214dc038ba0f2720e459993fc809531db8cda0091a5adec7a0e57073d21",
+      "inactive": true
+    }
+  ],
+  "deploymentAgent": {
+    "serviceName": "vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS",
+    "currentState": "Running",
+    "readOnlyAccessHandleCheck": true,
+    "serviceControlCalled": false,
+    "atUtc": "2026-09-16T03:40:58.8783204+00:00",
+    "startMode": "Auto",
+    "checks": [
+      {
+        "handleGranted": true,
+        "operation": "query",
+        "win32Error": 0
+      },
+      {
+        "handleGranted": false,
+        "operation": "stop",
+        "win32Error": 5
+      },
+      {
+        "handleGranted": false,
+        "operation": "start",
+        "win32Error": 5
+      },
+      {
+        "handleGranted": false,
+        "operation": "change-config",
+        "win32Error": 5
+      }
+    ],
+    "configurationChanged": false
+  },
+  "rootApiContainer": {
+    "status": "running",
+    "name": "/cp6-api",
+    "id": "9f76c764f56e20239b5da3b769184f6e742e992a8baf1b20bbc027a08c0ad433",
+    "imageId": "sha256:3eac813b45fe53512e96805850da62050234ac7926b96f20a9f26c715f837a1e",
+    "project": "cp6",
+    "configurationSha256": "f7a799b98b2d1a66adda6b98f2a93a5724db7235300e093a8870f09946e42b73",
+    "mountsSha256": "85200b952ce78515100ec354d709865006b9e3347aa5d3bb04fa593d0580ba89",
+    "restartPolicy": {
+      "Name": "unless-stopped",
+      "MaximumRetryCount": 0
+    }
+  },
+  "originalTransport": [
+    {
+      "status": "exited",
+      "name": "/cp6-c02-live-0aa59de164ad-publisher-dapr-1",
+      "id": "b9c3009c58bcb4fe4642a1185f682c5c462bb9e1f20d30534c9f74df0b3c04ba",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "project": "cp6-c02-live-0aa59de164ad",
+      "configurationSha256": "81263f9bf9934a13617f9a2af615d1788c82f6ae2b17d88e46d7908806492c2b",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "status": "exited",
+      "name": "/cp6-c02-live-0aa59de164ad-receiver-dapr-1",
+      "id": "009c8d2588691183adb23addffb2e4660c70268e78971290adc7bffbd4c7217e",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "project": "cp6-c02-live-0aa59de164ad",
+      "configurationSha256": "e2a76c71f98a30bc1dc86af5214404e62edc9ea86bbefe0ea34d5164bcdab2fa",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "status": "exited",
+      "name": "/cp6-c02-live-0aa59de164ad-kafka-1",
+      "id": "9e351205c9104b1b2839a6a853d23797b60f8b62dcfd918bbe59893154de1967",
+      "imageId": "sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837",
+      "project": "cp6-c02-live-0aa59de164ad",
+      "configurationSha256": "03a9ebc0e7acc584d995b50af506e19ef9459a30d15384bc4f76833b2a41beb9",
+      "mountsSha256": "bb68888991b975d33dcd7f72134771f937d6bdf9fed35ca2c61331faf91a3b40",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      }
+    }
+  ],
+  "packages": [
+    {
+      "role": "coreSourceOperator",
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-verified-target-enable\\core",
+      "sourceCommit": "7667b693e0264b13c36adc4e9f09331ceceb6dc5",
+      "fileCount": 40,
+      "fileSetSha256": "b236d73f87636522375356b77789d2aaf1fc67d195200274d738afacbc818f4e"
+    },
+    {
+      "role": "crmIntegratedOperator",
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-verified-target-enable\\crm-integrated",
+      "sourceCommit": "bdaae551c3db7726c413257ea15237d308913b14",
+      "fileCount": 178,
+      "fileSetSha256": "8026c1d841b891e2135a2b9d59468b26de446dc1f9db99cb194e5b1b35e397d0"
+    },
+    {
+      "role": "crmApi",
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-local-execution-package\\crm-api",
+      "sourceCommit": "8d549909e8972b7fd74b8e5142e3e4f0759995ae",
+      "fileCount": 206,
+      "fileSetSha256": "8138f8feff4ec95f5d970018332f1e94641665415a96029c5d886c0dd806a7e7"
+    },
+    {
+      "role": "recoveryHost",
+      "directory": "D:\\CP6-local-publish\\20260914\\c04a-preview-recovery-host\\host",
+      "sourceCommit": "93da582661c707c190eb51f4992d3a9e0886d336",
+      "fileCount": 5,
+      "fileSetSha256": "cb545ce200d0813bd92cce2a1c35fc9fc4318a58f97e42ca54ab9f192c0a126c"
+    }
+  ],
+  "preconditions": [
+    "Explicit approval for this bound 0.2 local cutover and first calendar writes.",
+    "Elevated authorized operator pauses/disables exact deployment Agent; SQL Agent remains stopped and no Agent.Worker is active.",
+    "Owner maintains exclusive administrator/manual deployment window; refreshed inventory matches reviewed bytes and database identities.",
+    "Refresh live source observations and final backup inputs in the exclusive window; existing six restore proofs are reused, not rerun."
+  ],
+  "sequence": [
+    "Pause privileged deployment writer, verify no active job and keep SQL/Docker database services running.",
+    "Stop exact legacy root cp6-api after recording its policy; retire eight exact inactive Windows entries using complete two-organization inventory.",
+    "Initialize original auth/catalog and both business targets once with the reviewed API, preserving original keyring and identity records.",
+    "Capture both Closed targets and common set anchor; freeze all three exact Core sources and recheck live source identity/content.",
+    "Start original three transport containers and reviewed recovery host; validate identity login and authenticated reads with targets Closed.",
+    "Use verified complete-target-set activation with live Frozen proofs; do not use old manual enable command.",
+    "For each organization, save reviewed calendar payload as first write (Written), capture actual returned version/ETag, preview then activate, then verify public form becomes usable.",
+    "Perform actual adoption/CRM11 evidence and observation; retain old tables read-only for required release cycle; C04B is not pre-approved as completed."
+  ],
+  "stopRules": [
+    "Any byte/database/process/privilege drift stops execution before the next mutation.",
+    "Initialization or partial source freeze failure keeps target business writes Closed.",
+    "Before any target Written, only the verified close/abort-all-targets/live-receipt/source-reopen protocol is allowed.",
+    "After first calendar save creates Written, do not restore old backups over current databases or reopen old writers; forward fix only.",
+    "Do not automatically re-enable the deployment Agent or old root API until its pending deployment configuration cannot restore retired CRM writers."
+  ],
+  "impacts": [
+    "Local root cp6-api and the functions it serves will be interrupted.",
+    "Deployment Agent cannot accept new deployments during the exclusive window.",
+    "Original C02 auth/identity data retained; business schema moves forward to 0.2.",
+    "First calendar save crosses the irreversible application rollback boundary; stop before it unless this exact action is approved."
+  ],
+  "excluded": [
+    "Production deployment",
+    "Actions invocation",
+    "Root Docker/SQL service shutdown",
+    "Docker factory reset or volume deletion",
+    "Deleting old tables",
+    "Invented historical business data"
+  ],
+  "progress": {
+    "overallChecklistPercent": 75.0,
+    "formalAcceptancePercent": 60,
+    "c04aChecklistPercent": 75.0,
+    "A10Complete": false,
+    "A11Complete": false,
+    "A12Complete": false,
+    "thisPreparationAddsPercentagePoints": 0
+  }
+}

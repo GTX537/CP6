@@ -1,0 +1,26 @@
+[
+  {
+    "enabled": 1,
+    "step_id": 1,
+    "subsystem": "TSQL",
+    "database_name": "master",
+    "commandSha256": "9CC509643E1316F46BFAC9E9112AD5735E0B2B095C520983CDEC0D89A5DC1D23",
+    "classification": "SQL Server policy maintenance"
+  },
+  {
+    "enabled": 1,
+    "step_id": 2,
+    "subsystem": "TSQL",
+    "database_name": "master",
+    "commandSha256": "3CBE9FC9371B811C83EE567D3531936F9F6DC56F65161A70200E4BD981F6DFB0",
+    "classification": "SQL Server policy maintenance"
+  },
+  {
+    "enabled": 1,
+    "step_id": 3,
+    "subsystem": "PowerShell",
+    "database_name": "master",
+    "commandSha256": "C8A9F1BFDB09A89F7343DA68C39558361A33AF88CD188732377F23A5999357ED",
+    "classification": "Requires private command review"
+  }
+]

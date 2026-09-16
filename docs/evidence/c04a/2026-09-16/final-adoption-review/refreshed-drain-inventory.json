@@ -1,0 +1,39 @@
+{
+  "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+  "deploymentId": "a5458488-5aee-41f4-a451-e0ecafdb5375",
+  "targets": [],
+  "inactiveEntryPoints": [
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "entryPointSha256": "CE7D3E8B55765E222EFA826F037A7E993C1AD73F12C6580007627A83FB51EB7A"
+    },
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\PreviewHost.dll",
+      "entryPointSha256": "9E2E08DB097AD52CEBEEC78814FA2F3CE9EAB2C7EA3D4803D02825CA39F9CFBE"
+    },
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "entryPointSha256": "ADE3BABDC997D5BACD2AEB8B6FEAFC515A1AB5BF0ECF25792E036583531B9745"
+    },
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "entryPointSha256": "0BA199F1604ADEE149896927252E6B39DB2500FEB1FD12E69538182B46DF9DE7"
+    },
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "entryPointSha256": "ADE3BABDC997D5BACD2AEB8B6FEAFC515A1AB5BF0ECF25792E036583531B9745"
+    },
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "entryPointSha256": "ADE3BABDC997D5BACD2AEB8B6FEAFC515A1AB5BF0ECF25792E036583531B9745"
+    },
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\harness\\invoke-published-smoke.ps1",
+      "entryPointSha256": "85858BD46DE83C86CC06E256477C2EEEABB73C695DBC1C4D27ACE7ED08D91EC8"
+    },
+    {
+      "entryPointPath": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\PublishedSmoke.dll",
+      "entryPointSha256": "48B3E214DC038BA0F2720E459993FC809531DB8CDA0091A5ADEC7A0E57073D21"
+    }
+  ]
+}

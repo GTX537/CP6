@@ -1,0 +1,59 @@
+{
+  "format": "CP6.C04A.ChangedContractReview.v1",
+  "version": "0.2.0",
+  "sourceMain": "2299f3f8d807ca00c8e145bee53982f8c3ae572a",
+  "files": [
+    {
+      "path": "contracts/data/crm-v1-column-contract.yaml",
+      "gitBlobSha256": "f7cc74d920fcc8760a8ed7dcacc52ce087f0179d8d037a10ada0f469086ad009",
+      "bytes": 437411
+    },
+    {
+      "path": "contracts/data/generated-runtime/crm-v1-retained-bindings.json",
+      "gitBlobSha256": "acd000ab8492674429c76242c2d0e466ae235919afd925ffe3ba2264def7dfb2",
+      "bytes": 368263
+    },
+    {
+      "path": "contracts/data/generated-runtime/crm-v1-retained-model.json",
+      "gitBlobSha256": "a61e9ea45127bf91d444af1e97d4730fe4552e951ab6bcf5a3a25cc453a036b4",
+      "bytes": 122329
+    },
+    {
+      "path": "contracts/data/generated-runtime/crm-v1-runtime-catalog.sql",
+      "gitBlobSha256": "fd5294c1e14ee2502d4b58252c16f836f6472a402269c7856295486a3bdfd60a",
+      "bytes": 2484
+    },
+    {
+      "path": "contracts/data/generated-runtime/crm-v1-runtime-organization.sql",
+      "gitBlobSha256": "b3e43a8316c764b3b77b74209f06d97b46ce308339ece1c98e17bcb06c6b9d30",
+      "bytes": 82667
+    },
+    {
+      "path": "contracts/data/generated-runtime/crm-v1-runtime-schema.json",
+      "gitBlobSha256": "3b80519108b1347fae83d5dfaa4b689185443093b3aca0558cb72755a9d31125",
+      "bytes": 543459
+    },
+    {
+      "path": "contracts/data/runtime-overlays/auxiliary-0.2.0.json",
+      "gitBlobSha256": "e987638376303469c4a712416f9477feb50295c616188985e3ad4993fdf234e2",
+      "bytes": 70580
+    },
+    {
+      "path": "contracts/data/runtime-overlays/calendar-0.2.0.json",
+      "gitBlobSha256": "7517b29d53007dcf4d93151faa12254ee758f8bd275a51d6b1b91272af31c188",
+      "bytes": 7845
+    },
+    {
+      "path": "contracts/data/runtime-overlays/leads-0.2.0.json",
+      "gitBlobSha256": "2fa806f92616f3341f9dc01832a3a298897a9d5313431b05a6cff73666d64cec",
+      "bytes": 40796
+    },
+    {
+      "path": "contracts/data/runtime-overlays/retained-0.2.0.json",
+      "gitBlobSha256": "ce6b6ee6cb866cb737c9fb85e9e562c4284bf8e347c741c4481aa32fbbdb6545",
+      "bytes": 61618
+    }
+  ],
+  "historicalBaseApprovalCoversChangedBytes": false,
+  "changedBytesUserSigned": false
+}
