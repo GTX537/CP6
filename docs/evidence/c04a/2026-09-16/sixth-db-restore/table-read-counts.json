@@ -1,0 +1,1647 @@
+[
+  {
+    "schema": "dbo",
+    "table": "__EFMigrationsHistory",
+    "rows": 128
+  },
+  {
+    "schema": "dbo",
+    "table": "__EFMigrationsHistory_Space",
+    "rows": 47
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_Account",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_Activity",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_Collaborator",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_Contact",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_ErpLink",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_IntakeConfig",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_IntakeMember",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_Lead",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_MediaAsset",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_MergeRecord",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_Opportunity",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_PageRevision",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_PageTranslation",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_PublicForm",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_PublicRoute",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_PublicSubmission",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_Site",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_SitePage",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_SourceTouch",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Crm_StageHistory",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "DataProtectionKeys",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_ApInvoice",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_ApInvoiceLine",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_ApSettlement",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_ArInvoice",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_ArInvoiceLine",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_ArSettlement",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_AssetCard",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_AssetCategory",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_AssetDisposal",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BankAccount",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BankImportProfile",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BankReconJournalLink",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BankReconMatch",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BankStatement",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BankStatementLine",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_Budget",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BudgetLine",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BudgetLinePeriod",
+    "rows": 12
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_BudgetVersion",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_CostCenter",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_CostSheet",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_CostSheetLine",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_DepreciationEntry",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_DepreciationRun",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_FiscalPeriod",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_GlAccount",
+    "rows": 15
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_JournalEntry",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_JournalLine",
+    "rows": 7
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_Payment",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_PostingRule",
+    "rows": 15
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_PostingRuleLine",
+    "rows": 34
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_Receipt",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_Sequence",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "Fin_TaxCode",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "M_Base",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "M_DefectCategory",
+    "rows": 25
+  },
+  {
+    "schema": "dbo",
+    "table": "M_GenericCode",
+    "rows": 59
+  },
+  {
+    "schema": "dbo",
+    "table": "M_InspectionTemplate",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "M_Machine",
+    "rows": 6
+  },
+  {
+    "schema": "dbo",
+    "table": "M_Staff",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "Plan_ItemPlanningPolicy",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Plan_MrpRun",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Plan_NetRequirement",
+    "rows": 18
+  },
+  {
+    "schema": "dbo",
+    "table": "Plan_Pegging",
+    "rows": 17
+  },
+  {
+    "schema": "dbo",
+    "table": "Plan_PlannedOrder",
+    "rows": 13
+  },
+  {
+    "schema": "dbo",
+    "table": "Pub_Attachment",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Pub_DocSequence",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "Pub_GenColumn",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Pub_GenTable",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_GoodsReceipt",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_GoodsReceiptLine",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_MatchTolerance",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_PoConsignMaterial",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_PurchaseOrder",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_PurchaseOrderLine",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_PurchaseRequest",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_PurchaseRequestLine",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_Rfq",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_RfqLine",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_RfqQuote",
+    "rows": 6
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_RfqSupplier",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_SupplierPrice",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_ThreeWayMatch",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Pur_ThreeWayMatchLine",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AbcSnapshot",
+    "rows": 40
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AiBudgetReservation",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Aisle",
+    "rows": 21
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AisleRevision",
+    "rows": 20
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AiTenantPolicy",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AiUsageRecord",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AnalyticsConfig",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Artifact",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Asset",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AssetVersion",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_AuditEvent",
+    "rows": 635
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_CadParsePreparation",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_CadSiteProviderCertification",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_CadSiteProviderConfiguration",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_CodeRule",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Connector",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ConnectorStop",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_DesignAttribute",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_DeviceAlarmState",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_DeviceEvent",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_DeviceMapping",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_DeviceState",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_DispatchRecommendation",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_EditLease",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_EditLeaseTakeoverAudit",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ElementAttribute",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ElementCommandBatch",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ElementCommandRecord",
+    "rows": 10527
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ElementRevision",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExcelMappingProfile",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExcelMappingProfileVersion",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExternalGrant",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExternalGrantFloor",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExternalGrantObject",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExternalGrantOwner",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExternalGrantZone",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExternalMembership",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ExternalOrganization",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_FieldPolicy",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_FieldPolicyField",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_File",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Floor",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_FloorRevision",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_GenerationLockedFact",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_GenerationProposal",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_GenerationRun",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_GenerationStagingElement",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_HistoricalRepublish",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_IdempotencyRecord",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Job",
+    "rows": 7
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_JobAttempt",
+    "rows": 23
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_JobStep",
+    "rows": 22
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_LayerMappingProfile",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_LayerMappingProfileVersion",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Location",
+    "rows": 10004
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_LocationExternalBinding",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_LocationRevision",
+    "rows": 10000
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Marker",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Model",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ModelIssue",
+    "rows": 10000
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ModelSource",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ModelVersion",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PersonnelEvent",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PersonnelState",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningComparison",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningComparisonEntry",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningComparisonRisk",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningDecisionRecord",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningHistoricalDataset",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningHistoricalTask",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningScenarioBranch",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningSimulationLocationResult",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PlanningSimulationRun",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ProposalDecision",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PublishAttempt",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PublishAuditEvent",
+    "rows": 97
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PublishBatch",
+    "rows": 20
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PublishPlan",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_PutawayRecommendation",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Rack",
+    "rows": 501
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_RackGenerationProfile",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_RackGenerationProfileVersion",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_RackLevelRevision",
+    "rows": 2500
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_RackRevision",
+    "rows": 500
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ReconciliationIssue",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_RuntimeElement",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Site",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Template",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_TenantAiWorkSlot",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_UnderlayCalibration",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ValidationRun",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_WarehouseTemplate",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_WarehouseTemplateVersion",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_WmsAdoption",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_WmsReceipt",
+    "rows": 10000
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_Zone",
+    "rows": 8
+  },
+  {
+    "schema": "dbo",
+    "table": "Space_ZoneRevision",
+    "rows": 7
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_Dept",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_DictDatas",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_DictTypes",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_FieldAuditLogs",
+    "rows": 12613
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_Langs",
+    "rows": 5370
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_MenuAction",
+    "rows": 1686
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_Menus",
+    "rows": 167
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_OperLogs",
+    "rows": 10
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_PasswordHistories",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_RefreshTokens",
+    "rows": 779
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_RoleAction",
+    "rows": 1940
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_RoleDataScope",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_RoleFieldPerm",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_RoleMenus",
+    "rows": 905
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_Roles",
+    "rows": 42
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_SecurityLogs",
+    "rows": 841
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_Tenants",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_TenantSsoConfigs",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_UserRole",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_Users",
+    "rows": 12
+  },
+  {
+    "schema": "dbo",
+    "table": "Sys_WorkCalendar",
+    "rows": 35
+  },
+  {
+    "schema": "dbo",
+    "table": "T_BarcodeAlias",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_BarcodeProfile",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_CarrierShipment",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ClientDevice",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_CreditNote",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_CrossDockOrder",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_DefectRecord",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_DeviceActivation",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_DocSequence",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "T_EstimateCalc",
+    "rows": 30
+  },
+  {
+    "schema": "dbo",
+    "table": "T_EstimateCalcProcess",
+    "rows": 44
+  },
+  {
+    "schema": "dbo",
+    "table": "T_FscChecklist",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "T_FxRate",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_InboundOrder",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_InboundOrderDetail",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_InboundReceipt",
+    "rows": 8
+  },
+  {
+    "schema": "dbo",
+    "table": "T_InboundReceiptDetail",
+    "rows": 8
+  },
+  {
+    "schema": "dbo",
+    "table": "T_InkColorMatchHistory",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_InkLot",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_IntegrationEvent",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "T_IotSensor",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "T_IotSensorReading",
+    "rows": 13
+  },
+  {
+    "schema": "dbo",
+    "table": "T_KitMaster",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "T_KitMasterComponent",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "T_KitOrder",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "T_LabelJob",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_LabelTemplate",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_Location",
+    "rows": 8
+  },
+  {
+    "schema": "dbo",
+    "table": "T_LogisticsUnit",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_LpnClosure",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_LpnContent",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_LpnEvent",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_LpnPolicy",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_MachineDowntime",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_MaterialShortage",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_MesSequence",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "T_MobileTask",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_MobileTaskEvent",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_MobileTaskReservation",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_MobileTaskScanLog",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OeeDaily",
+    "rows": 456
+  },
+  {
+    "schema": "dbo",
+    "table": "T_Order",
+    "rows": 24
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OrderDetail",
+    "rows": 24
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OrderMaterial",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OrderProcess",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OrderProcessNote",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OutboundOrder",
+    "rows": 35
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OutboundOrderDetail",
+    "rows": 40
+  },
+  {
+    "schema": "dbo",
+    "table": "T_OutboundRoutingRule",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_Pallet",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_PaperRoll",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_PlateMold",
+    "rows": 7
+  },
+  {
+    "schema": "dbo",
+    "table": "T_PlateMoldStock",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ProcessCostRate",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ProductCoProduct",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ProductionResult",
+    "rows": 9
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ProductLotPrice",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ProductMaster",
+    "rows": 11
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ProductMaterial",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ProductProcess",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "T_QcInspection",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_QcInspectionItem",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_QualityInspection",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_QualityInspectionItem",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_Quotation",
+    "rows": 19
+  },
+  {
+    "schema": "dbo",
+    "table": "T_QuotationCalc",
+    "rows": 19
+  },
+  {
+    "schema": "dbo",
+    "table": "T_QuotationDetail",
+    "rows": 23
+  },
+  {
+    "schema": "dbo",
+    "table": "T_RemnantMaterial",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ReplenishOrder",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_RmaDetail",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_RmaHeader",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_SampleStock",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_SheetUnitPrice",
+    "rows": 2
+  },
+  {
+    "schema": "dbo",
+    "table": "T_SheetUnitPriceEstimate",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_ShippingPackage",
+    "rows": 10
+  },
+  {
+    "schema": "dbo",
+    "table": "T_SlottingPlan",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_SpaceDispatchApprovalRequest",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_SpaceDispatchExecutionAction",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_SpaceWmsOperation",
+    "rows": 20
+  },
+  {
+    "schema": "dbo",
+    "table": "T_Stock",
+    "rows": 24
+  },
+  {
+    "schema": "dbo",
+    "table": "T_StockSerial",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_StockSerialTransaction",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_StockTake",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_StockTakeDetail",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_StockTransaction",
+    "rows": 55
+  },
+  {
+    "schema": "dbo",
+    "table": "T_TaskCommandReceipt",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_VmiBilling",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_Warehouse",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WcsTask",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WebBusinessPartner",
+    "rows": 16
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WmsBin",
+    "rows": 10000
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WmsFeatureFlag",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WmsFeatureFlagChange",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WmsRoleScope",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WmsSequence",
+    "rows": 13
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WorkCenter",
+    "rows": 1
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WorkOrder",
+    "rows": 11
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WorkOrderMaterial",
+    "rows": 9
+  },
+  {
+    "schema": "dbo",
+    "table": "T_WorkOrderProcess",
+    "rows": 15
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_ApprovalBinding",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_ApproverMap",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_Connector",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowCc",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowData",
+    "rows": 6
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowDef",
+    "rows": 8
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowDefVersion",
+    "rows": 10
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowDefVersionDependency",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowDelegate",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowFormTo",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowHistory",
+    "rows": 13
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowInstance",
+    "rows": 4
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowTask",
+    "rows": 5
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowToken",
+    "rows": 6
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FlowTrigger",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FormData",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FormDef",
+    "rows": 3
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FormDefVersion",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FormDraft",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FormFavorite",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_FormFlowBinding",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_InboxPref",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_Notification",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_ServiceJob",
+    "rows": 0
+  },
+  {
+    "schema": "dbo",
+    "table": "Wf_TriggerFire",
+    "rows": 0
+  }
+]
