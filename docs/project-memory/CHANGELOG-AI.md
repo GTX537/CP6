@@ -6,6 +6,16 @@
 
 本轮独立 worktree / Node `22.22.0` 验证：旧实现 5 项预期回归失败，恢复后相机/拾取/堆叠 Viewer/页面定向 **20/20 通过**；Vue 类型检查和 Vite 构建退出 0，仅有大 chunk 提示。首次组件测试的 i18n mock 初始化失败已修正并重验；详细命令与边界见[项目状态](PROJECT_STATE.md)。本条不宣称远端 main 已交付或真实场景已验收；未运行 Actions、部署或修改现有运行环境。
 
+## 2026-09-16：恢复遗漏的 Space HOME 修复
+
+- 以 `b807d603` 为基线恢复 `22b3a9ce`：首页优先读取 Design V1 活动版本楼层，保留 Legacy 回退，并区分草稿编辑与已发布版本导航。
+- 恢复 44 个 Space 五语言启动词条、服务器命名空间缓存清理与浏览器初始化语言刷新；不引入数据库结构变化。
+- 本地 SpaceHomeView 9/9、Vue 类型检查、WebAPI Debug 编译（0 警告/0 错误）及词条静态检查通过；旧实现对照出现 5 项预期失败，恢复后 9/9。未运行全仓套件、真实数据库/Redis、浏览器验收、Actions 或部署；后续由整合任务核对 main 远端交付。
+
+## 2026-09-16：补齐历史 BUG 管理交付
+
+从当前远端主线整合PR #39的BUG Issue Form、PR模板、[管理规则](../quality/BUG-MANAGEMENT.md)和导航；保留旧提交的可追溯关系并解决四份项目状态文档的追加冲突。当前业务实现、生产门禁及Actions手动策略保持，未把旧认证BUG登记当作修复结果。
+
 ## 2026-09-16：全项目源码盘点与升级入口
 
 完成业务、架构和界面现状材料整理。公开[Core/Platform分报告](../audits/2026-09-16-full-project/README.md)保留公开源码证据；[含CRM的完整跨仓报告](https://github.com/GTX537/CP6.CRM/blob/main/docs/audits/2026-09-16-full-project/README.md)与升级工作包留在CRM私有仓库。已记录旧Web拣货未提交、外部NoOp与固定规则、消息语义差异、Space/原生客户端及界面统一范围。

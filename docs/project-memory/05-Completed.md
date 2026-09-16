@@ -6,6 +6,16 @@
 
 本轮 Node `22.22.0`：相机、拾取、堆叠 Viewer 和 FloorViewer **4 文件 / 20 项通过**，Vue 类型检查与 Vite 构建退出 0，仅有大 chunk 提示。旧实现下 5 项预期失败证明回归能捕获缺失行为；测试替身初始化问题及完整命令见[项目状态](PROJECT_STATE.md)。本条完成项限代码恢复和本地验证，远端 main 仍由总整合任务确认；未修改运行环境或执行 Actions、部署、真实场景验收。
 
+## 2026-09-16：Space 首页遗漏修复完成本地验证
+
+恢复 `22b3a9ce` 的 Design V1/Legacy 统一楼层投影与导航、44 项五语言启动词条和两级语言缓存刷新。扩展现有 SpaceHomeView 测试，覆盖模型读取权限、404 回退、草稿优先、仅已发布版本导航、空 Design V1 不回退陈旧楼层及浏览器缓存更新。
+
+验证命令：在 `cp6.web` 运行 `npm run test:unit -- src/views/space/__tests__/SpaceHomeView.spec.ts`（9/9）和 `npm run type-check`（通过）；根目录运行 `dotnet build CP6.WebApi/CP6.WebApi.csproj --configuration Debug --nologo --verbosity minimal -maxcpucount:1`（0 警告/0 错误）。同一新增测试在旧实现上出现 5 项预期失败，恢复后全通过；44 项词条静态检查通过。仅本地验证，主线/远端统一交付由整合任务完成。
+
+## 2026-09-16：补齐历史 BUG 管理交付
+
+整合历史PR #39的必填BUG表单、极简PR模板、[一页管理规则](../quality/BUG-MANAGEMENT.md)及README/AGENTS/KnownIssues入口；活动BUG由GitHub Issues管理，长期风险保留在KnownIssues。仅做文档、YAML结构、链接和差异验证，不运行无关业务构建或Actions。
+
 ## 2026-09-16：全项目源码盘点与升级入口
 
 完成业务、架构和界面现状材料整理。公开[Core/Platform分报告](../audits/2026-09-16-full-project/README.md)保留公开源码证据；[含CRM的完整跨仓报告](https://github.com/GTX537/CP6.CRM/blob/main/docs/audits/2026-09-16-full-project/README.md)与升级工作包留在CRM私有仓库。已记录旧Web拣货未提交、外部NoOp与固定规则、消息语义差异、Space/原生客户端及界面统一范围。

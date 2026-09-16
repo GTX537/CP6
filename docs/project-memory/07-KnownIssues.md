@@ -1,5 +1,7 @@
 # 已知问题、风险与技术债
 
+> 本文件只记录跨任务长期风险、技术债和环境限制。可复现的活动 BUG 统一登记到 [GitHub Issues](https://github.com/GTX537/CP6/issues)，按 [`docs/quality/BUG-MANAGEMENT.md`](../quality/BUG-MANAGEMENT.md) 管理。
+
 ## 安全
 
 - 仓库曾经公开，历史中跟踪过 cloudflared 配置、部署脚本和开发配置。即使现在已转私有，旧凭证也应视为可能泄露并全部轮换。

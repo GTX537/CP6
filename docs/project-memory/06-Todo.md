@@ -6,6 +6,16 @@
 
 本次不替代历史计划中的真实 WebGL / 10,000 库位交互或生产验收，也不为恢复源码改动现有宿主、数据库或容器。设计/计划已明确为历史归档，其未勾选操作不自动成为本轮待执行任务。
 
+## 2026-09-16：Space 首页恢复交付边界
+
+历史遗漏 `22b3a9ce` 已在独立任务分支恢复并通过 9 项单测、Vue 类型检查和 WebAPI Debug 编译；44 个五语言词条完成静态核对。余下为整合任务的 main 合并、必要集成检查与远端提交确认，不需因文档或提交身份改变重跑相同输入的成功检查。
+
+真实浏览器/API 联合验证、数据库启动种子与 Redis 缓存清理未在本次执行；没有新增环境、迁移、生产部署或 Actions 授权。本地组件测试不替代这些运行验收。
+
+## 2026-09-16：BUG 队列与交付边界
+
+后续BUG按照[管理规则](../quality/BUG-MANAGEMENT.md)在[GitHub Issues](https://github.com/GTX537/CP6/issues?q=is%3Aissue+is%3Aopen+label%3Abug)跟踪；历史PR #39仅补齐管理入口，不自动关闭或重新判定Issue #38。产品升级工作继续以2026-09-16源码盘点及私有升级工作包为依据。
+
 ## 2026-09-16：全项目源码盘点与升级入口
 
 完成业务、架构和界面现状材料整理。公开[Core/Platform分报告](../audits/2026-09-16-full-project/README.md)保留公开源码证据；[含CRM的完整跨仓报告](https://github.com/GTX537/CP6.CRM/blob/main/docs/audits/2026-09-16-full-project/README.md)与升级工作包留在CRM私有仓库。已记录旧Web拣货未提交、外部NoOp与固定规则、消息语义差异、Space/原生客户端及界面统一范围。
