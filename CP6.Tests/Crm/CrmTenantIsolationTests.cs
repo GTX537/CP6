@@ -8,7 +8,7 @@ namespace CP6.Tests.Crm;
 
 public class CrmTenantIsolationTests
 {
-    private static CP6Context DbFor(string name, Guid tenant) => new(
+    private static LegacyCrmFixtureContext DbFor(string name, Guid tenant) => new(
         new DbContextOptionsBuilder<CP6Context>()
             .UseInMemoryDatabase(name)
             .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))

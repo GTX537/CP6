@@ -1,5 +1,7 @@
 # CP6 CRM V1 可执行工程规格
 
+> **2026-09-16 C系列开发验收范围变更：** 用户确认当前无真实业务数据，批准[模拟开发验收 v2](C04B-SIMULATED-ACCEPTANCE.md)。本轮 C04B 可在隔离模拟 SQL、代码退出、局部运行检查和主线交付后关闭；下文真实采用、正式观察周期及生产门禁仍适用于今后生产验收，不再阻塞本轮开发结案。历史结论保持原时点。
+
 状态：Historical planning baseline；新实施以 [CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md) 为准
 
 最后核验：2026-08-13
