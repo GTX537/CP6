@@ -12,6 +12,56 @@ public static class I18nSpaceScreenSeed
 {
     public static readonly Sys_Lang[] Items = new[]
     {
+        // ── Space 主数据与首页（原 docs/seeds/space-i18n-seed.sql 手工种子）──
+        // 必须进入应用启动的幂等种子，否则新环境只会把 key 原样渲染到页面。
+        new Sys_Lang { LangKey = "space.common.status", ZhCN = "状态", ZhTW = "狀態", En = "Status", Ja = "状態", Ko = "상태" },
+        new Sys_Lang { LangKey = "space.common.enabled", ZhCN = "启用", ZhTW = "啟用", En = "Enabled", Ja = "有効", Ko = "사용" },
+        new Sys_Lang { LangKey = "space.common.disabled", ZhCN = "停用", ZhTW = "停用", En = "Disabled", Ja = "無効", Ko = "사용 안 함" },
+        new Sys_Lang { LangKey = "space.common.action", ZhCN = "操作", ZhTW = "操作", En = "Actions", Ja = "操作", Ko = "작업" },
+        new Sys_Lang { LangKey = "space.common.edit", ZhCN = "编辑", ZhTW = "編輯", En = "Edit", Ja = "編集", Ko = "편집" },
+        new Sys_Lang { LangKey = "space.common.delete", ZhCN = "删除", ZhTW = "刪除", En = "Delete", Ja = "削除", Ko = "삭제" },
+        new Sys_Lang { LangKey = "space.common.search", ZhCN = "查询", ZhTW = "查詢", En = "Search", Ja = "検索", Ko = "검색" },
+        new Sys_Lang { LangKey = "space.common.clear", ZhCN = "重置", ZhTW = "重置", En = "Reset", Ja = "リセット", Ko = "초기화" },
+        new Sys_Lang { LangKey = "space.common.cancel", ZhCN = "取消", ZhTW = "取消", En = "Cancel", Ja = "キャンセル", Ko = "취소" },
+        new Sys_Lang { LangKey = "space.common.save", ZhCN = "保存", ZhTW = "儲存", En = "Save", Ja = "保存", Ko = "저장" },
+        new Sys_Lang { LangKey = "space.common.confirm", ZhCN = "确认", ZhTW = "確認", En = "Confirm", Ja = "確認", Ko = "확인" },
+        new Sys_Lang { LangKey = "space.common.confirmDelete", ZhCN = "确认删除？", ZhTW = "確認刪除？", En = "Confirm deletion?", Ja = "削除しますか？", Ko = "삭제하시겠습니까?" },
+        new Sys_Lang { LangKey = "space.common.required", ZhCN = "必填项", ZhTW = "必填項", En = "Required", Ja = "必須項目", Ko = "필수 항목" },
+        new Sys_Lang { LangKey = "space.common.success", ZhCN = "操作成功", ZhTW = "操作成功", En = "Done", Ja = "操作が完了しました", Ko = "완료되었습니다" },
+
+        new Sys_Lang { LangKey = "space.site.title", ZhCN = "站点管理", ZhTW = "站點管理", En = "Sites", Ja = "拠点管理", Ko = "거점 관리" },
+        new Sys_Lang { LangKey = "space.site.create", ZhCN = "新建站点", ZhTW = "新增站點", En = "New Site", Ja = "拠点を新規", Ko = "거점 신규" },
+        new Sys_Lang { LangKey = "space.site.floors", ZhCN = "楼层", ZhTW = "樓層", En = "Floors", Ja = "フロア", Ko = "층" },
+        new Sys_Lang { LangKey = "space.site.fld.code", ZhCN = "站点编码", ZhTW = "站點編碼", En = "Site Code", Ja = "拠点コード", Ko = "거점 코드" },
+        new Sys_Lang { LangKey = "space.site.fld.name", ZhCN = "站点名称", ZhTW = "站點名稱", En = "Site Name", Ja = "拠点名", Ko = "거점명" },
+        new Sys_Lang { LangKey = "space.site.fld.warehouseCd", ZhCN = "仓库编码", ZhTW = "倉庫編碼", En = "Warehouse Code", Ja = "倉庫コード", Ko = "창고 코드" },
+        new Sys_Lang { LangKey = "space.site.fld.address", ZhCN = "地址", ZhTW = "地址", En = "Address", Ja = "住所", Ko = "주소" },
+        new Sys_Lang { LangKey = "space.site.whDefault", ZhCN = "空=同站点编码", ZhTW = "空=同站點編碼", En = "Blank = same as Site Code", Ja = "空欄=拠点コードと同じ", Ko = "공백=거점 코드와 동일" },
+        new Sys_Lang { LangKey = "space.site.whDefaultTip", ZhCN = "未指定，发布时默认取站点编码 {code}", ZhTW = "未指定，發佈時預設取站點編碼 {code}", En = "Unset; publish defaults to site code {code}", Ja = "未指定・発行時は拠点コード {code} を既定使用", Ko = "미지정, 게시 시 거점 코드 {code} 기본 사용" },
+        new Sys_Lang { LangKey = "space.site.dlg.create", ZhCN = "新建站点", ZhTW = "新增站點", En = "New Site", Ja = "拠点の新規作成", Ko = "거점 신규 등록" },
+        new Sys_Lang { LangKey = "space.site.dlg.edit", ZhCN = "编辑站点", ZhTW = "編輯站點", En = "Edit Site", Ja = "拠点の編集", Ko = "거점 편집" },
+
+        new Sys_Lang { LangKey = "space.floor.title", ZhCN = "楼层管理", ZhTW = "樓層管理", En = "Floors", Ja = "フロア管理", Ko = "층 관리" },
+        new Sys_Lang { LangKey = "space.floor.create", ZhCN = "新建楼层", ZhTW = "新增樓層", En = "New Floor", Ja = "フロア新規", Ko = "층 신규" },
+        new Sys_Lang { LangKey = "space.floor.selectSite", ZhCN = "请选择站点", ZhTW = "請選擇站點", En = "Select site", Ja = "拠点を選択", Ko = "거점 선택" },
+        new Sys_Lang { LangKey = "space.floor.pickSiteFirst", ZhCN = "请先选择站点", ZhTW = "請先選擇站點", En = "Select a site first", Ja = "先に拠点を選択してください", Ko = "먼저 거점을 선택하세요" },
+        new Sys_Lang { LangKey = "space.floor.editor", ZhCN = "编辑画面", ZhTW = "編輯畫面", En = "Editor", Ja = "編集画面", Ko = "편집 화면" },
+        new Sys_Lang { LangKey = "space.floor.fld.level", ZhCN = "层号", ZhTW = "樓層號", En = "Level", Ja = "階層", Ko = "층 번호" },
+        new Sys_Lang { LangKey = "space.floor.fld.floorCode", ZhCN = "楼层编码", ZhTW = "樓層編碼", En = "Floor Code", Ja = "フロアコード", Ko = "층 코드" },
+        new Sys_Lang { LangKey = "space.floor.fld.floorName", ZhCN = "楼层名称", ZhTW = "樓層名稱", En = "Floor Name", Ja = "フロア名", Ko = "층 이름" },
+        new Sys_Lang { LangKey = "space.floor.fld.height", ZhCN = "层高 (mm)", ZhTW = "樓層高度 (mm)", En = "Height (mm)", Ja = "高さ (mm)", Ko = "높이 (mm)" },
+        new Sys_Lang { LangKey = "space.floor.dlg.create", ZhCN = "新建楼层", ZhTW = "新增樓層", En = "New Floor", Ja = "フロア新規", Ko = "층 신규" },
+        new Sys_Lang { LangKey = "space.floor.dlg.edit", ZhCN = "编辑楼层", ZhTW = "編輯樓層", En = "Edit Floor", Ja = "フロア編集", Ko = "층 편집" },
+
+        new Sys_Lang { LangKey = "space.home.siteCount", ZhCN = "站点数", ZhTW = "站點數", En = "Sites", Ja = "サイト数", Ko = "사이트 수" },
+        new Sys_Lang { LangKey = "space.home.floorCount", ZhCN = "楼层数", ZhTW = "樓層數", En = "Floors", Ja = "フロア数", Ko = "플로어 수" },
+        new Sys_Lang { LangKey = "space.home.viewer3d", ZhCN = "3D", ZhTW = "3D", En = "3D", Ja = "3D", Ko = "3D" },
+        new Sys_Lang { LangKey = "space.home.stacked", ZhCN = "全景", ZhTW = "全景", En = "Stacked", Ja = "全景", Ko = "전경" },
+        new Sys_Lang { LangKey = "space.home.controlTower", ZhCN = "控制塔", ZhTW = "控制塔", En = "Control Tower", Ja = "コントロールタワー", Ko = "컨트롤 타워" },
+        new Sys_Lang { LangKey = "space.home.noFloor", ZhCN = "暂无楼层", ZhTW = "尚無樓層", En = "No floors", Ja = "フロア未登録", Ko = "플로어 없음" },
+        new Sys_Lang { LangKey = "space.home.empty", ZhCN = "暂无站点", ZhTW = "尚無站點", En = "No sites yet", Ja = "サイトがありません", Ko = "사이트가 없습니다" },
+        new Sys_Lang { LangKey = "space.home.createSite", ZhCN = "去创建站点", ZhTW = "前往建立站點", En = "Create a site", Ja = "サイトを作成", Ko = "사이트 만들기" },
+
         // ── 主数据护栏（00 章 / 主数据服务）──
         new Sys_Lang { LangKey = "E-SPACE-001", ZhCN = "编码已存在", ZhTW = "編碼已存在", En = "Code already exists", Ja = "コードは既に存在します", Ko = "코드가 이미 존재합니다" },
         new Sys_Lang { LangKey = "E-SPACE-002", ZhCN = "参数校验失败", ZhTW = "參數校驗失敗", En = "Invalid parameters", Ja = "パラメータが不正です", Ko = "매개변수 검증에 실패했습니다" },

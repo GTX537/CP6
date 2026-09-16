@@ -2374,8 +2374,13 @@ using (var scope = app.Services.CreateScope())
         try
         {
             var cache = scope.ServiceProvider.GetRequiredService<CacheService>();
-            foreach (var code in new[] { "zh-CN", "zh-TW", "en", "ja", "ko" })
+            foreach (var code in CP6.WebApi.Localization.LangColumn.Codes)
+            {
                 cache.RemoveAsync(CacheService.LangKeyPrefix + code).GetAwaiter().GetResult();
+                cache.RemoveAsync($"{CacheService.LangKeyPrefix}ns:_core:{code}").GetAwaiter().GetResult();
+                foreach (var ns in CP6.WebApi.Localization.LangColumn.LazyNamespaces)
+                    cache.RemoveAsync($"{CacheService.LangKeyPrefix}ns:{ns}:{code}").GetAwaiter().GetResult();
+            }
         }
         catch { /* 缓存清理失败不应阻断启动 */ }
     }
