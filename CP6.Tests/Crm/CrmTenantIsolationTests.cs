@@ -27,6 +27,20 @@ public class CrmTenantIsolationTests
     };
 
     [Fact]
+    public void HistoricalFixture_PreservesTenantScopedLeadNumberAndSharedRouteKey()
+    {
+        using var db = DbFor(Guid.NewGuid().ToString(), Guid.NewGuid());
+        var lead = db.Model.FindEntityType(typeof(CrmLead))!;
+        Assert.Contains(lead.GetIndexes(), index => index.IsUnique &&
+            index.Properties.Select(p => p.Name).SequenceEqual(new[] { "TenantId", "LeadNo" }));
+        Assert.DoesNotContain(lead.GetIndexes(), index => index.IsUnique &&
+            index.Properties.Select(p => p.Name).SequenceEqual(new[] { "LeadNo" }));
+        var route = db.Model.FindEntityType(typeof(CrmPublicRoute))!;
+        Assert.Contains(route.GetIndexes(), index => index.IsUnique &&
+            index.Properties.Select(p => p.Name).SequenceEqual(new[] { "PublicKey" }));
+    }
+
+    [Fact]
     public async Task Lead_IsStampedAndHiddenFromOtherTenant()
     {
         var database = Guid.NewGuid().ToString();

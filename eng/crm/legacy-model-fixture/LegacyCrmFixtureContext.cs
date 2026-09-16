@@ -35,7 +35,6 @@ internal sealed class LegacyCrmFixtureContext : CP6Context
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
         // ───── CRM + public marketing site foundation ─────
         modelBuilder.Entity<CrmAccount>(e =>
         {
@@ -148,8 +147,8 @@ internal sealed class LegacyCrmFixtureContext : CP6Context
             e.HasIndex(x => x.TokenHash).IsUnique().HasFilter("[TokenHash] IS NOT NULL");
             e.HasIndex(x => new { x.TenantId, x.RouteType, x.TargetId });
         });
-
-
-        modelBuilder.Entity<CrmLead>().HasQueryFilter(x => x.TenantId == CurrentTenantId);
+        // Core's shared tenant filters and unique-index transformation must run
+        // after these historical indexes have been configured, as before retirement.
+        base.OnModelCreating(modelBuilder);
     }
 }
