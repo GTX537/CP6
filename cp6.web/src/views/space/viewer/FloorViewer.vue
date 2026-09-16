@@ -17,14 +17,18 @@
         role="region"
         tabindex="0"
         :aria-label="t('仓库三维视图')"
-        aria-describedby="viewer-keyboard-help"
+        aria-describedby="viewer-navigation-help viewer-keyboard-help"
         @mousemove="onMouseMove"
         @click="onClick"
         @dblclick="onDblClick"
         @keydown="onCanvasKeyDown"
+        @contextmenu.prevent
       />
+      <p id="viewer-navigation-help" class="viewer-navigation-help">
+        {{ t('左键旋转 · 右键平移 · 滚轮指向缩放 · 双击聚焦') }}
+      </p>
       <p id="viewer-keyboard-help" class="sr-only">
-        {{ t('键盘快捷键：1 俯视，2 等轴，3 正视，Home 复位，O 整层概览，F 聚焦选中，P 切换投影。') }}
+        {{ t('鼠标操作：左键旋转，右键平移，滚轮指向缩放，双击聚焦。键盘快捷键：1 俯视，2 等轴，3 正视，Home 复位，O 整层概览，F 聚焦选中，P 切换投影。') }}
       </p>
 
       <!-- Search box (top-left, barcode scanner / manual entry) -->
@@ -1557,6 +1561,23 @@ onBeforeUnmount(() => {
 .tb-btn:focus-visible {
   outline: 3px solid #ffca28;
   outline-offset: 2px;
+}
+
+.viewer-navigation-help {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  z-index: 9;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(79, 195, 247, 0.2);
+  border-radius: 5px;
+  color: #b3e5fc;
+  background: rgba(10, 15, 29, 0.78);
+  font-size: 11px;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .sr-only {
