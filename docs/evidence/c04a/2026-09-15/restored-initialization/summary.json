@@ -1,0 +1,57 @@
+{
+  "format": "CP6.C04A.RestoredInitializationEvidence.v1",
+  "status": "passed-with-explicit-scope",
+  "runId": "90dd01ff0e294065a9e11cd5e3002d50",
+  "actualC02Backups": true,
+  "syntheticBusinessDataAdded": false,
+  "restoredDatabases": 3,
+  "initializerExecutions": 1,
+  "initializerExitCode": 0,
+  "initializerSeconds": 5.816,
+  "apiPackage": {
+    "directory": "D:/CP6-local-publish/20260914/c04a-local-execution-package/crm-api",
+    "sourceCommit": "8d549909e8972b7fd74b8e5142e3e4f0759995ae",
+    "fileCount": 206,
+    "fileSetSha256": "4fdf0a2b3f2ee830d3f104eb8f70b520ccc64e305bc3192c24232a02741da8cb",
+    "dotnetPath": "C:\\Program Files\\dotnet\\dotnet.exe",
+    "dotnetSha256": "4377f10c78400f0370b88156773de9843c07f14e65b3232005ec3179ef38d463"
+  },
+  "preexistingAuthIdentityCatalogTables": 13,
+  "preexistingRowsRetained": 492,
+  "migrationHistory": "Preexisting rows preserved; new forward migration rows added",
+  "organizationTargets": 2,
+  "targetReadiness": "Ready",
+  "targetWriteState": "Closed",
+  "targetGeneration": 0,
+  "retiredSourceTriggersPerTarget": 4,
+  "initialCalendarRowsPerTarget": 0,
+  "http": {
+    "live": 200,
+    "ready": 503,
+    "readyExpectedForClosed": true
+  },
+  "ownedProcessExited": true,
+  "retainedCopiesReadOnly": true,
+  "originalPrivateInputsUnchanged": 11,
+  "apiFilesUnchanged": 206,
+  "limits": {
+    "actualActivation": false,
+    "fullHostRecovery": false,
+    "identityLoginOrReconciliation": false,
+    "calendarInitialStoredVersion": false,
+    "privilegedWriterIsolation": false,
+    "changedBytesUserSigned": false,
+    "productionDeployment": false,
+    "crm11FormalAcceptance": false
+  },
+  "priorFiveSqlChecksRerun": false,
+  "goal": {
+    "completed": 3,
+    "total": 5,
+    "percent": 60
+  },
+  "archive": {
+    "file": "restored-initialization-evidence.zip",
+    "sha256": "7479aa3c754144fc0a38ff899cf292e329891ad046a1aa83c9234945fbdd5d1b"
+  }
+}
