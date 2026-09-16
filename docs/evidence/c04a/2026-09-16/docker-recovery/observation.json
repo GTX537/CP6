@@ -1,0 +1,76 @@
+{
+  "format": "crm-c-series-progress-observation-v1",
+  "observedAtUtc": "2026-09-16T01:34:44.3787094Z",
+  "formalAcceptance": {
+    "closed": 3,
+    "total": 5,
+    "percent": 60
+  },
+  "supplementalChecklist": {
+    "version": 1,
+    "introducedAtUtc": "2026-09-16",
+    "meaning": "Equal-weight checklist coverage; not acceptance, effort, duration, or deployment readiness",
+    "milestoneWeightPercent": 20,
+    "c04aTaskCount": 12,
+    "c04aCompletedTasks": 7,
+    "c04aPartialBackupCompleted": 5,
+    "c04aPartialBackupTotal": 6,
+    "c04aPercentRounded": 65.3,
+    "overallPercentRounded": 73.1,
+    "newlyCompletedMilestonesThisAttempt": 0,
+    "backupSuccessWouldYieldOverallPercentRounded": 73.3
+  },
+  "docker": {
+    "startupExplicitlyAuthorized": true,
+    "startupAttempted": true,
+    "engineAvailable": false,
+    "sixthBackupStarted": false,
+    "sixthRestorePassed": false,
+    "firstFailure": "Stale dockerInference runtime socket; runtime directory preserved by rename",
+    "currentFailure": "Stale engine.sock; Windows error 1920, directory rename access denied",
+    "directoryMoveSucceeded": false,
+    "socketMoveSucceeded": false,
+    "afterAttempt": "Owned failed Docker processes stopped; both WSL distributions observed stopped",
+    "exactRootCauseEstablished": false,
+    "factoryResetPerformed": false,
+    "volumesOrDatabaseFilesModified": false,
+    "aclChanged": false,
+    "settingsChanged": false
+  },
+  "actualCutoverApproved": false,
+  "actualCutoverPerformed": false,
+  "oldPassedTestsRerun": false,
+  "independentCalendarInspection": {
+    "kind": "Source read only; no test execution or database mutation",
+    "saveCreatesDraftAndUsesFirstWriteGuard": true,
+    "publicationUsesSeparateActivateConfigurationCall": true,
+    "closedInitializationDoesNotCreateCalendar": true,
+    "completionClaimed": false
+  },
+  "privateDiagnosticRecordHashes": [
+    {
+      "name": "authorization.json",
+      "sha256": "71e339d0828a6f52507a205835aa94b6fa511783a43f2e0b2d7d8999ea539962"
+    },
+    {
+      "name": "desktop-start.json",
+      "sha256": "207cc641813e7636db12bf17172152d46e1f34eee577684b39556fe6092c544d"
+    },
+    {
+      "name": "socket-recovery.json",
+      "sha256": "b6fa9986e7c3a09de5512e2e548a4d424b99a5334b1ee6054f54ed04254307b7"
+    },
+    {
+      "name": "secrets-socket-recovery.json",
+      "sha256": "602e96e38c7f42c4abeebade2bc0a45c9dcdb3b66848a4776c939e5cfd84dde3"
+    },
+    {
+      "name": "exact-socket-preservation.json",
+      "sha256": "1906a5ab29af577eddc0827fb31ee5ebedc0425951d9831f04b7eb8795541653"
+    },
+    {
+      "name": "directory-move-preservation.json",
+      "sha256": "c41aa2813658e21f4887012f7c93cf1cad44f0caf6dccd40888d52cc5b371c42"
+    }
+  ]
+}
