@@ -1,0 +1,25 @@
+{
+  "atUtc": "2026-09-16T04:11:00.8740218+00:00",
+  "scriptSha256": "36bd84722530105fa192775972d977bc23cba7dd4bc469ebc0f32214a8b5f332",
+  "syntaxErrors": 0,
+  "nonAdministratorExitCode": 5,
+  "servicesUnchanged": true,
+  "services": [
+    {
+      "Name": "SQLAgent$KOUSQLSERVER",
+      "State": "Stopped",
+      "StartMode": "Manual",
+      "ProcessId": 0
+    },
+    {
+      "Name": "vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS",
+      "State": "Running",
+      "StartMode": "Auto",
+      "ProcessId": 6376
+    }
+  ],
+  "deploymentWorkerCount": 0,
+  "databaseMutationPerformed": false,
+  "privilegedSuccessPathExecuted": false,
+  "oldTestsRerun": false
+}

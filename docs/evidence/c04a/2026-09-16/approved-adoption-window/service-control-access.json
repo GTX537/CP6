@@ -1,0 +1,31 @@
+{
+  "startMode": "Auto",
+  "checks": [
+    {
+      "handleGranted": true,
+      "win32Error": 0,
+      "operation": "query"
+    },
+    {
+      "handleGranted": false,
+      "win32Error": 5,
+      "operation": "stop"
+    },
+    {
+      "handleGranted": false,
+      "win32Error": 5,
+      "operation": "start"
+    },
+    {
+      "handleGranted": false,
+      "win32Error": 5,
+      "operation": "change-config"
+    }
+  ],
+  "currentState": "Running",
+  "configurationChanged": false,
+  "atUtc": "2026-09-16T04:05:07.0360042+00:00",
+  "serviceName": "vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS",
+  "serviceControlCalled": false,
+  "readOnlyAccessHandleCheck": true
+}
