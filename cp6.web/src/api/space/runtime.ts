@@ -24,8 +24,6 @@ import type {
   SpaceDispatchOutcomeEvaluation,
 } from '@/types/space/runtime'
 
-const MAX_INVENTORY_LOCATION_IDS_IN_URL = 100
-
 export const spaceRuntimeApi = {
   generateDispatchRecommendation(
     siteId: string,
@@ -164,11 +162,8 @@ export const spaceRuntimeApi = {
   },
   inventory(siteId: string, locationLogicalIds: readonly string[]) {
     const params = new URLSearchParams()
-    const uniqueLocationIds = [...new Set(locationLogicalIds)]
-    if (uniqueLocationIds.length <= MAX_INVENTORY_LOCATION_IDS_IN_URL) {
-      for (const locationLogicalId of uniqueLocationIds) {
-        params.append('locationLogicalId', locationLogicalId)
-      }
+    for (const locationLogicalId of new Set(locationLogicalIds)) {
+      params.append('locationLogicalId', locationLogicalId)
     }
     return http.get<unknown, SpaceRuntimeInventoryResponse>(
       `/space/design/v1/sites/${siteId}/runtime/inventory`,

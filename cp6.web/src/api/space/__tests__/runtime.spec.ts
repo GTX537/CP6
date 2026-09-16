@@ -178,18 +178,6 @@ describe('spaceRuntimeApi', () => {
     ])
   })
 
-  it('uses the bounded site query when a floor scope would exceed a safe URL size', async () => {
-    await spaceRuntimeApi.inventory(
-      'site-1',
-      Array.from({ length: 101 }, (_, index) => `location-${index + 1}`),
-    )
-
-    expect(http.get).toHaveBeenCalledTimes(1)
-    const [url, config] = vi.mocked(http.get).mock.calls[0]!
-    expect(url).toBe('/space/design/v1/sites/site-1/runtime/inventory')
-    expect([...(config?.params as URLSearchParams).keys()]).toEqual([])
-  })
-
   it('serializes normalized owner, material, lot, and container locate criteria', async () => {
     await spaceRuntimeApi.locateInventory('site-1', {
       materialNumber: ' SKU-01 ',
