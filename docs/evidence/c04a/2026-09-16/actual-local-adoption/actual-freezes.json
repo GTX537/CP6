@@ -1,0 +1,45 @@
+{
+  "format": "CP6.C04A.ActualSourceFreezes.v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "atUtc": "2026-09-16T10:24:25.0263660+00:00",
+  "targetSetAnchorSha256": "6281a6a9ffcd1cb75378fe9fd695914165270791dd650338c0f5986f0bd2c061",
+  "status": "three-actual-sources-frozen",
+  "sources": [
+    {
+      "database": "CP6DB",
+      "generation": 1,
+      "beforeScopeSha256": "dae70d6ed5625b4cbbfac7f02aaecd27c002d1064ca21ad3360b9e49425388cc",
+      "state": "Frozen",
+      "requestPath": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\native-core-freeze-request.json",
+      "sourceFreezeRequestSha256": "8271748a0c4d2e7df0ed46e09e81c2599634d57eb1afbce474b5a9c216c073e2",
+      "requestFileSha256": "4e37c4ba222cf141ba45d1884c812943cb9f12956e24f6969cb5ee67c79c6c29",
+      "role": "native-core",
+      "frozenScopeSha256": "e3d03c0c1e7715b2cbf920765ac0fc1ca1cafe85a7a154e3017b11aefeb8932b"
+    },
+    {
+      "database": "CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3",
+      "generation": 1,
+      "beforeScopeSha256": "21c4187046db46bff8c1443689e62fdc55ceeff5db5a7182207c77e15b050b3d",
+      "state": "Frozen",
+      "requestPath": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\preview-core-freeze-request.json",
+      "sourceFreezeRequestSha256": "bd82f857a34225b15e3670dc8c08ce2c4c7ba13ab8e35e6572c62d5436d1dcd8",
+      "requestFileSha256": "6282024bd12425be765961eafede467a7b65780cb0123b1db7818b5f5b26270e",
+      "role": "preview-core",
+      "frozenScopeSha256": "bd0b7b12d02f48d9c8f601034ebff93a0d862e8ffde186c98b6eefc840b8905d"
+    },
+    {
+      "database": "CP6DB",
+      "generation": 1,
+      "beforeScopeSha256": "e4aff242aca80acb36c13520f36ef00e8263c90167166a399e5baacdcb5f4d17",
+      "state": "Frozen",
+      "requestPath": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\docker-core-freeze-request.json",
+      "sourceFreezeRequestSha256": "afcb2a1572c304a1d31e3581aec1bd67d5d95d65c10158335730e649bbe3f225",
+      "requestFileSha256": "32ed4f8182c0a38c805b3b4a6faec5530dc7256527e2752e10e5ba2ee828859e",
+      "role": "docker-core",
+      "frozenScopeSha256": "f92e8e892f4d5689317c7eedb9931a272c023ee78b4626fe46c876fdd83436f0"
+    }
+  ],
+  "actualSourcesMutated": true,
+  "oldTestsRerun": false,
+  "finishedAtUtc": "2026-09-16T10:24:31.0187289+00:00"
+}

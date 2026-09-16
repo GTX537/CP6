@@ -1,0 +1,162 @@
+{
+  "format": "CP6.C04A.ActualAdoptionEvidence.v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "files": [
+    {
+      "path": "execution.json",
+      "sha256": "dfcfda9fe0fa977efc31ae0646396a1f34a5f39f132d835334abcbb16c8a0858"
+    },
+    {
+      "path": "administrator-window.json",
+      "sha256": "443afc2cc1b04f76e627deb2fe8f72bf6092be2389a2a84e0fd0c79289a25de3"
+    },
+    {
+      "path": "writer-control.json",
+      "sha256": "e374a5e9a7f671ec6c498d71882aaf82489fd63674dc8e71122d4bd3db500de3"
+    },
+    {
+      "path": "root-api-control.json",
+      "sha256": "983079e753f673e1187941aca36526c6a82be9ec402a7cf49c931eb337d4bdd4"
+    },
+    {
+      "path": "retirement-result.json",
+      "sha256": "b35d31f466c7205b4f5970f9eda5037f86ef67592494ce849b5e022ed83a55e2"
+    },
+    {
+      "path": "retired-entry-preservation.json",
+      "sha256": "42ebfd88f35150c8f968749b6f2f01a47a9ba5c6736162c2325bd1537b6c4ef9"
+    },
+    {
+      "path": "final-backups.json",
+      "sha256": "1d584e54c729412875d7252cbf8970a940935f1ddd3439a2de17824a333a6b8f"
+    },
+    {
+      "path": "original-initialization.json",
+      "sha256": "43c0d43d9fa697935882687f5ce091aff3b8ad59e759ac7735415130afcb7ebd"
+    },
+    {
+      "path": "source-inspection-summary.json",
+      "sha256": "3ae59c1e0191f64c74fca165ebbb344986a95ce47b1cc644ab3e020df8b0580f"
+    },
+    {
+      "path": "freeze-request-bindings.json",
+      "sha256": "804b027a1221fe5ecb2a5df54ecc9861dc4cc7d69d489d9319d1871dea5ab7b5"
+    },
+    {
+      "path": "actual-freezes.json",
+      "sha256": "df04be95596f7dcf2d169a1df642d9b1957bed6e9f5ba14951665ade8bb0e6bd"
+    },
+    {
+      "path": "native-core-freeze-status.json",
+      "sha256": "7e94c113dc43dfe2831089737364f3cb6a557fd3b5a9ce9601e28ef1ffded53a"
+    },
+    {
+      "path": "preview-core-freeze-status.json",
+      "sha256": "b51eac008aa586e3bc5274ad60151c62a568109c6b91ba177f4e3815f6a301be"
+    },
+    {
+      "path": "docker-core-freeze-status.json",
+      "sha256": "8c984354571691e9964d829330d3afafc13c6dcdb13f5bc0e33c612d922a3eed"
+    },
+    {
+      "path": "target-set-anchor.json",
+      "sha256": "47a59b1bc6c0e8e9e62a1167d19cf4777090c6da0c7cdb6d24186447beb171b1"
+    },
+    {
+      "path": "target-activation-request.json",
+      "sha256": "341ae8d095631bbf644823cd6a4aaf956a65a28fd8308190420f7704c5cba70c"
+    },
+    {
+      "path": "verified-target-activation-after-pause.json",
+      "sha256": "c53dfbdabffaa7fdba491d2eeb58d0172ca1a82418c5ecc6fca11e6f3507f9ad"
+    },
+    {
+      "path": "verified-target-activation.json.stderr",
+      "sha256": "44c90e3c0cd6e7c6624da9310d67246188813b1b9ef44c7b8743966f7848cb08"
+    },
+    {
+      "path": "activation-failure-target-state.json",
+      "sha256": "4ad9ba71659ffbbe1c239947d8e2acc67a7821c77022194b9a6a41dcaa174b35"
+    },
+    {
+      "path": "activation-host-pause.json",
+      "sha256": "18303213df94d955d0ce886acb4de20f6b484b9f7e81f895d97748cee18685a7"
+    },
+    {
+      "path": "activation-sql-after-host-pause.json",
+      "sha256": "7b83d9e9277f9610c0d3fd6856cf59361079ba1fe65ca6c613fedb099ad952b5"
+    },
+    {
+      "path": "actual-adoption-http.json",
+      "sha256": "94deee823171cc3889d1b353a1750560cf1427e04ec653f9a76323790071a440"
+    },
+    {
+      "path": "actual-calendars.json",
+      "sha256": "f4a9d22cb9022147418fe1e27396adea93f397511f34ae810e4465cd27af4f7b"
+    },
+    {
+      "path": "actual-host-launch.json",
+      "sha256": "a7ad99eca01e696b21c885d971be93190c5b169a26afaae601fdbfd31d8fd9ca"
+    },
+    {
+      "path": "actual-host-resumed.json",
+      "sha256": "a6d24e727e18c091d3f7cf6291fd324a810c1dbd1ad6cf263bcfcd6c4666dd6d"
+    },
+    {
+      "path": "transport-start-order-recovery.json",
+      "sha256": "3ff06c2be80d15f45bf24d040b809e088148b02e5ea11ab0c66a3f3edf2da91f"
+    },
+    {
+      "path": "docker-memory-observation.json",
+      "sha256": "cff22191d369d39ab359d1eb3e3a230263029ab82bbd70a4490419b037140cdf"
+    },
+    {
+      "path": "docker-memory-adjustment.json",
+      "sha256": "3aa3b4684c35f3faeeee2ab5233390fed8e379f433ce1fe7f7f95702537644b6"
+    },
+    {
+      "path": "docker-memory-final-budget.json",
+      "sha256": "d7cb3fc58ddb28a5f80b4500adf644fff19b921a5b23fba5d83284210ce9818b"
+    },
+    {
+      "path": "runtime-memory-recovery.json",
+      "sha256": "15ea2ea0210c45f86a00ca6c9bf9cd84f1e409d07f893e6c4d25f67563c88343"
+    },
+    {
+      "path": "site-catalog-provisioning.json",
+      "sha256": "b3e3af57c7356ced80f1effd8eb8b3dd3a0696a104efaca5cb24b39cb5f07394"
+    },
+    {
+      "path": "administrator-permission-adoption-095f3443-3163-4427-be77-1819a49cddba.json",
+      "sha256": "fda9fd1ae52d842448ab814ddd6c4055f49d810c3a84ff8336ea8a941da2072f"
+    },
+    {
+      "path": "administrator-permission-adoption-09d4fb11-004f-49e0-a132-583fab65e469.json",
+      "sha256": "6e631631e8f4502045df6603d694ce892159b0fe71f3be18009d4d347d302415"
+    },
+    {
+      "path": "native-post-interruption-state.json",
+      "sha256": "bf9bb2debb9178f15d2fb0e55e52899ffe6cb1b1f608c17cfb5ba5a6315867cf"
+    },
+    {
+      "path": "runtime-bytes-verification.json",
+      "sha256": "79239a214b0f4c6d6742bf21bdd896911cf4e39b84835293376b9ed873c93373"
+    },
+    {
+      "path": "runtime-interruption.json",
+      "sha256": "fd1d8da7a498f849a8c12fbf5432e088f882a5df787a3c9a3969737d6012af32"
+    },
+    {
+      "path": "docker-stale-socket-recovery.json",
+      "sha256": "82dedc3c16b6ac38e3e704bceb83806fd6a036cb159cc050096206e026c628f9"
+    },
+    {
+      "path": "docker-secrets-runtime-repair.json",
+      "sha256": "d9fb162911ba3896f60d5f80dd74cf4916a052921963ed617f7ebab1cc0b2bb7"
+    },
+    {
+      "path": "cli-executions.jsonl",
+      "sha256": "8e52733985ecaeac3d069543e05e2a772ccb059b87ecb3f27feb63b63676e3da"
+    }
+  ]
+}

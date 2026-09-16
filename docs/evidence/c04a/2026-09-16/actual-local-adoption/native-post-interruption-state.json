@@ -1,0 +1,298 @@
+{
+  "format": "CP6.C04A.ActualLocalAcceptance.v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "startedAtUtc": "2026-09-16T11:10:59.6957417+00:00",
+  "status": "native-written-calendars-and-source-controls-preserved",
+  "scope": "Approved original local C02 adoption; not CRM11 production acceptance",
+  "sources": [
+    {
+      "database": "CP6DB",
+      "tables": [
+        {
+          "table": "Crm_Account",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Activity",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Collaborator",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Contact",
+          "rows": 0
+        },
+        {
+          "table": "Crm_ErpLink",
+          "rows": 0
+        },
+        {
+          "table": "Crm_IntakeConfig",
+          "rows": 0
+        },
+        {
+          "table": "Crm_IntakeMember",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Lead",
+          "rows": 0
+        },
+        {
+          "table": "Crm_MediaAsset",
+          "rows": 0
+        },
+        {
+          "table": "Crm_MergeRecord",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Opportunity",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PageRevision",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PageTranslation",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PublicForm",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PublicRoute",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PublicSubmission",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Site",
+          "rows": 0
+        },
+        {
+          "table": "Crm_SitePage",
+          "rows": 0
+        },
+        {
+          "table": "Crm_SourceTouch",
+          "rows": 0
+        },
+        {
+          "table": "Crm_StageHistory",
+          "rows": 0
+        }
+      ],
+      "sourceBusinessRowsUnchanged": true,
+      "gate": {
+        "State": "Frozen",
+        "Generation": 1,
+        "RunId": "8b969e49-dffe-4c97-b096-1c082cd037fb"
+      },
+      "role": "native-core"
+    },
+    {
+      "database": "CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3",
+      "tables": [
+        {
+          "table": "Crm_Account",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Activity",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Collaborator",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Contact",
+          "rows": 0
+        },
+        {
+          "table": "Crm_ErpLink",
+          "rows": 0
+        },
+        {
+          "table": "Crm_IntakeConfig",
+          "rows": 0
+        },
+        {
+          "table": "Crm_IntakeMember",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Lead",
+          "rows": 0
+        },
+        {
+          "table": "Crm_MediaAsset",
+          "rows": 0
+        },
+        {
+          "table": "Crm_MergeRecord",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Opportunity",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PageRevision",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PageTranslation",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PublicForm",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PublicRoute",
+          "rows": 0
+        },
+        {
+          "table": "Crm_PublicSubmission",
+          "rows": 0
+        },
+        {
+          "table": "Crm_Site",
+          "rows": 0
+        },
+        {
+          "table": "Crm_SitePage",
+          "rows": 0
+        },
+        {
+          "table": "Crm_SourceTouch",
+          "rows": 0
+        },
+        {
+          "table": "Crm_StageHistory",
+          "rows": 0
+        }
+      ],
+      "sourceBusinessRowsUnchanged": true,
+      "gate": {
+        "State": "Frozen",
+        "Generation": 1,
+        "RunId": "8b969e49-dffe-4c97-b096-1c082cd037fb"
+      },
+      "role": "preview-core"
+    }
+  ],
+  "targets": [
+    {
+      "database": "CP6CrmC02Live_86a709a6f627426fa23ad88f7dd2ebb9",
+      "forwardOnly": true,
+      "gate": {
+        "State": "Written",
+        "Generation": 2,
+        "RunId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+        "OrganizationId": "095f3443-3163-4427-be77-1819a49cddba",
+        "TargetBindingSha256": "4522a29cffc10399458d89f7c3b7ad7793709521b143ffeef66ccd5f0757bca8",
+        "FirstWriteAtUtc": "2026-09-16T10:39:53.465367",
+        "FirstWriteTable": "crm_v1.RetentionRun"
+      },
+      "configuration": {
+        "Id": "8691f324-4eb4-4801-981c-4ae359138581",
+        "OrganizationId": "095f3443-3163-4427-be77-1819a49cddba",
+        "Status": 10,
+        "EffectiveAtUtc": "2026-09-16T10:50:08.2968902",
+        "PublishedAtUtc": "2026-09-16T10:50:08.2968902",
+        "DefaultDeptId": "458f79d1-d340-473e-894e-2d131a2069da",
+        "BusinessCalendarId": "412ddb09-0a77-4928-80ec-5aadf5342f2d",
+        "CalendarVersionAlias": "8691f3244eb44801981c4ae359138581",
+        "Enable": true
+      },
+      "calendar": {
+        "Id": "412ddb09-0a77-4928-80ec-5aadf5342f2d",
+        "OrganizationId": "095f3443-3163-4427-be77-1819a49cddba",
+        "TimeZoneId": "America/New_York",
+        "Status": 10,
+        "PublishedAtUtc": "2026-09-16T10:50:08.2968902",
+        "PublishedByUserId": "95bffc82-f979-4bb4-bf2e-9cbe9c9a9110",
+        "SourceVersionAlias": "8691f3244eb44801981c4ae359138581"
+      },
+      "leadCount": 0,
+      "role": "business-primary"
+    },
+    {
+      "database": "CP6CrmC02Live_4bc6bc987f8040da843caf86c0b7faf2",
+      "forwardOnly": true,
+      "gate": {
+        "State": "Written",
+        "Generation": 2,
+        "RunId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+        "OrganizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+        "TargetBindingSha256": "61e78afcf76095f35f7a48edd61240dda0946fdff5d529fdd86ee2fb3c1c5c96",
+        "FirstWriteAtUtc": "2026-09-16T10:39:55.0779285",
+        "FirstWriteTable": "crm_v1.RetentionRun"
+      },
+      "configuration": {
+        "Id": "685a4ccf-d7b5-4bbe-b4fe-fd43015347bc",
+        "OrganizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+        "Status": 10,
+        "EffectiveAtUtc": "2026-09-16T10:51:27.8381783",
+        "PublishedAtUtc": "2026-09-16T10:51:27.8381783",
+        "DefaultDeptId": "f6841a23-842f-4953-b225-1195e898be1b",
+        "BusinessCalendarId": "5ba2f7b6-4c2f-4e32-8052-d74909a0c2e3",
+        "CalendarVersionAlias": "685a4ccfd7b54bbeb4fefd43015347bc",
+        "Enable": true
+      },
+      "calendar": {
+        "Id": "5ba2f7b6-4c2f-4e32-8052-d74909a0c2e3",
+        "OrganizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+        "TimeZoneId": "America/New_York",
+        "Status": 10,
+        "PublishedAtUtc": "2026-09-16T10:51:27.8381783",
+        "PublishedByUserId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+        "SourceVersionAlias": "685a4ccfd7b54bbeb4fefd43015347bc"
+      },
+      "leadCount": 0,
+      "role": "business-isolation"
+    }
+  ],
+  "oldTestsRerun": false,
+  "productionDeployed": false,
+  "formalC04BAccepted": false,
+  "readiness": [
+    {
+      "OrganizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "State": "Ready",
+      "SchemaHash": "784e5bd074810fa9b72ecbde2fcc93efe3fe1a038cfe2ae75342465170a5291e"
+    },
+    {
+      "OrganizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "State": "Ready",
+      "SchemaHash": "784e5bd074810fa9b72ecbde2fcc93efe3fe1a038cfe2ae75342465170a5291e"
+    }
+  ],
+  "identityReconciliation": [
+    {
+      "TenantId": "095f3443-3163-4427-be77-1819a49cddba",
+      "Ready": true,
+      "LastSuccessAtUtc": "2026-09-16T10:44:09.1173267+00:00"
+    },
+    {
+      "TenantId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "Ready": true,
+      "LastSuccessAtUtc": "2026-09-16T10:44:09.2334667+00:00"
+    }
+  ],
+  "projectionsNeedingReconciliation": 0,
+  "originalKeyringUnchanged": true,
+  "originalCrmConfigurationUnchanged": true,
+  "retiredEntrypointsVerified": 8,
+  "finishedAtUtc": "2026-09-16T11:11:01.4194601+00:00",
+  "dockerAndHostAcceptancePending": true
+}

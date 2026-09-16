@@ -1,0 +1,55 @@
+{
+  "entries": [
+    {
+      "retainedSha256": "ce7d3e8b55765e222efa826f037a7e993c1ad73f12c6580007627a83fb51eb7a",
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "retirementMarkerSha256": "c1b01775e73c5fcf99692022bfbbc7b2a79302db87e073b8cde01802dad32a64",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\recovery\\.run-preview.ps1.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    },
+    {
+      "retainedSha256": "9e2e08db097ad52cebeec78814fa2f3ce9eab2c7ea3d4803d02825ca39f9cfbe",
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\PreviewHost.dll",
+      "retirementMarkerSha256": "4c6fd17553b5e3009d6e34c0a4f4481d0b9de4bba82c03681af81e4b21b38d9c",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\.PreviewHost.dll.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    },
+    {
+      "retainedSha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "path": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "retirementMarkerSha256": "2a32b396b0d0f1a5d3490acc726345c74a4c3d283900e8d85985a00f7b11bd1e",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\crm-api\\.CP6.CRM.Api.dll.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    },
+    {
+      "retainedSha256": "0ba199f1604adee149896927252e6b39db2500feb1fd12e69538182b46df9de7",
+      "path": "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "retirementMarkerSha256": "08d6a37f246d7bf3eb0814221461222bef55e22035171fa9ecaabd448c44ee9f",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\.start-preview.ps1.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    },
+    {
+      "retainedSha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "retirementMarkerSha256": "d90c31892c613fa112299d970864c40edeb6222cb91c59b9a8547fd1eb1f6c93",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\.CP6.CRM.Api.dll.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    },
+    {
+      "retainedSha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "retirementMarkerSha256": "f4f6ba7959b4f1651abf3a2fb78e1717a6e2c4bf48d17807c465bea57ce4721c",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\.CP6.CRM.Api.dll.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    },
+    {
+      "retainedSha256": "85858bd46de83c86cc06e256477c2eeeabb73c695dbc1c4d27ace7ed08d91ec8",
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\invoke-published-smoke.ps1",
+      "retirementMarkerSha256": "fd49277177f9b416af0e795dc4f282d321968eac61754d46bbd84177d426e552",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\harness\\.invoke-published-smoke.ps1.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    },
+    {
+      "retainedSha256": "48b3e214dc038ba0f2720e459993fc809531db8cda0091a5adec7a0e57073d21",
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\PublishedSmoke.dll",
+      "retirementMarkerSha256": "74b74561d53d72c3a037602afd145d0dffec176f92d1dc1de3362c93d457dbfb",
+      "retainedPath": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\.PublishedSmoke.dll.crm-retired-303cd0ba6298481e9b2ac8c1278dde8f.bin"
+    }
+  ],
+  "entryCount": 8,
+  "databaseAccessed": false,
+  "atUtc": "2026-09-16T10:12:58.3227809+00:00"
+}

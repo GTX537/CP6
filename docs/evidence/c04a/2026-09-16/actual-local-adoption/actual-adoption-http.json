@@ -1,0 +1,36 @@
+{
+  "format": "CP6.C04A.ActualAdoptionHttp.v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "startedAtUtc": "2026-09-16T10:33:43.8348121+00:00",
+  "status": "stopped-at-recorded-stage",
+  "stage": "verified-whole-target-set-enable",
+  "actualOriginalDatabases": true,
+  "approvalSha256": "fda24100d831b325e5eec6620d34a8762973312d035d54f795338b2c8b918766",
+  "existingAccountsOnly": true,
+  "syntheticLeadsCreated": false,
+  "observations": [
+    {
+      "oidcPkceCallback": 302,
+      "workspaceRead": 200,
+      "beforeTargetEnable": true,
+      "actorId": "95bffc82-f979-4bb4-bf2e-9cbe9c9a9110",
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "leadListRead": 200,
+      "sessionIdentity": 200,
+      "nativePasswordLogin": 200
+    },
+    {
+      "oidcPkceCallback": 302,
+      "workspaceRead": 200,
+      "beforeTargetEnable": true,
+      "actorId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "leadListRead": 200,
+      "sessionIdentity": 200,
+      "nativePasswordLogin": 200
+    }
+  ],
+  "calendars": [],
+  "failureType": "RuntimeException",
+  "failureCode": "LOCAL_ORCHESTRATOR_EXCEPTION"
+}

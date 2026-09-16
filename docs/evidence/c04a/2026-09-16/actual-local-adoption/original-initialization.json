@@ -1,0 +1,175 @@
+{
+  "format": "CP6.C04A.OriginalInitialization.v1",
+  "atUtc": "2026-09-16T10:17:25.5433123+00:00",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "status": "originals-ready-closed-preserved",
+  "configurationSha256": "f7254b52d1d9d4124aed25a064d7076d5f1c4afb81f0ee4394769936d960608b",
+  "originalKeyFiles": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\crm-keys\\key-24109053-c84c-4759-a4d1-26fa12ff5b90.xml",
+      "sha256": "3cc92ab5e325592ead77c98aeb43d76e6225d7ad90f1adc52e95e467745525cb"
+    }
+  ],
+  "baselineSha256": "eaa7de0b79417d1ebfee22f0b78eb8c7af56417d5c0bd37d412911b5ea0b9d5a",
+  "apiSourceCommit": "8d549909e8972b7fd74b8e5142e3e4f0759995ae",
+  "actualOriginalDatabases": true,
+  "restoreTestRerun": false,
+  "keyringReplaced": false,
+  "exitCode": 0,
+  "seconds": 5.954,
+  "completedAtUtc": "2026-09-16T10:17:31.7967270+00:00",
+  "preservedTables": [
+    {
+      "preserved": true,
+      "table": "AuthStates",
+      "schema": "crm_auth",
+      "beforeRows": 8,
+      "aggregateSha256": "18ffd012d9f6f03c61a1360110be7c21b2e73bb7e972271c2b14a5f42efbf6b2",
+      "afterRows": 8
+    },
+    {
+      "preserved": true,
+      "table": "RateEvents",
+      "schema": "crm_auth",
+      "beforeRows": 109,
+      "aggregateSha256": "d40e0b37e5897e525251e3bdcadc2b9fe5e48d8e7676f8086866565d6b960bd9",
+      "afterRows": 109
+    },
+    {
+      "preserved": true,
+      "table": "SchemaVersion",
+      "schema": "crm_auth",
+      "beforeRows": 1,
+      "aggregateSha256": "3220bae616298e6899015b8929fe43214c7531403f8e4cb8b53d793eeec48bfe",
+      "afterRows": 1
+    },
+    {
+      "preserved": true,
+      "table": "Organizations",
+      "schema": "crm_catalog",
+      "beforeRows": 2,
+      "aggregateSha256": "73d43918c91d6dda29e667acfb25b61139c7de3189f95592b012a55ebf123f2e",
+      "afterRows": 2
+    },
+    {
+      "preserved": true,
+      "table": "__IdentityMigrations",
+      "schema": "crm_identity",
+      "beforeRows": 1,
+      "aggregateSha256": "86578dd4bf79d32d7aae2e9d21d81b4c0b387a5e16081af87d05b1c47be8639a",
+      "afterRows": 3
+    },
+    {
+      "preserved": true,
+      "table": "Cp6_DeadLetterRecord",
+      "schema": "crm_identity",
+      "beforeRows": 0,
+      "aggregateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterRows": 0
+    },
+    {
+      "preserved": true,
+      "table": "Cp6_InboxAggregateCheckpoint",
+      "schema": "crm_identity",
+      "beforeRows": 119,
+      "aggregateSha256": "4fe214dd2f0ebbf04996d8c0bb8c26c4fd9deed7ce1a54f643eba780cedf0837",
+      "afterRows": 119
+    },
+    {
+      "preserved": true,
+      "table": "Cp6_InboxMessage",
+      "schema": "crm_identity",
+      "beforeRows": 130,
+      "aggregateSha256": "7efbf0dd6e92112df6caf0e54084e7b17e8f3279848c0d4e717d4abccd0a2615",
+      "afterRows": 130
+    },
+    {
+      "preserved": true,
+      "table": "Cp6_OutboxMessage",
+      "schema": "crm_identity",
+      "beforeRows": 0,
+      "aggregateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterRows": 0
+    },
+    {
+      "preserved": true,
+      "table": "Projection",
+      "schema": "crm_identity",
+      "beforeRows": 119,
+      "aggregateSha256": "f626a82db3b8c79c6291a04f5aa1d707d63253e7cf4b021f3d0ac716ee5445b3",
+      "afterRows": 119
+    },
+    {
+      "preserved": true,
+      "table": "Reconciliation",
+      "schema": "crm_identity",
+      "beforeRows": 2,
+      "aggregateSha256": "4648a7042611bcd45fc9b5cb0dc35d04c421aa932caaaf2d8b78a18e9069b9eb",
+      "afterRows": 2
+    },
+    {
+      "preserved": true,
+      "table": "RevokedToken",
+      "schema": "crm_identity",
+      "beforeRows": 0,
+      "aggregateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterRows": 0
+    },
+    {
+      "preserved": true,
+      "table": "__EFMigrationsHistory",
+      "schema": "dbo",
+      "beforeRows": 1,
+      "aggregateSha256": "efcb96b31b5c5fcaf12eb2bac3e85868677457689fabf707272db1e4d55bdea4",
+      "afterRows": 2
+    }
+  ],
+  "readiness": [
+    {
+      "OrganizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "State": "Ready",
+      "SchemaHash": "784e5bd074810fa9b72ecbde2fcc93efe3fe1a038cfe2ae75342465170a5291e"
+    },
+    {
+      "OrganizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "State": "Ready",
+      "SchemaHash": "784e5bd074810fa9b72ecbde2fcc93efe3fe1a038cfe2ae75342465170a5291e"
+    }
+  ],
+  "targets": [
+    {
+      "gate": {
+        "State": "Closed",
+        "Generation": 0,
+        "OrganizationId": "095f3443-3163-4427-be77-1819a49cddba",
+        "TargetBindingSha256": "4522a29cffc10399458d89f7c3b7ad7793709521b143ffeef66ccd5f0757bca8",
+        "FirstWriteAtUtc": null,
+        "FirstWriteTable": null
+      },
+      "database": "CP6CrmC02Live_86a709a6f627426fa23ad88f7dd2ebb9",
+      "counts": {
+        "calendars": 0,
+        "sites": 1,
+        "forms": 1
+      },
+      "role": "business-primary"
+    },
+    {
+      "gate": {
+        "State": "Closed",
+        "Generation": 0,
+        "OrganizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+        "TargetBindingSha256": "61e78afcf76095f35f7a48edd61240dda0946fdff5d529fdd86ee2fb3c1c5c96",
+        "FirstWriteAtUtc": null,
+        "FirstWriteTable": null
+      },
+      "database": "CP6CrmC02Live_4bc6bc987f8040da843caf86c0b7faf2",
+      "counts": {
+        "calendars": 0,
+        "sites": 1,
+        "forms": 1
+      },
+      "role": "business-isolation"
+    }
+  ]
+}

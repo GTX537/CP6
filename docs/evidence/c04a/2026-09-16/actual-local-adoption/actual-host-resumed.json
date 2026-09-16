@@ -1,0 +1,15 @@
+{
+  "requestSha256": "8adc94af89e072d7435dd067b133d23094daf782fb407aa4168e12b6ed7f79e9",
+  "targetStateAtLaunch": "Enabled",
+  "originalPrivateRoot": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee",
+  "requestPath": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\actual-host-request.json",
+  "initializationPerformedByHost": false,
+  "hostOwnerRunId": "5e5791d1-5432-4588-a248-ea2a4cb5b852",
+  "originalDatabases": true,
+  "atUtc": "2026-09-16T10:39:44.0343656+00:00",
+  "pid": 484,
+  "actualCutoverApproved": true,
+  "executionRunId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "stopPath": "D:\\CP6-local-publish\\20260910\\private\\c02-8cab2139bf194595a8a1812874c5bdee\\stop-preview",
+  "startUtcTicks": 639251519840233107
+}

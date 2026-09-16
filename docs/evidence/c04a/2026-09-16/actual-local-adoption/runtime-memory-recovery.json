@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-09-16T10:43:57.7263997+00:00",
+  "sqlMemory": [
+    {
+      "physical_memory_in_use_kb": 320904,
+      "process_physical_memory_low": false
+    }
+  ],
+  "availableWindowsMiB": 1485.0,
+  "nativeSqlConnected": true
+}

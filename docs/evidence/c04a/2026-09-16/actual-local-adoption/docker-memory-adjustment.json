@@ -1,0 +1,38 @@
+{
+  "newMaxServerMemoryMB": 2048,
+  "status": "applied",
+  "restartRequired": false,
+  "before": [
+    {
+      "name": "show advanced options",
+      "value": 0,
+      "value_in_use": 0,
+      "is_dynamic": true
+    },
+    {
+      "name": "max server memory (MB)",
+      "value": 2147483647,
+      "value_in_use": 2147483647,
+      "is_dynamic": true
+    }
+  ],
+  "nativeSqlSettingsChanged": false,
+  "atUtc": "2026-09-16T06:42:07.1818137-04:00",
+  "reason": "Original Docker SQL is uncapped; actual runtime causes Windows memory pressure and native SQL login timeouts",
+  "instance": "46deb8044b4f",
+  "after": [
+    {
+      "name": "show advanced options",
+      "value": 0,
+      "value_in_use": 0,
+      "is_dynamic": true
+    },
+    {
+      "name": "max server memory (MB)",
+      "value": 2048,
+      "value_in_use": 2048,
+      "is_dynamic": true
+    }
+  ],
+  "completedAtUtc": "2026-09-16T10:42:07.6519556+00:00"
+}

@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-09-16T11:10:17.6613243+00:00",
+  "method": "Preserve exactly inspected runtime socket directory and recreate empty runtime directory",
+  "socketNames": [
+    "dockerInference",
+    "userAnalyticsOtlpHttp.sock"
+  ],
+  "configurationReset": false,
+  "volumesReset": false,
+  "retained": "C:\\Users\\tt\\AppData\\Local\\Docker\\run.stale-c04a-20260916-1110"
+}

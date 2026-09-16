@@ -1,0 +1,20 @@
+{
+  "format": "CP6.C04A.ActualLocalAdoption.v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "startedAtUtc": "2026-09-16T06:11:45.132684-04:00",
+  "privateRoot": "D:/CP6-local-publish/20260916/private/c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb",
+  "reviewManifestSha256": "531e2810d3ec3a010dd0a646a0cb4cca9a998d33a49cebd53ba4e260feaf93eb",
+  "approvalPath": "D:/CP6-audit-results/20260916/approved-adoption-window/approval.json",
+  "approvalSha256": "fda24100d831b325e5eec6620d34a8762973312d035d54f795338b2c8b918766",
+  "administratorReceiptSha256": "443afc2cc1b04f76e627deb2fe8f72bf6092be2389a2a84e0fd0c79289a25de3",
+  "runtimeFilesVerified": 429,
+  "hostInputsVerified": 18,
+  "oldEntrypointFilesVerified": 8,
+  "status": "calendars-published-native-state-preserved-runtime-recovery-pending",
+  "actualDatabasesMutated": true,
+  "overallChecklistPercent": 78.3333333333,
+  "formalAcceptancePercent": 60,
+  "oldTestsRerun": false,
+  "currentRuntimeAvailable": false,
+  "remainingA12": "Restore Docker/owned host after interruption, then finalize live acceptance and delivery"
+}
