@@ -1,0 +1,28 @@
+{
+  "format": "CP6.C04A.LocalAdoptionApproval.v1",
+  "recordedAtUtc": "2026-09-16T04:09:11.596310+00:00",
+  "source": "Current user conversation, following the concrete final-adoption review package",
+  "userStatement": "没有问题，给你所有开发权限",
+  "interpretation": "Approval to continue the reviewed local C-series cutover and calendar first writes; this record does not elevate the Windows token.",
+  "reviewManifestSha256": "531e2810d3ec3a010dd0a646a0cb4cca9a998d33a49cebd53ba4e260feaf93eb",
+  "reviewRunId": "d8208f83568e4b6bac285077f7701c2e",
+  "actualExecutionApproved": true,
+  "changedBytesUserSigned": true,
+  "scope": [
+    "reviewed 0.2 changed bytes",
+    "exclusive local deployment-agent pause",
+    "reviewed exact root API stop and Windows entrypoint retirement",
+    "forward initialization of original CRM databases",
+    "three actual Core source fences and complete target-set activation",
+    "the two reviewed existing administrators and initial calendar save/preview/publish requests"
+  ],
+  "productionDeploymentAuthorized": false,
+  "githubActionsAuthorized": false,
+  "administratorWindowEstablished": false,
+  "actualCutoverExecuted": false,
+  "oldImmutableReviewModified": false,
+  "remainingBlocker": "Windows service-control access denied (5); exact deployment agent remains Running / Auto.",
+  "overallChecklistPercent": 75.0,
+  "formalAcceptancePercent": 60,
+  "progressIncrement": 0
+}
