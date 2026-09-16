@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-16：补齐历史 BUG 管理交付
+
+整合历史PR #39的必填BUG表单、极简PR模板、[一页管理规则](../quality/BUG-MANAGEMENT.md)及README/AGENTS/KnownIssues入口；活动BUG由GitHub Issues管理，长期风险保留在KnownIssues。仅做文档、YAML结构、链接和差异验证，不运行无关业务构建或Actions。
+
 ## 2026-09-16：全项目源码盘点与升级入口
 
 完成业务、架构和界面现状材料整理。公开[Core/Platform分报告](../audits/2026-09-16-full-project/README.md)保留公开源码证据；[含CRM的完整跨仓报告](https://github.com/GTX537/CP6.CRM/blob/main/docs/audits/2026-09-16-full-project/README.md)与升级工作包留在CRM私有仓库。已记录旧Web拣货未提交、外部NoOp与固定规则、消息语义差异、Space/原生客户端及界面统一范围。

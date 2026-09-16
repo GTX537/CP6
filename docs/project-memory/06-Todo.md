@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-09-16：BUG 队列与交付边界
+
+后续BUG按照[管理规则](../quality/BUG-MANAGEMENT.md)在[GitHub Issues](https://github.com/GTX537/CP6/issues?q=is%3Aissue+is%3Aopen+label%3Abug)跟踪；历史PR #39仅补齐管理入口，不自动关闭或重新判定Issue #38。产品升级工作继续以2026-09-16源码盘点及私有升级工作包为依据。
+
 ## 2026-09-16：全项目源码盘点与升级入口
 
 完成业务、架构和界面现状材料整理。公开[Core/Platform分报告](../audits/2026-09-16-full-project/README.md)保留公开源码证据；[含CRM的完整跨仓报告](https://github.com/GTX537/CP6.CRM/blob/main/docs/audits/2026-09-16-full-project/README.md)与升级工作包留在CRM私有仓库。已记录旧Web拣货未提交、外部NoOp与固定规则、消息语义差异、Space/原生客户端及界面统一范围。

@@ -1,0 +1,62 @@
+name: BUG
+description: 记录可复现的 CP6 缺陷
+title: "[BUG] "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级
+      description: 单人开发只保留三个等级。
+      options:
+        - P0 - 立即处理（登录、安全、数据或发布被阻断）
+        - P1 - 下一项处理（核心功能异常，但有绕行）
+        - P2 - 后续处理（轻微体验、低频或文档问题）
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: 环境
+      description: 环境、浏览器或客户端；知道时附完整 Git SHA。
+      placeholder: DEV / Chrome / main@完整SHA
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 打开……
+        2. 执行……
+        3. 观察……
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: 预期与实际结果
+      placeholder: |
+        预期：
+        实际：
+        错误码或提示：
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 证据与临时绕行
+      description: 可附脱敏截图、日志时间、请求 ID，以及当前可用的绕行方式。
+
+  - type: textarea
+    id: done
+    attributes:
+      label: 完成条件
+      description: 至少写出如何证明问题已修复；修复时必须补回归测试或不可自动化说明。
+    validations:
+      required: true
