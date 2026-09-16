@@ -1,0 +1,138 @@
+{
+  "format": "CP6.C04B.SimulatedSqlAcceptance.v1",
+  "observedAtUtc": "2026-09-16T13:14:57.9021293+00:00",
+  "dataOrigin": "synthetic",
+  "environment": "local-sql-server",
+  "database": "CP6_C04B_Exit_Test_71d3a356cc56450e9771ca18ee7e585e",
+  "databaseGuid": "d093c30a-7400-48df-921f-638e6bd4e7a9",
+  "migration": "20260916130000_RetireLegacyCrmModel",
+  "legacyTables": [
+    {
+      "Table": "Crm_Account",
+      "Rows": 1,
+      "RowSha256": "c0f0fc5c603792ed76294c37ee878c800814e8ca63d95e638d6b50719337e6ec",
+      "SchemaSha256": "cf41b99acf737748d9263e077d8f3ce71ca1d7d2f7911d74c08a2bef37300707"
+    },
+    {
+      "Table": "Crm_Activity",
+      "Rows": 1,
+      "RowSha256": "65f695d15aa9540746ffa74c593aea5c6b039330d18d8a5d2abee2e214c527eb",
+      "SchemaSha256": "e6cb3adf76572631ec107880add545f8cd659b0ea73a4dae987aa90762a1f922"
+    },
+    {
+      "Table": "Crm_Collaborator",
+      "Rows": 1,
+      "RowSha256": "a45ce5f853da668e4d3a8fadd4f5464b6f68291f442b1202cd659c87eabc1171",
+      "SchemaSha256": "39d1fdeb39839f94871c4e37dc0487a153e4e7d9607740bebd3e21c9ba1b05af"
+    },
+    {
+      "Table": "Crm_Contact",
+      "Rows": 1,
+      "RowSha256": "985f4e0e531b402976449ace8d68e1b073f722927a3bb9a292c62b3ca2153e75",
+      "SchemaSha256": "10e595d325a83f1220db1c732b0262bff9d8f4055935523fa0bbcb980bab0233"
+    },
+    {
+      "Table": "Crm_ErpLink",
+      "Rows": 1,
+      "RowSha256": "a13f4c4fd825f0ac28a23bd67bd81b30d75bab633b51666f241f97853fd92466",
+      "SchemaSha256": "18cc63a2a20bb29bcd8d909a3d3dddbae37b1798585ba6aebeb759ad47ab24f6"
+    },
+    {
+      "Table": "Crm_IntakeConfig",
+      "Rows": 1,
+      "RowSha256": "fe9c0a4e8e0500935af9e8b78d54488997137a7fdef9ddaccbeeaf9c2961340c",
+      "SchemaSha256": "b843554d23c43d8b78b161703e973afe7e253988af9ffdca211f524bb705d652"
+    },
+    {
+      "Table": "Crm_IntakeMember",
+      "Rows": 1,
+      "RowSha256": "91849a2177c299909519bfb339abe8a6be43d1bf5361f035c0281732d316844e",
+      "SchemaSha256": "f04dc1f59d3f8c5d09dbd63dd0924dfcea0d25ecd0957fbe75691daa9c18e96a"
+    },
+    {
+      "Table": "Crm_Lead",
+      "Rows": 1,
+      "RowSha256": "0bd245220df097289136ed0ab1331682b1e6fe885a7058b96c5af678c3665a41",
+      "SchemaSha256": "84ff6a6fb932a78044b04f0bb8c5dd0c02a0d405b26c81666cf5b34e46d77140"
+    },
+    {
+      "Table": "Crm_MediaAsset",
+      "Rows": 1,
+      "RowSha256": "8a62ba26c8f989bfecc55708f4bbf8ef9dcc1b64fc92e076783436ac01159317",
+      "SchemaSha256": "f3335e0129b87934286b444e4546a95918aaaca93ff743a357728409073cf50e"
+    },
+    {
+      "Table": "Crm_MergeRecord",
+      "Rows": 1,
+      "RowSha256": "b8a79493b7f14a1023bd277600dfa88f1245913b3633b97f61fc5d3e28607168",
+      "SchemaSha256": "4d0bd4b78b78433e11b1bc33b51278f141d53161bffebf3867c32f446b695f13"
+    },
+    {
+      "Table": "Crm_Opportunity",
+      "Rows": 1,
+      "RowSha256": "9fb4498d84a638e1cd93e409e49ce7b45cd185fbdf34c01e7333f83be6a509d7",
+      "SchemaSha256": "a14f9bd8ee2f7564a8c75c5765cdfa8159369ebc2576b534d46e5ff2d8186026"
+    },
+    {
+      "Table": "Crm_PageRevision",
+      "Rows": 1,
+      "RowSha256": "f2256419293580fe875ccfdfc033a3006dc055049ced0e54c2f5d495f8856174",
+      "SchemaSha256": "af897b6a2457d82c477e287951de4816fbf40ab0d72b73eac3752ffcbffb4451"
+    },
+    {
+      "Table": "Crm_PageTranslation",
+      "Rows": 1,
+      "RowSha256": "073c3692bf5af1bc9479567a544fe802e00c90aa2d3e9457ce5f8faca312b07f",
+      "SchemaSha256": "31ae75aa81d068448a87d78430cc4da26a3f2a6716f34cef4d54f1cf32aab6da"
+    },
+    {
+      "Table": "Crm_PublicForm",
+      "Rows": 1,
+      "RowSha256": "b50bf10e11e1250c671e6fabc12b72b73654ef6b3df14f1f05a88b3cdacc5b51",
+      "SchemaSha256": "02f6d3ef1c429629f1e92f8b7304153eed48f4184072b716b04e772c4de2c423"
+    },
+    {
+      "Table": "Crm_PublicRoute",
+      "Rows": 1,
+      "RowSha256": "7a5f7582971084d3c88e712ed6057eb26eb75ade0d6af25ecddcfa19d6f31f61",
+      "SchemaSha256": "7568930f179d3567a83a9e22d4d43d7491b23974a205df4496885b313e2e3bf9"
+    },
+    {
+      "Table": "Crm_PublicSubmission",
+      "Rows": 1,
+      "RowSha256": "d683e4cb42d458f4a177b2916d2933055a9e7ef52d9549ff853331243777b82a",
+      "SchemaSha256": "aae48ea4be03701035e0bfb481ed9922a50eebfb46f5640e1d14437e0d38f37b"
+    },
+    {
+      "Table": "Crm_Site",
+      "Rows": 1,
+      "RowSha256": "84f60eecc856544529383da05f2ccb34049fd8089c6e66b9ab6e6765c8055973",
+      "SchemaSha256": "1504a9beceb265baaa8ad8b37d4a9f3c2dd7a6dfee6cb8bfe0d806db02dde966"
+    },
+    {
+      "Table": "Crm_SitePage",
+      "Rows": 1,
+      "RowSha256": "1191728b56f0a06a20f65aea75cb183990ab755b9e537212d69b22449ced2ce4",
+      "SchemaSha256": "dce81a756c2bc58c16476c27f72361a2249ec1b8d72cf44bb693cf3a56ce6a0b"
+    },
+    {
+      "Table": "Crm_SourceTouch",
+      "Rows": 1,
+      "RowSha256": "f0ae8a1e6467084d085decace896aa5b72395f9af7d866c97ad2b9d0fae11e16",
+      "SchemaSha256": "e0c453c05415293b7af1a4410d0d54e735af2dce5987145a506576f96d7c42bf"
+    },
+    {
+      "Table": "Crm_StageHistory",
+      "Rows": 1,
+      "RowSha256": "a0105033617076393bcbf844edfe6e7e22ab3dca4e9f7de673937ce0c45f0c03",
+      "SchemaSha256": "151a4470c59fbcaedb689e50f5010c48a55f772285aa0b17dffc74a0a5c61199"
+    }
+  ],
+  "legacySchemaAndRowsUnchanged": true,
+  "identityTokenRoundtrip": true,
+  "twoTenantProjectionRoundtrip": true,
+  "erpExternalAccountAssociationRoundtrip": true,
+  "erpOtherTenantInvisible": true,
+  "productionAcceptance": false,
+  "originalDatabasesModified": false
+}

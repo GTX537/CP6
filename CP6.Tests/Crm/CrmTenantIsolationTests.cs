@@ -8,7 +8,7 @@ namespace CP6.Tests.Crm;
 
 public class CrmTenantIsolationTests
 {
-    private static CP6Context DbFor(string name, Guid tenant) => new(
+    private static LegacyCrmFixtureContext DbFor(string name, Guid tenant) => new(
         new DbContextOptionsBuilder<CP6Context>()
             .UseInMemoryDatabase(name)
             .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -25,6 +25,20 @@ public class CrmTenantIsolationTests
         SourceChannel = CrmSourceChannel.Website,
         SlaDueAt = DateTime.UtcNow.AddHours(4),
     };
+
+    [Fact]
+    public void HistoricalFixture_PreservesTenantScopedLeadNumberAndSharedRouteKey()
+    {
+        using var db = DbFor(Guid.NewGuid().ToString(), Guid.NewGuid());
+        var lead = db.Model.FindEntityType(typeof(CrmLead))!;
+        Assert.Contains(lead.GetIndexes(), index => index.IsUnique &&
+            index.Properties.Select(p => p.Name).SequenceEqual(new[] { "TenantId", "LeadNo" }));
+        Assert.DoesNotContain(lead.GetIndexes(), index => index.IsUnique &&
+            index.Properties.Select(p => p.Name).SequenceEqual(new[] { "LeadNo" }));
+        var route = db.Model.FindEntityType(typeof(CrmPublicRoute))!;
+        Assert.Contains(route.GetIndexes(), index => index.IsUnique &&
+            index.Properties.Select(p => p.Name).SequenceEqual(new[] { "PublicKey" }));
+    }
 
     [Fact]
     public async Task Lead_IsStampedAndHiddenFromOtherTenant()

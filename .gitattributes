@@ -55,3 +55,7 @@ eng/crm/identity-events-fixture/evidence/**/*.xml -text whitespace=cr-at-eol
 # Preserve the original local publication verification report bytes.
 docs/devops/evidence/local-release-20260910/**/*.json -text whitespace=cr-at-eol
 docs/devops/evidence/local-release-20260910/**/*.xml -text whitespace=cr-at-eol
+
+# Preserve C04B local evidence bytes.
+docs/evidence/c04b/2026-09-16/simulated-exit/*.json -text whitespace=cr-at-eol
+docs/evidence/c04b/2026-09-16/simulated-exit/*.txt -text whitespace=cr-at-eol

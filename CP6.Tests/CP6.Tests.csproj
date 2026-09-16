@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <!-- Retired CRM behavior remains testable without shipping its entities. -->
+    <Compile Include="../eng/crm/legacy-model-fixture/*.cs" Link="Crm/LegacyFixture/%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
