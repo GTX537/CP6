@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "acceptance-summary.json",
-      "sha256": "3677f4cf8aec24251b46f7354ec18d6b48b8eb51cfe7a66840ed34aeb015fe39"
+      "sha256": "a830ed17c0b448f2e7e2a3a2849378c27b8c651967b8cc0e726d2eb89b54fa45"
     },
     {
       "path": "before-exit.json",
@@ -11,7 +11,7 @@
     },
     {
       "path": "after-exit.json",
-      "sha256": "13b2bb7e5b6605ab8ce6e9179a91c1500eae679eb61d863fd382ffaaa14f6489"
+      "sha256": "674d8414ba5e74e807466200b9bba329eb7ab2c844b5a80dfb23d5b367f952bb"
     },
     {
       "path": "sql-acceptance.json",

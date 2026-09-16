@@ -25,9 +25,9 @@
       "skipped": 0
     },
     {
-      "report": "affected-crm-tests.trx",
-      "sha256": "e68a773dc912d9bfefbd7bca8e80573ce61ac446f017deb200cfeea2fe590b69",
-      "passed": 16,
+      "report": "affected-crm-final.trx",
+      "sha256": "b595f7388ab9c67f5422ecda85fb617704bdcaacbf1b3146b5157c882667c243",
+      "passed": 17,
       "failed": 0,
       "skipped": 0
     },
@@ -39,7 +39,7 @@
       "skipped": 0
     }
   ],
-  "uniqueFinalPassingTests": 37,
+  "uniqueFinalPassingTests": 38,
   "runtimeBlockingFilesBefore": 8,
   "runtimeBlockingFilesAfter": 0,
   "legacyTablesPopulated": 20,
@@ -102,6 +102,14 @@
     {
       "file": "model-before.log",
       "sha256": "ef124bfecb4b0d6ebe620d824ebc6657b23b06fbf811dc88e286b140d51fd8d2"
+    },
+    {
+      "file": "fixture-order-red.trx",
+      "sha256": "8a2cfb353d35b4bf7e1362f2c79932f280a2e45f16e13f5583c6e13f3d8af1d0"
+    },
+    {
+      "file": "fixture-order-red.log",
+      "sha256": "4b64ac300dd33391970b2e55c7cb7850d406e41d963f0b7f4eaa48fcce53998c"
     }
   ],
   "limitations": [
@@ -109,5 +117,8 @@
     "Identity and ERP checks prove model/storage roundtrips, not new end-to-end broker or login execution.",
     "Original adopted host/package was not replaced; no production deployment or Actions invocation.",
     "Real user adoption, release-cycle observation and physical legacy DROP are separate future work."
-  ]
+  ],
+  "finalTestFixtureAndInventoryCommit": "384a246a2edaeae0efcd38948adb8b7542ddb4c7",
+  "unchangedProductionInputsSinceOriginalModelSqlAndPublishChecks": true,
+  "reviewCorrection": "Historical fixture must configure legacy indexes before shared tenant transformations. One new regression failed before the fix; 17 affected tests then passed. Production, SQL and publish inputs unchanged, results reused."
 }

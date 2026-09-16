@@ -1,14 +1,14 @@
 {
   "format": "CP6.C04B.LegacyReferenceInventory.v1",
-  "sourceCommit": "30ad1936eb0749b72dd0d1785ca95eaa4d154430",
+  "sourceCommit": "384a246a2edaeae0efcd38948adb8b7542ddb4c7",
   "toolSha256": "7fbb10c36a9fa7d3bc42e5fa70e8ae5a1f4b7b88017aa4fbde8eb2cb88c56554",
   "catalogVersion": 1,
   "catalogSha256": "611165c330e4a46a622f870580d9691c439ab14529094cc8b054019c3b6f3b0f",
-  "scannedFileSetSha256": "c2a5cae07c3fa7a5611ef2c79dcaa06b6c0a35967c0b8577e006c02469c84f7f",
+  "scannedFileSetSha256": "9eb0fb1d7fc4e1a650dd2cb06923643e2e99fefc3042c746abe9d0a43e372f30",
   "summary": {
-    "trackedFiles": 7144,
+    "trackedFiles": 7152,
     "scannedFiles": 3975,
-    "excludedFiles": 3169,
+    "excludedFiles": 3177,
     "matchingFiles": 20,
     "blockingFiles": 0,
     "filesByCategory": {
@@ -1473,8 +1473,8 @@
     },
     {
       "path": "CP6.Tests/Crm/CrmTenantIsolationTests.cs",
-      "gitBlob": "3944bb1c2d2d41cf24574f4f003d91a9d6278cbe",
-      "sha256": "a160207a63fdcca4d66169eecbd9b80fd0196a8a07700f5e1b1deda4c3d6e420",
+      "gitBlob": "a7b67239bfc8232b3ba5d8196e299c6209714f12",
+      "sha256": "f2e7cbe2b86e864a5f72d268c558b635d3d7532ab6e599c2b3019191f10460cc",
       "category": "tests",
       "matches": [
         {
@@ -1490,27 +1490,35 @@
           "symbol": "CrmSourceChannel"
         },
         {
+          "line": 33,
+          "symbol": "CrmLead"
+        },
+        {
           "line": 38,
-          "symbol": "CrmLeads"
-        },
-        {
-          "line": 44,
-          "symbol": "CrmLeads"
-        },
-        {
-          "line": 48,
-          "symbol": "CrmLeads"
-        },
-        {
-          "line": 61,
           "symbol": "CrmPublicRoute"
         },
         {
-          "line": 61,
+          "line": 52,
+          "symbol": "CrmLeads"
+        },
+        {
+          "line": 58,
+          "symbol": "CrmLeads"
+        },
+        {
+          "line": 62,
+          "symbol": "CrmLeads"
+        },
+        {
+          "line": 75,
+          "symbol": "CrmPublicRoute"
+        },
+        {
+          "line": 75,
           "symbol": "CrmPublicRoutes"
         },
         {
-          "line": 72,
+          "line": 86,
           "symbol": "CrmPublicRoutes"
         }
       ]
@@ -2061,8 +2069,8 @@
     },
     {
       "path": "eng/crm/legacy-model-fixture/LegacyCrmFixtureContext.cs",
-      "gitBlob": "d6d3dbfb8dbff8d814b58dee308b5511f6e5eabf",
-      "sha256": "9d32cc5d3da4409e45ba985d4e3a7898cf2a983e2c397b35f754724568c35842",
+      "gitBlob": "2388dc74125df5875cd1961003da15c5f8d847e3",
+      "sha256": "d2d886f21e5171e9c7f03fee33fc9f5e3df81063fe7a4f25e997348629971787",
       "category": "tests",
       "matches": [
         {
@@ -2230,168 +2238,164 @@
           "symbol": "CrmPublicRoutes"
         },
         {
-          "line": 40,
+          "line": 39,
           "symbol": "CrmAccount"
         },
         {
-          "line": 48,
+          "line": 47,
           "symbol": "CrmContact"
         },
         {
-          "line": 54,
+          "line": 53,
           "symbol": "CrmLead"
+        },
+        {
+          "line": 62,
+          "symbol": "CrmAccount"
         },
         {
           "line": 63,
-          "symbol": "CrmAccount"
+          "symbol": "CrmContact"
         },
         {
           "line": 64,
-          "symbol": "CrmContact"
-        },
-        {
-          "line": 65,
           "symbol": "CrmLead"
         },
         {
-          "line": 67,
+          "line": 66,
           "symbol": "CrmCollaborator"
         },
         {
-          "line": 69,
+          "line": 68,
           "symbol": "CrmActivity"
         },
         {
-          "line": 71,
+          "line": 70,
           "symbol": "CrmSourceTouch"
         },
         {
-          "line": 74,
+          "line": 73,
           "symbol": "CrmLead"
         },
         {
-          "line": 76,
+          "line": 75,
           "symbol": "CrmPublicSubmission"
         },
         {
-          "line": 80,
+          "line": 79,
           "symbol": "CrmPublicForm"
         },
         {
-          "line": 81,
+          "line": 80,
           "symbol": "CrmLead"
         },
         {
-          "line": 83,
+          "line": 82,
           "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 88,
+          "symbol": "CrmLead"
         },
         {
           "line": 89,
-          "symbol": "CrmLead"
-        },
-        {
-          "line": 90,
           "symbol": "CrmAccount"
         },
         {
-          "line": 91,
+          "line": 90,
           "symbol": "CrmContact"
         },
         {
-          "line": 93,
+          "line": 92,
           "symbol": "CrmStageHistory"
         },
         {
-          "line": 95,
+          "line": 94,
           "symbol": "CrmErpLink"
         },
         {
-          "line": 99,
+          "line": 98,
           "symbol": "CrmOpportunity"
         },
         {
-          "line": 101,
+          "line": 100,
           "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 104,
+          "symbol": "CrmLead"
         },
         {
           "line": 105,
           "symbol": "CrmLead"
         },
         {
-          "line": 106,
-          "symbol": "CrmLead"
+          "line": 107,
+          "symbol": "CrmIntakeConfig"
         },
         {
           "line": 108,
-          "symbol": "CrmIntakeConfig"
-        },
-        {
-          "line": 109,
           "symbol": "CrmIntakeMember"
         },
         {
-          "line": 112,
+          "line": 111,
           "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 113,
+          "symbol": "CrmSite"
         },
         {
           "line": 114,
-          "symbol": "CrmSite"
-        },
-        {
-          "line": 115,
           "symbol": "CrmSitePage"
         },
         {
-          "line": 118,
+          "line": 117,
           "symbol": "CrmSite"
         },
         {
-          "line": 120,
+          "line": 119,
           "symbol": "CrmPageRevision"
         },
         {
-          "line": 123,
+          "line": 122,
           "symbol": "CrmSitePage"
         },
         {
-          "line": 125,
+          "line": 124,
           "symbol": "CrmPageTranslation"
         },
         {
-          "line": 130,
+          "line": 129,
           "symbol": "CrmSite"
         },
         {
-          "line": 131,
+          "line": 130,
           "symbol": "CrmPageRevision"
         },
         {
-          "line": 133,
+          "line": 132,
           "symbol": "CrmMediaAsset"
         },
         {
-          "line": 136,
+          "line": 135,
           "symbol": "CrmSite"
         },
         {
-          "line": 138,
+          "line": 137,
           "symbol": "CrmPublicForm"
         },
         {
-          "line": 141,
+          "line": 140,
           "symbol": "CrmSite"
         },
         {
-          "line": 142,
+          "line": 141,
           "symbol": "CrmIntakeConfig"
         },
         {
-          "line": 144,
+          "line": 143,
           "symbol": "CrmPublicRoute"
-        },
-        {
-          "line": 153,
-          "symbol": "CrmLead"
         }
       ]
     },
