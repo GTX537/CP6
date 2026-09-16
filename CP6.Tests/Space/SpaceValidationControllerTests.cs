@@ -59,6 +59,7 @@ public sealed class SpaceValidationControllerTests
         var tenantId = Guid.NewGuid();
         var siteId = Guid.NewGuid();
         var correlationId = Guid.NewGuid();
+        const string warehouseCode = "SPB433";
         var snapshot = SpaceWmsCapabilitySnapshot.Create(
             "verified-wms",
             SpaceWmsDataSourceKind.Real,
@@ -83,11 +84,21 @@ public sealed class SpaceValidationControllerTests
                 It.Is<SpaceWmsContext>(context =>
                     context.TenantId == tenantId &&
                     context.SiteId == siteId &&
+                    context.WarehouseCode == warehouseCode &&
                     context.CorrelationId == correlationId),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(snapshot);
+        var warehouses = new Mock<ISpaceWarehouseResolver>();
+        warehouses.Setup(value => value.ResolveAsync(
+                siteId,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new SpaceWarehouseIdentity(
+                siteId,
+                "SPACE-ACCEPT-B433",
+                warehouseCode));
         using var services = new ServiceCollection()
             .AddSingleton(adapter.Object)
+            .AddSingleton(warehouses.Object)
             .BuildServiceProvider();
         var provider =
             new DefaultSpaceValidationProfileProvider(services);

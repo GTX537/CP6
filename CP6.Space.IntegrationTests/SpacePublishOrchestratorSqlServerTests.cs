@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Space;
@@ -18,7 +19,14 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
     ITestOutputHelper output)
 {
     [SqlServerFact]
-    public async Task Wms_timeout_keeps_production_and_automatic_retry_completes()
+    public Task Wms_timeout_keeps_production_and_automatic_retry_completes() =>
+        AssertPersistedBatchRecoveryAsync(tamperRequest: false);
+
+    [SqlServerFact]
+    public Task Wms_retry_rejects_tampered_persisted_mutation_before_applying() =>
+        AssertPersistedBatchRecoveryAsync(tamperRequest: true);
+
+    private async Task AssertPersistedBatchRecoveryAsync(bool tamperRequest)
     {
         await WithDatabaseAsync(
             async (connectionString, execution, clock) =>
@@ -125,12 +133,49 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
                     seeded.BaseVersionId,
                     unchanged.CurrentPublishedVersionId);
 
+                var persistedBatches = await space.PublishBatches
+                    .AsNoTracking()
+                    .Where(value => value.AttemptId == queued.Attempt.Id)
+                    .OrderBy(value => value.BatchNo)
+                    .ToArrayAsync();
+                Assert.NotEmpty(persistedBatches);
+                if (tamperRequest)
+                {
+                    var batch = persistedBatches[0];
+                    var request = JsonNode.Parse(batch.RequestJson)!;
+                    request["items"]![0]!["payloadHash"] = new string('f', 64);
+                    var tamperedJson = request.ToJsonString();
+                    Assert.NotEqual(batch.RequestJson, tamperedJson);
+                    // Simulate stored-data corruption only in this test's isolated database.
+                    await space.PublishBatches
+                        .Where(value => value.Id == batch.Id)
+                        .ExecuteUpdateAsync(update => update.SetProperty(
+                            value => value.RequestJson,
+                            tamperedJson));
+                    space.ChangeTracker.Clear();
+                }
+
                 adapter.Recovered = true;
                 executor.ClearFailure();
                 clock.Advance(automaticRecoveryDelay + TimeSpan.FromSeconds(1));
                 Assert.True(await runner.RunNextAsync(
                     SpaceJobType.Publish,
                     "test-timeout-worker"));
+                if (tamperRequest)
+                {
+                    var failure = Assert.IsType<SpaceJobProcessingException>(executor.Failure);
+                    Assert.Equal(SpaceJobFailureKind.Security, failure.FailureKind);
+                    Assert.Equal(SpaceErrorCodes.PublishJobMismatch, failure.ErrorCode);
+                    space.ChangeTracker.Clear();
+                    var protectedModel = await space.Models.AsNoTracking()
+                        .SingleAsync(value => value.Id == seeded.ModelId);
+                    Assert.Equal(seeded.BaseVersionId, protectedModel.CurrentPublishedVersionId);
+                    Assert.True((await cp6Context.WmsBins.AsNoTracking()
+                        .SingleAsync(value => value.Id == seeded.RemovedLocationId)).IsActive);
+                    Assert.False(await cp6Context.WmsBins.AsNoTracking()
+                        .AnyAsync(value => value.Id == seeded.NewLocationId));
+                    return;
+                }
                 Assert.Null(executor.Failure);
                 space.ChangeTracker.Clear();
                 var completed = await orchestrator.GetAsync(queued.Attempt.Id);
@@ -1564,9 +1609,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         public Task<SpaceWmsHealth> CheckHealthAsync(
             SpaceWmsContext context,
             CancellationToken ct = default) =>
-            Recovered
-                ? inner.CheckHealthAsync(context, ct)
-                : throw new TimeoutException("Injected WMS health timeout.");
+            inner.CheckHealthAsync(context, ct);
 
         public Task<SpaceWmsPreflightResult> PreflightAsync(
             SpaceWmsPreflightRequest request,
@@ -1576,7 +1619,9 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         public Task<SpaceWmsBatchResult> ApplyBatchAsync(
             SpaceWmsBatch batch,
             CancellationToken ct = default) =>
-            inner.ApplyBatchAsync(batch, ct);
+            Recovered
+                ? inner.ApplyBatchAsync(batch, ct)
+                : throw new TimeoutException("Injected WMS batch timeout.");
 
         public Task<SpaceWmsOperationStatus> GetOperationStatusAsync(
             SpaceWmsOperationQuery request,

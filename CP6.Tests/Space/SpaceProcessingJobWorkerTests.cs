@@ -108,6 +108,52 @@ public sealed class SpaceProcessingJobWorkerTests
         }
     }
 
+    [Fact]
+    public async Task ProcessOnce_claims_publish_types_with_verified_system_actor()
+    {
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
+        using var provider = BuildProvider(tenantA, tenantB);
+        var worker = new SpacePublishJobWorker(
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            NullLogger<SpacePublishJobWorker>.Instance);
+
+        var processed = await worker.ProcessOnceAsync();
+
+        var records = provider.GetRequiredService<RecordingState>()
+            .Records.ToArray();
+        Assert.Equal(SpacePublishJobWorker.JobTypes.Count * 2, processed);
+        Assert.Equal(processed, records.Length);
+        foreach (var tenantId in new[] { tenantA, tenantB })
+        {
+            var tenantRecords = records
+                .Where(record => record.TenantId == tenantId)
+                .ToArray();
+            Assert.Equal(
+                SpacePublishJobWorker.JobTypes,
+                tenantRecords.Select(record => record.JobType));
+            Assert.All(tenantRecords, record =>
+            {
+                Assert.Equal(tenantId, record.ScopedTenantId);
+                Assert.Equal(tenantId, record.ApplicationTenantId);
+                Assert.Equal(
+                    SpaceExecutionContext.SystemActor,
+                    record.ActorType);
+                Assert.Equal(
+                    SpacePublishJobWorker.WorkerActorName,
+                    record.ActorName);
+                Assert.Equal(
+                    SpacePublishJobWorker.WorkerActorId,
+                    record.ApplicationActorId);
+                Assert.NotEqual(Guid.Empty, record.CorrelationId);
+                Assert.EndsWith(
+                    ":publish",
+                    record.WorkerId,
+                    StringComparison.Ordinal);
+            });
+        }
+    }
+
     private static ServiceProvider BuildProvider(params Guid[] tenants)
     {
         var services = new ServiceCollection();
@@ -141,6 +187,8 @@ public sealed class SpaceProcessingJobWorkerTests
     private sealed class RecordingState
     {
         public ConcurrentQueue<ClaimRecord> Records { get; } = new();
+        public ConcurrentDictionary<(Guid TenantId, SpaceJobType JobType), byte>
+            Claims { get; } = new();
     }
 
     private sealed class RecordingRunner(
@@ -156,6 +204,8 @@ public sealed class SpaceProcessingJobWorkerTests
         {
             cancellationToken.ThrowIfCancellationRequested();
             var current = accessor.RequireCurrent();
+            if (!state.Claims.TryAdd((current.TenantId, jobType), 0))
+                return Task.FromResult(false);
             state.Records.Enqueue(new ClaimRecord(
                 current.TenantId,
                 tenant.CurrentTenantId,

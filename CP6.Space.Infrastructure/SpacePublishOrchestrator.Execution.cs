@@ -3,6 +3,7 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CP6.Space.Infrastructure;
 
@@ -11,6 +12,28 @@ public sealed partial class SpacePublishOrchestrator
     public async Task<SpaceJobStepOutput> ExecuteAsync(
         SpaceJobStepExecution execution,
         CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await ExecuteCoreAsync(execution, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(
+                exception,
+                "Space publish execution failed for Job {JobId}, Attempt {AttemptId}, " +
+                "Job attempt {AttemptNo}, and Step {StepCode}.",
+                execution?.Lease.JobId,
+                execution?.Lease.SubjectId,
+                execution?.Lease.AttemptNo,
+                execution?.StepCode);
+            throw;
+        }
+    }
+
+    private async Task<SpaceJobStepOutput> ExecuteCoreAsync(
+        SpaceJobStepExecution execution,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(execution);
         EnsureExecutionContext();
@@ -645,6 +668,11 @@ public sealed partial class SpacePublishOrchestrator
         }
         catch (Exception exception)
         {
+            _logger.LogError(
+                exception,
+                "Runtime activation failed for publish Attempt {AttemptId} and Job {JobId}.",
+                attempt.Id,
+                execution.Lease.JobId);
             _context.ChangeTracker.Clear();
             var persistedModel = await _context.Models.SingleAsync(
                 value => value.Id == model.Id,
@@ -731,12 +759,15 @@ public sealed partial class SpacePublishOrchestrator
                                     SpaceJobFailureKind.Security,
                                     SpaceErrorCodes.PublishJobMismatch,
                                     "A persisted WMS batch request could not be read.");
+                var mutations = persisted.Items
+                    .Select(item => item.ToMutation())
+                    .ToArray();
                 var request = SpaceWmsBatch.Create(
                     wmsContext,
                     attempt.Id,
                     value.BatchNo,
                     plan.PlanHash,
-                    persisted.Items);
+                    mutations);
                 if (!string.Equals(
                         request.OperationKey,
                         value.OperationKey,
@@ -907,5 +938,58 @@ public sealed partial class SpacePublishOrchestrator
         string summary) => new(kind, code, summary);
 
     private sealed record PersistedBatchRequest(
-        IReadOnlyList<SpaceWmsLocationMutation> Items);
+        IReadOnlyList<PersistedBatchItem> Items)
+    {
+        public static PersistedBatchRequest From(
+            IReadOnlyList<SpaceWmsLocationMutation> items) =>
+            new(items.Select(PersistedBatchItem.From).ToArray());
+    }
+
+    private sealed record PersistedBatchItem(
+        int SequenceNo,
+        Guid LogicalId,
+        string LocationCode,
+        SpaceWmsLocationAction Action,
+        long Version,
+        string? ExternalLocationId,
+        SpaceWmsLocationPath Path,
+        IReadOnlyDictionary<string, string?> Attributes,
+        string PayloadHash)
+    {
+        public static PersistedBatchItem From(
+            SpaceWmsLocationMutation item) => new(
+                item.SequenceNo,
+                item.LogicalId,
+                item.LocationCode,
+                item.Action,
+                item.Version,
+                item.ExternalLocationId,
+                item.Path,
+                item.Attributes,
+                item.PayloadHash);
+
+        public SpaceWmsLocationMutation ToMutation()
+        {
+            var mutation = SpaceWmsLocationMutation.Create(
+                SequenceNo,
+                LogicalId,
+                LocationCode,
+                Action,
+                Path,
+                Attributes,
+                ExternalLocationId,
+                Version);
+            if (!string.Equals(
+                    mutation.PayloadHash,
+                    PayloadHash,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                throw Processing(
+                    SpaceJobFailureKind.Security,
+                    SpaceErrorCodes.PublishJobMismatch,
+                    "A persisted WMS mutation hash did not match its payload.");
+            }
+            return mutation;
+        }
+    }
 }
