@@ -1,0 +1,299 @@
+{
+  "format": "CP6.C04A.FinalReviewObservation.v1",
+  "atUtc": "2026-09-16T03:44:28.5398676+00:00",
+  "readOnly": true,
+  "databases": [
+    {
+      "role": "native-core",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6DB",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "FA1F4DAB-33EE-4027-B5D8-F5A270E5BC53",
+        "databaseGuid": "49E6A7EF-6A3C-46A9-A389-F72315F5CB1B",
+        "familyGuid": "087348F5-6AF0-49CF-AF22-EEDAE73272E0",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "preview-core",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "327CC280-8867-47F3-AE4B-588466C268CE",
+        "databaseGuid": "4058A004-2F83-4457-BD77-A7BF37CC5FDD",
+        "familyGuid": "27089C7A-A090-49D2-BE92-0A49AE40919B",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "auth-identity-catalog",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6CrmC02Live_516b677f84b64cd1a876590a8cb54a0b",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "A8F10476-5B32-436B-9C51-13CC707EC673",
+        "databaseGuid": "F4952C19-6981-4089-9CBE-59782302C45D",
+        "familyGuid": "728FBBD1-EB4A-4BF4-AA0B-BC8CBFDC7962",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "business-primary",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6CrmC02Live_86a709a6f627426fa23ad88f7dd2ebb9",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "561C1AA6-1C0B-4F49-9985-195A1EFE3161",
+        "databaseGuid": "90736E28-58BA-4597-8CD5-DF23A3E30B55",
+        "familyGuid": "714D21DF-B7E3-4C7C-B23E-770A2D173644",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "business-isolation",
+      "engine": "native",
+      "identity": {
+        "serverName": "LAPTOP-3QQ44FJS\\KOUSQLSERVER",
+        "name": "CP6CrmC02Live_4bc6bc987f8040da843caf86c0b7faf2",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "11435648-1262-4D57-A454-06FB4DE336B5",
+        "databaseGuid": "A6D5C651-8646-4748-BE46-681817020E21",
+        "familyGuid": "B7261456-910F-45E6-BE58-68C25E805C7C",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    },
+    {
+      "role": "docker-core",
+      "engine": "docker",
+      "identity": {
+        "serverName": "46deb8044b4f",
+        "name": "CP6DB",
+        "state_desc": "ONLINE",
+        "is_read_only": false,
+        "user_access_desc": "MULTI_USER",
+        "serviceBrokerGuid": "FA1F4DAB-33EE-4027-B5D8-F5A270E5BC53",
+        "databaseGuid": "F59EDA72-6FAC-4056-900D-A96E254F9BC1",
+        "familyGuid": "087348F5-6AF0-49CF-AF22-EEDAE73272E0",
+        "sourceControlSchemaCount": 0,
+        "normalizedSchemaCount": 0
+      }
+    }
+  ],
+  "proposedActors": [
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "departmentId": "458f79d1-d340-473e-894e-2d131a2069da",
+      "selection": "Existing administrator used successfully on A09 restored identity data; proposed for owner review, not yet approved",
+      "enabled": true,
+      "actorId": "95bffc82-f979-4bb4-bf2e-9cbe9c9a9110",
+      "roleId": 1
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "departmentId": "f6841a23-842f-4953-b225-1195e898be1b",
+      "selection": "Existing administrator used successfully on A09 restored identity data; proposed for owner review, not yet approved",
+      "enabled": true,
+      "actorId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+      "roleId": 1
+    }
+  ],
+  "windowsEntries": [
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\run-preview.ps1",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ce7d3e8b55765e222efa826f037a7e993c1ad73f12c6580007627a83fb51eb7a",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\PreviewHost.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "9e2e08db097ad52cebeec78814fa2f3ce9eab2c7ea3d4803d02825ca39f9cfbe",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\crm-api\\CP6.CRM.Api.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\start-preview.ps1",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "0ba199f1604adee149896927252e6b39db2500feb1fd12e69538182b46df9de7",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\recovery\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\CP6.CRM.Api.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "ade3babdc997d5bacd2aeb8b6feafc515a1ab5bf0ecf25792e036583531b9745",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\invoke-published-smoke.ps1",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "85858bd46de83c86cc06e256477c2eeeabb73c695dbc1c4d27ace7ed08d91ec8",
+      "inactive": true
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260910\\harness\\bin\\Release\\net8.0\\PublishedSmoke.dll",
+      "currentMatchingProcesses": [
+        null
+      ],
+      "sha256": "48b3e214dc038ba0f2720e459993fc809531db8cda0091a5adec7a0e57073d21",
+      "inactive": true
+    }
+  ],
+  "processes": [
+    {
+      "pid": 9920,
+      "parentPid": 6376,
+      "hostPath": null,
+      "commandLineReadable": false,
+      "name": "Agent.Listener.exe",
+      "commandLineSha256": null
+    },
+    {
+      "pid": 21528,
+      "parentPid": 27904,
+      "hostPath": "C:\\Users\\tt\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\a708e72b10c27b59\\bin\\node.exe",
+      "commandLineReadable": true,
+      "name": "node.exe",
+      "commandLineSha256": "a6df12a7e0f1960af91e468bfe290ec15941ca23d4cab12c3c08394fa372ad1b"
+    }
+  ],
+  "services": [
+    {
+      "startMode": "Manual",
+      "name": "SQLAgent$KOUSQLSERVER",
+      "pid": 0,
+      "state": "Stopped",
+      "commandLineSha256": "9150b2a82262c46653bae465ebe8d798c0dba25aeacb6d2a0b05d89b5a748286"
+    },
+    {
+      "startMode": "Auto",
+      "name": "vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS",
+      "pid": 6376,
+      "state": "Running",
+      "commandLineSha256": "c2f18fe8e3cf59b1205de94c4d515bc720274c886680d364b438046e72acab54"
+    }
+  ],
+  "containers": [
+    {
+      "status": "exited",
+      "name": "/cp6-c02-live-0aa59de164ad-publisher-dapr-1",
+      "id": "b9c3009c58bcb4fe4642a1185f682c5c462bb9e1f20d30534c9f74df0b3c04ba",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "project": "cp6-c02-live-0aa59de164ad",
+      "configurationSha256": "81263f9bf9934a13617f9a2af615d1788c82f6ae2b17d88e46d7908806492c2b",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "status": "exited",
+      "name": "/cp6-c02-live-0aa59de164ad-receiver-dapr-1",
+      "id": "009c8d2588691183adb23addffb2e4660c70268e78971290adc7bffbd4c7217e",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "project": "cp6-c02-live-0aa59de164ad",
+      "configurationSha256": "e2a76c71f98a30bc1dc86af5214404e62edc9ea86bbefe0ea34d5164bcdab2fa",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "status": "exited",
+      "name": "/cp6-c02-live-0aa59de164ad-kafka-1",
+      "id": "9e351205c9104b1b2839a6a853d23797b60f8b62dcfd918bbe59893154de1967",
+      "imageId": "sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837",
+      "project": "cp6-c02-live-0aa59de164ad",
+      "configurationSha256": "03a9ebc0e7acc584d995b50af506e19ef9459a30d15384bc4f76833b2a41beb9",
+      "mountsSha256": "bb68888991b975d33dcd7f72134771f937d6bdf9fed35ca2c61331faf91a3b40",
+      "restartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "status": "running",
+      "name": "/cp6-api",
+      "id": "9f76c764f56e20239b5da3b769184f6e742e992a8baf1b20bbc027a08c0ad433",
+      "imageId": "sha256:3eac813b45fe53512e96805850da62050234ac7926b96f20a9f26c715f837a1e",
+      "project": "cp6",
+      "configurationSha256": "f7a799b98b2d1a66adda6b98f2a93a5724db7235300e093a8870f09946e42b73",
+      "mountsSha256": "85200b952ce78515100ec354d709865006b9e3347aa5d3bb04fa593d0580ba89",
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "status": "running",
+      "name": "/cp6-db",
+      "id": "505a5337f99522fd483f8db86a0e1b2d3da6755ef133d1bf341af063798f368e",
+      "imageId": "sha256:49b45a911dc535e9345fbfd7101a1bd8a1e190a5f29b877ef75387a061e5fcf0",
+      "project": "cp6",
+      "configurationSha256": "99cef0a2b4d4649d66044cd81c2f698b7ecb53ffc9b3d8a8fe896dcc6b7ef315",
+      "mountsSha256": "83b812419301079b5f21b17eaf05299d2809b78892bb706c9f1693283edbe7d8",
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    }
+  ],
+  "actualExecutionApproved": false,
+  "completeWriterIsolationVerified": false,
+  "sqlAgentJobs": {
+    "totalJobs": 1,
+    "enabledJobs": 1
+  },
+  "limits": [
+    "Read-only snapshot, not an exclusive writer fence.",
+    "Protected deployment Agent command line is not readable in this token.",
+    "SQL/Docker administrators can bypass application guards; operator ownership and final approval remain required."
+  ]
+}

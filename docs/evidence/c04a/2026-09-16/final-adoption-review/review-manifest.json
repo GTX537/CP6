@@ -1,0 +1,40 @@
+{
+  "format": "CP6.C04A.FinalReviewManifest.v1",
+  "runId": "d8208f83568e4b6bac285077f7701c2e",
+  "files": [
+    {
+      "path": "current-observation.json",
+      "sha256": "d7820997b761a58d2322aad9592f345133f1d821efbe8c3a4b4b802b52b1e77b"
+    },
+    {
+      "path": "refreshed-drain-inventory.json",
+      "sha256": "011c5d189fe4137abf15ef69094d49967a1ec56b9ed84c08cb4c631cc7c27d57"
+    },
+    {
+      "path": "service-control-access.json",
+      "sha256": "4f9e4e7ca1d7444e086d38f0784e2ba641460c932b233ac3859e140d70a26c01"
+    },
+    {
+      "path": "sql-agent-steps.json",
+      "sha256": "a362d1651e6f8b1b78f6df03974b07e907efb50853a6680b86e04b7d7688420e"
+    },
+    {
+      "path": "runtime-package-files.json",
+      "sha256": "309b09b242871d3c7899fb0ee040b6f5d77ec992365b7c2efa75fa83b2a56d2d"
+    },
+    {
+      "path": "proposed-calendars.json",
+      "sha256": "bad3cfa58a99e7e0978c931288d6772fa4bfb986ba8346505c8a12fb86b4b266"
+    },
+    {
+      "path": "changed-contract-bytes.json",
+      "sha256": "ccbf8715c95c7e5bbdaad8ca6a960e504d8b454fb1f186a4473c6e8d2ab54844"
+    },
+    {
+      "path": "execution-review.json",
+      "sha256": "a836fe00073869ad9ed9a332909be008d50a683b1ac304b119201574b65fe629"
+    }
+  ],
+  "actualExecutionApproved": false,
+  "doNotExecuteUntilApprovalAndAdministratorAccess": true
+}

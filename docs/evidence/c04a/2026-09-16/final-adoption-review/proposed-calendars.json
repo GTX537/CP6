@@ -1,0 +1,102 @@
+{
+  "format": "CP6.C04A.InitialCalendarReview.v1",
+  "runId": "d8208f83568e4b6bac285077f7701c2e",
+  "status": "proposed-not-approved-not-stored",
+  "organizations": [
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "proposedActorId": "95bffc82-f979-4bb4-bf2e-9cbe9c9a9110",
+      "request": {
+        "timeZone": "America/New_York",
+        "periods": [
+          {
+            "day": 1,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 2,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 3,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 4,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 5,
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "holidays": [],
+        "defaultDepartmentId": "458f79d1-d340-473e-894e-2d131a2069da",
+        "siteKey": "c02-primary",
+        "enabled": true
+      },
+      "saveHeaders": {
+        "If-Match": "*",
+        "Idempotency-Key": "c04a-calendar-d8208f83568e4b6bac285077f7701c2e-095f3443-3163-4427-be77-1819a49cddba"
+      },
+      "holidayScope": "No holiday dates have been supplied; empty initial list is a proposed input for review; holidays remain separately maintained.",
+      "executionState": "not-stored",
+      "calendarVersion": null,
+      "activation": "After save, bind returned ETag and returned CalendarVersion, preview, then publish effective immediately using an execution-time timestamp."
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "proposedActorId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+      "request": {
+        "timeZone": "America/New_York",
+        "periods": [
+          {
+            "day": 1,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 2,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 3,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 4,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 5,
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "holidays": [],
+        "defaultDepartmentId": "f6841a23-842f-4953-b225-1195e898be1b",
+        "siteKey": "c02-isolated",
+        "enabled": true
+      },
+      "saveHeaders": {
+        "If-Match": "*",
+        "Idempotency-Key": "c04a-calendar-d8208f83568e4b6bac285077f7701c2e-09d4fb11-004f-49e0-a132-583fab65e469"
+      },
+      "holidayScope": "No holiday dates have been supplied; empty initial list is a proposed input for review; holidays remain separately maintained.",
+      "executionState": "not-stored",
+      "calendarVersion": null,
+      "activation": "After save, bind returned ETag and returned CalendarVersion, preview, then publish effective immediately using an execution-time timestamp."
+    }
+  ],
+  "businessRulesPreviouslyConfirmed": true,
+  "departmentAndActorSelectionRequiresFinalReview": true,
+  "firstSaveCrossesWrittenBoundary": true
+}
