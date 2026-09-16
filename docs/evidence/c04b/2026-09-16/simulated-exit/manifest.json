@@ -1,0 +1,29 @@
+{
+  "format": "CP6.C04B.EvidenceManifest.v1",
+  "files": [
+    {
+      "path": "acceptance-summary.json",
+      "sha256": "3677f4cf8aec24251b46f7354ec18d6b48b8eb51cfe7a66840ed34aeb015fe39"
+    },
+    {
+      "path": "before-exit.json",
+      "sha256": "e7606792739d9653853e1e6693fad10784dbcefb14b6750dad7d9844f33d1b37"
+    },
+    {
+      "path": "after-exit.json",
+      "sha256": "13b2bb7e5b6605ab8ce6e9179a91c1500eae679eb61d863fd382ffaaa14f6489"
+    },
+    {
+      "path": "sql-acceptance.json",
+      "sha256": "81e7d489e51a1103901fb395a5518be00ca95d8f8cf998e41debca69e80ca9ed"
+    },
+    {
+      "path": "local-http.json",
+      "sha256": "456060924b897afbc4171751249ae1e8196904f3db5aaae1b3ca17a9154e1a0b"
+    },
+    {
+      "path": "unit-final.txt",
+      "sha256": "2edf98517f1f9661b64cb63e49fb8534694e2a8d7d5790c25d76a0a67f8e45e2"
+    }
+  ]
+}

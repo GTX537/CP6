@@ -1,0 +1,21 @@
+test_catalog_covers_exact_twenty_tables_even_when_models_removed (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_cli_reports_pending_references_and_does_not_overwrite (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_deterministic_report_and_source_inventory_digest (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_frontend_runtime_is_scanned (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_frozen_revision_ignores_dirty_and_untracked_sources (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_matches_exact_entity_dbset_table_enum_and_namespace (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_preserves_new_identity_and_erp_contracts_with_similar_names (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_rejects_abbreviated_or_symbolic_revision (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_rejects_incomplete_repository (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_rejects_invalid_utf8_in_scanned_source (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_rejects_submodule_in_inventory_tree (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_rejects_symlink_in_source_scope (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_reports_no_source_line_or_surrounding_secret (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_snapshot_blocks_but_historical_migration_is_retained (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_tests_and_source_protection_tools_are_not_runtime (test_legacy_inventory.LegacyInventoryTests) ... ok
+test_unknown_code_root_with_legacy_reference_requires_review (test_legacy_inventory.LegacyInventoryTests) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 10.228s
+
+OK

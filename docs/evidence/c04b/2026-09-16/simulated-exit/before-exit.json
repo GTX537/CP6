@@ -1,0 +1,3240 @@
+{
+  "format": "CP6.C04B.LegacyReferenceInventory.v1",
+  "sourceCommit": "1c68b9dc64f527285a0edd6d9cac81dcac1964c9",
+  "toolSha256": "04907e927a161341999e0dd59bf9b25aa36dd391c6b862b9c2bb85bf69f53bfb",
+  "catalogVersion": 1,
+  "catalogSha256": "611165c330e4a46a622f870580d9691c439ab14529094cc8b054019c3b6f3b0f",
+  "scannedFileSetSha256": "9b602f91f5129ccf1f919d14bf690b6d577fc59427acbb8e8609147f8493246b",
+  "summary": {
+    "trackedFiles": 7133,
+    "scannedFiles": 3967,
+    "excludedFiles": 3166,
+    "matchingFiles": 18,
+    "blockingFiles": 8,
+    "filesByCategory": {
+      "entity-model": 5,
+      "migration-history": 2,
+      "model-snapshot": 1,
+      "operations": 2,
+      "runtime": 2,
+      "tests": 6
+    }
+  },
+  "tables": [
+    {
+      "table": "Crm_Account",
+      "entity": "CrmAccount",
+      "dbSet": "CrmAccounts",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmCustomerModels.cs",
+        "eng/crm/source-fence-rehearsal/Invoke-RestoredAcceptance.ps1",
+        "eng/crm/source-fence-tests/ActualSourceFreezerTests.cs",
+        "eng/crm/source-fence-tests/ActualSourceInspectorTests.cs",
+        "eng/crm/source-fence-tests/SourceFenceTests.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 11
+    },
+    {
+      "table": "Crm_Activity",
+      "entity": "CrmActivity",
+      "dbSet": "CrmActivities",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmLeadModels.cs",
+        "eng/crm/source-fence-tests/SourceFenceTests.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 8
+    },
+    {
+      "table": "Crm_Collaborator",
+      "entity": "CrmCollaborator",
+      "dbSet": "CrmCollaborators",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmLeadModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_Contact",
+      "entity": "CrmContact",
+      "dbSet": "CrmContacts",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmCustomerModels.cs",
+        "eng/crm/source-fence-tests/ActualSourceInspectorTests.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 8
+    },
+    {
+      "table": "Crm_ErpLink",
+      "entity": "CrmErpLink",
+      "dbSet": "CrmErpLinks",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_IntakeConfig",
+      "entity": "CrmIntakeConfig",
+      "dbSet": "CrmIntakeConfigs",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_IntakeMember",
+      "entity": "CrmIntakeMember",
+      "dbSet": "CrmIntakeMembers",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_Lead",
+      "entity": "CrmLead",
+      "dbSet": "CrmLeads",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmLeadModels.cs",
+        "CP6.Tests/Crm/CrmTenantIsolationTests.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 8
+    },
+    {
+      "table": "Crm_MediaAsset",
+      "entity": "CrmMediaAsset",
+      "dbSet": "CrmMediaAssets",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_MergeRecord",
+      "entity": "CrmMergeRecord",
+      "dbSet": "CrmMergeRecords",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_Opportunity",
+      "entity": "CrmOpportunity",
+      "dbSet": "CrmOpportunities",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_PageRevision",
+      "entity": "CrmPageRevision",
+      "dbSet": "CrmPageRevisions",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_PageTranslation",
+      "entity": "CrmPageTranslation",
+      "dbSet": "CrmPageTranslations",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_PublicForm",
+      "entity": "CrmPublicForm",
+      "dbSet": "CrmPublicForms",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_PublicRoute",
+      "entity": "CrmPublicRoute",
+      "dbSet": "CrmPublicRoutes",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+        "CP6.Tests/Crm/CrmTenantIsolationTests.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 8
+    },
+    {
+      "table": "Crm_PublicSubmission",
+      "entity": "CrmPublicSubmission",
+      "dbSet": "CrmPublicSubmissions",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmLeadModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_Site",
+      "entity": "CrmSite",
+      "dbSet": "CrmSites",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_SitePage",
+      "entity": "CrmSitePage",
+      "dbSet": "CrmSitePages",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_SourceTouch",
+      "entity": "CrmSourceTouch",
+      "dbSet": "CrmSourceTouches",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmLeadModels.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 7
+    },
+    {
+      "table": "Crm_StageHistory",
+      "entity": "CrmStageHistory",
+      "dbSet": "CrmStageHistories",
+      "referencingFiles": [
+        "CP6.Core/EFDbContext/CP6Context.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+        "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+        "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+        "eng/crm/source-fence-tests/SourceFenceTests.cs",
+        "eng/crm/source-fence-tests/SqlFixture.cs",
+        "tools/CP6.Crm.SourceFence/SourceFence.cs"
+      ],
+      "fileCount": 8
+    }
+  ],
+  "references": [
+    {
+      "path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "gitBlob": "5be971d92daeec38e40019c9bdff12428892b4fb",
+      "sha256": "9a1c9c521baf747b5307f40ffbfcaac0766333be1a2c2befbef0957f14a20a46",
+      "category": "runtime",
+      "matches": [
+        {
+          "line": 10,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 56,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 56,
+          "symbol": "CrmAccounts"
+        },
+        {
+          "line": 57,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 57,
+          "symbol": "CrmContacts"
+        },
+        {
+          "line": 58,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 58,
+          "symbol": "CrmLeads"
+        },
+        {
+          "line": 59,
+          "symbol": "CrmCollaborator"
+        },
+        {
+          "line": 59,
+          "symbol": "CrmCollaborators"
+        },
+        {
+          "line": 60,
+          "symbol": "CrmActivities"
+        },
+        {
+          "line": 60,
+          "symbol": "CrmActivity"
+        },
+        {
+          "line": 61,
+          "symbol": "CrmSourceTouch"
+        },
+        {
+          "line": 61,
+          "symbol": "CrmSourceTouches"
+        },
+        {
+          "line": 62,
+          "symbol": "CrmPublicSubmission"
+        },
+        {
+          "line": 62,
+          "symbol": "CrmPublicSubmissions"
+        },
+        {
+          "line": 63,
+          "symbol": "CrmOpportunities"
+        },
+        {
+          "line": 63,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 64,
+          "symbol": "CrmStageHistories"
+        },
+        {
+          "line": 64,
+          "symbol": "CrmStageHistory"
+        },
+        {
+          "line": 65,
+          "symbol": "CrmErpLink"
+        },
+        {
+          "line": 65,
+          "symbol": "CrmErpLinks"
+        },
+        {
+          "line": 66,
+          "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 66,
+          "symbol": "CrmMergeRecords"
+        },
+        {
+          "line": 67,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 67,
+          "symbol": "CrmIntakeConfigs"
+        },
+        {
+          "line": 68,
+          "symbol": "CrmIntakeMember"
+        },
+        {
+          "line": 68,
+          "symbol": "CrmIntakeMembers"
+        },
+        {
+          "line": 69,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 69,
+          "symbol": "CrmSites"
+        },
+        {
+          "line": 70,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 70,
+          "symbol": "CrmSitePages"
+        },
+        {
+          "line": 71,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 71,
+          "symbol": "CrmPageRevisions"
+        },
+        {
+          "line": 72,
+          "symbol": "CrmPageTranslation"
+        },
+        {
+          "line": 72,
+          "symbol": "CrmPageTranslations"
+        },
+        {
+          "line": 73,
+          "symbol": "CrmMediaAsset"
+        },
+        {
+          "line": 73,
+          "symbol": "CrmMediaAssets"
+        },
+        {
+          "line": 74,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 74,
+          "symbol": "CrmPublicForms"
+        },
+        {
+          "line": 75,
+          "symbol": "CrmPublicRoute"
+        },
+        {
+          "line": 75,
+          "symbol": "CrmPublicRoutes"
+        },
+        {
+          "line": 2577,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 2585,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 2591,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 2600,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 2601,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 2602,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 2604,
+          "symbol": "CrmCollaborator"
+        },
+        {
+          "line": 2606,
+          "symbol": "CrmActivity"
+        },
+        {
+          "line": 2608,
+          "symbol": "CrmSourceTouch"
+        },
+        {
+          "line": 2611,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 2613,
+          "symbol": "CrmPublicSubmission"
+        },
+        {
+          "line": 2617,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 2618,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 2620,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 2626,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 2627,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 2628,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 2630,
+          "symbol": "CrmStageHistory"
+        },
+        {
+          "line": 2632,
+          "symbol": "CrmErpLink"
+        },
+        {
+          "line": 2636,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 2638,
+          "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 2642,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 2643,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 2645,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 2646,
+          "symbol": "CrmIntakeMember"
+        },
+        {
+          "line": 2649,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 2651,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 2652,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 2655,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 2657,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 2660,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 2662,
+          "symbol": "CrmPageTranslation"
+        },
+        {
+          "line": 2667,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 2668,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 2670,
+          "symbol": "CrmMediaAsset"
+        },
+        {
+          "line": 2673,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 2675,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 2678,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 2679,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 2681,
+          "symbol": "CrmPublicRoute"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Core/Migrations/20260811030108_CrmFoundation.Designer.cs",
+      "gitBlob": "b845075838c61236735e5743f91cea8d1c09c09b",
+      "sha256": "457d0a9061f4cf55d1b822890c6505bc2f46ac23d0999427261c0ed2c4723491",
+      "category": "migration-history",
+      "matches": [
+        {
+          "line": 258,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 258,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 325,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 328,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 328,
+          "symbol": "CrmActivity"
+        },
+        {
+          "line": 384,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 387,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 387,
+          "symbol": "CrmCollaborator"
+        },
+        {
+          "line": 431,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 434,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 434,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 519,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 522,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 522,
+          "symbol": "CrmErpLink"
+        },
+        {
+          "line": 571,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 574,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 574,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 624,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 627,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 627,
+          "symbol": "CrmIntakeMember"
+        },
+        {
+          "line": 664,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 667,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 667,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 855,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 858,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 858,
+          "symbol": "CrmMediaAsset"
+        },
+        {
+          "line": 914,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 917,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 917,
+          "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 967,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 970,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 970,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 1089,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 1092,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1092,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 1138,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 1141,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1141,
+          "symbol": "CrmPageTranslation"
+        },
+        {
+          "line": 1215,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 1218,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1218,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 1269,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 1272,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1272,
+          "symbol": "CrmPublicRoute"
+        },
+        {
+          "line": 1329,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 1332,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1332,
+          "symbol": "CrmPublicSubmission"
+        },
+        {
+          "line": 1393,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 1396,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1396,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 1465,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 1468,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1468,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 1527,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 1530,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1530,
+          "symbol": "CrmSourceTouch"
+        },
+        {
+          "line": 1592,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 1595,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1595,
+          "symbol": "CrmStageHistory"
+        },
+        {
+          "line": 1650,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 21455,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21455,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 21457,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21457,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 21465,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21465,
+          "symbol": "CrmErpLink"
+        },
+        {
+          "line": 21467,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21467,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 21474,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21474,
+          "symbol": "CrmIntakeMember"
+        },
+        {
+          "line": 21476,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21476,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 21483,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21483,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 21485,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21485,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 21490,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21490,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 21495,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21495,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 21501,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21501,
+          "symbol": "CrmMediaAsset"
+        },
+        {
+          "line": 21503,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21503,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 21510,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21510,
+          "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 21512,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21512,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 21518,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21518,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 21525,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21525,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 21527,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21527,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 21532,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21532,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 21538,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21538,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 21544,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21544,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 21546,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21546,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 21553,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21553,
+          "symbol": "CrmPageTranslation"
+        },
+        {
+          "line": 21555,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21555,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 21561,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21561,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 21568,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21568,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 21570,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21570,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 21575,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21575,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 21582,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21582,
+          "symbol": "CrmPublicSubmission"
+        },
+        {
+          "line": 21584,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21584,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 21590,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21590,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 21596,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21596,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 21598,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21598,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 21605,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21605,
+          "symbol": "CrmSourceTouch"
+        },
+        {
+          "line": 21607,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21607,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 21944,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21944,
+          "symbol": "CrmAccount"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Core/Migrations/20260811030108_CrmFoundation.cs",
+      "gitBlob": "296c839fe719adda4403bd68cba39baa5f18adcc",
+      "sha256": "76de7efa9baac910813ce1594157a74a635a4fb1c27c5ced11e2301d16259771",
+      "category": "migration-history",
+      "matches": [
+        {
+          "line": 15,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 40,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 64,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 84,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 107,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 129,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 155,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 178,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 208,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 214,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 232,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 238,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 261,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 267,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 289,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 295,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 301,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 325,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 331,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 384,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 390,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 396,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 402,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 423,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 429,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 450,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 456,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 462,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 499,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 505,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 511,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 517,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 540,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 546,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 552,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 577,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 583,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 608,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 614,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 620,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 640,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 647,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 652,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 657,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 662,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 667,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 673,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 678,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 683,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 688,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 693,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 698,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 703,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 709,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 714,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 719,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 725,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 730,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 735,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 742,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 748,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 753,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 758,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 763,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 768,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 773,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 778,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 783,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 789,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 794,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 799,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 804,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 810,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 815,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 821,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 826,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 831,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 836,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 842,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 847,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 853,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 858,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 864,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 869,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 874,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 881,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 886,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 893,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 898,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 904,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 909,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 914,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 920,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 925,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 931,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 936,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 944,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 947,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 950,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 953,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 956,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 959,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 962,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 965,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 968,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 971,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 974,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 977,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 980,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 983,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 986,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 989,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 992,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 995,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 998,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 1001,
+          "symbol": "Crm_Account"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+      "gitBlob": "db005f5aeb90c31b100c3084fdebba1bb607ad40",
+      "sha256": "ea623f6552cdbc9f53d730a2135ffa7c06786ab8f545a2220ca5f630363a7e62",
+      "category": "model-snapshot",
+      "matches": [
+        {
+          "line": 255,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 255,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 322,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 325,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 325,
+          "symbol": "CrmActivity"
+        },
+        {
+          "line": 381,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 384,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 384,
+          "symbol": "CrmCollaborator"
+        },
+        {
+          "line": 428,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 431,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 431,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 516,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 519,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 519,
+          "symbol": "CrmErpLink"
+        },
+        {
+          "line": 568,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 571,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 571,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 621,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 624,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 624,
+          "symbol": "CrmIntakeMember"
+        },
+        {
+          "line": 661,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 664,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 664,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 852,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 855,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 855,
+          "symbol": "CrmMediaAsset"
+        },
+        {
+          "line": 911,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 914,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 914,
+          "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 964,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 967,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 967,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 1086,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 1089,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1089,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 1135,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 1138,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1138,
+          "symbol": "CrmPageTranslation"
+        },
+        {
+          "line": 1212,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 1215,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1215,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 1266,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 1269,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1269,
+          "symbol": "CrmPublicRoute"
+        },
+        {
+          "line": 1326,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 1329,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1329,
+          "symbol": "CrmPublicSubmission"
+        },
+        {
+          "line": 1390,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 1393,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1393,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 1462,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 1465,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1465,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 1524,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 1527,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1527,
+          "symbol": "CrmSourceTouch"
+        },
+        {
+          "line": 1589,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 1592,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 1592,
+          "symbol": "CrmStageHistory"
+        },
+        {
+          "line": 1647,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 21972,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21972,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 21974,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21974,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 21982,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21982,
+          "symbol": "CrmErpLink"
+        },
+        {
+          "line": 21984,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21984,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 21991,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21991,
+          "symbol": "CrmIntakeMember"
+        },
+        {
+          "line": 21993,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 21993,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 22000,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22000,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22002,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22002,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 22007,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22007,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 22012,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22012,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22018,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22018,
+          "symbol": "CrmMediaAsset"
+        },
+        {
+          "line": 22020,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22020,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 22027,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22027,
+          "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 22029,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22029,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22035,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22035,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22042,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22042,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 22044,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22044,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 22049,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22049,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22055,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22055,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 22061,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22061,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 22063,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22063,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 22070,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22070,
+          "symbol": "CrmPageTranslation"
+        },
+        {
+          "line": 22072,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22072,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 22078,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22078,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 22085,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22085,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 22087,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22087,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 22092,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22092,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 22099,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22099,
+          "symbol": "CrmPublicSubmission"
+        },
+        {
+          "line": 22101,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22101,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 22107,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22107,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22113,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22113,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 22115,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22115,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 22122,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22122,
+          "symbol": "CrmSourceTouch"
+        },
+        {
+          "line": 22124,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22124,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22461,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 22461,
+          "symbol": "CrmAccount"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Core/Services/Crm/CrmStateMachine.cs",
+      "gitBlob": "aeb6092cfbf36f9d8f437e63c2cdd108f87c003c",
+      "sha256": "0c8ab5c984a2f57c7f0103016fc2a55e1dc7d2f154fb509fb93c1659875f6e0a",
+      "category": "runtime",
+      "matches": [
+        {
+          "line": 1,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 3,
+          "symbol": "CP6.Core.Services.Crm"
+        },
+        {
+          "line": 6,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 8,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 9,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 11,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 12,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 13,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 14,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 15,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 16,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 17,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 20,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 21,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 23,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 24,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 25,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 26,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 27,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 28,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 29,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 32,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 35,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 38,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 44,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 48,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 50,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 54,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 56,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 57,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 58,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 59,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 60,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 61,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 62,
+          "symbol": "CrmOpportunityStage"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Crm/CrmCustomerModels.cs",
+      "gitBlob": "ebbab93ed460fae2950cad1fdcad5127b9a17c87",
+      "sha256": "d3aa948c2da5cfda0b4596fbc7f5c2e103b21ff7132fee501f71e227095902ae",
+      "category": "entity-model",
+      "matches": [
+        {
+          "line": 4,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 6,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 7,
+          "symbol": "CrmAccount"
+        },
+        {
+          "line": 16,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 19,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 20,
+          "symbol": "CrmContact"
+        },
+        {
+          "line": 35,
+          "symbol": "CrmAccount"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Crm/CrmEnums.cs",
+      "gitBlob": "952f8c6a3aff4d18d5f34efb1d22c48a46a176e5",
+      "sha256": "013dfc940c3938afcf1312eb342c51a68d6a7df8f8398d882a64a1070b347087",
+      "category": "entity-model",
+      "matches": [
+        {
+          "line": 1,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 3,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 14,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 25,
+          "symbol": "CrmActivityType"
+        },
+        {
+          "line": 35,
+          "symbol": "CrmSourceChannel"
+        },
+        {
+          "line": 41,
+          "symbol": "CrmPublicSubmissionStatus"
+        },
+        {
+          "line": 48,
+          "symbol": "CrmSiteStatus"
+        },
+        {
+          "line": 55,
+          "symbol": "CrmPageType"
+        },
+        {
+          "line": 66,
+          "symbol": "CrmPublicationStatus"
+        },
+        {
+          "line": 73,
+          "symbol": "CrmEntityTypes"
+        },
+        {
+          "line": 79,
+          "symbol": "CrmErpEntityTypes"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Crm/CrmLeadModels.cs",
+      "gitBlob": "3c4d699611d0ce101119d4c2cc2c51e377327af5",
+      "sha256": "f145eb2d2c5836c7b3ebe4a260e6b73f75acd0697e9f12743d3fe616b5fca350",
+      "category": "entity-model",
+      "matches": [
+        {
+          "line": 4,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 6,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 7,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 22,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 23,
+          "symbol": "CrmSourceChannel"
+        },
+        {
+          "line": 51,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 52,
+          "symbol": "CrmCollaborator"
+        },
+        {
+          "line": 60,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 61,
+          "symbol": "CrmActivity"
+        },
+        {
+          "line": 65,
+          "symbol": "CrmActivityType"
+        },
+        {
+          "line": 73,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 74,
+          "symbol": "CrmSourceTouch"
+        },
+        {
+          "line": 87,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 88,
+          "symbol": "CrmPublicSubmission"
+        },
+        {
+          "line": 95,
+          "symbol": "CrmPublicSubmissionStatus"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+      "gitBlob": "0a0cde0d55a6f6ec3d387faa34ef579c2d659db2",
+      "sha256": "393ef12b997fd87685bcf71989fc49cc691f3c7441d92c3f58ab23620f960640",
+      "category": "entity-model",
+      "matches": [
+        {
+          "line": 4,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 6,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 7,
+          "symbol": "CrmOpportunity"
+        },
+        {
+          "line": 14,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 30,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 31,
+          "symbol": "CrmStageHistory"
+        },
+        {
+          "line": 42,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 43,
+          "symbol": "CrmErpLink"
+        },
+        {
+          "line": 51,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 52,
+          "symbol": "CrmMergeRecord"
+        },
+        {
+          "line": 61,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 62,
+          "symbol": "CrmIntakeConfig"
+        },
+        {
+          "line": 73,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 74,
+          "symbol": "CrmIntakeMember"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+      "gitBlob": "5a9b8bff78fc1ef125a2c162b0ebaa66614155e4",
+      "sha256": "0a3a3189d8b0b9e2768c628a6d86b3eec6e0173068535cee04ad3bc87f442ece",
+      "category": "entity-model",
+      "matches": [
+        {
+          "line": 4,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 6,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 7,
+          "symbol": "CrmSite"
+        },
+        {
+          "line": 13,
+          "symbol": "CrmSiteStatus"
+        },
+        {
+          "line": 19,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 20,
+          "symbol": "CrmSitePage"
+        },
+        {
+          "line": 23,
+          "symbol": "CrmPageType"
+        },
+        {
+          "line": 30,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 31,
+          "symbol": "CrmPageRevision"
+        },
+        {
+          "line": 35,
+          "symbol": "CrmPublicationStatus"
+        },
+        {
+          "line": 40,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 41,
+          "symbol": "CrmPageTranslation"
+        },
+        {
+          "line": 54,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 55,
+          "symbol": "CrmMediaAsset"
+        },
+        {
+          "line": 66,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 67,
+          "symbol": "CrmPublicForm"
+        },
+        {
+          "line": 81,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 82,
+          "symbol": "CrmPublicRoute"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Tests/Crm/CrmStateMachineTests.cs",
+      "gitBlob": "48739c755baf489f62eb109533ddf63869847f1b",
+      "sha256": "f4069561f4722f0d0e66d0afe0625580cbe8c163a3e52fe5f54f4d8cade8d661",
+      "category": "tests",
+      "matches": [
+        {
+          "line": 1,
+          "symbol": "CP6.Core.Services.Crm"
+        },
+        {
+          "line": 2,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 9,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 10,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 11,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 12,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 13,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 14,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 17,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 18,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 19,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 20,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 21,
+          "symbol": "CrmLeadStatus"
+        },
+        {
+          "line": 22,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 28,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 28,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 36,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 37,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 38,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 46,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 47,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 48,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 51,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 51,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 52,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 52,
+          "symbol": "CrmStateMachine"
+        },
+        {
+          "line": 58,
+          "symbol": "CrmOpportunityStage"
+        },
+        {
+          "line": 58,
+          "symbol": "CrmStateMachine"
+        }
+      ]
+    },
+    {
+      "path": "CP6.Tests/Crm/CrmTenantIsolationTests.cs",
+      "gitBlob": "51f6c63b45f785a3e55a1b705fe530634d4dfa1a",
+      "sha256": "9532fb8c2f61e09a38702e83624400f8bbaf020e3342b10d8acc6d71fa377fc8",
+      "category": "tests",
+      "matches": [
+        {
+          "line": 3,
+          "symbol": "CP6.Entity.DomainModels.Crm"
+        },
+        {
+          "line": 18,
+          "symbol": "CrmLead"
+        },
+        {
+          "line": 25,
+          "symbol": "CrmSourceChannel"
+        },
+        {
+          "line": 38,
+          "symbol": "CrmLeads"
+        },
+        {
+          "line": 44,
+          "symbol": "CrmLeads"
+        },
+        {
+          "line": 48,
+          "symbol": "CrmLeads"
+        },
+        {
+          "line": 61,
+          "symbol": "CrmPublicRoute"
+        },
+        {
+          "line": 61,
+          "symbol": "CrmPublicRoutes"
+        },
+        {
+          "line": 72,
+          "symbol": "CrmPublicRoutes"
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/source-fence-rehearsal/Invoke-RestoredAcceptance.ps1",
+      "gitBlob": "172e38791c8773dea60d73edecde874a38e66756",
+      "sha256": "8f4edac65a4e66ed4035d11739080a6dff80807a30c6170f90f5f5cd41a2d845",
+      "category": "operations",
+      "matches": [
+        {
+          "line": 122,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 124,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 128,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 132,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 136,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 148,
+          "symbol": "Crm_Account"
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/source-fence-tests/ActualSourceFreezerTests.cs",
+      "gitBlob": "1d168be2baec6ea07f53da2669055e2a68cb4b9b",
+      "sha256": "d5ae8989fff00111f12e9aad55624519d4d2e8b3bf15858f8ec8d610c9f99d18",
+      "category": "tests",
+      "matches": [
+        {
+          "line": 67,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 68,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 87,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 92,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 121,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 123,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 138,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 145,
+          "symbol": "Crm_Account"
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/source-fence-tests/ActualSourceInspectorTests.cs",
+      "gitBlob": "14c6c1ab6bf68184051b7470fcf2e14341aac27a",
+      "sha256": "9121f0793160ce51ec6e7988b24ffbdedac4e4738b359e19e2ab32bcc1e9c5ae",
+      "category": "tests",
+      "matches": [
+        {
+          "line": 28,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 33,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 42,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 76,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 85,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 142,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 147,
+          "symbol": "Crm_Contact"
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/source-fence-tests/SourceFenceTests.cs",
+      "gitBlob": "3caf5a810b832984b6f719804c2f58d0de48fcad",
+      "sha256": "2bf8208eb94f3a6909d1f10ae25ec4bd562331c288d54a65cc0ac4d59d261268",
+      "category": "tests",
+      "matches": [
+        {
+          "line": 58,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 69,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 76,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 87,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 105,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 121,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 127,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 164,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 171,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 173,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 194,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 195,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 196,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 197,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 209,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 211,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 212,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 248,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 295,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 327,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 369,
+          "symbol": "Crm_Account"
+        }
+      ]
+    },
+    {
+      "path": "eng/crm/source-fence-tests/SqlFixture.cs",
+      "gitBlob": "32d633cc012c0d03038892cbd6cb380277ee7da2",
+      "sha256": "134b13b52c960668faf2033f8d672c387ff442c696cfab1bb91bf92034914756",
+      "category": "tests",
+      "matches": [
+        {
+          "line": 15,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 15,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 15,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 15,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 15,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 16,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 16,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 16,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 16,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 16,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 17,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 17,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 17,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 17,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 18,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 18,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 18,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 18,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 18,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 18,
+          "symbol": "Crm_StageHistory"
+        },
+        {
+          "line": 102,
+          "symbol": "Crm_Account"
+        }
+      ]
+    },
+    {
+      "path": "tools/CP6.Crm.SourceFence/SourceFence.cs",
+      "gitBlob": "a69736b254b206058f65a171e4508f06fbdabfc2",
+      "sha256": "31918f3ac1946b6acd97008ce6584471606774a8fb53538caa014b87999d4696",
+      "category": "operations",
+      "matches": [
+        {
+          "line": 30,
+          "symbol": "Crm_Account"
+        },
+        {
+          "line": 30,
+          "symbol": "Crm_Activity"
+        },
+        {
+          "line": 30,
+          "symbol": "Crm_Collaborator"
+        },
+        {
+          "line": 30,
+          "symbol": "Crm_Contact"
+        },
+        {
+          "line": 30,
+          "symbol": "Crm_ErpLink"
+        },
+        {
+          "line": 31,
+          "symbol": "Crm_IntakeConfig"
+        },
+        {
+          "line": 31,
+          "symbol": "Crm_IntakeMember"
+        },
+        {
+          "line": 31,
+          "symbol": "Crm_Lead"
+        },
+        {
+          "line": 31,
+          "symbol": "Crm_MediaAsset"
+        },
+        {
+          "line": 31,
+          "symbol": "Crm_MergeRecord"
+        },
+        {
+          "line": 32,
+          "symbol": "Crm_Opportunity"
+        },
+        {
+          "line": 32,
+          "symbol": "Crm_PageRevision"
+        },
+        {
+          "line": 32,
+          "symbol": "Crm_PageTranslation"
+        },
+        {
+          "line": 32,
+          "symbol": "Crm_PublicForm"
+        },
+        {
+          "line": 33,
+          "symbol": "Crm_PublicRoute"
+        },
+        {
+          "line": 33,
+          "symbol": "Crm_PublicSubmission"
+        },
+        {
+          "line": 33,
+          "symbol": "Crm_Site"
+        },
+        {
+          "line": 33,
+          "symbol": "Crm_SitePage"
+        },
+        {
+          "line": 33,
+          "symbol": "Crm_SourceTouch"
+        },
+        {
+          "line": 33,
+          "symbol": "Crm_StageHistory"
+        }
+      ]
+    }
+  ],
+  "runtimeReferencesRemain": true,
+  "formalC04BComplete": false,
+  "databaseWriteAbsenceVerified": false,
+  "productionCutoverVerified": false,
+  "releaseCycleObservationVerified": false,
+  "adoptionVerified": false,
+  "changesApplied": false,
+  "scope": {
+    "input": "Committed Git tree only; working copy and untracked files are not read.",
+    "extensions": [
+      ".config",
+      ".cs",
+      ".cshtml",
+      ".csproj",
+      ".js",
+      ".json",
+      ".jsx",
+      ".props",
+      ".ps1",
+      ".psm1",
+      ".py",
+      ".razor",
+      ".sh",
+      ".sql",
+      ".targets",
+      ".ts",
+      ".tsx",
+      ".vue",
+      ".xml",
+      ".yaml",
+      ".yml"
+    ],
+    "excludedDirectoryParts": [
+      ".git",
+      ".venv",
+      "bin",
+      "docs",
+      "node_modules",
+      "obj",
+      "vendor"
+    ],
+    "blockingCategories": [
+      "entity-model",
+      "model-snapshot",
+      "runtime",
+      "unclassified"
+    ],
+    "matching": "Exact lexical identifiers, including comments/string literals; conservative review inventory.",
+    "limitations": "Not a compiler call graph or database access audit. Dynamic SQL, reflection, external assemblies, unlisted extensions and formal adoption evidence need independent verification.",
+    "protectedCapabilities": "C01/C02 identity and C03 ERP identifiers are not legacy table/entity matches merely because they start with Crm.",
+    "retention": "Historical migrations, tests and source-protection tools are reviewed separately; this report never authorizes deletion."
+  }
+}

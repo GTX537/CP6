@@ -1,0 +1,113 @@
+{
+  "format": "CP6.C04B.DevelopmentAcceptance.v2",
+  "atUtc": "2026-09-16T13:27:59.793396+00:00",
+  "sourceCommit": "30ad1936eb0749b72dd0d1785ca95eaa4d154430",
+  "dataOrigin": "synthetic",
+  "environment": "local-sql-server",
+  "developmentChecksPassed": true,
+  "remoteMainDelivery": "pending at evidence assembly; separate main-delivery receipt required",
+  "totalPercentBeforeDelivery": 80,
+  "totalPercentAfterVerifiedDualMainDelivery": 100,
+  "productionAcceptance": false,
+  "tests": [
+    {
+      "report": "model-after.trx",
+      "sha256": "05ec49a9ef7fe0a92ede21a77304b870b0df66c4f9338cbb2931f15d5fe05320",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "report": "sql-acceptance.trx",
+      "sha256": "2447bada710f6c373e43245c4126254f6862710f0f29b17a46f6986cc250f933",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "report": "affected-crm-tests.trx",
+      "sha256": "e68a773dc912d9bfefbd7bca8e80573ce61ac446f017deb200cfeea2fe590b69",
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "report": "unit-final.txt",
+      "sha256": "2edf98517f1f9661b64cb63e49fb8534694e2a8d7d5790c25d76a0a67f8e45e2",
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "uniqueFinalPassingTests": 37,
+  "runtimeBlockingFilesBefore": 8,
+  "runtimeBlockingFilesAfter": 0,
+  "legacyTablesPopulated": 20,
+  "legacyRowsRetained": 20,
+  "legacyColumnMetadataAndRowsUnchanged": true,
+  "schemaFingerprintScope": "columns only; not full index/foreign-key definitions; marker migration has zero table/data operations",
+  "snapshotLegacyBlocksRemoved": 34,
+  "nonLegacySnapshotBytesPreservedAfterNormalization": true,
+  "historicalSourcesPreserved": [
+    {
+      "oldPath": "CP6.Entity/DomainModels/Crm/CrmCustomerModels.cs",
+      "newPath": "eng/crm/legacy-model-fixture/CrmCustomerModels.cs",
+      "gitContentPreserved": true
+    },
+    {
+      "oldPath": "CP6.Entity/DomainModels/Crm/CrmEnums.cs",
+      "newPath": "eng/crm/legacy-model-fixture/CrmEnums.cs",
+      "gitContentPreserved": true
+    },
+    {
+      "oldPath": "CP6.Entity/DomainModels/Crm/CrmLeadModels.cs",
+      "newPath": "eng/crm/legacy-model-fixture/CrmLeadModels.cs",
+      "gitContentPreserved": true
+    },
+    {
+      "oldPath": "CP6.Entity/DomainModels/Crm/CrmOpportunityModels.cs",
+      "newPath": "eng/crm/legacy-model-fixture/CrmOpportunityModels.cs",
+      "gitContentPreserved": true
+    },
+    {
+      "oldPath": "CP6.Entity/DomainModels/Crm/CrmSiteModels.cs",
+      "newPath": "eng/crm/legacy-model-fixture/CrmSiteModels.cs",
+      "gitContentPreserved": true
+    },
+    {
+      "oldPath": "CP6.Core/Services/Crm/CrmStateMachine.cs",
+      "newPath": "eng/crm/legacy-model-fixture/CrmStateMachine.cs",
+      "gitContentPreserved": true
+    }
+  ],
+  "historicalCrmFoundationUnchanged": true,
+  "localPublishFiles": 257,
+  "localHttpStatuses": [
+    200,
+    200,
+    200
+  ],
+  "localHttpScope": "Published API startup, loopback HTTP, SQL connectivity and in-memory cache only; not end-to-end identity or production readiness",
+  "temporaryDatabasesRemaining": 0,
+  "reused": "C01-C03, five source/enable SQL gates, six database restores and C04A actual local adoption retain their original evidence; no rerun",
+  "retainedFailures": [
+    {
+      "file": "initial-red.txt",
+      "sha256": "1714402be6bc61a9cc30a220e08368f24cee0da7f030245ec26955688dfa3301"
+    },
+    {
+      "file": "model-before.trx",
+      "sha256": "dde13bb500b34e0ea71e2fd94f881fcc52264f08ce31164a49a763c00e819dd7"
+    },
+    {
+      "file": "model-before.log",
+      "sha256": "ef124bfecb4b0d6ebe620d824ebc6657b23b06fbf811dc88e286b140d51fd8d2"
+    }
+  ],
+  "limitations": [
+    "Synthetic migration history tests the new incremental marker, not the full historical chain.",
+    "Identity and ERP checks prove model/storage roundtrips, not new end-to-end broker or login execution.",
+    "Original adopted host/package was not replaced; no production deployment or Actions invocation.",
+    "Real user adoption, release-cycle observation and physical legacy DROP are separate future work."
+  ]
+}
