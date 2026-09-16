@@ -1,0 +1,10 @@
+{
+  "pid": 4828,
+  "reason": "Activation SQL timeout; Windows available memory observed 602 MiB; diagnose without overlapping owned runtime",
+  "startUtcTicks": 639251511606642385,
+  "status": "stopped",
+  "oldWritersReopened": false,
+  "atUtc": "2026-09-16T10:37:58.9324319+00:00",
+  "databasesRestored": false,
+  "foreignProcessesStopped": false
+}

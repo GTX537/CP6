@@ -1,0 +1,27 @@
+{
+  "systemMemory": [
+    {
+      "total_physical_memory_kb": 6418432,
+      "available_physical_memory_kb": 2945960,
+      "system_memory_state_desc": "Available physical memory is high"
+    }
+  ],
+  "configuration": [
+    {
+      "name": "min server memory (MB)",
+      "value_in_use": 16
+    },
+    {
+      "name": "max server memory (MB)",
+      "value_in_use": 2147483647
+    }
+  ],
+  "atUtc": "2026-09-16T10:41:24.0931666+00:00",
+  "processMemory": [
+    {
+      "physical_memory_in_use_kb": 4194304,
+      "locked_page_allocations_kb": 0,
+      "process_physical_memory_low": false
+    }
+  ]
+}

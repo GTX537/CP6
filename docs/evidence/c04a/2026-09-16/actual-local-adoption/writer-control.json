@@ -1,0 +1,30 @@
+{
+  "format": "CP6.C04A.ActualWriterControl.v1",
+  "atUtc": "2026-09-16T10:15:03.5060965+00:00",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "approvalEvidenceSha256": "fda24100d831b325e5eec6620d34a8762973312d035d54f795338b2c8b918766",
+  "reviewManifestSha256": "531e2810d3ec3a010dd0a646a0cb4cca9a998d33a49cebd53ba4e260feaf93eb",
+  "administratorReceiptSha256": "443afc2cc1b04f76e627deb2fe8f72bf6092be2389a2a84e0fd0c79289a25de3",
+  "deploymentServiceStoppedDisabled": true,
+  "sqlAgentStopped": true,
+  "noAgentProcessesObserved": true,
+  "rootApiStoppedNoRestart": true,
+  "retiredEntrypoints": 8,
+  "entryPreservationSha256": "42ebfd88f35150c8f968749b6f2f01a47a9ba5c6736162c2325bd1537b6c4ef9",
+  "currentObservationSha256": "efecb1033ec9c75d4b913f1364b125e1ff4c231771441885750e9c80a27246f0",
+  "actualDatabaseIdentitiesMatch": 6,
+  "requests": [
+    {
+      "activeRequests": [],
+      "engine": "native"
+    },
+    {
+      "activeRequests": [],
+      "engine": "docker"
+    }
+  ],
+  "administratorManualWindow": "User-established exclusive maintenance window; privileged/manual actions must remain coordinated",
+  "scope": "Reviewed local writer inventory; source SQL freeze and target first-write protection still follow",
+  "A11RuntimeConditionsSatisfied": true,
+  "oldTestsRerun": false
+}

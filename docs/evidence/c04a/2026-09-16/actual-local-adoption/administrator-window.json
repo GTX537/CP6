@@ -1,0 +1,25 @@
+{
+    "format":  "CP6.C04A.AdministratorWindow.v1",
+    "startedAtUtc":  "2026-09-16T10:06:49.2934809+00:00",
+    "computer":  "LAPTOP-3QQ44FJS",
+    "administrator":  "LAPTOP-3QQ44FJS\\tt",
+    "reviewedManifestSha256":  "531e2810d3ec3a010dd0a646a0cb4cca9a998d33a49cebd53ba4e260feaf93eb",
+    "serviceName":  "vstsagent.gaobubao.CP6-Deploy.LAPTOP-3QQ44FJS",
+    "before":  {
+                   "processId":  6376,
+                   "startMode":  "Auto",
+                   "state":  "Running"
+               },
+    "serviceConfigurationChangeAttempted":  true,
+    "serviceStopAttempted":  true,
+    "databaseMutationPerformed":  false,
+    "status":  "agent-stopped-and-disabled",
+    "after":  {
+                  "processId":  0,
+                  "startMode":  "Disabled",
+                  "state":  "Stopped"
+              },
+    "sqlAgentState":  "Stopped",
+    "noWorkerObserved":  true,
+    "completedAtUtc":  "2026-09-16T10:06:53.5465881+00:00"
+}

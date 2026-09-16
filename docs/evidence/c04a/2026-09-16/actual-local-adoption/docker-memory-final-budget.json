@@ -1,0 +1,27 @@
+{
+  "originalValueEvidence": "docker-memory-observation.json",
+  "nativeSqlSettingsChanged": false,
+  "atUtc": "2026-09-16T10:43:24.1612022+00:00",
+  "before": [
+    {
+      "name": "show advanced options",
+      "value_in_use": 0
+    },
+    {
+      "name": "max server memory (MB)",
+      "value_in_use": 2048
+    }
+  ],
+  "sqlRestarted": false,
+  "reason": "2 GiB ceiling exceeded actual managed memory of 1.66 GiB and did not relieve Windows pressure; set local Docker instance budget equal to native 1 GiB",
+  "after": [
+    {
+      "name": "show advanced options",
+      "value_in_use": 0
+    },
+    {
+      "name": "max server memory (MB)",
+      "value_in_use": 1024
+    }
+  ]
+}

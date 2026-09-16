@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-09-16T10:38:14.8702197+00:00",
+  "targets": [
+    {
+      "gate": {
+        "State": "Closed",
+        "Generation": 0,
+        "OrganizationId": "095f3443-3163-4427-be77-1819a49cddba",
+        "FirstWriteAtUtc": null
+      },
+      "role": "business-primary"
+    },
+    {
+      "gate": {
+        "State": "Closed",
+        "Generation": 0,
+        "OrganizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+        "FirstWriteAtUtc": null
+      },
+      "role": "business-isolation"
+    }
+  ]
+}

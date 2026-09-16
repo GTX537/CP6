@@ -1,0 +1,23 @@
+{
+  "sqlMemory": [
+    {
+      "physical_memory_in_use_kb": 265032,
+      "process_physical_memory_low": false,
+      "process_virtual_memory_low": false
+    }
+  ],
+  "atUtc": "2026-09-16T10:38:14.6586608+00:00",
+  "requests": [
+    {
+      "session_id": 53,
+      "status": "running",
+      "command": "SELECT",
+      "wait_type": null,
+      "wait_time": 0,
+      "blocking_session_id": 0,
+      "database_name": "master",
+      "program_name": "CP6-C04A-six-db-recovery-preparation"
+    }
+  ],
+  "availableWindowsMiB": 1710.0
+}

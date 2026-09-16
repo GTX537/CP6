@@ -1,0 +1,49 @@
+{
+  "atUtc": "2026-09-16T10:23:23.3020535+00:00",
+  "actualSourcesFrozen": false,
+  "sources": [
+    {
+      "path": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\native-core-before-freeze.json",
+      "sha256": "b083da4b8418c2a383d6967b58c9dffa757aa72d9a811b5f69184b2a1deee05d",
+      "databaseGuid": "49E6A7EF-6A3C-46A9-A389-F72315F5CB1B",
+      "database": "CP6DB",
+      "opaqueModuleCount": 0,
+      "scopeSha256": "dae70d6ed5625b4cbbfac7f02aaecd27c002d1064ca21ad3360b9e49425388cc",
+      "sqlAgentJobCount": 1,
+      "externalWriterControlSha256": "e374a5e9a7f671ec6c498d71882aaf82489fd63674dc8e71122d4bd3db500de3",
+      "enabledSqlAgentJobCount": 1,
+      "sourceTableCount": 20,
+      "totalSourceRows": 0,
+      "role": "native-core"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\preview-core-before-freeze.json",
+      "sha256": "09acaeb2c3ce48d74775ec958d8407480deb42b3a664d7bde7db86974acafeab",
+      "databaseGuid": "4058A004-2F83-4457-BD77-A7BF37CC5FDD",
+      "database": "CP6C02Live_9d8a22de291c44cd8516a3d81888fcc3",
+      "opaqueModuleCount": 0,
+      "scopeSha256": "21c4187046db46bff8c1443689e62fdc55ceeff5db5a7182207c77e15b050b3d",
+      "sqlAgentJobCount": 1,
+      "externalWriterControlSha256": "e374a5e9a7f671ec6c498d71882aaf82489fd63674dc8e71122d4bd3db500de3",
+      "enabledSqlAgentJobCount": 1,
+      "sourceTableCount": 20,
+      "totalSourceRows": 0,
+      "role": "preview-core"
+    },
+    {
+      "path": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\docker-core-before-freeze.json",
+      "sha256": "2cf396a9af83bbf6f5a0c533b8f32bfae476411a5ebb35636b098e8c13fc852c",
+      "databaseGuid": "F59EDA72-6FAC-4056-900D-A96E254F9BC1",
+      "database": "CP6DB",
+      "opaqueModuleCount": 0,
+      "scopeSha256": "e4aff242aca80acb36c13520f36ef00e8263c90167166a399e5baacdcb5f4d17",
+      "sqlAgentJobCount": 0,
+      "externalWriterControlSha256": "e374a5e9a7f671ec6c498d71882aaf82489fd63674dc8e71122d4bd3db500de3",
+      "enabledSqlAgentJobCount": 0,
+      "sourceTableCount": 20,
+      "totalSourceRows": 0,
+      "role": "docker-core"
+    }
+  ],
+  "targetSetAnchorSha256": "6281a6a9ffcd1cb75378fe9fd695914165270791dd650338c0f5986f0bd2c061"
+}

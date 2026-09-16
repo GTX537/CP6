@@ -1,0 +1,259 @@
+{
+  "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+  "actorId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+  "roleId": 1,
+  "reason": "Missing original C02 calendar capabilities",
+  "apiChanges": [
+    {
+      "status": 200,
+      "before": [],
+      "endpoint": "/api/pub/role-perm/menu-action/9901",
+      "after": [
+        {
+          "sort": 40,
+          "actionName": "分配/移交",
+          "actionCode": "assign"
+        }
+      ]
+    },
+    {
+      "status": 200,
+      "before": [],
+      "endpoint": "/api/pub/role-perm/menu-action/805",
+      "after": [
+        {
+          "sort": 0,
+          "actionName": "查看官网内容",
+          "actionCode": "query"
+        },
+        {
+          "sort": 10,
+          "actionName": "配置官网与表单",
+          "actionCode": "configure"
+        }
+      ]
+    },
+    {
+      "status": 200,
+      "before": {
+        "menuIds": [
+          9901,
+          9902,
+          9903,
+          9904,
+          9905,
+          9906
+        ],
+        "actions": [
+          {
+            "menuId": 9901,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9901,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9901,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9901,
+            "actionCode": "view-pii"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "delete"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "delete"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9904,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9904,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9905,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9905,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "delete"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "query"
+          }
+        ]
+      },
+      "endpoint": "/api/pub/role-perm/1",
+      "after": {
+        "menuIds": [
+          805,
+          9901,
+          9902,
+          9903,
+          9904,
+          9905,
+          9906
+        ],
+        "actions": [
+          {
+            "menuId": 9901,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9901,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9901,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9901,
+            "actionCode": "view-pii"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "delete"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9902,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "delete"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9903,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9904,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9904,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9905,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9905,
+            "actionCode": "query"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "add"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "delete"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "edit"
+          },
+          {
+            "menuId": 9906,
+            "actionCode": "query"
+          },
+          {
+            "actionCode": "assign",
+            "menuId": 9901
+          },
+          {
+            "actionCode": "query",
+            "menuId": 805
+          },
+          {
+            "actionCode": "configure",
+            "menuId": 805
+          }
+        ]
+      }
+    },
+    {
+      "status": 200,
+      "before": [
+        {
+          "resourceKey": "crm-lead",
+          "scopeType": 1,
+          "customDeptIds": []
+        }
+      ],
+      "endpoint": "/api/pub/role-perm/data-scope/1",
+      "after": [
+        {
+          "resourceKey": "crm-lead",
+          "scopeType": 4,
+          "customDeptIds": [
+            "d1a2a1af-75b7-4634-84d2-b07dce6d7e5a",
+            "f6841a23-842f-4953-b225-1195e898be1b"
+          ]
+        }
+      ]
+    }
+  ]
+}

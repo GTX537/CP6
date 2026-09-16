@@ -1,0 +1,24 @@
+{
+  "containers": [
+    {
+      "action": "started-after-kafka-ready",
+      "before": "exited",
+      "id": "b9c3009c58bcb4fe4642a1185f682c5c462bb9e1f20d30534c9f74df0b3c04ba",
+      "name": "/cp6-c02-live-0aa59de164ad-publisher-dapr-1"
+    },
+    {
+      "action": "started-after-kafka-ready",
+      "before": "exited",
+      "id": "009c8d2588691183adb23addffb2e4660c70268e78971290adc7bffbd4c7217e",
+      "name": "/cp6-c02-live-0aa59de164ad-receiver-dapr-1"
+    },
+    {
+      "action": "unchanged",
+      "before": "running",
+      "id": "9e351205c9104b1b2839a6a853d23797b60f8b62dcfd918bbe59893154de1967",
+      "name": "/cp6-c02-live-0aa59de164ad-kafka-1"
+    }
+  ],
+  "cause": "Both Dapr processes initially exited before Kafka accepted connections; retained logs report broker connection refused, OOM=false.",
+  "atUtc": "2026-09-16T10:39:43.9734621+00:00"
+}

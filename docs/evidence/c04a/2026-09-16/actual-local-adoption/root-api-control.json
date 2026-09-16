@@ -1,0 +1,19 @@
+{
+  "atUtc": "2026-09-16T10:11:47.7263598+00:00",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "containerId": "9f76c764f56e20239b5da3b769184f6e742e992a8baf1b20bbc027a08c0ad433",
+  "name": "/cp6-api",
+  "imageId": "sha256:3eac813b45fe53512e96805850da62050234ac7926b96f20a9f26c715f837a1e",
+  "configurationSha256": "f7a799b98b2d1a66adda6b98f2a93a5724db7235300e093a8870f09946e42b73",
+  "originalRestartPolicy": {
+    "Name": "unless-stopped",
+    "MaximumRetryCount": 0
+  },
+  "originalState": "running",
+  "status": "stopped-no-restart",
+  "agentState": "Stopped",
+  "agentStartMode": "Disabled",
+  "sqlAgentState": "Stopped",
+  "databasesStopped": false,
+  "completedAtUtc": "2026-09-16T10:11:48.4953548+00:00"
+}

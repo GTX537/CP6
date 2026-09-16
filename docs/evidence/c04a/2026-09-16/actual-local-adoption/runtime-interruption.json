@@ -1,0 +1,32 @@
+{
+  "format": "CP6.C04A.RuntimeInterruption.v1",
+  "observedAtUtc": "2026-09-16T11:16:46.371954+00:00",
+  "originalRunId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "observed": "Docker Desktop, WSL engine and five owned preview processes were absent on user-requested continuation; cause not established; Windows had not rebooted.",
+  "persistedNativeStateEvidence": "native-post-interruption-state.json",
+  "oldWriters": {
+    "deploymentAgent": "Stopped/Disabled",
+    "sqlAgent": "Stopped/Manual",
+    "oldEntrypointsRetired": 8
+  },
+  "dockerStartupErrors": [
+    "Inference manager stale AF_UNIX socket: Windows error1920",
+    "Secrets Engine stale engine.sock: Windows error1920; same-parent directory rename denied even using administrator token"
+  ],
+  "approvedRepair": "User explicitly approved preserving the exact Docker/run runtime socket directory and restarting Docker. That operation completed; no data, images, configuration or volumes reset.",
+  "remaining": "Windows must release the second stale runtime object before Docker/transport and the reviewed host can be restored; a controlled Windows restart is the next proposed recovery action, not authorized or executed yet.",
+  "progress": {
+    "A10": 100,
+    "A11": 100,
+    "A12": 0,
+    "c04aCompleted": 11,
+    "c04aTotal": 12,
+    "overallChecklistPercent": 78.3333333333,
+    "formalMilestonesPercent": 60
+  },
+  "initializationRepeated": false,
+  "sourceFreezeRepeated": false,
+  "targetEnableRepeatedAfterSuccess": false,
+  "successfulCalendarWriteRepeated": false,
+  "factoryReset": false
+}

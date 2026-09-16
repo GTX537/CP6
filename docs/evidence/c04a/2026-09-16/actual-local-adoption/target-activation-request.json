@@ -1,0 +1,53 @@
+{
+  "format": "crm-local-target-activation-v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "configurationSha256": "f7254b52d1d9d4124aed25a064d7076d5f1c4afb81f0ee4394769936d960608b",
+  "approvalEvidenceSha256": "fda24100d831b325e5eec6620d34a8762973312d035d54f795338b2c8b918766",
+  "anchor": {
+    "targets": [
+      {
+        "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+        "targetBindingSha256": "4522a29cffc10399458d89f7c3b7ad7793709521b143ffeef66ccd5f0757bca8",
+        "format": "CP6.CRM.TargetRollbackAnchor.v1"
+      },
+      {
+        "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+        "targetBindingSha256": "61e78afcf76095f35f7a48edd61240dda0946fdff5d529fdd86ee2fb3c1c5c96",
+        "format": "CP6.CRM.TargetRollbackAnchor.v1"
+      }
+    ],
+    "format": "CP6.CRM.TargetRollbackSetAnchor.v1"
+  },
+  "targets": [
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "expectedGeneration": 0
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "expectedGeneration": 0
+    }
+  ],
+  "sources": [
+    {
+      "connectionEnvironmentVariable": "C04A_ACTIVATION_SOURCE_NATIVE_CORE",
+      "freezeRequestPath": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\native-core-freeze-request.json",
+      "freezeRequestFileSha256": "4e37c4ba222cf141ba45d1884c812943cb9f12956e24f6969cb5ee67c79c6c29",
+      "sourceFreezeRequestSha256": "8271748a0c4d2e7df0ed46e09e81c2599634d57eb1afbce474b5a9c216c073e2"
+    },
+    {
+      "connectionEnvironmentVariable": "C04A_ACTIVATION_SOURCE_DOCKER_CORE",
+      "freezeRequestPath": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\docker-core-freeze-request.json",
+      "freezeRequestFileSha256": "32ed4f8182c0a38c805b3b4a6faec5530dc7256527e2752e10e5ba2ee828859e",
+      "sourceFreezeRequestSha256": "afcb2a1572c304a1d31e3581aec1bd67d5d95d65c10158335730e649bbe3f225"
+    },
+    {
+      "connectionEnvironmentVariable": "C04A_ACTIVATION_SOURCE_PREVIEW_CORE",
+      "freezeRequestPath": "D:\\CP6-local-publish\\20260916\\private\\c04a-actual-adoption-8b969e49dffe4c97b0961c082cd037fb\\preview-core-freeze-request.json",
+      "freezeRequestFileSha256": "6282024bd12425be765961eafede467a7b65780cb0123b1db7818b5f5b26270e",
+      "sourceFreezeRequestSha256": "bd82f857a34225b15e3670dc8c08ce2c4c7ba13ab8e35e6572c62d5436d1dcd8"
+    }
+  ],
+  "corePackageManifestPath": "D:\\CP6-audit-results\\20260916\\actual-local-adoption/core-source-proof-package.json",
+  "corePackageManifestSha256": "d3b823c07db2bfb02f80400245561fb04ad770f18d60db1541482a6bf38b7715"
+}

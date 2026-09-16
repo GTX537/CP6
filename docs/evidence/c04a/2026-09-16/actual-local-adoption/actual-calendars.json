@@ -1,0 +1,149 @@
+{
+  "format": "CP6.C04A.ActualCalendarPublication.v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "startedAtUtc": "2026-09-16T06:50:02.0234177-04:00",
+  "status": "actual-calendars-published",
+  "stage": "complete",
+  "actualOriginalDatabases": true,
+  "approvalSha256": "fda24100d831b325e5eec6620d34a8762973312d035d54f795338b2c8b918766",
+  "existingAccountsOnly": true,
+  "syntheticLeadsCreated": false,
+  "observations": [
+    {
+      "priorLeadListEvidence": "actual-adoption-http.json",
+      "nativePasswordLogin": 200,
+      "actorId": "95bffc82-f979-4bb4-bf2e-9cbe9c9a9110",
+      "beforeTargetEnable": false,
+      "sessionIdentity": 200,
+      "oidcPkceCallback": 302,
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "workspaceRead": 200
+    },
+    {
+      "priorLeadListEvidence": "actual-adoption-http.json",
+      "nativePasswordLogin": 200,
+      "actorId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+      "beforeTargetEnable": false,
+      "sessionIdentity": 200,
+      "oidcPkceCallback": 302,
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "workspaceRead": 200
+    }
+  ],
+  "calendars": [
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "actorId": "95bffc82-f979-4bb4-bf2e-9cbe9c9a9110",
+      "calendarVersion": "8691f3244eb44801981c4ae359138581",
+      "draftEtag": "\"AAAAAAAAVhw=\"",
+      "saveStatus": 200,
+      "savedAtUtc": "2026-09-16T06:50:07.0821774-04:00",
+      "request": {
+        "timeZone": "America/New_York",
+        "periods": [
+          {
+            "day": 1,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 2,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 3,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 4,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 5,
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "holidays": [],
+        "defaultDepartmentId": "458f79d1-d340-473e-894e-2d131a2069da",
+        "siteKey": "c02-primary",
+        "enabled": true
+      },
+      "saveResponseSha256": "64fa325e7ded26684ad6eb6aec283deed6dff2438889b6b3985246f899ddf87d",
+      "preview": {
+        "assignmentDueAtUtc": "2026-09-16T13:30:00Z",
+        "calendarVersion": "8691f3244eb44801981c4ae359138581",
+        "responseDueAtUtc": "2026-09-16T17:00:00Z",
+        "status": 200
+      },
+      "publishedEtag": "\"AAAAAAAAVi4=\"",
+      "publishStatus": 200,
+      "effectiveAtUtc": "2026-09-16T10:50:08.2968902Z",
+      "publishedResponseSha256": "811b0eefaad3db8fe1d25f229a0935ac8db65371cb7cef9094d1eb4b4201fc9a",
+      "apiStatus": "Active",
+      "readBackStatus": 200,
+      "publicFormStatus": 200
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "actorId": "ab29676f-b2b9-4699-bf52-71816d86b79e",
+      "calendarVersion": "685a4ccfd7b54bbeb4fefd43015347bc",
+      "draftEtag": "\"AAAAAAAAVhg=\"",
+      "saveStatus": 200,
+      "savedAtUtc": "2026-09-16T10:51:25.0518266+00:00",
+      "request": {
+        "timeZone": "America/New_York",
+        "periods": [
+          {
+            "day": 1,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 2,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 3,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 4,
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": 5,
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "holidays": [],
+        "defaultDepartmentId": "f6841a23-842f-4953-b225-1195e898be1b",
+        "siteKey": "c02-isolated",
+        "enabled": true
+      },
+      "saveResponseSha256": "388caeeac7ce9f08e4c2fd9389894c05b39605284fa7b57a63e652ec1089aedb",
+      "preview": {
+        "calendarVersion": "685a4ccfd7b54bbeb4fefd43015347bc",
+        "assignmentDueAtUtc": "2026-09-16T13:30:00Z",
+        "responseDueAtUtc": "2026-09-16T17:00:00Z",
+        "status": 200
+      },
+      "publishedEtag": "\"AAAAAAAAViw=\"",
+      "publishStatus": 200,
+      "effectiveAtUtc": "2026-09-16T10:51:27.8381783Z",
+      "publishedResponseSha256": "949ea4ecf17c1ebccb1385c876d854d00f9a124201cf59a177409afcc6d7c3a9",
+      "readBackStatus": 200,
+      "publicFormStatus": 200
+    }
+  ],
+  "activationResultSha256": "c53dfbdabffaa7fdba491d2eeb58d0172ca1a82418c5ecc6fca11e6f3507f9ad",
+  "finishedAtUtc": "2026-09-16T10:51:30.1452044+00:00",
+  "operatorStatusCorrection": "Immediate published calendars are represented as Active by the API. First publication returned 200 and was not repeated."
+}
