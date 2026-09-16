@@ -1,0 +1,14 @@
+{
+  "receiverHttpExposed": false,
+  "publisherHttpHealthStatus": 204,
+  "atUtc": "2026-09-16T12:24:44.7400188+00:00",
+  "publisherHttpPort": 60958,
+  "publisherGrpcPort": 60959,
+  "earlierProbeError": {
+    "result": "ResponseEnded",
+    "interpretation": "Probe addressed a gRPC listener as HTTP; not a receiver health observation",
+    "actualProtocol": "gRPC",
+    "attemptedProtocol": "HTTP",
+    "port": 60959
+  }
+}

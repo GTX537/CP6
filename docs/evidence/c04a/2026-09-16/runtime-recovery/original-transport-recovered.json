@@ -1,0 +1,52 @@
+{
+  "atUtc": "2026-09-16T12:21:46.8137613+00:00",
+  "status": "original-transport-recovered",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "dockerEngineVersion": "29.8.0",
+  "dockerDatabase": {
+    "serverName": "46deb8044b4f",
+    "name": "CP6DB",
+    "databaseGuid": "f59eda72-6fac-4056-900d-a96e254f9bc1",
+    "familyGuid": "087348f5-6af0-49cf-af22-eedae73272e0"
+  },
+  "dockerSourceControl": {
+    "State": "Frozen",
+    "Generation": 1,
+    "RunId": "8b969e49-dffe-4c97-b096-1c082cd037fb"
+  },
+  "sqlMaxServerMemoryMiB": 1024,
+  "originalContainers": [
+    {
+      "name": "/cp6-c02-live-0aa59de164ad-publisher-dapr-1",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "id": "b9c3009c58bcb4fe4642a1185f682c5c462bb9e1f20d30534c9f74df0b3c04ba",
+      "configurationSha256": "81263f9bf9934a13617f9a2af615d1788c82f6ae2b17d88e46d7908806492c2b",
+      "before": "exited"
+    },
+    {
+      "name": "/cp6-c02-live-0aa59de164ad-receiver-dapr-1",
+      "mountsSha256": "7d68d71aa87b320e6cc8597890723ac62d63e416a096470d3d642a8e5fae15ca",
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5",
+      "id": "009c8d2588691183adb23addffb2e4660c70268e78971290adc7bffbd4c7217e",
+      "configurationSha256": "e2a76c71f98a30bc1dc86af5214404e62edc9ea86bbefe0ea34d5164bcdab2fa",
+      "before": "exited"
+    },
+    {
+      "name": "/cp6-c02-live-0aa59de164ad-kafka-1",
+      "mountsSha256": "bb68888991b975d33dcd7f72134771f937d6bdf9fed35ca2c61331faf91a3b40",
+      "imageId": "sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837",
+      "id": "9e351205c9104b1b2839a6a853d23797b60f8b62dcfd918bbe59893154de1967",
+      "configurationSha256": "03a9ebc0e7acc584d995b50af506e19ef9459a30d15384bc4f76833b2a41beb9",
+      "before": "exited"
+    }
+  ],
+  "kafkaReadyBeforeDaprStart": true,
+  "kafkaReadyAtUtc": "2026-09-16T12:21:46.2755898+00:00",
+  "oldApiStopped": true,
+  "oldApiRestart": "no",
+  "dataRestored": false,
+  "containersRecreated": false,
+  "credentialValuesRecorded": false,
+  "oldTestsRerun": false
+}

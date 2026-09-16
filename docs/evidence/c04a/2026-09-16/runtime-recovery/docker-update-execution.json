@@ -1,0 +1,22 @@
+{
+  "atUtc": "2026-09-16T12:06:18.9963552+00:00",
+  "status": "updated-runtime-not-yet-verified",
+  "oldVersion": "4.68.0.223695",
+  "targetVersion": "4.91.0.239619",
+  "installerSha256": "ac405b09942701770d581b173747fc1024cf0e6047cbe60f13d1df85437311ac",
+  "protectionShadowId": "{49446845-52B0-4A37-A367-4F2C64AD5476}",
+  "arguments": [
+    "install",
+    "--quiet",
+    "--backend=wsl-2"
+  ],
+  "installationMode": "retain all-users",
+  "configurationResetRequested": false,
+  "uninstallRequested": false,
+  "dataDeletionRequested": false,
+  "crmPackageRebuilt": false,
+  "administratorToken": true,
+  "exitCode": 0,
+  "installedVersion": "4.91.0.239619",
+  "finishedAtUtc": "2026-09-16T12:10:46.4029629+00:00"
+}
