@@ -1,0 +1,249 @@
+﻿path,module,lines,routes,referenced_by,apis_transitive,template_components,permission_directives,style_scoped,inline_style_count,media_rules
+cp6.web/src/views/dashboard/components/DonutChart.vue,dashboard,152,,cp6.web/src/views/dashboard/DashboardView.vue,,,0,True,1,0
+cp6.web/src/views/dashboard/DashboardView.vue,dashboard,1055,/dashboard,cp6.web/src/router/index.ts,cp6.web/src/api/erp/order.ts | cp6.web/src/api/sys/dashboard.ts | cp6.web/src/api/wms/stockDwell.ts,CpStatCard,0,True,26,3
+cp6.web/src/views/dashboard/HomeView.vue,dashboard,3,,,,,0,False,0,0
+cp6.web/src/views/DetachedWorkspaceView.vue,_root,27,/oa/designer/window | /wf/form-designer/window | /wf/flow-designer/window,cp6.web/src/router/index.ts,,,0,True,0,0
+cp6.web/src/views/erp/BackorderListView.vue,erp,240,/erp/backorder,cp6.web/src/router/index.ts,cp6.web/src/api/erp/backorder.ts,CpListPage | CpPageShell | CpTag,2,True,0,1
+cp6.web/src/views/erp/bp/ApTab.vue,erp,15,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,False,1,0
+cp6.web/src/views/erp/bp/ArTab.vue,erp,18,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,False,2,0
+cp6.web/src/views/erp/bp/BasicInfoTab.vue,erp,74,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,True,21,0
+cp6.web/src/views/erp/bp/BillingTab.vue,erp,34,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,True,14,0
+cp6.web/src/views/erp/bp/CustomerTab.vue,erp,85,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,True,42,0
+cp6.web/src/views/erp/bp/DeliveryTab.vue,erp,24,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,True,9,0
+cp6.web/src/views/erp/bp/PaymentTab.vue,erp,13,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,False,0,0
+cp6.web/src/views/erp/bp/PaySchTab.vue,erp,41,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,True,5,0
+cp6.web/src/views/erp/bp/ReceiptTab.vue,erp,38,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,True,18,0
+cp6.web/src/views/erp/bp/SupplierTab.vue,erp,58,,cp6.web/src/views/erp/BusinessPartnerView.vue,,,0,True,15,0
+cp6.web/src/views/erp/BusinessPartnerListView.vue,erp,228,/business-partner-list,cp6.web/src/router/index.ts,cp6.web/src/api/erp/businessPartner.ts,CpTag,1,True,18,0
+cp6.web/src/views/erp/BusinessPartnerView.vue,erp,284,/business-partner | /business-partner/window,cp6.web/src/router/index.ts,cp6.web/src/api/erp/businessPartner.ts,CpTag,2,True,6,0
+cp6.web/src/views/erp/CreditNoteListView.vue,erp,126,/erp/credit-note,cp6.web/src/router/index.ts,cp6.web/src/api/erp/creditNote.ts,CpListPage | CpPageShell,0,False,0,0
+cp6.web/src/views/erp/estimate/Step1BasicInfo.vue,erp,634,,cp6.web/src/views/erp/EstimateCalcView.vue,cp6.web/src/api/erp/master.ts,,0,True,16,0
+cp6.web/src/views/erp/estimate/Step2Processes.vue,erp,248,,cp6.web/src/views/erp/EstimateCalcView.vue,cp6.web/src/api/erp/master.ts,,0,True,4,0
+cp6.web/src/views/erp/estimate/Step3Result.vue,erp,185,,cp6.web/src/views/erp/EstimateCalcView.vue,cp6.web/src/api/erp/estimateCalc.ts,,0,True,3,0
+cp6.web/src/views/erp/EstimateCalcListView.vue,erp,148,/estimate-calc-list,cp6.web/src/router/index.ts,cp6.web/src/api/erp/estimateCalc.ts | cp6.web/src/api/erp/master.ts,CpListPage,4,False,0,0
+cp6.web/src/views/erp/EstimateCalcView.vue,erp,485,/estimate-calc | /estimate-calc/window,cp6.web/src/router/index.ts,cp6.web/src/api/erp/estimateCalc.ts | cp6.web/src/api/erp/master.ts,,2,True,1,0
+cp6.web/src/views/erp/FscChecklistView.vue,erp,212,/fsc-checklist,cp6.web/src/router/index.ts,cp6.web/src/api/erp/fsc.ts,CpTag,1,True,13,0
+cp6.web/src/views/erp/FxRateView.vue,erp,179,/erp/fx-rate,cp6.web/src/router/index.ts,cp6.web/src/api/erp/fxRate.ts,CpFormDialog | CpListPage | CpPageShell | CpTag,3,True,3,0
+cp6.web/src/views/erp/order/Step1HeaderAndDetails.vue,erp,321,,cp6.web/src/views/erp/OrderEntryView.vue,cp6.web/src/api/erp/master.ts | cp6.web/src/api/erp/order.ts,CpTag,0,True,19,0
+cp6.web/src/views/erp/order/Step2BasicInfo.vue,erp,161,,cp6.web/src/views/erp/OrderEntryView.vue,cp6.web/src/api/erp/order.ts,CpTag,0,False,36,0
+cp6.web/src/views/erp/order/Step3ProcessInfo.vue,erp,248,,cp6.web/src/views/erp/OrderEntryView.vue,cp6.web/src/api/erp/order.ts,,0,False,15,0
+cp6.web/src/views/erp/OrderCancelDialog.vue,erp,230,,cp6.web/src/views/erp/OrderListView.vue,cp6.web/src/api/erp/order.ts,CpTag,0,False,5,0
+cp6.web/src/views/erp/OrderEntryView.vue,erp,321,/order | /order/window,cp6.web/src/router/index.ts,cp6.web/src/api/erp/master.ts | cp6.web/src/api/erp/order.ts,CpTag,2,True,2,0
+cp6.web/src/views/erp/OrderListView.vue,erp,214,/order-list,cp6.web/src/router/index.ts,cp6.web/src/api/erp/order.ts,CpListPage | CpTag,1,True,0,0
+cp6.web/src/views/erp/OrderPriceCorrectionView.vue,erp,247,/order-price-correction,cp6.web/src/router/index.ts,cp6.web/src/api/erp/order.ts,CpTag,1,True,18,0
+cp6.web/src/views/erp/OrderTraceView.vue,erp,455,/erp/order-trace,cp6.web/src/router/index.ts,cp6.web/src/api/erp/orderTrace.ts,CpTag,0,True,0,1
+cp6.web/src/views/erp/OtdReportView.vue,erp,421,/erp/otd-report,cp6.web/src/router/index.ts,cp6.web/src/api/erp/otdReport.ts,CpTag,0,True,1,1
+cp6.web/src/views/erp/PlateMoldListView.vue,erp,254,/plate-mold-list,cp6.web/src/router/index.ts,cp6.web/src/api/erp/plateMold.ts,CpTag,0,True,36,0
+cp6.web/src/views/erp/PlateMoldView.vue,erp,327,/plate-mold,cp6.web/src/router/index.ts,cp6.web/src/api/erp/plateMold.ts,CpTag,2,True,66,0
+cp6.web/src/views/erp/product/Step1TargetSelect.vue,erp,339,,cp6.web/src/views/erp/ProductMasterView.vue,cp6.web/src/api/erp/master.ts | cp6.web/src/api/erp/product.ts,CpTag,0,True,9,0
+cp6.web/src/views/erp/product/Step2BasicInfo.vue,erp,427,,cp6.web/src/views/erp/ProductMasterView.vue,cp6.web/src/api/erp/master.ts | cp6.web/src/api/erp/product.ts,,0,True,14,0
+cp6.web/src/views/erp/product/Step3ProcessInfo.vue,erp,428,,cp6.web/src/views/erp/ProductMasterView.vue,,CpTag,0,True,17,0
+cp6.web/src/views/erp/product/Step4MaterialSetting.vue,erp,182,,cp6.web/src/views/erp/ProductMasterView.vue,,,0,True,7,0
+cp6.web/src/views/erp/product/Step5LotPriceOther.vue,erp,291,,cp6.web/src/views/erp/ProductMasterView.vue,,,0,True,14,0
+cp6.web/src/views/erp/ProductMasterListView.vue,erp,226,/product-list,cp6.web/src/router/index.ts,cp6.web/src/api/erp/product.ts,CpListPage | CpTag,4,True,0,0
+cp6.web/src/views/erp/ProductMasterView.vue,erp,512,/product | /product/window,cp6.web/src/router/index.ts,cp6.web/src/api/erp/master.ts | cp6.web/src/api/erp/product.ts,CpTag,2,True,1,0
+cp6.web/src/views/erp/QuotationListView.vue,erp,248,/quotation-list,cp6.web/src/router/index.ts,cp6.web/src/api/erp/master.ts | cp6.web/src/api/erp/quotation.ts,CpListPage,5,True,0,0
+cp6.web/src/views/erp/QuotationView.vue,erp,1226,/quotation | /quotation/window,cp6.web/src/router/index.ts,cp6.web/src/api/erp/master.ts | cp6.web/src/api/erp/quotation.ts,CpTag,5,True,8,0
+cp6.web/src/views/erp/SheetUnitPriceView.vue,erp,214,/sheet-unit-price,cp6.web/src/router/index.ts,cp6.web/src/api/erp/sheetUnitPrice.ts,CpTag,2,True,6,0
+cp6.web/src/views/fin/ApAgingView.vue,fin,70,/fin/ap-aging,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,0,True,1,0
+cp6.web/src/views/fin/ApInvoiceView.vue,fin,190,/fin/ap-invoice,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,3,True,11,0
+cp6.web/src/views/fin/ArAgingView.vue,fin,70,/fin/ar-aging,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,0,True,1,0
+cp6.web/src/views/fin/ArInvoiceView.vue,fin,206,/fin/ar-invoice,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,4,True,11,0
+cp6.web/src/views/fin/AssetCardView.vue,fin,183,/fin/asset-card,cp6.web/src/router/index.ts,cp6.web/src/api/fin/asset.ts,,2,True,6,0
+cp6.web/src/views/fin/AssetCategoryView.vue,fin,150,/fin/asset-category,cp6.web/src/router/index.ts,cp6.web/src/api/fin/asset.ts | cp6.web/src/api/fin/fin.ts,,3,True,4,0
+cp6.web/src/views/fin/AssetDepreciationView.vue,fin,124,/fin/asset-deprec,cp6.web/src/router/index.ts,cp6.web/src/api/fin/asset.ts | cp6.web/src/api/fin/fin.ts,,3,True,2,0
+cp6.web/src/views/fin/AssetDisposalView.vue,fin,165,/fin/asset-disposal,cp6.web/src/router/index.ts,cp6.web/src/api/fin/asset.ts | cp6.web/src/api/fin/fin.ts,,3,True,6,0
+cp6.web/src/views/fin/BalanceSheetView.vue,fin,110,/fin/balance-sheet,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,0,True,1,0
+cp6.web/src/views/fin/BankImportProfileView.vue,fin,270,/fin/bank-import-profile,cp6.web/src/router/index.ts,cp6.web/src/api/fin/bankRecon.ts,,3,True,4,0
+cp6.web/src/views/fin/BankReconciliationView.vue,fin,422,/fin/bank-reconciliation,cp6.web/src/router/index.ts,cp6.web/src/api/fin/bankRecon.ts | cp6.web/src/api/fin/fin.ts,,7,True,5,0
+cp6.web/src/views/fin/BankStatementView.vue,fin,472,/fin/bank-statement,cp6.web/src/router/index.ts,cp6.web/src/api/fin/bankRecon.ts,,5,True,11,0
+cp6.web/src/views/fin/BudgetEditView.vue,fin,1004,/fin/budget,cp6.web/src/router/index.ts,cp6.web/src/api/fin/budget.ts | cp6.web/src/api/fin/fin.ts | cp6.web/src/api/sys/rolePerm.ts,,13,True,22,0
+cp6.web/src/views/fin/BudgetVsActualView.vue,fin,459,/fin/budget/vs-actual,cp6.web/src/router/index.ts,cp6.web/src/api/fin/budget.ts,,0,True,7,0
+cp6.web/src/views/fin/CostSheetView.vue,fin,216,/fin/cost,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,2,True,4,0
+cp6.web/src/views/fin/GlAccountView.vue,fin,202,/fin/account,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,4,True,2,0
+cp6.web/src/views/fin/IncomeStatementView.vue,fin,116,/fin/income-statement,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,0,True,1,0
+cp6.web/src/views/fin/JournalEntryView.vue,fin,250,/fin/journal,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,5,True,5,0
+cp6.web/src/views/fin/PaymentView.vue,fin,227,/fin/ap-payment,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,4,True,14,0
+cp6.web/src/views/fin/PeriodCloseView.vue,fin,112,/fin/period,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,2,True,0,0
+cp6.web/src/views/fin/ReceiptView.vue,fin,257,/fin/ar-receipt,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,4,True,15,0
+cp6.web/src/views/fin/TrialBalanceView.vue,fin,109,/fin/trial-balance,cp6.web/src/router/index.ts,cp6.web/src/api/fin/fin.ts,,0,True,1,0
+cp6.web/src/views/LayoutView.vue,_root,727,/,cp6.web/src/router/index.ts,cp6.web/src/api/oa/notification.ts | cp6.web/src/api/platform/impersonation.ts | cp6.web/src/api/sys/auth.ts,,0,True,3,1
+cp6.web/src/views/LoginView.vue,_root,1827,/login,cp6.web/src/router/index.ts,cp6.web/src/api/sys/auth.ts | cp6.web/src/api/sys/sso.ts,,0,True,1,6
+cp6.web/src/views/mes/ControlTowerView.vue,mes,410,/mes/control-tower | /mes/control-tower/standalone,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,0,True,5,0
+cp6.web/src/views/mes/DefectManagementView.vue,mes,377,/mes/defect,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,3,True,14,0
+cp6.web/src/views/mes/MachineListView.vue,mes,394,/mes/machine-list,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,5,True,14,0
+cp6.web/src/views/mes/MesDashboardView.vue,mes,411,/mes/dashboard,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,0,True,19,0
+cp6.web/src/views/mes/OeeAnalysisView.vue,mes,283,/mes/oee,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,1,True,10,0
+cp6.web/src/views/mes/PlanAchievementView.vue,mes,377,/mes/plan-achievement,cp6.web/src/router/index.ts,cp6.web/src/api/mes/planAchievement.ts,,0,True,1,1
+cp6.web/src/views/mes/PlanningBoardView.vue,mes,514,/mes/planning-board,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,2,True,20,0
+cp6.web/src/views/mes/ProcessCostRateView.vue,mes,135,/mes/process-cost-rate,cp6.web/src/router/index.ts,cp6.web/src/api/mes/processCost.ts,,3,True,5,0
+cp6.web/src/views/mes/ProductionResultEntryView.vue,mes,277,/mes/production-result,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,5,True,11,0
+cp6.web/src/views/mes/ProductionResultListView.vue,mes,174,/mes/production-result-list,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,0,True,9,0
+cp6.web/src/views/mes/QualityInspectionEntryView.vue,mes,403,/mes/quality-inspection,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,2,True,15,0
+cp6.web/src/views/mes/QualityInspectionListView.vue,mes,198,/mes/quality-inspection-list,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,1,True,11,0
+cp6.web/src/views/mes/work-order/steps/WoStep1BasicInfo.vue,mes,144,,cp6.web/src/views/mes/WorkOrderEntryView.vue,,,1,False,6,0
+cp6.web/src/views/mes/work-order/steps/WoStep2ProcessPlan.vue,mes,132,,cp6.web/src/views/mes/WorkOrderEntryView.vue,,,0,False,6,0
+cp6.web/src/views/mes/work-order/steps/WoStep3MaterialConfirm.vue,mes,112,,cp6.web/src/views/mes/WorkOrderEntryView.vue,,,0,False,5,0
+cp6.web/src/views/mes/WorkCenterView.vue,mes,129,/mes/work-center,cp6.web/src/router/index.ts,cp6.web/src/api/mes/processCost.ts,,3,True,2,0
+cp6.web/src/views/mes/WorkOrderEntryView.vue,mes,245,/mes/work-order,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,3,True,6,0
+cp6.web/src/views/mes/WorkOrderListView.vue,mes,275,/mes/work-order-list,cp6.web/src/router/index.ts,cp6.web/src/api/mes/mes.ts,,2,True,15,0
+cp6.web/src/views/oa/admin/ApproverMapView.vue,oa,89,/oa/approver-map,cp6.web/src/router/index.ts,cp6.web/src/api/oa/approverMap.ts | cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/user.ts,,2,True,2,0
+cp6.web/src/views/oa/admin/BatchTransferDialog.vue,oa,242,,cp6.web/src/views/oa/admin/FlowAdmin.vue,cp6.web/src/api/oa/inbox.ts | cp6.web/src/api/sys/user.ts,CpEmpty | CpTag,0,True,3,0
+cp6.web/src/views/oa/admin/FlowAdmin.vue,oa,118,/oa/flow-admin,cp6.web/src/router/index.ts,cp6.web/src/api/oa/flowAdmin.ts | cp6.web/src/api/oa/flowTrigger.ts | cp6.web/src/api/oa/inbox.ts | cp6.web/src/api/oa/wfConnector.ts | cp6.web/src/api/sys/user.ts,CpListPage | CpPageShell,2,False,0,0
+cp6.web/src/views/oa/admin/FlowTriggerDialog.vue,oa,146,,cp6.web/src/views/oa/admin/FlowTriggerPanel.vue,cp6.web/src/api/oa/flowTrigger.ts,,0,True,0,0
+cp6.web/src/views/oa/admin/FlowTriggerPanel.vue,oa,154,,cp6.web/src/views/oa/admin/FlowAdmin.vue,cp6.web/src/api/oa/flowTrigger.ts,CpTag,5,True,0,0
+cp6.web/src/views/oa/admin/WfConnectorDialog.vue,oa,101,,cp6.web/src/views/oa/admin/WfConnectorPanel.vue,cp6.web/src/api/oa/wfConnector.ts,,0,True,0,0
+cp6.web/src/views/oa/admin/WfConnectorPanel.vue,oa,82,,cp6.web/src/views/oa/admin/FlowAdmin.vue,cp6.web/src/api/oa/wfConnector.ts,CpTag,3,True,0,0
+cp6.web/src/views/oa/admin/WorkCalendar.vue,oa,159,/oa/work-calendar,cp6.web/src/router/index.ts,cp6.web/src/api/oa/workCalendar.ts,CpPageShell | CpTag,2,True,0,0
+cp6.web/src/views/oa/catalog/FormCatalog.vue,oa,210,/oa/form-catalog,cp6.web/src/router/index.ts,cp6.web/src/api/oa/catalog.ts,CpEmpty,2,True,1,0
+cp6.web/src/views/oa/catalog/FormInitiate.vue,oa,223,/oa/form-initiate,cp6.web/src/router/index.ts,cp6.web/src/api/oa/draft.ts | cp6.web/src/api/oa/flowAdmin.ts | cp6.web/src/api/oa/forecast.ts | cp6.web/src/api/sys/user.ts | cp6.web/src/api/wf/form.ts,CpEmpty,2,True,1,0
+cp6.web/src/views/oa/designer/DesignerCanvas.vue,oa,916,,cp6.web/src/views/oa/designer/DesignerView.vue,,,0,True,1,1
+cp6.web/src/views/oa/designer/DesignerView.vue,oa,507,/oa/designer,cp6.web/src/router/index.ts,cp6.web/src/api/oa/designer.ts | cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/user.ts,,3,True,0,3
+cp6.web/src/views/oa/designer/EdgePropertyPanel.vue,oa,171,,cp6.web/src/views/oa/designer/DesignerView.vue,cp6.web/src/api/sys/user.ts,,0,True,1,0
+cp6.web/src/views/oa/designer/FlowDesignEdgeInspector.vue,oa,387,,cp6.web/src/views/oa/designer/FlowDesignVariantsView.vue,,Cpu,0,True,0,1
+cp6.web/src/views/oa/designer/FlowDesignInspector.vue,oa,430,,cp6.web/src/views/oa/designer/FlowDesignVariantsView.vue,,,0,True,0,0
+cp6.web/src/views/oa/designer/FlowDesignPreviewCanvas.vue,oa,1386,,cp6.web/src/views/oa/designer/FlowDesignVariantsView.vue,,,0,True,1,0
+cp6.web/src/views/oa/designer/FlowDesignVariantsView.vue,oa,1102,/flow-designs,cp6.web/src/router/index.ts,,,0,True,0,3
+cp6.web/src/views/oa/designer/NodePropertyPanel.vue,oa,1091,,cp6.web/src/views/oa/designer/DesignerView.vue,cp6.web/src/api/oa/designer.ts | cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/user.ts,CpTag,0,True,38,0
+cp6.web/src/views/oa/designer/nodes/ApprovalNode.vue,oa,48,,cp6.web/src/views/oa/designer/DesignerCanvas.vue,,,0,True,0,0
+cp6.web/src/views/oa/designer/nodes/EndNode.vue,oa,34,,cp6.web/src/views/oa/designer/DesignerCanvas.vue,,,0,True,0,0
+cp6.web/src/views/oa/designer/nodes/FourWayHandles.vue,oa,20,,cp6.web/src/views/oa/designer/nodes/ApprovalNode.vue | cp6.web/src/views/oa/designer/nodes/EndNode.vue | cp6.web/src/views/oa/designer/nodes/GatewayNode.vue | cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.vue | cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue | cp6.web/src/views/oa/designer/nodes/StartNode.vue | cp6.web/src/views/oa/designer/nodes/SubFlowNode.vue,,,0,False,0,0
+cp6.web/src/views/oa/designer/nodes/GatewayNode.vue,oa,50,,cp6.web/src/views/oa/designer/DesignerCanvas.vue,,,0,True,0,0
+cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.vue,oa,61,,cp6.web/src/views/oa/designer/DesignerCanvas.vue,,,0,True,0,0
+cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue,oa,90,,cp6.web/src/views/oa/designer/DesignerCanvas.vue,,,0,True,0,0
+cp6.web/src/views/oa/designer/nodes/StartNode.vue,oa,34,,cp6.web/src/views/oa/designer/DesignerCanvas.vue,,,0,True,0,0
+cp6.web/src/views/oa/designer/nodes/SubFlowNode.vue,oa,85,,cp6.web/src/views/oa/designer/DesignerCanvas.vue,,,0,True,0,0
+cp6.web/src/views/oa/inbox/FlowTimeline.vue,oa,200,,cp6.web/src/views/oa/catalog/FormInitiate.vue | cp6.web/src/views/oa/inbox/FormDetail.vue,,CpEmpty | CpTag,0,True,1,0
+cp6.web/src/views/oa/inbox/FormDetail.vue,oa,384,,cp6.web/src/views/oa/inbox/InboxView.vue | cp6.web/src/views/oa/query/FormQuery.vue,cp6.web/src/api/oa/inbox.ts | cp6.web/src/api/oa/transfer.ts | cp6.web/src/api/sys/user.ts,CpEmpty | CpTag,4,True,1,1
+cp6.web/src/views/oa/inbox/InboxDashboard.vue,oa,155,,cp6.web/src/views/oa/inbox/InboxView.vue,cp6.web/src/api/oa/inbox.ts,CpEmpty | CpSectionHeader | CpStatCard,0,True,2,0
+cp6.web/src/views/oa/inbox/InboxDone.vue,oa,209,,cp6.web/src/views/oa/inbox/InboxView.vue,cp6.web/src/api/oa/inbox.ts,CpEmpty | CpTag,0,True,3,0
+cp6.web/src/views/oa/inbox/InboxDraft.vue,oa,168,,cp6.web/src/views/oa/inbox/InboxView.vue,cp6.web/src/api/oa/draft.ts | cp6.web/src/api/sys/user.ts,CpEmpty | CpTag,3,True,0,0
+cp6.web/src/views/oa/inbox/InboxPending.vue,oa,392,,cp6.web/src/views/oa/inbox/InboxView.vue,cp6.web/src/api/oa/inbox.ts | cp6.web/src/api/oa/pref.ts,CpEmpty | CpTag,2,True,3,1
+cp6.web/src/views/oa/inbox/InboxRunning.vue,oa,145,,cp6.web/src/views/oa/inbox/InboxView.vue,cp6.web/src/api/oa/inbox.ts,CpEmpty | CpTag,0,True,1,0
+cp6.web/src/views/oa/inbox/InboxView.vue,oa,369,/oa/inbox,cp6.web/src/router/index.ts,cp6.web/src/api/oa/delegate.ts | cp6.web/src/api/oa/draft.ts | cp6.web/src/api/oa/flowAdmin.ts | cp6.web/src/api/oa/inbox.ts | cp6.web/src/api/oa/pref.ts | cp6.web/src/api/oa/transfer.ts | cp6.web/src/api/sys/user.ts,CpTag,0,True,0,1
+cp6.web/src/views/oa/inbox/SendBackDialog.vue,oa,122,,cp6.web/src/views/oa/inbox/FormDetail.vue,cp6.web/src/api/oa/inbox.ts,,0,False,2,0
+cp6.web/src/views/oa/inbox/TransferDialog.vue,oa,122,,cp6.web/src/views/oa/inbox/FormDetail.vue,cp6.web/src/api/oa/transfer.ts | cp6.web/src/api/sys/user.ts,,0,False,1,0
+cp6.web/src/views/oa/notification/NotificationBell.vue,oa,306,,cp6.web/src/views/LayoutView.vue,cp6.web/src/api/oa/notification.ts,,1,True,1,0
+cp6.web/src/views/oa/query/FormQuery.vue,oa,324,/oa/form-search,cp6.web/src/router/index.ts,cp6.web/src/api/oa/flowAdmin.ts | cp6.web/src/api/oa/inbox.ts | cp6.web/src/api/oa/query.ts | cp6.web/src/api/oa/transfer.ts | cp6.web/src/api/sys/user.ts,CpEmpty | CpTag,0,True,7,0
+cp6.web/src/views/oa/settings/InboxSettings.vue,oa,377,/oa/settings,cp6.web/src/router/index.ts,cp6.web/src/api/oa/delegate.ts | cp6.web/src/api/oa/pref.ts | cp6.web/src/api/sys/user.ts,,5,True,4,0
+cp6.web/src/views/plan/ItemPolicyView.vue,plan,152,/plan/item-policy,cp6.web/src/router/index.ts,cp6.web/src/api/plan/plan.ts,,3,True,7,0
+cp6.web/src/views/plan/MrpBoardView.vue,plan,158,/plan/mrp,cp6.web/src/router/index.ts,cp6.web/src/api/plan/plan.ts,,4,True,3,0
+cp6.web/src/views/platform/CrossTenantAuditView.vue,platform,143,/platform/audit,cp6.web/src/router/index.ts,cp6.web/src/api/platform/audit.ts,,0,True,4,0
+cp6.web/src/views/platform/GdprView.vue,platform,165,/platform/gdpr,cp6.web/src/router/index.ts,cp6.web/src/api/platform/gdpr.ts,,0,True,4,0
+cp6.web/src/views/platform/ImpersonationView.vue,platform,122,/platform/impersonation,cp6.web/src/router/index.ts,cp6.web/src/api/platform/impersonation.ts | cp6.web/src/api/platform/tenant.ts,,0,True,2,0
+cp6.web/src/views/platform/PlatformAdminView.vue,platform,121,/platform/admin,cp6.web/src/router/index.ts,cp6.web/src/api/platform/admin.ts,,0,True,2,0
+cp6.web/src/views/platform/TenantListView.vue,platform,355,/platform/tenant,cp6.web/src/router/index.ts,cp6.web/src/api/platform/tenant.ts | cp6.web/src/api/platform/timezones.ts,,0,True,6,0
+cp6.web/src/views/pms/AboutView.vue,pms,15,,,,,0,False,0,1
+cp6.web/src/views/pms/ChangePasswordView.vue,pms,141,/sys/change-password,cp6.web/src/router/index.ts,cp6.web/src/api/sys/auth.ts,,0,True,2,0
+cp6.web/src/views/pms/CodeGenView.vue,pms,111,/pub/codegen,cp6.web/src/router/index.ts,cp6.web/src/api/pub/codegen.ts,,1,True,5,0
+cp6.web/src/views/pms/DataScopeView.vue,pms,117,/pub/data-scope,cp6.web/src/router/index.ts,cp6.web/src/api/sys/dept.ts | cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/rolePerm.ts,,0,False,9,0
+cp6.web/src/views/pms/DeptTreeView.vue,pms,184,/pub/dept,cp6.web/src/router/index.ts,cp6.web/src/api/sys/dept.ts | cp6.web/src/api/sys/user.ts,,0,False,4,0
+cp6.web/src/views/pms/DictView.vue,pms,73,/dict,cp6.web/src/router/index.ts,cp6.web/src/api/sys/dict.ts | cp6.web/src/api/sys/rolePerm.ts,VolTable,0,False,2,0
+cp6.web/src/views/pms/FieldAuditView.vue,pms,345,/sys/field-audit,cp6.web/src/router/index.ts,cp6.web/src/api/sys/fieldAudit.ts,,0,True,4,0
+cp6.web/src/views/pms/FieldPermView.vue,pms,103,/pub/field-perm,cp6.web/src/router/index.ts,cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/rolePerm.ts,,0,False,7,0
+cp6.web/src/views/pms/LangView.vue,pms,85,/lang,cp6.web/src/router/index.ts,cp6.web/src/api/sys/lang.ts | cp6.web/src/api/sys/rolePerm.ts,VolTable,0,True,0,0
+cp6.web/src/views/pms/MenuDesignVariantsView.vue,pms,819,/menu-designs,cp6.web/src/router/index.ts,,,0,True,3,6
+cp6.web/src/views/pms/MenuView.vue,pms,1551,/menu,cp6.web/src/router/index.ts,cp6.web/src/api/sys/auth.ts | cp6.web/src/api/sys/menu.ts | cp6.web/src/api/sys/rolePerm.ts,,10,True,0,3
+cp6.web/src/views/pms/OperLogView.vue,pms,136,/operlog,cp6.web/src/router/index.ts,cp6.web/src/api/sys/operlog.ts,,0,True,3,0
+cp6.web/src/views/pms/PermissionView.vue,pms,89,/permission,cp6.web/src/router/index.ts,cp6.web/src/api/sys/menu.ts | cp6.web/src/api/sys/role.ts,,0,False,6,0
+cp6.web/src/views/pms/RolePermView.vue,pms,137,/pub/role-perm,cp6.web/src/router/index.ts,cp6.web/src/api/sys/menu.ts | cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/rolePerm.ts,,0,False,8,0
+cp6.web/src/views/pms/RoleView.vue,pms,24,/role,cp6.web/src/router/index.ts,cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/rolePerm.ts,VolTable,0,False,0,0
+cp6.web/src/views/pms/SecurityLogView.vue,pms,171,/sys/security-log,cp6.web/src/router/index.ts,cp6.web/src/api/sys/securityLog.ts,,0,True,4,0
+cp6.web/src/views/pms/SeqView.vue,pms,47,/pub/seq,cp6.web/src/router/index.ts,cp6.web/src/api/pub/seq.ts | cp6.web/src/api/sys/rolePerm.ts,VolTable,0,False,0,0
+cp6.web/src/views/pms/SsoConfigView.vue,pms,162,/sys/sso-config,cp6.web/src/router/index.ts,cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/sso.ts,,0,True,1,0
+cp6.web/src/views/pms/SsoLandingView.vue,pms,87,/sso/landing,cp6.web/src/router/index.ts,cp6.web/src/api/sys/auth.ts,,0,True,0,0
+cp6.web/src/views/pms/TwoFactorChallengeView.vue,pms,179,/sys/2fa-challenge,cp6.web/src/router/index.ts,cp6.web/src/api/sys/twoFactor.ts,,0,True,1,0
+cp6.web/src/views/pms/TwoFactorEnrollView.vue,pms,159,/sys/2fa-enroll,cp6.web/src/router/index.ts,cp6.web/src/api/sys/twoFactor.ts,,0,True,1,0
+cp6.web/src/views/pms/TwoFactorSettingsView.vue,pms,319,/sys/2fa-settings,cp6.web/src/router/index.ts,cp6.web/src/api/sys/twoFactor.ts,,0,True,4,0
+cp6.web/src/views/pms/UserView.vue,pms,109,/user,cp6.web/src/router/index.ts,cp6.web/src/api/sys/dept.ts | cp6.web/src/api/sys/role.ts | cp6.web/src/api/sys/rolePerm.ts | cp6.web/src/api/sys/user.ts | cp6.web/src/api/sys/userRole.ts,VolTable,0,False,3,0
+cp6.web/src/views/pur/GoodsReceiptView.vue,pur,208,/pur/gr,cp6.web/src/router/index.ts,cp6.web/src/api/pur/pur.ts,,2,True,5,0
+cp6.web/src/views/pur/PrView.vue,pur,272,/pur/pr,cp6.web/src/router/index.ts,cp6.web/src/api/oa/approval.ts | cp6.web/src/api/pur/pur.ts,,4,True,7,0
+cp6.web/src/views/pur/PurchaseOrderView.vue,pur,217,/pur/po,cp6.web/src/router/index.ts,cp6.web/src/api/pur/pur.ts,,3,True,8,0
+cp6.web/src/views/pur/PurReconcileView.vue,pur,101,/pur/reconcile,cp6.web/src/router/index.ts,cp6.web/src/api/pur/pur.ts,,0,True,3,0
+cp6.web/src/views/pur/RfqView.vue,pur,305,/pur/rfq,cp6.web/src/router/index.ts,cp6.web/src/api/pur/pur.ts,,7,True,6,0
+cp6.web/src/views/pur/SubcontractView.vue,pur,298,/pur/subcontract,cp6.web/src/router/index.ts,cp6.web/src/api/pur/pur.ts,,4,True,6,0
+cp6.web/src/views/pur/SupplierPriceView.vue,pur,159,/pur/supplier-price,cp6.web/src/router/index.ts,cp6.web/src/api/pur/pur.ts,,2,True,10,0
+cp6.web/src/views/pur/ThreeWayMatchView.vue,pur,233,/pur/match,cp6.web/src/router/index.ts,cp6.web/src/api/pur/pur.ts,,3,True,6,0
+cp6.web/src/views/space/admin/SpaceAiAdminView.vue,space,422,/space/ai-admin,cp6.web/src/router/index.ts,cp6.web/src/api/space/aiAdmin.ts | cp6.web/src/api/space/site.ts,CpPageShell,1,True,0,2
+cp6.web/src/views/space/control-tower/ControlTowerLandingView.vue,space,88,/space/control-tower,cp6.web/src/router/index.ts,cp6.web/src/api/space/site.ts | cp6.web/src/api/sys/rolePerm.ts,,0,True,0,1
+cp6.web/src/views/space/control-tower/SpaceControlTowerView.vue,space,459,/space/control-tower/:siteId,cp6.web/src/router/index.ts,cp6.web/src/api/space/analytics.ts | cp6.web/src/api/space/designPublishedScene.ts | cp6.web/src/api/space/stock.ts | cp6.web/src/api/sys/rolePerm.ts,,0,True,1,1
+cp6.web/src/views/space/editor/DesignUnderlayView.vue,space,4596,/space/design/:versionId/floors/:floorLogicalId/underlay,cp6.web/src/router/index.ts,cp6.web/src/api/space/aiProposalReview.ts | cp6.web/src/api/space/designCadMappingProfiles.ts | cp6.web/src/api/space/designCadParse.ts | cp6.web/src/api/space/designCoding.ts | cp6.web/src/api/space/designElements.ts | cp6.web/src/api/space/designExcelCadMatch.ts | cp6.web/src/api/space/designExcelMapping.ts | cp6.web/src/api/space/designExcelPreflight.ts | cp6.web/src/api/space/designLayout.ts | cp6.web/src/api/space/designLease.ts | cp6.web/src/api/space/designModelingTemplate.ts | cp6.web/src/api/space/designProject.ts | cp6.web/src/api/space/designSources.ts | cp6.web/src/api/space/designUnderlay.ts | cp6.web/src/api/space/designWmsAdoption.ts,,2,True,0,1
+cp6.web/src/views/space/editor/FloorEditor.vue,space,1062,/space/editor/:floorId,cp6.web/src/router/index.ts,cp6.web/src/api/space/codeRule.ts | cp6.web/src/api/space/connector.ts | cp6.web/src/api/space/scene.ts | cp6.web/src/api/space/template.ts,,0,True,3,0
+cp6.web/src/views/space/editor/panels/BindCodesDialog.vue,space,334,,cp6.web/src/views/space/editor/FloorEditor.vue,cp6.web/src/api/space/scene.ts,,0,True,4,0
+cp6.web/src/views/space/editor/panels/ConnectorPanel.vue,space,291,,cp6.web/src/views/space/editor/FloorEditor.vue,cp6.web/src/api/space/connector.ts,,0,True,6,0
+cp6.web/src/views/space/editor/panels/PropertiesPanel.vue,space,379,,cp6.web/src/views/space/editor/FloorEditor.vue,cp6.web/src/api/space/codeRule.ts | cp6.web/src/api/space/scene.ts,,1,True,2,0
+cp6.web/src/views/space/editor/panels/TemplatePanel.vue,space,194,,cp6.web/src/views/space/editor/FloorEditor.vue,cp6.web/src/api/space/template.ts,,0,True,5,0
+cp6.web/src/views/space/editor/SpaceDesignStartView.vue,space,737,/space/design/sites/:siteId/start,cp6.web/src/router/index.ts,cp6.web/src/api/space/designProject.ts,,0,True,0,1
+cp6.web/src/views/space/lifecycle/SegmentsEditor.vue,space,163,,cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue,,,0,True,0,0
+cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue,space,362,/space/code-rule,cp6.web/src/router/index.ts,cp6.web/src/api/space/codeRule.ts | cp6.web/src/api/space/floor.ts | cp6.web/src/api/space/site.ts | cp6.web/src/api/space/zone.ts,CpFormDialog | CpListPage | CpPageShell,3,True,6,0
+cp6.web/src/views/space/lifecycle/SpaceEventsView.vue,space,123,/space/events,cp6.web/src/router/index.ts,cp6.web/src/api/space/publish.ts,CpListPage | CpPageShell,0,True,0,0
+cp6.web/src/views/space/lifecycle/SpacePublishManagementView.vue,space,729,/space/publish,cp6.web/src/router/index.ts,cp6.web/src/api/space/publishManagement.ts | cp6.web/src/api/space/site.ts,CpEmpty | CpPageShell | CpTag,4,True,1,3
+cp6.web/src/views/space/lifecycle/SpacePublishView.vue,space,388,/space/location-publish,cp6.web/src/router/index.ts,cp6.web/src/api/space/codeRule.ts | cp6.web/src/api/space/floor.ts | cp6.web/src/api/space/locate.ts | cp6.web/src/api/space/publish.ts | cp6.web/src/api/space/site.ts | cp6.web/src/api/space/zone.ts,CpEmpty | CpPageShell | CpStatCard | CpTag,4,True,5,0
+cp6.web/src/views/space/master/SpaceFloorView.vue,space,176,/space/floor,cp6.web/src/router/index.ts,cp6.web/src/api/space/floor.ts | cp6.web/src/api/space/site.ts,CpEmpty | CpFormDialog | CpListPage | CpPageShell,3,True,1,0
+cp6.web/src/views/space/master/SpaceSiteView.vue,space,165,/space/site,cp6.web/src/router/index.ts,cp6.web/src/api/space/site.ts,CpFormDialog | CpListPage | CpPageShell,3,True,0,0
+cp6.web/src/views/space/planning/PlanningComparisonPanel.vue,space,564,,cp6.web/src/views/space/planning/PlanningScenarioPanel.vue,cp6.web/src/api/space/planningScenario.ts,CpEmpty | CpTag,2,True,0,1
+cp6.web/src/views/space/planning/PlanningHistoricalDatasetPanel.vue,space,295,,cp6.web/src/views/space/planning/PlanningScenarioPanel.vue,cp6.web/src/api/space/planningScenario.ts,CpEmpty | CpTag,1,True,0,0
+cp6.web/src/views/space/planning/PlanningScenarioPanel.vue,space,315,,cp6.web/src/views/space/planning/SpacePlanningScenarioView.vue,cp6.web/src/api/space/planningScenario.ts,CpEmpty | CpTag,2,True,0,0
+cp6.web/src/views/space/planning/PlanningSimulationPanel.vue,space,426,,cp6.web/src/views/space/planning/PlanningHistoricalDatasetPanel.vue,cp6.web/src/api/space/planningScenario.ts,CpEmpty | CpTag,1,True,0,2
+cp6.web/src/views/space/planning/SpacePlanningScenarioView.vue,space,66,/space/planning,cp6.web/src/router/index.ts,cp6.web/src/api/space/planningScenario.ts | cp6.web/src/api/space/site.ts,CpEmpty | CpPageShell,0,False,1,0
+cp6.web/src/views/space/SpaceHomeView.vue,space,140,/space/home,cp6.web/src/router/index.ts,cp6.web/src/api/space/floor.ts | cp6.web/src/api/space/site.ts | cp6.web/src/api/sys/rolePerm.ts,CpEmpty | CpSectionHeader | CpStatCard,2,True,0,0
+cp6.web/src/views/space/stacked/StackedViewer.vue,space,354,/space/stacked/:siteId,cp6.web/src/router/index.ts,cp6.web/src/api/space/advanced.ts | cp6.web/src/api/space/designPublishedScene.ts,,0,True,0,0
+cp6.web/src/views/space/viewer/AdvancedPanel.vue,space,264,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/space/viewer/DispatchRecommendationPanel.vue,space,770,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/space/viewer/FloorList.vue,space,139,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/space/viewer/FloorViewer.vue,space,1667,/space/viewer/:siteId,cp6.web/src/router/index.ts,cp6.web/src/api/space/designPublishedScene.ts | cp6.web/src/api/space/locate.ts | cp6.web/src/api/space/runtime.ts,,0,True,0,0
+cp6.web/src/views/space/viewer/InfoCard.vue,space,140,,cp6.web/src/views/space/viewer/FloorViewer.vue,cp6.web/src/api/space/locate.ts,,0,True,0,0
+cp6.web/src/views/space/viewer/InventoryLocateResults.vue,space,186,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/space/viewer/InventorySpatialFilter.vue,space,199,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/space/viewer/OperationsDiagnosticPanel.vue,space,309,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/space/viewer/PutawayRecommendationPanel.vue,space,335,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/space/viewer/SearchBox.vue,space,204,,cp6.web/src/views/space/viewer/FloorViewer.vue,cp6.web/src/api/space/locate.ts,,0,True,0,0
+cp6.web/src/views/space/viewer/StockLegend.vue,space,142,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,2,0
+cp6.web/src/views/space/viewer/WarehouseOverviewPanel.vue,space,269,,cp6.web/src/views/space/viewer/FloorViewer.vue,,,0,True,0,0
+cp6.web/src/views/wf/designer/FlowDesigner.vue,wf,345,/wf/flow-designer,cp6.web/src/router/index.ts,cp6.web/src/api/wf/flow.ts,,2,True,11,0
+cp6.web/src/views/wf/designer/FormDesigner.vue,wf,371,/wf/form-designer,cp6.web/src/router/index.ts,cp6.web/src/api/sys/user.ts | cp6.web/src/api/wf/form.ts,,2,True,10,0
+cp6.web/src/views/wf/DynamicForm.vue,wf,296,,cp6.web/src/views/oa/catalog/FormInitiate.vue | cp6.web/src/views/oa/inbox/FormDetail.vue | cp6.web/src/views/oa/inbox/InboxDraft.vue | cp6.web/src/views/wf/TodoCenter.vue | cp6.web/src/views/wf/designer/FormDesigner.vue,cp6.web/src/api/sys/user.ts,,0,True,9,0
+cp6.web/src/views/wf/FlowTrace.vue,wf,75,,cp6.web/src/views/wf/MyApplications.vue,cp6.web/src/api/wf/flow.ts,,0,True,0,0
+cp6.web/src/views/wf/MyApplications.vue,wf,124,,,cp6.web/src/api/wf/flow.ts,,1,True,0,0
+cp6.web/src/views/wf/TodoCenter.vue,wf,166,,,cp6.web/src/api/sys/user.ts | cp6.web/src/api/wf/flow.ts | cp6.web/src/api/wf/form.ts,,2,True,0,0
+cp6.web/src/views/wms/BridgeHealthView.vue,wms,241,/wms/bridge-health,cp6.web/src/router/index.ts,cp6.web/src/api/wms/bridgeHealth.ts,CpSectionHeader | CpStatCard | CpTag,0,True,0,1
+cp6.web/src/views/wms/CarrierView.vue,wms,277,/wms/carrier,cp6.web/src/router/index.ts,cp6.web/src/api/wms/connectivity.ts,CpEmpty | CpFormDialog | CpListPage | CpPageShell,0,True,3,0
+cp6.web/src/views/wms/CrossDockView.vue,wms,191,/wms/cross-dock,cp6.web/src/router/index.ts,cp6.web/src/api/wms/logistics.ts,CpFormDialog | CpListPage | CpPageShell,1,True,1,0
+cp6.web/src/views/wms/ExpiryView.vue,wms,134,/wms/expiry,cp6.web/src/router/index.ts,cp6.web/src/api/wms/expiry.ts,CpListPage | CpPageShell | CpTag,1,True,0,0
+cp6.web/src/views/wms/InboundOrderListView.vue,wms,118,/wms/inbound-order-list,cp6.web/src/router/index.ts,cp6.web/src/api/wms/inboundOrder.ts,CpListPage | CpPageShell,0,False,0,0
+cp6.web/src/views/wms/InboundOrderView.vue,wms,223,/wms/inbound-order,cp6.web/src/router/index.ts,cp6.web/src/api/wms/inboundOrder.ts,CpTag,3,True,8,0
+cp6.web/src/views/wms/InboundReceiptView.vue,wms,196,/wms/inbound-receipt,cp6.web/src/router/index.ts,cp6.web/src/api/wms/inboundOrder.ts | cp6.web/src/api/wms/inboundReceipt.ts,,1,True,9,0
+cp6.web/src/views/wms/InkLotView.vue,wms,344,/wms/ink-lot,cp6.web/src/router/index.ts,cp6.web/src/api/wms/paperIndustry.ts,CpTag,1,True,14,0
+cp6.web/src/views/wms/IotMonitorView.vue,wms,255,/wms/iot-monitor,cp6.web/src/router/index.ts,cp6.web/src/api/wms/connectivity.ts,CpEmpty | CpFormDialog | CpTag,0,True,6,0
+cp6.web/src/views/wms/KitView.vue,wms,448,/wms/kit,cp6.web/src/router/index.ts,cp6.web/src/api/wms/kitting.ts,CpListPage | CpTag,2,True,5,0
+cp6.web/src/views/wms/LocationListView.vue,wms,232,/wms/location,cp6.web/src/router/index.ts,cp6.web/src/api/wms/warehouse.ts,CpTag,1,True,10,0
+cp6.web/src/views/wms/LotTraceView.vue,wms,179,/wms/lot-trace,cp6.web/src/router/index.ts,cp6.web/src/api/wms/lotTrace.ts,CpTag,2,True,13,0
+cp6.web/src/views/wms/MaterialShortageView.vue,wms,230,/wms/material-shortage,cp6.web/src/router/index.ts,cp6.web/src/api/wms/materialShortage.ts,CpListPage | CpPageShell | CpStatCard,0,True,0,0
+cp6.web/src/views/wms/MobileTaskView.vue,wms,343,/wms/mobile-task,cp6.web/src/router/index.ts,cp6.web/src/api/wms/mobile.ts | cp6.web/src/api/wms/production.ts,,4,True,1,0
+cp6.web/src/views/wms/OutboundOrderListView.vue,wms,189,/wms/outbound-order-list | /wms/shipping-order-list,cp6.web/src/router/index.ts,cp6.web/src/api/wms/outboundOrder.ts,CpListPage | CpPageShell,0,False,0,0
+cp6.web/src/views/wms/OutboundOrderView.vue,wms,306,/wms/outbound-order | /wms/shipping-order,cp6.web/src/router/index.ts,cp6.web/src/api/wms/outboundOrder.ts,CpTag,5,True,7,0
+cp6.web/src/views/wms/OutboundRoutingView.vue,wms,289,/wms/outbound-routing,cp6.web/src/router/index.ts,cp6.web/src/api/wms/outboundRouting.ts | cp6.web/src/api/wms/warehouse.ts,CpListPage | CpPageShell | CpTag,1,True,6,0
+cp6.web/src/views/wms/PackingShipView.vue,wms,266,/wms/packaging,cp6.web/src/router/index.ts,cp6.web/src/api/http.ts | cp6.web/src/api/wms/outboundOrder.ts,,1,True,12,0
+cp6.web/src/views/wms/PalletView.vue,wms,252,/wms/pallet,cp6.web/src/router/index.ts,cp6.web/src/api/wms/paperIndustry.ts,CpFormDialog | CpListPage | CpPageShell,3,False,4,0
+cp6.web/src/views/wms/PaperRollView.vue,wms,270,/wms/paper-roll,cp6.web/src/router/index.ts,cp6.web/src/api/wms/paperIndustry.ts,CpFormDialog | CpListPage | CpPageShell | CpTag,3,True,8,0
+cp6.web/src/views/wms/PickingWorkView.vue,wms,308,/wms/picking,cp6.web/src/router/index.ts,cp6.web/src/api/wms/outboundOrder.ts,,0,True,8,0
+cp6.web/src/views/wms/PlateMoldView.vue,wms,318,/wms/plate-mold-stock,cp6.web/src/router/index.ts,cp6.web/src/api/wms/paperIndustry2.ts,CpListPage | CpPageShell | CpTag,1,True,10,0
+cp6.web/src/views/wms/ProductionInboundView.vue,wms,220,/wms/product-inbound,cp6.web/src/router/index.ts,cp6.web/src/api/wms/inboundReceipt.ts,CpTag,1,True,8,0
+cp6.web/src/views/wms/QcInspectionView.vue,wms,314,/wms/inspection,cp6.web/src/router/index.ts,cp6.web/src/api/wms/qcInspection.ts,CpDetailPanel | CpListPage | CpPageShell | CpTag,1,True,6,0
+cp6.web/src/views/wms/RemnantView.vue,wms,282,/wms/remnant,cp6.web/src/router/index.ts,cp6.web/src/api/wms/paperIndustry2.ts,CpFormDialog | CpListPage | CpPageShell,2,False,7,0
+cp6.web/src/views/wms/ReplenishView.vue,wms,264,/wms/replenish,cp6.web/src/router/index.ts,cp6.web/src/api/wms/logistics.ts,CpFormDialog | CpListPage | CpPageShell,2,True,1,0
+cp6.web/src/views/wms/ReportCenterView.vue,wms,252,/wms/report-center,cp6.web/src/router/index.ts,cp6.web/src/api/wms/reportCenter.ts,CpEmpty | CpTag,0,True,9,0
+cp6.web/src/views/wms/RmaView.vue,wms,326,/wms/rma,cp6.web/src/router/index.ts,cp6.web/src/api/wms/rma.ts,CpListPage | CpPageShell | CpTag,2,True,6,0
+cp6.web/src/views/wms/SampleStockView.vue,wms,250,/wms/sample-stock,cp6.web/src/router/index.ts,cp6.web/src/api/wms/paperIndustry2.ts,CpFormDialog | CpListPage | CpPageShell,3,True,3,0
+cp6.web/src/views/wms/SlottingView.vue,wms,252,/wms/slotting,cp6.web/src/router/index.ts,cp6.web/src/api/wms/logistics.ts,CpDetailPanel | CpFormDialog | CpListPage | CpPageShell | CpSectionHeader | CpTag,0,True,0,0
+cp6.web/src/views/wms/StockDwellView.vue,wms,459,/wms/stock-dwell,cp6.web/src/router/index.ts,cp6.web/src/api/wms/stockDwell.ts,CpEmpty | CpTag,0,True,8,1
+cp6.web/src/views/wms/StockQueryView.vue,wms,248,/wms/stock,cp6.web/src/router/index.ts,cp6.web/src/api/wms/stock.ts,CpListPage | CpPageShell,1,True,1,0
+cp6.web/src/views/wms/StockTakeListView.vue,wms,180,/wms/stock-take-list,cp6.web/src/router/index.ts,cp6.web/src/api/wms/stockTake.ts,CpFormDialog | CpListPage | CpPageShell,0,False,0,0
+cp6.web/src/views/wms/StockTakeView.vue,wms,244,/wms/stock-take,cp6.web/src/router/index.ts,cp6.web/src/api/wms/stockTake.ts,CpTag,2,True,7,0
+cp6.web/src/views/wms/VmiView.vue,wms,245,/wms/vmi,cp6.web/src/router/index.ts,cp6.web/src/api/wms/paperIndustry.ts,CpFormDialog | CpListPage,2,True,2,0
+cp6.web/src/views/wms/WarehouseListView.vue,wms,175,/wms/warehouse,cp6.web/src/router/index.ts,cp6.web/src/api/wms/warehouse.ts,CpFormDialog | CpListPage | CpPageShell | CpTag,1,True,0,0
+cp6.web/src/views/wms/WcsTaskView.vue,wms,261,/wms/wcs-task,cp6.web/src/router/index.ts,cp6.web/src/api/wms/connectivity.ts,CpFormDialog | CpListPage | CpPageShell | CpTag,1,False,2,0
+cp6.web/src/views/wms/WmsDashboardView.vue,wms,315,/wms/dashboard,cp6.web/src/router/index.ts,cp6.web/src/api/wms/wmsDashboard.ts,CpSectionHeader | CpStatCard | CpTag,0,True,7,0
+cp6.web/src/views/wms/WmsPlaceholderView.vue,wms,79,,,,,0,True,0,0
+cp6.web/src/views/wms/WmsProductionConsole.vue,wms,656,,cp6.web/src/views/wms/MobileTaskView.vue,cp6.web/src/api/wms/production.ts,,15,True,0,0
+cp6.web/src/views/wms/WmsSerialLpnDialogs.vue,wms,401,,cp6.web/src/views/wms/WmsProductionConsole.vue,cp6.web/src/api/wms/production.ts,,0,True,0,0

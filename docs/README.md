@@ -7,6 +7,7 @@
 | 目的 | 从这里开始 |
 | --- | --- |
 | 了解项目、搭建开发环境 | [项目首页](../README.md) → [开发指南](../DEVELOPMENT-GUIDE.md) |
+| 全项目业务、架构、界面升级前盘点 | [公开源码盘点与完整私有报告入口](audits/2026-09-16-full-project/README.md) |
 | 接手任务、查看最新进展 | [项目记忆入口](project-memory/README.md) → [当前状态](project-memory/PROJECT_STATE.md) → [待办](project-memory/06-Todo.md) |
 | 找产品蓝图、功能范围与路线 | [产品规划](product/README.md) |
 | 看架构、源码位置和跨模块约定 | [架构与代码导航](architecture/README.md) |
@@ -46,6 +47,7 @@
 | --- | --- |
 | `product/` | 跨模块产品蓝图、功能盘点、路线及配套图源 |
 | `architecture/` | 项目结构、总体代码地图、设计系统、横切规范与国际化方案 |
+| `audits/` | 固定源码基线的跨仓现状盘点、统计附件、验证边界与升级约束 |
 | `codemap-*/`、`_inventory/` | 各模块源码地图、历史代码盘点及文档整理记录 |
 | `requirements/`、`detailed-spec/` | 早期需求底稿与逆向详细设计 |
 | `crm/`、`client/`、`space/`、`finance/`、`procurement/`、`approval/`、`pub/` | 对应业务域的规范与说明 |
