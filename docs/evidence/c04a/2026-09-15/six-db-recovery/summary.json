@@ -1,0 +1,124 @@
+{
+  "format": "CP6.C04A.NativeRecoveryEvidence.v1",
+  "runId": "9889bb212c6448ad8fd82bfd33556824",
+  "status": "five-native-databases-verified; docker-pending",
+  "actualEnvironment": true,
+  "actualSourceBusinessOrSchemaMutations": false,
+  "actualActivation": false,
+  "productionDeployment": false,
+  "nativeDatabases": [
+    {
+      "role": "native-core",
+      "tableCount": 329,
+      "rowCount": 67772,
+      "copyOnly": true,
+      "checksums": true,
+      "verifyOnly": true,
+      "actualRestore": true,
+      "checkDb": "passed",
+      "allUserTablesReadable": true,
+      "readOnly": true,
+      "restrictedUser": true,
+      "backupSha256": "1b19b9f5388368158fb58c158b47f872eb20c52b6ccb49fbb75587f594c11663",
+      "schemaSha256": "e9707eb7d1bb1000d84f8b5afaa0ec65b8e0fc3633d68cdf7dc9bb83477cee11"
+    },
+    {
+      "role": "preview-core",
+      "tableCount": 259,
+      "rowCount": 3301,
+      "copyOnly": true,
+      "checksums": true,
+      "verifyOnly": true,
+      "actualRestore": true,
+      "checkDb": "passed",
+      "allUserTablesReadable": true,
+      "readOnly": true,
+      "restrictedUser": true,
+      "backupSha256": "7bdc1acc457d57755b79dc814ef8e5e7bebd1486eb749ff98ce7f3a092c29a23",
+      "schemaSha256": "bf7d5cc4cb5c5e6d9f95560161aeb9272a99845072c5df061a6d064315ac0650"
+    },
+    {
+      "role": "auth-identity-catalog",
+      "tableCount": 13,
+      "rowCount": 492,
+      "copyOnly": true,
+      "checksums": true,
+      "verifyOnly": true,
+      "actualRestore": true,
+      "checkDb": "passed",
+      "allUserTablesReadable": true,
+      "readOnly": true,
+      "restrictedUser": true,
+      "backupSha256": "788c88c899d644a1bde6ea6401906e9b5bda29232758004a83bc16ae4a158f9f",
+      "schemaSha256": "4161d9a840f498510eedbc6fe7c1f59e5b21afb14eacc2bfc81c1778069bf5cb"
+    },
+    {
+      "role": "business-primary",
+      "tableCount": 10,
+      "rowCount": 1,
+      "copyOnly": true,
+      "checksums": true,
+      "verifyOnly": true,
+      "actualRestore": true,
+      "checkDb": "passed",
+      "allUserTablesReadable": true,
+      "readOnly": true,
+      "restrictedUser": true,
+      "backupSha256": "00d9c36e02ae578925672a80476c458d12b10d7d9471328aac8d9f90c29b6a71",
+      "schemaSha256": "b6f7af8273b0a047789eacad2bfca262a64174908cd3185dce7ed2e9734307d8"
+    },
+    {
+      "role": "business-isolation",
+      "tableCount": 10,
+      "rowCount": 1,
+      "copyOnly": true,
+      "checksums": true,
+      "verifyOnly": true,
+      "actualRestore": true,
+      "checkDb": "passed",
+      "allUserTablesReadable": true,
+      "readOnly": true,
+      "restrictedUser": true,
+      "backupSha256": "dc9a45c5f85a82099de1d0a04f8e484ea310f5e19341ec4a10d460fd96b54230",
+      "schemaSha256": "dbbfa86b629c7cf2d67bad6f372bfda9985a9bc56ab3f3eaa92ff262f6fda1ec"
+    }
+  ],
+  "protectedInputCopies": 11,
+  "sourceAndRestoreSchemasMatch": true,
+  "backupAndPrivateInputHashesMatch": true,
+  "lifecycle": {
+    "machineRebooted": true,
+    "originalPreviewProcessesPresent": 0,
+    "expectedPreviewProcesses": 6,
+    "oldPidInventoryReusable": false,
+    "dockerLinuxEngineUnavailable": true,
+    "existingServicesStarted": false,
+    "deployAgentStillRunning": true
+  },
+  "priorFiveSqlChecks": "Reused at their previously recorded versions; not rerun; Core #114 / CRM #75 already merged.",
+  "boundaries": {
+    "sixDatabaseSetComplete": false,
+    "crossDatabaseCutoverSnapshot": false,
+    "applicationRecoveryOrKeyDecryptionProven": false,
+    "crm11CanonicalDataComparison": false,
+    "calendarInitialStoredVersion": false,
+    "privilegedWriterIsolation": false,
+    "changedBytesUserSigned": false
+  },
+  "goal": {
+    "completed": 3,
+    "total": 5,
+    "percent": 60
+  },
+  "archive": {
+    "file": "native-recovery-evidence.zip",
+    "sha256": "263e1505b3de11c6e8565559cb2adcdbe34b25a30353ece10901fd5e6e99b571"
+  },
+  "remaining": [
+    "Docker CP6DB backup and actual restore after engine readiness approval",
+    "Isolated 0.2 forward adoption and Closed startup using actual C02 restore copies",
+    "Resolve initial calendar storage order before actual enable; config save is already a business write",
+    "Refresh exact lifecycle inventory after reboot and establish exclusive operation controls",
+    "Actual changed-byte approval, CRM11 formal acceptance, C04B adoption and observation"
+  ]
+}
