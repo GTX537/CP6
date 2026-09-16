@@ -1,0 +1,227 @@
+{
+  "view_modules_route_keys": 151,
+  "view_modules_unique_components": 149,
+  "static_or_layout_records": 23,
+  "all_direct_routed_components": 164,
+  "views_vue_files": 248,
+  "api_ts_non_test_files": 122,
+  "modules": {
+    "dashboard": {
+      "vue_files": 3,
+      "lines": 1210,
+      "direct_routed_components": 1,
+      "no_route_no_import": 1,
+      "with_api_dependency": 1,
+      "cp_template_components": 1
+    },
+    "_root": {
+      "vue_files": 3,
+      "lines": 2581,
+      "direct_routed_components": 3,
+      "no_route_no_import": 0,
+      "with_api_dependency": 2,
+      "cp_template_components": 0
+    },
+    "erp": {
+      "vue_files": 42,
+      "lines": 10661,
+      "direct_routed_components": 20,
+      "no_route_no_import": 0,
+      "with_api_dependency": 29,
+      "cp_template_components": 24
+    },
+    "fin": {
+      "vue_files": 22,
+      "lines": 5384,
+      "direct_routed_components": 22,
+      "no_route_no_import": 0,
+      "with_api_dependency": 22,
+      "cp_template_components": 0
+    },
+    "mes": {
+      "vue_files": 18,
+      "lines": 4990,
+      "direct_routed_components": 15,
+      "no_route_no_import": 0,
+      "with_api_dependency": 15,
+      "cp_template_components": 0
+    },
+    "oa": {
+      "vue_files": 39,
+      "lines": 11209,
+      "direct_routed_components": 10,
+      "no_route_no_import": 0,
+      "with_api_dependency": 25,
+      "cp_template_components": 18
+    },
+    "plan": {
+      "vue_files": 2,
+      "lines": 310,
+      "direct_routed_components": 2,
+      "no_route_no_import": 0,
+      "with_api_dependency": 2,
+      "cp_template_components": 0
+    },
+    "platform": {
+      "vue_files": 5,
+      "lines": 906,
+      "direct_routed_components": 5,
+      "no_route_no_import": 0,
+      "with_api_dependency": 5,
+      "cp_template_components": 0
+    },
+    "pms": {
+      "vue_files": 23,
+      "lines": 5163,
+      "direct_routed_components": 22,
+      "no_route_no_import": 1,
+      "with_api_dependency": 21,
+      "cp_template_components": 0
+    },
+    "pur": {
+      "vue_files": 8,
+      "lines": 1793,
+      "direct_routed_components": 8,
+      "no_route_no_import": 0,
+      "with_api_dependency": 8,
+      "cp_template_components": 0
+    },
+    "space": {
+      "vue_files": 36,
+      "lines": 17452,
+      "direct_routed_components": 16,
+      "no_route_no_import": 0,
+      "with_api_dependency": 26,
+      "cp_template_components": 13
+    },
+    "wf": {
+      "vue_files": 6,
+      "lines": 1377,
+      "direct_routed_components": 2,
+      "no_route_no_import": 2,
+      "with_api_dependency": 6,
+      "cp_template_components": 0
+    },
+    "wms": {
+      "vue_files": 41,
+      "lines": 11032,
+      "direct_routed_components": 38,
+      "no_route_no_import": 1,
+      "with_api_dependency": 40,
+      "cp_template_components": 34
+    }
+  },
+  "no_route_no_import": [
+    "cp6.web/src/views/dashboard/HomeView.vue",
+    "cp6.web/src/views/pms/AboutView.vue",
+    "cp6.web/src/views/wf/MyApplications.vue",
+    "cp6.web/src/views/wf/TodoCenter.vue",
+    "cp6.web/src/views/wms/WmsPlaceholderView.vue"
+  ],
+  "src_tests": 188,
+  "e2e_test_files": 10,
+  "view_module_routes_by_folder": {
+    "dashboard": 1,
+    "pms": 17,
+    "platform": 5,
+    "oa": 9,
+    "wf": 2,
+    "fin": 22,
+    "pur": 8,
+    "plan": 2,
+    "erp": 20,
+    "mes": 15,
+    "wms": 40,
+    "space": 10
+  },
+  "all_src_vue_files": 289,
+  "space_design_module_vue_files": 20,
+  "routed_ui_usage": {
+    "CpPageShell": 33,
+    "CpListPage": 34,
+    "CpFilterBar": 0,
+    "CpFormDialog": 17,
+    "CpTag": 43,
+    "VolTable": 5,
+    "VolForm": 0,
+    "el-table": 92,
+    "el-form": 106
+  },
+  "top_view_sizes": [
+    {
+      "path": "cp6.web/src/views/space/editor/DesignUnderlayView.vue",
+      "lines": 4596
+    },
+    {
+      "path": "cp6.web/src/views/LoginView.vue",
+      "lines": 1827
+    },
+    {
+      "path": "cp6.web/src/views/space/viewer/FloorViewer.vue",
+      "lines": 1667
+    },
+    {
+      "path": "cp6.web/src/views/pms/MenuView.vue",
+      "lines": 1551
+    },
+    {
+      "path": "cp6.web/src/views/oa/designer/FlowDesignPreviewCanvas.vue",
+      "lines": 1386
+    },
+    {
+      "path": "cp6.web/src/views/erp/QuotationView.vue",
+      "lines": 1226
+    },
+    {
+      "path": "cp6.web/src/views/oa/designer/FlowDesignVariantsView.vue",
+      "lines": 1102
+    },
+    {
+      "path": "cp6.web/src/views/oa/designer/NodePropertyPanel.vue",
+      "lines": 1091
+    },
+    {
+      "path": "cp6.web/src/views/space/editor/FloorEditor.vue",
+      "lines": 1062
+    },
+    {
+      "path": "cp6.web/src/views/dashboard/DashboardView.vue",
+      "lines": 1055
+    },
+    {
+      "path": "cp6.web/src/views/fin/BudgetEditView.vue",
+      "lines": 1004
+    },
+    {
+      "path": "cp6.web/src/views/oa/designer/DesignerCanvas.vue",
+      "lines": 916
+    }
+  ],
+  "native": {
+    "CP6.Desktop": {
+      "cs_files": 6,
+      "xaml_files": 2
+    },
+    "CP6.Mobile": {
+      "cs_files": 17,
+      "xaml_files": 8
+    },
+    "CP6.Client.Core": {
+      "cs_files": 19,
+      "xaml_files": 0
+    },
+    "CP6.Client.Api": {
+      "cs_files": 2,
+      "xaml_files": 0
+    },
+    "CP6.Client.Tests": {
+      "cs_files": 10,
+      "xaml_files": 0
+    },
+    "CP6.Space.Client": {
+      "cs_files": 1,
+      "xaml_files": 0
+    }
+  },
+  "api_http_call_sites": 925
+}

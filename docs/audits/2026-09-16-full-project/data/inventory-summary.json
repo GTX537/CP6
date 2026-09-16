@@ -1,0 +1,442 @@
+{
+  "method": {
+    "scope": "git ls-files at recorded HEAD; no database, HTTP or production verification",
+    "lines": "splitlines including comments and blank lines; generated files included unless explicitly excluded",
+    "api": "HTTP attributes in non-test *Controller.cs and MapGet/Post/Put/Delete/Patch/Methods calls in non-test C#; textual declarations, not expanded/runtime endpoint count",
+    "persistence": "public DbSet<T> declarations in non-test C#; not distinct physical tables; excludes Set<T>/modelBuilder-only entities",
+    "ui": "non-test .vue/.tsx/.razor/.axaml/.xaml tracked files; includes components/layouts and native resource XAML, not reachable-page count",
+    "tests": "test/spec file naming heuristic; file counts never mean passed test cases or coverage"
+  },
+  "repositories": {
+    "core": {
+      "commit": "5f39a020a9c535fb0bd515cc419bc0e99b90fe07",
+      "tracked_files": 7152,
+      "source_text_files": 3900,
+      "source_text_lines": 2683099,
+      "csharp_files": 2798,
+      "non_test_non_generated_csharp_files": 1678,
+      "non_test_non_generated_csharp_lines": 275681,
+      "test_source_files_heuristic": 939,
+      "generated_or_migration_source_files": 408,
+      "extensions": {
+        ".appxmanifest": 1,
+        ".bak": 3,
+        ".bat": 8,
+        ".cer": 1,
+        ".conf": 1,
+        ".config": 2,
+        ".cs": 2798,
+        ".csproj": 40,
+        ".css": 14,
+        ".csv": 3,
+        ".diff": 228,
+        ".dockerfile": 3,
+        ".dockerignore": 1,
+        ".docx": 120,
+        ".dxf": 28,
+        ".eot": 8,
+        ".example": 1,
+        ".gif": 1,
+        ".html": 440,
+        ".http": 3,
+        ".ico": 1,
+        ".inv": 1,
+        ".java": 2,
+        ".jpg": 10,
+        ".js": 19,
+        ".json": 386,
+        ".jsonl": 6,
+        ".manifest": 1,
+        ".md": 1205,
+        ".mjs": 12,
+        ".mmd": 9,
+        ".mod": 1,
+        ".msg": 1,
+        ".otf": 1,
+        ".pdf": 5,
+        ".pid": 1,
+        ".png": 271,
+        ".props": 1,
+        ".ps1": 112,
+        ".psm1": 3,
+        ".py": 7,
+        ".rpg": 1,
+        ".sh": 9,
+        ".sha256": 3,
+        ".slnx": 2,
+        ".sql": 106,
+        ".stderr": 1,
+        ".sum": 1,
+        ".svg": 8,
+        ".ts": 528,
+        ".ttf": 8,
+        ".txt": 45,
+        ".url": 3,
+        ".vue": 308,
+        ".webp": 1,
+        ".woff": 22,
+        ".woff2": 22,
+        ".xaml": 10,
+        ".xls": 3,
+        ".xlsm": 1,
+        ".xlsx": 167,
+        ".xml": 22,
+        ".yaml": 21,
+        ".yml": 20,
+        ".zip": 23,
+        "[none]": 58
+      },
+      "source_groups": {
+        "CP6.Client.Api": {
+          "files": 6,
+          "lines": 1096
+        },
+        "CP6.Client.Core": {
+          "files": 19,
+          "lines": 2472
+        },
+        "CP6.Client.Tests": {
+          "files": 10,
+          "lines": 1747
+        },
+        "CP6.Core": {
+          "files": 888,
+          "lines": 1721351
+        },
+        "CP6.Desktop": {
+          "files": 9,
+          "lines": 1633
+        },
+        "CP6.Entity": {
+          "files": 257,
+          "lines": 16080
+        },
+        "CP6.Mobile": {
+          "files": 28,
+          "lines": 1817
+        },
+        "CP6.Oidc.IntegrationTests": {
+          "files": 3,
+          "lines": 839
+        },
+        "CP6.Space.Application": {
+          "files": 85,
+          "lines": 29029
+        },
+        "CP6.Space.Client": {
+          "files": 1,
+          "lines": 38660
+        },
+        "CP6.Space.Contracts": {
+          "files": 50,
+          "lines": 5685
+        },
+        "CP6.Space.Domain": {
+          "files": 50,
+          "lines": 14036
+        },
+        "CP6.Space.Infrastructure": {
+          "files": 209,
+          "lines": 357205
+        },
+        "CP6.Space.IntegrationTests": {
+          "files": 80,
+          "lines": 40774
+        },
+        "CP6.Space.UnitTests": {
+          "files": 62,
+          "lines": 17522
+        },
+        "CP6.Tests": {
+          "files": 480,
+          "lines": 89488
+        },
+        "CP6.WebApi": {
+          "files": 349,
+          "lines": 43260
+        },
+        "contracts": {
+          "files": 3,
+          "lines": 366
+        },
+        "cp6.web": {
+          "files": 821,
+          "lines": 155218
+        },
+        "deploy": {
+          "files": 6,
+          "lines": 8622
+        },
+        "deploy-to-server.ps1": {
+          "files": 1,
+          "lines": 101
+        },
+        "docs": {
+          "files": 140,
+          "lines": 27820
+        },
+        "eng": {
+          "files": 56,
+          "lines": 7849
+        },
+        "redeploy-cp6uk.ps1": {
+          "files": 1,
+          "lines": 158
+        },
+        "scripts": {
+          "files": 60,
+          "lines": 11089
+        },
+        "sdk": {
+          "files": 1,
+          "lines": 41127
+        },
+        "start-wms-phase1.ps1": {
+          "files": 1,
+          "lines": 266
+        },
+        "tools": {
+          "files": 224,
+          "lines": 47789
+        }
+      },
+      "projects": 40,
+      "api_declarations": 1100,
+      "ui_files": 318,
+      "dbset_declarations": 319,
+      "declaration_scopes": {
+        "projects": {
+          "application_or_library": 17,
+          "reference": 6,
+          "engineering": 17
+        },
+        "api": {
+          "application_or_library": 1090,
+          "reference": 8,
+          "engineering": 2
+        },
+        "ui": {
+          "application_or_library": 299,
+          "reference": 19
+        },
+        "dbset": {
+          "application_or_library": 316,
+          "reference": 3
+        }
+      }
+    },
+    "platform": {
+      "commit": "30bd23af6808d217a23878bd9437513043c52834",
+      "tracked_files": 431,
+      "source_text_files": 195,
+      "source_text_lines": 39077,
+      "csharp_files": 164,
+      "non_test_non_generated_csharp_files": 93,
+      "non_test_non_generated_csharp_lines": 12587,
+      "test_source_files_heuristic": 78,
+      "extensions": {
+        ".cer": 1,
+        ".conf": 1,
+        ".config": 1,
+        ".cs": 164,
+        ".csproj": 18,
+        ".json": 138,
+        ".md": 48,
+        ".properties": 1,
+        ".props": 2,
+        ".ps1": 30,
+        ".psm1": 1,
+        ".py": 1,
+        ".sln": 1,
+        ".yaml": 9,
+        ".yml": 9,
+        "[none]": 6
+      },
+      "source_groups": {
+        "eng": {
+          "files": 24,
+          "lines": 5359
+        },
+        "src": {
+          "files": 89,
+          "lines": 11938
+        },
+        "tests": {
+          "files": 78,
+          "lines": 21131
+        },
+        "tools": {
+          "files": 4,
+          "lines": 649
+        }
+      },
+      "projects": 18,
+      "api_declarations": 2,
+      "ui_files": 0,
+      "dbset_declarations": 0,
+      "declaration_scopes": {
+        "projects": {
+          "application_or_library": 8,
+          "engineering": 10
+        },
+        "api": {
+          "application_or_library": 2
+        },
+        "ui": {},
+        "dbset": {}
+      }
+    }
+  },
+  "largest_non_test_non_generated_csharp": [
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "lines": 7619
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceContext.cs",
+      "lines": 6846
+    },
+    {
+      "repository": "core",
+      "path": "CP6.WebApi/Program.cs",
+      "lines": 3120
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "lines": 2863
+    },
+    {
+      "repository": "core",
+      "path": "CP6.WebApi/OpenApi/SpaceDesignV1OpenApi.cs",
+      "lines": 2312
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "lines": 2215
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceGenerationApplyStepExecutor.cs",
+      "lines": 2119
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+      "lines": 2107
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Application/SpaceValidation.cs",
+      "lines": 2079
+    },
+    {
+      "repository": "core",
+      "path": "tools/CP6.Space.CadExperiment/Program.cs",
+      "lines": 2064
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Application/SpaceAiWarehouseSynthesis.cs",
+      "lines": 1961
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceWmsRuntimeService.cs",
+      "lines": 1870
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Core/Services/Wms/MobileTaskV2Service.cs",
+      "lines": 1688
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Core/Services/Erp/OrderService.cs",
+      "lines": 1565
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceBuildSceneJobStepExecutor.cs",
+      "lines": 1561
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.cs",
+      "lines": 1541
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceDispatchApprovalService.cs",
+      "lines": 1489
+    },
+    {
+      "repository": "core",
+      "path": "CP6.WebApi/BackgroundServices/IntegrationEventRetryWorker.cs",
+      "lines": 1427
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Domain/SpaceRevisions.cs",
+      "lines": 1375
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/Cp6SpaceWmsAdapter.cs",
+      "lines": 1263
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/EfSpaceVersionClone.cs",
+      "lines": 1226
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceWmsAdoptionService.cs",
+      "lines": 1191
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Application/SpaceCadSemanticParsing.cs",
+      "lines": 1132
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceDeviceEventService.cs",
+      "lines": 1112
+    },
+    {
+      "repository": "core",
+      "path": "tools/CP6.Space.CadExperiment/GoldenCadBusinessEvaluator.cs",
+      "lines": 1105
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceUnderlayV1Service.cs",
+      "lines": 1098
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Application/SpaceWmsAdapter.cs",
+      "lines": 1075
+    },
+    {
+      "repository": "core",
+      "path": "tools/CP6.Space.CadExperiment/DevelopmentDxfCorpusGenerator.cs",
+      "lines": 1045
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceAiProposalDecisionService.cs",
+      "lines": 1043
+    },
+    {
+      "repository": "core",
+      "path": "CP6.Space.Infrastructure/SpaceHistoricalRepublishService.cs",
+      "lines": 1035
+    }
+  ]
+}
