@@ -1,0 +1,112 @@
+{
+  "format": "CP6.C04A.RuntimeRecovery.v1",
+  "runId": "8b969e49-dffe-4c97-b096-1c082cd037fb",
+  "observedAtUtc": "2026-09-16T12:23:12.5379598+00:00",
+  "status": "local-runtime-recovered-and-accepted",
+  "dockerDesktopVersion": "4.91.0.239619",
+  "dockerEngineVersion": "29.8.0",
+  "rebootAndUpgradeAloneResolvedSocketFailure": false,
+  "workaround": "Child-only LOCALAPPDATA points to an unencrypted runtime cache; its Docker junction maps back to the original Docker directory and data disk.",
+  "oldInaccessibleSocketPreserved": true,
+  "originalDataDiskPreserved": true,
+  "userEnvironmentPersisted": false,
+  "credentialStoreLocationChanged": false,
+  "aclChanged": false,
+  "encryptionPolicyChanged": false,
+  "factoryResetPerformed": false,
+  "runtimeFileCountVerified": 429,
+  "approvedHostRequestSha256": "8adc94af89e072d7435dd067b133d23094daf782fb407aa4168e12b6ed7f79e9",
+  "applicationPackagesRebuilt": false,
+  "priorControlRecordsPreserved": [
+    {
+      "processKilled": false,
+      "sha256": "81bdb10682464b9f3fad0fb0616abe8db8062beba0d57eb3c31a6a3be27102af",
+      "pidReused": false,
+      "name": "preview-host-process.json"
+    },
+    {
+      "processKilled": false,
+      "sha256": "614f207f09d6aa9080893d26fd8547b127e6d01a0a43849dddccbd7d53f48d96",
+      "pidReused": false,
+      "name": "core-process.json"
+    },
+    {
+      "processKilled": false,
+      "sha256": "8212fe00991fece465b3abafd868ca4ceb7352bf722a48f7c61d3d4619929c61",
+      "pidReused": false,
+      "name": "crm-process.json"
+    },
+    {
+      "processKilled": false,
+      "sha256": "c7ccccbee6a029383ff93435be72ce4203a300a44ed16e9433a1c4801a5b13e1",
+      "pidReused": false,
+      "name": "web-process.json"
+    },
+    {
+      "processKilled": false,
+      "sha256": "92da798a7b295d18950c2f0039fab25c9f91eb5329211ce8a5dcaddee9c07fe9",
+      "pidReused": false,
+      "name": "dispatcher-process.json"
+    }
+  ],
+  "sourceInitializationRepeated": false,
+  "sourceFreezeRepeated": false,
+  "targetActivationRepeated": false,
+  "calendarPublicationRepeated": false,
+  "oldTestsRerun": false,
+  "productionDeployed": false,
+  "actionsInvoked": false,
+  "subsequentStartHelper": {
+    "fileName": "Start-RecoveredDocker.ps1",
+    "sha256": "522a2cf67be1ccb34e78cce092562dbc80f59e4fee59fa4c630f5f9355cdad09",
+    "scope": "Local audit helper; validates original directory/disk mapping and signed executable; launches only if Docker processes are absent; does not stop processes or change global environment.",
+    "validation": "PowerShell parse plus running-process no-op path; actual successful launch is independently recorded in isolated-runtime-cache-launch.json."
+  },
+  "upgradeProtection": {
+    "kind": "Offline Docker disk protected by persistent same-volume VSS snapshot; not an off-device backup",
+    "persistent": true,
+    "sourceExclusiveReadLockAcquired": true,
+    "dataDiskBytes": 146622382080,
+    "sampledRegions": [
+      {
+        "offset": 0,
+        "sha256": "8e40b04c5dd92b96dba21278be2e451fde764b794e7b0b1f74cdfd3889b2a24c",
+        "bytes": 1048576
+      },
+      {
+        "offset": 1048576,
+        "sha256": "4186c87b2657ad3bd44ec89211eb2ead3b3c8114c362488f3244197d21613728",
+        "bytes": 1048576
+      },
+      {
+        "offset": 73311191040,
+        "sha256": "c532d139f98a51f0b1f3b789b2782483cb5cab1454f9fffb3a8701b7269ad16b",
+        "bytes": 1048576
+      },
+      {
+        "offset": 146621333504,
+        "sha256": "6bb4f7a2013ccdc10ad8c3cb01e38cc66fafbe7b93932a4c3e16a1710c9dbca3",
+        "bytes": 1048576
+      }
+    ],
+    "wholeDiskHashComputed": false,
+    "volumeRestored": false,
+    "privateFileCopies": [
+      {
+        "bytes": 117440512,
+        "sha256": "5f74a539deacad1ee9f99a58571b693b639a59d48352a61dd6a0baaa01fc555d"
+      },
+      {
+        "bytes": 307,
+        "sha256": "4d02018deaf3eace2104fa0a578aa148578f4234e621fd4855e2512d0c2ac701"
+      }
+    ]
+  },
+  "limitations": [
+    "Local original C02 adoption only; not CRM11 production acceptance.",
+    "The original encrypted stale socket remains inaccessible; future Docker starts must use the retained local helper/cache mapping.",
+    "The same-volume VSS protection is not an off-device backup or permission to overwrite Written targets.",
+    "The host status field actualCutoverApproved=false describes the recovery host capability; separate operator approval and actual database receipts govern this adoption.",
+    "The acceptance receipt is immutable and records formalDeliveryPending=true; remote-main delivery is verified separately."
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "algorithm": "SHA-256",
+  "scope": "Retained local audit originals; paths and sensitive runtime inputs are not published",
+  "files": [
+    {
+      "name": "actual-acceptance.json",
+      "sha256": "516c2315a51b61f696e660f00e2244ebcfa3f2f5029459321757b8526d1ad368"
+    },
+    {
+      "name": "actual-host-after-interruption.json",
+      "sha256": "9a9b79ee6ace430f716250a9432816c0d80acefeb2bdfec258deb6c4eb4f1392"
+    },
+    {
+      "name": "actual-calendars.json",
+      "sha256": "f4a9d22cb9022147418fe1e27396adea93f397511f34ae810e4465cd27af4f7b"
+    },
+    {
+      "name": "verified-target-activation-after-pause.json",
+      "sha256": "c53dfbdabffaa7fdba491d2eeb58d0172ca1a82418c5ecc6fca11e6f3507f9ad"
+    },
+    {
+      "name": "original-initialization.json",
+      "sha256": "43c0d43d9fa697935882687f5ce091aff3b8ad59e759ac7735415130afcb7ebd"
+    },
+    {
+      "name": "actual-freezes.json",
+      "sha256": "df04be95596f7dcf2d169a1df642d9b1957bed6e9f5ba14951665ade8bb0e6bd"
+    },
+    {
+      "name": "post-reboot-recovery/reboot-observed.json",
+      "sha256": "7aed1718c9d68e00f94c8780c5eb34bc9ed5c52d5577dc04aa4684129a299deb"
+    },
+    {
+      "name": "post-reboot-recovery/docker-update-execution.json",
+      "sha256": "c1b9b9d6bcda5bf506ca116a261c19c7a4fd55db329170cc2d2d5dd8b3bd9ccf"
+    },
+    {
+      "name": "post-reboot-recovery/docker-upgrade-protection.json",
+      "sha256": "b875da113624a56a3e7ad5eafd49b48f9b3f715dfd6aef650fe8c3214d8cabc5"
+    },
+    {
+      "name": "post-reboot-recovery/isolated-runtime-cache-launch.json",
+      "sha256": "28ef2d20a479b9acd77a14a14951b838e77bd15700cb6d4fc2482f95a2eb8d72"
+    },
+    {
+      "name": "post-reboot-recovery/original-transport-recovered.json",
+      "sha256": "60d605e9bed0501ea83d334727bd2e70670dcce552f1eafef4f0d08e737f66f2"
+    },
+    {
+      "name": "post-reboot-recovery/host-recovery-preservation.json",
+      "sha256": "d066990131e36587edb5b2f95c70e71e26b58247af93165ff444c9016b156adc"
+    },
+    {
+      "name": "post-reboot-recovery/dapr-health.json",
+      "sha256": "0abb5fd2f143536f166585f9ff5a43bc65f74d722b2db51a2b126a60f24f7f75"
+    },
+    {
+      "name": "post-reboot-recovery/Resume-OriginalTransport.ps1",
+      "sha256": "374024c4dcdf52293cfefd67f433560fc849fdcc6b244312300704d2026f403d"
+    },
+    {
+      "name": "post-reboot-recovery/Resume-ReviewedHost.ps1",
+      "sha256": "12296326a60195b5ed1c2addd2c2ab156a715d22a8865af1a90d5c7c3930d57b"
+    },
+    {
+      "name": "post-reboot-recovery/Start-RecoveredDocker.ps1",
+      "sha256": "522a2cf67be1ccb34e78cce092562dbc80f59e4fee59fa4c630f5f9355cdad09"
+    },
+    {
+      "name": "post-reboot-recovery/Start-DockerWithIsolatedRuntimeCache.ps1",
+      "sha256": "0b36b004cde77f1c04533badd19c657f4751af77518f1c23a8b45f187089a579"
+    },
+    {
+      "name": "verify-actual-acceptance-after-recovery.ps1",
+      "sha256": "b0e7d9e245ec3357b53a3f172ee430bd604281d4efa7f587cbde01280c8cdc11"
+    }
+  ]
+}
