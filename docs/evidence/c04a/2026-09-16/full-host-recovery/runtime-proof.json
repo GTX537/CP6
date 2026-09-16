@@ -1,0 +1,163 @@
+{
+  "format": "CP6.C04A.FullRecoveryRuntime.v1",
+  "atUtc": "2026-09-16T03:27:23.3193479+00:00",
+  "status": "passed-with-explicit-scope",
+  "processes": [
+    {
+      "startUtcTicks": 639251257746590714,
+      "alive": true,
+      "role": "preview-host",
+      "ownerRunId": "9015b0f4-ef75-470d-8dd9-36e68f71733a",
+      "pid": 23924
+    },
+    {
+      "startUtcTicks": 639251257749635227,
+      "alive": true,
+      "role": "core",
+      "ownerRunId": "9015b0f4-ef75-470d-8dd9-36e68f71733a",
+      "pid": 28296
+    },
+    {
+      "startUtcTicks": 639251257788268911,
+      "alive": true,
+      "role": "crm",
+      "ownerRunId": "9015b0f4-ef75-470d-8dd9-36e68f71733a",
+      "pid": 29836
+    },
+    {
+      "startUtcTicks": 639251257804941261,
+      "alive": true,
+      "role": "web",
+      "ownerRunId": "9015b0f4-ef75-470d-8dd9-36e68f71733a",
+      "pid": 31920
+    },
+    {
+      "startUtcTicks": 639251257816937181,
+      "alive": true,
+      "role": "dispatcher",
+      "ownerRunId": "9015b0f4-ef75-470d-8dd9-36e68f71733a",
+      "pid": 23940
+    }
+  ],
+  "transport": [
+    {
+      "project": "c04a-recovery-efc7401c6608",
+      "name": "/c04a-recovery-efc7401c6608-kafka-1",
+      "id": "b1f6e194bca9f912a65bb4120dd99dc9519f8fd521d5b9fb16e750e955a45df2",
+      "running": true,
+      "health": "healthy",
+      "imageId": "sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837"
+    },
+    {
+      "project": "c04a-recovery-efc7401c6608",
+      "name": "/c04a-recovery-efc7401c6608-publisher-dapr-1",
+      "id": "22d77274e5cb7d377d0a34c15a2bce14cb654b1c7a9f85e5dc366a3a899ada7d",
+      "running": true,
+      "health": null,
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5"
+    },
+    {
+      "project": "c04a-recovery-efc7401c6608",
+      "name": "/c04a-recovery-efc7401c6608-receiver-dapr-1",
+      "id": "f3fb2e6f660101085fdb67e1a2d64faedfb116f13b973cb39a3c87454160c941",
+      "running": true,
+      "health": null,
+      "imageId": "sha256:8e94ba37d6bc95875e88545ce7d8ff781354f29080db02706d57446285fcc4a5"
+    }
+  ],
+  "http": [
+    {
+      "status": 200,
+      "endpoint": "http://127.0.0.1:60958/v1.0/metadata",
+      "expected": 200
+    },
+    {
+      "status": 200,
+      "endpoint": "https://localhost:60964/health/live",
+      "expected": 200
+    },
+    {
+      "status": 503,
+      "endpoint": "https://localhost:60964/health/ready",
+      "expected": 503
+    },
+    {
+      "check": "public-form-read",
+      "status": 409,
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba"
+    },
+    {
+      "check": "public-form-read",
+      "status": 409,
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469"
+    }
+  ],
+  "targets": [
+    {
+      "database": "CP6_C04A_Init_90dd01ff0e29_business_primary",
+      "generation": 0,
+      "role": "business-primary",
+      "readOnly": true,
+      "state": "Closed"
+    },
+    {
+      "database": "CP6_C04A_Init_90dd01ff0e29_business_isolation",
+      "generation": 0,
+      "role": "business-isolation",
+      "readOnly": true,
+      "state": "Closed"
+    }
+  ],
+  "originalInputsUnchanged": 8,
+  "actualCutover": false,
+  "transportEventDeliveryRetested": false,
+  "hostStatus": {
+    "state": "ready",
+    "ownerRunId": "9015b0f4-ef75-470d-8dd9-36e68f71733a",
+    "requestSha256": "e184e55002f50fa2c98e9bdc0f589d38089d96adbe79cef1eaa7aeca4894d9c4",
+    "observedAtUtc": "2026-09-15T23:23:01.7014661-04:00",
+    "databaseMode": "reuse existing preview data",
+    "databaseInitializationAvailable": false,
+    "actualCutoverApproved": false
+  },
+  "relayOwnedByHost": true,
+  "reconciliation": [
+    {
+      "TenantId": "095f3443-3163-4427-be77-1819a49cddba",
+      "Ready": true,
+      "LastSuccessAtUtc": "2026-09-16T03:20:54.1224212+00:00",
+      "FailureCount": 0,
+      "LastErrorCode": null
+    },
+    {
+      "TenantId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "Ready": true,
+      "LastSuccessAtUtc": "2026-09-16T03:20:54.511698+00:00",
+      "FailureCount": 0,
+      "LastErrorCode": null
+    }
+  ],
+  "projections": [
+    {
+      "TenantId": "095f3443-3163-4427-be77-1819a49cddba",
+      "ProjectionCount": 109,
+      "DriftCount": 0
+    },
+    {
+      "TenantId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "ProjectionCount": 10,
+      "DriftCount": 0
+    }
+  ],
+  "publishedUsers": [
+    {
+      "TenantId": "095f3443-3163-4427-be77-1819a49cddba",
+      "UserCount": 102
+    },
+    {
+      "TenantId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "UserCount": 3
+    }
+  ],
+  "originalCrmKeyringPreserved": true
+}

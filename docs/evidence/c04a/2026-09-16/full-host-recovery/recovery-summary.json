@@ -1,0 +1,245 @@
+{
+  "format": "CP6.C04A.FullHostRecoverySummary.v1",
+  "status": "passed-with-explicit-scope",
+  "completedAtUtc": "2026-09-16T03:31:03.1292607+00:00",
+  "runId": "efc7401c66084c078ff4a0ead96ac113",
+  "scope": "Existing actual C02 identity data restored into isolated local databases; no original environment cutover",
+  "originalKeyRecovery": {
+    "preexistingSessionsDecrypted": 8,
+    "organizations": 2,
+    "expiredSessions": 8,
+    "expiredSessionsReusedForAuthentication": false,
+    "newKeysGenerated": false,
+    "keyringChanged": false
+  },
+  "host": {
+    "ready": true,
+    "ownedProcessRoles": [
+      "preview-host",
+      "core",
+      "crm",
+      "web",
+      "dispatcher"
+    ],
+    "relayOwnedByHost": true,
+    "privateTransportContainers": 3,
+    "kafkaHealthy": true,
+    "newTransportProjectUsed": true,
+    "originalC02TransportStarted": false,
+    "repeatedInitialization": false,
+    "packages": [
+      {
+        "directory": "D:/CP6-local-publish/20260914/c04a-local-execution-package/crm-api",
+        "sourceCommit": "8d549909e8972b7fd74b8e5142e3e4f0759995ae",
+        "fileCount": 206,
+        "fileSetSha256": "4fdf0a2b3f2ee830d3f104eb8f70b520ccc64e305bc3192c24232a02741da8cb"
+      },
+      {
+        "directory": "D:/CP6-local-publish/20260914/c04a-preview-recovery-host/host",
+        "sourceCommit": "93da582661c707c190eb51f4992d3a9e0886d336",
+        "fileCount": 5,
+        "fileSetSha256": "cb545ce200d0813bd92cce2a1c35fc9fc4318a58f97e42ca54ab9f192c0a126c"
+      }
+    ],
+    "requestSha256": "e184e55002f50fa2c98e9bdc0f589d38089d96adbe79cef1eaa7aeca4894d9c4"
+  },
+  "identity": {
+    "reconciledOrganizations": 2,
+    "projectionCount": 119,
+    "projectionDrift": 0,
+    "publishedUsers": 105,
+    "nativeLoginPassed": 2,
+    "oidcPkceCallbacksPassed": 2,
+    "subjectAndOrganizationBindingsPassed": 2,
+    "workspaceReadsPassed": 2,
+    "leadListReadsPassed": 2,
+    "foreignOrganizationHeaderChecksPassed": 2,
+    "newAccountsSeeded": false
+  },
+  "publicFormAvailability": {
+    "statuses": [
+      409,
+      409
+    ],
+    "observedProblemCode": "crm.configuration_not_active",
+    "activeInitialCalendarRequired": true,
+    "countedAsSuccessfulPublicFormRead": false
+  },
+  "retention": {
+    "restoredDatabases": [
+      {
+        "name": "CP6C02Live_efc7401c66084c078ff4a0ead96ac113",
+        "state_desc": "ONLINE",
+        "is_read_only": true,
+        "user_access_desc": "RESTRICTED_USER",
+        "databaseGuid": "4440105F-DE66-4685-9ADF-544E3D2BFD17"
+      },
+      {
+        "name": "CP6_C04A_Init_90dd01ff0e29_auth_identity_catalog",
+        "state_desc": "ONLINE",
+        "is_read_only": true,
+        "user_access_desc": "RESTRICTED_USER",
+        "databaseGuid": "0826742A-7D68-402D-87A8-973C2D72DF70"
+      },
+      {
+        "name": "CP6_C04A_Init_90dd01ff0e29_business_primary",
+        "state_desc": "ONLINE",
+        "is_read_only": true,
+        "user_access_desc": "RESTRICTED_USER",
+        "databaseGuid": "15361B33-FEE9-4AE0-AFAB-73C1FBA07B56"
+      },
+      {
+        "name": "CP6_C04A_Init_90dd01ff0e29_business_isolation",
+        "state_desc": "ONLINE",
+        "is_read_only": true,
+        "user_access_desc": "RESTRICTED_USER",
+        "databaseGuid": "8C0E8426-64F9-4E36-9307-FF3487CC4261"
+      }
+    ],
+    "authCopyBackedUpBeforeRecoveryWrites": true,
+    "authInitializationBackupSha256": "f964006d66d59c44942af97a6b9bf21e5779141fd207d0e4585eeedd7e9b0d24",
+    "ownedProcessesExited": true,
+    "privateTransportStoppedAndRetained": true,
+    "originalInputFilesUnchanged": 11,
+    "currentApiAndHostFilesUnchanged": 211,
+    "originalContainersPreserved": 51,
+    "originalContainerStateChanges": 0
+  },
+  "progress": {
+    "formalAcceptancePercent": 60,
+    "overallChecklistPercent": 75.0,
+    "c04aChecklistPercent": 75.0,
+    "c04aCompleteTasks": 9,
+    "c04aTotalTasks": 12,
+    "completedTask": "A09",
+    "overallIncrementPercentagePoints": 1.6666666666666667,
+    "databaseRecoveryComplete": 6,
+    "databaseRecoveryTotal": 6
+  },
+  "boundaries": {
+    "actualSourceOrTargetInitialized": false,
+    "actualSourceFrozen": false,
+    "actualTargetEnabled": false,
+    "actualCutover": false,
+    "productionDeployment": false,
+    "initialCalendarsStored": false,
+    "exclusiveWriterControlCompleted": false,
+    "finalExecutionPackageSigned": false,
+    "crm11AcceptanceCompleted": false,
+    "transportEventDeliveryRetested": false,
+    "oldPassedSqlTestsRerun": false
+  },
+  "diagnostics": [
+    "Transient native SQL login timeout; read-only master and target connections recovered without settings changes.",
+    "Preparation rejected base Core appsettings database reference; base and Local references both explicitly rebound before launch.",
+    "Probe used Windows runtime SqlClient/ProtectedData assets after standalone reference assembly rejected platform use.",
+    "First full-host attempt stopped after unchanged dispatcher rejected the restored Core name/content-root. Only the new Core restore was renamed to its required owned-copy pattern; no initialization repeated; failed attempt retained."
+  ],
+  "privateAuditArchive": {
+    "file": "full-host-recovery-evidence.zip",
+    "sha256": "51ff252f0cccac0534f9bd8a27fd908fdff65d9cc39f9004ed8542a0a67de2a8",
+    "files": 25
+  },
+  "executionRecordHashes": [
+    {
+      "path": "auth-runtime-preparation.json",
+      "sha256": "e3347e962c3bbf920e8808551c842561f1a35e906c3dd2924969c61d200a5322"
+    },
+    {
+      "path": "bind-dispatcher-copy.ps1",
+      "sha256": "6acdc309254d50aff92306aeb3b06d126ed9f9dd96ec39952bce7190886f2700"
+    },
+    {
+      "path": "capture-runtime.ps1",
+      "sha256": "dba89d4e40858e507431de93503048d71e284846b8a4b60e7a19c1210165cef3"
+    },
+    {
+      "path": "dispatcher-binding-correction.json",
+      "sha256": "737e5c761ae14754bd65517a48b9fcfff876b7c57d608df7030961ffc6a5f5fc"
+    },
+    {
+      "path": "enable-isolated-auth.ps1",
+      "sha256": "25030dd84492e6b3e9199873a73f2d2efc4fa7fd8833bc2463a159a4ba533c70"
+    },
+    {
+      "path": "host-inspection.json",
+      "sha256": "493628d7cb3c5994c89ef26de31f52203a4231f0a508d33c6a3be0ce3769605a"
+    },
+    {
+      "path": "host-launch-attempt-1.json",
+      "sha256": "8c62a7ea0a2ed5a87f97eec21c9c628b5399f06533df62436379eba2a9eb5c92"
+    },
+    {
+      "path": "host-launch.json",
+      "sha256": "218fce7ef4cf0464910d816b704068676f22177decee5c0e6f684161dbc034bb"
+    },
+    {
+      "path": "isolated-transport.json",
+      "sha256": "4bbdaa103258d18416c75f263a467444817a64c6dfaa313d7ca3f515c2e88f70"
+    },
+    {
+      "path": "key-recovery.json",
+      "sha256": "7f22d2790e6e0d580c41a839be9c16f5e2e983fc91048e7373d7325da6a49110"
+    },
+    {
+      "path": "original-container-preservation.json",
+      "sha256": "a19d050a83d3067e646196ce257b23cf0c9eef6efae6430ce0cc4614754eda8e"
+    },
+    {
+      "path": "preexisting-container-ids.json",
+      "sha256": "faf07ab5599e8eaa2694e9d0b1c03ffa3f30dfde65cebf31b8dc419f8aef8727"
+    },
+    {
+      "path": "preparation.json",
+      "sha256": "e11302fcffdabeab56f51195d307a02ca511edd05fba0ccfa6f7689dbd4fd61d"
+    },
+    {
+      "path": "prepare.ps1",
+      "sha256": "d8e64b8571e4a0712384c3aab08285a7118d14cb5f1fa67b7e305b6852a53d5a"
+    },
+    {
+      "path": "probe/HttpRecoveryProbe.cs",
+      "sha256": "0e8d2db110cfe4ab571aca467143432adee2b082c6896c8e6ab46810597dc4da"
+    },
+    {
+      "path": "probe/NuGet.config",
+      "sha256": "9508cae5f76364f56e80eb97cb16493977243cf38e5cca6284e3d74f83b20a2c"
+    },
+    {
+      "path": "probe/Program.cs",
+      "sha256": "a1c75c1d73415e0a180d1a2488a5b834bb645225f154fbfeac67ecebb00edc41"
+    },
+    {
+      "path": "probe/RecoveryProbe.csproj",
+      "sha256": "daa27698d821c061ffa45ec40ecdddc03a2aa7b927a5e47292329dee6b449ab9"
+    },
+    {
+      "path": "restored-login.json",
+      "sha256": "c0f1693c5ad3caa0c9bf81aaa9d657dbf55d871b3b235536dc23a0e25237fd47"
+    },
+    {
+      "path": "resume-inputs.ps1",
+      "sha256": "9c2aa6766c3d40555124cc30906766f66333def2593e515c8338208049e57d83"
+    },
+    {
+      "path": "retention.json",
+      "sha256": "10efae9e4533439a58e6bbfeba79e805a06eb1d35e250864840688080a7ccd1e"
+    },
+    {
+      "path": "runtime-proof.json",
+      "sha256": "9092456ed67b011c0e80aa8c254ec701be8cac83efe3c188c739a372846843bc"
+    },
+    {
+      "path": "start-isolated-host.ps1",
+      "sha256": "36ffa0b458381e9b3ea13bc0cc0cf18fb95645b4cb64cda1563eb7ff83bf8268"
+    },
+    {
+      "path": "stop-and-preserve.ps1",
+      "sha256": "b6e1c700a84cb351162ae37719784f64eb68c96071a6f0fd8c8b52ccbc4b40ba"
+    },
+    {
+      "path": "verify-existing-containers.ps1",
+      "sha256": "8dbb5e4eae52e3a7e2e27da3db1a58e9e0d839c8c75a33b1965aefae88a2d53f"
+    }
+  ]
+}
