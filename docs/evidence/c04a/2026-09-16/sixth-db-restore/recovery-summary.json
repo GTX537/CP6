@@ -1,0 +1,156 @@
+{
+  "format": "CP6.C04A.SixthDatabaseRecoverySummary.v1",
+  "completedAtUtc": "2026-09-16T02:53:25.4502317Z",
+  "status": "passed",
+  "databaseRole": "docker-core",
+  "databaseName": "CP6DB",
+  "container": {
+    "id": "505a5337f99522fd483f8db86a0e1b2d3da6755ef133d1bf341af063798f368e",
+    "name": "/cp6-db",
+    "image": "sha256:49b45a911dc535e9345fbfd7101a1bd8a1e190a5f29b877ef75387a061e5fcf0",
+    "restartPolicy": "unless-stopped",
+    "configSha256": "99cef0a2b4d4649d66044cd81c2f698b7ecb53ffc9b3d8a8fe896dcc6b7ef315",
+    "mountsSha256": "83b812419301079b5f21b17eaf05299d2809b78892bb706c9f1693283edbe7d8"
+  },
+  "originalIdentity": {
+    "database_guid": "f59eda72-6fac-4056-900d-a96e254f9bc1",
+    "family_guid": "087348f5-6af0-49cf-af22-eedae73272e0",
+    "recovery_fork_guid": "28cc4e83-7cae-4d3a-a920-2879896f8886"
+  },
+  "historicalContainerAndDatabaseIdentityMatched": true,
+  "backup": {
+    "fileName": "CP6_C04A_Prep_ae7d56f7f31b_docker_core.bak",
+    "sha256": "5f7b4adc1d927e850350fe5005f8b8800faf6c24eb42539e34b89001fbfdce8a",
+    "bytes": 302157824,
+    "copyOnly": true,
+    "checksums": true,
+    "verifyOnly": "passed",
+    "linuxAndRestrictedWindowsCopyHashesMatch": true,
+    "seconds": 0.283,
+    "backupHeader": {
+      "databaseName": "CP6DB",
+      "backupSetGuid": "72033661-bf4c-4eec-8eae-e2f5cc6b5e5c",
+      "familyGuid": "087348f5-6af0-49cf-af22-eedae73272e0",
+      "firstLsn": "153000004596800001.0",
+      "lastLsn": "153000004599200001.0",
+      "start": "2026-09-16T02:53:28",
+      "finish": "2026-09-16T02:53:29",
+      "copyOnly": true,
+      "checksums": true
+    }
+  },
+  "restore": {
+    "databaseName": "CP6_C04A_Prep_ae7d56f7f31b_docker_core",
+    "seconds": 1.283,
+    "online": true,
+    "readOnly": true,
+    "restrictedUser": true,
+    "checkDb": "passed",
+    "checkDbErrorRows": 0,
+    "allUserTablesReadable": true,
+    "userTableCount": 329,
+    "totalRowsReadByCount": 90918,
+    "schemaSha256": "8f1b2f64cbd60e1191792d51ccf6593f2b5fee7bebfd09d1ed8315e8d29bf7db",
+    "originalAndRestoredSchemaMatch": true,
+    "sourceSchemaBeforeAndAfterMatch": true,
+    "retained": true
+  },
+  "sourceAfter": {
+    "databaseGuidUnchanged": true,
+    "online": true,
+    "writable": true,
+    "sourceControlSchemas": 0
+  },
+  "containerPreservation": {
+    "count": 51,
+    "identitiesConfigurationsMountEntriesRestartPoliciesPreserved": true,
+    "stateChanges": 0,
+    "mountOrderOnlyDifferences": 9,
+    "oldDigestReproducedByPermutationForEveryOrderDifference": true
+  },
+  "dockerStartup": {
+    "explicitlyAuthorized": true,
+    "engineResponded": true,
+    "engineVersion": "29.3.1",
+    "oldRuntimeDirectoriesPreserved": true,
+    "renameBlocker": "Source directory and apparent parent resolve to different volumes; same-volume preservation succeeded",
+    "socketError1920UnderlyingCauseFullyDetermined": false,
+    "factoryReset": false,
+    "aclChanges": false,
+    "containerRecreation": false,
+    "volumeDeletion": false,
+    "existingRootServicesResumedByOriginalRestartPolicy": true,
+    "c02TransportStarted": false
+  },
+  "progress": {
+    "formalAcceptancePercent": 60,
+    "overallChecklistPercent": 73.3,
+    "c04aChecklistPercent": 66.7,
+    "c04aCompleteTasks": 8,
+    "c04aTotalTasks": 12,
+    "databaseRecoveryComplete": 6,
+    "databaseRecoveryTotal": 6,
+    "totalUserTablesReadAcrossSixRetainedRestores": 950,
+    "nativeFiveEvidenceReused": true,
+    "oldPassedTestsRerun": false
+  },
+  "boundaries": {
+    "crossDatabaseConsistentCutoverSnapshot": false,
+    "completeApplicationOrIdentityRecoveryProven": false,
+    "initialStoredCalendarsProven": false,
+    "exclusiveWriterControlProven": false,
+    "actualCutoverApproved": false,
+    "actualCutoverPerformed": false,
+    "productionDeployment": false
+  },
+  "privateExecutionRecordHashes": [
+    {
+      "name": "recovery-report.json",
+      "sha256": "6c2b1a8dcc0fabe14f81cf3d29084944763f5caf6016cbbc16c921e20a58dc67"
+    },
+    {
+      "name": "container-before.json",
+      "sha256": "cce10ef320a7653a5cce9aa7499970e58991f6c21e5dcb81cbe92fffa02ce6c2"
+    },
+    {
+      "name": "container-comparison-diagnostic.json",
+      "sha256": "62391904933b5bcef754191c01a0f1beb773f01e9866e09d9c727ad7f235516c"
+    },
+    {
+      "name": "preservation.json",
+      "sha256": "c7d9858be990704ec1b52e49222b6740772222b816323800e58d52e83133a15b"
+    },
+    {
+      "name": "backup-restore-docker.ps1",
+      "sha256": "dcc9486620cb6c5e34c6e3d5f876045b5eb4a0f6d3fe9cea0103c3f62af54378"
+    },
+    {
+      "name": "verify-containers.ps1",
+      "sha256": "19bd8c9d29e5a8a2bf88d7846983feb14f15f6a74f44fc4066f03abcb046aa37"
+    },
+    {
+      "name": "handle-inspection.json",
+      "sha256": "74449cd8dabbd47c73833e714f3ea0dcdd9dfd53cdc02d24299652bdc44c1efb"
+    },
+    {
+      "name": "directory-volumes.json",
+      "sha256": "bd92cfe2c5cec992aad85ad89966538eb55cf2c51840fcbb3632da4b8a2c1759"
+    },
+    {
+      "name": "handle-preservation.json",
+      "sha256": "55b343d681b51a58b241d3db700d0a229c831c8b03bcee5bbdb5995857cadfb2"
+    },
+    {
+      "name": "same-volume-preservation.json",
+      "sha256": "a9bf693bbb5b19e8e6ee6f0b4bc6d3241a96dfa6b53504888daf623a43d0d0b5"
+    },
+    {
+      "name": "clean-runtime-restart.json",
+      "sha256": "19dbba72102a8d0c960255cb3582c324b50ac323f72f31a44c3197d02371fdbc"
+    },
+    {
+      "name": "engine-readiness.json",
+      "sha256": "105f7c6057ba19d6bdac3feb8e6aa8fcf40eb00cf29c4b6b2545dd1e12b48fa7"
+    }
+  ]
+}
