@@ -1,0 +1,80 @@
+{
+  "format": "CP6.C04A.RestoredLogin.v1",
+  "status": "passed",
+  "atUtc": "2026-09-16T03:25:02.3668609+00:00",
+  "stage": "complete",
+  "failure": null,
+  "observations": [
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "check": "native-password-login",
+      "status": 200
+    },
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "check": "oidc-pkce-callback",
+      "status": 302,
+      "issuerMatched": true,
+      "sessionIssued": true
+    },
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "check": "restored-subject-and-organization",
+      "status": 200,
+      "subjectMatched": true
+    },
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "check": "normalized-workspace-read",
+      "status": 200
+    },
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "check": "lead-list-read",
+      "status": 200,
+      "jsonObject": true
+    },
+    {
+      "organizationId": "095f3443-3163-4427-be77-1819a49cddba",
+      "check": "foreign-organization-header-cannot-override-session",
+      "status": 200
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "check": "native-password-login",
+      "status": 200
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "check": "oidc-pkce-callback",
+      "status": 302,
+      "issuerMatched": true,
+      "sessionIssued": true
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "check": "restored-subject-and-organization",
+      "status": 200,
+      "subjectMatched": true
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "check": "normalized-workspace-read",
+      "status": 200
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "check": "lead-list-read",
+      "status": 200,
+      "jsonObject": true
+    },
+    {
+      "organizationId": "09d4fb11-004f-49e0-a132-583fab65e469",
+      "check": "foreign-organization-header-cannot-override-session",
+      "status": 200
+    }
+  ],
+  "scope": "Restored actual identity databases through existing Core/Vue and CRM/Next HTTPS endpoints",
+  "newAccountsSeeded": false,
+  "actualCutover": false
+}

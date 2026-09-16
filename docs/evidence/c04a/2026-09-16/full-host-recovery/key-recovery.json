@@ -1,0 +1,25 @@
+{
+  "format": "CP6.C04A.OriginalKeyRecovery.v1",
+  "status": "passed",
+  "atUtc": "2026-09-16T03:20:21.1121472+00:00",
+  "applicationName": "CP6.CRM",
+  "purpose": [
+    "CP6.CRM.BrowserSessions",
+    "v1"
+  ],
+  "persistedPayloadsDecrypted": 8,
+  "distinctOrganizations": 2,
+  "distinctSubjects": 2,
+  "expiredSessions": 8,
+  "originalKeys": [
+    {
+      "file": "key-24109053-c84c-4759-a4d1-26fa12ff5b90.xml",
+      "sha256": "3cc92ab5e325592ead77c98aeb43d76e6225d7ad90f1adc52e95e467745525cb"
+    }
+  ],
+  "keyGenerationDisabled": true,
+  "keyringUnchanged": true,
+  "decryptedPayloadsEmitted": false,
+  "activeLoginProven": false,
+  "databaseWrites": false
+}

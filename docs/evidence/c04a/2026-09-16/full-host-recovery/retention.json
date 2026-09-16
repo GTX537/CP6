@@ -1,0 +1,48 @@
+{
+  "atUtc": "2026-09-16T03:31:03.1292607+00:00",
+  "status": "passed",
+  "ownedHostAndChildrenExited": true,
+  "ownedProcessRecordsRemoved": true,
+  "ownedTransportStopped": true,
+  "ownedTransportContainersRetained": [
+    "b1f6e194bca9f912a65bb4120dd99dc9519f8fd521d5b9fb16e750e955a45df2",
+    "22d77274e5cb7d377d0a34c15a2bce14cb654b1c7a9f85e5dc366a3a899ada7d",
+    "f3fb2e6f660101085fdb67e1a2d64faedfb116f13b973cb39a3c87454160c941"
+  ],
+  "databases": [
+    {
+      "name": "CP6C02Live_efc7401c66084c078ff4a0ead96ac113",
+      "state_desc": "ONLINE",
+      "is_read_only": true,
+      "user_access_desc": "RESTRICTED_USER",
+      "databaseGuid": "4440105F-DE66-4685-9ADF-544E3D2BFD17"
+    },
+    {
+      "name": "CP6_C04A_Init_90dd01ff0e29_auth_identity_catalog",
+      "state_desc": "ONLINE",
+      "is_read_only": true,
+      "user_access_desc": "RESTRICTED_USER",
+      "databaseGuid": "0826742A-7D68-402D-87A8-973C2D72DF70"
+    },
+    {
+      "name": "CP6_C04A_Init_90dd01ff0e29_business_primary",
+      "state_desc": "ONLINE",
+      "is_read_only": true,
+      "user_access_desc": "RESTRICTED_USER",
+      "databaseGuid": "15361B33-FEE9-4AE0-AFAB-73C1FBA07B56"
+    },
+    {
+      "name": "CP6_C04A_Init_90dd01ff0e29_business_isolation",
+      "state_desc": "ONLINE",
+      "is_read_only": true,
+      "user_access_desc": "RESTRICTED_USER",
+      "databaseGuid": "8C0E8426-64F9-4E36-9307-FF3487CC4261"
+    }
+  ],
+  "originalInputsUnchanged": 11,
+  "initializationRepeated": false,
+  "oldPassedSqlTestsRerun": false,
+  "actualCutover": false,
+  "publishedFilesUnchanged": 211,
+  "preRunAuthBackupPreserved": true
+}
