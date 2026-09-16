@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-09-16：补齐历史 BUG 管理交付
+
+按用户要求核对本地分支与远端主线，从最新主线整合历史PR #39的[轻量级BUG管理](../quality/BUG-MANAGEMENT.md)、Issue Form和PR模板。保留当前主线全部业务、验收及Actions额度策略；状态冲突以当前记录为基础补充本条，不恢复旧里程碑。该任务只交付治理文档，不表示修复Issue #38。
+
 ## 2026-09-16：全项目源码盘点与升级入口
 
 完成业务、架构和界面现状材料整理。公开[Core/Platform分报告](../audits/2026-09-16-full-project/README.md)保留公开源码证据；[含CRM的完整跨仓报告](https://github.com/GTX537/CP6.CRM/blob/main/docs/audits/2026-09-16-full-project/README.md)与升级工作包留在CRM私有仓库。已记录旧Web拣货未提交、外部NoOp与固定规则、消息语义差异、Space/原生客户端及界面统一范围。

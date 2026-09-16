@@ -18,6 +18,13 @@
 6. 将已验证分支合并到 `main`。合并后执行必要的冒烟或集成验证，再推送 `main` 到远端。
 7. 核对远端 `main` 已包含任务提交后，才可声明完成或清理任务 worktree/分支。
 
+## BUG 管理（单人开发）
+
+- GitHub Issues 是活动 BUG 的唯一真相源，具体规则见 `docs/quality/BUG-MANAGEMENT.md`。
+- 一个 BUG 对应一个 Issue；只使用 P0/P1/P2 和 Open/Closed，不维护额外看板或多人流转状态。
+- 修复分支从最新 `main` 创建并关联 Issue。回归测试、原步骤复测和远端 `main` 核对完成后才可关闭。
+- `docs/project-memory/07-KnownIssues.md` 只记录长期风险和技术债，不作为活动 BUG 队列。
+
 ## 完成定义
 
 - 功能代码、测试和必要文档在同一任务范围内闭环。
