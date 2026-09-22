@@ -1,0 +1,65 @@
+{
+  "observedAtUtc": "2026-09-22T17:04:09.0408097+00:00",
+  "passed": true,
+  "expectedGitSha": "ac624299154d6186a92b54a14c02051c024aa6ed",
+  "checks": [
+    {
+      "name": "login document",
+      "url": "https://cp6.uk/login",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "application entry script",
+      "url": "https://cp6.uk/assets/index-CnIv3zBB.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "API live",
+      "url": "https://api.cp6.uk/health/live",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "API ready",
+      "url": "https://api.cp6.uk/health/ready",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "API release",
+      "url": "https://api.cp6.uk/health/release",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "Web release",
+      "url": "https://cp6.uk/release.json",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "matching source and version",
+      "passed": true
+    },
+    {
+      "name": "anonymous same-origin profile rejected",
+      "url": "https://cp6.uk/api/auth/profile",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "anonymous ERP access rejected",
+      "url": "https://api.cp6.uk/api/products",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "login translations",
+      "url": "https://cp6.uk/api/lang/ja/ns/_core",
+      "status": 200,
+      "passed": true
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-09-22：最新 main 的公网 demo
+
+完成 `ac624299` API/Web 镜像、校验后的数据库副本、独立依赖、一次性迁移和 `cp6.uk` Tunnel 切换；实际登录及 ERP/WMS/Space 模型读取通过。新增 [demo Compose/runbook](../../deploy/demo/README.md) 和 `Test-Cp6Demo.ps1`，公网 10 项检查通过，错误 SHA 拒绝；[证据](../devops/evidence/cp6uk-demo-20260922/README.md)保留验证边界。3D 库存叠加 Issue #132 未解决；不是 R2 生产发布。
+
 ## 2026-09-16：Space 发布恢复代码与隔离 SQL 回归
 
 恢复六项仓库校验/权限/计划容量/worker 身份/持久化批次/运行失效行修复，新增篡改批次在 WMS 写入前被拒绝的真实 SQL 回归。[报告](../space/reports/2026-09-16-space-publish-recovery.md)记录后端 26/26、SQL 4/4 与最终篡改 1/1，全部零跳过；首页合入后的后端编译及 26/26 复跑通过。测试随机库全部清理，未改现有业务库。

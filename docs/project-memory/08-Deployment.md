@@ -1,5 +1,7 @@
 # 部署与换机恢复
 
+> 2026-09-22 更新：公网主站现由独立 `cp6-demo` 提供，入口及日常命令见 [demo runbook](../../deploy/demo/README.md)。以下根 Compose 的家庭服务器操作是历史流程；C04A 已将根 `cp6-api` 退休，当前不要执行其旧 `start` / `start-build` 命令。
+
 ## 新主机恢复源码
 
 ```powershell

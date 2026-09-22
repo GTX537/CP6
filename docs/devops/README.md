@@ -6,6 +6,8 @@
 
 ## 文档地图
 
+2026-09-22，`cp6.uk` 按用户授权改由独立 `cp6-demo` 提供主站演示；使用数据库副本及本机 main 镜像。日常操作请看 [demo runbook](../../deploy/demo/README.md)，不要重启 C04A 已退休的根 `cp6-api`。这次切换不等于 Azure `cp6-dev` Tunnel 切换或生产发布。
+
 普通 GitHub 编译、测试按用户要求改为手动触发，远程运行需新的明确授权；用户随后授权移除五项 Actions 必需检查，改用本地验证与本地发布检查后正常 PR 合并。[本地验证策略](./LOCAL-VALIDATION-POLICY.md) 记录精确门禁变更、Artifact 依赖及保留的其他保护。Azure Artifact 桥同步只保留手动入口。下方历史成功运行不构成新运行授权。
 
 | 文档 | 类型 | 用途 |
@@ -60,7 +62,7 @@ Azure Release Shadow S0 已完成仓库与 Azure 执行闭环：根目录 [`azur
 | Azure 逻辑 Environments | DEV 已有部署历史 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已创建；`cp6-dev` 由 DEV CD Run #95 写入首次成功部署历史，UAT/PROD-LAB 仍未部署 |
 | 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；最新 Readiness [`Run #89`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=89) 验证身份、Docker、Compose、SQL TCP、`sqlcmd` 与备份目录 |
 | Azure DEV 双模式发布 | 手动/自动均已验收 | Pipeline/Pool/Variable Group/Environment 均为定向授权，`cp6-dev` 配置 Exclusive lock；#95/#120/#121 Manual 3/3，#129 证明低内存失败关闭，#131 暴露并修复重试证据命名，#132→#133 最终自动发布成功。7 份备份均保留，最新 CHECKSUM/VERIFYONLY 与本机 SHA-256 复核通过；公网验证保持关闭，根环境基线不变 |
-| 白天测试公网 | 工具已交付，切换待执行 | `cp6-public-tunnel` 只连接 `cp6-dev_default`；切换前必须显式停止旧 `cp6-cloudflared`，Pipeline 不自动切换 Cloudflare |
+| 白天测试公网 | 当前为独立手动 demo | `cp6-demo` 服务 `cp6.uk`；旧 `cp6-cloudflared` 已停止。Azure `cp6-public-tunnel` 到 `cp6-dev` 的切换仍未执行，Pipeline 不自动切换 Cloudflare |
 | 私人本地 `cp6`/`CP6DB` | 保持独立 | DEV CD 不操作根 Compose、`CP6DB` 或 `cp6_cp6-db-data`；DEV 数据只能手动恢复为新的 `CP6DEV_IMPORT_*` 旁路库 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |
 | CRM R00 | 私有源 Accepted；公开同步 Complete；P09/P10 Pending | GHCR/GitHub R2 已固定为 V1 唯一权威，但精确对象版本与四仓 Manifest 尚未实现 |
