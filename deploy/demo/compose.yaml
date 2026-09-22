@@ -1,0 +1,156 @@
+# Home-hosted demo only. Uses a separately restored database and private
+# Redis/RabbitMQ/Kafka instances. Never starts the retired root cp6-api.
+name: cp6-demo
+
+x-api: &api
+  image: ${CP6_DEMO_API_IMAGE:?Set the verified local API image ID}
+  env_file:
+    - ${CP6_DEMO_SPACE_ENV_FILE:?Set the reviewed Space compatibility file}
+  environment: &api-environment
+    ASPNETCORE_ENVIRONMENT: Docker
+    ConnectionStrings__DefaultConnection: ${CP6_DEMO_DB_CONNECTION:?Set the demo-only SQL connection}
+    ConnectionStrings__Redis: redis:6379
+    RabbitMQ__HostName: rabbitmq
+    RabbitMQ__UserName: cp6demo
+    RabbitMQ__Password: ${CP6_DEMO_MQ_PASSWORD:?Set a demo message password}
+    Kafka__BootstrapServers: kafka:9092
+    Kafka__OperLogTopic: cp6.demo.operlog
+    Kafka__ConsumerGroup: cp6-demo-operlog
+    JWT__Secret: ${CP6_DEMO_JWT_SECRET:?Set a demo JWT secret}
+    Security__Cookie__Secure: "true"
+    Release__Version: ${CP6_DEMO_VERSION:?Set the demo release version}
+    Release__GitSha: ${CP6_DEMO_GIT_SHA:?Set the full source SHA}
+    Release__ApiImageDigest: ${CP6_DEMO_API_IMAGE}
+    Release__WebImageDigest: ${CP6_DEMO_WEB_IMAGE:?Set the verified local Web image ID}
+    Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
+  volumes:
+    - api-data:/app/App_Data
+    - api-i18n:/app/wwwroot/i18n
+  networks:
+    - default
+    - database
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: cp6demo
+      RABBITMQ_DEFAULT_PASS: ${CP6_DEMO_MQ_PASSWORD}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, check_port_connectivity]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+
+  kafka:
+    image: apache/kafka:3.8.0
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx256m
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: [CMD-SHELL, /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 20s
+
+  db-init:
+    <<: *api
+    profiles: [init]
+    restart: "no"
+    environment:
+      <<: *api-environment
+      Startup__Mode: DatabaseInit
+      Startup__SkipHostedServices: "true"
+
+  api:
+    <<: *api
+    restart: unless-stopped
+    environment:
+      <<: *api-environment
+      Startup__SkipDatabaseInitialization: "true"
+    networks:
+      default:
+        aliases: [cp6-api]
+      database: {}
+    ports:
+      - 127.0.0.1:29991:5000
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, http://localhost:5000/health/ready]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  web:
+    image: ${CP6_DEMO_WEB_IMAGE}
+    restart: unless-stopped
+    networks:
+      default:
+        aliases: [cp6-web]
+    ports:
+      - 127.0.0.1:28080:80
+    depends_on:
+      api:
+        condition: service_healthy
+
+  cloudflared:
+    image: ${CP6_DEMO_TUNNEL_IMAGE:?Set the existing tunnel image ID}
+    profiles: [public]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    volumes:
+      - type: bind
+        source: ${CP6_DEMO_TUNNEL_DIRECTORY:?Set the existing private tunnel directory}
+        target: /etc/cloudflared
+        read_only: true
+    depends_on:
+      - web
+
+networks:
+  database:
+    external: true
+    name: ${CP6_DEMO_DATABASE_NETWORK:-cp6_default}
+
+volumes:
+  api-data:
+  api-i18n:
+  redis-data:
+  rabbitmq-data:
+  kafka-data:

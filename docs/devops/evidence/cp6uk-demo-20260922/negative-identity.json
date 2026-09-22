@@ -1,0 +1,47 @@
+{
+  "observedAtUtc": "2026-09-22T16:57:56.4421232+00:00",
+  "passed": false,
+  "expectedGitSha": "0000000000000000000000000000000000000000",
+  "checks": [
+    {
+      "name": "login document",
+      "url": "http://127.0.0.1:28080/login",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "application entry script",
+      "url": "http://127.0.0.1:28080/assets/index-CnIv3zBB.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "API live",
+      "url": "http://127.0.0.1:29991/health/live",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "API ready",
+      "url": "http://127.0.0.1:29991/health/ready",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "API release",
+      "url": "http://127.0.0.1:29991/health/release",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "Web release",
+      "url": "http://127.0.0.1:28080/release.json",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "matching source and version",
+      "passed": false
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-09-22：cp6.uk 主站 demo 更新
+
+按用户授权，将 main `ac624299` 的 ERP/WMS/3D Space 发布到独立 `cp6-demo`，使用 `CP6_DEMO_20260922` 副本和独立缓存/消息服务；退休根 API 保持 stopped/no restart，旧 Tunnel 停止。公网登录、健康、双端源码身份、ERP/WMS 列表、Space Published 两层模型已验证；10 项自动化 smoke 通过，错误 SHA 被拒绝。3D 实时库存叠加仍受 [Issue #132](https://github.com/GTX537/CP6/issues/132) 影响。详见[部署证据](../devops/evidence/cp6uk-demo-20260922/README.md)与[操作说明](../../deploy/demo/README.md)。未执行 Actions、生产部署或独立 CRM 接入。
+
 ## 2026-09-16：恢复六项 Space 发布修复
 
 从当前主线整合仓库编码解析、发布/回退权限、较大内部发布计划、发布 worker 身份、持久化批次恢复和运行失效行处理；保留当前首页、Viewer 与项目状态。[验证报告](../space/reports/2026-09-16-space-publish-recovery.md)：相关后端 26/26、真实 LocalDB SQL 4/4、最终篡改回归 1/1，均零跳过；合入首页后重新编译并复跑后端 26/26。临时库前后为零，无既有业务库或运行环境变更。

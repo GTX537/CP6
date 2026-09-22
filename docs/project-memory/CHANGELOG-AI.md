@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-09-22：cp6.uk 独立 demo 部署
+
+新增 `deploy/demo/compose.yaml`、操作说明与 `scripts/Test-Cp6Demo.ps1`。将用户指定的 main `ac624299` 本机镜像部署到独立数据库副本和消息/缓存资源，停止旧 Tunnel 后切换到唯一 demo 连接器，保留旧 API 退休控制。补回已核对来源的 Space 演示配置；公网 10 项 smoke、错误 SHA 拒绝、登录和业务页面检查见[报告](../devops/evidence/cp6uk-demo-20260922/README.md)。保留 Issue #132 库存叠加失败，不声明其修复；未运行 Actions 或生产部署。
+
 ## 2026-09-16：整合遗漏的 Space 发布恢复能力
 
 按完整差异复核恢复六项后端修复，保留当前主线状态；补充真实 SQL 持久化 mutation 哈希篡改回归。[验证报告](../space/reports/2026-09-16-space-publish-recovery.md)记录后端 26/26、SQL 4/4、最终篡改 1/1，以及首页合入后后端重新编译/26 项复跑；全部零跳过，临时库前后均零。未触发 Actions 或更换现有环境。
