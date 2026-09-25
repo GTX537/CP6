@@ -156,6 +156,10 @@ builder.Services.AddDbContext<CP6Context>((services, options) =>
     options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .AddInterceptors(services.GetRequiredService<LegacySpaceWriteGuardInterceptor>()));
+builder.Services.AddDbContext<CP6.Core.Services.Plm.PlmContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.MigrationsHistoryTable("__EFMigrationsHistory_Plm", "plm")));
+builder.Services.AddScoped<CP6.Core.Services.Plm.IPlmEngineeringService, CP6.Core.Services.Plm.PlmEngineeringService>();
 builder.Services.AddSingleton(
     new SpaceUnderlayCalibrationOptions
     {
@@ -1009,6 +1013,9 @@ using (var scope = app.Services.CreateScope())
     var spaceDb = scope.ServiceProvider
         .GetRequiredService<CP6.Space.Infrastructure.SpaceContext>();
     spaceDb.Database.Migrate();
+    db.Database.ExecuteSqlRaw("IF SCHEMA_ID(N'plm') IS NULL EXEC(N'CREATE SCHEMA [plm]')");
+    var plmDb = scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Plm.PlmContext>();
+    plmDb.Database.Migrate();
 
     // SPACE observability must have one canonical UTC ordering column before
     // any seed, background worker, or request can query integration history.
