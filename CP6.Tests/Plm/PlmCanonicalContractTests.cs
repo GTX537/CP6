@@ -233,9 +233,13 @@ public sealed class PlmCanonicalContractTests
         Assert.Equal(original.CanonicalBytes, PlmCanonicalWriter.Encode(Tenant,
             [PlmSnapshotProjector.Routing(routing), PlmSnapshotProjector.Bom(bom), PlmSnapshotProjector.Product(product)]).CanonicalBytes); // V02
         product.SetRatio = 1.00m; bom.UnitUsage = 1.0000m;
-        Assert.Equal(BaseDigest, Encode(product, bom, routing).ManifestDigest); // V03
+        var v03 = Encode(product, bom, routing);
+        Assert.Equal(BaseDigest, v03.ManifestDigest);
+        AssertHex("V01", v03); // V03 references V01 exact bytes.
         product.CpItemName1 = "Café";
-        Assert.Equal(BaseDigest, Encode(product, bom, routing).ManifestDigest); // V04
+        var v04 = Encode(product, bom, routing);
+        Assert.Equal(BaseDigest, v04.ManifestDigest);
+        AssertHex("V01", v04); // V04 references V01 exact bytes.
         product.ProductShape = "BOX";
         var v05Product = Encode(product, bom, routing);
         Assert.Equal("314923554799720af0c238d49ca2c7c0a53175beb112e7d88d603ab9157dfea6", v05Product.ManifestDigest);
@@ -257,7 +261,9 @@ public sealed class PlmCanonicalContractTests
             PlmCanonicalWriter.Encode(Tenant, [PlmSnapshotProjector.Product(product), PlmSnapshotProjector.Bom(bom), PlmSnapshotProjector.Bom(bom), PlmSnapshotProjector.Routing(routing)])).Code); // V07
         product.Id = Guid.NewGuid(); product.RowVersion = [1, 2, 3, 4, 5, 6, 7, 8];
         bom.Id = Guid.NewGuid(); bom.RowVersion = [8, 7, 6, 5, 4, 3, 2, 1];
-        Assert.Equal(BaseDigest, Encode(product, bom, routing).ManifestDigest); // V08
+        var v08 = Encode(product, bom, routing);
+        Assert.Equal(BaseDigest, v08.ManifestDigest);
+        AssertHex("V01", v08); // V08 metadata changes leave exact bytes unchanged.
     }
 
     [Fact]
