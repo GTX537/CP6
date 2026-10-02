@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2c046b56-ac1e-41f8-8830-7aea9eb4c47d" name="tt@LAPTOP-3QQ44FJS 2026-10-02 12:32:20" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T12:32:20.7662506-04:00" queuing="2026-10-02T12:32:20.7662512-04:00" start="2026-10-02T12:32:18.8737916-04:00" finish="2026-10-02T12:32:21.6936687-04:00" />
+  <TestSettings name="default" id="52cfff6f-16b4-48e8-8752-19d04a95a755">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_12_32_20" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3f43d371-6d9a-4d81-bb2a-147b8e078c0e" testId="2af50226-3c8a-bc04-2ac0-7658a109f43d" testName="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_NoTenants_NoOp" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0136872" startTime="2026-10-02T12:32:21.5889869-04:00" endTime="2026-10-02T12:32:21.6025372-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f43d371-6d9a-4d81-bb2a-147b8e078c0e" />
+    <UnitTestResult executionId="22beb9ec-6e20-46be-abc7-e1788c2f2ef3" testId="7c993cd2-5793-8c30-9972-5cc6383ac6d9" testName="CP6.Tests.PurPermissionSeedTests.ExpectedOracle_Covers24Tuples_Over7MenuKeys_NoDuplicates" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0082487" startTime="2026-10-02T12:32:19.8528761-04:00" endTime="2026-10-02T12:32:19.8655566-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22beb9ec-6e20-46be-abc7-e1788c2f2ef3" />
+    <UnitTestResult executionId="573a9933-7bec-434e-95f0-5c5661e58905" testId="44cc908c-a463-75c0-8239-0d52a79c0de1" testName="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0158088" startTime="2026-10-02T12:32:21.6026284-04:00" endTime="2026-10-02T12:32:21.6190923-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="573a9933-7bec-434e-95f0-5c5661e58905" />
+    <UnitTestResult executionId="78c4744d-e532-4440-b361-85bae60e66c4" testId="0c750bec-463a-3d46-abd5-25573828dce6" testName="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_IsIdempotent_SecondCallNoNewRows" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0193697" startTime="2026-10-02T12:32:21.6191754-04:00" endTime="2026-10-02T12:32:21.6379645-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78c4744d-e532-4440-b361-85bae60e66c4" />
+    <UnitTestResult executionId="824566c2-32fc-4b6c-92f2-c1672c69ff35" testId="082b652e-efed-cb16-4377-507f0fae5e81" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Int_key_entity_added_and_modified_uses_pk_value" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0096568" startTime="2026-10-02T12:32:21.5400240-04:00" endTime="2026-10-02T12:32:21.5496437-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="824566c2-32fc-4b6c-92f2-c1672c69ff35" />
+    <UnitTestResult executionId="2c7cb4e1-3590-4f71-9dd0-2edc553d82c5" testId="ab7a3ac6-f1aa-f79e-9cdd-f8135bf4487d" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Audit_row_tenant_mirrors_business_entity" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0070434" startTime="2026-10-02T12:32:21.6083625-04:00" endTime="2026-10-02T12:32:21.6153353-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c7cb4e1-3590-4f71-9dd0-2edc553d82c5" />
+    <UnitTestResult executionId="6eaa1b8a-8d00-4f62-9ba8-cea3b52efaea" testId="83a064fe-1750-d824-ce44-5615085b0f99" testName="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0400290" startTime="2026-10-02T12:32:21.5488868-04:00" endTime="2026-10-02T12:32:21.5888201-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6eaa1b8a-8d00-4f62-9ba8-cea3b52efaea" />
+    <UnitTestResult executionId="bd2aa042-1d99-4b84-8b6f-f6892ea25b04" testId="d00aa3da-50da-0d9f-7f7a-038cb0efa88d" testName="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0055080" startTime="2026-10-02T12:32:21.5015843-04:00" endTime="2026-10-02T12:32:21.5070172-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd2aa042-1d99-4b84-8b6f-f6892ea25b04" />
+    <UnitTestResult executionId="2d760a28-7c47-4428-89a8-5c9ac148b056" testId="3c13936e-1575-36fe-2b79-b0f01141d843" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Password_excluded_by_AuditIgnore" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0014085" startTime="2026-10-02T12:32:21.6167244-04:00" endTime="2026-10-02T12:32:21.6180401-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d760a28-7c47-4428-89a8-5c9ac148b056" />
+    <UnitTestResult executionId="cfd8cdab-e386-4885-87af-3a06b8835fb2" testId="ec633d36-c1f1-d6a1-00af-d0c09fc1a025" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Added_marked_entity_writes_op1_with_resolved_guid_key" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0059029" startTime="2026-10-02T12:32:21.6024751-04:00" endTime="2026-10-02T12:32:21.6082293-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cfd8cdab-e386-4885-87af-3a06b8835fb2" />
+    <UnitTestResult executionId="d432557e-f9b7-4eec-a2d3-8ffb6d783934" testId="04d92fbe-f962-7173-d5c8-b696a51c4d3f" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Modified_marked_entity_writes_one_row_with_only_changed_fields" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0012192" startTime="2026-10-02T12:32:21.6154456-04:00" endTime="2026-10-02T12:32:21.6166049-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d432557e-f9b7-4eec-a2d3-8ffb6d783934" />
+    <UnitTestResult executionId="35529f4d-4279-411a-af59-73fb0287fc1e" testId="d6474fb9-6fd5-dbe4-7856-b20ede64d3b2" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Deleted_marked_entity_writes_op3_with_key_before_save" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.6278940" startTime="2026-10-02T12:32:19.8529140-04:00" endTime="2026-10-02T12:32:21.4836693-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35529f4d-4279-411a-af59-73fb0287fc1e" />
+    <UnitTestResult executionId="dad4794b-df23-4d6f-996c-d530ba4a7bf1" testId="bf931610-d0cd-dbf5-2414-fd630e3a63c7" testName="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0039718" startTime="2026-10-02T12:32:21.5071333-04:00" endTime="2026-10-02T12:32:21.5111408-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dad4794b-df23-4d6f-996c-d530ba4a7bf1" />
+    <UnitTestResult executionId="15984f58-233d-4c79-b65c-e8980f64485e" testId="e0e5c1c1-fcf2-8e56-0530-b661f2a4fc70" testName="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_SeedsExactly24TuplesPerTenant_ForBothMenuAndRoleAction" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.6831008" startTime="2026-10-02T12:32:19.8721616-04:00" endTime="2026-10-02T12:32:21.5487687-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="15984f58-233d-4c79-b65c-e8980f64485e" />
+    <UnitTestResult executionId="5d3799af-0364-4b94-ad5f-cfa9d1b4f6e2" testId="074c6b28-b1b2-9680-4eb7-4509234fceb4" testName="CP6.Tests.Sys.FieldAuditCaptureTests.User_attribution_filled_and_null_for_background" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0070425" startTime="2026-10-02T12:32:21.5952686-04:00" endTime="2026-10-02T12:32:21.6023400-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5d3799af-0364-4b94-ad5f-cfa9d1b4f6e2" />
+    <UnitTestResult executionId="99aab2ed-81d7-42b9-85fb-12519000e042" testId="ffef593b-24d9-8a57-5ee1-e7ee6c5be1af" testName="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_ExistingMenuPreservesOverridesAndRoleGrants" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.6456647" startTime="2026-10-02T12:32:19.8520279-04:00" endTime="2026-10-02T12:32:21.5014547-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="99aab2ed-81d7-42b9-85fb-12519000e042" />
+    <UnitTestResult executionId="b32fc7cc-7b0c-4b0d-b853-497944aa94ad" testId="84ad6304-b10c-3023-2bd5-1f5dcf06f86f" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Only_meta_field_change_writes_no_row" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0272271" startTime="2026-10-02T12:32:21.4842467-04:00" endTime="2026-10-02T12:32:21.5109591-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b32fc7cc-7b0c-4b0d-b853-497944aa94ad" />
+    <UnitTestResult executionId="7203ee98-150c-4c05-92fa-dbe8bed77557" testId="a479220f-475c-e29a-ebde-d6052c8b6567" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Secret_field_excluded_by_denylist_even_without_attribute" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0454615" startTime="2026-10-02T12:32:21.5505814-04:00" endTime="2026-10-02T12:32:21.5951141-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7203ee98-150c-4c05-92fa-dbe8bed77557" />
+    <UnitTestResult executionId="e3eb8639-1ea5-4825-85a6-b144cd80a31c" testId="b2f03786-2deb-a84c-c4a5-b4d10fcf14d5" testName="CP6.Tests.Sys.FieldAuditCaptureTests.Non_auditable_entity_change_writes_no_row" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0197825" startTime="2026-10-02T12:32:21.6190534-04:00" endTime="2026-10-02T12:32:21.6381128-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e3eb8639-1ea5-4825-85a6-b144cd80a31c" />
+    <UnitTestResult executionId="3d4eed38-9ecf-4b13-85d9-6183eb140af2" testId="cf9f7cd1-8e17-b472-39e5-2ab9efb32bd6" testName="CP6.Tests.Sys.FieldAuditCaptureTests.PrimaryKey_and_TenantId_not_in_diff" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0288548" startTime="2026-10-02T12:32:21.5111087-04:00" endTime="2026-10-02T12:32:21.5398816-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3d4eed38-9ecf-4b13-85d9-6183eb140af2" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Password_excluded_by_AuditIgnore" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3c13936e-1575-36fe-2b79-b0f01141d843">
+      <Execution id="2d760a28-7c47-4428-89a8-5c9ac148b056" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Password_excluded_by_AuditIgnore" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.User_attribution_filled_and_null_for_background" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="074c6b28-b1b2-9680-4eb7-4509234fceb4">
+      <Execution id="5d3799af-0364-4b94-ad5f-cfa9d1b4f6e2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="User_attribution_filled_and_null_for_background" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Secret_field_excluded_by_denylist_even_without_attribute" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a479220f-475c-e29a-ebde-d6052c8b6567">
+      <Execution id="7203ee98-150c-4c05-92fa-dbe8bed77557" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Secret_field_excluded_by_denylist_even_without_attribute" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_NoTenants_NoOp" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="2af50226-3c8a-bc04-2ac0-7658a109f43d">
+      <Execution id="3f43d371-6d9a-4d81-bb2a-147b8e078c0e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurPermissionSeedTests" name="EnsureSeeded_NoTenants_NoOp" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurPermissionSeedTests.ExpectedOracle_Covers24Tuples_Over7MenuKeys_NoDuplicates" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7c993cd2-5793-8c30-9972-5cc6383ac6d9">
+      <Execution id="22beb9ec-6e20-46be-abc7-e1788c2f2ef3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurPermissionSeedTests" name="ExpectedOracle_Covers24Tuples_Over7MenuKeys_NoDuplicates" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Only_meta_field_change_writes_no_row" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="84ad6304-b10c-3023-2bd5-1f5dcf06f86f">
+      <Execution id="b32fc7cc-7b0c-4b0d-b853-497944aa94ad" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Only_meta_field_change_writes_no_row" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_ExistingMenuPreservesOverridesAndRoleGrants" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="ffef593b-24d9-8a57-5ee1-e7ee6c5be1af">
+      <Execution id="99aab2ed-81d7-42b9-85fb-12519000e042" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurReconcileMenuSeedTests" name="EnsureSeeded_ExistingMenuPreservesOverridesAndRoleGrants" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_IsIdempotent_SecondCallNoNewRows" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0c750bec-463a-3d46-abd5-25573828dce6">
+      <Execution id="78c4744d-e532-4440-b361-85bae60e66c4" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurPermissionSeedTests" name="EnsureSeeded_IsIdempotent_SecondCallNoNewRows" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Int_key_entity_added_and_modified_uses_pk_value" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="082b652e-efed-cb16-4377-507f0fae5e81">
+      <Execution id="824566c2-32fc-4b6c-92f2-c1672c69ff35" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Int_key_entity_added_and_modified_uses_pk_value" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Non_auditable_entity_change_writes_no_row" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b2f03786-2deb-a84c-c4a5-b4d10fcf14d5">
+      <Execution id="e3eb8639-1ea5-4825-85a6-b144cd80a31c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Non_auditable_entity_change_writes_no_row" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Audit_row_tenant_mirrors_business_entity" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="ab7a3ac6-f1aa-f79e-9cdd-f8135bf4487d">
+      <Execution id="2c7cb4e1-3590-4f71-9dd0-2edc553d82c5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Audit_row_tenant_mirrors_business_entity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="44cc908c-a463-75c0-8239-0d52a79c0de1">
+      <Execution id="573a9933-7bec-434e-95f0-5c5661e58905" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurPermissionSeedTests" name="EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_SeedsExactly24TuplesPerTenant_ForBothMenuAndRoleAction" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e0e5c1c1-fcf2-8e56-0530-b661f2a4fc70">
+      <Execution id="15984f58-233d-4c79-b65c-e8980f64485e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurPermissionSeedTests" name="EnsureSeeded_SeedsExactly24TuplesPerTenant_ForBothMenuAndRoleAction" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.PrimaryKey_and_TenantId_not_in_diff" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cf9f7cd1-8e17-b472-39e5-2ab9efb32bd6">
+      <Execution id="3d4eed38-9ecf-4b13-85d9-6183eb140af2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="PrimaryKey_and_TenantId_not_in_diff" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Modified_marked_entity_writes_one_row_with_only_changed_fields" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="04d92fbe-f962-7173-d5c8-b696a51c4d3f">
+      <Execution id="d432557e-f9b7-4eec-a2d3-8ffb6d783934" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Modified_marked_entity_writes_one_row_with_only_changed_fields" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Deleted_marked_entity_writes_op3_with_key_before_save" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d6474fb9-6fd5-dbe4-7856-b20ede64d3b2">
+      <Execution id="35529f4d-4279-411a-af59-73fb0287fc1e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Deleted_marked_entity_writes_op3_with_key_before_save" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d00aa3da-50da-0d9f-7f7a-038cb0efa88d">
+      <Execution id="bd2aa042-1d99-4b84-8b6f-f6892ea25b04" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurReconcileMenuSeedTests" name="EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bf931610-d0cd-dbf5-2414-fd630e3a63c7">
+      <Execution id="dad4794b-df23-4d6f-996c-d530ba4a7bf1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurReconcileMenuSeedTests" name="EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurPermissionSeedTests.EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="83a064fe-1750-d824-ce44-5615085b0f99">
+      <Execution id="6eaa1b8a-8d00-4f62-9ba8-cea3b52efaea" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurPermissionSeedTests" name="EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Sys.FieldAuditCaptureTests.Added_marked_entity_writes_op1_with_resolved_guid_key" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="ec633d36-c1f1-d6a1-00af-d0c09fc1a025">
+      <Execution id="cfd8cdab-e386-4885-87af-3a06b8835fb2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Sys.FieldAuditCaptureTests" name="Added_marked_entity_writes_op1_with_resolved_guid_key" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2af50226-3c8a-bc04-2ac0-7658a109f43d" executionId="3f43d371-6d9a-4d81-bb2a-147b8e078c0e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c993cd2-5793-8c30-9972-5cc6383ac6d9" executionId="22beb9ec-6e20-46be-abc7-e1788c2f2ef3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44cc908c-a463-75c0-8239-0d52a79c0de1" executionId="573a9933-7bec-434e-95f0-5c5661e58905" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c750bec-463a-3d46-abd5-25573828dce6" executionId="78c4744d-e532-4440-b361-85bae60e66c4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="082b652e-efed-cb16-4377-507f0fae5e81" executionId="824566c2-32fc-4b6c-92f2-c1672c69ff35" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab7a3ac6-f1aa-f79e-9cdd-f8135bf4487d" executionId="2c7cb4e1-3590-4f71-9dd0-2edc553d82c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="83a064fe-1750-d824-ce44-5615085b0f99" executionId="6eaa1b8a-8d00-4f62-9ba8-cea3b52efaea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d00aa3da-50da-0d9f-7f7a-038cb0efa88d" executionId="bd2aa042-1d99-4b84-8b6f-f6892ea25b04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c13936e-1575-36fe-2b79-b0f01141d843" executionId="2d760a28-7c47-4428-89a8-5c9ac148b056" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec633d36-c1f1-d6a1-00af-d0c09fc1a025" executionId="cfd8cdab-e386-4885-87af-3a06b8835fb2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04d92fbe-f962-7173-d5c8-b696a51c4d3f" executionId="d432557e-f9b7-4eec-a2d3-8ffb6d783934" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d6474fb9-6fd5-dbe4-7856-b20ede64d3b2" executionId="35529f4d-4279-411a-af59-73fb0287fc1e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf931610-d0cd-dbf5-2414-fd630e3a63c7" executionId="dad4794b-df23-4d6f-996c-d530ba4a7bf1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e0e5c1c1-fcf2-8e56-0530-b661f2a4fc70" executionId="15984f58-233d-4c79-b65c-e8980f64485e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="074c6b28-b1b2-9680-4eb7-4509234fceb4" executionId="5d3799af-0364-4b94-ad5f-cfa9d1b4f6e2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ffef593b-24d9-8a57-5ee1-e7ee6c5be1af" executionId="99aab2ed-81d7-42b9-85fb-12519000e042" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84ad6304-b10c-3023-2bd5-1f5dcf06f86f" executionId="b32fc7cc-7b0c-4b0d-b853-497944aa94ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a479220f-475c-e29a-ebde-d6052c8b6567" executionId="7203ee98-150c-4c05-92fa-dbe8bed77557" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2f03786-2deb-a84c-c4a5-b4d10fcf14d5" executionId="e3eb8639-1ea5-4825-85a6-b144cd80a31c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf9f7cd1-8e17-b472-39e5-2ab9efb32bd6" executionId="3d4eed38-9ecf-4b13-85d9-6183eb140af2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="20" executed="20" passed="20" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.25]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.57]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.59]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:02.39]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

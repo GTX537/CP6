@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="241ee9a1-9295-478b-a74b-2183d05c64b7" name="tt@LAPTOP-3QQ44FJS 2026-10-02 12:31:32" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T12:31:32.1034471-04:00" queuing="2026-10-02T12:31:32.1034475-04:00" start="2026-10-02T12:31:26.1051703-04:00" finish="2026-10-02T12:31:32.1952526-04:00" />
+  <TestSettings name="default" id="b42e3d78-afd9-4352-ab0a-3edd5082dbfe">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_12_31_32" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="44edc803-57a4-49cc-be81-dfbb3fc12937" testId="ffef593b-24d9-8a57-5ee1-e7ee6c5be1af" testName="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_ExistingMenuPreservesOverridesAndRoleGrants" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.8841498" startTime="2026-10-02T12:31:30.2041079-04:00" endTime="2026-10-02T12:31:32.0779893-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="44edc803-57a4-49cc-be81-dfbb3fc12937" />
+    <UnitTestResult executionId="b7e131a0-a8c1-48a9-ae3b-7d575cd25aa6" testId="bf931610-d0cd-dbf5-2414-fd630e3a63c7" testName="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0148965" startTime="2026-10-02T12:31:32.1169935-04:00" endTime="2026-10-02T12:31:32.1284314-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7e131a0-a8c1-48a9-ae3b-7d575cd25aa6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: null&#xD;
+Actual:   "pur-reconcile"</Message>
+          <StackTrace>   at CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit() in D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\PurReconcileMenuSeedTests.cs:line 60&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f54b70b8-615b-4e95-931b-5a516fda83fd" testId="d00aa3da-50da-0d9f-7f7a-038cb0efa88d" testName="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0238996" startTime="2026-10-02T12:31:32.0889236-04:00" endTime="2026-10-02T12:31:32.1135207-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f54b70b8-615b-4e95-931b-5a516fda83fd">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "pur-reconcile"&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant() in D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\PurReconcileMenuSeedTests.cs:line 24&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bf931610-d0cd-dbf5-2414-fd630e3a63c7">
+      <Execution id="b7e131a0-a8c1-48a9-ae3b-7d575cd25aa6" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurReconcileMenuSeedTests" name="EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_ExistingMenuPreservesOverridesAndRoleGrants" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="ffef593b-24d9-8a57-5ee1-e7ee6c5be1af">
+      <Execution id="44edc803-57a4-49cc-be81-dfbb3fc12937" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurReconcileMenuSeedTests" name="EnsureSeeded_ExistingMenuPreservesOverridesAndRoleGrants" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant" storage="d:\cp6\tmp\worktrees\bug-137-reconcile-seed\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d00aa3da-50da-0d9f-7f7a-038cb0efa88d">
+      <Execution id="f54b70b8-615b-4e95-931b-5a516fda83fd" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.PurReconcileMenuSeedTests" name="EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ffef593b-24d9-8a57-5ee1-e7ee6c5be1af" executionId="44edc803-57a4-49cc-be81-dfbb3fc12937" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf931610-d0cd-dbf5-2414-fd630e3a63c7" executionId="b7e131a0-a8c1-48a9-ae3b-7d575cd25aa6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d00aa3da-50da-0d9f-7f7a-038cb0efa88d" executionId="f54b70b8-615b-4e95-931b-5a516fda83fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="1" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:01.53]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:02.40]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:02.41]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:04.35]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:04.35]       Expected: "pur-reconcile"&#xD;
+[xUnit.net 00:00:04.35]       Actual:   null&#xD;
+[xUnit.net 00:00:04.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.35]         D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\PurReconcileMenuSeedTests.cs(24,0): at CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant()&#xD;
+[xUnit.net 00:00:04.35]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:04.36]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:04.37]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:04.37]       Expected: null&#xD;
+[xUnit.net 00:00:04.37]       Actual:   "pur-reconcile"&#xD;
+[xUnit.net 00:00:04.37]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.37]         D:\CP6\tmp\worktrees\bug-137-reconcile-seed\CP6.Tests\PurReconcileMenuSeedTests.cs(60,0): at CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit()&#xD;
+[xUnit.net 00:00:04.37]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:04.37]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:04.37]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:31:32.1152108-04:00">
+        <Text>[xUnit.net 00:00:04.35]     CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_FirstInitializationCreatesMenuWithResourceKeyAndAdminGrant [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:31:32.1289504-04:00">
+        <Text>[xUnit.net 00:00:04.37]     CP6.Tests.PurReconcileMenuSeedTests.EnsureSeeded_RepeatedInitializationDoesNotChangeRowsOrAddFieldAudit [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
