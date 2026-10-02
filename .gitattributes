@@ -63,6 +63,11 @@ docs/evidence/c04b/2026-09-16/simulated-exit/*.txt -text whitespace=cr-at-eol
 # Original dual-database probe reports carry exact byte SHA-256 evidence.
 docs/audits/database-compatibility/evidence/*.json -text whitespace=cr-at-eol
 
-# BUG139 original RED/GREEN test evidence retains its byte SHA-256.
+# BUG139 original unit/native evidence retains its byte SHA-256.
 docs/audits/2026-10-02-bug-139-order-indexes/*.trx -text whitespace=cr-at-eol
 docs/audits/2026-10-02-bug-139-order-indexes/*.log -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-139-order-indexes/*.json -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-139-order-indexes/*.sql -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-139-order-indexes/*.ps1 -text whitespace=cr-at-eol
+# Preserve the actual EF-generated final blank line without rewriting evidence.
+docs/audits/2026-10-02-bug-139-order-indexes/bug-139-actual-ef8-migration.sql whitespace=cr-at-eol,-blank-at-eof

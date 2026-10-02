@@ -1,8 +1,8 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-02：BUG #139 索引前向修复完成本地验证
+## 2026-10-02：BUG #139 本地及真实 SQL 验收完成，待远端交付
 
-[订单查询索引遗漏](https://github.com/GTX537/CP6/issues/139) 已实现 21 个非唯一索引的 SQL-only 前向修复和完整同名冲突 guard；旧模型、snapshot、迁移和两个唯一索引别名保持。实际 RED **21 失败 / 1 通过**，相关 GREEN **25/25、零跳过**，原始日志与定义在[本地审计](../audits/2026-10-02-bug-139-order-indexes/README.md)。本条完成范围仅本地实现及自动化，真实 SQL、任务审查和远端交付仍待验证，Issue 保持 Open；未运行 Actions 或部署。
+[订单查询索引遗漏](https://github.com/GTX537/CP6/issues/139) 的 21 项 SQL-only 修复已通过单元 **25/25**（保留 RED **21 失败 / 1 通过**）、真实同 binary 首次/重复初始化 exit 0 且无 HTTP、升级/重复比较各 **25/25** 及 native guard **8/8**。352 表 count/摘要状态及全部旧索引捕获 metadata 保留，负场景均恢复原状态；晚冲突证明外层事务撤销前 20 项创建。一次独立完整审查无实质阻塞，[原始证据与失败范围](../audits/2026-10-02-bug-139-order-indexes/README.md)完整保留。功能源码 `083e9c4d` 未变，后续文档复用结果。此条完成范围为本地验收；正常 PR/远端 main/Issue 关闭待交付，Issue Open，不代表 WP2 其他结构或 PG API 完成。未运行 Actions 或部署。
 
 ## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
 

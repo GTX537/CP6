@@ -1,8 +1,8 @@
 # 当前待办与优先级
 
-## 2026-10-02：BUG #139 待真实 SQL 与正常交付
+## 2026-10-02：BUG #139 本地门禁通过，待正常 PR 与远端核对
 
-[Issue #139](https://github.com/GTX537/CP6/issues/139) 的独立前向修复已本地 **25/25 GREEN、零跳过**，保留旧链 **21 失败 / 1 通过** 的原始 RED。[本地范围和定义](../audits/2026-10-02-bug-139-order-indexes/README.md)明确只补 21 个非唯一索引。下一步由任务负责人在准确 owner 的隔离 SQL 库验证目录及原数据保留、同名一致重复保持、不同 key/filter/unique/include/desc/disabled/ignoredup 拒绝与事务回滚，并完成一次独立任务审查。随后正常 PR、远端 main 包含性及原步骤复测完成后关闭；当前 Issue Open。此项不替代 DB-COMPAT-01 的阶段门禁，未触发 Actions 或生产部署。
+[Issue #139](https://github.com/GTX537/CP6/issues/139) 单元 **25/25、零跳过**，真实同 binary 初始化首次/重复 exit 0、无 HTTP，升级/重复比较各 **25/25**，native guard **8/8**（每次状态恢复 **25/25**），一次独立任务审查无实质阻塞。[证据](../audits/2026-10-02-bug-139-order-indexes/README.md)保留原始 RED、空 stdout 归档失败与 1934 setup 失败；不把它们改写成 guard RED/成功。下一步负责人正常 PR、远端 main 包含性和必要集成核对后关闭；当前 Issue Open。WP2 generation 合入时需收窄本分支测试固定 137 条 registry 的总数断言；其他 WP2 历史结构缺口另立任务，此项不替代阶段门禁。未触发 Actions 或生产部署。
 
 ## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
 

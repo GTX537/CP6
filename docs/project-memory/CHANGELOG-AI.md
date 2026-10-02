@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-10-02：BUG #139 新增订单查询索引前向修复
+## 2026-10-02：BUG #139 索引前向修复通过真实 SQL 本地验收
 
-从已确认 `main` 的 `d507f389` 建立独立分支，新增 SQL-only migration 和 guarded SQL helper，恢复 frozen 模型遗漏的 21 个非唯一查询索引。同名定义一致原样保留，冲突失败关闭；两个等价历史唯一索引不新增。历史 136 条迁移、snapshot、实体与业务数据均未改。旧链回归 **21 失败 / 1 通过**；本地相关 **25/25 通过、零跳过**，locked restore 和编译成功，原始失败/成功在[审计](../audits/2026-10-02-bug-139-order-indexes/README.md)。真实 SQL 验证、独立审查、正常 PR 及远端交付待负责人执行，Issue #139 Open；未运行 Actions、业务库迁移或部署。
+从已确认 `main` 的 `d507f389` 建立独立分支，功能源码 `083e9c4d` 新增 SQL-only migration/helper 恢复 21 个非唯一索引；同名一致保留、冲突拒绝，两个唯一别名不新增。模型、snapshot、旧 136 迁移不改。RED **21 失败 / 1 通过**，单元 **25/25、零跳过**；同 compiled API 真库首次/重复初始化 exit 0 且无 HTTP，升级/重复比较各 **25/25**，352 表 count/内容摘要状态与全部旧索引捕获 metadata 保留，仅新增 21 项。native guard **8/8**、每次恢复 **25/25**，一次独立完整审查无阻塞。[原始归档](../audits/2026-10-02-bug-139-order-indexes/README.md)保留真实失败边界与复用来源。后续仅证据/四状态文档更新，不重复 unchanged source 验证。正常 PR/远端包含性/关闭待负责人执行，Issue Open；不声明 WP2 全结构完成，未运行 Actions、业务库迁移或部署。
 
 ## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
 

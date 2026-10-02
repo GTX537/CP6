@@ -1,0 +1,16 @@
+{
+  "Scope": "Real compiled application DatabaseInit; isolated owned database only, no API/workers",
+  "Provider": "SqlServer",
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "SourceWorktree": "D:\\CP6\\tmp\\worktrees\\bug-139-order-indexes",
+  "SourceCommit": "083e9c4dcdb3d5b1aad3b57c32cb337f86859361",
+  "StartedUtc": "2026-10-02T18:06:21.1676874Z",
+  "FinishedUtc": "2026-10-02T18:06:27.7509170Z",
+  "ProcessId": 27508,
+  "ExitCode": 0,
+  "ListenerObserved": false,
+  "CompletionMessage": true,
+  "BinarySha256": "4CF42E4D68980CB0D5C1D0F819E2CBD48B428749DF5CDEE0268369A7F6D2A5BE",
+  "StdoutSha256": "4DE03FCA972782FB80A13AD555C2F72FE4FB92AC624686C231DC812C96295023",
+  "StderrSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6"
+}

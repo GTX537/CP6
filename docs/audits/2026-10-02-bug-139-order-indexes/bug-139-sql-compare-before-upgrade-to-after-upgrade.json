@@ -1,0 +1,139 @@
+{
+  "Scope": "BUG139 actual SQL forward/repeat original-step and all-table/index preservation comparison",
+  "StartedFrom": "before-upgrade",
+  "ComparedTo": "after-upgrade",
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "Upgrade": true,
+  "CapturedUtc": "2026-10-02T18:06:01.8776579Z",
+  "SourceCommit": "083e9c4dcdb3d5b1aad3b57c32cb337f86859361",
+  "BeforeSha256": "FD9FE9C6DB0E7690715F4FA000D4B24D9F8A9511B7186B8DF89532D22A54AF1B",
+  "AfterSha256": "C8D2CF00E99451AC7420AA7B54DE56FD0D00D5EFF2608ED5D5E75648968EEBB6",
+  "FrozenOmissionOracleSha256": "D1AE112BDFFFB6428108CEA1E76CE2CDA6FA129D701E6EFF11F3040EC56FA004",
+  "Checks": [
+    {
+      "Name": "AllBusinessContentAndCountsPreserved",
+      "Status": "Passed",
+      "Detail": "Every business table retained its exact PK-ordered JSON SHA256 and count; only deliberate Core history append excluded during upgrade. 352 tables compared."
+    },
+    {
+      "Name": "CanonicalHistoryExactAppendOrRepeat",
+      "Status": "Passed",
+      "Detail": "All original MigrationId/ProductVersion pairs retained; expected append=1, before=137, after=138."
+    },
+    {
+      "Name": "EveryOriginalIndexPreserved",
+      "Status": "Passed",
+      "Detail": "All 1357 existing complete index metadata records remained exact, including PK/unique aliases; no DROP/rebuild."
+    },
+    {
+      "Name": "OnlyExpectedNewIndexes",
+      "Status": "Passed",
+      "Detail": "Exactly 21 new index definitions expected; actual=21."
+    },
+    {
+      "Name": "FrozenIndex.T_Order.IX_T_Order_OrderType_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_Order.IX_T_Order_Status_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderDetail.IX_T_OrderDetail_ApprovalStatus_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderDetail.IX_T_OrderDetail_CustomerDeliveryDate_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderDetail.IX_T_OrderDetail_HaibaiNo2_HaibaiNo3",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderDetail.IX_T_OrderDetail_ItemCd",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderDetail.IX_T_OrderDetail_McTransferFlg_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderDetail.IX_T_OrderDetail_ProductCatBig_ProductCatMid_ProductCatSml",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderMaterial.IX_T_OrderMaterial_WebOrderNo_WebOrderDetailNo_SortOrder",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderProcess.IX_T_OrderProcess_ProcessCd",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_OrderProcess.IX_T_OrderProcess_WebOrderNo_WebOrderDetailNo_SortOrder",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_PlateMold.IX_T_PlateMold_BaseCd_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_PlateMold.IX_T_PlateMold_PlaceCd",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_PlateMold.IX_T_PlateMold_ProcessCd",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_PlateMold.IX_T_PlateMold_RepresentativeProductCd",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_PlateMold.IX_T_PlateMold_StDate_EndDate",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_PlateMold.IX_T_PlateMold_TypeClass",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_SheetUnitPrice.IX_T_SheetUnitPrice_BaseCd_CustomerCd_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_SheetUnitPrice.IX_T_SheetUnitPrice_RevisionDate",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_SheetUnitPriceEstimate.IX_T_SheetUnitPriceEstimate_BaseCd_CustomerCd_IsDeleted",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    },
+    {
+      "Name": "FrozenIndex.T_SheetUnitPriceEstimate.IX_T_SheetUnitPriceEstimate_RevisionDate",
+      "Status": "Passed",
+      "Detail": "Native enabled nonunique type2/unfiltered/no-include/ASC ordered keys match independent frozen model omission oracle."
+    }
+  ]
+}

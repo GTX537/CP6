@@ -1,0 +1,2 @@
+Msg 51039, Level 16, State 1, Server LAPTOP-3QQ44FJS\KOUSQLSERVER, Line 30
+BUG139 index dbo.T_SheetUnitPriceEstimate.IX_T_SheetUnitPriceEstimate_RevisionDate conflicts with the frozen definition; existing object preserved.

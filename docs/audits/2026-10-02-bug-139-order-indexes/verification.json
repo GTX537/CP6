@@ -58,11 +58,383 @@
       "path": "bug-139-green.log",
       "sha256": "D23AB1A452701471C3DC8B2721DEF233ECC8B5B1DD61B04D9A5B68BDD8A707B8",
       "bytes": 395
+    },
+    {
+      "path": "bug-139-actual-ef8-migration.sql",
+      "sha256": "789C7380E28EB141E112110899EC009FC2CA649B48974066E088C7856F4FEE15",
+      "bytes": 41136,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-actual-ef8-migration.sql"
+    },
+    {
+      "path": "bug-139-native-guard-correct-existing.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-correct-existing.log"
+    },
+    {
+      "path": "bug-139-native-guard-correct-existing.sql",
+      "sha256": "4A0279FBDDF56FFD064ECBC7E7EFFA34E80CF84F3D08EAF8A8AD7368A84F034B",
+      "bytes": 41355,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-correct-existing.sql"
+    },
+    {
+      "path": "bug-139-native-guard-disabled-index.log",
+      "sha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "bytes": 222,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-disabled-index.log"
+    },
+    {
+      "path": "bug-139-native-guard-disabled-index.sql",
+      "sha256": "52ED79BDFC7319BA9F650E89307AAD99F43BFED97227C5E6EDCA00823B7C20E3",
+      "bytes": 41621,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-disabled-index.sql"
+    },
+    {
+      "path": "bug-139-native-guard-late-conflict-atomic-rollback.log",
+      "sha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "bytes": 222,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-late-conflict-atomic-rollback.log"
+    },
+    {
+      "path": "bug-139-native-guard-late-conflict-atomic-rollback.sql",
+      "sha256": "45B8FC4E21E45F60CFC5447CCBBF4EF84C13177F851517BD37E3E2E2229D1DFC",
+      "bytes": 43275,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-late-conflict-atomic-rollback.sql"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-filter-correct-set-options.log",
+      "sha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "bytes": 222,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-filter-correct-set-options.log"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-filter-correct-set-options.sql",
+      "sha256": "64B519DAB78DBFF5AD6EEEA335E10973E72330BCF13F56D7F63AB6FBAD30ED9C",
+      "bytes": 41772,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-filter-correct-set-options.sql"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-filter.log",
+      "sha256": "CD3A86EE9ECB6FECCC81720DCEA4496CEAB037E284E7A8C28D82C4078D47582F",
+      "bytes": 350,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-filter.log"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-filter.sql",
+      "sha256": "716589979AD5647E49B960D8A8FAA98739F016A961361D54A9BDCCBE9BEC9979",
+      "bytes": 41605,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-filter.sql"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-include.log",
+      "sha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "bytes": 222,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-include.log"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-include.sql",
+      "sha256": "FC28A93DBC19EF9EA9942A4AB1BF33A1BA2019042CD9F234E96BC339685EC3A0",
+      "bytes": 41758,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-include.sql"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-unique.log",
+      "sha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "bytes": 222,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-unique.log"
+    },
+    {
+      "path": "bug-139-native-guard-unexpected-unique.sql",
+      "sha256": "22580F11E1A7BC3F7EB5E81679BC3B7B3DD0DBFA09B25CF79137FD2929E8F8B7",
+      "bytes": 41579,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-unexpected-unique.sql"
+    },
+    {
+      "path": "bug-139-native-guard-wrong-column.log",
+      "sha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "bytes": 222,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-wrong-column.log"
+    },
+    {
+      "path": "bug-139-native-guard-wrong-column.sql",
+      "sha256": "A63133441489C355FA85E54F325176724AF93EFA2EA9174E2B56B2B1E5A562AE",
+      "bytes": 41569,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-wrong-column.sql"
+    },
+    {
+      "path": "bug-139-native-guard-wrong-direction.log",
+      "sha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "bytes": 222,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-wrong-direction.log"
+    },
+    {
+      "path": "bug-139-native-guard-wrong-direction.sql",
+      "sha256": "30C2C528CC216A529C200278912D09C31DB3C5AA982627D2EB293ECE72A54C21",
+      "bytes": 41740,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guard-wrong-direction.sql"
+    },
+    {
+      "path": "bug-139-native-guards.json",
+      "sha256": "887FA4DE49E4F9A6C990219305A87F74DD09CEB6477DCE350FE3B53028210DA9",
+      "bytes": 4908,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-native-guards.json"
+    },
+    {
+      "path": "bug-139-sql-after-repeat.json",
+      "sha256": "6742FEC484F7A5F8C258C9CF9E1EB4058D3217AD39D7D9B50C747FF52F060883",
+      "bytes": 948557,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-after-repeat.json"
+    },
+    {
+      "path": "bug-139-sql-after-upgrade.json",
+      "sha256": "C8D2CF00E99451AC7420AA7B54DE56FD0D00D5EFF2608ED5D5E75648968EEBB6",
+      "bytes": 948558,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-after-upgrade.json"
+    },
+    {
+      "path": "bug-139-sql-before-upgrade.json",
+      "sha256": "FD9FE9C6DB0E7690715F4FA000D4B24D9F8A9511B7186B8DF89532D22A54AF1B",
+      "bytes": 935091,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-before-upgrade.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-correct-existing-evidence.json",
+      "sha256": "85F0BC61B4EB2285D9C0F3E2BB750C01866D769EC95EE0A6F4C4DF8DBF0A0DD9",
+      "bytes": 7027,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-correct-existing-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-disabled-index-evidence.json",
+      "sha256": "1CF41BCE252424AE6B223B8689C9BBB1090F29F5D00E8843E319C9EF6E7AB218",
+      "bytes": 7025,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-disabled-index-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-late-conflict-atomic-rollback-evidence.json",
+      "sha256": "A3F86CEC3BC160EC277E1957A724C7B7343437AB10232EBAAFD82E08024114C0",
+      "bytes": 7040,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-late-conflict-atomic-rollback-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-unexpected-filter-correct-set-options-evidence.json",
+      "sha256": "AF124A51B6D21EAF102A3D239A00FD9F33F344D6C3B3B32A9DC52EFE63B63AE4",
+      "bytes": 7048,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-unexpected-filter-correct-set-options-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-unexpected-filter-evidence.json",
+      "sha256": "70194D36D7996D1BEE7886E5E7B3BA01F46CBB6BC514D1C8DB2AAC5B86468337",
+      "bytes": 7028,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-unexpected-filter-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-unexpected-include-evidence.json",
+      "sha256": "EBB678716107651127F64C44860DB0CC3611480179BCAD98A41119CEE6B66A5F",
+      "bytes": 7029,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-unexpected-include-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-unexpected-unique-evidence.json",
+      "sha256": "0C8B0F20020CE46361BA8BC746055F6B9AC8B7BE552DD858877FB93CB5AEE960",
+      "bytes": 7028,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-unexpected-unique-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-wrong-column-evidence.json",
+      "sha256": "B036D0B9A6411CCAFF6A4C294F82F7CF498EBE952CD513D043A4C5D60BDE8D02",
+      "bytes": 7023,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-wrong-column-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-repeat-to-guard-wrong-direction-evidence.json",
+      "sha256": "031F32E82E8C59E48D5E7B70E7A8F09B55C7C870FEBFE5C401B74F19351E2C1F",
+      "bytes": 7026,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-repeat-to-guard-wrong-direction-evidence.json"
+    },
+    {
+      "path": "bug-139-sql-compare-after-upgrade-to-after-repeat.json",
+      "sha256": "4E6C6BF5A85EAF0FBACE7E423C17B878EC486A6CA08DB16189FD9DD5B2AD64B0",
+      "bytes": 7009,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-after-upgrade-to-after-repeat.json"
+    },
+    {
+      "path": "bug-139-sql-compare-before-upgrade-to-after-upgrade.json",
+      "sha256": "B3B5F437786CBCCF0B2D9311C641BEFB3956D8D3AC34B4CD3AC0586840F21283",
+      "bytes": 7012,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-compare-before-upgrade-to-after-upgrade.json"
+    },
+    {
+      "path": "Capture-Bug139SqlState.ps1",
+      "sha256": "5E322AE8C9BE28CA766C1EE7FDB87078DDE716DFA019A50F369A31BCB8C956DE",
+      "bytes": 5273,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\Capture-Bug139SqlState.ps1"
+    },
+    {
+      "path": "Compare-Bug139SqlState.ps1",
+      "sha256": "52B5DC8C524E16669B0B4F53E6FA6754F749E5545436CA371D2B106DD7621AC6",
+      "bytes": 5389,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\Compare-Bug139SqlState.ps1"
+    },
+    {
+      "path": "Test-Bug139SqlGuards.ps1",
+      "sha256": "A52681BD99884E92089B3C213BD6A5419AB3EAF6E38B7D9CD9C7605E22042F38",
+      "bytes": 6923,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\Test-Bug139SqlGuards.ps1"
+    },
+    {
+      "path": "wp2-init-bug139-index-upgrade-first.json",
+      "sha256": "8292572F4866884DCF8E3B455AA6FABD90495C5CFB8EED2AB31EECE9736B793C",
+      "bytes": 778,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\wp2-init-bug139-index-upgrade-first.json"
+    },
+    {
+      "path": "wp2-init-bug139-index-upgrade-repeat.json",
+      "sha256": "4062C856044722AD49C23688BD2833FD80970712EA04EE4D081E85D7C55D142E",
+      "bytes": 778,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\wp2-init-bug139-index-upgrade-repeat.json"
+    },
+    {
+      "path": "wp2-sql137-missing-model-indexes.json",
+      "sha256": "D1AE112BDFFFB6428108CEA1E76CE2CDA6FA129D701E6EFF11F3040EC56FA004",
+      "bytes": 5395,
+      "originalIgnoredPath": "D:\\CP6\\tmp\\wp2-sql137-missing-model-indexes.json"
+    },
+    {
+      "path": "native-attempt-boundaries.json",
+      "sha256": "4C6D7167B7E968715295389BAF8B4ABE59EACB84ADF89A7519BE351CA6964CED",
+      "bytes": 2173,
+      "provenance": "Derived record from root tool-session statement and archived native output; not an original exception log"
     }
   ],
-  "databaseConnectionsOpened": false,
-  "nativeSqlAcceptance": "Pending",
-  "independentTaskReview": "Pending",
+  "nativeSqlAcceptance": "Passed",
+  "independentTaskReview": "Passed",
   "remoteDelivery": "Pending",
-  "githubActionsTriggered": false
+  "githubActionsTriggered": false,
+  "retainedIgnoredNativeCaptures": [
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-correct-existing-evidence.json",
+      "sha256": "7D9FAECC441C20CF7FF909DE6F7C6C5D3E430D42CB8EC69CE3730B0C59053DF7",
+      "bytes": 948576,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-wrong-column-evidence.json",
+      "sha256": "0E3B022240D3E9FF13B43D9B4DD4C381AAC23AA92F7023BECC61572BAAFA1233",
+      "bytes": 948572,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-unexpected-unique-evidence.json",
+      "sha256": "B2F12D532B3FDD085D7B6CEF20F8F60B8852820CF52AF7E98DAB8C5A7E995D57",
+      "bytes": 948577,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-unexpected-filter-correct-set-options-evidence.json",
+      "sha256": "244F759E70362527DA5A0499DB777F9E02615B163A5F6E0F8293E87449BDF857",
+      "bytes": 948597,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-unexpected-include-evidence.json",
+      "sha256": "F1DD6AB6B56CA849736CA93243B0688519FEDD355543C1766D653467F48B6A19",
+      "bytes": 948578,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-wrong-direction-evidence.json",
+      "sha256": "6E52CA81F2E527B214DFFE01EB466DC63ADA1480CD0C452B057A9F97C55A9685",
+      "bytes": 948575,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-disabled-index-evidence.json",
+      "sha256": "C3AC34DD499BB727C98FD6D4B2772867AFFC61639B69790B7EDFC0E17B71338B",
+      "bytes": 948574,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:\\CP6\\tmp\\bug-139-sql-guard-late-conflict-atomic-rollback-evidence.json",
+      "sha256": "B561E5BA75E998DC698907C424F7C5868897F114DF6A110701C5F055E2CB6536",
+      "bytes": 948589,
+      "reason": "Full per-case 352-table/1378-index capture retained locally; verified 25-check restore comparison is archived"
+    },
+    {
+      "originalIgnoredPath": "D:/CP6/tmp/bug-139-sql-guard-correct-existing.json",
+      "sha256": "BA60D5B447AF32236636792B24FBC7C46187398F9FC0CAB582000774E4A1F681",
+      "bytes": 948567,
+      "reason": "Adjacent capture from first successful native execution whose empty log archive failed; no exact exception timestamp recorded"
+    },
+    {
+      "originalIgnoredPath": "D:/CP6/tmp/bug-139-sql-guard-unexpected-filter-evidence.json",
+      "sha256": "71E477AA82E31431E594289D7649A029EE71DBF993182EAC0BC03F70F983BBE1",
+      "bytes": 948577,
+      "reason": "Full restore capture after1934 fixture setup failure; corresponding25-check compare archived"
+    }
+  ],
+  "unitVerificationOpenedDatabaseConnections": false,
+  "nativeSourceCommit": "083e9c4dcdb3d5b1aad3b57c32cb337f86859361",
+  "actualNative": {
+    "executor": "root",
+    "finishedUtc": "2026-10-02T18:09:45.3839684Z",
+    "database": "CP6Compat_WP2_20261002_36ef9cae",
+    "version": "16.0.1000.6",
+    "apiSha256": "4CF42E4D68980CB0D5C1D0F819E2CBD48B428749DF5CDEE0268369A7F6D2A5BE",
+    "applicationInit": {
+      "runs": 2,
+      "exitCodes": [
+        0,
+        0
+      ],
+      "httpListenersObserved": false,
+      "sourceUnchanged": true
+    },
+    "upgrade": {
+      "checksPassed": 25,
+      "checksFailed": 0,
+      "tablesCompared": 352,
+      "nonemptyTablesWithContentSha256": 25,
+      "emptyTablesWithNullDigest": 327,
+      "coreHistoryBefore": 137,
+      "coreHistoryAfter": 138,
+      "existingIndexesPreserved": 1357,
+      "newNonuniqueIndexes": 21
+    },
+    "repeat": {
+      "checksPassed": 25,
+      "checksFailed": 0,
+      "tablesCompared": 352,
+      "coreHistory": 138,
+      "indexes": 1378
+    },
+    "guards": {
+      "passed": 8,
+      "failed": 0,
+      "checksAfterEachRollback": 25,
+      "firstThreeExecutionsReused": true,
+      "lateConflictCreatesFirstTwentyBefore51039": true
+    },
+    "validationReuse": "Subsequent archive/state-only commit keeps native source 083e9c4d unchanged; unit and native successful evidence reused, not rerun"
+  },
+  "review": {
+    "reviewer": "wp1_wiring",
+    "reviewedCommit": "083e9c4dcdb3d5b1aad3b57c32cb337f86859361",
+    "base": "d507f389fdcadd8e2fc5dcb9e40f752cde613703",
+    "scope": "Complete original 14-file task diff; independent frozen 21 index definitions and original snapshot blob",
+    "p1": 0,
+    "p2": 0,
+    "blockers": 0,
+    "reviewConfirmedUtc": "2026-10-02T18:14:16Z",
+    "confirmationIsExactReviewFinishTime": false,
+    "source": "Direct wp1_wiring confirmation; earlier exact review completion second was not recorded",
+    "nonblockingIntegrationFollowup": "Tests migration-total assertion137 must be narrowed after WP2 generation migration is integrated; current isolated BUG139 baseline expectation remains valid"
+  },
+  "failureBoundaryEvidence": "native-attempt-boundaries.json",
+  "archiveVerification": {
+    "scope": "Only evidence/docs changes; no build, test rerun, or database connection",
+    "originalEvidenceHashesVerified": 45,
+    "localLinksVerified": 32,
+    "staticReproductionScriptsParsed": 3,
+    "preservedEfScriptTrailingBlank": "First git diff --check flagged original EF-generated trailing blank line. Script bytes and SHA-256 stayed unchanged; only its exact-file whitespace attribute exempts blank-at-eof."
+  }
 }
