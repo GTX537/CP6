@@ -1,0 +1,99 @@
+{
+  "Scope": "BUG143 SQL139->140 capacity-only upgrade or exact repeat/guard restoration; immutable six-column oracle from d607 plus independent native column audit.",
+  "StartedFrom": "after-real-ef-rejection",
+  "ComparedTo": "after-original-missing-column",
+  "Upgrade": false,
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "CapturedUtc": "2026-10-02T19:53:29.5930480Z",
+  "ExpectedMigrationId": "20261002193500_RestoreQuotationAuditColumnCapacity",
+  "ExpectedProductVersion": "8.0.30",
+  "ExpectedColumnDeltaCount": 0,
+  "ExpectedHistoryAppendCount": 0,
+  "BeforeSha256": "A3224A3D66C874BD9295F7547EA6F838D31AA528EA88C763D10E143582A62B56",
+  "AfterSha256": "22BA49E41877B95AF1866932F26501B68079ADC2A4CDB4A675132058717A8D03",
+  "ReceiptSha256": "0B8681AC50D0CA8AABB84F9561301CC8EC57C1E178554F9F57E3DC4BBAFDDE2C",
+  "InputSha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED",
+  "FrozenOracleSha256": "441CBCB228624370995EE735C8CEC52104A8B1481A5A6457589547B78EC52618",
+  "NativeSixColumnAuditSha256": "81BE921FEC03AB8F4D316A6AEFD0320C88F93CDB77BFF3CA8C5A9EE9140AA94C",
+  "TableMetadataChanges": [],
+  "Checks": [
+    {
+      "Name": "All352TableIdentitiesDataCountsAndTokensPreserved",
+      "Status": "Passed",
+      "Detail": "Only the canonical history table hash/count is exempt during the one-row upgrade. Every other PK-ordered hash/count, including stored tokens and nonempty quotations, must be identical."
+    },
+    {
+      "Name": "ServerVersionAndDatabaseCollationUnchanged",
+      "Status": "Passed",
+      "Detail": "No server/provider/collation reference drift."
+    },
+    {
+      "Name": "CoreHistoryExactly139To140OrIdentical",
+      "Status": "Passed",
+      "Detail": "Exactly one specified MigrationId/ProductVersion append on upgrade; repeat/guard restoration has no history difference."
+    },
+    {
+      "Name": "AllTableMetadataExact",
+      "Status": "Passed",
+      "Detail": "Repeat/guard restoration permits no table modify_date or other metadata change."
+    },
+    {
+      "Name": "AllIndexesExact",
+      "Status": "Passed",
+      "Detail": "Complete captured metadata and ordered nested records are exact; missing/new/rebuilt objects are rejected."
+    },
+    {
+      "Name": "AllForeignKeysExact",
+      "Status": "Passed",
+      "Detail": "Complete captured metadata and ordered nested records are exact; missing/new/rebuilt objects are rejected."
+    },
+    {
+      "Name": "AllChecksExact",
+      "Status": "Passed",
+      "Detail": "Complete captured metadata and ordered nested records are exact; missing/new/rebuilt objects are rejected."
+    },
+    {
+      "Name": "AllTriggersExact",
+      "Status": "Passed",
+      "Detail": "Complete captured metadata and ordered nested records are exact; missing/new/rebuilt objects are rejected."
+    },
+    {
+      "Name": "OnlySixExactColumnChangesOrNoColumnChange",
+      "Status": "Passed",
+      "Detail": "Predeclared allowed column delta count=0; no extra/missing tuple is accepted."
+    },
+    {
+      "Name": "FrozenColumn.T_Quotation.Creator",
+      "Status": "Passed",
+      "Detail": "Only native max_length -1 to 200 is allowed on upgrade; column_id/type/nullable/collation/identity/computed/default/generation and all remaining sys.columns fields must remain exact."
+    },
+    {
+      "Name": "FrozenColumn.T_Quotation.Modifier",
+      "Status": "Passed",
+      "Detail": "Only native max_length -1 to 200 is allowed on upgrade; column_id/type/nullable/collation/identity/computed/default/generation and all remaining sys.columns fields must remain exact."
+    },
+    {
+      "Name": "FrozenColumn.T_QuotationCalc.Creator",
+      "Status": "Passed",
+      "Detail": "Only native max_length -1 to 200 is allowed on upgrade; column_id/type/nullable/collation/identity/computed/default/generation and all remaining sys.columns fields must remain exact."
+    },
+    {
+      "Name": "FrozenColumn.T_QuotationCalc.Modifier",
+      "Status": "Passed",
+      "Detail": "Only native max_length -1 to 200 is allowed on upgrade; column_id/type/nullable/collation/identity/computed/default/generation and all remaining sys.columns fields must remain exact."
+    },
+    {
+      "Name": "FrozenColumn.T_QuotationDetail.Creator",
+      "Status": "Passed",
+      "Detail": "Only native max_length -1 to 200 is allowed on upgrade; column_id/type/nullable/collation/identity/computed/default/generation and all remaining sys.columns fields must remain exact."
+    },
+    {
+      "Name": "FrozenColumn.T_QuotationDetail.Modifier",
+      "Status": "Passed",
+      "Detail": "Only native max_length -1 to 200 is allowed on upgrade; column_id/type/nullable/collation/identity/computed/default/generation and all remaining sys.columns fields must remain exact."
+    }
+  ],
+  "Passed": 15,
+  "Failed": 0,
+  "Boundary": "Task-owned isolated SQL36ef only. No production migration/acceptance; no row values/credentials emitted. Whole-server DBTS/sequence rollback is not asserted."
+}

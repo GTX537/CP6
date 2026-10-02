@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-02：BUG #143 待真实 SQL、完整审查与正常交付
+
+[Issue #143](https://github.com/GTX537/CP6/issues/143) 本地目标 **17/17、零跳过、零warning/error**，有效RED **6失败/7通过**；六个nullable审计姓名列只向100收敛，超长/未知定义拒绝，保留collation，不truncate/delete/backfill/drop依赖。[证据](../audits/2026-10-02-bug-143-quotation-audit-capacity/README.md)已交负责人同actualAPI/Core；下一步owner隔离SQL真实首次/重复、100个UTF16码元（200字节）/尾空格/NULL边界、已有超长/未知定义/依赖/晚失败全事务回滚及原数据token/index/FK/history保留，再一次独立完整任务审查及正常PR/远端main包含性后关闭。Issue143 Open，不预称native通过或WP2完成。BUG141已PR142 merge、远端main4d4e2608确认并Closed，旧Pending段落保留历史；本地源码freeze，后续不因docs/commit重复编译。未运行Actions或部署。
+
+初版17静态GREEN之后实际SQL102（COLLATE方括号）/缺列207失败已保留；两次全数据/目录恢复15/15不是容量迁移通过。已最小修native collation校验后safe literal拼接和metadata之后动态DATALENGTH bitOUT，新target17/17；APIhash不变但Corehash变更须重新绑定。修正版native与完整审查/远端交付仍Pending，不预写GREEN。
+
 ## 2026-10-02：BUG #141 真实 SQL 门禁通过，待正常交付
 
 [Issue #141](https://github.com/GTX537/CP6/issues/141) FK12+索引25 **37/37、零跳过**，一次独立任务审查无阻塞；真实同API首次/重复exit0无HTTP，原生升级/重复各 **9/9**、guard **11/11**（各恢复9/9）、独立WP2实际SQL订单关系 **2/2**及写入后状态比较9/9。[范围与原始失败](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留NFR setup失败/五项复用和组合证明边界。本BUG本地门禁通过，下一步负责人正常PR、远端main包含性和必要集成核对后关闭；当前Issue Open，不执行NOCHECK或清理业务孤儿。其他WP2结构、六个报价字段容量差异及全阶段验收独立待处理，未运行Actions或部署。

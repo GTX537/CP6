@@ -1,0 +1,8 @@
+{
+  "Scope": "BUG143 input manifest setup failure before any database access",
+  "Status": "Failed",
+  "FailureKind": "Guessed runtime filename CP6.Platform.dll does not exist; actual runtime has five named Platform package assemblies",
+  "DatabaseAccess": false,
+  "IsMigrationRejection": false,
+  "Correction": "Discover actual filenames, hash all five package assemblies and then freeze the manifest before native capture"
+}
