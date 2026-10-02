@@ -96,8 +96,11 @@ public sealed class QuotationAuditColumnCapacityRepairTests
     [Fact]
     public void Guards_check_native_metadata_raw_byte_capacity_and_preserve_collation_without_data_rewrites()
     {
-        Assert.All(QuotationAuditColumnCapacityRepairSql.CreateStatements(), sql =>
+        var statements = QuotationAuditColumnCapacityRepairSql.CreateStatements();
+        for (var ordinal = 0; ordinal < AuditColumns.Count; ordinal++)
         {
+            var table = (string)AuditColumns.ElementAt(ordinal)[0];
+            var sql = statements[ordinal];
             foreach (var required in new[] { "FROM sys.tables", "schema_id = SCHEMA_ID(N'dbo')", "FROM sys.columns", "INNER JOIN sys.types",
                 "t.name = N'nvarchar'", "t.is_user_defined = 0", "t.is_assembly_type = 0", "c.system_type_id = TYPE_ID(N'nvarchar')",
                 "c.is_nullable = 1", "c.is_computed = 0", "c.is_identity = 0", "c.max_length IN (-1, 200)",
@@ -111,10 +114,27 @@ public sealed class QuotationAuditColumnCapacityRepairTests
             Assert.True(sql.IndexOf("IF @cp6_column_id IS NULL", StringComparison.Ordinal) < sql.IndexOf("EXEC sys.sp_executesql @cp6_check", StringComparison.Ordinal));
             Assert.True(sql.IndexOf("FROM sys.fn_helpcollations()", StringComparison.Ordinal) < sql.IndexOf("DECLARE @cp6_alter", StringComparison.Ordinal));
             Assert.True(sql.IndexOf("DATALENGTH([", StringComparison.Ordinal) < sql.IndexOf("DECLARE @cp6_alter", StringComparison.Ordinal));
+            var identityGuard = $"IF OBJECT_ID(N'[dbo].[{table}]', N'U') IS NULL";
+            Assert.Contains(identityGuard, sql, StringComparison.Ordinal);
+            Assert.Contains($"OR OBJECT_ID(N'[dbo].[{table}]', N'U') <> @cp6_object_id", sql, StringComparison.Ordinal);
+            var dataRead = sql.IndexOf("EXEC sys.sp_executesql @cp6_check", StringComparison.Ordinal);
+            var identityCheck = sql.IndexOf(identityGuard, StringComparison.Ordinal);
+            var columnCheck = sql.LastIndexOf("IF NOT EXISTS (", StringComparison.Ordinal);
+            var alter = sql.IndexOf("DECLARE @cp6_alter", StringComparison.Ordinal);
+            Assert.True(dataRead < identityCheck && identityCheck < columnCheck && columnCheck < alter);
+            var identitySql = sql[identityCheck..columnCheck];
+            Assert.Contains("FROM sys.tables", identitySql, StringComparison.Ordinal);
+            Assert.Contains("object_id = @cp6_object_id AND schema_id = SCHEMA_ID(N'dbo')", identitySql, StringComparison.Ordinal);
+            Assert.Contains($"name COLLATE Latin1_General_100_BIN2 = N'{table}' COLLATE Latin1_General_100_BIN2", identitySql, StringComparison.Ordinal);
+            Assert.Contains("THROW 51043", identitySql, StringComparison.Ordinal);
+            var columnSql = sql[columnCheck..alter];
+            Assert.Contains("c.object_id = @cp6_object_id AND c.column_id = @cp6_column_id", columnSql, StringComparison.Ordinal);
+            Assert.Contains("c.collation_name COLLATE Latin1_General_100_BIN2 = @cp6_collation", columnSql, StringComparison.Ordinal);
+            Assert.Contains("THROW 51043", columnSql, StringComparison.Ordinal);
             Assert.DoesNotMatch(@"\b(?:LEN|SUBSTRING|LEFT)\s*\(", sql);
             Assert.DoesNotMatch(@"\b(?:DROP|TRUNCATE|DELETE|INSERT|UPDATE|TRY|CATCH|COMMIT|ROLLBACK)\b", sql);
             Assert.DoesNotContain("__EFMigrationsHistory", sql, StringComparison.Ordinal);
-        });
+        }
     }
 
     [Fact]

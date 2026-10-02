@@ -52,7 +52,16 @@ public static class QuotationAuditColumnCapacityRepairSql
             IF @cp6_overlong = 1
                 THROW 51043, N'BUG143 dbo.{{definition.Table}}.{{definition.Column}} contains more than 100 UTF-16 units; no data changed.', 1;
 
-            -- Revalidate after acquiring the data lock, before using the captured collation.
+            -- The locked name must still identify the table whose metadata was captured.
+            IF OBJECT_ID(N'[dbo].[{{definition.Table}}]', N'U') IS NULL
+               OR OBJECT_ID(N'[dbo].[{{definition.Table}}]', N'U') <> @cp6_object_id
+               OR NOT EXISTS (
+                   SELECT 1 FROM sys.tables
+                   WHERE object_id = @cp6_object_id AND schema_id = SCHEMA_ID(N'dbo')
+                     AND name COLLATE Latin1_General_100_BIN2 = N'{{definition.Table}}' COLLATE Latin1_General_100_BIN2)
+                THROW 51043, N'BUG143 dbo.{{definition.Table}} identity changed; audit capacity repair refused.', 1;
+
+            -- Revalidate the captured column before using its collation.
             IF NOT EXISTS (
                 SELECT 1 FROM sys.columns AS c
                 WHERE c.object_id = @cp6_object_id AND c.column_id = @cp6_column_id
