@@ -1,0 +1,16 @@
+{
+  "Scope": "Real compiled application DatabaseInit; isolated owned database only, no API/workers",
+  "Provider": "SqlServer",
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "SourceWorktree": "D:\\CP6\\tmp\\worktrees\\bug-137-reconcile-seed",
+  "SourceCommit": "bab643750111beef610eba911bb530b422f9d99f",
+  "StartedUtc": "2026-10-02T16:47:22.2765122Z",
+  "FinishedUtc": "2026-10-02T16:47:27.8296629Z",
+  "ProcessId": 34260,
+  "ExitCode": 0,
+  "ListenerObserved": false,
+  "CompletionMessage": true,
+  "BinarySha256": "20894153768F6AFA1F3D5B3307597B1E9CFBD55ACC52DC1D29AAB2D62CE625E2",
+  "StdoutSha256": "4DE03FCA972782FB80A13AD555C2F72FE4FB92AC624686C231DC812C96295023",
+  "StderrSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6"
+}

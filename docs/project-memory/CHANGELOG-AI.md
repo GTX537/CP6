@@ -1,10 +1,10 @@
 # AI 可读变更日志
 
-## 2026-10-02：BUG #137 本地修复验证，待远端交付
+## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
 
-在 `d6074aaa` 基线的独立分支提取 `PurReconcileMenuSeed`，替换 Program 原菜单 708 inline seed，新插入即写入 `pur-reconcile`。新增首次创建含 key/admin 授权、重复初始化零额外审计、已有配置/授权保留三个 CP6Context 测试；旧逻辑 RED **2 失败 / 1 通过**，修复及相关权限/审计回归 **20/20 通过，零跳过**，相关 API 依赖编译零警告/错误。原始日志与 TRX 保留，详见[项目状态](PROJECT_STATE.md)。
+[采购对账菜单首次资源键修复](https://github.com/GTX537/CP6/issues/137)已在独立分支提交。旧逻辑 RED **2 失败 / 1 通过**；修复后相关测试 **20/20 通过、零跳过**。真实隔离 SQL 空库首次初始化即有菜单资源键；同一 compiled API 再次初始化后，**全部 351 张表行数和迁移历史不变**，包括字段审计。全局/租户翻译、管理员昵称与密码哈希原样保留，两次进程退出 0、不启动 HTTP。详见[执行证据与适用边界](../audits/2026-10-02-bug-137-menu-seed/README.md)。
 
-[Issue #137](https://github.com/GTX537/CP6/issues/137) 保持 Open，等待任务负责人真库原步骤复测及正常 PR/远端 `main` 核对；本条仅保存本地验证时点，未 push、创建 PR、合并、执行 Actions、改动现有数据库或部署。
+功能执行源 `bab643750111beef610eba911bb530b422f9d99f`；后续文档及证据提交复用相同功能源码的测试。正常 PR 合并、远端 main 包含性核对及 Issue 关闭待交付步骤完成；当前 Issue Open。不执行 Actions、现有数据库迁移或部署；触发配置未改、取消项 0。
 
 ## 2026-10-02：PostgreSQL / SQL Server 兼容 WP1 本地门禁完成
 

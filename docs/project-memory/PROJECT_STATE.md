@@ -1,12 +1,10 @@
 # 项目当前状态
 
-## 2026-10-02：BUG #137 采购对账菜单首轮资源键，本地回归通过
+## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
 
-从已核对的远端 `main` 基线 `d6074aaa` 创建独立分支，修复 [Issue #137](https://github.com/GTX537/CP6/issues/137)：全局 MenuKey 回填先于菜单 708 创建，旧插入缺 key，第二次初始化才补齐并增加字段审计。提取 [PurReconcileMenuSeed](../../CP6.WebApi/Seed/PurReconcileMenuSeed.cs)，新建菜单时直接写入 `pur-reconcile`，Program 在原位置调用；已有菜单的自定义配置和授权保留。
+[采购对账菜单首次资源键修复](https://github.com/GTX537/CP6/issues/137)已在独立分支提交。旧逻辑 RED **2 失败 / 1 通过**；修复后相关测试 **20/20 通过、零跳过**。真实隔离 SQL 空库首次初始化即有菜单资源键；同一 compiled API 再次初始化后，**全部 351 张表行数和迁移历史不变**，包括字段审计。全局/租户翻译、管理员昵称与密码哈希原样保留，两次进程退出 0、不启动 HTTP。详见[执行证据与适用边界](../audits/2026-10-02-bug-137-menu-seed/README.md)。
 
-[三个 CP6Context 回归测试](../../CP6.Tests/PurReconcileMenuSeedTests.cs)先对原样提取的旧逻辑得到 **2 项预期失败 / 1 项通过 / 0 跳过**；修复后连同采购权限 seed、字段审计相关测试 **20/20 通过，零跳过**，锁定依赖恢复和相关 API 依赖编译成功，零警告/错误。真实日志与 TRX 保留于本任务 worktree 的 `tmp/bug-137-seed/`。这些测试使用 InMemory Provider，不替代真实数据库初始化验收。
-
-本条记录本地修复验证时点，待任务负责人以隔离 SQL 空库复测首次及重复初始化，并完成正常 PR 与远端 `main` 核对；Issue 保持 Open。本轮只准备审查后的本地提交，未 push、创建 PR、合并、运行 Actions 或接触现有数据库/部署。
+功能执行源 `bab643750111beef610eba911bb530b422f9d99f`；后续文档及证据提交复用相同功能源码的测试。正常 PR 合并、远端 main 包含性核对及 Issue 关闭待交付步骤完成；当前 Issue Open。不执行 Actions、现有数据库迁移或部署；触发配置未改、取消项 0。
 
 ## 2026-10-02：DB-COMPAT-01 WP1 本地门禁完成，待正常 PR 交付
 
