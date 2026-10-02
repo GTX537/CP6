@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Platform.EntityFramework;
 using CP6.Platform.Messaging;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.BackgroundServices;
 
-public sealed class IdentityEventDispatchWorker(CrmIdentityRuntime runtime, IConfiguration configuration,
+public sealed class IdentityEventDispatchWorker(CrmIdentityRuntime runtime, IConfiguration configuration, DatabaseOptions database,
     ILogger<IdentityEventDispatchWorker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -17,13 +18,27 @@ public sealed class IdentityEventDispatchWorker(CrmIdentityRuntime runtime, ICon
             .UseGrpcEndpoint(runtime.Options.DaprGrpcEndpoint).Build();
         using var invocation = new HttpClient { BaseAddress = new Uri(runtime.Options.DaprHttpEndpoint), Timeout = TimeSpan.FromSeconds(10) };
         var publisher = new IdentityDaprPublisher(new Cp6DaprTransport(dapr, invocation), runtime.Validator);
-        var ordinary = new Cp6OutboxDispatcher<CP6Context>(new ContextFactory<CP6Context>(() => new CP6Context(
-            new DbContextOptionsBuilder<CP6Context>().UseSqlServer(connection).Options)), runtime.Validator, publisher, Options(32));
-        var priority = new Cp6OutboxDispatcher<IdentityMessagingContext>(new ContextFactory<IdentityMessagingContext>(() => new IdentityMessagingContext(
-            new DbContextOptionsBuilder<IdentityMessagingContext>().UseSqlServer(connection).Options)), runtime.Validator, publisher, Options(16));
+        var ordinary = new Cp6OutboxDispatcher<CP6Context>(CreateOrdinaryContextFactory(database, connection), runtime.Validator, publisher, Options(32));
+        var priority = new Cp6OutboxDispatcher<IdentityMessagingContext>(CreatePriorityContextFactory(database, connection), runtime.Validator, publisher, Options(16));
         // Independent asynchronous loops: a blocked ordinary publish never consumes the priority budget.
         await Task.WhenAll(LoopAsync("priority", priority.DispatchBatchAsync, stoppingToken),
             LoopAsync("ordinary", ordinary.DispatchBatchAsync, stoppingToken));
+    }
+
+    internal static IDbContextFactory<CP6Context> CreateOrdinaryContextFactory(DatabaseOptions database, string connection)
+    {
+        var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.Core);
+        var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), database, connection,
+            profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options;
+        return new ContextFactory<CP6Context>(() => new(options));
+    }
+
+    internal static IDbContextFactory<IdentityMessagingContext> CreatePriorityContextFactory(DatabaseOptions database, string connection)
+    {
+        var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.IdentityPriority);
+        var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<IdentityMessagingContext>(), database, connection,
+            profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options;
+        return new ContextFactory<IdentityMessagingContext>(() => new(options));
     }
 
     private async Task LoopAsync(string queue, Func<string, CancellationToken, Task<Cp6OutboxDispatchResult>> dispatch, CancellationToken cancellationToken)

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-02：启动 PostgreSQL / SQL Server 兼容 WP1
+
+按用户要求将 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134) 设为本对话目标，在独立分支实现严格 Provider、连接工厂、四 Context 迁移 profile 与设计时配置，统一应用 / Space / identity / ERP / Dapper 接线并增加 PG 生产连接校验。固定 Npgsql Provider 8.0.11 / driver 8.0.8，EF 保持 8.0.30；相关本地测试 133/133，零跳过，原始失败记录保留。PG 应用启动暂由早期 guard 拒绝。[WP1 证据](../audits/database-compatibility/WP1-DECISIONS.md)仍为进行中，真实双库方案与远端功能交付未完成；未触发 Actions 或环境部署。
+
 ## 2026-10-02：登记 PostgreSQL / SQL Server 兼容主任务
 
 用户接受共享业务、每部署一个 Provider、独立迁移链的方向；新增[盘点](../audits/2026-10-02-database-compatibility.md)、[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)和[计划](../superpowers/plans/2026-10-02-database-compatibility.md)，关联 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)并同步四份项目记忆。父任务保持 Open；此次仅任务建档，功能、数据库迁移与既有数据搬迁均未执行。普通验证维持本地，未触发 Actions、修改工作流/分支保护或部署。

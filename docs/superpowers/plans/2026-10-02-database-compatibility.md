@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：用户已接受架构方向；本次仅建档，六个功能工作包均未开始。更新日期：2026-10-02。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：用户已接受架构方向，并要求将其设为本对话持续目标；WP1 实施中，WP2–WP6 尚未开始。更新日期：2026-10-02。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。配置基础与未完成门禁见 [WP1 记录](../../audits/database-compatibility/WP1-DECISIONS.md)。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -27,7 +27,7 @@
 
 ## 预计文件边界
 
-下面的新文件是功能实施时的目标路径，本次没有创建它们；已有路径可在[盘点](../../audits/2026-10-02-database-compatibility.md)中复核。WP1 若需调整接口命名，须先同步设计与该表再实施，不另建重复状态队列。
+下面的新文件是功能实施时的目标路径；WP1 已创建配置/连接/Context helper、集中迁移 profile、设计时配置与限量表探针，实际状态以阶段证据为准。已有路径可在[盘点](../../audits/2026-10-02-database-compatibility.md)中复核，不另建重复状态队列。
 
 | 工作包 | 已有文件 / 目录 | 计划新增位置及职责 |
 | --- | --- | --- |

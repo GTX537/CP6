@@ -1,6 +1,7 @@
 using System.Text;
 using CP6.Core.BaseProvider;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.DataProtection;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
-using Microsoft.Data.SqlClient;
 using CP6.Core.Utilities;
 using CP6.WebApi.Filters;
 using CP6.WebApi.BackgroundServices;
@@ -25,9 +25,16 @@ var builder = WebApplication.CreateBuilder(args);
 // 优先级（低→高）：appsettings.json → appsettings.{Env}.json → appsettings.Local.json → env vars → 命令行。
 CP6.WebApi.Configuration.LocalJsonConfiguration.Add(builder.Configuration);
 
+var database = DatabaseOptions.FromConfiguration(builder.Configuration);
+CP6.WebApi.Configuration.DatabaseRuntimeSupport.EnsureSupported(database);
+var databaseConnection = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is required.");
+builder.Services.AddSingleton(database);
+builder.Services.AddSingleton(new DatabaseConnectionFactory(database));
+
 // 1. 注册控制器（全局注册 OperLogFilter）
 if (builder.Environment.IsProduction())
-    CP6.WebApi.Configuration.ProductionConfigurationValidator.Validate(builder.Configuration);
+    CP6.WebApi.Configuration.ProductionConfigurationValidator.Validate(builder.Configuration, database);
 
 builder.Services.AddScoped<OperLogFilter>();
 builder.Services.AddScoped<SpaceAuditActionFilter>();
@@ -74,8 +81,8 @@ var crmOidc = builder.Configuration.GetSection("CrmOidc").Get<CP6.WebApi.Service
     ?? new CP6.WebApi.Services.CrmOidcOptions();
 crmOidc.Validate(builder.Environment.IsDevelopment());
 builder.Services.AddSingleton(crmOidc);
-CP6.WebApi.Configuration.CrmIdentityConfiguration.AddCrmIdentityEvents(builder.Services, builder.Configuration, crmOidc);
-CP6.WebApi.Configuration.ErpIntegrationConfiguration.AddErpIntegration(builder.Services, builder.Configuration, crmOidc);
+CP6.WebApi.Configuration.CrmIdentityConfiguration.AddCrmIdentityEvents(builder.Services, builder.Configuration, crmOidc, database);
+CP6.WebApi.Configuration.ErpIntegrationConfiguration.AddErpIntegration(builder.Services, builder.Configuration, crmOidc, database);
 builder.Services.AddSingleton<CP6.WebApi.Services.CrmOidcCrypto>();
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>
@@ -152,9 +159,10 @@ builder.Services.Configure<SpaceObservabilityOptions>(
     builder.Configuration.GetSection(
         SpaceObservabilityOptions.SectionName));
 
+var coreMigrations = DatabaseMigrationProfile.For(database, DatabaseContextKind.Core);
 builder.Services.AddDbContext<CP6Context>((services, options) =>
-    options
-        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    DatabaseContextOptions.Configure(options, database, databaseConnection,
+        coreMigrations.MigrationsAssembly, coreMigrations.HistoryTable, coreMigrations.HistorySchema)
         .AddInterceptors(services.GetRequiredService<LegacySpaceWriteGuardInterceptor>()));
 builder.Services.AddSingleton(
     new SpaceUnderlayCalibrationOptions
@@ -169,9 +177,7 @@ builder.Services.AddSingleton(
             ?? 0.002m,
     });
 builder.Services.AddSpaceDesignV1Persistence(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException(
-        "DefaultConnection is required for Space Design v1."));
+    databaseConnection, database);
 var remoteCadWorker = builder.Configuration
     .GetSection(SpaceCadRemoteWorkerOptions.SectionName)
     .Get<SpaceCadRemoteWorkerOptions>();
@@ -199,8 +205,8 @@ builder.Services.AddSpaceFileSystemStorage(
         : Path.Combine(builder.Environment.ContentRootPath, spaceFileRoot));
 
 // 3.1 注册 Dapper 用的 IDbConnection（每次请求新建连接）
-builder.Services.AddScoped<IDbConnection>(_ =>
-    new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IDbConnection>(services =>
+    services.GetRequiredService<DatabaseConnectionFactory>().Create(databaseConnection));
 
 // 3.2 分布式缓存：生产 Redis 供权限、认证和跨副本失效共用；开发使用进程内实现。
 if (!string.IsNullOrEmpty(redisConn))

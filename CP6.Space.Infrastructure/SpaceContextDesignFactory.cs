@@ -1,3 +1,4 @@
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -8,15 +9,11 @@ public sealed class SpaceContextDesignFactory : IDesignTimeDbContextFactory<Spac
 {
     public SpaceContext CreateDbContext(string[] args)
     {
-        var connectionString =
-            Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ??
-            "Server=(localdb)\\MSSQLLocalDB;Database=CP6_Space_Design;Trusted_Connection=True;TrustServerCertificate=True";
-
-        var options = new DbContextOptionsBuilder<SpaceContext>()
-            .UseSqlServer(
-                connectionString,
-                sql => sql.MigrationsHistoryTable(SpaceContext.MigrationsHistoryTable))
-            .Options;
+        var design = DatabaseDesignTimeConfiguration.FromArguments(args,
+            Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"));
+        var profile = DatabaseMigrationProfile.For(design.Database, DatabaseContextKind.Space);
+        var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<SpaceContext>(), design.Database,
+            design.ConnectionString, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options;
 
         return new SpaceContext(options, new DesignExecutionContext(), new SystemSpaceClock());
     }

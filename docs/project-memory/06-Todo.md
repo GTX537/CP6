@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-02：DB-COMPAT-01 WP1 进行中
+
+[Issue #134](https://github.com/GTX537/CP6/issues/134) 是本对话持续目标，六阶段按[计划](../superpowers/plans/2026-10-02-database-compatibility.md)推进。配置与工厂基础已本地验证；接下来完成 PostgreSQL 本机安全登录、两库 token / 实际消息包 / 身份分页 / 四 Context 事务试验，选定方案后集中审查并交付 WP1。当前缺少真实双库必要结果，不能先勾选 WP1 或批量生成 PostgreSQL 基线；[WP1 门禁](../audits/database-compatibility/WP1-DECISIONS.md)持续更新真实证据。
+
+后续仍需四 Context 模型与独立迁移、业务锁/编号/错误、身份/ERP/WMS/OA/WF/财务、Space/CAD/AI/报表，以及原生恢复和隔离 API 验收。父任务保持 Open；不切换现有环境、不执行已有 SQL Server 数据搬迁或生产部署。
+
 ## 2026-10-02：DB-COMPAT-01 双数据库兼容
 
 主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)，Open。用户已接受同一代码按部署选择 SQL Server 或 PostgreSQL，保留现有 SQL Server 迁移历史，新增独立 PostgreSQL 迁移链。唯一阶段/验收明细在[实施计划](../superpowers/plans/2026-10-02-database-compatibility.md)，事实与边界见[盘点](../audits/2026-10-02-database-compatibility.md)和[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)，此处只保留路线入口。

@@ -1,3 +1,4 @@
+using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Platform.AspNetCore;
 using CP6.Platform.Messaging;
@@ -32,12 +33,16 @@ public static class CrmIdentityConfiguration
         return options;
     }
 
-    public static IServiceCollection AddCrmIdentityEvents(this IServiceCollection services, IConfiguration configuration, CrmOidcOptions oidc)
+    public static IServiceCollection AddCrmIdentityEvents(this IServiceCollection services, IConfiguration configuration, CrmOidcOptions oidc,
+        DatabaseOptions? database = null)
     {
+        database ??= DatabaseOptions.FromConfiguration(configuration);
         var options = BindOptions(configuration);
         if (!options.Enabled) return services;
         if (!oidc.Enabled) throw new InvalidOperationException("C02_REQUIRES_ENABLED_CRM_ISSUER");
-        if (new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection")).MultipleActiveResultSets)
+        var connection = configuration.GetConnectionString("DefaultConnection")!;
+        using var validatedConnection = new DatabaseConnectionFactory(database).Create(connection);
+        if (database.Provider == DatabaseProvider.SqlServer && new SqlConnectionStringBuilder(connection).MultipleActiveResultSets)
             throw new InvalidOperationException("C02_REQUIRES_SQL_SAVEPOINTS_DISABLE_MARS");
         options.Issuer = oidc.Issuer;
         options.PasswordMaxAgeDays = configuration.GetValue<int>("Security:Password:ExpiryDays");
@@ -59,7 +64,8 @@ public static class CrmIdentityConfiguration
         services.AddScoped<IdentityBootstrapService>();
         services.AddScoped<ICrmServiceTokenRecordStore, CrmServiceTokenRecordStore>();
         services.AddHostedService<IdentityBootstrapWorker>();
-        services.AddHostedService<IdentityEventDispatchWorker>();
+        services.AddHostedService(provider =>
+            ActivatorUtilities.CreateInstance<IdentityEventDispatchWorker>(provider, database));
         services.AddCp6JwtBearer(new Cp6JwtBearerProfile
         {
             Authority = oidc.Issuer, Issuer = oidc.Issuer, Audiences = ["CP6.Services"], ClockSkew = TimeSpan.FromSeconds(60)

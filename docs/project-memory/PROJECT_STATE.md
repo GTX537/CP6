@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-02：DB-COMPAT-01 已设为本对话目标，WP1 实施中
+
+用户要求在本对话持续执行 [Issue #134](https://github.com/GTX537/CP6/issues/134) 的六阶段兼容任务。已从远端确认的 `685a5238` 创建独立 WP1 worktree / 分支。Provider、连接与四 Context 的注册/设计时迁移选择已实现，相关本地测试 **133 通过 / 0 失败 / 0 跳过**；其中包含此前 38 项 Provider 基础测试，不重复相加。实际 Platform 0.10.2 固定源码及缓存包签名已核验，SQL Server 任务独占测试库已创建；详见 [WP1 记录](../audits/database-compatibility/WP1-DECISIONS.md)。
+
+SQL Server 收尾限量探针 **28 Passed / 1 NotApplicable / 0 Failed**，含 actual 四 Context / Dapper 事务与真实 Platform 包；集中审查发现的并发/重启断言缺口已修并局部复核。PG 两次本地输入的 `28P01` 保留为真实失败，随后用户在已登录 pgAdmin 执行专用测试账号脚本；任务已成功登录 **PG 18.6**，建立独立且带 owner 标记的测试库，开始限量试验。真实双库门禁未完成，WP1 仍进行中；CP6 库与配置由任务建立。PostgreSQL 应用 runtime guard 实际启动验证退出 1，完整适配完成前不能启动写库。未交付本阶段至远端 main，父任务 Open；没有新增 Actions、环境切换或生产部署。下方“功能实施未开始”是前次建档时点。
+
 ## 2026-10-02：双数据库兼容任务已登记，功能实施未开始
 
 用户接受“同一套代码、每次部署选择 PostgreSQL 或 SQL Server”，以及共享业务模型、独立 Provider 迁移链的方向。主任务为 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)，保持 Open；[源码盘点](../audits/2026-10-02-database-compatibility.md)、[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)与[六阶段计划](../superpowers/plans/2026-10-02-database-compatibility.md)已建档。基线 `157630594e3371fe181955d2f6227ff3b6962c84`：四个 Context、187 个迁移主文件、208 个 rowversion 快照映射；本机 PostgreSQL 18 服务运行只证明环境存在。

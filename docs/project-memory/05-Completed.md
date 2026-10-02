@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-02：DB-COMPAT-01 的本地基础验证进展（WP1 未结案）
+
+本对话已将 [Issue #134](https://github.com/GTX537/CP6/issues/134) 设为持续目标并启动 WP1。已执行的 Provider / 配置接线收尾测试为 **133/133，零跳过**，保留先失败测试、固定依赖和启动拒绝证据；[阶段记录](../audits/database-compatibility/WP1-DECISIONS.md)区分本地基础验证与真实双库门禁。当前没有新增远端功能交付项；WP1 尚未结案，整体兼容及 WP2–WP6 不记作已完成。
+
 ## 2026-10-02：双数据库源码盘点与任务建档
 
 完成 PostgreSQL / SQL Server 兼容性[静态盘点](../audits/2026-10-02-database-compatibility.md)，将用户接受的独立迁移链方向登记为 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)，交付[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)和[六阶段计划](../superpowers/plans/2026-10-02-database-compatibility.md)。本条已完成项仅限盘点、范围与验收条件建档；父任务保持 Open，六个功能工作包均未开始，不宣称双库已可运行或已有数据已搬迁。
