@@ -1,0 +1,3 @@
+# Original execution reports retain their exact SHA-256 bytes across checkouts.
+*.json -text whitespace=cr-at-eol
+*.trx -text whitespace=cr-at-eol
