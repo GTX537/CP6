@@ -1,5 +1,8 @@
+using System.Net;
 using System.Text.RegularExpressions;
+using CP6.Core.Persistence;
 using Microsoft.Data.SqlClient;
+using Npgsql;
 
 namespace CP6.WebApi.Configuration;
 
@@ -16,9 +19,9 @@ internal static partial class ProductionConfigurationValidator
         "cp6-mobile://auth/callback"
     ];
 
-    public static void Validate(IConfiguration configuration)
+    public static void Validate(IConfiguration configuration, DatabaseOptions? database = null)
     {
-        var errors = GetErrors(configuration);
+        var errors = GetErrors(configuration, database);
         if (errors.Count == 0)
             return;
 
@@ -28,12 +31,23 @@ internal static partial class ProductionConfigurationValidator
             string.Join(Environment.NewLine, errors.Select(error => $"- {error}")));
     }
 
-    internal static IReadOnlyList<string> GetErrors(IConfiguration configuration)
+    internal static IReadOnlyList<string> GetErrors(IConfiguration configuration, DatabaseOptions? database = null)
     {
         var errors = new List<string>();
 
         ValidateAllowedHosts(configuration, errors);
-        ValidateSqlServer(configuration, errors);
+        try
+        {
+            database ??= DatabaseOptions.FromConfiguration(configuration);
+        }
+        catch (InvalidOperationException)
+        {
+            errors.Add("Database:Provider must be SqlServer or PostgreSql.");
+        }
+        if (database?.Provider == DatabaseProvider.SqlServer)
+            ValidateSqlServer(configuration, errors);
+        else if (database?.Provider == DatabaseProvider.PostgreSql)
+            ValidatePostgreSql(configuration, errors);
         ValidateRedis(configuration, errors);
         ValidateMessaging(configuration, errors);
         ValidateAuthentication(configuration, errors);
@@ -81,6 +95,63 @@ internal static partial class ProductionConfigurationValidator
         {
             errors.Add($"{key} is not a valid SQL Server connection string.");
         }
+    }
+
+    private static void ValidatePostgreSql(IConfiguration configuration, ICollection<string> errors)
+    {
+        const string key = "ConnectionStrings:DefaultConnection";
+        var connection = configuration.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrWhiteSpace(connection))
+        {
+            errors.Add($"{key} is required.");
+            return;
+        }
+
+        try
+        {
+            var builder = new NpgsqlConnectionStringBuilder(connection);
+            if (string.IsNullOrWhiteSpace(builder.Host))
+            {
+                errors.Add($"{key} is not a valid PostgreSQL connection string: Host is required.");
+                return;
+            }
+            if (builder.Host.Split(',', StringSplitOptions.TrimEntries).Any(IsPostgreSqlLocalHost))
+                errors.Add($"{key} must not target a local development PostgreSQL server.");
+            if (builder.SslMode != SslMode.VerifyFull)
+                errors.Add($"{key} must set SSL Mode=VerifyFull to verify PostgreSQL server identity.");
+        }
+        catch (Exception exception) when (exception is ArgumentException or FormatException or OverflowException)
+        {
+            errors.Add($"{key} is not a valid PostgreSQL connection string.");
+        }
+    }
+
+    private static bool IsPostgreSqlLocalHost(string endpoint)
+    {
+        var host = endpoint.Trim();
+        if (string.IsNullOrWhiteSpace(host) || host.StartsWith('/') || host.StartsWith('@'))
+            return true;
+        if (host.StartsWith('['))
+        {
+            var bracket = host.IndexOf(']');
+            if (bracket > 0)
+                host = host[1..bracket];
+        }
+        else if (host.Count(character => character == ':') == 1)
+        {
+            host = host[..host.LastIndexOf(':')];
+        }
+
+        if (IPAddress.TryParse(host, out var address))
+        {
+            if (address.IsIPv4MappedToIPv6)
+                address = address.MapToIPv4();
+            return IPAddress.IsLoopback(address) || address.Equals(IPAddress.Any) || address.Equals(IPAddress.IPv6Any);
+        }
+        return host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+               host.EndsWith(".localhost", StringComparison.OrdinalIgnoreCase) ||
+               host.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
+               host is "." or "(local)";
     }
 
     private static void ValidateRedis(IConfiguration configuration, ICollection<string> errors)

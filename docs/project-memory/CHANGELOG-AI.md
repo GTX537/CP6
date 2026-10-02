@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-02：PostgreSQL / SQL Server 兼容 WP1 本地门禁完成
+
+按用户要求持续执行 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)，在独立分支实现严格 Provider、连接工厂、四 Context 迁移 profile / 设计时配置，统一应用 / Space / identity / ERP / Dapper 接线及 PG 生产连接校验。固定 Npgsql Provider **8.0.11** / driver **8.0.8**、EF **8.0.30**、实际 Platform **0.10.2**；配置测试 **133/133，零跳过**（包含原 38 项，不重复相加），SQL 真库 **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG 真库 **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`；原始失败记录保留，详见[WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)和[探针证据](../audits/database-compatibility/WP1-PROBE.md)。
+
+选定 SQL Server 原生 rowversion、PG 数据库生成的 **8 字节 bytea token**，另用同事务持久化 tenant generation / v2 cursor；真实 `40001` 与严格 UTC 规则已试验。任务负责人校验准确库名、owner 标记及 **0 对象 / 0 连接**后清理两库，无 FORCE 或会话终止，专用 PG 角色保留。WP1 本地门禁已完成，准备正常 PR 交付，当前尚未远端合并；随后从新分支执行 WP2。WP2–WP6 和整体兼容未完成，PG runtime guard 保留，父任务 Open；未触发 Actions、环境切换、数据搬迁或生产部署。下方任务建档条目保留其历史时点。
+
 ## 2026-10-02：登记 PostgreSQL / SQL Server 兼容主任务
 
 用户接受共享业务、每部署一个 Provider、独立迁移链的方向；新增[盘点](../audits/2026-10-02-database-compatibility.md)、[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)和[计划](../superpowers/plans/2026-10-02-database-compatibility.md)，关联 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)并同步四份项目记忆。父任务保持 Open；此次仅任务建档，功能、数据库迁移与既有数据搬迁均未执行。普通验证维持本地，未触发 Actions、修改工作流/分支保护或部署。

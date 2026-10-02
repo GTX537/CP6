@@ -1,0 +1,85 @@
+{
+  "Scope": "DB-COMPAT-01 WP1 limited-table experiment; not full migrations or production acceptance",
+  "StartedAtUtc": "2026-10-02T13:26:41.8679147Z",
+  "SourceSha": "685a5238734816f6a19b21ce60f76d4bf93cd796",
+  "SourceState": "Base HEAD plus staged WP1 task working tree; not an exact implementation commit.",
+  "InputFingerprintSha256": "0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3",
+  "Provider": "PostgreSql",
+  "DatabaseVersion": "18.6",
+  "Schema": "CP6Compat_20261002_30151068ce9f424a841b07e0108d35d0",
+  "OwnershipId": "9cc159da-6d4a-4ef0-9acf-4023b083e28c",
+  "Dependencies": {
+    "Microsoft.EntityFrameworkCore": "8.0.30",
+    "Npgsql": "8.0.8\u002B43e15ee3ba0fc31e8b3b24c09d5634141c487e40",
+    "Microsoft.Data.SqlClient": "5.1.9\u002B96dff8240157a99d47fb2ace4633806e72526fac",
+    "Dapper": "2.1.72\u002B288730e69b",
+    "CP6.Platform.EntityFramework": "0.8.0-alpha.2\u002Bfbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+    "CP6.Core": "1.0.0\u002B685a5238734816f6a19b21ce60f76d4bf93cd796",
+    "CP6.Space.Infrastructure": "1.0.0\u002B685a5238734816f6a19b21ce60f76d4bf93cd796",
+    "CP6.DatabaseCompatibility.Probe": "1.0.0\u002B685a5238734816f6a19b21ce60f76d4bf93cd796",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.11\u002B52a6b9f2ddd23fcabd1c673b4a2e273495129481"
+  },
+  "ResolvedDirectPackages": {
+    "CP6.Platform.EntityFramework": "0.10.2",
+    "Dapper": "2.1.72",
+    "Microsoft.EntityFrameworkCore.SqlServer": "8.0.30",
+    "Npgsql": "8.0.8",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.11"
+  },
+  "SourceInputSha256": {
+    "CP6.Core/CP6.Core.csproj": "241AA0F2737A6AA6E2DD3B89D7AF9344472C20E306EBD4897DB5BCC1B830B2B8",
+    "CP6.Core/EFDbContext/CP6Context.cs": "EA6AC054F759EAED7B1E319FD66E08A871243D4B8668D94D8302363BDC4AEE23",
+    "CP6.Core/packages.lock.json": "D3317B7BF34F2A1C6219541E53F3064F842A4E03414A866AF7B6D4BC6A1BEDFC",
+    "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs": "DA32B8CC33F92C415A287F9E6C0873AA97EB7985DB9D2E8A2C2E8889E53007E2",
+    "CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs": "58D29AD0332877954FF0C8714840EFCF8D1CD32CCD053FF8B1325D6E746562A3",
+    "CP6.Core/Persistence/DatabaseConnectionFactory.cs": "F3E9067697F31875E7D9231C4555414B65FC451EF05B77EE55A296C24E0FCF92",
+    "CP6.Core/Persistence/DatabaseContextOptions.cs": "59A243BFD5998783569A2C1DE1C9520DC6A28B291CFBF397F43020BBFD5F774B",
+    "CP6.Core/Persistence/DatabaseDesignTimeConfiguration.cs": "25670530E084B5001A3411B0136A72CC36D7773881019A644543EE077FA309A2",
+    "CP6.Core/Persistence/DatabaseMigrationProfile.cs": "D9DCC382AB411555237AB2496769DCE41216554A7708FAA693B60EAE133A16D6",
+    "CP6.Core/Persistence/DatabaseOptions.cs": "4474B8A7CD1F099E45F4AA05C1E5A890067A9786EB7DE0B6420DF0D2CFFFD202",
+    "CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj": "1AD4FAD052DFB9C947CF5105906886D165FBD267692ED61F377EC4E06BCD1872",
+    "CP6.Space.Infrastructure/packages.lock.json": "393AF9E3E2C8C4F193A381A873AEAB0262226BADFFFC2F4B8963F2B94A6BD328",
+    "CP6.Space.Infrastructure/SpaceContext.cs": "A61958CA2FF5E3372AABE528280AC76586B62F26E78A2D49B7599886BC37C1DC",
+    "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj": "BA5907DB6CD39D232B2F83479029AF7E657A3AE785F563841078A834CD91A608",
+    "tools/CP6.DatabaseCompatibility.Probe/IdentityExperiments.cs": "E54F2F54796B99BB3EA37A6EF9CC6A7BAFF75618F4F57456112E60B06D10962D",
+    "tools/CP6.DatabaseCompatibility.Probe/packages.lock.json": "D9AA9DA708221B10D81A2A0C39350671984260A771768E92EFE39DC925490B12",
+    "tools/CP6.DatabaseCompatibility.Probe/PlatformContext.cs": "2DCCC7D5E99F64CDA4404EDDDD3DCB45BE4BCF5E88F34752A0E8F2A4DB6D6686",
+    "tools/CP6.DatabaseCompatibility.Probe/PlatformExperiments.cs": "7C7CBE387158C85839875431F7AE59A0C4E26269A891C5CAC74D51BB1F63A078",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeDatabase.cs": "171FE65DBF91D88B88EF5AAD0D585CEF4681FF7F86750210E55DE2E0C1E6AA27",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeDdl.cs": "68D79244F0A725074047932BEBA37CE33F4480BED79DAE2B189FB109D277DB6E",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeModels.cs": "3DE2A8A0C6D97D2042271DD1DE0C00C79E356884055AF434CDFE18B845340761",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeResults.cs": "6DD980E355E26B19F87584704E212B0F029F3E9B09AF40A8F9F056BD54BE35B7",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeSafety.cs": "94EDDBC87EF8794D2704D04CA1519DA058BE0B0BDD3773249AA71198F05D4AEC",
+    "tools/CP6.DatabaseCompatibility.Probe/Program.cs": "AF2DC3151A3C753BB13EAAB2D762113E72FDF39BB70F5ED328521081ED9461CF",
+    "tools/CP6.DatabaseCompatibility.Probe/TokenExperiments.cs": "89CE56B0D21402304C9D765DA414D486190A03695E419D894FFB845B01250517",
+    "tools/CP6.DatabaseCompatibility.Probe/TransactionExperiments.cs": "DA94A5DCCD6B704C93436B4BD77A553242A2D37236D0FA5221AC9AD775540673"
+  },
+  "RuntimeAssemblySha256": {
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Dapper": "32EB214303B7DEA7792C462FDF528F46B52F3471F44E7F5E646FB90EFE94CBDF",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Core": "8C6A3C5AF06820CCE7B53B328231133D6E1E9EA247F2B63213BB78D95A8F0D75",
+    "CP6.Space.Infrastructure": "4B4201768D797A76EEECF652A1639D2E4F0C7E0B07EA6BCC5DC03F67A218156F",
+    "CP6.DatabaseCompatibility.Probe": "681A9C59D3679E78E9E4E6FFE1BF13A958706EB3BCE73FA397077CA6A02D67A4",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "E0A329C94CA198007947D38E89B38FA7F332E65B8A63A2035D06143E759B7D3C"
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.CreateOwnedSchema",
+      "Status": "Passed",
+      "Detail": "Unique schema and transactionally installed ownership marker; existing database objects were not used."
+    },
+    {
+      "Name": "NegativeControl.MissingStaleWritePredicateMustFail",
+      "Status": "Failed",
+      "Detail": "Expected negative-control failure: a raw writer that omits the stale token predicate accepts an old caller and loses the winner\u0027s update."
+    },
+    {
+      "Name": "Isolation.Cleanup",
+      "Status": "Passed",
+      "Detail": "Owner identity checked; only explicit owned tables, functions, sequence and schema removed."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "Task": "DB-COMPAT-01-WP1",
+  "StartedAtUtc": "2026-10-02T13:34:15.4531998Z",
+  "CompletedAtUtc": "2026-10-02T13:34:17.1374500Z",
+  "DatabaseName": "CP6Compat_WP1_20261002_0b54dc81",
+  "DatabaseOwnershipMarkerVerified": true,
+  "SQLServer": {
+    "RemainingProbeSchemasBeforeDrop": 0,
+    "Version": "16.0.1000.6",
+    "DatabaseAbsentAfterDrop": true,
+    "RemainingUserObjectsBeforeDrop": 0,
+    "ActiveConnectionsBeforeDrop": 0
+  },
+  "PostgreSQL": {
+    "ActiveConnectionsBeforeDrop": 0,
+    "Version": "18.6",
+    "RemainingUserRelationsBeforeDrop": 0,
+    "RemainingUserSchemasBeforeDrop": 0,
+    "DatabaseAbsentAfterDrop": true
+  },
+  "PostgreSQLRole": {
+    "Purpose": "Dedicated local DB-COMPAT test account for subsequent isolated migration and business validation; local credentials remain ignored.",
+    "Retained": true
+  },
+  "Limits": "Exact owner-marked WP1 task databases only; no FORCE, session termination, authentication change, service change or business database operation."
+}

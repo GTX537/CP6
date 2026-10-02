@@ -20,6 +20,8 @@
     <PackageReference Include="Dapper" Version="2.1.72" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.30" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.30" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="[8.0.11]" />
+    <PackageReference Include="Npgsql" Version="[8.0.8]" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.12" />
     <PackageReference Include="NCrontab" Version="3.3.3" />
     <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />

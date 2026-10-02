@@ -1,3 +1,4 @@
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,12 @@ public static class SpaceInfrastructureRegistration
     public static IServiceCollection AddSpaceDesignV1Persistence(
         this IServiceCollection services,
         string connectionString)
+        => services.AddSpaceDesignV1Persistence(connectionString, new(DatabaseProvider.SqlServer));
+
+    public static IServiceCollection AddSpaceDesignV1Persistence(
+        this IServiceCollection services,
+        string connectionString,
+        DatabaseOptions database)
     {
         if (string.IsNullOrWhiteSpace(connectionString))
         {
@@ -44,11 +51,10 @@ public static class SpaceInfrastructureRegistration
                 "The Space database connection string is required.");
         }
 
+        var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.Space);
         services.AddDbContext<SpaceContext>(options =>
-            options.UseSqlServer(
-                connectionString,
-                sql => sql.MigrationsHistoryTable(
-                    SpaceContext.MigrationsHistoryTable)));
+            DatabaseContextOptions.Configure(options, database, connectionString,
+                profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema));
         services.AddSingleton<ISpaceClock, SystemSpaceClock>();
         services.TryAddSingleton(new SpaceFileUploadLimits());
         services.TryAddSingleton(new SpaceFileRetentionOptions());

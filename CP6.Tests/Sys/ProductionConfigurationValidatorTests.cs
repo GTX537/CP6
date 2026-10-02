@@ -84,6 +84,90 @@ public class ProductionConfigurationValidatorTests
         Assert.DoesNotContain(unsafeSecret, exception.Message, StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("database.cp6.internal")]
+    [InlineData("database-1.cp6.internal,database-2.cp6.internal")]
+    public void GetErrors_AcceptsPostgreSqlWithVerifiedServerIdentity(string hosts)
+    {
+        var configuration = PostgreSqlConfiguration($"Host={hosts};Database=CP6;Username=cp6;Password=secret-value;SSL Mode=VerifyFull");
+
+        Assert.Empty(ProductionConfigurationValidator.GetErrors(configuration));
+    }
+
+    [Theory]
+    [InlineData("Disable")]
+    [InlineData("Allow")]
+    [InlineData("Prefer")]
+    [InlineData("Require")]
+    [InlineData("VerifyCA")]
+    public void GetErrors_RequiresPostgreSqlVerifyFull(string sslMode)
+    {
+        var configuration = PostgreSqlConfiguration($"Host=database.cp6.internal;Database=CP6;Username=cp6;Password=secret-value;SSL Mode={sslMode}");
+
+        Assert.Contains(ProductionConfigurationValidator.GetErrors(configuration), error => error.Contains("VerifyFull", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("localhost")]
+    [InlineData("127.0.0.1")]
+    [InlineData("127.0.0.2")]
+    [InlineData("::1")]
+    [InlineData("[::1]:5432")]
+    [InlineData("/var/run/postgresql")]
+    [InlineData("database.cp6.internal,localhost")]
+    [InlineData("database.cp6.internal,127.0.0.1:5432")]
+    [InlineData("localhost,database.cp6.internal")]
+    public void GetErrors_RejectsEveryLocalPostgreSqlHost(string hosts)
+    {
+        var configuration = PostgreSqlConfiguration($"Host={hosts};Database=CP6;Username=cp6;Password=secret-value;SSL Mode=VerifyFull");
+
+        Assert.Contains(ProductionConfigurationValidator.GetErrors(configuration), error => error.Contains("local", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Theory]
+    [InlineData("Host=database.cp6.internal;Password=do-not-print;do-not-print=invalid")]
+    [InlineData("Host=database.cp6.internal;Password=do-not-print;SSL Mode=do-not-print")]
+    [InlineData("Host=database.cp6.internal;Password=do-not-print;Port=do-not-print")]
+    public void Validate_InvalidPostgreSqlConnectionDoesNotExposeParserErrorOrSecret(string connection)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(PostgreSqlConfiguration(connection)));
+
+        Assert.Contains("PostgreSQL connection string", exception.Message);
+        Assert.DoesNotContain("do-not-print", exception.ToString());
+        Assert.Null(exception.InnerException);
+    }
+
+    [Fact]
+    public void Validate_PostgreSqlRequiresHostWithoutThrowingNullParserError()
+    {
+        var configuration = PostgreSqlConfiguration("Database=CP6;Username=cp6;Password=do-not-print;SSL Mode=VerifyFull");
+        var exception = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(configuration));
+
+        Assert.Contains("PostgreSQL connection string", exception.Message);
+        Assert.DoesNotContain("do-not-print", exception.ToString());
+        Assert.Null(exception.InnerException);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("postgres")]
+    [InlineData("Password=do-not-print")]
+    public void Validate_InvalidProviderDoesNotFallBackOrExposeInput(string provider)
+    {
+        var configuration = BuildConfiguration(new Dictionary<string, string?> { ["Database:Provider"] = provider });
+        var exception = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(configuration));
+
+        Assert.Contains("Database:Provider", exception.Message);
+        Assert.DoesNotContain("do-not-print", exception.ToString());
+        Assert.Null(exception.InnerException);
+    }
+
+    private static IConfiguration PostgreSqlConfiguration(string connection) => BuildConfiguration(new Dictionary<string, string?>
+    {
+        ["Database:Provider"] = "PostgreSql",
+        ["ConnectionStrings:DefaultConnection"] = connection
+    });
+
     private static IConfiguration BuildConfiguration(
         IReadOnlyDictionary<string, string?>? overrides = null)
     {

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.ErpIntegration;
@@ -19,8 +20,10 @@ namespace CP6.WebApi.Configuration;
 
 public static class ErpIntegrationConfiguration
 {
-    public static IServiceCollection AddErpIntegration(this IServiceCollection services, IConfiguration configuration, CrmOidcOptions oidc)
+    public static IServiceCollection AddErpIntegration(this IServiceCollection services, IConfiguration configuration, CrmOidcOptions oidc,
+        DatabaseOptions? database = null)
     {
+        database ??= DatabaseOptions.FromConfiguration(configuration);
         services.AddScoped<ErpReadService>();
         var section = configuration.GetSection("ErpIntegration");
         var options = section.Get<ErpIntegrationOptions>() ?? new();
@@ -38,7 +41,8 @@ public static class ErpIntegrationConfiguration
                 options.Tenants.ContainsKey(c.TenantId) && c.AllowedScopes.Contains("cp6.services", StringComparer.Ordinal))))
             throw new InvalidOperationException("C03_REQUIRES_RECORDED_C01_C02_SERVICE_IDENTITY");
         var connection = configuration.GetConnectionString("DefaultConnection")!;
-        if (new SqlConnectionStringBuilder(connection).MultipleActiveResultSets)
+        using var validatedConnection = new DatabaseConnectionFactory(database).Create(connection);
+        if (database.Provider == DatabaseProvider.SqlServer && new SqlConnectionStringBuilder(connection).MultipleActiveResultSets)
             throw new InvalidOperationException("C03_REQUIRES_SQL_SAVEPOINTS_DISABLE_MARS");
         foreach (var endpoint in new[] { options.DaprHttpEndpoint, options.DaprGrpcEndpoint })
             if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri) || !uri.IsLoopback || uri.Scheme is not ("http" or "https") ||
@@ -47,7 +51,7 @@ public static class ErpIntegrationConfiguration
         var validator = new ErpEventValidator(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/erp")));
         services.AddSingleton(validator);
         services.AddSingleton(provider => new ErpIntegrationRuntime(options, validator, provider.GetService<TimeProvider>()));
-        services.AddSingleton<IDbContextFactory<ErpIntegrationContext>>(new ErpQueueContextFactory(connection));
+        services.AddSingleton<IDbContextFactory<ErpIntegrationContext>>(new ErpQueueContextFactory(database, connection));
         services.AddScoped<ErpInboxReplayService>();
         services.AddScoped<ErpDeliveryReplayService>();
         services.AddScoped(provider => new ErpRequestHandler(provider.GetRequiredService<IDbContextFactory<ErpIntegrationContext>>(),
@@ -107,8 +111,17 @@ public static class ErpIntegrationConfiguration
     private static string? Single(HttpContext context, string name)
         => context.Request.Headers.TryGetValue(name, out var values) && values.Count == 1 ? values[0] : null;
 
-    private sealed class ErpQueueContextFactory(string connection) : IDbContextFactory<ErpIntegrationContext>
+    private sealed class ErpQueueContextFactory : IDbContextFactory<ErpIntegrationContext>
     {
-        public ErpIntegrationContext CreateDbContext() => new(new DbContextOptionsBuilder<ErpIntegrationContext>().UseSqlServer(connection).Options);
+        private readonly DbContextOptions<ErpIntegrationContext> _options;
+
+        public ErpQueueContextFactory(DatabaseOptions database, string connection)
+        {
+            var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.ErpIntegration);
+            _options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<ErpIntegrationContext>(), database, connection,
+                profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options;
+        }
+
+        public ErpIntegrationContext CreateDbContext() => new(_options);
     }
 }

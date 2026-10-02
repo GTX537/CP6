@@ -1,0 +1,80 @@
+{
+  "Scope": "DB-COMPAT-01 WP1 limited-table experiment; not full migrations or production acceptance",
+  "StartedAtUtc": "2026-10-02T13:04:21.674939Z",
+  "SourceSha": "685a5238734816f6a19b21ce60f76d4bf93cd796",
+  "SourceState": "SourceSha identifies base HEAD; experiment input includes the uncommitted task working tree.",
+  "InputFingerprintSha256": "240146210CFE25D2C568DFFE7D9321B39A81C818B3A61936B7E2595DF0E18322",
+  "Provider": "SqlServer",
+  "DatabaseVersion": null,
+  "Schema": "CP6Compat_20261002_9aa8d7edbade49a3a21e603f23be7b2e",
+  "OwnershipId": "2824eb6d-1213-4cc4-baac-2cea382d2207",
+  "Dependencies": {
+    "Microsoft.EntityFrameworkCore": "8.0.30",
+    "Npgsql": "8.0.8\u002B43e15ee3ba0fc31e8b3b24c09d5634141c487e40",
+    "Microsoft.Data.SqlClient": "5.1.9\u002B96dff8240157a99d47fb2ace4633806e72526fac",
+    "Dapper": "2.1.72\u002B288730e69b",
+    "CP6.Platform.EntityFramework": "0.8.0-alpha.2\u002Bfbcd21528078a04e5b53c42c5fdfebe6ffa9655f",
+    "CP6.Core": "1.0.0\u002B685a5238734816f6a19b21ce60f76d4bf93cd796",
+    "CP6.Space.Infrastructure": "1.0.0\u002B685a5238734816f6a19b21ce60f76d4bf93cd796",
+    "CP6.DatabaseCompatibility.Probe": "1.0.0\u002B685a5238734816f6a19b21ce60f76d4bf93cd796",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.11\u002B52a6b9f2ddd23fcabd1c673b4a2e273495129481"
+  },
+  "ResolvedDirectPackages": {
+    "CP6.Platform.EntityFramework": "0.10.2",
+    "Dapper": "2.1.72",
+    "Microsoft.EntityFrameworkCore.SqlServer": "8.0.30",
+    "Npgsql": "8.0.8",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.11"
+  },
+  "SourceInputSha256": {
+    "CP6.Core/CP6.Core.csproj": "241AA0F2737A6AA6E2DD3B89D7AF9344472C20E306EBD4897DB5BCC1B830B2B8",
+    "CP6.Core/EFDbContext/CP6Context.cs": "EA6AC054F759EAED7B1E319FD66E08A871243D4B8668D94D8302363BDC4AEE23",
+    "CP6.Core/packages.lock.json": "D3317B7BF34F2A1C6219541E53F3064F842A4E03414A866AF7B6D4BC6A1BEDFC",
+    "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs": "DA32B8CC33F92C415A287F9E6C0873AA97EB7985DB9D2E8A2C2E8889E53007E2",
+    "CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs": "58D29AD0332877954FF0C8714840EFCF8D1CD32CCD053FF8B1325D6E746562A3",
+    "CP6.Core/Persistence/DatabaseConnectionFactory.cs": "F3E9067697F31875E7D9231C4555414B65FC451EF05B77EE55A296C24E0FCF92",
+    "CP6.Core/Persistence/DatabaseContextOptions.cs": "59A243BFD5998783569A2C1DE1C9520DC6A28B291CFBF397F43020BBFD5F774B",
+    "CP6.Core/Persistence/DatabaseDesignTimeConfiguration.cs": "25670530E084B5001A3411B0136A72CC36D7773881019A644543EE077FA309A2",
+    "CP6.Core/Persistence/DatabaseMigrationProfile.cs": "D9DCC382AB411555237AB2496769DCE41216554A7708FAA693B60EAE133A16D6",
+    "CP6.Core/Persistence/DatabaseOptions.cs": "4474B8A7CD1F099E45F4AA05C1E5A890067A9786EB7DE0B6420DF0D2CFFFD202",
+    "CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj": "1AD4FAD052DFB9C947CF5105906886D165FBD267692ED61F377EC4E06BCD1872",
+    "CP6.Space.Infrastructure/packages.lock.json": "393AF9E3E2C8C4F193A381A873AEAB0262226BADFFFC2F4B8963F2B94A6BD328",
+    "CP6.Space.Infrastructure/SpaceContext.cs": "A61958CA2FF5E3372AABE528280AC76586B62F26E78A2D49B7599886BC37C1DC",
+    "tools/CP6.DatabaseCompatibility.Probe/CP6.DatabaseCompatibility.Probe.csproj": "BA5907DB6CD39D232B2F83479029AF7E657A3AE785F563841078A834CD91A608",
+    "tools/CP6.DatabaseCompatibility.Probe/IdentityExperiments.cs": "7A986C901CF87600B24B934D2B25C5680682D528F1BE8BB6827EED36254326BE",
+    "tools/CP6.DatabaseCompatibility.Probe/packages.lock.json": "D9AA9DA708221B10D81A2A0C39350671984260A771768E92EFE39DC925490B12",
+    "tools/CP6.DatabaseCompatibility.Probe/PlatformContext.cs": "3C2F877D535900FF452B645DC7B86DF8429468C015A72A85BDD66F3B3882BADA",
+    "tools/CP6.DatabaseCompatibility.Probe/PlatformExperiments.cs": "D2163747AFB2473497C05C4FE2118D645B549D3052E15029F29C4EEEE45BE8E4",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeDatabase.cs": "62F06F0AC5D98281E6614CDCB486B33C457D748AB6FAB3A4891A44B1E97AB920",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeDdl.cs": "68D79244F0A725074047932BEBA37CE33F4480BED79DAE2B189FB109D277DB6E",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeModels.cs": "C6F9474073EE7857E75234CFB2C0DCFC263C4C8FDD256EE4536651BF1BD2922F",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeResults.cs": "6DD980E355E26B19F87584704E212B0F029F3E9B09AF40A8F9F056BD54BE35B7",
+    "tools/CP6.DatabaseCompatibility.Probe/ProbeSafety.cs": "19B304DB246959B618B009E687F582C77524C274C6142BE63CA64D18570B282F",
+    "tools/CP6.DatabaseCompatibility.Probe/Program.cs": "9C2DF50FF05A15A2FB69167203ACA165ADC3D066D9A940D5C0244FBDEF9CC1F8",
+    "tools/CP6.DatabaseCompatibility.Probe/TokenExperiments.cs": "89CE56B0D21402304C9D765DA414D486190A03695E419D894FFB845B01250517",
+    "tools/CP6.DatabaseCompatibility.Probe/TransactionExperiments.cs": "DA94A5DCCD6B704C93436B4BD77A553242A2D37236D0FA5221AC9AD775540673"
+  },
+  "RuntimeAssemblySha256": {
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Dapper": "32EB214303B7DEA7792C462FDF528F46B52F3471F44E7F5E646FB90EFE94CBDF",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Core": "8C6A3C5AF06820CCE7B53B328231133D6E1E9EA247F2B63213BB78D95A8F0D75",
+    "CP6.Space.Infrastructure": "4B4201768D797A76EEECF652A1639D2E4F0C7E0B07EA6BCC5DC03F67A218156F",
+    "CP6.DatabaseCompatibility.Probe": "99C15ED713581C729552DC48256E5343BC0B297DA6916A97FC1E5EC50DB19174",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "E0A329C94CA198007947D38E89B38FA7F332E65B8A63A2035D06143E759B7D3C"
+  },
+  "Checks": [
+    {
+      "Name": "Probe.SetupOrRun",
+      "Status": "Failed",
+      "Detail": "Expected setup negative-control failure after CREATE SCHEMA and before COMMIT; transaction must roll back its schema."
+    },
+    {
+      "Name": "Isolation.Cleanup",
+      "Status": "Passed",
+      "Detail": "Verified no temporary schema remained after rolled-back or unsuccessful setup."
+    }
+  ]
+}

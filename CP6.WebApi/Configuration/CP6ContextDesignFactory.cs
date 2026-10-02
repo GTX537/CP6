@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.ErpIntegration;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +11,33 @@ namespace CP6.WebApi.Configuration;
 // remains the responsibility of CP6Context migrations and the existing db-init entry point.
 public sealed class CP6ContextDesignFactory : IDesignTimeDbContextFactory<CP6Context>
 {
-    public CP6Context CreateDbContext(string[] args) => new(new DbContextOptionsBuilder<CP6Context>()
-        .UseSqlServer("Server=localhost;Database=CP6_Design;Integrated Security=true;TrustServerCertificate=true").Options);
+    public CP6Context CreateDbContext(string[] args)
+    {
+        var design = DatabaseDesignTimeConfiguration.FromArguments(args);
+        var profile = DatabaseMigrationProfile.For(design.Database, DatabaseContextKind.Core);
+        return new(DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), design.Database,
+            design.ConnectionString, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options);
+    }
 }
 
 public sealed class IdentityMessagingContextDesignFactory : IDesignTimeDbContextFactory<IdentityMessagingContext>
 {
-    public IdentityMessagingContext CreateDbContext(string[] args) => new(new DbContextOptionsBuilder<IdentityMessagingContext>()
-        .UseSqlServer("Server=localhost;Database=CP6_Design;Integrated Security=true;TrustServerCertificate=true").Options);
+    public IdentityMessagingContext CreateDbContext(string[] args)
+    {
+        var design = DatabaseDesignTimeConfiguration.FromArguments(args);
+        var profile = DatabaseMigrationProfile.For(design.Database, DatabaseContextKind.IdentityPriority);
+        return new(DatabaseContextOptions.Configure(new DbContextOptionsBuilder<IdentityMessagingContext>(), design.Database,
+            design.ConnectionString, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options);
+    }
 }
 
 public sealed class ErpIntegrationContextDesignFactory : IDesignTimeDbContextFactory<ErpIntegrationContext>
 {
-    public ErpIntegrationContext CreateDbContext(string[] args) => new(new DbContextOptionsBuilder<ErpIntegrationContext>()
-        .UseSqlServer("Server=localhost;Database=CP6_Design;Integrated Security=true;TrustServerCertificate=true").Options);
+    public ErpIntegrationContext CreateDbContext(string[] args)
+    {
+        var design = DatabaseDesignTimeConfiguration.FromArguments(args);
+        var profile = DatabaseMigrationProfile.For(design.Database, DatabaseContextKind.ErpIntegration);
+        return new(DatabaseContextOptions.Configure(new DbContextOptionsBuilder<ErpIntegrationContext>(), design.Database,
+            design.ConnectionString, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options);
+    }
 }
