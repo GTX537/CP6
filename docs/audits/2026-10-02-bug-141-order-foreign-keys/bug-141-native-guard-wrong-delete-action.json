@@ -1,0 +1,19 @@
+{
+  "Name": "wrong-delete-action",
+  "Status": "Passed",
+  "NativeExitCode": 1,
+  "ExpectedSqlError": 51041,
+  "FixtureEstablishedBeforeGuard": true,
+  "GuardsOneThroughThreeCompleted": true,
+  "GuardFourEntered": true,
+  "GuardFourCompleted": false,
+  "IntendedGuardOutcome": true,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "08E78D520F2CD502936F8E943954224DF17F2F0BBBFDD15D1C0182B94692A15C",
+  "NativeOutputSha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+  "RestorationReportSha256": "71B3E7DC094BBDD37C4CB6052236CD1CEC9A52406969AB0F8A00956852E90BA1",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C91413DB2042430048E80E2A1EBA9FCAF4EEBB03727861353C1D54ABFAFD86DC"
+}

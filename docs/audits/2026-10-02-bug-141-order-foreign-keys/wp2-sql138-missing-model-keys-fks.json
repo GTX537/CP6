@@ -1,0 +1,50 @@
+[
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Kind": "K",
+    "Name": "AK_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd",
+    "FrozenContract": "K:False:WebOrderNo,WebOrderDetailNo,ProductCd:AK_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Kind": "FK",
+    "Name": "FK_T_OrderDetail_T_Order_WebOrderNo",
+    "FrozenContract": "FK:WebOrderNo->CP6.Entity.DomainModels.Erp.Order:WebOrderNo:False:True:Cascade:FK_T_OrderDetail_T_Order_WebOrderNo"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderMaterial",
+    "Kind": "FK",
+    "Name": "FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd",
+    "FrozenContract": "FK:WebOrderNo,WebOrderDetailNo,ProductCd->CP6.Entity.DomainModels.Erp.OrderDetail:WebOrderNo,WebOrderDetailNo,ProductCd:False:True:Cascade:FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderProcess",
+    "Kind": "FK",
+    "Name": "FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd",
+    "FrozenContract": "FK:WebOrderNo,WebOrderDetailNo,ProductCd->CP6.Entity.DomainModels.Erp.OrderDetail:WebOrderNo,WebOrderDetailNo,ProductCd:False:True:Cascade:FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderProcessNote",
+    "Kind": "FK",
+    "Name": "FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd",
+    "FrozenContract": "FK:WebOrderNo,WebOrderDetailNo,ProductCd->CP6.Entity.DomainModels.Erp.OrderDetail:WebOrderNo,WebOrderDetailNo,ProductCd:False:True:Cascade:FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_Quotation",
+    "Kind": "K",
+    "Name": "AK_T_Quotation_QtnNo",
+    "FrozenContract": "K:False:QtnNo:AK_T_Quotation_QtnNo"
+  }
+]

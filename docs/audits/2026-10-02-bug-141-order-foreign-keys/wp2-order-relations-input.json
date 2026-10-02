@@ -1,0 +1,51 @@
+{
+  "Scope": "Actual new Order and conflicting-mode probe runs; unchanged full model/caller input hashes and compiled runtime binaries captured in each report",
+  "CapturedUtc": "2026-10-02T19:05:10.7056220Z",
+  "SourceBase": "2d9747360a38dfc519ddebea7aced06a9466b879",
+  "BuildLog": "build-migration-probe-order-relations-mode-safety.log",
+  "BuildLogSha256": "5D0D28073F1E368E3745D1E3503D52EDA4F4713FCCEE3FBFCE008487AFB8E746",
+  "Files": [
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+      "Sha256": "3F6B53FF09849FFA3294E4DCBFE7AFB7BD623FBF9BAF2D58979213ED756831B6"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2OrderRelationWriteGates.cs",
+      "Sha256": "00F5D288CC70504F353D1B8710F0924413A872567D524D3BF7720A5CA523C4A0"
+    },
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "69DCBD468C3CB742CFAEFDE5FFA8B2A518230C2710E3CE31E46F5AE9A9DA2106"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceContext.cs",
+      "Sha256": "888A747CDE65F68370589C30FE871C21871A56A8835FBB0EB0D74D54EF772F27"
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlModelConfiguration.cs",
+      "Sha256": "7EE4E3D0ED5C121EC4832B4BB3C756842322891BA1A509CA4D5CAD0316552596"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "Sha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190"
+    }
+  ],
+  "Reports": [
+    {
+      "Path": "wp2-migration-sql-old136-order-relations-negative-control.json",
+      "Sha256": "D51DC795D99B1D2E5C95EF9D03E793FC36F45CF97010189C233A1D5FB93AF82C"
+    },
+    {
+      "Path": "wp2-migration-pg-order-relations-reference.json",
+      "Sha256": "A45C0056A0078118088202A3536EFC17AB173FF8BDDC4CDB50849D8FC6609B51"
+    },
+    {
+      "Path": "wp2-migration-conflicting-modes-rejected.json",
+      "Sha256": "3CA2834A3D0B8BAA4D4CCDEEA083485B14E302DF6433B90A323B1546A5C9B042"
+    }
+  ],
+  "ModeConflictExpectedExit": 1,
+  "SqlOldOrderExpectedExit": 1,
+  "PostgreSqlOrderExpectedExit": 0,
+  "FullBusinessAcceptance": false
+}

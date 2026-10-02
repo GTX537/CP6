@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-02：BUG #141 新增四条订单模型外键前向修复
+
+基线 `2d974736` 的独立任务新增 SQL-only migration `20261002184500_RestoreMissingOrderModelForeignKeys` 与4句 public guarded SQL；WITH CHECK 创建、CASCADEdelete/NO ACTIONupdate，既有同名对象检查 schema/父子/有序列/动作/enabled/trusted/NFR，冲突拒绝且不改造。模型、snapshot、旧迁移、业务数据与唯一候选键不改；只收窄原索引回归的永久迁移总数断言。实际 RED **4 失败 / 5 通过**、最终 **37/37、零跳过、零 warning/error**，一次完整审查无阻塞。相同功能源73946/API F40298E0…真实隔离SQL首次/重复exit0无HTTP，Core138→139/Space47；全352表摘要/行数及1378旧索引/198旧FK保留，仅新增4FK（总202），升级/重复各 **9/9**。guard最终 **11/11**、各恢复9/9；5项来源哈希复用、6项新执行，原 NFR夹具51003失败及combined NFR/untrusted限制原样保留。父WP2订单关系SQL **2/2**、写入后原生恢复9/9，外部源与二进制范围不冒充本BUG迁移currency或全业务验收。原件、首轮warning、setup失败与大捕获hash见[审计](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)。本BUG本地验收完成，正常远端交付仍Pending，Issue Open；六个报价容量差异仍独立WP2阻塞，不声明PG API或全阶段完成。未触发Actions、迁移现有环境或部署。
+
 ## 2026-10-02：BUG #139 索引前向修复通过真实 SQL 本地验收
 
 从已确认 `main` 的 `d507f389` 建立独立分支，功能源码 `083e9c4d` 新增 SQL-only migration/helper 恢复 21 个非唯一索引；同名一致保留、冲突拒绝，两个唯一别名不新增。模型、snapshot、旧 136 迁移不改。RED **21 失败 / 1 通过**，单元 **25/25、零跳过**；同 compiled API 真库首次/重复初始化 exit 0 且无 HTTP，升级/重复比较各 **25/25**，352 表 count/内容摘要状态与全部旧索引捕获 metadata 保留，仅新增 21 项。native guard **8/8**、每次恢复 **25/25**，一次独立完整审查无阻塞。[原始归档](../audits/2026-10-02-bug-139-order-indexes/README.md)保留真实失败边界与复用来源。后续仅证据/四状态文档更新，不重复 unchanged source 验证。正常 PR/远端包含性/关闭待负责人执行，Issue Open；不声明 WP2 全结构完成，未运行 Actions、业务库迁移或部署。

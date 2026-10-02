@@ -1,0 +1,19 @@
+{
+  "Name": "not-for-replication",
+  "Status": "Failed",
+  "NativeExitCode": 1,
+  "ExpectedSqlError": 51041,
+  "FixtureEstablishedBeforeGuard": false,
+  "GuardsOneThroughThreeCompleted": false,
+  "GuardFourEntered": false,
+  "GuardFourCompleted": false,
+  "IntendedGuardOutcome": false,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "DD364CBD989B800A58A196A78ED28C9B14B6E1A76E4AE12CD7E8D078CC644797",
+  "NativeOutputSha256": "EFDFF3B24FAE5765D54BB2881DB9A8D6532CCC22AD3CB968F0C7BCE4C5231279",
+  "RestorationReportSha256": "0B7D31CCB434D7AB1C273BDFC2AFE4ACBEEACE06D63CD0F2E113176DB4295DE9",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C91413DB2042430048E80E2A1EBA9FCAF4EEBB03727861353C1D54ABFAFD86DC"
+}

@@ -71,3 +71,13 @@ docs/audits/2026-10-02-bug-139-order-indexes/*.sql -text whitespace=cr-at-eol
 docs/audits/2026-10-02-bug-139-order-indexes/*.ps1 -text whitespace=cr-at-eol
 # Preserve the actual EF-generated final blank line without rewriting evidence.
 docs/audits/2026-10-02-bug-139-order-indexes/bug-139-actual-ef8-migration.sql whitespace=cr-at-eol,-blank-at-eof
+
+# BUG141 original unit/native evidence preserves byte SHA-256.
+docs/audits/2026-10-02-bug-141-order-foreign-keys/*.trx -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-141-order-foreign-keys/*.log -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-141-order-foreign-keys/*.json -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-141-order-foreign-keys/*.sql -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-141-order-foreign-keys/*.ps1 -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-141-order-foreign-keys/Wp2OrderRelationWriteGates.cs -text whitespace=cr-at-eol
+# Preserve the actual EF-generated final blank line without rewriting evidence.
+docs/audits/2026-10-02-bug-141-order-foreign-keys/bug-141-generated-migration.sql whitespace=cr-at-eol,-blank-at-eof

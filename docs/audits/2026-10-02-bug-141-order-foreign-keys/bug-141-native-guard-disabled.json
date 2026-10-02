@@ -1,0 +1,19 @@
+{
+  "Name": "disabled",
+  "Status": "Passed",
+  "NativeExitCode": 1,
+  "ExpectedSqlError": 51041,
+  "FixtureEstablishedBeforeGuard": true,
+  "GuardsOneThroughThreeCompleted": true,
+  "GuardFourEntered": true,
+  "GuardFourCompleted": false,
+  "IntendedGuardOutcome": true,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "1E4C58F244A658B35D85510D4E7E6F1D74E20BC8ECEA9B576E117169401A2408",
+  "NativeOutputSha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+  "RestorationReportSha256": "8E12AF7C1FB6A69F12B7A7DF94F5236D43840C2DC7FA739B3C4C85E495FCF70F",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C91413DB2042430048E80E2A1EBA9FCAF4EEBB03727861353C1D54ABFAFD86DC"
+}

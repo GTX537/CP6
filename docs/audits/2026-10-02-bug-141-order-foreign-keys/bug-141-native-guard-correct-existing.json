@@ -1,0 +1,19 @@
+{
+  "Name": "correct-existing",
+  "Status": "Passed",
+  "NativeExitCode": 0,
+  "ExpectedSqlError": 0,
+  "FixtureEstablishedBeforeGuard": true,
+  "GuardsOneThroughThreeCompleted": true,
+  "GuardFourEntered": true,
+  "GuardFourCompleted": true,
+  "IntendedGuardOutcome": true,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "9E7C280EAD111BB856714F79127B5B10F1E609733E8A5C672FAE5DE1EF28F75D",
+  "NativeOutputSha256": "733F3CCD73EF44A30712DF9C5F4020A6FDBCD67F3E7312708F423DBF4232774D",
+  "RestorationReportSha256": "B89C70B9076B36CCAF462643FC0CC971B6E9023CD0F90FC212180B6DCA229D75",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C91413DB2042430048E80E2A1EBA9FCAF4EEBB03727861353C1D54ABFAFD86DC"
+}

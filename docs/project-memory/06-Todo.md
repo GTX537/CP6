@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-02：BUG #141 真实 SQL 门禁通过，待正常交付
+
+[Issue #141](https://github.com/GTX537/CP6/issues/141) FK12+索引25 **37/37、零跳过**，一次独立任务审查无阻塞；真实同API首次/重复exit0无HTTP，原生升级/重复各 **9/9**、guard **11/11**（各恢复9/9）、独立WP2实际SQL订单关系 **2/2**及写入后状态比较9/9。[范围与原始失败](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留NFR setup失败/五项复用和组合证明边界。本BUG本地门禁通过，下一步负责人正常PR、远端main包含性和必要集成核对后关闭；当前Issue Open，不执行NOCHECK或清理业务孤儿。其他WP2结构、六个报价字段容量差异及全阶段验收独立待处理，未运行Actions或部署。
+
 ## 2026-10-02：BUG #139 本地门禁通过，待正常 PR 与远端核对
 
 [Issue #139](https://github.com/GTX537/CP6/issues/139) 单元 **25/25、零跳过**，真实同 binary 初始化首次/重复 exit 0、无 HTTP，升级/重复比较各 **25/25**，native guard **8/8**（每次状态恢复 **25/25**），一次独立任务审查无实质阻塞。[证据](../audits/2026-10-02-bug-139-order-indexes/README.md)保留原始 RED、空 stdout 归档失败与 1934 setup 失败；不把它们改写成 guard RED/成功。下一步负责人正常 PR、远端 main 包含性和必要集成核对后关闭；当前 Issue Open。WP2 generation 合入时需收窄本分支测试固定 137 条 registry 的总数断言；其他 WP2 历史结构缺口另立任务，此项不替代阶段门禁。未触发 Actions 或生产部署。

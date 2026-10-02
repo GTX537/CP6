@@ -72,7 +72,7 @@ public sealed class OrderModelIndexRepairTests
     {
         using var context = Context();
         var assembly = context.GetService<IMigrationsAssembly>();
-        Assert.Equal(137, assembly.Migrations.Count);
+        Assert.Contains(RepairMigration, assembly.Migrations.Keys);
         var migration = assembly.CreateMigration(assembly.Migrations[RepairMigration], "Microsoft.EntityFrameworkCore.SqlServer");
         Assert.Equal(21, migration.UpOperations.Count);
         Assert.All(migration.UpOperations, operation => Assert.False(Assert.IsType<SqlOperation>(operation).SuppressTransaction));

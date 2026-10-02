@@ -1,0 +1,7 @@
+CP6_BUG141_OWNED_BASELINE_VERIFIED
+is_disabled is_not_trusted is_not_for_replication
+----------- -------------- ----------------------
+          0              1                      1
+is_disabled is_not_trusted is_not_for_replication
+----------- -------------- ----------------------
+          0              1                      1

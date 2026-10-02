@@ -1,0 +1,19 @@
+{
+  "Name": "schema-same-name-wrong-type",
+  "Status": "Passed",
+  "NativeExitCode": 1,
+  "ExpectedSqlError": 51041,
+  "FixtureEstablishedBeforeGuard": true,
+  "GuardsOneThroughThreeCompleted": true,
+  "GuardFourEntered": true,
+  "GuardFourCompleted": false,
+  "IntendedGuardOutcome": true,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "528634CB49BFB04FB279D6C9EE621AFA8456231EC6105A9B59F04618A470469B",
+  "NativeOutputSha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+  "RestorationReportSha256": "0538404BB3C8C8562DF520B8B4BFF0885D127432D25E13E4FEFD0AEF9295A018",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C5ECE5CA65F610BC6B7D33BD54AC72E49F87FE0CFB24D70BBA6C4DC3C454732C"
+}

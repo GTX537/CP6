@@ -1,0 +1,16 @@
+{
+  "Scope": "Real compiled application DatabaseInit; isolated owned database only, no API/workers",
+  "Provider": "SqlServer",
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "SourceWorktree": "D:\\CP6\\tmp\\worktrees\\bug-141-order-foreign-keys",
+  "SourceCommit": "73946e96478f7eef1fc85ad8c310d49694471270",
+  "StartedUtc": "2026-10-02T19:06:32.4346024Z",
+  "FinishedUtc": "2026-10-02T19:06:37.7709357Z",
+  "ProcessId": 27812,
+  "ExitCode": 0,
+  "ListenerObserved": false,
+  "CompletionMessage": true,
+  "BinarySha256": "F40298E0417BF7A408E06D9C8F0F47BC59D4F6FD58F6591CAB22FDB1DD57ADFB",
+  "StdoutSha256": "4DE03FCA972782FB80A13AD555C2F72FE4FB92AC624686C231DC812C96295023",
+  "StderrSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6"
+}

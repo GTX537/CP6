@@ -1,0 +1,63 @@
+{
+  "Scope": "BUG141 captured SQL138-to139 upgrade or identical repeat/guard rollback; all 352 table hashes/counts, indexes and original FK definitions retained; only four exact frozen FKs/history append allowed",
+  "StartedFrom": "after-repeat",
+  "ComparedTo": "guard-wrong-delete-action-evidence",
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "Upgrade": false,
+  "CapturedUtc": "2026-10-02T19:16:32.4410534Z",
+  "ExpectedMigrationId": "20261002184500_RestoreMissingOrderModelForeignKeys",
+  "ExpectedProductVersion": "8.0.30",
+  "BeforeSha256": "F387047E7C9FAA685D3BB6D30DCBCE37B3B9C8B84E5C454D907AD8F191181F36",
+  "AfterSha256": "106FE7A869B9B385662289B8216450360B399BC3B829B72AF7513A9E3E5F66EA",
+  "FrozenOmissionOracleSha256": "C52ED58A11DEB0B4C0C19175797C99FD128E32CFA4491B00C001E1BF838122CC",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "ReceiptSha256": "0B8681AC50D0CA8AABB84F9561301CC8EC57C1E178554F9F57E3DC4BBAFDDE2C",
+  "Checks": [
+    {
+      "Name": "All352BusinessHashesCountsAndTableSetPreserved",
+      "Status": "Passed",
+      "Detail": "All 352 captured table identities/counts/PK-ordered UTF16 JSON hashes retained; only canonical history row/hash is excluded during the deliberate one-row upgrade. Empty-table SQL NULL is normalized to []."
+    },
+    {
+      "Name": "CanonicalCoreHistoryExact138To139OrIdentical",
+      "Status": "Passed",
+      "Detail": "Original MigrationId/ProductVersion pairs exact; expected append=0, before=139, after=139."
+    },
+    {
+      "Name": "EveryIndexDefinitionAndIdentityUnchanged",
+      "Status": "Passed",
+      "Detail": "All 1378 complete index records, including historical unique aliases, remain exact; no new/drop/rebuild permitted."
+    },
+    {
+      "Name": "EveryOriginalForeignKeyDefinitionAndIdentityUnchanged",
+      "Status": "Passed",
+      "Detail": "All 202 pre-existing FK records retain object identity, schemas, principals/indexes, ordered columns/actions/enabled/trust/NFR."
+    },
+    {
+      "Name": "OnlyFourFrozenForeignKeysAddedOrNoChanges",
+      "Status": "Passed",
+      "Detail": "Expected only 0 exact frozen new FKs; actual added=0. No additional key/index/object mutation is accepted."
+    },
+    {
+      "Name": "FrozenForeignKey.T_OrderDetail.FK_T_OrderDetail_T_Order_WebOrderNo",
+      "Status": "Passed",
+      "Detail": "Native exact dbo parent/principal and ordered column mapping, existing global unique index, CASCADE delete/NO_ACTION update, enabled/trusted/non-NFR match the independent frozen contract."
+    },
+    {
+      "Name": "FrozenForeignKey.T_OrderMaterial.FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd",
+      "Status": "Passed",
+      "Detail": "Native exact dbo parent/principal and ordered column mapping, existing global unique index, CASCADE delete/NO_ACTION update, enabled/trusted/non-NFR match the independent frozen contract."
+    },
+    {
+      "Name": "FrozenForeignKey.T_OrderProcess.FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd",
+      "Status": "Passed",
+      "Detail": "Native exact dbo parent/principal and ordered column mapping, existing global unique index, CASCADE delete/NO_ACTION update, enabled/trusted/non-NFR match the independent frozen contract."
+    },
+    {
+      "Name": "FrozenForeignKey.T_OrderProcessNote.FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_WebOrderDetailNo_ProductCd",
+      "Status": "Passed",
+      "Detail": "Native exact dbo parent/principal and ordered column mapping, existing global unique index, CASCADE delete/NO_ACTION update, enabled/trusted/non-NFR match the independent frozen contract."
+    }
+  ],
+  "Boundary": "Captured isolated database evidence only; no production upgrade/business acceptance, no DBTS/global identity or sequence rollback promise."
+}
