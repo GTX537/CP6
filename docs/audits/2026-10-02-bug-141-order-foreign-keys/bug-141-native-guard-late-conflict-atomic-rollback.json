@@ -1,0 +1,19 @@
+{
+  "Name": "late-conflict-atomic-rollback",
+  "Status": "Passed",
+  "NativeExitCode": 1,
+  "ExpectedSqlError": 51041,
+  "FixtureEstablishedBeforeGuard": true,
+  "GuardsOneThroughThreeCompleted": true,
+  "GuardFourEntered": true,
+  "GuardFourCompleted": false,
+  "IntendedGuardOutcome": true,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "DDA033448C0B04AD3B88CFCCF87F5F2FCFCD53F7BE49FB7F6BFB00E385A27371",
+  "NativeOutputSha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+  "RestorationReportSha256": "6E28AF9E2A2EF700A376A32C3D2A30942AEAAA6A2D18580CB222BA8561A3E4DF",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C5ECE5CA65F610BC6B7D33BD54AC72E49F87FE0CFB24D70BBA6C4DC3C454732C"
+}

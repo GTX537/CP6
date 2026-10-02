@@ -1,0 +1,19 @@
+{
+  "Name": "untrusted",
+  "Status": "Passed",
+  "NativeExitCode": 1,
+  "ExpectedSqlError": 51041,
+  "FixtureEstablishedBeforeGuard": true,
+  "GuardsOneThroughThreeCompleted": true,
+  "GuardFourEntered": true,
+  "GuardFourCompleted": false,
+  "IntendedGuardOutcome": true,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "6F5FABD9FFF6B7F96ECF495A8BC621B7DBD21C93BBDB6C48D3D1A96244D7A772",
+  "NativeOutputSha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+  "RestorationReportSha256": "14B57CF48D2DEF6EA2F2766D7274E47E4FF183B73BD637E7743BE350582BA6A3",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C91413DB2042430048E80E2A1EBA9FCAF4EEBB03727861353C1D54ABFAFD86DC"
+}

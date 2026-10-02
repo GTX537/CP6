@@ -90,10 +90,10 @@
       "originalIgnoredPath": "tmp/bug-141-tests/green-verified.log"
     }
   ],
-  "databaseConnectionsOpened": false,
-  "nativeSqlAcceptance": "Pending",
+  "databaseConnectionsOpened": true,
+  "nativeSqlAcceptance": "Passed for representative isolated BUG141 migration/data-preservation/relationship scope; full WP2 and production acceptance remain separate",
   "independentTaskReview": "Passed",
-  "remoteDelivery": "Pending",
+  "remoteDelivery": "Pending normal PR/remote main inclusion/Issue close by parent",
   "githubActionsTriggered": false,
   "review": {
     "reviewer": "wp1_wiring",
@@ -102,6 +102,664 @@
     "p1": 0,
     "p2": 0,
     "blockers": 0,
-    "subsequentScope": "Only record this review and later native evidence; no production changes"
+    "subsequentScope": "Only record this review and later native evidence; no production changes",
+    "workingFileScopeSha256": "d6ff67c158dbd56f3b3e641564080c493a233f2999f807a786beab17fcd6ed73",
+    "functionalFourFileScopeSha256": "42a61eb683fa1fc91dc0d0d8c4efe8fc20a09d9728970cca335c1f9f2bf7b46e",
+    "digestRecipe": "Original review scope: sorted relative path + TAB + file-byte SHA256 + LF, UTF-8; not replaced with current evidence scope"
+  },
+  "unitScopeDatabaseConnectionsOpened": false,
+  "nativeSourceCommit": "73946e96478f7eef1fc85ad8c310d49694471270",
+  "actualNative": {
+    "executor": "Parent/root; evidence archived by wp1_platform without additional DB or .NET execution",
+    "database": "CP6Compat_WP2_20261002_36ef9cae",
+    "actualApiSha256": "F40298E0417BF7A408E06D9C8F0F47BC59D4F6FD58F6591CAB22FDB1DD57ADFB",
+    "actualCoreSha256": "2F2B357394A9684211C79538707248261FED26602CC6C8AA369604676C70E34E",
+    "actualGeneratedSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+    "generatedSqlSourceScope": "Generated before source commit, four functional source hashes identical; same actual compiled API used for first and repeat",
+    "first": {
+      "report": "wp2-init-bug141-fk-upgrade-first.json",
+      "exitCode": 0,
+      "httpListenerObserved": false,
+      "startedUtc": "2026-10-02T19:06:13.2827848Z",
+      "finishedUtc": "2026-10-02T19:06:19.3704709Z"
+    },
+    "repeat": {
+      "report": "wp2-init-bug141-fk-upgrade-repeat.json",
+      "exitCode": 0,
+      "httpListenerObserved": false,
+      "startedUtc": "2026-10-02T19:06:32.4346024Z",
+      "finishedUtc": "2026-10-02T19:06:37.7709357Z"
+    },
+    "nativeCounts": {
+      "tables": 352,
+      "nonEmptyTables": 25,
+      "allTableHashes": "Ordered-PK UTF-16 normalized JSON, including [] for empty tables",
+      "coreBefore": 138,
+      "coreAfter": 139,
+      "space": 47,
+      "indexesBefore": 1378,
+      "indexesAfter": 1378,
+      "foreignKeysBefore": 198,
+      "foreignKeysAfter": 202,
+      "originalIndexesAndForeignKeysExact": true,
+      "onlyFourForeignKeysAdded": true,
+      "allBusinessTableHashesAndCountsPreserved": true,
+      "onlyHistoryAppend": true
+    },
+    "upgradeComparison": {
+      "report": "bug-141-sql-compare-before-upgrade-to-after-upgrade.json",
+      "passed": 9,
+      "failed": 0
+    },
+    "repeatComparison": {
+      "report": "bug-141-sql-compare-after-upgrade-to-after-repeat.json",
+      "passed": 9,
+      "failed": 0
+    },
+    "guardVerified": {
+      "report": "bug-141-native-guards-verified.json",
+      "finishedUtc": "2026-10-02T19:19:45.7478824Z",
+      "passed": 11,
+      "failed": 0,
+      "total": 11,
+      "reusedEarlierCheckedCases": 5,
+      "newlyExecutedCases": 6,
+      "everyRestorationPassed": 9,
+      "cases": [
+        "correct-existing",
+        "wrong-column",
+        "wrong-delete-action",
+        "disabled",
+        "untrusted",
+        "not-for-replication-untrusted",
+        "wrong-parent",
+        "schema-same-name-wrong-type",
+        "late-conflict-atomic-rollback",
+        "real-orphan-547",
+        "missing-install"
+      ],
+      "representativeExistingOrphanSqlError": 547,
+      "definitionConflictSqlError": 51041,
+      "lateFourthConflictUndoesFirstThreeCreates": true,
+      "notForReplicationProof": "Combined native is_not_for_replication=1/is_not_trusted=1; no isolated NFR-only proof"
+    },
+    "preservedSetupFailure": {
+      "report": "bug-141-native-guards.json",
+      "case": "bug-141-native-guard-not-for-replication.json",
+      "actualSqlError": 51003,
+      "passed": 5,
+      "failed": 1,
+      "executed": 6,
+      "expected": 11,
+      "complete": false,
+      "fixtureEstablishedBeforeGuard": false,
+      "guardEntered": false,
+      "restorationPassed": 9,
+      "diagnostic": "bug-141-nfr-fixture-diagnostic.log",
+      "reason": "Native NFR fixture remained untrusted after WITH CHECK CHECK; initial trusted precondition failed, not intended guard rejection"
+    },
+    "externalOrderProbe": {
+      "scope": "Parent uncommitted WP2 compiled probe, separate from BUG141 main API migration installation; no migration currency/full business/PG API claim",
+      "input": "wp2-order-relations-input.json",
+      "archivedSource": "Wp2OrderRelationWriteGates.cs",
+      "oldSql136NegativeControl": "wp2-migration-sql-old136-order-relations-negative-control.json",
+      "oldSqlPassed": 1,
+      "oldSqlFailed": 1,
+      "postSql": "wp2-migration-sql-restored-four-fks-order-write.json",
+      "postSqlPassed": 2,
+      "postSqlFailed": 0,
+      "pgReference": "wp2-migration-pg-order-relations-reference.json",
+      "pgReferencePassed": 2,
+      "actualValidGraphRows": 6,
+      "nativeOrphanRejections": 4,
+      "nativeDeleteCascades": 4,
+      "postOrderNativeComparison": "bug-141-sql-compare-after-repeat-to-after-order-writes.json",
+      "postOrderNativeComparisonPassed": 9
+    },
+    "limits": [
+      "Representative owned local SQL verification, not production or full business acceptance",
+      "WP2 all-model capacity failure is independent and not corrected by this BUG",
+      "No promise of DBTS/global identity/sequence rollback",
+      "No receipt, seedstate, raw application stdout/stderr or direct password hash archived"
+    ],
+    "archivedEvidence": [
+      {
+        "path": "bug-141-generated-migration.sql",
+        "sha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+        "bytes": 11022,
+        "originalIgnoredPath": "tmp/bug-141-generated-migration.sql"
+      },
+      {
+        "path": "bug-141-native-guards.json",
+        "sha256": "7F70E08CA1C56BC86C18E50B85A9195DF8878BC7C0EB5528ACBD3B5F15F1C760",
+        "bytes": 7360,
+        "originalIgnoredPath": "tmp/bug-141-native-guards.json"
+      },
+      {
+        "path": "bug-141-native-guards-verified.json",
+        "sha256": "3FCB79AD2F39B703BAF93D4E43F9ECBC0729F0DB844675396AEDBEC9D8DA5CB9",
+        "bytes": 14118,
+        "originalIgnoredPath": "tmp/bug-141-native-guards-verified.json"
+      },
+      {
+        "path": "bug-141-nfr-fixture-diagnostic.sql",
+        "sha256": "541A90E2738A63097A28E67CABBE56C025F1EED49F202ED1762465BD09F11A5F",
+        "bytes": 10529,
+        "originalIgnoredPath": "tmp/bug-141-nfr-fixture-diagnostic.sql"
+      },
+      {
+        "path": "bug-141-nfr-fixture-diagnostic.log",
+        "sha256": "43FB46B6081286355AD65020F63B56D27F0B7080E1EB4D49C18CD96B5B38634C",
+        "bytes": 342,
+        "originalIgnoredPath": "tmp/bug-141-nfr-fixture-diagnostic.log"
+      },
+      {
+        "path": "Capture-Bug141SqlState.ps1",
+        "sha256": "69495EEC6A97A883A733E94169EF7FE97CE1FEEAEE61AA375E3CF48893AB717C",
+        "bytes": 8850,
+        "originalIgnoredPath": "tmp/Capture-Bug141SqlState.ps1"
+      },
+      {
+        "path": "Compare-Bug141SqlState.ps1",
+        "sha256": "19872BD460191960D4E51383C51438723B2BFC967E02562F6E38F34C19DFDA94",
+        "bytes": 11580,
+        "originalIgnoredPath": "tmp/Compare-Bug141SqlState.ps1"
+      },
+      {
+        "path": "Test-Bug141SqlGuards.ps1",
+        "sha256": "C91413DB2042430048E80E2A1EBA9FCAF4EEBB03727861353C1D54ABFAFD86DC",
+        "bytes": 21493,
+        "originalIgnoredPath": "tmp/Test-Bug141SqlGuards.ps1"
+      },
+      {
+        "path": "Test-Bug141SqlGuards-Remaining.ps1",
+        "sha256": "C5ECE5CA65F610BC6B7D33BD54AC72E49F87FE0CFB24D70BBA6C4DC3C454732C",
+        "bytes": 25878,
+        "originalIgnoredPath": "tmp/Test-Bug141SqlGuards-Remaining.ps1"
+      },
+      {
+        "path": "wp2-init-bug141-fk-upgrade-first.json",
+        "sha256": "816619C4371A267D98189C9DA0676D4F80E5FCD787E8AA488A7278CDFD63377D",
+        "bytes": 783,
+        "originalIgnoredPath": "tmp/wp2-init-bug141-fk-upgrade-first.json"
+      },
+      {
+        "path": "wp2-init-bug141-fk-upgrade-repeat.json",
+        "sha256": "746DF7E39D316182A7DC49937ABA83D8AF1D61DF113EF5095E5D7C7F48308CD2",
+        "bytes": 783,
+        "originalIgnoredPath": "tmp/wp2-init-bug141-fk-upgrade-repeat.json"
+      },
+      {
+        "path": "wp2-migration-sql-restored-four-fks-order-write.json",
+        "sha256": "38A7D85A43AD1553DCD5D1AB7F5D0702B607222E60C896335F39E6EA14515339",
+        "bytes": 1992,
+        "originalIgnoredPath": "tmp/wp2-migration-sql-restored-four-fks-order-write.json"
+      },
+      {
+        "path": "wp2-migration-sql-old136-order-relations-negative-control.json",
+        "sha256": "D51DC795D99B1D2E5C95EF9D03E793FC36F45CF97010189C233A1D5FB93AF82C",
+        "bytes": 1812,
+        "originalIgnoredPath": "tmp/wp2-migration-sql-old136-order-relations-negative-control.json"
+      },
+      {
+        "path": "wp2-migration-pg-order-relations-reference.json",
+        "sha256": "A45C0056A0078118088202A3536EFC17AB173FF8BDDC4CDB50849D8FC6609B51",
+        "bytes": 1987,
+        "originalIgnoredPath": "tmp/wp2-migration-pg-order-relations-reference.json"
+      },
+      {
+        "path": "wp2-order-relations-input.json",
+        "sha256": "D39209D44A7A665B01E7EC614B9EABF9ABB6B2DB03365C5ADD456F3E428BB9C0",
+        "bytes": 2138,
+        "originalIgnoredPath": "tmp/wp2-order-relations-input.json"
+      },
+      {
+        "path": "wp2-sql138-missing-model-keys-fks.json",
+        "sha256": "C52ED58A11DEB0B4C0C19175797C99FD128E32CFA4491B00C001E1BF838122CC",
+        "bytes": 2107,
+        "originalIgnoredPath": "tmp/wp2-sql138-missing-model-keys-fks.json"
+      },
+      {
+        "path": "bug-141-sql-before-upgrade.json",
+        "sha256": "C62FBF6C3F83979E4FA069DCBF233200355C252EE79FCE9DFBE390334A91D6B9",
+        "bytes": 1373992,
+        "originalIgnoredPath": "tmp/bug-141-sql-before-upgrade.json"
+      },
+      {
+        "path": "bug-141-sql-after-upgrade.json",
+        "sha256": "A409DFD913E4A151F57D1B1232B75A967021696C655F356C48D0E64D9E715925",
+        "bytes": 1377953,
+        "originalIgnoredPath": "tmp/bug-141-sql-after-upgrade.json"
+      },
+      {
+        "path": "bug-141-sql-after-repeat.json",
+        "sha256": "F387047E7C9FAA685D3BB6D30DCBCE37B3B9C8B84E5C454D907AD8F191181F36",
+        "bytes": 1377952,
+        "originalIgnoredPath": "tmp/bug-141-sql-after-repeat.json"
+      },
+      {
+        "path": "bug-141-sql-before-upgrade.capture.sql",
+        "sha256": "883DA68A23274367C474CA770D57EF60803CBFE14FE482D8A52E716542F16CFF",
+        "bytes": 5400,
+        "originalIgnoredPath": "tmp/bug-141-sql-before-upgrade.capture.sql"
+      },
+      {
+        "path": "bug-141-sql-after-upgrade.capture.sql",
+        "sha256": "A7B884642540119F0836048BB4F3AE5E91E507210266C195833CCF9AE9ED3980",
+        "bytes": 5400,
+        "originalIgnoredPath": "tmp/bug-141-sql-after-upgrade.capture.sql"
+      },
+      {
+        "path": "bug-141-sql-after-repeat.capture.sql",
+        "sha256": "A7B884642540119F0836048BB4F3AE5E91E507210266C195833CCF9AE9ED3980",
+        "bytes": 5400,
+        "originalIgnoredPath": "tmp/bug-141-sql-after-repeat.capture.sql"
+      },
+      {
+        "path": "bug-141-sql-compare-before-upgrade-to-after-upgrade.json",
+        "sha256": "1FAB1516131EA919516EA8FB80306A687FCDB587C8F742E442B69A7EC182C84D",
+        "bytes": 3893,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-before-upgrade-to-after-upgrade.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-upgrade-to-after-repeat.json",
+        "sha256": "4C9AED860119B4BD20618FD87B727A92F239AF570CE27628D3A299CDA15DC047",
+        "bytes": 3892,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-upgrade-to-after-repeat.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-after-order-writes.json",
+        "sha256": "33303A13B322A068A545A706A6EA19B63C9D4DEB856D0A05A8D84743A155F19D",
+        "bytes": 3897,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-after-order-writes.json"
+      },
+      {
+        "path": "bug-141-native-guard-correct-existing.json",
+        "sha256": "E22D9EB575A234F59597525E2D44D040BC739A0829835FFBC657C110E2F96931",
+        "bytes": 907,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-correct-existing.json"
+      },
+      {
+        "path": "bug-141-native-guard-correct-existing.log",
+        "sha256": "733F3CCD73EF44A30712DF9C5F4020A6FDBCD67F3E7312708F423DBF4232774D",
+        "bytes": 337,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-correct-existing.log"
+      },
+      {
+        "path": "bug-141-native-guard-correct-existing.sql",
+        "sha256": "9E7C280EAD111BB856714F79127B5B10F1E609733E8A5C672FAE5DE1EF28F75D",
+        "bytes": 29328,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-correct-existing.sql"
+      },
+      {
+        "path": "bug-141-native-guard-disabled.json",
+        "sha256": "1D76A0C0869DF62841F1BE1294DA58D50B2AF296554B010811CA7C19E08849BA",
+        "bytes": 904,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-disabled.json"
+      },
+      {
+        "path": "bug-141-native-guard-disabled.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-disabled.log"
+      },
+      {
+        "path": "bug-141-native-guard-disabled.sql",
+        "sha256": "1E4C58F244A658B35D85510D4E7E6F1D74E20BC8ECEA9B576E117169401A2408",
+        "bytes": 29692,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-disabled.sql"
+      },
+      {
+        "path": "bug-141-native-guard-late-conflict-atomic-rollback.json",
+        "sha256": "7A1563639DF6889BD97BD85BEA52E2BAD0632301B9324602B26840C4D8F236AF",
+        "bytes": 925,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-late-conflict-atomic-rollback.json"
+      },
+      {
+        "path": "bug-141-native-guard-late-conflict-atomic-rollback.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-late-conflict-atomic-rollback.log"
+      },
+      {
+        "path": "bug-141-native-guard-late-conflict-atomic-rollback.sql",
+        "sha256": "DDA033448C0B04AD3B88CFCCF87F5F2FCFCD53F7BE49FB7F6BFB00E385A27371",
+        "bytes": 30810,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-late-conflict-atomic-rollback.sql"
+      },
+      {
+        "path": "bug-141-native-guard-missing-install.json",
+        "sha256": "5396A1B7E65FA6C6035CFEF59F22AB20C185A69DFE01115E21240CD0BC056B64",
+        "bytes": 906,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-missing-install.json"
+      },
+      {
+        "path": "bug-141-native-guard-missing-install.log",
+        "sha256": "733F3CCD73EF44A30712DF9C5F4020A6FDBCD67F3E7312708F423DBF4232774D",
+        "bytes": 337,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-missing-install.log"
+      },
+      {
+        "path": "bug-141-native-guard-missing-install.sql",
+        "sha256": "D7B219CF3F954F9896B382FE37B307FEAD3C56CA68A5E3F11E751879666F707A",
+        "bytes": 30231,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-missing-install.sql"
+      },
+      {
+        "path": "bug-141-native-guard-not-for-replication-untrusted.json",
+        "sha256": "3A5BD12B1CF69A609221F6ABD13ECAA98F512D8EABBC8E39370DBD060F0EE7F4",
+        "bytes": 925,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-not-for-replication-untrusted.json"
+      },
+      {
+        "path": "bug-141-native-guard-not-for-replication-untrusted.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-not-for-replication-untrusted.log"
+      },
+      {
+        "path": "bug-141-native-guard-not-for-replication-untrusted.sql",
+        "sha256": "C92E55D7E19E59221367E7B2156EA689D902F62BE19D3338B2A7F32E53EE95A8",
+        "bytes": 30113,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-not-for-replication-untrusted.sql"
+      },
+      {
+        "path": "bug-141-native-guard-not-for-replication.json",
+        "sha256": "246DCDD2EBA2A9A5CA1E591B4C1DDD12A86E85F29634B80E0B09C99A02B2F38A",
+        "bytes": 919,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-not-for-replication.json"
+      },
+      {
+        "path": "bug-141-native-guard-not-for-replication.log",
+        "sha256": "EFDFF3B24FAE5765D54BB2881DB9A8D6532CCC22AD3CB968F0C7BCE4C5231279",
+        "bytes": 153,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-not-for-replication.log"
+      },
+      {
+        "path": "bug-141-native-guard-not-for-replication.sql",
+        "sha256": "DD364CBD989B800A58A196A78ED28C9B14B6E1A76E4AE12CD7E8D078CC644797",
+        "bytes": 30087,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-not-for-replication.sql"
+      },
+      {
+        "path": "bug-141-native-guard-real-orphan-547.json",
+        "sha256": "5109D8DFC489935298D3A5F699A31EAC5D7EAAE5DFA43BD74167EF942616F7E5",
+        "bytes": 909,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-real-orphan-547.json"
+      },
+      {
+        "path": "bug-141-native-guard-real-orphan-547.log",
+        "sha256": "B3EF8912F2CB1485C556AC6B3DEEE4F595EAE518C6F4F548082416BCC0B9DDDD",
+        "bytes": 514,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-real-orphan-547.log"
+      },
+      {
+        "path": "bug-141-native-guard-real-orphan-547.sql",
+        "sha256": "C0E961B163026F1C2278CEFEEDE67ED1FA3AD47109653910811166F30B2061FC",
+        "bytes": 31155,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-real-orphan-547.sql"
+      },
+      {
+        "path": "bug-141-native-guard-schema-same-name-wrong-type.json",
+        "sha256": "A91774C5E9BB92955A8534ACB444742CD85E359E444779E8D8430BF847A22F5C",
+        "bytes": 923,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-schema-same-name-wrong-type.json"
+      },
+      {
+        "path": "bug-141-native-guard-schema-same-name-wrong-type.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-schema-same-name-wrong-type.log"
+      },
+      {
+        "path": "bug-141-native-guard-schema-same-name-wrong-type.sql",
+        "sha256": "528634CB49BFB04FB279D6C9EE621AFA8456231EC6105A9B59F04618A470469B",
+        "bytes": 29892,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-schema-same-name-wrong-type.sql"
+      },
+      {
+        "path": "bug-141-native-guard-untrusted.json",
+        "sha256": "B24D16FF6E6886B1DD19CE58E770152474EA46FBD77EDB4E3003048D6619CA97",
+        "bytes": 905,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-untrusted.json"
+      },
+      {
+        "path": "bug-141-native-guard-untrusted.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-untrusted.log"
+      },
+      {
+        "path": "bug-141-native-guard-untrusted.sql",
+        "sha256": "6F5FABD9FFF6B7F96ECF495A8BC621B7DBD21C93BBDB6C48D3D1A96244D7A772",
+        "bytes": 29868,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-untrusted.sql"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-column.json",
+        "sha256": "86D07A88BD0D0A7F60CB3C3E93F776C4F84607CB0D4D016A9AFA54A5AA849DAB",
+        "bytes": 908,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-column.json"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-column.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-column.log"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-column.sql",
+        "sha256": "60D682493E774E4FC494215CC5546831A55AAD39D120A3A9A5264FBA32C054BD",
+        "bytes": 30158,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-column.sql"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-delete-action.json",
+        "sha256": "6BE6C8F1CA5E4C245BC4A582D5DC4C55958974462C0006D27A9D67AF83877512",
+        "bytes": 915,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-delete-action.json"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-delete-action.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-delete-action.log"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-delete-action.sql",
+        "sha256": "08E78D520F2CD502936F8E943954224DF17F2F0BBBFDD15D1C0182B94692A15C",
+        "bytes": 30033,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-delete-action.sql"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-parent.json",
+        "sha256": "60241F126F2FC68F223E9823D20EE129D3A6851EB786E7E523B161CADB135A56",
+        "bytes": 908,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-parent.json"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-parent.log",
+        "sha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+        "bytes": 463,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-parent.log"
+      },
+      {
+        "path": "bug-141-native-guard-wrong-parent.sql",
+        "sha256": "FA6F29FD3D12B0F009354E556A700A8A44D98ADEA4B0D4B9C0AAFEAC0B023548",
+        "bytes": 30536,
+        "originalIgnoredPath": "tmp/bug-141-native-guard-wrong-parent.sql"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-correct-existing-evidence.json",
+        "sha256": "B89C70B9076B36CCAF462643FC0CC971B6E9023CD0F90FC212180B6DCA229D75",
+        "bytes": 3910,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-correct-existing-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-disabled-evidence.json",
+        "sha256": "8E12AF7C1FB6A69F12B7A7DF94F5236D43840C2DC7FA739B3C4C85E495FCF70F",
+        "bytes": 3902,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-disabled-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-late-conflict-atomic-rollback-evidence.json",
+        "sha256": "6E28AF9E2A2EF700A376A32C3D2A30942AEAAA6A2D18580CB222BA8561A3E4DF",
+        "bytes": 3923,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-late-conflict-atomic-rollback-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-missing-install-evidence.json",
+        "sha256": "DFA38379E5DF3A6CE2DDA4E0880CE9A58F53B02DF778CF45D521EAFEA9D2CE53",
+        "bytes": 3909,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-missing-install-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-not-for-replication-evidence.json",
+        "sha256": "0B7D31CCB434D7AB1C273BDFC2AFE4ACBEEACE06D63CD0F2E113176DB4295DE9",
+        "bytes": 3913,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-not-for-replication-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-not-for-replication-untrusted-evidence.json",
+        "sha256": "31412CC3E801B43BEA6FF4C9D366A5787E3C2E93F15EB8E6DC8AA52583B0BD19",
+        "bytes": 3923,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-not-for-replication-untrusted-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-real-orphan-547-evidence.json",
+        "sha256": "2679CB7830346E027E440E21EC123EBADFCB87E7A6D6FC84BA270D4CD06B9831",
+        "bytes": 3909,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-real-orphan-547-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-schema-same-name-wrong-type-evidence.json",
+        "sha256": "0538404BB3C8C8562DF520B8B4BFF0885D127432D25E13E4FEFD0AEF9295A018",
+        "bytes": 3921,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-schema-same-name-wrong-type-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-untrusted-evidence.json",
+        "sha256": "14B57CF48D2DEF6EA2F2766D7274E47E4FF183B73BD637E7743BE350582BA6A3",
+        "bytes": 3903,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-untrusted-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-wrong-column-evidence.json",
+        "sha256": "7283DFA7E4D4A2F743D7CEFDD101CF9DFEE0341B5D547F434B53217154D62DDE",
+        "bytes": 3906,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-wrong-column-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-wrong-delete-action-evidence.json",
+        "sha256": "71B3E7DC094BBDD37C4CB6052236CD1CEC9A52406969AB0F8A00956852E90BA1",
+        "bytes": 3913,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-wrong-delete-action-evidence.json"
+      },
+      {
+        "path": "bug-141-sql-compare-after-repeat-to-guard-wrong-parent-evidence.json",
+        "sha256": "27805EDFF9CE81FE603B3123573DA51CDA998C6B17FD2E16E55B219DDCC8F0CE",
+        "bytes": 3906,
+        "originalIgnoredPath": "tmp/bug-141-sql-compare-after-repeat-to-guard-wrong-parent-evidence.json"
+      },
+      {
+        "path": "Wp2OrderRelationWriteGates.cs",
+        "sha256": "00F5D288CC70504F353D1B8710F0924413A872567D524D3BF7720A5CA523C4A0",
+        "bytes": 8721,
+        "originalIgnoredPath": "tmp/worktrees/db-compat-wp2-20261002/tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2OrderRelationWriteGates.cs",
+        "scope": "External uncommitted WP2 probe source; audit fixture only, not BUG141 product code or migration currency proof"
+      }
+    ],
+    "ignoredFullCaptures": [
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-after-order-writes.json",
+        "sha256": "B7278CDBBACC5243A3ACD63BFDAC855B533567C7E25D4C1C77292C1F1A03A843",
+        "bytes": 1377958,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-correct-existing-evidence.json",
+        "sha256": "9D88B9C5025F98F58A09453360785B383C10DD75119D2E78080F2D2119CC6607",
+        "bytes": 1377971,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-disabled-evidence.json",
+        "sha256": "C709A889FFB926D1D32D4A2534636D36F2FB5BD84EA5E922F3F321742070A11D",
+        "bytes": 1377963,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-late-conflict-atomic-rollback-evidence.json",
+        "sha256": "D83ADF1E0C5BD890F3822E637D906DAB604F97FFF345F3AB430106C355179B78",
+        "bytes": 1377984,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-missing-install-evidence.json",
+        "sha256": "E6548E0FB132418AE10AD7A0DFA416C8487F1608B32439513D930C92A8A1C432",
+        "bytes": 1377970,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-not-for-replication-evidence.json",
+        "sha256": "D25957E740196643A6CAF1BDA16CF247045DFD18021604AEF161A2B7DA0C5585",
+        "bytes": 1377974,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-not-for-replication-untrusted-evidence.json",
+        "sha256": "1BA51ADDB0A1F3339383C4DBE8EEA210308143EEA955534B187400C2882581F2",
+        "bytes": 1377984,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-real-orphan-547-evidence.json",
+        "sha256": "0ED95F72BD3663F13A83DF105128E4A9D22114ACF6166D056F8627304C0BF8DF",
+        "bytes": 1377970,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-schema-same-name-wrong-type-evidence.json",
+        "sha256": "468566C7533466503D9DAFEA98BC30F93D57CABC70B7EE59D0491C4F6FA6F6C7",
+        "bytes": 1377982,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-untrusted-evidence.json",
+        "sha256": "203126388E19998F0A6DA76C16166085E1BA4CF4760F8E4EBB354C0D0B700068",
+        "bytes": 1377964,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-wrong-column-evidence.json",
+        "sha256": "5394B9D6B6ACAC57061BD08B54062DE39A5FD073BA9503F422B6A18E5B714B21",
+        "bytes": 1377967,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-wrong-delete-action-evidence.json",
+        "sha256": "106FE7A869B9B385662289B8216450360B399BC3B829B72AF7513A9E3E5F66EA",
+        "bytes": 1377974,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      },
+      {
+        "originalIgnoredPath": "tmp/bug-141-sql-guard-wrong-parent-evidence.json",
+        "sha256": "056AEF591F7D54928AAEF065D64833BFA2B99EA45D34A9E9FC00FBC253D58E1D",
+        "bytes": 1377967,
+        "scope": "Full case/Order-write native capture retained ignored; matching archived comparison verifies restoration against archived after-repeat baseline"
+      }
+    ]
+  },
+  "incrementalEvidenceVerification": {
+    "checkedUtc": "2026-10-02T19:26:49Z",
+    "scope": "74 archived raw files byte/hash match, 13 ignored full-capture hashes retained, 11 executed-input/output/restoration crosslinks match, four functional hashes unchanged; no credential-pattern matches",
+    "newDbOrDotnetExecution": false,
+    "wholeTaskSourceReviewReused": true,
+    "localRelativeLinks": 41,
+    "nativeComparisonReportsPassed9Of9": 15,
+    "byteAttributes": "All80 original unit/native raw files verified -text",
+    "stagedOriginalBlobSha256": "All80 matched source SHA256 and byte length via binary git cat-file stream before commit",
+    "stagedScope": "Exactly81 new/updated evidence/document paths; no functional source changes",
+    "diffWhitespaceCheck": "Passed"
   }
 }

@@ -1,8 +1,8 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-02：BUG #141 四条订单外键修复完成本地自动化
+## 2026-10-02：BUG #141 四条订单外键修复完成本地及真实 SQL 验证
 
-[Issue #141](https://github.com/GTX537/CP6/issues/141) 已实现四条 SQL-only WITH CHECK 外键前向修复和完整既有对象 guard，不改模型、snapshot、旧迁移或数据。旧链 RED **4 失败 / 5 通过**，相关 **37/37、零跳过、最终零 warning/error**（含原索引25），一次独立完整审查无实质阻塞，[原始证据](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留首轮 warning 与修正范围。本条完成仅本地实现/自动化及审查；真实 SQL、远端交付仍待验，Issue Open，不替代 WP2 其他门禁。未运行 Actions 或部署。
+[Issue #141](https://github.com/GTX537/CP6/issues/141) 已实现四条 SQL-only WITH CHECK 外键前向修复和完整既有对象 guard，不改模型、snapshot、旧迁移或数据。旧链 RED **4 失败 / 5 通过**，相关 **37/37、零跳过、最终零 warning/error**（含原索引25），一次独立完整审查无实质阻塞。真实同 API首次/重复初始化 exit 0、无 HTTP；升级/重复比较各 **9/9**，352 表内容摘要/行数与1378旧索引、198旧FK保留，仅新增4FK。native guard最终 **11/11**、各恢复 **9/9**；五项复用、六项新执行，保留原NFR夹具51003失败及组合旗标证明边界。独立WP2实际订单关系SQL **2/2**，合法六行图、四孤儿拒绝和四级联，写入回滚后状态比较 **9/9**。[原始证据](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留失败/源码/二进制和外部probe范围。本条完成仅本BUG本地验收；正常远端交付待负责人执行，Issue Open，不替代WP2全结构/业务或PG API验收。未运行 Actions 或部署。
 
 ## 2026-10-02：BUG #139 本地及真实 SQL 验收完成，待远端交付
 

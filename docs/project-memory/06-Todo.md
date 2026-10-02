@@ -1,8 +1,8 @@
 # 当前待办与优先级
 
-## 2026-10-02：BUG #141 待真实 SQL 门禁及正常交付
+## 2026-10-02：BUG #141 真实 SQL 门禁通过，待正常交付
 
-[Issue #141](https://github.com/GTX537/CP6/issues/141) 本地 FK12+索引25 **37/37、零跳过**，一次独立任务审查无实质阻塞，保留旧链 RED **4 失败 / 5 通过**。[范围](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)只恢复四条原有全局业务键关系，现需负责人真实验前向/重复及原数据/token/index/history、四个合法/孤儿/级联、同名错误对象/定义拒绝和晚失败完整回滚。必需门禁通过后正常 PR、远端 main 核对再关闭；当前 Issue Open。不执行 NOCHECK 或清理业务孤儿来绕过约束；WP2 其他结构独立待验，未运行 Actions 或部署。
+[Issue #141](https://github.com/GTX537/CP6/issues/141) FK12+索引25 **37/37、零跳过**，一次独立任务审查无阻塞；真实同API首次/重复exit0无HTTP，原生升级/重复各 **9/9**、guard **11/11**（各恢复9/9）、独立WP2实际SQL订单关系 **2/2**及写入后状态比较9/9。[范围与原始失败](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留NFR setup失败/五项复用和组合证明边界。本BUG本地门禁通过，下一步负责人正常PR、远端main包含性和必要集成核对后关闭；当前Issue Open，不执行NOCHECK或清理业务孤儿。其他WP2结构、六个报价字段容量差异及全阶段验收独立待处理，未运行Actions或部署。
 
 ## 2026-10-02：BUG #139 本地门禁通过，待正常 PR 与远端核对
 

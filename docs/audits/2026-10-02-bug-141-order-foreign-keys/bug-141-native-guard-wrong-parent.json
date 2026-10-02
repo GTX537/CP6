@@ -1,0 +1,19 @@
+{
+  "Name": "wrong-parent",
+  "Status": "Passed",
+  "NativeExitCode": 1,
+  "ExpectedSqlError": 51041,
+  "FixtureEstablishedBeforeGuard": true,
+  "GuardsOneThroughThreeCompleted": true,
+  "GuardFourEntered": true,
+  "GuardFourCompleted": false,
+  "IntendedGuardOutcome": true,
+  "All352TableHashesCountsHistoryIndexesAndForeignKeysRestored": true,
+  "ChecksAfterRollback": 9,
+  "RestorationError": null,
+  "ExecutedInputSha256": "FA6F29FD3D12B0F009354E556A700A8A44D98ADEA4B0D4B9C0AAFEAC0B023548",
+  "NativeOutputSha256": "3333C25BEE349EBFE39B64964C759671013CEAB749EBAEF1CF9C811A1D289B08",
+  "RestorationReportSha256": "27805EDFF9CE81FE603B3123573DA51CDA998C6B17FD2E16E55B219DDCC8F0CE",
+  "ActualGeneratedMigrationSqlSha256": "17940B38B5CEE24A4F3E97257301372409F759846A786D656D1F187F023EE481",
+  "GuardHarnessSourceSha256": "C5ECE5CA65F610BC6B7D33BD54AC72E49F87FE0CFB24D70BBA6C4DC3C454732C"
+}
