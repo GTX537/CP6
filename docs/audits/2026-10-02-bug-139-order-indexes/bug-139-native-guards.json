@@ -1,0 +1,97 @@
+{
+  "Scope": "Actual EF8 generated 21-command guarded SQL; same-correct replay plus six conflicting definitions and late-command rollback of earlier repaired indexes; all fixtures transactionally restored",
+  "SourceCommit": "083e9c4dcdb3d5b1aad3b57c32cb337f86859361",
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "FinishedUtc": "2026-10-02T18:09:45.3839684Z",
+  "ActualMigrationScriptSha256": "789C7380E28EB141E112110899EC009FC2CA649B48974066E088C7856F4FEE15",
+  "Cases": [
+    {
+      "Name": "correct-existing",
+      "Status": "Passed",
+      "ReusedEarlierCheckedExecution": true,
+      "ExpectedConflict51039": false,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "4A0279FBDDF56FFD064ECBC7E7EFFA34E80CF84F3D08EAF8A8AD7368A84F034B",
+      "NativeOutputSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "RestorationReportSha256": "85F0BC61B4EB2285D9C0F3E2BB750C01866D769EC95EE0A6F4C4DF8DBF0A0DD9"
+    },
+    {
+      "Name": "wrong-column",
+      "Status": "Passed",
+      "ReusedEarlierCheckedExecution": true,
+      "ExpectedConflict51039": true,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "A63133441489C355FA85E54F325176724AF93EFA2EA9174E2B56B2B1E5A562AE",
+      "NativeOutputSha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "RestorationReportSha256": "B036D0B9A6411CCAFF6A4C294F82F7CF498EBE952CD513D043A4C5D60BDE8D02"
+    },
+    {
+      "Name": "unexpected-unique",
+      "Status": "Passed",
+      "ReusedEarlierCheckedExecution": true,
+      "ExpectedConflict51039": true,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "22580F11E1A7BC3F7EB5E81679BC3B7B3DD0DBFA09B25CF79137FD2929E8F8B7",
+      "NativeOutputSha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "RestorationReportSha256": "0C8B0F20020CE46361BA8BC746055F6B9AC8B7BE552DD858877FB93CB5AEE960"
+    },
+    {
+      "Name": "unexpected-filter-correct-set-options",
+      "Status": "Passed",
+      "NativeExitCode": 1,
+      "ExpectedConflict51039": true,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "64B519DAB78DBFF5AD6EEEA335E10973E72330BCF13F56D7F63AB6FBAD30ED9C",
+      "NativeOutputSha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "RestorationReportSha256": "AF124A51B6D21EAF102A3D239A00FD9F33F344D6C3B3B32A9DC52EFE63B63AE4"
+    },
+    {
+      "Name": "unexpected-include",
+      "Status": "Passed",
+      "NativeExitCode": 1,
+      "ExpectedConflict51039": true,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "FC28A93DBC19EF9EA9942A4AB1BF33A1BA2019042CD9F234E96BC339685EC3A0",
+      "NativeOutputSha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "RestorationReportSha256": "EBB678716107651127F64C44860DB0CC3611480179BCAD98A41119CEE6B66A5F"
+    },
+    {
+      "Name": "wrong-direction",
+      "Status": "Passed",
+      "NativeExitCode": 1,
+      "ExpectedConflict51039": true,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "30C2C528CC216A529C200278912D09C31DB3C5AA982627D2EB293ECE72A54C21",
+      "NativeOutputSha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "RestorationReportSha256": "031F32E82E8C59E48D5E7B70E7A8F09B55C7C870FEBFE5C401B74F19351E2C1F"
+    },
+    {
+      "Name": "disabled-index",
+      "Status": "Passed",
+      "NativeExitCode": 1,
+      "ExpectedConflict51039": true,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "52ED79BDFC7319BA9F650E89307AAD99F43BFED97227C5E6EDCA00823B7C20E3",
+      "NativeOutputSha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "RestorationReportSha256": "1CF41BCE252424AE6B223B8689C9BBB1090F29F5D00E8843E319C9EF6E7AB218"
+    },
+    {
+      "Name": "late-conflict-atomic-rollback",
+      "Status": "Passed",
+      "NativeExitCode": 1,
+      "ExpectedConflict51039": true,
+      "AllTableHashesCountsHistoryAndIndexMetadataRestored": true,
+      "ChecksAfterRollback": 25,
+      "ExecutedInputSha256": "45B8FC4E21E45F60CFC5447CCBBF4EF84C13177F851517BD37E3E2E2229D1DFC",
+      "NativeOutputSha256": "3A2BA8FE828AB2578FAB24D5CF4A66E7DFEFBE94F38B51C3CC63E73D43EB5B8D",
+      "RestorationReportSha256": "A3F86CEC3BC160EC277E1957A724C7B7343437AB10232EBAAFD82E08024114C0"
+    }
+  ]
+}

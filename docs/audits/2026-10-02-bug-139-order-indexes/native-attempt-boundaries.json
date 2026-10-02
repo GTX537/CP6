@@ -1,0 +1,34 @@
+{
+  "scope": "Derived provenance of runner/setup failures; original native output and successful guard records remain unchanged",
+  "nativeSourceCommit": "083e9c4dcdb3d5b1aad3b57c32cb337f86859361",
+  "emptySuccessfulOutputAttempt": {
+    "source": "Root tool-session error, supplied verbatim by root; no raw failure file was created",
+    "errorText": "Get-FileHash: D:\\CP6\\tmp\\Test-Bug139SqlGuards.ps1:53 / Could not find file 'D:\\CP6\\tmp\\bug-139-native-guard-correct-existing.log'.",
+    "exceptionUtc": null,
+    "adjacentCaptureUtc": "2026-10-02T18:07:56.5114777Z",
+    "adjacentCaptureIsExceptionTime": false,
+    "originalIgnoredCapturePath": "D:/CP6/tmp/bug-139-sql-guard-correct-existing.json",
+    "originalCaptureSha256": "BA60D5B447AF32236636792B24FBC7C46187398F9FC0CAB582000774E4A1F681",
+    "outcome": "First correct native execution and state comparison passed; empty stdout pipeline did not create log, so runner hash archival failed. Root replaced Set-Content with File.WriteAllText(empty), then actually re-executed correct case and captured guard-correct-existing-evidence. This failed archival attempt is not counted as completed guard acceptance."
+  },
+  "filteredIndexSetupAttempt": {
+    "rawLog": "bug-139-native-guard-unexpected-filter.log",
+    "rawInput": "bug-139-native-guard-unexpected-filter.sql",
+    "nativeError": 1934,
+    "outcome": "QUOTED_IDENTIFIER fixture setup failure occurred before the actual guard; not guard RED",
+    "restorationReport": "bug-139-sql-compare-after-repeat-to-guard-unexpected-filter-evidence.json",
+    "restorationPassed": 25,
+    "correctedInput": "bug-139-native-guard-unexpected-filter-correct-set-options.sql",
+    "correctedLog": "bug-139-native-guard-unexpected-filter-correct-set-options.log",
+    "correctedGuardError": 51039
+  },
+  "reuse": {
+    "source": "bug-139-native-guards.json ReusedEarlierCheckedExecution",
+    "cases": [
+      "correct-existing",
+      "wrong-column",
+      "unexpected-unique"
+    ],
+    "meaning": "These three successful complete executions were reused in final eight-case aggregation, not newly rerun by ResumeFirstThree."
+  }
+}

@@ -1,0 +1,163 @@
+[
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_Order",
+    "Index": "IX_T_Order_OrderType_IsDeleted",
+    "ModelContract": "IX:OrderType,IsDeleted:False::IX_T_Order_OrderType_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_Order",
+    "Index": "IX_T_Order_Status_IsDeleted",
+    "ModelContract": "IX:Status,IsDeleted:False::IX_T_Order_Status_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_Order",
+    "Index": "IX_T_Order_WebOrderNo",
+    "ModelContract": "IX:WebOrderNo:True::IX_T_Order_WebOrderNo"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Index": "IX_T_OrderDetail_ApprovalStatus_IsDeleted",
+    "ModelContract": "IX:ApprovalStatus,IsDeleted:False::IX_T_OrderDetail_ApprovalStatus_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Index": "IX_T_OrderDetail_CustomerDeliveryDate_IsDeleted",
+    "ModelContract": "IX:CustomerDeliveryDate,IsDeleted:False::IX_T_OrderDetail_CustomerDeliveryDate_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Index": "IX_T_OrderDetail_HaibaiNo2_HaibaiNo3",
+    "ModelContract": "IX:HaibaiNo2,HaibaiNo3:False::IX_T_OrderDetail_HaibaiNo2_HaibaiNo3"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Index": "IX_T_OrderDetail_ItemCd",
+    "ModelContract": "IX:ItemCd:False::IX_T_OrderDetail_ItemCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Index": "IX_T_OrderDetail_McTransferFlg_IsDeleted",
+    "ModelContract": "IX:McTransferFlg,IsDeleted:False::IX_T_OrderDetail_McTransferFlg_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Index": "IX_T_OrderDetail_ProductCatBig_ProductCatMid_ProductCatSml",
+    "ModelContract": "IX:ProductCatBig,ProductCatMid,ProductCatSml:False::IX_T_OrderDetail_ProductCatBig_ProductCatMid_ProductCatSml"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderDetail",
+    "Index": "UX_OrderDetail_OrderProduct",
+    "ModelContract": "IX:WebOrderNo,WebOrderDetailNo,ProductCd:True::UX_OrderDetail_OrderProduct"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderMaterial",
+    "Index": "IX_T_OrderMaterial_WebOrderNo_WebOrderDetailNo_SortOrder",
+    "ModelContract": "IX:WebOrderNo,WebOrderDetailNo,SortOrder:False::IX_T_OrderMaterial_WebOrderNo_WebOrderDetailNo_SortOrder"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderProcess",
+    "Index": "IX_T_OrderProcess_ProcessCd",
+    "ModelContract": "IX:ProcessCd:False::IX_T_OrderProcess_ProcessCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_OrderProcess",
+    "Index": "IX_T_OrderProcess_WebOrderNo_WebOrderDetailNo_SortOrder",
+    "ModelContract": "IX:WebOrderNo,WebOrderDetailNo,SortOrder:False::IX_T_OrderProcess_WebOrderNo_WebOrderDetailNo_SortOrder"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_PlateMold",
+    "Index": "IX_T_PlateMold_BaseCd_IsDeleted",
+    "ModelContract": "IX:BaseCd,IsDeleted:False::IX_T_PlateMold_BaseCd_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_PlateMold",
+    "Index": "IX_T_PlateMold_PlaceCd",
+    "ModelContract": "IX:PlaceCd:False::IX_T_PlateMold_PlaceCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_PlateMold",
+    "Index": "IX_T_PlateMold_ProcessCd",
+    "ModelContract": "IX:ProcessCd:False::IX_T_PlateMold_ProcessCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_PlateMold",
+    "Index": "IX_T_PlateMold_RepresentativeProductCd",
+    "ModelContract": "IX:RepresentativeProductCd:False::IX_T_PlateMold_RepresentativeProductCd"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_PlateMold",
+    "Index": "IX_T_PlateMold_StDate_EndDate",
+    "ModelContract": "IX:StDate,EndDate:False::IX_T_PlateMold_StDate_EndDate"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_PlateMold",
+    "Index": "IX_T_PlateMold_TypeClass",
+    "ModelContract": "IX:TypeClass:False::IX_T_PlateMold_TypeClass"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_SheetUnitPrice",
+    "Index": "IX_T_SheetUnitPrice_BaseCd_CustomerCd_IsDeleted",
+    "ModelContract": "IX:BaseCd,CustomerCd,IsDeleted:False::IX_T_SheetUnitPrice_BaseCd_CustomerCd_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_SheetUnitPrice",
+    "Index": "IX_T_SheetUnitPrice_RevisionDate",
+    "ModelContract": "IX:RevisionDate:False::IX_T_SheetUnitPrice_RevisionDate"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_SheetUnitPriceEstimate",
+    "Index": "IX_T_SheetUnitPriceEstimate_BaseCd_CustomerCd_IsDeleted",
+    "ModelContract": "IX:BaseCd,CustomerCd,IsDeleted:False::IX_T_SheetUnitPriceEstimate_BaseCd_CustomerCd_IsDeleted"
+  },
+  {
+    "Context": "Core",
+    "Schema": "dbo",
+    "Table": "T_SheetUnitPriceEstimate",
+    "Index": "IX_T_SheetUnitPriceEstimate_RevisionDate",
+    "ModelContract": "IX:RevisionDate:False::IX_T_SheetUnitPriceEstimate_RevisionDate"
+  }
+]

@@ -1,0 +1,603 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d72257d0-a99e-4544-9c30-85dde39298c0" name="tt@LAPTOP-3QQ44FJS 2026-10-02 13:46:55" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T13:46:55.9008433-04:00" queuing="2026-10-02T13:46:55.9008437-04:00" start="2026-10-02T13:46:31.7271596-04:00" finish="2026-10-02T13:50:10.4117054-04:00" />
+  <TestSettings name="default" id="1e910b5e-9d3a-47fb-a51a-a7453a27240a">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_13_46_55" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6bda5084-862c-4bde-b314-326ba0805e5a" testId="14ef2bcc-25d8-efa0-ab4a-62742bdf28fd" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderProcess&quot;, name: &quot;IX_T_OrderProcess_ProcessCd&quot;, columns: [&quot;ProcessCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:10.0719107" startTime="2026-10-02T13:48:11.5982616-04:00" endTime="2026-10-02T13:48:21.6694013-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6bda5084-862c-4bde-b314-326ba0805e5a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderProc"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f9654671-ba5e-4970-b211-05d4d0f4c2e7" testId="0e9beaab-1ef5-885a-ffc1-b1ce2f70a941" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderProcess&quot;, name: &quot;IX_T_OrderProcess_WebOrderNo_WebOrderDetailNo_Sort&quot;···, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;SortOrder&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:20.2581791" startTime="2026-10-02T13:46:35.6144223-04:00" endTime="2026-10-02T13:46:55.8720510-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9654671-ba5e-4970-b211-05d4d0f4c2e7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderProc"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c1a86468-00dc-4123-ab20-7e9bdf559234" testId="a0e82901-2dbc-561d-066d-921b9554bd46" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_ItemCd&quot;, columns: [&quot;ItemCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.7351131" startTime="2026-10-02T13:49:35.2738594-04:00" endTime="2026-10-02T13:49:44.0083858-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1a86468-00dc-4123-ab20-7e9bdf559234">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3c82adca-d680-4b96-ba78-5b0b060fc692" testId="4d598111-bfb1-788d-8763-6ea4a0802023" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_ApprovalStatus_IsDeleted&quot;, columns: [&quot;ApprovalStatus&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.7466231" startTime="2026-10-02T13:47:15.0530809-04:00" endTime="2026-10-02T13:47:23.7987749-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c82adca-d680-4b96-ba78-5b0b060fc692">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="49b7297e-7250-4852-9237-44d6e995f566" testId="52c28a7a-924f-aa92-d20e-fa23f5b7d435" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_RepresentativeProductCd&quot;, columns: [&quot;RepresentativeProductCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.2805652" startTime="2026-10-02T13:49:44.0091687-04:00" endTime="2026-10-02T13:49:52.2890419-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="49b7297e-7250-4852-9237-44d6e995f566">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c063af66-84c2-494f-9f90-701c825e5cc5" testId="31c9718f-f957-c872-7597-8b4bb6561b24" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPriceEstimate&quot;, name: &quot;IX_T_SheetUnitPriceEstimate_RevisionDate&quot;, columns: [&quot;RevisionDate&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.7152736" startTime="2026-10-02T13:47:42.3619453-04:00" endTime="2026-10-02T13:47:52.0764595-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c063af66-84c2-494f-9f90-701c825e5cc5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d3722019-8923-460a-90f4-f2e60e6fc793" testId="c4b04013-7298-dd0e-798c-05a139b2a0df" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_McTransferFlg_IsDeleted&quot;, columns: [&quot;McTransferFlg&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.6182779" startTime="2026-10-02T13:48:01.9797625-04:00" endTime="2026-10-02T13:48:11.5973222-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3722019-8923-460a-90f4-f2e60e6fc793">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c37b5485-9bae-43a6-9930-d06c850e24ac" testId="e4715766-fddc-4eb6-daef-316094c7352c" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_CustomerDeliveryDate_IsDeleted&quot;, columns: [&quot;CustomerDeliveryDate&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.3311977" startTime="2026-10-02T13:46:55.8864213-04:00" endTime="2026-10-02T13:47:05.2034688-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c37b5485-9bae-43a6-9930-d06c850e24ac">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bef0f801-c00c-4bf9-9d73-58a7d009b510" testId="8a5a3acd-8579-0e9f-f571-e1179f0d887a" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_Order&quot;, name: &quot;IX_T_Order_OrderType_IsDeleted&quot;, columns: [&quot;OrderType&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.2569572" startTime="2026-10-02T13:47:23.7999009-04:00" endTime="2026-10-02T13:47:33.0559594-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bef0f801-c00c-4bf9-9d73-58a7d009b510">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_Order_Ord"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d2b27133-39a5-4ed1-9add-d216e8f32887" testId="d3dcff1e-61eb-35b6-0f7c-9f387e8a9837" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_PlaceCd&quot;, columns: [&quot;PlaceCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.0111934" startTime="2026-10-02T13:48:49.6995039-04:00" endTime="2026-10-02T13:48:58.7101133-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2b27133-39a5-4ed1-9add-d216e8f32887">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c883ffcb-d414-41d4-aa41-4cbe00e9400a" testId="cc5cd4f5-22f4-62cf-b7bf-dddd3d1087c0" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_StDate_EndDate&quot;, columns: [&quot;StDate&quot;, &quot;EndDate&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.9021362" startTime="2026-10-02T13:47:52.0773565-04:00" endTime="2026-10-02T13:48:01.9787970-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c883ffcb-d414-41d4-aa41-4cbe00e9400a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d51764d7-8387-4a05-ab7e-dc382f89efd0" testId="db3b924d-ede2-e79a-cd9a-fc1ec1f27632" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPrice&quot;, name: &quot;IX_T_SheetUnitPrice_RevisionDate&quot;, columns: [&quot;RevisionDate&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.3425304" startTime="2026-10-02T13:49:17.1576068-04:00" endTime="2026-10-02T13:49:26.4993640-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d51764d7-8387-4a05-ab7e-dc382f89efd0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aefc7256-169d-4390-a077-49093afba3ff" testId="36ffeb88-0b60-ff9a-34b4-5fcae4ad9201" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderMaterial&quot;, name: &quot;IX_T_OrderMaterial_WebOrderNo_WebOrderDetailNo_Sor&quot;···, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;SortOrder&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.1099886" startTime="2026-10-02T13:49:08.0472738-04:00" endTime="2026-10-02T13:49:17.1566675-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aefc7256-169d-4390-a077-49093afba3ff">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderMate"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e1e5ee88-a44f-4b7a-b76e-8d8d3ed34c5c" testId="1b896e42-68f6-4e52-d38c-1f70c7240859" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_ProductCatBig_ProductCatMid_Produ&quot;···, columns: [&quot;ProductCatBig&quot;, &quot;ProductCatMid&quot;, &quot;ProductCatSml&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.8483351" startTime="2026-10-02T13:47:05.2086964-04:00" endTime="2026-10-02T13:47:15.0519691-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1e5ee88-a44f-4b7a-b76e-8d8d3ed34c5c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4107c46a-71d4-424b-b32a-fee36072bdac" testId="09371ada-14ce-1636-ab2c-1ea7f2f521fb" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_Order&quot;, name: &quot;IX_T_Order_Status_IsDeleted&quot;, columns: [&quot;Status&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.8669967" startTime="2026-10-02T13:49:52.2897788-04:00" endTime="2026-10-02T13:50:01.1565772-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4107c46a-71d4-424b-b32a-fee36072bdac">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_Order_Sta"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="36a956d5-05fb-4f33-acdc-a8662b9bc72d" testId="e956c9e2-9359-5515-5806-3eeb3d3d5570" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_HaibaiNo2_HaibaiNo3&quot;, columns: [&quot;HaibaiNo2&quot;, &quot;HaibaiNo3&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.1121698" startTime="2026-10-02T13:48:40.5870948-04:00" endTime="2026-10-02T13:48:49.6987633-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36a956d5-05fb-4f33-acdc-a8662b9bc72d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="63977323-cb9c-4f83-9d00-42463c3f8a7d" testId="4966f90f-dc34-7b76-1087-fe781bf6b866" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_BaseCd_IsDeleted&quot;, columns: [&quot;BaseCd&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.3048412" startTime="2026-10-02T13:47:33.0570815-04:00" endTime="2026-10-02T13:47:42.3609937-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63977323-cb9c-4f83-9d00-42463c3f8a7d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b77ea77e-931d-4c61-a754-1846b1a7fb84" testId="050c1673-3a6d-8650-9f94-3f98e4221187" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPrice&quot;, name: &quot;IX_T_SheetUnitPrice_BaseCd_CustomerCd_IsDeleted&quot;, columns: [&quot;BaseCd&quot;, &quot;CustomerCd&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.3361504" startTime="2026-10-02T13:48:58.7113703-04:00" endTime="2026-10-02T13:49:08.0464295-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b77ea77e-931d-4c61-a754-1846b1a7fb84">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5163cac3-0795-45b7-9e65-e4692c13d6fd" testId="4261a30d-adf3-c60a-f897-81038c3b0072" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPriceEstimate&quot;, name: &quot;IX_T_SheetUnitPriceEstimate_BaseCd_CustomerCd_IsDe&quot;···, columns: [&quot;BaseCd&quot;, &quot;CustomerCd&quot;, &quot;IsDeleted&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.5700481" startTime="2026-10-02T13:48:21.6737912-04:00" endTime="2026-10-02T13:48:31.2396442-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5163cac3-0795-45b7-9e65-e4692c13d6fd">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d2825641-1007-479d-b0eb-e94719c4fb6c" testId="87395a22-e0ec-c21e-bd2f-3402208f780e" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Original_136_chain_does_not_install_any_of_the_21_omissions" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.1099968" startTime="2026-10-02T13:50:01.1583502-04:00" endTime="2026-10-02T13:50:10.2670885-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2825641-1007-479d-b0eb-e94719c4fb6c" />
+    <UnitTestResult executionId="074210ae-a311-430a-a204-2839a303e98d" testId="bd96467e-ad61-8475-76ba-97f32baace17" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_TypeClass&quot;, columns: [&quot;TypeClass&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:09.3463461" startTime="2026-10-02T13:48:31.2404819-04:00" endTime="2026-10-02T13:48:40.5862191-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="074210ae-a311-430a-a204-2839a303e98d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8abcd8a2-ce3c-49ce-9990-31f824931ead" testId="1754219e-0082-7b28-d4ed-419d48cc2ff8" testName="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_ProcessCd&quot;, columns: [&quot;ProcessCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.7731804" startTime="2026-10-02T13:49:26.5002661-04:00" endTime="2026-10-02T13:49:35.2730575-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8abcd8a2-ce3c-49ce-9990-31f824931ead">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns) in D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs:line 50&#xD;
+   at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_ItemCd&quot;, columns: [&quot;ItemCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a0e82901-2dbc-561d-066d-921b9554bd46">
+      <Execution id="c1a86468-00dc-4123-ab20-7e9bdf559234" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_BaseCd_IsDeleted&quot;, columns: [&quot;BaseCd&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4966f90f-dc34-7b76-1087-fe781bf6b866">
+      <Execution id="63977323-cb9c-4f83-9d00-42463c3f8a7d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPrice&quot;, name: &quot;IX_T_SheetUnitPrice_BaseCd_CustomerCd_IsDeleted&quot;, columns: [&quot;BaseCd&quot;, &quot;CustomerCd&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="050c1673-3a6d-8650-9f94-3f98e4221187">
+      <Execution id="b77ea77e-931d-4c61-a754-1846b1a7fb84" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_CustomerDeliveryDate_IsDeleted&quot;, columns: [&quot;CustomerDeliveryDate&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e4715766-fddc-4eb6-daef-316094c7352c">
+      <Execution id="c37b5485-9bae-43a6-9930-d06c850e24ac" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_McTransferFlg_IsDeleted&quot;, columns: [&quot;McTransferFlg&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c4b04013-7298-dd0e-798c-05a139b2a0df">
+      <Execution id="d3722019-8923-460a-90f4-f2e60e6fc793" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPrice&quot;, name: &quot;IX_T_SheetUnitPrice_RevisionDate&quot;, columns: [&quot;RevisionDate&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="db3b924d-ede2-e79a-cd9a-fc1ec1f27632">
+      <Execution id="d51764d7-8387-4a05-ab7e-dc382f89efd0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_ProductCatBig_ProductCatMid_Produ&quot;···, columns: [&quot;ProductCatBig&quot;, &quot;ProductCatMid&quot;, &quot;ProductCatSml&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1b896e42-68f6-4e52-d38c-1f70c7240859">
+      <Execution id="e1e5ee88-a44f-4b7a-b76e-8d8d3ed34c5c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_PlaceCd&quot;, columns: [&quot;PlaceCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d3dcff1e-61eb-35b6-0f7c-9f387e8a9837">
+      <Execution id="d2b27133-39a5-4ed1-9add-d216e8f32887" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_RepresentativeProductCd&quot;, columns: [&quot;RepresentativeProductCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="52c28a7a-924f-aa92-d20e-fa23f5b7d435">
+      <Execution id="49b7297e-7250-4852-9237-44d6e995f566" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_ProcessCd&quot;, columns: [&quot;ProcessCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1754219e-0082-7b28-d4ed-419d48cc2ff8">
+      <Execution id="8abcd8a2-ce3c-49ce-9990-31f824931ead" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderMaterial&quot;, name: &quot;IX_T_OrderMaterial_WebOrderNo_WebOrderDetailNo_Sor&quot;···, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;SortOrder&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="36ffeb88-0b60-ff9a-34b4-5fcae4ad9201">
+      <Execution id="aefc7256-169d-4390-a077-49093afba3ff" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderProcess&quot;, name: &quot;IX_T_OrderProcess_ProcessCd&quot;, columns: [&quot;ProcessCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="14ef2bcc-25d8-efa0-ab4a-62742bdf28fd">
+      <Execution id="6bda5084-862c-4bde-b314-326ba0805e5a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Original_136_chain_does_not_install_any_of_the_21_omissions" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="87395a22-e0ec-c21e-bd2f-3402208f780e">
+      <Execution id="d2825641-1007-479d-b0eb-e94719c4fb6c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Original_136_chain_does_not_install_any_of_the_21_omissions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPriceEstimate&quot;, name: &quot;IX_T_SheetUnitPriceEstimate_RevisionDate&quot;, columns: [&quot;RevisionDate&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="31c9718f-f957-c872-7597-8b4bb6561b24">
+      <Execution id="c063af66-84c2-494f-9f90-701c825e5cc5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderProcess&quot;, name: &quot;IX_T_OrderProcess_WebOrderNo_WebOrderDetailNo_Sort&quot;···, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;SortOrder&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0e9beaab-1ef5-885a-ffc1-b1ce2f70a941">
+      <Execution id="f9654671-ba5e-4970-b211-05d4d0f4c2e7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_TypeClass&quot;, columns: [&quot;TypeClass&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bd96467e-ad61-8475-76ba-97f32baace17">
+      <Execution id="074210ae-a311-430a-a204-2839a303e98d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_ApprovalStatus_IsDeleted&quot;, columns: [&quot;ApprovalStatus&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4d598111-bfb1-788d-8763-6ea4a0802023">
+      <Execution id="3c82adca-d680-4b96-ba78-5b0b060fc692" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_Order&quot;, name: &quot;IX_T_Order_Status_IsDeleted&quot;, columns: [&quot;Status&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="09371ada-14ce-1636-ab2c-1ea7f2f521fb">
+      <Execution id="4107c46a-71d4-424b-b32a-fee36072bdac" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_OrderDetail&quot;, name: &quot;IX_T_OrderDetail_HaibaiNo2_HaibaiNo3&quot;, columns: [&quot;HaibaiNo2&quot;, &quot;HaibaiNo3&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e956c9e2-9359-5515-5806-3eeb3d3d5570">
+      <Execution id="36a956d5-05fb-4f33-acdc-a8662b9bc72d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_SheetUnitPriceEstimate&quot;, name: &quot;IX_T_SheetUnitPriceEstimate_BaseCd_CustomerCd_IsDe&quot;···, columns: [&quot;BaseCd&quot;, &quot;CustomerCd&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4261a30d-adf3-c60a-f897-81038c3b0072">
+      <Execution id="5163cac3-0795-45b7-9e65-e4692c13d6fd" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_Order&quot;, name: &quot;IX_T_Order_OrderType_IsDeleted&quot;, columns: [&quot;OrderType&quot;, &quot;IsDeleted&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8a5a3acd-8579-0e9f-f571-e1179f0d887a">
+      <Execution id="bef0f801-c00c-4bf9-9d73-58a7d009b510" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: &quot;T_PlateMold&quot;, name: &quot;IX_T_PlateMold_StDate_EndDate&quot;, columns: [&quot;StDate&quot;, &quot;EndDate&quot;])" storage="d:\cp6\tmp\worktrees\bug-139-order-indexes\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cc5cd4f5-22f4-62cf-b7bf-dddd3d1087c0">
+      <Execution id="c883ffcb-d414-41d4-aa41-4cbe00e9400a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelIndexRepairTests" name="Complete_sql_chain_installs_each_frozen_nonunique_query_index" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="14ef2bcc-25d8-efa0-ab4a-62742bdf28fd" executionId="6bda5084-862c-4bde-b314-326ba0805e5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0e9beaab-1ef5-885a-ffc1-b1ce2f70a941" executionId="f9654671-ba5e-4970-b211-05d4d0f4c2e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0e82901-2dbc-561d-066d-921b9554bd46" executionId="c1a86468-00dc-4123-ab20-7e9bdf559234" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d598111-bfb1-788d-8763-6ea4a0802023" executionId="3c82adca-d680-4b96-ba78-5b0b060fc692" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52c28a7a-924f-aa92-d20e-fa23f5b7d435" executionId="49b7297e-7250-4852-9237-44d6e995f566" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31c9718f-f957-c872-7597-8b4bb6561b24" executionId="c063af66-84c2-494f-9f90-701c825e5cc5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4b04013-7298-dd0e-798c-05a139b2a0df" executionId="d3722019-8923-460a-90f4-f2e60e6fc793" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e4715766-fddc-4eb6-daef-316094c7352c" executionId="c37b5485-9bae-43a6-9930-d06c850e24ac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a5a3acd-8579-0e9f-f571-e1179f0d887a" executionId="bef0f801-c00c-4bf9-9d73-58a7d009b510" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3dcff1e-61eb-35b6-0f7c-9f387e8a9837" executionId="d2b27133-39a5-4ed1-9add-d216e8f32887" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc5cd4f5-22f4-62cf-b7bf-dddd3d1087c0" executionId="c883ffcb-d414-41d4-aa41-4cbe00e9400a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db3b924d-ede2-e79a-cd9a-fc1ec1f27632" executionId="d51764d7-8387-4a05-ab7e-dc382f89efd0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="36ffeb88-0b60-ff9a-34b4-5fcae4ad9201" executionId="aefc7256-169d-4390-a077-49093afba3ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b896e42-68f6-4e52-d38c-1f70c7240859" executionId="e1e5ee88-a44f-4b7a-b76e-8d8d3ed34c5c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09371ada-14ce-1636-ab2c-1ea7f2f521fb" executionId="4107c46a-71d4-424b-b32a-fee36072bdac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e956c9e2-9359-5515-5806-3eeb3d3d5570" executionId="36a956d5-05fb-4f33-acdc-a8662b9bc72d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4966f90f-dc34-7b76-1087-fe781bf6b866" executionId="63977323-cb9c-4f83-9d00-42463c3f8a7d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="050c1673-3a6d-8650-9f94-3f98e4221187" executionId="b77ea77e-931d-4c61-a754-1846b1a7fb84" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4261a30d-adf3-c60a-f897-81038c3b0072" executionId="5163cac3-0795-45b7-9e65-e4692c13d6fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="87395a22-e0ec-c21e-bd2f-3402208f780e" executionId="d2825641-1007-479d-b0eb-e94719c4fb6c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bd96467e-ad61-8475-76ba-97f32baace17" executionId="074210ae-a311-430a-a204-2839a303e98d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1754219e-0082-7b28-d4ed-419d48cc2ff8" executionId="8abcd8a2-ce3c-49ce-9990-31f824931ead" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="22" executed="22" passed="1" failed="21" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:01.52]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:02.30]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:02.33]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:22.62]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:22.62]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:22.62]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderProc"···&#xD;
+[xUnit.net 00:00:22.62]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.62]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:00:22.62]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:22.62]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:31.95]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:31.95]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:31.95]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···&#xD;
+[xUnit.net 00:00:31.95]       Stack Trace:&#xD;
+[xUnit.net 00:00:31.95]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:00:31.95]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:00:31.95]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:41.80]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:41.80]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:41.80]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···&#xD;
+[xUnit.net 00:00:41.80]       Stack Trace:&#xD;
+[xUnit.net 00:00:41.80]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:00:41.80]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:00:41.80]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:50.54]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:50.54]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:50.54]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···&#xD;
+[xUnit.net 00:00:50.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:50.54]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:00:50.54]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:00:50.54]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:59.80]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:59.80]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:59.80]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_Order_Ord"···&#xD;
+[xUnit.net 00:00:59.80]       Stack Trace:&#xD;
+[xUnit.net 00:00:59.80]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:00:59.80]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:00:59.80]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:01:09.10]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:01:09.10]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:01:09.10]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···&#xD;
+[xUnit.net 00:01:09.10]       Stack Trace:&#xD;
+[xUnit.net 00:01:09.10]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:01:09.10]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:01:09.10]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:01:18.82]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:01:18.82]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:01:18.82]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···&#xD;
+[xUnit.net 00:01:18.82]       Stack Trace:&#xD;
+[xUnit.net 00:01:18.82]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:01:18.82]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:01:18.82]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:01:28.72]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:01:28.72]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:01:28.72]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···&#xD;
+[xUnit.net 00:01:28.72]       Stack Trace:&#xD;
+[xUnit.net 00:01:28.72]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:01:28.72]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:01:28.72]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:01:38.34]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:01:38.34]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:01:38.34]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···&#xD;
+[xUnit.net 00:01:38.34]       Stack Trace:&#xD;
+[xUnit.net 00:01:38.34]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:01:38.34]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:01:38.34]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:01:48.41]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:01:48.41]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:01:48.41]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderProc"···&#xD;
+[xUnit.net 00:01:48.41]       Stack Trace:&#xD;
+[xUnit.net 00:01:48.41]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:01:48.41]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:01:48.41]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:01:57.98]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:01:57.98]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:01:57.98]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···&#xD;
+[xUnit.net 00:01:57.98]       Stack Trace:&#xD;
+[xUnit.net 00:01:57.98]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:01:57.98]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:01:57.98]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:02:07.33]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:02:07.33]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:02:07.33]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···&#xD;
+[xUnit.net 00:02:07.33]       Stack Trace:&#xD;
+[xUnit.net 00:02:07.33]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:02:07.33]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:02:07.33]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:02:16.44]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:02:16.44]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:02:16.44]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···&#xD;
+[xUnit.net 00:02:16.44]       Stack Trace:&#xD;
+[xUnit.net 00:02:16.44]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:02:16.44]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:02:16.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:02:25.45]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:02:25.45]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:02:25.45]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···&#xD;
+[xUnit.net 00:02:25.45]       Stack Trace:&#xD;
+[xUnit.net 00:02:25.45]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:02:25.45]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:02:25.45]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:02:34.79]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:02:34.79]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:02:34.79]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···&#xD;
+[xUnit.net 00:02:34.79]       Stack Trace:&#xD;
+[xUnit.net 00:02:34.79]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:02:34.79]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:02:34.79]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:02:43.90]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:02:43.90]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:02:43.90]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderMate"···&#xD;
+[xUnit.net 00:02:43.90]       Stack Trace:&#xD;
+[xUnit.net 00:02:43.90]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:02:43.90]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:02:43.90]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:02:53.24]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:02:53.24]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:02:53.24]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_SheetUnit"···&#xD;
+[xUnit.net 00:02:53.24]       Stack Trace:&#xD;
+[xUnit.net 00:02:53.24]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:02:53.24]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:02:53.24]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:03:02.02]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:03:02.02]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:03:02.02]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···&#xD;
+[xUnit.net 00:03:02.02]       Stack Trace:&#xD;
+[xUnit.net 00:03:02.02]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:03:02.02]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:03:02.02]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:03:10.75]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:03:10.75]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:03:10.75]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_OrderDeta"···&#xD;
+[xUnit.net 00:03:10.75]       Stack Trace:&#xD;
+[xUnit.net 00:03:10.75]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:03:10.75]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:03:10.75]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:03:19.03]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:03:19.03]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:03:19.03]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_PlateMold"···&#xD;
+[xUnit.net 00:03:19.03]       Stack Trace:&#xD;
+[xUnit.net 00:03:19.03]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:03:19.03]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:03:19.03]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:03:27.90]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:03:27.90]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:03:27.90]       Not found: "CREATE NONCLUSTERED INDEX [IX_T_Order_Sta"···&#xD;
+[xUnit.net 00:03:27.90]       Stack Trace:&#xD;
+[xUnit.net 00:03:27.90]         D:\CP6\tmp\worktrees\bug-139-order-indexes\CP6.Tests\Persistence\OrderModelIndexRepairTests.cs(50,0): at CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(String table, String name, String[] columns)&#xD;
+[xUnit.net 00:03:27.90]            at InvokeStub_OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(Object, Span`1)&#xD;
+[xUnit.net 00:03:27.90]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:03:37.01]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:46:55.8740301-04:00">
+        <Text>[xUnit.net 00:00:22.62]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderProcess", name: "IX_T_OrderProcess_WebOrderNo_WebOrderDetailNo_Sort"···, columns: ["WebOrderNo", "WebOrderDetailNo", "SortOrder"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:47:05.2043060-04:00">
+        <Text>[xUnit.net 00:00:31.95]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderDetail", name: "IX_T_OrderDetail_CustomerDeliveryDate_IsDeleted", columns: ["CustomerDeliveryDate", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:47:15.0524386-04:00">
+        <Text>[xUnit.net 00:00:41.79]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderDetail", name: "IX_T_OrderDetail_ProductCatBig_ProductCatMid_Produ"···, columns: ["ProductCatBig", "ProductCatMid", "ProductCatSml"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:47:23.7991522-04:00">
+        <Text>[xUnit.net 00:00:50.54]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderDetail", name: "IX_T_OrderDetail_ApprovalStatus_IsDeleted", columns: ["ApprovalStatus", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:47:33.0564537-04:00">
+        <Text>[xUnit.net 00:00:59.80]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_Order", name: "IX_T_Order_OrderType_IsDeleted", columns: ["OrderType", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:47:42.3613481-04:00">
+        <Text>[xUnit.net 00:01:09.10]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_PlateMold", name: "IX_T_PlateMold_BaseCd_IsDeleted", columns: ["BaseCd", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:47:52.0767724-04:00">
+        <Text>[xUnit.net 00:01:18.82]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_SheetUnitPriceEstimate", name: "IX_T_SheetUnitPriceEstimate_RevisionDate", columns: ["RevisionDate"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:48:01.9791671-04:00">
+        <Text>[xUnit.net 00:01:28.72]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_PlateMold", name: "IX_T_PlateMold_StDate_EndDate", columns: ["StDate", "EndDate"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:48:11.5977750-04:00">
+        <Text>[xUnit.net 00:01:38.34]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderDetail", name: "IX_T_OrderDetail_McTransferFlg_IsDeleted", columns: ["McTransferFlg", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:48:21.6696578-04:00">
+        <Text>[xUnit.net 00:01:48.41]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderProcess", name: "IX_T_OrderProcess_ProcessCd", columns: ["ProcessCd"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:48:31.2401651-04:00">
+        <Text>[xUnit.net 00:01:57.98]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_SheetUnitPriceEstimate", name: "IX_T_SheetUnitPriceEstimate_BaseCd_CustomerCd_IsDe"···, columns: ["BaseCd", "CustomerCd", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:48:40.5865382-04:00">
+        <Text>[xUnit.net 00:02:07.33]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_PlateMold", name: "IX_T_PlateMold_TypeClass", columns: ["TypeClass"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:48:49.6990715-04:00">
+        <Text>[xUnit.net 00:02:16.44]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderDetail", name: "IX_T_OrderDetail_HaibaiNo2_HaibaiNo3", columns: ["HaibaiNo2", "HaibaiNo3"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:48:58.7104351-04:00">
+        <Text>[xUnit.net 00:02:25.45]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_PlateMold", name: "IX_T_PlateMold_PlaceCd", columns: ["PlaceCd"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:49:08.0466980-04:00">
+        <Text>[xUnit.net 00:02:34.79]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_SheetUnitPrice", name: "IX_T_SheetUnitPrice_BaseCd_CustomerCd_IsDeleted", columns: ["BaseCd", "CustomerCd", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:49:17.1570060-04:00">
+        <Text>[xUnit.net 00:02:43.90]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderMaterial", name: "IX_T_OrderMaterial_WebOrderNo_WebOrderDetailNo_Sor"···, columns: ["WebOrderNo", "WebOrderDetailNo", "SortOrder"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:49:26.4995895-04:00">
+        <Text>[xUnit.net 00:02:53.24]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_SheetUnitPrice", name: "IX_T_SheetUnitPrice_RevisionDate", columns: ["RevisionDate"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:49:35.2733043-04:00">
+        <Text>[xUnit.net 00:03:02.02]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_PlateMold", name: "IX_T_PlateMold_ProcessCd", columns: ["ProcessCd"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:49:44.0086241-04:00">
+        <Text>[xUnit.net 00:03:10.75]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_OrderDetail", name: "IX_T_OrderDetail_ItemCd", columns: ["ItemCd"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:49:52.2898278-04:00">
+        <Text>[xUnit.net 00:03:19.03]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_PlateMold", name: "IX_T_PlateMold_RepresentativeProductCd", columns: ["RepresentativeProductCd"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T13:50:01.1569129-04:00">
+        <Text>[xUnit.net 00:03:27.90]     CP6.Tests.Persistence.OrderModelIndexRepairTests.Complete_sql_chain_installs_each_frozen_nonunique_query_index(table: "T_Order", name: "IX_T_Order_Status_IsDeleted", columns: ["Status", "IsDeleted"]) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
