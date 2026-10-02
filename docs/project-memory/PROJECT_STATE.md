@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-02：BUG #141 四条订单外键修复本地 GREEN，待真实 SQL 与交付
+
+[订单外键遗漏](https://github.com/GTX537/CP6/issues/141) 从已确认 `main` 的 `2d974736` 独立分支新增 SQL-only 前向迁移，恢复四个既有全局业务键关系及 CASCADE/NO ACTION。WITH CHECK 验证原行，同名对象必须完整匹配 enabled/trusted/NFR 等合同，否则拒绝；既有孤儿由 SQL547阻止，不删改数据或 NOCHECK。模型、snapshot、旧迁移及候选唯一键不改。旧链 RED **4 失败 / 5 通过**，FK12+索引25相关 **37/37、零跳过、最终零 warning/error**，[原件和范围](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留。
+
+一次独立完整任务审查无 P1/P2/阻塞；当前本地自动化通过，实际 SQL 前向/重复、孤儿拒绝、4级联、原数据与完整事务回滚和正常远端交付仍 Pending，Issue Open。未连接业务库、部署或触发 Actions；不声明 WP2 全结构或 PG API 完成。下方保留各历史时点。
+
 ## 2026-10-02：BUG #139 本地及真实 SQL 验收通过，待正常交付
 
 [订单查询索引遗漏](https://github.com/GTX537/CP6/issues/139) 的独立 SQL-only 前向修复补 21 个非唯一索引；冲突拒绝，两个历史唯一别名不重复创建，模型/snapshot/旧迁移未改。旧链 RED **21 失败 / 1 通过**，单元 **25/25、零跳过**。同一 compiled API 真实首次与重复初始化均退出 0、无 HTTP；升级与重复比较各 **25/25**，352 表行数/摘要状态保留，原 1,357 个索引捕获 metadata 原样，只新增 21 项。实际 guard **8/8**，每项回滚恢复比较 **25/25**，含晚冲突撤销先前 20 项创建。[原始证据与失败边界](../audits/2026-10-02-bug-139-order-indexes/README.md)保留。

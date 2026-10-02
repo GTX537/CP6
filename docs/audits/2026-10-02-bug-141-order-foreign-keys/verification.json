@@ -1,0 +1,107 @@
+{
+  "issue": 141,
+  "base": "2d9747360a38dfc519ddebea7aced06a9466b879",
+  "definitionOracle": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "snapshotGitBlob": "21ed77b4056ee44b4f44e61de13d5d34774d6934",
+  "migration": "20261002184500_RestoreMissingOrderModelForeignKeys",
+  "restore": {
+    "lockedMode": true,
+    "exitCode": 0
+  },
+  "red": {
+    "passed": 5,
+    "failed": 4,
+    "skipped": 0,
+    "total": 9,
+    "exitCode": 1,
+    "scope": "4 independent frozen FK contracts and legacy136 oracle passed;4 missing CREATE assertions failed"
+  },
+  "greenInitial": {
+    "passed": 37,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "compilerWarning": "xUnit2013 collection-size assertion; no production problem"
+  },
+  "greenVerified": {
+    "passed": 37,
+    "failed": 0,
+    "skipped": 0,
+    "total": 37,
+    "exitCode": 0,
+    "warnings": 0,
+    "scope": "12 FK contracts/migration/source/provider/down plus25 existing query-index regressions; Assert.Single replaced same one-element check only"
+  },
+  "apiSha256": "F40298E0417BF7A408E06D9C8F0F47BC59D4F6FD58F6591CAB22FDB1DD57ADFB",
+  "coreSha256": "2F2B357394A9684211C79538707248261FED26602CC6C8AA369604676C70E34E",
+  "sources": [
+    {
+      "path": "CP6.Core/Persistence/OrderModelForeignKeyRepairSql.cs",
+      "sha256": "65048E50976CAEC8BFA613D09CC7B247087F78E717F2DF92C0496BAB024152DD"
+    },
+    {
+      "path": "CP6.Core/Migrations/20261002184500_RestoreMissingOrderModelForeignKeys.cs",
+      "sha256": "09B9F3C533B7F1F09769BE1AF1DD637193271BC46D1E2CB823A8BE049AF555C3"
+    },
+    {
+      "path": "CP6.Tests/Persistence/OrderModelForeignKeyRepairTests.cs",
+      "sha256": "58EBF4DAF3D045E3B7B88DDF3A9400F79DFC521CE747542A05A3929395FFE37D"
+    },
+    {
+      "path": "CP6.Tests/Persistence/OrderModelIndexRepairTests.cs",
+      "sha256": "8EBB3C1C69A0A041E6EF396C3977B8B9B503017B2971F5BB34BD4FDBE2717E2D"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "bug-141-red.trx",
+      "sha256": "BA50426383685C879275917C34060F5874B9AD12E7AAB6B72B3492DCA39AEEEA",
+      "bytes": 27596,
+      "originalIgnoredPath": "tmp/bug-141-tests/red/bug-141-red.trx"
+    },
+    {
+      "path": "bug-141-red.log",
+      "sha256": "BFA5DB9BCC03ACB40D03784FB3B75AD7DCB5FC506EEF8C2B6239F002C04F7404",
+      "bytes": 1689,
+      "originalIgnoredPath": "tmp/bug-141-tests/red.log"
+    },
+    {
+      "path": "bug-141-green.trx",
+      "sha256": "E6A8A63B325976CC7AA95E7D70C321ABF6B104D919996651F9FEF988257527A8",
+      "bytes": 63617,
+      "originalIgnoredPath": "tmp/bug-141-tests/green/bug-141-green.trx"
+    },
+    {
+      "path": "bug-141-green.log",
+      "sha256": "D701799992872D4FE9528C1C73F4AF4CC6FB2EB6BDE17E2C79C55113B0C48C5E",
+      "bytes": 750,
+      "originalIgnoredPath": "tmp/bug-141-tests/green.log"
+    },
+    {
+      "path": "bug-141-green-verified.trx",
+      "sha256": "756CC03CE0EA536B1F1B7433752115841CF0AF48F2AC0FDC7367FF3A4675E772",
+      "bytes": 63617,
+      "originalIgnoredPath": "tmp/bug-141-tests/green-verified/bug-141-green-verified.trx"
+    },
+    {
+      "path": "bug-141-green-verified.log",
+      "sha256": "3A8A6A7A90ABAC11AF6E92455B6D985833BB527BB28F3FD3A6EB604947F9A1C5",
+      "bytes": 423,
+      "originalIgnoredPath": "tmp/bug-141-tests/green-verified.log"
+    }
+  ],
+  "databaseConnectionsOpened": false,
+  "nativeSqlAcceptance": "Pending",
+  "independentTaskReview": "Passed",
+  "remoteDelivery": "Pending",
+  "githubActionsTriggered": false,
+  "review": {
+    "reviewer": "wp1_wiring",
+    "completedUtc": "2026-10-02T19:01:01Z",
+    "scope": "Complete staged17-file task diff against2d974736 before initial commit;4source/6original evidence hashes and snapshot identity independently confirmed",
+    "p1": 0,
+    "p2": 0,
+    "blockers": 0,
+    "subsequentScope": "Only record this review and later native evidence; no production changes"
+  }
+}

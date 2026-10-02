@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6aa6f5f8-d9da-4de4-adb1-89391c66177a" name="tt@LAPTOP-3QQ44FJS 2026-10-02 14:52:33" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T14:52:33.0983770-04:00" queuing="2026-10-02T14:52:33.0983772-04:00" start="2026-10-02T14:52:27.3566726-04:00" finish="2026-10-02T14:52:59.6250940-04:00" />
+  <TestSettings name="default" id="1a5b0bd9-43b3-4232-ab38-a53990e3fddc">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_14_52_33" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="55b59325-bded-468a-97d7-e7bf3b4d2165" testId="290a5ff5-e1b3-ae0f-6ddb-54076bcc8c5b" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderProcessNote&quot;, name: &quot;FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_Web&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0043810" startTime="2026-10-02T14:52:50.7983479-04:00" endTime="2026-10-02T14:52:50.8021107-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="55b59325-bded-468a-97d7-e7bf3b4d2165">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_OrderProcessNote] WI"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns) in D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs:line 52&#xD;
+   at InvokeStub_OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="25851456-2f8a-4689-91c5-78da5e5c4441" testId="ea1b45c6-7909-c87a-08ea-bf8e942c205c" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderMaterial&quot;, name: &quot;FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrd&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4445695" startTime="2026-10-02T14:52:31.5767086-04:00" endTime="2026-10-02T14:52:32.0120912-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25851456-2f8a-4689-91c5-78da5e5c4441" />
+    <UnitTestResult executionId="4b4d6099-98f9-4246-9489-478457c779a1" testId="8ad44b71-074b-cdcc-cccf-54f9d2b0c532" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderDetail&quot;, name: &quot;FK_T_OrderDetail_T_Order_WebOrderNo&quot;, principal: &quot;T_Order&quot;, columns: [&quot;WebOrderNo&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000738" startTime="2026-10-02T14:52:32.0180016-04:00" endTime="2026-10-02T14:52:32.0180351-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b4d6099-98f9-4246-9489-478457c779a1" />
+    <UnitTestResult executionId="f32fd1df-a685-4681-9571-d16fe7936411" testId="fff63ca5-b3fb-b896-f04b-083800a78c05" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderProcessNote&quot;, name: &quot;FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_Web&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001108" startTime="2026-10-02T14:52:32.0178869-04:00" endTime="2026-10-02T14:52:32.0179253-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f32fd1df-a685-4681-9571-d16fe7936411" />
+    <UnitTestResult executionId="4c155aed-5072-44f5-8a81-580fdeab89f4" testId="a5b7f42f-76a2-0691-22f0-bc2d603bfa57" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Original_136_chain_does_not_create_any_of_the_four_fks" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.6866377" startTime="2026-10-02T14:52:50.8027196-04:00" endTime="2026-10-02T14:52:59.4894849-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c155aed-5072-44f5-8a81-580fdeab89f4" />
+    <UnitTestResult executionId="5c286d50-4fca-41f8-8686-96af7c1623b5" testId="a0bb0610-4514-a2ec-06df-50eede2e42c8" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderProcess&quot;, name: &quot;FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrde&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0046359" startTime="2026-10-02T14:52:50.7939058-04:00" endTime="2026-10-02T14:52:50.7976250-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c286d50-4fca-41f8-8686-96af7c1623b5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_OrderProcess] WITH C"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns) in D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs:line 52&#xD;
+   at InvokeStub_OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="72a56d8a-8f22-4be9-b6bb-4a33bc663759" testId="f21a5106-a9b4-042f-b748-afbe947899b0" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderProcess&quot;, name: &quot;FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrde&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003508" startTime="2026-10-02T14:52:32.0173835-04:00" endTime="2026-10-02T14:52:32.0174538-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72a56d8a-8f22-4be9-b6bb-4a33bc663759" />
+    <UnitTestResult executionId="b820ce73-bf86-4d27-a5c3-ed89fdfbc611" testId="00706188-6790-653c-2274-aa52c5f668b5" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderDetail&quot;, name: &quot;FK_T_OrderDetail_T_Order_WebOrderNo&quot;, principal: &quot;T_Order&quot;, columns: [&quot;WebOrderNo&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0050105" startTime="2026-10-02T14:52:50.7920568-04:00" endTime="2026-10-02T14:52:50.7934003-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b820ce73-bf86-4d27-a5c3-ed89fdfbc611">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_OrderDetail] WITH CH"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns) in D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs:line 52&#xD;
+   at InvokeStub_OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="47980983-9510-4987-9c0a-654ade4bd8d3" testId="f5bca086-28b5-6fe5-f3a5-36864fae2a65" testName="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderMaterial&quot;, name: &quot;FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrd&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" computerName="LAPTOP-3QQ44FJS" duration="00:00:18.7646799" startTime="2026-10-02T14:52:32.0184322-04:00" endTime="2026-10-02T14:52:50.7879366-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47980983-9510-4987-9c0a-654ade4bd8d3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_OrderMaterial] WITH "···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns) in D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs:line 52&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderDetail&quot;, name: &quot;FK_T_OrderDetail_T_Order_WebOrderNo&quot;, principal: &quot;T_Order&quot;, columns: [&quot;WebOrderNo&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8ad44b71-074b-cdcc-cccf-54f9d2b0c532">
+      <Execution id="4b4d6099-98f9-4246-9489-478457c779a1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Frozen_snapshot_has_each_required_global_business_key_cascade" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderProcess&quot;, name: &quot;FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrde&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a0bb0610-4514-a2ec-06df-50eede2e42c8">
+      <Execution id="5c286d50-4fca-41f8-8686-96af7c1623b5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderProcessNote&quot;, name: &quot;FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_Web&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="fff63ca5-b3fb-b896-f04b-083800a78c05">
+      <Execution id="f32fd1df-a685-4681-9571-d16fe7936411" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Frozen_snapshot_has_each_required_global_business_key_cascade" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderProcess&quot;, name: &quot;FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrde&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f21a5106-a9b4-042f-b748-afbe947899b0">
+      <Execution id="72a56d8a-8f22-4be9-b6bb-4a33bc663759" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Frozen_snapshot_has_each_required_global_business_key_cascade" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Frozen_snapshot_has_each_required_global_business_key_cascade(table: &quot;T_OrderMaterial&quot;, name: &quot;FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrd&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="ea1b45c6-7909-c87a-08ea-bf8e942c205c">
+      <Execution id="25851456-2f8a-4689-91c5-78da5e5c4441" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Frozen_snapshot_has_each_required_global_business_key_cascade" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Original_136_chain_does_not_create_any_of_the_four_fks" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a5b7f42f-76a2-0691-22f0-bc2d603bfa57">
+      <Execution id="4c155aed-5072-44f5-8a81-580fdeab89f4" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Original_136_chain_does_not_create_any_of_the_four_fks" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderMaterial&quot;, name: &quot;FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrd&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f5bca086-28b5-6fe5-f3a5-36864fae2a65">
+      <Execution id="47980983-9510-4987-9c0a-654ade4bd8d3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderDetail&quot;, name: &quot;FK_T_OrderDetail_T_Order_WebOrderNo&quot;, principal: &quot;T_Order&quot;, columns: [&quot;WebOrderNo&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="00706188-6790-653c-2274-aa52c5f668b5">
+      <Execution id="b820ce73-bf86-4d27-a5c3-ed89fdfbc611" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: &quot;T_OrderProcessNote&quot;, name: &quot;FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_Web&quot;···, principal: &quot;T_OrderDetail&quot;, columns: [&quot;WebOrderNo&quot;, &quot;WebOrderDetailNo&quot;, &quot;ProductCd&quot;])" storage="d:\cp6\tmp\worktrees\bug-141-order-foreign-keys\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="290a5ff5-e1b3-ae0f-6ddb-54076bcc8c5b">
+      <Execution id="55b59325-bded-468a-97d7-e7bf3b4d2165" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.OrderModelForeignKeyRepairTests" name="Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="290a5ff5-e1b3-ae0f-6ddb-54076bcc8c5b" executionId="55b59325-bded-468a-97d7-e7bf3b4d2165" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea1b45c6-7909-c87a-08ea-bf8e942c205c" executionId="25851456-2f8a-4689-91c5-78da5e5c4441" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ad44b71-074b-cdcc-cccf-54f9d2b0c532" executionId="4b4d6099-98f9-4246-9489-478457c779a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fff63ca5-b3fb-b896-f04b-083800a78c05" executionId="f32fd1df-a685-4681-9571-d16fe7936411" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5b7f42f-76a2-0691-22f0-bc2d603bfa57" executionId="4c155aed-5072-44f5-8a81-580fdeab89f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0bb0610-4514-a2ec-06df-50eede2e42c8" executionId="5c286d50-4fca-41f8-8686-96af7c1623b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f21a5106-a9b4-042f-b748-afbe947899b0" executionId="72a56d8a-8f22-4be9-b6bb-4a33bc663759" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00706188-6790-653c-2274-aa52c5f668b5" executionId="b820ce73-bf86-4d27-a5c3-ed89fdfbc611" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f5bca086-28b5-6fe5-f3a5-36864fae2a65" executionId="47980983-9510-4987-9c0a-654ade4bd8d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="5" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:01.55]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:02.46]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:02.49]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:21.73]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:21.73]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:21.73]       Not found: "ALTER TABLE [dbo].[T_OrderMaterial] WITH "···&#xD;
+[xUnit.net 00:00:21.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:21.73]         D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs(52,0): at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns)&#xD;
+[xUnit.net 00:00:21.73]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:21.73]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:21.73]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:21.73]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:21.73]       Not found: "ALTER TABLE [dbo].[T_OrderDetail] WITH CH"···&#xD;
+[xUnit.net 00:00:21.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:21.73]         D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs(52,0): at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns)&#xD;
+[xUnit.net 00:00:21.73]            at InvokeStub_OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(Object, Span`1)&#xD;
+[xUnit.net 00:00:21.73]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:21.73]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:21.73]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:21.73]       Not found: "ALTER TABLE [dbo].[T_OrderProcess] WITH C"···&#xD;
+[xUnit.net 00:00:21.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:21.73]         D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs(52,0): at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns)&#xD;
+[xUnit.net 00:00:21.73]            at InvokeStub_OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(Object, Span`1)&#xD;
+[xUnit.net 00:00:21.73]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:21.74]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:21.74]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:21.74]       Not found: "ALTER TABLE [dbo].[T_OrderProcessNote] WI"···&#xD;
+[xUnit.net 00:00:21.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:21.74]         D:\CP6\tmp\worktrees\bug-141-order-foreign-keys\CP6.Tests\Persistence\OrderModelForeignKeyRepairTests.cs(52,0): at CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(String table, String name, String principal, String[] columns)&#xD;
+[xUnit.net 00:00:21.74]            at InvokeStub_OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(Object, Span`1)&#xD;
+[xUnit.net 00:00:21.74]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:30.43]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T14:52:50.7899583-04:00">
+        <Text>[xUnit.net 00:00:21.73]     CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: "T_OrderMaterial", name: "FK_T_OrderMaterial_T_OrderDetail_WebOrderNo_WebOrd"···, principal: "T_OrderDetail", columns: ["WebOrderNo", "WebOrderDetailNo", "ProductCd"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T14:52:50.7936482-04:00">
+        <Text>[xUnit.net 00:00:21.73]     CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: "T_OrderDetail", name: "FK_T_OrderDetail_T_Order_WebOrderNo", principal: "T_Order", columns: ["WebOrderNo"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T14:52:50.7978751-04:00">
+        <Text>[xUnit.net 00:00:21.73]     CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: "T_OrderProcess", name: "FK_T_OrderProcess_T_OrderDetail_WebOrderNo_WebOrde"···, principal: "T_OrderDetail", columns: ["WebOrderNo", "WebOrderDetailNo", "ProductCd"]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T14:52:50.8024988-04:00">
+        <Text>[xUnit.net 00:00:21.74]     CP6.Tests.Persistence.OrderModelForeignKeyRepairTests.Complete_chain_creates_each_missing_fk_with_check_and_frozen_actions(table: "T_OrderProcessNote", name: "FK_T_OrderProcessNote_T_OrderDetail_WebOrderNo_Web"···, principal: "T_OrderDetail", columns: ["WebOrderNo", "WebOrderDetailNo", "ProductCd"]) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-02：BUG #141 四条订单外键修复完成本地自动化
+
+[Issue #141](https://github.com/GTX537/CP6/issues/141) 已实现四条 SQL-only WITH CHECK 外键前向修复和完整既有对象 guard，不改模型、snapshot、旧迁移或数据。旧链 RED **4 失败 / 5 通过**，相关 **37/37、零跳过、最终零 warning/error**（含原索引25），一次独立完整审查无实质阻塞，[原始证据](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留首轮 warning 与修正范围。本条完成仅本地实现/自动化及审查；真实 SQL、远端交付仍待验，Issue Open，不替代 WP2 其他门禁。未运行 Actions 或部署。
+
 ## 2026-10-02：BUG #139 本地及真实 SQL 验收完成，待远端交付
 
 [订单查询索引遗漏](https://github.com/GTX537/CP6/issues/139) 的 21 项 SQL-only 修复已通过单元 **25/25**（保留 RED **21 失败 / 1 通过**）、真实同 binary 首次/重复初始化 exit 0 且无 HTTP、升级/重复比较各 **25/25** 及 native guard **8/8**。352 表 count/摘要状态及全部旧索引捕获 metadata 保留，负场景均恢复原状态；晚冲突证明外层事务撤销前 20 项创建。一次独立完整审查无实质阻塞，[原始证据与失败范围](../audits/2026-10-02-bug-139-order-indexes/README.md)完整保留。功能源码 `083e9c4d` 未变，后续文档复用结果。此条完成范围为本地验收；正常 PR/远端 main/Issue 关闭待交付，Issue Open，不代表 WP2 其他结构或 PG API 完成。未运行 Actions 或部署。
