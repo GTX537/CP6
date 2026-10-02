@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
+
+[采购对账菜单首次资源键修复](https://github.com/GTX537/CP6/issues/137)已在独立分支提交。旧逻辑 RED **2 失败 / 1 通过**；修复后相关测试 **20/20 通过、零跳过**。真实隔离 SQL 空库首次初始化即有菜单资源键；同一 compiled API 再次初始化后，**全部 351 张表行数和迁移历史不变**，包括字段审计。全局/租户翻译、管理员昵称与密码哈希原样保留，两次进程退出 0、不启动 HTTP。详见[执行证据与适用边界](../audits/2026-10-02-bug-137-menu-seed/README.md)。
+
+功能执行源 `bab643750111beef610eba911bb530b422f9d99f`；后续文档及证据提交复用相同功能源码的测试。正常 PR 合并、远端 main 包含性核对及 Issue 关闭待交付步骤完成；当前 Issue Open。不执行 Actions、现有数据库迁移或部署；触发配置未改、取消项 0。
+
 ## 2026-10-02：DB-COMPAT-01 WP1 本地门禁完成（待正常 PR 交付）
 
 已完成 [Issue #134](https://github.com/GTX537/CP6/issues/134) WP1 的本地配置接线与限定真库门禁：配置测试 **133/133，零跳过**（包含原 38 项，不重复相加）；SQL Server **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`，固定当前 Platform **0.10.2**；原失败和候选排除证据保留，见[阶段决策](../audits/database-compatibility/WP1-DECISIONS.md)和[真库探针](../audits/database-compatibility/WP1-PROBE.md)。

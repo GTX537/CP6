@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
+
+[采购对账菜单首次资源键修复](https://github.com/GTX537/CP6/issues/137)已在独立分支提交。旧逻辑 RED **2 失败 / 1 通过**；修复后相关测试 **20/20 通过、零跳过**。真实隔离 SQL 空库首次初始化即有菜单资源键；同一 compiled API 再次初始化后，**全部 351 张表行数和迁移历史不变**，包括字段审计。全局/租户翻译、管理员昵称与密码哈希原样保留，两次进程退出 0、不启动 HTTP。详见[执行证据与适用边界](../audits/2026-10-02-bug-137-menu-seed/README.md)。
+
+功能执行源 `bab643750111beef610eba911bb530b422f9d99f`；后续文档及证据提交复用相同功能源码的测试。正常 PR 合并、远端 main 包含性核对及 Issue 关闭待交付步骤完成；当前 Issue Open。不执行 Actions、现有数据库迁移或部署；触发配置未改、取消项 0。
+
 ## 2026-10-02：DB-COMPAT-01 WP1 本地门禁完成，待正常 PR 交付
 
 用户要求在本对话持续执行 [Issue #134](https://github.com/GTX537/CP6/issues/134) 的六阶段兼容任务。WP1 从远端确认的 `685a5238` 建立独立 worktree / 分支，已完成 Provider、连接与四 Context 的注册/设计时迁移选择。配置接线本地测试 **133 通过 / 0 失败 / 0 跳过**，包含此前 38 项 Provider 基础测试，不重复相加。固定实际 Platform **0.10.2** 的源码、包身份与运行证据；详见 [WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)和[探针证据](../audits/database-compatibility/WP1-PROBE.md)。

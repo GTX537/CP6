@@ -1,0 +1,50 @@
+{
+  "red": {
+    "counters": {
+      "total": "3",
+      "executed": "3",
+      "passed": "1",
+      "failed": "2",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "sha256": "f2b640c536bcbb826923dea51a2165051681eb1e552cc4969ca57ad0f25f58b0"
+  },
+  "green": {
+    "counters": {
+      "total": "20",
+      "executed": "20",
+      "passed": "20",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "sha256": "2392cfa880f4a8da4340705653610496a62e91bc31077bd1ccbfa91eb3f93fcc"
+  },
+  "baseSha": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "greenSourceSha256": {
+    "CP6.WebApi\\Program.cs": "721e4d5997bfee435fd32ee28409e37bd5c582a74cfebe25064c3e2f10cbad51",
+    "CP6.WebApi\\Seed\\PurReconcileMenuSeed.cs": "99071a521e319c5bad795f3adc0927d4110cab48e3fecd3e6fc513dc6f66cf5e",
+    "CP6.Tests\\PurReconcileMenuSeedTests.cs": "7056c8602f6c938ee3e580c837ebb82ee7397265406d958818ad1d6f7bb27f2c"
+  }
+}

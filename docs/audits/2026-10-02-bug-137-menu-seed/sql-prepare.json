@@ -1,0 +1,30 @@
+{
+  "Scope": "WP2 real full migration/catalog installation; business, seeds, upgrade and restoration gates separate",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-02T16:46:57.1832671Z",
+  "FinishedUtc": "2026-10-02T16:46:57.9726117Z",
+  "SourceBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "SourceState": "WP2 uncommitted task input; applicable build log and file hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "8EE749D4D235E60B74B0F50E6AA32EFF68D79ED0FE0FC37DFCF09FAC76544FB5",
+    "CP6.Persistence.PostgreSql": "32659E14BB909E525E2C3440B146A21A96FC1247BC721FEE7779B45815E23FF9",
+    "CP6.Space.Infrastructure": "7825D6ECFDABFE84CFC4731B180C69FF641F9EF2594A6A10D20C29B63A4BD28B",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+    },
+    {
+      "Name": "Seed.prepare",
+      "Status": "Passed",
+      "Detail": "Captured all 351 table row counts after actual first initialization; prepared translation and admin retention fixtures; password digest only."
+    }
+  ]
+}

@@ -1850,12 +1850,7 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 707 });
         db.SaveChanges();
     }
-    if (!db.Sys_Menus.Any(m => m.MenuId == 708))
-    {
-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 708, MenuName = "采购对账", RoutePath = "/pur/reconcile", Icon = "Finished", ParentId = 700, OrderNo = 708, Enable = true });
-        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 708 });
-        db.SaveChanges();
-    }
+    CP6.WebApi.Seed.PurReconcileMenuSeed.EnsureSeeded(db);
     // 计划中台（Plan）P1 MRP 菜单（730 组）—— 置于采购之后（OrderNo 246）
     if (!db.Sys_Menus.Any(m => m.MenuId == 730))
     {

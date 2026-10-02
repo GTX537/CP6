@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
+
+[采购对账菜单首次资源键修复](https://github.com/GTX537/CP6/issues/137)已在独立分支提交。旧逻辑 RED **2 失败 / 1 通过**；修复后相关测试 **20/20 通过、零跳过**。真实隔离 SQL 空库首次初始化即有菜单资源键；同一 compiled API 再次初始化后，**全部 351 张表行数和迁移历史不变**，包括字段审计。全局/租户翻译、管理员昵称与密码哈希原样保留，两次进程退出 0、不启动 HTTP。详见[执行证据与适用边界](../audits/2026-10-02-bug-137-menu-seed/README.md)。
+
+功能执行源 `bab643750111beef610eba911bb530b422f9d99f`；后续文档及证据提交复用相同功能源码的测试。正常 PR 合并、远端 main 包含性核对及 Issue 关闭待交付步骤完成；当前 Issue Open。不执行 Actions、现有数据库迁移或部署；触发配置未改、取消项 0。
+
 ## 2026-10-02：PostgreSQL / SQL Server 兼容 WP1 本地门禁完成
 
 按用户要求持续执行 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)，在独立分支实现严格 Provider、连接工厂、四 Context 迁移 profile / 设计时配置，统一应用 / Space / identity / ERP / Dapper 接线及 PG 生产连接校验。固定 Npgsql Provider **8.0.11** / driver **8.0.8**、EF **8.0.30**、实际 Platform **0.10.2**；配置测试 **133/133，零跳过**（包含原 38 项，不重复相加），SQL 真库 **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG 真库 **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`；原始失败记录保留，详见[WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)和[探针证据](../audits/database-compatibility/WP1-PROBE.md)。
