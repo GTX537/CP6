@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-02：BUG #137 交付剩余门禁
+
+[Issue #137](https://github.com/GTX537/CP6/issues/137) 的独立分支已完成本地修复与 **20/20、零跳过**相关回归；[项目状态](PROJECT_STATE.md)记录旧逻辑 RED 与验证范围。接下来由任务负责人完成隔离 SQL 空库的首次/重复初始化原步骤复测，再正常 PR 交付、核对远端 `main` 并回写 Issue 后关闭。当前只准备本地提交，Issue 保持 Open；不把本地 InMemory 测试作为真库验收。
+
 ## 2026-10-02：DB-COMPAT-01 WP1 待正常 PR 交付，随后执行 WP2
 
 [Issue #134](https://github.com/GTX537/CP6/issues/134) 是本对话持续目标，六阶段按[计划](../superpowers/plans/2026-10-02-database-compatibility.md)推进。WP1 本地门禁已完成：配置测试 **133/133，零跳过**（含原 38 项，不重复相加）；SQL **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`，固定实际 Platform **0.10.2**。已选定 PG 数据库生成 **8 字节 bytea token** 与独立持久化 tenant generation / v2 cursor，并完成真实 `40001` 和严格 UTC 试验；见[WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)及[探针证据](../audits/database-compatibility/WP1-PROBE.md)。

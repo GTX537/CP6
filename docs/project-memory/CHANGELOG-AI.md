@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-02：BUG #137 本地修复验证，待远端交付
+
+在 `d6074aaa` 基线的独立分支提取 `PurReconcileMenuSeed`，替换 Program 原菜单 708 inline seed，新插入即写入 `pur-reconcile`。新增首次创建含 key/admin 授权、重复初始化零额外审计、已有配置/授权保留三个 CP6Context 测试；旧逻辑 RED **2 失败 / 1 通过**，修复及相关权限/审计回归 **20/20 通过，零跳过**，相关 API 依赖编译零警告/错误。原始日志与 TRX 保留，详见[项目状态](PROJECT_STATE.md)。
+
+[Issue #137](https://github.com/GTX537/CP6/issues/137) 保持 Open，等待任务负责人真库原步骤复测及正常 PR/远端 `main` 核对；本条仅保存本地验证时点，未 push、创建 PR、合并、执行 Actions、改动现有数据库或部署。
+
 ## 2026-10-02：PostgreSQL / SQL Server 兼容 WP1 本地门禁完成
 
 按用户要求持续执行 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)，在独立分支实现严格 Provider、连接工厂、四 Context 迁移 profile / 设计时配置，统一应用 / Space / identity / ERP / Dapper 接线及 PG 生产连接校验。固定 Npgsql Provider **8.0.11** / driver **8.0.8**、EF **8.0.30**、实际 Platform **0.10.2**；配置测试 **133/133，零跳过**（包含原 38 项，不重复相加），SQL 真库 **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG 真库 **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`；原始失败记录保留，详见[WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)和[探针证据](../audits/database-compatibility/WP1-PROBE.md)。

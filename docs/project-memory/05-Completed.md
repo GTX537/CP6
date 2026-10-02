@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-02：BUG #137 本地修复与回归完成（待真实复测及远端交付）
+
+已在独立分支修复 [采购对账菜单首次初始化缺资源键](https://github.com/GTX537/CP6/issues/137)：菜单 708 在插入时具备 `pur-reconcile`，重复初始化不再因补该 key 新增审计，已有自定义菜单和授权保留。三个真实 CP6Context/InMemory 测试对旧逻辑确认 **2 失败 / 1 通过**，修复后与相关权限、字段审计测试 **20/20 通过，零跳过**，相关 API 依赖编译零警告/错误；证据位置和边界见[项目状态](PROJECT_STATE.md)。
+
+此处已完成项仅为本地修复与回归；隔离 SQL 空库原步骤复测、正常 PR 合并及远端 `main` 包含性尚待任务负责人完成，Issue 保持 Open。未运行 Actions、改动现有数据库或部署。
+
 ## 2026-10-02：DB-COMPAT-01 WP1 本地门禁完成（待正常 PR 交付）
 
 已完成 [Issue #134](https://github.com/GTX537/CP6/issues/134) WP1 的本地配置接线与限定真库门禁：配置测试 **133/133，零跳过**（包含原 38 项，不重复相加）；SQL Server **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`，固定当前 Platform **0.10.2**；原失败和候选排除证据保留，见[阶段决策](../audits/database-compatibility/WP1-DECISIONS.md)和[真库探针](../audits/database-compatibility/WP1-PROBE.md)。

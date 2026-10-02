@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-10-02：BUG #137 采购对账菜单首轮资源键，本地回归通过
+
+从已核对的远端 `main` 基线 `d6074aaa` 创建独立分支，修复 [Issue #137](https://github.com/GTX537/CP6/issues/137)：全局 MenuKey 回填先于菜单 708 创建，旧插入缺 key，第二次初始化才补齐并增加字段审计。提取 [PurReconcileMenuSeed](../../CP6.WebApi/Seed/PurReconcileMenuSeed.cs)，新建菜单时直接写入 `pur-reconcile`，Program 在原位置调用；已有菜单的自定义配置和授权保留。
+
+[三个 CP6Context 回归测试](../../CP6.Tests/PurReconcileMenuSeedTests.cs)先对原样提取的旧逻辑得到 **2 项预期失败 / 1 项通过 / 0 跳过**；修复后连同采购权限 seed、字段审计相关测试 **20/20 通过，零跳过**，锁定依赖恢复和相关 API 依赖编译成功，零警告/错误。真实日志与 TRX 保留于本任务 worktree 的 `tmp/bug-137-seed/`。这些测试使用 InMemory Provider，不替代真实数据库初始化验收。
+
+本条记录本地修复验证时点，待任务负责人以隔离 SQL 空库复测首次及重复初始化，并完成正常 PR 与远端 `main` 核对；Issue 保持 Open。本轮只准备审查后的本地提交，未 push、创建 PR、合并、运行 Actions 或接触现有数据库/部署。
+
 ## 2026-10-02：DB-COMPAT-01 WP1 本地门禁完成，待正常 PR 交付
 
 用户要求在本对话持续执行 [Issue #134](https://github.com/GTX537/CP6/issues/134) 的六阶段兼容任务。WP1 从远端确认的 `685a5238` 建立独立 worktree / 分支，已完成 Provider、连接与四 Context 的注册/设计时迁移选择。配置接线本地测试 **133 通过 / 0 失败 / 0 跳过**，包含此前 38 项 Provider 基础测试，不重复相加。固定实际 Platform **0.10.2** 的源码、包身份与运行证据；详见 [WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)和[探针证据](../audits/database-compatibility/WP1-PROBE.md)。
