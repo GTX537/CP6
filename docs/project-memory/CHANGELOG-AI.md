@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-02：登记 PostgreSQL / SQL Server 兼容主任务
+
+用户接受共享业务、每部署一个 Provider、独立迁移链的方向；新增[盘点](../audits/2026-10-02-database-compatibility.md)、[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)和[计划](../superpowers/plans/2026-10-02-database-compatibility.md)，关联 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)并同步四份项目记忆。父任务保持 Open；此次仅任务建档，功能、数据库迁移与既有数据搬迁均未执行。普通验证维持本地，未触发 Actions、修改工作流/分支保护或部署。
+
 ## 2026-09-22：cp6.uk 独立 demo 部署
 
 新增 `deploy/demo/compose.yaml`、操作说明与 `scripts/Test-Cp6Demo.ps1`。将用户指定的 main `ac624299` 本机镜像部署到独立数据库副本和消息/缓存资源，停止旧 Tunnel 后切换到唯一 demo 连接器，保留旧 API 退休控制。补回已核对来源的 Space 演示配置；公网 10 项 smoke、错误 SHA 拒绝、登录和业务页面检查见[报告](../devops/evidence/cp6uk-demo-20260922/README.md)。保留 Issue #132 库存叠加失败，不声明其修复；未运行 Actions 或生产部署。

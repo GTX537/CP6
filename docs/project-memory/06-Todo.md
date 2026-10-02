@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-02：DB-COMPAT-01 双数据库兼容
+
+主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)，Open。用户已接受同一代码按部署选择 SQL Server 或 PostgreSQL，保留现有 SQL Server 迁移历史，新增独立 PostgreSQL 迁移链。唯一阶段/验收明细在[实施计划](../superpowers/plans/2026-10-02-database-compatibility.md)，事实与边界见[盘点](../audits/2026-10-02-database-compatibility.md)和[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)，此处只保留路线入口。
+
+下一步执行 WP1：统一 Provider/连接/Context 工厂，核验实际 Platform 0.10.2 包，并以真实双库试验冻结并发 token、身份快照边界和跨 Context 原子事务方案。随后按 WP2 映射迁移、WP3 数据库能力、WP4 关键业务、WP5 Space/报表、WP6 验收运维推进。功能尚未开始；已有 SQL Server 数据搬迁、独立 CRM 和生产切换另立任务，不以连接或建档作为完成证据。
+
 ## 2026-09-22：demo 使用边界
 
 `cp6.uk` 已接入独立 `cp6-demo`。演示前运行 [runbook](../../deploy/demo/README.md) 中的健康/身份检查，并保持电脑和 Docker 在线；不要用根项目旧启动脚本重新开启退休 API。当前 ERP/WMS 列表与 Space 两层模型可展示；实时库存叠加仍按 [Issue #132](https://github.com/GTX537/CP6/issues/132) 独立修复和验证。独立 CRM、生产发布及真实业务全流程不在此次验收范围。

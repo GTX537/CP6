@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-02：双数据库兼容任务已登记，功能实施未开始
+
+用户接受“同一套代码、每次部署选择 PostgreSQL 或 SQL Server”，以及共享业务模型、独立 Provider 迁移链的方向。主任务为 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)，保持 Open；[源码盘点](../audits/2026-10-02-database-compatibility.md)、[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)与[六阶段计划](../superpowers/plans/2026-10-02-database-compatibility.md)已建档。基线 `157630594e3371fe181955d2f6227ff3b6962c84`：四个 Context、187 个迁移主文件、208 个 rowversion 快照映射；本机 PostgreSQL 18 服务运行只证明环境存在。
+
+下一步 WP1 核验 Provider/Context 工厂、真实 Platform 包、并发 token、身份快照边界及同连接事务。现有 SQL Server 数据搬迁、独立 CRM 全面改造和生产上线另立任务。本次仅文档与任务登记，未修改运行代码、连接业务数据库、执行迁移/业务测试或触发 Actions；文档合并不等于兼容功能完成。
+
 ## 2026-09-22：cp6.uk 主站 demo 更新
 
 按用户授权，将 main `ac624299` 的 ERP/WMS/3D Space 发布到独立 `cp6-demo`，使用 `CP6_DEMO_20260922` 副本和独立缓存/消息服务；退休根 API 保持 stopped/no restart，旧 Tunnel 停止。公网登录、健康、双端源码身份、ERP/WMS 列表、Space Published 两层模型已验证；10 项自动化 smoke 通过，错误 SHA 被拒绝。3D 实时库存叠加仍受 [Issue #132](https://github.com/GTX537/CP6/issues/132) 影响。详见[部署证据](../devops/evidence/cp6uk-demo-20260922/README.md)与[操作说明](../../deploy/demo/README.md)。未执行 Actions、生产部署或独立 CRM 接入。
