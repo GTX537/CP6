@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-02：双数据库源码盘点与任务建档
+
+完成 PostgreSQL / SQL Server 兼容性[静态盘点](../audits/2026-10-02-database-compatibility.md)，将用户接受的独立迁移链方向登记为 [DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)，交付[设计](../superpowers/specs/2026-10-02-database-compatibility-design.md)和[六阶段计划](../superpowers/plans/2026-10-02-database-compatibility.md)。本条已完成项仅限盘点、范围与验收条件建档；父任务保持 Open，六个功能工作包均未开始，不宣称双库已可运行或已有数据已搬迁。
+
+本次适用验证限文档链接、完整差异及交付保护；未编译、连接业务数据库、执行迁移/业务测试、运行 Actions 或部署。
+
 ## 2026-09-22：最新 main 的公网 demo
 
 完成 `ac624299` API/Web 镜像、校验后的数据库副本、独立依赖、一次性迁移和 `cp6.uk` Tunnel 切换；实际登录及 ERP/WMS/Space 模型读取通过。新增 [demo Compose/runbook](../../deploy/demo/README.md) 和 `Test-Cp6Demo.ps1`，公网 10 项检查通过，错误 SHA 拒绝；[证据](../devops/evidence/cp6uk-demo-20260922/README.md)保留验证边界。3D 库存叠加 Issue #132 未解决；不是 R2 生产发布。
