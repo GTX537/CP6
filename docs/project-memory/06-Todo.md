@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-02：BUG #139 待真实 SQL 与正常交付
+
+[Issue #139](https://github.com/GTX537/CP6/issues/139) 的独立前向修复已本地 **25/25 GREEN、零跳过**，保留旧链 **21 失败 / 1 通过** 的原始 RED。[本地范围和定义](../audits/2026-10-02-bug-139-order-indexes/README.md)明确只补 21 个非唯一索引。下一步由任务负责人在准确 owner 的隔离 SQL 库验证目录及原数据保留、同名一致重复保持、不同 key/filter/unique/include/desc/disabled/ignoredup 拒绝与事务回滚，并完成一次独立任务审查。随后正常 PR、远端 main 包含性及原步骤复测完成后关闭；当前 Issue Open。此项不替代 DB-COMPAT-01 的阶段门禁，未触发 Actions 或生产部署。
+
 ## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
 
 [采购对账菜单首次资源键修复](https://github.com/GTX537/CP6/issues/137)已在独立分支提交。旧逻辑 RED **2 失败 / 1 通过**；修复后相关测试 **20/20 通过、零跳过**。真实隔离 SQL 空库首次初始化即有菜单资源键；同一 compiled API 再次初始化后，**全部 351 张表行数和迁移历史不变**，包括字段审计。全局/租户翻译、管理员昵称与密码哈希原样保留，两次进程退出 0、不启动 HTTP。详见[执行证据与适用边界](../audits/2026-10-02-bug-137-menu-seed/README.md)。

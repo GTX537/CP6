@@ -1,0 +1,68 @@
+{
+  "issue": 139,
+  "base": "d507f389fdcadd8e2fc5dcb9e40f752cde613703",
+  "definitionOracle": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "snapshotGitBlob": "21ed77b4056ee44b4f44e61de13d5d34774d6934",
+  "migration": "20261002175000_RestoreMissingOrderModelIndexes",
+  "restore": {
+    "lockedMode": true,
+    "exitCode": 0
+  },
+  "red": {
+    "passed": 1,
+    "failed": 21,
+    "skipped": 0,
+    "total": 22,
+    "exitCode": 1
+  },
+  "green": {
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0,
+    "total": 25,
+    "exitCode": 0
+  },
+  "apiSha256": "4CF42E4D68980CB0D5C1D0F819E2CBD48B428749DF5CDEE0268369A7F6D2A5BE",
+  "coreSha256": "15E865AD90929B017680D07BA7FFD155238EFB10AEAB36816B65E800DA1E4076",
+  "sources": [
+    {
+      "path": "CP6.Core/Migrations/20261002175000_RestoreMissingOrderModelIndexes.cs",
+      "sha256": "4FC67AA5CEE2929BF4366965BBF3AA29CBD849A02B01E467C0FDA09783FAABCB"
+    },
+    {
+      "path": "CP6.Core/Persistence/OrderModelIndexRepairSql.cs",
+      "sha256": "6914B5D777561405DC42EBBBE4EC207E4D4F93FCCB00944D261AF3F876278922"
+    },
+    {
+      "path": "CP6.Tests/Persistence/OrderModelIndexRepairTests.cs",
+      "sha256": "2282CE4E3658A6843D12E40482B272B870635F592C4B53BE664B70552097EE64"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "bug-139-red.trx",
+      "sha256": "B22733E097EC6D3CCC9A954EECAE09E098ACE7DE17B97596ABA556DB738091A5",
+      "bytes": 86099
+    },
+    {
+      "path": "bug-139-green.trx",
+      "sha256": "5C730A799AA5E299A2C2F4DBE8369AD178572D50D9E440FC74385C8DC920CF48",
+      "bytes": 42692
+    },
+    {
+      "path": "bug-139-red.log",
+      "sha256": "0BF700A27C2910A6D14BC9F83D9C48693963B60673BB0D8B90539ECC81F36DF7",
+      "bytes": 5772
+    },
+    {
+      "path": "bug-139-green.log",
+      "sha256": "D23AB1A452701471C3DC8B2721DEF233ECC8B5B1DD61B04D9A5B68BDD8A707B8",
+      "bytes": 395
+    }
+  ],
+  "databaseConnectionsOpened": false,
+  "nativeSqlAcceptance": "Pending",
+  "independentTaskReview": "Pending",
+  "remoteDelivery": "Pending",
+  "githubActionsTriggered": false
+}
