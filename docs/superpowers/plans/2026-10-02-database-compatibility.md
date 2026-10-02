@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：用户已接受架构方向，并要求将其设为本对话持续目标；WP1 实施中，WP2–WP6 尚未开始。更新日期：2026-10-02。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。配置基础与未完成门禁见 [WP1 记录](../../audits/database-compatibility/WP1-DECISIONS.md)。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：用户已接受架构方向，并要求将其设为本对话持续目标；WP1 本地门禁完成、方案冻结、准备正常 PR 交付，WP2–WP6 尚未开始。更新日期：2026-10-02。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。冻结方案与后续安装职责见 [WP1 记录](../../audits/database-compatibility/WP1-DECISIONS.md)。整体兼容与远端交付不能提前记作完成。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -42,12 +42,12 @@
 
 **产出：** 配置契约、统一连接/Context 工厂及 `WP1-DECISIONS.md`。不以“连接成功”宣称整体兼容。
 
-- [ ] 将 Provider 接口约定固定为 `Database:Provider`：`SqlServer` / `PostgreSql`；旧配置缺省为 SqlServer，显式未知值启动失败，禁止根据连接字符串猜测 Provider。工厂、设计时 EF、Dapper 和生产校验使用同一解析结果。
-- [ ] 核对实际消费的 `CP6.Platform.EntityFramework [0.10.2]` 源码、包身份、EF 模型与所有消息写入路径。若模型/租约绑定 SQL Server，在 Platform 权威源中交付固定新包后再消费；记录对应源码 SHA、包版本和哈希，不用本地旧 checkout 或复制实现替代。
-- [ ] 在两种真实临时数据库验证两个并发候选：SQL Server 保持原生 rowversion；PostgreSQL 分别试验数据库生成的 8 字节 opaque token、应用生成 token。每个候选必须覆盖 EF SaveChanges、ExecuteUpdate、原始 SQL、消息包写入、插入默认值、更新后回读和陈旧 token 拒绝；凡存在漏更新路径的候选不得选用。
-- [ ] 单独验证身份快照分页边界。使用与业务写入同事务推进的租户 generation 或持久化快照边界，验证跨页写入导致拒绝/重启或读取固定快照，不遗漏记录；`xmin` 不作为外部单调水位。记录游标/API 兼容性、8 字节重放输入、Base64/If-Match 行为以及需要的前向 SQL Server 变更。
-- [ ] 为共用连接的 CP6/Space/Identity/ERP Context 工厂完成两库事务试验：业务写入成功后故意中止事务，数据库内业务、消息和发布变更均不可见；提交时共同可见。Dapper 命令需要共享事务时必须显式接入该事务。
-- [ ] 固定 Provider/Npgsql 依赖版本和 lock；记录试验真实命令、服务器版本、临时库身份、源码 SHA、成功/失败结果和清理回执。WP1 结案须给出选定方案及所有写路径覆盖表，不能只列候选。
+- [x] 将 Provider 接口约定固定为 `Database:Provider`：`SqlServer` / `PostgreSql`；旧配置缺省为 SqlServer，显式未知值启动失败，禁止根据连接字符串猜测 Provider。工厂、设计时 EF、Dapper 和生产校验使用同一解析结果。
+- [x] 核对实际消费的 `CP6.Platform.EntityFramework [0.10.2]` 源码、包身份、EF 模型与所有消息写入路径。双库实测可保留当前签名包，消费者管理 PG 模型/触发器；记录源码 SHA、包版本及哈希，不用本地旧 checkout 或复制实现替代。
+- [x] 在两种真实临时数据库验证两个并发候选：SQL Server 保持原生 rowversion；PG 选择数据库生成的 8 字节 opaque bytea token，SaveChanges-only 应用候选被实际 raw/ExecuteUpdate 陈旧覆盖淘汰。覆盖表和生产安装职责见 WP1 记录。
+- [x] 单独验证身份快照分页边界。冻结同事务持久 tenant generation；跨页变化、墓碑/物理删除、跨租户、回滚与真实进程重启通过。保留 byte[] / Base64 / replay 输入；WP3 保留现有 API 外形并通过 v2 cursor 拒绝旧边界；SQL Server generation 为前向迁移。不是实际 API 已接入。
+- [x] 为共用连接的 CP6/Space/Identity/ERP Context 工厂完成两库实际 DatabaseFacade 限量表事务试验，Dapper 显式参加相同实际事务；提交共同可见，回滚共同不可见。全量实体/迁移和具体业务调用仍在后续阶段。
+- [x] 固定 Provider/Npgsql 依赖版本和 lock；真实命令、服务器版本、源码/运行二进制 fingerprint、成功/失败、清理回执及选定方案/写路径表已保留。
 
 配置契约示例（字段示例不是现有配置实现，也不包含凭据）：
 

@@ -1,8 +1,10 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-02：DB-COMPAT-01 的本地基础验证进展（WP1 未结案）
+## 2026-10-02：DB-COMPAT-01 WP1 本地门禁完成（待正常 PR 交付）
 
-本对话已将 [Issue #134](https://github.com/GTX537/CP6/issues/134) 设为持续目标并启动 WP1。已执行的 Provider / 配置接线收尾测试为 **133/133，零跳过**，保留先失败测试、固定依赖和启动拒绝证据；[阶段记录](../audits/database-compatibility/WP1-DECISIONS.md)区分本地基础验证与真实双库门禁。当前没有新增远端功能交付项；WP1 尚未结案，整体兼容及 WP2–WP6 不记作已完成。
+已完成 [Issue #134](https://github.com/GTX537/CP6/issues/134) WP1 的本地配置接线与限定真库门禁：配置测试 **133/133，零跳过**（包含原 38 项，不重复相加）；SQL Server **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`，固定当前 Platform **0.10.2**；原失败和候选排除证据保留，见[阶段决策](../audits/database-compatibility/WP1-DECISIONS.md)和[真库探针](../audits/database-compatibility/WP1-PROBE.md)。
+
+选定 SQL Server 原生 rowversion、PG 数据库生成的 **8 字节 bytea token**，独立使用同事务持久化 tenant generation / v2 cursor；真实 `40001` 和严格 UTC 规则已试验。任务负责人核对准确库名、owner 标记及 **0 对象 / 0 连接**后安全清理两库，无 FORCE 或会话终止，专用 PG 角色保留。WP1 已准备正常 PR 交付，尚未远端合并；WP2–WP6 和整体兼容不记作完成，应用 runtime guard 保留，父任务 Open。下方建档记录保留其历史时点。
 
 ## 2026-10-02：双数据库源码盘点与任务建档
 

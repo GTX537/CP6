@@ -2,7 +2,7 @@
 
 日期：2026-10-02。主任务：[DB-COMPAT-01 / Issue #134](https://github.com/GTX537/CP6/issues/134)。活动状态和完成证据以该 Issue 为唯一真相源；本规格、盘点及计划共用一个任务，不为工作包另建重复状态。
 
-用户已确认的方向是：同一套 CP6 业务代码，每次部署选择 SQL Server 或 PostgreSQL，并维护独立的数据库迁移链。本次只建立文档，尚未实施数据库兼容代码，未执行双库验证。并发令牌、身份分页水位、Platform 包兼容及 PostgreSQL 基线的具体实现，必须经 WP1 的真实试验达到本规格门槛后冻结；下列候选不代表已批准的技术实现。
+用户已确认的方向是：同一套 CP6 业务代码，每次部署选择 SQL Server 或 PostgreSQL，并维护独立的数据库迁移链。WP1 已实现配置与工厂基础并完成真实双库限定表试验；选定方案、写路径及后续 DDL 职责见 [WP1 冻结记录](../../audits/database-compatibility/WP1-DECISIONS.md)。WP2–WP6 尚未完成，整体兼容不能仅凭该试验宣称通过。下文候选门槛保留为设计依据，最终选择见本节补充。
 
 依据：[只读兼容性盘点](../../audits/2026-10-02-database-compatibility.md)。执行顺序与六个工作包见[实施计划](../plans/2026-10-02-database-compatibility.md)。盘点源码基线为 `157630594e3371fe181955d2f6227ff3b6962c84`。
 
@@ -41,6 +41,8 @@
 数据库选择在进程启动时确定，在进程生命周期内不切换。统一注册入口根据选择配置四个 DbContext、后台与设计时工厂、迁移组件和 Dapper/原生连接工厂。任何遗漏的 `UseSqlServer`、`SqlConnection`、SQL Server 连接字符串解析器或异常分类器都不能成为 PostgreSQL 模式下的隐式旁路。SQL Server 专有选项如 MARS 只进入对应实现。历史 CRM 来源工具的专用 SQL Server 连接单独命名并保留来源边界。
 
 EF Core 继续使用当前 8.x 主版本；Npgsql EF provider 采用与 EF Core 8 配套的8.x主版本，Npgsql、EF runtime、design 工具和相关包的具体兼容版本及锁定结果在 WP1 中核实。不能通过升级整个 EF 主版本混入本任务，也不能把仅成功 restore 当作行为兼容证据。
+
+WP1 已固定 EF Core / 本地 design 工具 `8.0.30`、Npgsql EF `[8.0.11]`、Npgsql driver `[8.0.8]`，真实测试服务器 PostgreSQL 18.6，初始目标为 18 系列。完整支持版本与恢复验收在 WP6 记录。Platform 保持签名包 `[0.10.2]`；消费方安装 PG 模型与数据库生成对象。消息的跨库共同输入契约为 UTC，非零 DateTimeOffset 显式归一化后保持同一瞬间；业务本地 DateTime / 日期分别映射。
 
 需要业务、快照、Outbox 或命令收据原子提交的调用，必须共享同一个实际 `DbConnection` 和 `DbTransaction`，跨 context 显式参加该事务；相同连接字符串本身不足以保证原子性。Dapper 同样使用已选择 provider 的连接并接收当前事务。一般请求与独立 dispatcher 继续使用各自适当生命周期和连接，不建立全进程共享连接，也不将身份优先队列与普通队列预算合并。
 
@@ -82,11 +84,15 @@ PostgreSQL `xmin` 可以作为经验证的数据库内部并发候选辅助信�
 
 如果受固定版本 Platform 包管理的模型、迁移辅助或 worker 只支持 SQL Server，本任务必须通过该组件同源的新包版本取得 PostgreSQL 能力，并保留来源、包版本及合同证据；不能复制其源码到 CP6 绕开发布边界。无法取得该证据时，记录确切限制，依赖该能力的工作包不得进入“已兼容”结论。
 
+WP1 冻结选择：SQL Server 保留 native rowversion，PostgreSQL 的 8 字节 bytea 由迁移管理的 BEFORE INSERT OR UPDATE trigger、私有 NO CYCLE sequence 与 `pg_catalog.int8send` 生成；token 仅作 opaque bytes 相等比较，保持 byte[] / Base64 / replay 输入。SaveChanges-only 应用候选因真实 raw / ExecuteUpdate 陈旧覆盖被淘汰。身份目录采用独立持久 tenant generation，在 mutation 同事务推进；短页事务一致读取，边界变化则拒绝 continuation。WP3 保留现有 Boundary / LastAggregate / NextCursor API 外形，并采用 v2 protector / 格式判别拒绝旧 rowversion cursor。实际 Platform 0.10.2 的四实体与消息路径双库通过，无须为已验证路径发布新包；完整实体、迁移、实际 API 和业务验收仍在后续阶段。
+
 ## 6. 独立迁移链与初始化
 
 现有 SQL Server migration 路径、migration ID、snapshot 与已部署历史保持连续：CP6 Core 主链，Core 的 `Migrations/IdentityPriority` 与 `Migrations/ErpIntegration`，以及 `CP6.Space.Infrastructure/Migrations`。不能重写已经应用的 SQL Server 迁移、用 PostgreSQL snapshot 覆盖现有 snapshot，或让 PostgreSQL 执行原 T-SQL 历史。
 
 PostgreSQL 迁移放入独立的 provider migration assembly，按四个 context 分组维护各自迁移和 snapshot；物理项目/assembly 的分组在 WP1 依构建与设计时工厂证据冻结。四个 context 的 provider、迁移 assembly、schema 和历史表选择必须明确绑定。SQL Server 继续采用既有 assembly/路径；PostgreSQL 的空库基线从已确认的完整模型和历史语义生成，不从187个 SQL Server 文件做未经验证的文本转换。
+
+WP1 的配置/设计时选择已冻结为新程序集 `CP6.Persistence.PostgreSql`，分组 `Migrations/Core`、`Space`、`IdentityPriority`、`ErpIntegration`；历史表依次为 `public.__EFMigrationsHistory`、`public.__EFMigrationsHistory_Space`、`public.__EFMigrationsHistory_IdentityPriority`、`public.__EFMigrationsHistory_ErpIntegration`。显式 public 不受连接 Search Path 影响。程序集与完整基线将在 WP2 建立，选择测试不代表基线已安装。
 
 基线盘点须覆盖：所有业务及消息 schema/表、列与默认值、主键/外键/唯一/过滤索引、check constraint、存储过程/函数/触发器、数据保护键结构、历史迁移中的数据修正与初始化种子。模型 snapshot 不包含全部历史 SQL 和种子；仅能建表不足以验收。MES 存储过程、财务不可变保护、身份授权种子等用途必须有等价实现或明确适用边界，不能因创建成功而遗漏。
 

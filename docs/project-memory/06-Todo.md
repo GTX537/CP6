@@ -1,10 +1,12 @@
 # 当前待办与优先级
 
-## 2026-10-02：DB-COMPAT-01 WP1 进行中
+## 2026-10-02：DB-COMPAT-01 WP1 待正常 PR 交付，随后执行 WP2
 
-[Issue #134](https://github.com/GTX537/CP6/issues/134) 是本对话持续目标，六阶段按[计划](../superpowers/plans/2026-10-02-database-compatibility.md)推进。配置与工厂基础已本地验证；接下来完成 PostgreSQL 本机安全登录、两库 token / 实际消息包 / 身份分页 / 四 Context 事务试验，选定方案后集中审查并交付 WP1。当前缺少真实双库必要结果，不能先勾选 WP1 或批量生成 PostgreSQL 基线；[WP1 门禁](../audits/database-compatibility/WP1-DECISIONS.md)持续更新真实证据。
+[Issue #134](https://github.com/GTX537/CP6/issues/134) 是本对话持续目标，六阶段按[计划](../superpowers/plans/2026-10-02-database-compatibility.md)推进。WP1 本地门禁已完成：配置测试 **133/133，零跳过**（含原 38 项，不重复相加）；SQL **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`，固定实际 Platform **0.10.2**。已选定 PG 数据库生成 **8 字节 bytea token** 与独立持久化 tenant generation / v2 cursor，并完成真实 `40001` 和严格 UTC 试验；见[WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)及[探针证据](../audits/database-compatibility/WP1-PROBE.md)。
 
-后续仍需四 Context 模型与独立迁移、业务锁/编号/错误、身份/ERP/WMS/OA/WF/财务、Space/CAD/AI/报表，以及原生恢复和隔离 API 验收。父任务保持 Open；不切换现有环境、不执行已有 SQL Server 数据搬迁或生产部署。
+任务负责人已凭准确库名、owner 标记及 **0 对象 / 0 连接**清理两库，无 FORCE 或会话终止，专用 PG 角色保留。当前尚未远端合并；下一步按正常 PR 流程交付 WP1，核对远端 main 包含性后，从最新已确认主线创建独立 WP2 分支。
+
+WP2–WP6 及整体兼容仍未完成：继续四 Context 模型与独立迁移、业务锁/编号/错误、身份/ERP/WMS/OA/WF/财务、Space/CAD/AI/报表，以及原生恢复和隔离 API 验收。PostgreSQL 应用 runtime guard 保留，父任务 Open；不切换现有环境、不执行已有 SQL Server 数据搬迁或生产部署。下方“功能尚未开始”保留建档时点。
 
 ## 2026-10-02：DB-COMPAT-01 双数据库兼容
 
