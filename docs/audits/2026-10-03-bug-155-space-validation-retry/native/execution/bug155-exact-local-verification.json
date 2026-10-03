@@ -1,0 +1,67 @@
+{
+  "Task": "BUG-155",
+  "Status": "LocalVerifiedRemotePending",
+  "CheckedUtc": "2026-10-03T17:59:57.1191822Z",
+  "SourceBase": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Runs": [
+    {
+      "Label": "bug155-pg-validation-green-v2",
+      "Provider": "PostgreSql",
+      "Total": 9,
+      "Passed": 9,
+      "Other": 0,
+      "ResultSha256": "36763598FD39AD3A994D463763D0E43D8B940F6D74D6445B231FA004145BDF55",
+      "TrxSha256": "4FCBBD7247F79E56418FB3BB5E63CCD29994D285DA853813B91F43BC4C56F400",
+      "CurrentSourceFileCount": 1700,
+      "SourceInputsSha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "ExitCode": 0
+    },
+    {
+      "Label": "bug155-sql-validation-green",
+      "Provider": "SqlServer",
+      "Total": 9,
+      "Passed": 9,
+      "Other": 0,
+      "ResultSha256": "2DEC1777AE717BF3828C312062B11CC710ECADD620301BA35ABB9EFA862AD38A",
+      "TrxSha256": "4AFC72B0BEC3DE9CA084A0869E9677ADB447E71078A26F3A1031F07AB7B7B01B",
+      "CurrentSourceFileCount": 1700,
+      "SourceInputsSha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "ExitCode": 0
+    },
+    {
+      "Label": "bug155-pg-design-publish-green",
+      "Provider": "PostgreSql",
+      "Total": 41,
+      "Passed": 41,
+      "Other": 0,
+      "ResultSha256": "3C32B46744845B5A1052D17B3E6E155B2DB976E9035E846893B578787E1A3F9B",
+      "TrxSha256": "ED8576861684A3EFEA6AC25B910EDE1378F222DF261547F424FFE079806A4E3C",
+      "CurrentSourceFileCount": 1700,
+      "SourceInputsSha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "ExitCode": 0
+    },
+    {
+      "Label": "bug155-sql-design-publish-green",
+      "Provider": "SqlServer",
+      "Total": 41,
+      "Passed": 41,
+      "Other": 0,
+      "ResultSha256": "63ED2F909A6994EE504354969943BEAF8CFFB3EB47A94F58D7E80A8C81FAAEAF",
+      "TrxSha256": "536742EC1513CA605961D96F1CE554D3A00182F59B11EBD93202CAAC2F096D69",
+      "CurrentSourceFileCount": 1700,
+      "SourceInputsSha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "ExitCode": 0
+    }
+  ],
+  "AllCurrentSourcesAndRuntimeMatch": true,
+  "SourceReviewSha256": "DECCB396D687EBC482C6DAF525E77DF6182C8CFCB44C42B9729268414DD3FB84",
+  "Scope": "Raw native TRX and exact required sets verified; all four executions use the same current source/runtime. The 9-case suites are subsets of the 41-case groups and are not added as distinct coverage. Injected recovery controls are not native deadlock reproductions. Full WP6, post-merge smoke, cleanup and remote delivery remain pending."
+}
