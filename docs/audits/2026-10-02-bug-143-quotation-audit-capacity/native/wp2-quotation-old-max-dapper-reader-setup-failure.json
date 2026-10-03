@@ -1,0 +1,17 @@
+{
+  "Scope": "Local exact actual compiled Dapper/ColumnValue constructor diagnostic using native-observed SQL nvarchar(max) bigint metadata, no database access or business acceptance",
+  "CapturedUtc": "2026-10-02T20:04:12.9511951Z",
+  "NativeBeforeRepairLengthTypes": [
+    "bigint",
+    "bigint"
+  ],
+  "ActualCtor": [
+    "String",
+    "Int32",
+    "Int32"
+  ],
+  "DiagnosticExceptionType": "System.InvalidOperationException",
+  "DiagnosticMessage": "A parameterless default constructor or one matching signature (System.String Value, System.Int64 Utf16Units, System.Int64 StorageBytes) is required for Wp2QuotationAuditWriteGates+ColumnValue materialization",
+  "DatabaseAccess": false,
+  "IsCapacityContractRed": false
+}

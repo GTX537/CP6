@@ -1,0 +1,18 @@
+{
+  "Scope": "Original BUG143 actual compiled EF migration failure; actual SQL102 at first ALTER COLLATE bracketed native name, not intended sixth-column51043; all 352 tables and complete native catalog rollback proved",
+  "CapturedUtc": "2026-10-02T19:52:07.8601508Z",
+  "Status": "Failed",
+  "ActualSqlError": 102,
+  "ExpectedSqlError": 51043,
+  "ExpectedRejectionObserved": false,
+  "FirstAlterSyntaxErrorObserved": true,
+  "ProcessExitCode": -532462766,
+  "HttpListenerObserved": false,
+  "RollbackChecksPassed": 15,
+  "RollbackChecksFailed": 0,
+  "OriginalInitializerReportSha256": "E018E0F7DEDC2B642852B37ECB26C26538DCB0E09A7984CB06E3B358FB10656B",
+  "OriginalStderrSha256": "57DB29E6F4C99E675B6AACF2D818283E2625343007F8E795086152805D532E2F",
+  "OriginalStdoutSha256": "8E496A62730F7FE4A9419E26D7450377B7474A9ADE811065EEEF606A64648392",
+  "OriginalInputSha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED",
+  "RepairRequired": "Validate native collation against fn_helpcollations and safe ASCII identifier grammar, then use unquoted SQL collation literal; defer unknown column access until after metadata guard via dynamic byte-length query"
+}

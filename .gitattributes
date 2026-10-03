@@ -81,3 +81,16 @@ docs/audits/2026-10-02-bug-141-order-foreign-keys/*.ps1 -text whitespace=cr-at-e
 docs/audits/2026-10-02-bug-141-order-foreign-keys/Wp2OrderRelationWriteGates.cs -text whitespace=cr-at-eol
 # Preserve the actual EF-generated final blank line without rewriting evidence.
 docs/audits/2026-10-02-bug-141-order-foreign-keys/bug-141-generated-migration.sql whitespace=cr-at-eol,-blank-at-eof
+
+# BUG143 original unit/native evidence retains exact byte hashes.
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/*.trx -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/*.log -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/*.json -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/*.sql -text whitespace=cr-at-eol
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/*.ps1 -text whitespace=cr-at-eol
+# Preserve the original failing EF script's final blank line as evidence.
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-generated-migration.sql whitespace=cr-at-eol,-blank-at-eof
+# Final native proofs retain original JSON/SQL/log/TRX/script and gzip bytes.
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/native/** -text whitespace=cr-at-eol,-blank-at-eof
+# Preserve space-only lines in the four original executed fixture scripts.
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/native/bug-143-native-cp143-final-*.sql whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

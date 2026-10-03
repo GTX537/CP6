@@ -1,0 +1,137 @@
+{
+  "Scope": "BUG143 immutable actual three-source input and compiled SQL-only API/Core EF8 runtime used for native upgrade/rollback acceptance; no credentials or business row values.",
+  "CapturedUtc": "2026-10-02T19:47:39.9865980Z",
+  "Task": "DB-COMPAT-01 / BUG143",
+  "ConfirmedSourceBase": "4d4e260819f0a1b59810403d016c69a2fd7319ae",
+  "SourceState": "Source bytes frozen after valid RED then final GREEN; base SHA alone does not identify these initially uncommitted task files.",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\bug-143-quotation-audit-capacity",
+  "Sources": [
+    {
+      "Path": "CP6.Core/Persistence/QuotationAuditColumnCapacityRepairSql.cs",
+      "Sha256": "61B7C6CD331F345C632A63075D259B107BC1146DA7705CB824451FA3FD7541DF"
+    },
+    {
+      "Path": "CP6.Core/Migrations/20261002193500_RestoreQuotationAuditColumnCapacity.cs",
+      "Sha256": "08E68829AE9BB581EDD7907D2F124B113B668E8FF6CA8D27F1DE84B1987DA42D"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/QuotationAuditColumnCapacityRepairTests.cs",
+      "Sha256": "6D216BA68C75F25D18BFB0FD7F673254FB178E49BA5F91D36542D2ECAFCD78C3"
+    }
+  ],
+  "Runtime": [
+    {
+      "Name": "CP6.WebApi",
+      "Sha256": "3AAD7F977AF059AEBEA728D1251C0C4F17776064718D09C7321E717EACBED470"
+    },
+    {
+      "Name": "CP6.Core",
+      "Sha256": "FDB1C2BCFB21A27D03CC3FE95C4F4755AC76BFE9C4605A0FA4EF80E2440AD0D7"
+    },
+    {
+      "Name": "CP6.Entity",
+      "Sha256": "482D830E963352AB3FD3E1884B12F98A1B87BE334FAD69BF550FB8CB19FF9862"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "Sha256": "888142B75C3B0A2D1183D7D94EF7E4EFE01A88A623E0D5E091D73110EB9DDDFA"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.AspNetCore",
+      "Sha256": "B4D0FB90E153961A65AD65A8D096CEDEB76C61EAE488469B836064E70EF31DD8"
+    },
+    {
+      "Name": "CP6.Platform.Contracts",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "Microsoft.EntityFrameworkCore",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    {
+      "Name": "Microsoft.EntityFrameworkCore.SqlServer",
+      "Sha256": "6B6316970F12A420C89DC6D7988DE49D840052526201066EA80219E990EA83D7"
+    }
+  ],
+  "Evidence": [
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-generated-migration.sql",
+      "Sha256": "C2934D6A635A8D45903203C862E60A822A0A092A715439449BCDF68C5034313E",
+      "Bytes": 16266
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-generated-migration.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Bytes": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\restore.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Bytes": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\red.log",
+      "Sha256": "7E04901B4B42BE200964EA3DCAE29DF3D4E9C52A3201B7249F4B745A3D86CB82",
+      "Bytes": 2908
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\red\\bug-143-red.trx",
+      "Sha256": "E57B23645BB65ECB598ECF719B8E517A69B3C745DEC16973B8D6A3222EBD2FDC",
+      "Bytes": 53631
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\red-verified.log",
+      "Sha256": "395669E730B275EC8CF00EC111C9E6AD4EE1A12C6DD0FD0342CE808AC394BAE9",
+      "Bytes": 1673
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\red-verified\\bug-143-red-verified.trx",
+      "Sha256": "A66DF03862F2307267AC3BC453C6509FC595EFA222ACF620D77BC507E5B72294",
+      "Bytes": 36281
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\green.log",
+      "Sha256": "8541A571C3C06031932EF62B341100F9A4D19C37C8A4898539FF565EB2CA06FD",
+      "Bytes": 370
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\green\\bug-143-green.trx",
+      "Sha256": "40DD2829988A04B530A683B6574E00DA74D9B859581DA4D01FA091CB6A439E15",
+      "Bytes": 28276
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\green-verified.log",
+      "Sha256": "64071ACFDFA37993EA068B7F5E800407DBE8B22EF148D56C9B8E8F696F748001",
+      "Bytes": 388
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\green-verified\\bug-143-green-verified.trx",
+      "Sha256": "D33F4F993CABA37A654E836979E77B8BAA409ACF556FA0DADCBDBA1B1C7C1187",
+      "Bytes": 28276
+    }
+  ],
+  "SnapshotGitBlob": "21ed77b4056ee44b4f44e61de13d5d34774d6934",
+  "MigrationId": "20261002193500_RestoreQuotationAuditColumnCapacity",
+  "ExpectedSqlOperationCount": 6,
+  "UnitResult": {
+    "ValidRedPassed": 7,
+    "ValidRedFailed": 6,
+    "FinalGreenPassed": 17,
+    "FinalGreenFailed": 0,
+    "Skipped": 0,
+    "InitialFixtureFailureRetained": true
+  },
+  "NativeAcceptanceStatus": "To be established by separately hashed reports; this manifest itself makes no database success claim."
+}

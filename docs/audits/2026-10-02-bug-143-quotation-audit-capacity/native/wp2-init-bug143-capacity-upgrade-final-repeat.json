@@ -1,0 +1,16 @@
+{
+  "Scope": "Real compiled application DatabaseInit; isolated owned database only, no API/workers",
+  "Provider": "SqlServer",
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "SourceWorktree": "D:\\CP6\\tmp\\worktrees\\bug-143-quotation-audit-capacity",
+  "SourceCommit": "2b6548b10251477dfcbbcf11e2b4334896baebab",
+  "StartedUtc": "2026-10-03T06:55:54.9196262Z",
+  "FinishedUtc": "2026-10-03T06:56:11.1778888Z",
+  "ProcessId": 28304,
+  "ExitCode": 0,
+  "ListenerObserved": false,
+  "CompletionMessage": true,
+  "BinarySha256": "E4D6519CC66893C30B8C1A59AED9FA5EAC40D0F95E948C717CF0AE6FB5D823EF",
+  "StdoutSha256": "4DE03FCA972782FB80A13AD555C2F72FE4FB92AC624686C231DC812C96295023",
+  "StderrSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6"
+}

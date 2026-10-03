@@ -1,0 +1,285 @@
+{
+  "issue": 143,
+  "base": "4d4e260819f0a1b59810403d016c69a2fd7319ae",
+  "definitionOracle": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "snapshotGitBlob": "21ed77b4056ee44b4f44e61de13d5d34774d6934",
+  "migration": "20261002193500_RestoreQuotationAuditColumnCapacity",
+  "restore": {
+    "lockedMode": true,
+    "exitCode": 0
+  },
+  "initialRed": {
+    "passed": 1,
+    "failed": 12,
+    "total": 13,
+    "skipped": 0,
+    "exitCode": 1,
+    "scope": "6 true missing ALTER failures plus6 snapshot property-bag CLR reflection fixture errors; legacy136passed; original preserved"
+  },
+  "verifiedRed": {
+    "passed": 7,
+    "failed": 6,
+    "total": 13,
+    "skipped": 0,
+    "exitCode": 1,
+    "scope": "6 independent frozen facets plus actual inherited CLR attributes andlegacy136 passed;6 missing ALTER assertions failed"
+  },
+  "initialGreen": {
+    "passed": 17,
+    "failed": 0,
+    "total": 17,
+    "skipped": 0,
+    "exitCode": 0,
+    "warnings": 0
+  },
+  "verifiedGreen": {
+    "passed": 17,
+    "failed": 0,
+    "total": 17,
+    "skipped": 0,
+    "exitCode": 0,
+    "warnings": 0,
+    "scope": "Same production source; corrected prohibition regex to catch LEN/functions without trailing word-boundary false negative"
+  },
+  "TestBuildProducedActualApi": true,
+  "StandaloneApiBuildPerformed": false,
+  "buildProvenance": "Normal transitive ProjectReference fromCP6.Tests toCP6.WebApi/Core during recorded dotnet test, no separate APIbuild log or execution",
+  "apiSha256": "3AAD7F977AF059AEBEA728D1251C0C4F17776064718D09C7321E717EACBED470",
+  "coreSha256": "A277E0BF86A6F66CD1A11F4885F7E34B7FD0CA17F1291F9ACF49854502521927",
+  "sources": [
+    {
+      "path": "CP6.Core/Persistence/QuotationAuditColumnCapacityRepairSql.cs",
+      "sha256": "374898155FD5B85584BCD29828199B5A13501C3B382E3003CAA75FF8F237D215"
+    },
+    {
+      "path": "CP6.Core/Migrations/20261002193500_RestoreQuotationAuditColumnCapacity.cs",
+      "sha256": "08E68829AE9BB581EDD7907D2F124B113B668E8FF6CA8D27F1DE84B1987DA42D"
+    },
+    {
+      "path": "CP6.Tests/Persistence/QuotationAuditColumnCapacityRepairTests.cs",
+      "sha256": "39AF1EF1192649ED72CB781043FEACCE66E68ADB923BC6D7F7F076C62C08F3F2"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "bug-143-restore.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0,
+      "originalIgnoredPath": "tmp/bug-143-tests/restore.log"
+    },
+    {
+      "path": "bug-143-red.log",
+      "sha256": "7E04901B4B42BE200964EA3DCAE29DF3D4E9C52A3201B7249F4B745A3D86CB82",
+      "bytes": 2908,
+      "originalIgnoredPath": "tmp/bug-143-tests/red.log"
+    },
+    {
+      "path": "bug-143-red.trx",
+      "sha256": "E57B23645BB65ECB598ECF719B8E517A69B3C745DEC16973B8D6A3222EBD2FDC",
+      "bytes": 53631,
+      "originalIgnoredPath": "tmp/bug-143-tests/red/bug-143-red.trx"
+    },
+    {
+      "path": "bug-143-red-verified.log",
+      "sha256": "395669E730B275EC8CF00EC111C9E6AD4EE1A12C6DD0FD0342CE808AC394BAE9",
+      "bytes": 1673,
+      "originalIgnoredPath": "tmp/bug-143-tests/red-verified.log"
+    },
+    {
+      "path": "bug-143-red-verified.trx",
+      "sha256": "A66DF03862F2307267AC3BC453C6509FC595EFA222ACF620D77BC507E5B72294",
+      "bytes": 36281,
+      "originalIgnoredPath": "tmp/bug-143-tests/red-verified/bug-143-red-verified.trx"
+    },
+    {
+      "path": "bug-143-green.log",
+      "sha256": "8541A571C3C06031932EF62B341100F9A4D19C37C8A4898539FF565EB2CA06FD",
+      "bytes": 370,
+      "originalIgnoredPath": "tmp/bug-143-tests/green.log"
+    },
+    {
+      "path": "bug-143-green.trx",
+      "sha256": "40DD2829988A04B530A683B6574E00DA74D9B859581DA4D01FA091CB6A439E15",
+      "bytes": 28276,
+      "originalIgnoredPath": "tmp/bug-143-tests/green/bug-143-green.trx"
+    },
+    {
+      "path": "bug-143-green-verified.log",
+      "sha256": "64071ACFDFA37993EA068B7F5E800407DBE8B22EF148D56C9B8E8F696F748001",
+      "bytes": 388,
+      "originalIgnoredPath": "tmp/bug-143-tests/green-verified.log"
+    },
+    {
+      "path": "bug-143-green-verified.trx",
+      "sha256": "D33F4F993CABA37A654E836979E77B8BAA409ACF556FA0DADCBDBA1B1C7C1187",
+      "bytes": 28276,
+      "originalIgnoredPath": "tmp/bug-143-tests/green-verified/bug-143-green-verified.trx"
+    },
+    {
+      "path": "bug-143-native-fix-green.log",
+      "sha256": "684A1452DA508D46F867B17BE284A569F306DA64BFFFF23A206D5B8D5F4CC4AC",
+      "bytes": 392,
+      "originalIgnoredPath": "tmp/bug-143-tests/native-fix-green.log"
+    },
+    {
+      "path": "bug-143-native-fix-green.trx",
+      "sha256": "54334250E8CFF579BAA650F09728A50F6C5253EAA9838D62031CCDC4DF69D77B",
+      "bytes": 28276,
+      "originalIgnoredPath": "tmp/bug-143-tests/native-fix-green/bug-143-native-fix-green.trx"
+    },
+    {
+      "path": "bug-143-original-real-ef-syntax-failure.json",
+      "sha256": "699E8A402EAA8D449166A90CCDA5790FA7216A3967C26FD1402108C6AC1BDE34",
+      "bytes": 1191,
+      "originalIgnoredPath": "tmp/bug-143-original-real-ef-syntax-failure.json"
+    },
+    {
+      "path": "bug-143-missing-column-original.json",
+      "sha256": "42E68D6005C799EA32F28E80673CB07703D13BB871094B007674B0D7AC2124F7",
+      "bytes": 640,
+      "originalIgnoredPath": "tmp/bug-143-missing-column-original.json"
+    },
+    {
+      "path": "bug-143-missing-column-original.sql",
+      "sha256": "5E5F3FC23F9FDA0D6FCC762BA45D2BCBE8E43736995A911BDC2B18B547A6DA00",
+      "bytes": 4285,
+      "originalIgnoredPath": "tmp/bug-143-missing-column-original.sql"
+    },
+    {
+      "path": "bug-143-input-manifest-setup-failure.json",
+      "sha256": "5C79608D852227D6010D6A231E11A330BA246135971A874A4D489FA6FDE9F649",
+      "bytes": 428,
+      "originalIgnoredPath": "tmp/bug-143-input-manifest-setup-failure.json"
+    },
+    {
+      "path": "wp2-init-bug143-real-ef-late-overlong-rejected.json",
+      "sha256": "E018E0F7DEDC2B642852B37ECB26C26538DCB0E09A7984CB06E3B358FB10656B",
+      "bytes": 799,
+      "originalIgnoredPath": "tmp/wp2-init-bug143-real-ef-late-overlong-rejected.json"
+    },
+    {
+      "path": "bug-143-sql-compare-before-real-ef-rejection-to-after-real-ef-rejection.json",
+      "sha256": "8B0EBE43493ED4852F32C00CB768120E372415139F91D3433E621D2FD044659B",
+      "bytes": 5075,
+      "originalIgnoredPath": "tmp/bug-143-sql-compare-before-real-ef-rejection-to-after-real-ef-rejection.json"
+    },
+    {
+      "path": "bug-143-sql-compare-after-real-ef-rejection-to-after-original-missing-column.json",
+      "sha256": "5FBA5B095DB391825CC4C65D6B7194C9C5B01E65AD1521B880CB0B1A9933E682",
+      "bytes": 5080,
+      "originalIgnoredPath": "tmp/bug-143-sql-compare-after-real-ef-rejection-to-after-original-missing-column.json"
+    },
+    {
+      "path": "bug-143-original-actual-input.json",
+      "sha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED",
+      "bytes": 5298,
+      "originalIgnoredPath": "tmp/bug-143-actual-input.json",
+      "scope": "Original failing native input, not corrected implementation evidence"
+    },
+    {
+      "path": "bug-143-original-generated-migration.sql",
+      "sha256": "C2934D6A635A8D45903203C862E60A822A0A092A715439449BCDF68C5034313E",
+      "bytes": 16266,
+      "originalIgnoredPath": "tmp/bug-143-generated-migration.sql",
+      "scope": "Original failing native input, not corrected implementation evidence"
+    }
+  ],
+  "reusedRegression": {
+    "source": "BUG141 audit atbaseline4d4e260 includes37Passed FK12/index25; two original test files/helpers/migrations unchanged",
+    "executedAgain": false,
+    "permanentMigrationCountAssertions": "AlreadyContains-specific-repair, no new count dependency",
+    "legacy136ExecutedInThisTask": true
+  },
+  "taskUnitDbConnectionsOpened": false,
+  "nativeSqlAcceptance": "Original implementation failed actualSQL102/207; corrected implementation Pending parent native upgrade/repeat and intended51043/dependency/boundary/late rollback",
+  "independentTaskReview": "Pending parent assigned reviewer",
+  "remoteDelivery": "Pending normal PR/remote main inclusion/Issue close",
+  "githubActionsTriggered": false,
+  "previousBug141": {
+    "issueState": "Closed",
+    "closedUtc": "2026-10-02T19:34:16Z",
+    "pr": 142,
+    "confirmedMain": "4d4e260819f0a1b59810403d016c69a2fd7319ae"
+  },
+  "limits": [
+    "Unit script/metadata checks are not native ALTER or real business acceptance",
+    "Parent owns isolated native SQL and WP2 integration; no DB/PG/WP2/receipt edits by this agent",
+    "Issue143 remainsOpen; no push/PR/Actions/production deployment"
+  ],
+  "initialStaticSources": [
+    {
+      "path": "CP6.Core/Persistence/QuotationAuditColumnCapacityRepairSql.cs",
+      "sha256": "61B7C6CD331F345C632A63075D259B107BC1146DA7705CB824451FA3FD7541DF"
+    },
+    {
+      "path": "CP6.Core/Migrations/20261002193500_RestoreQuotationAuditColumnCapacity.cs",
+      "sha256": "08E68829AE9BB581EDD7907D2F124B113B668E8FF6CA8D27F1DE84B1987DA42D"
+    },
+    {
+      "path": "CP6.Tests/Persistence/QuotationAuditColumnCapacityRepairTests.cs",
+      "sha256": "6D216BA68C75F25D18BFB0FD7F673254FB178E49BA5F91D36542D2ECAFCD78C3"
+    }
+  ],
+  "initialStaticApiSha256": "3AAD7F977AF059AEBEA728D1251C0C4F17776064718D09C7321E717EACBED470",
+  "initialStaticCoreSha256": "FDB1C2BCFB21A27D03CC3FE95C4F4755AC76BFE9C4605A0FA4EF80E2440AD0D7",
+  "nativeFixGreen": {
+    "passed": 17,
+    "failed": 0,
+    "total": 17,
+    "skipped": 0,
+    "exitCode": 0,
+    "warnings": 0,
+    "scope": "Corrected original SQL102 bracketed COLLATE syntax and207 static unknown-column binding; native fixed implementation still requires parent actual proof"
+  },
+  "originalNativeFailures": {
+    "actualSqlSyntaxError": 102,
+    "expectedGuardError": 51043,
+    "expectedGuardObserved": false,
+    "missingColumnActualError": 207,
+    "missingColumnExpectedError": 51043,
+    "originalMissingColumnFixtureEstablished": true,
+    "originalMissingColumnQueryExit": 0,
+    "originalMissingColumnStatus": "Failed, not intended guard rejection",
+    "eachFullRollbackPassed": 15,
+    "fullRollbackScope": "352 table data/hash plus6832 column/catalog metadata preserved; not capacity acceptance",
+    "originalRuntimeCoreSha256": "FDB1C2BCFB21A27D03CC3FE95C4F4755AC76BFE9C4605A0FA4EF80E2440AD0D7",
+    "originalActualInputSha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED",
+    "originalGeneratedSqlSha256": "C2934D6A635A8D45903203C862E60A822A0A092A715439449BCDF68C5034313E",
+    "rawAppLogsArchived": false,
+    "sanitizedSummaryArchived": true,
+    "correctedCollation": "fn_helpcollations exactBIN2 plus ASCII-only grammar then validated unquoted SQL literal",
+    "correctedDataRead": "Metadata validation precedes dynamic sp_executesql byte-length read with bit OUTPUT, same outerTxn data locks"
+  },
+  "originalNativeIgnoredEvidence": [
+    {
+      "originalIgnoredPath": "tmp/bug-143-sql-before-real-ef-rejection.json",
+      "sha256": "0679781D18677355A07A29C3DBBAEE45C6DA8F16622A4321D3724C51B839C615",
+      "bytes": 16400446,
+      "scope": "Retained ignored raw full capture/application log; sanitized summary and restoration comparisons archived, no direct secrets copied"
+    },
+    {
+      "originalIgnoredPath": "tmp/bug-143-sql-after-real-ef-rejection.json",
+      "sha256": "A3224A3D66C874BD9295F7547EA6F838D31AA528EA88C763D10E143582A62B56",
+      "bytes": 16400445,
+      "scope": "Retained ignored raw full capture/application log; sanitized summary and restoration comparisons archived, no direct secrets copied"
+    },
+    {
+      "originalIgnoredPath": "tmp/bug-143-sql-after-original-missing-column.json",
+      "sha256": "22BA49E41877B95AF1866932F26501B68079ADC2A4CDB4A675132058717A8D03",
+      "bytes": 16400451,
+      "scope": "Retained ignored raw full capture/application log; sanitized summary and restoration comparisons archived, no direct secrets copied"
+    },
+    {
+      "originalIgnoredPath": "tmp/wp2-init-bug143-real-ef-late-overlong-rejected.stderr.log",
+      "sha256": "57DB29E6F4C99E675B6AACF2D818283E2625343007F8E795086152805D532E2F",
+      "bytes": 2100,
+      "scope": "Retained ignored raw full capture/application log; sanitized summary and restoration comparisons archived, no direct secrets copied"
+    },
+    {
+      "originalIgnoredPath": "tmp/wp2-init-bug143-real-ef-late-overlong-rejected.stdout.log",
+      "sha256": "8E496A62730F7FE4A9419E26D7450377B7474A9ADE811065EEEF606A64648392",
+      "bytes": 3049,
+      "scope": "Retained ignored raw full capture/application log; sanitized summary and restoration comparisons archived, no direct secrets copied"
+    }
+  ]
+}

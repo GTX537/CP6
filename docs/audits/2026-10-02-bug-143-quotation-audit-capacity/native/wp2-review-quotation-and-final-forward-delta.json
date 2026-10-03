@@ -1,0 +1,142 @@
+{
+  "RecordKind": "ArchiveOfCompletedIncrementalIndependentSourceReview",
+  "Task": "DB-COMPAT-01-WP2",
+  "Reviewer": "/root/wp1_wiring",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002",
+  "CapturedUtc": "2026-10-02T20:00:50.4545100Z",
+  "CompletedUtc": "2026-10-02T20:01:21Z",
+  "ScopeCount": 4,
+  "SourceScopeSha256": "d1ee102163764aa5a5740bc148113cc385e38fd522b85b612366930fdd686fcf",
+  "SourceScopeAlgorithm": "SHA256 of UTF-8 bytes without BOM: files sorted by ordinal repository-relative path, each line path + TAB + uppercase full-file SHA256 + LF, including the final LF; resulting scope hash rendered lowercase.",
+  "Files": [
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+      "Sha256": "A9059D597E16BC0F06506642D5A865540271E5923F5F0CAA9600BCB8C1076A4D",
+      "Bytes": 21318,
+      "ReviewedDelta": "Quotation primary-mode mutual exclusion, standalone branch and report scope; inclusion of the quotation gate in all write gates; final SQL upgrade report scope."
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/README.md",
+      "Sha256": "CA8431DDD0F41FDAD3DD531520EE8B95FF4B73B44B19F25AD4BE303D6686F172",
+      "Bytes": 7687,
+      "ReviewedDelta": "Quotation storage/error/transaction scope, excess-trailing-space provider difference, four-forward SQL136-to140 scope and honest retention of older generation-only reports."
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2QuotationAuditWriteGates.cs",
+      "Sha256": "21844C99F3D958EC5F75D5262111603F04876ECE03FCF50CE0FC0556CDE8E043",
+      "Bytes": 14350,
+      "ReviewedDelta": "Entire new actual EF/native quotation storage helper, including connection ownership, all six column boundaries, exact native error matching, savepoints and outer rollback."
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2SqlUpgradeGates.cs",
+      "Sha256": "CFB2713170AD830CE2863E95CF8471A7109056A58A135D25E5F14C5BCF60E15E",
+      "Bytes": 27627,
+      "ReviewedDelta": "Exactly four fixed forward migration identities, strict supported 136-history prefix/pending sequence, final 140 history and count/report deltas. Existing generation fixture logic retains its prior review scope."
+    }
+  ],
+  "Conclusion": {
+    "Blockers": 0,
+    "P1": 0,
+    "P2": 0,
+    "Result": "No material blocker, P1 or P2 found in the four-file incremental source scope.",
+    "NonBlockingSuggestions": []
+  },
+  "ReviewedContracts": [
+    "The helper requires the exact open connection from the actual Core context and rejects an existing context transaction or unsaved caller changes.",
+    "The valid three-row Quotation/Calc/Detail graph is saved through the actual Core EF context and must receive three database-generated eight-byte tokens.",
+    "Each of the six Creator/Modifier columns is exercised with exact 100 UTF-16-unit ASCII, 50 supplementary characters, and a 100-unit value containing trailing spaces. Raw values, UTF-16 units and storage bytes are compared.",
+    "Native Dapper updates do not carry the EF Size=100 facet, so the complete 101-unit ASCII and supplementary-plus-x negative parameters reach database storage.",
+    "PostgreSQL rejection must be SQLSTATE 23514 with public schema, the exact targeted table, and its exact generated column-capacity constraint name. SQL Server rejection accepts only native truncation error 2628 or 8152 from the targeted single-column update.",
+    "Each negative attempt rolls back to a savepoint and compares the exact previous raw value and lengths. The outer transaction is rolled back in finally, tracker entries are cleared, the transaction is disposed, and every actual table count including audit/history tables is compared.",
+    "The separate 100-ASCII-plus-one-space case intentionally observes SQL Server excess-space truncation and PostgreSQL strict managed capacity rejection. README explicitly excludes this excess-trailing-space behavior from the shared provider equivalence promise while requiring legal trailing spaces to remain exact.",
+    "Program includes quotation-audit-only in primary-mode mutual exclusion before database access, runs only its intended gate in that mode, and invokes the quotation gate in the complete write-gates path.",
+    "The SQL upgrade requires exactly 136 applied migrations with the supported legacy final identity, an unchanged complete available/applied prefix, and exactly the four fixed pending IDs in order. The completed physical history must contain exactly 140 entries and preserve original ID/ProductVersion pairs.",
+    "README confines the new checks to storage and the supported isolated upgrade fixture, preserves old 136-to137 evidence as generation-component evidence, and does not claim complete quotation business or production upgrade acceptance."
+  ],
+  "ReusedPriorReviews": [
+    {
+      "ScopeCount": 30,
+      "CanonicalRecord": "Root's original 30-file task-level runtime/probe/tests review record and its original path/hash list remain authoritative.",
+      "ReuseBoundary": "Only unchanged inputs and the conclusions within their original scope are reused. This incremental review does not re-execute, re-date or relabel that 30-file review; the new quotation helper and the explicitly listed final-forward deltas are covered by the present four-file record.",
+      "ScopeHashReconstructedHere": false
+    },
+    {
+      "ScopeCount": 45,
+      "CanonicalRecord": "D:\\CP6\\tmp\\wp2-review-mapping-migrations.json",
+      "SourceScopeSha256": "3b32a0976118e3a4cca0c0b76b18c8061dd2b52beddfa44d9f1f7fdd757324ba",
+      "CapturedUtc": "2026-10-02T19:25:52Z",
+      "CompletedUtc": "2026-10-02T19:26:59Z",
+      "MigrationSubsetCount": 12,
+      "MigrationSubsetSha256": "02caf49de89bb60c702f84119d0df9d706985c40081e3833f62594bb8d5cc4a9",
+      "ReuseBoundary": "The prior exact 45-file mapping/migration source scope and its unchanged 12-file PostgreSQL migration subset retain their original static-review conclusions. The present four-file runtime/probe/documentation delta does not change or re-review those PostgreSQL mapping/baseline inputs, and neither record substitutes for BUG143's separate complete product-source review or actual database gates."
+    }
+  ],
+  "ExecutionScope": {
+    "ReadOnlySourceReview": true,
+    "DotNetExecuted": false,
+    "DatabaseConnected": false,
+    "CredentialsOrReceiptsRead": false,
+    "SourceOrTrackedDocumentationEdited": false,
+    "RemoteActionsExecuted": false,
+    "ArchiveIsNewReview": false,
+    "ActualValidationPerformed": "Source inspection and four full-file SHA256 capture during the completed review; archive JSON parsing and read-only matching of these four source hashes during archival.",
+    "NotVerifiedByThisReview": [
+      "New helper runtime execution against SQL Server or PostgreSQL.",
+      "Actual native SQL136-to140 migration, repeat, preservation and rollback gates.",
+      "BUG143's separate complete migration/helper/test source scope.",
+      "Full quotation business acceptance or production upgrade acceptance."
+    ]
+  },
+  "TargetedReaderFix": {
+    "RecordKind": "SubsequentTargetedSourceReview",
+    "CapturedUtc": "2026-10-02T20:06:35.3142890Z",
+    "CompletedUtc": "2026-10-02T20:07:28Z",
+    "OriginalArchiveSha256BeforeAppend": "03EB9602E0B1C270A91C2E75ACFFEF6A5EE9335F8ABC023BBB4A8709847B4786",
+    "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2QuotationAuditWriteGates.cs",
+    "OriginallyReviewedSha256": "21844C99F3D958EC5F75D5262111603F04876ECE03FCF50CE0FC0556CDE8E043",
+    "OriginallyReviewedBytes": 14350,
+    "CurrentSha256": "EC904021AA6B23964FFD41CEA30C4AB8AE72C69C17BB4180508A347025172C60",
+    "CurrentBytes": 14378,
+    "Changes": [
+      {
+        "Line": 161,
+        "ProviderBranch": "SqlServer",
+        "OldExpression": "DATALENGTH({Q(pg, column.Name)})/2",
+        "NewExpression": "CONVERT(int, DATALENGTH({Q(pg, column.Name)})/2)",
+        "ExactReplacementCount": 1
+      },
+      {
+        "Line": 162,
+        "ProviderBranch": "SqlServer",
+        "OldExpression": "DATALENGTH({Q(pg, column.Name)})",
+        "NewExpression": "CONVERT(int, DATALENGTH({Q(pg, column.Name)}))",
+        "ExactReplacementCount": 1
+      }
+    ],
+    "ExactDeltaProof": {
+      "Method": "Read current full-file UTF-8 bytes, reverse only the two exact new SQL branch expressions, re-encode without changing the source text or writing any source file, and SHA256 the reconstructed original bytes.",
+      "ReconstructedOriginalSha256": "21844C99F3D958EC5F75D5262111603F04876ECE03FCF50CE0FC0556CDE8E043",
+      "MatchesOriginalFourFileReviewEntry": true,
+      "AllOtherFileBytesUnchanged": true,
+      "PostgreSqlQueriesAndSharedContractsChanged": false
+    },
+    "Reason": "SQL Server DATALENGTH on the historical nvarchar(max) column returns bigint, so the prior Utf16Units/StorageBytes query exposed Int64 metadata while the actual ColumnValue constructor requires Int32. The two explicit SQL conversions align native result metadata with that constructor. This gate reads its own bounded fixture values of at most 101 UTF-16 units, so these int conversions preserve the exact lengths used by its boundary assertions.",
+    "SetupFailureEvidence": "D:\\CP6\\tmp\\wp2-quotation-old-max-dapper-reader-setup-failure.json",
+    "SetupFailureClassification": "The original SQL139 InvalidOperationException is reader/materialization setup failure, not a true capacity-contract RED. The parent diagnostic records bigint/bigint native-observed length types, the actual String/Int32/Int32 constructor and IsCapacityContractRed=false.",
+    "Conclusion": {
+      "Blockers": 0,
+      "P1": 0,
+      "P2": 0,
+      "Result": "No material issue found in the two-line SQL-only reader fix. Original four-file hashes, times and scope remain unchanged historical review input; this targeted record covers the new helper bytes only."
+    },
+    "ValidationBoundary": {
+      "DotNetExecutedByReviewer": false,
+      "DatabaseConnectedByReviewer": false,
+      "CredentialsOrReceiptsRead": false,
+      "SourceEditedByReviewer": false,
+      "FullTaskReviewRepeated": false,
+      "ActualSqlOldCapacityRedOrPostgreSqlGreenClaimedByThisRecord": false,
+      "RuntimeValidationOwner": "Root executes actual old SQL RED and PostgreSQL GREEN with the corrected compiled probe and preserves the original setup failure separately."
+    }
+  }
+}

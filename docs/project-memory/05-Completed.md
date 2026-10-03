@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-03：BUG #143 完成真实本地容量迁移与回归验收
+
+六个报价Creator/Modifier nullable nvarchar(max)按既有模型收敛至100，原排序规则、行值和已存token保留；最终源 `2b6548b1` 目标17/17。同编译应用真实首次/重复exit0无HTTP，隔离SQL139→140升级/重复各15/15，四实际命令案例4/4且各完整恢复15/15；第六列超长时前五已实际ALTER、同事务全部恢复。三行fixture归零后的完整只读比较29/29，351业务表原始hash/count、352表身份、原history前缀/唯一追加及全部最终metadata核对。实际EF报价图与六列native边界SQL修复后/PG各2/2，原SQL容量RED及最后超长空格差异单独记录。
+
+[原件与范围](../audits/2026-10-02-bug-143-quotation-audit-capacity/README.md)保留有效RED、102/207、snapshot/Dapper/manifest夹具错误与清理比较第一次28P1F；最后一次只定向修比较摘要的来源绑定，未重跑DB。原完整30文件审查复用，P2两文件定向复查已解决，原FK12/索引25按未变输入复用。此条完成本BUG本地验收，LocalVerified/RemotePending；Issue143仍Open，正常PR/远端核对后关闭，不能代替WP2/全业务或PG API验收。未运行Actions或部署；下方旧Pending保留历史含义。
+
+## 2026-10-02：BUG #143 六列容量修复完成本地实现与目标测试
+
+[Issue #143](https://github.com/GTX537/CP6/issues/143) 已新增六句只读public commands及SQL-only前向migration，nullable nvarchar(max)→100之前按DATALENGTH严格拒绝超200字节（尾空格/UTF16），exact metadata guard、原collation保留、same100no-op，未知定义/依赖错误不drop或改写原数据。原模型/snapshot/旧迁移不改。真实有效RED **6失败/7通过**，相关最终 **17/17、零跳过、零warning/error**，原FK12/index25按原成功来源复用；[审计](../audits/2026-10-02-bug-143-quotation-audit-capacity/README.md)保留首轮夹具错误/两轮GREEN及真实transitive APIbuild来源。这里只完成本地实现/自动化，native/完整审查/远端交付仍Pending，Issue143 Open。BUG141已经PR142合入确认main4d4e2608后Closed，不更改下方历史记录；未运行Actions/DB或部署。
+
+初版17静态GREEN之后实际SQL102（COLLATE方括号）/缺列207失败已保留；两次全数据/目录恢复15/15不是容量迁移通过。已最小修native collation校验后safe literal拼接和metadata之后动态DATALENGTH bitOUT，新target17/17；APIhash不变但Corehash变更须重新绑定。修正版native与完整审查/远端交付仍Pending，不预写GREEN。
+
 ## 2026-10-02：BUG #141 四条订单外键修复完成本地及真实 SQL 验证
 
 [Issue #141](https://github.com/GTX537/CP6/issues/141) 已实现四条 SQL-only WITH CHECK 外键前向修复和完整既有对象 guard，不改模型、snapshot、旧迁移或数据。旧链 RED **4 失败 / 5 通过**，相关 **37/37、零跳过、最终零 warning/error**（含原索引25），一次独立完整审查无实质阻塞。真实同 API首次/重复初始化 exit 0、无 HTTP；升级/重复比较各 **9/9**，352 表内容摘要/行数与1378旧索引、198旧FK保留，仅新增4FK。native guard最终 **11/11**、各恢复 **9/9**；五项复用、六项新执行，保留原NFR夹具51003失败及组合旗标证明边界。独立WP2实际订单关系SQL **2/2**，合法六行图、四孤儿拒绝和四级联，写入回滚后状态比较 **9/9**。[原始证据](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留失败/源码/二进制和外部probe范围。本条完成仅本BUG本地验收；正常远端交付待负责人执行，Issue Open，不替代WP2全结构/业务或PG API验收。未运行 Actions 或部署。

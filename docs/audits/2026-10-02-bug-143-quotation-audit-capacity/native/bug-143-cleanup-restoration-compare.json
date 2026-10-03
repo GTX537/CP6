@@ -1,0 +1,331 @@
+{
+  "Scope": "BUG143 fixture cleanup restoration: original raw business-data baseline versus final capture, plus exact final-repeat to final-cleanup catalogs/history. Cross-runtime data baseline reuse is explicit, not a same-input upgrade assertion.",
+  "Issue": 143,
+  "StartedUtc": "2026-10-03T07:07:11.9859786Z",
+  "CompletedUtc": "2026-10-03T07:07:16.3237655Z",
+  "ComparisonScriptSha256": "AA42D476E862A8203E6616C97C2E2393C03BE65C6C9C8A609BD7D7EA861A1125",
+  "ReadOnly": true,
+  "DatabaseConnectionsOpened": false,
+  "DotnetCommandsRun": false,
+  "CredentialReceiptsRead": false,
+  "Database": "CP6Compat_WP2_20261002_36ef9cae",
+  "Task": "DB-COMPAT-01-WP2",
+  "SourceCaptures": [
+    {
+      "Stage": "original-empty",
+      "CapturePath": "D:\\CP6\\tmp\\bug-143-sql-original-empty.json",
+      "CaptureSha256": "9BAB61897CAB3FDE266BCEFB56C37DB8C07A88FE8271DF48E1CA62500930A707",
+      "CapturedUtc": "2026-10-02T19:47:47.1692794Z",
+      "OwnerVerified": true,
+      "Task": "DB-COMPAT-01-WP2",
+      "Database": "CP6Compat_WP2_20261002_36ef9cae",
+      "ExpectedHistoryCount": 139,
+      "ReceiptSha256RecordedInCapture": "0B8681AC50D0CA8AABB84F9561301CC8EC57C1E178554F9F57E3DC4BBAFDDE2C",
+      "InputManifestPath": "D:\\CP6\\tmp\\bug-143-actual-input.json",
+      "RecordedInputSha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED",
+      "ActualInputSha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED",
+      "QueryPath": "D:\\CP6\\tmp\\bug-143-sql-original-empty.capture.sql",
+      "RecordedQuerySha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+      "ActualQuerySha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+      "ApiRuntimeSha256": "3AAD7F977AF059AEBEA728D1251C0C4F17776064718D09C7321E717EACBED470",
+      "CoreRuntimeSha256": "FDB1C2BCFB21A27D03CC3FE95C4F4755AC76BFE9C4605A0FA4EF80E2440AD0D7",
+      "RuntimeUse": "Historical native raw-data baseline only; original failing implementation runtime is not final-runtime acceptance."
+    },
+    {
+      "Stage": "after-repeat-final",
+      "CapturePath": "D:\\CP6\\tmp\\bug-143-sql-after-repeat-final.json",
+      "CaptureSha256": "BD2C3E9DF68BF157FC0BD9F60E08369AD52254D4A44BD3638E0C6BD2D0B5E83C",
+      "CapturedUtc": "2026-10-03T06:57:09.4795913Z",
+      "OwnerVerified": true,
+      "Task": "DB-COMPAT-01-WP2",
+      "Database": "CP6Compat_WP2_20261002_36ef9cae",
+      "ExpectedHistoryCount": 140,
+      "ReceiptSha256RecordedInCapture": "0B8681AC50D0CA8AABB84F9561301CC8EC57C1E178554F9F57E3DC4BBAFDDE2C",
+      "InputManifestPath": "D:\\CP6\\tmp\\bug-143-actual-input-final.json",
+      "RecordedInputSha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5",
+      "ActualInputSha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5",
+      "QueryPath": "D:\\CP6\\tmp\\bug-143-sql-after-repeat-final.capture.sql",
+      "RecordedQuerySha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ActualQuerySha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ApiRuntimeSha256": "E4D6519CC66893C30B8C1A59AED9FA5EAC40D0F95E948C717CF0AE6FB5D823EF",
+      "CoreRuntimeSha256": "A76A5F9F349E0851335CCDF1CB099C0F8B6F803EA5DFF2092A74CA7A62F9EEF3",
+      "RuntimeUse": "Parent final-runtime capture after actual upgrade/repeat or fixture cleanup; this script performs no new application execution."
+    },
+    {
+      "Stage": "after-cleanup-final",
+      "CapturePath": "D:\\CP6\\tmp\\bug-143-sql-after-cleanup-final.json",
+      "CaptureSha256": "F39C9BA1C8CA884BC2EFBD162D47C78C8A7E96C2443A8532B7F0BA0FB1D929B1",
+      "CapturedUtc": "2026-10-03T06:59:17.6845045Z",
+      "OwnerVerified": true,
+      "Task": "DB-COMPAT-01-WP2",
+      "Database": "CP6Compat_WP2_20261002_36ef9cae",
+      "ExpectedHistoryCount": 140,
+      "ReceiptSha256RecordedInCapture": "0B8681AC50D0CA8AABB84F9561301CC8EC57C1E178554F9F57E3DC4BBAFDDE2C",
+      "InputManifestPath": "D:\\CP6\\tmp\\bug-143-actual-input-final.json",
+      "RecordedInputSha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5",
+      "ActualInputSha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5",
+      "QueryPath": "D:\\CP6\\tmp\\bug-143-sql-after-cleanup-final.capture.sql",
+      "RecordedQuerySha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ActualQuerySha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ApiRuntimeSha256": "E4D6519CC66893C30B8C1A59AED9FA5EAC40D0F95E948C717CF0AE6FB5D823EF",
+      "CoreRuntimeSha256": "A76A5F9F349E0851335CCDF1CB099C0F8B6F803EA5DFF2092A74CA7A62F9EEF3",
+      "RuntimeUse": "Parent final-runtime capture after actual upgrade/repeat or fixture cleanup; this script performs no new application execution."
+    }
+  ],
+  "InputArtifactHashes": [
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-actual-input-final.json",
+      "Sha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-actual-input.json",
+      "Sha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-quotation-fixture-cleanup.json",
+      "Sha256": "025644FD38F4E0B6D5E47492109029E4138260C58B78AEE4FCFF4BC96B8A4F9E"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-quotation-fixture-cleanup.log",
+      "Sha256": "F406B2336823C720429DD20F739B26EFD081650909BB3170B8D065FDAC0FBBCD"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-sql-after-cleanup-final.capture.sql",
+      "Sha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-sql-after-cleanup-final.json",
+      "Sha256": "F39C9BA1C8CA884BC2EFBD162D47C78C8A7E96C2443A8532B7F0BA0FB1D929B1"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-sql-after-repeat-final.capture.sql",
+      "Sha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-sql-after-repeat-final.json",
+      "Sha256": "BD2C3E9DF68BF157FC0BD9F60E08369AD52254D4A44BD3638E0C6BD2D0B5E83C"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-sql-original-empty.capture.sql",
+      "Sha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-sql-original-empty.json",
+      "Sha256": "9BAB61897CAB3FDE266BCEFB56C37DB8C07A88FE8271DF48E1CA62500930A707"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\Capture-Bug143SqlState.ps1",
+      "Sha256": "045AFCFFADC97472DAA77D5FBEE4E27B8798E337E56BE4A96156E06516BA2910"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\Invoke-Bug143QuotationFixture.ps1",
+      "Sha256": "3911BC0E211C3BF2565C5C4744DC7B499486680834F3D9172B7B074E1E1A4B62"
+    }
+  ],
+  "CaptureScriptWitness": {
+    "Path": "D:\\CP6\\tmp\\Capture-Bug143SqlState.ps1",
+    "CurrentActualSha256": "045AFCFFADC97472DAA77D5FBEE4E27B8798E337E56BE4A96156E06516BA2910",
+    "HistoricalScriptSha256RecordedInCapture": false,
+    "HistoricalScriptSha256": null,
+    "EvidenceScope": "Capture artifacts record QuerySha256, not capture-script SHA. Current script query template is verified against all original native query bytes; no historical script hash is invented."
+  },
+  "QueryGuardDifference": {
+    "OriginalQuerySha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+    "FinalRepeatQuerySha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+    "FinalCleanupQuerySha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+    "RawQueryShaEqualAcrossOriginalAndFinal": false,
+    "ExplicitDifferences": [
+      "Native __EFMigrationsHistory count precondition 139->140, exactly one occurrence",
+      "Expected last migration precondition 184500 foreign-keys->193500 quotation-capacity, exactly one occurrence"
+    ],
+    "ReverseFinalGuardArgumentsReproducesOriginalBytes": true,
+    "ReverseFinalGuardArgumentsSha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+    "OriginalArtifactsModified": false,
+    "InputManifestNormalized": false
+  },
+  "QuotationFixtureTraces": [
+    {
+      "Schema": "dbo",
+      "Table": "T_Quotation",
+      "OriginalRows": 0,
+      "AfterRepeatRows": 1,
+      "AfterCleanupRows": 0,
+      "OriginalAndCleanupContentHashExact": true
+    },
+    {
+      "Schema": "dbo",
+      "Table": "T_QuotationCalc",
+      "OriginalRows": 0,
+      "AfterRepeatRows": 1,
+      "AfterCleanupRows": 0,
+      "OriginalAndCleanupContentHashExact": true
+    },
+    {
+      "Schema": "dbo",
+      "Table": "T_QuotationDetail",
+      "OriginalRows": 0,
+      "AfterRepeatRows": 1,
+      "AfterCleanupRows": 0,
+      "OriginalAndCleanupContentHashExact": true
+    }
+  ],
+  "BusinessTableDifferenceCountOriginalToCleanupExcludingCanonicalHistory": 0,
+  "DataRecordDifferenceCountRepeatToCleanup": 3,
+  "CleanupSummarySha256": "025644FD38F4E0B6D5E47492109029E4138260C58B78AEE4FCFF4BC96B8A4F9E",
+  "Checks": [
+    {
+      "Name": "Capture.original-empty.CompleteOwnedNativeState",
+      "Status": "Passed",
+      "Detail": "Original stage/owner assertion/SQL36ef task and exact 352/6832/1378/202/127/2 catalog counts, normalized non-null data hashes and expected native history are required."
+    },
+    {
+      "Name": "Capture.original-empty.ExactNativeInputManifest",
+      "Status": "Passed",
+      "Detail": "Each original input manifest is independently verified against its own actual bytes; original and final inputs remain distinct."
+    },
+    {
+      "Name": "Capture.original-empty.OriginalQueryBytesMatchRecordedSha",
+      "Status": "Passed",
+      "Detail": "Verify the unmodified original native query file against the capture-recorded digest."
+    },
+    {
+      "Name": "Capture.after-repeat-final.CompleteOwnedNativeState",
+      "Status": "Passed",
+      "Detail": "Original stage/owner assertion/SQL36ef task and exact 352/6832/1378/202/127/2 catalog counts, normalized non-null data hashes and expected native history are required."
+    },
+    {
+      "Name": "Capture.after-repeat-final.ExactNativeInputManifest",
+      "Status": "Passed",
+      "Detail": "Each original input manifest is independently verified against its own actual bytes; original and final inputs remain distinct."
+    },
+    {
+      "Name": "Capture.after-repeat-final.OriginalQueryBytesMatchRecordedSha",
+      "Status": "Passed",
+      "Detail": "Verify the unmodified original native query file against the capture-recorded digest."
+    },
+    {
+      "Name": "Capture.after-cleanup-final.CompleteOwnedNativeState",
+      "Status": "Passed",
+      "Detail": "Original stage/owner assertion/SQL36ef task and exact 352/6832/1378/202/127/2 catalog counts, normalized non-null data hashes and expected native history are required."
+    },
+    {
+      "Name": "Capture.after-cleanup-final.ExactNativeInputManifest",
+      "Status": "Passed",
+      "Detail": "Each original input manifest is independently verified against its own actual bytes; original and final inputs remain distinct."
+    },
+    {
+      "Name": "Capture.after-cleanup-final.OriginalQueryBytesMatchRecordedSha",
+      "Status": "Passed",
+      "Detail": "Verify the unmodified original native query file against the capture-recorded digest."
+    },
+    {
+      "Name": "AllCapturesUseSameRecordedReceiptServerAndDatabaseReference",
+      "Status": "Passed",
+      "Detail": "Compare only recorded receipt hash/server/collation fields; no credential-bearing receipt is read."
+    },
+    {
+      "Name": "CurrentCaptureScriptQueryTemplateMatchesAllThreeOriginalQueries",
+      "Status": "Passed",
+      "Detail": "Current capture script body renders the exact original query bytes for declared 139/140 history guards. Capture artifacts did not record a historical capture-script SHA; this is a current source witness, not an invented historical script hash."
+    },
+    {
+      "Name": "QueryBodyExactWithOnlyTwoExplicitHistoryGuardArgumentsDifferent",
+      "Status": "Passed",
+      "Detail": "The original 139 and final 140 query SHA values differ. Reverse the one history-count literal and one expected-tail literal in memory to reproduce the original raw query and its SHA; all measurement SQL is exact. No artifact is changed and no same-input claim is made."
+    },
+    {
+      "Name": "FinalCaptureInputsExactAndHistoricalInputHonestlyDistinct",
+      "Status": "Passed",
+      "Detail": "The old raw-data baseline has its original input and runtime identity. Repeat/cleanup share the final input/runtime identity; this read-only comparison is not a new API or migration execution."
+    },
+    {
+      "Name": "All352TableIdentitiesRemainExact",
+      "Status": "Passed",
+      "Detail": "Require ordinal schema/name identities without extra or missing tables."
+    },
+    {
+      "Name": "CleanupRestoresAll351OriginalBusinessTableRowsAndContentHashesExactly",
+      "Status": "Passed",
+      "Detail": "Every original business table, including stored rowversion tokens and empty quotations, has identical Rows and PK-ordered raw ContentSha256 after cleanup. Only canonical history is exempt across the one-row migration append."
+    },
+    {
+      "Name": "RepeatToCleanupOnlyThreeQuotationFixtureTableDataRecordsChange",
+      "Status": "Passed",
+      "Detail": "Exactly three predeclared quotation fixture tables differ; all 349 other table records, including native history data, are exact."
+    },
+    {
+      "Name": "QuotationFixture.T_Quotation.Original0Repeat1Cleanup0",
+      "Status": "Passed",
+      "Detail": "One committed native fixture row is removed; the original zero-row content hash is restored exactly."
+    },
+    {
+      "Name": "QuotationFixture.T_QuotationCalc.Original0Repeat1Cleanup0",
+      "Status": "Passed",
+      "Detail": "One committed native fixture row is removed; the original zero-row content hash is restored exactly."
+    },
+    {
+      "Name": "QuotationFixture.T_QuotationDetail.Original0Repeat1Cleanup0",
+      "Status": "Passed",
+      "Detail": "One committed native fixture row is removed; the original zero-row content hash is restored exactly."
+    },
+    {
+      "Name": "NativeHistoryKeepsAll139OriginalRowsWithOnlyExactCapacityAppendTo140",
+      "Status": "Passed",
+      "Detail": "Preserve the complete MigrationId/ProductVersion prefix and append only 20261002193500_RestoreQuotationAuditColumnCapacity/8.0.30; repeat and cleanup histories must be exact."
+    },
+    {
+      "Name": "CanonicalHistoryTableNativeCountsAndPostUpgradeHashRemainExact",
+      "Status": "Passed",
+      "Detail": "Native table count follows the one-row history append; fixture deletion preserves the final history hash/count."
+    },
+    {
+      "Name": "RepeatToCleanup.AllTableMetadataExact",
+      "Status": "Passed",
+      "Detail": "No field is normalized or exempt: full ordered native metadata, object IDs, table modify_date, column/default/identity/computed/collation and nested constraint/index fields must match exactly."
+    },
+    {
+      "Name": "RepeatToCleanup.AllColumnsExact",
+      "Status": "Passed",
+      "Detail": "No field is normalized or exempt: full ordered native metadata, object IDs, table modify_date, column/default/identity/computed/collation and nested constraint/index fields must match exactly."
+    },
+    {
+      "Name": "RepeatToCleanup.AllIndexesExact",
+      "Status": "Passed",
+      "Detail": "No field is normalized or exempt: full ordered native metadata, object IDs, table modify_date, column/default/identity/computed/collation and nested constraint/index fields must match exactly."
+    },
+    {
+      "Name": "RepeatToCleanup.AllForeignKeysExact",
+      "Status": "Passed",
+      "Detail": "No field is normalized or exempt: full ordered native metadata, object IDs, table modify_date, column/default/identity/computed/collation and nested constraint/index fields must match exactly."
+    },
+    {
+      "Name": "RepeatToCleanup.AllChecksExact",
+      "Status": "Passed",
+      "Detail": "No field is normalized or exempt: full ordered native metadata, object IDs, table modify_date, column/default/identity/computed/collation and nested constraint/index fields must match exactly."
+    },
+    {
+      "Name": "RepeatToCleanup.AllTriggersExact",
+      "Status": "Passed",
+      "Detail": "No field is normalized or exempt: full ordered native metadata, object IDs, table modify_date, column/default/identity/computed/collation and nested constraint/index fields must match exactly."
+    },
+    {
+      "Name": "SanitizedCleanupSummaryMatchesItsOriginalScriptAndLogBytes",
+      "Status": "Failed",
+      "Detail": "Native cleanup summary reports exit0, exact owned graph rows0 and no business values; its unmodified script/log bytes are independently hashed, never executed or printed."
+    },
+    {
+      "Name": "EveryOriginalInputArtifactUnchangedDuringReadOnlyComparison",
+      "Status": "Passed",
+      "Detail": "Rehash all explicit input files; the only output is this new comparison report."
+    }
+  ],
+  "Passed": 28,
+  "Failed": 1,
+  "Limitations": [
+    "Original-empty capture is a native raw data/hash baseline from an earlier runtime/input. It is not counted as execution or acceptance of the final runtime.",
+    "Only the two declared capture-query history preconditions differ; all native measurement SQL is byte-exact. Original query/input SHA values remain distinct and unchanged.",
+    "Historical capture-script SHA was not recorded in the source captures; current script-template/query-byte evidence does not invent that missing historical field.",
+    "This is an offline artifact comparison, not a new migration, full source review, PostgreSQL or production acceptance.",
+    "No whole-server DBTS/sequence rollback or production database condition is asserted; actual captured table data and final metadata are compared."
+  ]
+}

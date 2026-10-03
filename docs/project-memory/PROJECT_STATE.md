@@ -1,5 +1,19 @@
 # 项目当前状态
 
+## 2026-10-03：BUG #143 六列容量修复真实本地通过，远端交付待验
+
+[Issue #143](https://github.com/GTX537/CP6/issues/143) 功能源 `2b6548b1` 已通过最终17/17、零skip/warning/error；同实际API/Core首次与重复DatabaseInit均exit0、无HTTP。已有generation的隔离SQL139→140升级/重复各15/15，352表数据/身份/已存token保留，6832列仅六个max→200变化、history仅指定一行，1378索引/202FK及其他目录保持；三报价表modify_date随ALTER前进。四个实际命令案例4/4、各完整恢复15/15，最后列拒绝前五列已实际收窄；三行报价fixture清理后的只读完整比较29/29。实际报价SQL修复前容量RED、修复后SQL/PG各2/2及双库超长最后空格差异见[证据](../audits/2026-10-02-bug-143-quotation-audit-capacity/README.md)。原102/207、准备失败与清理比较28P1F均保留分类，不冒充产品验收。
+
+一次完整30文件审查按原范围复用，P2的两文件修正已定向复核Resolved、无新阻塞；缺失旧时间/完整manifestSHA保持null。当前LocalVerified/RemotePending，Issue143仍Open，待正常PR、远端main包含性和必要整合核对；WP2最终136→140及其余阶段仍待验。未触发Actions或部署。下方2026-10-02 Pending仅为历史时点，不改旧结果来源。
+
+## 2026-10-02：BUG #143 六个报价审计列容量修复本地 GREEN，真实 SQL/交付待验
+
+[Issue #143](https://github.com/GTX537/CP6/issues/143) 从已确认远端main `4d4e2608` 独立分支新增 SQL-only前向 `20261002193500_RestoreQuotationAuditColumnCapacity`，恢复三报价表 Creator/Modifier 的 nullable nvarchar(100)，保留原列collation。原生metadata只接受max或100；max列锁住检查DATALENGTH>200报51043，含尾空格/UTF16，拒绝而不删改或截断数据/依赖，六独立SQLops默认同EF事务，Down拒绝。模型/snapshot/旧136迁移/PG不改。
+
+有效RED **6失败/7通过**，最终目标 **17/17、零跳过、零warning/error**，[原件与范围](../audits/2026-10-02-bug-143-quotation-audit-capacity/README.md)保留首轮snapshot反射夹具错误及后续测试regex修正。actualAPI/Core由真实dotnet test transitive build生成，未单独APIbuild；旧FK12/索引25证据按原范围复用。本BUG本地实现/自动化通过；原生安装/重复/边界/依赖/全数据与晚失败回滚、独立完整审查、正常PR/远端main核对仍Pending，Issue143 Open，不声明WP2/全业务或PG API完成。BUG141已经PR142合入本基线并于19:34:16UTC Closed；下方原Pending是历史时点。未运行Actions或部署。
+
+初版17静态GREEN之后实际SQL102（COLLATE方括号）/缺列207失败已保留；两次全数据/目录恢复15/15不是容量迁移通过。已最小修native collation校验后safe literal拼接和metadata之后动态DATALENGTH bitOUT，新target17/17；APIhash不变但Corehash变更须重新绑定。修正版native与完整审查/远端交付仍Pending，不预写GREEN。
+
 ## 2026-10-02：BUG #141 四条订单外键通过本地及真实 SQL，待正常交付
 
 [订单外键遗漏](https://github.com/GTX537/CP6/issues/141) 从已确认 `main` 的 `2d974736` 独立分支新增 SQL-only 前向迁移，恢复四个既有全局业务键关系及 CASCADE/NO ACTION。WITH CHECK 验证原行，同名对象必须完整匹配 enabled/trusted/NFR 等合同，否则拒绝；既有孤儿由 SQL547阻止，不删改数据或 NOCHECK。模型、snapshot、旧迁移及候选唯一键不改。旧链 RED **4 失败 / 5 通过**，FK12+索引25相关 **37/37、零跳过、最终零 warning/error**，[原件和范围](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留。

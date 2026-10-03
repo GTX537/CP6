@@ -1,5 +1,17 @@
 # AI 可读变更日志
 
+## 2026-10-03：BUG #143 六列容量前向迁移通过真实本地验收
+
+最终功能源 `2b6548b1` 在三报价表六个Creator/Modifier保留nullable/collation、严格DATALENGTH拒绝超200字节；修正SQL原生COLLATE literal及metadata之后动态列绑定，再补锁后table identity重验。实体/snapshot/旧136迁移不变。最终17/17、零skip/warning/error；actualAPI/Core由transitive test构建产生，真实隔离SQL139→140首次/重复exit0无HTTP，各完整比较15/15，只六个容量+history一行+三modify_date变化。四普通命令案例4/4且各恢复15/15，最后第六列拒绝时前五已实际收窄；fixture清理比较29/29，原351业务表内容/352身份/完整最终目录保持。报价SQL旧容量有效RED、SQL修复后及PG各2/2，合法100尾空格保留与超长最后空格的provider差异独立记录。
+
+[证据](../audits/2026-10-02-bug-143-quotation-audit-capacity/README.md)保留102/207、夹具准备与首次清理比较28P1F，不将它们改称产品RED；完整nativeJSON gzip解压hash逐字节验证。完整30文件审查复用、P2两文件delta已Resolved，不重复完整审查或同输入构建，旧缺失时间/manifest完整SHA如实null。LocalVerified/RemotePending，Issue143仍Open，待正常PR/main远端核对；WP2及后续阶段继续。未触发Actions、部署或迁移既有环境；下方旧Pending为历史记录。
+
+## 2026-10-02：BUG #143 新增报价六个审计列容量前向修复
+
+从fresh confirmedmain `4d4e260819f0a1b59810403d016c69a2fd7319ae` 建独立branch，新增readonly六句public helper、SQL-only migration `20261002193500_RestoreQuotationAuditColumnCapacity` 和独立回归。保留三报价表Creator/Modifier原nullable/collation，native max→100前DATALENGTH>200报51043，TABLOCKX/HOLDLOCK覆盖检查到ALTER，metadata重验，same100不改；缺失/未知/依赖异常拒绝，不删改或截断数据/依赖。model/snapshot/旧136/PG/WP2不改。有效RED **6失败/7通过**，最终 **17/17、零skip/warning/error**，旧FK12/index25复用原验证；初RED反射夹具错误、regex补强与全部原记录见[审计](../audits/2026-10-02-bug-143-quotation-audit-capacity/README.md)。actualAPI由dotnet test正常transitive构建，无独立APIbuild命令/log；native、完整审查和远端交付Pending，Issue143 Open。BUG141已PR142正常合入此基线并Closed；未运行Actions、DB或部署。
+
+初版17静态GREEN之后实际SQL102（COLLATE方括号）/缺列207失败已保留；两次全数据/目录恢复15/15不是容量迁移通过。已最小修native collation校验后safe literal拼接和metadata之后动态DATALENGTH bitOUT，新target17/17；APIhash不变但Corehash变更须重新绑定。修正版native与完整审查/远端交付仍Pending，不预写GREEN。
+
 ## 2026-10-02：BUG #141 新增四条订单模型外键前向修复
 
 基线 `2d974736` 的独立任务新增 SQL-only migration `20261002184500_RestoreMissingOrderModelForeignKeys` 与4句 public guarded SQL；WITH CHECK 创建、CASCADEdelete/NO ACTIONupdate，既有同名对象检查 schema/父子/有序列/动作/enabled/trusted/NFR，冲突拒绝且不改造。模型、snapshot、旧迁移、业务数据与唯一候选键不改；只收窄原索引回归的永久迁移总数断言。实际 RED **4 失败 / 5 通过**、最终 **37/37、零跳过、零 warning/error**，一次完整审查无阻塞。相同功能源73946/API F40298E0…真实隔离SQL首次/重复exit0无HTTP，Core138→139/Space47；全352表摘要/行数及1378旧索引/198旧FK保留，仅新增4FK（总202），升级/重复各 **9/9**。guard最终 **11/11**、各恢复9/9；5项来源哈希复用、6项新执行，原 NFR夹具51003失败及combined NFR/untrusted限制原样保留。父WP2订单关系SQL **2/2**、写入后原生恢复9/9，外部源与二进制范围不冒充本BUG迁移currency或全业务验收。原件、首轮warning、setup失败与大捕获hash见[审计](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)。本BUG本地验收完成，正常远端交付仍Pending，Issue Open；六个报价容量差异仍独立WP2阻塞，不声明PG API或全阶段完成。未触发Actions、迁移现有环境或部署。

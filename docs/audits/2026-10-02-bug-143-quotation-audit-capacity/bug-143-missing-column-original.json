@@ -1,0 +1,15 @@
+{
+  "Scope": "Actual original generated EF8 batch missing-column negative diagnostic; outer transaction fully rolled back, no migration/history applied.",
+  "CapturedUtc": "2026-10-02T19:51:18.6001285Z",
+  "Status": "Failed",
+  "NativeExitCode": 0,
+  "GeneratedMigrationSha256": "C2934D6A635A8D45903203C862E60A822A0A092A715439449BCDF68C5034313E",
+  "QuerySha256": "5E5F3FC23F9FDA0D6FCC762BA45D2BCBE8E43736995A911BDC2B18B547A6DA00",
+  "Native": {
+    "FixtureEstablished": true,
+    "ActualGuardError": 207,
+    "ExpectedGuardError": 51043,
+    "ExpectedErrorObserved": false,
+    "OriginalColumnAndHistoryRestored": true
+  }
+}

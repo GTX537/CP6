@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3f2fdcd3-3a59-4cd4-a7a8-b4f7ab905600" name="tt@LAPTOP-3QQ44FJS 2026-10-02 15:40:51" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T15:40:51.7596376-04:00" queuing="2026-10-02T15:40:51.7596380-04:00" start="2026-10-02T15:40:49.8982623-04:00" finish="2026-10-02T15:41:18.0812757-04:00" />
+  <TestSettings name="default" id="d4e43438-c608-41da-bc17-424ed1ffdb63">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_15_40_51" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6c7c69d1-4b2d-4eb7-a904-196c57a3f3e6" testId="0b3de9b2-9677-76cc-4c13-9c38909e24fe" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000756" startTime="2026-10-02T15:40:51.0757979-04:00" endTime="2026-10-02T15:40:51.0758348-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6c7c69d1-4b2d-4eb7-a904-196c57a3f3e6" />
+    <UnitTestResult executionId="729a615e-054d-4301-b325-5cabcfaea33e" testId="7dffd41b-ec0f-6f15-54b5-0036c54ca076" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2734146" startTime="2026-10-02T15:40:50.7912170-04:00" endTime="2026-10-02T15:40:51.0685570-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="729a615e-054d-4301-b325-5cabcfaea33e" />
+    <UnitTestResult executionId="4fe36eb9-e048-4284-a3fb-ec1ebabd3a5d" testId="8bd580fa-01ed-f8bb-77d5-e6eb2c3486e6" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0004300" startTime="2026-10-02T15:40:51.0751752-04:00" endTime="2026-10-02T15:40:51.0752395-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4fe36eb9-e048-4284-a3fb-ec1ebabd3a5d" />
+    <UnitTestResult executionId="068e2dc3-f194-4480-91c0-98d1b9794307" testId="5516b64c-4674-9202-0129-a481d93146c2" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000671" startTime="2026-10-02T15:41:09.0229569-04:00" endTime="2026-10-02T15:41:09.0229890-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="068e2dc3-f194-4480-91c0-98d1b9794307">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 60&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d60047da-5be2-42b3-84e0-367a1b525616" testId="52031aa1-04b9-f696-a618-72c3bba63ff9" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Legacy_136_chain_preserves_the_historical_rebuild_and_has_no_capacity_repair" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.9211347" startTime="2026-10-02T15:41:09.0234170-04:00" endTime="2026-10-02T15:41:17.9395231-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d60047da-5be2-42b3-84e0-367a1b525616" />
+    <UnitTestResult executionId="9677f99e-bdaf-49aa-9af0-6e3ff6e7a061" testId="1e60ca82-8e38-9179-0f60-75db58310f4c" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000636" startTime="2026-10-02T15:41:09.0221490-04:00" endTime="2026-10-02T15:41:09.0221794-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9677f99e-bdaf-49aa-9af0-6e3ff6e7a061">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 60&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="40f8689c-02d3-4445-9b23-7e4691f7d1ad" testId="55ad15e1-bbf8-ce43-7632-0af0d7d36711" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000788" startTime="2026-10-02T15:40:51.0759901-04:00" endTime="2026-10-02T15:40:51.0760275-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40f8689c-02d3-4445-9b23-7e4691f7d1ad" />
+    <UnitTestResult executionId="f437e2ed-30d2-4302-8902-0b4e3977a508" testId="cbc47289-46f4-121a-4c88-cb1191df94c4" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000972" startTime="2026-10-02T15:41:09.0218161-04:00" endTime="2026-10-02T15:41:09.0218487-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f437e2ed-30d2-4302-8902-0b4e3977a508">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 60&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="059834d6-9603-438b-8478-6117d7f5fa9b" testId="16cfda08-0e4f-4517-e1a1-ad47789d300a" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000647" startTime="2026-10-02T15:41:09.0225508-04:00" endTime="2026-10-02T15:41:09.0225845-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="059834d6-9603-438b-8478-6117d7f5fa9b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 60&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="58ebffe4-ce05-44fd-b3f0-3378452a964b" testId="4dd60a80-25df-e6f7-f250-23a96b524e31" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:17.9423638" startTime="2026-10-02T15:40:51.0765147-04:00" endTime="2026-10-02T15:41:09.0173883-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="58ebffe4-ce05-44fd-b3f0-3378452a964b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 60&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="920586f4-f738-4377-a87a-e70fa8670431" testId="40d82cea-b2d9-3ef2-0bbf-951e137e89f9" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001013" startTime="2026-10-02T15:40:51.0756566-04:00" endTime="2026-10-02T15:40:51.0757036-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="920586f4-f738-4377-a87a-e70fa8670431" />
+    <UnitTestResult executionId="29237564-6e52-4ef5-b34e-9c464ff1bf1f" testId="11097de4-78f4-0aea-85bc-de2410d32865" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000948" startTime="2026-10-02T15:40:51.0759027-04:00" endTime="2026-10-02T15:40:51.0759358-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="29237564-6e52-4ef5-b34e-9c464ff1bf1f" />
+    <UnitTestResult executionId="7a799abf-18d9-497e-b3e7-195525cc1d22" testId="7b7650b3-6332-5837-a631-0cbc92276ac0" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003124" startTime="2026-10-02T15:41:09.0212688-04:00" endTime="2026-10-02T15:41:09.0213649-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7a799abf-18d9-497e-b3e7-195525cc1d22">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 60&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0b3de9b2-9677-76cc-4c13-9c38909e24fe">
+      <Execution id="6c7c69d1-4b2d-4eb7-a904-196c57a3f3e6" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="40d82cea-b2d9-3ef2-0bbf-951e137e89f9">
+      <Execution id="920586f4-f738-4377-a87a-e70fa8670431" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Legacy_136_chain_preserves_the_historical_rebuild_and_has_no_capacity_repair" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="52031aa1-04b9-f696-a618-72c3bba63ff9">
+      <Execution id="d60047da-5be2-42b3-84e0-367a1b525616" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Legacy_136_chain_preserves_the_historical_rebuild_and_has_no_capacity_repair" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5516b64c-4674-9202-0129-a481d93146c2">
+      <Execution id="068e2dc3-f194-4480-91c0-98d1b9794307" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4dd60a80-25df-e6f7-f250-23a96b524e31">
+      <Execution id="58ebffe4-ce05-44fd-b3f0-3378452a964b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cbc47289-46f4-121a-4c88-cb1191df94c4">
+      <Execution id="f437e2ed-30d2-4302-8902-0b4e3977a508" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8bd580fa-01ed-f8bb-77d5-e6eb2c3486e6">
+      <Execution id="4fe36eb9-e048-4284-a3fb-ec1ebabd3a5d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1e60ca82-8e38-9179-0f60-75db58310f4c">
+      <Execution id="9677f99e-bdaf-49aa-9af0-6e3ff6e7a061" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7b7650b3-6332-5837-a631-0cbc92276ac0">
+      <Execution id="7a799abf-18d9-497e-b3e7-195525cc1d22" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="55ad15e1-bbf8-ce43-7632-0af0d7d36711">
+      <Execution id="40f8689c-02d3-4445-9b23-7e4691f7d1ad" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7dffd41b-ec0f-6f15-54b5-0036c54ca076">
+      <Execution id="729a615e-054d-4301-b325-5cabcfaea33e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="16cfda08-0e4f-4517-e1a1-ad47789d300a">
+      <Execution id="059834d6-9603-438b-8478-6117d7f5fa9b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="11097de4-78f4-0aea-85bc-de2410d32865">
+      <Execution id="29237564-6e52-4ef5-b34e-9c464ff1bf1f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0b3de9b2-9677-76cc-4c13-9c38909e24fe" executionId="6c7c69d1-4b2d-4eb7-a904-196c57a3f3e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7dffd41b-ec0f-6f15-54b5-0036c54ca076" executionId="729a615e-054d-4301-b325-5cabcfaea33e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8bd580fa-01ed-f8bb-77d5-e6eb2c3486e6" executionId="4fe36eb9-e048-4284-a3fb-ec1ebabd3a5d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5516b64c-4674-9202-0129-a481d93146c2" executionId="068e2dc3-f194-4480-91c0-98d1b9794307" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52031aa1-04b9-f696-a618-72c3bba63ff9" executionId="d60047da-5be2-42b3-84e0-367a1b525616" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e60ca82-8e38-9179-0f60-75db58310f4c" executionId="9677f99e-bdaf-49aa-9af0-6e3ff6e7a061" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="55ad15e1-bbf8-ce43-7632-0af0d7d36711" executionId="40f8689c-02d3-4445-9b23-7e4691f7d1ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cbc47289-46f4-121a-4c88-cb1191df94c4" executionId="f437e2ed-30d2-4302-8902-0b4e3977a508" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16cfda08-0e4f-4517-e1a1-ad47789d300a" executionId="059834d6-9603-438b-8478-6117d7f5fa9b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4dd60a80-25df-e6f7-f250-23a96b524e31" executionId="58ebffe4-ce05-44fd-b3f0-3378452a964b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="40d82cea-b2d9-3ef2-0bbf-951e137e89f9" executionId="920586f4-f738-4377-a87a-e70fa8670431" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11097de4-78f4-0aea-85bc-de2410d32865" executionId="29237564-6e52-4ef5-b34e-9c464ff1bf1f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b7650b3-6332-5837-a631-0cbc92276ac0" executionId="7a799abf-18d9-497e-b3e7-195525cc1d22" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="7" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.18]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.49]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.51]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:18.76]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:18.76]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:18.76]       Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···&#xD;
+[xUnit.net 00:00:18.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.76]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(60,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:18.76]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:18.76]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:18.76]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:18.76]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:18.76]       Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···&#xD;
+[xUnit.net 00:00:18.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.76]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(60,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:18.76]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:18.76]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:18.76]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:18.76]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:18.76]       Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···&#xD;
+[xUnit.net 00:00:18.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.76]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(60,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:18.76]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:18.76]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:18.76]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:18.76]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:18.76]       Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···&#xD;
+[xUnit.net 00:00:18.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.76]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(60,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:18.76]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:18.76]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:18.76]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:18.76]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:18.76]       Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···&#xD;
+[xUnit.net 00:00:18.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.76]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(60,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:18.76]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:18.76]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:18.76]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:18.76]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:18.76]       Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···&#xD;
+[xUnit.net 00:00:18.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.76]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(60,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:18.76]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:18.76]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:27.68]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:41:09.0189744-04:00">
+        <Text>[xUnit.net 00:00:18.76]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationCalc", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:41:09.0227015-04:00">
+        <Text>[xUnit.net 00:00:18.76]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationDetail", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:41:09.0228625-04:00">
+        <Text>[xUnit.net 00:00:18.76]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_Quotation", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:41:09.0229645-04:00">
+        <Text>[xUnit.net 00:00:18.76]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_Quotation", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:41:09.0230350-04:00">
+        <Text>[xUnit.net 00:00:18.76]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationDetail", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:41:09.0231602-04:00">
+        <Text>[xUnit.net 00:00:18.76]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationCalc", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

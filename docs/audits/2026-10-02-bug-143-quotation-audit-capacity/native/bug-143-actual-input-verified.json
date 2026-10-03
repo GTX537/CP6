@@ -1,0 +1,117 @@
+{
+  "Scope": "BUG143 verified source/runtime after actual SQL102/207 fixes; same API assembly but changed Core dependency explicitly bound. Subsequent native results are separate, not preclaimed.",
+  "CapturedUtc": "2026-10-02T19:58:47.4028552Z",
+  "ConfirmedSourceBase": "4d4e260819f0a1b59810403d016c69a2fd7319ae",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\bug-143-quotation-audit-capacity",
+  "SourceState": "Frozen exact helper/migration/test bytes after targeted 17/17 verified transitive test build; initial old source/runtime/native failures retained separately.",
+  "Sources": [
+    {
+      "Path": "CP6.Core/Persistence/QuotationAuditColumnCapacityRepairSql.cs",
+      "Sha256": "374898155FD5B85584BCD29828199B5A13501C3B382E3003CAA75FF8F237D215"
+    },
+    {
+      "Path": "CP6.Core/Migrations/20261002193500_RestoreQuotationAuditColumnCapacity.cs",
+      "Sha256": "08E68829AE9BB581EDD7907D2F124B113B668E8FF6CA8D27F1DE84B1987DA42D"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/QuotationAuditColumnCapacityRepairTests.cs",
+      "Sha256": "39AF1EF1192649ED72CB781043FEACCE66E68ADB923BC6D7F7F076C62C08F3F2"
+    }
+  ],
+  "Runtime": [
+    {
+      "Name": "CP6.WebApi",
+      "Sha256": "3AAD7F977AF059AEBEA728D1251C0C4F17776064718D09C7321E717EACBED470"
+    },
+    {
+      "Name": "CP6.Core",
+      "Sha256": "A277E0BF86A6F66CD1A11F4885F7E34B7FD0CA17F1291F9ACF49854502521927"
+    },
+    {
+      "Name": "CP6.Entity",
+      "Sha256": "482D830E963352AB3FD3E1884B12F98A1B87BE334FAD69BF550FB8CB19FF9862"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "Sha256": "888142B75C3B0A2D1183D7D94EF7E4EFE01A88A623E0D5E091D73110EB9DDDFA"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.AspNetCore",
+      "Sha256": "B4D0FB90E153961A65AD65A8D096CEDEB76C61EAE488469B836064E70EF31DD8"
+    },
+    {
+      "Name": "CP6.Platform.Contracts",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "Microsoft.EntityFrameworkCore",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    {
+      "Name": "Microsoft.EntityFrameworkCore.SqlServer",
+      "Sha256": "6B6316970F12A420C89DC6D7988DE49D840052526201066EA80219E990EA83D7"
+    }
+  ],
+  "Evidence": [
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-generated-migration-verified.sql",
+      "Sha256": "5F457F83F2E7B2A4E30E9D9D415894244E1F8AB4EB02881B85EC598A7EDC0B2B",
+      "Bytes": 19914
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-generated-migration-verified.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Bytes": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\native-fix-green.log",
+      "Sha256": "684A1452DA508D46F867B17BE284A569F306DA64BFFFF23A206D5B8D5F4CC4AC",
+      "Bytes": 392
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\native-fix-green\\bug-143-native-fix-green.trx",
+      "Sha256": "54334250E8CFF579BAA650F09728A50F6C5253EAA9838D62031CCDC4DF69D77B",
+      "Bytes": 28276
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-actual-input.json",
+      "Sha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED",
+      "Bytes": 5298
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-original-real-ef-syntax-failure.json",
+      "Sha256": "699E8A402EAA8D449166A90CCDA5790FA7216A3967C26FD1402108C6AC1BDE34",
+      "Bytes": 1191
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-missing-column-original.json",
+      "Sha256": "42E68D6005C799EA32F28E80673CB07703D13BB871094B007674B0D7AC2124F7",
+      "Bytes": 640
+    }
+  ],
+  "MigrationId": "20261002193500_RestoreQuotationAuditColumnCapacity",
+  "ExpectedSqlOperations": 6,
+  "SnapshotGitBlob": "21ed77b4056ee44b4f44e61de13d5d34774d6934",
+  "BuildProvenance": {
+    "TestBuildProducedActualApi": true,
+    "StandaloneApiBuildPerformed": false,
+    "TestsProjectReferenceWebApiAndCore": true,
+    "FinalPassed": 17,
+    "Failed": 0,
+    "Skipped": 0,
+    "Warnings": 0
+  },
+  "NativeAcceptanceStatus": "Pending separately recorded real EF failure/success/repeat and native guards."
+}

@@ -1,0 +1,858 @@
+{
+  "Scope": "Explicit original non-secret BUG143 native evidence; large complete catalog JSON archived as gzip with exact decompression SHA256 verification. Original files remain in ignored task tmp.",
+  "CreatedUtc": "2026-10-03T07:11:33.0394717Z",
+  "Files": [
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-actual-input-final.json",
+      "OriginalBytes": 4656,
+      "OriginalSha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5",
+      "ArchivedPath": "native/bug-143-actual-input-final.json",
+      "ArchivedBytes": 4656,
+      "ArchivedSha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-generated-migration-final.sql",
+      "OriginalBytes": 23210,
+      "OriginalSha256": "8000E0C053EF66D439DF847A020A18E409CCA71EE3343473468A67CA2491E519",
+      "ArchivedPath": "native/bug-143-generated-migration-final.sql",
+      "ArchivedBytes": 23210,
+      "ArchivedSha256": "8000E0C053EF66D439DF847A020A18E409CCA71EE3343473468A67CA2491E519",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-generated-migration-final.log",
+      "OriginalBytes": 0,
+      "OriginalSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "ArchivedPath": "native/bug-143-generated-migration-final.log",
+      "ArchivedBytes": 0,
+      "ArchivedSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-red.log",
+      "OriginalBytes": 582,
+      "OriginalSha256": "98202E98CC6F2EF5E5BE804FD8F890AC85AF7B79BD3A4489E5B78811D0ECFA07",
+      "ArchivedPath": "native/identity-fix-red.log",
+      "ArchivedBytes": 582,
+      "ArchivedSha256": "98202E98CC6F2EF5E5BE804FD8F890AC85AF7B79BD3A4489E5B78811D0ECFA07",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-red\\bug-143-identity-fix-red.trx",
+      "OriginalBytes": 30437,
+      "OriginalSha256": "D5C4E76B08FF40A1743E7B7543ABFD5634631FA43CED3C088EF6F9DF4340F9A0",
+      "ArchivedPath": "native/bug-143-identity-fix-red.trx",
+      "ArchivedBytes": 30437,
+      "ArchivedSha256": "D5C4E76B08FF40A1743E7B7543ABFD5634631FA43CED3C088EF6F9DF4340F9A0",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-green.log",
+      "OriginalBytes": 396,
+      "OriginalSha256": "8BAB94423B0E3B184D14D23746E3EA2EDF6820FC2A253422AA8AC8F0B02B970F",
+      "ArchivedPath": "native/identity-fix-green.log",
+      "ArchivedBytes": 396,
+      "ArchivedSha256": "8BAB94423B0E3B184D14D23746E3EA2EDF6820FC2A253422AA8AC8F0B02B970F",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-green\\bug-143-identity-fix-green.trx",
+      "OriginalBytes": 28276,
+      "OriginalSha256": "4F5060C031FFCE23071934494AEC2875E732BAFFA36FA80E2B663DE76E0DC3D0",
+      "ArchivedPath": "native/bug-143-identity-fix-green.trx",
+      "ArchivedBytes": 28276,
+      "ArchivedSha256": "4F5060C031FFCE23071934494AEC2875E732BAFFA36FA80E2B663DE76E0DC3D0",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-actual-input-verified.json",
+      "OriginalBytes": 4607,
+      "OriginalSha256": "3D3E04F3F3868A94107415308BC6DBAB5F911BA29647E7C971DB76BFDBF04DCA",
+      "ArchivedPath": "native/bug-143-actual-input-verified.json",
+      "ArchivedBytes": 4607,
+      "ArchivedSha256": "3D3E04F3F3868A94107415308BC6DBAB5F911BA29647E7C971DB76BFDBF04DCA",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-generated-migration-verified.sql",
+      "OriginalBytes": 19914,
+      "OriginalSha256": "5F457F83F2E7B2A4E30E9D9D415894244E1F8AB4EB02881B85EC598A7EDC0B2B",
+      "ArchivedPath": "native/bug-143-generated-migration-verified.sql",
+      "ArchivedBytes": 19914,
+      "ArchivedSha256": "5F457F83F2E7B2A4E30E9D9D415894244E1F8AB4EB02881B85EC598A7EDC0B2B",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-generated-migration-verified.log",
+      "OriginalBytes": 0,
+      "OriginalSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "ArchivedPath": "native/bug-143-generated-migration-verified.log",
+      "ArchivedBytes": 0,
+      "ArchivedSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-init-bug143-real-ef-late-overlong-rejected-verified.json",
+      "OriginalBytes": 799,
+      "OriginalSha256": "781FACB72FECB79D5F2A03848ACDB175D387C328EF17D3AF7CF0314D4EFCE10E",
+      "ArchivedPath": "native/wp2-init-bug143-real-ef-late-overlong-rejected-verified.json",
+      "ArchivedBytes": 799,
+      "ArchivedSha256": "781FACB72FECB79D5F2A03848ACDB175D387C328EF17D3AF7CF0314D4EFCE10E",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-before-real-ef-rejection-verified-to-after-real-ef-rejection-verified.json",
+      "OriginalBytes": 5093,
+      "OriginalSha256": "BA5A6005D95F66C32CF6EE9834195099C7CA456D5C59A5FE339D1010A5A909E8",
+      "ArchivedPath": "native/bug-143-sql-compare-before-real-ef-rejection-verified-to-after-real-ef-rejection-verified.json",
+      "ArchivedBytes": 5093,
+      "ArchivedSha256": "BA5A6005D95F66C32CF6EE9834195099C7CA456D5C59A5FE339D1010A5A909E8",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-identity-interval-original.json",
+      "OriginalBytes": 1016,
+      "OriginalSha256": "FF4632E02C8913E93DACF53605E90FD003F254E2552144FD9554745D9B79E2FD",
+      "ArchivedPath": "native/bug-143-identity-interval-original.json",
+      "ArchivedBytes": 1016,
+      "ArchivedSha256": "FF4632E02C8913E93DACF53605E90FD003F254E2552144FD9554745D9B79E2FD",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-identity-interval-original.sql",
+      "OriginalBytes": 6268,
+      "OriginalSha256": "F03C064C4F7915C4AA890CADCD645971E25EA2F8302F8099611690FE0B936505",
+      "ArchivedPath": "native/bug-143-identity-interval-original.sql",
+      "ArchivedBytes": 6268,
+      "ArchivedSha256": "F03C064C4F7915C4AA890CADCD645971E25EA2F8302F8099611690FE0B936505",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-identity-interval-original.log",
+      "OriginalBytes": 313,
+      "OriginalSha256": "359540BA0C6DAFC680F437FC6C075635AFBBA4232716DAEF572829ACB9CA6F21",
+      "ArchivedPath": "native/bug-143-identity-interval-original.log",
+      "ArchivedBytes": 313,
+      "ArchivedSha256": "359540BA0C6DAFC680F437FC6C075635AFBBA4232716DAEF572829ACB9CA6F21",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-before-upgrade-verified-to-after-original-identity-interval.json",
+      "OriginalBytes": 5083,
+      "OriginalSha256": "481447EFD9C029BF7DB182B87730CFAB5EA58B81130F6CC60B4ED3BCF475D413",
+      "ArchivedPath": "native/bug-143-sql-compare-before-upgrade-verified-to-after-original-identity-interval.json",
+      "ArchivedBytes": 5083,
+      "ArchivedSha256": "481447EFD9C029BF7DB182B87730CFAB5EA58B81130F6CC60B4ED3BCF475D413",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture.sql",
+      "OriginalBytes": 10609,
+      "OriginalSha256": "602630CF8B7F7AF59CC4E4A0E22E1DB55B2294698DEA8170C45B6F5DFC3BCC75",
+      "ArchivedPath": "native/bug-143-quotation-fixture.sql",
+      "ArchivedBytes": 10609,
+      "ArchivedSha256": "602630CF8B7F7AF59CC4E4A0E22E1DB55B2294698DEA8170C45B6F5DFC3BCC75",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-prepare.json",
+      "OriginalBytes": 694,
+      "OriginalSha256": "85CA8DB1628EECCB352CA560EA31DB84D8B71E8BFE2600AE32525E136F01E8DF",
+      "ArchivedPath": "native/bug-143-quotation-fixture-prepare.json",
+      "ArchivedBytes": 694,
+      "ArchivedSha256": "85CA8DB1628EECCB352CA560EA31DB84D8B71E8BFE2600AE32525E136F01E8DF",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-prepare.log",
+      "OriginalBytes": 122,
+      "OriginalSha256": "51CF4E8CA3554C2C475F23DF3E2EAA216CAB05754FF7EFF71E293CFA02EEA4B7",
+      "ArchivedPath": "native/bug-143-quotation-fixture-prepare.log",
+      "ArchivedBytes": 122,
+      "ArchivedSha256": "51CF4E8CA3554C2C475F23DF3E2EAA216CAB05754FF7EFF71E293CFA02EEA4B7",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-poison.json",
+      "OriginalBytes": 692,
+      "OriginalSha256": "C948FCA5C2BDB0029364CE3CD0B4BAF04C783363055D6A28AF90B3CE7F636D5C",
+      "ArchivedPath": "native/bug-143-quotation-fixture-poison.json",
+      "ArchivedBytes": 692,
+      "ArchivedSha256": "C948FCA5C2BDB0029364CE3CD0B4BAF04C783363055D6A28AF90B3CE7F636D5C",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-poison.log",
+      "OriginalBytes": 121,
+      "OriginalSha256": "007F1625D0146388351FF205B7081B5EB757F5BA34C989840810A0D8307CD4DC",
+      "ArchivedPath": "native/bug-143-quotation-fixture-poison.log",
+      "ArchivedBytes": 121,
+      "ArchivedSha256": "007F1625D0146388351FF205B7081B5EB757F5BA34C989840810A0D8307CD4DC",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-restore.json",
+      "OriginalBytes": 694,
+      "OriginalSha256": "D443F5C7A415C95406FEF2BFC96008763FF5168CD74D95CA01D4351C1ADAED14",
+      "ArchivedPath": "native/bug-143-quotation-fixture-restore.json",
+      "ArchivedBytes": 694,
+      "ArchivedSha256": "D443F5C7A415C95406FEF2BFC96008763FF5168CD74D95CA01D4351C1ADAED14",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-restore.log",
+      "OriginalBytes": 122,
+      "OriginalSha256": "CA126C5DAE43DF28910AF6681E46D1F9BF2ABD9D56F634804C4E92948614A22A",
+      "ArchivedPath": "native/bug-143-quotation-fixture-restore.log",
+      "ArchivedBytes": 122,
+      "ArchivedSha256": "CA126C5DAE43DF28910AF6681E46D1F9BF2ABD9D56F634804C4E92948614A22A",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-cleanup.json",
+      "OriginalBytes": 694,
+      "OriginalSha256": "025644FD38F4E0B6D5E47492109029E4138260C58B78AEE4FCFF4BC96B8A4F9E",
+      "ArchivedPath": "native/bug-143-quotation-fixture-cleanup.json",
+      "ArchivedBytes": 694,
+      "ArchivedSha256": "025644FD38F4E0B6D5E47492109029E4138260C58B78AEE4FCFF4BC96B8A4F9E",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-quotation-fixture-cleanup.log",
+      "OriginalBytes": 122,
+      "OriginalSha256": "F406B2336823C720429DD20F739B26EFD081650909BB3170B8D065FDAC0FBBCD",
+      "ArchivedPath": "native/bug-143-quotation-fixture-cleanup.log",
+      "ArchivedBytes": 122,
+      "ArchivedSha256": "F406B2336823C720429DD20F739B26EFD081650909BB3170B8D065FDAC0FBBCD",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-init-bug143-capacity-upgrade-final-first.json",
+      "OriginalBytes": 788,
+      "OriginalSha256": "ADDD009CC428DDBA68FB909C5D7C3CF41DE6E033A84BC52479F5C1468C027AB7",
+      "ArchivedPath": "native/wp2-init-bug143-capacity-upgrade-final-first.json",
+      "ArchivedBytes": 788,
+      "ArchivedSha256": "ADDD009CC428DDBA68FB909C5D7C3CF41DE6E033A84BC52479F5C1468C027AB7",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-init-bug143-capacity-upgrade-final-repeat.json",
+      "OriginalBytes": 789,
+      "OriginalSha256": "A57F93C56B892FED2CB7D04B192899C355885AEACDAA486DBCD9791870915E3C",
+      "ArchivedPath": "native/wp2-init-bug143-capacity-upgrade-final-repeat.json",
+      "ArchivedBytes": 789,
+      "ArchivedSha256": "A57F93C56B892FED2CB7D04B192899C355885AEACDAA486DBCD9791870915E3C",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-before-upgrade-final.json",
+      "OriginalBytes": 16400448,
+      "OriginalSha256": "18292C313FA42D0F5FF306C41394D29FB3BB573C4A380242171825AD2C9349BE",
+      "ArchivedPath": "native/bug-143-sql-before-upgrade-final.json.gz",
+      "ArchivedBytes": 313558,
+      "ArchivedSha256": "63F8E3E9EF5F73E1F4B20C3C5BD866D718502919EB59891D1CED9FD7C2D6977D",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-before-upgrade-final.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+      "ArchivedPath": "native/bug-143-sql-before-upgrade-final.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-after-upgrade-final.json",
+      "OriginalBytes": 16400576,
+      "OriginalSha256": "8B0D36883707818235FE071C23FABD9F6080FEC9E05CB65A9F61250DB4AAB7A6",
+      "ArchivedPath": "native/bug-143-sql-after-upgrade-final.json.gz",
+      "ArchivedBytes": 313581,
+      "ArchivedSha256": "4BDCC522DFA74F943F4519092AF98D5A780331777AE7CE4C3FA82F7838363D82",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-after-upgrade-final.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ArchivedPath": "native/bug-143-sql-after-upgrade-final.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-after-repeat-final.json",
+      "OriginalBytes": 16400575,
+      "OriginalSha256": "BD2C3E9DF68BF157FC0BD9F60E08369AD52254D4A44BD3638E0C6BD2D0B5E83C",
+      "ArchivedPath": "native/bug-143-sql-after-repeat-final.json.gz",
+      "ArchivedBytes": 313580,
+      "ArchivedSha256": "3A28E35D42EA5BD93A3A9CC8A2529242EC4BC9B77927A955CD610EDBB3260C7A",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-after-repeat-final.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ArchivedPath": "native/bug-143-sql-after-repeat-final.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-before-upgrade-final-to-after-upgrade-final.json",
+      "OriginalBytes": 5947,
+      "OriginalSha256": "8F9CB5497880553C900D65810FC25B7490E8CA42EB79455E648513D186F06025",
+      "ArchivedPath": "native/bug-143-sql-compare-before-upgrade-final-to-after-upgrade-final.json",
+      "ArchivedBytes": 5947,
+      "ArchivedSha256": "8F9CB5497880553C900D65810FC25B7490E8CA42EB79455E648513D186F06025",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-after-upgrade-final-to-after-repeat-final.json",
+      "OriginalBytes": 5065,
+      "OriginalSha256": "FFA68A430422EE4781DC2AB75519C01B373523C2621A6CB32EC9563E8A9F8445",
+      "ArchivedPath": "native/bug-143-sql-compare-after-upgrade-final-to-after-repeat-final.json",
+      "ArchivedBytes": 5065,
+      "ArchivedSha256": "FFA68A430422EE4781DC2AB75519C01B373523C2621A6CB32EC9563E8A9F8445",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-original-empty.json",
+      "OriginalBytes": 16400436,
+      "OriginalSha256": "9BAB61897CAB3FDE266BCEFB56C37DB8C07A88FE8271DF48E1CA62500930A707",
+      "ArchivedPath": "native/bug-143-sql-original-empty.json.gz",
+      "ArchivedBytes": 313401,
+      "ArchivedSha256": "28A993D3C227FCD0AAF5E80FE73F355B9E48D0CA25563556E7A3C0C6E9790830",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-original-empty.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+      "ArchivedPath": "native/bug-143-sql-original-empty.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "5AF5A3D21BA69A941CFD86F188E807BCBBC1800E3CB98181AAA517226E09F21D",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-after-cleanup-final.json",
+      "OriginalBytes": 16400576,
+      "OriginalSha256": "F39C9BA1C8CA884BC2EFBD162D47C78C8A7E96C2443A8532B7F0BA0FB1D929B1",
+      "ArchivedPath": "native/bug-143-sql-after-cleanup-final.json.gz",
+      "ArchivedBytes": 313435,
+      "ArchivedSha256": "F61551E203E7ED528385133EA2BF002398314ACCD9F595324057AE5695B98BD5",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-after-cleanup-final.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ArchivedPath": "native/bug-143-sql-after-cleanup-final.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-sql139-quotation-audit-capacity-valid-red.json",
+      "OriginalBytes": 1797,
+      "OriginalSha256": "A580E910EA6C93890AAB65F42D9122BBA710F5C77DAE89A2D2D7C37F43ACAE7D",
+      "ArchivedPath": "native/wp2-migration-sql139-quotation-audit-capacity-valid-red.json",
+      "ArchivedBytes": 1797,
+      "ArchivedSha256": "A580E910EA6C93890AAB65F42D9122BBA710F5C77DAE89A2D2D7C37F43ACAE7D",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-sql139-quotation-audit-capacity-valid-red.log",
+      "OriginalBytes": 72,
+      "OriginalSha256": "62DD957D17F300A7F34EB587DBE49D51E61C227E77887BFF17DEABA8058B32D0",
+      "ArchivedPath": "native/wp2-migration-sql139-quotation-audit-capacity-valid-red.log",
+      "ArchivedBytes": 72,
+      "ArchivedSha256": "62DD957D17F300A7F34EB587DBE49D51E61C227E77887BFF17DEABA8058B32D0",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-quotation-old-max-dapper-reader-setup-failure.json",
+      "OriginalBytes": 743,
+      "OriginalSha256": "F6EA202CF97C7DC49F46451CA711C562A25111F78004042F84F1976250E09D1C",
+      "ArchivedPath": "native/wp2-quotation-old-max-dapper-reader-setup-failure.json",
+      "ArchivedBytes": 743,
+      "ArchivedSha256": "F6EA202CF97C7DC49F46451CA711C562A25111F78004042F84F1976250E09D1C",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-sql139-quotation-audit-capacity-contract-red.json",
+      "OriginalBytes": 1888,
+      "OriginalSha256": "4AE25FD3DD9F69DDEB5367041ED3FE1AC7CAFC6B7100F6C33CCD81B0CE598165",
+      "ArchivedPath": "native/wp2-migration-sql139-quotation-audit-capacity-contract-red.json",
+      "ArchivedBytes": 1888,
+      "ArchivedSha256": "4AE25FD3DD9F69DDEB5367041ED3FE1AC7CAFC6B7100F6C33CCD81B0CE598165",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-sql139-quotation-audit-capacity-contract-red.log",
+      "OriginalBytes": 162,
+      "OriginalSha256": "10A7469001A612FDADE6EAC3B98084C20D2C776345638AA03A865C587ED8BEFD",
+      "ArchivedPath": "native/wp2-migration-sql139-quotation-audit-capacity-contract-red.log",
+      "ArchivedBytes": 162,
+      "ArchivedSha256": "10A7469001A612FDADE6EAC3B98084C20D2C776345638AA03A865C587ED8BEFD",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-sql140-quotation-audit-capacity-restored.json",
+      "OriginalBytes": 2441,
+      "OriginalSha256": "33AC0ECE5EB90DE61652AA89EDE083522389F10593F072B932D2463BF4368032",
+      "ArchivedPath": "native/wp2-migration-sql140-quotation-audit-capacity-restored.json",
+      "ArchivedBytes": 2441,
+      "ArchivedSha256": "33AC0ECE5EB90DE61652AA89EDE083522389F10593F072B932D2463BF4368032",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-sql140-quotation-audit-capacity-restored.log",
+      "OriginalBytes": 715,
+      "OriginalSha256": "AD182695DF22D743E4D5E2C436ABBE3577555200B972EBB2EF17D377CF3EAADA",
+      "ArchivedPath": "native/wp2-migration-sql140-quotation-audit-capacity-restored.log",
+      "ArchivedBytes": 715,
+      "ArchivedSha256": "AD182695DF22D743E4D5E2C436ABBE3577555200B972EBB2EF17D377CF3EAADA",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-pg-quotation-audit-capacity-reference.json",
+      "OriginalBytes": 2414,
+      "OriginalSha256": "46A304A9C725119F48735349C317AE985F6DD0D57B748EB1CB1463C5E69E38CF",
+      "ArchivedPath": "native/wp2-migration-pg-quotation-audit-capacity-reference.json",
+      "ArchivedBytes": 2414,
+      "ArchivedSha256": "46A304A9C725119F48735349C317AE985F6DD0D57B748EB1CB1463C5E69E38CF",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-migration-pg-quotation-audit-capacity-reference.log",
+      "OriginalBytes": 693,
+      "OriginalSha256": "2AB3930F1DAB8D7AC3A7674E25E78A7534CAB0307A5DCAD029FC65CE9FBFA47F",
+      "ArchivedPath": "native/wp2-migration-pg-quotation-audit-capacity-reference.log",
+      "ArchivedBytes": 693,
+      "ArchivedSha256": "2AB3930F1DAB8D7AC3A7674E25E78A7534CAB0307A5DCAD029FC65CE9FBFA47F",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\build-migration-probe-quotation-audit-gate.log",
+      "OriginalBytes": 82,
+      "OriginalSha256": "17005D68C307190F953152481194FCE3409DDB796B397C323B19B54090407623",
+      "ArchivedPath": "native/build-migration-probe-quotation-audit-gate.log",
+      "ArchivedBytes": 82,
+      "ArchivedSha256": "17005D68C307190F953152481194FCE3409DDB796B397C323B19B54090407623",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\build-migration-probe-quotation-legacy-max-reader-fix.log",
+      "OriginalBytes": 82,
+      "OriginalSha256": "A4BC31F2E0001FAD9B053825B88523FAD2B41B7522AA249F5E6A5390E031384E",
+      "ArchivedPath": "native/build-migration-probe-quotation-legacy-max-reader-fix.log",
+      "ArchivedBytes": 82,
+      "ArchivedSha256": "A4BC31F2E0001FAD9B053825B88523FAD2B41B7522AA249F5E6A5390E031384E",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\wp2-review-quotation-and-final-forward-delta.json",
+      "OriginalBytes": 10437,
+      "OriginalSha256": "AFA493EF34F1950467FBAD61AD771997658E7D28E4163E9CFB885F143FE158FA",
+      "ArchivedPath": "native/wp2-review-quotation-and-final-forward-delta.json",
+      "ArchivedBytes": 10437,
+      "ArchivedSha256": "AFA493EF34F1950467FBAD61AD771997658E7D28E4163E9CFB885F143FE158FA",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-independent-review.json",
+      "OriginalBytes": 16874,
+      "OriginalSha256": "EE5BC931B058DB610570191375B9619551A1806E5971A007CF8FBAB7C2B7F1EA",
+      "ArchivedPath": "native/bug-143-independent-review.json",
+      "ArchivedBytes": 16874,
+      "ArchivedSha256": "EE5BC931B058DB610570191375B9619551A1806E5971A007CF8FBAB7C2B7F1EA",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\Capture-Bug143SqlState.ps1",
+      "OriginalBytes": 12425,
+      "OriginalSha256": "045AFCFFADC97472DAA77D5FBEE4E27B8798E337E56BE4A96156E06516BA2910",
+      "ArchivedPath": "native/Capture-Bug143SqlState.ps1",
+      "ArchivedBytes": 12425,
+      "ArchivedSha256": "045AFCFFADC97472DAA77D5FBEE4E27B8798E337E56BE4A96156E06516BA2910",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\Compare-Bug143SqlState.ps1",
+      "OriginalBytes": 14231,
+      "OriginalSha256": "808639154AB91F1B45ABC464841422815D0390BDECA71EB5BE2D992DAAEF2185",
+      "ArchivedPath": "native/Compare-Bug143SqlState.ps1",
+      "ArchivedBytes": 14231,
+      "ArchivedSha256": "808639154AB91F1B45ABC464841422815D0390BDECA71EB5BE2D992DAAEF2185",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\Invoke-Bug143QuotationFixture.ps1",
+      "OriginalBytes": 1774,
+      "OriginalSha256": "3911BC0E211C3BF2565C5C4744DC7B499486680834F3D9172B7B074E1E1A4B62",
+      "ArchivedPath": "native/Invoke-Bug143QuotationFixture.ps1",
+      "ArchivedBytes": 1774,
+      "ArchivedSha256": "3911BC0E211C3BF2565C5C4744DC7B499486680834F3D9172B7B074E1E1A4B62",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-guards-cp143-final.json",
+      "OriginalBytes": 4997,
+      "OriginalSha256": "42D4FEC8B879A4FFCD2CE74974A29EE752112A111575660EA1A331D912B7EFBE",
+      "ArchivedPath": "native/bug-143-native-guards-cp143-final.json",
+      "ArchivedBytes": 4997,
+      "ArchivedSha256": "42D4FEC8B879A4FFCD2CE74974A29EE752112A111575660EA1A331D912B7EFBE",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\Test-Bug143SqlGuards.ps1",
+      "OriginalBytes": 18983,
+      "OriginalSha256": "0A4F47C2C37B5A65BE16DFBA382C535C31C45D66BAB30A7D196950311FE1A311",
+      "ArchivedPath": "native/Test-Bug143SqlGuards.ps1",
+      "ArchivedBytes": 18983,
+      "ArchivedSha256": "0A4F47C2C37B5A65BE16DFBA382C535C31C45D66BAB30A7D196950311FE1A311",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-correct-existing.sql",
+      "OriginalBytes": 31787,
+      "OriginalSha256": "3E0CB7C17D6764CDAA0B9D08D16D82863F99CA1C4278E5A276E616FC398B72BD",
+      "ArchivedPath": "native/bug-143-native-cp143-final-correct-existing.sql",
+      "ArchivedBytes": 31787,
+      "ArchivedSha256": "3E0CB7C17D6764CDAA0B9D08D16D82863F99CA1C4278E5A276E616FC398B72BD",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-correct-existing.log",
+      "OriginalBytes": 920,
+      "OriginalSha256": "687D4EA3CF599B9FCB943E52367C74A7F3B61F6BD2CE930C0CAB8D47449D3449",
+      "ArchivedPath": "native/bug-143-native-cp143-final-correct-existing.log",
+      "ArchivedBytes": 920,
+      "ArchivedSha256": "687D4EA3CF599B9FCB943E52367C74A7F3B61F6BD2CE930C0CAB8D47449D3449",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-correct-existing.json",
+      "OriginalBytes": 1021,
+      "OriginalSha256": "12C6D6EAEB9C0984EC3AC4D713FC5295F9D32E6CA648E465EFEA27247FC814A0",
+      "ArchivedPath": "native/bug-143-native-cp143-final-correct-existing.json",
+      "ArchivedBytes": 1021,
+      "ArchivedSha256": "12C6D6EAEB9C0984EC3AC4D713FC5295F9D32E6CA648E465EFEA27247FC814A0",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-correct-existing-restored.json",
+      "OriginalBytes": 16400594,
+      "OriginalSha256": "89E5835014C7F3B32C078496087C4489706D89C47E1E675662C21BBFBF3CCB58",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-correct-existing-restored.json.gz",
+      "ArchivedBytes": 313442,
+      "ArchivedSha256": "AFBEDEC4ECAD33631FD9C06C08B56FFA761739EC0C3271FC997188D90F41709F",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-correct-existing-restored.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-correct-existing-restored.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-after-cleanup-final-to-cp143-final-correct-existing-restored.json",
+      "OriginalBytes": 5084,
+      "OriginalSha256": "7A9F4BBBD8DCFB7B830CA2D7E3BAC3B9DAE2DECD4BE18812D1A364DDAAF76C65",
+      "ArchivedPath": "native/bug-143-sql-compare-after-cleanup-final-to-cp143-final-correct-existing-restored.json",
+      "ArchivedBytes": 5084,
+      "ArchivedSha256": "7A9F4BBBD8DCFB7B830CA2D7E3BAC3B9DAE2DECD4BE18812D1A364DDAAF76C65",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-missing-column.sql",
+      "OriginalBytes": 31835,
+      "OriginalSha256": "0DBB99B1010E7B270381911530D2CE405356603337C6C03079D466E0A399FFAD",
+      "ArchivedPath": "native/bug-143-native-cp143-final-missing-column.sql",
+      "ArchivedBytes": 31835,
+      "ArchivedSha256": "0DBB99B1010E7B270381911530D2CE405356603337C6C03079D466E0A399FFAD",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-missing-column.log",
+      "OriginalBytes": 923,
+      "OriginalSha256": "811E7469BD689B40DEE180BDA6747FBBDE462D6E55607E8618AE48EC7456468C",
+      "ArchivedPath": "native/bug-143-native-cp143-final-missing-column.log",
+      "ArchivedBytes": 923,
+      "ArchivedSha256": "811E7469BD689B40DEE180BDA6747FBBDE462D6E55607E8618AE48EC7456468C",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-missing-column.json",
+      "OriginalBytes": 1024,
+      "OriginalSha256": "BD495058B0ACDADA8D721AE428E9F53AC808A87470D1C703B333D3ED59391BC0",
+      "ArchivedPath": "native/bug-143-native-cp143-final-missing-column.json",
+      "ArchivedBytes": 1024,
+      "ArchivedSha256": "BD495058B0ACDADA8D721AE428E9F53AC808A87470D1C703B333D3ED59391BC0",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-missing-column-restored.json",
+      "OriginalBytes": 16400592,
+      "OriginalSha256": "958D8971CF7A94A99304B85FBFE18D9E3CA467FDB8C66A1ACACC75E273939E69",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-missing-column-restored.json.gz",
+      "ArchivedBytes": 313440,
+      "ArchivedSha256": "6480FE1A32C466115FDDCED769BF0CC577CF504F2331843CAE6AB75CA4A4AA67",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-missing-column-restored.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-missing-column-restored.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-after-cleanup-final-to-cp143-final-missing-column-restored.json",
+      "OriginalBytes": 5082,
+      "OriginalSha256": "85CAEBA66E5498BCF0B4183D719F841FD2AA2C154F9DF279DDDB748482999C45",
+      "ArchivedPath": "native/bug-143-sql-compare-after-cleanup-final-to-cp143-final-missing-column-restored.json",
+      "ArchivedBytes": 5082,
+      "ArchivedSha256": "85CAEBA66E5498BCF0B4183D719F841FD2AA2C154F9DF279DDDB748482999C45",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-overlong-trailing-spaces.sql",
+      "OriginalBytes": 33989,
+      "OriginalSha256": "49BFD2DC0B8A5EBC94599342E82A63AB7CEECE447E93608980E5988EBCEC6D0D",
+      "ArchivedPath": "native/bug-143-native-cp143-final-overlong-trailing-spaces.sql",
+      "ArchivedBytes": 33989,
+      "ArchivedSha256": "49BFD2DC0B8A5EBC94599342E82A63AB7CEECE447E93608980E5988EBCEC6D0D",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-overlong-trailing-spaces.log",
+      "OriginalBytes": 943,
+      "OriginalSha256": "C43E632E08816B8A9750D487F47ECD981914833A58B0BAEE85E853CBEB86D6ED",
+      "ArchivedPath": "native/bug-143-native-cp143-final-overlong-trailing-spaces.log",
+      "ArchivedBytes": 943,
+      "ArchivedSha256": "C43E632E08816B8A9750D487F47ECD981914833A58B0BAEE85E853CBEB86D6ED",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-overlong-trailing-spaces.json",
+      "OriginalBytes": 1044,
+      "OriginalSha256": "BD504542D1549F08AC7FB813271A82479C4426CE845E0BB2737AC9A2CDCF1565",
+      "ArchivedPath": "native/bug-143-native-cp143-final-overlong-trailing-spaces.json",
+      "ArchivedBytes": 1044,
+      "ArchivedSha256": "BD504542D1549F08AC7FB813271A82479C4426CE845E0BB2737AC9A2CDCF1565",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-overlong-trailing-spaces-restored.json",
+      "OriginalBytes": 16400602,
+      "OriginalSha256": "772309BE7E78ECE58F70AAEEFB8220DE0B02562C5DDAD4EC77F5BE6E50C09C75",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-overlong-trailing-spaces-restored.json.gz",
+      "ArchivedBytes": 313449,
+      "ArchivedSha256": "AEBA3CA985239E45B75EE171E891790E74DD1EA492D2ECEBDDA93DAFB6EE287D",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-overlong-trailing-spaces-restored.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-overlong-trailing-spaces-restored.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-after-cleanup-final-to-cp143-final-overlong-trailing-spaces-restored.json",
+      "OriginalBytes": 5092,
+      "OriginalSha256": "6D3B393FDD0D25AE77EAD8DAB96248D03678655CF6E3E887A6F3B27161EDC5CB",
+      "ArchivedPath": "native/bug-143-sql-compare-after-cleanup-final-to-cp143-final-overlong-trailing-spaces-restored.json",
+      "ArchivedBytes": 5092,
+      "ArchivedSha256": "6D3B393FDD0D25AE77EAD8DAB96248D03678655CF6E3E887A6F3B27161EDC5CB",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-last-column-late-atomic.sql",
+      "OriginalBytes": 34869,
+      "OriginalSha256": "EF76D60AC40DE3C3658FB82AB9F27A324D0D5F28A121F542FBD1540D07482610",
+      "ArchivedPath": "native/bug-143-native-cp143-final-last-column-late-atomic.sql",
+      "ArchivedBytes": 34869,
+      "ArchivedSha256": "EF76D60AC40DE3C3658FB82AB9F27A324D0D5F28A121F542FBD1540D07482610",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-last-column-late-atomic.log",
+      "OriginalBytes": 940,
+      "OriginalSha256": "B0E84F51130CBF1B6975724D474039C2740BD964A385372299C0B608E38D257C",
+      "ArchivedPath": "native/bug-143-native-cp143-final-last-column-late-atomic.log",
+      "ArchivedBytes": 940,
+      "ArchivedSha256": "B0E84F51130CBF1B6975724D474039C2740BD964A385372299C0B608E38D257C",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-native-cp143-final-last-column-late-atomic.json",
+      "OriginalBytes": 1041,
+      "OriginalSha256": "3D23B637E47D93BF440377CE1CE7A686DC9B97C1A042645D2A807B21FCDBE315",
+      "ArchivedPath": "native/bug-143-native-cp143-final-last-column-late-atomic.json",
+      "ArchivedBytes": 1041,
+      "ArchivedSha256": "3D23B637E47D93BF440377CE1CE7A686DC9B97C1A042645D2A807B21FCDBE315",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-last-column-late-atomic-restored.json",
+      "OriginalBytes": 16400601,
+      "OriginalSha256": "8222AB79180E0106626515E0D6D1C6378AB04E8C2F475C17D0E4F881CCE574F0",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-last-column-late-atomic-restored.json.gz",
+      "ArchivedBytes": 313448,
+      "ArchivedSha256": "232D49BD299D4CF5885FFA3460B0D4D331EC9B7BCD9CDD767E2B628885F65C46",
+      "GZip": true,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-cp143-final-last-column-late-atomic-restored.capture.sql",
+      "OriginalBytes": 7413,
+      "OriginalSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "ArchivedPath": "native/bug-143-sql-cp143-final-last-column-late-atomic-restored.capture.sql",
+      "ArchivedBytes": 7413,
+      "ArchivedSha256": "D6F57D9DD6047FA97064BA1F71140CB74FF241B68DA8C2365B61F9768CC0A879",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-sql-compare-after-cleanup-final-to-cp143-final-last-column-late-atomic-restored.json",
+      "OriginalBytes": 5091,
+      "OriginalSha256": "F48389B2BAE07C51CEB7E015DC564E243782752F678A3BC80C9A9E2147DB9D0B",
+      "ArchivedPath": "native/bug-143-sql-compare-after-cleanup-final-to-cp143-final-last-column-late-atomic-restored.json",
+      "ArchivedBytes": 5091,
+      "ArchivedSha256": "F48389B2BAE07C51CEB7E015DC564E243782752F678A3BC80C9A9E2147DB9D0B",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-cleanup-restoration-compare.json",
+      "OriginalBytes": 18303,
+      "OriginalSha256": "DED3E3FCE2A7B79F46014A44EE25B933243E66C0881B52FBC097568F36811814",
+      "ArchivedPath": "native/bug-143-cleanup-restoration-compare.json",
+      "ArchivedBytes": 18303,
+      "ArchivedSha256": "DED3E3FCE2A7B79F46014A44EE25B933243E66C0881B52FBC097568F36811814",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\Compare-Bug143Cleanup.original-fixture-hash-source.ps1",
+      "OriginalBytes": 20302,
+      "OriginalSha256": "AA42D476E862A8203E6616C97C2E2393C03BE65C6C9C8A609BD7D7EA861A1125",
+      "ArchivedPath": "native/Compare-Bug143Cleanup.original-fixture-hash-source.ps1",
+      "ArchivedBytes": 20302,
+      "ArchivedSha256": "AA42D476E862A8203E6616C97C2E2393C03BE65C6C9C8A609BD7D7EA861A1125",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\bug-143-cleanup-restoration-compare-verified.json",
+      "OriginalBytes": 19911,
+      "OriginalSha256": "1D852F08D9AD20A4D58672CD478595A06BC43AFBEFAA7ABEDA0C611D7DC9E6B4",
+      "ArchivedPath": "native/bug-143-cleanup-restoration-compare-verified.json",
+      "ArchivedBytes": 19911,
+      "ArchivedSha256": "1D852F08D9AD20A4D58672CD478595A06BC43AFBEFAA7ABEDA0C611D7DC9E6B4",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    },
+    {
+      "Original": "D:\\CP6\\tmp\\Compare-Bug143Cleanup.ps1",
+      "OriginalBytes": 22089,
+      "OriginalSha256": "AC1E0C4421808C82258B0F3A43707C380423FC9FFC1FF3965421F878EE584797",
+      "ArchivedPath": "native/Compare-Bug143Cleanup.ps1",
+      "ArchivedBytes": 22089,
+      "ArchivedSha256": "AC1E0C4421808C82258B0F3A43707C380423FC9FFC1FF3965421F878EE584797",
+      "GZip": false,
+      "DecodedOriginalHashVerified": true
+    }
+  ],
+  "FileCount": 85,
+  "SecretsOrRawApplicationStreamsArchived": false
+}

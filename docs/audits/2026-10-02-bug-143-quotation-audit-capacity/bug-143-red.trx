@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ce90d265-fb7d-4731-8e1a-da8b399ef4d1" name="tt@LAPTOP-3QQ44FJS 2026-10-02 15:39:35" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T15:39:35.8473320-04:00" queuing="2026-10-02T15:39:35.8473322-04:00" start="2026-10-02T15:39:30.3777496-04:00" finish="2026-10-02T15:40:03.0972337-04:00" />
+  <TestSettings name="default" id="def9fc8a-30bd-4738-8630-6f7ad8bbb37a">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_15_39_35" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6839a4e7-0230-4fa4-bd55-f6d69974dc01" testId="11097de4-78f4-0aea-85bc-de2410d32865" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001053" startTime="2026-10-02T15:39:34.7320983-04:00" endTime="2026-10-02T15:39:34.7321444-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6839a4e7-0230-4fa4-bd55-f6d69974dc01">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentNullException : Value cannot be null. (Parameter 'element')</Message>
+          <StackTrace>   at System.ArgumentNullException.Throw(String paramName)&#xD;
+   at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 41&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cc793e32-84b3-4b9c-8605-2b8495c699de" testId="1e60ca82-8e38-9179-0f60-75db58310f4c" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000694" startTime="2026-10-02T15:39:54.0095664-04:00" endTime="2026-10-02T15:39:54.0095994-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc793e32-84b3-4b9c-8605-2b8495c699de">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 48&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a893922f-c79b-407e-b1ff-dd7abb465087" testId="0b3de9b2-9677-76cc-4c13-9c38909e24fe" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001310" startTime="2026-10-02T15:39:34.7316075-04:00" endTime="2026-10-02T15:39:34.7316585-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a893922f-c79b-407e-b1ff-dd7abb465087">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentNullException : Value cannot be null. (Parameter 'element')</Message>
+          <StackTrace>   at System.ArgumentNullException.Throw(String paramName)&#xD;
+   at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 41&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f10bde4b-82c8-4c0e-9c31-cba237c6002c" testId="7dffd41b-ec0f-6f15-54b5-0036c54ca076" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4095018" startTime="2026-10-02T15:39:34.3187225-04:00" endTime="2026-10-02T15:39:34.7216646-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f10bde4b-82c8-4c0e-9c31-cba237c6002c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentNullException : Value cannot be null. (Parameter 'element')</Message>
+          <StackTrace>   at System.ArgumentNullException.Throw(String paramName)&#xD;
+   at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 41&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6144456d-c3c7-42ac-8377-287771254dd0" testId="52031aa1-04b9-f696-a618-72c3bba63ff9" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Legacy_136_chain_preserves_the_historical_rebuild_and_has_no_capacity_repair" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.9445077" startTime="2026-10-02T15:39:54.0107284-04:00" endTime="2026-10-02T15:40:02.9528948-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6144456d-c3c7-42ac-8377-287771254dd0" />
+    <UnitTestResult executionId="689bea14-e76f-4f49-ab07-4a4d4cd3d384" testId="cbc47289-46f4-121a-4c88-cb1191df94c4" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000803" startTime="2026-10-02T15:39:54.0092211-04:00" endTime="2026-10-02T15:39:54.0092538-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="689bea14-e76f-4f49-ab07-4a4d4cd3d384">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 48&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="681d92b1-739e-47c1-bf63-2fd299252c25" testId="4dd60a80-25df-e6f7-f250-23a96b524e31" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:19.2789027" startTime="2026-10-02T15:39:34.7335187-04:00" endTime="2026-10-02T15:39:54.0070215-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="681d92b1-739e-47c1-bf63-2fd299252c25">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 48&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="28b89738-6373-4bfb-ab10-8f45f91c6f51" testId="55ad15e1-bbf8-ce43-7632-0af0d7d36711" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000972" startTime="2026-10-02T15:39:34.7325885-04:00" endTime="2026-10-02T15:39:34.7326343-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="28b89738-6373-4bfb-ab10-8f45f91c6f51">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentNullException : Value cannot be null. (Parameter 'element')</Message>
+          <StackTrace>   at System.ArgumentNullException.Throw(String paramName)&#xD;
+   at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 41&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="efeab260-8624-40b0-adf5-8d8259ba9869" testId="40d82cea-b2d9-3ef2-0bbf-951e137e89f9" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001817" startTime="2026-10-02T15:39:34.7307880-04:00" endTime="2026-10-02T15:39:34.7308433-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="efeab260-8624-40b0-adf5-8d8259ba9869">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentNullException : Value cannot be null. (Parameter 'element')</Message>
+          <StackTrace>   at System.ArgumentNullException.Throw(String paramName)&#xD;
+   at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 41&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ab001a86-0725-40b3-9113-9ad1356472a4" testId="16cfda08-0e4f-4517-e1a1-ad47789d300a" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000671" startTime="2026-10-02T15:39:54.0099525-04:00" endTime="2026-10-02T15:39:54.0099831-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ab001a86-0725-40b3-9113-9ad1356472a4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 48&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="82bb4221-9f27-44a8-bf3d-d3dc6f76ecaa" testId="5516b64c-4674-9202-0129-a481d93146c2" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000658" startTime="2026-10-02T15:39:54.0102821-04:00" endTime="2026-10-02T15:39:54.0103117-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82bb4221-9f27-44a8-bf3d-d3dc6f76ecaa">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 48&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="43d3b35e-d00e-4e8d-b912-056740aa21a8" testId="7b7650b3-6332-5837-a631-0cbc92276ac0" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002406" startTime="2026-10-02T15:39:54.0087893-04:00" endTime="2026-10-02T15:39:54.0088406-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43d3b35e-d00e-4e8d-b912-056740aa21a8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 48&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="88e58b12-8dea-4b17-9a33-d8491dfa92cb" testId="8bd580fa-01ed-f8bb-77d5-e6eb2c3486e6" testName="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0004858" startTime="2026-10-02T15:39:34.7297173-04:00" endTime="2026-10-02T15:39:34.7298066-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88e58b12-8dea-4b17-9a33-d8491dfa92cb">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentNullException : Value cannot be null. (Parameter 'element')</Message>
+          <StackTrace>   at System.ArgumentNullException.Throw(String paramName)&#xD;
+   at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+   at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+   at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column) in D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs:line 41&#xD;
+   at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0b3de9b2-9677-76cc-4c13-9c38909e24fe">
+      <Execution id="a893922f-c79b-407e-b1ff-dd7abb465087" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="40d82cea-b2d9-3ef2-0bbf-951e137e89f9">
+      <Execution id="efeab260-8624-40b0-adf5-8d8259ba9869" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Legacy_136_chain_preserves_the_historical_rebuild_and_has_no_capacity_repair" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="52031aa1-04b9-f696-a618-72c3bba63ff9">
+      <Execution id="6144456d-c3c7-42ac-8377-287771254dd0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Legacy_136_chain_preserves_the_historical_rebuild_and_has_no_capacity_repair" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5516b64c-4674-9202-0129-a481d93146c2">
+      <Execution id="82bb4221-9f27-44a8-bf3d-d3dc6f76ecaa" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4dd60a80-25df-e6f7-f250-23a96b524e31">
+      <Execution id="681d92b1-739e-47c1-bf63-2fd299252c25" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cbc47289-46f4-121a-4c88-cb1191df94c4">
+      <Execution id="689bea14-e76f-4f49-ab07-4a4d4cd3d384" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8bd580fa-01ed-f8bb-77d5-e6eb2c3486e6">
+      <Execution id="88e58b12-8dea-4b17-9a33-d8491dfa92cb" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1e60ca82-8e38-9179-0f60-75db58310f4c">
+      <Execution id="cc793e32-84b3-4b9c-8605-2b8495c699de" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7b7650b3-6332-5837-a631-0cbc92276ac0">
+      <Execution id="43d3b35e-d00e-4e8d-b912-056740aa21a8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="55ad15e1-bbf8-ce43-7632-0af0d7d36711">
+      <Execution id="28b89738-6373-4bfb-ab10-8f45f91c6f51" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_QuotationCalc&quot;, column: &quot;Creator&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7dffd41b-ec0f-6f15-54b5-0036c54ca076">
+      <Execution id="f10bde4b-82c8-4c0e-9c31-cba237c6002c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: &quot;T_QuotationDetail&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="16cfda08-0e4f-4517-e1a1-ad47789d300a">
+      <Execution id="ab001a86-0725-40b3-9113-9ad1356472a4" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Complete_chain_restores_each_capacity_while_preserving_native_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: &quot;T_Quotation&quot;, column: &quot;Modifier&quot;)" storage="d:\cp6\tmp\worktrees\bug-143-quotation-audit-capacity\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="11097de4-78f4-0aea-85bc-de2410d32865">
+      <Execution id="6839a4e7-0230-4fa4-bd55-f6d69974dc01" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests" name="Frozen_model_and_inherited_attribute_require_nullable_unicode_100" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="11097de4-78f4-0aea-85bc-de2410d32865" executionId="6839a4e7-0230-4fa4-bd55-f6d69974dc01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e60ca82-8e38-9179-0f60-75db58310f4c" executionId="cc793e32-84b3-4b9c-8605-2b8495c699de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b3de9b2-9677-76cc-4c13-9c38909e24fe" executionId="a893922f-c79b-407e-b1ff-dd7abb465087" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7dffd41b-ec0f-6f15-54b5-0036c54ca076" executionId="f10bde4b-82c8-4c0e-9c31-cba237c6002c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52031aa1-04b9-f696-a618-72c3bba63ff9" executionId="6144456d-c3c7-42ac-8377-287771254dd0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cbc47289-46f4-121a-4c88-cb1191df94c4" executionId="689bea14-e76f-4f49-ab07-4a4d4cd3d384" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4dd60a80-25df-e6f7-f250-23a96b524e31" executionId="681d92b1-739e-47c1-bf63-2fd299252c25" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="55ad15e1-bbf8-ce43-7632-0af0d7d36711" executionId="28b89738-6373-4bfb-ab10-8f45f91c6f51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="40d82cea-b2d9-3ef2-0bbf-951e137e89f9" executionId="efeab260-8624-40b0-adf5-8d8259ba9869" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16cfda08-0e4f-4517-e1a1-ad47789d300a" executionId="ab001a86-0725-40b3-9113-9ad1356472a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5516b64c-4674-9202-0129-a481d93146c2" executionId="82bb4221-9f27-44a8-bf3d-d3dc6f76ecaa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b7650b3-6332-5837-a631-0cbc92276ac0" executionId="43d3b35e-d00e-4e8d-b912-056740aa21a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8bd580fa-01ed-f8bb-77d5-e6eb2c3486e6" executionId="88e58b12-8dea-4b17-9a33-d8491dfa92cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="1" failed="12" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:01.61]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:02.33]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:02.35]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:02.79]       System.ArgumentNullException : Value cannot be null. (Parameter 'element')&#xD;
+[xUnit.net 00:00:02.79]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.79]            at System.ArgumentNullException.Throw(String paramName)&#xD;
+[xUnit.net 00:00:02.79]            at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.79]            at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.79]            at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+[xUnit.net 00:00:02.79]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(41,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column)&#xD;
+[xUnit.net 00:00:02.79]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:02.79]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:02.79]       System.ArgumentNullException : Value cannot be null. (Parameter 'element')&#xD;
+[xUnit.net 00:00:02.79]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.79]            at System.ArgumentNullException.Throw(String paramName)&#xD;
+[xUnit.net 00:00:02.79]            at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.79]            at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.79]            at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+[xUnit.net 00:00:02.79]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(41,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column)&#xD;
+[xUnit.net 00:00:02.79]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+[xUnit.net 00:00:02.79]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:02.80]       System.ArgumentNullException : Value cannot be null. (Parameter 'element')&#xD;
+[xUnit.net 00:00:02.80]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.80]            at System.ArgumentNullException.Throw(String paramName)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+[xUnit.net 00:00:02.80]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(41,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column)&#xD;
+[xUnit.net 00:00:02.80]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:02.80]       System.ArgumentNullException : Value cannot be null. (Parameter 'element')&#xD;
+[xUnit.net 00:00:02.80]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.80]            at System.ArgumentNullException.Throw(String paramName)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+[xUnit.net 00:00:02.80]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(41,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column)&#xD;
+[xUnit.net 00:00:02.80]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:02.80]       System.ArgumentNullException : Value cannot be null. (Parameter 'element')&#xD;
+[xUnit.net 00:00:02.80]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.80]            at System.ArgumentNullException.Throw(String paramName)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+[xUnit.net 00:00:02.80]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(41,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column)&#xD;
+[xUnit.net 00:00:02.80]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:02.80]       System.ArgumentNullException : Value cannot be null. (Parameter 'element')&#xD;
+[xUnit.net 00:00:02.80]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.80]            at System.ArgumentNullException.Throw(String paramName)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttributes(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Attribute.GetCustomAttribute(MemberInfo element, Type attributeType, Boolean inherit)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.CustomAttributeExtensions.GetCustomAttribute[T](MemberInfo element)&#xD;
+[xUnit.net 00:00:02.80]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(41,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(String table, String column)&#xD;
+[xUnit.net 00:00:02.80]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(Object, Span`1)&#xD;
+[xUnit.net 00:00:02.80]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:22.07]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:22.07]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:22.07]       Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···&#xD;
+[xUnit.net 00:00:22.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.07]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(48,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:22.07]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:22.07]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:22.07]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:22.07]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:22.07]       Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···&#xD;
+[xUnit.net 00:00:22.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.07]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(48,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:22.07]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:22.07]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:22.07]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:22.07]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:22.07]       Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···&#xD;
+[xUnit.net 00:00:22.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.07]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(48,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:22.07]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:22.07]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:22.07]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:22.07]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:22.07]       Not found: "ALTER TABLE [dbo].[T_Quotation] ALTER COL"···&#xD;
+[xUnit.net 00:00:22.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.07]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(48,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:22.07]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:22.07]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:22.07]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:22.07]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:22.07]       Not found: "ALTER TABLE [dbo].[T_QuotationDetail] ALT"···&#xD;
+[xUnit.net 00:00:22.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.07]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(48,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:22.07]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:22.07]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:22.07]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:22.07]       String:    "IF OBJECT_ID(N'[__EFMigrationsHistory]') "···&#xD;
+[xUnit.net 00:00:22.07]       Not found: "ALTER TABLE [dbo].[T_QuotationCalc] ALTER"···&#xD;
+[xUnit.net 00:00:22.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.07]         D:\CP6\tmp\worktrees\bug-143-quotation-audit-capacity\CP6.Tests\Persistence\QuotationAuditColumnCapacityRepairTests.cs(48,0): at CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(String table, String column)&#xD;
+[xUnit.net 00:00:22.07]            at InvokeStub_QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:22.07]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:31.02]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:34.7232817-04:00">
+        <Text>[xUnit.net 00:00:02.79]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: "T_QuotationCalc", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:34.7303339-04:00">
+        <Text>[xUnit.net 00:00:02.79]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: "T_QuotationDetail", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:34.7310581-04:00">
+        <Text>[xUnit.net 00:00:02.79]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: "T_Quotation", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:34.7319935-04:00">
+        <Text>[xUnit.net 00:00:02.80]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: "T_QuotationDetail", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:34.7323476-04:00">
+        <Text>[xUnit.net 00:00:02.80]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: "T_Quotation", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:34.7329500-04:00">
+        <Text>[xUnit.net 00:00:02.80]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Frozen_model_and_inherited_attribute_require_nullable_unicode_100(table: "T_QuotationCalc", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:54.0074049-04:00">
+        <Text>[xUnit.net 00:00:22.07]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationCalc", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:54.0100021-04:00">
+        <Text>[xUnit.net 00:00:22.07]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationDetail", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:54.0101531-04:00">
+        <Text>[xUnit.net 00:00:22.07]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_Quotation", column: "Creator") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:54.0101752-04:00">
+        <Text>[xUnit.net 00:00:22.07]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_Quotation", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:54.0102019-04:00">
+        <Text>[xUnit.net 00:00:22.07]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationDetail", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T15:39:54.0104021-04:00">
+        <Text>[xUnit.net 00:00:22.07]     CP6.Tests.Persistence.QuotationAuditColumnCapacityRepairTests.Complete_chain_restores_each_capacity_while_preserving_native_collation(table: "T_QuotationCalc", column: "Modifier") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
