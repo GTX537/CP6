@@ -1,0 +1,1 @@
+[xUnit.net 00:00:07.50]     CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order [FAIL]

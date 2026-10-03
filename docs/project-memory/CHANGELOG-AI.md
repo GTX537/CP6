@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-03：WP5 已交付，ERP 并发测试修正中
+
+WP5 经 PR152 正常合入 `cbbb7fc8e99290f6aba7589830a98a98726280e9`，合并后 SQL/PG 各 3/3 冒烟和 13 库清理完成。WP6 继续，父任务 #134 Open。
+
+新增 [BUG153](https://github.com/GTX537/CP6/issues/153)：ERP 两个并发测试把 native 40001 后合法 RetryScheduled 立即判失败。独立分支仅为这两项补全有界原消息重投，最终订单/bridge/journal 断言保留并增加逐条 Inbox 完成检查；修复后 PG 2/2 且均实际触发 40001，两库完整原 ERP 回归另各 95/95 通过；集中审查无实质阻断，远端交付尚待完成。[专项记录](../audits/2026-10-03-bug-153-erp-concurrency-retry/README.md) 区分原失败、诊断、修复结果和未验证范围。无 Actions、工作流/保护变更或生产部署。
+
 ## 2026-10-03：WP5 本地验证与集中审查完成，待远端交付
 
 [PR149](https://github.com/GTX537/CP6/pull/149)已正常合入远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，包含候选`cfe479124fb04d770462b874bc2a70508a8bf79e`且完整树相同。合并后原业务快照保存SQL/PG各2/2、零skip（含owner/迁移setup）；六个WP4自有临时库已普通DROP并确认不存在，receipt和PG角色保留。[交付/清理原件](../audits/database-compatibility/wp4-native/post-merge/manifest.json)新增17份，[父任务更新记录](../audits/database-compatibility/wp4-native/post-merge/parent-progress/manifest.json)另三份；原211与七份manifest及各次失败/复用范围保持。

@@ -1,0 +1,9 @@
+D:\CP6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs(66,13): warning xUnit2029: Do not use Assert.Empty to check if a value does not exist in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2029) [D:\CP6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+
+Build succeeded.
+
+D:\CP6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs(66,13): warning xUnit2029: Do not use Assert.Empty to check if a value does not exist in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2029) [D:\CP6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:01:02.29

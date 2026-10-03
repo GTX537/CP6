@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-03：完成 BUG153 后继续 WP6
+
+[BUG153](https://github.com/GTX537/CP6/issues/153) 两库原 ERP 各 95/95 已通过；集中审查无实质阻断，继续正常 PR 交付；活动状态以 GitHub Issue 为准。该修复只纠正两项并发测试的有界原消息重投，生产订单代码不变。
+
+随后在 WP6 分支接入修复，继续完整双库矩阵、真实 SignalR、恢复后待发消息、正式本地入口与自有库清理；所有验收和远端包含性完成后才关闭 [父任务 #134](https://github.com/GTX537/CP6/issues/134)。WP5 已由 PR152 交付，不再列作未完成阶段。继续本地验证，不启动 Actions 或替换既有环境。
+
 ## 2026-10-03：WP5 本地验证与集中审查完成，待远端交付
 
 [PR149](https://github.com/GTX537/CP6/pull/149)已正常合入远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，包含候选`cfe479124fb04d770462b874bc2a70508a8bf79e`且完整树相同。合并后原业务快照保存SQL/PG各2/2、零skip（含owner/迁移setup）；六个WP4自有临时库已普通DROP并确认不存在，receipt和PG角色保留。[交付/清理原件](../audits/database-compatibility/wp4-native/post-merge/manifest.json)新增17份，[父任务更新记录](../audits/database-compatibility/wp4-native/post-merge/parent-progress/manifest.json)另三份；原211与七份manifest及各次失败/复用范围保持。

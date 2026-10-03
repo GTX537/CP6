@@ -1,0 +1,5 @@
+Test run for D:\CP6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6\tmp\bug153-sql-erp-full-green\private\trx\results.trx
+
+Passed!  - Failed:     0, Passed:    95, Skipped:     0, Total:    95, Duration: 30 s - CP6.ErpIntegration.SqlTests.dll (net8.0)
