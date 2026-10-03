@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-03：校验并发已交付，楼层并发修复本地验证完成
+
+[BUG155](https://github.com/GTX537/CP6/issues/155) 已由 [PR156](https://github.com/GTX537/CP6/pull/156) 交付远端 main `2e1f90c629340944d95fadd7aee428f639304ed6` 并关闭；原/协调并发合并后两库各 2/2，两个自有库普通清理并确认不存在。WP1–WP5 已交付，WP6 和父任务 #134 继续。
+
+[BUG157](https://github.com/GTX537/CP6/issues/157) 的创建楼层完整事务恢复已完成本地实现、构建与一次集中源码审查。原 16 项加新增七项的精确克隆组两库各 23/23，相关设计/发布两库各 41/41，零 skip；确定性协调 RED 与 GREEN 均保留真实 PG 40001，调用方状态与未知/取消/三次耗尽控制有覆盖。[证据及限制](../audits/2026-10-03-bug-157-floor-initialization-retry/README.md)保留原 Matrix 15/16 失败、编译失败及类级 26/26 但 expected23 的门禁失败。这里只记录本地完成能力，不称远端交付或 WP6 整体验收完成。
+
 ## 2026-10-03：WP5/BUG153 已交付，Space 并发修复本地验证完成
 
 WP5 已由 [PR152](https://github.com/GTX537/CP6/pull/152) 交付，两库各 3/3 合并后冒烟通过，13 个自有临时库正常清理。[BUG153](https://github.com/GTX537/CP6/issues/153) 已由 [PR154](https://github.com/GTX537/CP6/pull/154) 交付并关闭。WP6 和父任务 #134 尚未完成。

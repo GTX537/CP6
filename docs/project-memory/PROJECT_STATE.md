@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-10-03：BUG155 已交付，楼层并发修复双库本地通过
+
+WP1–WP5 已交付；[BUG155](https://github.com/GTX537/CP6/issues/155) 已由 [PR156](https://github.com/GTX537/CP6/pull/156) 正常合入远端 main `2e1f90c629340944d95fadd7aee428f639304ed6` 并关闭，两库原并发/协调冒烟及两个自有库清理完成。WP6 接入后的新 PG Matrix 前 24 个入口通过，楼层并发入口原 16 项中 15P/1F，实际 native 40001，已另登记 [BUG157](https://github.com/GTX537/CP6/issues/157)。
+
+BUG157 在该主线的独立分支补全创建楼层的三次有界完整事务恢复，保留不同 key 的版本冲突和同 key 的合法回放，并拒绝保存/清除调用方状态。新增两项真实 PG 40001 协调回归及五项调用方/恢复控制；两库精确克隆各 23/23、设计/发布各 41/41，零 skip，本地构建与一次集中源码审查通过。当前为本地验证完成、远端待交付，见[专项记录](../audits/2026-10-03-bug-157-floor-initialization-retry/README.md)。原 WP6 失败和首次测试编译/数量门禁失败均保留。
+
+BUG157 正常交付、合并后原步骤复测和两库清理，以及 WP6 最终双库 Matrix、新发布物 Application、归档和远端交付仍待完成；父任务 #134 保持 Open。没有启动/取消 Actions、修改触发/保护或部署既有环境；下方旧状态保留各历史时点。
+
 ## 2026-10-03：WP1–WP5 已交付，WP6 Space 并发修复本地通过
 
 [PR152](https://github.com/GTX537/CP6/pull/152) 完成 WP5 交付，两库各 3/3 合并后冒烟及 13 个自有库清理完成。[BUG153](https://github.com/GTX537/CP6/issues/153) 已由 [PR154](https://github.com/GTX537/CP6/pull/154) 交付并关闭，当前已确认远端 main 为 `59e09f6e68a36734c64144abfcefc81b7c9c8d9d`。父任务 #134 保持 Open，WP1–WP5 已交付，WP6 继续。

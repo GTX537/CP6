@@ -1,0 +1,2 @@
+[xUnit.net 00:00:12.06]     CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict [FAIL]
+[xUnit.net 00:00:12.15]     CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key [FAIL]
