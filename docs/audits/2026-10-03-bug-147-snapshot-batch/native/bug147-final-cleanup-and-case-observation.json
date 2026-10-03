@@ -1,0 +1,15 @@
+{
+  "Task": "BUG147",
+  "ObservedUtc": "2026-10-03T10:26:09.5101378Z",
+  "ResultTrxSha256": "9F0D1115CDAFD8F705C89B31FB3CF8DC0DA3E88DA88FF3F7C408F5490753934C",
+  "NativeCases": 7,
+  "NativePassed": 7,
+  "RelatedOtherPassed": 111,
+  "NativeDatabaseNames": [
+    "CP6Test_Bug147_7a17397a2878497db5ee8b9913286146"
+  ],
+  "RemainingTaskPrefixDatabaseCount": 0,
+  "RootReadOnlyCleanupVerification": true,
+  "CleanupPerformedByFixture": true,
+  "ForceUsed": false
+}

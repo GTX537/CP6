@@ -1,0 +1,139 @@
+{
+  "Task": "BUG147",
+  "ReviewKind": "One task-level concentrated code and tests review",
+  "Reviewer": "/root/wp3_final_core_review",
+  "ObservedUtc": "2026-10-03T10:28:57.9442188Z",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\bug-147-snapshot-batch-collation",
+  "Base": "0b0ab74a04c4d840a2c0bb05e36395aff8b89d32",
+  "Conclusion": "No blocking functional, data-consistency, lifecycle, or contract findings in the scoped three-file change",
+  "BlockingFindings": [],
+  "ReviewedSources": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB"
+    },
+    {
+      "Path": "CP6.Core/Persistence/SqlServerIdentitySnapshotUpdateSqlGenerator.cs",
+      "Sha256": "5FAE858D64ABB36730E918BAE7003BF506A778F94356D4D2DC96BDC6BB74AFDC"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/IdentitySnapshotBatchSqlServerTests.cs",
+      "Sha256": "197060AC3442D9132671DA4265146464222C9189D3E8D91588023847073E9B52"
+    }
+  ],
+  "SourcesMatchExecutedFinalGate": true,
+  "FrameworkVersion": "Microsoft.EntityFrameworkCore.SqlServer 8.0.30, as pinned by CP6.Core.csproj",
+  "FrameworkSources": [
+    {
+      "Path": "D:\\CP6\\tmp\\efcore-8.0.30-SqlServerUpdateSqlGenerator.cs",
+      "Sha256": "F4323D102F90D5449195FD859CBB486E918E0D532394201003D742A1E164EEA9"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\efcore-8.0.30-SqlServerModificationCommandBatch.cs",
+      "Sha256": "558813E35E4FF220C9F95B6C4B497E0483FF8198318EA3CE6CAEE74876C48ABD"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\efcore-8.0.30-SqlServerServiceCollectionExtensions.cs",
+      "Sha256": "050283DC9D039BA48B1CF8C0299E8380C2B395D2B50F1EBC19F5626E87534466"
+    }
+  ],
+  "Checks": [
+    {
+      "Concern": "Snapshot-only fallback",
+      "Result": "Pass",
+      "Source": "SqlServerIdentitySnapshotUpdateSqlGenerator.cs:19-38",
+      "Reason": "Threshold >=4, exact crm_identity/Snapshot name, generated value reads and no generated key reads restrict the override. EF batches commands only with matching table/schema/write/read columns; all other commands delegate to the provider base."
+    },
+    {
+      "Concern": "SQL service replacement and PostgreSQL isolation",
+      "Result": "Pass by source inspection and related regressions",
+      "Source": "CP6Context.cs:50-57",
+      "Reason": "OnConfiguring checks the actual SQL Server provider extension assembly and replaces IUpdateSqlGenerator only there. This also reaches direct UseSqlServer callers. The derived generator implements the inherited SQL-specific interface consumed by the native batch. Npgsql/SQLite options do not satisfy the branch; no shared model or migrations change."
+    },
+    {
+      "Concern": "Result mapping and generated RowVersion",
+      "Result": "Pass",
+      "Source": "SqlServerIdentitySnapshotUpdateSqlGenerator.cs:31-35",
+      "Reason": "Per-command AppendInsertAndSelectOperation and LastInResultSet reproduce the EF 8.0.30 small-batch fallback. Each command gets its own generated-value result set; the native five-key tests compare every tracked token to its separately queried persisted row, and the real business pipeline checks five snapshots and five valid outbox messages."
+    },
+    {
+      "Concern": "Trigger timing and atomicity",
+      "Result": "Pass",
+      "Source": "IdentitySnapshotBatchSqlServerTests.cs:67-80,151-187",
+      "Reason": "INSERT then SELECT follows trigger execution and avoids the collation-conflicting table-variable JOIN. requiresTransaction=true preserves automatic batch atomicity; native later-row CHECK failure leaves zero rows and generation. Caller-owned rollback also removes both. Existing SaveChanges capture/savepoint behavior is unchanged."
+    },
+    {
+      "Concern": "Opaque generation contract",
+      "Result": "Pass",
+      "Source": "IdentityGenerationSqlServerV1.TriggerSql and native generation assertions",
+      "Reason": "The unchanged trigger may increment once per inserted statement after fallback instead of once per bulk statement. Generation remains an opaque durable change boundary; tests require positive change and rollback to absence, not an exact increment count."
+    },
+    {
+      "Concern": "Native regression authenticity",
+      "Result": "Pass",
+      "Source": "IdentitySnapshotBatchSqlServerFixture.InitializeAsync and existing SqlServerFact gate",
+      "Reason": "Fixture creates a fresh loopback-only database with Chinese_PRC_CI_AS, applies all 140 real Core migrations, verifies BIN2 AggregateId and enabled generation trigger, and uses the actual CP6 save pipeline. Corrected RED observes the native Chinese/BIN2 equal-to collation failure. Environment-gated tests were actually executed with zero skips in the final gate."
+    }
+  ],
+  "Validation": {
+    "Status": "Completed evidence inspected; not executed by reviewer",
+    "Build": {
+      "Warnings": 0,
+      "Errors": 0
+    },
+    "Final": {
+      "Total": 118,
+      "Passed": 118,
+      "Failed": 0,
+      "Skipped": 0,
+      "NativeSqlCases": 7,
+      "RelatedCases": 111
+    },
+    "CorrectedRed": {
+      "Total": 1,
+      "Passed": 0,
+      "Failed": 1,
+      "Skipped": 0,
+      "Failure": "Actual SQL Server equal-to collation mismatch between Chinese_PRC_CI_AS and Latin1_General_100_BIN2 after 140 migrations"
+    },
+    "Cleanup": {
+      "Source": "Root read-only cleanup observation and fixture output",
+      "RemainingTaskPrefixDatabaseCount": 0,
+      "ForceUsed": false
+    }
+  },
+  "Evidence": [
+    {
+      "Path": "D:\\CP6\\tmp\\bug147-final-related-and-native.json",
+      "Sha256": "72A9A9B441352612075AAF1F30B4A6CE1646CFE3E699A910FEA34F991C1EAF29"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug147-native-corrected-red.json",
+      "Sha256": "2713CF75E8F49C216A7662BECC3F0EADA6FD13C58C2D1383F3CB3E60F5FAC359"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug147-tests\\bug147-native-corrected-red\\results.trx",
+      "Sha256": "4D44F5ACAEC48B5153A2006A5C11649BDAF906FCA962C065D7B447B5A16FDB74"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug147-tests\\bug147-final-related-and-native\\results.trx",
+      "Sha256": "9F0D1115CDAFD8F705C89B31FB3CF8DC0DA3E88DA88FF3F7C408F5490753934C"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug147-final-cleanup-and-case-observation.json",
+      "Sha256": "3F15BA814468FFB979832063D4CB4D4ADF80AFCDD5709CDEF7CF11BB9FA4DD2A"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug147-final-regression-build.log",
+      "Sha256": "BDAFCFE686D8B93E17661B9DDDAAD1C4F2CA5800D8046441D9330AF313E74A68"
+    }
+  ],
+  "Limits": [
+    "No reviewer build, database command, remote action, commit, or production change was performed.",
+    "Full live API DI startup and PostgreSQL native business writes were not run for this SQL-only fix; provider/model/shared-context/wiring evidence is limited to the named 111 related tests and source inspection.",
+    "The seven native cases cover this batch-collation fix, not the complete WP4 identity/ERP workflow or downstream CRM acceptance.",
+    "Documentation, .gitattributes, project-state updates and complete delivery evidence diff are owned by the root reviewer.",
+    "The generator derives from EF provider internal API; compatibility must be reconsidered with its native regression on a provider upgrade."
+  ],
+  "PendingValidation": []
+}

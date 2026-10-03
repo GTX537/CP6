@@ -1,0 +1,30 @@
+Test run for D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:37.27]     CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_preserves_case_distinct_keys_and_refills_native_tokens [FAIL]
+  Failed CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_preserves_case_distinct_keys_and_refills_native_tokens [253 ms]
+  Error Message:
+   System.InvalidOperationException : The instance of entity type 'CrmIdentitySnapshot' cannot be tracked because another instance with the same key value for {'TenantId', 'AggregateId'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.ThrowIdentityConflict(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(TKey key, InternalEntityEntry entry, Boolean updateDuplicate)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(TKey key, InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.NullableKeyIdentityMap`1.Add(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.StartTracking(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.SetEntityState(EntityState oldState, EntityState newState, Boolean acceptChanges, Boolean modifyProperties)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.SetEntityState(EntityState entityState, Boolean acceptChanges, Boolean modifyProperties, Nullable`1 forceStateWhenUnknownKey, Nullable`1 fallbackState)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityGraphAttacher.PaintAction(EntityEntryGraphNode`1 node)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityEntryGraphIterator.TraverseGraph[TState](EntityEntryGraphNode`1 node, Func`2 handleNode)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityGraphAttacher.AttachGraph(InternalEntityEntry rootEntry, EntityState targetState, EntityState storeGeneratedWithKeySetTargetState, Boolean forceStateWhenUnknownKey)
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.SetEntityState(InternalEntityEntry entry, EntityState entityState)
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.SetEntityStates(IEnumerable`1 entities, EntityState entityState)
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.AddRange(TEntity[] entities)
+   at CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_preserves_case_distinct_keys_and_refills_native_tokens() in D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Tests\Persistence\IdentitySnapshotBatchSqlServerTests.cs:line 25
+   at CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_preserves_case_distinct_keys_and_refills_native_tokens() in D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Tests\Persistence\IdentitySnapshotBatchSqlServerTests.cs:line 30
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ BUG147 database=CP6Test_Bug147_9261964629be428595f4ad0c440c82fd; applied=140; pending=0; database-collation=Chinese_PRC_CI_AS; Snapshot.AggregateId-collation=Latin1_General_100_BIN2; generation-trigger-enabled=true.
+
+
+Results File: D:\CP6\tmp\bug147-tests\bug147-native-first-red\results.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 259 ms - CP6.Tests.dll (net8.0)

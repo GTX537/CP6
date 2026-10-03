@@ -1,0 +1,40 @@
+Test run for D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:27.05]     CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_refills_native_tokens_for_distinct_aggregate_keys [FAIL]
+  Failed CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_refills_native_tokens_for_distinct_aggregate_keys [301 ms]
+  Error Message:
+   Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+---- Microsoft.Data.SqlClient.SqlException : 无法解决 equal to 运算中 "Chinese_PRC_CI_AS" 和 "Latin1_General_100_BIN2" 之间的排序规则冲突。
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Core\EFDbContext\CP6Context.cs:line 2822
+   at CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_refills_native_tokens_for_distinct_aggregate_keys() in D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Tests\Persistence\IdentitySnapshotBatchSqlServerTests.cs:line 27
+   at CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Async_snapshot_batch_refills_native_tokens_for_distinct_aggregate_keys() in D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Tests\Persistence\IdentitySnapshotBatchSqlServerTests.cs:line 30
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Standard Output Messages:
+ BUG147 database=CP6Test_Bug147_167a5a89f26e4b9b9ab6e8ebb13da0c0; applied=140; pending=0; database-collation=Chinese_PRC_CI_AS; Snapshot.AggregateId-collation=Latin1_General_100_BIN2; generation-trigger-enabled=true.
+
+
+Results File: D:\CP6\tmp\bug147-tests\bug147-native-corrected-red\results.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 312 ms - CP6.Tests.dll (net8.0)

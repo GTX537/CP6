@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-03：WP3 远端交付已确认，WP4 进入业务回归
+
+[PR146](https://github.com/GTX537/CP6/pull/146) 已正常合并到远端 main `0b0ab74a04c4d840a2c0bb05e36395aff8b89d32`。WP4 执行中发现的 SQL Server 保存阻断由独立 [BUG147](https://github.com/GTX537/CP6/issues/147) 跟踪，尚未关闭；后续按其远端交付证据记录修复结论。没有 Actions/触发配置/分支保护变更或生产部署。
+
 ## 2026-10-03：WP3 已交付，WP4 身份与核心业务适配开始
 
 [PR #146](https://github.com/GTX537/CP6/pull/146)正常合入远端main `0b0ab74a04c4d840a2c0bb05e36395aff8b89d32`，包含候选`4ddc6c9d8d75f47711fce1c5e56fbb0ac8733e21`且完整树相同。合并后同一API实际再次拒绝普通PG运行、非零退出、无HTTP；[七份交付/冒烟原件](../audits/database-compatibility/wp3-native/post-merge/manifest.json)随本阶段状态保留。WP3原151来源/147原件及各次真实双库结果按原范围复用，两库临时库已清理。父Issue134已勾选WP3，仍Open。
@@ -7,6 +11,7 @@
 WP4在最新远端main的独立`codex/db-compat-wp4-20261003`工作树开始，首段为OIDC、真实refresh与身份撤销/priority同事务链。已建立新的两库owner-marked临时库，正在准备真实PG RED入口，尚未声称WP4业务通过。其余身份、ERP/WMS、采购/OA/WF和财务按已接受阶段计划继续；[WP4实施记录](../audits/database-compatibility/WP4-IMPLEMENTATION.md)说明范围与未验收项。
 
 根main因原有未提交锁文件被Git拒绝fast-forward，文件及其他未跟踪内容原样保留；没有为同步而stash/暂存/覆盖。WP4基线使用已确认最新origin/main。普通PG API/worker限制保持，WP4–WP6未完成；没有Actions运行/取消、工作流/保护变更或生产部署。下文为此前历史状态。
+
 ## 2026-10-03：WP3 本地验收与集中审查完成，远端交付待核对
 
 WP1/2已分别由PR136/145交付；本阶段基线为main `605246ca83cbb8e1a89d3ff7209ba9df65176e98`。WP3已实现两库资源锁、数据库UTC、错误分类、ORD原子分配、共享Context事务、generation/v2游标与工作槽领取，并登记全部指定Provider分支及后续业务责任。
