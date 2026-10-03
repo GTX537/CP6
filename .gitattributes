@@ -109,3 +109,5 @@ docs/audits/database-compatibility/wp4-native/** -text whitespace=cr-at-eol,-bla
 docs/audits/database-compatibility/wp5-native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
 # BUG150 original native failures and passes retain exact bytes.
 docs/audits/2026-10-03-bug-150-mapping-idempotency/native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+# BUG153 original test failures, native results and review records retain exact bytes.
+docs/audits/2026-10-03-bug-153-erp-concurrency-retry/native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

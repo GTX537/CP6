@@ -69,7 +69,7 @@ public sealed class OrderSqlTests(SqlDatabaseFixture database, ITestOutputHelper
         var request = await s.ReadyOrderAsync();
         var repeated = s.Envelope(request);
         var deliveries = new[] { repeated, repeated }.Concat(Enumerable.Range(0, 4).Select(_ => s.Envelope(request))).ToArray();
-        await Task.WhenAll(deliveries.Select(x => s.ConsumeAsync(x)));
+        await DeliverConcurrentCommandsAsync(s, deliveries);
         await using var db = s.Db();
         Assert.Single(await db.Orders.ToArrayAsync());
         Assert.Single(await db.OrderDetails.ToArrayAsync());
@@ -107,7 +107,7 @@ public sealed class OrderSqlTests(SqlDatabaseFixture database, ITestOutputHelper
         var s = await ScenarioAsync();
         var request = await s.ReadyOrderAsync();
         var next = request with { RequestId = Guid.NewGuid(), RequestVersion = 2 };
-        await Task.WhenAll(s.ConsumeAsync(s.Envelope(request)), s.ConsumeAsync(s.Envelope(next)));
+        await DeliverConcurrentCommandsAsync(s, [s.Envelope(request), s.Envelope(next)]);
         await using var db = s.Db();
         Assert.Single(await db.Orders.ToArrayAsync());
         Assert.Single(await db.OrderDetails.ToArrayAsync());
@@ -117,6 +117,39 @@ public sealed class OrderSqlTests(SqlDatabaseFixture database, ITestOutputHelper
         Assert.Equal(2, journals.Length);
         Assert.Single(journals, x => x.Succeeded);
         Assert.All(journals, x => Assert.True(x.Terminal));
+    }
+
+    private async Task DeliverConcurrentCommandsAsync(ErpScenario scenario, Cp6OutboxEnvelope[] envelopes)
+    {
+        using var failures = new SqlFailureProbe(database.Database.Provider, output);
+        Task<Cp6InboxProcessingResult> Deliver(Cp6OutboxEnvelope envelope) =>
+            scenario.Handler().ConsumeAsync(envelope.Payload, envelope.TopicName, envelope.PartitionKey);
+        var results = await Task.WhenAll(envelopes.Select(Deliver));
+        if (results.Any(x => x.Disposition == Cp6InboxDisposition.RetryScheduled))
+            failures.AssertObservedTransactionConflict();
+        // The production transport returns RETRY. Only replay original idempotent messages,
+        // after the fixture's maximum backoff, and never accept RetryScheduled as completion.
+        for (var attempt = 0; attempt < 5 && results.Any(x => x.Disposition == Cp6InboxDisposition.RetryScheduled); attempt++)
+        {
+            failures.AssertOnlyTransactionConflicts();
+            scenario.Clock.Advance(TimeSpan.FromSeconds(9));
+            for (var index = 0; index < envelopes.Length; index++)
+            {
+                if (results[index].Disposition != Cp6InboxDisposition.RetryScheduled) continue;
+                Assert.Contains(results[index].ErrorCode, new[] { "C03_ERP_UNAVAILABLE", "C03_RETRY_NOT_DUE" });
+                results[index] = await Deliver(envelopes[index]);
+            }
+        }
+        failures.AssertOnlyTransactionConflicts();
+        Assert.All(results, result => Assert.Contains(result.Disposition,
+            new[] { Cp6InboxDisposition.Applied, Cp6InboxDisposition.Duplicate }));
+        await using var queue = scenario.Queue();
+        foreach (var envelope in envelopes.DistinctBy(x => x.MessageId))
+        {
+            var receipt = await queue.Inbox.SingleAsync(x => x.MessageId == envelope.MessageId);
+            Assert.Equal(ErpInboxStatus.Processed, receipt.Status);
+            Assert.Equal(envelope.Payload.ToArray(), receipt.Payload);
+        }
     }
 
     [Fact]
