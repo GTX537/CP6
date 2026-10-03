@@ -1,0 +1,1 @@
+[xUnit.net 00:00:15.16]     CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence [FAIL]

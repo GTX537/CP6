@@ -1,0 +1,46 @@
+{
+  "Task": "BUG-161",
+  "Status": "LocalVerifiedRemotePending",
+  "CheckedUtc": "2026-10-03T22:00:37.7172573Z",
+  "SourceBase": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "Runs": [
+    {
+      "Label": "bug161-pg-cad-exact-green",
+      "Provider": "PostgreSql",
+      "Total": 25,
+      "Passed": 25,
+      "Other": 0,
+      "ResultSha256": "341DAAF26F8B17B646D2A97EFAA2BA1BEAB913B57BB3DF961BF5789A3DA12C5D",
+      "TrxSha256": "9598DD054712780D5654A509CE0F44911005B2F8EC0ACA71BCE45BBE0DA99BAB",
+      "CurrentSourceFileCount": 1703,
+      "SourceInputsSha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "ExitCode": 0
+    },
+    {
+      "Label": "bug161-sql-cad-exact-green",
+      "Provider": "SqlServer",
+      "Total": 25,
+      "Passed": 25,
+      "Other": 0,
+      "ResultSha256": "44E27C2BDA1A5FED10B5EC710C693C03A4FFB49595CFD3C6ABB6FE412CCCEE52",
+      "TrxSha256": "56455CC70EF54EF1C9981F1534D012571375355880BB572AEB29E28B9C2B8C27",
+      "CurrentSourceFileCount": 1703,
+      "SourceInputsSha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "ExitCode": 0
+    }
+  ],
+  "AllCurrentSourcesAndRuntimeMatch": true,
+  "SourceReviewSha256": "0B459AE6994D6C6D61B16F3AA46BCB4C3DFD58EA472F306D536981B85BF85FD1",
+  "OriginalNativeFailuresRetained": true,
+  "CoordinatedNativeRedCases": 2,
+  "SupplementalInMemoryRouting": {
+    "Passed": 17,
+    "TrxSha256": "EF7E68334B97F9004F0DB2D5F873FFC5BD6B0DD6BB19E3DC807B9AF53CAEBCC5",
+    "Scope": "Existing CAD provider routing/configuration tests use InMemory; the selected-provider environment does not change their backend. This is supplemental regression coverage, not native database acceptance."
+  },
+  "Scope": "Raw native TRX and exact required sets verified; two executions use the same current source/runtime. The exact 25 cases include the original 15 required CAD/assets/collaboration cases and ten focused transaction-recovery regressions. Injected recovery controls are not native deadlock reproductions. Full WP6, post-merge smoke, cleanup and remote delivery remain pending."
+}

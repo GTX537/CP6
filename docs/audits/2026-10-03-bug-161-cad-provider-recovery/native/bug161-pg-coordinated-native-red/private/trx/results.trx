@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="09bcc8bf-dc7e-48f6-bde2-031398aa4b1c" name="tt@LAPTOP-3QQ44FJS 2026-10-03 17:42:09" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T17:42:09.2055036-04:00" queuing="2026-10-03T17:42:09.2055038-04:00" start="2026-10-03T17:41:54.9809769-04:00" finish="2026-10-03T17:42:09.2101768-04:00" />
+  <TestSettings name="default" id="c35d1cc4-77ac-499d-82db-9cc1080979f8">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_17_42_09" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="40a678ca-ca96-4126-967e-a88996da20e3" testId="9b444dc6-a6d7-fadc-6eef-ca2be2b94e29" testName="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5506873" startTime="2026-10-03T17:42:08.4902848-04:00" endTime="2026-10-03T17:42:09.0469694-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40a678ca-ca96-4126-967e-a88996da20e3">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=cad-provider-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.&#xD;
+BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(CP6.Space.Application.SpaceProblemException)&#xD;
+Actual:   typeof(System.InvalidOperationException)&#xD;
+---- System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+-------- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+------------ Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+&#xD;
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 55&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 74&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs:line 322&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.CoordinatedReplacementAsync(Boolean replay) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs:line 121&#xD;
+   at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs:line 145&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 71&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9671d2b0-59f4-45a4-a747-76d13a4030f1" testId="320221fa-2fb1-e350-f44c-e8e4480c3b6b" testName="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0738958" startTime="2026-10-03T17:42:09.0570310-04:00" endTime="2026-10-03T17:42:09.1227478-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9671d2b0-59f4-45a4-a747-76d13a4030f1">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=cad-provider-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.&#xD;
+BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure.</StdOut>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+-------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+&#xD;
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.</Message>
+          <StackTrace>   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs:line 121&#xD;
+   at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs:line 145&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 71&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 74&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs:line 322&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.CoordinatedReplacementAsync(Boolean replay) in D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict" storage="d:\cp6\tmp\worktrees\bug-161-cad-provider-recovery\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="320221fa-2fb1-e350-f44c-e8e4480c3b6b">
+      <Execution id="9671d2b0-59f4-45a4-a747-76d13a4030f1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests" name="Replace_waiter_replays_same_key_after_native_serialization_conflict" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict" storage="d:\cp6\tmp\worktrees\bug-161-cad-provider-recovery\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="9b444dc6-a6d7-fadc-6eef-ca2be2b94e29">
+      <Execution id="40a678ca-ca96-4126-967e-a88996da20e3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests" name="Replace_waiter_recovers_native_serialization_conflict" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9b444dc6-a6d7-fadc-6eef-ca2be2b94e29" executionId="40a678ca-ca96-4126-967e-a88996da20e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="320221fa-2fb1-e350-f44c-e8e4480c3b6b" executionId="9671d2b0-59f4-45a4-a747-76d13a4030f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.12]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:13.53]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:13.53]       Expected: typeof(CP6.Space.Application.SpaceProblemException)&#xD;
+[xUnit.net 00:00:13.53]       Actual:   typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:13.53]       ---- System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+[xUnit.net 00:00:13.53]       -------- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+[xUnit.net 00:00:13.53]       ------------ Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+[xUnit.net 00:00:13.53]       &#xD;
+[xUnit.net 00:00:13.53]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+[xUnit.net 00:00:13.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:13.53]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(55,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.53]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(74,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.54]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(82,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.54]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(82,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.54]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs(322,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:13.54]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(23,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.CoordinatedReplacementAsync(Boolean replay)&#xD;
+[xUnit.net 00:00:13.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs(121,0): at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs(145,0): at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(71,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:13.54]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.54]       Output:&#xD;
+[xUnit.net 00:00:13.54]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:13.54]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:13.54]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:13.54]         Provider=PostgreSql; Stage=cad-provider-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.&#xD;
+[xUnit.net 00:00:13.54]         BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure.&#xD;
+[xUnit.net 00:00:13.61]       System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+[xUnit.net 00:00:13.61]       ---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+[xUnit.net 00:00:13.61]       -------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+[xUnit.net 00:00:13.61]       &#xD;
+[xUnit.net 00:00:13.61]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+[xUnit.net 00:00:13.61]       Stack Trace:&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs(121,0): at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs(145,0): at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(71,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.61]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(74,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.61]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(82,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.61]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(82,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.&lt;&gt;c__DisplayClass22_0.&lt;&lt;CoordinatedReplacementAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.61]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs(322,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:13.61]         D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.RecoveryTests.cs(23,0): at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.CoordinatedReplacementAsync(Boolean replay)&#xD;
+[xUnit.net 00:00:13.61]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.61]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:13.61]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.61]       Output:&#xD;
+[xUnit.net 00:00:13.61]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:13.61]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:13.61]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:13.61]         Provider=PostgreSql; Stage=cad-provider-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.&#xD;
+[xUnit.net 00:00:13.61]         BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure.&#xD;
+[xUnit.net 00:00:13.61]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T17:42:09.0487704-04:00">
+        <Text>[xUnit.net 00:00:13.53]     CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T17:42:09.1234270-04:00">
+        <Text>[xUnit.net 00:00:13.61]     CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

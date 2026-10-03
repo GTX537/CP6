@@ -1,0 +1,43 @@
+{
+  "Task": "BUG-161",
+  "Provider": "PostgreSql",
+  "ExecutionHead": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "WorkingTreeDirty": true,
+  "DatabaseName": "CP6Compat_WP5_20261003_a2bef6ea",
+  "OwnershipProtocol": "DB-COMPAT-01-WP5",
+  "BuildExecuted": true,
+  "Filter": "FullyQualifiedName=CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict|FullyQualifiedName=CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict",
+  "Counts": {
+    "Expected": 2,
+    "Total": 2,
+    "Passed": 0,
+    "Failed": 2,
+    "Other": 0
+  },
+  "Process": {
+    "ProcessId": 36076,
+    "ExitCode": 1,
+    "StartedUtc": "2026-10-03T21:41:54.1315045Z",
+    "FinishedUtc": "2026-10-03T21:42:09.3475167Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "CD63B8BB6EC88EBBFAA4D2FB90DBF8BD4AD4D2F452FDEBDE5CB38AFD28DFD667",
+    "StandardErrorSha256": "BA776BD0336FC181129779076D639165C65D06F7783BD3CCD5649154FE0393E4",
+    "TimedOut": false
+  },
+  "Success": false,
+  "SourcesUnchanged": true,
+  "RuntimeUnchanged": true,
+  "SourceInputsSha256": "48D622B85C9211B8D06C871E9630A1EA3633DAAF9B4671108CC8AC817C644919",
+  "RuntimeManifestSha256": "49429EBAFCFAFF0BB3EBDBD4048533AF830CBF152CA16E1DBB3B7FAD1A2382C4",
+  "TrxSha256": "97B4946E4B0E911C1A6608393E5651DC37FA08A9DCEDC536DEE22C0018091A14",
+  "CaseNames": [
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict"
+  ],
+  "NativeEvidence": [
+    "BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure.",
+    "BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure."
+  ],
+  "Scope": "Selected actual native database tests; controlled failure injections are distinguished in source from the coordinated native CAD configuration replacement regression",
+  "FinishedUtc": "2026-10-03T21:42:10.2860604Z"
+}

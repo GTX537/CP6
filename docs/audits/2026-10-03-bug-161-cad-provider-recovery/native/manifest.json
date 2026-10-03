@@ -1,0 +1,571 @@
+{
+  "Task": "BUG-161",
+  "SourceBase": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "ArchivedUtc": "2026-10-03T22:00:41.8283303Z",
+  "Originals": [
+    {
+      "Path": "original-wp6-failure/entry-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\entry-result.json",
+      "Sha256": "FB2205AD4384520EA8F3EFDF28DA13003C13FECEA63E398560D39F29D6EB349E",
+      "Length": 4361
+    },
+    {
+      "Path": "original-wp6-failure/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\runtime-artifact-before.json",
+      "Sha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+      "Length": 56079
+    },
+    {
+      "Path": "original-wp6-failure/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\runtime-artifact-after.json",
+      "Sha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+      "Length": 56079
+    },
+    {
+      "Path": "original-wp6-failure/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\private\\trx\\results.trx",
+      "Sha256": "32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364",
+      "Length": 44799
+    },
+    {
+      "Path": "original-wp6-failure/private/process/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\private\\process\\stdout.log",
+      "Sha256": "833BD33C28AF18AAC0A7072B28DA7DF01F21A643D9F6F72F12DF8FFD0054C25C",
+      "Length": 7025
+    },
+    {
+      "Path": "original-wp6-failure/private/process/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\private\\process\\stderr.log",
+      "Sha256": "F39EF756859B14C2C7EFCB31F931A9E734F2A05F74870E61FFD2DA89E2F21B17",
+      "Length": 167
+    },
+    {
+      "Path": "original-wp6-failure/summary.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\summary.json",
+      "Sha256": "9A788F5E6450F4B4FE4258FEDA9FFC99B959EB7A7E997F2A8EB2BEAD49F6284C",
+      "Length": 599334
+    },
+    {
+      "Path": "original-wp6-failure/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\source-inputs.json",
+      "Sha256": "20351D0A20F2E19189AEF1841400A7A3A1C3A3C48CE7AD48C850E6D8247F79E7",
+      "Length": 453738
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\result.json",
+      "Sha256": "1FADA57CF691258119F7387EE3A84AF940F9E0B23CA0906CA4B3155565CEAF19",
+      "Length": 2159
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\runtime-artifact-after.json",
+      "Sha256": "49429EBAFCFAFF0BB3EBDBD4048533AF830CBF152CA16E1DBB3B7FAD1A2382C4",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\runtime-artifact-before.json",
+      "Sha256": "49429EBAFCFAFF0BB3EBDBD4048533AF830CBF152CA16E1DBB3B7FAD1A2382C4",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\source-inputs.json",
+      "Sha256": "48D622B85C9211B8D06C871E9630A1EA3633DAAF9B4671108CC8AC817C644919",
+      "Length": 276633
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\build-result.json",
+      "Sha256": "201D416ED19D7D9641B4E946B0E4A0E1A0A760DD9715242AE965A0F59313C890",
+      "Length": 394375
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\project-01.json",
+      "Sha256": "F58A838195D75DBF64E4D2C477B28817919A9262E134F6BA7CF946775109E94F",
+      "Length": 360257
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\private\\01-build\\stdout.log",
+      "Sha256": "7F5DB2C877C866A95C2CA41EE6929707D4D92F018D4B19CBF599C071EB501293",
+      "Length": 1180
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "D3634802172BB4213BF6FA4B9DF53F14AB3D61E5DFB8827317F265A41E9240D7",
+      "Length": 1013
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\private\\test\\stderr.log",
+      "Sha256": "BA776BD0336FC181129779076D639165C65D06F7783BD3CCD5649154FE0393E4",
+      "Length": 310
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\private\\test\\stdout.log",
+      "Sha256": "CD63B8BB6EC88EBBFAA4D2FB90DBF8BD4AD4D2F452FDEBDE5CB38AFD28DFD667",
+      "Length": 14727
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-coordinated-native-red\\private\\trx\\results.trx",
+      "Sha256": "97B4946E4B0E911C1A6608393E5651DC37FA08A9DCEDC536DEE22C0018091A14",
+      "Length": 37535
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\exact-case-set-audit.json",
+      "Sha256": "9D371A66F7FA79230049BE8C11F3DDDE3C89854B9E06031D90B5EEDBB9A38F0D",
+      "Length": 3787
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\result.json",
+      "Sha256": "341DAAF26F8B17B646D2A97EFAA2BA1BEAB913B57BB3DF961BF5789A3DA12C5D",
+      "Length": 8082
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\runtime-artifact-after.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\runtime-artifact-before.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\source-inputs.json",
+      "Sha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+      "Length": 276633
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\build-result.json",
+      "Sha256": "1CAF1E3D22B18FAA80EBDDE0BBD26684B66BEEB056B32CC9BA9C0AD0784304AB",
+      "Length": 394376
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\project-01.json",
+      "Sha256": "83D54B1E37F1728A51C30F09FFF55C66C5532CDFECA55833443D352B2E8C72F1",
+      "Length": 360258
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\private\\01-build\\stdout.log",
+      "Sha256": "0862AE796D324739F0E1C68E2BF924839B36CC4ABA2882BBA1894F904CFBC8BD",
+      "Length": 1180
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "2AD9967F2280D0195AD457A92FE6A353A8492625846632386DF6DFC446EFE4BC",
+      "Length": 82
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\private\\test\\stdout.log",
+      "Sha256": "09A1B65294DE1BAA19F66017A4FC3E2351F6F685DA6090D434FBFDAE1DEE5A99",
+      "Length": 429
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-pg-cad-exact-green\\private\\trx\\results.trx",
+      "Sha256": "9598DD054712780D5654A509CE0F44911005B2F8EC0ACA71BCE45BBE0DA99BAB",
+      "Length": 48522
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\exact-case-set-audit.json",
+      "Sha256": "45093CC6DA41F135380DA24DFE4E4F9E8ABEC037B19CCB7843E1D9FA4DC2EFBB",
+      "Length": 3786
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\result.json",
+      "Sha256": "44E27C2BDA1A5FED10B5EC710C693C03A4FFB49595CFD3C6ABB6FE412CCCEE52",
+      "Length": 7905
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\runtime-artifact-after.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\runtime-artifact-before.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\source-inputs.json",
+      "Sha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+      "Length": 276633
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\private\\test\\stdout.log",
+      "Sha256": "DDF9ACB0DDECD9B0E83880CDD3D7DDBFD1C39A02A86BAD5461AF9650E0E05962",
+      "Length": 430
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-sql-cad-exact-green\\private\\trx\\results.trx",
+      "Sha256": "56455CC70EF54EF1C9981F1534D012571375355880BB572AEB29E28B9C2B8C27",
+      "Length": 220503
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-inmemory-routing-green\\result.json",
+      "Sha256": "AAE75AE279203D06320E90DD6921FC3068EE6138072433317EC55FD5CA72DD03",
+      "Length": 3796
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-inmemory-routing-green\\runtime-artifact-after.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-inmemory-routing-green\\runtime-artifact-before.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "Length": 52985
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-inmemory-routing-green\\source-inputs.json",
+      "Sha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+      "Length": 276633
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-inmemory-routing-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-inmemory-routing-green\\private\\test\\stdout.log",
+      "Sha256": "F4A97B26495040FAFCB7D058D584BB200ED05BF9A4218FF836373313F1352271",
+      "Length": 433
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-inmemory-routing-green\\private\\trx\\results.trx",
+      "Sha256": "EF7E68334B97F9004F0DB2D5F873FFC5BD6B0DD6BB19E3DC807B9AF53CAEBCC5",
+      "Length": 27222
+    },
+    {
+      "Path": "execution/Invoke-Bug161Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug161Tests.ps1",
+      "Sha256": "2F3D754565F04ECD932ABEA65A9B0D554375546C01C607D462D16C093C86070D",
+      "Length": 5967
+    },
+    {
+      "Path": "execution/Invoke-Bug161Groups.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug161Groups.ps1",
+      "Sha256": "667AE4BDBAD320EF75EF39469008C3FB6216B02C989CEF29A8FA7837E0FE8107",
+      "Length": 2943
+    },
+    {
+      "Path": "execution/New-Bug161Databases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\New-Bug161Databases.ps1",
+      "Sha256": "C04CF4640A263AA47B18B24D08A427BD6EEC0BF4C8529B15A4168F6045E24274",
+      "Length": 4274
+    },
+    {
+      "Path": "execution/Test-Bug161LocalEvidence.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Test-Bug161LocalEvidence.ps1",
+      "Sha256": "ECDD220563D33ABBD7309934993DDF7163415EEABE6481C27870AAF32A8C7F5F",
+      "Length": 7847
+    },
+    {
+      "Path": "execution/Invoke-Bug161Routing.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug161Routing.ps1",
+      "Sha256": "6ACB51F9514094688470F31DE33D0FC18C31D98C719C454A8BC20E5D22EADE24",
+      "Length": 6004
+    },
+    {
+      "Path": "execution/Archive-Bug161Evidence.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Archive-Bug161Evidence.ps1",
+      "Sha256": "7EE58C52EB8C06D30B26F174027308AAE9D9DBA8C1A1C5BFF21BAE0D9C0FE3F8",
+      "Length": 6053
+    },
+    {
+      "Path": "execution/bug161-review.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-review.md",
+      "Sha256": "0B459AE6994D6C6D61B16F3AA46BCB4C3DFD58EA472F306D536981B85BF85FD1",
+      "Length": 7941
+    },
+    {
+      "Path": "execution/bug161-exact-local-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-exact-local-verification.json",
+      "Sha256": "8688082BBD48CFC99B3C7B53CDB99272C534C56ED3B70602D89A51595F06095C",
+      "Length": 2421
+    },
+    {
+      "Path": "execution/bug161-databases-created.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-databases-created.json",
+      "Sha256": "18D4919FB966E4BAE97BE871D08448AB4F968F9FA10BB1051ECC3DFC6E4DB014",
+      "Length": 226
+    },
+    {
+      "Path": "execution/bug161-task-start-workflow-input-inspection-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-task-start-workflow-input-inspection-workflow-input-inspection.json",
+      "Sha256": "4BE24DFB756EA443EB0C8B46DE459B9709E322F637EEEE5F78EC411A8B66D1E3",
+      "Length": 6755
+    },
+    {
+      "Path": "execution/bug161-original-failure-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-original-failure-verification.json",
+      "Sha256": "BB073918652038BCABD19AACE4390E57E691B36FED129A984EDC6789E4855503",
+      "Length": 947
+    },
+    {
+      "Path": "execution/wp6-failed-cad-matrix-owned-cleanup.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-failed-cad-matrix-owned-cleanup.json",
+      "Sha256": "0A4E214C5AE972DF8FD1F82C7F65FE88852A8D3C80F98F8693685DB3D7AA307B",
+      "Length": 3942
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityEntries.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityEntries.psm1",
+      "Sha256": "5CF53766FEAC54CEF69C6F1768C75D508EC99EA1DB34D80E85DF52647AF94299",
+      "Length": 24992
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityProcess.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityProcess.psm1",
+      "Sha256": "B95CDE488E14B7D4AE986458FBAE589934912DBDDA1EC08413D945C6DAF56B25",
+      "Length": 6892
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityResults.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityResults.psm1",
+      "Sha256": "AD66A8EDA85E1283649AF010043D85B1D1744008837EB01E529FB7D79491D9C1",
+      "Length": 20078
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityLifecycle.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityLifecycle.psm1",
+      "Sha256": "BF192F54A51140FB3162BDDD15553EA565972CA31A105B77C026A7EC4E972D39",
+      "Length": 38371
+    },
+    {
+      "Path": "execution/original-required-cases.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug161-required-cases-before-fix.json",
+      "Sha256": "5B1898EC51E93C03AAC6B826DDBD9B574B0E28F33EFDCF470693B9B12379C4FD",
+      "Length": 249020
+    }
+  ],
+  "DerivedTrxCounts": [
+    {
+      "Path": "original-wp6-failure/private/trx/results.trx",
+      "Sha256": "32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364",
+      "Total": 15,
+      "Passed": 14,
+      "Failed": 1,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe",
+        "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed",
+        "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server",
+        "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server",
+        "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index",
+        "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped"
+      ]
+    },
+    {
+      "Path": "bug161-pg-coordinated-native-red/private/trx/results.trx",
+      "Sha256": "97B4946E4B0E911C1A6608393E5651DC37FA08A9DCEDC536DEE22C0018091A14",
+      "Total": 2,
+      "Passed": 0,
+      "Failed": 2,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict"
+      ]
+    },
+    {
+      "Path": "bug161-pg-cad-exact-green/private/trx/results.trx",
+      "Sha256": "9598DD054712780D5654A509CE0F44911005B2F8EC0ACA71BCE45BBE0DA99BAB",
+      "Total": 25,
+      "Passed": 25,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe",
+        "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_deadlock_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_ambient_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_pending_changes",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_serialization_failure_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_unknown_unique_constraint_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict",
+        "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server",
+        "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server",
+        "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index",
+        "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped"
+      ]
+    },
+    {
+      "Path": "bug161-sql-cad-exact-green/private/trx/results.trx",
+      "Sha256": "56455CC70EF54EF1C9981F1534D012571375355880BB572AEB29E28B9C2B8C27",
+      "Total": 25,
+      "Passed": 25,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe",
+        "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_deadlock_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_ambient_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_pending_changes",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_serialization_failure_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_unknown_unique_constraint_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict",
+        "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server",
+        "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request",
+        "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server",
+        "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk",
+        "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index",
+        "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped"
+      ]
+    },
+    {
+      "Path": "bug161-inmemory-routing-green/private/trx/results.trx",
+      "Sha256": "EF7E68334B97F9004F0DB2D5F873FFC5BD6B0DD6BB19E3DC807B9AF53CAEBCC5",
+      "Total": 17,
+      "Passed": 17,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Atomic_configuration_replacement_reports_two_provider_GA_and_replays",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Backup_sealed_by_preparation_never_falls_back_to_primary",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Certification_evidence_is_immutable_after_insert",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Configuration_rejects_mixed_evaluation_baselines_and_failed_hard_gate",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Configuration_rejects_unqualified_or_ambiguous_ranking(primaryScore: 79, backupScore: 86)",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Configuration_rejects_unqualified_or_ambiguous_ranking(primaryScore: 85, backupScore: 90)",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Configuration_rejects_unqualified_or_ambiguous_ranking(primaryScore: 90, backupScore: 90)",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Configuration_rejects_unqualified_or_ambiguous_ranking(primaryScore: 92, backupScore: 79)",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Configuration_rejects_version_not_registered_in_this_deployment",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Parse_rejects_preparation_sealed_to_a_different_provider_version",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Parse_uses_the_preparation_sealed_provider_then_certified_backup",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Provider_output_version_must_match_runtime_registration",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Qualified_primary_only_configuration_is_Core_GA_ready",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Retryable_primary_failure_uses_only_the_certified_backup",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Revision_conflict_preserves_the_current_configuration",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Runtime_version_mismatch_fails_closed_without_invoking_provider",
+        "CP6.Space.IntegrationTests.SpaceCadProviderRoutingTests.Uncertified_registered_provider_is_never_used_as_fallback"
+      ]
+    }
+  ],
+  "Scope": "Original WP6 native 40001 failure, two deterministic actual native 40001 RED cases, exact two-provider 25-case GREEN and supplemental 17 InMemory routing results, review and actual execution modules are retained byte-for-byte. Original 15 and ten new cases are checked as one exact group per provider; injected recovery controls are not native deadlock reproductions. Remote delivery, post-merge smoke and cleanup remain pending.",
+  "Excluded": "Private credentials, connection/ownership receipts, database state, JWT/Cookie and backups are excluded."
+}

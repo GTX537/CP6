@@ -1,0 +1,19 @@
+{
+  "Task": "BUG-161",
+  "OriginalMatrixPassedEntries": 28,
+  "OriginalEntryCounts": {
+    "Failed": 1,
+    "Total": 15,
+    "Passed": 14
+  },
+  "OriginalSummarySha256": "9A788F5E6450F4B4FE4258FEDA9FFC99B959EB7A7E997F2A8EB2BEAD49F6284C",
+  "OriginalTrxSha256": "32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364",
+  "CoordinatedNativeRedCases": 2,
+  "CoordinatedNativeRedTrxSha256": "97B4946E4B0E911C1A6608393E5651DC37FA08A9DCEDC536DEE22C0018091A14",
+  "BothRedCasesObservedNative40001": true,
+  "RedProductionMatchesUnfixedMain": true,
+  "RedSourceInputsSha256": "48D622B85C9211B8D06C871E9630A1EA3633DAAF9B4671108CC8AC817C644919",
+  "RedRuntimeManifestSha256": "49429EBAFCFAFF0BB3EBDBD4048533AF830CBF152CA16E1DBB3B7FAD1A2382C4",
+  "CheckedUtc": "2026-10-03T21:49:14.6074918Z",
+  "Scope": "Original terminal failure and pre-fix two actual native coordinated regressions; no success or final WP6 acceptance claim"
+}

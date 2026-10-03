@@ -1,0 +1,69 @@
+{
+  "EntryId": "space-cad-assets-collaboration",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_c5c7dc85_space",
+  "Role": "space",
+  "SourceSha": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A4DF5749ED39510CEBB445C54F4F65F962ED2972A111EB1CDA116701D78722F6",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 35908,
+    "ExitCode": 1,
+    "StartedUtc": "2026-10-03T21:28:43.4945605Z",
+    "FinishedUtc": "2026-10-03T21:29:02.9616211Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "833BD33C28AF18AAC0A7072B28DA7DF01F21A643D9F6F72F12DF8FFD0054C25C",
+    "StandardErrorSha256": "F39EF756859B14C2C7EFCB31F931A9E734F2A05F74870E61FFD2DA89E2F21B17",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-cad-assets-collaboration",
+    "Provider": "PostgreSql",
+    "Success": false,
+    "Status": "Failed",
+    "FailureCodes": [
+      "ProcessFailed",
+      "RunNotSuccessful",
+      "CounterMismatch",
+      "NonPassingCase"
+    ],
+    "Counts": {
+      "Expected": 15,
+      "Total": 15,
+      "Passed": 14,
+      "NonPassing": 1
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+      "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe",
+      "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed",
+      "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index",
+      "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed",
+      "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk",
+      "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server",
+      "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk",
+      "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server",
+      "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped",
+      "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency",
+      "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage",
+      "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically",
+      "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk",
+      "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request"
+    ],
+    "ReportSha256": "32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-cad-assets-collaboration\\private\\trx\\results.trx",
+  "ReportSha256": "32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364",
+  "FailureCode": null,
+  "Success": false
+}

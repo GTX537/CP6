@@ -1,0 +1,2 @@
+[xUnit.net 00:00:13.53]     CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict [FAIL]
+[xUnit.net 00:00:13.61]     CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict [FAIL]

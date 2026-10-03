@@ -2,6 +2,7 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -36,6 +37,53 @@ public sealed class SpaceCadProviderCapabilityService(
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureAccess(siteId, write: true);
+        var relational = context.Database.IsRelational();
+        if (relational)
+        {
+            if (context.Database.CurrentTransaction is not null ||
+                System.Transactions.Transaction.Current is not null ||
+                System.Transactions.TransactionsDatabaseFacadeExtensions.GetEnlistedTransaction(context.Database) is not null)
+                throw new InvalidOperationException(
+                    "CAD Provider replacement requires its own transaction; a caller transaction cannot be retried or committed here.");
+
+            context.ChangeTracker.DetectChanges();
+            if (context.ChangeTracker.HasChanges())
+                throw new InvalidOperationException(
+                    "CAD Provider replacement requires a clean context so caller changes are not saved or discarded by transaction recovery.");
+        }
+
+        const int maximumAttempts = 3;
+        for (var attempt = 1; ; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                return await ReplaceAttemptAsync(siteId, request, idempotencyKey, cancellationToken);
+            }
+            catch (Exception exception) when (relational)
+            {
+                // The failed attempt has rolled back and released its site lock.
+                // Discard its tracked writes before re-reading replay and revision.
+                if (context.Database.CurrentTransaction is not null)
+                    throw new InvalidOperationException("CAD Provider recovery requires the failed transaction to be disposed first.", exception);
+                context.ChangeTracker.Clear();
+                if (!DatabaseFailureClassifier.Classify(exception).CanRetryTransaction)
+                    throw;
+                cancellationToken.ThrowIfCancellationRequested();
+                if (attempt >= maximumAttempts)
+                    throw;
+            }
+        }
+    }
+
+    private async Task<ReplaceSpaceCadProviderConfigurationResponse> ReplaceAttemptAsync(
+        Guid siteId,
+        ReplaceSpaceCadProviderConfigurationRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureAccess(siteId, write: true);
         var normalized = Normalize(request);
         var operation = $"cad-provider-config:{siteId:N}";
         var keyHash = IdempotencyHash(operation, idempotencyKey);
@@ -48,7 +96,7 @@ public sealed class SpaceCadProviderCapabilityService(
         if (replay is not null)
             return replay with { IdempotentReplay = true };
 
-        IDbContextTransaction? transaction = context.Database.IsRelational()
+        await using IDbContextTransaction? transaction = context.Database.IsRelational()
             ? await context.Database.BeginTransactionAsync(
                 IsolationLevel.Serializable,
                 cancellationToken)
