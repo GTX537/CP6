@@ -16,16 +16,21 @@ public sealed class IdentityReadException(string code) : Exception(code);
 
 public sealed class IdentitySnapshotReader(CP6Context db, CrmIdentityRuntime runtime, IDataProtectionProvider protection)
 {
-    private readonly IDataProtector protector = protection.CreateProtector("CP6.C02.IdentityVersions.Cursor.v1");
+    private readonly IDataProtector protector = protection.CreateProtector("CP6.C02.IdentityVersions.Cursor.v2");
 
     public async Task<IdentityVersionPage> ReadVersionsAsync(Guid tenant, string? cursor, int size = 200, CancellationToken cancellationToken = default)
     {
         if (size is < 1 or > 200) throw new IdentityReadException("C02_INVALID_PAGE_SIZE");
         var position = DecodeCursor(tenant, cursor);
-        await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        // PG RepeatableRead gives all statements in this page one committed snapshot.
+        // SQL Server retains its existing Serializable reader without requiring a
+        // deployment-wide SNAPSHOT setting. Generation and directory are read together.
+        await using var transaction = await db.Database.BeginTransactionAsync(
+            db.Database.IsNpgsql() ? IsolationLevel.RepeatableRead : IsolationLevel.Serializable, cancellationToken);
         await RequireReadyAsync(tenant, cancellationToken);
-        var boundary = await db.Database.SqlQuery<long>($"SELECT COALESCE(MAX(CONVERT(bigint,RowVersion)),0) AS [Value] FROM crm_identity.Snapshot WHERE TenantId={tenant}")
-            .SingleAsync(cancellationToken);
+        var boundary = await db.CrmIdentityTenantGenerations.AsNoTracking()
+            .Where(x => x.TenantId == tenant).Select(x => (long?)x.Generation)
+            .SingleOrDefaultAsync(cancellationToken) ?? 0;
         // With only current snapshots, a write between pages can move a row beyond the boundary.
         // Reject/restart the entire baseline instead of silently omitting that row.
         if (position is not null && position.Boundary != boundary) throw new IdentityReadException("C02_SNAPSHOT_BOUNDARY_CHANGED");
@@ -66,7 +71,7 @@ public sealed class IdentitySnapshotReader(CP6Context db, CrmIdentityRuntime run
         {
             var cursor = JsonSerializer.Deserialize<Cursor>(protector.Unprotect(value), IdentityEventContracts.Json);
             if (cursor is null || cursor.Tenant != tenant || cursor.ExpiresAtUtc <= runtime.Clock.GetUtcNow() ||
-                cursor.Boundary < 0 || cursor.LastAggregate.Length is < 1 or > 128)
+                cursor.Boundary < 0 || string.IsNullOrEmpty(cursor.LastAggregate) || cursor.LastAggregate.Length > 128)
                 throw new IdentityReadException("C02_INVALID_CURSOR");
             return cursor;
         }

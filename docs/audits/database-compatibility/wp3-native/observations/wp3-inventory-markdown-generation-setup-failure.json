@@ -1,0 +1,13 @@
+{
+  "Kind": "ReadOnlyInventoryMarkdownGenerationSetupFailure",
+  "ScriptSha256": "F60ED8AB2918E4D46D340986CC77F2DA090B6D6ED9002D8347BD1C6E5E401FEA",
+  "JsonOnlySha256": "E43B4DCCFA2CD4C382CF733F5F1B930AF677E75BD402B1EBBFA46364E6C45CE9",
+  "ExitCode": 1,
+  "Failure": "Single Ref returned as dictionary because PowerShell unrolled one-element array, then Markdown accessed References[0].Path",
+  "Source": "Tool chunk8a7c9e, script309",
+  "Correction": "Refs returns explicit array without pipeline unrolling",
+  "Timestamp": null,
+  "DatabaseCommandsRun": 0,
+  "DotNetCommandsRun": 0,
+  "CredentialFilesRead": 0
+}

@@ -1,0 +1,3 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=1, pending=0; no full catalog or business acceptance implied.
+Passed: Failures.NativeConstraintClassificationAndRollback: Actual PK/explicit unique-index 23505, FK23503 and CHECK23514 matched classifier kind and exact generated constraint name; integrity failures were not retryable. Each failed transaction fully rolled back; same-connection fresh transaction SELECT1 passed four times; all five fixture tables absent.

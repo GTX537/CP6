@@ -2,9 +2,9 @@ using System.Data;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.ErpIntegration;
 
@@ -27,9 +27,8 @@ public sealed class ErpInboxReplayService(IDbContextFactory<ErpIntegrationContex
         await using var db = await factory.CreateDbContextAsync(ct);
         if (!db.Database.IsSqlServer()) throw new InvalidOperationException("C03_REQUIRES_REAL_SQL_SERVER");
         await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
-        await using var business = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
-            .UseSqlServer(db.Database.GetDbConnection()).Options, new TenantContext { CurrentTenantId = tenant });
-        await business.Database.UseTransactionAsync(tx.GetDbTransaction(), ct);
+        await using var business = await DatabaseSharedContext.CreateAsync<CP6Context>(db, DatabaseContextKind.Core,
+            options => new(options, new TenantContext { CurrentTenantId = tenant }), ct);
         var tenantCheckedAt = runtime.Clock.GetUtcNow().UtcDateTime;
         if (!await business.Sys_Tenants.IgnoreQueryFilters().AsNoTracking().AnyAsync(x => x.Id == tenant && x.Enable &&
                 (x.ExpireDate == null || x.ExpireDate > tenantCheckedAt), ct))

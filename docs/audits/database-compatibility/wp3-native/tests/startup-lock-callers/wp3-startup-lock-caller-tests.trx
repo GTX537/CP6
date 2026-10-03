@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a24590ae-5d7c-43e2-b243-98aa225ed665" name="tt@LAPTOP-3QQ44FJS 2026-10-03 05:07:15" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T05:07:15.9807886-04:00" queuing="2026-10-03T05:07:15.9807889-04:00" start="2026-10-03T05:07:14.1278855-04:00" finish="2026-10-03T05:07:20.2040450-04:00" />
+  <TestSettings name="default" id="0d73e76c-c705-44f8-96ce-d51243c97335">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_05_07_15" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b14f4f21-d165-48be-9801-147c6277d4a0" testId="d3dac722-cdc6-f538-3f4f-ddd847e23163" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.EnsureSeeded_repairs_full_admin_menu_set_and_splits_control_tower_from_ai_admin" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.6628439" startTime="2026-10-03T05:07:15.9345492-04:00" endTime="2026-10-03T05:07:17.5973642-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b14f4f21-d165-48be-9801-147c6277d4a0" />
+    <UnitTestResult executionId="afe81b12-7daa-4fba-a0bf-eb24cc5440de" testId="b75ca292-034b-d07b-a26b-55425ed80da7" testName="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Explicit_legacy_time_zone_is_fail_closed(id: &quot;&quot;, expectedCode: &quot;SPACE_LEGACY_TIME_ZONE_REQUIRED&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001803" startTime="2026-10-03T05:07:15.9542602-04:00" endTime="2026-10-03T05:07:15.9543090-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="afe81b12-7daa-4fba-a0bf-eb24cc5440de" />
+    <UnitTestResult executionId="61b8de9a-7e38-49a7-995b-5f7ece48c6c3" testId="4aa689cf-8aad-fd64-cd60-5d8b3b30e842" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Sqlite_two_contexts_seed_concurrently_without_duplicates" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.2484498" startTime="2026-10-03T05:07:17.8920793-04:00" endTime="2026-10-03T05:07:20.1404273-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="61b8de9a-7e38-49a7-995b-5f7ece48c6c3" />
+    <UnitTestResult executionId="493e71bd-30f0-4369-af90-76ee422125b6" testId="cf6f1581-5794-2565-dae2-9cf4099928e0" testName="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Invalid_time_zone_after_lock_releases_for_next_context" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010000" startTime="2026-10-03T05:07:15.9192573-04:00" endTime="2026-10-03T05:07:15.9204375-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="493e71bd-30f0-4369-af90-76ee422125b6">
+      <Output>
+        <ErrorInfo>
+          <Message>设 CP6_TEST_SQLSERVER=&lt;连接串&gt; 以运行真库集成测试</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4f670218-57df-4de4-b7c1-f79ebc6cbb5b" testId="bbbd660c-0c31-8992-204f-962a1e77ce76" testName="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.New_distinct_job_uses_same_ticks_as_utc" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0091344" startTime="2026-10-03T05:07:15.9233516-04:00" endTime="2026-10-03T05:07:15.9325408-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f670218-57df-4de4-b7c1-f79ebc6cbb5b" />
+    <UnitTestResult executionId="33b312a4-7309-45b5-bdcb-1bd38f3df4dd" testId="b42477cb-43da-0a31-ffb9-6349c5ea9b3c" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_simulation_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0007471" startTime="2026-10-03T05:07:17.5975008-04:00" endTime="2026-10-03T05:07:17.5981792-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33b312a4-7309-45b5-bdcb-1bd38f3df4dd" />
+    <UnitTestResult executionId="e37bf2fc-64c9-491a-b80b-c95a5d18c636" testId="bb99fe0b-a9f5-24e9-9298-f839fa79c4f2" testName="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Backfill_session_lock_keeps_its_global_resource_and_wait_budget" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000802" startTime="2026-10-03T05:07:17.5045315-04:00" endTime="2026-10-03T05:07:17.5045842-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e37bf2fc-64c9-491a-b80b-c95a5d18c636" />
+    <UnitTestResult executionId="b938dc24-b174-4866-bc61-6e9757741c9d" testId="f10bf4be-9fef-490d-2beb-a42386ecc082" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Seed_lock_keeps_its_global_resource_and_wait_budget" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0070170" startTime="2026-10-03T05:07:15.9261320-04:00" endTime="2026-10-03T05:07:15.9318694-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b938dc24-b174-4866-bc61-6e9757741c9d" />
+    <UnitTestResult executionId="2e2c5238-5367-429c-850a-b21389d4a66e" testId="66d76363-1f51-afdd-6966-4ad074e85467" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Dispatch_recommendation_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0028883" startTime="2026-10-03T05:07:17.7569825-04:00" endTime="2026-10-03T05:07:17.7598582-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e2c5238-5367-429c-850a-b21389d4a66e" />
+    <UnitTestResult executionId="bda35b4c-ef46-4ee7-b449-2b2b454653fd" testId="11e0d38e-462b-fa3f-1b29-7d825f46ba72" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.EnsureSeeded_is_idempotent_for_every_tenant" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0929118" startTime="2026-10-03T05:07:17.6628606-04:00" endTime="2026-10-03T05:07:17.7558958-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bda35b4c-ef46-4ee7-b449-2b2b454653fd" />
+    <UnitTestResult executionId="8b4c1f0c-a6f1-4d86-a548-9237b945b061" testId="bd1c83db-3983-84e4-d961-01a109d398c1" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Operations_diagnostics_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010348" startTime="2026-10-03T05:07:17.7560335-04:00" endTime="2026-10-03T05:07:17.7568736-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b4c1f0c-a6f1-4d86-a548-9237b945b061" />
+    <UnitTestResult executionId="dff87b21-100c-400f-ae13-39facad3744a" testId="e5ddfa54-10f4-9664-6e5c-b01b124ab3b1" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Audit_error_keys_have_complete_safe_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0021656" startTime="2026-10-03T05:07:17.7618641-04:00" endTime="2026-10-03T05:07:17.7639057-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dff87b21-100c-400f-ae13-39facad3744a" />
+    <UnitTestResult executionId="8964bc83-dcb1-4efc-8e5b-181f6c10fced" testId="e307418e-8ffb-4a6b-e34e-0da4e7397bba" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Ai_admin_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0032705" startTime="2026-10-03T05:07:15.9325032-04:00" endTime="2026-10-03T05:07:15.9344325-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8964bc83-dcb1-4efc-8e5b-181f6c10fced" />
+    <UnitTestResult executionId="cb20fecd-635b-4b94-bfb4-fc5d246c564a" testId="6bb95a7e-043d-4216-9f1e-41f595bf4b3d" testName="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Two_connections_serialize_all_batches_under_session_app_lock" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010000" startTime="2026-10-03T05:07:15.9280630-04:00" endTime="2026-10-03T05:07:15.9280882-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb20fecd-635b-4b94-bfb4-fc5d246c564a">
+      <Output>
+        <ErrorInfo>
+          <Message>设 CP6_TEST_SQLSERVER=&lt;连接串&gt; 以运行真库集成测试</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a26f3340-999f-420a-bd80-870789b36112" testId="50720242-2768-ba97-72ea-83d4900a8358" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Busy_database_lock_fails_before_seed_or_commit" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0006463" startTime="2026-10-03T05:07:17.7611634-04:00" endTime="2026-10-03T05:07:17.7617672-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a26f3340-999f-420a-bd80-870789b36112" />
+    <UnitTestResult executionId="df5d6738-0ed4-449a-91df-ccb8679ca44b" testId="95f7217b-e3b0-a527-5852-75185a784c1b" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Canceled_database_lock_propagates_the_same_token_and_disposes_before_seed_or_commit" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0034532" startTime="2026-10-03T05:07:17.6600456-04:00" endTime="2026-10-03T05:07:17.6627581-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df5d6738-0ed4-449a-91df-ccb8679ca44b" />
+    <UnitTestResult executionId="2c6f7d4a-2158-48b1-9260-19c65ee1da0e" testId="3da48895-a6ff-1bca-55e8-98969a1c6499" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_dataset_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0005796" startTime="2026-10-03T05:07:17.8913154-04:00" endTime="2026-10-03T05:07:17.8919110-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c6f7d4a-2158-48b1-9260-19c65ee1da0e" />
+    <UnitTestResult executionId="e0aa78b0-122b-4b4b-a88a-2e4407a19a70" testId="636ed4fa-aada-5ae6-1139-1569d30494be" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_comparison_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0007569" startTime="2026-10-03T05:07:17.6585849-04:00" endTime="2026-10-03T05:07:17.6592935-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0aa78b0-122b-4b4b-a88a-2e4407a19a70" />
+    <UnitTestResult executionId="1ca34555-723e-4dfb-ab6d-ca1f539dff6e" testId="a9866039-84d5-332a-bb3e-b61f5f5774a2" testName="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Explicit_legacy_time_zone_is_fail_closed(id: null, expectedCode: &quot;SPACE_LEGACY_TIME_ZONE_REQUIRED&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0000158" startTime="2026-10-03T05:07:15.9544707-04:00" endTime="2026-10-03T05:07:15.9544997-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ca34555-723e-4dfb-ab6d-ca1f539dff6e" />
+    <UnitTestResult executionId="ae4cf743-d92a-46c0-a61e-c97fa69df6e9" testId="13a24efb-a71c-99b7-a123-3819f0865629" testName="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Legacy_ambiguous_time_chooses_later_utc_occurrence" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0016247" startTime="2026-10-03T05:07:15.9326023-04:00" endTime="2026-10-03T05:07:15.9336021-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae4cf743-d92a-46c0-a61e-c97fa69df6e9" />
+    <UnitTestResult executionId="bba01117-6fcd-44b7-947d-d95488356202" testId="670b309e-fbab-e8c3-2d24-98fa4da7a10e" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_scenario_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0006585" startTime="2026-10-03T05:07:17.8911554-04:00" endTime="2026-10-03T05:07:17.8911958-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bba01117-6fcd-44b7-947d-d95488356202" />
+    <UnitTestResult executionId="d93438dc-df98-41cb-856d-4e67d95f646b" testId="5e11bb1d-54f3-507b-2fbf-fb8398438f06" testName="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Pending_space_row_requires_explicit_time_zone" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0268328" startTime="2026-10-03T05:07:17.5046919-04:00" endTime="2026-10-03T05:07:17.5314382-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d93438dc-df98-41cb-856d-4e67d95f646b" />
+    <UnitTestResult executionId="8cb95ce6-4646-4077-af2e-e0d909d20dcf" testId="9c628cc5-cf81-aa4c-ffa2-6d1b4103f93b" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Database_protocol_orders_transaction_lock_seed_verify_and_commit" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0068850" startTime="2026-10-03T05:07:17.6516658-04:00" endTime="2026-10-03T05:07:17.6584728-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cb95ce6-4646-4077-af2e-e0d909d20dcf" />
+    <UnitTestResult executionId="8465862c-3f46-4fdb-9228-e4d47213bb3b" testId="5a8225ac-0035-74e8-fb21-8790876ec493" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Existing_906_only_converges_menu_key_and_preserves_route" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0439055" startTime="2026-10-03T05:07:17.7640077-04:00" endTime="2026-10-03T05:07:17.8080191-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8465862c-3f46-4fdb-9228-e4d47213bb3b" />
+    <UnitTestResult executionId="9c037f7f-c1a4-405f-85c3-3f0478994e97" testId="d5456175-b0c6-a524-5451-b5a7348a561f" testName="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Extreme_values_saturate_without_throwing" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002195" startTime="2026-10-03T05:07:15.9547183-04:00" endTime="2026-10-03T05:07:15.9547437-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c037f7f-c1a4-405f-85c3-3f0478994e97" />
+    <UnitTestResult executionId="bd3f65dd-6079-47d1-8b2b-3fa96fdebba0" testId="75b20f79-a40f-fcca-f96c-7fd40f747714" testName="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Backfill_crosses_batch_boundary_is_idempotent_and_space_only" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.5814580" startTime="2026-10-03T05:07:15.9201926-04:00" endTime="2026-10-03T05:07:17.5043696-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd3f65dd-6079-47d1-8b2b-3fa96fdebba0" />
+    <UnitTestResult executionId="74564a23-b7e7-4c8c-8de7-2c7877fe2649" testId="1719cfdc-e86f-38e9-6782-18ecb9d05d93" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.EnsureSeeded_creates_two_tenant_admin_grants_with_explicit_tenants" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0824301" startTime="2026-10-03T05:07:17.8081523-04:00" endTime="2026-10-03T05:07:17.8904989-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="74564a23-b7e7-4c8c-8de7-2c7877fe2649" />
+    <UnitTestResult executionId="941e8f55-f960-42af-a143-536ddcb66eb7" testId="8ad1a24f-c820-325b-5ff5-cdd1e09a8b68" testName="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Fresh_database_does_not_require_legacy_time_zone" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0090727" startTime="2026-10-03T05:07:17.5315797-04:00" endTime="2026-10-03T05:07:17.5405366-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="941e8f55-f960-42af-a143-536ddcb66eb7" />
+    <UnitTestResult executionId="2fa4bce0-39ed-4384-8502-1e0f68ea8ec8" testId="a4c9fa8b-e44c-69e6-6299-0d65004a8cae" testName="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Explicit_legacy_time_zone_is_fail_closed(id: &quot;Definitely/Not/A/TimeZone&quot;, expectedCode: &quot;SPACE_LEGACY_TIME_ZONE_INVALID&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0009914" startTime="2026-10-03T05:07:15.9337076-04:00" endTime="2026-10-03T05:07:15.9346523-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2fa4bce0-39ed-4384-8502-1e0f68ea8ec8" />
+    <UnitTestResult executionId="681cfd59-d13c-411f-9114-6bf6f055cb2d" testId="529bcb26-266c-a671-c116-19f2d4c6d9cc" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Putaway_recommendation_screen_has_complete_five_language_text" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010972" startTime="2026-10-03T05:07:17.7599573-04:00" endTime="2026-10-03T05:07:17.7610715-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="681cfd59-d13c-411f-9114-6bf6f055cb2d" />
+    <UnitTestResult executionId="649a1e5c-9510-4217-88a1-aaf38d8a380a" testId="8fe92697-b099-915b-0078-64f7500cc2f5" testName="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Legacy_invalid_time_shifts_to_first_valid_instant" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003524" startTime="2026-10-03T05:07:15.9546154-04:00" endTime="2026-10-03T05:07:15.9546494-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="649a1e5c-9510-4217-88a1-aaf38d8a380a" />
+    <UnitTestResult executionId="320c74c7-b5f6-4628-9102-b930fe8e9431" testId="d76de523-547b-f2d9-edfa-f0b96843d9be" testName="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Existing_regular_role_is_not_granted_audit_read" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0533020" startTime="2026-10-03T05:07:17.5982727-04:00" endTime="2026-10-03T05:07:17.6515283-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="320c74c7-b5f6-4628-9102-b930fe8e9431" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_simulation_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b42477cb-43da-0a31-ffb9-6349c5ea9b3c">
+      <Execution id="33b312a4-7309-45b5-bdcb-1bd38f3df4dd" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Planning_simulation_screen_has_complete_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Fresh_database_does_not_require_legacy_time_zone" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8ad1a24f-c820-325b-5ff5-cdd1e09a8b68">
+      <Execution id="941e8f55-f960-42af-a143-536ddcb66eb7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests" name="Fresh_database_does_not_require_legacy_time_zone" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_comparison_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="636ed4fa-aada-5ae6-1139-1569d30494be">
+      <Execution id="e0aa78b0-122b-4b4b-a88a-2e4407a19a70" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Planning_comparison_screen_has_complete_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.EnsureSeeded_repairs_full_admin_menu_set_and_splits_control_tower_from_ai_admin" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d3dac722-cdc6-f538-3f4f-ddd847e23163">
+      <Execution id="b14f4f21-d165-48be-9801-147c6277d4a0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="EnsureSeeded_repairs_full_admin_menu_set_and_splits_control_tower_from_ai_admin" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_scenario_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="670b309e-fbab-e8c3-2d24-98fa4da7a10e">
+      <Execution id="bba01117-6fcd-44b7-947d-d95488356202" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Planning_scenario_screen_has_complete_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Existing_906_only_converges_menu_key_and_preserves_route" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5a8225ac-0035-74e8-fb21-8790876ec493">
+      <Execution id="8465862c-3f46-4fdb-9228-e4d47213bb3b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Existing_906_only_converges_menu_key_and_preserves_route" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Legacy_ambiguous_time_chooses_later_utc_occurrence" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="13a24efb-a71c-99b7-a123-3819f0865629">
+      <Execution id="ae4cf743-d92a-46c0-a61e-c97fa69df6e9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests" name="Legacy_ambiguous_time_chooses_later_utc_occurrence" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Planning_dataset_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3da48895-a6ff-1bca-55e8-98969a1c6499">
+      <Execution id="2c6f7d4a-2158-48b1-9260-19c65ee1da0e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Planning_dataset_screen_has_complete_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Backfill_session_lock_keeps_its_global_resource_and_wait_budget" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bb99fe0b-a9f5-24e9-9298-f839fa79c4f2">
+      <Execution id="e37bf2fc-64c9-491a-b80b-c95a5d18c636" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests" name="Backfill_session_lock_keeps_its_global_resource_and_wait_budget" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Explicit_legacy_time_zone_is_fail_closed(id: &quot;Definitely/Not/A/TimeZone&quot;, expectedCode: &quot;SPACE_LEGACY_TIME_ZONE_INVALID&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a4c9fa8b-e44c-69e6-6299-0d65004a8cae">
+      <Execution id="2fa4bce0-39ed-4384-8502-1e0f68ea8ec8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests" name="Explicit_legacy_time_zone_is_fail_closed" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Operations_diagnostics_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bd1c83db-3983-84e4-d961-01a109d398c1">
+      <Execution id="8b4c1f0c-a6f1-4d86-a548-9237b945b061" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Operations_diagnostics_screen_has_complete_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.EnsureSeeded_creates_two_tenant_admin_grants_with_explicit_tenants" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1719cfdc-e86f-38e9-6782-18ecb9d05d93">
+      <Execution id="74564a23-b7e7-4c8c-8de7-2c7877fe2649" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="EnsureSeeded_creates_two_tenant_admin_grants_with_explicit_tenants" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Dispatch_recommendation_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="66d76363-1f51-afdd-6966-4ad074e85467">
+      <Execution id="2e2c5238-5367-429c-850a-b21389d4a66e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Dispatch_recommendation_screen_has_complete_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.EnsureSeeded_is_idempotent_for_every_tenant" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="11e0d38e-462b-fa3f-1b29-7d825f46ba72">
+      <Execution id="bda35b4c-ef46-4ee7-b449-2b2b454653fd" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="EnsureSeeded_is_idempotent_for_every_tenant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Existing_regular_role_is_not_granted_audit_read" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d76de523-547b-f2d9-edfa-f0b96843d9be">
+      <Execution id="320c74c7-b5f6-4628-9102-b930fe8e9431" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Existing_regular_role_is_not_granted_audit_read" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Legacy_invalid_time_shifts_to_first_valid_instant" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8fe92697-b099-915b-0078-64f7500cc2f5">
+      <Execution id="649a1e5c-9510-4217-88a1-aaf38d8a380a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests" name="Legacy_invalid_time_shifts_to_first_valid_instant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.New_distinct_job_uses_same_ticks_as_utc" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bbbd660c-0c31-8992-204f-962a1e77ce76">
+      <Execution id="4f670218-57df-4de4-b7c1-f79ebc6cbb5b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests" name="New_distinct_job_uses_same_ticks_as_utc" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Canceled_database_lock_propagates_the_same_token_and_disposes_before_seed_or_commit" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="95f7217b-e3b0-a527-5852-75185a784c1b">
+      <Execution id="df5d6738-0ed4-449a-91df-ccb8679ca44b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Canceled_database_lock_propagates_the_same_token_and_disposes_before_seed_or_commit" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Pending_space_row_requires_explicit_time_zone" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5e11bb1d-54f3-507b-2fbf-fb8398438f06">
+      <Execution id="d93438dc-df98-41cb-856d-4e67d95f646b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests" name="Pending_space_row_requires_explicit_time_zone" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Explicit_legacy_time_zone_is_fail_closed(id: &quot;&quot;, expectedCode: &quot;SPACE_LEGACY_TIME_ZONE_REQUIRED&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b75ca292-034b-d07b-a26b-55425ed80da7">
+      <Execution id="afe81b12-7daa-4fba-a0bf-eb24cc5440de" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests" name="Explicit_legacy_time_zone_is_fail_closed" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Putaway_recommendation_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="529bcb26-266c-a671-c116-19f2d4c6d9cc">
+      <Execution id="681cfd59-d13c-411f-9114-6bf6f055cb2d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Putaway_recommendation_screen_has_complete_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Database_protocol_orders_transaction_lock_seed_verify_and_commit" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9c628cc5-cf81-aa4c-ffa2-6d1b4103f93b">
+      <Execution id="8cb95ce6-4646-4077-af2e-e0d909d20dcf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Database_protocol_orders_transaction_lock_seed_verify_and_commit" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Two_connections_serialize_all_batches_under_session_app_lock" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="6bb95a7e-043d-4216-9f1e-41f595bf4b3d">
+      <Execution id="cb20fecd-635b-4b94-bfb4-fc5d246c564a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests" name="Two_connections_serialize_all_batches_under_session_app_lock" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Busy_database_lock_fails_before_seed_or_commit" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="50720242-2768-ba97-72ea-83d4900a8358">
+      <Execution id="a26f3340-999f-420a-bd80-870789b36112" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Busy_database_lock_fails_before_seed_or_commit" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Seed_lock_keeps_its_global_resource_and_wait_budget" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f10bf4be-9fef-490d-2beb-a42386ecc082">
+      <Execution id="b938dc24-b174-4866-bc61-6e9757741c9d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Seed_lock_keeps_its_global_resource_and_wait_budget" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Sqlite_two_contexts_seed_concurrently_without_duplicates" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4aa689cf-8aad-fd64-cd60-5d8b3b30e842">
+      <Execution id="61b8de9a-7e38-49a7-995b-5f7ece48c6c3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Sqlite_two_contexts_seed_concurrently_without_duplicates" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests.Backfill_crosses_batch_boundary_is_idempotent_and_space_only" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="75b20f79-a40f-fcca-f96c-7fd40f747714">
+      <Execution id="bd3f65dd-6079-47d1-8b2b-3fa96fdebba0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcBackfillTests" name="Backfill_crosses_batch_boundary_is_idempotent_and_space_only" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Extreme_values_saturate_without_throwing" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d5456175-b0c6-a524-5451-b5a7348a561f">
+      <Execution id="9c037f7f-c1a4-405f-85c3-3f0478994e97" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests" name="Extreme_values_saturate_without_throwing" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Invalid_time_zone_after_lock_releases_for_next_context" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cf6f1581-5794-2565-dae2-9cf4099928e0">
+      <Execution id="493e71bd-30f0-4369-af90-76ee422125b6" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests" name="Invalid_time_zone_after_lock_releases_for_next_context" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Audit_error_keys_have_complete_safe_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e5ddfa54-10f4-9664-6e5c-b01b124ab3b1">
+      <Execution id="dff87b21-100c-400f-ae13-39facad3744a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Audit_error_keys_have_complete_safe_five_language_text" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests.Explicit_legacy_time_zone_is_fail_closed(id: null, expectedCode: &quot;SPACE_LEGACY_TIME_ZONE_REQUIRED&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a9866039-84d5-332a-bb3e-b61f5f5774a2">
+      <Execution id="1ca34555-723e-4dfb-ab6d-ca1f539dff6e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceIntegrationEventUtcNormalizerTests" name="Explicit_legacy_time_zone_is_fail_closed" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Space.SpaceAuditPermissionSeedTests.Ai_admin_screen_has_complete_five_language_text" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e307418e-8ffb-4a6b-e34e-0da4e7397bba">
+      <Execution id="8964bc83-dcb1-4efc-8e5b-181f6c10fced" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Space.SpaceAuditPermissionSeedTests" name="Ai_admin_screen_has_complete_five_language_text" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d3dac722-cdc6-f538-3f4f-ddd847e23163" executionId="b14f4f21-d165-48be-9801-147c6277d4a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b75ca292-034b-d07b-a26b-55425ed80da7" executionId="afe81b12-7daa-4fba-a0bf-eb24cc5440de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4aa689cf-8aad-fd64-cd60-5d8b3b30e842" executionId="61b8de9a-7e38-49a7-995b-5f7ece48c6c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf6f1581-5794-2565-dae2-9cf4099928e0" executionId="493e71bd-30f0-4369-af90-76ee422125b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bbbd660c-0c31-8992-204f-962a1e77ce76" executionId="4f670218-57df-4de4-b7c1-f79ebc6cbb5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b42477cb-43da-0a31-ffb9-6349c5ea9b3c" executionId="33b312a4-7309-45b5-bdcb-1bd38f3df4dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bb99fe0b-a9f5-24e9-9298-f839fa79c4f2" executionId="e37bf2fc-64c9-491a-b80b-c95a5d18c636" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f10bf4be-9fef-490d-2beb-a42386ecc082" executionId="b938dc24-b174-4866-bc61-6e9757741c9d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66d76363-1f51-afdd-6966-4ad074e85467" executionId="2e2c5238-5367-429c-850a-b21389d4a66e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11e0d38e-462b-fa3f-1b29-7d825f46ba72" executionId="bda35b4c-ef46-4ee7-b449-2b2b454653fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bd1c83db-3983-84e4-d961-01a109d398c1" executionId="8b4c1f0c-a6f1-4d86-a548-9237b945b061" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5ddfa54-10f4-9664-6e5c-b01b124ab3b1" executionId="dff87b21-100c-400f-ae13-39facad3744a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e307418e-8ffb-4a6b-e34e-0da4e7397bba" executionId="8964bc83-dcb1-4efc-8e5b-181f6c10fced" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6bb95a7e-043d-4216-9f1e-41f595bf4b3d" executionId="cb20fecd-635b-4b94-bfb4-fc5d246c564a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50720242-2768-ba97-72ea-83d4900a8358" executionId="a26f3340-999f-420a-bd80-870789b36112" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95f7217b-e3b0-a527-5852-75185a784c1b" executionId="df5d6738-0ed4-449a-91df-ccb8679ca44b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3da48895-a6ff-1bca-55e8-98969a1c6499" executionId="2c6f7d4a-2158-48b1-9260-19c65ee1da0e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="636ed4fa-aada-5ae6-1139-1569d30494be" executionId="e0aa78b0-122b-4b4b-a88a-2e4407a19a70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9866039-84d5-332a-bb3e-b61f5f5774a2" executionId="1ca34555-723e-4dfb-ab6d-ca1f539dff6e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13a24efb-a71c-99b7-a123-3819f0865629" executionId="ae4cf743-d92a-46c0-a61e-c97fa69df6e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="670b309e-fbab-e8c3-2d24-98fa4da7a10e" executionId="bba01117-6fcd-44b7-947d-d95488356202" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5e11bb1d-54f3-507b-2fbf-fb8398438f06" executionId="d93438dc-df98-41cb-856d-4e67d95f646b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c628cc5-cf81-aa4c-ffa2-6d1b4103f93b" executionId="8cb95ce6-4646-4077-af2e-e0d909d20dcf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a8225ac-0035-74e8-fb21-8790876ec493" executionId="8465862c-3f46-4fdb-9228-e4d47213bb3b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5456175-b0c6-a524-5451-b5a7348a561f" executionId="9c037f7f-c1a4-405f-85c3-3f0478994e97" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="75b20f79-a40f-fcca-f96c-7fd40f747714" executionId="bd3f65dd-6079-47d1-8b2b-3fa96fdebba0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1719cfdc-e86f-38e9-6782-18ecb9d05d93" executionId="74564a23-b7e7-4c8c-8de7-2c7877fe2649" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ad1a24f-c820-325b-5ff5-cdd1e09a8b68" executionId="941e8f55-f960-42af-a143-536ddcb66eb7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4c9fa8b-e44c-69e6-6299-0d65004a8cae" executionId="2fa4bce0-39ed-4384-8502-1e0f68ea8ec8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="529bcb26-266c-a671-c116-19f2d4c6d9cc" executionId="681cfd59-d13c-411f-9114-6bf6f055cb2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8fe92697-b099-915b-0078-64f7500cc2f5" executionId="649a1e5c-9510-4217-88a1-aaf38d8a380a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d76de523-547b-f2d9-edfa-f0b96843d9be" executionId="320c74c7-b5f6-4628-9102-b930fe8e9431" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="32" executed="30" passed="30" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.95]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:01.32]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:01.34]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:01.36]       设 CP6_TEST_SQLSERVER=&lt;连接串&gt; 以运行真库集成测试&#xD;
+[xUnit.net 00:00:01.36]       设 CP6_TEST_SQLSERVER=&lt;连接串&gt; 以运行真库集成测试&#xD;
+Test 'CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Invalid_time_zone_after_lock_releases_for_next_context' was skipped in the test run.&#xD;
+Test 'CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Two_connections_serialize_all_batches_under_session_app_lock' was skipped in the test run.&#xD;
+[xUnit.net 00:00:05.58]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Warning" timestamp="2026-10-03T05:07:15.9212366-04:00">
+        <Text>[xUnit.net 00:00:01.36]     CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Invalid_time_zone_after_lock_releases_for_next_context [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Warning" timestamp="2026-10-03T05:07:15.9288184-04:00">
+        <Text>[xUnit.net 00:00:01.36]     CP6.Tests.Space.SpaceIntegrationEventOccurredAtUtcSqlServerTests.Two_connections_serialize_all_batches_under_session_app_lock [SKIP]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

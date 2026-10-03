@@ -1,34 +1,22 @@
 using System.Data;
-using System.Data.Common;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.WebApi.Seed;
 
 /// <summary>
 /// Seeds the Space audit-read resource and grants it only to each tenant's
-/// administrator role. SQL Server instances serialize through a transaction-
-/// owned application lock; other providers serialize in-process and use a
-/// relational transaction when supported.
+/// administrator role. SQL Server and PostgreSQL instances serialize through
+/// a transaction-owned database resource lock. Test-provider fallbacks retain
+/// their in-process gate and use a relational transaction when supported.
 /// </summary>
 public static class SpaceAuditPermissionSeed
 {
     internal const string LockResource =
         "CP6:Seed:SpaceAuditPermission:v1";
     internal const int LockTimeoutMilliseconds = 15_000;
-    internal const string AcquireLockCommandText =
-        """
-        DECLARE @result int;
-        EXEC @result = sys.sp_getapplock
-            @Resource = @resource,
-            @LockMode = N'Exclusive',
-            @LockOwner = N'Transaction',
-            @LockTimeout = @timeoutMilliseconds,
-            @DbPrincipal = N'public';
-        SELECT @result;
-        """;
 
     private const int SpaceMenuId = 900;
     private const int HomeMenuId = 901;
@@ -143,19 +131,15 @@ public static class SpaceAuditPermissionSeed
     {
         ArgumentNullException.ThrowIfNull(db);
 
-        if (db.Database.IsSqlServer())
+        if (db.Database.IsSqlServer() || db.Database.IsNpgsql())
         {
             var strategy = db.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(() =>
-                ExecuteSqlServerLockedSeedProtocolAsync(
+                ExecuteDatabaseLockedSeedProtocolAsync(
                     token => db.Database.BeginTransactionAsync(
                         IsolationLevel.Serializable,
                         token),
-                    (transaction, token) =>
-                        AcquireSqlServerLockAsync(
-                            db.Database.GetDbConnection(),
-                            transaction.GetDbTransaction(),
-                            token),
+                    (_, token) => AcquireDatabaseLockAsync(db, token),
                     token => SeedAndVerifyAsync(db, token),
                     (transaction, token) =>
                         transaction.CommitAsync(token),
@@ -186,30 +170,11 @@ public static class SpaceAuditPermissionSeed
         }
     }
 
-    internal static void ConfigureAppLockCommand(DbCommand command)
-    {
-        command.CommandText = AcquireLockCommandText;
-        command.CommandType = CommandType.Text;
-
-        var resource = command.CreateParameter();
-        resource.ParameterName = "@resource";
-        resource.DbType = DbType.String;
-        resource.Size = 255;
-        resource.Value = LockResource;
-        command.Parameters.Add(resource);
-
-        var timeout = command.CreateParameter();
-        timeout.ParameterName = "@timeoutMilliseconds";
-        timeout.DbType = DbType.Int32;
-        timeout.Value = LockTimeoutMilliseconds;
-        command.Parameters.Add(timeout);
-    }
-
     internal static async Task
-        ExecuteSqlServerLockedSeedProtocolAsync<TTransaction>(
+        ExecuteDatabaseLockedSeedProtocolAsync<TTransaction>(
             Func<CancellationToken, Task<TTransaction>>
                 beginTransaction,
-            Func<TTransaction, CancellationToken, Task<int>>
+            Func<TTransaction, CancellationToken, Task<bool>>
                 acquireLock,
             Func<CancellationToken, Task> seedAndVerify,
             Func<TTransaction, CancellationToken, Task> commit,
@@ -218,8 +183,8 @@ public static class SpaceAuditPermissionSeed
     {
         await using var transaction =
             await beginTransaction(ct);
-        var lockResult = await acquireLock(transaction, ct);
-        if (lockResult < 0)
+        var acquired = await acquireLock(transaction, ct);
+        if (!acquired)
         {
             throw new InvalidOperationException(
                 "SPACE_AUDIT_PERMISSION_SEED_LOCK_UNAVAILABLE");
@@ -229,22 +194,17 @@ public static class SpaceAuditPermissionSeed
         await commit(transaction, ct);
     }
 
-    private static async Task<int> AcquireSqlServerLockAsync(
-        DbConnection connection,
-        DbTransaction transaction,
-        CancellationToken ct)
+    private static async Task<bool> AcquireDatabaseLockAsync(CP6Context db, CancellationToken ct)
     {
-        await using var command = connection.CreateCommand();
-        command.Transaction = transaction;
-        ConfigureAppLockCommand(command);
-        var result = await command.ExecuteScalarAsync(ct);
-        if (result is null || result is DBNull)
+        try
         {
-            throw new InvalidOperationException(
-                "SPACE_AUDIT_PERMISSION_SEED_LOCK_UNAVAILABLE");
+            return await DatabaseResourceLocks.TryAcquireTransactionAsync(
+                db, LockResource, LockTimeoutMilliseconds, ct);
         }
-
-        return Convert.ToInt32(result);
+        catch (DatabaseResourceLockDeadlockException exception) when (exception.Provider == DatabaseProvider.SqlServer)
+        {
+            return false;
+        }
     }
 
     private static async Task SeedAndVerifyAsync(

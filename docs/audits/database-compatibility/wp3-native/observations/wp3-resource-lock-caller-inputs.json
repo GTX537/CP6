@@ -1,0 +1,244 @@
+{
+  "CapturedUtc": "2026-10-03T08:59:09.0092387Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "Files": [
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpSqlLock.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Core\\Services\\ErpIntegration\\ErpSqlLock.cs",
+      "Sha256": "5B0DC4DBFE415D6F69AEDCC9564F9EA3E4ED6D3D4A2B6D0FDAB8AC034460EBBA",
+      "CallSites": [
+        {
+          "Line": 14,
+          "Text": "if (!await DatabaseResourceLocks.TryAcquireTransactionAsync(db, resource, 10000, ct))"
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceResourceLocks.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceResourceLocks.cs",
+      "Sha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6",
+      "CallSites": [
+        {
+          "Line": 14,
+          "Text": "return await DatabaseResourceLocks.TryAcquireTransactionAsync(context, resource, timeoutMs, cancellationToken);"
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceEditLeaseService.cs",
+      "Sha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7",
+      "CallSites": [
+        {
+          "Line": 408,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceDesignV1Service.cs",
+      "Sha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F",
+      "CallSites": [
+        {
+          "Line": 6374,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        },
+        {
+          "Line": 6390,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceUnderlayHistory.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceUnderlayHistory.cs",
+      "Sha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77",
+      "CallSites": [
+        {
+          "Line": 323,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyService.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceExcelCadApplyService.cs",
+      "Sha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9",
+      "CallSites": [
+        {
+          "Line": 649,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceExcelCadApplyJobStepExecutor.cs",
+      "Sha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809",
+      "CallSites": [
+        {
+          "Line": 1884,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceCadParseService.cs",
+      "Sha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419",
+      "CallSites": [
+        {
+          "Line": 1462,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        },
+        {
+          "Line": 1809,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceAiAtomicApplyService.cs",
+      "Sha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE",
+      "CallSites": [
+        {
+          "Line": 381,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiRetentionStore.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceAiRetentionStore.cs",
+      "Sha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928",
+      "CallSites": [
+        {
+          "Line": 189,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceCadProviderCapabilityService.cs",
+      "Sha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B",
+      "CallSites": [
+        {
+          "Line": 468,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceValidationInfrastructure.cs",
+      "Sha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F",
+      "CallSites": [
+        {
+          "Line": 98,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceHistoricalRepublishService.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceHistoricalRepublishService.cs",
+      "Sha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED",
+      "CallSites": [
+        {
+          "Line": 72,
+          "Text": "if (!await SpaceResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.WebApi/Seed/SpaceAuditPermissionSeed.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.WebApi\\Seed\\SpaceAuditPermissionSeed.cs",
+      "Sha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C",
+      "CallSites": [
+        {
+          "Line": 138,
+          "Text": "ExecuteDatabaseLockedSeedProtocolAsync("
+        },
+        {
+          "Line": 174,
+          "Text": "ExecuteDatabaseLockedSeedProtocolAsync<TTransaction>("
+        },
+        {
+          "Line": 201,
+          "Text": "return await DatabaseResourceLocks.TryAcquireTransactionAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.WebApi/BackgroundServices/SpaceIntegrationEventOccurredAtUtcBackfill.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.WebApi\\BackgroundServices\\SpaceIntegrationEventOccurredAtUtcBackfill.cs",
+      "Sha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+      "CallSites": [
+        {
+          "Line": 48,
+          "Text": "sessionLock = await DatabaseResourceLocks.TryAcquireSessionAsync("
+        },
+        {
+          "Line": 201,
+          "Text": "await sessionLock.DisposeAsync();"
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Tests/Space/SpaceAuditPermissionSeedTests.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\Space\\SpaceAuditPermissionSeedTests.cs",
+      "Sha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E",
+      "CallSites": [
+        {
+          "Line": 370,
+          "Text": ".ExecuteDatabaseLockedSeedProtocolAsync("
+        },
+        {
+          "Line": 411,
+          "Text": ".ExecuteDatabaseLockedSeedProtocolAsync("
+        },
+        {
+          "Line": 448,
+          "Text": "() => SpaceAuditPermissionSeed.ExecuteDatabaseLockedSeedProtocolAsync("
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Tests/Space/SpaceIntegrationEventOccurredAtUtcTests.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\Space\\SpaceIntegrationEventOccurredAtUtcTests.cs",
+      "Sha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2",
+      "CallSites": []
+    }
+  ],
+  "RemainingLegacySites": [],
+  "DiffCheckPassed": true,
+  "Scope": "WP3 sixteen existing logical-resource lock source sites, small Space mapping wrapper and two startup unit-test files. Current six clock-helper edits were authored earlier by root and are included in the exact shared-file hashes; this agent changed only lock helpers/imports in those files.",
+  "ResourceIdentityCheck": "D:\\CP6\\tmp\\wp3-resource-lock-caller-expression-check.json",
+  "CallerNativeSites": 16,
+  "SpaceSites": 13,
+  "SpaceFallback": "Nonrelational existing fallback; relational SQL Server/PostgreSQL use the actual caller transaction. Unsupported relational providers are rejected by the capability.",
+  "StartupFallback": "Existing SQLite/InMemory process-gate fallback retained; real PostgreSQL now uses database locks.",
+  "TransactionBoundaries": "Original transaction creation/isolation unchanged; no hidden transaction retry or isolation weakening. PG Serializable advisory waiting does not refresh its snapshot; complete business retries remain WP4/WP5.",
+  "FailureChanges": [
+    "Original Space/ERP native sp_getapplock -3 maps to the existing domain busy error; native cancellation propagates OperationCanceledException.",
+    "Validation SQL THROW51000 and Republish SQL THROW51021 replaced by InvalidOperationException preserving SPACE_VALIDATION_LOCK_UNAVAILABLE and SPACE_REPUBLISH_LOCK_UNAVAILABLE. Native SQL error numbers are not retained as public failure types.",
+    "Invalid native protocol results propagate capability failure instead of being silently treated as busy."
+  ],
+  "BackfillLifecycle": "Explicit nonowning session handle is held before pending query and across every batch, then released with no cancellation in finally; only a connection opened by this operation is closed.",
+  "ValidationThisAgent": {
+    "OfflineTargetedResourceIdentityAndDomainBodyCheckPassed": true,
+    "TargetedDiffCheckPassed": true,
+    "UnitTestsExecuted": false,
+    "NativeDatabaseExecuted": false,
+    "BuildExecuted": false,
+    "RemoteActionsExecuted": false
+  },
+  "RequiredRootValidation": [
+    "Affected startup unit classes including the new same-token cancellation/disposal case",
+    "Necessary Core/Space/WebApi build after all related owner edits are frozen",
+    "Real SQL/PG startup locked seed/backfill or designated capability integration gates; primitive lock results must not be called full business/API acceptance"
+  ]
+}

@@ -1,0 +1,3 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=140, pending=0; no full catalog or business acceptance implied.
+Passed: SharedContext.TransactionOwnership: Seven child contexts: exact configured provider/target history, same physical connection/transaction, non-owning disposal, failed child disposal preserves parent, full rollback and fixture absence; business SQL compatibility not exercised.

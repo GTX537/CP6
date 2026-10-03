@@ -1,5 +1,14 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-03：WP3 本地验收与集中审查完成，远端交付待核对
+
+WP1/2已分别由PR136/145交付；本阶段基线为main `605246ca83cbb8e1a89d3ff7209ba9df65176e98`。WP3已实现两库资源锁、数据库UTC、错误分类、ORD原子分配、共享Context事务、generation/v2游标与工作槽领取，并登记全部指定Provider分支及后续业务责任。
+
+实际两库ORD各7/7及补充各5/5、锁/时钟各5/5、共享事务各3/3、约束与整事务重试各4/4、工作槽各10/10通过；游标SQL3/3、PG4/4含真实进程重启与PG同页并发快照。通用单测75/75和共享18/18保持各自来源；最终调用方相关Core54/54、Space22/22零Skip，包含14个异常注入回归。原启动30P/2Skip后两项真实SQL用例独立2P/0Skip保留原件。API双库首次/重复DatabaseInit四次exit0/noHTTP，未开放普通PG API/worker。
+
+一次任务级审查的P2测试工具超时清理已定向解决；最终ORD与共享工具分别双库复测通过，强制超时只静态复核。原始失败全部保留，151个来源/147份唯一原件逐一hash一致，[manifest](../audits/database-compatibility/wp3-native/manifest.json)与[实施记录](../audits/database-compatibility/WP3-IMPLEMENTATION.md)说明复用及未验证范围。两个WP3独占数据库已普通DROP并确认不存在，原receipt及PG测试role保留。根工作区其他改动未动。
+
+当前LocalVerified/RemotePending：待正常提交、PR、main包含性与必要集成核对；随后执行WP4/5/6。父[Issue134](https://github.com/GTX537/CP6/issues/134)继续Open。没有Actions运行/取消、工作流触发变更、保护变更或生产部署。下文保留此前历史时点。
 ## 2026-10-03：最终 SQL 门禁与双库初始化本地通过
 
 [PR #144](https://github.com/GTX537/CP6/pull/144) 于07:15:02 UTC正常合入，main `94c0f8c9cac63a72008c4e6b242c94358f25b305` 确认包含功能 `2b6548b1` 与证据 `5348a2a5`；WP2保留任务改动并fast-forward。BUG143原17/17、升级/重复15/15、四案例及恢复、fixture清理29/29和报价SQL/PG各2/2保持原范围；合并后同API原步骤exit0/noHTTP及native完整比较15/15已完成，[Issue143](https://github.com/GTX537/CP6/issues/143) 于07:23:27 UTC Closed，closure原件由WP2交付记录引用。

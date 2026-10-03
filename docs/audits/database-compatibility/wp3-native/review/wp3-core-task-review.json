@@ -1,0 +1,340 @@
+{
+  "Task": "DB-COMPAT-01 WP3",
+  "Role": "Core/shared-context/identity/runtime-probe task-level review",
+  "ReviewedHostUtc": "2026-10-03T09:26:55.6570855Z",
+  "BaseSha": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003",
+  "Conclusion": "No production blocker in reviewed scope; one P2 RuntimeProbe timeout lifecycle defect requires targeted correction before delivery.",
+  "Findings": [
+    {
+      "Id": "WP3-CORE-REVIEW-01",
+      "Priority": "P2",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/OrderNumberGates.cs",
+      "Line": 46,
+      "RelatedLines": [
+        38,
+        40,
+        44,
+        50
+      ],
+      "Title": "Join concurrent ORD workers before clearing their shared fixture",
+      "Trigger": "bothReady exceeds 10 seconds or WhenAll waiting exceeds 20 seconds; native allocation/open can still be running.",
+      "Impact": "WaitAsync does not cancel the underlying tasks. finally clears the common ORD row before workers terminate; a worker may reserve after cleanup or contend with later order cases. A worker waiting on the unreleased barrier also retains its open context.",
+      "RequiredCorrection": "Retain both tasks outside try, cancel/release the start barrier on failure, await both worker completions and context disposal before ClearOrderAsync; retain bounded connection/command timeouts. No change to DocNumber production behavior needed.",
+      "Evidence": "Static control-flow finding only; the already recorded successful ORD native runs remain valid successful executions."
+    }
+  ],
+  "ReviewedFiles": [
+    {
+      "Path": "CP6.Core/Persistence/DatabaseResourceLocks.cs",
+      "Sha256": "6E3ACC6D3AB2C052A601C070BD8C5616105B7BA664110AE6CAE307C71D861593",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseUtcClock.cs",
+      "Sha256": "1B0F438DDCCB7D48EA8AA391DFEC7E96BF2BE133E520D262577FC175BA6794E9",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "Sha256": "801B62608E2D9E6A62BC7B27437E7A7D80C2ED3F02D3794F28ED7295ECA43D92",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseSharedContext.cs",
+      "Sha256": "FD06C38C2B003B9B6644C476635CB1D17F61321875CECBD4531772F450F511F5",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Services/Common/DocNumber.cs",
+      "Sha256": "CCFB53B85263A3F0C7269DC24FD6D498EFCE529C1D4DDA5245C7A4FFFE43357B",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
+      "Sha256": "0BC6A322545D5EEFBAE26BB9C0022A76CA6BB962DB46B6A92AF385A34E4DF01E",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "Sha256": "64B8389F9D1AE1AD667AB03F7AE3F4CA896E8F8082AAAE7C2E8725DE2C9027C7",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+      "Sha256": "A20E273FF32D2D08D5D56C6C30581017F99B1FFABAB524E0EF60C1F0CBADAA71",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpInboxReplayService.cs",
+      "Sha256": "3AF8AA0E0FFF79BD468CAD836F2AF1F36C48DE2C69828602DB41DF645DE7AC4F",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpDeliveryReplayService.cs",
+      "Sha256": "8499B1D9A00A3F09CB52DA799B1B69CAF9E6F3ADA5404B418195FE072A60D1AD",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.WebApi/Services/CrmOidcGrantStore.cs",
+      "Sha256": "5475DD7381E0B069CA1763628D53EDFF633F42202DF71872FEC674209F7DAB0F",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Cp6SpaceRuntimeMaterializer.cs",
+      "Sha256": "23445EE85999123C69CE704A66C5DF4671F374654B4648851D56C494C657CE2D",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseFailureClassifierTests.cs",
+      "Sha256": "6E564D3F5A597E373629892799D72776F85EC9CA6DC3B938D7D94A789DF668C2",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseResourceLockTests.cs",
+      "Sha256": "3CDB47E283B13C7226C6486C3600B7459CE68C6AD7A6C9CB2E575CABDD089ACB",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseSharedContextTests.cs",
+      "Sha256": "9369654F8CB37F42B1AF91587ACEC4C7894E8279E8C1DC144D8C9F9A3092640B",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseUtcClockTests.cs",
+      "Sha256": "4A556850299A523A3ADB45244C7C8A9D880B2C7FF9B10E6596F39A3BF9234B98",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+      "Sha256": "560B02BAB5E20BEE872438D552CD7C64E409DEF902196E97B899428900F78161",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/FailureGates.cs",
+      "Sha256": "13126651452996F5DFDA7B6DE1134ACEB09837BC92A1578859DF5E9B6B5CCD04",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/IdentityCursorGates.cs",
+      "Sha256": "F8CB0C1C4BD2A11DAA56863F3CAFAAFC636401D85C8ED7346461EE05F5F265F4",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/IdentityPageSnapshotGate.cs",
+      "Sha256": "199290E093178447F3B5E44EBBFE843F7DE57F75C5976FF33511F9865EB7853D",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/OrderNumberGates.cs",
+      "Sha256": "60FE19FAF91538EEFCAB4207C2E291B36B93D82064A4834A1D20409DB7259323",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/packages.lock.json",
+      "Sha256": "6155B97413ED665582D8E906C5284C35BBCF75C01668821042855E95D95275B4",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Parsed dependency graph, project-only direct references"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/Program.cs",
+      "Sha256": "B14B2BC6765489C4EFB741882EA2282C355B683AC85C1D71A1F5798F88CD9C0D",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+      "Sha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/RuntimeFixture.cs",
+      "Sha256": "7790AF7F30CC6CC57B6F3B9C81E225C32667EE94937869F7B6AEF1DF725F09E5",
+      "MatchesObservedCursorInputs": false,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/SharedContextGates.cs",
+      "Sha256": "EE7E685435C71D46CEA133466601D74D2078E763B9190A288724C3067C248F90",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/TransactionFailureGates.cs",
+      "Sha256": "11F8C9298703326CBBA089F99F2E2E48A7042CA95F66DD8AE11F84E4297F94E2",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/WorkSlotClaimGates.cs",
+      "Sha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+      "MatchesObservedCursorInputs": true,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/README.md",
+      "Sha256": "6E9CE01B9F44DC21F89294367CECC38F4A011DD5BBF6AC8FF2C96A996960E7E7",
+      "MatchesObservedCursorInputs": null,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    },
+    {
+      "Path": "docs/audits/database-compatibility/WP3-IMPLEMENTATION.md",
+      "Sha256": "F18978FBAF35B5CA56602CA81E61D498829E045131AC340CCB22A327D12688CF",
+      "MatchesObservedCursorInputs": null,
+      "ReviewMode": "Source/diff and directly relevant caller context"
+    }
+  ],
+  "SupportingReferences": [
+    "CP6.Core/Persistence/DatabaseContextOptions.cs",
+    "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+    "CP6.Core/Persistence/IdentityGenerationSqlServerV1.cs",
+    "CP6.Persistence.PostgreSql/IdentityGenerationPostgreSqlV1.cs"
+  ],
+  "ExistingEvidenceReviewed": [
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-orders-atomic-first-green.json",
+      "Sha256": "2E0052E37973DC1FBBCF657233F45844661419D82BBC2C8E06B08A2E65A9C0C9",
+      "Provider": "PostgreSql",
+      "Passed": 7,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-orders-atomic-sql-regression.json",
+      "Sha256": "4BCE114B32314C81DA6F6C8D92367F0D5EECE544E18AC0DEC504B737C91617AD",
+      "Provider": "SqlServer",
+      "Passed": 7,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-orders-extra-pg-first-native.json",
+      "Sha256": "1EDECD47B7CCA152BD8651F7B74112B5A7AE62CBA62A08C9E9C347D41B779333",
+      "Provider": "PostgreSql",
+      "Passed": 5,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-orders-extra-sql-first-native.json",
+      "Sha256": "5ADE844F62CF5991563B28845951AD9ED643B0E93035E7E84C7EB9F6911631AF",
+      "Provider": "SqlServer",
+      "Passed": 5,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-locks-clock-first-native.json",
+      "Sha256": "D751FA6CA0BE2DF2BFC84C4862F48FC6815957138398E977C2EB5C287F5694BE",
+      "Provider": "PostgreSql",
+      "Passed": 5,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-locks-clock-sql-cancellation-fixed.json",
+      "Sha256": "5E9DF413CC40551328579261EAC118EF94C163126B295D319F43B826E7DC70C2",
+      "Provider": "SqlServer",
+      "Passed": 5,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-constraints-and-transactions-sql-native.json",
+      "Sha256": "142187CADAE8B579954A7A06B0EFA8453433CABECA1874E843E9A98D1B2DFFBB",
+      "Provider": "SqlServer",
+      "Passed": 4,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-transactions-pg-native.json",
+      "Sha256": "E0C1D1903ACAD995EEF850DC66B839D63E5A5666331C1E5882ABA88A3CBEBB86",
+      "Provider": "PostgreSql",
+      "Passed": 4,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-shared-context-pg-native.json",
+      "Sha256": "6718B45202929CD04DC21ED452650A9EB0B27314961D16F1613B64A978286C98",
+      "Provider": "PostgreSql",
+      "Passed": 3,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-shared-context-sql-native.json",
+      "Sha256": "326BEC46B9CC6CD3AADA035179F6574F8CAA0EC99D0349B9871F9342A940AD13",
+      "Provider": "SqlServer",
+      "Passed": 3,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-cursor-sql-lifecycle.json",
+      "Sha256": "867BF0D6A80582B1ADCB1BE5FA4672B2A6B840ADB6E58D10C02FA9A3371D16C0",
+      "Provider": "SqlServer",
+      "Passed": 3,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-cursor-pg-lifecycle-and-page-snapshot.json",
+      "Sha256": "0B0271A2845AF310B99D0815A7473D3569646995688F323A6897CD2E3796038F",
+      "Provider": "PostgreSql",
+      "Passed": 4,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-claim-pg-concurrency-first.json",
+      "Sha256": "69BC8309FC97C44A325D486EF8B239F00BBE7F8A7561CC88FCD1097E74A9BCED",
+      "Provider": "PostgreSql",
+      "Passed": 10,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-claim-sql-concurrency-first.json",
+      "Sha256": "24A554D37F784AEAC15F29EA22EF6CE2373E0825B8090451126189F3449B645B",
+      "Provider": "SqlServer",
+      "Passed": 10,
+      "Failed": 0,
+      "Verification": "Read pre-existing actual report; not rerun"
+    }
+  ],
+  "Executed": "Read-only git/source/evidence inspection and SHA256 observations; no dotnet, database access, remote, Actions, production or application-file modifications.",
+  "Limitations": [
+    "This is one task-level review of the assigned scope; other production changes are reviewed separately.",
+    "Shared-context seven-child fixture proves provider/profile/physical transaction ownership, not the six consumers complete business behavior.",
+    "SQL Server and PostgreSQL ORD/locks/clock/constraints/shared/cursor/work-slot evidence remains primitive or directly named behavior only; WP4/WP5 complete business and WP6 recovery/operational acceptance are not claimed.",
+    "SQL localized constraint-name parsing evidence covers observed native Chinese and English templates only.",
+    "RuntimeFixture literal-loopback generalization and README are reviewed statically; final integration build remains root responsibility.",
+    "New timeout cleanup fault path has not been executed; after correction only affected path requires targeted review/verification.",
+    "Source observations are named per-file hashes, not a complete compiler input manifest.",
+    "No unrelated legacy bugs, full-repository vulnerability review, production deployment, or remote checks were performed."
+  ]
+}

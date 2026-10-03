@@ -1,0 +1,482 @@
+{
+  "Task": "DB-COMPAT-01 WP3",
+  "Review": "One task-level independent Space/startup/work-slot half",
+  "Reviewer": "/root/bug143_evidence_prepare",
+  "CapturedHostUtc": "2026-10-03T09:30:03.6875804Z",
+  "BaseMain": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "Status": "CompletedNoBlockingFindingsInAssignedScope",
+  "SourceScopeCanonicalFormat": "Sorted repository-relative path, TAB, uppercase file-byte SHA256, LF; trailing LF; UTF8 without BOM",
+  "SourceScopeSha256": "1DA30EA20EAC34BF9EE908AA84A42736C0BF1CF572C9C9F40523A569707984AB",
+  "ReviewedChangedAndNewFileCount": 20,
+  "ReviewedFiles": [
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs",
+      "Sha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "Sha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiRetentionStore.cs",
+      "Sha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiWorkSlotQueries.cs",
+      "Sha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "Sha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+      "Sha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "Sha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+      "Sha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+      "Sha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyService.cs",
+      "Sha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceHistoricalRepublishService.cs",
+      "Sha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceResourceLocks.cs",
+      "Sha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceUnderlayHistory.cs",
+      "Sha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+      "Sha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F"
+    },
+    {
+      "Path": "CP6.Tests/Space/SpaceAuditPermissionSeedTests.cs",
+      "Sha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E"
+    },
+    {
+      "Path": "CP6.Tests/Space/SpaceIntegrationEventOccurredAtUtcTests.cs",
+      "Sha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2"
+    },
+    {
+      "Path": "CP6.WebApi/BackgroundServices/SpaceIntegrationEventOccurredAtUtcBackfill.cs",
+      "Sha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04"
+    },
+    {
+      "Path": "CP6.WebApi/Seed/SpaceAuditPermissionSeed.cs",
+      "Sha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+      "Sha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/WorkSlotClaimGates.cs",
+      "Sha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507"
+    }
+  ],
+  "Findings": [],
+  "StaticConclusions": [
+    "All thirteen Space native resource sites retain original resource expression, scope and wait budget; six floor-edit entrypoints remain one namespace. SQL application-lock -3 retains original caller busy mapping; cancellation and other native errors propagate by typed contract.",
+    "All six Space authoritative UTC calls select DatabaseUtcClock only for the two supported providers; existing test clock fallback/Kind/sentinel behavior remains. No business-date or GETDATE mapping changed.",
+    "Work-slot Acquire owns each complete ReadCommitted transaction and tenant mutex before initialization/read/count/write; bounded retries are only typed deadlock/serialization or explicit optimistic concurrency; rollback uses None and tracker is cleared before full re-read. Last failure propagates. Budget and existing Renew/Release implementations are outside changed scope.",
+    "Production candidate helper uses parameterized exact tenant/run bounds, SQL original hints and PostgreSQL FOR UPDATE SKIP LOCKED; original caller command timeout is restored in finally. The two-second gate exercises candidate helper directly, not a whole-worker or whole-ledger skip guarantee.",
+    "Backfill preserves global Session lock over all batches, no pending-row timezone requirement, domain error/cancellation propagation, release in finally and only closes a connection it opened. Actual unchanged SQL regression source verifies501 rows, two production sessions and release after exception.",
+    "Startup seed preserves transaction-lock-seed-verify-commit ordering and fail-before-write when busy/canceled; existing SQLite/process-gate and nonrelational fallback remain in its provider branch. Generic command-shape assertions moved to capability tests; protocol and native lifecycle evidence retained.",
+    "Fixture graphs use real installed production migrations and exact owned random tenant/model/run/job identifiers; concurrency starts two distinct native sessions behind a bounded shared barrier; independent observers prove commits and cleanup. Lease clock fixture is explicitly not database-clock acceptance."
+  ],
+  "DeferredBoundaries": [
+    {
+      "Owner": "WP4/WP5 before ordinary PostgreSQL startup/consumer guard release",
+      "Path": "CP6.WebApi/Seed/SpaceAuditPermissionSeed.cs",
+      "Line": 136,
+      "Observation": "PostgreSQL Serializable plus an advisory SELECT can establish a snapshot before a contended lock is obtained. Full seed/Space consumer collision and fresh whole-transaction recovery remain an explicit original inventory boundary.",
+      "EvidenceStatus": "Read-only inference and recorded phase boundary; no native failure or additional execution asserted.",
+      "BlockingThisWP3": false
+    },
+    {
+      "Owner": "WP5",
+      "Paths": [
+        "CP6.Space.Infrastructure/EfSpaceVersionClone.cs",
+        "CP6.Space.Infrastructure/SpaceExcelMappingService.cs",
+        "CP6.Space.Infrastructure/SpaceCadMappingProfileService.cs",
+        "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs budget"
+      ],
+      "Observation": "Original bounded1205 retry, unique replay/rollback/reload and budget/nativeSQL consumers require complete business-owned adaptation and exact idempotency acceptance. Not changed for formal classifier removal.",
+      "BlockingThisWP3": false
+    },
+    {
+      "Owner": "WP4/WP5",
+      "Observation": "Identity/ERP/OIDC native business SQL, full lease/generation/CAD flows, all background workers and other number services are not certified by the capability/candidate/claim gates. Normal PG application guard remains.",
+      "BlockingThisWP3": false
+    }
+  ],
+  "NativeEvidenceObserved": [
+    {
+      "Report": "D:\\CP6\\tmp\\wp3-claim-pg-concurrency-first.json",
+      "Sha256": "69BC8309FC97C44A325D486EF8B239F00BBE7F8A7561CC88FCD1097E74A9BCED",
+      "Input": "D:\\CP6\\tmp\\wp3-claim-pg-concurrency-first-input.json",
+      "InputSha256": "27E44A17FAB3124FAD01A87593FB6A84CA14928E947DA03CA769D3E82ECA31B2",
+      "Provider": "PostgreSql",
+      "Passed": 10,
+      "Failed": 0,
+      "RecordedScopeBindings": [
+        {
+          "Path": "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs",
+          "RecordedSha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C",
+          "CurrentSha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+          "RecordedSha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE",
+          "CurrentSha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceAiRetentionStore.cs",
+          "RecordedSha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928",
+          "CurrentSha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceAiWorkSlotQueries.cs",
+          "RecordedSha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134",
+          "CurrentSha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+          "RecordedSha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419",
+          "CurrentSha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+          "RecordedSha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B",
+          "CurrentSha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+          "RecordedSha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F",
+          "CurrentSha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+          "RecordedSha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7",
+          "CurrentSha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+          "RecordedSha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809",
+          "CurrentSha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyService.cs",
+          "RecordedSha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9",
+          "CurrentSha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceHistoricalRepublishService.cs",
+          "RecordedSha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED",
+          "CurrentSha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceResourceLocks.cs",
+          "RecordedSha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6",
+          "CurrentSha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceUnderlayHistory.cs",
+          "RecordedSha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77",
+          "CurrentSha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+          "RecordedSha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F",
+          "CurrentSha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Tests/Space/SpaceAuditPermissionSeedTests.cs",
+          "RecordedSha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E",
+          "CurrentSha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Tests/Space/SpaceIntegrationEventOccurredAtUtcTests.cs",
+          "RecordedSha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2",
+          "CurrentSha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.WebApi/BackgroundServices/SpaceIntegrationEventOccurredAtUtcBackfill.cs",
+          "RecordedSha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+          "CurrentSha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.WebApi/Seed/SpaceAuditPermissionSeed.cs",
+          "RecordedSha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C",
+          "CurrentSha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C",
+          "Matches": true
+        },
+        {
+          "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+          "RecordedSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "CurrentSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "Matches": true
+        },
+        {
+          "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/WorkSlotClaimGates.cs",
+          "RecordedSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+          "CurrentSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+          "Matches": true
+        }
+      ],
+      "AllRecordedScopeBindingsMatch": true,
+      "ScopeNote": "Existing actual run reused only for its recorded unchanged named inputs and cases; no new run by reviewer; unrecorded caller paths are static review, not native consumer acceptance."
+    },
+    {
+      "Report": "D:\\CP6\\tmp\\wp3-claim-sql-concurrency-first.json",
+      "Sha256": "24A554D37F784AEAC15F29EA22EF6CE2373E0825B8090451126189F3449B645B",
+      "Input": "D:\\CP6\\tmp\\wp3-claim-sql-concurrency-first-input.json",
+      "InputSha256": "B74DC7683DD68440BBA5E60E5C0DE74A928DAE6F257C1E8FD49F59EEB0741C42",
+      "Provider": "SqlServer",
+      "Passed": 10,
+      "Failed": 0,
+      "RecordedScopeBindings": [
+        {
+          "Path": "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs",
+          "RecordedSha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C",
+          "CurrentSha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+          "RecordedSha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE",
+          "CurrentSha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceAiRetentionStore.cs",
+          "RecordedSha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928",
+          "CurrentSha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceAiWorkSlotQueries.cs",
+          "RecordedSha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134",
+          "CurrentSha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+          "RecordedSha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419",
+          "CurrentSha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+          "RecordedSha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B",
+          "CurrentSha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+          "RecordedSha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F",
+          "CurrentSha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+          "RecordedSha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7",
+          "CurrentSha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+          "RecordedSha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809",
+          "CurrentSha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyService.cs",
+          "RecordedSha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9",
+          "CurrentSha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceHistoricalRepublishService.cs",
+          "RecordedSha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED",
+          "CurrentSha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceResourceLocks.cs",
+          "RecordedSha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6",
+          "CurrentSha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceUnderlayHistory.cs",
+          "RecordedSha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77",
+          "CurrentSha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+          "RecordedSha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F",
+          "CurrentSha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Tests/Space/SpaceAuditPermissionSeedTests.cs",
+          "RecordedSha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E",
+          "CurrentSha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.Tests/Space/SpaceIntegrationEventOccurredAtUtcTests.cs",
+          "RecordedSha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2",
+          "CurrentSha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.WebApi/BackgroundServices/SpaceIntegrationEventOccurredAtUtcBackfill.cs",
+          "RecordedSha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+          "CurrentSha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+          "Matches": true
+        },
+        {
+          "Path": "CP6.WebApi/Seed/SpaceAuditPermissionSeed.cs",
+          "RecordedSha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C",
+          "CurrentSha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C",
+          "Matches": true
+        },
+        {
+          "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+          "RecordedSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "CurrentSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "Matches": true
+        },
+        {
+          "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/WorkSlotClaimGates.cs",
+          "RecordedSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+          "CurrentSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+          "Matches": true
+        }
+      ],
+      "AllRecordedScopeBindingsMatch": true,
+      "ScopeNote": "Existing actual run reused only for its recorded unchanged named inputs and cases; no new run by reviewer; unrecorded caller paths are static review, not native consumer acceptance."
+    },
+    {
+      "Report": "D:\\CP6\\tmp\\wp3-locks-clock-first-native.json",
+      "Sha256": "D751FA6CA0BE2DF2BFC84C4862F48FC6815957138398E977C2EB5C287F5694BE",
+      "Input": "D:\\CP6\\tmp\\wp3-locks-clock-first-native-input.json",
+      "InputSha256": "D3F08F25D2E6DC2E41FA65148C14E1E2A8663E177865A96365D8CE63320EF8D2",
+      "Provider": "PostgreSql",
+      "Passed": 5,
+      "Failed": 0,
+      "RecordedScopeBindings": [
+        {
+          "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+          "RecordedSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "CurrentSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "Matches": true
+        }
+      ],
+      "AllRecordedScopeBindingsMatch": true,
+      "ScopeNote": "Existing actual run reused only for its recorded unchanged named inputs and cases; no new run by reviewer; unrecorded caller paths are static review, not native consumer acceptance."
+    },
+    {
+      "Report": "D:\\CP6\\tmp\\wp3-locks-clock-sql-cancellation-fixed.json",
+      "Sha256": "5E9DF413CC40551328579261EAC118EF94C163126B295D319F43B826E7DC70C2",
+      "Input": "D:\\CP6\\tmp\\wp3-locks-clock-sql-cancellation-fixed-input.json",
+      "InputSha256": "959E85BC519DA990264A8337C116EB1621FFF7BFDE3EEF2E7EB5695FCBC927C3",
+      "Provider": "SqlServer",
+      "Passed": 5,
+      "Failed": 0,
+      "RecordedScopeBindings": [
+        {
+          "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+          "RecordedSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "CurrentSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+          "Matches": true
+        }
+      ],
+      "AllRecordedScopeBindingsMatch": true,
+      "ScopeNote": "Existing actual run reused only for its recorded unchanged named inputs and cases; no new run by reviewer; unrecorded caller paths are static review, not native consumer acceptance."
+    }
+  ],
+  "AdditionalEvidence": [
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-resource-lock-caller-expression-check.json",
+      "Sha256": "1670863661183034875B53B26480B1AE02F3C36DB106F06D3D9A7BB897795E5F",
+      "Scope": "Existing offline ten-method resource/domain-body/timeout equality, Passed=true; other three Space sites manually reviewed against base diff; not native execution."
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-startup-lock-caller-tests.log",
+      "Sha256": "72F1DF2AA8702540A17FB981435232FFAB8204668F11DABCD613DB3B44B9D7AB",
+      "Passed": 30,
+      "Skipped": 2,
+      "Failed": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-startup-sql-native-tests.log",
+      "Sha256": "8E20D63E47751FDE688042880E103B413E487B53BBE714F1CB6CA75C7F859575",
+      "Passed": 2,
+      "Skipped": 0,
+      "Failed": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp3-startup-sql-native-postrun-observation.json",
+      "Sha256": "A8C1FC1667AEF55C3C34B9E2BA420481295E751818E902A6C11D6625586A6283",
+      "Scope": "Post-run source/binary observation, not pre-run capture; original logs and skip record retained."
+    }
+  ],
+  "ContextOnlySources": [
+    {
+      "Path": "CP6.Tests/Space/SpaceIntegrationEventOccurredAtUtcSqlServerTests.cs",
+      "Sha256": "F9236DC18A90019B1C94DC8063551295160B827EA2F23AF672A14D0140C0F3DE",
+      "Scope": "Unchanged existing two-test actual production-backfill regression, inspected for evidence interpretation."
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceAiCapacity.cs",
+      "Sha256": "3CC7F8B49C5323FFB10AA665E054DD972AC71108C2432077DFABC41FE6C79B23",
+      "Scope": "Unchanged slot count/lease fence contract, context only."
+    }
+  ],
+  "Excluded": [
+    "Four newly integrated classifier predicates reviewed independently by root",
+    "Core capabilities/shared factories/Identity/general probe half owned by independent root reviewer",
+    "WP4/WP5 full business consumers",
+    "Credentials/receipts/raw app streams",
+    "No .NET/build/native DB/remote operation executed by this reviewer",
+    "No new full review per small step"
+  ],
+  "SourceMutationByReview": false
+}

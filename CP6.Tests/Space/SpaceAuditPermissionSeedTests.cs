@@ -2,7 +2,6 @@ using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Sys;
 using CP6.WebApi.Seed;
-using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -356,43 +355,19 @@ public sealed class SpaceAuditPermissionSeedTests
     }
 
     [Fact]
-    public void Sql_server_seed_lock_is_exclusive_transaction_owned_and_fail_closed()
+    public void Seed_lock_keeps_its_global_resource_and_wait_budget()
     {
-        using var command = new SqlCommand();
-
-        SpaceAuditPermissionSeed.ConfigureAppLockCommand(command);
-
-        Assert.Contains(
-            "sys.sp_getapplock",
-            command.CommandText,
-            StringComparison.Ordinal);
-        Assert.Contains(
-            "@LockMode = N'Exclusive'",
-            command.CommandText,
-            StringComparison.Ordinal);
-        Assert.Contains(
-            "@LockOwner = N'Transaction'",
-            command.CommandText,
-            StringComparison.Ordinal);
-        Assert.Contains(
-            "SELECT @result",
-            command.CommandText,
-            StringComparison.Ordinal);
-        Assert.Equal(
-            SpaceAuditPermissionSeed.LockResource,
-            command.Parameters["@resource"].Value);
-        Assert.Equal(
-            SpaceAuditPermissionSeed.LockTimeoutMilliseconds,
-            command.Parameters["@timeoutMilliseconds"].Value);
+        Assert.Equal("CP6:Seed:SpaceAuditPermission:v1", SpaceAuditPermissionSeed.LockResource);
+        Assert.Equal(15_000, SpaceAuditPermissionSeed.LockTimeoutMilliseconds);
     }
 
     [Fact]
-    public async Task Sql_server_protocol_orders_transaction_lock_seed_verify_and_commit()
+    public async Task Database_protocol_orders_transaction_lock_seed_verify_and_commit()
     {
         var steps = new List<string>();
 
         await SpaceAuditPermissionSeed
-            .ExecuteSqlServerLockedSeedProtocolAsync(
+            .ExecuteDatabaseLockedSeedProtocolAsync(
                 _ =>
                 {
                     steps.Add("begin");
@@ -402,7 +377,7 @@ public sealed class SpaceAuditPermissionSeedTests
                 (_, _) =>
                 {
                     steps.Add("app-lock");
-                    return Task.FromResult(0);
+                    return Task.FromResult(true);
                 },
                 _ =>
                 {
@@ -427,13 +402,13 @@ public sealed class SpaceAuditPermissionSeedTests
     }
 
     [Fact]
-    public async Task Negative_app_lock_result_fails_before_seed_or_commit()
+    public async Task Busy_database_lock_fails_before_seed_or_commit()
     {
         var steps = new List<string>();
 
         var error = await Assert.ThrowsAsync<InvalidOperationException>(
             () => SpaceAuditPermissionSeed
-                .ExecuteSqlServerLockedSeedProtocolAsync(
+                .ExecuteDatabaseLockedSeedProtocolAsync(
                     _ =>
                     {
                         steps.Add("begin");
@@ -443,7 +418,7 @@ public sealed class SpaceAuditPermissionSeedTests
                     (_, _) =>
                     {
                         steps.Add("app-lock");
-                        return Task.FromResult(-1);
+                        return Task.FromResult(false);
                     },
                     _ =>
                     {
@@ -462,6 +437,40 @@ public sealed class SpaceAuditPermissionSeedTests
         Assert.Equal(
             ["begin", "app-lock", "dispose"],
             steps);
+    }
+
+    [Fact]
+    public async Task Canceled_database_lock_propagates_the_same_token_and_disposes_before_seed_or_commit()
+    {
+        var steps = new List<string>();
+        using var cancellation = new CancellationTokenSource();
+        var error = await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => SpaceAuditPermissionSeed.ExecuteDatabaseLockedSeedProtocolAsync(
+                _ =>
+                {
+                    steps.Add("begin");
+                    return Task.FromResult(new RecordingAsyncTransaction(steps));
+                },
+                (_, token) =>
+                {
+                    steps.Add("app-lock");
+                    cancellation.Cancel();
+                    return Task.FromCanceled<bool>(token);
+                },
+                _ =>
+                {
+                    steps.Add("seed-save-verify");
+                    return Task.CompletedTask;
+                },
+                (_, _) =>
+                {
+                    steps.Add("commit");
+                    return Task.CompletedTask;
+                },
+                cancellation.Token));
+
+        Assert.Equal(cancellation.Token, error.CancellationToken);
+        Assert.Equal(["begin", "app-lock", "dispose"], steps);
     }
 
     [Fact]

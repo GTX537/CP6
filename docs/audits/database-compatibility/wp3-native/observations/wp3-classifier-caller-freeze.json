@@ -1,0 +1,26 @@
+{
+  "BaseMain": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "Scope": "Four DbUpdateException predicates only; existing errors and catch bodies retained; no caller-native business run by this agent",
+  "Source": [
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpCommerceAuthority.cs",
+      "Sha256": "8FE31D71286D9ED1A332373085B7B6F32516DF3A587195B52B2A184E87CE0E38"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceFieldPolicyService.cs",
+      "Sha256": "046970EACE91FE151565C0A02461D8BD1EB3EF080A29D898AF0C6216C4E288CC"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExternalOrganizationService.cs",
+      "Sha256": "A6E5CDA26B7E730AA0F6B1687427402A2FA6B8FCB2E8398DDE3A3874A00E982C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExternalGrantService.cs",
+      "Sha256": "CE7C9DE191F9A781D70C56D7EE71C96AA8D8C92E10416C5BF0E81B886EFE47B0"
+    }
+  ],
+  "Document": {
+    "Path": "docs/audits/database-compatibility/WP3-CALLERS.md",
+    "Sha256": "4E8526F530D76B4686CA4C61B526691E228DB1565A5686E9821C0C09C67F5D04"
+  }
+}

@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.Common;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Space.Observability;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,28 +12,7 @@ internal static class SpaceIntegrationEventOccurredAtUtcBackfill
     internal const int BatchSize = 500;
     internal const string LockResource =
         "CP6:SpaceIntegrationEvent:OccurredAtUtc:v1";
-    internal const string AcquireLockCommandText =
-        """
-        DECLARE @result int;
-        EXEC @result = sys.sp_getapplock
-            @Resource = @resource,
-            @LockMode = N'Exclusive',
-            @LockOwner = N'Session',
-            @LockTimeout = @timeoutMilliseconds,
-            @DbPrincipal = N'public';
-        SELECT @result;
-        """;
-    internal const string ReleaseLockCommandText =
-        """
-        DECLARE @result int;
-        EXEC @result = sys.sp_releaseapplock
-            @Resource = @resource,
-            @LockOwner = N'Session',
-            @DbPrincipal = N'public';
-        SELECT @result;
-        """;
-
-    private const int LockTimeoutMilliseconds = 30_000;
+    internal const int LockTimeoutMilliseconds = 30_000;
     private const string SourceModule = "SPACE";
     private static readonly SemaphoreSlim NonSqlGate = new(1, 1);
 
@@ -46,35 +26,39 @@ internal static class SpaceIntegrationEventOccurredAtUtcBackfill
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(logger);
 
-        var isSqlServer = db.Database.IsSqlServer();
-        DbConnection? sqlConnection = null;
+        var usesDatabaseLock = db.Database.IsSqlServer() || db.Database.IsNpgsql();
+        DbConnection? lockConnection = null;
         var openedConnection = false;
-        var sqlLockHeld = false;
+        DatabaseSessionResourceLock? sessionLock = null;
         var nonSqlGateHeld = false;
 
         try
         {
-            if (isSqlServer)
+            if (usesDatabaseLock)
             {
-                sqlConnection = db.Database.GetDbConnection();
-                if (sqlConnection.State != ConnectionState.Open)
+                lockConnection = db.Database.GetDbConnection();
+                if (lockConnection.State != ConnectionState.Open)
                 {
-                    await sqlConnection.OpenAsync(ct);
+                    await lockConnection.OpenAsync(ct);
                     openedConnection = true;
                 }
 
-                var lockResult = await ExecuteAppLockCommandAsync(
-                    sqlConnection,
-                    AcquireLockCommandText,
-                    LockTimeoutMilliseconds,
-                    ct);
-                if (lockResult < 0)
+                try
+                {
+                    sessionLock = await DatabaseResourceLocks.TryAcquireSessionAsync(
+                        lockConnection,
+                        db.Database.IsSqlServer() ? DatabaseProvider.SqlServer : DatabaseProvider.PostgreSql,
+                        LockResource, LockTimeoutMilliseconds, ct);
+                }
+                catch (DatabaseResourceLockDeadlockException exception) when (exception.Provider == DatabaseProvider.SqlServer)
+                {
+                    throw new InvalidOperationException("SPACE_OCCURRED_AT_UTC_BACKFILL_LOCK_UNAVAILABLE", exception);
+                }
+                if (sessionLock is null)
                 {
                     throw new InvalidOperationException(
                         "SPACE_OCCURRED_AT_UTC_BACKFILL_LOCK_UNAVAILABLE");
                 }
-
-                sqlLockHeld = true;
             }
             else
             {
@@ -210,15 +194,11 @@ internal static class SpaceIntegrationEventOccurredAtUtcBackfill
         }
         finally
         {
-            if (sqlLockHeld && sqlConnection is not null)
+            if (sessionLock is not null)
             {
                 try
                 {
-                    await ExecuteAppLockCommandAsync(
-                        sqlConnection,
-                        ReleaseLockCommandText,
-                        LockTimeoutMilliseconds,
-                        CancellationToken.None);
+                    await sessionLock.DisposeAsync();
                 }
                 catch (Exception ex)
                 {
@@ -229,54 +209,11 @@ internal static class SpaceIntegrationEventOccurredAtUtcBackfill
                 }
             }
 
-            if (openedConnection && sqlConnection is not null)
-                await sqlConnection.CloseAsync();
+            if (openedConnection && lockConnection is not null)
+                await lockConnection.CloseAsync();
             if (nonSqlGateHeld)
                 NonSqlGate.Release();
         }
-    }
-
-    internal static void ConfigureAppLockCommand(
-        DbCommand command,
-        string commandText,
-        int timeoutMilliseconds)
-    {
-        command.CommandText = commandText;
-        command.CommandType = CommandType.Text;
-
-        var resource = command.CreateParameter();
-        resource.ParameterName = "@resource";
-        resource.DbType = DbType.String;
-        resource.Size = 255;
-        resource.Value = LockResource;
-        command.Parameters.Add(resource);
-
-        var timeout = command.CreateParameter();
-        timeout.ParameterName = "@timeoutMilliseconds";
-        timeout.DbType = DbType.Int32;
-        timeout.Value = timeoutMilliseconds;
-        command.Parameters.Add(timeout);
-    }
-
-    private static async Task<int> ExecuteAppLockCommandAsync(
-        DbConnection connection,
-        string commandText,
-        int timeoutMilliseconds,
-        CancellationToken ct)
-    {
-        await using var command = connection.CreateCommand();
-        ConfigureAppLockCommand(
-            command,
-            commandText,
-            timeoutMilliseconds);
-        var result = await command.ExecuteScalarAsync(ct);
-        if (result is null || result is DBNull)
-        {
-            throw new InvalidOperationException(
-                "SPACE_OCCURRED_AT_UTC_BACKFILL_LOCK_UNAVAILABLE");
-        }
-
-        return Convert.ToInt32(result);
     }
 
     private static async Task<int> UpdateRelationalBatchAsync(

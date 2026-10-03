@@ -1,0 +1,25 @@
+{
+  "Kind": "ReadOnlyArtifactVerification",
+  "Task": "DB-COMPAT-01-WP3",
+  "ActualSourceHashRecheckUtc": "2026-10-03T08:04:47.5601966Z",
+  "SourceFileHashCount": 1567,
+  "ChangedFiles": [],
+  "ScriptSyntaxErrors": 0,
+  "OriginalInventoryPreserved": true,
+  "OriginalInventorySha256": "F7D1BC89AA57A00B33B2ECF4425EED7E62AB09FC1C3F7E10969970B69128E9AB",
+  "CurrentJsonSha256": "5FA647E93E28C7C4FACC2B588A5560260EAFC0ED5B8E79C0ED5DFE9E32A6E57D",
+  "CurrentMarkdownSha256": "324B74D77A64E957F60C9A094F8A8B551C7487B2DEA11CFF628B1E0E83079E31",
+  "FinalGeneratorSha256": "AB0CE9553727E875FA9D48B18C21B10F3183EA23282B06150743086DF1F73AC2",
+  "IgnoreConfirmed": true,
+  "SourceReferenceCorrections": "Current report uses actual StartAsync36, Seed140/failure225, Backfill failure74 and external callers; MES third usp is ProcessProgress. Previous generated artifacts preserved as before-reference-corrections, not runtime validation.",
+  "PreservedSetupFailures": [
+    "wp3-inventory-generation-setup-failure.json",
+    "wp3-inventory-markdown-generation-setup-failure.json"
+  ],
+  "ExecutedRuntimeTests": 0,
+  "DatabaseCommands": 0,
+  "DotNetCommands": 0,
+  "CredentialFilesRead": 0,
+  "RemoteActions": 0,
+  "ValidationScope": "JSON parsed, source census counts checked, current source refs/text/hashes verified, PS syntax valid, artifacts ignored, original inventory unchanged. This is not WP3 functional acceptance or a new WP2 review."
+}

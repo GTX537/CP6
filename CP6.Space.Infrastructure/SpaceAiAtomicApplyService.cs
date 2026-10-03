@@ -5,7 +5,6 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -378,34 +377,9 @@ public sealed class SpaceAiAtomicApplyService(
         Guid runId,
         CancellationToken cancellationToken)
     {
-        if (context.Database.ProviderName !=
-            "Microsoft.EntityFrameworkCore.SqlServer")
-        {
-            return;
-        }
-
-        var result = new SqlParameter("@result", SqlDbType.Int)
-        {
-            Direction = ParameterDirection.Output,
-        };
-        var resource = new SqlParameter(
-            "@resource",
-            SqlDbType.NVarChar,
-            255)
-        {
-            Value = $"cp6:space:ai-apply:{execution.TenantId:N}:{runId:N}",
-        };
-        await context.Database.ExecuteSqlRawAsync(
-            """
-            EXEC @result = sys.sp_getapplock
-                @Resource = @resource,
-                @LockMode = 'Exclusive',
-                @LockOwner = 'Transaction',
-                @LockTimeout = 15000;
-            """,
-            [result, resource],
-            cancellationToken);
-        if (Convert.ToInt32(result.Value) < 0)
+        var resource = $"cp6:space:ai-apply:{execution.TenantId:N}:{runId:N}";
+        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
+                context, resource, 15000, cancellationToken))
         {
             throw Problem(
                 SpaceErrorCodes.AiReviewConflict,

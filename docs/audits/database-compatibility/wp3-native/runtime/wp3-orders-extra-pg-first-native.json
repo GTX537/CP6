@@ -1,0 +1,68 @@
+{
+  "Scope": "WP3 explicitly named real runtime gates on a newly owned isolated database. Complete business/API/worker and recovery acceptance remain separate.",
+  "Suite": "orders-extra",
+  "Case": "all",
+  "Provider": "PostgreSql",
+  "StartedHostUtc": "2026-10-03T09:04:25.0928329Z",
+  "FinishedHostUtc": "2026-10-03T09:04:27.7144497Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "SourceState": "WP3 uncommitted task source; per-file input binding required",
+  "DatabaseVersion": "18.6",
+  "RuntimeBinaries": {
+    "CP6.Core": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "DA72788B57D7A745E624216D014F85D2055C3DF4F57E63E0B590262969FB5EA5"
+    },
+    "CP6.DatabaseCompatibility.RuntimeProbe": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.DatabaseCompatibility.RuntimeProbe.dll",
+      "Sha256": "6B84BE8D4747A13C35BA21314D65AA2468BFA3DC094AD953EE18DF5D81153DE4"
+    },
+    "CP6.Persistence.PostgreSql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "2A6156967B2EBEF9A556B54D6143EC25E960CC1E381B4907DEA71268A1C00AFE"
+    },
+    "CP6.Space.Infrastructure": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "2D38EC3B2C0377D846A80FACA3B04752F6AB376705737D7D7D1023BCA01D71A2"
+    },
+    "Microsoft.Data.SqlClient": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+    },
+    "Microsoft.EntityFrameworkCore": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    "Npgsql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+    }
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.Wp3Owner",
+      "Status": "Passed",
+      "Detail": "Dedicated loopback WP3 name, provider and owner verified."
+    },
+    {
+      "Name": "Installation.CoreExactHistory",
+      "Status": "Passed",
+      "Detail": "Exact Core history=1, pending=0; no full catalog or business acceptance implied."
+    },
+    {
+      "Name": "Orders.ExistingRowConcurrency",
+      "Status": "Passed",
+      "Detail": "Committed ORD1 before a real two-session start barrier; actual sessions reserved distinct2/3 and a separate connection observed committed3."
+    },
+    {
+      "Name": "Orders.PendingModifiedAndDeleted",
+      "Status": "Passed",
+      "Detail": "Actual saved ORD1 was separately tracked Modified and Deleted; both calls retained ORD_SEQUENCE_HAS_PENDING_MANUAL_CHANGE and left the committed counter1 unchanged."
+    },
+    {
+      "Name": "Orders.NonOrderLocalBatching",
+      "Status": "Passed",
+      "Detail": "Actual QZV calls returned original formatted1/2 on the same single Local row; separate native reads saw no row before SaveChanges and committed2 afterwards. No cross-context non-ORD concurrency guarantee is implied."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=140, pending=0; no full catalog or business acceptance implied.
+Passed: Orders.ImmediateAllocation: Actual DocNumber reserved1 without SaveChanges; separate connection read1 and no pending manual counter changes.
+Passed: Orders.FirstCreationConcurrency: Two actual open sessions crossed a shared start barrier with ORD absent; distinct1/2 and committed2.
+Passed: Orders.CallerRollbackAndVisibility: Caller-owned transaction reserved1/2 then rollback removed both; fresh allocation independently committed1.
+Passed: Orders.GlobalCrossTenantAndDatePrefix: Different tenant contexts and months shared the original global1/2 stream; date formatting did not reset it. Business tenant isolation is separate.
+Passed: Orders.PendingManualChangeRejected: Actual pending manual ORD row rejected with original error; no native counter created.

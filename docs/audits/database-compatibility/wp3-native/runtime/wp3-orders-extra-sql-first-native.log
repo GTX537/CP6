@@ -1,0 +1,5 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=140, pending=0; no full catalog or business acceptance implied.
+Passed: Orders.ExistingRowConcurrency: Committed ORD1 before a real two-session start barrier; actual sessions reserved distinct2/3 and a separate connection observed committed3.
+Passed: Orders.PendingModifiedAndDeleted: Actual saved ORD1 was separately tracked Modified and Deleted; both calls retained ORD_SEQUENCE_HAS_PENDING_MANUAL_CHANGE and left the committed counter1 unchanged.
+Passed: Orders.NonOrderLocalBatching: Actual QZV calls returned original formatted1/2 on the same single Local row; separate native reads saw no row before SaveChanges and committed2 afterwards. No cross-context non-ORD concurrency guarantee is implied.

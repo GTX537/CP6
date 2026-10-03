@@ -459,28 +459,14 @@ public sealed class SpaceCadProviderCapabilityService(
     {
         if (!context.Database.IsRelational())
             return;
-        var transaction = context.Database.CurrentTransaction ??
+        if (context.Database.CurrentTransaction is null)
             throw new InvalidOperationException("A transaction is required for the Site lock.");
         var connection = context.Database.GetDbConnection();
         if (connection.State != ConnectionState.Open)
             await connection.OpenAsync(cancellationToken);
-        await using var command = connection.CreateCommand();
-        command.Transaction = transaction.GetDbTransaction();
-        command.CommandText = """
-            DECLARE @result int;
-            EXEC @result = sys.sp_getapplock
-                @Resource = @resource,
-                @LockMode = 'Exclusive',
-                @LockOwner = 'Transaction',
-                @LockTimeout = 15000;
-            SELECT @result;
-            """;
-        var parameter = command.CreateParameter();
-        parameter.ParameterName = "@resource";
-        parameter.Value = $"space:cad-provider:{execution.TenantId:N}:{siteId:N}";
-        command.Parameters.Add(parameter);
-        var result = Convert.ToInt32(await command.ExecuteScalarAsync(cancellationToken));
-        if (result < 0)
+        var resource = $"space:cad-provider:{execution.TenantId:N}:{siteId:N}";
+        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
+                context, resource, 15000, cancellationToken))
             throw new SpaceProblemException(
                 SpaceErrorCodes.CadProviderRevisionConflict,
                 409,

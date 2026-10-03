@@ -1,0 +1,58 @@
+{
+  "Scope": "WP3 explicitly named real runtime gates on a newly owned isolated database. Complete business/API/worker and recovery acceptance remain separate.",
+  "Suite": "failures",
+  "Case": "all",
+  "Provider": "SqlServer",
+  "StartedHostUtc": "2026-10-03T08:39:40.0283874Z",
+  "FinishedHostUtc": "2026-10-03T08:39:42.3729233Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "SourceState": "WP3 uncommitted task source; per-file input binding required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "355773F7EAB278AF79B8C1B78F06A5CA2B6436B228B45E7154A5DCD50F4F2511"
+    },
+    "CP6.DatabaseCompatibility.RuntimeProbe": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.DatabaseCompatibility.RuntimeProbe.dll",
+      "Sha256": "A9CDE86995505C6B35C49E4B6B7565316088FA4B86F19831749F75E21FA4E2EE"
+    },
+    "CP6.Persistence.PostgreSql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "3878621DCD5AFAFC2C5CB50B5079753A8CAB67F46F38993512B123A46186B43D"
+    },
+    "CP6.Space.Infrastructure": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "ED62538942CC1B46495839281DD537461C912298668D5BEEF7B82340B83900B7"
+    },
+    "Microsoft.Data.SqlClient": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+    },
+    "Microsoft.EntityFrameworkCore": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    "Npgsql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+    }
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.Wp3Owner",
+      "Status": "Passed",
+      "Detail": "Dedicated loopback WP3 name, provider and owner verified."
+    },
+    {
+      "Name": "Installation.CoreExactHistory",
+      "Status": "Passed",
+      "Detail": "Exact Core history=140, pending=0; no full catalog or business acceptance implied."
+    },
+    {
+      "Name": "Failures.NativeConstraintClassificationAndRollback",
+      "Status": "Failed",
+      "Detail": "Exact SQL constraint-name assertions require English server messages; other locales are not inferred."
+    }
+  ]
+}

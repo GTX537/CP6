@@ -3,11 +3,46 @@ using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql;
 
 namespace CP6.Space.IntegrationTests;
 
 public sealed class SpaceFieldPolicyServiceTests
 {
+    [Theory]
+    [InlineData("23505", true)]
+    [InlineData("23503", false)]
+    [InlineData("23514", false)]
+    public async Task Injected_postgres_save_failure_preserves_policy_unique_conflict_and_other_errors(
+        string sqlState, bool mapsToBusinessConflict)
+    {
+        // This InMemory/public-provider exception fixture verifies the catch boundary only.
+        var interceptor = new SaveFailureInterceptor();
+        await using var fixture = CreateFixture(interceptor);
+        var failure = new DbUpdateException("Injected PostgreSQL save failure",
+            new PostgresException("Injected provider condition", "ERROR", "ERROR", sqlState,
+                constraintName: "AnyPolicyIntegrityName"));
+        interceptor.Failure = failure;
+        var service = new SpaceFieldPolicyService(fixture.Context, fixture.Execution);
+
+        var caught = await Record.ExceptionAsync(() => service.CreatePolicyAsync(new(
+            "Caller regression", "Customer", [new("Stock", "materialNumber")])));
+
+        Assert.Equal(1, interceptor.FailedSaveCalls);
+        if (mapsToBusinessConflict)
+        {
+            var conflict = Assert.IsType<SpaceProblemException>(caught);
+            Assert.Equal(SpaceErrorCodes.FieldPolicyConflict, conflict.Code);
+            Assert.Equal(409, conflict.StatusCode);
+            Assert.Equal("The field policy conflicts with current data.", conflict.Title);
+            Assert.Equal("reload-field-policies", conflict.RecoveryAction);
+            Assert.False(conflict.Retryable);
+        }
+        else
+            Assert.Same(failure, caught);
+    }
+
     [Fact]
     public async Task Create_and_update_policy_replace_fields_and_bump_authorization_stamp()
     {
@@ -111,7 +146,7 @@ public sealed class SpaceFieldPolicyServiceTests
                 .SequenceEqual(["TenantId", "FieldPolicyId"]));
     }
 
-    private static Fixture CreateFixture()
+    private static Fixture CreateFixture(params IInterceptor[] interceptors)
     {
         var tenantId = Guid.NewGuid();
         var actorId = Guid.NewGuid();
@@ -122,6 +157,7 @@ public sealed class SpaceFieldPolicyServiceTests
                 .UseInMemoryDatabase(
                     Guid.NewGuid().ToString("N"),
                     SpaceTestDatabaseRoots.InMemory)
+                .AddInterceptors(interceptors)
                 .Options,
             execution,
             new FixedClock(now));
@@ -148,6 +184,21 @@ public sealed class SpaceFieldPolicyServiceTests
         DateTime Now) : IAsyncDisposable
     {
         public ValueTask DisposeAsync() => Context.DisposeAsync();
+    }
+
+    private sealed class SaveFailureInterceptor : SaveChangesInterceptor
+    {
+        public DbUpdateException? Failure { get; set; }
+        public int FailedSaveCalls { get; private set; }
+
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData, InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            if (Failure is null) return base.SavingChangesAsync(eventData, result, cancellationToken);
+            FailedSaveCalls++;
+            throw Failure;
+        }
     }
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :

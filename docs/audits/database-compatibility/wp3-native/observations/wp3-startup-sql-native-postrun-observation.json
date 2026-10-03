@@ -1,0 +1,39 @@
+{
+  "Scope": "Post-run byte observation, not a claimed pre-execution compiler manifest. Actual two existing SQL Server production backfill tests ran from the startup caller test build with --no-build; fixture uses its own GUID databases and EnsureCreated, not migration acceptance.",
+  "CapturedHostUtc": "2026-10-03T09:14:47.3621396Z",
+  "UnitRun": "wp3-startup-lock-caller-tests.log: 30 passed / 2 skipped",
+  "NativeRerun": "wp3-startup-sql-native-tests.log: 2 passed / 0 skipped",
+  "RemainingBackfillDatabases": 0,
+  "Inputs": [
+    {
+      "Path": "CP6.Tests/Space/SpaceIntegrationEventOccurredAtUtcSqlServerTests.cs",
+      "Sha256": "F9236DC18A90019B1C94DC8063551295160B827EA2F23AF672A14D0140C0F3DE",
+      "LastWriteUtc": "2026-10-03T08:07:57.7348049Z"
+    },
+    {
+      "Path": "CP6.WebApi/BackgroundServices/SpaceIntegrationEventOccurredAtUtcBackfill.cs",
+      "Sha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+      "LastWriteUtc": "2026-10-03T08:55:52.8534628Z"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseResourceLocks.cs",
+      "Sha256": "6E3ACC6D3AB2C052A601C070BD8C5616105B7BA664110AE6CAE307C71D861593",
+      "LastWriteUtc": "2026-10-03T08:38:22.6382286Z"
+    },
+    {
+      "Path": "CP6.Tests/bin/Debug/net8.0/CP6.Tests.dll",
+      "Sha256": "DDF54F1645230E408BBA6CA0379C9F4096B088930FC2F58CF11B4097F7866232",
+      "LastWriteUtc": "2026-10-03T09:07:13.4593320Z"
+    },
+    {
+      "Path": "CP6.Tests/bin/Debug/net8.0/CP6.Core.dll",
+      "Sha256": "26186D715BA4CFD1321653E0976405828D7C194BC6E10AAF7BBBEB99D01967C3",
+      "LastWriteUtc": "2026-10-03T09:06:57.4703272Z"
+    },
+    {
+      "Path": "CP6.Tests/bin/Debug/net8.0/CP6.WebApi.dll",
+      "Sha256": "FCAC8E87B98942393C201C30B07BC6E92425C87A31C25F4DC7585167FA4DBF7C",
+      "LastWriteUtc": "2026-10-03T09:07:04.3355884Z"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "Task": "DB-COMPAT-01 WP3",
+  "Review": "Targeted resolution only; no restarted task-level or whole-repository review",
+  "ReviewedHostUtc": "2026-10-03T09:30:56.3571014Z",
+  "BaseSha": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "PriorReview": "D:\\CP6\\tmp\\wp3-core-task-review.json",
+  "PriorReviewSha256": "56168B64FA1ECEB4E6F3E4C281C3F3C42020CEAC0D1A8E526AF40249E3C7B88C",
+  "Conclusion": "No remaining blocker in this targeted source review; WP3-CORE-REVIEW-01 is resolved by worker completion preceding fixture cleanup.",
+  "ResolvedFinding": {
+    "Id": "WP3-CORE-REVIEW-01",
+    "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/OrderNumberGates.cs",
+    "Lines": [
+      30,
+      31,
+      32,
+      33,
+      40,
+      41,
+      43,
+      55,
+      56,
+      58,
+      60
+    ],
+    "Resolution": "Both worker task references and cancellation/barrier state survive failures. Open and barrier waits observe cancellation. finally cancels the budget and barrier, awaits all started workers and their await-using Context disposal, then clears ORD. WaitAsync timeout can no longer allow a worker to write after fixture cleanup.",
+    "Validation": "Static control-flow review only. Production DocNumber bytes remain identical. Forced native timeout/failure injection was not run or claimed."
+  },
+  "AdditionalReviewedChanges": [
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/SharedContextGates.cs",
+      "Lines": [
+        175,
+        176
+      ],
+      "Result": "EF placeholder {0} remains in SQL text and rowId is supplied as an EF value parameter. Table and column interpolation stays limited to existing internally generated fixture identifiers. Provider/profile/shared transaction assertions and rollback checks remain in place. Bytes equal prior review."
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/RuntimeFixture.cs",
+      "Lines": [
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "Result": "SQL Server accepts the explicitly listed literal loopback forms with optional tcp prefix and instance/port suffix; dedicated WP3 database-name and native ownership requirements remain. PostgreSQL check unchanged. Bytes equal prior review; prior native input predates this generalization."
+    }
+  ],
+  "ReviewedFiles": [
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/OrderNumberGates.cs",
+      "PriorReviewSha256": "60FE19FAF91538EEFCAB4207C2E291B36B93D82064A4834A1D20409DB7259323",
+      "Sha256": "C803FF113599180AA4C9435D1AEA3E65903E21BC837673E314AC7AD2936E580A"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/SharedContextGates.cs",
+      "PriorReviewSha256": "EE7E685435C71D46CEA133466601D74D2078E763B9190A288724C3067C248F90",
+      "Sha256": "EE7E685435C71D46CEA133466601D74D2078E763B9190A288724C3067C248F90"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/RuntimeFixture.cs",
+      "PriorReviewSha256": "7790AF7F30CC6CC57B6F3B9C81E225C32667EE94937869F7B6AEF1DF725F09E5",
+      "Sha256": "7790AF7F30CC6CC57B6F3B9C81E225C32667EE94937869F7B6AEF1DF725F09E5"
+    },
+    {
+      "Path": "CP6.Core/Services/Common/DocNumber.cs",
+      "PriorReviewSha256": "CCFB53B85263A3F0C7269DC24FD6D498EFCE529C1D4DDA5245C7A4FFFE43357B",
+      "Sha256": "CCFB53B85263A3F0C7269DC24FD6D498EFCE529C1D4DDA5245C7A4FFFE43357B"
+    }
+  ],
+  "OutstandingVerification": [
+    "Root is separately running final build and dual-provider orders/shared native regressions; their outcomes have not been read or claimed in this resolution.",
+    "No forced runtime timeout injection was added; timeout cleanup is verified by source ordering only.",
+    "Existing successful native reports remain their original successful runs; they are not relabeled as failures or new executions."
+  ],
+  "UnresolvedFindings": [],
+  "Executed": "Read-only source/hash inspection; this JSON is the sole new artifact. No dotnet, database, remote, Actions or production operations."
+}

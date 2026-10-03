@@ -3,11 +3,11 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
 using CP6.Platform.EntityFramework;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.ErpIntegration;
 
@@ -70,8 +70,7 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
         var handled = await HandlePriorAsync(queue, command, aggregate, previous, ct);
         if (!handled)
         {
-            await using var db = CreateBusinessContext(queue, command.TenantId);
-            await db.Database.UseTransactionAsync(transaction.GetDbTransaction(), ct);
+            await using var db = await CreateBusinessContextAsync(queue, command.TenantId, ct);
             try
             {
                 var now = clock.GetUtcNow().UtcDateTime;
@@ -262,9 +261,9 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
         ReceivedAtUtc = clock.GetUtcNow(), Status = ErpInboxStatus.Processing
     };
 
-    private static CP6Context CreateBusinessContext(ErpIntegrationContext queue, Guid tenant)
-        => new(new DbContextOptionsBuilder<CP6Context>().UseSqlServer(queue.Database.GetDbConnection()).Options,
-            new TenantContext { CurrentTenantId = tenant });
+    private static Task<CP6Context> CreateBusinessContextAsync(ErpIntegrationContext queue, Guid tenant, CancellationToken ct)
+        => DatabaseSharedContext.CreateAsync<CP6Context>(queue, DatabaseContextKind.Core,
+            options => new(options, new TenantContext { CurrentTenantId = tenant }), ct);
 
     private static Task LockMessageAsync(ErpIntegrationContext queue, Command c, CancellationToken ct)
         => ErpSqlLock.AcquireAsync(queue, "c03:message:" + ErpEventContracts.Hash(Encoding.UTF8.GetBytes(c.MessageId)), ct);

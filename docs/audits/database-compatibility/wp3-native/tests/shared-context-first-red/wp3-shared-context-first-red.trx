@@ -1,0 +1,578 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="174895dc-ded5-462c-80a1-351bfb1a539c" name="tt@LAPTOP-3QQ44FJS 2026-10-03 04:49:16" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T04:49:16.2255373-04:00" queuing="2026-10-03T04:49:16.2255378-04:00" start="2026-10-03T04:49:05.8009407-04:00" finish="2026-10-03T04:49:18.3188525-04:00" />
+  <TestSettings name="default" id="41d0ac25-39f7-4f34-af07-e2f7d21c0e38">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_04_49_16" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4c8a0784-c70a-4ce4-a8c2-4383a37974a5" testId="761498aa-ee55-4ac3-825d-6e04c58a1f68" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: IdentityPriority, history: null)" computerName="LAPTOP-3QQ44FJS" duration="00:00:03.7319965" startTime="2026-10-03T04:49:12.4302893-04:00" endTime="2026-10-03T04:49:16.1785726-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c8a0784-c70a-4ce4-a8c2-4383a37974a5">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 140&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="22129bab-70fb-45c9-8d36-f7dd245d92d3" testId="eb4d3e2e-062c-3afb-ec5d-a92cc2dd7faf" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: Space, history: &quot;__EFMigrationsHistory_Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0063324" startTime="2026-10-03T04:49:17.9194253-04:00" endTime="2026-10-03T04:49:17.9245806-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22129bab-70fb-45c9-8d36-f7dd245d92d3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 138&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4b76332a-bfba-444b-b065-9cc293182223" testId="80765691-69b0-4538-dac9-211777048d76" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0014647" startTime="2026-10-03T04:49:18.2518567-04:00" endTime="2026-10-03T04:49:18.2533193-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b76332a-bfba-444b-b065-9cc293182223">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.OperationCanceledException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 121&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 125&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass6_0.&lt;Cancellation_before_creation_does_not_invoke_factory&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 121</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="068140ae-cd33-4dd9-bf59-dd36fd7a7391" testId="95395676-de86-4664-dd05-495f10e80a21" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: IdentityPriority, history: &quot;__EFMigrationsHistory_IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.7393720" startTime="2026-10-03T04:49:16.2099849-04:00" endTime="2026-10-03T04:49:17.9177785-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="068140ae-cd33-4dd9-bf59-dd36fd7a7391">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 140&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0520d19f-86f7-44ca-b00b-4d6ce9769954" testId="c23320f8-b069-7711-b68b-8dd423be8d45" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: ErpIntegration, history: null)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0020243" startTime="2026-10-03T04:49:17.9661390-04:00" endTime="2026-10-03T04:49:17.9678634-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0520d19f-86f7-44ca-b00b-4d6ce9769954">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 142&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b893d856-ad71-4928-aa3a-ab93c0d553c2" testId="c039ebc2-17ca-4fa5-5707-6dab009d0ecc" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0016027" startTime="2026-10-03T04:49:18.2493563-04:00" endTime="2026-10-03T04:49:18.2506989-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b893d856-ad71-4928-aa3a-ab93c0d553c2">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 18&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 53&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 61&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e78a7e90-e803-4eff-8fbb-948b259d744a" testId="5663afbf-df14-160f-bcd6-5b3ca8eae3ee" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Unsupported_explicit_caller_provider_is_rejected_without_connection_inference" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2309061" startTime="2026-10-03T04:49:18.0180717-04:00" endTime="2026-10-03T04:49:18.2488072-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e78a7e90-e803-4eff-8fbb-948b259d744a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.InvalidOperationException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Unsupported_explicit_caller_provider_is_rejected_without_connection_inference() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 68&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Unsupported_explicit_caller_provider_is_rejected_without_connection_inference() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 70&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsupported_explicit_caller_provider_is_rejected_without_connection_inference&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 69</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7c0ee8d1-d736-49db-beb8-1ab0c20718ae" testId="31bbbcb7-c537-7c53-811e-616132eccdd8" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0014663" startTime="2026-10-03T04:49:18.2551038-04:00" endTime="2026-10-03T04:49:18.2558960-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c0ee8d1-d736-49db-beb8-1ab0c20718ae">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.InvalidOperationException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 95&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 98&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 98&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 18&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass4_0.&lt;Transaction_on_another_physical_connection_is_rejected_before_child_creation&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 95</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="285c18ad-05dc-43db-96d2-e4b26d54a04c" testId="c4fa7c3a-c5d9-ebf0-d2a0-03ca6586d0ff" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: Core, history: &quot;__EFMigrationsHistory&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0005360" startTime="2026-10-03T04:49:17.9682658-04:00" endTime="2026-10-03T04:49:17.9686174-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="285c18ad-05dc-43db-96d2-e4b26d54a04c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 136&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d42e7a7d-4252-4d6f-9eeb-0863faf4565a" testId="659e434e-10b0-247f-693d-aba50590c8be" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0006957" startTime="2026-10-03T04:49:18.2510560-04:00" endTime="2026-10-03T04:49:18.2515146-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d42e7a7d-4252-4d6f-9eeb-0863faf4565a">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 18&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 53&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 61&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7599fd41-ce86-4e30-9a8a-c3942428387d" testId="c4d897d1-688d-c55d-9cdb-17af8fa64b52" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(connectionProvider: SqlServer, selectedProvider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0008977" startTime="2026-10-03T04:49:18.0174886-04:00" endTime="2026-10-03T04:49:18.0175344-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7599fd41-ce86-4e30-9a8a-c3942428387d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.InvalidOperationException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 81&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 85&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 18&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass3_1.&lt;Explicit_provider_must_match_actual_connection_before_child_is_created&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 81</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2e6901bd-1368-469d-b1e7-ca8bd7d32b09" testId="d6c9124f-df35-8c34-59ed-a58299db7496" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0005643" startTime="2026-10-03T04:49:18.0137115-04:00" endTime="2026-10-03T04:49:18.0141091-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e6901bd-1368-469d-b1e7-ca8bd7d32b09">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.InvalidOperationException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 107&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 109&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass5_1.&lt;Child_factory_must_use_the_supplied_physical_connection&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 107</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="851ff213-4255-4178-8c90-61a7f46f1558" testId="d87fce9d-7e3f-0554-9acb-78b69562f005" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: Space, history: &quot;__EFMigrationsHistory_Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0008136" startTime="2026-10-03T04:49:18.0082681-04:00" endTime="2026-10-03T04:49:18.0087267-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="851ff213-4255-4178-8c90-61a7f46f1558">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 138&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f6740c79-3ca2-4e80-b402-75683d1dc9f6" testId="33b39d3b-0e9e-ceb5-942b-c97db39b52d8" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0004304" startTime="2026-10-03T04:49:18.2541735-04:00" endTime="2026-10-03T04:49:18.2542473-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f6740c79-3ca2-4e80-b402-75683d1dc9f6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+Expected: typeof(System.OperationCanceledException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 121&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 125&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass6_0.&lt;Cancellation_before_creation_does_not_invoke_factory&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 121</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="72fe21fb-19bd-4002-8fe6-e40208551ac8" testId="c7eb1bfc-0dd2-057b-3396-66156645e405" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: ErpIntegration, history: &quot;__EFMigrationsHistory_ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0408180" startTime="2026-10-03T04:49:17.9250486-04:00" endTime="2026-10-03T04:49:17.9656042-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72fe21fb-19bd-4002-8fe6-e40208551ac8">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 142&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="43165405-7b39-4c1b-987d-af570118d7b9" testId="d4f0f5ca-002a-697c-2b2f-d16a6f1da0ca" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(connectionProvider: PostgreSql, selectedProvider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0012614" startTime="2026-10-03T04:49:18.0146514-04:00" endTime="2026-10-03T04:49:18.0158161-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43165405-7b39-4c1b-987d-af570118d7b9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.InvalidOperationException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 81&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 85&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 18&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass3_1.&lt;Explicit_provider_must_match_actual_connection_before_child_is_created&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 81</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c14b690b-3247-46ad-914c-563548f133fd" testId="9af6627c-9b0d-8553-5d86-97385998d62b" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0031516" startTime="2026-10-03T04:49:18.0101397-04:00" endTime="2026-10-03T04:49:18.0131686-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c14b690b-3247-46ad-914c-563548f133fd">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(System.InvalidOperationException)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 107&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 109&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass5_1.&lt;Child_factory_must_use_the_supplied_physical_connection&gt;b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 107</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3608ffa6-16bc-4e39-920e-522a82933142" testId="b067260f-e33b-0bf7-6f64-077f809230d2" testName="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: Core, history: null)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0387957" startTime="2026-10-03T04:49:17.9690093-04:00" endTime="2026-10-03T04:49:18.0076687-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3608ffa6-16bc-4e39-920e-522a82933142">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs:line 12&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 136&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 31&#xD;
+   at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="659e434e-10b0-247f-693d-aba50590c8be">
+      <Execution id="d42e7a7d-4252-4d6f-9eeb-0863faf4565a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Explicit_connection_overload_preserves_external_connection_and_non_ownership" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(connectionProvider: SqlServer, selectedProvider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c4d897d1-688d-c55d-9cdb-17af8fa64b52">
+      <Execution id="7599fd41-ce86-4e30-9a8a-c3942428387d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Explicit_provider_must_match_actual_connection_before_child_is_created" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: Core, history: null)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b067260f-e33b-0bf7-6f64-077f809230d2">
+      <Execution id="3608ffa6-16bc-4e39-920e-522a82933142" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9af6627c-9b0d-8553-5d86-97385998d62b">
+      <Execution id="c14b690b-3247-46ad-914c-563548f133fd" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_factory_must_use_the_supplied_physical_connection" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="80765691-69b0-4538-dac9-211777048d76">
+      <Execution id="4b76332a-bfba-444b-b065-9cc293182223" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Cancellation_before_creation_does_not_invoke_factory" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d6c9124f-df35-8c34-59ed-a58299db7496">
+      <Execution id="2e6901bd-1368-469d-b1e7-ca8bd7d32b09" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_factory_must_use_the_supplied_physical_connection" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: Space, history: &quot;__EFMigrationsHistory_Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d87fce9d-7e3f-0554-9acb-78b69562f005">
+      <Execution id="851ff213-4255-4178-8c90-61a7f46f1558" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: IdentityPriority, history: null)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="761498aa-ee55-4ac3-825d-6e04c58a1f68">
+      <Execution id="4c8a0784-c70a-4ce4-a8c2-4383a37974a5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: Core, history: &quot;__EFMigrationsHistory&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c4fa7c3a-c5d9-ebf0-d2a0-03ca6586d0ff">
+      <Execution id="285c18ad-05dc-43db-96d2-e4b26d54a04c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: ErpIntegration, history: null)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c23320f8-b069-7711-b68b-8dd423be8d45">
+      <Execution id="0520d19f-86f7-44ca-b00b-4d6ce9769954" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(connectionProvider: PostgreSql, selectedProvider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d4f0f5ca-002a-697c-2b2f-d16a6f1da0ca">
+      <Execution id="43165405-7b39-4c1b-987d-af570118d7b9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Explicit_provider_must_match_actual_connection_before_child_is_created" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="33b39d3b-0e9e-ceb5-942b-c97db39b52d8">
+      <Execution id="f6740c79-3ca2-4e80-b402-75683d1dc9f6" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Cancellation_before_creation_does_not_invoke_factory" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Unsupported_explicit_caller_provider_is_rejected_without_connection_inference" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5663afbf-df14-160f-bcd6-5b3ca8eae3ee">
+      <Execution id="e78a7e90-e803-4eff-8fbb-948b259d744a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Unsupported_explicit_caller_provider_is_rejected_without_connection_inference" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c039ebc2-17ca-4fa5-5707-6dab009d0ecc">
+      <Execution id="b893d856-ad71-4928-aa3a-ab93c0d553c2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Explicit_connection_overload_preserves_external_connection_and_non_ownership" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: IdentityPriority, history: &quot;__EFMigrationsHistory_IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="95395676-de86-4664-dd05-495f10e80a21">
+      <Execution id="068140ae-cd33-4dd9-bf59-dd36fd7a7391" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="31bbbcb7-c537-7c53-811e-616132eccdd8">
+      <Execution id="7c0ee8d1-d736-49db-beb8-1ab0c20718ae" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Transaction_on_another_physical_connection_is_rejected_before_child_creation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: ErpIntegration, history: &quot;__EFMigrationsHistory_ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c7eb1bfc-0dd2-057b-3396-66156645e405">
+      <Execution id="72fe21fb-19bd-4002-8fe6-e40208551ac8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: Space, history: &quot;__EFMigrationsHistory_Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp3-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="eb4d3e2e-062c-3afb-ec5d-a92cc2dd7faf">
+      <Execution id="22129bab-70fb-45c9-8d36-f7dd245d92d3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSharedContextTests" name="Child_keeps_explicit_caller_provider_connection_and_target_migration_identity" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="761498aa-ee55-4ac3-825d-6e04c58a1f68" executionId="4c8a0784-c70a-4ce4-a8c2-4383a37974a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb4d3e2e-062c-3afb-ec5d-a92cc2dd7faf" executionId="22129bab-70fb-45c9-8d36-f7dd245d92d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80765691-69b0-4538-dac9-211777048d76" executionId="4b76332a-bfba-444b-b065-9cc293182223" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95395676-de86-4664-dd05-495f10e80a21" executionId="068140ae-cd33-4dd9-bf59-dd36fd7a7391" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c23320f8-b069-7711-b68b-8dd423be8d45" executionId="0520d19f-86f7-44ca-b00b-4d6ce9769954" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c039ebc2-17ca-4fa5-5707-6dab009d0ecc" executionId="b893d856-ad71-4928-aa3a-ab93c0d553c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5663afbf-df14-160f-bcd6-5b3ca8eae3ee" executionId="e78a7e90-e803-4eff-8fbb-948b259d744a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31bbbcb7-c537-7c53-811e-616132eccdd8" executionId="7c0ee8d1-d736-49db-beb8-1ab0c20718ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4fa7c3a-c5d9-ebf0-d2a0-03ca6586d0ff" executionId="285c18ad-05dc-43db-96d2-e4b26d54a04c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="659e434e-10b0-247f-693d-aba50590c8be" executionId="d42e7a7d-4252-4d6f-9eeb-0863faf4565a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4d897d1-688d-c55d-9cdb-17af8fa64b52" executionId="7599fd41-ce86-4e30-9a8a-c3942428387d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d6c9124f-df35-8c34-59ed-a58299db7496" executionId="2e6901bd-1368-469d-b1e7-ca8bd7d32b09" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d87fce9d-7e3f-0554-9acb-78b69562f005" executionId="851ff213-4255-4178-8c90-61a7f46f1558" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="33b39d3b-0e9e-ceb5-942b-c97db39b52d8" executionId="f6740c79-3ca2-4e80-b402-75683d1dc9f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7eb1bfc-0dd2-057b-3396-66156645e405" executionId="72fe21fb-19bd-4002-8fe6-e40208551ac8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d4f0f5ca-002a-697c-2b2f-d16a6f1da0ca" executionId="43165405-7b39-4c1b-987d-af570118d7b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9af6627c-9b0d-8553-5d86-97385998d62b" executionId="c14b690b-3247-46ad-914c-563548f133fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b067260f-e33b-0bf7-6f64-077f809230d2" executionId="3608ffa6-16bc-4e39-920e-522a82933142" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="18" executed="18" passed="0" failed="18" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:02.95]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:04.36]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:04.38]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:08.16]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:08.17]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.17]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.17]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(140,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:08.17]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:08.17]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:08.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.89]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.89]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.89]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(140,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:09.89]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.89]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.90]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.90]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.90]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(138,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:09.90]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.90]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.94]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.94]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(142,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.94]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.94]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.94]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(142,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.94]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.94]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.94]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(136,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.94]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.98]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.98]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(136,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.98]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.98]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.98]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(138,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.ChildAsync(DbContext caller, DatabaseContextKind target)&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(31,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.98]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(43,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(DatabaseProvider provider, DatabaseContextKind target, String history)&#xD;
+[xUnit.net 00:00:09.98]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.99]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:09.99]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:09.99]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:09.99]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.99]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(107,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(109,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:09.99]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.99]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(107,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass5_1.&lt;Child_factory_must_use_the_supplied_physical_connection&gt;b__0()&#xD;
+[xUnit.net 00:00:09.99]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:09.99]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:09.99]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:09.99]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.99]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(107,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(109,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:09.99]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.99]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(107,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass5_1.&lt;Child_factory_must_use_the_supplied_physical_connection&gt;b__0()&#xD;
+[xUnit.net 00:00:09.99]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:09.99]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:09.99]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:09.99]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.99]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(81,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(85,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider)&#xD;
+[xUnit.net 00:00:09.99]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.99]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(18,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(81,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass3_1.&lt;Explicit_provider_must_match_actual_connection_before_child_is_created&gt;b__0()&#xD;
+[xUnit.net 00:00:09.99]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:09.99]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:09.99]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:09.99]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:09.99]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(81,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(85,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(DatabaseProvider connectionProvider, DatabaseProvider selectedProvider)&#xD;
+[xUnit.net 00:00:09.99]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.99]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(18,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.99]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(81,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass3_1.&lt;Explicit_provider_must_match_actual_connection_before_child_is_created&gt;b__0()&#xD;
+[xUnit.net 00:00:10.22]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:10.22]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:10.22]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:10.22]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:10.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.22]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(68,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Unsupported_explicit_caller_provider_is_rejected_without_connection_inference()&#xD;
+[xUnit.net 00:00:10.22]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(70,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Unsupported_explicit_caller_provider_is_rejected_without_connection_inference()&#xD;
+[xUnit.net 00:00:10.22]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.22]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:10.22]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.22]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(69,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass2_0.&lt;Unsupported_explicit_caller_provider_is_rejected_without_connection_inference&gt;b__0()&#xD;
+[xUnit.net 00:00:10.23]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:10.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(18,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(53,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(61,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.23]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:10.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(18,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(53,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(61,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.23]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:10.23]       Expected: typeof(System.OperationCanceledException)&#xD;
+[xUnit.net 00:00:10.23]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:10.23]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:10.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(121,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(125,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.23]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(121,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass6_0.&lt;Cancellation_before_creation_does_not_invoke_factory&gt;b__0()&#xD;
+[xUnit.net 00:00:10.23]       Assert.ThrowsAny() Failure: Exception type was not compatible&#xD;
+[xUnit.net 00:00:10.23]       Expected: typeof(System.OperationCanceledException)&#xD;
+[xUnit.net 00:00:10.23]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:10.23]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:10.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(121,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(125,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:10.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.23]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(12,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DbContext caller, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(121,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass6_0.&lt;Cancellation_before_creation_does_not_invoke_factory&gt;b__0()&#xD;
+[xUnit.net 00:00:10.23]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:10.23]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:10.23]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:10.23]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:10.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(95,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation()&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(98,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation()&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(98,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation()&#xD;
+[xUnit.net 00:00:10.23]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.23]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseSharedContext.cs(18,0): at CP6.Core.Persistence.DatabaseSharedContext.CreateAsync[TContext](DatabaseOptions database, DbConnection connection, DbTransaction transaction, DatabaseContextKind target, Func`2 create, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.23]         D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseSharedContextTests.cs(95,0): at CP6.Tests.Persistence.DatabaseSharedContextTests.&lt;&gt;c__DisplayClass4_0.&lt;Transaction_on_another_physical_connection_is_rejected_before_child_creation&gt;b__0()&#xD;
+[xUnit.net 00:00:10.23]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:16.1813393-04:00">
+        <Text>[xUnit.net 00:00:08.16]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: IdentityPriority, history: null) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:17.9184695-04:00">
+        <Text>[xUnit.net 00:00:09.89]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: IdentityPriority, history: "__EFMigrationsHistory_IdentityPriority") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:17.9249330-04:00">
+        <Text>[xUnit.net 00:00:09.90]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: Space, history: "__EFMigrationsHistory_Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:17.9660955-04:00">
+        <Text>[xUnit.net 00:00:09.94]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: ErpIntegration, history: "__EFMigrationsHistory_ErpIntegration") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:17.9681267-04:00">
+        <Text>[xUnit.net 00:00:09.94]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: ErpIntegration, history: null) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:17.9688934-04:00">
+        <Text>[xUnit.net 00:00:09.94]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: PostgreSql, target: Core, history: "__EFMigrationsHistory") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.0081729-04:00">
+        <Text>[xUnit.net 00:00:09.98]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: Core, history: null) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.0090411-04:00">
+        <Text>[xUnit.net 00:00:09.98]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_keeps_explicit_caller_provider_connection_and_target_migration_identity(provider: SqlServer, target: Space, history: "__EFMigrationsHistory_Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.0135699-04:00">
+        <Text>[xUnit.net 00:00:09.99]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(provider: SqlServer) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.0144527-04:00">
+        <Text>[xUnit.net 00:00:09.99]     CP6.Tests.Persistence.DatabaseSharedContextTests.Child_factory_must_use_the_supplied_physical_connection(provider: PostgreSql) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.0161197-04:00">
+        <Text>[xUnit.net 00:00:09.99]     CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(connectionProvider: PostgreSql, selectedProvider: SqlServer) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.0197435-04:00">
+        <Text>[xUnit.net 00:00:09.99]     CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_provider_must_match_actual_connection_before_child_is_created(connectionProvider: SqlServer, selectedProvider: PostgreSql) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.2492116-04:00">
+        <Text>[xUnit.net 00:00:10.22]     CP6.Tests.Persistence.DatabaseSharedContextTests.Unsupported_explicit_caller_provider_is_rejected_without_connection_inference [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.2509963-04:00">
+        <Text>[xUnit.net 00:00:10.23]     CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(provider: PostgreSql) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.2517695-04:00">
+        <Text>[xUnit.net 00:00:10.23]     CP6.Tests.Persistence.DatabaseSharedContextTests.Explicit_connection_overload_preserves_external_connection_and_non_ownership(provider: SqlServer) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.2536373-04:00">
+        <Text>[xUnit.net 00:00:10.23]     CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(provider: SqlServer) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.2544739-04:00">
+        <Text>[xUnit.net 00:00:10.23]     CP6.Tests.Persistence.DatabaseSharedContextTests.Cancellation_before_creation_does_not_invoke_factory(provider: PostgreSql) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T04:49:18.2561260-04:00">
+        <Text>[xUnit.net 00:00:10.23]     CP6.Tests.Persistence.DatabaseSharedContextTests.Transaction_on_another_physical_connection_is_rejected_before_child_creation [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

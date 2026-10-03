@@ -1,3 +1,4 @@
+using CP6.Core.Persistence;
 using System.Data;
 using System.Globalization;
 using System.Security.Cryptography;
@@ -6,7 +7,6 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -1865,10 +1865,8 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
     private async Task<DateTime> ReadAuthoritativeUtcNowAsync(
         CancellationToken cancellationToken)
     {
-        var now = context.Database.IsSqlServer()
-            ? await context.Database
-                .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
-                .SingleAsync(cancellationToken)
+        var now = (context.Database.IsSqlServer() || context.Database.IsNpgsql())
+            ? await DatabaseUtcClock.ReadUtcNowAsync(context, cancellationToken)
             : clock.UtcNow;
         return now.Kind == DateTimeKind.Utc
             ? now
@@ -1881,29 +1879,10 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         Guid floorLogicalId,
         CancellationToken cancellationToken)
     {
-        if (!context.Database.IsSqlServer())
-            return;
-
-        var result = new SqlParameter("@result", SqlDbType.Int)
-        {
-            Direction = ParameterDirection.Output,
-        };
-        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
-        {
-            Value = $"cp6:space:floor-edit:{tenantId:N}:" +
-                    $"{versionId:N}:{floorLogicalId:N}",
-        };
-        await context.Database.ExecuteSqlRawAsync(
-            """
-            EXEC @result = sys.sp_getapplock
-                @Resource = @resource,
-                @LockMode = 'Exclusive',
-                @LockOwner = 'Transaction',
-                @LockTimeout = 15000;
-            """,
-            [result, resource],
-            cancellationToken);
-        if (Convert.ToInt32(result.Value) < 0)
+        var resource = $"cp6:space:floor-edit:{tenantId:N}:" +
+                       $"{versionId:N}:{floorLogicalId:N}";
+        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
+                context, resource, 15000, cancellationToken))
         {
             throw Failure(
                 SpaceJobFailureKind.Resource,

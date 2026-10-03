@@ -1,3 +1,4 @@
+using CP6.Core.Persistence;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -7,7 +8,6 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.Infrastructure;
@@ -6356,10 +6356,8 @@ public sealed class SpaceDesignV1Service :
     private async Task<DateTime> ReadAuthoritativeUtcNowAsync(
         CancellationToken cancellationToken)
     {
-        var now = _context.Database.IsSqlServer()
-            ? await _context.Database
-                .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
-                .SingleAsync(cancellationToken)
+        var now = (_context.Database.IsSqlServer() || _context.Database.IsNpgsql())
+            ? await DatabaseUtcClock.ReadUtcNowAsync(_context, cancellationToken)
             : RequireUtcNow();
         return now.Kind == DateTimeKind.Utc
             ? now
@@ -6371,29 +6369,10 @@ public sealed class SpaceDesignV1Service :
         Guid floorLogicalId,
         CancellationToken cancellationToken)
     {
-        if (!_context.Database.IsSqlServer())
-            return;
-
-        var result = new SqlParameter("@result", SqlDbType.Int)
-        {
-            Direction = ParameterDirection.Output,
-        };
-        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
-        {
-            Value = $"cp6:space:floor-edit:{_execution.TenantId:N}:" +
-                    $"{versionId:N}:{floorLogicalId:N}",
-        };
-        await _context.Database.ExecuteSqlRawAsync(
-            """
-            EXEC @result = sys.sp_getapplock
-                @Resource = @resource,
-                @LockMode = 'Exclusive',
-                @LockOwner = 'Transaction',
-                @LockTimeout = 15000;
-            """,
-            [result, resource],
-            cancellationToken);
-        if (Convert.ToInt32(result.Value) < 0)
+        var resource = $"cp6:space:floor-edit:{_execution.TenantId:N}:" +
+                       $"{versionId:N}:{floorLogicalId:N}";
+        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
+                _context, resource, 15000, cancellationToken))
         {
             throw Conflict(
                 SpaceErrorCodes.CommandConflict,
@@ -6406,29 +6385,10 @@ public sealed class SpaceDesignV1Service :
         Guid versionId,
         CancellationToken cancellationToken)
     {
-        if (!_context.Database.IsSqlServer())
-            return;
-
-        var result = new SqlParameter("@result", SqlDbType.Int)
-        {
-            Direction = ParameterDirection.Output,
-        };
-        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
-        {
-            Value = $"cp6:space:version-floor-init:{_execution.TenantId:N}:" +
-                    $"{versionId:N}",
-        };
-        await _context.Database.ExecuteSqlRawAsync(
-            """
-            EXEC @result = sys.sp_getapplock
-                @Resource = @resource,
-                @LockMode = 'Exclusive',
-                @LockOwner = 'Transaction',
-                @LockTimeout = 15000;
-            """,
-            [result, resource],
-            cancellationToken);
-        if (Convert.ToInt32(result.Value) < 0)
+        var resource = $"cp6:space:version-floor-init:{_execution.TenantId:N}:" +
+                       $"{versionId:N}";
+        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
+                _context, resource, 15000, cancellationToken))
         {
             throw Conflict(
                 SpaceErrorCodes.ConcurrencyConflict,
