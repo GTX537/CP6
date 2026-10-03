@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using CP6.DatabaseCompatibility.Testing;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -17,18 +18,23 @@ public static class Wp2CatalogNegativeControls
         ArgumentNullException.ThrowIfNull(coreModel);
         Require(connection.State == ConnectionState.Open, "Catalog negative control requires the verified open task connection.");
         Require(pg ? connection is NpgsqlConnection : connection is SqlConnection, "Catalog negative control provider must match the task connection.");
-        Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Catalog negative control requires a dedicated WP2 database.");
-        Require(pg
-            ? ((NpgsqlConnection)connection).Host is "localhost" or "127.0.0.1" or "::1"
-            : ((SqlConnection)connection).DataSource == "localhost\\KOUSQLSERVER",
-            "Catalog negative control requires the recorded loopback database host.");
+        if (Wp6MigrationOwnership.IsRequested)
+            await Wp6MigrationOwnership.VerifyAsync(connection, pg, DatabaseFixtureRole.Schema, DatabaseFixtureRole.SqlUpgrade);
+        else
+        {
+            Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Catalog negative control requires a dedicated WP2 database.");
+            Require(pg
+                ? ((NpgsqlConnection)connection).Host is "localhost" or "127.0.0.1" or "::1"
+                : ((SqlConnection)connection).DataSource == "localhost\\KOUSQLSERVER",
+                "Catalog negative control requires the recorded loopback database host.");
 
-        var owner = Environment.GetEnvironmentVariable("CP6_TEST_DATABASE_OWNER");
-        Require(owner is not null && Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "Catalog negative control requires the task owner receipt.");
-        var actualOwner = await connection.QuerySingleOrDefaultAsync<string>(pg
-            ? "SELECT shobj_description(oid,'pg_database') FROM pg_database WHERE datname=current_database()"
-            : "SELECT CONVERT(nvarchar(200),value) FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatOwner' AND EXISTS(SELECT 1 FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatTask' AND CONVERT(nvarchar(200),value)=N'DB-COMPAT-01-WP2')");
-        Require(actualOwner == (pg ? $"DB-COMPAT-01-WP2:{owner}" : owner), "Catalog negative control database ownership must match before DDL.");
+            var owner = Environment.GetEnvironmentVariable("CP6_TEST_DATABASE_OWNER");
+            Require(owner is not null && Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "Catalog negative control requires the task owner receipt.");
+            var actualOwner = await connection.QuerySingleOrDefaultAsync<string>(pg
+                ? "SELECT shobj_description(oid,'pg_database') FROM pg_database WHERE datname=current_database()"
+                : "SELECT CONVERT(nvarchar(200),value) FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatOwner' AND EXISTS(SELECT 1 FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatTask' AND CONVERT(nvarchar(200),value)=N'DB-COMPAT-01-WP2')");
+            Require(actualOwner == (pg ? $"DB-COMPAT-01-WP2:{owner}" : owner), "Catalog negative control database ownership must match before DDL.");
+        }
 
         var schema = pg ? "public" : "dbo";
         var table = coreModel.GetRelationalModel().Tables.Single(t => t.Name == "Sys_Users" && (t.Schema ?? schema) == schema);

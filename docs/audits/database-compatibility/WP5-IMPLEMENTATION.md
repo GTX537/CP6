@@ -1,8 +1,8 @@
 # DB-COMPAT-01 WP5：Space、发布与报表
 
-日期：2026-10-03。依据[已接受计划](../../superpowers/plans/2026-10-02-database-compatibility.md)，分支`codex/db-compat-wp5-20261003`、工作树`D:\CP6\tmp\worktrees\db-compat-wp5-20261003`从已确认远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`建立。父[Issue134](https://github.com/GTX537/CP6/issues/134)仍Open；WP4已勾选，WP5/6未勾选。
+日期：2026-10-03。依据[已接受计划](../../superpowers/plans/2026-10-02-database-compatibility.md)，分支`codex/db-compat-wp5-20261003`、工作树`D:\CP6\tmp\worktrees\db-compat-wp5-20261003`从已确认远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`建立。父[Issue134](https://github.com/GTX537/CP6/issues/134)仍Open；WP5已交付并勾选，WP6继续执行。
 
-当前状态为 **LocalVerifiedRemotePending**：WP5 本地业务、迁移专项及任务审查的适用范围已验证，BUG150 依赖已正常交付并整合；WP5 自身远端交付待完成。WP6 全应用启动、初始化和备份恢复尚未验收，各批真实结果、复用来源及限制如下。
+当前状态为 **Delivered**：[PR152](https://github.com/GTX537/CP6/pull/152)已正常合入远端main `cbbb7fc8e99290f6aba7589830a98a98726280e9`，包含候选`c9141a558a46586d8343cd1e5b69ce710a468f31`且完整树相同。合并后实际全字段克隆及CAD/Excel同键并发SQL/PG各3/3、零跳过；13个WP5临时库已普通DROP并核对不存在，未强制断连，原receipt及PG角色保留。[22份交付原件](wp5-native/post-merge/manifest.json)包含首次推送前网络失败、正常交付、冒烟、清理和父任务阶段更新，不将这些结果改称新全量矩阵。WP6整体验收及父任务尚未完成，各批真实结果、复用来源及限制如下。
 
 ## 已交付前置
 
@@ -17,7 +17,7 @@
 
 创建来源为公共[工作树证明](wp5-native/initial/reports/wp5-worktree-created.json)、[Space库证明](wp5-native/initial/reports/wp5-databases-created.json)及[报表库证明](wp5-native/initial/reports/wp5-reports-databases-created.json)；创建证明不代替实际迁移或业务验收。连接与所有权receipt仅本机未跟踪文件，未复制入文档。root统一安排本地构建与数据库执行，必需场景选择Provider后不能Skip。
 
-Space租约、克隆故障/并发、发布恢复及CAD已按下列原批次和定向复测完成本地验证；一次任务级集中审查的两项P2已修复并增量复查。WP5远端交付仍待完成。普通PG API/worker guard继续保留，WP6负责完整应用启动、初始化、备份恢复与运行配置验收；没有现有数据搬迁、环境替换或生产部署。
+Space租约、克隆故障/并发、发布恢复及CAD已按下列原批次和定向复测完成本地验证；一次任务级集中审查的两项P2已修复并增量复查，WP5远端交付已完成。WP5交付版本仍保留普通PG API/worker guard；WP6负责开放与验证完整应用启动、初始化、备份恢复及运行配置，没有现有数据搬迁、环境替换或生产部署。
 
 ## 首轮真实结果与限定范围
 
@@ -92,6 +92,6 @@ AI修复将待保存变化和EF当前、ambient、enlisted调用方事务排除�
 
 [PR151](https://github.com/GTX537/CP6/pull/151)已正常交付，远端main为`522433a370c0c247a98b300c69e88e403217d53a`；Issue150于`2026-10-03T14:47:22Z`关闭。BUG独立双库RED/GREEN、原12项单元回归和合并后两库各2/2冒烟的范围见[BUG150审计记录](../2026-10-03-bug-150-mapping-idempotency/README.md)。两自有库已普通DROP并核对不存在，未终止会话；[交付后15份公共原件清单](../2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json)独立于原已交付29份清单。
 
-WP5以`97e4a9f2e0881c4f423111848632bbc821cde11d`整合该main；三处映射生产文件与已交付BUG150字节一致，生产无合并冲突。[整合证明](wp5-native/review-followup/dependency/wp5-bug150-dependency-integrated.json)和[完整Space测试项目构建日志](wp5-native/review-followup/builds/wp5-bug150-integration-build.log)记录0警告、0错误，随后SQL/PG映射各4/4。原不相关WP5成功结果保留原执行输入和来源，不因整合提交或程序集哈希改变而冒称已重新执行。WP5当前仍为LocalVerifiedRemotePending，WP6全应用与恢复验收未完成。
+WP5以`97e4a9f2e0881c4f423111848632bbc821cde11d`整合该main；三处映射生产文件与已交付BUG150字节一致，生产无合并冲突。[整合证明](wp5-native/review-followup/dependency/wp5-bug150-dependency-integrated.json)和[完整Space测试项目构建日志](wp5-native/review-followup/builds/wp5-bug150-integration-build.log)记录0警告、0错误，随后SQL/PG映射各4/4。原不相关WP5成功结果保留原执行输入和来源，不因整合提交或程序集哈希改变而冒称已重新执行。该整合时点为LocalVerifiedRemotePending；随后PR152完成远端交付，见本页顶部及交付原件。
 
 收尾[结果核算](wp5-native/final-result-accounting.json)按Provider、测试类和案例名称关联65份原TRX，所有已记录案例的最后一次记录均为Passed；它是历史记录核算，不是又执行一轮完整矩阵。[最终源码与复用核对](wp5-native/final-source-reuse-review.json)为相对已交付main的15份生产文件绑定相关成功批次，核对当前12个Space程序集与映射整合批次一致，并保留旧runner未直接记录classifier源码时的同程序集交叉证明。准备阶段两次绑定校正、未重新运行的范围及WP6边界均明确记录。

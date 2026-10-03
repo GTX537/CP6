@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Wf;
 using CP6.Core.Services.Wms;
@@ -27,6 +28,7 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
     private bool _ownsDatabase;
     private bool _usesTaskOwnedDatabase;
     private DatabaseOptions? _database;
+    private OwnedTestDatabase? ownedDatabase;
     public string ConnectionString { get; private set; } = string.Empty;
 
     public async Task InitializeAsync()
@@ -41,10 +43,17 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
                 _ => throw new InvalidOperationException("WMS_REQUIRED_DATABASE_PROVIDER_INVALID")
             });
             var owner = Environment.GetEnvironmentVariable(WmsProductionFactAttribute.OwnerVariable) ?? "";
-            Require(Regex.IsMatch(owner, "\\A[a-f0-9]{32}\\z"), "WMS_WP4_DATABASE_OWNER_REQUIRED");
             var supplied = Environment.GetEnvironmentVariable(WmsProductionFactAttribute.ConnectionVariable) ?? "";
-            Require(!string.IsNullOrWhiteSpace(supplied), "WMS_REQUIRED_DATABASE_CONNECTION_MISSING");
-            ConnectionString = ValidateTaskOwnedConnection(supplied, owner);
+            ownedDatabase = OwnedTestDatabase.FromEnvironment(_database, supplied,
+                [DatabaseFixtureRole.CoreWms], "CP6Compat.WP6.WmsTests");
+            if (ownedDatabase is not null)
+                ConnectionString = ownedDatabase.ConnectionString;
+            else
+            {
+                Require(Regex.IsMatch(owner, "\\A[a-f0-9]{32}\\z"), "WMS_WP4_DATABASE_OWNER_REQUIRED");
+                Require(!string.IsNullOrWhiteSpace(supplied), "WMS_REQUIRED_DATABASE_CONNECTION_MISSING");
+                ConnectionString = ValidateTaskOwnedConnection(supplied, owner);
+            }
             await VerifyTaskOwnerAsync(owner);
             await using var required = Create(Guid.NewGuid());
             required.Database.SetCommandTimeout(180);
@@ -146,6 +155,11 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
 
     private async Task VerifyTaskOwnerAsync(string owner)
     {
+        if (ownedDatabase is not null)
+        {
+            await ownedDatabase.VerifyAsync();
+            return;
+        }
         await using var connection = new DatabaseConnectionFactory(_database!).Create(ConnectionString);
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();

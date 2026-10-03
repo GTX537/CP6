@@ -1,0 +1,11 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Issue": 134,
+  "State": "open",
+  "UpdatedAt": "2026-10-03T15:20:43Z",
+  "Wp5Checked": true,
+  "Wp6Unchecked": true,
+  "RemoteMain": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "PayloadSha256": "203F34CBDDBA58B8DF8D335E7345C2DB6965B026AEED3C0D8A4CBC7874C5D5ED",
+  "FullBodyPreservedExceptWp5CheckboxAndAppendedDeliveryRecord": true
+}

@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.ErpIntegration;
 using Microsoft.Data.SqlClient;
@@ -18,7 +19,8 @@ public sealed class SqlDatabaseCollection : ICollectionFixture<SqlDatabaseFixtur
 public sealed class SqlDatabaseFixture : IAsyncLifetime, IErpScenarioDatabase
 {
     private readonly ErpRelationalFixture? relational = Environment.GetEnvironmentVariables().Keys.Cast<string>()
-        .Any(name => name.StartsWith("CP6_ERP_TEST_", StringComparison.OrdinalIgnoreCase)) ? new() : null;
+        .Any(name => name.StartsWith("CP6_ERP_TEST_", StringComparison.OrdinalIgnoreCase))
+        || OwnedTestDatabase.IsRequestedForRole(DatabaseFixtureRole.Erp) ? new() : null;
     private readonly string database = "CP6C03Test_" + Guid.NewGuid().ToString("N");
     private string? masterConnection;
     private string? connection;

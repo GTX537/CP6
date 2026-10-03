@@ -34,6 +34,8 @@ spec:
           ports:
             - name: http
               containerPort: 5000
+          # cp6-runtime-secrets supplies Database__Provider and
+          # ConnectionStrings__DefaultConnection together, identical to db-init.
           envFrom:
             - configMapRef:
                 name: cp6-runtime

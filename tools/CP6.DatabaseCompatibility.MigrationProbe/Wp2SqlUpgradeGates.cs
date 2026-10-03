@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.CrmIdentity;
+using CP6.DatabaseCompatibility.Testing;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,9 @@ public static class Wp2SqlUpgradeGates
     {
         Require(connection is SqlConnection && connection.State == ConnectionState.Open && context.Database.IsSqlServer(),
             "Populated upgrade requires an open SQL Server connection and SQL Core context.");
-        Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"),
+        if (Wp6MigrationOwnership.IsRequested)
+            await Wp6MigrationOwnership.VerifyAsync(connection, pg: false, DatabaseFixtureRole.SqlUpgrade);
+        else Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"),
             "Populated upgrade requires the already owner-verified dedicated WP2 database.");
         Require(ReferenceEquals(context.Database.GetDbConnection(), connection), "Upgrade context must use the exact verified connection.");
         Require(context.Database.CurrentTransaction is null && !context.ChangeTracker.HasChanges(),

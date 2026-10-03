@@ -1,0 +1,17 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "CapturedUtc": "2026-10-03T15:11:53.156987+00:00",
+  "ExplicitStagedFiles": 63,
+  "OriginalArtifactsInIndex": 285,
+  "AllIndexBytesMatchOriginals": true,
+  "AdditionalFinalAccountingReportsMatchOriginals": 2,
+  "Manifests": [
+    "docs/audits/database-compatibility/wp5-native/review-followup/manifest.json",
+    "docs/audits/2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json",
+    "docs/audits/database-compatibility/wp5-native/initial/manifest.json",
+    "docs/audits/database-compatibility/wp4-native/post-merge/manifest.json",
+    "docs/audits/database-compatibility/wp4-native/post-merge/parent-progress/manifest.json"
+  ],
+  "Scope": "Only final WP5 changes and explicit public original artifacts staged; no private ownership receipts, credentials, existing root workspace changes or unrelated changes.",
+  "RootOriginalLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5"
+}

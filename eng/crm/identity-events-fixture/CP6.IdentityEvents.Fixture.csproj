@@ -7,6 +7,7 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../database-compatibility/OwnedTestDatabase.cs" Link="OwnedTestDatabase.cs" />
     <ProjectReference Include="../../../CP6.WebApi/CP6.WebApi.csproj" />
   </ItemGroup>
 </Project>

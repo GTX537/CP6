@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -23,7 +24,8 @@ public sealed class CoreBusinessFactAttribute : FactAttribute
     }
 
     internal static bool IsSelected => Environment.GetEnvironmentVariable(ProviderVariable) is not null
-        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null;
+        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null
+        || OwnedTestDatabase.IsRequestedForRole(DatabaseFixtureRole.CoreWms);
 }
 
 [CollectionDefinition(Name, DisableParallelization = true)]
@@ -39,6 +41,7 @@ public sealed class CoreBusinessRelationalFixture : IAsyncLifetime
     private readonly DatabaseOptions? database;
     private readonly string? connectionString;
     private readonly string? owner;
+    private readonly OwnedTestDatabase? ownedDatabase;
 
     public CoreBusinessRelationalFixture()
     {
@@ -50,8 +53,15 @@ public sealed class CoreBusinessRelationalFixture : IAsyncLifetime
             _ => throw new InvalidOperationException("CP6_CORE_TEST_PROVIDER must explicitly select SqlServer or PostgreSql; selected native tests never skip.")
         });
         owner = Environment.GetEnvironmentVariable(CoreBusinessFactAttribute.OwnerVariable) ?? "";
-        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "A WP4 database ownership receipt is required.");
         var supplied = Environment.GetEnvironmentVariable(CoreBusinessFactAttribute.ConnectionVariable) ?? "";
+        ownedDatabase = OwnedTestDatabase.FromEnvironment(database, supplied,
+            [DatabaseFixtureRole.CoreWms], "CP6Compat.WP6.CoreBusinessTests");
+        if (ownedDatabase is not null)
+        {
+            connectionString = ownedDatabase.ConnectionString;
+            return;
+        }
+        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "A WP4 database ownership receipt is required.");
         Require(!string.IsNullOrWhiteSpace(supplied), "CP6_CORE_TEST_CONNECTION must identify the selected WP4 database.");
         connectionString = ValidateConnection(supplied);
     }
@@ -63,6 +73,9 @@ public sealed class CoreBusinessRelationalFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         if (database is null) return;
+        if (ownedDatabase is not null)
+            await ownedDatabase.VerifyAsync();
+        else
         await using (var connection = new DatabaseConnectionFactory(Database).Create(ConnectionString))
         {
             await connection.OpenAsync();
@@ -84,7 +97,7 @@ public sealed class CoreBusinessRelationalFixture : IAsyncLifetime
         var applied = (await context.Database.GetAppliedMigrationsAsync()).ToArray();
         Require(available.SequenceEqual(applied) && !(await context.Database.GetPendingMigrationsAsync()).Any(),
             "The Core test database must finish all actual provider migrations.");
-        SetupSummary = $"Provider={Database.Provider}; Core migrations={applied.Length}; pending=0; WP4 owner verified.";
+        SetupSummary = $"Provider={Database.Provider}; Core migrations={applied.Length}; pending=0; {(ownedDatabase is null ? "WP4" : "WP6")} owner verified.";
     }
 
     public CP6Context CreateContext(Guid tenant, params IInterceptor[] interceptors)

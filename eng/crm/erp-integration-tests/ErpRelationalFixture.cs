@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.ErpIntegration;
@@ -28,6 +29,7 @@ public sealed class ErpRelationalFixture : IAsyncLifetime, IErpScenarioDatabase
 {
     private const string TaskName = "DB-COMPAT-01-WP4";
     private readonly string owner;
+    private readonly OwnedTestDatabase? ownedDatabase;
 
     public ErpRelationalFixture()
     {
@@ -38,8 +40,15 @@ public sealed class ErpRelationalFixture : IAsyncLifetime, IErpScenarioDatabase
             _ => throw new InvalidOperationException("CP6_ERP_TEST_PROVIDER must select SqlServer or PostgreSql; required ERP database tests never skip.")
         });
         owner = Environment.GetEnvironmentVariable("CP6_TEST_DATABASE_OWNER") ?? "";
-        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "A WP4 database ownership receipt is required.");
         var connection = Environment.GetEnvironmentVariable("CP6_ERP_TEST_CONNECTION") ?? "";
+        ownedDatabase = OwnedTestDatabase.FromEnvironment(Database, connection,
+            [DatabaseFixtureRole.Erp], "CP6Compat.WP6.ErpTests");
+        if (ownedDatabase is not null)
+        {
+            ConnectionString = ownedDatabase.ConnectionString;
+            return;
+        }
+        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "A WP4 database ownership receipt is required.");
         Require(!string.IsNullOrWhiteSpace(connection), "CP6_ERP_TEST_CONNECTION must identify the selected WP4 test database.");
         ConnectionString = ValidateConnection(connection);
     }
@@ -107,6 +116,11 @@ public sealed class ErpRelationalFixture : IAsyncLifetime, IErpScenarioDatabase
 
     private async Task VerifyOwnerAsync()
     {
+        if (ownedDatabase is not null)
+        {
+            await ownedDatabase.VerifyAsync();
+            return;
+        }
         await using var connection = CreateConnection();
         await connection.OpenAsync();
         var actual = await connection.QuerySingleOrDefaultAsync<string>(IsPostgreSql

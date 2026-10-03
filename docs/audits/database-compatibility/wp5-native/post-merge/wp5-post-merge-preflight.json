@@ -1,0 +1,12 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Stage": "Post-merge input preflight",
+  "Head": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "SourceCount": 439,
+  "BinaryCount": 12,
+  "AllInputsIdentical": true,
+  "Reference": "wp5-mapping-bug150-pg-integration",
+  "ReferenceSha256": "E9CF4A4D693A1AFBC76874F7A4AF9C14EEF6BE7E94009C954AF1E5E4B146CF0C",
+  "CheckedUtc": "2026-10-03T15:16:07.3043879Z",
+  "Scope": "Existing final compiled Space binary retained after equal-tree merge; new smoke runs selected separately, no full matrix rerun."
+}

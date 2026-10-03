@@ -48,6 +48,20 @@
 `release-manifest.json.Database.LatestMigration`；部署阶段通过
 `GET /health/release` 返回的 `__EFMigrationsHistory` 最新记录动态比对。
 
+### 数据库运行能力与候选边界
+
+DB-COMPAT-01 提供同一 CP6 代码部署的 `Database:Provider=SqlServer|PostgreSql`
+选择；缺省仍为 `SqlServer`，显式未知值失败。一次性 `db-init` 与 API 必须使用
+同一发布制品、同一 Provider 和对应连接 Secret，具体配置、本机验收和同引擎
+新库恢复流程见 [数据库选择与恢复](../../devops/DATABASE-COMPATIBILITY.md)。
+
+现有 R2 candidate/source/migration/manifest 可执行门禁仍以 SQL Server 为生产
+基线。本地 PostgreSQL 应用或备份恢复通过，不表示 PostgreSQL 已具备本规范的
+候选/生产部署资格，不得据此替换 `LatestMigration` 合同、跳过 SQL/E2E、签名、
+漏洞扫描、digest 身份核对或环境审批。GitHub R2 + GHCR 的唯一发布权威保持不变。
+根 `docker-compose.yml` / `k8s/` 仍仅供开发，其中根 Compose 仍是 SQL Server 编排；
+已有 SQL Server 数据迁往 PostgreSQL、既有环境切换和生产推广均另有任务与授权边界。
+
 ## 5. 阶段完成定义
 
 | 阶段 | 完成定义 | 主要证据 |

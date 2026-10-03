@@ -1,0 +1,26 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "CheckedUtc": "2026-10-03T15:12:07.9257088Z",
+  "ReferenceMain": "522433a370c0c247a98b300c69e88e403217d53a",
+  "TaskReview": "Original Space and Core/reports/migration task-level reviews plus resolved targeted follow-up retained; no second full review.",
+  "FinalDiff": "15 changed production files relative to delivered main reconciled against reviewed source and relevant successful native or unit source/binary proofs.",
+  "LastChanges": "Two mapping tests use equivalent Assert.Single predicate overloads; final SQL/PG4 integration passed. Public closure/audit and four memory documents updated.",
+  "Documentation": {
+    "MarkdownFiles": 8,
+    "LocalLinkTargets": 458,
+    "Errors": 0,
+    "DiffCheckPassed": true,
+    "Bug150CleanupWordingCorrected": "Actual marker and successful normal DROP/absence, without claiming a separate active-session query."
+  },
+  "StagedEvidence": "wp5-final-staged-evidence-check.json",
+  "SourceReuse": "wp5-final-source-reuse-review.json",
+  "ResultAccounting": "wp5-final-result-accounting.json",
+  "UnresolvedMaterialReviewFindings": 0,
+  "RequiredScopeFailuresOutstanding": 0,
+  "ProductionAcceptance": false,
+  "Wp6Pending": true,
+  "RemoteActionsTriggered": 0,
+  "RemoteActionsCancelled": 0,
+  "WorkflowChanges": 0,
+  "RootWorkspaceOriginalChangesPreserved": true
+}

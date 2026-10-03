@@ -1,10 +1,12 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-03：WP5 交付确认与 ERP 并发诊断
+## 2026-10-03：WP5、BUG153 已交付，WP6 应用分项通过
 
 WP5 已由 [PR152](https://github.com/GTX537/CP6/pull/152) 进入远端 main `cbbb7fc8e99290f6aba7589830a98a98726280e9`，两库各 3/3 合并后冒烟通过，13 个自有临时库正常清理。WP6 和父任务 #134 尚未完成。
 
-[BUG153](https://github.com/GTX537/CP6/issues/153) 已保留 ERP 并发测试原失败，并以实际 native 40001 确认首次投递断言与 RETRY 协议不符；修复后的 PG 原两项 2/2、零 skip。SQL/PG 原 ERP 全套另各 95/95、零 skip；此处仅记录本地诊断与回归结果，尚不声明 BUG 交付，完整证据见[专项记录](../audits/2026-10-03-bug-153-erp-concurrency-retry/README.md)。
+[BUG153](https://github.com/GTX537/CP6/issues/153) 已保留 ERP 并发测试原失败及真实 native 40001 诊断；SQL/PG 原 ERP 全套各 95/95、零 skip。[PR154](https://github.com/GTX537/CP6/pull/154) 正常交付远端 main `59e09f6e68a36734c64144abfcefc81b7c9c8d9d`，合并后两库原并发各 2/2、两个自有库已清理且 Issue Closed，见 [交付原件](../audits/2026-10-03-bug-153-erp-concurrency-retry/native/post-merge/manifest.json)。
+
+WP6 正式 Application 两库各 17 个入口通过，包括实际 WebSocket 通知、原生恢复、恢复后待发事件/重放和旧游标；使用同一份 261 文件的发布物。各两个正式临时库已清理并核对不存在。此处记录应用分项完成，最终 Matrix、归档及远端交付仍待完成，详见 [WP6 实施记录](../audits/database-compatibility/WP6-IMPLEMENTATION.md)。
 
 ## 2026-10-03：WP5 本地验证与集中审查完成，待远端交付
 

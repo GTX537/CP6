@@ -1,10 +1,12 @@
 # AI 可读变更日志
 
-## 2026-10-03：WP5 已交付，ERP 并发测试修正中
+## 2026-10-03：WP6 两库应用分项通过，最终矩阵继续
 
 WP5 经 PR152 正常合入 `cbbb7fc8e99290f6aba7589830a98a98726280e9`，合并后 SQL/PG 各 3/3 冒烟和 13 库清理完成。WP6 继续，父任务 #134 Open。
 
-新增 [BUG153](https://github.com/GTX537/CP6/issues/153)：ERP 两个并发测试把 native 40001 后合法 RetryScheduled 立即判失败。独立分支仅为这两项补全有界原消息重投，最终订单/bridge/journal 断言保留并增加逐条 Inbox 完成检查；修复后 PG 2/2 且均实际触发 40001，两库完整原 ERP 回归另各 95/95 通过；集中审查无实质阻断，远端交付尚待完成。[专项记录](../audits/2026-10-03-bug-153-erp-concurrency-retry/README.md) 区分原失败、诊断、修复结果和未验证范围。无 Actions、工作流/保护变更或生产部署。
+[BUG153](https://github.com/GTX537/CP6/issues/153) 已由 PR154 交付 main `59e09f6e68a36734c64144abfcefc81b7c9c8d9d` 并关闭：两项并发测试补全既有有界原消息 RETRY，最终订单/bridge/journal 断言保持并检查逐条 Inbox；原 ERP 两库各 95/95、合并后并发各 2/2 和两个自有库清理完成。[专项交付原件](../audits/2026-10-03-bug-153-erp-concurrency-retry/native/post-merge/manifest.json) 保留真实失败和诊断。
+
+WP6 新增正式本地 runner、独占库 fixture、精确必需场景/进程/依赖身份核对及运维手册；开放已适配的普通 PostgreSQL API/worker。正式 Application 两库各 17 入口通过，含真实双用户 WebSocket、原生新库恢复、恢复 worker/幂等重放和旧游标续页，各两个正式库清理核实；同一组 261 发布文件、2009 相关源输入。最终 Matrix、归档和 WP6 远端交付尚待完成，见 [实施记录](../audits/database-compatibility/WP6-IMPLEMENTATION.md)。无 Actions、工作流/保护变更或生产部署。
 
 ## 2026-10-03：WP5 本地验证与集中审查完成，待远端交付
 

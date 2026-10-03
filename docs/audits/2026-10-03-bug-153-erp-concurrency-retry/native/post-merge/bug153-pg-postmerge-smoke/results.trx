@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a90947c7-a31a-4257-9ca7-0587cea809b1" name="tt@LAPTOP-3QQ44FJS 2026-10-03 12:49:52" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T12:49:52.7023223-04:00" queuing="2026-10-03T12:49:52.7023227-04:00" start="2026-10-03T12:49:46.6908539-04:00" finish="2026-10-03T12:49:53.2476031-04:00" />
+  <TestSettings name="default" id="a2e0ea00-877c-40c1-b2fa-6d3617610d34">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_12_49_52" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="00051a6d-2b4b-4014-ba34-2494c4921d84" testId="93d212ad-00e9-117b-aca7-989dcc62fb1b" testName="CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.0726823" startTime="2026-10-03T12:49:50.6144555-04:00" endTime="2026-10-03T12:49:52.6781499-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00051a6d-2b4b-4014-ba34-2494c4921d84">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Provider=PostgreSql; native=Provider=PostgreSql; code=40001; kind=SerializationFailure; constraint=none</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="daafb531-bae2-4cda-9e37-d7052c5ced0c" testId="4090f97a-cbd7-faf5-eb9f-9b42edcd717b" testName="CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4974791" startTime="2026-10-03T12:49:52.6892090-04:00" endTime="2026-10-03T12:49:53.1767430-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="daafb531-bae2-4cda-9e37-d7052c5ced0c">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Provider=PostgreSql; native=Provider=PostgreSql; code=40001; kind=SerializationFailure; constraint=none</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order" storage="d:\cp6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="4090f97a-cbd7-faf5-eb9f-9b42edcd717b">
+      <Execution id="daafb531-bae2-4cda-9e37-d7052c5ced0c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.OrderSqlTests" name="Concurrent_duplicate_commands_create_exactly_one_order" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order" storage="d:\cp6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="93d212ad-00e9-117b-aca7-989dcc62fb1b">
+      <Execution id="00051a6d-2b4b-4014-ba34-2494c4921d84" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-153-erp-concurrency-retry\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.OrderSqlTests" name="Concurrent_different_versions_for_one_opportunity_create_one_order" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="93d212ad-00e9-117b-aca7-989dcc62fb1b" executionId="00051a6d-2b4b-4014-ba34-2494c4921d84" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4090f97a-cbd7-faf5-eb9f-9b42edcd717b" executionId="daafb531-bae2-4cda-9e37-d7052c5ced0c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="2" passed="2" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.13]   Starting:    CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:06.12]   Finished:    CP6.ErpIntegration.SqlTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

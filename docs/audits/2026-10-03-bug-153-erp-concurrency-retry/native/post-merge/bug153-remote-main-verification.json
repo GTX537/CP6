@@ -1,0 +1,21 @@
+{
+  "Task": "BUG-153",
+  "PullRequest": {
+    "baseRefOid": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+    "headRefOid": "3bd0cccbe4a6be64dda95310f109eef6262e8c53",
+    "mergeCommit": {
+      "oid": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d"
+    },
+    "mergedAt": "2026-10-03T16:48:27Z",
+    "number": 154,
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/154"
+  },
+  "VerifiedUtc": "2026-10-03T16:49:20.4273732Z",
+  "RemoteMain": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Candidate": "3bd0cccbe4a6be64dda95310f109eef6262e8c53",
+  "CandidateContained": true,
+  "MainTree": "a57eb605c46d60c0a5fb0084d3955848eac7f058",
+  "CandidateTree": "a57eb605c46d60c0a5fb0084d3955848eac7f058",
+  "SameTree": true
+}

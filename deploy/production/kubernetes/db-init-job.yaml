@@ -19,6 +19,8 @@ spec:
         - name: db-init
           image: CP6_API_IMAGE
           imagePullPolicy: IfNotPresent
+          # Use the same Database__Provider and ConnectionStrings__DefaultConnection
+          # from cp6-runtime-secrets as the API; avoid overriding either in env.
           envFrom:
             - configMapRef:
                 name: cp6-runtime

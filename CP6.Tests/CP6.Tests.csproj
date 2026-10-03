@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Compile Include="../eng/database-compatibility/OwnedTestDatabase.cs" Link="DatabaseCompatibility/OwnedTestDatabase.cs" />
     <!-- Retired CRM behavior remains testable without shipping its entities. -->
     <Compile Include="../eng/crm/legacy-model-fixture/*.cs" Link="Crm/LegacyFixture/%(Filename)%(Extension)" />
     <EmbeddedResource Include="Persistence/Fixtures/sql-server-d6074aaa-contracts.json" LogicalName="CP6.Tests.Persistence.SqlServerD6074aaaContracts" />

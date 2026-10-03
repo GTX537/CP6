@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.ErpIntegration;
@@ -52,35 +53,49 @@ try
     }
     argumentsValidated = true;
     var owner = Environment.GetEnvironmentVariable("CP6_TEST_DATABASE_OWNER");
-    Require(owner is not null && Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "Task owner receipt is required before connection.");
     var connectionString = Environment.GetEnvironmentVariable(pg ? "CP6_TEST_POSTGRES" : "CP6_TEST_SQLSERVER");
-    Require(!string.IsNullOrWhiteSpace(connectionString), "Task test connection environment is required.");
-    if (pg)
+    var database = new DatabaseOptions(pg ? DatabaseProvider.PostgreSql : DatabaseProvider.SqlServer);
+    var ownedDatabase = OwnedTestDatabase.FromEnvironment(database, connectionString,
+        [DatabaseFixtureRole.Schema, DatabaseFixtureRole.SqlUpgrade, DatabaseFixtureRole.Application, DatabaseFixtureRole.Restore],
+        "CP6Compat.WP6.MigrationProbe");
+    if (ownedDatabase is not null)
     {
-        var builder = new NpgsqlConnectionStringBuilder(connectionString);
-        Require(builder.Host is "localhost" or "127.0.0.1" or "::1", "Literal loopback is required.");
-        Require(Regex.IsMatch(builder.Database ?? "", "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Dedicated WP2 database is required.");
-        builder.IncludeErrorDetail = false; builder.ApplicationName = "CP6Compat.WP2.MigrationProbe";
-        connectionString = builder.ConnectionString;
+        connectionString = ownedDatabase.ConnectionString;
+        await ownedDatabase.VerifyAsync();
     }
     else
     {
-        var builder = new SqlConnectionStringBuilder(connectionString);
-        Require(builder.DataSource == "localhost\\KOUSQLSERVER", "Recorded loopback SQL instance is required.");
-        Require(Regex.IsMatch(builder.InitialCatalog, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Dedicated WP2 database is required.");
+        Require(owner is not null && Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "Task owner receipt is required before connection.");
+        Require(!string.IsNullOrWhiteSpace(connectionString), "Task test connection environment is required.");
+        if (pg)
+        {
+            var builder = new NpgsqlConnectionStringBuilder(connectionString);
+            Require(builder.Host is "localhost" or "127.0.0.1" or "::1", "Literal loopback is required.");
+            Require(Regex.IsMatch(builder.Database ?? "", "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Dedicated WP2 database is required.");
+            builder.IncludeErrorDetail = false; builder.ApplicationName = "CP6Compat.WP2.MigrationProbe";
+            connectionString = builder.ConnectionString;
+        }
+        else
+        {
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            Require(builder.DataSource == "localhost\\KOUSQLSERVER", "Recorded loopback SQL instance is required.");
+            Require(Regex.IsMatch(builder.InitialCatalog, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Dedicated WP2 database is required.");
+        }
     }
-    var database = new DatabaseOptions(pg ? DatabaseProvider.PostgreSql : DatabaseProvider.SqlServer);
     await using var connection = new DatabaseConnectionFactory(database).Create(connectionString!);
     await connection.OpenAsync();
-    var actualOwner = await connection.QuerySingleOrDefaultAsync<string>(pg
-        ? "SELECT shobj_description(oid,'pg_database') FROM pg_database WHERE datname=current_database()"
-        : "SELECT CONVERT(nvarchar(200),value) FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatOwner' AND EXISTS(SELECT 1 FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatTask' AND CONVERT(nvarchar(200),value)=N'DB-COMPAT-01-WP2')");
-    Require(actualOwner == (pg ? $"DB-COMPAT-01-WP2:{owner}" : owner), "Database ownership metadata must match before migration.");
+    if (ownedDatabase is null)
+    {
+        var actualOwner = await connection.QuerySingleOrDefaultAsync<string>(pg
+            ? "SELECT shobj_description(oid,'pg_database') FROM pg_database WHERE datname=current_database()"
+            : "SELECT CONVERT(nvarchar(200),value) FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatOwner' AND EXISTS(SELECT 1 FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatTask' AND CONVERT(nvarchar(200),value)=N'DB-COMPAT-01-WP2')");
+        Require(actualOwner == (pg ? $"DB-COMPAT-01-WP2:{owner}" : owner), "Database ownership metadata must match before migration.");
+    }
     databaseVersion = connection.ServerVersion;
     if (pg) Require(int.Parse(databaseVersion.Split('.')[0]) == 18, "This baseline requires the accepted PostgreSQL 18 target.");
     if (pg) Require(await connection.QuerySingleAsync<string>("SELECT current_setting('search_path')") == "public",
         "The actual application connection must pin PostgreSQL search_path to public.");
-    checks.Add(new("Isolation.OwnerAndProvider", "Passed", "Recorded loopback, dedicated name and task ownership verified before migration."));
+    checks.Add(new("Isolation.OwnerAndProvider", "Passed", OwnedTestDatabase.IsRequested() ? "Recorded WP6 loopback, dedicated name, role and task ownership verified before migration." : "Recorded loopback, dedicated name and task ownership verified before migration."));
 
     var seedMode = Arg("--seed-mode");
     if (seedMode is not null)
@@ -265,8 +280,8 @@ finally
         : args.Contains("--sql-upgrade") ? "Real populated SQL Server supported Core136-to140 generation/index/FK/quotation-capacity forward upgrade and retained data/token/generation checks"
         : args.Contains("--catalog-only") ? "Read-only installed catalog validation; migration currency not claimed"
         : "WP2 real four-context migration/catalog installation and explicitly named representative write gates; full business and restoration gates separate";
-    await File.WriteAllTextAsync(output, JsonSerializer.Serialize(new { Scope = scope, Provider = providerName,
-        StartedUtc = started, FinishedUtc = DateTime.UtcNow, SourceBase = Arg("--source-sha"), SourceState = "WP2 uncommitted task input; applicable build log and file hashes required", DatabaseVersion = databaseVersion,
+    await File.WriteAllTextAsync(output, JsonSerializer.Serialize(new { Scope = OwnedTestDatabase.IsRequested() ? "WP6 runner-owned database: " + scope : scope, Provider = providerName,
+        StartedUtc = started, FinishedUtc = DateTime.UtcNow, SourceBase = Arg("--source-sha"), SourceState = OwnedTestDatabase.IsRequested() ? "WP6 runner task input; applicable build log, source-file and runtime-binary hashes required" : "WP2 uncommitted task input; applicable build log and file hashes required", DatabaseVersion = databaseVersion,
         RuntimeBinaries = binaries, ModelCounts = modelCounts, Checks = checks }, new JsonSerializerOptions { WriteIndented = true }));
 }
 return checks.Any(check => check.Status == "Failed") ? 1 : 0;

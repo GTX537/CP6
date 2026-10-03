@@ -1,3 +1,4 @@
+using CP6.DatabaseCompatibility.Testing;
 using Xunit;
 
 namespace CP6.Tests.Infra;
@@ -17,5 +18,6 @@ public sealed class WmsProductionFactAttribute : FactAttribute
 
     internal static bool UsesTaskOwnedInputs =>
         Environment.GetEnvironmentVariable(ProviderVariable) is not null
-        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null;
+        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null
+        || OwnedTestDatabase.IsRequestedForRole(DatabaseFixtureRole.CoreWms);
 }

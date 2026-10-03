@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Platform.EntityFramework;
@@ -25,7 +26,8 @@ public sealed class Wp5ReportsFactAttribute : FactAttribute
     }
 
     internal static bool IsSelected => Environment.GetEnvironmentVariable(ProviderVariable) is not null
-        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null;
+        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null
+        || OwnedTestDatabase.IsRequestedForRole(DatabaseFixtureRole.Reports);
 }
 
 [CollectionDefinition(Name, DisableParallelization = true)]
@@ -41,6 +43,7 @@ public sealed class Wp5ReportsRelationalFixture : IAsyncLifetime
     private readonly DatabaseOptions? database;
     private readonly string? connectionString;
     private readonly string? owner;
+    private readonly OwnedTestDatabase? ownedDatabase;
 
     public Wp5ReportsRelationalFixture()
     {
@@ -52,8 +55,15 @@ public sealed class Wp5ReportsRelationalFixture : IAsyncLifetime
             _ => throw new InvalidOperationException("WP5_REPORTS_PROVIDER_INVALID: explicitly select SqlServer or PostgreSql.")
         });
         owner = Environment.GetEnvironmentVariable(Wp5ReportsFactAttribute.OwnerVariable) ?? "";
-        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "WP5_REPORTS_OWNER_REQUIRED");
         var supplied = Environment.GetEnvironmentVariable(Wp5ReportsFactAttribute.ConnectionVariable) ?? "";
+        ownedDatabase = OwnedTestDatabase.FromEnvironment(database, supplied,
+            [DatabaseFixtureRole.Reports], "CP6Compat.WP6.ReportsTests");
+        if (ownedDatabase is not null)
+        {
+            connectionString = ownedDatabase.ConnectionString;
+            return;
+        }
+        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "WP5_REPORTS_OWNER_REQUIRED");
         Require(!string.IsNullOrWhiteSpace(supplied), "WP5_REPORTS_CONNECTION_REQUIRED");
         connectionString = ValidateConnection(supplied);
     }
@@ -65,6 +75,9 @@ public sealed class Wp5ReportsRelationalFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         if (database is null) return;
+        if (ownedDatabase is not null)
+            await ownedDatabase.VerifyAsync();
+        else
         await using (var connection = CreateConnection())
         {
             await connection.OpenAsync();
@@ -84,7 +97,7 @@ public sealed class Wp5ReportsRelationalFixture : IAsyncLifetime
             ? await MigrateAsync(priority) : coreCount;
         // SQL Server's priority tables belong to Core migrations; use the real priority mapping to verify installation.
         _ = await priority.Set<Cp6OutboxMessage>().AsNoTracking().Take(1).CountAsync();
-        SetupSummary = $"Provider={Database.Provider}; Core migrations={coreCount}; IdentityPriority migration owner={priorityProfile.MigrationOwner}, migrations={priorityCount}; pending=0; WP5 owner verified.";
+        SetupSummary = $"Provider={Database.Provider}; Core migrations={coreCount}; IdentityPriority migration owner={priorityProfile.MigrationOwner}, migrations={priorityCount}; pending=0; {(ownedDatabase is null ? "WP5" : "WP6")} owner verified.";
     }
 
     public CP6Context CreateContext(Guid tenant, params IInterceptor[] interceptors)
