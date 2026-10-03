@@ -1,5 +1,11 @@
 # BUG159：Space 多 worker 领取任务的事务恢复
 
+## 交付确认（2026-10-03）
+
+[PR160](https://github.com/GTX537/CP6/pull/160) 已正常合入远端 main `4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0`，候选 `813a5c2286fffd8038741dea79683790eba93e03` 包含性与完整树一致已核对，[Issue159](https://github.com/GTX537/CP6/issues/159) 已关闭。合并后 SQL/PG 原双worker及协调回归各2/2、零skip，PG再次实际23505后恢复；当前源码/产物哈希仍与原23项一致。两个自有库已完成全部及逐库owner/physical/session检查、普通DROP和不存在确认，receipt及PG角色保留。
+
+[34份交付原件](native/post-merge/manifest.json) 的manifest SHA-256为 `BDDFF904028BEFD863AC3C5D1938AA9C4E92B6821BA9A72AC4371890767EECBF`，保留四个归档脚本引用修正的审计记录、实际远端72文件逐blob核对、合并后两库冒烟及清理/关闭证据。原62份修正后manifest保持。下文为合并前本地验证时点；旧23项不称为合并后重跑，完整WP6及父任务仍未完成。
+
 活动状态以 [Issue #159](https://github.com/GTX537/CP6/issues/159) 为准。这是 [DB-COMPAT-01 / #134](https://github.com/GTX537/CP6/issues/134) 的 WP6 最终矩阵发现；修复分支从远端 main `5587a2a67ae73715596ca1a135b5863005abac8d` 建立。当前为 `LocalVerifiedRemotePending`：双库本地回归、构建和一次集中审查通过，远端交付仍待完成，父任务保持 Open。
 
 ## 根因与边界

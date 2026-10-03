@@ -1,6 +1,17 @@
 # WP6：完整应用、双库回归与本地恢复
 
+最新状态（2026-10-03，BUG161 Open）：claim-fix PostgreSQL 最终 Matrix 已终止为 Failed；7 个相关项目构建通过，28 个入口 Passed，第 29 个 CAD/资产/协作入口 15 项为 14P/1F，后五入口未执行。原 Concurrent_replace_preserves_one_current_revision_and_immutable_evidence 出现实际 PostgreSQL 40001，失败 summary SHA256 9A788F5E6450F4B4FE4258FEDA9FFC99B959EB7A7E997F2A8EB2BEAD49F6284C，TRX SHA256 32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364；原件保留。修复从已确认远端 main 4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0 建立独立 codex/bug-161-cad-provider-recovery 分支，活动缺陷以 [Issue #161](https://github.com/GTX537/CP6/issues/161) 为准。最新 SQL Matrix / 双库 Application 仍未开始；WP6 与父 Issue134 未完成。下文 claim-fix 计划及状态保留历史时点。
+
+
 父任务：[DB-COMPAT-01 / #134](https://github.com/GTX537/CP6/issues/134)。当前为实施与验证中，未完成交付。WP1–WP5 已进入远端 main；WP5 的正常合并、双库冒烟和 13 个自有库清理见 [交付原件](wp5-native/post-merge/manifest.json)。
+
+## 2026-10-03 最新整合：BUG159 已交付，最终验收继续
+
+BUG153/155/157/159 已分别由 PR154/156/158/160 正常交付并关闭，最新确认远端 main 为 `4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0`，已接入本 WP6 分支。此前 `wp6-pg-formal-matrix-floor-fix` 七个项目构建通过，26 个必需入口通过；第27个任务/生成/保留组原17项中16P/1F，实际领取并发触发 `23505 / UX_Space_JobAttempt_Tenant_Job_AttemptNo`，后续七个入口未执行。原失败保持，七个 owner-marked PG 临时库已正常清理，summary SHA-256 `AFB53D4AE12AC5D43C00DAFA12945C4E4FE3C313B9650BF03A5047E3F5A281E5` 未改变。
+
+BUG159 的精确领取冲突恢复，两库原17＋新6各23/23、零skip，构建和一次专项审查通过；合并后原步骤/协调冒烟各2/2、PG观察实际23505后恢复，两个自有库清理及远端包含性/完整树核对完成。62份本地原件保留真实RED和GREEN；四个执行脚本误引用旧任务的归档错误在推送前用追加审计提交校正，当前原件manifest及34份交付原件见[专项记录](../2026-10-03-bug-159-space-job-claim-recovery/README.md)。注入控制不称为实际数据库死锁复现。
+
+只把新六项加入任务组23，克隆23、设计/发布41及其他61个入口保持。最新纯离线入口510检查、结果解析463断言/59份既有报告/62入口通过；这些不替代真库验收。最终执行改用新的 `wp6-pg-formal-matrix-claim-fix`、`wp6-sql-formal-matrix-claim-fix`、`wp6-pg-formal-application-claim-fix`、`wp6-sql-formal-application-claim-fix`，由当前源码构建并发布，全部终态成功、实际清理及105个适用入口的精确覆盖证明仍待完成。四次分项不会改称单次Full，原应用17/17保留旧产物来源；父任务#134继续Open。
 
 ## 实现范围
 

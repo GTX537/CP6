@@ -1,0 +1,49 @@
+{
+  "Task": "BUG-159",
+  "PR": 160,
+  "RemoteMain": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "Candidate": "813a5c2286fffd8038741dea79683790eba93e03",
+  "Status": "RemoteMergedPostSmokePassedCleanupPending",
+  "Runs": [
+    {
+      "Provider": "PostgreSql",
+      "Label": "bug159-pg-postmerge-smoke",
+      "ExecutionHead": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+      "Passed": 2,
+      "Other": 0,
+      "TrxSha256": "88FC26E853DFDDDBE19EF3143D731E3F62A1EEACE66DD52B5F92ABEC8D59EFC0",
+      "SourceInputsSha256": "A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7",
+      "RuntimeManifestSha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "ResultSha256": "DBD156207DA8DDA9EA7B83E7E85E328F8F09BEF0C43E892A1B763DB6F3A1D9AE",
+      "ExactNames": [
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt"
+      ],
+      "SourceCount": 1702,
+      "RuntimeCount": 296,
+      "ActualNativeEvidence": [
+        "BUG159 claim native failure: SQLSTATE=23505; Kind=UniqueConstraint; Constraint=UX_Space_JobAttempt_Tenant_Job_AttemptNo."
+      ]
+    },
+    {
+      "Provider": "SqlServer",
+      "Label": "bug159-sql-postmerge-smoke",
+      "ExecutionHead": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+      "Passed": 2,
+      "Other": 0,
+      "TrxSha256": "4A1FF4A72A43D84F1F87ECE648A1D1E9AF7F6499B12BEC4DB87F5731A654372F",
+      "SourceInputsSha256": "A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7",
+      "RuntimeManifestSha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "ResultSha256": "57A17DF232F1CD9C2F641D53BC938DEB607971F871048D9F13D3E97A0FCDB1E3",
+      "ExactNames": [
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt"
+      ],
+      "SourceCount": 1702,
+      "RuntimeCount": 296,
+      "ActualNativeEvidence": []
+    }
+  ],
+  "CheckedUtc": "2026-10-03T21:00:21.9801113Z",
+  "Scope": "Fresh two-provider original-step smoke on merged main using verified unchanged actual code/runtime; earlier 23-case results are reused as their historical executions, not rerun. Full WP6 and production remain pending."
+}

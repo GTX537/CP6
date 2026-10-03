@@ -1,0 +1,42 @@
+{
+  "Task": "BUG-159",
+  "Provider": "PostgreSql",
+  "ExecutionHead": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "WorkingTreeDirty": false,
+  "DatabaseName": "CP6Compat_WP5_20261003_37dc8a6c",
+  "OwnershipProtocol": "DB-COMPAT-01-WP5",
+  "BuildExecuted": false,
+  "Filter": "FullyQualifiedName=CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt|FullyQualifiedName=CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict",
+  "Counts": {
+    "Expected": 2,
+    "Total": 2,
+    "Passed": 2,
+    "Failed": 0,
+    "Other": 0
+  },
+  "Process": {
+    "ProcessId": 20032,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T20:53:37.1097175Z",
+    "FinishedUtc": "2026-10-03T20:53:42.3411074Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "55BCA121FF43C6D1EDB665C3A0C87E1370432E473233D4707EA929B69FE7808C",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Success": true,
+  "SourcesUnchanged": true,
+  "RuntimeUnchanged": true,
+  "SourceInputsSha256": "A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7",
+  "RuntimeManifestSha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+  "TrxSha256": "88FC26E853DFDDDBE19EF3143D731E3F62A1EEACE66DD52B5F92ABEC8D59EFC0",
+  "CaseNames": [
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt",
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict"
+  ],
+  "NativeEvidence": [
+    "BUG159 claim native failure: SQLSTATE=23505; Kind=UniqueConstraint; Constraint=UX_Space_JobAttempt_Tenant_Job_AttemptNo."
+  ],
+  "Scope": "Selected actual native database tests; controlled unknown/cancellation/exhaustion injections are distinguished in source from the coordinated native attempt-number regression",
+  "FinishedUtc": "2026-10-03T20:53:43.4238388Z"
+}

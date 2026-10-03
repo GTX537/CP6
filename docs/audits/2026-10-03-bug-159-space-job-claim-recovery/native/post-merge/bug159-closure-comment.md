@@ -1,0 +1,7 @@
+根因、最小修复、回归和一次任务级审查已完成，并由 PR160 正常合入远端 main `4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0`。候选 `813a5c2286fffd8038741dea79683790eba93e03` 的包含性及完整树一致已核对。最初本地提交后发现四份归档执行脚本引用旧任务，追加审计提交修正；未重写历史，实际测试源码/产物/TRX未改变。最终62份原件manifest SHA256 `4A28315CE5666D6ED4420836BC40AF96FC94165F9D319C4756CB3B2BCD900B25`。
+
+修复前稳定协调回归观察到实际 PostgreSQL 23505 / UX_Space_JobAttempt_Tenant_Job_AttemptNo，0P/1F。修复后两库原17＋新6各精确23/23、零skip；locked build零warning/error。合并后另执行原双worker步骤及协调回归，SQL/PG各2/2、零skip，PG再次观察原生23505后恢复成功。它们使用相同源码manifest `A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7` 与runtime `45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13`；旧23项结果保留原执行来源，不声称合并后重跑23项。
+
+两个本BUG自有库已通过全部owner/physical/session预检和逐库复检，普通DROP并确认不存在；私有receipt及PG角色保留。另七个原失败Matrix临时库已清理，原失败summary/hash保持不变。全部本地执行，Actions启动/取消均0，无触发/保护改动、force-push、管理员绕过或生产部署。
+
+本Issue完成条件已满足，关闭BUG159。父任务#134与WP6保持Open；后续需接入修复并完成最终双库矩阵、最新应用恢复验收及正常交付。注入控制不是原生deadlock/serialization复现，局部通过不代称生产或整体兼容验收。

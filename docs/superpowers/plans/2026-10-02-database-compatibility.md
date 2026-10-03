@@ -1,5 +1,8 @@
 # CP6 双数据库兼容 Implementation Plan
 
+最新状态（2026-10-03，BUG161 Open）：claim-fix PostgreSQL 最终 Matrix 已终止为 Failed；7 个相关项目构建通过，28 个入口 Passed，第 29 个 CAD/资产/协作入口 15 项为 14P/1F，后五入口未执行。原 Concurrent_replace_preserves_one_current_revision_and_immutable_evidence 出现实际 PostgreSQL 40001，失败 summary SHA256 9A788F5E6450F4B4FE4258FEDA9FFC99B959EB7A7E997F2A8EB2BEAD49F6284C，TRX SHA256 32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364；原件保留。修复从已确认远端 main 4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0 建立独立 codex/bug-161-cad-provider-recovery 分支，活动缺陷以 [Issue #161](https://github.com/GTX537/CP6/issues/161) 为准。最新 SQL Matrix / 双库 Application 仍未开始；WP6 与父 Issue134 未完成。下文 claim-fix 计划及状态保留历史时点。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement the next work package. Follow CP6 AGENTS.md: related steps receive local verification; perform one complete review per delivery task/PR, not a complete review after every file or commit.
 
 **Goal:** 同一套 CP6 源码，每次部署选择 SQL Server 或 PostgreSQL，保持业务、权限、并发和消息一致性，并提供真实双库本地验收证据。
@@ -9,6 +12,8 @@
 **Tech Stack:** 当前 .NET 8 / EF Core 8.0.30、Dapper、SQL Server、PostgreSQL 18；Npgsql Provider 与 EF Core 主版本一致，具体依赖版本及 lock 文件在 WP1 核验后固定。
 
 ---
+
+最新整合（2026-10-03）：BUG159已由PR160正常交付远端main `4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0` 并关闭，已接入WP6；两库任务/处理/生成/保留原17＋新6各23/23、合并后各2/2、零skip，相关自有库清理完成。PG floor-fix最终矩阵26入口通过后第27入口16P/1F原生23505失败保留，后七入口未执行；当前任务组23/克隆23/设计发布41保持精确清单，其他61入口不变。最终claim-fix两库Matrix与最新发布物Application、归档和远端WP6交付继续，父Issue134仍Open。下文原floor-fix计划与状态保留历史时点，当前结果见WP6实施记录。
 
 用途：DB-COMPAT-01 的阶段工作包与验收计划。WP1–WP5 已分别由 PR136/145/146/149/152 交付；WP5 合并后两库各3/3冒烟及13库清理见[交付原件](../../audits/database-compatibility/wp5-native/post-merge/manifest.json)。BUG153/155/157已由PR154/156/158交付并关闭，最新已确认主线为 `5587a2a67ae73715596ca1a135b5863005abac8d`，WP6已接入。修复前正式Application两库各17个入口及清理通过，包含真实WebSocket、恢复后的worker/重放和旧游标；两个生产事务修复改变依赖后，最终Matrix与新发布物Application采用新floor-fix目录。设计/发布41项保持，克隆原16＋新七项为23；最新定向两库23/23、41/41与合并后3/3不代称完整WP6验收。最终验收、归档及远端交付仍待完成，见[WP6实施记录](../../audits/database-compatibility/WP6-IMPLEMENTATION.md)。[Issue#134](https://github.com/GTX537/CP6/issues/134)保持Open，WP6阶段交付未勾选。更新日期：2026-10-03；下文早期Pending保留各历史时点。
 

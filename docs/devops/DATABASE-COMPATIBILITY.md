@@ -1,5 +1,8 @@
 # 数据库选择、本地验收与恢复
 
+最新状态（2026-10-03，BUG161 Open）：claim-fix PostgreSQL 最终 Matrix 已终止为 Failed；7 个相关项目构建通过，28 个入口 Passed，第 29 个 CAD/资产/协作入口 15 项为 14P/1F，后五入口未执行。原 Concurrent_replace_preserves_one_current_revision_and_immutable_evidence 出现实际 PostgreSQL 40001，失败 summary SHA256 9A788F5E6450F4B4FE4258FEDA9FFC99B959EB7A7E997F2A8EB2BEAD49F6284C，TRX SHA256 32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364；原件保留。修复从已确认远端 main 4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0 建立独立 codex/bug-161-cad-provider-recovery 分支，活动缺陷以 [Issue #161](https://github.com/GTX537/CP6/issues/161) 为准。最新 SQL Matrix / 双库 Application 仍未开始；WP6 与父 Issue134 未完成。下文 claim-fix 计划及状态保留历史时点。
+
+
 本页说明 DB-COMPAT-01 的运行配置与本机隔离恢复流程。部署时由配置选择 `SqlServer` 或 `PostgreSql`，使用同一份 CP6 代码和发布文件；一个应用实例的 Core、Space、IdentityPriority、ErpIntegration 必须使用同一 Provider 和目标数据库。
 
 本页不授权切换现有环境、把已有 SQL Server 数据搬到 PostgreSQL、在同一实例混用两种 Provider，或执行生产部署。生产候选、环境推广与真实恢复验收仍遵循 [R2 主规范](../client/r2/README.md)、[发布流程](./RELEASE-PROCESS.md) 和 [本地验证策略](./LOCAL-VALIDATION-POLICY.md)。GitHub R2 + GHCR 保持唯一候选与部署权威。
@@ -141,6 +144,6 @@ runner 成功结束时，向 `Remove-Cp6OwnedDatabases` 传入本次明确的 re
 
 2026-10-03 的 WP6 本地应用验证实际使用 PostgreSQL `18.6` 与 SQL Server `16.0.1000.6`。这两个精确版本是观察到的验证环境，不扩展为所有历史/未来版本或生产发行组合的支持承诺；换引擎版本、客户端工具或依赖后按受影响范围重新验证。
 
-修复前两库正式 Application 分项各完成 17 个必需入口，覆盖首次/重复初始化、隔离 API 健康/登录/授权、两个真实用户的 WebSocket 通知、原生新库恢复、全表数据对账、恢复后待发通知及幂等重放和旧 Data Protection 游标续页。各运行的两个临时库已清理并确认不存在。两库使用同一组 261 个发布文件，API SHA-256 为 `445E9B73EB39277C8D395677DCDDE5E14B48AB834890ACB79C985A2AC4F6B9A5`；正式两库运行的 2009 个相关源码/配置输入也相同。这是该历史本地验证发布物的身份，不是当前源码新构建结果或 R2 候选身份。随后 BUG155 由 PR156 修复生产 Space 校验事务恢复并交付；WP6 接入后以新的发布物和执行目录完成最终应用验收，保留原件及历史适用范围。
+修复前两库正式 Application 分项各完成 17 个必需入口，覆盖首次/重复初始化、隔离 API 健康/登录/授权、两个真实用户的 WebSocket 通知、原生新库恢复、全表数据对账、恢复后待发通知及幂等重放和旧 Data Protection 游标续页。各运行的两个临时库已清理并确认不存在。两库使用同一组 261 个发布文件，API SHA-256 为 `445E9B73EB39277C8D395677DCDDE5E14B48AB834890ACB79C985A2AC4F6B9A5`；正式两库运行的 2009 个相关源码/配置输入也相同。这是该历史本地验证发布物的身份，不是当前源码新构建结果或 R2 候选身份。随后 BUG155/157/159 分别由 PR156/158/160 修复生产 Space 校验、楼层和任务领取事务恢复并交付；WP6 接入后以新的 claim-fix 执行目录和当前源码发布物完成最终矩阵及应用验收，保留原件及历史适用范围。
 
 正式两库 Matrix 和最终归档、远端交付仍待完成，因此此时不声明 WP6 或父任务完成。Application 分项均记录 `FullAcceptance=false`，不能改称单次 Full。后续结论以 [WP6 实施记录](../audits/database-compatibility/WP6-IMPLEMENTATION.md)、对应实际原件和远端 main 包含性核对为准。部分阶段、旧证据复用或本地 `Passed` 都不能替代完整验收与生产发布门禁。

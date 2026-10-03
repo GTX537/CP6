@@ -1,0 +1,17 @@
+{
+  "Task": "BUG-159",
+  "Status": "ExecutionProvenanceCorrected",
+  "EarlierLocalCommit": "e2432ac019487de0a62b52af7323d6db71949b55",
+  "EarlierManifestSha256": "D47898921B13BA9D9DF960919F6BE9266D899C076F711A62CB9D08794A9CD029",
+  "CorrectedManifestSha256": "4A28315CE5666D6ED4420836BC40AF96FC94165F9D319C4756CB3B2BCD900B25",
+  "CorrectedScripts": [
+    "Invoke-Bug159Tests.ps1",
+    "Invoke-Bug159Groups.ps1",
+    "New-Bug159Databases.ps1",
+    "Test-Bug159LocalEvidence.ps1"
+  ],
+  "Originals": 62,
+  "AllOriginalAndIndexBytesMatch": true,
+  "SourceAndNativeTestsUnchanged": true,
+  "RemotePushPerformed": false
+}

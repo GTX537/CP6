@@ -1,0 +1,12 @@
+{
+  "Task": "BUG-159",
+  "PR": 160,
+  "Candidate": "813a5c2286fffd8038741dea79683790eba93e03",
+  "Base": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "ExpectedFiles": 72,
+  "ActualFiles": 72,
+  "AllPRBlobsMatch": true,
+  "SourceAndNativeTestsUnchanged": true,
+  "CorrectedArchiveManifestSha256": "4A28315CE5666D6ED4420836BC40AF96FC94165F9D319C4756CB3B2BCD900B25",
+  "CheckedUtc": "2026-10-03T20:51:47.5410829Z"
+}
