@@ -2,8 +2,8 @@ using Dapper;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
-using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 
 namespace CP6.WebApi.Services;
@@ -132,8 +132,8 @@ public sealed class SqlCrmOidcGrantStore(string connectionString, CrmIdentityRun
     private async Task AppendRevocationsAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<CrmOidcGrant> revoked)
     {
         if (identity is null) return;
-        await using var context = new CP6Context(new DbContextOptionsBuilder<CP6Context>().UseSqlServer(connection).Options);
-        await context.Database.UseTransactionAsync(transaction);
+        await using var context = await DatabaseSharedContext.CreateAsync<CP6Context>(new(DatabaseProvider.SqlServer),
+            connection, transaction, DatabaseContextKind.Core, options => new(options));
         var writer = new IdentitySnapshotWriter(context, identity);
         foreach (var grant in revoked.OrderBy(x => x.OrganizationId).ThenBy(x => x.Id))
             await writer.RevokeTokenAsync(grant.OrganizationId, grant.Id.ToString("D"), $"user:{grant.SubjectId:D}",

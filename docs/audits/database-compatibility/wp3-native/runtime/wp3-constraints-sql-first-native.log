@@ -1,0 +1,3 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=140, pending=0; no full catalog or business acceptance implied.
+Failed: Failures.NativeConstraintClassificationAndRollback: Exact SQL constraint-name assertions require English server messages; other locales are not inferred.

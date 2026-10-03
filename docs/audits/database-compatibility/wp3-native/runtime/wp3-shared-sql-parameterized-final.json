@@ -1,0 +1,58 @@
+{
+  "Scope": "WP3 explicitly named real runtime gates on a newly owned isolated database. Complete business/API/worker and recovery acceptance remain separate.",
+  "Suite": "shared",
+  "Case": "all",
+  "Provider": "SqlServer",
+  "StartedHostUtc": "2026-10-03T09:32:01.1797917Z",
+  "FinishedHostUtc": "2026-10-03T09:32:04.4481024Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "SourceState": "WP3 uncommitted task source; per-file input binding required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "2C185927611C1153AC57AF68ADA9DFD3950F25DAA4AEDC6BC40E9940960A55DA"
+    },
+    "CP6.DatabaseCompatibility.RuntimeProbe": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.DatabaseCompatibility.RuntimeProbe.dll",
+      "Sha256": "C1EDC60E07D43236845FC06517F204BF1BABAB762AE3510EC5CFEE18CBAB331F"
+    },
+    "CP6.Persistence.PostgreSql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "3ABA01E168A6DCADB92ECB98A826DB946487E1CFD887C8EF9833BA69AB9DA5E5"
+    },
+    "CP6.Space.Infrastructure": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "D78106DAE03796CC3869748AB444D5AE3C55E347FC24018360701961C1F98BD4"
+    },
+    "Microsoft.Data.SqlClient": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+    },
+    "Microsoft.EntityFrameworkCore": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    "Npgsql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+    }
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.Wp3Owner",
+      "Status": "Passed",
+      "Detail": "Dedicated loopback WP3 name, provider and owner verified."
+    },
+    {
+      "Name": "Installation.CoreExactHistory",
+      "Status": "Passed",
+      "Detail": "Exact Core history=140, pending=0; no full catalog or business acceptance implied."
+    },
+    {
+      "Name": "SharedContext.TransactionOwnership",
+      "Status": "Passed",
+      "Detail": "Seven child contexts: exact configured provider/target history, same physical connection/transaction, non-owning disposal, failed child disposal preserves parent, full rollback and fixture absence; business SQL compatibility not exercised."
+    }
+  ]
+}

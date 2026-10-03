@@ -1,0 +1,87 @@
+{
+  "Scope": "Post-run observation of first74-case meaningful RED compiled output before replacement by GREEN build; no pre-run or actual load-path claim",
+  "ObservedHostUtc": "2026-10-03T08:23:42.6790324Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "SourceState": "Uncommitted WP3 stubs/tests; source identifiers independently supplied by frozen workers before root test",
+  "OriginalStubSourceHashes": [
+    {
+      "Path": "CP6.Core/Persistence/DatabaseResourceLocks.cs",
+      "Sha256": "E41B43865E049E5989791AB0B8A5A056138377A410FE511B567DB6EFCD607586"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseUtcClock.cs",
+      "Sha256": "6B250536EE69DF57FC07C079CD0B95EC7288DD6B3E83FB949E49A070BB3E0BCC"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "Sha256": "02E6B3130D727A8E0AB658C732B8CB4607316D660BD8CB70C3512A7D6631CAB3"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseResourceLockTests.cs",
+      "Sha256": "3CDB47E283B13C7226C6486C3600B7459CE68C6AD7A6C9CB2E575CABDD089ACB"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseUtcClockTests.cs",
+      "Sha256": "4A556850299A523A3ADB45244C7C8A9D880B2C7FF9B10E6596F39A3BF9234B98"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseFailureClassifierTests.cs",
+      "Sha256": "653B8E8CFA92E2C5A58DEAA99CE6C98B1BA03C40CB891A48A53ADA4517BB8BF9"
+    }
+  ],
+  "OutputBinaries": [
+    {
+      "Name": "CP6.Tests",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\CP6.Tests.dll",
+      "Sha256": "E8CA190D0549A97C9DFB26CA07ED9F3CD287E80A98E46D21654A2D1AB7FD467D",
+      "ActualLoadedPathCaptured": false
+    },
+    {
+      "Name": "CP6.Core",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "274C22BB3D66B13BEFF7FCE3993874A509EFCCA1EBD5D5466DF3239748E06E89",
+      "ActualLoadedPathCaptured": false
+    },
+    {
+      "Name": "CP6.Entity",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\CP6.Entity.dll",
+      "Sha256": "46CCE32960BE03ABDD28080D77466FB86F0A36680A1B5C238E1C0DFDAF5054D8",
+      "ActualLoadedPathCaptured": false
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "67BC9F60C4AB09D3005D4A6B19E8FA6ABE1B47B50CECA0D6DAA59633BB43D441",
+      "ActualLoadedPathCaptured": false
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "AC37534E7B9B473BC56E3D67582A531C814042BC19E1B44F019C4BEF54E98E59",
+      "ActualLoadedPathCaptured": false
+    },
+    {
+      "Name": "Microsoft.EntityFrameworkCore",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+      "ActualLoadedPathCaptured": false
+    },
+    {
+      "Name": "Npgsql",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D",
+      "ActualLoadedPathCaptured": false
+    },
+    {
+      "Name": "Microsoft.Data.SqlClient",
+      "ObservedOutputPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "0B8BDA81D16FECFACFC73893F367241B00FBDDC3B63F76B74CC6012375436B45",
+      "ActualLoadedPathCaptured": false
+    }
+  ],
+  "TestLogSha256": "A5D456D54C008C7D646E8EF7FAF76122FA1157875BA3C316081B3F8C33EE9E8F",
+  "TrxSha256": "9EE3B7C3F50D2FDB4A1601A571ADA2FE5A6A6DFB67EDCD31546ABAB5894CBE3A",
+  "ActualFailed": 74,
+  "ActualPassed": 0,
+  "ActualSkipped": 0
+}

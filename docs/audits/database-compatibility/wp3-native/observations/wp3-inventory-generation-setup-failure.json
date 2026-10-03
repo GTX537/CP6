@@ -1,0 +1,18 @@
+{
+  "Kind": "ReadOnlyInventoryGenerationSetupFailure",
+  "ScriptPath": "D:\\CP6\\tmp\\Refresh-Wp3RuntimeInventory.original-regex-variable.ps1",
+  "ScriptSha256": "9DE8643E371527F115A830CFCB91E54F5C062823E3D46F7B3B160254F090558D",
+  "Operation": "pwsh -NoProfile -File D:\\CP6\\tmp\\Refresh-Wp3RuntimeInventory.ps1",
+  "ExitCode": 1,
+  "CapturedToolChunkId": "931a4c",
+  "ExactError": "Cannot find an overload for \"Add\" and the argument count: \"1\".",
+  "FailureLocation": "Refresh-Wp3RuntimeInventory.ps1:34",
+  "Cause": "PowerShell -match sets automatic case-insensitive $Matches variable; local collector named $matches was overwritten by regex match state.",
+  "Correction": "Rename read-only census collector to task-specific $censusMatches; preserve original script bytes and failed setup record.",
+  "InventoryOutputsWritten": false,
+  "DatabaseCommandsRun": 0,
+  "DotNetCommandsRun": 0,
+  "CredentialFilesRead": 0,
+  "Timestamp": null,
+  "TimestampNote": "Precise tool call UTC start/finish was not captured; null rather than inventing."
+}

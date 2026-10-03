@@ -3,13 +3,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Space;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -126,18 +126,12 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
         var snapshot = await LoadSnapshotAsync(
             target.Id,
             cancellationToken);
-        var connection = _space.Database.GetDbConnection();
-        var cp6Options = new DbContextOptionsBuilder<CP6Context>()
-            .UseSqlServer(connection)
-            .Options;
         var tenant = new TenantContext
         {
             CurrentTenantId = _execution.TenantId,
         };
-        await using var runtime = new CP6Context(cp6Options, tenant);
-        await runtime.Database.UseTransactionAsync(
-            transaction.GetDbTransaction(),
-            cancellationToken);
+        await using var runtime = await DatabaseSharedContext.CreateAsync<CP6Context>(_space,
+            DatabaseContextKind.Core, options => new(options, tenant), cancellationToken);
 
         var projection = await MaterializeCp6Async(
             runtime,

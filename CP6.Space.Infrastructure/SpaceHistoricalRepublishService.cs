@@ -66,24 +66,12 @@ public sealed class SpaceHistoricalRepublishService :
         var transactionCommitted = false;
         try
         {
-            if (_context.Database.IsSqlServer())
-            {
-                var lockResource =
-                    $"CP6:Space:Republish:{_execution.TenantId:D}:" +
-                    Hash(normalizedKey);
-                await _context.Database.ExecuteSqlInterpolatedAsync(
-                    $"""
-                    DECLARE @result int;
-                    EXEC @result = sys.sp_getapplock
-                        @Resource = {lockResource},
-                        @LockMode = 'Exclusive',
-                        @LockOwner = 'Transaction',
-                        @LockTimeout = 15000;
-                    IF @result < 0
-                        THROW 51021, 'SPACE_REPUBLISH_LOCK_UNAVAILABLE', 1;
-                    """,
-                    cancellationToken);
-            }
+            var lockResource =
+                $"CP6:Space:Republish:{_execution.TenantId:D}:" +
+                Hash(normalizedKey);
+            if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
+                    _context, lockResource, 15000, cancellationToken))
+                throw new InvalidOperationException("SPACE_REPUBLISH_LOCK_UNAVAILABLE");
 
             var concurrentReplay = await _context.HistoricalRepublishes
                 .SingleOrDefaultAsync(

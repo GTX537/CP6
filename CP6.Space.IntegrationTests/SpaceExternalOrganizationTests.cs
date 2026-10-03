@@ -6,7 +6,9 @@ using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
 
 namespace CP6.Space.IntegrationTests;
 
@@ -14,6 +16,38 @@ public sealed class SpaceExternalOrganizationTests
 {
     private static readonly DateTime Now =
         new(2026, 8, 1, 12, 0, 0, DateTimeKind.Utc);
+
+    [Theory]
+    [InlineData("23505", true)]
+    [InlineData("23503", false)]
+    [InlineData("23514", false)]
+    public async Task Injected_postgres_save_failure_preserves_organization_unique_conflict_and_other_errors(
+        string sqlState, bool mapsToBusinessConflict)
+    {
+        // Public provider exception injection exercises this caller, not the database engine.
+        var interceptor = new SaveFailureInterceptor();
+        await using var context = NewSpaceContext(Guid.NewGuid(), interceptors: [interceptor]);
+        var failure = new DbUpdateException("Injected PostgreSQL save failure",
+            new PostgresException("Injected provider condition", "ERROR", "ERROR", sqlState,
+                constraintName: "AnyOrganizationIntegrityName"));
+        interceptor.Failure = failure;
+
+        var caught = await Record.ExceptionAsync(() => NewService(context).CreateOrganizationAsync(
+            new CreateSpaceExternalOrganizationRequest("Customer", "caller-regression", "Caller regression")));
+
+        Assert.Equal(1, interceptor.FailedSaveCalls);
+        if (mapsToBusinessConflict)
+        {
+            var conflict = Assert.IsType<SpaceProblemException>(caught);
+            Assert.Equal(SpaceErrorCodes.ExternalOrganizationConflict, conflict.Code);
+            Assert.Equal(409, conflict.StatusCode);
+            Assert.Equal("An external organization with the same identity already exists.", conflict.Title);
+            Assert.Equal("reload-current-resource", conflict.RecoveryAction);
+            Assert.False(conflict.Retryable);
+        }
+        else
+            Assert.Same(failure, caught);
+    }
 
     [Fact]
     public async Task Same_code_is_isolated_by_organization_type()
@@ -238,12 +272,14 @@ public sealed class SpaceExternalOrganizationTests
     private static SpaceContext NewSpaceContext(
         Guid tenantId,
         InMemoryDatabaseRoot? root = null,
-        string? database = null) =>
+        string? database = null,
+        params IInterceptor[] interceptors) =>
         new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseInMemoryDatabase(
                     database ?? Guid.NewGuid().ToString("N"),
                     root ?? new InMemoryDatabaseRoot())
+                .AddInterceptors(interceptors)
                 .Options,
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             new FixedClock());
@@ -267,6 +303,21 @@ public sealed class SpaceExternalOrganizationTests
             Password = "test-only",
             Enable = true,
         };
+
+    private sealed class SaveFailureInterceptor : SaveChangesInterceptor
+    {
+        public DbUpdateException? Failure { get; set; }
+        public int FailedSaveCalls { get; private set; }
+
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData, InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            if (Failure is null) return base.SavingChangesAsync(eventData, result, cancellationToken);
+            FailedSaveCalls++;
+            throw Failure;
+        }
+    }
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :
         ISpaceExecutionContext;

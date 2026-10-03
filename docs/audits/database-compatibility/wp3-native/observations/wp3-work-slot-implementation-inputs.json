@@ -1,0 +1,66 @@
+{
+  "Task": "DB-COMPAT-01-WP3",
+  "Scope": "Production Space AI work-slot acquire protocol and known-table lock/skip-locked capability; real service probe gates prepared. Full budget, complete generation/CAD business and background worker adoption remain WP5.",
+  "CapturedUtc": "2026-10-03T09:17:00.2428685Z",
+  "Files": [
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\EfSpaceAiCapacityLedger.cs",
+      "Sha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiWorkSlotQueries.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.Infrastructure\\SpaceAiWorkSlotQueries.cs",
+      "Sha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/WorkSlotClaimGates.cs",
+      "AbsolutePath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\WorkSlotClaimGates.cs",
+      "Sha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507"
+    }
+  ],
+  "OriginalPgRedReportSha256": "4CE0D1828D4F3F5D8DB18FECA9FBBC60584FE2843A3F3B4909AB9439B577150D",
+  "PreservationChecks": {
+    "CapturedUtc": "2026-10-03T09:15:53.6568778Z",
+    "OriginalLedgerSha256": "561721B8844DA6A5B62352158851E48739D85C2C50E5E9F0A527313790D487A1",
+    "RenewAndReleaseSourceExactApartFromNewlines": true,
+    "AllBudgetOperationMethodsExactApartFromNewlines": true,
+    "FencedLoadSaveAndAllRemainingHelpersExactApartFromNewlines": true,
+    "CurrentAcquireHasOnlyClassifiedRetry": true,
+    "Scope": "Offline source preservation and retry-filter verification only; original SQL and PG RED execution belongs to root. No build, unit or native DB execution by this agent."
+  },
+  "GateMethods": [
+    "InitializeSpaceAsync",
+    "FirstAcquireAsync",
+    "ConcurrentMaxOneAsync",
+    "ConcurrentMaxTwoAsync",
+    "SameRunSingletonAsync",
+    "LeaseFencesAndExpiryAsync",
+    "TenantIndependenceAsync",
+    "SkipLockedAsync"
+  ],
+  "OriginalNativeEvidence": {
+    "ExecutedBy": "root",
+    "PostgreSql": "tmp/wp3-claim-pg-original-red.json/log/input: owner/Core1/Space1 passed, original actual acquisition rejected T-SQL with42601; exact fixture cleanup.",
+    "SqlServer": "Root reported original reference4/4 passed, actual Core140/Space47/first acquisition; this result was not executed or rerun by this agent."
+  },
+  "Implementation": {
+    "TenantMutex": "cp6:space:ai-work-slots:{tenant:N}; Transaction owner/public; acquire15s; ReadCommitted original isolation preserved",
+    "Initialization": "SQL original locked IF NOT EXISTS, PG literal production table INSERT ON CONFLICT(TenantId,SlotNo) DO NOTHING",
+    "ExistingRun": "SQL UPDLOCK/HOLDLOCK/ROWLOCK; PG FOR UPDATE",
+    "ActiveCount": "SQL original row/range hints retained; PG ordinary scoped Count protected by whole-acquire tenant mutex",
+    "Candidate": "SQL TOP1/UPDLOCK/READPAST/ROWLOCK; PG ORDER BY SlotNo LIMIT1 FOR UPDATE SKIP LOCKED; commandtimeout at most30s and preserves smaller caller timeout, restoring original in finally",
+    "Retries": "Only classified Deadlock/SerializationFailure/OptimisticConcurrency, at most3 attempts. Entire rollback/clear/new ReadCommitted transaction; no statement retry or external hook replay. SQL native1205 completed transaction exception accepted only when native transaction detached.",
+    "RenewRelease": "Existing EF rowversion/run/owner/expiry fences and caller transaction semantics untouched"
+  },
+  "NativeProbeScope": "Real production Space migrations only, exact known prefix/full history; random owned legal tenant graph, two physical sessions with actual start barrier, exact fixture cleanup. Controlled fixture UTC lease clock; authoritative advancing DB clock is proven by separate prior root gate.",
+  "ValidationByThisAgent": {
+    "SourcePreservationChecksPassed": true,
+    "TargetedDiffCheckPassed": true,
+    "BuildExecuted": false,
+    "UnitExecuted": false,
+    "NativeDbExecuted": false,
+    "RemoteExecuted": false
+  },
+  "Status": "FrozenAwaitingRootBuildAndRealDualDatabaseGates"
+}

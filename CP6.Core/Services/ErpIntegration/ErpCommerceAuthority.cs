@@ -1,8 +1,8 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Entity;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DTOs.Erp;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.ErpIntegration;
@@ -31,9 +31,9 @@ public sealed class ErpCommerceAuthority(CP6Context db, TimeProvider? clock = nu
         partner.IsFrozen = input.IsFrozen;
         Touch(partner, actor);
         try { await db.SaveChangesAsync(ct); }
-        catch (DbUpdateException error) when (error.InnerException is SqlException sql &&
-            sql.Errors.Cast<SqlError>().Any(e => e.Number is 2601 or 2627 &&
-                e.Message.Contains("IX_T_WebBusinessPartner_TenantId_CrmAccountId", StringComparison.Ordinal)))
+        catch (DbUpdateException error) when (
+            DatabaseFailureClassifier.Classify(error) is { Kind: DatabaseFailureKind.UniqueConstraint } failure &&
+            failure.MatchesConstraint("IX_T_WebBusinessPartner_TenantId_CrmAccountId"))
         {
             // Two different partners can pass the friendly precheck concurrently.
             // Only this named uniqueness violation is the account-binding business conflict.

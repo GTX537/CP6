@@ -15,7 +15,7 @@ namespace CP6.Core.Services.Common;
 /// カウンタの加算は呼び出し側の SaveChanges と同一トランザクションで確定するため、
 /// 採番→実体登録が原子的になる（従来の MAX(...)+1 と同等以上の整合性）。
 /// 呼び出し側は本メソッド後に必ず SaveChangesAsync を行うこと。
-/// SQL Server ORD allocation is immediately serialized across ordinary, backorder and CRM writers.
+/// SQL Server and PostgreSQL ORD allocation is immediately serialized across ordinary, backorder and CRM writers.
 /// It joins an existing transaction; callers without one reserve a number independently (gaps are possible).
 /// </remarks>
 public static class DocNumber
@@ -24,7 +24,7 @@ public static class DocNumber
     public static async Task<(string No, int Seq)> NextAsync(CP6Context db, string funcCode, DateTime? date = null)
     {
         var code = funcCode.ToUpperInvariant();
-        if (code == "ORD" && db.Database.IsSqlServer())
+        if (code == "ORD" && (db.Database.IsSqlServer() || db.Database.IsNpgsql()))
             return await NextOrderAsync(db, date);
         // 同一 DbContext 内で複数回採番する場合（例：FSC 一括発行のループ）、
         // 未保存の追加済みカウンタ行を DB クエリは拾えないため、まず Local を確認する。
@@ -45,11 +45,21 @@ public static class DocNumber
         if (db.ChangeTracker.Entries<DocSequence>().Any(e => e.Entity.FuncCode == "ORD" &&
                 e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted))
             throw new InvalidOperationException("ORD_SEQUENCE_HAS_PENDING_MANUAL_CHANGE");
+        var postgreSql = db.Database.IsNpgsql();
+        // A single PG UPSERT serializes both absent-row creation and existing increments.
+        // Its independent reservation needs no multi-statement Serializable snapshot;
+        // an existing caller transaction always retains its own isolation and rollback.
         await using var ownedTransaction = db.Database.CurrentTransaction is null
-            ? await db.Database.BeginTransactionAsync(IsolationLevel.Serializable) : null;
+            ? await db.Database.BeginTransactionAsync(postgreSql ? IsolationLevel.ReadCommitted : IsolationLevel.Serializable) : null;
         await using var command = db.Database.GetDbConnection().CreateCommand();
         command.Transaction = db.Database.CurrentTransaction!.GetDbTransaction();
-        command.CommandText = """
+        command.CommandText = postgreSql ? """
+            INSERT INTO public."T_DocSequence" ("Id","FuncCode","LastSeq","CreateDate")
+            VALUES (@id,'ORD',1,@now)
+            ON CONFLICT ("FuncCode") DO UPDATE
+            SET "LastSeq"="T_DocSequence"."LastSeq"+1
+            RETURNING "LastSeq";
+            """ : """
             DECLARE @numbers TABLE (Number int NOT NULL);
             UPDATE dbo.T_DocSequence WITH (UPDLOCK,HOLDLOCK)
             SET LastSeq=LastSeq+1 OUTPUT inserted.LastSeq INTO @numbers WHERE FuncCode=N'ORD';
@@ -59,7 +69,12 @@ public static class DocNumber
             SELECT Number FROM @numbers;
             """;
         var id = command.CreateParameter(); id.ParameterName = "@id"; id.Value = Guid.NewGuid(); command.Parameters.Add(id);
-        var now = command.CreateParameter(); now.ParameterName = "@now"; now.Value = DateTime.UtcNow; command.Parameters.Add(now);
+        var now = command.CreateParameter(); now.ParameterName = "@now";
+        // Preserve the original UTC clock digits in this timestamp-without-zone column.
+        // An explicit unspecified PG value avoids applying the connection's time zone.
+        now.Value = postgreSql ? DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified) : DateTime.UtcNow;
+        if (postgreSql) now.DbType = DbType.DateTime2;
+        command.Parameters.Add(now);
         var value = await command.ExecuteScalarAsync();
         var sequence = Convert.ToInt32(value, System.Globalization.CultureInfo.InvariantCulture);
         if (ownedTransaction is not null) await ownedTransaction.CommitAsync();

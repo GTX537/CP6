@@ -1,8 +1,8 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.Infrastructure;
@@ -413,10 +413,7 @@ public sealed class SpaceExternalOrganizationService(
             await context.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException exception)
-            when (exception.GetBaseException() is SqlException
-                  {
-                      Number: 2601 or 2627,
-                  })
+            when (DatabaseFailureClassifier.Classify(exception).Kind == DatabaseFailureKind.UniqueConstraint)
         {
             throw new SpaceProblemException(
                 conflictCode,

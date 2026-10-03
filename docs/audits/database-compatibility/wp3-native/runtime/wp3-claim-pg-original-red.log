@@ -1,0 +1,4 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=1, pending=0; no full catalog or business acceptance implied.
+Passed: Installation.SpaceExactHistory: Actual production Space migration history=1, pending=0; known-prefix guard enforced. No EnsureCreated or substitute model.
+Failed: Claims.WorkSlotFirstAcquire: PostgresException SQLSTATE=42601; constraint=unspecified

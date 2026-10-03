@@ -1,0 +1,5 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=140, pending=0; no full catalog or business acceptance implied.
+Failed: Locks.TransactionLifecycle: SqlException Number=0
+Failed: Locks.SessionLifecycle: SqlException Number=0
+Passed: Clock.AdvancingDatabaseUtc: Two UTC Kind reads advanced in one native transaction and matched independent SYSUTCDATETIME bounds; caller connection remained open. No application-clock input or business-date conversion.

@@ -1,0 +1,68 @@
+{
+  "Scope": "Actual source/output observation after the recorded build and before this native probe. Named inputs are observed, not claimed to be a complete compiler input manifest. Original main tree identifies unchanged repository files; uncommitted observed helpers retain exact hashes.",
+  "CapturedHostUtc": "2026-10-03T08:32:21.8760047Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "SourceState": "Uncommitted WP3 task source",
+  "Sources": [
+    {
+      "Path": "CP6.Core/Services/Common/DocNumber.cs",
+      "Sha256": "CCFB53B85263A3F0C7269DC24FD6D498EFCE529C1D4DDA5245C7A4FFFE43357B"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseResourceLocks.cs",
+      "Sha256": "5C91AFA1AEC7B6B3D7710355CE857ECE3BC15C9060CCD4E71657C6264A0061A9"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseUtcClock.cs",
+      "Sha256": "1B0F438DDCCB7D48EA8AA391DFEC7E96BF2BE133E520D262577FC175BA6794E9"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "Sha256": "54358EE384753CF382DF502A2B4D5778D2A26676AB1CDA7BF040DC24762019A6"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "Sha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+      "Sha256": "C8F3521C294F15793A8CB3BE0AB8D598A7DDBC88573A52042AF12C6CC16BFB26"
+    },
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "69DCBD468C3CB742CFAEFDE5FFA8B2A518230C2710E3CE31E46F5AE9A9DA2106"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+      "Sha256": "560B02BAB5E20BEE872438D552CD7C64E409DEF902196E97B899428900F78161"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/FailureGates.cs",
+      "Sha256": "100D6D5376FA4DFB64A72DF61753155BC5ADFCCB38E6D16C86E5728EFC53EDF8"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/OrderNumberGates.cs",
+      "Sha256": "25B975564BC02E197B7635579AC14832377B4213B3B61117131C34243ECA3C2E"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/packages.lock.json",
+      "Sha256": "6155B97413ED665582D8E906C5284C35BBCF75C01668821042855E95D95275B4"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/Program.cs",
+      "Sha256": "407F379D99E32CF13CB6662A8DE37F9F9E62B4350A27600E335CFDD849E425ED"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+      "Sha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/RuntimeFixture.cs",
+      "Sha256": "334DB0A3B924C5C5A3962DC7B6F41D42395BBE276E0D460D7209853041BCA81F"
+    }
+  ],
+  "ProbeBinarySha256": "A9CDE86995505C6B35C49E4B6B7565316088FA4B86F19831749F75E21FA4E2EE",
+  "Suite": "orders",
+  "Case": "all",
+  "Initialize": false
+}

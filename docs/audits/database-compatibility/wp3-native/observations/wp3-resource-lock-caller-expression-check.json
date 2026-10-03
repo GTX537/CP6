@@ -1,0 +1,129 @@
+{
+  "CapturedUtc": "2026-10-03T08:58:15.0952999Z",
+  "Baseline": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "Methods": [
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+      "Method": "AcquireFloorEditLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:floor-edit:{execution.TenantId:N}:\" +\n                    $\"{versionId:N}:{floorLogicalId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:floor-edit:{execution.TenantId:N}:\" +\n                       $\"{versionId:N}:{floorLogicalId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "Method": "AcquireFloorEditLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:floor-edit:{_execution.TenantId:N}:\" +\n                    $\"{versionId:N}:{floorLogicalId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:floor-edit:{_execution.TenantId:N}:\" +\n                       $\"{versionId:N}:{floorLogicalId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "Method": "AcquireVersionFloorInitializationLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:version-floor-init:{_execution.TenantId:N}:\" +\n                    $\"{versionId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:version-floor-init:{_execution.TenantId:N}:\" +\n                       $\"{versionId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceUnderlayHistory.cs",
+      "Method": "AcquireFloorEditLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:floor-edit:{_execution.TenantId:N}:\" +\n                    $\"{versionId:N}:{floorLogicalId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:floor-edit:{_execution.TenantId:N}:\" +\n                       $\"{versionId:N}:{floorLogicalId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyService.cs",
+      "Method": "AcquireFloorEditLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:floor-edit:{execution.TenantId:N}:\" +\n                    $\"{versionId:N}:{floorLogicalId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:floor-edit:{execution.TenantId:N}:\" +\n                       $\"{versionId:N}:{floorLogicalId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+      "Method": "AcquireFloorEditLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:floor-edit:{tenantId:N}:\" +\n                    $\"{versionId:N}:{floorLogicalId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:floor-edit:{tenantId:N}:\" +\n                       $\"{versionId:N}:{floorLogicalId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "Method": "AcquireFloorEditLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:floor-edit:{execution.TenantId:N}:\" +\n                    $\"{versionId:N}:{floorLogicalId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:floor-edit:{execution.TenantId:N}:\" +\n                       $\"{versionId:N}:{floorLogicalId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "Method": "AcquireCadParseLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:cad-parse:{execution.TenantId:N}:{sourceId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:cad-parse:{execution.TenantId:N}:{sourceId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "Method": "AcquireRunQueueLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:ai-apply:{execution.TenantId:N}:{runId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:ai-apply:{execution.TenantId:N}:{runId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 15000,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiRetentionStore.cs",
+      "Method": "AcquireTenantLockAsync",
+      "OriginalResourceExpression": "$\"cp6:space:ai-retention:{tenantId:N}\"",
+      "CurrentResourceExpression": "$\"cp6:space:ai-retention:{tenantId:N}\"",
+      "ResourceExpressionExactApartFromWhitespace": true,
+      "DomainErrorBodyExact": true,
+      "TimeoutMilliseconds": 0,
+      "OriginalTimeoutPresent": true,
+      "CurrentTimeoutPresent": true,
+      "NonEmptyEvidence": true
+    }
+  ],
+  "Scope": "Targeted offline comparison of ten unchanged Space resource identities/domain error bodies and wait budgets; not a new task-level review or executed unit/native validation.",
+  "Passed": true,
+  "NativeValidationExecutedByThisAgent": false
+}

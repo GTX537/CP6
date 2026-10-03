@@ -1,0 +1,15 @@
+{
+  "CheckedHostUtc": "2026-10-03T09:35:47.7803689Z",
+  "Document": "docs/audits/database-compatibility/WP3-PROVIDER-BRANCHES.md",
+  "DocumentSha256": "56F4CEB98E459ED58D2F6D71A3132E0346C2C0160B4EFFA802BE2A1773E71072",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "ScannedFiles": 1571,
+  "StrictMatches": 45,
+  "StrictFiles": 34,
+  "ProviderLiteralMatches": 79,
+  "TableFiles": 46,
+  "ScanManifestSha256": "D24E5CD7D7AE0195EDC10BFF8CD3017CBDCA6FD7ADFA6711BB4C86412C49E3F7",
+  "PerFileLinesAndHashesAndLinks": "Passed",
+  "NoMissingOrExtraFiles": true,
+  "Validation": "Static documentation/source census only; no compilation, native database, remote or Actions"
+}

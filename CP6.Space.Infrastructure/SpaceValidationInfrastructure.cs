@@ -93,23 +93,11 @@ public sealed class SpaceValidationService : ISpaceValidationService
                 IsolationLevel.Serializable,
                 cancellationToken)
             : null;
-        if (_context.Database.IsSqlServer())
-        {
-            var lockResource =
-                $"CP6:Space:Validation:{_execution.TenantId:D}:{versionId:D}";
-            await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"""
-                DECLARE @result int;
-                EXEC @result = sys.sp_getapplock
-                    @Resource = {lockResource},
-                    @LockMode = 'Exclusive',
-                    @LockOwner = 'Transaction',
-                    @LockTimeout = 15000;
-                IF @result < 0
-                    THROW 51000, 'SPACE_VALIDATION_LOCK_UNAVAILABLE', 1;
-                """,
-                cancellationToken);
-        }
+        var lockResource =
+            $"CP6:Space:Validation:{_execution.TenantId:D}:{versionId:D}";
+        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
+                _context, lockResource, 15000, cancellationToken))
+            throw new InvalidOperationException("SPACE_VALIDATION_LOCK_UNAVAILABLE");
         var scope = await RequireScopeAsync(versionId, cancellationToken);
         _access.EnsureSiteAccess(scope.Model.SiteId, write: true);
         if (scope.Version.Status is not (

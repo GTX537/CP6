@@ -1,0 +1,430 @@
+{
+  "Scope": "Root targeted review of four unique-conflict catch predicates, four injected caller regressions, exact two PostgreSQL transitive lock additions, and byte-preserving evidence attributes. Post-run source/output observation, not a complete compiler manifest or native caller acceptance.",
+  "CapturedHostUtc": "2026-10-03T09:41:44.1201685Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "Conclusion": "No blocking finding in targeted changes",
+  "Sources": [
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpCommerceAuthority.cs",
+      "Sha256": "8FE31D71286D9ED1A332373085B7B6F32516DF3A587195B52B2A184E87CE0E38"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceFieldPolicyService.cs",
+      "Sha256": "046970EACE91FE151565C0A02461D8BD1EB3EF080A29D898AF0C6216C4E288CC"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExternalOrganizationService.cs",
+      "Sha256": "A6E5CDA26B7E730AA0F6B1687427402A2FA6B8FCB2E8398DDE3A3874A00E982C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExternalGrantService.cs",
+      "Sha256": "CE7C9DE191F9A781D70C56D7EE71C96AA8D8C92E10416C5BF0E81B886EFE47B0"
+    },
+    {
+      "Path": "CP6.Tests/ErpIntegration/ErpCommerceAuthorityTests.cs",
+      "Sha256": "D16E797E2BCB7AECFC68489EA70827F687258BF10901922F3100B52D96CE647F"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceFieldPolicyServiceTests.cs",
+      "Sha256": "928EB33478C8073411634CD4A8C28FFAE87F05E24BA5246AAE0AA3EC7D78C4F7"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalOrganizationTests.cs",
+      "Sha256": "08BC027A1817A101C9487141E842D31FFB89E77BF72DD6C17EDEE3C2DAD6F890"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalGrantServiceTests.cs",
+      "Sha256": "072A7310999DD36603E8BE0AD572E53DA97326207F79BD7420BA37E5A54ED521"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/packages.lock.json",
+      "Sha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5"
+    },
+    {
+      "Path": ".gitattributes",
+      "Sha256": "74E85FEC532B1A0D8F1A2597D0808BDC35872D35560155CB5DC4702345BBA850"
+    }
+  ],
+  "ActualTestExecutions": [
+    {
+      "Log": "D:\\CP6\\tmp\\wp3-core-classifier-caller-tests.log",
+      "Trx": "D:\\CP6\\tmp\\db-compat-wp3-tests\\core-classifier-callers\\wp3-core-classifier-caller-tests.trx",
+      "TrxSha256": "E3702F1C4EF641B48098F9961922EB8B3BC928A1B33E29B81AF348C5E31CEC9C",
+      "Total": 54,
+      "Passed": 54,
+      "Failed": 0,
+      "NotExecuted": 0,
+      "TestDllPostrunPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Tests\\bin\\Debug\\net8.0\\CP6.Tests.dll",
+      "TestDllPostrunSha256": "C55E32C8E527BB6906085F5C164E4038E31DBB277EE98DD1677E700ECE1C0C6C"
+    },
+    {
+      "Log": "D:\\CP6\\tmp\\wp3-space-classifier-caller-tests.log",
+      "Trx": "D:\\CP6\\tmp\\db-compat-wp3-tests\\space-classifier-callers\\wp3-space-classifier-caller-tests.trx",
+      "TrxSha256": "9F873BF3F542BE34BA560668D94FD6BC63032C199F247CD934823EAC7E904404",
+      "Total": 22,
+      "Passed": 22,
+      "Failed": 0,
+      "NotExecuted": 0,
+      "TestDllPostrunPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.Space.IntegrationTests\\bin\\Debug\\net8.0\\CP6.Space.IntegrationTests.dll",
+      "TestDllPostrunSha256": "02555767E6EB76119E671F38476CC2A224001DB98A3A88F001D28186EBD6EE5E"
+    }
+  ],
+  "InjectedCases": 14,
+  "NativeAcceptance": "Reuse separate unchanged classifier constraint/rollback native reports; these 14 cases inject public provider exceptions at real service SaveChanges.",
+  "TaskReviewInputComparison": [
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Persistence/DatabaseResourceLocks.cs",
+      "OriginalSha256": "6E3ACC6D3AB2C052A601C070BD8C5616105B7BA664110AE6CAE307C71D861593",
+      "CurrentSha256": "6E3ACC6D3AB2C052A601C070BD8C5616105B7BA664110AE6CAE307C71D861593",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Persistence/DatabaseUtcClock.cs",
+      "OriginalSha256": "1B0F438DDCCB7D48EA8AA391DFEC7E96BF2BE133E520D262577FC175BA6794E9",
+      "CurrentSha256": "1B0F438DDCCB7D48EA8AA391DFEC7E96BF2BE133E520D262577FC175BA6794E9",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "OriginalSha256": "801B62608E2D9E6A62BC7B27437E7A7D80C2ED3F02D3794F28ED7295ECA43D92",
+      "CurrentSha256": "801B62608E2D9E6A62BC7B27437E7A7D80C2ED3F02D3794F28ED7295ECA43D92",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Persistence/DatabaseSharedContext.cs",
+      "OriginalSha256": "FD06C38C2B003B9B6644C476635CB1D17F61321875CECBD4531772F450F511F5",
+      "CurrentSha256": "FD06C38C2B003B9B6644C476635CB1D17F61321875CECBD4531772F450F511F5",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Services/Common/DocNumber.cs",
+      "OriginalSha256": "CCFB53B85263A3F0C7269DC24FD6D498EFCE529C1D4DDA5245C7A4FFFE43357B",
+      "CurrentSha256": "CCFB53B85263A3F0C7269DC24FD6D498EFCE529C1D4DDA5245C7A4FFFE43357B",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
+      "OriginalSha256": "0BC6A322545D5EEFBAE26BB9C0022A76CA6BB962DB46B6A92AF385A34E4DF01E",
+      "CurrentSha256": "0BC6A322545D5EEFBAE26BB9C0022A76CA6BB962DB46B6A92AF385A34E4DF01E",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "OriginalSha256": "64B8389F9D1AE1AD667AB03F7AE3F4CA896E8F8082AAAE7C2E8725DE2C9027C7",
+      "CurrentSha256": "64B8389F9D1AE1AD667AB03F7AE3F4CA896E8F8082AAAE7C2E8725DE2C9027C7",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+      "OriginalSha256": "A20E273FF32D2D08D5D56C6C30581017F99B1FFABAB524E0EF60C1F0CBADAA71",
+      "CurrentSha256": "A20E273FF32D2D08D5D56C6C30581017F99B1FFABAB524E0EF60C1F0CBADAA71",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Services/ErpIntegration/ErpInboxReplayService.cs",
+      "OriginalSha256": "3AF8AA0E0FFF79BD468CAD836F2AF1F36C48DE2C69828602DB41DF645DE7AC4F",
+      "CurrentSha256": "3AF8AA0E0FFF79BD468CAD836F2AF1F36C48DE2C69828602DB41DF645DE7AC4F",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Core/Services/ErpIntegration/ErpDeliveryReplayService.cs",
+      "OriginalSha256": "8499B1D9A00A3F09CB52DA799B1B69CAF9E6F3ADA5404B418195FE072A60D1AD",
+      "CurrentSha256": "8499B1D9A00A3F09CB52DA799B1B69CAF9E6F3ADA5404B418195FE072A60D1AD",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.WebApi/Services/CrmOidcGrantStore.cs",
+      "OriginalSha256": "5475DD7381E0B069CA1763628D53EDFF633F42202DF71872FEC674209F7DAB0F",
+      "CurrentSha256": "5475DD7381E0B069CA1763628D53EDFF633F42202DF71872FEC674209F7DAB0F",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Space.Infrastructure/Cp6SpaceRuntimeMaterializer.cs",
+      "OriginalSha256": "23445EE85999123C69CE704A66C5DF4671F374654B4648851D56C494C657CE2D",
+      "CurrentSha256": "23445EE85999123C69CE704A66C5DF4671F374654B4648851D56C494C657CE2D",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Tests/Persistence/DatabaseFailureClassifierTests.cs",
+      "OriginalSha256": "6E564D3F5A597E373629892799D72776F85EC9CA6DC3B938D7D94A789DF668C2",
+      "CurrentSha256": "6E564D3F5A597E373629892799D72776F85EC9CA6DC3B938D7D94A789DF668C2",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Tests/Persistence/DatabaseResourceLockTests.cs",
+      "OriginalSha256": "3CDB47E283B13C7226C6486C3600B7459CE68C6AD7A6C9CB2E575CABDD089ACB",
+      "CurrentSha256": "3CDB47E283B13C7226C6486C3600B7459CE68C6AD7A6C9CB2E575CABDD089ACB",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Tests/Persistence/DatabaseSharedContextTests.cs",
+      "OriginalSha256": "9369654F8CB37F42B1AF91587ACEC4C7894E8279E8C1DC144D8C9F9A3092640B",
+      "CurrentSha256": "9369654F8CB37F42B1AF91587ACEC4C7894E8279E8C1DC144D8C9F9A3092640B",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "CP6.Tests/Persistence/DatabaseUtcClockTests.cs",
+      "OriginalSha256": "4A556850299A523A3ADB45244C7C8A9D880B2C7FF9B10E6596F39A3BF9234B98",
+      "CurrentSha256": "4A556850299A523A3ADB45244C7C8A9D880B2C7FF9B10E6596F39A3BF9234B98",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+      "OriginalSha256": "560B02BAB5E20BEE872438D552CD7C64E409DEF902196E97B899428900F78161",
+      "CurrentSha256": "560B02BAB5E20BEE872438D552CD7C64E409DEF902196E97B899428900F78161",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/FailureGates.cs",
+      "OriginalSha256": "13126651452996F5DFDA7B6DE1134ACEB09837BC92A1578859DF5E9B6B5CCD04",
+      "CurrentSha256": "13126651452996F5DFDA7B6DE1134ACEB09837BC92A1578859DF5E9B6B5CCD04",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/IdentityCursorGates.cs",
+      "OriginalSha256": "F8CB0C1C4BD2A11DAA56863F3CAFAAFC636401D85C8ED7346461EE05F5F265F4",
+      "CurrentSha256": "F8CB0C1C4BD2A11DAA56863F3CAFAAFC636401D85C8ED7346461EE05F5F265F4",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/IdentityPageSnapshotGate.cs",
+      "OriginalSha256": "199290E093178447F3B5E44EBBFE843F7DE57F75C5976FF33511F9865EB7853D",
+      "CurrentSha256": "199290E093178447F3B5E44EBBFE843F7DE57F75C5976FF33511F9865EB7853D",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/OrderNumberGates.cs",
+      "OriginalSha256": "60FE19FAF91538EEFCAB4207C2E291B36B93D82064A4834A1D20409DB7259323",
+      "CurrentSha256": "C803FF113599180AA4C9435D1AEA3E65903E21BC837673E314AC7AD2936E580A",
+      "Same": false
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/packages.lock.json",
+      "OriginalSha256": "6155B97413ED665582D8E906C5284C35BBCF75C01668821042855E95D95275B4",
+      "CurrentSha256": "6155B97413ED665582D8E906C5284C35BBCF75C01668821042855E95D95275B4",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/Program.cs",
+      "OriginalSha256": "B14B2BC6765489C4EFB741882EA2282C355B683AC85C1D71A1F5798F88CD9C0D",
+      "CurrentSha256": "B14B2BC6765489C4EFB741882EA2282C355B683AC85C1D71A1F5798F88CD9C0D",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+      "OriginalSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+      "CurrentSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/RuntimeFixture.cs",
+      "OriginalSha256": "7790AF7F30CC6CC57B6F3B9C81E225C32667EE94937869F7B6AEF1DF725F09E5",
+      "CurrentSha256": "7790AF7F30CC6CC57B6F3B9C81E225C32667EE94937869F7B6AEF1DF725F09E5",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/SharedContextGates.cs",
+      "OriginalSha256": "EE7E685435C71D46CEA133466601D74D2078E763B9190A288724C3067C248F90",
+      "CurrentSha256": "EE7E685435C71D46CEA133466601D74D2078E763B9190A288724C3067C248F90",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/TransactionFailureGates.cs",
+      "OriginalSha256": "11F8C9298703326CBBA089F99F2E2E48A7042CA95F66DD8AE11F84E4297F94E2",
+      "CurrentSha256": "11F8C9298703326CBBA089F99F2E2E48A7042CA95F66DD8AE11F84E4297F94E2",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/WorkSlotClaimGates.cs",
+      "OriginalSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+      "CurrentSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/README.md",
+      "OriginalSha256": "6E9CE01B9F44DC21F89294367CECC38F4A011DD5BBF6AC8FF2C96A996960E7E7",
+      "CurrentSha256": "6E9CE01B9F44DC21F89294367CECC38F4A011DD5BBF6AC8FF2C96A996960E7E7",
+      "Same": true
+    },
+    {
+      "Review": "wp3-core-task-review.json",
+      "Path": "docs/audits/database-compatibility/WP3-IMPLEMENTATION.md",
+      "OriginalSha256": "F18978FBAF35B5CA56602CA81E61D498829E045131AC340CCB22A327D12688CF",
+      "CurrentSha256": "F18978FBAF35B5CA56602CA81E61D498829E045131AC340CCB22A327D12688CF",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs",
+      "OriginalSha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C",
+      "CurrentSha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "OriginalSha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE",
+      "CurrentSha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceAiRetentionStore.cs",
+      "OriginalSha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928",
+      "CurrentSha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceAiWorkSlotQueries.cs",
+      "OriginalSha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134",
+      "CurrentSha256": "E624B365AC1EC056F2101E1E84798091DE925654C93AA3B94EB58D88E58B7134",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "OriginalSha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419",
+      "CurrentSha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+      "OriginalSha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B",
+      "CurrentSha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "OriginalSha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F",
+      "CurrentSha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+      "OriginalSha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7",
+      "CurrentSha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+      "OriginalSha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809",
+      "CurrentSha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyService.cs",
+      "OriginalSha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9",
+      "CurrentSha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceHistoricalRepublishService.cs",
+      "OriginalSha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED",
+      "CurrentSha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceResourceLocks.cs",
+      "OriginalSha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6",
+      "CurrentSha256": "7A2F9B13AB144FE585CCD31BCBB5970EE5EE6C946FCA001A1AE71148D61B1DE6",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceUnderlayHistory.cs",
+      "OriginalSha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77",
+      "CurrentSha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+      "OriginalSha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F",
+      "CurrentSha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Tests/Space/SpaceAuditPermissionSeedTests.cs",
+      "OriginalSha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E",
+      "CurrentSha256": "A210AFD71AF2CF177B39F14F1DBCA9EA25C8304C3CBA20902465F204BBE3264E",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.Tests/Space/SpaceIntegrationEventOccurredAtUtcTests.cs",
+      "OriginalSha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2",
+      "CurrentSha256": "972616F443E5BC833A462313327046BE53735B66C78B8168F9806042E8F3E6D2",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.WebApi/BackgroundServices/SpaceIntegrationEventOccurredAtUtcBackfill.cs",
+      "OriginalSha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+      "CurrentSha256": "4F0E7A2B9EADE0724AF3600554456F63D8F8F337B21A43E4DE6850907C237A04",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "CP6.WebApi/Seed/SpaceAuditPermissionSeed.cs",
+      "OriginalSha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C",
+      "CurrentSha256": "8403C698D8DCC199B850F90AD83E37CF240859A5C13A0F647DD8C6A076A5DF7C",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/ResourceLockGates.cs",
+      "OriginalSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+      "CurrentSha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+      "Same": true
+    },
+    {
+      "Review": "wp3-space-task-review.json",
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/WorkSlotClaimGates.cs",
+      "OriginalSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+      "CurrentSha256": "C339A887848215652DC7EBB0CBC459A63E9D21C63F4BCEEE4552421A81916507",
+      "Same": true
+    }
+  ],
+  "DeltaResolution": "wp3-core-review-resolution.json",
+  "TimeoutCoverage": "ORD normal native concurrency re-executed on both providers; forced timeout path inspected statically only.",
+  "UnrelatedRootLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5",
+  "DependencyChange": "Only existing Core exact Npgsql8.0.8/EF8.0.11 requirements propagated to Space test lock; original NU1004 retained; refreshed locked restore passed."
+}

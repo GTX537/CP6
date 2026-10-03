@@ -3,11 +3,46 @@ using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql;
 
 namespace CP6.Space.IntegrationTests;
 
 public sealed class SpaceExternalGrantServiceTests
 {
+    [Theory]
+    [InlineData("23505", true)]
+    [InlineData("23503", false)]
+    [InlineData("23514", false)]
+    public async Task Injected_postgres_save_failure_preserves_grant_unique_conflict_and_other_errors(
+        string sqlState, bool mapsToBusinessConflict)
+    {
+        // Reuse the existing published graph; injected errors are not native DB acceptance.
+        var interceptor = new SaveFailureInterceptor();
+        await using var fixture = await CreateFixtureAsync(interceptor);
+        var failure = new DbUpdateException("Injected PostgreSQL save failure",
+            new PostgresException("Injected provider condition", "ERROR", "ERROR", sqlState,
+                constraintName: "AnyGrantIntegrityName"));
+        interceptor.Failure = failure;
+        var service = new SpaceExternalGrantService(fixture.Context, fixture.Execution, fixture.Clock);
+
+        var caught = await Record.ExceptionAsync(() => service.CreateGrantAsync(
+            fixture.Organization.Id, new CreateSpaceExternalGrantRequest(fixture.SiteId)));
+
+        Assert.Equal(1, interceptor.FailedSaveCalls);
+        if (mapsToBusinessConflict)
+        {
+            var conflict = Assert.IsType<SpaceProblemException>(caught);
+            Assert.Equal(SpaceErrorCodes.ExternalGrantConflict, conflict.Code);
+            Assert.Equal(409, conflict.StatusCode);
+            Assert.Equal("The external grant scope conflicts with current data.", conflict.Title);
+            Assert.Equal("reload-current-grants", conflict.RecoveryAction);
+            Assert.False(conflict.Retryable);
+        }
+        else
+            Assert.Same(failure, caught);
+    }
+
     [Fact]
     public async Task Create_and_update_grant_validate_published_scope_and_version()
     {
@@ -179,7 +214,7 @@ public sealed class SpaceExternalGrantServiceTests
             .IsConcurrencyToken);
     }
 
-    private static async Task<Fixture> CreateFixtureAsync()
+    private static async Task<Fixture> CreateFixtureAsync(params IInterceptor[] interceptors)
     {
         var tenantId = Guid.NewGuid();
         var actorId = Guid.NewGuid();
@@ -191,6 +226,7 @@ public sealed class SpaceExternalGrantServiceTests
             .UseInMemoryDatabase(
                 Guid.NewGuid().ToString("N"),
                 SpaceTestDatabaseRoots.InMemory)
+            .AddInterceptors(interceptors)
             .Options;
         var context = new SpaceContext(options, execution, clock);
         var organization = SpaceExternalOrganization.Create(
@@ -280,6 +316,21 @@ public sealed class SpaceExternalGrantServiceTests
         DateTime Now) : IAsyncDisposable
     {
         public ValueTask DisposeAsync() => Context.DisposeAsync();
+    }
+
+    private sealed class SaveFailureInterceptor : SaveChangesInterceptor
+    {
+        public DbUpdateException? Failure { get; set; }
+        public int FailedSaveCalls { get; private set; }
+
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData, InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            if (Failure is null) return base.SavingChangesAsync(eventData, result, cancellationToken);
+            FailedSaveCalls++;
+            throw Failure;
+        }
     }
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :

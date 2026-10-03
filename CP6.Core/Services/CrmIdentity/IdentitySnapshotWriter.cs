@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Platform.EntityFramework;
 using Dapper;
@@ -138,9 +139,8 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
             new Cp6OutboxStore<CP6Context>(db, runtime.Validator, runtime.Clock).Enqueue(envelope);
             return;
         }
-        await using var queue = new IdentityMessagingContext(new DbContextOptionsBuilder<IdentityMessagingContext>()
-            .UseSqlServer(db.Database.GetDbConnection()).Options);
-        await queue.Database.UseTransactionAsync(db.Database.CurrentTransaction!.GetDbTransaction(), cancellationToken).ConfigureAwait(false);
+        await using var queue = await DatabaseSharedContext.CreateAsync<IdentityMessagingContext>(db,
+            DatabaseContextKind.IdentityPriority, options => new(options), cancellationToken).ConfigureAwait(false);
         new Cp6OutboxStore<IdentityMessagingContext>(queue, runtime.Validator, runtime.Clock).Enqueue(envelope);
         await queue.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }

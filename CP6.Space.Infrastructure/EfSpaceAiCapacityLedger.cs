@@ -1,8 +1,10 @@
 using System.Data;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Domain;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -52,18 +54,16 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                     cancellationToken);
             try
             {
+                if (!await DatabaseResourceLocks.TryAcquireTransactionAsync(
+                        _context, SpaceAiWorkSlotQueries.TenantLockResource(tenantId), 15000, cancellationToken))
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return null;
+                }
                 await EnsureWorkSlotsAsync(tenantId, cancellationToken);
                 var now = RequireUtcNow();
-                var existing = await _context.TenantAiWorkSlots
-                    .FromSqlInterpolated(
-                        $"""
-                        SELECT *
-                        FROM [Space_TenantAiWorkSlot]
-                            WITH (UPDLOCK, HOLDLOCK, ROWLOCK)
-                        WHERE [TenantId] = {tenantId}
-                          AND [RunId] = {runId}
-                        """)
-                    .SingleOrDefaultAsync(cancellationToken);
+                var existing = await SpaceAiWorkSlotQueries.FindExistingAsync(
+                    _context, tenantId, runId, cancellationToken);
                 if (existing is not null)
                 {
                     if (!existing.IsAvailable(now) &&
@@ -86,38 +86,16 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                     return ToLease(existing);
                 }
 
-                var activeCount = await _context.TenantAiWorkSlots
-                    .FromSqlInterpolated(
-                        $"""
-                        SELECT *
-                        FROM [Space_TenantAiWorkSlot]
-                            WITH (UPDLOCK, HOLDLOCK, ROWLOCK)
-                        WHERE [TenantId] = {tenantId}
-                          AND [RunId] IS NOT NULL
-                          AND [LeaseExpiresAtUtc] > {now}
-                        """)
-                    .CountAsync(cancellationToken);
+                var activeCount = await SpaceAiWorkSlotQueries.CountActiveAsync(
+                    _context, tenantId, now, cancellationToken);
                 if (activeCount >= maxConcurrentRuns)
                 {
                     await transaction.CommitAsync(cancellationToken);
                     return null;
                 }
 
-                var available = await _context.TenantAiWorkSlots
-                    .FromSqlInterpolated(
-                        $"""
-                        SELECT TOP (1) *
-                        FROM [Space_TenantAiWorkSlot]
-                            WITH (UPDLOCK, READPAST, ROWLOCK)
-                        WHERE [TenantId] = {tenantId}
-                          AND [SlotNo] <= {maxConcurrentRuns}
-                          AND (
-                              [RunId] IS NULL OR
-                              [LeaseExpiresAtUtc] <= {now})
-                        ORDER BY [SlotNo]
-                        """)
-                    .ToListAsync(cancellationToken);
-                var slot = available.SingleOrDefault();
+                var slot = await SpaceAiWorkSlotQueries.FindAvailableAsync(
+                    _context, tenantId, maxConcurrentRuns, now, cancellationToken);
                 if (slot is null)
                 {
                     await transaction.CommitAsync(cancellationToken);
@@ -133,16 +111,21 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                 await transaction.CommitAsync(cancellationToken);
                 return ToLease(slot);
             }
-            catch (DbUpdateException) when (
-                retry + 1 < ConcurrencyRetries)
+            catch (Exception exception) when (
+                retry + 1 < ConcurrencyRetries && IsRetryableWorkSlotFailure(exception))
             {
-                await transaction.RollbackAsync(CancellationToken.None);
-            }
-            catch (SqlException exception) when (
-                exception.Number == 1205 &&
-                retry + 1 < ConcurrencyRetries)
-            {
-                await transaction.RollbackAsync(CancellationToken.None);
+                try
+                {
+                    await transaction.RollbackAsync(CancellationToken.None);
+                }
+                catch (InvalidOperationException) when (
+                    DatabaseFailureClassifier.Classify(exception).DatabaseErrorCode == 1205
+                    && transaction.GetDbTransaction().Connection is null)
+                {
+                    // SQL Server can already complete the entire native deadlock-victim transaction.
+                }
+                _context.ChangeTracker.Clear();
+                // A new whole ReadCommitted transaction rereads every condition on the next attempt.
             }
         }
 
@@ -454,32 +437,15 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
         return released;
     }
 
-    private async Task EnsureWorkSlotsAsync(
+    private Task EnsureWorkSlotsAsync(
         Guid tenantId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken) =>
+        SpaceAiWorkSlotQueries.EnsureAsync(_context, tenantId, cancellationToken);
+
+    private static bool IsRetryableWorkSlotFailure(Exception exception)
     {
-        for (var slotNo = 1;
-             slotNo <= SpaceTenantAiWorkSlot.PlatformSlotCount;
-             slotNo++)
-        {
-            await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"""
-                IF NOT EXISTS (
-                    SELECT 1
-                    FROM [Space_TenantAiWorkSlot]
-                        WITH (UPDLOCK, HOLDLOCK)
-                    WHERE [TenantId] = {tenantId}
-                      AND [SlotNo] = {slotNo})
-                BEGIN
-                    INSERT INTO [Space_TenantAiWorkSlot]
-                        ([TenantId], [SlotNo], [RunId], [LeaseOwner],
-                         [LeaseExpiresAtUtc])
-                    VALUES
-                        ({tenantId}, {slotNo}, NULL, NULL, NULL)
-                END
-                """,
-                cancellationToken);
-        }
+        var failure = DatabaseFailureClassifier.Classify(exception);
+        return failure.CanRetryTransaction || failure.Kind == DatabaseFailureKind.OptimisticConcurrency;
     }
 
     private async Task<SpaceTenantAiWorkSlot> LoadFencedSlotAsync(

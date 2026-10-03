@@ -1,0 +1,1752 @@
+{
+  "Task": "DB-COMPAT-01-WP3",
+  "Scope": "Byte-exact original local evidence: original failures and passes, source/output observations, review and targeted resolutions, caller injection tests, actual initialization smoke and owned database cleanup. Counts do not imply combined execution or complete business acceptance.",
+  "ArchivedHostUtc": "2026-10-03T09:43:18.8452864Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "PreparedManifestSha256": "5EE19CF66E524E1CB51F89A79D3B898DC01A587E6D97DD7942C8D6D159D76D30",
+  "OriginalEntries": 151,
+  "UniqueArchivedFiles": 147,
+  "Excluded": "Credentials/ownership receipt contents, private cursor state/Data Protection keys and raw application stdout/stderr. App reports retain their local-only log hashes; these logs are not archived.",
+  "Limits": "Historical RED stubs have recorded source hashes only, not preserved stub source bytes. Source/output observations are not complete compiler manifests. Forced ORD timeout path was statically reviewed; normal ORD concurrency was rerun. Caller exception tests inject failures and are not native DB business acceptance. Native reports include prerequisite checks and preserve original scope.",
+  "Entries": [
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\capabilities-first-green\\wp3-capabilities-first-green.trx",
+      "Path": "tests/capabilities-first-green/wp3-capabilities-first-green.trx",
+      "Sha256": "2579183815B97D4003B9980B948C4E0179CB04AD8E88CA1B84F6F0FC1182E6B9",
+      "Bytes": 112463,
+      "Type": "ActualUnitTestTrx",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "green"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\capabilities-first-red\\wp3-capabilities-first-red.trx",
+      "Path": "tests/capabilities-first-red/wp3-capabilities-first-red.trx",
+      "Sha256": "9EE3B7C3F50D2FDB4A1601A571ADA2FE5A6A6DFB67EDCD31546ABAB5894CBE3A",
+      "Bytes": 304465,
+      "Type": "ActualUnitTestTrx",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\shared-context-first-green\\wp3-shared-context-first-green.trx",
+      "Path": "tests/shared-context-first-green/wp3-shared-context-first-green.trx",
+      "Sha256": "FC73907B97072ADFC13B4A157ABFC33525AB3BDF30199E82A11E7E25751CEF01",
+      "Bytes": 28984,
+      "Type": "ActualUnitTestTrx",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "green"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\shared-context-first-red\\wp3-shared-context-first-red.trx",
+      "Path": "tests/shared-context-first-red/wp3-shared-context-first-red.trx",
+      "Sha256": "CD8C63B98329D1ECC51D765F61BBA46753ED645A69B0A0CD8C1AE6A34BF5783B",
+      "Bytes": 90946,
+      "Type": "ActualUnitTestTrx",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\startup-lock-callers\\wp3-startup-lock-caller-tests.trx",
+      "Path": "tests/startup-lock-callers/wp3-startup-lock-caller-tests.trx",
+      "Sha256": "74D979CDA60CC30A043CD80D6C77498BDF07CA91A6EDC945E1DA567EC54C52F5",
+      "Bytes": 47863,
+      "Type": "ActualUnitTestTrx",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "green-with-preserved-skips"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\startup-sql-native\\wp3-startup-sql-native-tests.trx",
+      "Path": "tests/startup-sql-native/wp3-startup-sql-native-tests.trx",
+      "Sha256": "9D3E129BADEC035B4B8764FE553AA39BD2AA96F30567C2E16BBE290B5768DD90",
+      "Bytes": 4438,
+      "Type": "ActualUnitTestTrx",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "green"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-DbCompatWp3RuntimeProbe.ps1",
+      "Path": "runners/Invoke-DbCompatWp3RuntimeProbe.ps1",
+      "Sha256": "F2AF62531B1A361399479476DC3576CF6BFE9EF9D150BD57CF2A8F4F73E1E5E7",
+      "Bytes": 4134,
+      "Type": "LocalRunnerSource",
+      "ScopeTags": [
+        "static-source-only",
+        "local-machine-paths-and-secret-variable-names",
+        "no-credential-values"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\New-DbCompatWp3Databases.ps1",
+      "Path": "runners/New-DbCompatWp3Databases.ps1",
+      "Sha256": "CB61DA322F593F4305DD6B4A1825AA44A32E96BFF5AC9C9440FBB543AA630158",
+      "Bytes": 4225,
+      "Type": "LocalRunnerSource",
+      "ScopeTags": [
+        "static-source-only",
+        "local-machine-paths-and-secret-variable-names",
+        "no-credential-values"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-capabilities-first-green.log",
+      "Path": "tests/logs/wp3-capabilities-first-green.log",
+      "Sha256": "311D715FB0E877692C37FFF2C806B440BA3E3C737C7AC2190C50D53DD929C12D",
+      "Bytes": 1497,
+      "Type": "ActualUnitTestLog",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "paired-original-trx"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-capabilities-first-red.log",
+      "Path": "tests/logs/wp3-capabilities-first-red.log",
+      "Sha256": "A5D456D54C008C7D646E8EF7FAF76122FA1157875BA3C316081B3F8C33EE9E8F",
+      "Bytes": 97919,
+      "Type": "ActualUnitTestLog",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "paired-original-trx"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-pg-concurrency-first-input.json",
+      "Path": "runtime/wp3-claim-pg-concurrency-first-input.json",
+      "Sha256": "27E44A17FAB3124FAD01A87593FB6A84CA14928E947DA03CA769D3E82ECA31B2",
+      "Bytes": 9262,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-pg-concurrency-first.json",
+      "Path": "runtime/wp3-claim-pg-concurrency-first.json",
+      "Sha256": "69BC8309FC97C44A325D486EF8B239F00BBE7F8A7561CC88FCD1097E74A9BCED",
+      "Bytes": 6026,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-pg-concurrency-first.log",
+      "Path": "runtime/wp3-claim-pg-concurrency-first.log",
+      "Sha256": "4E9A78375B693C2EBADBFABE6C60EB5621C8C33464BDF33D38D04436B5E6A045",
+      "Bytes": 2701,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-pg-original-red-input.json",
+      "Path": "runtime/wp3-claim-pg-original-red-input.json",
+      "Sha256": "4F4F2B4CA03878B2002C3E2D96A86F580CBCA9FAFECB8DE91540941AE9D470BD",
+      "Bytes": 8735,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-pg-original-red.json",
+      "Path": "runtime/wp3-claim-pg-original-red.json",
+      "Sha256": "4CE0D1828D4F3F5D8DB18FECA9FBBC60584FE2843A3F3B4909AB9439B577150D",
+      "Bytes": 3377,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-pg-original-red.log",
+      "Path": "runtime/wp3-claim-pg-original-red.log",
+      "Sha256": "6A7AC22359B2C66432037DD9D498BA7A920BA18E46A4932C18C24606B29EFA61",
+      "Bytes": 467,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-sql-concurrency-first-input.json",
+      "Path": "runtime/wp3-claim-sql-concurrency-first-input.json",
+      "Sha256": "B74DC7683DD68440BBA5E60E5C0DE74A928DAE6F257C1E8FD49F59EEB0741C42",
+      "Bytes": 9262,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-sql-concurrency-first.json",
+      "Path": "runtime/wp3-claim-sql-concurrency-first.json",
+      "Sha256": "24A554D37F784AEAC15F29EA22EF6CE2373E0825B8090451126189F3449B645B",
+      "Bytes": 6034,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-sql-concurrency-first.log",
+      "Path": "runtime/wp3-claim-sql-concurrency-first.log",
+      "Sha256": "008A54B3A9B983A006ACEF9F27CA1AE0CBE85E7483A2B90C83D0370C530BDE24",
+      "Bytes": 2704,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-sql-original-reference-input.json",
+      "Path": "runtime/wp3-claim-sql-original-reference-input.json",
+      "Sha256": "367A93C89DD234251BBBD28C2299A5F998915025592ED6DDA1A406EC6A24C678",
+      "Bytes": 8735,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-sql-original-reference.json",
+      "Path": "runtime/wp3-claim-sql-original-reference.json",
+      "Sha256": "2F6D6854977FED6305A91E17D0ADD756B01B0B46C9C52F24D5AA55DCFEBA7830",
+      "Bytes": 3665,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-claim-sql-original-reference.log",
+      "Path": "runtime/wp3-claim-sql-original-reference.log",
+      "Sha256": "8051FFDD941F957B84439B6BA7F7FEC4263893494A31A89469FA04651D3ABF05",
+      "Bytes": 749,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-classifier-caller-freeze.json",
+      "Path": "observations/wp3-classifier-caller-freeze.json",
+      "Sha256": "5F1D0967000A45DEE9D95F728D7E933C140538BCA4484BA33CF2D9AFF4BC7027",
+      "Bytes": 1089,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-and-transactions-sql-native-input.json",
+      "Path": "runtime/wp3-constraints-and-transactions-sql-native-input.json",
+      "Sha256": "827ABD6E3EAF2195ECC151F20310AF347BF8D2323B7D434BB7EF4A9762CF7AF0",
+      "Bytes": 3423,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-and-transactions-sql-native.json",
+      "Path": "runtime/wp3-constraints-and-transactions-sql-native.json",
+      "Sha256": "142187CADAE8B579954A7A06B0EFA8453433CABECA1874E843E9A98D1B2DFFBB",
+      "Bytes": 4012,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-and-transactions-sql-native.log",
+      "Path": "runtime/wp3-constraints-and-transactions-sql-native.log",
+      "Sha256": "B56B5961FFE4FE8C6F89899D560ABD5BF5B6B21095882A656D26F50BC69FA20D",
+      "Bytes": 1093,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-pg-first-native-input.json",
+      "Path": "runtime/wp3-constraints-pg-first-native-input.json",
+      "Sha256": "EAD41841CAA0FCDCB18B556B61C09BC9C13113651F47D1842C7AA1B92937817A",
+      "Bytes": 3050,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-pg-first-native.json",
+      "Path": "runtime/wp3-constraints-pg-first-native.json",
+      "Sha256": "BE19B97B83DAE51CFDB7C5A3F0DE262DEDAFB756278E4BE3834BE59B23D40E8F",
+      "Bytes": 3412,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-pg-first-native.log",
+      "Path": "runtime/wp3-constraints-pg-first-native.log",
+      "Sha256": "4D6E710A8EAD1383263BFE27370F8C2BF6EEE706F144C1B4886019E3E460CB6C",
+      "Bytes": 567,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-sql-first-native-input.json",
+      "Path": "runtime/wp3-constraints-sql-first-native-input.json",
+      "Sha256": "0D9D839A1FF7CAA1611877BD142DA316E5AA1F1CE54DB2C0C38D22880DA587C9",
+      "Bytes": 3050,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-sql-first-native.json",
+      "Path": "runtime/wp3-constraints-sql-first-native.json",
+      "Sha256": "D0BDB099B787CDAE022ECAB9B654A97D27F41CFD7A5B19DBCEBD0915CEB383C2",
+      "Bytes": 3223,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-sql-first-native.log",
+      "Path": "runtime/wp3-constraints-sql-first-native.log",
+      "Sha256": "531CA98C35E7AEA98309074E745ED37EE39F697D0BA15E128B27F24E8F1BD897",
+      "Bytes": 373,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-sql-native-zh-red-input.json",
+      "Path": "runtime/wp3-constraints-sql-native-zh-red-input.json",
+      "Sha256": "4A0BE9FC68638275C36A3610CB02C497821A3923D8EB2E4C7EE2C7CBDACC2FBD",
+      "Bytes": 3239,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-sql-native-zh-red.json",
+      "Path": "runtime/wp3-constraints-sql-native-zh-red.json",
+      "Sha256": "6A24F2142886D2033A2221D2F18F541C2F5609E994E210656C5CB3DC47DCA951",
+      "Bytes": 3205,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-constraints-sql-native-zh-red.log",
+      "Path": "runtime/wp3-constraints-sql-native-zh-red.log",
+      "Sha256": "E359F6BE19D58333CFE036D0793E29292562B7A42E6F1749C67797C73AB74E3D",
+      "Bytes": 355,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-core-review-resolution.json",
+      "Path": "review/wp3-core-review-resolution.json",
+      "Sha256": "244FFB8068420830B633A00883FB134DD8D96B3656B6827D9979C5FAA6208075",
+      "Bytes": 4111,
+      "Type": "IndependentTaskReviewRecord",
+      "ScopeTags": [
+        "independent-task-review",
+        "historical-conclusion-preserved",
+        "not-runtime-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-core-task-review.json",
+      "Path": "review/wp3-core-task-review.json",
+      "Sha256": "56168B64FA1ECEB4E6F3E4C281C3F3C42020CEAC0D1A8E526AF40249E3C7B88C",
+      "Bytes": 16389,
+      "Type": "IndependentTaskReviewRecord",
+      "ScopeTags": [
+        "independent-task-review",
+        "historical-conclusion-preserved",
+        "not-runtime-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-cursor-pg-lifecycle-and-page-snapshot-input.json",
+      "Path": "runtime/wp3-cursor-pg-lifecycle-and-page-snapshot-input.json",
+      "Sha256": "D67BA1E77FA0FD88A901BDA327B02BE135408EBF91BD3E0CF55CE1463243614F",
+      "Bytes": 9263,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-cursor-pg-lifecycle-and-page-snapshot.json",
+      "Path": "runtime/wp3-cursor-pg-lifecycle-and-page-snapshot.json",
+      "Sha256": "0B0271A2845AF310B99D0815A7473D3569646995688F323A6897CD2E3796038F",
+      "Bytes": 4350,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-cursor-pg-lifecycle-and-page-snapshot.log",
+      "Path": "runtime/wp3-cursor-pg-lifecycle-and-page-snapshot.log",
+      "Sha256": "C9028C29AF2ACAAD270A73569CA5C2161EB2B946DAFDA0395B6079DC28A798FB",
+      "Bytes": 1298,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-cursor-sql-lifecycle-input.json",
+      "Path": "runtime/wp3-cursor-sql-lifecycle-input.json",
+      "Sha256": "B242F6BEAF022AF85CFC548F968C1E2BC5A479C643EFC73EF7EA236F1145A7E7",
+      "Bytes": 9263,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-cursor-sql-lifecycle.json",
+      "Path": "runtime/wp3-cursor-sql-lifecycle.json",
+      "Sha256": "867BF0D6A80582B1ADCB1BE5FA4672B2A6B840ADB6E58D10C02FA9A3371D16C0",
+      "Bytes": 3956,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-cursor-sql-lifecycle.log",
+      "Path": "runtime/wp3-cursor-sql-lifecycle.log",
+      "Sha256": "0CD77EF43C932262EEA0CB3219EE65A169C03D0D395151FE0253561A17037604",
+      "Bytes": 968,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-databases-created.json",
+      "Path": "observations/wp3-databases-created.json",
+      "Sha256": "5476BFFBF379925FD6726815112878F3D8F2A0A5EEA28B6B163A6BDD3AFBFB71",
+      "Bytes": 226,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-failure-gates.before-native-locale.cs",
+      "Path": "sources-original/wp3-failure-gates.before-native-locale.cs",
+      "Sha256": "100D6D5376FA4DFB64A72DF61753155BC5ADFCCB38E6D16C86E5728EFC53EDF8",
+      "Bytes": 10316,
+      "Type": "PreservedOriginalHelperSource",
+      "ScopeTags": [
+        "historical-source-bytes",
+        "original-red-or-diagnostic-baseline",
+        "not-final-implementation"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-first-red-input.json",
+      "Path": "observations/wp3-first-red-input.json",
+      "Sha256": "332B98B5FB135F5E119E8A00D96C6A3AFB4C76E950AB0A2A7E6EA3F16970EDA3",
+      "Bytes": 4189,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-identity-cursor-gates-original-red.cs",
+      "Path": "sources-original/wp3-identity-cursor-gates-original-red.cs",
+      "Sha256": "9303353FC62CA9945DB02DEDDAF11EA593B13E8FA4087E121188E5FB288D8ADC",
+      "Bytes": 8330,
+      "Type": "PreservedOriginalHelperSource",
+      "ScopeTags": [
+        "historical-source-bytes",
+        "original-red-or-diagnostic-baseline",
+        "not-final-implementation"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-identity-cursor-pg-original-red-input.json",
+      "Path": "runtime/wp3-identity-cursor-pg-original-red-input.json",
+      "Sha256": "5B02E77617522623663AD51D6097A5CEFCAFA9B613C9BA6E6886BA0180C6058D",
+      "Bytes": 8379,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-identity-cursor-pg-original-red.json",
+      "Path": "runtime/wp3-identity-cursor-pg-original-red.json",
+      "Sha256": "5166ECF169994840A159C0F0AFC4CA901C8A4B6B5B830FEA326433B3A702A571",
+      "Bytes": 3144,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-identity-cursor-pg-original-red.log",
+      "Path": "runtime/wp3-identity-cursor-pg-original-red.log",
+      "Sha256": "C98AB8EEA4121F360C9ABBBECBD0DABBCF39EED37A4FB03FB2BA4447B001741D",
+      "Bytes": 301,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-identity-cursor-sql-original-red-input.json",
+      "Path": "runtime/wp3-identity-cursor-sql-original-red-input.json",
+      "Sha256": "F171E53A802F04EC687AC721CD76677787666D6AF5055A9F4730EC51F1500BC7",
+      "Bytes": 8379,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-identity-cursor-sql-original-red.json",
+      "Path": "runtime/wp3-identity-cursor-sql-original-red.json",
+      "Sha256": "ECA0A77D7B141A78F4EBAEAF883691A48D05A8D117B50FFCEB88A77544AE5E1F",
+      "Bytes": 3210,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-identity-cursor-sql-original-red.log",
+      "Path": "runtime/wp3-identity-cursor-sql-original-red.log",
+      "Sha256": "9181D80CF75C5049D8868DDCDC20C77382ECFF9D0DBC8C4B252FD4F7C8648735",
+      "Bytes": 357,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-inventory-generation-setup-failure.json",
+      "Path": "observations/wp3-inventory-generation-setup-failure.json",
+      "Sha256": "1AE0D435F39730AC3D3DDE828D6911AEA788F9959A956B1EB68F58F75E122A3D",
+      "Bytes": 1050,
+      "Type": "OfflineEvidencePreparationFailure",
+      "ScopeTags": [
+        "actual-offline-failure",
+        "not-database-or-dotnet-failure"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-inventory-markdown-generation-setup-failure.json",
+      "Path": "observations/wp3-inventory-markdown-generation-setup-failure.json",
+      "Sha256": "204D538EDBDA7AF1E2E40CBAFDF53804C0D5FF318A517F5DF43116DEFEA26128",
+      "Bytes": 627,
+      "Type": "OfflineEvidencePreparationFailure",
+      "ScopeTags": [
+        "actual-offline-failure",
+        "not-database-or-dotnet-failure"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-first-native-input.json",
+      "Path": "runtime/wp3-locks-clock-first-native-input.json",
+      "Sha256": "D3F08F25D2E6DC2E41FA65148C14E1E2A8663E177865A96365D8CE63320EF8D2",
+      "Bytes": 3047,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-first-native.json",
+      "Path": "runtime/wp3-locks-clock-first-native.json",
+      "Sha256": "D751FA6CA0BE2DF2BFC84C4862F48FC6815957138398E977C2EB5C287F5694BE",
+      "Bytes": 3983,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-first-native.log",
+      "Path": "runtime/wp3-locks-clock-first-native.log",
+      "Sha256": "59680EEBB89C2B4F4A7ABDA4401B50BFC02B27C02C824BC041DECD449D86126E",
+      "Bytes": 1003,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-sql-cancellation-fixed-input.json",
+      "Path": "runtime/wp3-locks-clock-sql-cancellation-fixed-input.json",
+      "Sha256": "959E85BC519DA990264A8337C116EB1621FFF7BFDE3EEF2E7EB5695FCBC927C3",
+      "Bytes": 3047,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-sql-cancellation-fixed.json",
+      "Path": "runtime/wp3-locks-clock-sql-cancellation-fixed.json",
+      "Sha256": "5E9DF413CC40551328579261EAC118EF94C163126B295D319F43B826E7DC70C2",
+      "Bytes": 3986,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-sql-cancellation-fixed.log",
+      "Path": "runtime/wp3-locks-clock-sql-cancellation-fixed.log",
+      "Sha256": "13C6B34EC11C3A55A135966660B255E27A346488030694540B7A4C0E5057396A",
+      "Bytes": 1001,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-sql-reference-input.json",
+      "Path": "runtime/wp3-locks-clock-sql-reference-input.json",
+      "Sha256": "2BA4500C7EBD78A5C6C9E6524CC744C48249204FC22148A21FA84AB8D3AA81C8",
+      "Bytes": 3047,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-sql-reference.json",
+      "Path": "runtime/wp3-locks-clock-sql-reference.json",
+      "Sha256": "486F55C6CCBFC740D1C807DAC818CB92A4F3EB2A0FCF8CC1848859F2C0791708",
+      "Bytes": 3536,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-clock-sql-reference.log",
+      "Path": "runtime/wp3-locks-clock-sql-reference.log",
+      "Sha256": "318E739509C6893DE61D9B6A0E6247605FD8CD0AF9B64E05A3D5DC0DD8C41A6D",
+      "Bytes": 551,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-sql-cancellation-diagnostic-input.json",
+      "Path": "runtime/wp3-locks-sql-cancellation-diagnostic-input.json",
+      "Sha256": "BF7BEDCCBDDEA24CD58AB89F5F2602D49BF47E9F65CB53A1787CF80649503F3A",
+      "Bytes": 3047,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-sql-cancellation-diagnostic.json",
+      "Path": "runtime/wp3-locks-sql-cancellation-diagnostic.json",
+      "Sha256": "D9BFA54894211371D885564B356B2942489FEB7AB6DA7148C657F1034A4774C6",
+      "Bytes": 3721,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "diagnostic-with-preserved-failure"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-locks-sql-cancellation-diagnostic.log",
+      "Path": "runtime/wp3-locks-sql-cancellation-diagnostic.log",
+      "Sha256": "A1E248ED4A8A9A3788A0F23A1EED4D938FECD6C164DFDCFFD184AA89A88F20A2",
+      "Bytes": 737,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-atomic-first-green-input.json",
+      "Path": "runtime/wp3-orders-atomic-first-green-input.json",
+      "Sha256": "5392E91628E0876A5CCBEADDF3AEF65F3903019E3B326ED7E303A329C76F7D11",
+      "Bytes": 3048,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-atomic-first-green.json",
+      "Path": "runtime/wp3-orders-atomic-first-green.json",
+      "Sha256": "2E0052E37973DC1FBBCF657233F45844661419D82BBC2C8E06B08A2E65A9C0C9",
+      "Bytes": 4101,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-atomic-first-green.log",
+      "Path": "runtime/wp3-orders-atomic-first-green.log",
+      "Sha256": "87BF322AEF24EFE303DA72CABE7FCEEDFCE9B9FC8AD3FE57E20C7EF9CD44F48A",
+      "Bytes": 982,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-atomic-sql-regression-input.json",
+      "Path": "runtime/wp3-orders-atomic-sql-regression-input.json",
+      "Sha256": "86982CBC765EC20C6019CEF69DF61B36ED37CAB76695EE56216F5DBE93E8AE07",
+      "Bytes": 3048,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-atomic-sql-regression.json",
+      "Path": "runtime/wp3-orders-atomic-sql-regression.json",
+      "Sha256": "4BCE114B32314C81DA6F6C8D92367F0D5EECE544E18AC0DEC504B737C91617AD",
+      "Bytes": 4108,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-atomic-sql-regression.log",
+      "Path": "runtime/wp3-orders-atomic-sql-regression.log",
+      "Sha256": "511074D1E6C04B92131C0044420F6325190A8875DAF75E865F215CED8C1A9844",
+      "Bytes": 984,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-extra-pg-first-native-input.json",
+      "Path": "runtime/wp3-orders-extra-pg-first-native-input.json",
+      "Sha256": "A1A6FEAFF928F2CAB79EA5A2F3E51E635050FC321F91CE579867ED636B815887",
+      "Bytes": 8385,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-extra-pg-first-native.json",
+      "Path": "runtime/wp3-orders-extra-pg-first-native.json",
+      "Sha256": "1EDECD47B7CCA152BD8651F7B74112B5A7AE62CBA62A08C9E9C347D41B779333",
+      "Bytes": 3838,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-extra-pg-first-native.log",
+      "Path": "runtime/wp3-orders-extra-pg-first-native.log",
+      "Sha256": "618B10FB5E17869B8F78676447D2BC57F0D72933693BD67CE44FA1D4C0C894FA",
+      "Bytes": 851,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-extra-sql-first-native-input.json",
+      "Path": "runtime/wp3-orders-extra-sql-first-native-input.json",
+      "Sha256": "D8EF50969D620CA34F5F242D54F8265DCC88303A651314D5E52B8E30804B625B",
+      "Bytes": 8385,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-extra-sql-first-native.json",
+      "Path": "runtime/wp3-orders-extra-sql-first-native.json",
+      "Sha256": "5ADE844F62CF5991563B28845951AD9ED643B0E93035E7E84C7EB9F6911631AF",
+      "Bytes": 3843,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-extra-sql-first-native.log",
+      "Path": "runtime/wp3-orders-extra-sql-first-native.log",
+      "Sha256": "5AAD32056DAC84988026385146029A3D28521FCD41E00E21A755EF8C7081A356",
+      "Bytes": 853,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-immediate-before-adapter-red-input.json",
+      "Path": "runtime/wp3-orders-immediate-before-adapter-red-input.json",
+      "Sha256": "D14C8FC6622AAF8EF768567CE5AA9024702E913921E0A9C3DAEEF462CD91FF2F",
+      "Bytes": 2692,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-immediate-before-adapter-red.json",
+      "Path": "runtime/wp3-orders-immediate-before-adapter-red.json",
+      "Sha256": "266DF2E48CC41A92333EC3399095C414B80A228DB410B125512404D2017244EC",
+      "Bytes": 3130,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "red"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-immediate-before-adapter-red.log",
+      "Path": "runtime/wp3-orders-immediate-before-adapter-red.log",
+      "Sha256": "37894E4516445272C9AE54A9A3DA1F2C3FF29C0B65D199574A59DD255A0D84C7",
+      "Bytes": 327,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-immediate-original-sql-reference-input.json",
+      "Path": "runtime/wp3-orders-immediate-original-sql-reference-input.json",
+      "Sha256": "035B98FB11F45A11B7A806D9B740E640D55C6B38EEC5C935CDB3E9DF5B5D38AE",
+      "Bytes": 2692,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-immediate-original-sql-reference.json",
+      "Path": "runtime/wp3-orders-immediate-original-sql-reference.json",
+      "Sha256": "5E926949AAF7316C96B30A634AC4958190F60FC9743AD3E1622F10F21564F79A",
+      "Bytes": 3156,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-immediate-original-sql-reference.log",
+      "Path": "runtime/wp3-orders-immediate-original-sql-reference.log",
+      "Sha256": "30C3FE09C9B225917075C6D9909CB9396DBAF6B10BFA06168211F38A140449FD",
+      "Bytes": 348,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-pg-final-review-input.json",
+      "Path": "runtime/wp3-orders-pg-final-review-input.json",
+      "Sha256": "5FCCE565EA05EF4EE9E6ECD3474B0A26CDB2B9AB7FB671D0C2D905FE3E2948B6",
+      "Bytes": 9955,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-pg-final-review.json",
+      "Path": "runtime/wp3-orders-pg-final-review.json",
+      "Sha256": "EC2E5F65985BEF3E38190CF37F37E65372721F80D699D92B716C491DA6F4815C",
+      "Bytes": 4098,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-pg-final-review.log",
+      "Path": "runtime/wp3-orders-atomic-first-green.log",
+      "Sha256": "87BF322AEF24EFE303DA72CABE7FCEEDFCE9B9FC8AD3FE57E20C7EF9CD44F48A",
+      "Bytes": 982,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-sql-final-review-input.json",
+      "Path": "runtime/wp3-orders-sql-final-review-input.json",
+      "Sha256": "1D1079B7723B740CFA72E0539889A85304BB3B65C9C3461F1C44F812A55B1E82",
+      "Bytes": 9955,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-sql-final-review.json",
+      "Path": "runtime/wp3-orders-sql-final-review.json",
+      "Sha256": "39DA13049C1511893116A4CFDBCF6C9F9FD6FF10DA3F8A504D7559221EAF080B",
+      "Bytes": 4108,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-orders-sql-final-review.log",
+      "Path": "runtime/wp3-orders-atomic-sql-regression.log",
+      "Sha256": "511074D1E6C04B92131C0044420F6325190A8875DAF75E865F215CED8C1A9844",
+      "Bytes": 984,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-resource-lock-caller-expression-check.json",
+      "Path": "observations/wp3-resource-lock-caller-expression-check.json",
+      "Sha256": "1670863661183034875B53B26480B1AE02F3C36DB106F06D3D9A7BB897795E5F",
+      "Bytes": 6642,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-resource-lock-caller-inputs.json",
+      "Path": "observations/wp3-resource-lock-caller-inputs.json",
+      "Sha256": "EB548419ABAEC0830EFB1D4CBACB025BBBE571EF28E6D10B46F3D374585AF152",
+      "Bytes": 10930,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-resource-lock-gates.original-before-cancellation-diagnostics.cs",
+      "Path": "sources-original/wp3-resource-lock-gates.original-before-cancellation-diagnostics.cs",
+      "Sha256": "D40BFEFE59093E2575D46AEE4C40B2FDD605CB5261D3108C7D8578A6C3DABA2A",
+      "Bytes": 18881,
+      "Type": "PreservedOriginalHelperSource",
+      "ScopeTags": [
+        "historical-source-bytes",
+        "original-red-or-diagnostic-baseline",
+        "not-final-implementation"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-restore-runtime-probe.log",
+      "Path": "build/wp3-restore-runtime-probe.log",
+      "Sha256": "573D3656B2E66867B0329FF0312296E86F1A944E36D72359DF5233C5DE70D372",
+      "Bytes": 989,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-restore-tests-locked.log",
+      "Path": "build/wp3-restore-tests-locked.log",
+      "Sha256": "9B43C2D6784549CE9ED97E8F6601CB45263230896B5FB6D8920F7A26662003DA",
+      "Bytes": 1033,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-inventory-current-verification.json",
+      "Path": "observations/wp3-runtime-inventory-current-verification.json",
+      "Sha256": "C7B6BBDA58191D3D21CA1EFAA3A2AF40D91B50874C7E23ACB48D1BD23BAEEF0E",
+      "Bytes": 1434,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-inventory-current.md",
+      "Path": "observations/wp3-runtime-inventory-current.md",
+      "Sha256": "324B74D77A64E957F60C9A094F8A8B551C7487B2DEA11CFF628B1E0E83079E31",
+      "Bytes": 29618,
+      "Type": "InventoryMarkdownReference",
+      "ScopeTags": [
+        "offline-source-observation",
+        "pre-WP3-implementation-plan",
+        "not-runtime-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-atomic-orders-build.log",
+      "Path": "build/wp3-runtime-probe-atomic-orders-build.log",
+      "Sha256": "3D8DAF5A95D1675C986CFCB6D86C38E0556E2AD47034A9532AAC33E9A631D11F",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-claim-red-build.log",
+      "Path": "build/wp3-runtime-probe-claim-red-build.log",
+      "Sha256": "9D3A5AC08FB58EBBB824DE91B72DBE940161A282A66E931F05EE75A4E10E6257",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-classifier-and-transaction-build.log",
+      "Path": "build/wp3-runtime-probe-classifier-and-transaction-build.log",
+      "Sha256": "AF52816C1AF3EBDF633FA7DCFCC0EF087DFF4D4C86FDE672C60041C7409A7DF3",
+      "Bytes": 2262,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-cursor-claim-green-build.log",
+      "Path": "build/wp3-runtime-probe-cursor-claim-green-build.log",
+      "Sha256": "611EE287F67C7CEA62C458194C39B7AD441512FA8B1DEDA0815EF451F184AB4A",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-cursor-red-orders-build.log",
+      "Path": "build/wp3-runtime-probe-cursor-red-orders-build.log",
+      "Sha256": "413994457DC962CFB6DEABD3EA235EDB920588B0D7A5D14BFC241B67F1BF4AE5",
+      "Bytes": 2262,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-final-review-build.log",
+      "Path": "build/wp3-runtime-probe-final-review-build.log",
+      "Sha256": "7FE23C6EE0DC7DBF000667CE2F3BF152A4AF5D8C1743F14150D531B70948BF60",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-first-build.log",
+      "Path": "build/wp3-runtime-probe-first-build.log",
+      "Sha256": "5BF5299051B4A236801F0A0E00888F76587931DEA957E76AF9EA3791705A572F",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-native-locale-red-build.log",
+      "Path": "build/wp3-runtime-probe-native-locale-red-build.log",
+      "Sha256": "99802EA16BB96722B130F04DD675579241EB8E14AF0D17339B33277B3909021A",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-sql-cancellation-diagnostic-build.log",
+      "Path": "build/wp3-runtime-probe-sql-cancellation-diagnostic-build.log",
+      "Sha256": "78C10F22441B44DB4522E7FBAB1F4193F24DD1595ECF5CF615D4C9B58B94A783",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-sql-cancellation-normalized-build.log",
+      "Path": "build/wp3-runtime-probe-sql-cancellation-normalized-build.log",
+      "Sha256": "2A58B4D0E6A301B0673FD046A882FBF08252D3582E4A5677A4AAAE59EEE2C150",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-runtime-probe-sql-cancellation-stage-diagnostic-build.log",
+      "Path": "build/wp3-runtime-probe-sql-cancellation-stage-diagnostic-build.log",
+      "Sha256": "259924172238F9973B3E164C3308F657655D0615DBE49D383B9CECF603B9FBB0",
+      "Bytes": 1166,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-first-green.log",
+      "Path": "tests/logs/wp3-shared-context-first-green.log",
+      "Sha256": "7030682212F93400D3DDA9F460A506ADB18568B2A733B1EEB847DBD46E648285",
+      "Bytes": 1498,
+      "Type": "ActualUnitTestLog",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "paired-original-trx"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-first-red.log",
+      "Path": "tests/logs/wp3-shared-context-first-red.log",
+      "Sha256": "339B53659076D88F33DC23892D3AF4A4D436E81BF90E55EA081244FC1096BDF4",
+      "Bytes": 32593,
+      "Type": "ActualUnitTestLog",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "paired-original-trx"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-pg-native-input.json",
+      "Path": "runtime/wp3-shared-context-pg-native-input.json",
+      "Sha256": "9747CB018EBD4A3F48257856B4E4C48300FB342DE680C808BA4B04F0134A95F2",
+      "Bytes": 3421,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-pg-native.json",
+      "Path": "runtime/wp3-shared-context-pg-native.json",
+      "Sha256": "6718B45202929CD04DC21ED452650A9EB0B27314961D16F1613B64A978286C98",
+      "Bytes": 3336,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-pg-native.log",
+      "Path": "runtime/wp3-shared-context-pg-native.log",
+      "Sha256": "C488B3630C6A5D9CF3564C713F5DEAE78D6FC31592EB1CDBC0E1517402773087",
+      "Bytes": 493,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-sql-native-input.json",
+      "Path": "runtime/wp3-shared-context-sql-native-input.json",
+      "Sha256": "833CDA960BE61F6A717050AE43DE8C2CFA0E57ACF52A8210BAC68F8952336F79",
+      "Bytes": 3421,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-sql-native.json",
+      "Path": "runtime/wp3-shared-context-sql-native.json",
+      "Sha256": "326BEC46B9CC6CD3AADA035179F6574F8CAA0EC99D0349B9871F9342A940AD13",
+      "Bytes": 3342,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-context-sql-native.log",
+      "Path": "runtime/wp3-shared-context-sql-native.log",
+      "Sha256": "4F7CACA3E0C252FFF611733AD74EE03291B24B5B7033E6B5101C5898C72C5662",
+      "Bytes": 495,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-pg-parameterized-final-input.json",
+      "Path": "runtime/wp3-shared-pg-parameterized-final-input.json",
+      "Sha256": "E78A21599F934F655CA8B40B69769015EDB10FB1ABFA33DEBA0A1E1A46B2EFAE",
+      "Bytes": 9955,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-pg-parameterized-final.json",
+      "Path": "runtime/wp3-shared-pg-parameterized-final.json",
+      "Sha256": "FD2CEF692CDA27AE38366F4FB071732D6703D6213662B582B127A104A7D5CEC7",
+      "Bytes": 3335,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-pg-parameterized-final.log",
+      "Path": "runtime/wp3-shared-context-pg-native.log",
+      "Sha256": "C488B3630C6A5D9CF3564C713F5DEAE78D6FC31592EB1CDBC0E1517402773087",
+      "Bytes": 493,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-sql-parameterized-final-input.json",
+      "Path": "runtime/wp3-shared-sql-parameterized-final-input.json",
+      "Sha256": "D73AC94EBF00F5336D5A9B9D1A3B185CD93B2F1189585DDFE5E707BA837A4E7C",
+      "Bytes": 9955,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-sql-parameterized-final.json",
+      "Path": "runtime/wp3-shared-sql-parameterized-final.json",
+      "Sha256": "D8CE754C60AF502EA99FD65E1251401234E4B3D75BCB1A8729C62E77624F0624",
+      "Bytes": 3343,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "SqlServer",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-shared-sql-parameterized-final.log",
+      "Path": "runtime/wp3-shared-context-sql-native.log",
+      "Sha256": "4F7CACA3E0C252FFF611733AD74EE03291B24B5B7033E6B5101C5898C72C5662",
+      "Bytes": 495,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-space-caller-tests-lock-refresh.log",
+      "Path": "build/wp3-space-caller-tests-lock-refresh.log",
+      "Sha256": "94858B56571A9DDD7A528EB79AFA62181BBD370890D938856F3C4420EA94116A",
+      "Bytes": 822,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-space-caller-tests-locked-restore-after-refresh.log",
+      "Path": "build/wp3-space-caller-tests-locked-restore-after-refresh.log",
+      "Sha256": "83C25D63062AC3F4081B0A9906D1C6F4F28AEAA966AD7AB6058598B83747B24C",
+      "Bytes": 824,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-space-caller-tests-locked-restore.log",
+      "Path": "build/wp3-space-caller-tests-locked-restore.log",
+      "Sha256": "4452AF5343857692A09A5B6FB8860B0EEB535BAAE4B4281D41A9BBA837EB624A",
+      "Bytes": 2239,
+      "Type": "ActualBuildOrRestoreLog",
+      "ScopeTags": [
+        "actual-recorded-local-build-or-restore",
+        "not-native-business-acceptance",
+        "actual-locked-restore-failure-NU1004"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-space-task-review.json",
+      "Path": "review/wp3-space-task-review.json",
+      "Sha256": "8E27A863E3B2BC0F324EE8C7F5DF5DCE9354AB6DAA46B0379904E44DD07A81D7",
+      "Bytes": 26281,
+      "Type": "IndependentTaskReviewRecord",
+      "ScopeTags": [
+        "independent-task-review",
+        "historical-conclusion-preserved",
+        "not-runtime-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-startup-lock-caller-tests.log",
+      "Path": "tests/logs/wp3-startup-lock-caller-tests.log",
+      "Sha256": "72F1DF2AA8702540A17FB981435232FFAB8204668F11DABCD613DB3B44B9D7AB",
+      "Bytes": 2091,
+      "Type": "ActualUnitTestLog",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "paired-original-trx"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-startup-sql-native-postrun-observation.json",
+      "Path": "observations/wp3-startup-sql-native-postrun-observation.json",
+      "Sha256": "A8C1FC1667AEF55C3C34B9E2BA420481295E751818E902A6C11D6625586A6283",
+      "Bytes": 1893,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-startup-sql-native-tests.log",
+      "Path": "tests/logs/wp3-startup-sql-native-tests.log",
+      "Sha256": "8E20D63E47751FDE688042880E103B413E487B53BBE714F1CB6CA75C7F859575",
+      "Bytes": 394,
+      "Type": "ActualUnitTestLog",
+      "ScopeTags": [
+        "actual-recorded-local-test-run",
+        "paired-original-trx"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-transactions-pg-native-input.json",
+      "Path": "runtime/wp3-transactions-pg-native-input.json",
+      "Sha256": "D376CCC7C5616E4C69B77D1B2770738F03D853B21A2F1820B0EF4F3E4B6D143C",
+      "Bytes": 3423,
+      "Type": "NativeRunSourceOutputObservation",
+      "ScopeTags": [
+        "observed-source-and-output-hashes",
+        "not-complete-compiler-input-manifest",
+        "not-test-or-native-execution-by-itself"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-transactions-pg-native.json",
+      "Path": "runtime/wp3-transactions-pg-native.json",
+      "Sha256": "E0C1D1903ACAD995EEF850DC66B839D63E5A5666331C1E5882ABA88A3CBEBB86",
+      "Bytes": 3936,
+      "Type": "ActualNativeGateReport",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "PostgreSql",
+        "green-or-original-sql-reference"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-transactions-pg-native.log",
+      "Path": "runtime/wp3-transactions-pg-native.log",
+      "Sha256": "11F9D9A90D251C9BB7CA445AC267D3C52FA53C302E7D1ED78BA9F866D6D0A886",
+      "Bytes": 1022,
+      "Type": "SanitizedNativeGateLog",
+      "ScopeTags": [
+        "actual-recorded-local-native-run",
+        "public-safe-check-summary-only"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-work-slot-gates.original-first-red.cs",
+      "Path": "sources-original/wp3-work-slot-gates.original-first-red.cs",
+      "Sha256": "675232149229D0E2593503D005820A6EF4C1BF2B68A2DD64DB34EE758E7C9A51",
+      "Bytes": 8776,
+      "Type": "PreservedOriginalHelperSource",
+      "ScopeTags": [
+        "historical-source-bytes",
+        "original-red-or-diagnostic-baseline",
+        "not-final-implementation"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-work-slot-implementation-inputs.json",
+      "Path": "observations/wp3-work-slot-implementation-inputs.json",
+      "Sha256": "D2756FB27E321CDFB7A9070417C0725056D24F44AEF442A1BB643DE68BC4374A",
+      "Bytes": 4278,
+      "Type": "SourceOrPostrunObservation",
+      "ScopeTags": [
+        "offline-or-postrun-observation",
+        "original-scope-preserved",
+        "not-new-native-execution"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-work-slot-ledger.original-before-provider-adapter.cs",
+      "Path": "sources-original/wp3-work-slot-ledger.original-before-provider-adapter.cs",
+      "Sha256": "561721B8844DA6A5B62352158851E48739D85C2C50E5E9F0A527313790D487A1",
+      "Bytes": 26488,
+      "Type": "PreservedOriginalHelperSource",
+      "ScopeTags": [
+        "historical-source-bytes",
+        "original-red-or-diagnostic-baseline",
+        "not-final-implementation"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-api-final-review-build.log",
+      "Path": "final/wp3-api-final-review-build.log",
+      "Sha256": "0949D8FDA92C61F7F4EF669BE154A8357E8BAB557EEF23FFF23DF57813879E24",
+      "Bytes": 1076,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-core-classifier-caller-tests.log",
+      "Path": "final/wp3-core-classifier-caller-tests.log",
+      "Sha256": "4DFD080E028365059AE8A59099C36EFF0805AAECA3138A053F3743511B6D6A5D",
+      "Bytes": 1497,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-space-classifier-caller-tests.log",
+      "Path": "final/wp3-space-classifier-caller-tests.log",
+      "Sha256": "E0716C11F2B6D851B90D8B0568E40408A3C603473F787AF7AC156506D8D1481B",
+      "Bytes": 1345,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-classifier-caller-tests-freeze.json",
+      "Path": "final/wp3-classifier-caller-tests-freeze.json",
+      "Sha256": "A945278C048513824A1869619DC5E5725D356AB144E865C8875D251027A4E30F",
+      "Bytes": 2722,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-final-caller-review-and-test-observation.json",
+      "Path": "final/wp3-final-caller-review-and-test-observation.json",
+      "Sha256": "1DA65C3E8B660E6CA551E47308DB1E5368D64192760C6AD6BF8F0028F8A63482",
+      "Bytes": 21216,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-provider-branches-document-check.json",
+      "Path": "final/wp3-provider-branches-document-check.json",
+      "Sha256": "AA9FF41C4E8E2E77A7D5A6AEBD28C39EA3D6D16D9AC0E6CC5442ED077F1E3E62",
+      "Bytes": 696,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-init-sql-first.json",
+      "Path": "final/wp3-init-sql-first.json",
+      "Sha256": "D6E708D15F35C091E4F930D399125E799B206AD8DC8CE4EDC2F58134E98268C1",
+      "Bytes": 16116,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-init-sql-repeat.json",
+      "Path": "final/wp3-init-sql-repeat.json",
+      "Sha256": "B43D22565608B72F6E0B3FB914B3C5310CFA88B51256547EFA4E01642274DE7B",
+      "Bytes": 16119,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-init-pg-first.json",
+      "Path": "final/wp3-init-pg-first.json",
+      "Sha256": "376FCCD501DEA4514973B48FDF26F2EA629AE1A7FB37FB79BF92496F85942E19",
+      "Bytes": 16114,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-init-pg-repeat.json",
+      "Path": "final/wp3-init-pg-repeat.json",
+      "Sha256": "829022D564A5A23463C7748CDF05A228FE36F72F65863BFB3C6A6CA76693F415",
+      "Bytes": 16117,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-cleanup-final-owned-two.json",
+      "Path": "final/wp3-cleanup-final-owned-two.json",
+      "Sha256": "FA304B2B75EF3A9CF3019A33731AE267490C29FCFD80FD4F5DCB2987809E705E",
+      "Bytes": 1106,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-DbCompatWp3Initializer.ps1",
+      "Path": "final/Invoke-DbCompatWp3Initializer.ps1",
+      "Sha256": "0C70195098548E480B066169F64F96930B344F44E1AB6C6E4C419CFF56CFD298",
+      "Bytes": 12682,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\Complete-DbCompatWp3Cleanup.ps1",
+      "Path": "final/Complete-DbCompatWp3Cleanup.ps1",
+      "Sha256": "1E5A2BC5FB9F0073BB8A848F7C1B93C9A3D4D806C97FCC6764E496FFF10F6C80",
+      "Bytes": 11781,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\core-classifier-callers\\wp3-core-classifier-caller-tests.trx",
+      "Path": "final/wp3-core-classifier-caller-tests.trx",
+      "Sha256": "E3702F1C4EF641B48098F9961922EB8B3BC928A1B33E29B81AF348C5E31CEC9C",
+      "Bytes": 83181,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp3-tests\\space-classifier-callers\\wp3-space-classifier-caller-tests.trx",
+      "Path": "final/wp3-space-classifier-caller-tests.trx",
+      "Sha256": "9F873BF3F542BE34BA560668D94FD6BC63032C199F247CD934823EAC7E904404",
+      "Bytes": 35760,
+      "Type": "FinalTargetedValidationOrReviewedRunner",
+      "ScopeTags": [
+        "OriginalBytes",
+        "SeeOriginalScope"
+      ]
+    }
+  ]
+}

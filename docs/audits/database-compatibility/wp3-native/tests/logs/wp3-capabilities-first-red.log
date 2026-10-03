@@ -1,0 +1,797 @@
+  CP6.Space.Domain -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Space.Domain\bin\Debug\net8.0\CP6.Space.Domain.dll
+  CP6.Entity -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.Space.Contracts -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Space.Contracts\bin\Debug\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Application -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Space.Application\bin\Debug\net8.0\CP6.Space.Application.dll
+  CP6.Core -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\bin\Debug\net8.0\CP6.Core.dll
+  CP6.Space.Infrastructure -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Space.Infrastructure\bin\Debug\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Persistence.PostgreSql\bin\Debug\net8.0\CP6.Persistence.PostgreSql.dll
+  CP6.WebApi -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.WebApi\bin\Debug\net8.0\CP6.WebApi.dll
+  CP6.Tests -> D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll
+Test run for D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:06.00]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: "23514", expectedKind: CheckConstraint) [FAIL]
+[xUnit.net 00:00:06.00]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: "23503", expectedKind: ForeignKey) [FAIL]
+[xUnit.net 00:00:06.01]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: "23505", expectedKind: UniqueConstraint) [FAIL]
+[xUnit.net 00:00:06.01]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Broad_DbUpdateException_does_not_imply_retry_or_integrity_failure [FAIL]
+[xUnit.net 00:00:06.01]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: "1205 deadlock victim") [FAIL]
+[xUnit.net 00:00:06.01]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: "The INSERT statement conflicted with the FOREIGN K"···) [FAIL]
+[xUnit.net 00:00:06.01]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: "23505 duplicate key constraint \"UX_DocNumber\"") [FAIL]
+[xUnit.net 00:00:06.01]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 1) [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: "23514", expectedKind: CheckConstraint) [469 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(String sqlState, DatabaseFailureKind expectedKind) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 35
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: "23503", expectedKind: ForeignKey) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(String sqlState, DatabaseFailureKind expectedKind) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 35
+   at InvokeStub_DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: "23505", expectedKind: UniqueConstraint) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(String sqlState, DatabaseFailureKind expectedKind) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 35
+   at InvokeStub_DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Broad_DbUpdateException_does_not_imply_retry_or_integrity_failure [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Broad_DbUpdateException_does_not_imply_retry_or_integrity_failure() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 119
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: "1205 deadlock victim") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(String message) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 134
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: "The INSERT statement conflicted with the FOREIGN K"···) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(String message) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 134
+   at InvokeStub_DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: "23505 duplicate key constraint \"UX_DocNumber\"") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(String message) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 134
+   at InvokeStub_DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 1) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(Int32 depth) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 55
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 3) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 0) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "UX_Exact ", expectedMatch: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: null, expectedMatch: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "UX_Exact_Extra", expectedMatch: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "", requestedName: "", expectedMatch: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "ux_exact", expectedMatch: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: null, requestedName: "UX_Exact", expectedMatch: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "UX_Exact", expectedMatch: True) [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 3) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(Int32 depth) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 55
+   at InvokeStub_DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 0) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(Int32 depth) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 55
+   at InvokeStub_DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "UX_Exact ", expectedMatch: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: null, expectedMatch: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at InvokeStub_DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "UX_Exact_Extra", expectedMatch: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at InvokeStub_DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "", requestedName: "", expectedMatch: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at InvokeStub_DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "ux_exact", expectedMatch: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at InvokeStub_DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: null, requestedName: "UX_Exact", expectedMatch: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at InvokeStub_DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "UX_Exact", expectedMatch: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at InvokeStub_DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "", expectedMatch: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: Unknown, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: ForeignKey, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: SerializationFailure, expectedRetry: True) [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: UnknownIntegrity, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: Deadlock, expectedRetry: True) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: UniqueConstraint, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: CheckConstraint, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: OptimisticConcurrency, expectedRetry: False) [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: "UX_Exact", requestedName: "", expectedMatch: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.MatchesConstraint(String constraintName) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 23
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(String constraintName, String requestedName, Boolean expectedMatch) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 175
+   at InvokeStub_DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: Unknown, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: ForeignKey, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at InvokeStub_DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: SerializationFailure, expectedRetry: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at InvokeStub_DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: UnknownIntegrity, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at InvokeStub_DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: Deadlock, expectedRetry: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at InvokeStub_DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: UniqueConstraint, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at InvokeStub_DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: CheckConstraint, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at InvokeStub_DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: OptimisticConcurrency, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailure.get_CanRetryTransaction() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 21
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(DatabaseFailureKind kind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 158
+   at InvokeStub_DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "40001", expectedKind: SerializationFailure, expectedRetry: True) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "23505", expectedKind: UniqueConstraint, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "23503", expectedKind: ForeignKey, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "23514", expectedKind: CheckConstraint, expectedRetry: False) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "40P01", expectedKind: Deadlock, expectedRetry: True) [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "57014") [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "23P01") [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "53300") [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "08006") [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "40001", expectedKind: SerializationFailure, expectedRetry: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(String sqlState, DatabaseFailureKind expectedKind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 18
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "23505", expectedKind: UniqueConstraint, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(String sqlState, DatabaseFailureKind expectedKind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 18
+   at InvokeStub_DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "23503", expectedKind: ForeignKey, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(String sqlState, DatabaseFailureKind expectedKind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 18
+   at InvokeStub_DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "23514", expectedKind: CheckConstraint, expectedRetry: False) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(String sqlState, DatabaseFailureKind expectedKind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 18
+   at InvokeStub_DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: "40P01", expectedKind: Deadlock, expectedRetry: True) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(String sqlState, DatabaseFailureKind expectedKind, Boolean expectedRetry) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 18
+   at InvokeStub_DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "57014") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(String sqlState) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 70
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "23P01") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(String sqlState) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 70
+   at InvokeStub_DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "53300") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(String sqlState) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 70
+   at InvokeStub_DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: "08006") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(String sqlState) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 70
+   at InvokeStub_DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_concurrency_takes_precedence_over_inner_retry_code_but_retains_it [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Missing_constraint_name_is_not_guessed_from_PostgreSql_message [FAIL]
+[xUnit.net 00:00:06.04]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_optimistic_concurrency_is_not_a_default_whole_transaction_retry [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseFailureClassifierTests.Null_exception_is_rejected_as_an_argument_error [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_resource_longer_than_sql_application_lock_limit [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "cp6:space:floor-edit:11111111111141118111111111111"···, expected: 5450251417918794356) [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "资源:楼层", expected: -770984511167209867) [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "Resource", expected: -1478724186056112996) [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "c03:message:0123456789abcdef", expected: 7211430008690815696) [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_concurrency_takes_precedence_over_inner_retry_code_but_retains_it [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_concurrency_takes_precedence_over_inner_retry_code_but_retains_it() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 109
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Missing_constraint_name_is_not_guessed_from_PostgreSql_message [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Missing_constraint_name_is_not_guessed_from_PostgreSql_message() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 81
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_optimistic_concurrency_is_not_a_default_whole_transaction_retry [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_optimistic_concurrency_is_not_a_default_whole_transaction_retry() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 95
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseFailureClassifierTests.Null_exception_is_rejected_as_an_argument_error [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentNullException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseFailureClassifierTests.Null_exception_is_rejected_as_an_argument_error() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 181
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseFailureClassifier.Classify(Exception exception) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseFailureClassifier.cs:line 28
+   at CP6.Tests.Persistence.DatabaseFailureClassifierTests.<>c.<Null_exception_is_rejected_as_an_argument_error>b__11_0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseFailureClassifierTests.cs:line 181
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_resource_longer_than_sql_application_lock_limit [469 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_resource_longer_than_sql_application_lock_limit() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 47
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c.<PostgreSql_key_rejects_resource_longer_than_sql_application_lock_limit>b__4_0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 47
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "cp6:space:floor-edit:11111111111141118111111111111"···, expected: 5450251417918794356) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "资源:楼层", expected: -770984511167209867) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "Resource", expected: -1478724186056112996) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "c03:message:0123456789abcdef", expected: 7211430008690815696) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "resource ", expected: -2642325522617836797) [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "CP6:SpaceIntegrationEvent:OccurredAtUtc:v1", expected: 1758760524055182398) [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "resource", expected: 6767031285991106541) [FAIL]
+[xUnit.net 00:00:06.29]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "CP6:Seed:SpaceAuditPermission:v1", expected: -8128330429859714458) [FAIL]
+[xUnit.net 00:00:06.90]     CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_provider_connection_mismatch_without_opening_it(selected: SqlServer, connectionProvider: PostgreSql) [FAIL]
+[xUnit.net 00:00:06.90]     CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_provider_connection_mismatch_without_opening_it(selected: PostgreSql, connectionProvider: SqlServer) [FAIL]
+[xUnit.net 00:00:06.90]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_a_context [FAIL]
+[xUnit.net 00:00:07.41]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_oversized_resource [FAIL]
+[xUnit.net 00:00:07.41]     CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_honors_cancellation_before_opening_connection(provider: SqlServer) [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "resource ", expected: -2642325522617836797) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "CP6:SpaceIntegrationEvent:OccurredAtUtc:v1", expected: 1758760524055182398) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "resource", expected: 6767031285991106541) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(resource: "CP6:Seed:SpaceAuditPermission:v1", expected: -8128330429859714458) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(String resource, Int64 expected) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 30
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_matches_independent_stable_signed_big_endian_vectors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_provider_connection_mismatch_without_opening_it(selected: SqlServer, connectionProvider: PostgreSql) [604 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_provider_connection_mismatch_without_opening_it(DatabaseProvider selected, DatabaseProvider connectionProvider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 167
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireSessionAsync(DbConnection connection, DatabaseProvider provider, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 32
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass14_0.<Session_lock_rejects_provider_connection_mismatch_without_opening_it>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 168
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_provider_connection_mismatch_without_opening_it(selected: PostgreSql, connectionProvider: SqlServer) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_provider_connection_mismatch_without_opening_it(DatabaseProvider selected, DatabaseProvider connectionProvider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 167
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireSessionAsync(DbConnection connection, DatabaseProvider provider, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 32
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass14_0.<Session_lock_rejects_provider_connection_mismatch_without_opening_it>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 168
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_a_context [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentNullException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_a_context() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 55
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c.<Transaction_lock_requires_a_context>b__5_0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 56
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_oversized_resource [508 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_oversized_resource() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 80
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass7_0.<Transaction_lock_rejects_oversized_resource>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 81
+  Failed CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_honors_cancellation_before_opening_connection(provider: SqlServer) [2 s]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.OperationCanceledException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_honors_cancellation_before_opening_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 50
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseUtcClock.ReadUtcNowAsync(DbContext context, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseUtcClock.cs:line 13
+   at CP6.Tests.Persistence.DatabaseUtcClockTests.<>c__DisplayClass3_0.<Database_clock_honors_cancellation_before_opening_connection>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 51
+[xUnit.net 00:00:07.64]     CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_honors_cancellation_before_opening_connection(provider: PostgreSql) [FAIL]
+[xUnit.net 00:00:07.64]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_in_memory_provider [FAIL]
+[xUnit.net 00:00:07.64]     CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_rejects_application_clock_fallback_for_in_memory_provider [FAIL]
+[xUnit.net 00:00:07.88]     CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_rejects_unsupported_relational_provider [FAIL]
+[xUnit.net 00:00:07.88]     CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_requires_context [FAIL]
+[xUnit.net 00:00:08.08]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_caller_transaction_without_opening_connection(provider: PostgreSql) [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_caller_transaction_without_opening_connection(provider: SqlServer) [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(resource: "") [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(resource: " ") [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_honors_cancellation_before_opening_connection(provider: PostgreSql) [225 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.OperationCanceledException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_honors_cancellation_before_opening_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 50
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseUtcClock.ReadUtcNowAsync(DbContext context, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseUtcClock.cs:line 13
+   at CP6.Tests.Persistence.DatabaseUtcClockTests.<>c__DisplayClass3_0.<Database_clock_honors_cancellation_before_opening_connection>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 51
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_in_memory_provider [225 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_in_memory_provider() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 105
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass9_0.<Transaction_lock_rejects_in_memory_provider>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 106
+  Failed CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_rejects_application_clock_fallback_for_in_memory_provider [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_rejects_application_clock_fallback_for_in_memory_provider() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 23
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseUtcClock.ReadUtcNowAsync(DbContext context, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseUtcClock.cs:line 13
+   at CP6.Tests.Persistence.DatabaseUtcClockTests.<>c__DisplayClass1_0.<Database_clock_rejects_application_clock_fallback_for_in_memory_provider>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 23
+  Failed CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_rejects_unsupported_relational_provider [237 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_rejects_unsupported_relational_provider() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 33
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseUtcClock.ReadUtcNowAsync(DbContext context, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseUtcClock.cs:line 13
+   at CP6.Tests.Persistence.DatabaseUtcClockTests.<>c__DisplayClass2_0.<Database_clock_rejects_unsupported_relational_provider>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 33
+  Failed CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_requires_context [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentNullException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseUtcClockTests.Database_clock_requires_context() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 12
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseUtcClock.ReadUtcNowAsync(DbContext context, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseUtcClock.cs:line 13
+   at CP6.Tests.Persistence.DatabaseUtcClockTests.<>c.<Database_clock_requires_context>b__0_0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseUtcClockTests.cs:line 12
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_caller_transaction_without_opening_connection(provider: PostgreSql) [442 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_caller_transaction_without_opening_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 130
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass11_0.<Transaction_lock_requires_caller_transaction_without_opening_connection>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 131
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_caller_transaction_without_opening_connection(provider: SqlServer) [26 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_requires_caller_transaction_without_opening_connection(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 130
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass11_0.<Transaction_lock_requires_caller_transaction_without_opening_connection>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 131
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(resource: "") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 39
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass3_0.<PostgreSql_key_rejects_missing_resource>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 39
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(resource: " ") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 39
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass3_0.<PostgreSql_key_rejects_missing_resource>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 39
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(resource: null) [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration(provider: PostgreSql) [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration(provider: SqlServer) [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(resource: " ") [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(resource: "") [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(resource: null) [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_negative_timeout_before_connection_access [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(resource: null) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 39
+   at InvokeStub_DatabaseResourceLockTests.PostgreSql_key_rejects_missing_resource(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.PostgreSqlKey(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 36
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass3_0.<PostgreSql_key_rejects_missing_resource>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 39
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration(provider: PostgreSql) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 182
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireSessionAsync(DbConnection connection, DatabaseProvider provider, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 32
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass15_0.<Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 183
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration(provider: SqlServer) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever(timeoutMs: -1) [FAIL]
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever(timeoutMs: -2147483648) [FAIL]
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 182
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireSessionAsync(DbConnection connection, DatabaseProvider provider, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 32
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass15_0.<Session_lock_requires_already_open_caller_connection_and_preserves_its_configuration>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 183
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(resource: " ") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 69
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass6_0.<Transaction_lock_rejects_missing_resource_before_accessing_database>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 70
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(resource: "") [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 69
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass6_0.<Transaction_lock_rejects_missing_resource_before_accessing_database>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 70
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(resource: null) [< 1 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_missing_resource_before_accessing_database(String resource) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 69
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass6_0.<Transaction_lock_rejects_missing_resource_before_accessing_database>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 70
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_negative_timeout_before_connection_access [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentOutOfRangeException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_negative_timeout_before_connection_access() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 195
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireSessionAsync(DbConnection connection, DatabaseProvider provider, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 32
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass16_0.<Session_lock_rejects_negative_timeout_before_connection_access>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 196
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever(timeoutMs: -1) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentOutOfRangeException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever(Int32 timeoutMs) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 93
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass8_0.<Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 94
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever(timeoutMs: -2147483648) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentOutOfRangeException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever(Int32 timeoutMs) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 93
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass8_0.<Transaction_lock_rejects_negative_timeout_instead_of_waiting_forever>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 94
+[xUnit.net 00:00:08.11]     CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_caller_connection [FAIL]
+[xUnit.net 00:00:08.12]     CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_unknown_provider [FAIL]
+[xUnit.net 00:00:08.12]     CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_other_relational_providers [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_caller_connection [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentNullException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_requires_caller_connection() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 141
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireSessionAsync(DbConnection connection, DatabaseProvider provider, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 32
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c.<Session_lock_requires_caller_connection>b__12_0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 142
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_unknown_provider [4 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentOutOfRangeException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Session_lock_rejects_unknown_provider() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 152
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireSessionAsync(DbConnection connection, DatabaseProvider provider, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 32
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass13_0.<Session_lock_rejects_unknown_provider>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 153
+  Failed CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_other_relational_providers [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseResourceLockTests.Transaction_lock_rejects_other_relational_providers() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 116
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at CP6.Core.Persistence.DatabaseResourceLocks.TryAcquireTransactionAsync(DbContext context, String resource, Int32 timeoutMs, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Core\Persistence\DatabaseResourceLocks.cs:line 19
+   at CP6.Tests.Persistence.DatabaseResourceLockTests.<>c__DisplayClass10_0.<Transaction_lock_rejects_other_relational_providers>b__0() in D:\CP6\tmp\worktrees\db-compat-wp3-20261003\CP6.Tests\Persistence\DatabaseResourceLockTests.cs:line 117
+Results File: D:\CP6\tmp\db-compat-wp3-tests\capabilities-first-red\wp3-capabilities-first-red.trx
+
+Failed!  - Failed:    74, Passed:     0, Skipped:     0, Total:    74, Duration: 2 s - CP6.Tests.dll (net8.0)

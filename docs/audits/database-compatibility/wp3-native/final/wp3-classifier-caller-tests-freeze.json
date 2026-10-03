@@ -1,0 +1,64 @@
+{
+  "Task": "WP3 four error-classification caller regression",
+  "Status": "FrozenAwaitingRootTargetedExecution",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "SourcePredicateFreeze": "D:\\CP6\\tmp\\wp3-classifier-caller-freeze.json",
+  "Files": [
+    {
+      "Path": "CP6.Tests/ErpIntegration/ErpCommerceAuthorityTests.cs",
+      "Sha256": "D16E797E2BCB7AECFC68489EA70827F687258BF10901922F3100B52D96CE647F"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceFieldPolicyServiceTests.cs",
+      "Sha256": "928EB33478C8073411634CD4A8C28FFAE87F05E24BA5246AAE0AA3EC7D78C4F7"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalOrganizationTests.cs",
+      "Sha256": "08BC027A1817A101C9487141E842D31FFB89E77BF72DD6C17EDEE3C2DAD6F890"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalGrantServiceTests.cs",
+      "Sha256": "072A7310999DD36603E8BE0AD572E53DA97326207F79BD7420BA37E5A54ED521"
+    }
+  ],
+  "PlannedNewCases": 14,
+  "Cases": [
+    {
+      "Caller": "ErpCommerceAuthority",
+      "NewCases": 5,
+      "Boundary": "Exact account-binding unique index maps old code; suffix/case mismatch, FK and check preserve same exception",
+      "Injected": true,
+      "NativeDatabaseAcceptance": false
+    },
+    {
+      "Caller": "SpaceFieldPolicyService",
+      "NewCases": 3,
+      "Boundary": "Unique preserves old code/title/409/recoveryAction/nonretryable; FK and check preserve same exception",
+      "Injected": true,
+      "NativeDatabaseAcceptance": false
+    },
+    {
+      "Caller": "SpaceExternalOrganizationService",
+      "NewCases": 3,
+      "Boundary": "Unique preserves caller code/title/409/recoveryAction/nonretryable; FK and check preserve same exception",
+      "Injected": true,
+      "NativeDatabaseAcceptance": false
+    },
+    {
+      "Caller": "SpaceExternalGrantService",
+      "NewCases": 3,
+      "Boundary": "Unique preserves old code/title/409/recoveryAction/nonretryable; FK and check preserve same exception",
+      "Injected": true,
+      "NativeDatabaseAcceptance": false
+    }
+  ],
+  "FixtureScope": "Existing isolated InMemory service fixtures; optional EF SaveChangesInterceptor armed after seed; public PostgresException wrapped DbUpdateException. Each caller asserts exactly one failed save.",
+  "ExecutionByThisAgent": "None; no .NET/build/DB",
+  "NativeClassifierEvidence": "Existing actual dual-provider constraints/transaction evidence reused; injected caller tests do not replace native business acceptance",
+  "TargetProjects": [
+    "CP6.Tests/CP6.Tests.csproj",
+    "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj"
+  ],
+  "ExistingTestBodiesRetained": true,
+  "ProjectDependencyEditsByThisAgent": false
+}

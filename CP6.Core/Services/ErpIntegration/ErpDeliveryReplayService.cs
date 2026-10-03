@@ -2,10 +2,10 @@ using System.Data;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Platform.EntityFramework;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.ErpIntegration;
 
@@ -23,7 +23,7 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
         RequireConfiguredTenant(tenant);
         await using var queue = await factory.CreateDbContextAsync(ct);
         RequireSql(queue);
-        await using var business = BusinessContext(queue, tenant);
+        await using var business = await BusinessContextAsync(queue, tenant, ct);
         await RequireActiveTenantAsync(business, tenant, ct);
         var results = await queue.Set<Cp6OutboxMessage>().AsNoTracking()
             .Where(x => x.TenantId == tenant && x.Status == Cp6OutboxStatus.DeadLettered)
@@ -67,8 +67,7 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
         await using var queue = await factory.CreateDbContextAsync(ct);
         RequireSql(queue);
         await using var transaction = await queue.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
-        await using var business = BusinessContext(queue, tenant);
-        await business.Database.UseTransactionAsync(transaction.GetDbTransaction(), ct);
+        await using var business = await BusinessContextAsync(queue, tenant, ct);
         await RequireActiveTenantAsync(business, tenant, ct);
         // Operator replay is infrequent. Serialize a tenant's audit inserts before reading missing
         // operation keys so two different operation ids cannot deadlock on Serializable index gaps.
@@ -174,9 +173,9 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
                 (x.ExpireDate == null || x.ExpireDate > now), ct)) throw Error("TENANT_DISABLED");
     }
 
-    private static CP6Context BusinessContext(ErpIntegrationContext queue, Guid tenant) =>
-        new(new DbContextOptionsBuilder<CP6Context>().UseSqlServer(queue.Database.GetDbConnection()).Options,
-            new TenantContext { CurrentTenantId = tenant });
+    private static Task<CP6Context> BusinessContextAsync(ErpIntegrationContext queue, Guid tenant, CancellationToken ct) =>
+        DatabaseSharedContext.CreateAsync<CP6Context>(queue, DatabaseContextKind.Core,
+            options => new(options, new TenantContext { CurrentTenantId = tenant }), ct);
 
     private static void RequireSql(ErpIntegrationContext queue)
     {

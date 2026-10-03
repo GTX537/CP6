@@ -1,7 +1,11 @@
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.ErpIntegration;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DTOs.Erp;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql;
 
 namespace CP6.Tests.ErpIntegration;
 
@@ -9,6 +13,45 @@ public class ErpCommerceAuthorityTests
 {
     private static readonly DateTimeOffset Now = new(2026, 9, 12, 12, 0, 0, TimeSpan.Zero);
     private static readonly byte[] Version = [0, 0, 0, 0, 0, 0, 0, 1];
+
+    [Theory]
+    [InlineData("23505", "IX_T_WebBusinessPartner_TenantId_CrmAccountId", true)]
+    [InlineData("23505", "IX_T_WebBusinessPartner_TenantId_CrmAccountId_other", false)]
+    [InlineData("23505", "ix_t_webbusinesspartner_tenantid_crmaccountid", false)]
+    [InlineData("23503", "IX_T_WebBusinessPartner_TenantId_CrmAccountId", false)]
+    [InlineData("23514", "IX_T_WebBusinessPartner_TenantId_CrmAccountId", false)]
+    public async Task Injected_postgres_save_failure_maps_only_the_exact_account_binding_unique_index(
+        string sqlState, string constraintName, bool mapsToBusinessConflict)
+    {
+        // Public provider exception injected at SaveChanges; this is caller regression,
+        // not a native database or complete account-binding transaction acceptance test.
+        var interceptor = new SaveFailureInterceptor();
+        var options = new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
+            .AddInterceptors(interceptor)
+            .Options;
+        await using var db = new CP6Context(options);
+        await new BusinessPartnerService(db).CreateAsync(new BusinessPartnerDto
+        {
+            BpCd = "BP001", BpName = "ERP registered customer", BaseCd = "B01", CustomerFlg = true,
+            AccountsReceivableCd = "AR001", SalesStaffCd = "S01", BusinessStaffCd = "S02"
+        }, "erp-staff", preRegister: true);
+        db.BusinessPartners.Single().RowVersion = Version;
+        await db.SaveChangesAsync();
+        var failure = new DbUpdateException("Injected PostgreSQL save failure",
+            new PostgresException("Injected provider condition", "ERROR", "ERROR", sqlState,
+                constraintName: constraintName));
+        interceptor.Failure = failure;
+
+        var caught = await Record.ExceptionAsync(() => new ErpCommerceAuthority(db, new FixedClock())
+            .SetBusinessPartnerProfileAsync("BP001", new(Version, Guid.NewGuid(), "USD", true), "erp-staff"));
+
+        Assert.Equal(1, interceptor.FailedSaveCalls);
+        if (mapsToBusinessConflict)
+            Assert.Equal("C03_ACCOUNT_ALREADY_BOUND", Assert.IsType<ErpCommerceException>(caught).Code);
+        else
+            Assert.Same(failure, caught);
+    }
 
     [Fact]
     public async Task Internal_approval_does_not_supply_customer_acceptance_or_terms()
@@ -163,6 +206,21 @@ public class ErpCommerceAuthorityTests
         EstimateCheckFlg = 9, MasterConfirmFlg = 0, TotalAmount = 300m, RowVersion = Version,
         Details = [new() { QtnNo = "QTN2026090001-01", DetailNo = 1, Quantity = 2m, UnitPrice = 150m, Amount = 300m, Unit = "piece" }]
     };
+
+    private sealed class SaveFailureInterceptor : SaveChangesInterceptor
+    {
+        public DbUpdateException? Failure { get; set; }
+        public int FailedSaveCalls { get; private set; }
+
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData, InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            if (Failure is null) return base.SavingChangesAsync(eventData, result, cancellationToken);
+            FailedSaveCalls++;
+            throw Failure;
+        }
+    }
 
     private sealed class FixedClock : TimeProvider
     {

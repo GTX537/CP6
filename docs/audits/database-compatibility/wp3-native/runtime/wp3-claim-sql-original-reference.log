@@ -1,0 +1,4 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP3 name, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=140, pending=0; no full catalog or business acceptance implied.
+Passed: Installation.SpaceExactHistory: Actual production Space migration history=47, pending=0; known-prefix guard enforced. No EnsureCreated or substitute model.
+Passed: Claims.WorkSlotFirstAcquire: Actual EfSpaceAiCapacityLedger first claim persisted one lease among three real production slots with an eight-byte opaque token; independent Context observed the committed claim. Exact owned tenant graph cleaned. Lease clock is controlled fixture UTC, not database-clock acceptance; budget and full generation/CAD business remain WP5.

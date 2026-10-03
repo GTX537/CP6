@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：用户已接受架构方向，并要求将其设为本对话持续目标；WP1 已经PR136交付。WP2本地映射/迁移/初始化门禁已通过，当前基线为PR144合入的main94c0f8c9，BUG137/139/141/143均Closed；8个owned测试库清理完成，WP2远端交付Pending，WP3–WP6尚未开始。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。冻结方案与后续安装职责见 [WP1 记录](../../audits/database-compatibility/WP1-DECISIONS.md)，实际执行输入/范围/原失败见 [WP2实施记录](../../audits/database-compatibility/WP2-IMPLEMENTATION.md)。整体兼容与远端交付不能提前记作完成。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1已由PR136、WP2已由PR145交付远端main；WP3在main605246ca基线的独立分支完成适用本地实施/真实门禁/集中审查/清理，远端交付待核对。WP4–WP6未完成。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。阶段实际来源与当前范围见[WP3实施记录](../../audits/database-compatibility/WP3-IMPLEMENTATION.md)。下文WP2的Pending保留提交前历史时点，远端交付以本条与项目状态为准；不提前声明整体兼容。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -80,13 +80,15 @@
 
 **前置：** WP2 可运行的双库模型。**产出：** 小范围数据库能力适配，以及所有调用方清单。
 
-- [ ] 事务资源锁分别实现 SQL Server sp_getapplock 和 PostgreSQL 事务级 advisory lock。保持含 TenantId 的规范资源键、锁顺序、超时、失败返回及事务释放；对首次创建/不存在记录互斥不能只改成 FOR UPDATE。
-- [ ] 为原子领取/跳过已锁记录、修改并返回记录建立独立能力；将 READPAST/TOP/OUTPUT 的使用迁移到语义等价实现。验证容量上限、并发双领取、租约过期与旧持有者续租/完成被拒绝。
-- [ ] 将 DocNumber ORD 原子递增与首次创建统一为两库分配器，保留现有编号、作用域与事务约定；测试并发首次创建、跨租户隔离和事务失败，不以不同业务规则的 sequence 替换。
-- [ ] 分类唯一约束、死锁、序列化失败和乐观并发冲突；保留具体约束名及已知重试条件，验证 PostgreSQL 事务失败后正确回滚/重试。禁止把所有 DbUpdateException 解释成可忽略重复。
-- [ ] 全量登记 IsSqlServer/ProviderName 分支：标明真实跨库实现、专属能力与测试回退。逐项替换拒绝 PostgreSQL 或直接跳过锁的路径；保留已有条件 ExecuteUpdate 方案并做真库验证。
+- [x] 事务资源锁分别实现 SQL Server sp_getapplock 和 PostgreSQL 事务级 advisory lock。保持含 TenantId 的规范资源键、锁顺序、超时、失败返回及事务释放；对首次创建/不存在记录互斥不能只改成 FOR UPDATE。
+- [x] 为原子领取/跳过已锁记录、修改并返回记录建立独立能力；将 READPAST/TOP/OUTPUT 的使用迁移到语义等价实现。验证容量上限、并发双领取、租约过期与旧持有者续租/完成被拒绝。
+- [x] 将 DocNumber ORD 原子递增与首次创建统一为两库分配器，保留现有编号、作用域与事务约定；测试并发首次创建、跨租户共用原全局号流和事务失败，不以不同业务规则的 sequence 替换。
+- [x] 分类唯一约束、死锁、序列化失败和乐观并发冲突；保留具体约束名及已知重试条件，验证 PostgreSQL 事务失败后正确回滚/重试。禁止把所有 DbUpdateException 解释成可忽略重复。
+- [x] 全量登记 IsSqlServer/ProviderName 分支：标明真实跨库实现、专属能力与测试回退。本阶段替换通用能力中直接跳过PG锁的路径；业务专属拒绝/查询按逐文件矩阵交WP4/5，普通PG运行guard留至WP6。保留已有条件ExecuteUpdate，完整消费者真库验证在对应业务阶段完成。
 
 **必须通过：** 事务锁释放/超时/隔离；首次创建互斥；原子编号；唯一冲突分类；租约抢占与旧 owner fence；两库真实并发 token。串行测试不能替代并发试验。
+
+本地阶段结果、失败/复用与151个原始路径证据见[WP3实施记录](../../audits/database-compatibility/WP3-IMPLEMENTATION.md)。本节勾选表示能力实施及对应门禁完成；WP3提交/PR/远端main仍待核对，WP4–WP6与父任务没有完成。
 
 ## WP4：身份、ERP/WMS、采购和工作流
 

@@ -1,0 +1,93 @@
+{
+  "Scope": "WP3 explicitly named real runtime gates on a newly owned isolated database. Complete business/API/worker and recovery acceptance remain separate.",
+  "Suite": "claim",
+  "Case": "all",
+  "Provider": "SqlServer",
+  "StartedHostUtc": "2026-10-03T09:18:59.9342921Z",
+  "FinishedHostUtc": "2026-10-03T09:19:04.3914705Z",
+  "SourceBase": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "SourceState": "WP3 uncommitted task source; per-file input binding required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "26186D715BA4CFD1321653E0976405828D7C194BC6E10AAF7BBBEB99D01967C3"
+    },
+    "CP6.DatabaseCompatibility.RuntimeProbe": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.DatabaseCompatibility.RuntimeProbe.dll",
+      "Sha256": "EEEDFA62C3536EC10AC3ED154DCC8059B8DB08EC8924879465AC26D12E3981C1"
+    },
+    "CP6.Persistence.PostgreSql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "94C078C99A97F728C0FC7956B88007EB43A594F72CB35EC3AC2BEF4585CB9423"
+    },
+    "CP6.Space.Infrastructure": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "8270D698BBD5C2C31C28F471A2330EB5F53821A403921D8FE6B08958F152BDA4"
+    },
+    "Microsoft.Data.SqlClient": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+    },
+    "Microsoft.EntityFrameworkCore": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    "Npgsql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+    }
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.Wp3Owner",
+      "Status": "Passed",
+      "Detail": "Dedicated loopback WP3 name, provider and owner verified."
+    },
+    {
+      "Name": "Installation.CoreExactHistory",
+      "Status": "Passed",
+      "Detail": "Exact Core history=140, pending=0; no full catalog or business acceptance implied."
+    },
+    {
+      "Name": "Installation.SpaceExactHistory",
+      "Status": "Passed",
+      "Detail": "Actual production Space migration history=47, pending=0; known-prefix guard enforced. No EnsureCreated or substitute model."
+    },
+    {
+      "Name": "Claims.WorkSlotFirstAcquire",
+      "Status": "Passed",
+      "Detail": "Actual EfSpaceAiCapacityLedger first claim persisted one lease among three real production slots with an eight-byte opaque token; independent Context observed the committed claim. Exact owned tenant graph cleaned. Lease clock is controlled fixture UTC, not database-clock acceptance; budget and full generation/CAD business remain WP5."
+    },
+    {
+      "Name": "Claims.ConcurrentCapacityOne",
+      "Status": "Passed",
+      "Detail": "Two distinct physical sessions crossed a shared barrier with no existing tenant slots; actual ledger max1 committed only one lease, observed independently among three initialized slots. Exact owned graph cleaned; controlled fixture clock, no budget acceptance."
+    },
+    {
+      "Name": "Claims.ConcurrentCapacityTwo",
+      "Status": "Passed",
+      "Detail": "Two distinct physical sessions raced actual ledger max2 and committed distinct slot1/slot2 leases; independent Context observed two active leases and three initialized slots. Exact owned graph cleaned; controlled fixture clock."
+    },
+    {
+      "Name": "Claims.SameRunSingleton",
+      "Status": "Passed",
+      "Detail": "Two distinct physical sessions raced one run with different owners; only one actual ledger claimant and one committed tenant/run slot. Exact owned graph cleaned; controlled fixture clock."
+    },
+    {
+      "Name": "Claims.LeaseFencesAndExpiry",
+      "Status": "Passed",
+      "Detail": "Actual ledger renewal changed the opaque eight-byte token; stale-token and wrong-owner renew/release were rejected. Exact expiry rejected renewal, allowed a different run to reclaim the slot, and rejected the old lease plus wrong-run operations without altering the replacement. Valid replacement release succeeded. Controlled UTC fixture clock; real advancing database UTC is a separate gate. Exact owned graph cleaned."
+    },
+    {
+      "Name": "Claims.TenantIndependence",
+      "Status": "Passed",
+      "Detail": "Two tenants on distinct physical sessions crossed a shared barrier and independently committed their own max1 slot1 lease; separate tenant Contexts observed one active lease each. Both exact owned graphs cleaned; controlled fixture clock."
+    },
+    {
+      "Name": "Claims.SkipLockedCandidate",
+      "Status": "Passed",
+      "Detail": "The actual production candidate query held available slot1 in one real ReadCommitted session; a distinct session used the same helper and returned slot2 under a two-second cancellation budget, then both transactions rolled back. SQL READPAST/PG SKIP LOCKED capability verified directly, not a claim that all background workers already use it. Caller timeout restored; exact owned graph cleaned."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "Task": "DB-COMPAT-01-WP3",
+  "Scope": "Only the two exact WP3 receipt databases; all-target read-only preflight, per-target identity/activity recheck, ordinary non-FORCE DROP.",
+  "StartedHostUtc": "2026-10-03T09:42:05.2424483Z",
+  "FinishedHostUtc": "2026-10-03T09:42:06.7259771Z",
+  "Status": "Completed",
+  "Phase": "Completed",
+  "FailureCode": null,
+  "ReceiptSha256": "D1C9E9E51C9D5F607A3CFA29460E93036EE0B3D063FE44048333FEC17F7CF9D7",
+  "ReceiptBytesUnchanged": true,
+  "AllTwoPreflightPassed": true,
+  "Dropped": 2,
+  "AllTwoAbsent": true,
+  "PostgreSqlRoleRetained": true,
+  "Targets": [
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP3_20261003_92d070db",
+      "PreflightPassed": true,
+      "DatabaseId": 68,
+      "ActiveSessions": 0,
+      "DropConfirmed": true,
+      "Absent": true
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP3_20261003_92d070db",
+      "PreflightPassed": true,
+      "DatabaseId": "65540",
+      "ActiveSessions": 0,
+      "DropConfirmed": true,
+      "Absent": true
+    }
+  ]
+}

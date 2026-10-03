@@ -3,7 +3,6 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.Space.Observability;
 using CP6.Entity.DomainModels.Integration;
 using CP6.WebApi.BackgroundServices;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -293,35 +292,10 @@ public sealed class SpaceIntegrationEventOccurredAtUtcBackfillTests
     }
 
     [Fact]
-    public void Sql_server_app_lock_command_is_stable_and_exclusive()
+    public void Backfill_session_lock_keeps_its_global_resource_and_wait_budget()
     {
-        using var command = new SqlCommand();
-
-        SpaceIntegrationEventOccurredAtUtcBackfill
-            .ConfigureAppLockCommand(
-                command,
-                SpaceIntegrationEventOccurredAtUtcBackfill
-                    .AcquireLockCommandText,
-                30_000);
-
-        Assert.Contains(
-            "sys.sp_getapplock",
-            command.CommandText,
-            StringComparison.Ordinal);
-        Assert.Contains(
-            "@LockMode = N'Exclusive'",
-            command.CommandText,
-            StringComparison.Ordinal);
-        Assert.Contains(
-            "@LockOwner = N'Session'",
-            command.CommandText,
-            StringComparison.Ordinal);
-        Assert.Equal(
-            SpaceIntegrationEventOccurredAtUtcBackfill.LockResource,
-            command.Parameters["@resource"].Value);
-        Assert.Equal(
-            30_000,
-            command.Parameters["@timeoutMilliseconds"].Value);
+        Assert.Equal("CP6:SpaceIntegrationEvent:OccurredAtUtc:v1", SpaceIntegrationEventOccurredAtUtcBackfill.LockResource);
+        Assert.Equal(30_000, SpaceIntegrationEventOccurredAtUtcBackfill.LockTimeoutMilliseconds);
     }
 
     private static CP6Context NewDb()
