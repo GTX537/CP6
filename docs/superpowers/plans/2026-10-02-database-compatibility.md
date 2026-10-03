@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：用户已接受架构方向，并要求将其设为本对话持续目标；WP1 本地门禁完成、方案冻结、准备正常 PR 交付，WP2–WP6 尚未开始。更新日期：2026-10-02。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。冻结方案与后续安装职责见 [WP1 记录](../../audits/database-compatibility/WP1-DECISIONS.md)。整体兼容与远端交付不能提前记作完成。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：用户已接受架构方向，并要求将其设为本对话持续目标；WP1 已经PR136交付。WP2本地映射/迁移/初始化门禁已通过，当前基线为PR144合入的main94c0f8c9，BUG137/139/141/143均Closed；8个owned测试库清理完成，WP2远端交付Pending，WP3–WP6尚未开始。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。冻结方案与后续安装职责见 [WP1 记录](../../audits/database-compatibility/WP1-DECISIONS.md)，实际执行输入/范围/原失败见 [WP2实施记录](../../audits/database-compatibility/WP2-IMPLEMENTATION.md)。整体兼容与远端交付不能提前记作完成。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -63,12 +63,16 @@
 
 **前置：** WP1 冻结的 token、快照和包方案。**产出：** 可真实安装的 PostgreSQL 基线、SQL Server 回归以及双迁移维护规则。
 
-- [ ] 将长度、精度、键、关系、TenantId 过滤与业务唯一性保留为共享模型规则；数据库类型、identity、并发生成、索引谓词、JSON/check、collation 和默认表达式分别实现。
-- [ ] 为 PostgreSQL 保持 Sys_Lang 的“每个 key 至多一个全局行、每租户一个覆盖”规则；明确 NULLS NOT DISTINCT 或等价 partial unique 实现。逐项核验 95 处 HasFilter 中的业务语义，不统一机械改写。
-- [ ] 建立 UTC 时刻、业务本地时间、日期、decimal/金额、Guid、bool、Unicode、JSON 与二进制映射；检查 PostgreSQL 标识符长度、命名碰撞、大小写/尾空格和约束名消费者。历史非 UTC 数据转换只接受明示时区证据。
-- [ ] 新建 PostgreSQL 迁移程序集，在同一程序集内按 Context 分四组迁移/快照；SQL Server 继续使用原程序集、路径和迁移 ID。设计时和运行时必须选择同一迁移集；核对每个 Context 的历史表/schema，禁止错误复用或交叉标记迁移已应用。
-- [ ] 从当前模型生成 PostgreSQL 安装基线，并逐一核对已有 28 个 migrationBuilder.Sql 文件、必要触发器/索引/约束、消息模型、OIDC 原始 DDL、种子和历史修复的最终业务要求。schema snapshot 不能替代这些核对。
-- [ ] 在两库空库执行四 Context 的真实迁移及数据库初始化，两次初始化无重复或覆盖管理员设置；SQL Server 另用保留数据的支持版本副本验证前向升级。PostgreSQL 基线发布后建立“前一 PG 支持版本→当前版本”升级夹具，未产生历史版本前不虚构升级通过。
+- [x] 将长度、精度、键、关系、TenantId 过滤与业务唯一性保留为共享模型规则；数据库类型、identity、并发生成、索引谓词、JSON/check、collation 和默认表达式分别实现。
+- [x] 为 PostgreSQL 保持 Sys_Lang 的“每个 key 至多一个全局行、每租户一个覆盖”规则；明确 NULLS NOT DISTINCT 或等价 partial unique 实现。逐项核验 95 处 HasFilter 中的业务语义，不统一机械改写。
+- [x] 建立 UTC 时刻、业务本地时间、日期、decimal/金额、Guid、bool、Unicode、JSON 与二进制映射；检查 PostgreSQL 标识符长度、命名碰撞、大小写/尾空格和约束名消费者。历史非 UTC 数据转换只接受明示时区证据。
+- [x] 新建 PostgreSQL 迁移程序集，在同一程序集内按 Context 分四组迁移/快照；SQL Server 继续使用原程序集、路径和迁移 ID。设计时和运行时必须选择同一迁移集；核对每个 Context 的历史表/schema，禁止错误复用或交叉标记迁移已应用。
+- [x] 从当前模型生成 PostgreSQL 安装基线，并逐一核对已有 28 个 migrationBuilder.Sql 文件、必要触发器/索引/约束、消息模型、OIDC 原始 DDL、种子和历史修复的最终业务要求。schema snapshot 不能替代这些核对。
+- [x] 在两库空库执行四 Context 的真实迁移及数据库初始化，两次初始化无重复或覆盖管理员设置；SQL Server 另用保留数据的支持版本副本验证前向升级。PostgreSQL 基线发布后建立“前一 PG 支持版本→当前版本”升级夹具，未产生历史版本前不虚构升级通过。
+
+**实际本地结果：** 151/151相关测试与独立索引25/25按原输入复用；PG fresh33/33、既有PG完整限定36/36与另一次报价2/2保留独立执行来源，真实应用首次/重复保持334表与自定义种子。2026-10-03 SQL支持版本136→140四项升级2/2、完整目录/定向写入/负对照35/35、未知history2/2通过；同新API首次/重复exit0/noHTTP及两次seed verify各2/2保持352表/历史/自定义种子。SQL证明路径是旧136空库实际安装后捕获保留数据、前向至140与新initializer首次/重复，不冒称另一次新140空库安装。PG首版没有历史发布版，未执行历史PG升级。30/45任务级review、两P2修复及后加四文件/reader两行增量review按原记录复用；8个owned库清理/全不存在核对完成（[实际原件](../../audits/database-compatibility/wp2-native/wp2-cleanup-final-owned-eight-verified-env.json)），正常提交/PR/remote main核对仍Pending，勾选本地实施项不等于WP2已交付或开放普通PG运行。
+
+原始真实成功/失败、输入及清理证明已归档142份（prepared140＋最终输入字节证明/脚本2），原件/副本hash与bytes全数匹配，见[manifest](../../audits/database-compatibility/wp2-native/manifest.json)。[最终输入比对](../../audits/database-compatibility/wp2-native/wp2-final-review-source-applicability.json)中的75个唯一记录源码字节一致只支持旧review适用性，不称新75文件审查/测试或重复native执行。WP2正常PR及远端main核对仍Pending。
 
 **必须通过：** applied/pending migration 核对；四 Context 历史表/schema；NULL 唯一性、FK、金额与日期往返；种子幂等；SQL Server 升级保留数据。记录 PG 首版无既有 PG 历史版本的适用边界。
 

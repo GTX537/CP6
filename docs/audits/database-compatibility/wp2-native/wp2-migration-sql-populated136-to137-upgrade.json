@@ -1,0 +1,30 @@
+{
+  "Scope": "Real populated SQL Server supported Core136-to137 forward upgrade and retained data/token/generation checks",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-02T17:13:17.2822463Z",
+  "FinishedUtc": "2026-10-02T17:13:23.2875614Z",
+  "SourceBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "SourceState": "WP2 uncommitted task input; applicable build log and file hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "A2643EE8D0051A1E8406944A39E77F38FBEC0C0189B6D98AFF1FF149510D8560",
+    "CP6.Persistence.PostgreSql": "B32CF2EDED10CF8238B0297BEE475902BB0F5456D64A86EDA4F7F3BE9A702F1C",
+    "CP6.Space.Infrastructure": "A5B4E42C40D8683B944679F5250DFDA0521809A1DDF1C5B1C8A2C4E0A9C62399",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+    },
+    {
+      "Name": "Upgrade.SqlServer.Populated136To137",
+      "Status": "Passed",
+      "Detail": "SQL Core 136 -\u003E 137 appended only 20261002151353_CrmIdentityTenantGenerationV1; all 351 pre-existing table counts retained (history \u002B1; Snapshot fixture \u002B2). All 2 captured Snapshot rows retained exact fields and eight-byte tokens through migration. All 4122 language rows and the admin password/metadata digests retained. Tenant generations seeded once at 1; actual EF Snapshot save advanced 1 -\u003E 2 and returned a new token; a second EF save reached 3 inside its transaction, then rollback restored generation 2 and exact Snapshot bytes. Migration-input Snapshot SHA256=158f93c640d8fb2d75c4d7440763b19cfbc41b8db2d56c2d17687ea91d4a08a5; language SHA256=4ab0190fdce40e1bb3ec0e9833820a3bfb51bef07b77f351144429f9060c8cf0; admin SHA256=37da018128c6033abd83d27a39db34ea7e15a8b063e6e02ea61068329fbe12c2. Exact temporary Snapshot and tenant-generation fixtures removed; final original data/counts rechecked. Checks cover this captured task database and these critical fields, not all business payloads or production upgrade acceptance."
+    }
+  ]
+}

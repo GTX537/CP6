@@ -1,0 +1,81 @@
+{
+  "Scope": "WP2 real full migration/catalog installation; business, seeds, upgrade and restoration gates separate",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-02T15:26:57.7677688Z",
+  "FinishedUtc": "2026-10-02T15:27:29.2475458Z",
+  "SourceBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "SourceState": "WP2 uncommitted task input; applicable build log and file hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "BCB8E4554A829DA497D111C85BC3885E13CF2BE0A791083BFA4A59986C5540A0",
+    "CP6.Persistence.PostgreSql": "4E5E9D5657C1165E91059F55FBA423C6BC9C4CD9650125685DE7B51118F121C8",
+    "CP6.Space.Infrastructure": "7F4F87FAFE46BC0B17695D41DFB18110716AC6AE17F10F0DBAB6448020A3A468",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [
+    {
+      "Context": "Core",
+      "Tables": 233,
+      "TokenTables": 157
+    },
+    {
+      "Context": "Space",
+      "Tables": 83,
+      "TokenTables": 41
+    }
+  ],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+    },
+    {
+      "Name": "Migration.Core.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=137, previouslyApplied=0, pending=0."
+    },
+    {
+      "Name": "Migration.Core.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.Core.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 233 actual model tables."
+    },
+    {
+      "Name": "Catalog.Core.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 157 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Migration.Space.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=47, previouslyApplied=0, pending=0."
+    },
+    {
+      "Name": "Migration.Space.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.Space.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 83 actual model tables."
+    },
+    {
+      "Name": "Catalog.Space.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 41 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Migration.IdentityPriority.Forward",
+      "Status": "Failed",
+      "Detail": "SqlException Number=2714"
+    }
+  ]
+}

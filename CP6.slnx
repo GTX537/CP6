@@ -5,6 +5,7 @@
   <Project Path="CP6.Client.Tests/CP6.Client.Tests.csproj" />
   <Project Path="CP6.Desktop/CP6.Desktop.csproj" />
   <Project Path="CP6.Entity/CP6.Entity.csproj" />
+  <Project Path="CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj" />
   <Project Path="CP6.Mobile/CP6.Mobile.csproj" />
   <Project Path="CP6.Space.Application/CP6.Space.Application.csproj" />
   <Project Path="CP6.Space.Client/CP6.Space.Client.csproj" />

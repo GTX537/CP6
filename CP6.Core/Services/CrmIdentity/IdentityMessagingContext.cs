@@ -1,4 +1,5 @@
 using CP6.Platform.EntityFramework;
+using CP6.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.CrmIdentity;
@@ -8,5 +9,9 @@ public sealed class IdentityMessagingContext(DbContextOptions<IdentityMessagingC
 {
     public const string Schema = "crm_identity_priority";
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.AddCp6TransactionalMessaging(Schema);
+    {
+        if (Database.IsNpgsql()) modelBuilder.Model.SetMaxIdentifierLength(int.MaxValue);
+        modelBuilder.AddCp6TransactionalMessaging(Schema);
+        if (Database.IsNpgsql()) PostgreSqlModelConfiguration.Apply(modelBuilder);
+    }
 }

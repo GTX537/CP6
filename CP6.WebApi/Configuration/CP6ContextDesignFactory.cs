@@ -4,8 +4,16 @@ using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.ErpIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using CP6.Space.Infrastructure;
 
 namespace CP6.WebApi.Configuration;
+
+// The migrations command discovers factories in its startup assembly. Keep
+// Space's audited factory visible even when the guarded application cannot start.
+public sealed class SpaceMigrationDesignFactory : IDesignTimeDbContextFactory<SpaceContext>
+{
+    public SpaceContext CreateDbContext(string[] args) => new SpaceContextDesignFactory().CreateDbContext(args);
+}
 
 // Model scaffolding never starts workers or reads application credentials. Forward application
 // remains the responsibility of CP6Context migrations and the existing db-init entry point.

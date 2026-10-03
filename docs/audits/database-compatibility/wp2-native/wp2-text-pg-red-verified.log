@@ -1,0 +1,16 @@
+Passed: Text.RawRoundTrip: Observed expected SQL Server contract.
+Failed: Text.PadSpaceParameter: Parameter equality must preserve the source collation contract.
+Failed: Text.CaseParameter: Parameter equality must preserve the source collation contract.
+Passed: Text.WidthParameter: Observed expected SQL Server contract.
+Passed: Text.NfcParameter: Observed expected SQL Server contract.
+Passed: Text.AccentDistinct: Observed expected SQL Server contract.
+Passed: Text.MiddleSpaceDistinct: Observed expected SQL Server contract.
+Failed: Text.ArrayParameterPadSpace: Array membership must retain scalar comparison semantics.
+Passed: Text.ContainsTailSpace: Observed expected SQL Server contract.
+Passed: Text.SubstringTailSpace: Observed expected SQL Server contract.
+Passed: Text.ConcatTailSpace: Observed expected SQL Server contract.
+Passed: Text.LenUtf16: Observed expected SQL Server contract.
+Failed: Text.ForeignKeyPadSpace: PostgresException SQLSTATE=23503
+Failed: Text.UniquePadSpace: Native unique key must reject the case/tail-space equivalent value.
+Passed: Isolation.RollbackCleanup: Observed expected SQL Server contract.
+Passed: Isolation.CollationCleanup: Observed expected SQL Server contract.

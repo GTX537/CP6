@@ -1,0 +1,499 @@
+{
+  "Task": "DB-COMPAT-01 WP2",
+  "Reviewer": "/root/wp1_review",
+  "ArchivedUtc": "2026-10-02T19:31:52.9654746Z",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002",
+  "Branch": "codex/db-compat-wp2-20261002",
+  "ConfirmedSourceBase": "2d9747360a38dfc519ddebea7aced06a9466b879",
+  "SourceState": "Uncommitted task candidate. Source base does not identify the reviewed bytes; exact original and targeted source manifests are distinct below.",
+  "Method": "One task-level read-only review of the assigned initialization/provider/probe scope, then targeted recheck of two accepted P2 fixes. This file archives existing review; it is not a new code review or test run.",
+  "ReviewActivity": {
+    "BuildPerformedByReviewer": false,
+    "DatabaseAccessPerformedByReviewer": false,
+    "CredentialReceiptReadByReviewer": false,
+    "SourceEditsPerformedByReviewer": false,
+    "ActionsOrRemotePerformedByReviewer": false,
+    "OnlyNewFileWritten": "D:\\CP6\\tmp\\wp2-review-initialization-probes.json"
+  },
+  "TimestampPrecision": {
+    "ExactOriginalReviewStartUtc": null,
+    "ExactOriginalReviewEndUtc": null,
+    "ExactTargetedReviewStartUtc": null,
+    "ExactTargetedReviewEndUtc": null,
+    "Note": "Exact wall-clock start/end timestamps of the review turns were not recorded; they are not invented retrospectively. ArchivedUtc is exact. Raw evidence start/end timestamps below identify parent-executed verification, not reviewer execution.",
+    "OriginalReviewCompletedBeforeFixBuildLogLastWriteUtc": "2026-10-02T19:24:04.3766483Z"
+  },
+  "OriginalTaskLevelReview": {
+    "FileCount": 30,
+    "ManifestSha256": "F2A87FF23B1A9EDF9F08F2D84A382E18491C8A916C7DEEF7C440396418678A86",
+    "FileHashes": [
+      {
+        "Path": "CP6.Core/Persistence/DatabaseConnectionFactory.cs",
+        "Sha256": "D7B729E3B44DE38DC8413ECFC9869ED381CB8768B246300F61B6178E102A018A"
+      },
+      {
+        "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+        "Sha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190"
+      },
+      {
+        "Path": "CP6.Core/Persistence/DatabaseDesignTimeConfiguration.cs",
+        "Sha256": "CEE25A3B803120DFA3306A2E96FAD18189F119B1F4E7F4BF0180CA5CD2CF9FE5"
+      },
+      {
+        "Path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+        "Sha256": "C8F3521C294F15793A8CB3BE0AB8D598A7DDBC88573A52042AF12C6CC16BFB26"
+      },
+      {
+        "Path": "CP6.Space.Infrastructure/SpaceContextDesignFactory.cs",
+        "Sha256": "57AC3E048677672D5DAC851FEADB7F34287456179A5332924B95EFAAEB051689"
+      },
+      {
+        "Path": "CP6.Tests/Persistence/DatabaseInitializationModeTests.cs",
+        "Sha256": "30CD4BFE33427BA60BDE011B35471DC7257E3FFA98EDABD27D9E37A833DBA3FA"
+      },
+      {
+        "Path": "CP6.Tests/Persistence/DatabaseMigrationOwnershipTests.cs",
+        "Sha256": "0AC921495A8BDEDCB89FD5C35C44963F712A0C3A9903F88E41EC2330B611C032"
+      },
+      {
+        "Path": "CP6.Tests/Persistence/DatabaseProviderTests.cs",
+        "Sha256": "67832CE0DFF12D2D92CC34A13DEC760F25DCD648815DFD1C8FD2EF6137A37367"
+      },
+      {
+        "Path": "CP6.Tests/Persistence/DatabaseSearchPathTests.cs",
+        "Sha256": "A62F6F027C5E8AF81D89C372094178C657C8BF99134D620510AE19A9C88F331E"
+      },
+      {
+        "Path": "CP6.Tests/Persistence/DatabaseWiringTests.cs",
+        "Sha256": "4B24DD7A0159F6DC1673536E421CCBDF1C7AFB0B6563A078ED6D13CDA4A11ABD"
+      },
+      {
+        "Path": "CP6.WebApi/Configuration/CP6ContextDesignFactory.cs",
+        "Sha256": "263B548AD7D2E2E275704B7C55C938A044CC30DB180771E803B3FFF66AFBD303"
+      },
+      {
+        "Path": "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs",
+        "Sha256": "D0C21C8A7F257E92AD1725D338677E77D1A5CFE4F61D5DE13FE8C64F6BF69B18"
+      },
+      {
+        "Path": "CP6.WebApi/Program.cs",
+        "Sha256": "0EF17BA4A28B8AFADEAD42B063CBF035B37ABA3BF8B9A8196B924E7D081D293A"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+        "Sha256": "F5119D3C6CADD57EFF7B25760C0C1009BA70BC4E6B9B5E27C83A6F0C13BD0D9C"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/packages.lock.json",
+        "Sha256": "14E1A0BA215580C03A0F03160B7C95FDB7A6C61DDC85A66777CF2FFACF66AE08"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+        "Sha256": "3F6B53FF09849FFA3294E4DCBFE7AFB7BD623FBF9BAF2D58979213ED756831B6"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/README.md",
+        "Sha256": "EF16C069FC14F68A93968B6689B436D3EBB6823A65900992DA7550E570EF5014"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2CatalogGates.cs",
+        "Sha256": "4B205C9A654845DDAA42D23407636BCEC3A0EEBB7E34F4FAD85DDF4A93CDA700"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2CatalogNegativeControls.cs",
+        "Sha256": "01F2847B2F3C9CE40D2553818E3BBF249BA7C168C5D3477BC1A133F7ABB9B56A"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2ConstraintWriteGates.cs",
+        "Sha256": "7AAE9C8AC98B24EDD299FB27A05E776A2E3C41E4542FCD250AAF62E9144E8D5A"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2FinanceGates.cs",
+        "Sha256": "9B8A4604B5FFD07D07DEAC5E57C7BEF1265CB0AA8544E67745FC581C3A102974"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2OrderRelationWriteGates.cs",
+        "Sha256": "00F5D288CC70504F353D1B8710F0924413A872567D524D3BF7720A5CA523C4A0"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2RawOrderGates.cs",
+        "Sha256": "C727BA417064ACB8EFC9ED607DA62C51BABD193944D5278E256AD2203F04AF65"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2SeedGates.cs",
+        "Sha256": "236A6D2EE4393AE10E7868C0F1456B9707D038280C041C7375A882368C726B75"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2SqlUpgradeGates.cs",
+        "Sha256": "A4C93D04EA9DB33197DBAE91E46611EC10BCFEBCDA80F8BDA31D019CB21EF937"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2WriteGates.cs",
+        "Sha256": "99D6BB765312741DC3718576D9DA607F566B442E7DF1296BF55416D5E88177EA"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.TextProbe/CP6.DatabaseCompatibility.TextProbe.csproj",
+        "Sha256": "5A263FEFD434CEEF41E7A0CE616E5D5E2E3A097E7D899E3D6CB6C651A509CE35"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.TextProbe/packages.lock.json",
+        "Sha256": "2A5E1D0A3EE84DA6D9FD1F74F2ABBF0056B24E3E37DAA79D69320C98467FABC0"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.TextProbe/Program.cs",
+        "Sha256": "ECCCE33B94A871436A789695C096A8E4EF470FABF7640FBCAFF56C47355351A4"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.TextProbe/README.md",
+        "Sha256": "4ED736305BBAF76837C80F2F82A72C3E18B169BF8AE73CC167EB70ECA0D4889B"
+      }
+    ],
+    "ManifestSerialization": "SHA256 over UTF8 bytes of compact PowerShell ConvertTo-Json -InputObject FileHashes -Compress -Depth 3; ordered Path/Sha256 records in the stored order.",
+    "ArchiveReconstruction": "The original Program hash was retained from the original review output. The other 29 current file hashes are unchanged: recomputing all 30 ordered records reproduces the previously recorded F2A87FF2 manifest exactly. The new Program hash is not attributed to that original snapshot.",
+    "IncludedScope": "API startup/runtime guard; connection/options/migration profile and design factories; Provider/Wiring/SearchPath/Initialization/Ownership tests; all then-present MigrationProbe and TextProbe C# sources, README, project and lock files.",
+    "ExcludedParallelScope": "Provider mapping helpers, PostgreSQL baseline migrations and frozen-model tests were reviewed by the separate assigned mapping reviewer; this archive does not substitute for that review.",
+    "Findings": [
+      {
+        "Id": "WP2-INIT-PROBE-01",
+        "Priority": "P2",
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+        "OriginalLines": [
+          139,
+          144
+        ],
+        "Title": "Default migration gate accepted extra provider/context history identities",
+        "Reproduction": "An owned database history containing every available migration plus an unknown or other-context identity passed applied.Length > 0/pending == 0 and repeat equality.",
+        "Impact": "The tool could report a green migration identity gate without rejecting mixed history.",
+        "Resolution": "Resolved by before-Migrate exact-prefix validation and after-Migrate complete exact-chain validation; repeat begins with exact-chain validation and preserves that set."
+      },
+      {
+        "Id": "WP2-INIT-PROBE-02",
+        "Priority": "P2",
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+        "OriginalLines": [
+          25,
+          77,
+          83
+        ],
+        "Title": "Missing seed-mode value fell through to default migration execution",
+        "Reproduction": "A final --seed-mode flag returned null from Arg and dispatched the default migration/catalog path instead of the requested seed gate.",
+        "Impact": "The requested seed assertion could be skipped while the tool reported default green checks.",
+        "Resolution": "Resolved by before-owner/environment/connection enum and seed-state value checks with explicit pre-database rejection scope."
+      }
+    ],
+    "OtherMaterialFindings": [],
+    "NoAdditionalP0OrP1Found": true,
+    "ReviewedBehavior": "Fixed deployment provider and public search path; PostgreSQL normal runtime remains rejected while one-shot DatabaseInit is allowed; SQL queue templates remain Core-owned. Real two-session observed finance blocking, four-context byte tokens/native/bulk stale checks including Platform private setters, generation/UTC/date/amount boundaries, six-row Order graph/four targeted exact-FK orphans/four cascades/all-count rollback, and custom seed/password-digest assertions have bounded honest storage/installation scope.",
+    "HistoricalSqlUpgradeAssessment": {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2SqlUpgradeGates.cs",
+      "Sha256": "A4C93D04EA9DB33197DBAE91E46611EC10BCFEBCDA80F8BDA31D019CB21EF937",
+      "Scope": "Prepared exact Core136-to139 generation/index/FK three-forward gate was not yet actually executed. Earlier generation-only136-to137 2/2 retained its original historical scope.",
+      "NotApprovalOfFuture136To140": true
+    }
+  },
+  "TargetedFixRecheck": {
+    "OnlyChangedScope": [
+      "Probe seed argument preflight and history-negative-only mode",
+      "Forward prefix/exact and repeat exact history validation",
+      "New native-transaction history negative helper lifetime/rollback"
+    ],
+    "FileHashes": [
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+        "Sha256": "A60E14561FA73AF04C774335A68FE0BD49549EF87083BBA826BBD573C09DE8AC"
+      },
+      {
+        "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2MigrationHistoryGates.cs",
+        "Sha256": "A85BF7DFF5E1E701C9FAA871C979CCDA37624E7077AC0AF3CFE347502821C209"
+      }
+    ],
+    "FindingsResolved": [
+      "WP2-INIT-PROBE-01",
+      "WP2-INIT-PROBE-02"
+    ],
+    "NewMaterialFindings": [],
+    "LifetimeConclusion": "The helper shares the verified caller connection/context, attaches an externally owned native transaction, detaches the EF wrapper in finally, rolls back, and disposes that transaction. No commit or Migrate path exists. After rollback it verifies exact original identities and the full available chain; it does not dispose the caller connection/context. Transaction disposal also bounds exceptional exits.",
+    "ParentExecutedBuild": {
+      "Path": "D:\\CP6\\tmp\\build-migration-probe-exact-history-and-seed-mode.log",
+      "Sha256": "5537B2B1D2CD013BCAB65972059BB023166E16582B0C0150E133B58EE1B23DFA",
+      "Warnings": 0,
+      "Errors": 0,
+      "LastWriteUtc": "2026-10-02T19:24:04.3766483Z"
+    },
+    "ParentExecutedUnknownHistoryNegativeControl": {
+      "Path": "D:\\CP6\\tmp\\wp2-migration-pg-unknown-history-identity-rollback.json",
+      "Sha256": "E605923F15FE3A33E1EE2AF38711F3069390BC206E69483515A60C21E1605D07",
+      "StartedUtc": "2026-10-02T19:24:24.9701885Z",
+      "FinishedUtc": "2026-10-02T19:24:27.2651324Z",
+      "SourceBase": "2d9747360a38dfc519ddebea7aced06a9466b879",
+      "Scope": "Actual Core history API rejected a transaction-only unknown migration identity; exact complete original history restored, no migration applied",
+      "DatabaseVersion": "18.6",
+      "Checks": [
+        {
+          "Name": "Isolation.OwnerAndProvider",
+          "Status": "Passed",
+          "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+        },
+        {
+          "Name": "History.UnknownIdentityRollbackNegativeControl",
+          "Status": "Passed",
+          "Detail": "Actual Core history rejected one unknown provider/context identity before migration; rollback retained the exact 1 original identities. No migration or business-row write occurred."
+        }
+      ],
+      "MigrationProbeBinarySha256": "1EB704BE0E253CD9D5E79B11545F0B3CA07A79DA29D95D45554B6C8809D547FD"
+    },
+    "ParentExecutedMissingSeedMode": {
+      "ExpectedAndActualExit": 1,
+      "Interpretation": "Expected failure before database access, not a green business test",
+      "Report": {
+        "Path": "D:\\CP6\\tmp\\wp2-migration-missing-seed-mode-value-rejected.json",
+        "Sha256": "B036E2A1A8EF555CD57A5CCF4E66496FE96548199FE8847F65B1B43FFE254CA3",
+        "StartedUtc": "2026-10-02T19:24:25.2896814Z",
+        "FinishedUtc": "2026-10-02T19:24:25.3468535Z",
+        "SourceBase": null,
+        "Scope": "Rejected invalid probe arguments before database access; no migration or write performed",
+        "DatabaseVersion": null,
+        "Checks": [
+          {
+            "Name": "Probe.SetupOrRun",
+            "Status": "Failed",
+            "Detail": "An explicit prepare, capture or verify seed mode is required before database access."
+          }
+        ],
+        "MigrationProbeBinarySha256": "1EB704BE0E253CD9D5E79B11545F0B3CA07A79DA29D95D45554B6C8809D547FD"
+      }
+    },
+    "ParentExecutedMissingSeedState": {
+      "ExpectedAndActualExit": 1,
+      "Interpretation": "Expected failure before database access, not a green business test",
+      "Report": {
+        "Path": "D:\\CP6\\tmp\\wp2-migration-missing-seed-state-path-rejected.json",
+        "Sha256": "13515F3F2C3B7892D7376F8D53B805A41069E556646A42C50B2F7EFC328DEACB",
+        "StartedUtc": "2026-10-02T19:24:24.9976975Z",
+        "FinishedUtc": "2026-10-02T19:24:25.0569312Z",
+        "SourceBase": null,
+        "Scope": "Rejected invalid probe arguments before database access; no migration or write performed",
+        "DatabaseVersion": null,
+        "Checks": [
+          {
+            "Name": "Probe.SetupOrRun",
+            "Status": "Failed",
+            "Detail": "An explicit seed state path is required before database access."
+          }
+        ],
+        "MigrationProbeBinarySha256": "1EB704BE0E253CD9D5E79B11545F0B3CA07A79DA29D95D45554B6C8809D547FD"
+      }
+    }
+  },
+  "LaterEvidenceReportedAndArtifactsReadOnlyChecked": {
+    "ParentExecutedPgFullReport": {
+      "Path": "D:\\CP6\\tmp\\wp2-migration-pg-final-exact-history-full-write-gates.json",
+      "Sha256": "265D3F6E15963D871391F0C90463EE45665A4FFAC6EE7051349AE1D07F765C0C",
+      "StartedUtc": "2026-10-02T19:26:27.6658354Z",
+      "FinishedUtc": "2026-10-02T19:26:40.3645745Z",
+      "SourceBase": "2d9747360a38dfc519ddebea7aced06a9466b879",
+      "Scope": "WP2 real four-context migration/catalog installation and explicitly named representative write gates; full business and restoration gates separate",
+      "DatabaseVersion": "18.6",
+      "Checks": [
+        {
+          "Name": "Isolation.OwnerAndProvider",
+          "Status": "Passed",
+          "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+        },
+        {
+          "Name": "Migration.Core.Forward",
+          "Status": "Passed",
+          "Detail": "Applied=1, previouslyApplied=1, pending=0."
+        },
+        {
+          "Name": "Migration.Core.Repeat",
+          "Status": "Passed",
+          "Detail": "Repeated real migration retained the same applied history."
+        },
+        {
+          "Name": "Catalog.Core.EveryTableAndColumn",
+          "Status": "Passed",
+          "Detail": "Verified every column in 233 actual model tables."
+        },
+        {
+          "Name": "Catalog.Core.EveryDatabaseToken",
+          "Status": "Passed",
+          "Detail": "Verified 157 native token generators; no application-only token substitute."
+        },
+        {
+          "Name": "Catalog.Core.ModelConstraintsAndStorage",
+          "Status": "Passed",
+          "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+        },
+        {
+          "Name": "Write.Core.InstalledTokens",
+          "Status": "Passed",
+          "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+        },
+        {
+          "Name": "Migration.Space.Forward",
+          "Status": "Passed",
+          "Detail": "Applied=1, previouslyApplied=1, pending=0."
+        },
+        {
+          "Name": "Migration.Space.Repeat",
+          "Status": "Passed",
+          "Detail": "Repeated real migration retained the same applied history."
+        },
+        {
+          "Name": "Catalog.Space.EveryTableAndColumn",
+          "Status": "Passed",
+          "Detail": "Verified every column in 83 actual model tables."
+        },
+        {
+          "Name": "Catalog.Space.EveryDatabaseToken",
+          "Status": "Passed",
+          "Detail": "Verified 41 native token generators; no application-only token substitute."
+        },
+        {
+          "Name": "Catalog.Space.ModelConstraintsAndStorage",
+          "Status": "Passed",
+          "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+        },
+        {
+          "Name": "Write.Space.InstalledTokens",
+          "Status": "Passed",
+          "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+        },
+        {
+          "Name": "Migration.IdentityPriority.Forward",
+          "Status": "Passed",
+          "Detail": "Applied=1, previouslyApplied=1, pending=0."
+        },
+        {
+          "Name": "Migration.IdentityPriority.Repeat",
+          "Status": "Passed",
+          "Detail": "Repeated real migration retained the same applied history."
+        },
+        {
+          "Name": "Catalog.IdentityPriority.EveryTableAndColumn",
+          "Status": "Passed",
+          "Detail": "Verified every column in 4 actual model tables."
+        },
+        {
+          "Name": "Catalog.IdentityPriority.EveryDatabaseToken",
+          "Status": "Passed",
+          "Detail": "Verified 4 native token generators; no application-only token substitute."
+        },
+        {
+          "Name": "Catalog.IdentityPriority.ModelConstraintsAndStorage",
+          "Status": "Passed",
+          "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+        },
+        {
+          "Name": "Write.IdentityPriority.InstalledTokens",
+          "Status": "Passed",
+          "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+        },
+        {
+          "Name": "Migration.ErpIntegration.Forward",
+          "Status": "Passed",
+          "Detail": "Applied=1, previouslyApplied=1, pending=0."
+        },
+        {
+          "Name": "Migration.ErpIntegration.Repeat",
+          "Status": "Passed",
+          "Detail": "Repeated real migration retained the same applied history."
+        },
+        {
+          "Name": "Catalog.ErpIntegration.EveryTableAndColumn",
+          "Status": "Passed",
+          "Detail": "Verified every column in 8 actual model tables."
+        },
+        {
+          "Name": "Catalog.ErpIntegration.EveryDatabaseToken",
+          "Status": "Passed",
+          "Detail": "Verified 6 native token generators; no application-only token substitute."
+        },
+        {
+          "Name": "Catalog.ErpIntegration.ModelConstraintsAndStorage",
+          "Status": "Passed",
+          "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+        },
+        {
+          "Name": "Write.ErpIntegration.InstalledTokens",
+          "Status": "Passed",
+          "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+        },
+        {
+          "Name": "Catalog.RawOrderDefaultsAndGlobalUniqueness",
+          "Status": "Passed",
+          "Detail": "65 original raw Order defaults on eight tables matched native catalog types and evaluated values; all eight CreateDate expressions advanced within one transaction as local wall clocks. Four exact global unique indexes are enabled, valid, unfiltered, and preserve ordered keys; PostgreSQL uses NULLS NOT DISTINCT. Read-only gate; no full Order business-graph acceptance implied."
+        },
+        {
+          "Name": "Catalog.ManagedOidcLedger",
+          "Status": "Passed",
+          "Detail": "Both OIDC ledger tables are installed."
+        },
+        {
+          "Name": "Catalog.ManagedJournalGuard",
+          "Status": "Passed",
+          "Detail": "Posted-journal mutation guard is present and enabled; write behavior is a separate gate."
+        },
+        {
+          "Name": "Write.IdentityGeneration",
+          "Status": "Passed",
+          "Detail": "Installed INSERT/UPDATE/tenant move/physical DELETE advanced opaque generations; both tenant versions rolled back with the snapshot transaction."
+        },
+        {
+          "Name": "Write.LanguageNullAndTenantUniqueness",
+          "Status": "Passed",
+          "Detail": "Actual NULL global/case/padding duplicate rejection and distinct tenant override coexistence; fixtures rolled back."
+        },
+        {
+          "Name": "Write.TimeDateAndNumericBoundaries",
+          "Status": "Passed",
+          "Detail": "Actual microsecond UTC/wall-clock/offset and DateOnly leap-date round trips; numeric scale rounding and overflow; Min/Max sentinels; PG invalid-kind/offset rejection; full rollback. Extra SQL 100ns precision is not promised by PG."
+        },
+        {
+          "Name": "Write.FinancialMoneyAndForeignKey",
+          "Status": "Passed",
+          "Detail": "Actual financial decimal(18,2) rounding, maximum value and overflow; native missing-parent FK rejection retained original link; fixtures rolled back. Domain posting rules are separate."
+        },
+        {
+          "Name": "Write.SpaceTenantForeignKeyAndUnicode",
+          "Status": "Passed",
+          "Detail": "Actual Space composite FK rejected a tenant move despite the valid parent ID; 200 UTF-16 units retained, 201 ASCII/202 supplementary units rejected without truncation; complete rollback."
+        },
+        {
+          "Name": "Write.OrderForeignKeysAndCascades",
+          "Status": "Passed",
+          "Detail": "Actual EF stored the valid six-row Order graph; each of four native FKs rejected its independently targeted orphan with the exact constraint identity; native detail/parent deletions exercised all four cascades. Entire transaction and all table counts restored; full order business validation remains separate."
+        },
+        {
+          "Name": "Write.FinancePostingMutationRace",
+          "Status": "Passed",
+          "Detail": "UPDATE and DELETE each waited on the actual posting session; after Status=2 committed, E-FIN-160 rejected both mutations and preserved both original lines. Exact fixtures removed and absence verified."
+        },
+        {
+          "Name": "Catalog.MissingIndexRollbackNegativeControl",
+          "Status": "Passed",
+          "Detail": "Complete catalog passed; transaction-only missing index and wrong filter on its nullable department column were rejected by exact assertions; rollback restored the complete catalog. No business rows changed."
+        }
+      ],
+      "MigrationProbeBinarySha256": "1EB704BE0E253CD9D5E79B11545F0B3CA07A79DA29D95D45554B6C8809D547FD"
+    },
+    "Passed": 36,
+    "Failed": 0,
+    "NoReviewerRerun": true,
+    "InputManifest": {
+      "Path": "D:\\CP6\\tmp\\wp2-migration-pg-final-exact-history-full-write-input.json",
+      "Sha256": "673605C9B5CAA253AC6AE03B4F8DBABE5CD62F44CAC1FE4DE792249F13AA2B33",
+      "CapturedUtc": "2026-10-02T19:28:11.2258674Z",
+      "ActualSourceHashCount": 1439,
+      "ActualSdkVersion": "10.0.302",
+      "ProvenanceCorrection": "The requested global.json path does not exist in this checkout. Removed that absent-file record and recorded actual SDK version; original incomplete manifest retained as invalid. Native runs/build/source hashes unchanged."
+    },
+    "PreservedInvalidInputManifest": {
+      "Path": "D:\\CP6\\tmp\\wp2-migration-pg-final-exact-history-full-write-input.invalid-missing-sdk-file.json",
+      "Sha256": "08838AA5D27C56E7736CF552864F29639A7D7407FB5BD93CD4B26B36526746B9",
+      "Reason": "Absent global.json initially produced a null SDK field. This manifest remains invalid and preserved; correction did not change the already executed build/runtime/native results."
+    }
+  },
+  "OutstandingBoundary": "SQL full catalog six historical Quotation capacity mismatches remain unclosed. The eventual full SQL supported forward upgrade is expected to include a capacity migration and reach Core140, but it is neither executed nor approved by this original139-scope review archive. Remote delivery, cleanup, application runtime/full business and production acceptance are separate and not claimed complete."
+}

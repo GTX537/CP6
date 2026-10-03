@@ -1,0 +1,207 @@
+[
+  {
+    "Schema": "public",
+    "Table": "Space_AiTenantPolicy",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Asset",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ExcelMappingProfile",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ExternalOrganization",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_FieldPolicy",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_File",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Job",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_LayerMappingProfile",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_PersonnelState",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_RackGenerationProfile",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_WarehouseTemplate",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_AssetVersion",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ExternalMembership",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ExternalGrant",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_RackGenerationProfileVersion",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_AiBudgetReservation",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_AisleRevision",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_AiUsageRecord",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_DeviceAlarmState",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_DeviceMapping",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_DeviceState",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_EditLease",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ElementRevision",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_FloorRevision",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_GenerationLockedFact",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_GenerationProposal",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_GenerationRun",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_GenerationStagingElement",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ProposalDecision",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_TenantAiWorkSlot",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_HistoricalRepublish",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_LocationRevision",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Model",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ModelVersion",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ModelSource",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ValidationRun",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_WmsAdoption",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ZoneRevision",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_RackRevision",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_PublishAttempt",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_RackLevelRevision",
+    "Column": "RowVersion"
+  }
+]

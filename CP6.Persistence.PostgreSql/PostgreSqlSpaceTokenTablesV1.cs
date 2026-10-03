@@ -1,0 +1,50 @@
+namespace CP6.Persistence.PostgreSql;
+
+// Frozen from the v1 baseline CreateTable operations; never derive old DDL from a future model.
+internal static class PostgreSqlSpaceTokenTablesV1
+{
+    public static readonly PostgreSqlTokenTableV1[] All =
+    [
+        new("public", "Space_AiTenantPolicy", "RowVersion"),
+        new("public", "Space_Asset", "RowVersion"),
+        new("public", "Space_ExcelMappingProfile", "RowVersion"),
+        new("public", "Space_ExternalOrganization", "RowVersion"),
+        new("public", "Space_FieldPolicy", "RowVersion"),
+        new("public", "Space_File", "RowVersion"),
+        new("public", "Space_Job", "RowVersion"),
+        new("public", "Space_LayerMappingProfile", "RowVersion"),
+        new("public", "Space_PersonnelState", "RowVersion"),
+        new("public", "Space_RackGenerationProfile", "RowVersion"),
+        new("public", "Space_WarehouseTemplate", "RowVersion"),
+        new("public", "Space_AssetVersion", "RowVersion"),
+        new("public", "Space_ExternalMembership", "RowVersion"),
+        new("public", "Space_ExternalGrant", "RowVersion"),
+        new("public", "Space_RackGenerationProfileVersion", "RowVersion"),
+        new("public", "Space_AiBudgetReservation", "RowVersion"),
+        new("public", "Space_AisleRevision", "RowVersion"),
+        new("public", "Space_AiUsageRecord", "RowVersion"),
+        new("public", "Space_DeviceAlarmState", "RowVersion"),
+        new("public", "Space_DeviceMapping", "RowVersion"),
+        new("public", "Space_DeviceState", "RowVersion"),
+        new("public", "Space_EditLease", "RowVersion"),
+        new("public", "Space_ElementRevision", "RowVersion"),
+        new("public", "Space_FloorRevision", "RowVersion"),
+        new("public", "Space_GenerationLockedFact", "RowVersion"),
+        new("public", "Space_GenerationProposal", "RowVersion"),
+        new("public", "Space_GenerationRun", "RowVersion"),
+        new("public", "Space_GenerationStagingElement", "RowVersion"),
+        new("public", "Space_ProposalDecision", "RowVersion"),
+        new("public", "Space_TenantAiWorkSlot", "RowVersion"),
+        new("public", "Space_HistoricalRepublish", "RowVersion"),
+        new("public", "Space_LocationRevision", "RowVersion"),
+        new("public", "Space_Model", "RowVersion"),
+        new("public", "Space_ModelVersion", "RowVersion"),
+        new("public", "Space_ModelSource", "RowVersion"),
+        new("public", "Space_ValidationRun", "RowVersion"),
+        new("public", "Space_WmsAdoption", "RowVersion"),
+        new("public", "Space_ZoneRevision", "RowVersion"),
+        new("public", "Space_RackRevision", "RowVersion"),
+        new("public", "Space_PublishAttempt", "RowVersion"),
+        new("public", "Space_RackLevelRevision", "RowVersion"),
+    ];
+}

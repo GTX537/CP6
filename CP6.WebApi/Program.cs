@@ -26,7 +26,9 @@ var builder = WebApplication.CreateBuilder(args);
 CP6.WebApi.Configuration.LocalJsonConfiguration.Add(builder.Configuration);
 
 var database = DatabaseOptions.FromConfiguration(builder.Configuration);
-CP6.WebApi.Configuration.DatabaseRuntimeSupport.EnsureSupported(database);
+var databaseInitializationOnly = string.Equals(builder.Configuration["Startup:Mode"],
+    "DatabaseInit", StringComparison.OrdinalIgnoreCase);
+CP6.WebApi.Configuration.DatabaseRuntimeSupport.EnsureSupported(database, databaseInitializationOnly);
 var databaseConnection = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is required.");
 builder.Services.AddSingleton(database);
@@ -997,10 +999,6 @@ if (app.Environment.IsDevelopment())
 }
 
 // 7. 初始化种子数据（首次启动时自动创建）
-var databaseInitializationOnly = string.Equals(
-    app.Configuration["Startup:Mode"],
-    "DatabaseInit",
-    StringComparison.OrdinalIgnoreCase);
 var runDatabaseInitialization = databaseInitializationOnly
                                 || !app.Configuration.GetValue<bool>(
                                     "Startup:SkipDatabaseInitialization");
@@ -1015,6 +1013,23 @@ using (var scope = app.Services.CreateScope())
     var spaceDb = scope.ServiceProvider
         .GetRequiredService<CP6.Space.Infrastructure.SpaceContext>();
     spaceDb.Database.Migrate();
+
+    // SQL's immutable Core history already installs both queue schemas. PostgreSQL
+    // owns their separate baseline chains, even when dispatch features are disabled.
+    var identityProfile = DatabaseMigrationProfile.For(database, DatabaseContextKind.IdentityPriority);
+    using (var identityDb = new CP6.Core.Services.CrmIdentity.IdentityMessagingContext(
+        DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6.Core.Services.CrmIdentity.IdentityMessagingContext>(),
+            database, databaseConnection, identityProfile.MigrationsAssembly, identityProfile.HistoryTable,
+            identityProfile.HistorySchema).Options))
+        if (identityProfile.MigrationOwner == DatabaseContextKind.IdentityPriority)
+            identityDb.Database.Migrate();
+    var erpProfile = DatabaseMigrationProfile.For(database, DatabaseContextKind.ErpIntegration);
+    using (var erpDb = new CP6.Core.Services.ErpIntegration.ErpIntegrationContext(
+        DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6.Core.Services.ErpIntegration.ErpIntegrationContext>(),
+            database, databaseConnection, erpProfile.MigrationsAssembly, erpProfile.HistoryTable,
+            erpProfile.HistorySchema).Options))
+        if (erpProfile.MigrationOwner == DatabaseContextKind.ErpIntegration)
+            erpDb.Database.Migrate();
 
     // SPACE observability must have one canonical UTC ordering column before
     // any seed, background worker, or request can query integration history.

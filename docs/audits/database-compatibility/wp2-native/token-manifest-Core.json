@@ -1,0 +1,787 @@
+[
+  {
+    "Schema": "crm_identity",
+    "Table": "Bootstrap",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity",
+    "Table": "Cp6_DeadLetterRecord",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity",
+    "Table": "Cp6_InboxAggregateCheckpoint",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity",
+    "Table": "Cp6_InboxMessage",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity",
+    "Table": "Cp6_OutboxMessage",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_AssetCard",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_AssetCategory",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_AssetDisposal",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_BankImportProfile",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_BankReconMatch",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_BankStatement",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_BankStatementLine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_BudgetLine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_BudgetVersion",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_DepreciationEntry",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Fin_DepreciationRun",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "M_Base",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "M_DefectCategory",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "M_GenericCode",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "M_InspectionTemplate",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "M_Machine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "M_Staff",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Plan_ItemPlanningPolicy",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Plan_MrpRun",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Plan_NetRequirement",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Plan_Pegging",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Plan_PlannedOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_GoodsReceipt",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_MatchTolerance",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_PoConsignMaterial",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_PurchaseOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_PurchaseRequest",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_Rfq",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_SupplierPrice",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_ThreeWayMatch",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity",
+    "Table": "ServiceToken",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity",
+    "Table": "Snapshot",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_AbcSnapshot",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Aisle",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_AnalyticsConfig",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_CodeRule",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Connector",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_ConnectorStop",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Floor",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Location",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Marker",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Rack",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Site",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Template",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Space_Zone",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Sys_RefreshTokens",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_BarcodeAlias",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_BarcodeProfile",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_CarrierShipment",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ClientDevice",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_CreditNote",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_CrossDockOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_DefectRecord",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_DeviceActivation",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_EstimateCalc",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_FscChecklist",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_FxRate",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_InboundOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_InboundOrderDetail",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_InboundReceipt",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_InboundReceiptDetail",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_InkColorMatchHistory",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_InkLot",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_IntegrationEvent",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_IotSensor",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_IotSensorReading",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_KitMaster",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_KitMasterComponent",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_KitOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_LabelJob",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_LabelTemplate",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_Location",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_LogisticsUnit",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_LpnContent",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_LpnPolicy",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_MachineDowntime",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_MaterialShortage",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_MobileTask",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_MobileTaskReservation",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OeeDaily",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_Order",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OutboundOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OutboundOrderDetail",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OutboundRoutingRule",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_Pallet",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_PaperRoll",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_PlateMold",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_PlateMoldStock",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ProcessCostRate",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ProductionResult",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ProductMaster",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_QcInspection",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_QcInspectionItem",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_QualityInspection",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_Quotation",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_RemnantMaterial",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ReplenishOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_RmaDetail",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_RmaHeader",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_SampleStock",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_SheetUnitPrice",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_SheetUnitPriceEstimate",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ShippingPackage",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_SlottingPlan",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_SpaceDispatchApprovalRequest",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_SpaceWmsOperation",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_Stock",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_StockSerial",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_StockTake",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_StockTakeDetail",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_StockTransaction",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_VmiBilling",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_Warehouse",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WcsTask",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WebBusinessPartner",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WmsBin",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WmsFeatureFlag",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WmsFeatureFlagChange",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WmsSequence",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WorkCenter",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WorkOrder",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_Connector",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_FlowInstance",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_FlowTrigger",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_FormData",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_ServiceJob",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_GoodsReceiptLine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_PurchaseOrderLine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_PurchaseRequestLine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_RfqLine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_RfqQuote",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_RfqSupplier",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Pur_ThreeWayMatchLine",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_EstimateCalcProcess",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OrderDetail",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ProductCoProduct",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ProductLotPrice",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ProductMaterial",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_ProductProcess",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_QualityInspectionItem",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_QuotationCalc",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_QuotationDetail",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_SpaceDispatchExecutionAction",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WorkOrderMaterial",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_WorkOrderProcess",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_FlowDefVersion",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_FormDefVersion",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_FormFlowBinding",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OrderMaterial",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OrderProcess",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "T_OrderProcessNote",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "public",
+    "Table": "Wf_FormDraft",
+    "Column": "RowVersion"
+  }
+]

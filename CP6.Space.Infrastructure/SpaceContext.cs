@@ -177,6 +177,7 @@ public sealed class SpaceContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        if (Database.IsNpgsql()) modelBuilder.Model.SetMaxIdentifierLength(int.MaxValue);
         ConfigureModel(modelBuilder);
         ConfigureVersion(modelBuilder);
         ConfigureFloorRevision(modelBuilder);
@@ -260,6 +261,11 @@ public sealed class SpaceContext : DbContext
         ConfigureTenantAiWorkSlot(modelBuilder);
         ConfigureAiBudgetReservation(modelBuilder);
         ConfigureAiTenantPolicy(modelBuilder);
+
+        if (Database.IsNpgsql())
+        {
+            SpacePostgreSqlModelConfiguration.Apply(modelBuilder);
+        }
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)

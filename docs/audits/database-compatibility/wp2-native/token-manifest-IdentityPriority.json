@@ -1,0 +1,22 @@
+[
+  {
+    "Schema": "crm_identity_priority",
+    "Table": "Cp6_DeadLetterRecord",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity_priority",
+    "Table": "Cp6_InboxAggregateCheckpoint",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity_priority",
+    "Table": "Cp6_InboxMessage",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "crm_identity_priority",
+    "Table": "Cp6_OutboxMessage",
+    "Column": "RowVersion"
+  }
+]

@@ -1,0 +1,926 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a6cc24a3-9f5c-4298-b246-8229731b60ad" name="tt@LAPTOP-3QQ44FJS 2026-10-02 10:18:11" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T10:18:11.6253710-04:00" queuing="2026-10-02T10:18:11.6253714-04:00" start="2026-10-02T10:18:04.7854712-04:00" finish="2026-10-02T10:18:18.8275240-04:00" />
+  <TestSettings name="default" id="3fb9eee0-2ad9-4c71-9579-35653a99a35d">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_10_18_11" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a4055a54-e936-4c5d-aaa1-89c2019cd842" testId="5cb1fd6d-3ebe-cd54-4957-6f12485acac9" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.4589346" startTime="2026-10-02T10:18:14.6610826-04:00" endTime="2026-10-02T10:18:16.1190525-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4055a54-e936-4c5d-aaa1-89c2019cd842">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                                   ↓ (pos 1770)&#xD;
+Expected: ···"lse:Never:\nP:Status|System.Int16|False|||"···&#xD;
+Actual:   ···"lse:Never:\nP:Status|CP6.Space.Domain.Spac"···&#xD;
+                                   ↑ (pos 1770)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 72&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a8969827-a292-4810-bafe-1adec01a5f35" testId="1ffdad9f-2e2b-e512-0f42-3b0c7f711f22" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0050188" startTime="2026-10-02T10:18:14.6475348-04:00" endTime="2026-10-02T10:18:14.6523609-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a8969827-a292-4810-bafe-1adec01a5f35">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 8&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 160&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0c20c5a0-2780-430e-8bf3-38e7a710a5fc" testId="11d4ab1d-178d-528c-4392-d998b2ec7029" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Tenant_queries_keep_actual_tenant_predicates_and_global_refresh_token_exception(provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1222570" startTime="2026-10-02T10:18:18.3389236-04:00" endTime="2026-10-02T10:18:18.4607809-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c20c5a0-2780-430e-8bf3-38e7a710a5fc" />
+    <UnitTestResult executionId="90dbdf36-6395-41c6-800a-4ef8dd3f7a01" testId="4e3b0451-5a4f-53f7-e6b0-316f7f57c421" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0008374" startTime="2026-10-02T10:18:18.3374859-04:00" endTime="2026-10-02T10:18:18.3384224-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90dbdf36-6395-41c6-800a-4ef8dd3f7a01">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Filter not matched in collection&#xD;
+Collection: [Check: CK_Space_AiBudgetReservation_Cost "[ReservedCostMinor] &gt;= 0 AND ([ActualCostMinor] IS NULL OR [ActualCostMinor] &gt;= 0)", Check: CK_Space_AiBudgetReservation_Currency "[ReservedCostMinor] = 0 OR [Currency] IS NOT NULL", Check: CK_Space_AiBudgetReservation_Period "[PeriodMonth] = YEAR([PeriodDay]) * 100 + MONTH([PeriodDay])"]</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 141&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5e6575c7-b057-4a1b-a7e4-b4d8d706429d" testId="7bf0166d-d5ac-d5c7-1ae4-3d769ff8e5cc" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0007947" startTime="2026-10-02T10:18:18.7518275-04:00" endTime="2026-10-02T10:18:18.7522811-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e6575c7-b057-4a1b-a7e4-b4d8d706429d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "timestamp with time zone"&#xD;
+Actual:   "datetimeoffset(7)"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 261&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6231e871-7078-49e8-8093-9756a34f6701" testId="9485763b-08c4-11b7-2acf-3ecddb76711f" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_global_language_key_is_unique_even_when_tenant_is_null" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0020144" startTime="2026-10-02T10:18:14.6455544-04:00" endTime="2026-10-02T10:18:14.6470046-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6231e871-7078-49e8-8093-9756a34f6701">
+      <Output>
+        <ErrorInfo>
+          <Message>Default PostgreSQL NULL-distinct composite uniqueness permits duplicate global translations.</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_global_language_key_is_unique_even_when_tenant_is_null() in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 222&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d088ef97-932d-4f78-89db-0f99bfcda799" testId="62b85b7a-ca84-2e5d-273f-a43751b67a27" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Space&quot;, provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0174776" startTime="2026-10-02T10:18:18.6628110-04:00" endTime="2026-10-02T10:18:18.6802446-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d088ef97-932d-4f78-89db-0f99bfcda799" />
+    <UnitTestResult executionId="3da04c7d-df22-4d5f-9808-d076df0672ca" testId="1c12898b-a335-e0c1-235c-6d121590ccaa" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Core&quot;, provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1499994" startTime="2026-10-02T10:18:18.5141240-04:00" endTime="2026-10-02T10:18:18.6626673-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3da04c7d-df22-4d5f-9808-d076df0672ca" />
+    <UnitTestResult executionId="6657cbee-7d19-49ea-88aa-aecf5f1b7245" testId="8ad01d91-b3a4-eaf3-8470-a374714cf3f2" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.6813162" startTime="2026-10-02T10:18:11.6926055-04:00" endTime="2026-10-02T10:18:14.3730025-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6657cbee-7d19-49ea-88aa-aecf5f1b7245">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotMatch() Failure: Match found&#xD;
+                                  ↓ (pos 346)&#xD;
+String: ···"64) NOT NULL,\r\n    "RowVersion" bytea NOT"···&#xD;
+RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 87&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a53bb309-b999-486f-8d63-ef1ae2cb601d" testId="e7493ed8-2544-7925-cfe8-807f39c3115f" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002299" startTime="2026-10-02T10:18:18.4851667-04:00" endTime="2026-10-02T10:18:18.4852877-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a53bb309-b999-486f-8d63-ef1ae2cb601d" />
+    <UnitTestResult executionId="0c31c591-76f2-479e-830f-c303a38533c8" testId="c9b427b2-5b28-8d77-58e7-d859fd05f8ac" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: &quot;ErpDeliveryReplayAudit&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0043793" startTime="2026-10-02T10:18:18.5097077-04:00" endTime="2026-10-02T10:18:18.5116103-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c31c591-76f2-479e-830f-c303a38533c8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "'\\x0001020380fdfeff'"&#xD;
+Actual:   "BYTEA E'\\\\x0001020380FDFEFF'"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(String entityName) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 208&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="39627117-7709-4eb2-bbe9-7ff7274f4939" testId="103c24c5-0172-a841-7948-9a1af2ea795c" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: &quot;ErpIntegration&quot;, expectedEntities: 2)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002586" startTime="2026-10-02T10:18:14.6596898-04:00" endTime="2026-10-02T10:18:14.6598486-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39627117-7709-4eb2-bbe9-7ff7274f4939" />
+    <UnitTestResult executionId="71c0a43d-2150-4469-b430-86eef1422fb9" testId="d915769d-fddb-9848-5dab-981b513d84e2" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Space&quot;, provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0172775" startTime="2026-10-02T10:18:18.7224926-04:00" endTime="2026-10-02T10:18:18.7397463-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71c0a43d-2150-4469-b430-86eef1422fb9" />
+    <UnitTestResult executionId="c57c0b2f-1301-408b-983f-d842e80cc410" testId="391724c7-6c9a-9c6d-a8bf-950151cd8927" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.4135902" startTime="2026-10-02T10:18:16.8688986-04:00" endTime="2026-10-02T10:18:18.2816245-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c57c0b2f-1301-408b-983f-d842e80cc410">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                                   ↓ (pos 1956)&#xD;
+Expected: ···"lse:Never:\nP:Status|System.Int32|False|||"···&#xD;
+Actual:   ···"lse:Never:\nP:Status|CP6.Entity.DomainMode"···&#xD;
+                                   ↑ (pos 1956)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 72&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3e86a701-a0cd-401a-9f0b-cf9e74d9097c" testId="d8dc11a2-bc11-844c-7f8a-7e9b1c31d30e" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0018934" startTime="2026-10-02T10:18:18.5052563-04:00" endTime="2026-10-02T10:18:18.5068687-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e86a701-a0cd-401a-9f0b-cf9e74d9097c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "C"&#xD;
+Actual:   "Latin1_General_100_BIN2"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 322&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ae50fe05-ce40-4864-918a-3fce85039997" testId="3756bd26-22cd-2068-7c57-696a08535d77" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;IdentityPriority&quot;, provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010152" startTime="2026-10-02T10:18:18.6818065-04:00" endTime="2026-10-02T10:18:18.6827400-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae50fe05-ce40-4864-918a-3fce85039997" />
+    <UnitTestResult executionId="e253f621-6ebd-44eb-815b-cdaa68a978ce" testId="caf2cf00-14f2-b7d6-fc97-b3126feed949" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0005655" startTime="2026-10-02T10:18:18.4850304-04:00" endTime="2026-10-02T10:18:18.4850803-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e253f621-6ebd-44eb-815b-cdaa68a978ce" />
+    <UnitTestResult executionId="11f8e9c6-8519-479f-8fa0-f1ef3596ab61" testId="56e24a06-6a8b-a697-409b-c72bfc6a7241" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0633208" startTime="2026-10-02T10:18:14.3740174-04:00" endTime="2026-10-02T10:18:14.4366325-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11f8e9c6-8519-479f-8fa0-f1ef3596ab61">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotMatch() Failure: Match found&#xD;
+                                  ↓ (pos 444)&#xD;
+String: ···"ger NOT NULL,\r\n    "RowVersion" bytea NOT"···&#xD;
+RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 87&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dabae72b-200a-450a-acc4-3e0c89cfbe86" testId="46ac17c5-cd5f-f004-9c0b-44685a0b26c7" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: &quot;Core&quot;, expectedEntities: 4)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0008023" startTime="2026-10-02T10:18:14.6595683-04:00" endTime="2026-10-02T10:18:14.6596175-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dabae72b-200a-450a-acc4-3e0c89cfbe86" />
+    <UnitTestResult executionId="d6e18606-c0fa-42c8-b2b3-8bcdbf5bfc27" testId="84894c7e-8a28-1b18-71b4-45fd1dd35c8a" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0027469" startTime="2026-10-02T10:18:18.4916081-04:00" endTime="2026-10-02T10:18:18.4918825-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d6e18606-c0fa-42c8-b2b3-8bcdbf5bfc27">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection was empty</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 348&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d6beab62-4eb2-4619-868f-ae154f4d6f27" testId="192656ca-8c00-78b6-f3e6-bc34a1482ed7" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0062665" startTime="2026-10-02T10:18:18.4782707-04:00" endTime="2026-10-02T10:18:18.4844149-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d6beab62-4eb2-4619-868f-ae154f4d6f27" />
+    <UnitTestResult executionId="48aefc0e-1503-445e-ae64-1eaaf8e87180" testId="3d9515cb-b7e0-4d1b-85ee-54ade2027b95" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2079491" startTime="2026-10-02T10:18:14.4373065-04:00" endTime="2026-10-02T10:18:14.6447889-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48aefc0e-1503-445e-ae64-1eaaf8e87180">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotMatch() Failure: Match found&#xD;
+                                ↓ (pos 172)&#xD;
+String: ···"AllowedSiteIdsJson" nvarchar(max) NOT NUL"···&#xD;
+RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 87&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fbaa7519-9e60-4406-895c-9a806f3d169a" testId="1fb8c742-bcd3-6343-f3f7-6e31dcc102ed" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0018857" startTime="2026-10-02T10:18:18.4923911-04:00" endTime="2026-10-02T10:18:18.5043625-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fbaa7519-9e60-4406-895c-9a806f3d169a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "C"&#xD;
+Actual:   "Latin1_General_100_BIN2"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 322&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="29f0832e-3198-4839-86bd-1cf872284ad2" testId="528556d4-0aaa-a103-8fd5-e269e95d0d88" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0012551" startTime="2026-10-02T10:18:18.3361440-04:00" endTime="2026-10-02T10:18:18.3373889-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="29f0832e-3198-4839-86bd-1cf872284ad2" />
+    <UnitTestResult executionId="f45d01f3-5117-4dd7-86ad-7c918d10e86c" testId="c0d88461-1816-1dd3-3342-f228f237fdcc" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;ErpIntegration&quot;, provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0016071" startTime="2026-10-02T10:18:18.6828344-04:00" endTime="2026-10-02T10:18:18.6844247-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f45d01f3-5117-4dd7-86ad-7c918d10e86c" />
+    <UnitTestResult executionId="b5b9036a-aef8-443a-ba8e-4072f2b53e83" testId="b0741680-8891-73d7-d0c4-df78e54ad28d" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1025367" startTime="2026-10-02T10:18:11.6061746-04:00" endTime="2026-10-02T10:18:11.6914319-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5b9036a-aef8-443a-ba8e-4072f2b53e83">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotMatch() Failure: Match found&#xD;
+                                  ↓ (pos 731)&#xD;
+String: ···"varying(128),\r\n    "RowVersion" bytea NOT"···&#xD;
+RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 87&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2ed31976-367b-4408-b422-fdc4b3d5fba9" testId="83e19d24-ead7-16fd-74d9-1e15ca8cedfd" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.7485913" startTime="2026-10-02T10:18:16.1199982-04:00" endTime="2026-10-02T10:18:16.8678747-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2ed31976-367b-4408-b422-fdc4b3d5fba9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                                   ↓ (pos 301)&#xD;
+Expected: ···":Never:\nP:Direction|System.Int32|False|||"···&#xD;
+Actual:   ···":Never:\nP:Direction|CP6.Platform.EntityFr"···&#xD;
+                                   ↑ (pos 301)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 72&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e5d783c0-50ca-42d0-b326-b789ff26f0f6" testId="9e9ebfb0-cd50-77f6-6bd0-ce2a24ae7a37" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Tenant_queries_keep_actual_tenant_predicates_and_global_refresh_token_exception(provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0172473" startTime="2026-10-02T10:18:18.4609188-04:00" endTime="2026-10-02T10:18:18.4780876-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5d783c0-50ca-42d0-b326-b789ff26f0f6" />
+    <UnitTestResult executionId="caf0741a-7369-400a-803b-edb1c4f1f11c" testId="9f09050e-2ad1-7d99-a3f7-efd4ed2d4fdf" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;ErpIntegration&quot;, provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0014251" startTime="2026-10-02T10:18:18.7399112-04:00" endTime="2026-10-02T10:18:18.7412070-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="caf0741a-7369-400a-803b-edb1c4f1f11c" />
+    <UnitTestResult executionId="bc85476c-3220-48ae-a343-44f4a66d9dbf" testId="dbc429e9-5121-2b0b-6971-5a6b0827f39b" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: PostgreSql)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0013238" startTime="2026-10-02T10:18:18.4867171-04:00" endTime="2026-10-02T10:18:18.4889616-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc85476c-3220-48ae-a343-44f4a66d9dbf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection was empty</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(DatabaseProvider provider) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 348&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a2824320-8324-4720-a81a-aad91cf83dfb" testId="d94c9b56-03a4-d61b-4d9f-d132ee245366" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Space_datetime_contract_is_utc_on_write_and_read_for_all_audited_properties" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.7796797" startTime="2026-10-02T10:18:08.8074731-04:00" endTime="2026-10-02T10:18:11.5885309-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2824320-8324-4720-a81a-aad91cf83dfb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "timestamp with time zone"&#xD;
+Actual:   "datetime2"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.AssertUtcProperties(IEnumerable`1 properties) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 363&#xD;
+   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Space_datetime_contract_is_utc_on_write_and_read_for_all_audited_properties() in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 275&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="983fab64-aa0e-4025-8a7d-fe84aee7c8d8" testId="d17e58ab-01f9-ae1c-2d36-ae12ce90c931" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: &quot;IdentityPriority&quot;, expectedEntities: 4)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0030829" startTime="2026-10-02T10:18:14.6561235-04:00" endTime="2026-10-02T10:18:14.6589578-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="983fab64-aa0e-4025-8a7d-fe84aee7c8d8" />
+    <UnitTestResult executionId="e6bd351e-e706-4370-b6ea-c8bcd11a7ad5" testId="7a33e58d-e613-fda2-da43-3a67de593bea" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003863" startTime="2026-10-02T10:18:14.6555339-04:00" endTime="2026-10-02T10:18:14.6555699-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6bd351e-e706-4370-b6ea-c8bcd11a7ad5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 8&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 160&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6ef02e3c-2ddd-4c5c-8c6d-f3773cdf2c37" testId="3875158e-7e5f-f65c-9ba9-9791443259c8" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0013475" startTime="2026-10-02T10:18:14.6539808-04:00" endTime="2026-10-02T10:18:14.6550139-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ef02e3c-2ddd-4c5c-8c6d-f3773cdf2c37">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 8&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 160&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c4b573e1-4278-4a8f-9481-fe762e6c7c9e" testId="ab2ca291-fa63-c1b2-3a05-46ac42ec6e37" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003168" startTime="2026-10-02T10:18:18.7530709-04:00" endTime="2026-10-02T10:18:18.7531103-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c4b573e1-4278-4a8f-9481-fe762e6c7c9e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 264&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c6729ff9-497e-4129-bab1-c80320679ae8" testId="2bf1a348-027e-a204-d761-5064253632b3" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0244527" startTime="2026-10-02T10:18:18.2827705-04:00" endTime="2026-10-02T10:18:18.3062712-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c6729ff9-497e-4129-bab1-c80320679ae8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                                   ↓ (pos 1827)&#xD;
+Expected: ···"dOrUpdate:\nP:Status|System.Int32|False|||"···&#xD;
+Actual:   ···"dOrUpdate:\nP:Status|CP6.Core.Services.Erp"···&#xD;
+                                   ↑ (pos 1827)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 72&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7ddbc67d-fab6-4d7e-be3d-09990d5ec3ef" testId="7ba6a6fb-ab55-23d5-18a7-7f4d57cc21dd" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010663" startTime="2026-10-02T10:18:18.3355973-04:00" endTime="2026-10-02T10:18:18.3360429-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ddbc67d-fab6-4d7e-be3d-09990d5ec3ef" />
+    <UnitTestResult executionId="8cf3893d-9a18-42bc-b539-2c30d0485c5d" testId="9266c42b-8a54-674a-ab33-d0c5105e4397" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: &quot;ErpInboxReplayAudit&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0006920" startTime="2026-10-02T10:18:18.5121358-04:00" endTime="2026-10-02T10:18:18.5124615-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cf3893d-9a18-42bc-b539-2c30d0485c5d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "'\\x0001020380fdfeff'"&#xD;
+Actual:   "BYTEA E'\\\\x0001020380FDFEFF'"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(String entityName) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 208&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9baec708-7f36-4d3b-b59f-6579a5b532f7" testId="a590034a-ef69-3289-dfe1-4bfaa3d60950" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010267" startTime="2026-10-02T10:18:14.6529929-04:00" endTime="2026-10-02T10:18:14.6534834-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9baec708-7f36-4d3b-b59f-6579a5b532f7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 8&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 160&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="40bd6ce6-2bfb-4a1d-b2c1-855b77b6fc4f" testId="b3714848-0e52-b570-0976-832dbc787c0a" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0023558" startTime="2026-10-02T10:18:18.7499902-04:00" endTime="2026-10-02T10:18:18.7514111-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40bd6ce6-2bfb-4a1d-b2c1-855b77b6fc4f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 264&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7e47490d-ac61-4241-a8ed-a1d624c082d4" testId="16fef6ee-152a-8df0-ca05-929d6afdae11" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Core&quot;, provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0378150" startTime="2026-10-02T10:18:18.6845675-04:00" endTime="2026-10-02T10:18:18.7223379-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e47490d-ac61-4241-a8ed-a1d624c082d4" />
+    <UnitTestResult executionId="f4b41bb8-80d9-4224-a550-5ee401a4c285" testId="10a43ba1-168e-e26e-5d4c-e025180e8652" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0006512" startTime="2026-10-02T10:18:18.4853866-04:00" endTime="2026-10-02T10:18:18.4861783-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4b41bb8-80d9-4224-a550-5ee401a4c285">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.InRange() Failure: Value not in range&#xD;
+Range:  (1 - 63)&#xD;
+Actual: 70</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.&lt;Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace&gt;g__Register|14_0(String schema, String scope, String name, &lt;&gt;c__DisplayClass14_0&amp;) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 245&#xD;
+   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 239&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ccc12e85-c8aa-47ee-a31e-f7b8efdf8ab2" testId="f9a7a973-ad02-37d3-02e8-9213be9d66c2" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Core_preserves_local_and_calendar_fields_and_only_maps_verified_instants_to_utc" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0073375" startTime="2026-10-02T10:18:18.7413284-04:00" endTime="2026-10-02T10:18:18.7487470-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccc12e85-c8aa-47ee-a31e-f7b8efdf8ab2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsAssignableFrom() Failure: Value is null&#xD;
+Expected: typeof(Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.AssertUtcProperties(IEnumerable`1 properties) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 367&#xD;
+   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Core_preserves_local_and_calendar_fields_and_only_maps_verified_instants_to_utc() in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 288&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7bc13291-b4de-4caa-a375-baea55486154" testId="0258fea9-84a8-4015-a0b1-58b1432d69e6" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0285058" startTime="2026-10-02T10:18:18.3071040-04:00" endTime="2026-10-02T10:18:18.3350325-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7bc13291-b4de-4caa-a375-baea55486154">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Filter not matched in collection&#xD;
+Collection: [Check: CK_Space_AuditEvent_ActorType "[ActorType] IN ('User','System')", Check: CK_Space_AuditEvent_Correlation "[CorrelationId] &lt;&gt; '00000000-0000-0000-0000-000000000000'", Check: CK_Space_AuditEvent_Outcome "[Outcome] IN ('Started','Succeeded','Failed','Denied')", Check: CK_Space_AuditEvent_Tenant "[TenantId] &lt;&gt; '00000000-0000-0000-0000-000000000000'"]</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 141&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e6565a74-4fcb-4fb0-a36d-cbd099a67ccc" testId="43d25433-42e0-4ad3-d7b3-d6d06b6b1001" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003686" startTime="2026-10-02T10:18:18.7527260-04:00" endTime="2026-10-02T10:18:18.7527627-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6565a74-4fcb-4fb0-a36d-cbd099a67ccc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+Expected: typeof(System.Exception)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 264&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dd1d31f8-2959-4d5f-9051-9f4fd4cc8161" testId="6f629dff-5b34-c796-8ed5-db10ffd18ab5" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;IdentityPriority&quot;, provider: SqlServer)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0014319" startTime="2026-10-02T10:18:18.6803900-04:00" endTime="2026-10-02T10:18:18.6817090-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd1d31f8-2959-4d5f-9051-9f4fd4cc8161" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;IdentityPriority&quot;, provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="6f629dff-5b34-c796-8ed5-db10ffd18ab5">
+      <Execution id="dd1d31f8-2959-4d5f-9051-9f4fd4cc8161" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7bf0166d-d5ac-d5c7-1ae4-3d769ff8e5cc">
+      <Execution id="5e6575c7-b057-4a1b-a7e4-b4d8d706429d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="43d25433-42e0-4ad3-d7b3-d6d06b6b1001">
+      <Execution id="e6565a74-4fcb-4fb0-a36d-cbd099a67ccc" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: &quot;ErpInboxReplayAudit&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9266c42b-8a54-674a-ab33-d0c5105e4397">
+      <Execution id="8cf3893d-9a18-42bc-b539-2c30d0485c5d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;ErpIntegration&quot;, provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9f09050e-2ad1-7d99-a3f7-efd4ed2d4fdf">
+      <Execution id="caf0741a-7369-400a-803b-edb1c4f1f11c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="84894c7e-8a28-1b18-71b4-45fd1dd35c8a">
+      <Execution id="d6e18606-c0fa-42c8-b2b3-8bcdbf5bfc27" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7ba6a6fb-ab55-23d5-18a7-7f4d57cc21dd">
+      <Execution id="7ddbc67d-fab6-4d7e-be3d-09990d5ec3ef" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1fb8c742-bcd3-6343-f3f7-6e31dcc102ed">
+      <Execution id="fbaa7519-9e60-4406-895c-9a806f3d169a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Core&quot;, provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1c12898b-a335-e0c1-235c-6d121590ccaa">
+      <Execution id="3da04c7d-df22-4d5f-9808-d076df0672ca" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: &quot;ErpIntegration&quot;, expectedEntities: 2)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="103c24c5-0172-a841-7948-9a1af2ea795c">
+      <Execution id="39627117-7709-4eb2-bbe9-7ff7274f4939" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Actual_platform_private_setters_keep_generated_concurrency_metadata" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="83e19d24-ead7-16fd-74d9-1e15ca8cedfd">
+      <Execution id="2ed31976-367b-4408-b422-fdc4b3d5fba9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Sql_server_preserves_every_existing_snapshot_entity_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="391724c7-6c9a-9c6d-a8bf-950151cd8927">
+      <Execution id="c57c0b2f-1301-408b-983f-d842e80cc410" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Sql_server_preserves_every_existing_snapshot_entity_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5cb1fd6d-3ebe-cd54-4957-6f12485acac9">
+      <Execution id="a4055a54-e936-4c5d-aaa1-89c2019cd842" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Sql_server_preserves_every_existing_snapshot_entity_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;ErpIntegration&quot;, provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c0d88461-1816-1dd3-3342-f228f237fdcc">
+      <Execution id="f45d01f3-5117-4dd7-86ad-7c918d10e86c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Space_datetime_contract_is_utc_on_write_and_read_for_all_audited_properties" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d94c9b56-03a4-d61b-4d9f-d132ee245366">
+      <Execution id="a2824320-8324-4720-a81a-aad91cf83dfb" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Space_datetime_contract_is_utc_on_write_and_read_for_all_audited_properties" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="10a43ba1-168e-e26e-5d4c-e025180e8652">
+      <Execution id="f4b41bb8-80d9-4224-a550-5ee401a4c285" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="2bf1a348-027e-a204-d761-5064253632b3">
+      <Execution id="c6729ff9-497e-4129-bab1-c80320679ae8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Sql_server_preserves_every_existing_snapshot_entity_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3875158e-7e5f-f65c-9ba9-9791443259c8">
+      <Execution id="6ef02e3c-2ddd-4c5c-8c6d-f3773cdf2c37" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3d9515cb-b7e0-4d1b-85ee-54ade2027b95">
+      <Execution id="48aefc0e-1503-445e-ae64-1eaaf8e87180" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: &quot;IdentityPriority&quot;, expectedEntities: 4)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d17e58ab-01f9-ae1c-2d36-ae12ce90c931">
+      <Execution id="983fab64-aa0e-4025-8a7d-fe84aee7c8d8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Actual_platform_private_setters_keep_generated_concurrency_metadata" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b0741680-8891-73d7-d0c4-df78e54ad28d">
+      <Execution id="b5b9036a-aef8-443a-ba8e-4072f2b53e83" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_global_language_key_is_unique_even_when_tenant_is_null" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9485763b-08c4-11b7-2acf-3ecddb76711f">
+      <Execution id="6231e871-7078-49e8-8093-9756a34f6701" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_global_language_key_is_unique_even_when_tenant_is_null" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a590034a-ef69-3289-dfe1-4bfaa3d60950">
+      <Execution id="9baec708-7f36-4d3b-b59f-6579a5b532f7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Tenant_queries_keep_actual_tenant_predicates_and_global_refresh_token_exception(provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9e9ebfb0-cd50-77f6-6bd0-ce2a24ae7a37">
+      <Execution id="e5d783c0-50ca-42d0-b326-b789ff26f0f6" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Tenant_queries_keep_actual_tenant_predicates_and_global_refresh_token_exception" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d8dc11a2-bc11-844c-7f8a-7e9b1c31d30e">
+      <Execution id="3e86a701-a0cd-401a-9f0b-cf9e74d9097c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="528556d4-0aaa-a103-8fd5-e269e95d0d88">
+      <Execution id="29f0832e-3198-4839-86bd-1cf872284ad2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Tenant_queries_keep_actual_tenant_predicates_and_global_refresh_token_exception(provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="11d4ab1d-178d-528c-4392-d998b2ec7029">
+      <Execution id="0c20c5a0-2780-430e-8bf3-38e7a710a5fc" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Tenant_queries_keep_actual_tenant_predicates_and_global_refresh_token_exception" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0258fea9-84a8-4015-a0b1-58b1432d69e6">
+      <Execution id="7bc13291-b4de-4caa-a375-baea55486154" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;IdentityPriority&quot;, provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3756bd26-22cd-2068-7c57-696a08535d77">
+      <Execution id="ae50fe05-ce40-4864-918a-3fce85039997" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="56e24a06-6a8b-a697-409b-c72bfc6a7241">
+      <Execution id="11f8e9c6-8519-479f-8fa0-f1ef3596ab61" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Core_preserves_local_and_calendar_fields_and_only_maps_verified_instants_to_utc" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f9a7a973-ad02-37d3-02e8-9213be9d66c2">
+      <Execution id="ccc12e85-c8aa-47ee-a31e-f7b8efdf8ab2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Core_preserves_local_and_calendar_fields_and_only_maps_verified_instants_to_utc" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: &quot;ErpDeliveryReplayAudit&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c9b427b2-5b28-8d77-58e7-d859fd05f8ac">
+      <Execution id="0c31c591-76f2-479e-830f-c303a38533c8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e7493ed8-2544-7925-cfe8-807f39c3115f">
+      <Execution id="a53bb309-b999-486f-8d63-ef1ae2cb601d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Core&quot;, provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="16fef6ee-152a-8df0-ca05-929d6afdae11">
+      <Execution id="7e47490d-ac61-4241-a8ed-a1d624c082d4" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8ad01d91-b3a4-eaf3-8470-a374714cf3f2">
+      <Execution id="6657cbee-7d19-49ea-88aa-aecf5f1b7245" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="caf2cf00-14f2-b7d6-fc97-b3126feed949">
+      <Execution id="e253f621-6ebd-44eb-815b-cdaa68a978ce" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Actual_platform_private_setters_keep_generated_concurrency_metadata(kind: &quot;Core&quot;, expectedEntities: 4)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="46ac17c5-cd5f-f004-9c0b-44685a0b26c7">
+      <Execution id="dabae72b-200a-450a-acc4-3e0c89cfbe86" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Actual_platform_private_setters_keep_generated_concurrency_metadata" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7a33e58d-e613-fda2-da43-3a67de593bea">
+      <Execution id="e6bd351e-e706-4370-b6ea-c8bcd11a7ad5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b3714848-0e52-b570-0976-832dbc787c0a">
+      <Execution id="40bd6ce6-2bfb-4a1d-b2c1-855b77b6fc4f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: &quot;Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4e3b0451-5a4f-53f7-e6b0-316f7f57c421">
+      <Execution id="90dbdf36-6395-41c6-800a-4ef8dd3f7a01" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Space&quot;, provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d915769d-fddb-9848-5dab-981b513d84e2">
+      <Execution id="71c0a43d-2150-4469-b430-86eef1422fb9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: PostgreSql)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="dbc429e9-5121-2b0b-6971-5a6b0827f39b">
+      <Execution id="bc85476c-3220-48ae-a343-44f4a66d9dbf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Design_factory_and_runtime_build_the_same_relational_contract(kind: &quot;Space&quot;, provider: SqlServer)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="62b85b7a-ca84-2e5d-273f-a43751b67a27">
+      <Execution id="d088ef97-932d-4f78-89db-0f99bfcda799" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Design_factory_and_runtime_build_the_same_relational_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="192656ca-8c00-78b6-f3e6-bc34a1482ed7">
+      <Execution id="d6beab62-4eb2-4619-868f-ae154f4d6f27" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="ab2ca291-fa63-c1b2-3a05-46ac42ec6e37">
+      <Execution id="c4b573e1-4278-4a8f-9481-fe762e6c7c9e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: &quot;IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1ffdad9f-2e2b-e512-0f42-3b0c7f711f22">
+      <Execution id="a8969827-a292-4810-bafe-1adec01a5f35" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5cb1fd6d-3ebe-cd54-4957-6f12485acac9" executionId="a4055a54-e936-4c5d-aaa1-89c2019cd842" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ffdad9f-2e2b-e512-0f42-3b0c7f711f22" executionId="a8969827-a292-4810-bafe-1adec01a5f35" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11d4ab1d-178d-528c-4392-d998b2ec7029" executionId="0c20c5a0-2780-430e-8bf3-38e7a710a5fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e3b0451-5a4f-53f7-e6b0-316f7f57c421" executionId="90dbdf36-6395-41c6-800a-4ef8dd3f7a01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7bf0166d-d5ac-d5c7-1ae4-3d769ff8e5cc" executionId="5e6575c7-b057-4a1b-a7e4-b4d8d706429d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9485763b-08c4-11b7-2acf-3ecddb76711f" executionId="6231e871-7078-49e8-8093-9756a34f6701" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62b85b7a-ca84-2e5d-273f-a43751b67a27" executionId="d088ef97-932d-4f78-89db-0f99bfcda799" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c12898b-a335-e0c1-235c-6d121590ccaa" executionId="3da04c7d-df22-4d5f-9808-d076df0672ca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ad01d91-b3a4-eaf3-8470-a374714cf3f2" executionId="6657cbee-7d19-49ea-88aa-aecf5f1b7245" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7493ed8-2544-7925-cfe8-807f39c3115f" executionId="a53bb309-b999-486f-8d63-ef1ae2cb601d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9b427b2-5b28-8d77-58e7-d859fd05f8ac" executionId="0c31c591-76f2-479e-830f-c303a38533c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="103c24c5-0172-a841-7948-9a1af2ea795c" executionId="39627117-7709-4eb2-bbe9-7ff7274f4939" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d915769d-fddb-9848-5dab-981b513d84e2" executionId="71c0a43d-2150-4469-b430-86eef1422fb9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="391724c7-6c9a-9c6d-a8bf-950151cd8927" executionId="c57c0b2f-1301-408b-983f-d842e80cc410" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8dc11a2-bc11-844c-7f8a-7e9b1c31d30e" executionId="3e86a701-a0cd-401a-9f0b-cf9e74d9097c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3756bd26-22cd-2068-7c57-696a08535d77" executionId="ae50fe05-ce40-4864-918a-3fce85039997" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="caf2cf00-14f2-b7d6-fc97-b3126feed949" executionId="e253f621-6ebd-44eb-815b-cdaa68a978ce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56e24a06-6a8b-a697-409b-c72bfc6a7241" executionId="11f8e9c6-8519-479f-8fa0-f1ef3596ab61" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46ac17c5-cd5f-f004-9c0b-44685a0b26c7" executionId="dabae72b-200a-450a-acc4-3e0c89cfbe86" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84894c7e-8a28-1b18-71b4-45fd1dd35c8a" executionId="d6e18606-c0fa-42c8-b2b3-8bcdbf5bfc27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="192656ca-8c00-78b6-f3e6-bc34a1482ed7" executionId="d6beab62-4eb2-4619-868f-ae154f4d6f27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3d9515cb-b7e0-4d1b-85ee-54ade2027b95" executionId="48aefc0e-1503-445e-ae64-1eaaf8e87180" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1fb8c742-bcd3-6343-f3f7-6e31dcc102ed" executionId="fbaa7519-9e60-4406-895c-9a806f3d169a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="528556d4-0aaa-a103-8fd5-e269e95d0d88" executionId="29f0832e-3198-4839-86bd-1cf872284ad2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c0d88461-1816-1dd3-3342-f228f237fdcc" executionId="f45d01f3-5117-4dd7-86ad-7c918d10e86c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0741680-8891-73d7-d0c4-df78e54ad28d" executionId="b5b9036a-aef8-443a-ba8e-4072f2b53e83" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="83e19d24-ead7-16fd-74d9-1e15ca8cedfd" executionId="2ed31976-367b-4408-b422-fdc4b3d5fba9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e9ebfb0-cd50-77f6-6bd0-ce2a24ae7a37" executionId="e5d783c0-50ca-42d0-b326-b789ff26f0f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9f09050e-2ad1-7d99-a3f7-efd4ed2d4fdf" executionId="caf0741a-7369-400a-803b-edb1c4f1f11c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbc429e9-5121-2b0b-6971-5a6b0827f39b" executionId="bc85476c-3220-48ae-a343-44f4a66d9dbf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d94c9b56-03a4-d61b-4d9f-d132ee245366" executionId="a2824320-8324-4720-a81a-aad91cf83dfb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d17e58ab-01f9-ae1c-2d36-ae12ce90c931" executionId="983fab64-aa0e-4025-8a7d-fe84aee7c8d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7a33e58d-e613-fda2-da43-3a67de593bea" executionId="e6bd351e-e706-4370-b6ea-c8bcd11a7ad5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3875158e-7e5f-f65c-9ba9-9791443259c8" executionId="6ef02e3c-2ddd-4c5c-8c6d-f3773cdf2c37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab2ca291-fa63-c1b2-3a05-46ac42ec6e37" executionId="c4b573e1-4278-4a8f-9481-fe762e6c7c9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2bf1a348-027e-a204-d761-5064253632b3" executionId="c6729ff9-497e-4129-bab1-c80320679ae8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ba6a6fb-ab55-23d5-18a7-7f4d57cc21dd" executionId="7ddbc67d-fab6-4d7e-be3d-09990d5ec3ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9266c42b-8a54-674a-ab33-d0c5105e4397" executionId="8cf3893d-9a18-42bc-b539-2c30d0485c5d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a590034a-ef69-3289-dfe1-4bfaa3d60950" executionId="9baec708-7f36-4d3b-b59f-6579a5b532f7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b3714848-0e52-b570-0976-832dbc787c0a" executionId="40bd6ce6-2bfb-4a1d-b2c1-855b77b6fc4f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16fef6ee-152a-8df0-ca05-929d6afdae11" executionId="7e47490d-ac61-4241-a8ed-a1d624c082d4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10a43ba1-168e-e26e-5d4c-e025180e8652" executionId="f4b41bb8-80d9-4224-a550-5ee401a4c285" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9a7a973-ad02-37d3-02e8-9213be9d66c2" executionId="ccc12e85-c8aa-47ee-a31e-f7b8efdf8ab2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0258fea9-84a8-4015-a0b1-58b1432d69e6" executionId="7bc13291-b4de-4caa-a375-baea55486154" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43d25433-42e0-4ad3-d7b3-d6d06b6b1001" executionId="e6565a74-4fcb-4fb0-a36d-cbd099a67ccc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f629dff-5b34-c796-8ed5-db10ffd18ab5" executionId="dd1d31f8-2959-4d5f-9051-9f4fd4cc8161" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="46" executed="46" passed="18" failed="28" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:01.57]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:02.37]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:02.40]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:05.22]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:05.22]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:05.22]       Expected: "timestamp with time zone"&#xD;
+[xUnit.net 00:00:05.22]       Actual:   "datetime2"&#xD;
+[xUnit.net 00:00:05.22]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:05.22]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.22]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(363,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.AssertUtcProperties(IEnumerable`1 properties)&#xD;
+[xUnit.net 00:00:05.22]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(275,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Space_datetime_contract_is_utc_on_write_and_read_for_all_audited_properties()&#xD;
+[xUnit.net 00:00:05.22]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:05.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:05.32]       Assert.DoesNotMatch() Failure: Match found&#xD;
+[xUnit.net 00:00:05.32]                                         ↓ (pos 731)&#xD;
+[xUnit.net 00:00:05.32]       String: ···"varying(128),\r\n    "RowVersion" bytea NOT"···&#xD;
+[xUnit.net 00:00:05.32]       RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···&#xD;
+[xUnit.net 00:00:05.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.32]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(87,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind)&#xD;
+[xUnit.net 00:00:05.32]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:05.32]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:08.00]       Assert.DoesNotMatch() Failure: Match found&#xD;
+[xUnit.net 00:00:08.00]                                         ↓ (pos 346)&#xD;
+[xUnit.net 00:00:08.00]       String: ···"64) NOT NULL,\r\n    "RowVersion" bytea NOT"···&#xD;
+[xUnit.net 00:00:08.00]       RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···&#xD;
+[xUnit.net 00:00:08.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.00]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(87,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind)&#xD;
+[xUnit.net 00:00:08.00]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(Object, Span`1)&#xD;
+[xUnit.net 00:00:08.00]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:08.06]       Assert.DoesNotMatch() Failure: Match found&#xD;
+[xUnit.net 00:00:08.06]                                         ↓ (pos 444)&#xD;
+[xUnit.net 00:00:08.06]       String: ···"ger NOT NULL,\r\n    "RowVersion" bytea NOT"···&#xD;
+[xUnit.net 00:00:08.06]       RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···&#xD;
+[xUnit.net 00:00:08.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.07]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(87,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind)&#xD;
+[xUnit.net 00:00:08.07]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(Object, Span`1)&#xD;
+[xUnit.net 00:00:08.07]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:08.27]       Assert.DoesNotMatch() Failure: Match found&#xD;
+[xUnit.net 00:00:08.27]                                       ↓ (pos 172)&#xD;
+[xUnit.net 00:00:08.27]       String: ···"AllowedSiteIdsJson" nvarchar(max) NOT NUL"···&#xD;
+[xUnit.net 00:00:08.27]       RegEx:  "(?i)\\b(?:nvarchar|nchar|datetime2|datetim"···&#xD;
+[xUnit.net 00:00:08.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.27]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(87,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(String kind)&#xD;
+[xUnit.net 00:00:08.27]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(Object, Span`1)&#xD;
+[xUnit.net 00:00:08.27]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:08.28]       Default PostgreSQL NULL-distinct composite uniqueness permits duplicate global translations.&#xD;
+[xUnit.net 00:00:08.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.28]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(222,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_global_language_key_is_unique_even_when_tenant_is_null()&#xD;
+[xUnit.net 00:00:08.28]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:08.28]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:08.28]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:08.28]       Expected: 8&#xD;
+[xUnit.net 00:00:08.28]       Actual:   null&#xD;
+[xUnit.net 00:00:08.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.28]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(160,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind)&#xD;
+[xUnit.net 00:00:08.28]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:08.28]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:08.28]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:08.28]       Expected: 8&#xD;
+[xUnit.net 00:00:08.28]       Actual:   null&#xD;
+[xUnit.net 00:00:08.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.28]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(160,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind)&#xD;
+[xUnit.net 00:00:08.28]            at InvokeStub_DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(Object, Span`1)&#xD;
+[xUnit.net 00:00:08.28]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:08.28]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:08.28]       Expected: 8&#xD;
+[xUnit.net 00:00:08.28]       Actual:   null&#xD;
+[xUnit.net 00:00:08.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.28]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(160,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind)&#xD;
+[xUnit.net 00:00:08.28]            at InvokeStub_DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(Object, Span`1)&#xD;
+[xUnit.net 00:00:08.28]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:08.28]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:08.28]       Expected: 8&#xD;
+[xUnit.net 00:00:08.28]       Actual:   null&#xD;
+[xUnit.net 00:00:08.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.28]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(160,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(String kind)&#xD;
+[xUnit.net 00:00:08.28]            at InvokeStub_DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(Object, Span`1)&#xD;
+[xUnit.net 00:00:08.28]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:09.75]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:09.75]                                          ↓ (pos 1770)&#xD;
+[xUnit.net 00:00:09.75]       Expected: ···"lse:Never:\nP:Status|System.Int16|False|||"···&#xD;
+[xUnit.net 00:00:09.75]       Actual:   ···"lse:Never:\nP:Status|CP6.Space.Domain.Spac"···&#xD;
+[xUnit.net 00:00:09.75]                                          ↑ (pos 1770)&#xD;
+[xUnit.net 00:00:09.75]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.75]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(72,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind)&#xD;
+[xUnit.net 00:00:09.75]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:09.75]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:10.50]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:10.50]                                          ↓ (pos 301)&#xD;
+[xUnit.net 00:00:10.50]       Expected: ···":Never:\nP:Direction|System.Int32|False|||"···&#xD;
+[xUnit.net 00:00:10.50]       Actual:   ···":Never:\nP:Direction|CP6.Platform.EntityFr"···&#xD;
+[xUnit.net 00:00:10.50]                                          ↑ (pos 301)&#xD;
+[xUnit.net 00:00:10.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.50]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(72,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind)&#xD;
+[xUnit.net 00:00:10.50]            at InvokeStub_DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(Object, Span`1)&#xD;
+[xUnit.net 00:00:10.50]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:11.91]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:11.91]                                          ↓ (pos 1956)&#xD;
+[xUnit.net 00:00:11.91]       Expected: ···"lse:Never:\nP:Status|System.Int32|False|||"···&#xD;
+[xUnit.net 00:00:11.91]       Actual:   ···"lse:Never:\nP:Status|CP6.Entity.DomainMode"···&#xD;
+[xUnit.net 00:00:11.91]                                          ↑ (pos 1956)&#xD;
+[xUnit.net 00:00:11.91]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.91]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(72,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind)&#xD;
+[xUnit.net 00:00:11.91]            at InvokeStub_DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(Object, Span`1)&#xD;
+[xUnit.net 00:00:11.91]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:11.93]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:11.93]                                          ↓ (pos 1827)&#xD;
+[xUnit.net 00:00:11.93]       Expected: ···"dOrUpdate:\nP:Status|System.Int32|False|||"···&#xD;
+[xUnit.net 00:00:11.93]       Actual:   ···"dOrUpdate:\nP:Status|CP6.Core.Services.Erp"···&#xD;
+[xUnit.net 00:00:11.93]                                          ↑ (pos 1827)&#xD;
+[xUnit.net 00:00:11.93]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.93]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(72,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(String kind)&#xD;
+[xUnit.net 00:00:11.93]            at InvokeStub_DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(Object, Span`1)&#xD;
+[xUnit.net 00:00:11.93]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:11.96]       Assert.Contains() Failure: Filter not matched in collection&#xD;
+[xUnit.net 00:00:11.96]       Collection: [Check: CK_Space_AuditEvent_ActorType "[ActorType] IN ('User','System')", Check: CK_Space_AuditEvent_Correlation "[CorrelationId] &lt;&gt; '00000000-0000-0000-0000-000000000000'", Check: CK_Space_AuditEvent_Outcome "[Outcome] IN ('Started','Succeeded','Failed','Denied')", Check: CK_Space_AuditEvent_Tenant "[TenantId] &lt;&gt; '00000000-0000-0000-0000-000000000000'"]&#xD;
+[xUnit.net 00:00:11.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.96]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(141,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(String kind)&#xD;
+[xUnit.net 00:00:11.96]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:11.96]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:11.97]       Assert.Contains() Failure: Filter not matched in collection&#xD;
+[xUnit.net 00:00:11.97]       Collection: [Check: CK_Space_AiBudgetReservation_Cost "[ReservedCostMinor] &gt;= 0 AND ([ActualCostMinor] IS NULL OR [ActualCostMinor] &gt;= 0)", Check: CK_Space_AiBudgetReservation_Currency "[ReservedCostMinor] = 0 OR [Currency] IS NOT NULL", Check: CK_Space_AiBudgetReservation_Period "[PeriodMonth] = YEAR([PeriodDay]) * 100 + MONTH([PeriodDay])"]&#xD;
+[xUnit.net 00:00:11.97]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.97]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(141,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(String kind)&#xD;
+[xUnit.net 00:00:11.97]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(Object, Span`1)&#xD;
+[xUnit.net 00:00:11.97]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.11]       Assert.InRange() Failure: Value not in range&#xD;
+[xUnit.net 00:00:12.11]       Range:  (1 - 63)&#xD;
+[xUnit.net 00:00:12.11]       Actual: 70&#xD;
+[xUnit.net 00:00:12.11]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.11]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(245,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.&lt;Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace&gt;g__Register|14_0(String schema, String scope, String name, &lt;&gt;c__DisplayClass14_0&amp;)&#xD;
+[xUnit.net 00:00:12.11]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(239,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(String kind)&#xD;
+[xUnit.net 00:00:12.11]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.11]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.12]       Assert.Single() Failure: The collection was empty&#xD;
+[xUnit.net 00:00:12.12]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.12]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(348,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:12.12]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:12.12]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.12]       Assert.Single() Failure: The collection was empty&#xD;
+[xUnit.net 00:00:12.12]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.12]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(348,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(DatabaseProvider provider)&#xD;
+[xUnit.net 00:00:12.12]            at InvokeStub_DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.12]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.13]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:12.13]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:12.13]       Expected: "C"&#xD;
+[xUnit.net 00:00:12.13]       Actual:   "Latin1_General_100_BIN2"&#xD;
+[xUnit.net 00:00:12.13]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:12.13]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.13]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(322,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(String kind)&#xD;
+[xUnit.net 00:00:12.13]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:12.13]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.14]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:12.14]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:12.14]       Expected: "C"&#xD;
+[xUnit.net 00:00:12.14]       Actual:   "Latin1_General_100_BIN2"&#xD;
+[xUnit.net 00:00:12.14]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:12.14]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.14]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(322,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(String kind)&#xD;
+[xUnit.net 00:00:12.14]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.14]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.14]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:12.14]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:12.14]       Expected: "'\\x0001020380fdfeff'"&#xD;
+[xUnit.net 00:00:12.14]       Actual:   "BYTEA E'\\\\x0001020380FDFEFF'"&#xD;
+[xUnit.net 00:00:12.14]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:12.14]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.14]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(208,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(String entityName)&#xD;
+[xUnit.net 00:00:12.14]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:12.14]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.14]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:12.14]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:12.14]       Expected: "'\\x0001020380fdfeff'"&#xD;
+[xUnit.net 00:00:12.14]       Actual:   "BYTEA E'\\\\x0001020380FDFEFF'"&#xD;
+[xUnit.net 00:00:12.14]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:12.14]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.14]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(208,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(String entityName)&#xD;
+[xUnit.net 00:00:12.14]            at InvokeStub_DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.14]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.38]       Assert.IsAssignableFrom() Failure: Value is null&#xD;
+[xUnit.net 00:00:12.38]       Expected: typeof(Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter)&#xD;
+[xUnit.net 00:00:12.38]       Actual:   null&#xD;
+[xUnit.net 00:00:12.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.38]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(367,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.AssertUtcProperties(IEnumerable`1 properties)&#xD;
+[xUnit.net 00:00:12.38]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(288,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Core_preserves_local_and_calendar_fields_and_only_maps_verified_instants_to_utc()&#xD;
+[xUnit.net 00:00:12.38]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:12.38]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.38]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:12.38]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:12.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.38]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(264,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind)&#xD;
+[xUnit.net 00:00:12.38]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:12.38]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.38]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:12.38]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:12.38]       Expected: "timestamp with time zone"&#xD;
+[xUnit.net 00:00:12.38]       Actual:   "datetimeoffset(7)"&#xD;
+[xUnit.net 00:00:12.38]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:12.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.38]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(261,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind)&#xD;
+[xUnit.net 00:00:12.38]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.38]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.38]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:12.38]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:12.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.38]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(264,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind)&#xD;
+[xUnit.net 00:00:12.38]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.38]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.38]       Assert.ThrowsAny() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:12.38]       Expected: typeof(System.Exception)&#xD;
+[xUnit.net 00:00:12.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.38]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(264,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(String kind)&#xD;
+[xUnit.net 00:00:12.38]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.38]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.38]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:11.5909452-04:00">
+        <Text>[xUnit.net 00:00:05.22]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Space_datetime_contract_is_utc_on_write_and_read_for_all_audited_properties [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:11.6919713-04:00">
+        <Text>[xUnit.net 00:00:05.32]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: "IdentityPriority") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.3735241-04:00">
+        <Text>[xUnit.net 00:00:08.00]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: "Core") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.4371642-04:00">
+        <Text>[xUnit.net 00:00:08.06]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: "ErpIntegration") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.6452032-04:00">
+        <Text>[xUnit.net 00:00:08.27]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: "Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.6473168-04:00">
+        <Text>[xUnit.net 00:00:08.28]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_global_language_key_is_unique_even_when_tenant_is_null [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.6527121-04:00">
+        <Text>[xUnit.net 00:00:08.28]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "IdentityPriority") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.6537790-04:00">
+        <Text>[xUnit.net 00:00:08.28]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.6553084-04:00">
+        <Text>[xUnit.net 00:00:08.28]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "Core") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:14.6556807-04:00">
+        <Text>[xUnit.net 00:00:08.28]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "ErpIntegration") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:16.1193816-04:00">
+        <Text>[xUnit.net 00:00:09.75]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: "Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:16.8683210-04:00">
+        <Text>[xUnit.net 00:00:10.50]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: "IdentityPriority") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.2822413-04:00">
+        <Text>[xUnit.net 00:00:11.91]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: "Core") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.3065884-04:00">
+        <Text>[xUnit.net 00:00:11.93]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Sql_server_preserves_every_existing_snapshot_entity_contract(kind: "ErpIntegration") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.3353131-04:00">
+        <Text>[xUnit.net 00:00:11.96]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Core") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.3386937-04:00">
+        <Text>[xUnit.net 00:00:11.97]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.4864474-04:00">
+        <Text>[xUnit.net 00:00:12.11]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: "Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.4893060-04:00">
+        <Text>[xUnit.net 00:00:12.12]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: PostgreSql) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.4921093-04:00">
+        <Text>[xUnit.net 00:00:12.12]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: SqlServer) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.5047690-04:00">
+        <Text>[xUnit.net 00:00:12.13]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: "Core") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.5076688-04:00">
+        <Text>[xUnit.net 00:00:12.14]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: "ErpIntegration") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.5119216-04:00">
+        <Text>[xUnit.net 00:00:12.14]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: "ErpDeliveryReplayAudit") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.5126717-04:00">
+        <Text>[xUnit.net 00:00:12.14]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: "ErpInboxReplayAudit") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.7490930-04:00">
+        <Text>[xUnit.net 00:00:12.38]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Core_preserves_local_and_calendar_fields_and_only_maps_verified_instants_to_utc [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.7517582-04:00">
+        <Text>[xUnit.net 00:00:12.38]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "Core") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.7525732-04:00">
+        <Text>[xUnit.net 00:00:12.38]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.7529538-04:00">
+        <Text>[xUnit.net 00:00:12.38]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "IdentityPriority") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:18:18.7532574-04:00">
+        <Text>[xUnit.net 00:00:12.38]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "ErpIntegration") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

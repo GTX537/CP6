@@ -1,0 +1,32 @@
+{
+  "Scope": "Actual Core history API rejected a transaction-only unknown migration identity; exact complete original history restored, no migration applied",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-03T07:28:25.876974Z",
+  "FinishedUtc": "2026-10-03T07:28:28.0020524Z",
+  "SourceBase": "94c0f8c9cac63a72008c4e6b242c94358f25b305",
+  "SourceState": "WP2 uncommitted task input; applicable build log and file hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "F84A3ED6B48536FC81F1CCEE853C0FC5F53BC7CB951708A74961CA4803AF0DE1",
+    "CP6.DatabaseCompatibility.MigrationProbe": "BFB8B9E8783EC16B44BB00539169A1009BDCBA0C86A279C3C1CEEFF4439314C0",
+    "CP6.Persistence.PostgreSql": "64238B55CE6A539348851936E881F974B03CD4D44556565C353B1FC8E344B439",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Space.Infrastructure": "9DA181383077AB409F12D30744A6B0AF0BD341A1397827D6E937CD50D392525D",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+    },
+    {
+      "Name": "History.UnknownIdentityRollbackNegativeControl",
+      "Status": "Passed",
+      "Detail": "Actual Core history rejected one unknown provider/context identity before migration; rollback retained the exact 140 original identities. No migration or business-row write occurred."
+    }
+  ]
+}

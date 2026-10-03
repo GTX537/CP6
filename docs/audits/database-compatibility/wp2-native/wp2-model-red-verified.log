@@ -1,0 +1,27 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:02.71]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Space_datetime_contract_is_utc_on_write_and_read_for_all_audited_properties [FAIL]
+[xUnit.net 00:00:05.77]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: "Core") [FAIL]
+[xUnit.net 00:00:06.02]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_generates_provider_sql_without_sql_server_types_or_expressions(kind: "Space") [FAIL]
+[xUnit.net 00:00:06.02]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_global_language_key_is_unique_even_when_tenant_is_null [FAIL]
+[xUnit.net 00:00:06.02]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "IdentityPriority") [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "Space") [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "Core") [FAIL]
+[xUnit.net 00:00:06.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Every_postgre_sql_rowversion_is_generated_eight_byte_binary_and_uses_database_readback(kind: "ErpIntegration") [FAIL]
+[xUnit.net 00:00:09.87]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Core") [FAIL]
+[xUnit.net 00:00:09.88]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Space") [FAIL]
+[xUnit.net 00:00:10.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_identifiers_fit_utf8_limit_and_do_not_collide_in_their_catalog_namespace(kind: "Space") [FAIL]
+[xUnit.net 00:00:10.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: PostgreSql) [FAIL]
+[xUnit.net 00:00:10.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Durable_generation_is_a_tenant_keyed_nonnegative_counter_separate_from_rowversion(provider: SqlServer) [FAIL]
+[xUnit.net 00:00:10.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: "Core") [FAIL]
+[xUnit.net 00:00:10.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_binary_sensitive_identity_and_idempotency_fields_retain_explicit_collation(kind: "ErpIntegration") [FAIL]
+[xUnit.net 00:00:10.04]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: "ErpDeliveryReplayAudit") [FAIL]
+[xUnit.net 00:00:10.04]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Replay_input_rowversion_is_saved_as_ordinary_eight_byte_binary(entityName: "ErpInboxReplayAudit") [FAIL]
+[xUnit.net 00:00:10.19]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Core_preserves_local_and_calendar_fields_and_only_maps_verified_instants_to_utc [FAIL]
+[xUnit.net 00:00:10.19]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "Core") [FAIL]
+[xUnit.net 00:00:10.19]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "Space") [FAIL]
+[xUnit.net 00:00:10.19]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "IdentityPriority") [FAIL]
+[xUnit.net 00:00:10.19]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_datetimeoffset_columns_require_utc_and_preserve_the_instant(kind: "ErpIntegration") [FAIL]
+Results File: D:\CP6\tmp\worktrees\db-compat-wp2-20261002\tmp\db-compat-wp2-tests\model-red-verified\wp2-model-red-verified.trx
+
+Failed!  - Failed:    22, Passed:    24, Skipped:     0, Total:    46, Duration: 9 s - CP6.Tests.dll (net8.0)

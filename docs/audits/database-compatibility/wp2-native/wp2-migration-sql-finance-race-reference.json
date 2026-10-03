@@ -1,0 +1,166 @@
+{
+  "Scope": "WP2 real full migration/catalog installation; business, seeds, upgrade and restoration gates separate",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-02T15:59:57.1818335Z",
+  "FinishedUtc": "2026-10-02T16:00:03.7710851Z",
+  "SourceBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "SourceState": "WP2 uncommitted task input; applicable build log and file hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "380A9025F8628B45F65A2DB026838AEE05C00D8B798C1E7669CE795C9AA167A2",
+    "CP6.Persistence.PostgreSql": "D529D2CA3A9324E9F9555C718C607FD71FE39B44769A9EC4EFB47060ABEEFBFF",
+    "CP6.Space.Infrastructure": "E6A17E828D5BF587CD6C12179CA346BD4F4DEF00B2932ABD484808A440B96ECC",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [
+    {
+      "Context": "Core",
+      "Tables": 233,
+      "TokenTables": 157
+    },
+    {
+      "Context": "Space",
+      "Tables": 83,
+      "TokenTables": 41
+    },
+    {
+      "Context": "IdentityPriority",
+      "Tables": 4,
+      "TokenTables": 4
+    },
+    {
+      "Context": "ErpIntegration",
+      "Tables": 8,
+      "TokenTables": 6
+    }
+  ],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+    },
+    {
+      "Name": "Migration.Core.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=137, previouslyApplied=137, pending=0."
+    },
+    {
+      "Name": "Migration.Core.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.Core.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 233 actual model tables."
+    },
+    {
+      "Name": "Catalog.Core.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 157 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Write.Core.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Migration.Space.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=47, previouslyApplied=47, pending=0."
+    },
+    {
+      "Name": "Migration.Space.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.Space.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 83 actual model tables."
+    },
+    {
+      "Name": "Catalog.Space.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 41 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Write.Space.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Migration.IdentityPriority.CoreOwnership",
+      "Status": "Passed",
+      "Detail": "SQL Core canonical history owns installed queue operations; standalone template identities are not falsely inserted as applied."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 4 actual model tables."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 4 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Write.IdentityPriority.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Migration.ErpIntegration.CoreOwnership",
+      "Status": "Passed",
+      "Detail": "SQL Core canonical history owns installed queue operations; standalone template identities are not falsely inserted as applied."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 8 actual model tables."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 6 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Write.ErpIntegration.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Catalog.ManagedOidcLedger",
+      "Status": "Passed",
+      "Detail": "Both OIDC ledger tables are installed."
+    },
+    {
+      "Name": "Catalog.ManagedJournalGuard",
+      "Status": "Passed",
+      "Detail": "Posted-journal mutation guard is present and enabled; write behavior is a separate gate."
+    },
+    {
+      "Name": "Write.IdentityGeneration",
+      "Status": "Passed",
+      "Detail": "Installed INSERT/UPDATE/tenant move/physical DELETE advanced opaque generations; both tenant versions rolled back with the snapshot transaction."
+    },
+    {
+      "Name": "Write.LanguageNullAndTenantUniqueness",
+      "Status": "Passed",
+      "Detail": "Actual NULL global/case/padding duplicate rejection and distinct tenant override coexistence; fixtures rolled back."
+    },
+    {
+      "Name": "Write.TimeDateAndNumericBoundaries",
+      "Status": "Passed",
+      "Detail": "Actual microsecond UTC/wall-clock/offset and DateOnly leap-date round trips; numeric scale rounding and overflow; Min/Max sentinels; PG invalid-kind/offset rejection; full rollback. Extra SQL 100ns precision is not promised by PG."
+    },
+    {
+      "Name": "Write.FinancePostingMutationRace",
+      "Status": "Passed",
+      "Detail": "UPDATE and DELETE each waited on the actual posting session; after Status=2 committed, E-FIN-160 rejected both mutations and preserved both original lines. Exact fixtures removed and absence verified."
+    }
+  ]
+}

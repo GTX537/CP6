@@ -1,0 +1,9 @@
+D:\CP6\tmp\worktrees\db-compat-wp2-20261002\tools\CP6.DatabaseCompatibility.TextProbe\Program.cs(245,43): error CS1061: 'IMutableProperty' does not contain a definition for 'SetKeyValueComparer' and no accessible extension method 'SetKeyValueComparer' accepting a first argument of type 'IMutableProperty' could be found (are you missing a using directive or an assembly reference?) [D:\CP6\tmp\worktrees\db-compat-wp2-20261002\tools\CP6.DatabaseCompatibility.TextProbe\CP6.DatabaseCompatibility.TextProbe.csproj]
+
+Build FAILED.
+
+D:\CP6\tmp\worktrees\db-compat-wp2-20261002\tools\CP6.DatabaseCompatibility.TextProbe\Program.cs(245,43): error CS1061: 'IMutableProperty' does not contain a definition for 'SetKeyValueComparer' and no accessible extension method 'SetKeyValueComparer' accepting a first argument of type 'IMutableProperty' could be found (are you missing a using directive or an assembly reference?) [D:\CP6\tmp\worktrees\db-compat-wp2-20261002\tools\CP6.DatabaseCompatibility.TextProbe\CP6.DatabaseCompatibility.TextProbe.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.85

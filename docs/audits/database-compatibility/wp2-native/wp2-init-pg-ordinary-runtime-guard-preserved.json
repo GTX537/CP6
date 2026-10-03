@@ -1,0 +1,17 @@
+{
+  "Scope": "Real compiled ordinary PostgreSQL runtime rejection before application database work, no API/workers",
+  "Provider": "PostgreSql",
+  "Database": "CP6Compat_WP2_20261002_31d68591",
+  "SourceWorktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002",
+  "SourceCommit": "2d9747360a38dfc519ddebea7aced06a9466b879",
+  "StartedUtc": "2026-10-02T18:37:11.2835492Z",
+  "FinishedUtc": "2026-10-02T18:37:14.9812972Z",
+  "ProcessId": 41932,
+  "ExitCode": -532462766,
+  "ListenerObserved": false,
+  "CompletionMessage": false,
+  "BinarySha256": "B13BEFECF30CBFEFCA2A6ED1653A657149FD15EB92CD53F75496B3C4F3571490",
+  "StdoutSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+  "StderrSha256": "EFC56EA3460EEFE4727735F8F807A201D29309395AC5DBE8CF558FE85240770C",
+  "RuntimeGuardRejected": true
+}

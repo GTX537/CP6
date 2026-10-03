@@ -1,0 +1,32 @@
+[
+  {
+    "Schema": "erp_integration",
+    "Table": "Aggregate",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "erp_integration",
+    "Table": "CommandInbox",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "erp_integration",
+    "Table": "Cp6_DeadLetterRecord",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "erp_integration",
+    "Table": "Cp6_OutboxMessage",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "erp_integration",
+    "Table": "OrderBridgeDispatch",
+    "Column": "RowVersion"
+  },
+  {
+    "Schema": "erp_integration",
+    "Table": "Request",
+    "Column": "RowVersion"
+  }
+]

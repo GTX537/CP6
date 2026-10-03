@@ -1,6 +1,8 @@
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 namespace CP6.Core.Persistence;
@@ -17,8 +19,8 @@ public static class DatabaseContextOptions
         {
             DatabaseProvider.SqlServer => builder.UseSqlServer(connectionString,
                 sql => ConfigureMigrations(sql, migrationsAssembly, migrationsHistoryTable, migrationsHistorySchema)),
-            DatabaseProvider.PostgreSql => builder.UseNpgsql(connectionString,
-                pg => ConfigureMigrations(pg, migrationsAssembly, migrationsHistoryTable, migrationsHistorySchema)),
+            DatabaseProvider.PostgreSql => ConfigurePostgreSql(builder.UseNpgsql(validatedConnection.ConnectionString,
+                pg => ConfigureMigrations(pg, migrationsAssembly, migrationsHistoryTable, migrationsHistorySchema))),
             _ => throw new InvalidOperationException("Database:Provider must be SqlServer or PostgreSql.")
         };
     }
@@ -34,8 +36,8 @@ public static class DatabaseContextOptions
         {
             DatabaseProvider.SqlServer => builder.UseSqlServer(connection, contextOwnsConnection: false,
                 sql => ConfigureMigrations(sql, migrationsAssembly, migrationsHistoryTable, migrationsHistorySchema)),
-            DatabaseProvider.PostgreSql => builder.UseNpgsql(connection, contextOwnsConnection: false,
-                pg => ConfigureMigrations(pg, migrationsAssembly, migrationsHistoryTable, migrationsHistorySchema)),
+            DatabaseProvider.PostgreSql => ConfigurePostgreSql(builder.UseNpgsql(connection, contextOwnsConnection: false,
+                pg => ConfigureMigrations(pg, migrationsAssembly, migrationsHistoryTable, migrationsHistorySchema))),
             _ => throw new InvalidOperationException("Database:Provider must be SqlServer or PostgreSql.")
         };
     }
@@ -92,4 +94,8 @@ public static class DatabaseContextOptions
         if (migrationsHistoryTable is not null)
             builder.MigrationsHistoryTable(migrationsHistoryTable, migrationsHistorySchema);
     }
+
+    private static DbContextOptionsBuilder ConfigurePostgreSql(DbContextOptionsBuilder builder) => builder
+        .ReplaceService<IRelationalTypeMappingSource, PostgreSqlTextTypeMappingSource>()
+        .ReplaceService<IQuerySqlGeneratorFactory, PostgreSqlTextQuerySqlGeneratorFactory>();
 }

@@ -1,0 +1,12 @@
+{
+  "Scope": "Only transient PostgreSQL environment-null binding correction; original source/failures retained, no prior drop.",
+  "RecordedUtc": "2026-10-03T07:47:52.4360983Z",
+  "IntermediateScriptSha256": "4097EEB71AC9A7336F6F2760F7BA2E631A4754523A89D8DF8D23987078EA8711",
+  "FinalScriptSha256": "8DA601BEF6C4C4982B61E01EA3580ED454E61ED490F7E8D2EC0007C1FF3980EA",
+  "ActualNativeError": "service file empty-string not found",
+  "Cause": "PowerShell method binding converted null to an existing empty-string environment value",
+  "Correction": "Use NullString.Value for actual removal; finally restore absent versus empty/present values correctly",
+  "StandaloneTaskVariableRemovalObserved": true,
+  "SecondAttemptDropped": 0,
+  "SyntaxErrors": 0
+}

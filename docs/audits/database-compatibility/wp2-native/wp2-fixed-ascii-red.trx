@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6e4a6f6c-77d9-4236-b172-8efb0070e224" name="tt@LAPTOP-3QQ44FJS 2026-10-02 12:09:49" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T12:09:49.6709021-04:00" queuing="2026-10-02T12:09:49.6709025-04:00" start="2026-10-02T12:09:47.5535223-04:00" finish="2026-10-02T12:09:55.3146516-04:00" />
+  <TestSettings name="default" id="0b30b40e-11d0-4687-a200-e71f86805bc0">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_12_09_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="be823de7-628b-49c3-9d2a-6368aa7d1f69" testId="70b9a8a1-44c6-653f-3595-3902fe04ea4b" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(storage: &quot;nchar(8)&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0011948" startTime="2026-10-02T12:09:49.2095315-04:00" endTime="2026-10-02T12:09:49.2096107-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be823de7-628b-49c3-9d2a-6368aa7d1f69">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.InvalidOperationException)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(String storage) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 421&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="36a98315-5019-432b-8f59-9f92badf134c" testId="6446a62f-ad99-3ea9-9ad8-3aae73242a9c" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;ErpIntegration&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6161162" startTime="2026-10-02T12:09:49.2113080-04:00" endTime="2026-10-02T12:09:49.8175819-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36a98315-5019-432b-8f59-9f92badf134c" />
+    <UnitTestResult executionId="95500ea4-c344-4ceb-8449-c708a9e08c9d" testId="476b9758-f92a-cec1-1825-599ed5d6428b" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(storage: &quot;char(8)&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0699917" startTime="2026-10-02T12:09:49.1141375-04:00" endTime="2026-10-02T12:09:49.1996229-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95500ea4-c344-4ceb-8449-c708a9e08c9d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.InvalidOperationException)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(String storage) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 421&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="71514a49-94c2-4ea1-9bc8-400409e37812" testId="2ded5671-e154-8f48-e8ad-1c236c8da993" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;Space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.1061454" startTime="2026-10-02T12:09:49.8183616-04:00" endTime="2026-10-02T12:09:51.9239318-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71514a49-94c2-4ea1-9bc8-400409e37812">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 77&#xD;
+Actual:   0</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 401&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4fbf6593-6009-4310-9aca-9a6fac9de228" testId="f9dd18ad-a82c-bb6e-704d-e40d06492c8c" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;IdentityPriority&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0304770" startTime="2026-10-02T12:09:55.2154750-04:00" endTime="2026-10-02T12:09:55.2446970-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4fbf6593-6009-4310-9aca-9a6fac9de228" />
+    <UnitTestResult executionId="a5042a04-33f7-404e-b92f-f3469059af23" testId="88e4269c-d701-d99a-3741-f68e54a7dc5c" testName="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;Core&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:03.2896366" startTime="2026-10-02T12:09:51.9254690-04:00" endTime="2026-10-02T12:09:55.2141512-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5042a04-33f7-404e-b92f-f3469059af23">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 6&#xD;
+Actual:   0</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 401&#xD;
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(storage: &quot;nchar(8)&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="70b9a8a1-44c6-653f-3595-3902fe04ea4b">
+      <Execution id="be823de7-628b-49c3-9d2a-6368aa7d1f69" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(storage: &quot;char(8)&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="476b9758-f92a-cec1-1825-599ed5d6428b">
+      <Execution id="95500ea4-c344-4ceb-8449-c708a9e08c9d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;ErpIntegration&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="6446a62f-ad99-3ea9-9ad8-3aae73242a9c">
+      <Execution id="36a98315-5019-432b-8f59-9f92badf134c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;IdentityPriority&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f9dd18ad-a82c-bb6e-704d-e40d06492c8c">
+      <Execution id="4fbf6593-6009-4310-9aca-9a6fac9de228" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;Core&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="88e4269c-d701-d99a-3741-f68e54a7dc5c">
+      <Execution id="a5042a04-33f7-404e-b92f-f3469059af23" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: &quot;Space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="2ded5671-e154-8f48-e8ad-1c236c8da993">
+      <Execution id="71514a49-94c2-4ea1-9bc8-400409e37812" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseModelCompatibilityTests" name="Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="70b9a8a1-44c6-653f-3595-3902fe04ea4b" executionId="be823de7-628b-49c3-9d2a-6368aa7d1f69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6446a62f-ad99-3ea9-9ad8-3aae73242a9c" executionId="36a98315-5019-432b-8f59-9f92badf134c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="476b9758-f92a-cec1-1825-599ed5d6428b" executionId="95500ea4-c344-4ceb-8449-c708a9e08c9d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ded5671-e154-8f48-e8ad-1c236c8da993" executionId="71514a49-94c2-4ea1-9bc8-400409e37812" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9dd18ad-a82c-bb6e-704d-e40d06492c8c" executionId="4fbf6593-6009-4310-9aca-9a6fac9de228" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88e4269c-d701-d99a-3741-f68e54a7dc5c" executionId="a5042a04-33f7-404e-b92f-f3469059af23" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="2" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.49]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.90]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.92]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:01.03]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:01.03]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:01.03]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.03]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(421,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(String storage)&#xD;
+[xUnit.net 00:00:01.03]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.03]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.04]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:01.04]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:01.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.04]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(421,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(String storage)&#xD;
+[xUnit.net 00:00:01.04]            at InvokeStub_DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.04]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:03.75]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.75]       Expected: 77&#xD;
+[xUnit.net 00:00:03.75]       Actual:   0&#xD;
+[xUnit.net 00:00:03.75]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.75]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(401,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(String kind)&#xD;
+[xUnit.net 00:00:03.75]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(Object, Span`1)&#xD;
+[xUnit.net 00:00:03.75]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:07.04]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:07.04]       Expected: 6&#xD;
+[xUnit.net 00:00:07.04]       Actual:   0&#xD;
+[xUnit.net 00:00:07.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.04]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs(401,0): at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(String kind)&#xD;
+[xUnit.net 00:00:07.04]            at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(Object, Span`1)&#xD;
+[xUnit.net 00:00:07.04]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:07.07]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:09:49.2019710-04:00">
+        <Text>[xUnit.net 00:00:01.03]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(storage: "char(8)") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:09:49.2100543-04:00">
+        <Text>[xUnit.net 00:00:01.04]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.A_new_general_fixed_unicode_column_cannot_silently_use_pg_codepoint_padding(storage: "nchar(8)") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:09:51.9243990-04:00">
+        <Text>[xUnit.net 00:00:03.75]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: "Space") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:09:55.2145601-04:00">
+        <Text>[xUnit.net 00:00:07.04]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_fixed_text_is_limited_to_the_exact_audited_ascii_domains(kind: "Core") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

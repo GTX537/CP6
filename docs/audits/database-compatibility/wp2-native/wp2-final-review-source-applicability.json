@@ -1,0 +1,620 @@
+{
+  "Task": "DB-COMPAT-01 WP2",
+  "ObservedUtc": "2026-10-03T07:53:35.1173116Z",
+  "Method": "Read-only byte comparison to existing original and targeted review inputs; this is not a new AI review, build, test or database execution.",
+  "MainBase": "94c0f8c9cac63a72008c4e6b242c94358f25b305",
+  "CurrentSourceState": "Uncommitted WP2 source with final evidence/documentation additions",
+  "UniqueRecordedFiles": 75,
+  "IdenticalFiles": 75,
+  "DocumentationDeltas": [],
+  "UnreviewedSourceDeltas": [],
+  "Records": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "ExpectedSha256": "69DCBD468C3CB742CFAEFDE5FFA8B2A518230C2710E3CE31E46F5AE9A9DA2106",
+      "ActualSha256": "69DCBD468C3CB742CFAEFDE5FFA8B2A518230C2710E3CE31E46F5AE9A9DA2106",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Migrations/20261002151353_CrmIdentityTenantGenerationV1.Designer.cs",
+      "ExpectedSha256": "F446F0D99D120A460BF7ACD52182E12A23E7933DDC9520C44DEE611F2E516F7B",
+      "ActualSha256": "F446F0D99D120A460BF7ACD52182E12A23E7933DDC9520C44DEE611F2E516F7B",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Migrations/20261002151353_CrmIdentityTenantGenerationV1.cs",
+      "ExpectedSha256": "0F1E26A71F4C68B63A4A6F2E1792A94ACF9A2C559800354A8FDA38D1CCA2E8F9",
+      "ActualSha256": "0F1E26A71F4C68B63A4A6F2E1792A94ACF9A2C559800354A8FDA38D1CCA2E8F9",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+      "ExpectedSha256": "BA2BC258453450BBD8B043359A746E2977E9CF45FE9B40874442ADCB127FCDCF",
+      "ActualSha256": "BA2BC258453450BBD8B043359A746E2977E9CF45FE9B40874442ADCB127FCDCF",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs",
+      "ExpectedSha256": "17938C6F13CD7CB5D23DFD2D7807E0397042A18091FB673594A8762233D3D59D",
+      "ActualSha256": "17938C6F13CD7CB5D23DFD2D7807E0397042A18091FB673594A8762233D3D59D",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseConnectionFactory.cs",
+      "ExpectedSha256": "D7B729E3B44DE38DC8413ECFC9869ED381CB8768B246300F61B6178E102A018A",
+      "ActualSha256": "D7B729E3B44DE38DC8413ECFC9869ED381CB8768B246300F61B6178E102A018A",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "ExpectedSha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190",
+      "ActualSha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/IdentityGenerationSqlServerV1.cs",
+      "ExpectedSha256": "F32CC3F7E27542D844532919273D682FA050BF1A7A0ED71B852CBED09FE4E101",
+      "ActualSha256": "F32CC3F7E27542D844532919273D682FA050BF1A7A0ED71B852CBED09FE4E101",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlBusinessTextComparer.cs",
+      "ExpectedSha256": "BE18D4DB60D06D6BAA4D4036E03647FCCC11A8A719A9CCB728AAE681AA37F5BE",
+      "ActualSha256": "BE18D4DB60D06D6BAA4D4036E03647FCCC11A8A719A9CCB728AAE681AA37F5BE",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlFixedTextDomainsV1.cs",
+      "ExpectedSha256": "09800C1D34971EB8561A46ABCD0E979EC40689537D7735A173CC3E8D874FBBFA",
+      "ActualSha256": "09800C1D34971EB8561A46ABCD0E979EC40689537D7735A173CC3E8D874FBBFA",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlManagedTextV1.cs",
+      "ExpectedSha256": "A8EA97F5D8994E99DC7383FFC1E27B4E85A8FAAF500774891A083B68C6BBD803",
+      "ActualSha256": "A8EA97F5D8994E99DC7383FFC1E27B4E85A8FAAF500774891A083B68C6BBD803",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlModelConfiguration.cs",
+      "ExpectedSha256": "7EE4E3D0ED5C121EC4832B4BB3C756842322891BA1A509CA4D5CAD0316552596",
+      "ActualSha256": "7EE4E3D0ED5C121EC4832B4BB3C756842322891BA1A509CA4D5CAD0316552596",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlModelExpressions.cs",
+      "ExpectedSha256": "EEB3CED0E9262E0A2CD26AE00DA4D39C0C8F2660E1232093130396C91AADC7AC",
+      "ActualSha256": "EEB3CED0E9262E0A2CD26AE00DA4D39C0C8F2660E1232093130396C91AADC7AC",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlModelIdentifiers.cs",
+      "ExpectedSha256": "04B2E8C76938C3C88E784CCD068327B957CE0D1790C60AE2DF3590F9CDDEE19B",
+      "ActualSha256": "04B2E8C76938C3C88E784CCD068327B957CE0D1790C60AE2DF3590F9CDDEE19B",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlTextQuerySqlGenerator.cs",
+      "ExpectedSha256": "A9866D893D5211625914E3A71998651974F911855D60F13FA5240634D56CBC4E",
+      "ActualSha256": "A9866D893D5211625914E3A71998651974F911855D60F13FA5240634D56CBC4E",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlTextTypeMappingSource.cs",
+      "ExpectedSha256": "7C30EC66D6AAD9C1B566E142C2E161966310DB28892958256CAB03507C8B589A",
+      "ActualSha256": "7C30EC66D6AAD9C1B566E142C2E161966310DB28892958256CAB03507C8B589A",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/CrmIdentityTenantGeneration.cs",
+      "ExpectedSha256": "9E74A662580D52BAC04C826B93F4401A05DCF9E8A7DAD0C0F67E167A4FD1813C",
+      "ActualSha256": "9E74A662580D52BAC04C826B93F4401A05DCF9E8A7DAD0C0F67E167A4FD1813C",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+      "ExpectedSha256": "B4F7F011111FBC133EDF78BE7E359F3A3CC4312E3E147A2E2E3083737D9D98F7",
+      "ActualSha256": "B4F7F011111FBC133EDF78BE7E359F3A3CC4312E3E147A2E2E3083737D9D98F7",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs",
+      "ExpectedSha256": "673425FB7B02A971ACDFDEE220882681A92FC15E42AB0BF698AE9A0976513DB0",
+      "ActualSha256": "673425FB7B02A971ACDFDEE220882681A92FC15E42AB0BF698AE9A0976513DB0",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/IdentityGenerationPostgreSqlV1.cs",
+      "ExpectedSha256": "7B3EDADFA14D9D8B1D0CF4CED0117FC0EAD84EC09D33D3162C144DD5A1FDA6CD",
+      "ActualSha256": "7B3EDADFA14D9D8B1D0CF4CED0117FC0EAD84EC09D33D3162C144DD5A1FDA6CD",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.Designer.cs",
+      "ExpectedSha256": "F1C8DDD9F2890ABC0D101C12948899253722EAA855FD1167BE1189CE694F40F1",
+      "ActualSha256": "F1C8DDD9F2890ABC0D101C12948899253722EAA855FD1167BE1189CE694F40F1",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.cs",
+      "ExpectedSha256": "E9E2B24685A83E4D223CDA8497884C0420AB74293892B9C3D63FD8CDD6F98A4A",
+      "ActualSha256": "E9E2B24685A83E4D223CDA8497884C0420AB74293892B9C3D63FD8CDD6F98A4A",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+      "ExpectedSha256": "B1B190952C5102DB7C0B30097256DAAECDF4DF1C2ABCB6F0D874A43BA1521D35",
+      "ActualSha256": "B1B190952C5102DB7C0B30097256DAAECDF4DF1C2ABCB6F0D874A43BA1521D35",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.Designer.cs",
+      "ExpectedSha256": "57E5B41BA3DCC8F5D5013B425FB68350BA869A4C39C9C2CA0DDF1CAFC0A8F1C4",
+      "ActualSha256": "57E5B41BA3DCC8F5D5013B425FB68350BA869A4C39C9C2CA0DDF1CAFC0A8F1C4",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.cs",
+      "ExpectedSha256": "E3219787477F49408850DA5907C63F07AAB87D9A8934B31DB0CE02C8F460DCB2",
+      "ActualSha256": "E3219787477F49408850DA5907C63F07AAB87D9A8934B31DB0CE02C8F460DCB2",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/ErpIntegrationContextModelSnapshot.cs",
+      "ExpectedSha256": "9F27F2C58E742C822E0481897AE7EFF7B005D34D026E166C22B205CE6C4E56A2",
+      "ActualSha256": "9F27F2C58E742C822E0481897AE7EFF7B005D34D026E166C22B205CE6C4E56A2",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.Designer.cs",
+      "ExpectedSha256": "514E1537CCCE366419184F1488724FEBCEA98D5CFF4CADA2499696C6B024CDD5",
+      "ActualSha256": "514E1537CCCE366419184F1488724FEBCEA98D5CFF4CADA2499696C6B024CDD5",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.cs",
+      "ExpectedSha256": "6AF32769F1B80B58BD95F6503934BE1292DEC8138FEFE6D339378D55B185641F",
+      "ActualSha256": "6AF32769F1B80B58BD95F6503934BE1292DEC8138FEFE6D339378D55B185641F",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/IdentityMessagingContextModelSnapshot.cs",
+      "ExpectedSha256": "78CA6A9C91016B1B6F0979CD52161DC2EF8851D6730CF7236714A7666958102D",
+      "ActualSha256": "78CA6A9C91016B1B6F0979CD52161DC2EF8851D6730CF7236714A7666958102D",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.Designer.cs",
+      "ExpectedSha256": "289EE74DF3AC9A1E34C9BC654E819BE280BB8CF3839F336BC02937F84C869D61",
+      "ActualSha256": "289EE74DF3AC9A1E34C9BC654E819BE280BB8CF3839F336BC02937F84C869D61",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.cs",
+      "ExpectedSha256": "88A09564B7560D102F5F8F62683B809A5879AB871D8DD8904BD60EF0A0B8410F",
+      "ActualSha256": "88A09564B7560D102F5F8F62683B809A5879AB871D8DD8904BD60EF0A0B8410F",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Space/SpaceContextModelSnapshot.cs",
+      "ExpectedSha256": "F0089ED85BC42769C9288FC37E6FC7B0C6BF61B3BB133E75475E37CED796901D",
+      "ActualSha256": "F0089ED85BC42769C9288FC37E6FC7B0C6BF61B3BB133E75475E37CED796901D",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlCoreObjectsV1.cs",
+      "ExpectedSha256": "463C5A535036DBB8F9F1DFE89711184C8E6CDCB9684350B9093D0A4C5F93920A",
+      "ActualSha256": "463C5A535036DBB8F9F1DFE89711184C8E6CDCB9684350B9093D0A4C5F93920A",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlCoreTokenTablesV1.cs",
+      "ExpectedSha256": "247532FC7A6435B66BA15292AA8921C222CC54E267E0B9B94ACD0B40A3F26B20",
+      "ActualSha256": "247532FC7A6435B66BA15292AA8921C222CC54E267E0B9B94ACD0B40A3F26B20",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlErpIntegrationTokenTablesV1.cs",
+      "ExpectedSha256": "7FD7F46B2B2DF4FAC89279C3F2E4DBE00D0F86C5B89375D801582E835EDF6AFC",
+      "ActualSha256": "7FD7F46B2B2DF4FAC89279C3F2E4DBE00D0F86C5B89375D801582E835EDF6AFC",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlFreshSeedV1.cs",
+      "ExpectedSha256": "71EC39F3F1140ACC8BD9F9DDFEE752EE59A2533A9512F28C006EEE9170F34F0F",
+      "ActualSha256": "71EC39F3F1140ACC8BD9F9DDFEE752EE59A2533A9512F28C006EEE9170F34F0F",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlIdentityPriorityTokenTablesV1.cs",
+      "ExpectedSha256": "68EA396487AA904E3025D7BCAC15F95F94DCDF2C75B0B827DCBA7166B8555C9B",
+      "ActualSha256": "68EA396487AA904E3025D7BCAC15F95F94DCDF2C75B0B827DCBA7166B8555C9B",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlMigrationsAssembly.cs",
+      "ExpectedSha256": "A7B571DF365979E7A064C06DDCD000FA25DE70005FFB880ED18F850CE909AF2C",
+      "ActualSha256": "A7B571DF365979E7A064C06DDCD000FA25DE70005FFB880ED18F850CE909AF2C",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlRestoredOrderDefaultsV1.cs",
+      "ExpectedSha256": "186D2E6B0DFC3C2C23020F9867A288EBE43BEC77D55C92B34581388F42E50356",
+      "ActualSha256": "186D2E6B0DFC3C2C23020F9867A288EBE43BEC77D55C92B34581388F42E50356",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlSpaceTokenTablesV1.cs",
+      "ExpectedSha256": "191990EB77B9EF294D64167D3E24448C226B4472B5EA38B9F804D1A6381A92EA",
+      "ActualSha256": "191990EB77B9EF294D64167D3E24448C226B4472B5EA38B9F804D1A6381A92EA",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlTokenV1.cs",
+      "ExpectedSha256": "173200BBBF02E117E7AF9CE49D9A1D12FD3213FA1F5B00F9CAA2902A68167D54",
+      "ActualSha256": "173200BBBF02E117E7AF9CE49D9A1D12FD3213FA1F5B00F9CAA2902A68167D54",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceContext.cs",
+      "ExpectedSha256": "888A747CDE65F68370589C30FE871C21871A56A8835FBB0EB0D74D54EF772F27",
+      "ActualSha256": "888A747CDE65F68370589C30FE871C21871A56A8835FBB0EB0D74D54EF772F27",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePostgreSqlModelConfiguration.cs",
+      "ExpectedSha256": "20A152990AED41BFB93D7C2EEC5C1C8FD23F4A5FF2EF4DF01889AF089B16FF23",
+      "ActualSha256": "20A152990AED41BFB93D7C2EEC5C1C8FD23F4A5FF2EF4DF01889AF089B16FF23",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseModelCompatibilityTests.cs",
+      "ExpectedSha256": "E57E9EE7681F0A518BC9456D674117D38B21B38F4383D9CF8A11AA1FEFBFE81D",
+      "ActualSha256": "E57E9EE7681F0A518BC9456D674117D38B21B38F4383D9CF8A11AA1FEFBFE81D",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Tests/Persistence/Fixtures/sql-server-d6074aaa-contracts.json",
+      "ExpectedSha256": "441CBCB228624370995EE735C8CEC52104A8B1481A5A6457589547B78EC52618",
+      "ActualSha256": "441CBCB228624370995EE735C8CEC52104A8B1481A5A6457589547B78EC52618",
+      "ReviewSource": "Original mapping/migrations task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseDesignTimeConfiguration.cs",
+      "ExpectedSha256": "CEE25A3B803120DFA3306A2E96FAD18189F119B1F4E7F4BF0180CA5CD2CF9FE5",
+      "ActualSha256": "CEE25A3B803120DFA3306A2E96FAD18189F119B1F4E7F4BF0180CA5CD2CF9FE5",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+      "ExpectedSha256": "C8F3521C294F15793A8CB3BE0AB8D598A7DDBC88573A52042AF12C6CC16BFB26",
+      "ActualSha256": "C8F3521C294F15793A8CB3BE0AB8D598A7DDBC88573A52042AF12C6CC16BFB26",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceContextDesignFactory.cs",
+      "ExpectedSha256": "57AC3E048677672D5DAC851FEADB7F34287456179A5332924B95EFAAEB051689",
+      "ActualSha256": "57AC3E048677672D5DAC851FEADB7F34287456179A5332924B95EFAAEB051689",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseInitializationModeTests.cs",
+      "ExpectedSha256": "30CD4BFE33427BA60BDE011B35471DC7257E3FFA98EDABD27D9E37A833DBA3FA",
+      "ActualSha256": "30CD4BFE33427BA60BDE011B35471DC7257E3FFA98EDABD27D9E37A833DBA3FA",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseMigrationOwnershipTests.cs",
+      "ExpectedSha256": "0AC921495A8BDEDCB89FD5C35C44963F712A0C3A9903F88E41EC2330B611C032",
+      "ActualSha256": "0AC921495A8BDEDCB89FD5C35C44963F712A0C3A9903F88E41EC2330B611C032",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseProviderTests.cs",
+      "ExpectedSha256": "67832CE0DFF12D2D92CC34A13DEC760F25DCD648815DFD1C8FD2EF6137A37367",
+      "ActualSha256": "67832CE0DFF12D2D92CC34A13DEC760F25DCD648815DFD1C8FD2EF6137A37367",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseSearchPathTests.cs",
+      "ExpectedSha256": "A62F6F027C5E8AF81D89C372094178C657C8BF99134D620510AE19A9C88F331E",
+      "ActualSha256": "A62F6F027C5E8AF81D89C372094178C657C8BF99134D620510AE19A9C88F331E",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseWiringTests.cs",
+      "ExpectedSha256": "4B24DD7A0159F6DC1673536E421CCBDF1C7AFB0B6563A078ED6D13CDA4A11ABD",
+      "ActualSha256": "4B24DD7A0159F6DC1673536E421CCBDF1C7AFB0B6563A078ED6D13CDA4A11ABD",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.WebApi/Configuration/CP6ContextDesignFactory.cs",
+      "ExpectedSha256": "263B548AD7D2E2E275704B7C55C938A044CC30DB180771E803B3FFF66AFBD303",
+      "ActualSha256": "263B548AD7D2E2E275704B7C55C938A044CC30DB180771E803B3FFF66AFBD303",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs",
+      "ExpectedSha256": "D0C21C8A7F257E92AD1725D338677E77D1A5CFE4F61D5DE13FE8C64F6BF69B18",
+      "ActualSha256": "D0C21C8A7F257E92AD1725D338677E77D1A5CFE4F61D5DE13FE8C64F6BF69B18",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "CP6.WebApi/Program.cs",
+      "ExpectedSha256": "0EF17BA4A28B8AFADEAD42B063CBF035B37ABA3BF8B9A8196B924E7D081D293A",
+      "ActualSha256": "0EF17BA4A28B8AFADEAD42B063CBF035B37ABA3BF8B9A8196B924E7D081D293A",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+      "ExpectedSha256": "F5119D3C6CADD57EFF7B25760C0C1009BA70BC4E6B9B5E27C83A6F0C13BD0D9C",
+      "ActualSha256": "F5119D3C6CADD57EFF7B25760C0C1009BA70BC4E6B9B5E27C83A6F0C13BD0D9C",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/packages.lock.json",
+      "ExpectedSha256": "14E1A0BA215580C03A0F03160B7C95FDB7A6C61DDC85A66777CF2FFACF66AE08",
+      "ActualSha256": "14E1A0BA215580C03A0F03160B7C95FDB7A6C61DDC85A66777CF2FFACF66AE08",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+      "ExpectedSha256": "A9059D597E16BC0F06506642D5A865540271E5923F5F0CAA9600BCB8C1076A4D",
+      "ActualSha256": "A9059D597E16BC0F06506642D5A865540271E5923F5F0CAA9600BCB8C1076A4D",
+      "ReviewSource": "Targeted quotation/final-upgrade delta review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/README.md",
+      "ExpectedSha256": "CA8431DDD0F41FDAD3DD531520EE8B95FF4B73B44B19F25AD4BE303D6686F172",
+      "ActualSha256": "CA8431DDD0F41FDAD3DD531520EE8B95FF4B73B44B19F25AD4BE303D6686F172",
+      "ReviewSource": "Targeted quotation/final-upgrade delta review",
+      "ByteIdentical": true,
+      "DocumentationOnly": true
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2CatalogGates.cs",
+      "ExpectedSha256": "4B205C9A654845DDAA42D23407636BCEC3A0EEBB7E34F4FAD85DDF4A93CDA700",
+      "ActualSha256": "4B205C9A654845DDAA42D23407636BCEC3A0EEBB7E34F4FAD85DDF4A93CDA700",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2CatalogNegativeControls.cs",
+      "ExpectedSha256": "01F2847B2F3C9CE40D2553818E3BBF249BA7C168C5D3477BC1A133F7ABB9B56A",
+      "ActualSha256": "01F2847B2F3C9CE40D2553818E3BBF249BA7C168C5D3477BC1A133F7ABB9B56A",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2ConstraintWriteGates.cs",
+      "ExpectedSha256": "7AAE9C8AC98B24EDD299FB27A05E776A2E3C41E4542FCD250AAF62E9144E8D5A",
+      "ActualSha256": "7AAE9C8AC98B24EDD299FB27A05E776A2E3C41E4542FCD250AAF62E9144E8D5A",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2FinanceGates.cs",
+      "ExpectedSha256": "9B8A4604B5FFD07D07DEAC5E57C7BEF1265CB0AA8544E67745FC581C3A102974",
+      "ActualSha256": "9B8A4604B5FFD07D07DEAC5E57C7BEF1265CB0AA8544E67745FC581C3A102974",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2OrderRelationWriteGates.cs",
+      "ExpectedSha256": "00F5D288CC70504F353D1B8710F0924413A872567D524D3BF7720A5CA523C4A0",
+      "ActualSha256": "00F5D288CC70504F353D1B8710F0924413A872567D524D3BF7720A5CA523C4A0",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2RawOrderGates.cs",
+      "ExpectedSha256": "C727BA417064ACB8EFC9ED607DA62C51BABD193944D5278E256AD2203F04AF65",
+      "ActualSha256": "C727BA417064ACB8EFC9ED607DA62C51BABD193944D5278E256AD2203F04AF65",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2SeedGates.cs",
+      "ExpectedSha256": "236A6D2EE4393AE10E7868C0F1456B9707D038280C041C7375A882368C726B75",
+      "ActualSha256": "236A6D2EE4393AE10E7868C0F1456B9707D038280C041C7375A882368C726B75",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2SqlUpgradeGates.cs",
+      "ExpectedSha256": "CFB2713170AD830CE2863E95CF8471A7109056A58A135D25E5F14C5BCF60E15E",
+      "ActualSha256": "CFB2713170AD830CE2863E95CF8471A7109056A58A135D25E5F14C5BCF60E15E",
+      "ReviewSource": "Targeted quotation/final-upgrade delta review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2WriteGates.cs",
+      "ExpectedSha256": "99D6BB765312741DC3718576D9DA607F566B442E7DF1296BF55416D5E88177EA",
+      "ActualSha256": "99D6BB765312741DC3718576D9DA607F566B442E7DF1296BF55416D5E88177EA",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.TextProbe/CP6.DatabaseCompatibility.TextProbe.csproj",
+      "ExpectedSha256": "5A263FEFD434CEEF41E7A0CE616E5D5E2E3A097E7D899E3D6CB6C651A509CE35",
+      "ActualSha256": "5A263FEFD434CEEF41E7A0CE616E5D5E2E3A097E7D899E3D6CB6C651A509CE35",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.TextProbe/packages.lock.json",
+      "ExpectedSha256": "2A5E1D0A3EE84DA6D9FD1F74F2ABBF0056B24E3E37DAA79D69320C98467FABC0",
+      "ActualSha256": "2A5E1D0A3EE84DA6D9FD1F74F2ABBF0056B24E3E37DAA79D69320C98467FABC0",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.TextProbe/Program.cs",
+      "ExpectedSha256": "ECCCE33B94A871436A789695C096A8E4EF470FABF7640FBCAFF56C47355351A4",
+      "ActualSha256": "ECCCE33B94A871436A789695C096A8E4EF470FABF7640FBCAFF56C47355351A4",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.TextProbe/README.md",
+      "ExpectedSha256": "4ED736305BBAF76837C80F2F82A72C3E18B169BF8AE73CC167EB70ECA0D4889B",
+      "ActualSha256": "4ED736305BBAF76837C80F2F82A72C3E18B169BF8AE73CC167EB70ECA0D4889B",
+      "ReviewSource": "Original initialization/probe task review",
+      "ByteIdentical": true,
+      "DocumentationOnly": true
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2MigrationHistoryGates.cs",
+      "ExpectedSha256": "A85BF7DFF5E1E701C9FAA871C979CCDA37624E7077AC0AF3CFE347502821C209",
+      "ActualSha256": "A85BF7DFF5E1E701C9FAA871C979CCDA37624E7077AC0AF3CFE347502821C209",
+      "ReviewSource": "Targeted two P2 fix recheck",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2QuotationAuditWriteGates.cs",
+      "ExpectedSha256": "EC904021AA6B23964FFD41CEA30C4AB8AE72C69C17BB4180508A347025172C60",
+      "ActualSha256": "EC904021AA6B23964FFD41CEA30C4AB8AE72C69C17BB4180508A347025172C60",
+      "ReviewSource": "Targeted SQL-only two-line reader fix review",
+      "ByteIdentical": true,
+      "DocumentationOnly": false
+    }
+  ],
+  "PriorReviewArchives": [
+    "wp2-review-mapping-migrations.json",
+    "wp2-review-initialization-probes.json",
+    "wp2-review-quotation-and-final-forward-delta.json"
+  ],
+  "SeparateMainBugSources": "BUG139/141/143 were reviewed, tested and delivered independently; not attributed to the original WP2 reviews.",
+  "Passed": true
+}

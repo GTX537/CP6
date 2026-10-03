@@ -1,0 +1,66 @@
+{
+  "Scope": "Actual final API output/source/build observation after first SQL initializer. API hash matches executed process report; no unrecorded Core load path/pre-run capture is invented.",
+  "CapturedUtc": "2026-10-03T07:31:29.5204786Z",
+  "SourceBase": "94c0f8c9cac63a72008c4e6b242c94358f25b305",
+  "SourceInputPath": "tmp/wp2-final-sql140-probe-input-verified.json",
+  "SourceInputSha256": "301657FED2370B7A1066583F2AECFDEC4A3B4DD8935DC811CD81A7805706F10B",
+  "BuildLogSha256": "C4D32D6B13BB106FCD48C16E7250A3DDEB6A76995102540E9B989ADF963915EC",
+  "ActualFirstInitializerSha256": "7FB01272A9C043D32F0DC9D3E302031122514E54B33BD0FD48579D6F514B0BE9",
+  "RuntimeOutput": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "F84A3ED6B48536FC81F1CCEE853C0FC5F53BC7CB951708A74961CA4803AF0DE1"
+    },
+    {
+      "Name": "CP6.Entity.dll",
+      "Sha256": "0313148519747C2D34B387E034C025B25C35152744E34BE7C2CAE69E2B2397A7"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "64238B55CE6A539348851936E881F974B03CD4D44556565C353B1FC8E344B439"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions.dll",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.AspNetCore.dll",
+      "Sha256": "B4D0FB90E153961A65AD65A8D096CEDEB76C61EAE488469B836064E70EF31DD8"
+    },
+    {
+      "Name": "CP6.Platform.Contracts.dll",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework.dll",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging.dll",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "CP6.Space.Application.dll",
+      "Sha256": "592049A724FA307FCBCA9B9DE20A1A051C617D91BC863CC01B0B7CD5FE877644"
+    },
+    {
+      "Name": "CP6.Space.Contracts.dll",
+      "Sha256": "7B586430365AF8FFE2814CD242F22A1D8C1DC1FA5FC18F530026CFAB5305B506"
+    },
+    {
+      "Name": "CP6.Space.Domain.dll",
+      "Sha256": "422656A0048E7906A493669A3CF97932ED1F0005025166E407EC8AA993905272"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure.dll",
+      "Sha256": "9DA181383077AB409F12D30744A6B0AF0BD341A1397827D6E937CD50D392525D"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "709710CFC2888819D99CCA9559142475A4BD072A0B17AFC152F1F9F738A9740A"
+    }
+  ],
+  "ActualFirstApiHashMatches": true,
+  "Warnings": 0,
+  "Errors": 0
+}

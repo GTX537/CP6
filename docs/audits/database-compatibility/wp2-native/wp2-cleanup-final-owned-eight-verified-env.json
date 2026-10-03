@@ -1,0 +1,323 @@
+{
+  "Scope": "Exact eight explicitly receipt-listed WP2 task databases only; all-target preflight followed by per-target recheck, native non-FORCE DROP and absence proof.",
+  "Task": "DB-COMPAT-01-WP2",
+  "Label": "wp2-cleanup-final-owned-eight-verified-env",
+  "StartedUtc": "2026-10-03T07:47:52.8628266Z",
+  "UpdatedUtc": "2026-10-03T07:48:00.5283377Z",
+  "FinishedUtc": "2026-10-03T07:48:00.5279779Z",
+  "ScriptSha256": "8DA601BEF6C4C4982B61E01EA3580ED454E61ED490F7E8D2EC0007C1FF3980EA",
+  "Status": "Completed",
+  "Phase": "FinalEightAbsenceAndRoleVerification",
+  "CurrentTarget": null,
+  "ExpectedTargetCount": 8,
+  "AllEightPreflightPassed": true,
+  "DroppedAndAbsenceVerified": 8,
+  "AllEightAbsentVerified": true,
+  "AnyDropOutcomeUnknown": false,
+  "ReceiptHashes": [
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-initial-owned.json",
+      "Sha256": "D18D0005279E452A3CFCCC68DE0AFCA6FF0847E3DCE073C6803C1F9348C02D99"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-pre-review-owned.json",
+      "Sha256": "916A2B990F35E8EC920EAAB64FDE4AF347DEC5CAD1954B6B5CD06D95C0A5AA61"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-before-raw-final-owned.json",
+      "Sha256": "2CBBC834A88BB83E51782123E6DCEEE46269E9B1BCFE0DC2D228FF0D40949C68"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-before-sql-final-upgrade-owned.json",
+      "Sha256": "0B8681AC50D0CA8AABB84F9561301CC8EC57C1E178554F9F57E3DC4BBAFDDE2C"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-owned.json",
+      "Sha256": "2C757B8977F7DFD42C4AF99791C1353435C59CACD6863308290A5E4A328D2AB9"
+    }
+  ],
+  "ReceiptsModified": false,
+  "ReceiptBytesUnchanged": true,
+  "Targets": [
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_3ac63d7a",
+      "ExpectedOwnerMarker": "3ac63d7a823843d492620af048349491",
+      "ReceiptSources": [
+        "db-compat.wp2-initial-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseId": 68,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "PreflightUtc": "2026-10-03T07:47:53.3803463Z",
+      "BeforeDropRecheck": {
+        "DatabaseId": 68,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:55.5090449Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:55.7338035Z",
+      "FinalAbsent": true
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_3ac63d7a",
+      "ExpectedOwnerMarker": "3ac63d7a823843d492620af048349491",
+      "ReceiptSources": [
+        "db-compat.wp2-initial-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseOid": 16782,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "PreflightUtc": "2026-10-03T07:47:54.4802464Z",
+      "BeforeDropRecheck": {
+        "DatabaseOid": 16782,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:56.8909130Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:57.4642578Z",
+      "FinalAbsent": true
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_844f5957",
+      "ExpectedOwnerMarker": "844f5957ba5047a0a3cf4c53a981e64f",
+      "ReceiptSources": [
+        "db-compat.wp2-pre-review-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseId": 69,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "PreflightUtc": "2026-10-03T07:47:53.6481001Z",
+      "BeforeDropRecheck": {
+        "DatabaseId": 69,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:55.9021042Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:56.0467824Z",
+      "FinalAbsent": true
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_844f5957",
+      "ExpectedOwnerMarker": "844f5957ba5047a0a3cf4c53a981e64f",
+      "ReceiptSources": [
+        "db-compat.wp2-pre-review-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseOid": 28241,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "PreflightUtc": "2026-10-03T07:47:54.7315114Z",
+      "BeforeDropRecheck": {
+        "DatabaseOid": 28241,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:57.6637414Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:58.1869692Z",
+      "FinalAbsent": true
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_36ef9cae",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-before-raw-final-owned.json",
+        "db-compat.wp2-before-sql-final-upgrade-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseId": 70,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "PreflightUtc": "2026-10-03T07:47:53.9030954Z",
+      "BeforeDropRecheck": {
+        "DatabaseId": 70,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:56.2231757Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:56.3970058Z",
+      "FinalAbsent": true
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_36ef9cae",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-before-raw-final-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseOid": 39388,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "PreflightUtc": "2026-10-03T07:47:55.0105333Z",
+      "BeforeDropRecheck": {
+        "DatabaseOid": 39388,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:58.4216520Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:58.9311359Z",
+      "FinalAbsent": true
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_31d68591",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-before-sql-final-upgrade-owned.json",
+        "db-compat.wp2-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseOid": 50610,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "PreflightUtc": "2026-10-03T07:47:55.3122768Z",
+      "BeforeDropRecheck": {
+        "DatabaseOid": 50610,
+        "Version": "18.6",
+        "CurrentRole": "cp6compat_wp1_0b54dc81",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 334,
+        "ActiveConnections": 0
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:59.1573610Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:59.7284158Z",
+      "FinalAbsent": true
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_63d019b6",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-owned.json"
+      ],
+      "Status": "DroppedAndAbsenceVerified",
+      "Preflight": {
+        "DatabaseId": 71,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "PreflightUtc": "2026-10-03T07:47:54.1936842Z",
+      "BeforeDropRecheck": {
+        "DatabaseId": 71,
+        "Version": "16.0.1000.6",
+        "OwnerAndTaskVerified": true,
+        "TableCount": 352,
+        "ActiveSessions": 0,
+        "ActiveRequests": 0,
+        "GlobalActivityVisible": true
+      },
+      "BeforeDropUtc": "2026-10-03T07:47:56.5601009Z",
+      "DropAttempted": true,
+      "DropOutcome": "NativeAbsenceVerified",
+      "Dropped": true,
+      "AbsenceVerified": true,
+      "DropCompletedUtc": "2026-10-03T07:47:56.7081898Z",
+      "FinalAbsent": true
+    }
+  ],
+  "PostgreSqlRole": {
+    "Name": "cp6compat_wp1_0b54dc81",
+    "Retained": true
+  },
+  "Failure": null,
+  "Limits": "Caller-owned final-gate evidence is a prerequisite. No prefix discovery, force option, session termination, role/authentication/service changes, business-row cleanup, or root-workspace cleanup."
+}

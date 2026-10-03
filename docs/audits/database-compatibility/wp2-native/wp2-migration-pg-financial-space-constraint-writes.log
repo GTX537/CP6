@@ -1,0 +1,2 @@
+Passed: Write.FinancialMoneyAndForeignKey: Actual financial decimal(18,2) rounding, maximum value and overflow; native missing-parent FK rejection retained original link; fixtures rolled back. Domain posting rules are separate.
+Passed: Write.SpaceTenantForeignKeyAndUnicode: Actual Space composite FK rejected a tenant move despite the valid parent ID; 200 UTF-16 units retained, 201 ASCII/202 supplementary units rejected without truncation; complete rollback.
