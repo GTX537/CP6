@@ -936,6 +936,25 @@
         "resolved": "13.0.3",
         "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
+      "Npgsql": {
+        "type": "Transitive",
+        "resolved": "8.0.8",
+        "contentHash": "1g7tA1easureueqyS5SqJtojI7FwEdw50UYTh0l576iWZNnyRyAVfFi1bJp4BzO8IwYodP8YCRp6ThNQvvBn8A==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
+        }
+      },
+      "Npgsql.EntityFrameworkCore.PostgreSQL": {
+        "type": "Transitive",
+        "resolved": "8.0.11",
+        "contentHash": "leShR/O/nSIS3Jpj8yUBmkzaXzBbtlV326+MYkX2BwAj2qSNrUv/H6m8G9Hnv2zUkQYccTpmV5jIVq5vdciEUA==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "8.0.11",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.11",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.11",
+          "Npgsql": "8.0.6"
+        }
+      },
       "OpenTelemetry": {
         "type": "Transitive",
         "resolved": "1.18.0",
@@ -1357,6 +1376,8 @@
           "Microsoft.Extensions.Caching.StackExchangeRedis": "[8.0.12, )",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "[8.17.0, )",
           "NCrontab": "[3.3.3, )",
+          "Npgsql": "[8.0.8, 8.0.8]",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.11, 8.0.11]",
           "Otp.NET": "[1.4.0, )",
           "RabbitMQ.Client": "[7.2.1, )",
           "Scriban": "[7.2.4, )",
@@ -1368,6 +1389,13 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[8.0.30, )"
+        }
+      },
+      "cp6.persistence.postgresql": {
+        "type": "Project",
+        "dependencies": {
+          "CP6.Core": "[1.0.0, )",
+          "CP6.Space.Infrastructure": "[1.0.0, )"
         }
       },
       "cp6.space.application": {
@@ -1398,6 +1426,7 @@
         "type": "Project",
         "dependencies": {
           "CP6.Core": "[1.0.0, )",
+          "CP6.Persistence.PostgreSql": "[1.0.0, )",
           "CP6.Platform.AspNetCore": "[0.10.2, 0.10.2]",
           "CP6.Space.Application": "[1.0.0, )",
           "CP6.Space.Contracts": "[1.0.0, )",

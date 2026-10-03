@@ -8,6 +8,14 @@ It is component verification. CRM authorization projections, Dapr/Kafka replay a
 
 ## Run
 
+WP4 provider preparation (2026-10-03) adds a separate exact-case entry. Select `SqlServer` or `PostgreSql` explicitly; provide only that provider's private connection via `CP6_C02_TEST_SQL` or `CP6_C02_TEST_POSTGRES`, plus `CP6_TEST_DATABASE_OWNER`. The connection must target the root-created loopback `CP6Compat_WP4_20261003_<owner-prefix>` database with its exact WP4 owner marker. Missing or unavailable selected input fails with zero skips. The fixture installs the current actual Core migration profile and, on PostgreSQL, the independent IdentityPriority profile. It retains the database for root-coordinated evidence and cleanup.
+
+```powershell
+dotnet run --project eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj --no-restore -- <public-output> <private-diagnostics> provider-case PostgreSql business-save-produces-valid-versioned-snapshots
+```
+
+This entry currently runs only setup plus the existing actual snapshot/outbox Save-pipeline case. It is prepared for a native RED against the original SQL-only writer; no successful PostgreSQL runtime execution is claimed by this documentation. Its two-case report identifies the selected provider and both Core/fixture assembly hashes. It does not represent the complete 23 cases, the SQL historical upgrade, or real RefreshTokenService rotation. The original SQL entry below retains its historical migration and complete producer/HTTP scope.
+
 Provide `CP6_C02_TEST_SQL` privately with administrative access to an isolated local SQL Server. The fixture accepts only loopback/local machine SQL hosts. It creates a unique `CP6C02Test_<guid>` database, applies the historical migrations through the C01 baseline, preserves a seeded baseline user while applying the C02 migrations, and drops only its owned database in `finally`.
 
 ```powershell

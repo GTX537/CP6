@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Entity.DomainModels.Sys;
@@ -17,6 +18,11 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+if (args.Length == 5 && args[2] == "provider-case")
+{
+    Environment.ExitCode = await IdentityProviderCase.RunAsync(args);
+    return;
+}
 if (args.Length == 3 && args[0] == "live-initialize")
 {
     await IdentityLiveFixture.InitializeAsync(args[1], args[2]);
@@ -80,20 +86,23 @@ sealed class Evidence
     private readonly string output;
     private readonly string diagnostics;
     private readonly string? selection;
+    private readonly DatabaseProvider? provider;
     private readonly List<CaseResult> cases = [];
     private bool complete;
-    public Evidence(string output, string diagnostics, string? selection)
+    public Evidence(string output, string diagnostics, string? selection, DatabaseProvider? provider = null)
     {
         this.output = output;
         this.diagnostics = diagnostics;
         this.selection = selection;
+        this.provider = provider;
         Directory.CreateDirectory(output);
         Directory.CreateDirectory(diagnostics);
         Save();
     }
     public async Task Case(string name, Func<Task> run)
     {
-        if (selection is not null && name != "forward-migration-preserves-baseline-and-creates-both-queues" && name != selection) return;
+        var setup = provider is null ? "forward-migration-preserves-baseline-and-creates-both-queues" : IdentityProviderCase.SetupCase;
+        if (selection is not null && name != setup && name != selection) return;
         try { await run(); cases.Add(new(name, true)); Console.WriteLine("PASS " + name); Save(); }
         catch (Exception ex) { Failure(name, ex); Save(); throw; }
     }
@@ -114,9 +123,11 @@ sealed class Evidence
         var index = Path.Combine(AppContext.BaseDirectory, "contracts/events/platform/contract-bundle.v1.json");
         File.WriteAllText(Path.Combine(output, "summary.json"), JsonSerializer.Serialize(new
         {
-            schemaId = "cp6.c02.producer-sql-verification.v1", conclusion = complete && failed == 0 ? "success" : "failure",
-            verificationKind = "working-tree SQL integration; not cross-repository transport acceptance",
+            schemaId = provider is null ? "cp6.c02.producer-sql-verification.v1" : "cp6.c02.producer-provider-verification.v1", conclusion = complete && failed == 0 ? "success" : "failure",
+            verificationKind = provider is null ? "working-tree SQL integration; not cross-repository transport acceptance" : "selected production identity save pipeline on an owned current-provider database; not full producer/HTTP or cross-repository transport acceptance",
+            provider = (provider ?? DatabaseProvider.SqlServer).ToString(),
             assemblySha256 = IdentityEventContracts.Hash(File.ReadAllBytes(typeof(CP6Context).Assembly.Location)),
+            fixtureAssemblySha256 = IdentityEventContracts.Hash(File.ReadAllBytes(typeof(IdentitySqlFixture).Assembly.Location)),
             contractBundleSha256 = File.Exists(index) ? IdentityEventContracts.Hash(File.ReadAllBytes(index)) : null,
             scope = selection ?? "all producer SQL/HTTP cases", expectedCases = selection is null ? 23 : 2,
             total = cases.Count, passed = cases.Count(x => x.Passed), failed, skipped = 0, cases,
@@ -371,9 +382,16 @@ sealed partial class IdentitySqlFixture : IAsyncDisposable
 
     private CP6Context Create(Guid tenant, bool enabled = true, IInterceptor? interceptor = null)
     {
-        var options = new DbContextOptionsBuilder<CP6Context>().UseSqlServer(connection, sql => sql.CommandTimeout(120));
+        var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.Core);
+        var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), database,
+            connection, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
         if (interceptor is not null) options.AddInterceptors(interceptor);
-        return new(options.Options, new TenantContext { CurrentTenantId = tenant }, identity: enabled ? Runtime(tenant) : null);
+        var commandDiagnostic = Environment.GetEnvironmentVariable("CP6_C02_COMMAND_DIAGNOSTIC");
+        if (!string.IsNullOrWhiteSpace(commandDiagnostic))
+            options.LogTo(message => File.AppendAllText(commandDiagnostic, message + Environment.NewLine), [RelationalEventId.CommandError]);
+        var context = new CP6Context(options.Options, new TenantContext { CurrentTenantId = tenant }, identity: enabled ? Runtime(tenant) : null);
+        context.Database.SetCommandTimeout(120);
+        return context;
     }
     private CrmIdentityRuntime Runtime(Guid tenant) => new(new CrmIdentityOptions
     {
