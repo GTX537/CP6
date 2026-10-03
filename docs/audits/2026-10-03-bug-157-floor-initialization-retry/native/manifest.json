@@ -1,0 +1,799 @@
+{
+  "Task": "BUG-157",
+  "SourceBase": "2e1f90c629340944d95fadd7aee428f639304ed6",
+  "ArchivedUtc": "2026-10-03T19:26:38.7423248Z",
+  "Originals": [
+    {
+      "Path": "original-wp6-failure/entry-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\entry-result.json",
+      "Sha256": "BC560C7EAE4CEFF1BDFACBB77C161ED6D72B31888D7B62D314360E5D539093AE",
+      "Length": 4413
+    },
+    {
+      "Path": "original-wp6-failure/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\runtime-artifact-before.json",
+      "Sha256": "75C798CA64C14AF842F816D60BF0E0E502856C7BB7C1446EFC5067AF698F0524",
+      "Length": 56079
+    },
+    {
+      "Path": "original-wp6-failure/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\runtime-artifact-after.json",
+      "Sha256": "75C798CA64C14AF842F816D60BF0E0E502856C7BB7C1446EFC5067AF698F0524",
+      "Length": 56079
+    },
+    {
+      "Path": "original-wp6-failure/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\private\\trx\\results.trx",
+      "Sha256": "829491EF1736CD49A56D69BEE2AE234F804212F59F114450D4A23DCBC0CD382C",
+      "Length": 46841
+    },
+    {
+      "Path": "original-wp6-failure/private/process/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\private\\process\\stdout.log",
+      "Sha256": "85DFB362CD5D6B1F9D6743F32E52CF937368EF3022C0AD2C36504387C46C96CD",
+      "Length": 7740
+    },
+    {
+      "Path": "original-wp6-failure/private/process/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\private\\process\\stderr.log",
+      "Sha256": "488955F6CF18F11DD8BE30CB6E24F20668CD2D8DF372C835BAD16424172C8BAF",
+      "Length": 164
+    },
+    {
+      "Path": "original-wp6-failure/summary.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\summary.json",
+      "Sha256": "495437739748C6525B818F83E13C55F207A31BAF293CDDB0145CAACEE0E96D58",
+      "Length": 576817
+    },
+    {
+      "Path": "original-wp6-failure/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\source-inputs.json",
+      "Sha256": "2FD2B7DDF419FB928C465125649BDAC276B22E0113DADEF6846E11EF4AD8971F",
+      "Length": 453351
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\source-inputs.json",
+      "Sha256": "E73C9AA09783174E99FDACDDCA215E01E2708BFFBD40C8CD83562053C58DB846",
+      "Length": 276268
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\build\\build-result.json",
+      "Sha256": "F192FCEA67AE203EB5CBAED0292086192783338E242A096C8648A7DEC31F3B30",
+      "Length": 319101
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\build\\private\\01-build\\stdout.log",
+      "Sha256": "783C52C7A78645D532459540046F03AB32C2DAA3279DEC1A29AE4C04CA008771",
+      "Length": 5055
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "B670C4A34F902B8736DFDF98CC954E17F05F6A8C02C0B81994033453B7C2692F",
+      "Length": 1052
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\result.json",
+      "Sha256": "D75758E812438794B2EC13A6803D54669A0835230253A5B8DE4A48AB83FA7DFF",
+      "Length": 2411
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\runtime-artifact-after.json",
+      "Sha256": "CB56BF72800AA24D6BFA2739D3445CB2743E5BA04E335E6750B7F0F399728059",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\runtime-artifact-before.json",
+      "Sha256": "CB56BF72800AA24D6BFA2739D3445CB2743E5BA04E335E6750B7F0F399728059",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\source-inputs.json",
+      "Sha256": "0702DC6CD282C2A662F93504359619BCE0147219D5C828776CC2E4A69574553E",
+      "Length": 276268
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\build-result.json",
+      "Sha256": "F6386B4C3D63DBBAAB4DAD19F79AF9E805BD884A23D0631ACA96AC57C0635AF3",
+      "Length": 393963
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\project-01.json",
+      "Sha256": "4FE55A593FA8566167E5EF1B281253162BFF44F60C59075590AD7B0D1218311A",
+      "Length": 359877
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\private\\01-build\\stdout.log",
+      "Sha256": "CB72CEF97B1751CE9A86AE280302924E5DEF49CA2CF49DB1B0E5C898EA5E3C7A",
+      "Length": 1220
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "2AD9967F2280D0195AD457A92FE6A353A8492625846632386DF6DFC446EFE4BC",
+      "Length": 82
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\private\\test\\stderr.log",
+      "Sha256": "BE19657E8266447D847186A359298EA2428994C68A54A94FABB070B542D00DA9",
+      "Length": 328
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\private\\test\\stdout.log",
+      "Sha256": "9A2C41F50AFD1E2ED9B563C7A45B69F035B5B0F1F078B0E86C5F121D1B8EAFDE",
+      "Length": 15948
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-coordinated-native-red-v2\\private\\trx\\results.trx",
+      "Sha256": "42A4C07B85668912682D609B4A358361A34DEE6DA57BD45C07F0CFE1FB44CD1C",
+      "Length": 40144
+    },
+    {
+      "Path": "bug157-pg-clone-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\result.json",
+      "Sha256": "F1F972192486F89A1C65B6E7F64EF94934C4642A2E42D700F93E211FC956E594",
+      "Length": 5381
+    },
+    {
+      "Path": "bug157-pg-clone-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\runtime-artifact-after.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-clone-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\runtime-artifact-before.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-clone-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\source-inputs.json",
+      "Sha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+      "Length": 276268
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\build-result.json",
+      "Sha256": "A7118DEB248128FAF680D03788555AED7215206215D83C6BA17ECD653E81C9D0",
+      "Length": 393962
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\project-01.json",
+      "Sha256": "7C89DA3779EA945436DCAB86BFF1A1E7D7D39308449EF5DA86FE8413D82EA721",
+      "Length": 359877
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\private\\01-build\\stdout.log",
+      "Sha256": "3B5ABB5F1D7888940DAE843A9E03770E7E084009D0D3B77CAB9C841490BE1334",
+      "Length": 1220
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "2AD9967F2280D0195AD457A92FE6A353A8492625846632386DF6DFC446EFE4BC",
+      "Length": 82
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-clone-green/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug157-pg-clone-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-clone-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\private\\test\\stdout.log",
+      "Sha256": "AED18A0674CC1018A56D42CED36216CF857680A9132B9EC368A4BEF5A31CA1D0",
+      "Length": 431
+    },
+    {
+      "Path": "bug157-pg-clone-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-green\\private\\trx\\results.trx",
+      "Sha256": "38E54182F194B7A7C5C95E2446274576AC937160C44A41B94CFDD33D4AEB3C1A",
+      "Length": 48907
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\exact-case-set-audit.json",
+      "Sha256": "04B7C34ED44BC7DB629A8AEE678E2A2DA086EC67A889D80A8A4537A2DF0EA9CC",
+      "Length": 3652
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\result.json",
+      "Sha256": "6DD5A6B95C41A76971E27E5066565BF35906C7F0AD94A0831AAC9EDF6F72D1BE",
+      "Length": 8158
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\runtime-artifact-after.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\runtime-artifact-before.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\source-inputs.json",
+      "Sha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+      "Length": 276268
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\private\\test\\stdout.log",
+      "Sha256": "8407EBD628A44CBF74113EEE3701424E7422654FC1B3C11856679FB57C011D42",
+      "Length": 437
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-clone-exact-green\\private\\trx\\results.trx",
+      "Sha256": "2EF894402828D42E7EB5AEC71F95C000EBDB9ABF15F4950F21A7AD01F2362AE8",
+      "Length": 44407
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\exact-case-set-audit.json",
+      "Sha256": "2288C688F90AFB7F83BD1C45EB47289E6CA0D6DEFD6519751D7A77071D661004",
+      "Length": 3651
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\result.json",
+      "Sha256": "751BE8B0B7A696F344A2F7008501DDD16B311EDC1F3C170AB193412651E66A06",
+      "Length": 7661
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\runtime-artifact-after.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\runtime-artifact-before.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\source-inputs.json",
+      "Sha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+      "Length": 276268
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\private\\test\\stdout.log",
+      "Sha256": "A4F634399EDAAD141716F374DE4A938B4BFA963F2E30292BB18269CD34691342",
+      "Length": 442
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-clone-exact-green\\private\\trx\\results.trx",
+      "Sha256": "AE6E3C438A34F7893EDA88588CFC3131249160C242769BFD887A1F575C32685B",
+      "Length": 203503
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\exact-case-set-audit.json",
+      "Sha256": "72B8E6EDEED2934C1E341258DDAA43CDD2C67F3DFE042AE27D10765EFE3A04C8",
+      "Length": 5739
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\result.json",
+      "Sha256": "585300987F974B6FF4AB68F10D230831AE83CB41D68F7A378B064F9FA2A27D60",
+      "Length": 12533
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\runtime-artifact-after.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\runtime-artifact-before.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\source-inputs.json",
+      "Sha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+      "Length": 276268
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\private\\test\\stdout.log",
+      "Sha256": "297E55700873719743C978480E0F9AB5A60C99335063376D4EFB4BCADBC15DED",
+      "Length": 440
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-pg-design-publish-green\\private\\trx\\results.trx",
+      "Sha256": "89BDA839FF6268E505BAFCC5652E1BA99A163A31FEF1DC65E95818F4A13AD36F",
+      "Length": 76889
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\exact-case-set-audit.json",
+      "Sha256": "78EDB6C384A94D9F12447860D788F9F701FBD11047B833FEBE819DF8330B12C7",
+      "Length": 5738
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\result.json",
+      "Sha256": "517A07A9528C33A1968AFBB264BAC606EC8929EC0C0D153CA065635080C1390D",
+      "Length": 12015
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\runtime-artifact-after.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\runtime-artifact-before.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "Length": 52985
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\source-inputs.json",
+      "Sha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+      "Length": 276268
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\private\\test\\stdout.log",
+      "Sha256": "92348164CC2ADC6615AE55CE8DEF95B1A1DA499DE332A65F3E6AC455A051E72F",
+      "Length": 441
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-sql-design-publish-green\\private\\trx\\results.trx",
+      "Sha256": "CA7D4F7AA52A63445BD659CEBFD4ECC784B3DA968C9B5A6A7A434150D5771F96",
+      "Length": 360521
+    },
+    {
+      "Path": "execution/Invoke-Bug157Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug157Tests.ps1",
+      "Sha256": "CADC847E97C3AD3F6ADC70C2B404D18EBAFB89C35E9F09F8DD6C0012BF385EFE",
+      "Length": 5994
+    },
+    {
+      "Path": "execution/Invoke-Bug157Groups.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug157Groups.ps1",
+      "Sha256": "7EFC3F2C70971B141557DF7BEF03A6A189A6410514A00A369222FA319EA7CA90",
+      "Length": 3345
+    },
+    {
+      "Path": "execution/New-Bug157Databases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\New-Bug157Databases.ps1",
+      "Sha256": "859AA67B9BC7B4CA531D22CD6611FFE5D07BD8750266F5A0421FBB12D0411B0B",
+      "Length": 4274
+    },
+    {
+      "Path": "execution/Test-Bug157LocalEvidence.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Test-Bug157LocalEvidence.ps1",
+      "Sha256": "80C6963AAC9BD045674D47EBB0C32FFE7C77E5BF36F14B878BA15B7418FFCB52",
+      "Length": 5966
+    },
+    {
+      "Path": "execution/bug157-review.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-review.md",
+      "Sha256": "C1E72EFFA3BD532FEFB91BF28615CBFF4970BE634743FAE480BFB82428E92C92",
+      "Length": 6310
+    },
+    {
+      "Path": "execution/bug157-exact-local-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-exact-local-verification.json",
+      "Sha256": "E9E945006BFB5431824576E9310F7783A675EC073AE073A176F6166461B8560E",
+      "Length": 3261
+    },
+    {
+      "Path": "execution/bug157-databases-created.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-databases-created.json",
+      "Sha256": "14D8CFC42101D45B31D55F5885A049423AF6F2A93D20442754D1AB2A393F27F4",
+      "Length": 226
+    },
+    {
+      "Path": "execution/bug157-task-start-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug157-task-start-workflow-input-inspection.json",
+      "Sha256": "42328158FC17583D68285F33FF02548830F5722AB70A2000865DA44D967D9787",
+      "Length": 6760
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityEntries.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityEntries.psm1",
+      "Sha256": "5CF53766FEAC54CEF69C6F1768C75D508EC99EA1DB34D80E85DF52647AF94299",
+      "Length": 24992
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityProcess.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityProcess.psm1",
+      "Sha256": "B95CDE488E14B7D4AE986458FBAE589934912DBDDA1EC08413D945C6DAF56B25",
+      "Length": 6892
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityResults.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityResults.psm1",
+      "Sha256": "AD66A8EDA85E1283649AF010043D85B1D1744008837EB01E529FB7D79491D9C1",
+      "Length": 20078
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityLifecycle.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityLifecycle.psm1",
+      "Sha256": "BF192F54A51140FB3162BDDD15553EA565972CA31A105B77C026A7EC4E972D39",
+      "Length": 38371
+    },
+    {
+      "Path": "execution/original-required-cases.json",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\eng\\database-compatibility\\required-cases.json",
+      "Sha256": "7CA38B226DB019D2C8A50F695640E6608D3B73888A4437BECF9B2F93956108ED",
+      "Length": 241979
+    }
+  ],
+  "DerivedTrxCounts": [
+    {
+      "Path": "original-wp6-failure/private/trx/results.trx",
+      "Sha256": "829491EF1736CD49A56D69BEE2AE234F804212F59F114450D4A23DCBC0CD382C",
+      "Total": 16,
+      "Passed": 15,
+      "Failed": 1,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Clone_remaps_row_ids_and_preserves_logical_identity",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Concurrent_same_operation_returns_one_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_blank_create_supports_replay_and_rejects_a_base_version",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_is_explicit_idempotent_and_listed",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_endpoints_reject_external_principals",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Duplicate_operation_returns_the_same_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Empty_published_warehouse_clones_to_an_empty_draft",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Migration_creates_clone_snapshot_tables_and_column",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Native_last_table_failure_rolls_back_snapshot_and_scheduled_retry_succeeds",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.System_template_mode_initializes_every_floor_and_persists_provenance",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Tenant_template_mode_uses_only_the_current_tenant_template_scope"
+      ]
+    },
+    {
+      "Path": "bug157-pg-coordinated-native-red-v2/private/trx/results.trx",
+      "Sha256": "42A4C07B85668912682D609B4A358361A34DEE6DA57BD45C07F0CFE1FB44CD1C",
+      "Total": 2,
+      "Passed": 0,
+      "Failed": 2,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict"
+      ]
+    },
+    {
+      "Path": "bug157-pg-clone-green/private/trx/results.trx",
+      "Sha256": "38E54182F194B7A7C5C95E2446274576AC937160C44A41B94CFDD33D4AEB3C1A",
+      "Total": 26,
+      "Passed": 26,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Clone_remaps_row_ids_and_preserves_logical_identity",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Concurrent_same_operation_returns_one_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_blank_create_supports_replay_and_rejects_a_base_version",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_is_explicit_idempotent_and_listed",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_preserves_caller_owned_transaction",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_preserves_unsaved_caller_changes",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_unknown_failure_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_endpoints_reject_external_principals",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Duplicate_operation_returns_the_same_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Empty_published_warehouse_clones_to_an_empty_draft",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Migration_creates_clone_snapshot_tables_and_column",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Native_last_table_failure_rolls_back_snapshot_and_scheduled_retry_succeeds",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Published_snapshot_rows_are_immutable_in_the_context",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Queued_clone_cancellation_releases_the_reserved_draft",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.System_template_mode_initializes_every_floor_and_persists_provenance",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Tenant_template_mode_uses_only_the_current_tenant_template_scope",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Warehouse_template_catalog_is_internal_scoped_and_preview_only"
+      ]
+    },
+    {
+      "Path": "bug157-pg-clone-exact-green/private/trx/results.trx",
+      "Sha256": "2EF894402828D42E7EB5AEC71F95C000EBDB9ABF15F4950F21A7AD01F2362AE8",
+      "Total": 23,
+      "Passed": 23,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Clone_remaps_row_ids_and_preserves_logical_identity",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Concurrent_same_operation_returns_one_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_blank_create_supports_replay_and_rejects_a_base_version",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_is_explicit_idempotent_and_listed",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_preserves_caller_owned_transaction",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_preserves_unsaved_caller_changes",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_unknown_failure_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_endpoints_reject_external_principals",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Duplicate_operation_returns_the_same_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Empty_published_warehouse_clones_to_an_empty_draft",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Migration_creates_clone_snapshot_tables_and_column",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Native_last_table_failure_rolls_back_snapshot_and_scheduled_retry_succeeds",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.System_template_mode_initializes_every_floor_and_persists_provenance",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Tenant_template_mode_uses_only_the_current_tenant_template_scope"
+      ]
+    },
+    {
+      "Path": "bug157-sql-clone-exact-green/private/trx/results.trx",
+      "Sha256": "AE6E3C438A34F7893EDA88588CFC3131249160C242769BFD887A1F575C32685B",
+      "Total": 23,
+      "Passed": 23,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Clone_remaps_row_ids_and_preserves_logical_identity",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Concurrent_same_operation_returns_one_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_blank_create_supports_replay_and_rejects_a_base_version",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_is_explicit_idempotent_and_listed",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_preserves_caller_owned_transaction",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_preserves_unsaved_caller_changes",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_unknown_failure_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_endpoints_reject_external_principals",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Duplicate_operation_returns_the_same_reservation_and_job",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Empty_published_warehouse_clones_to_an_empty_draft",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Migration_creates_clone_snapshot_tables_and_column",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Native_last_table_failure_rolls_back_snapshot_and_scheduled_retry_succeeds",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.System_template_mode_initializes_every_floor_and_persists_provenance",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Tenant_template_mode_uses_only_the_current_tenant_template_scope"
+      ]
+    },
+    {
+      "Path": "bug157-pg-design-publish-green/private/trx/results.trx",
+      "Sha256": "89BDA839FF6268E505BAFCC5652E1BA99A163A31FEF1DC65E95818F4A13AD36F",
+      "Total": 41,
+      "Passed": 41,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Abc_query_translates_and_enforces_warehouse_and_half_open_window",
+        "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Inventory_spatial_filter_joins_container_to_its_unique_stock_owner",
+        "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Migration_adapter_and_transaction_contracts_close",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Create_element_accepts_null_content_hash_and_stale_fence_is_zero_write",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_commands_update_delete_replay_and_audit_atomically",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_merge_and_saved_compensation_are_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_split_compensation_and_redo_keep_new_identities_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_polygon_redraw_and_saved_compensation_keep_identity_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Layout_commands_create_coded_warehouse_atomically",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Location_coding_previews_without_writes_and_applies_with_fences",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Manual_correction_lock_persists_and_fences_CAD_changesets",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Mixed_editor_batches_array_and_saved_compensation_are_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Published_viewer_scene_uses_only_current_published_pointer",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Scene_uses_revision_authority_without_runtime_overlay",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Tenant_warehouse_template_is_idempotent_isolated_and_applyable",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Warehouse_template_floor_apply_is_leased_atomic_and_replayable",
+        "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests.Idempotency_key_is_unique_per_tenant_principal_and_operation",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Concurrent_acquire_preserves_one_floor_slot",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Expired_lease_can_be_reacquired_using_database_time",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Lifecycle_uses_database_time_and_fences_browser_sessions",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Renew_and_takeover_compete_without_deadlock_or_duplicate_slot",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Sql_takeover_audit_is_immutable_for_async_update_and_delete",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Historical_version_is_republished_as_new_attempt_without_rewriting_history",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Success_activates_runtime_and_partial_requires_reconciliation",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_retry_rejects_tampered_persisted_mutation_before_applying",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_timeout_keeps_production_and_automatic_retry_completes",
+        "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Adopted_location_create_is_wms_noop_in_publish_preview",
+        "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Blocked_rename_preview_exposes_wms_impact",
+        "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Preview_is_deterministic_filterable_and_tenant_scoped",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_same_input_reuses_one_run_and_one_job",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_waiter_recovers_native_conflict_and_reuses_validation",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Incomplete_rack_blocks_version_and_emits_unified_issue",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_job_passes_reuses_and_preserves_ai_category",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_request_preserves_caller_owned_transaction",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_request_preserves_unsaved_caller_changes",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_unknown_failure_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_batch_conflict_is_atomic",
+        "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_place_uses_wms_identity_and_level_dimensions",
+        "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_refresh_and_bind_persist_rowversion_and_identity"
+      ]
+    },
+    {
+      "Path": "bug157-sql-design-publish-green/private/trx/results.trx",
+      "Sha256": "CA7D4F7AA52A63445BD659CEBFD4ECC784B3DA968C9B5A6A7A434150D5771F96",
+      "Total": 41,
+      "Passed": 41,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Abc_query_translates_and_enforces_warehouse_and_half_open_window",
+        "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Inventory_spatial_filter_joins_container_to_its_unique_stock_owner",
+        "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Migration_adapter_and_transaction_contracts_close",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Create_element_accepts_null_content_hash_and_stale_fence_is_zero_write",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_commands_update_delete_replay_and_audit_atomically",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_merge_and_saved_compensation_are_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_split_compensation_and_redo_keep_new_identities_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_polygon_redraw_and_saved_compensation_keep_identity_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Layout_commands_create_coded_warehouse_atomically",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Location_coding_previews_without_writes_and_applies_with_fences",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Manual_correction_lock_persists_and_fences_CAD_changesets",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Mixed_editor_batches_array_and_saved_compensation_are_atomic",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Published_viewer_scene_uses_only_current_published_pointer",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Scene_uses_revision_authority_without_runtime_overlay",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Tenant_warehouse_template_is_idempotent_isolated_and_applyable",
+        "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Warehouse_template_floor_apply_is_leased_atomic_and_replayable",
+        "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests.Idempotency_key_is_unique_per_tenant_principal_and_operation",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Concurrent_acquire_preserves_one_floor_slot",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Expired_lease_can_be_reacquired_using_database_time",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Lifecycle_uses_database_time_and_fences_browser_sessions",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Renew_and_takeover_compete_without_deadlock_or_duplicate_slot",
+        "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Sql_takeover_audit_is_immutable_for_async_update_and_delete",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Historical_version_is_republished_as_new_attempt_without_rewriting_history",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Success_activates_runtime_and_partial_requires_reconciliation",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_retry_rejects_tampered_persisted_mutation_before_applying",
+        "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_timeout_keeps_production_and_automatic_retry_completes",
+        "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Adopted_location_create_is_wms_noop_in_publish_preview",
+        "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Blocked_rename_preview_exposes_wms_impact",
+        "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Preview_is_deterministic_filterable_and_tenant_scoped",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_same_input_reuses_one_run_and_one_job",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_waiter_recovers_native_conflict_and_reuses_validation",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Incomplete_rack_blocks_version_and_emits_unified_issue",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_job_passes_reuses_and_preserves_ai_category",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_request_preserves_caller_owned_transaction",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_request_preserves_unsaved_caller_changes",
+        "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_unknown_failure_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_batch_conflict_is_atomic",
+        "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_place_uses_wms_identity_and_level_dimensions",
+        "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_refresh_and_bind_persist_rowversion_and_identity"
+      ]
+    }
+  ],
+  "Scope": "Original WP6 native 40001 failure, initial test compilation failure, deterministic actual native 40001 RED-v2, broad 26-case run with all native tests passed but the expected-count gate failed, exact two-provider 23/41-case GREEN results, review and actual execution modules are retained byte-for-byte. The broad run overlaps exact clone and is not added as distinct coverage. Remote delivery, post-merge smoke and cleanup remain pending.",
+  "Excluded": "Private credentials, connection/ownership receipts, database state, JWT/Cookie and backups are excluded."
+}

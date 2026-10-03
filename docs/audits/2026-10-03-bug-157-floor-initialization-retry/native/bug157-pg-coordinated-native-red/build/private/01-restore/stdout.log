@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 4.14 sec).
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj (in 58 ms).
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Entity\CP6.Entity.csproj (in 23 ms).
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 4 ms).
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Core\CP6.Core.csproj (in 11 ms).
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Space.Domain\CP6.Space.Domain.csproj (in 0.9 ms).
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Space.Application\CP6.Space.Application.csproj (in 2 ms).
+  Restored D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 20 ms).
