@@ -1,12 +1,10 @@
 $ErrorActionPreference = 'Stop'
-$worktree = 'D:\CP6\tmp\worktrees\bug-157-floor-initialization-retry'
-$output = 'D:\CP6\tmp\bug157-exact-local-verification.json'
+$worktree = 'D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery'
+$output = 'D:\CP6\tmp\bug159-exact-local-verification.json'
 if (Test-Path -LiteralPath $output) { throw 'Preserve existing evidence verification.' }
 $runs = @(
-    @{Label='bug157-pg-clone-exact-green';Provider='PostgreSql';Count=23},
-    @{Label='bug157-sql-clone-exact-green';Provider='SqlServer';Count=23},
-    @{Label='bug157-pg-design-publish-green';Provider='PostgreSql';Count=41},
-    @{Label='bug157-sql-design-publish-green';Provider='SqlServer';Count=41}
+    @{Label='bug159-pg-jobs-exact-green';Provider='PostgreSql';Count=23},
+    @{Label='bug159-sql-jobs-exact-green';Provider='SqlServer';Count=23}
 )
 $records = @()
 foreach ($spec in $runs) {
@@ -54,16 +52,16 @@ foreach ($spec in $runs) {
 }
 if (@($records.SourceInputsSha256 | Sort-Object -Unique).Count -ne 1 -or
     @($records.RuntimeManifestSha256 | Sort-Object -Unique).Count -ne 1) { throw 'Provider inputs differ.' }
-$reviewPath = 'D:\CP6\tmp\bug157-review.md'
+$reviewPath = 'D:\CP6\tmp\bug159-review.md'
 $review = [IO.File]::ReadAllText($reviewPath)
-foreach ($relative in @('CP6.Space.Infrastructure/SpaceDesignV1Service.cs',
-    'CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.cs',
-    'CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.FloorRecoveryTests.cs')) {
+foreach ($relative in @('CP6.Space.Infrastructure/EfSpaceJobLedger.cs',
+    'CP6.Space.IntegrationTests/SpaceJobSqlServerTests.cs',
+    'CP6.Space.IntegrationTests/SpaceJobSqlServerTests.ClaimRecoveryTests.cs')) {
     if (!$review.Contains((Get-FileHash -LiteralPath (Join-Path $worktree $relative)).Hash)) { throw 'Review source applicability not established.' }
 }
-$report = [ordered]@{Task='BUG-157';Status='LocalVerifiedRemotePending';CheckedUtc=[datetime]::UtcNow.ToString('o');
-    SourceBase='2e1f90c629340944d95fadd7aee428f639304ed6';Runs=$records;AllCurrentSourcesAndRuntimeMatch=$true;
+$report = [ordered]@{Task='BUG-159';Status='LocalVerifiedRemotePending';CheckedUtc=[datetime]::UtcNow.ToString('o');
+    SourceBase='5587a2a67ae73715596ca1a135b5863005abac8d';Runs=$records;AllCurrentSourcesAndRuntimeMatch=$true;
     SourceReviewSha256=(Get-FileHash -LiteralPath $reviewPath).Hash;
-    Scope='Raw native TRX and exact required sets verified; four executions use the same current source/runtime. Clone 23 and design/publish 41 are distinct required groups; the earlier broad 26-case execution overlaps clone and is not added as new coverage. Injected recovery controls are not native deadlock reproductions. Full WP6, post-merge smoke, cleanup and remote delivery remain pending.'}
+    Scope='Raw native TRX and exact required sets verified; two executions use the same current source/runtime. The exact 23 cases include the original 17 required job/processing/generation/retention cases and six focused recovery regressions. Injected recovery controls are not native deadlock reproductions. Full WP6, post-merge smoke, cleanup and remote delivery remain pending.'}
 [IO.File]::WriteAllText($output, ($report | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false))
 [pscustomobject]@{Status=$report.Status;Groups=@($records | Select-Object Provider,Total,Passed);CurrentInputsMatch=$true} | ConvertTo-Json -Depth 4 -Compress

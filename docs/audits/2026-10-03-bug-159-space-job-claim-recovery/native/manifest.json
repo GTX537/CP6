@@ -286,28 +286,28 @@
       "Length": 202486
     },
     {
-      "Path": "execution/Invoke-Bug157Tests.ps1",
-      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug157Tests.ps1",
-      "Sha256": "CADC847E97C3AD3F6ADC70C2B404D18EBAFB89C35E9F09F8DD6C0012BF385EFE",
-      "Length": 5994
+      "Path": "execution/Invoke-Bug159Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug159Tests.ps1",
+      "Sha256": "24B38D317EE9F1B90A30C6831189DFB817B629D11BB0315673E3A091703D1CF1",
+      "Length": 5972
     },
     {
-      "Path": "execution/Invoke-Bug157Groups.ps1",
-      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug157Groups.ps1",
-      "Sha256": "7EFC3F2C70971B141557DF7BEF03A6A189A6410514A00A369222FA319EA7CA90",
-      "Length": 3345
+      "Path": "execution/Invoke-Bug159Groups.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug159Groups.ps1",
+      "Sha256": "1788632728674DC8BF920B6DCFB686BAA5C5F60D5C80D854CF63E012C5E1E1E8",
+      "Length": 2778
     },
     {
-      "Path": "execution/New-Bug157Databases.ps1",
-      "OriginalPath": "D:\\CP6\\tmp\\New-Bug157Databases.ps1",
-      "Sha256": "859AA67B9BC7B4CA531D22CD6611FFE5D07BD8750266F5A0421FBB12D0411B0B",
+      "Path": "execution/New-Bug159Databases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\New-Bug159Databases.ps1",
+      "Sha256": "401426991C8BEF5E705F05123115D42F6D9DCD6A567E124A1EAFA60AF00DFEA5",
       "Length": 4274
     },
     {
-      "Path": "execution/Test-Bug157LocalEvidence.ps1",
-      "OriginalPath": "D:\\CP6\\tmp\\Test-Bug157LocalEvidence.ps1",
-      "Sha256": "80C6963AAC9BD045674D47EBB0C32FFE7C77E5BF36F14B878BA15B7418FFCB52",
-      "Length": 5966
+      "Path": "execution/Test-Bug159LocalEvidence.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Test-Bug159LocalEvidence.ps1",
+      "Sha256": "7F28118D5E43A98DB26885F655FAD93C10B858655EE3451ACEEA068BDCF46234",
+      "Length": 5769
     },
     {
       "Path": "execution/bug159-review.md",

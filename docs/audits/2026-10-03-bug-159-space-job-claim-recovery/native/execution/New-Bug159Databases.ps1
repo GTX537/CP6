@@ -1,6 +1,6 @@
 $ErrorActionPreference='Stop'
 $PSNativeCommandUseErrorActionPreference=$false
-$receiptPath='D:\CP6\tmp\bug157-wp5-owned.private.json'
+$receiptPath='D:\CP6\tmp\bug159-wp5-owned.private.json'
 if(Test-Path -LiteralPath $receiptPath){throw 'Preserve existing WP5 ownership receipt.'}
 $owner=[Guid]::NewGuid().ToString('N')
 $databaseName='CP6Compat_WP5_20261003_'+$owner.Substring(0,8)
@@ -27,7 +27,7 @@ try{
  $pg.Timeout=5
 $pg.SslMode=[Npgsql.SslMode]::Disable
  $pg.SearchPath='public'
- $receipt=[ordered]@{Task=$taskName;Owner=$owner;CreatedHostUtc=[DateTime]::UtcNow.ToString('o');SourceBase='2e1f90c629340944d95fadd7aee428f639304ed6';SqlServerDatabase=$databaseName;SqlServerConnection="Server=$sqlServer;Database=$databaseName;Integrated Security=True;TrustServerCertificate=True;MultipleActiveResultSets=False;Connect Timeout=5";PostgreSqlDatabase=$databaseName;PostgreSqlConnection=$pg.ConnectionString;SqlServerState='Planned';PostgreSqlState='Planned'}
+ $receipt=[ordered]@{Task=$taskName;Owner=$owner;CreatedHostUtc=[DateTime]::UtcNow.ToString('o');SourceBase='5587a2a67ae73715596ca1a135b5863005abac8d';SqlServerDatabase=$databaseName;SqlServerConnection="Server=$sqlServer;Database=$databaseName;Integrated Security=True;TrustServerCertificate=True;MultipleActiveResultSets=False;Connect Timeout=5";PostgreSqlDatabase=$databaseName;PostgreSqlConnection=$pg.ConnectionString;SqlServerState='Planned';PostgreSqlState='Planned'}
  $receipt|ConvertTo-Json|Set-Content -LiteralPath $receiptPath -Encoding utf8NoBOM
  & $sqlcmd -S $sqlServer -E -C -d master -b -Q "CREATE DATABASE [$databaseName];"
  if($LASTEXITCODE -ne 0){throw 'SQL creation failed.'}
@@ -45,7 +45,7 @@ $pg.SslMode=[Npgsql.SslMode]::Disable
  if($LASTEXITCODE -ne 0){throw 'PostgreSQL owner marker failed.'}
  $receipt.PostgreSqlState='CreatedAndOwnerMarked'
  $receipt|ConvertTo-Json|Set-Content -LiteralPath $receiptPath -Encoding utf8NoBOM
- [ordered]@{Task=$taskName;DatabaseName=$databaseName;BothCreatedAndOwnerMarked=$true;SourceBase=$receipt.SourceBase;CredentialReceiptIgnored=$true}|ConvertTo-Json|Set-Content -LiteralPath 'D:\CP6\tmp\bug157-databases-created.json' -Encoding utf8NoBOM
+ [ordered]@{Task=$taskName;DatabaseName=$databaseName;BothCreatedAndOwnerMarked=$true;SourceBase=$receipt.SourceBase;CredentialReceiptIgnored=$true}|ConvertTo-Json|Set-Content -LiteralPath 'D:\CP6\tmp\bug159-databases-created.json' -Encoding utf8NoBOM
  Write-Output "Created both new owner-marked WP5 temporary databases: $databaseName."
 }finally{
  foreach($name in $saved.Keys){if($null -eq $saved[$name]){[Environment]::SetEnvironmentVariable($name,[NullString]::Value,'Process')}else{[Environment]::SetEnvironmentVariable($name,$saved[$name],'Process')}}
