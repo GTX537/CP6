@@ -4,9 +4,15 @@
 
 [PR149](https://github.com/GTX537/CP6/pull/149)已正常合入远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，包含候选`cfe479124fb04d770462b874bc2a70508a8bf79e`且完整树相同。合并后原业务快照保存SQL/PG各2/2、零skip（含owner/迁移setup）；六个WP4自有临时库已普通DROP并确认不存在，receipt和PG角色保留。[交付/清理原件](../audits/database-compatibility/wp4-native/post-merge/manifest.json)新增17份，[父任务更新记录](../audits/database-compatibility/wp4-native/post-merge/parent-progress/manifest.json)另三份；原211与七份manifest及各次失败/复用范围保持。
 
-WP5从该主线在独立`codex/db-compat-wp5-20261003`工作树准备Space及报表/GDPR。Space、报表各自两库已创建并标记owner；已取得克隆SQL14/14及PG分批限定通过、报表4/GDPR1/Core Space5两库各自通过；容量/文件原13已两库各13通过，新增带数据报表4和清理故障回滚1也各自两库通过。AI应用原13两库各13通过；设计/发布35及任务/基础约束分批通过，CAD Retry与克隆新增同key并发的修复已定向两库各5/5，SQL独立及历史迁移6项通过；PG Space-only缺共享前置对象正在补齐，mapping同key并发的原SQL缺陷已拆为独立[BUG150](https://github.com/GTX537/CP6/issues/150)修复，详见[WP5实施记录](../audits/database-compatibility/WP5-IMPLEMENTATION.md)。[父Issue134](https://github.com/GTX537/CP6/issues/134)实际已勾选WP4，WP5/6未勾选且仍Open；普通PG应用guard保留。
+WP5从该主线在独立`codex/db-compat-wp5-20261003`工作树准备Space及报表/GDPR。Space、报表各自两库已创建并标记owner；已取得克隆SQL14/14及PG分批限定通过、报表4/GDPR1/Core Space5两库各自通过；容量/文件原13已两库各13通过，新增带数据报表4和清理故障回滚1也各自两库通过。AI应用原13两库各13通过；设计/发布35及任务/基础约束分批通过，CAD Retry与克隆新增同key并发的修复已定向两库各5/5，SQL独立及历史迁移6项通过；PG前置的两种安装顺序、脚本重复及Space-only各1/1，集中审查两项P2修正后PG AI/CAD15/15和选择器2/2通过；[BUG150](https://github.com/GTX537/CP6/issues/150)已由[PR151](https://github.com/GTX537/CP6/pull/151)交付main522433a3并关闭，原并发合并后两库各2/2，现已纳入WP5分支待映射集成复测，详见[WP5实施记录](../audits/database-compatibility/WP5-IMPLEMENTATION.md)。[父Issue134](https://github.com/GTX537/CP6/issues/134)实际已勾选WP4，WP5/6未勾选且仍Open；普通PG应用guard保留。
 
 Actions启动/取消均0，无工作流/保护变更或生产部署。根工作区原改动保持，早期Pending/Open文字保留各历史时点，当前以本节和真实Issue读回为准。
+
+## 2026-10-03 历史快照：映射保存并发修复本地通过，待远端交付
+
+[BUG150](https://github.com/GTX537/CP6/issues/150)在WP5对照测试中确认原SQL Server同键并发死锁，PG对应路径唯一约束冲突未回放。独立修复只调整CAD/Excel映射保存的自有事务恢复，保留调用方待提交状态和事务。真实SQL/PG各4/4、原映射相关12/12、零skip，最终构建零warning/error，一次集中代码审查无实质阻断；[实际证据与边界](../audits/2026-10-03-bug-150-mapping-idempotency/README.md)保留原RED。
+
+当前LocalVerified/RemotePending，Issue仍Open；正常合并、远端包含性和原步骤冒烟后才关闭。WP4已由PR149交付，WP5草稿保留在另一独立工作树，父任务134与WP5/6继续。无Actions启动/取消、工作流/保护变更或生产部署；根工作区原改动保持。下方历史状态保留原时点。
 
 ## 2026-10-03 历史快照：WP4 本地双库验收与集中审查通过，待远端交付
 

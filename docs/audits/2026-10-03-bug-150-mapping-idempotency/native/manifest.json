@@ -1,0 +1,213 @@
+{
+  "Schema": "cp6.bug150.original-evidence.v1",
+  "Task": "BUG-150",
+  "CreatedUtc": "2026-10-03T14:33:33.4227249Z",
+  "OriginalCount": 29,
+  "AllOriginalBytesVerified": true,
+  "Scope": "Independent two-provider RED, four native GREEN per provider, twelve original related non-native tests, build and exact-source review. No full WP5 or production acceptance.",
+  "Entries": [
+    {
+      "File": "bug150-worktree-created.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-worktree-created.json",
+      "Bytes": 265,
+      "Sha256": "A730A6DE05B1CB429EE94A07A960C5A5BE94BD130E8A3C13CE23C32AFC0AE502",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-databases-created.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-databases-created.json",
+      "Bytes": 213,
+      "Sha256": "CDE222A0AF79829B081CAF3A0100C08D2EA538AACDB1852E136C82D3FDF777BA",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-red-restore.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-red-restore.log",
+      "Bytes": 1081,
+      "Sha256": "6CDA30697AF1DEF27CA8E024AD12BE7DF1AA483C7E1FD0B3522D0744AA11FD67",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-red-build.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-red-build.log",
+      "Bytes": 6754,
+      "Sha256": "FC3F8F75113BE1CC2B6AC53262E5679B58C29AB8BE42983E2C39DC64E011E65E",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-green-build.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-green-build.log",
+      "Bytes": 1236,
+      "Sha256": "43AA978A602BF4E22C815E69940CF6C231D5AFAF26FCF0DCA35E1DEC25DF98CD",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-task-review-and-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-task-review-and-inputs.json",
+      "Bytes": 1921,
+      "Sha256": "728F23B5D624339F097BCDECDCBA52A2093C1E86FEE4066B757679CB4E4E24C7",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-root-review.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-root-review.json",
+      "Bytes": 813,
+      "Sha256": "0DE89B75F0C92A07E9EDC21729A5822074BBD7E979625C038337C356DA886111",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-doc-links.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-doc-links.log",
+      "Bytes": 66,
+      "Sha256": "0C3A75F386B0BA87E0E8847936682D8FBAD93A0F587E5B56154BE3BDC20A1E9E",
+      "OriginalMatches": true
+    },
+    {
+      "File": "New-Bug150Databases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\New-Bug150Databases.ps1",
+      "Bytes": 4218,
+      "Sha256": "23FED5963043E6407B018181C0A2E70AC0620AE708F045F2BA300CE13E78C031",
+      "OriginalMatches": true
+    },
+    {
+      "File": "Invoke-Bug150Case.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug150Case.ps1",
+      "Bytes": 5792,
+      "Sha256": "15DBB8DDC83BD36EF5A2D15C762BC612BB982AF182D32E1C9999E00C86E0ADF6",
+      "OriginalMatches": true
+    },
+    {
+      "File": "Invoke-RequiredLocalTestCases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-RequiredLocalTestCases.ps1",
+      "Bytes": 4297,
+      "Sha256": "F2EBB252369E004976263FC58D9A647F64B49861821ABC8A2823D809EC8AC79B",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-sql-red.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-sql-red.json",
+      "Bytes": 79910,
+      "Sha256": "19DF8D248F1268463F435425366B7905B62611C844B125BDF7B34A47FF09572C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-sql-red-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-red\\process.log",
+      "Bytes": 28598,
+      "Sha256": "D8D694177669838CABAA8AB52E0237739D4CF4157EC069A30CE08FBC9F062B6A",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-sql-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-red\\results.trx",
+      "Bytes": 63940,
+      "Sha256": "8DBA863F67082C6BA2A4A20000EE1C63BEA894269BFF1E593CEE65C20936E21E",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-pg-red.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-pg-red.json",
+      "Bytes": 79909,
+      "Sha256": "D8B0B5464581AA9077D231B433745CAEFBACD24BB01C980DD6E10DA8090A8BA5",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-pg-red-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-red\\process.log",
+      "Bytes": 13176,
+      "Sha256": "E80F468805C40D104BC671E2BF0A2A64B8F40F0818094CC077E21A50CBCACE44",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-pg-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-red\\results.trx",
+      "Bytes": 32728,
+      "Sha256": "3BD2526C0D18C654D090B0AE82B36DA5B81306DA12DFC26E0F8F7D895397F31D",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-sql-green.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-sql-green.json",
+      "Bytes": 80086,
+      "Sha256": "9AD3BFDE102CB58CDA848FD5BECB1F237525D46F4C8417B28043D829ECB41748",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-sql-green-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-green\\process.log",
+      "Bytes": 428,
+      "Sha256": "AE10343811705B914F6A83A89BC1D4689672E7D4E7242D9E7215B3C455CF444C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-sql-green.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-green\\results.trx",
+      "Bytes": 37136,
+      "Sha256": "FAFB564698296DA197352B1484D55246C6A5E33357358D1DDEB0BA696D8321D0",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-pg-green.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-pg-green.json",
+      "Bytes": 80085,
+      "Sha256": "F788380AFDA649ED1CDFC1256FD7C2F414FFE7F9418B3BDAFC706403B103FA51",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-pg-green-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-green\\process.log",
+      "Bytes": 430,
+      "Sha256": "BF6C53162C919DE14C9B02993D1563637F15B0A51CED6AC8AA8AC8695B8E2AC2",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-pg-green.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-green\\results.trx",
+      "Bytes": 9676,
+      "Sha256": "7E1B26D473AD9AFD6EDE341AC9988D7D4FAFFEFB4317ED98C05F13F4A12EFDB1",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-mapping-related-unit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-mapping-related-unit.json",
+      "Bytes": 67676,
+      "Sha256": "26D667A4397E6558940B503D0102978D9D12A9030FCEAECFC07D15DA36754AC9",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-mapping-related-unit-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\local-required-tests\\bug150-mapping-related-unit\\process.log",
+      "Bytes": 447,
+      "Sha256": "476B1DB59DD9E354CF0553AB473BB07313DB303168EE3CA2CBDD06CC566AAC9C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug150-mapping-related-unit.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\local-required-tests\\bug150-mapping-related-unit\\results.trx",
+      "Bytes": 19844,
+      "Sha256": "0D97E85562D2885771086A82EDAAB436F13F04454943B6FBB91AB0ED0B6ABF78",
+      "OriginalMatches": true
+    },
+    {
+      "File": "red-Bug150RelationalFixture.cs",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-red-sources\\Bug150RelationalFixture.cs",
+      "Bytes": 9486,
+      "Sha256": "E851988323C80549C26B3ADC999D52ACDD951B3205A88D612F1E9BC222A32947",
+      "OriginalMatches": true
+    },
+    {
+      "File": "red-SpaceMappingProfileConcurrencyTests.cs",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-red-sources\\SpaceMappingProfileConcurrencyTests.cs",
+      "Bytes": 12670,
+      "Sha256": "341DFA12D87239CF2DF84D3B80518F128F7DC3643A19D4B8F0C34D6124AEDC37",
+      "OriginalMatches": true
+    },
+    {
+      "File": "red-CP6.Space.IntegrationTests.csproj",
+      "OriginalPath": "D:\\CP6\\tmp\\bug150-red-sources\\CP6.Space.IntegrationTests.csproj",
+      "Bytes": 1241,
+      "Sha256": "14D4F495D48A10FDC7DE98FEA027E197200A4862FBAEFBC9874396FE9E9BB40B",
+      "OriginalMatches": true
+    }
+  ]
+}

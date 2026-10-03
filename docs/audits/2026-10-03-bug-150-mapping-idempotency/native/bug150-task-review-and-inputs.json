@@ -1,0 +1,45 @@
+{
+  "Task": "BUG-150",
+  "Base": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "Reviewer": "/root/bug150_review",
+  "ReviewedUtc": "2026-10-03T14:31:10.8326365Z",
+  "Findings": [],
+  "Conclusion": "No substantive blocking findings across three production files, fixture, four native test cases, project reference and lock change. Read-only review; execution by root.",
+  "FinalSources": [
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadMappingProfileService.cs",
+      "Sha256": "F8B4A2BFBF083FEE1731B2F78168859483855F7CCB242833C7B09547CC0419A6"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelMappingService.cs",
+      "Sha256": "B2BBAB86887DA2567062D92FAB968BC5E27DC721865109BB2DEA85816A6681AD"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceMappingSaveTransaction.cs",
+      "Sha256": "7C08DEAE1F0AB72384C498238479B70F7ED6010316B0A95A772D07E39EC36340"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/Bug150RelationalFixture.cs",
+      "Sha256": "E851988323C80549C26B3ADC999D52ACDD951B3205A88D612F1E9BC222A32947"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMappingProfileConcurrencyTests.cs",
+      "Sha256": "8A87E223B3013047A3887C1301CB31B13BAAA4C6F7447EEF7FE2AEF180A17489"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "Sha256": "14D4F495D48A10FDC7DE98FEA027E197200A4862FBAEFBC9874396FE9E9BB40B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/packages.lock.json",
+      "Sha256": "B97672D5CE68BB364010ADAE9DD8C554B3D1972135A083989E662A3F616BA067"
+    }
+  ],
+  "NativeResults": [
+    "bug150-sql-green",
+    "bug150-pg-green"
+  ],
+  "RelatedResult": "bug150-mapping-related-unit",
+  "ExactFinalCodeAndBinariesMatchSuccessfulInputs": true,
+  "Scope": "Mapping save concurrency and caller-state preservation only; no complete WP5 or production acceptance."
+}
