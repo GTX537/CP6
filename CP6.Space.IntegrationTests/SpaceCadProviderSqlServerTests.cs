@@ -5,12 +5,13 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceCadProviderSqlServerTests(
+public sealed partial class SpaceCadProviderSqlServerTests(
     SpaceRelationalFixture database,
     ITestOutputHelper output)
 {
@@ -386,14 +387,15 @@ public sealed class SpaceCadProviderSqlServerTests(
 
     private SpaceContext CreateContext(
         string connectionString,
-        ISpaceExecutionContext execution)
+        ISpaceExecutionContext execution,
+        params IInterceptor[] interceptors)
     {
         if (SpaceRelationalFixture.IsSelected)
         {
             Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
                 "Selected CAD provider contexts must use the fixture-owned connection.");
             return database.CreateSpaceContext(execution, new FixedClock(),
-                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "cad-provider-business"));
+                [new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "cad-provider-business"), .. interceptors]);
         }
 
         var options = new DbContextOptionsBuilder<SpaceContext>()
@@ -401,6 +403,7 @@ public sealed class SpaceCadProviderSqlServerTests(
                 connectionString,
                 sql => sql.MigrationsHistoryTable(
                     SpaceContext.MigrationsHistoryTable))
+            .AddInterceptors(interceptors)
             .Options;
         return new SpaceContext(options, execution, new FixedClock());
     }
