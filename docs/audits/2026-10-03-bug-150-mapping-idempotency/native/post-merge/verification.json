@@ -1,0 +1,102 @@
+{
+  "Task": "BUG-150",
+  "ManifestSha256": "3D3113D0BF6AAEA8DDD6993DF009ED86704B022E3D971A5C37B7F0819BE63339",
+  "VerifiedUtc": "2026-10-03T14:59:25.4721636Z",
+  "OriginalFileCount": 15,
+  "Passed": 15,
+  "Failed": 0,
+  "ExistingEvidenceOverwritten": 0,
+  "Scope": "Byte/hash and existing public proof consistency only; no test/build/database execution.",
+  "Files": [
+    {
+      "RelativePath": "bug150-before-push-workflow-input-inspection.json",
+      "Sha256": "087785D57483FCD2EAB0B8D63E042965A728BB79ED3B2B32A135AB52C42D00AD",
+      "Bytes": 6762,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-before-pr-create-workflow-input-inspection.json",
+      "Sha256": "396F31E67AA5BD7266A2602C53A86418CB8BEB43FA554370BB03BC45D70F268A",
+      "Bytes": 6762,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-before-merge-workflow-input-inspection.json",
+      "Sha256": "F5CE6EDB1EA5B8FE17BB5D7E3EB82F79BD6FEED2F5DF60CC371AC544834F2A57",
+      "Bytes": 6762,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-staged-evidence-check.json",
+      "Sha256": "7EE2B305DBF8A5220172616E99A4F04A3292B9E98C3F5EB5DCA3A9EB9EF2752C",
+      "Bytes": 95,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-remote-main-observation.json",
+      "Sha256": "2EAA180A274B3E00919322670F3B3F4ED812946D34394C993FF76A79C5E5D65D",
+      "Bytes": 611,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-sql-post-merge-smoke.json",
+      "Sha256": "9955DD5C7A6C5FC0DC733BEF5F14DC7C9C7D6E1408BA19E6D088DF313E4B7DB8",
+      "Bytes": 80154,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-pg-post-merge-smoke.json",
+      "Sha256": "A6BD7B8987CA1C8B37361B0683B92423A3166F827127FEC7A47F978E93EEE77D",
+      "Bytes": 80153,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-owned-databases-cleanup.json",
+      "Sha256": "4E5E9C9B41A4399C16EF5A514EA2EBE142310F4728ACB858E96AE08656EF459B",
+      "Bytes": 531,
+      "Passed": true
+    },
+    {
+      "RelativePath": "Remove-Bug150OwnedDatabases.ps1",
+      "Sha256": "FE1204F12D01D5FCB2359CA10AF8306445F93EE98865E63F18EC0077E40A4253",
+      "Bytes": 4633,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-issue-closed-observation.json",
+      "Sha256": "FB2BCFD919E744749CB5BA1EE80DE4ABE4CB44B9D7493D9AA6D348CFA7C167C7",
+      "Bytes": 421,
+      "Passed": true
+    },
+    {
+      "RelativePath": "bug150-delivery-closure.json",
+      "Sha256": "F9CF37CB44D576D10A65928F1CE81773097FF967D0D5DCEEE644BFEA49E16CA8",
+      "Bytes": 985,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/bug150-sql-post-merge-smoke/process.log",
+      "Sha256": "B55D49D900D7AB1EFA231F1ACFCFEE38B7CB0F1924605285323A2DC1479300C1",
+      "Bytes": 439,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/bug150-sql-post-merge-smoke/results.trx",
+      "Sha256": "E4A98BB41E37080CAB77212AA39C30C75E0693FEEAA0D582BD87712B6C5BEC11",
+      "Bytes": 19638,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/bug150-pg-post-merge-smoke/process.log",
+      "Sha256": "04903409F7822E0A5089CF0483C711F5F6BA42C86F46E4026E72D850601980A6",
+      "Bytes": 441,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/bug150-pg-post-merge-smoke/results.trx",
+      "Sha256": "FAD79348A0D799B4EFDEA99B129FDB5113850DB3761D57E4BB1DA853DFA388A6",
+      "Bytes": 6182,
+      "Passed": true
+    }
+  ]
+}

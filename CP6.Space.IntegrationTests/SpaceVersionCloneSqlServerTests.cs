@@ -5,11 +5,12 @@ using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceVersionCloneSqlServerTests
+public sealed partial class SpaceVersionCloneSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private const string ContentHash =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -259,6 +260,14 @@ public sealed class SpaceVersionCloneSqlServerTests
 
             var cloneColumn = await context.Database
                 .SqlQueryRaw<string>(
+                    context.Database.IsNpgsql() ?
+                    """
+                    SELECT attname AS "Value"
+                    FROM pg_catalog.pg_attribute
+                    WHERE attrelid = 'public."Space_ModelVersion"'::regclass
+                      AND attname = 'CloneOperationId'
+                      AND attnum > 0 AND NOT attisdropped
+                    """ :
                     """
                     SELECT [name] AS [Value]
                     FROM sys.columns
@@ -270,6 +279,14 @@ public sealed class SpaceVersionCloneSqlServerTests
 
             var calibrationColumn = await context.Database
                 .SqlQueryRaw<string>(
+                    context.Database.IsNpgsql() ?
+                    """
+                    SELECT attname AS "Value"
+                    FROM pg_catalog.pg_attribute
+                    WHERE attrelid = 'public."Space_FloorRevision"'::regclass
+                      AND attname = 'UnderlayCalibrationId'
+                      AND attnum > 0 AND NOT attisdropped
+                    """ :
                     """
                     SELECT [name] AS [Value]
                     FROM sys.columns
@@ -281,6 +298,14 @@ public sealed class SpaceVersionCloneSqlServerTests
 
             var locationTypeColumn = await context.Database
                 .SqlQueryRaw<string>(
+                    context.Database.IsNpgsql() ?
+                    """
+                    SELECT attname AS "Value"
+                    FROM pg_catalog.pg_attribute
+                    WHERE attrelid = 'public."Space_LocationRevision"'::regclass
+                      AND attname = 'LocationType'
+                      AND attnum > 0 AND NOT attisdropped
+                    """ :
                     """
                     SELECT [name] AS [Value]
                     FROM sys.columns
@@ -1324,7 +1349,7 @@ public sealed class SpaceVersionCloneSqlServerTests
                 "Column",
                 """{"schemaVersion":1,"kind":"box","width":200,"height":3000,"depth":200}""");
             var asset = SpaceAsset.CreateSystem(
-                "SYS-COLUMN",
+                $"SYS-COLUMN-{Guid.NewGuid():N}",
                 "System Column",
                 "Structure",
                 null,
@@ -1384,7 +1409,15 @@ public sealed class SpaceVersionCloneSqlServerTests
     {
         await context.Database.OpenConnectionAsync();
         await using var command = context.Database.GetDbConnection().CreateCommand();
-        command.CommandText = "SELECT [name] FROM sys.tables ORDER BY [name]";
+        command.CommandText = context.Database.IsNpgsql() ?
+            """
+            SELECT c.relname AS "Value"
+            FROM pg_catalog.pg_class c
+            INNER JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')
+            ORDER BY c.relname
+            """ :
+            "SELECT [name] FROM sys.tables ORDER BY [name]";
         var result = new List<string>();
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -1408,9 +1441,19 @@ public sealed class SpaceVersionCloneSqlServerTests
             new SpaceSourceCoordinator(execution));
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<SpaceContext, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            var ownedExecution = new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+            var ownedClock = new TestClock();
+            await using var ownedContext = CreateContext(database.ConnectionString, ownedExecution, ownedClock);
+            await action(ownedContext, ownedExecution, ownedClock);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -1438,11 +1481,19 @@ public sealed class SpaceVersionCloneSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "clone-business"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,
@@ -1483,7 +1534,9 @@ public sealed class SpaceVersionCloneSqlServerTests
 
     private sealed class TestClock : ISpaceClock
     {
-        public DateTime UtcNow { get; } = DateTime.UtcNow;
+        // Both native providers preserve this microsecond precision exactly.
+        public DateTime UtcNow { get; } =
+            new(DateTime.UtcNow.Ticks / 10 * 10, DateTimeKind.Utc);
     }
 
     private sealed class TestAccessEvaluator : ISpaceDesignAccessEvaluator

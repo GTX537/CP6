@@ -40,7 +40,14 @@ public sealed class SpaceEditLeaseService(
             await ReadAuthoritativeUtcNowAsync(cancellationToken));
     }
 
-    public async Task<SpaceEditLeaseDto> AcquireAsync(
+    public Task<SpaceEditLeaseDto> AcquireAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        AcquireSpaceEditLeaseRequest request,
+        CancellationToken cancellationToken = default) =>
+        ExecuteOwnedCommandAsync(() => AcquireOnceAsync(versionId, floorLogicalId, request, cancellationToken), cancellationToken);
+
+    private async Task<SpaceEditLeaseDto> AcquireOnceAsync(
         Guid versionId,
         Guid floorLogicalId,
         AcquireSpaceEditLeaseRequest request,
@@ -111,7 +118,7 @@ public sealed class SpaceEditLeaseService(
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException exception) when (!context.Database.IsNpgsql() || !IsPostgreSqlTransactionFailure(exception))
         {
             await transaction.RollbackAsync(cancellationToken);
             throw new SpaceProblemException(
@@ -124,7 +131,15 @@ public sealed class SpaceEditLeaseService(
         return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
 
-    public async Task<SpaceEditLeaseDto> RenewAsync(
+    public Task<SpaceEditLeaseDto> RenewAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        Guid leaseId,
+        ContinueSpaceEditLeaseRequest request,
+        CancellationToken cancellationToken = default) =>
+        ExecuteOwnedCommandAsync(() => RenewOnceAsync(versionId, floorLogicalId, leaseId, request, cancellationToken), cancellationToken);
+
+    private async Task<SpaceEditLeaseDto> RenewOnceAsync(
         Guid versionId,
         Guid floorLogicalId,
         Guid leaseId,
@@ -180,7 +195,15 @@ public sealed class SpaceEditLeaseService(
         return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
 
-    public async Task<SpaceEditLeaseDto> ReleaseAsync(
+    public Task<SpaceEditLeaseDto> ReleaseAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        Guid leaseId,
+        ContinueSpaceEditLeaseRequest request,
+        CancellationToken cancellationToken = default) =>
+        ExecuteOwnedCommandAsync(() => ReleaseOnceAsync(versionId, floorLogicalId, leaseId, request, cancellationToken), cancellationToken);
+
+    private async Task<SpaceEditLeaseDto> ReleaseOnceAsync(
         Guid versionId,
         Guid floorLogicalId,
         Guid leaseId,
@@ -234,7 +257,14 @@ public sealed class SpaceEditLeaseService(
         return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
 
-    public async Task<SpaceEditLeaseDto> TakeoverAsync(
+    public Task<SpaceEditLeaseDto> TakeoverAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        TakeoverSpaceEditLeaseRequest request,
+        CancellationToken cancellationToken = default) =>
+        ExecuteOwnedCommandAsync(() => TakeoverOnceAsync(versionId, floorLogicalId, request, cancellationToken), cancellationToken);
+
+    private async Task<SpaceEditLeaseDto> TakeoverOnceAsync(
         Guid versionId,
         Guid floorLogicalId,
         TakeoverSpaceEditLeaseRequest request,
@@ -319,6 +349,41 @@ public sealed class SpaceEditLeaseService(
         }
         return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
+
+    private async Task<SpaceEditLeaseDto> ExecuteOwnedCommandAsync(
+        Func<Task<SpaceEditLeaseDto>> operation,
+        CancellationToken cancellationToken)
+    {
+        // Preserve the original single-command path for SQL Server and caller-owned work.
+        // Clearing failed attempt state is safe only when no pending caller changes entered this command.
+        if (!context.Database.IsNpgsql() || HasCallerTransaction() || context.ChangeTracker.HasChanges())
+            return await operation();
+
+        const int maximumAttempts = 3;
+        for (var attempt = 0; ; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                return await operation();
+            }
+            catch (Exception exception) when (IsPostgreSqlTransactionFailure(exception))
+            {
+                // The single-command method has await-disposed its Serializable transaction before this catch.
+                // Reacquire the resource lock, database time and all fences against a fresh transaction snapshot.
+                if (HasCallerTransaction()) throw;
+                context.ChangeTracker.Clear();
+                if (attempt + 1 >= maximumAttempts) throw;
+            }
+        }
+    }
+
+    private bool HasCallerTransaction() => context.Database.CurrentTransaction is not null
+        || System.Transactions.Transaction.Current is not null
+        || System.Transactions.TransactionsDatabaseFacadeExtensions.GetEnlistedTransaction(context.Database) is not null;
+
+    private static bool IsPostgreSqlTransactionFailure(Exception exception) =>
+        DatabaseFailureClassifier.Classify(exception).SqlState is "40001" or "40P01";
 
     private async Task EnsureScopeAsync(
         Guid versionId,

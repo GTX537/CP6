@@ -1,0 +1,24 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.42]     CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry [1 s]
+  Error Message:
+   Assert.NotNull() Failure: Value is null
+  Stack Trace:
+     at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCallerPendingPostgreSqlTests.cs:line 97
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCallerPendingPostgreSqlTests.cs:line 134
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCallerPendingPostgreSqlTests.cs:line 134
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCallerPendingPostgreSqlTests.cs:line 134
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCallerPendingPostgreSqlTests.cs:line 134
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Native Cancel contention: blocker=31788; waiter=23988; observer=28968; PostgreSQL blocking relationship confirmed.
+ Caller-pending outcome: native SQLSTATE=40001; propagated=False; pendingState=Detached; replayReads=2; runLockReads=1.
+
+
+Results File: D:\CP6\tmp\db-compat-wp5-tests\wp5-ai-caller-pending-pg-red\results.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - CP6.Space.IntegrationTests.dll (net8.0)

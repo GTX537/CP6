@@ -1,0 +1,5 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6\tmp\db-compat-wp5-tests\wp5-ai-cad-review-followup-pg\results.trx
+
+Passed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15, Duration: 4 s - CP6.Space.IntegrationTests.dll (net8.0)

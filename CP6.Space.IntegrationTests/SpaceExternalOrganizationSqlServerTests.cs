@@ -1,13 +1,15 @@
 using CP6.Space.Application;
+using CP6.Core.Persistence;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceExternalOrganizationSqlServerTests
+public sealed class SpaceExternalOrganizationSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 8, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -44,8 +46,11 @@ public sealed class SpaceExternalOrganizationSqlServerTests
                         SpaceExternalOrganizationType.Customer,
                         "Partner-001",
                         "Duplicate"));
-                await Assert.ThrowsAsync<DbUpdateException>(
+                var error = await Assert.ThrowsAsync<DbUpdateException>(
                     () => duplicate.SaveChangesAsync());
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.UniqueConstraint, failure.Kind);
+                Assert.Equal("UX_Space_ExternalOrganization_Tenant_Type_Code", failure.ConstraintName);
             }
 
             var userId = Guid.NewGuid();
@@ -79,8 +84,11 @@ public sealed class SpaceExternalOrganizationSqlServerTests
                         SpaceExternalMembershipStatus.Active,
                         Guid.NewGuid(),
                         Now));
-                await Assert.ThrowsAsync<DbUpdateException>(
+                var error = await Assert.ThrowsAsync<DbUpdateException>(
                     () => duplicate.SaveChangesAsync());
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.UniqueConstraint, failure.Kind);
+                Assert.Equal("UX_Space_ExternalMembership_Tenant_Organization_User_Current", failure.ConstraintName);
             }
 
             await using (var revoke = CreateContext(connectionString, tenantA))
@@ -130,16 +138,26 @@ public sealed class SpaceExternalOrganizationSqlServerTests
                         SpaceExternalMembershipStatus.Active,
                         Guid.NewGuid(),
                         Now));
-                await Assert.ThrowsAsync<DbUpdateException>(
+                var error = await Assert.ThrowsAsync<DbUpdateException>(
                     () => forged.SaveChangesAsync());
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.ForeignKey, failure.Kind);
+                Assert.Equal("FK_Space_ExternalMembership_Organization_Tenant", failure.ConstraintName);
                 Assert.Empty(await forged.ExternalOrganizations.ToListAsync());
             }
         });
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -160,10 +178,18 @@ public sealed class SpaceExternalOrganizationSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
-        Guid tenantId) =>
-        new(
+        Guid tenantId)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(new TestExecutionContext(tenantId, Guid.NewGuid()), new FixedClock(),
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "external-organization"));
+        }
+        return new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(
                     connectionString,
@@ -172,6 +198,7 @@ public sealed class SpaceExternalOrganizationSqlServerTests
                 .Options,
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             new FixedClock());
+    }
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :
         ISpaceExecutionContext;

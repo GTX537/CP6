@@ -1,0 +1,12 @@
+{
+  "Task": "BUG-150",
+  "PullRequest": "https://github.com/GTX537/CP6/pull/151",
+  "Candidate": "af47a6936f0057e7ff0ae6b58e54d47d215dd0bd",
+  "RemoteMain": "522433a370c0c247a98b300c69e88e403217d53a",
+  "CandidateTree": "d4efdeb7dc52ca761695db1a23f782d4e223faa8",
+  "RemoteTree": "d4efdeb7dc52ca761695db1a23f782d4e223faa8",
+  "ContainsCandidate": true,
+  "EqualTrees": true,
+  "ObservedUtc": "2026-10-03T14:37:10.6334147Z",
+  "SourceReuse": "Seven task source inputs and CP6 binaries match prior local results; same tree permits reuse. Original native concurrent cases will be rerun after merge."
+}

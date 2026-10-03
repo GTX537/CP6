@@ -1,0 +1,3503 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "CapturedUtc": "2026-10-03T15:06:51.784276+00:00",
+  "Scope": "Accounting of archived TRX case identities only. Latest recorded outcome per provider/class/display name; not a new test run, not a final-binary execution claim, not production or full WP6 acceptance. Raw failed batches remain unchanged. Relevant source-based reuse is documented separately.",
+  "RecordedRuns": 65,
+  "LatestRecordedCaseCounts": {
+    "PostgreSql": 146,
+    "ProviderIndependent": 52,
+    "SqlServer": 147
+  },
+  "LatestNonPassCount": 0,
+  "NonPasses": [],
+  "Runs": [
+    {
+      "Label": "wp5-clone-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T12:47:18.1766968Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-sql-first-reference.json",
+      "ReportSha256": "EF9B4A04F87567B826A7D33EA4CB94EE76229C1DED350D790683CF32AA012E42",
+      "Total": 2,
+      "Outcomes": {
+        "Passed": 2
+      }
+    },
+    {
+      "Label": "wp5-clone-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T12:47:55.9018507Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-pg-first-run.json",
+      "ReportSha256": "86D65F78FAA6B5AF34B37A3461616760CDFCA109484A4B38196FB819B4FC334B",
+      "Total": 2,
+      "Outcomes": {
+        "Passed": 1,
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-clone-pg-business-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-pg-business-first-run.json",
+      "ReportSha256": "50EF875CA4DB5755F910AD147F775DDAFC1381648D04A0849D27F1808D4E9117",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 11,
+        "Failed": 2
+      }
+    },
+    {
+      "Label": "wp5-clone-pg-fixture-followup",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:10:33.4929155Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-pg-fixture-followup.json",
+      "ReportSha256": "46EC0280F4F1B90938DD8C38D3C0EFEC783DCEE3901C7DD5BC31FC266F20A517",
+      "Total": 3,
+      "Outcomes": {
+        "Passed": 3
+      }
+    },
+    {
+      "Label": "wp5-clone-sql-native-matrix",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-sql-native-matrix.json",
+      "ReportSha256": "13DEF8B9104C45D7AF381FE3E75957EA7FB0AACF8E96BE9E4542B03120F4EC8E",
+      "Total": 14,
+      "Outcomes": {
+        "Passed": 14
+      }
+    },
+    {
+      "Label": "wp5-reports-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T12:56:22.3379206Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-sql-first-reference.json",
+      "ReportSha256": "0C52A6DCC480021CB8051E68CF185132F40D909F6EF372015A9344B6F09F0468",
+      "Total": 4,
+      "Outcomes": {
+        "Passed": 4
+      }
+    },
+    {
+      "Label": "wp5-reports-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T12:57:03.0697413Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-pg-first-run.json",
+      "ReportSha256": "4F7275A062D52EF0085157EC14F298457F6DF7329CDE2C557BCD2C1A1396887B",
+      "Total": 4,
+      "Outcomes": {
+        "Failed": 4
+      }
+    },
+    {
+      "Label": "wp5-gdpr-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T12:57:50.6481677Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-sql-first-reference.json",
+      "ReportSha256": "5396B470BFA48A3C2F6F814AE7005DA59F5456C80DF3E7B0645F66F8001116E3",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-gdpr-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T12:58:38.0177639Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-pg-first-run.json",
+      "ReportSha256": "BF1C07BABC363E890FBD5A21920C091DF46133848BE85A6E8CFE118D63A1771F",
+      "Total": 1,
+      "Outcomes": {
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-reports-pg-provider",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:07:48.6533846Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-pg-provider.json",
+      "ReportSha256": "2A0EF77C51C1C799DD0ED6B68C4155335D8A166C9518670EA5FE530AF38F90C7",
+      "Total": 4,
+      "Outcomes": {
+        "Passed": 4
+      }
+    },
+    {
+      "Label": "wp5-reports-sql-provider",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:08:31.6878705Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-sql-provider.json",
+      "ReportSha256": "E0C4C0C5E21E78E62A29A155F9C5CC6D63F57B10AEC5F30CF9B1C15B96137244",
+      "Total": 4,
+      "Outcomes": {
+        "Passed": 4
+      }
+    },
+    {
+      "Label": "wp5-gdpr-pg-provider",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:07:56.4947927Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-pg-provider.json",
+      "ReportSha256": "C1AF57A68D928353CA1246F8F653AAA76F957750E38285FC029C1FE59DE760C1",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-gdpr-sql-provider",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:08:40.8729624Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-sql-provider.json",
+      "ReportSha256": "6FEC870F4234F027C9BB80CF0DC35E605D3605AFA686AFD33678E2D1E0E9AADE",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-core-space-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:09:20.1174417Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-core-space-sql-first-reference.json",
+      "ReportSha256": "1EAF58B5E8A308B038F558145E2EACE8419E297F9131D7FE8C6B2C5C89181BA1",
+      "Total": 5,
+      "Outcomes": {
+        "Passed": 5
+      }
+    },
+    {
+      "Label": "wp5-core-space-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:09:26.7841575Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-core-space-pg-first-run.json",
+      "ReportSha256": "3B9FAF0C9B088172878CCA0668EA5763AC25D45E3C56FBC6DED8D4A1EFC0C4E0",
+      "Total": 5,
+      "Outcomes": {
+        "Passed": 5
+      }
+    },
+    {
+      "Label": "wp5-capacity-file-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:12:44.5474778Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-sql-first-reference.json",
+      "ReportSha256": "2641CA4ED60714F0BA0FA4271FD8C2D57A06013287F0AA65FBEB86E8B4DEB840",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 13
+      }
+    },
+    {
+      "Label": "wp5-capacity-file-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:13:49.1484677Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-pg-first-run.json",
+      "ReportSha256": "5D7D988AE4D0CD06CB8D10526D31588258433EAFB14B4D1E63D19A2A3D5685DE",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 4,
+        "Failed": 9
+      }
+    },
+    {
+      "Label": "wp5-capacity-file-pg-provider",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-pg-provider.json",
+      "ReportSha256": "24B85E3834D29C92EC8E226A923C39812D910B1602EA9ECBCD84E722A96DE33E",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 13
+      }
+    },
+    {
+      "Label": "wp5-capacity-file-sql-provider",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-sql-provider.json",
+      "ReportSha256": "9889732F6591C0E240331D815B4AD158691D114727572190BA4E37EDBB752408",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 13
+      }
+    },
+    {
+      "Label": "wp5-ai-atomic-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:25:06.0734655Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-sql-first-reference.json",
+      "ReportSha256": "5676AAD221FB181FA142A195AEB408E98A398199A3064EC38D3209247CE5FA9F",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 13
+      }
+    },
+    {
+      "Label": "wp5-ai-atomic-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:25:25.3972964Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-pg-first-run.json",
+      "ReportSha256": "B16AA86CB4C4F1D15612D72F75ED3F6D6AA8C397BD41EDDFC3308CACE9531819",
+      "Total": 13,
+      "Outcomes": {
+        "Failed": 6,
+        "Passed": 7
+      }
+    },
+    {
+      "Label": "wp5-reports-parity-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:26:03.9693801Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-parity-sql-first-reference.json",
+      "ReportSha256": "C7AE5578ECB3BF1C733CF145DBDFE12F9481FDCC79B51D006103FAB624FB2632",
+      "Total": 4,
+      "Outcomes": {
+        "Passed": 4
+      }
+    },
+    {
+      "Label": "wp5-reports-parity-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:26:15.3606188Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-parity-pg-first-run.json",
+      "ReportSha256": "05DC6AA1968E9DF3BB01D30EE52030063BF6449EC4051A38F0516E22BC9B7286",
+      "Total": 4,
+      "Outcomes": {
+        "Passed": 4
+      }
+    },
+    {
+      "Label": "wp5-gdpr-rollback-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:26:30.7047714Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-rollback-sql-first-reference.json",
+      "ReportSha256": "4FAE13D91F5ACC956921D1E368E74DF001CAC7106BFE40D3214C0E2306D8133B",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-gdpr-rollback-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:26:44.4169532Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-rollback-pg-first-run.json",
+      "ReportSha256": "69D0E55A4F8CBF97228CAE1C86DFF0541EB58035F60CE79806F8B8C87F073F65",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-ai-atomic-pg-provider",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:36:05.5608211Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-pg-provider.json",
+      "ReportSha256": "40C9003DA6AAF2694BC06B5FCD88A24C898D7366DE431DBEDE7B9ECE63C85D1B",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 13
+      }
+    },
+    {
+      "Label": "wp5-ai-atomic-sql-provider",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-sql-provider.json",
+      "ReportSha256": "5DC473D0AC1871838818EEB26974DCEE60B1FAFC8F451C693AFE1A6B5DB599A8",
+      "Total": 13,
+      "Outcomes": {
+        "Passed": 13
+      }
+    },
+    {
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-jobs-generation-retention-sql-first-reference.json",
+      "ReportSha256": "80D88DD4B39136A65E08ADA0A10256D759CCB0C581BD01A261C664D78FE48C93",
+      "Total": 17,
+      "Outcomes": {
+        "Passed": 16,
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-jobs-generation-retention-pg-first-run.json",
+      "ReportSha256": "30E41BCAD5FE74A3A2EF534D2769D1E602216A4047595A6FEBF8DF99E8640CC8",
+      "Total": 17,
+      "Outcomes": {
+        "Passed": 16,
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-design-publish-wms-sql-first-reference.json",
+      "ReportSha256": "1BBCBA3D5FC527D64A122C6881D78BD767CA9E62B5F2D1BD5276879EF25964CE",
+      "Total": 35,
+      "Outcomes": {
+        "Passed": 34,
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-design-publish-wms-pg-first-run.json",
+      "ReportSha256": "8AC675C65D757B1076C13B17CE7767FE2DEF48762B70E9B7C30ED40F21784987",
+      "Total": 35,
+      "Outcomes": {
+        "Passed": 31,
+        "Failed": 4
+      }
+    },
+    {
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-design-publish-lease-pg-followup.json",
+      "ReportSha256": "C07A67C141DC07DC7E98AFAFBEB52C354347C588B24C895F85DFA7A48B6D460C",
+      "Total": 8,
+      "Outcomes": {
+        "Passed": 8
+      }
+    },
+    {
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-design-publish-lease-sql-followup.json",
+      "ReportSha256": "F69B6A24F195452F475FBDAD092C03C07BB1A40F75050221248202664662834F",
+      "Total": 8,
+      "Outcomes": {
+        "Passed": 8
+      }
+    },
+    {
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-base-space-job-sql-first-reference.json",
+      "ReportSha256": "2A4E08A23BAD9F4E835F90002CA389081410FE32AC5DE6312A48155B63545D31",
+      "Total": 14,
+      "Outcomes": {
+        "Passed": 14
+      }
+    },
+    {
+      "Label": "wp5-base-space-job-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-base-space-job-pg-first-run.json",
+      "ReportSha256": "F654160B2CF40801ED58AB0900B3C364E2BE7C819EEE59294F36C48F4B7A69FC",
+      "Total": 14,
+      "Outcomes": {
+        "Passed": 13,
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-restrict-file-pg-classifier",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:53:41.8185652Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-restrict-file-pg-classifier.json",
+      "ReportSha256": "455AE7475B632CF896A029046D863DC69CADDC004006FED5C469C5A38C0DDA53",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-restrict-file-sql-classifier",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:53:52.5428669Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-restrict-file-sql-classifier.json",
+      "ReportSha256": "E9BD88EB5D42DF8ABA19F1D72E11B4AA11A192DCBE2A531E6211F7168353CF55",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-failure-classifier-unit",
+      "Provider": "ProviderIndependent",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-failure-classifier-unit.json",
+      "ReportSha256": "69C4B32AAD985A8985C692E049AD11C1A8DECD4DD061913ECB52AD97AC169A82",
+      "Total": 42,
+      "Outcomes": {
+        "Passed": 42
+      }
+    },
+    {
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-cad-assets-collaboration-sql-first-reference.json",
+      "ReportSha256": "D6616B9CD0E4C97A88E30CDD6D3E85ED47698A532879AAC6ED189146DAF5BEBF",
+      "Total": 17,
+      "Outcomes": {
+        "Passed": 17
+      }
+    },
+    {
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-cad-assets-collaboration-pg-first-run.json",
+      "ReportSha256": "9B0708D14540D9C47BB43AC535FC4F5E757FCFDD44DDA5E184CC773D5E29BA55",
+      "Total": 17,
+      "Outcomes": {
+        "Passed": 16,
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-clone-edges-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T13:54:56.4959034Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-edges-sql-first-reference.json",
+      "ReportSha256": "D95C3CFF798D1B2854A35B0E9C9175BDD6647394351D81BAF1C6A5CE6DF47570",
+      "Total": 2,
+      "Outcomes": {
+        "Passed": 2
+      }
+    },
+    {
+      "Label": "wp5-clone-edges-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T13:55:30.4779203Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-edges-pg-first-run.json",
+      "ReportSha256": "9939EE7DBE312A6B76026C916C79933A9A089E79EF65FE533ACFF63CC0C7AD9B",
+      "Total": 2,
+      "Outcomes": {
+        "Failed": 1,
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-clone-cad-retry-pg-followup",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:12:14.4233379Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-cad-retry-pg-followup.json",
+      "ReportSha256": "5B49E99A09640932550D39FFCBD8F124D9BAF17EF3683CE3CBA6568578C96441",
+      "Total": 5,
+      "Outcomes": {
+        "Passed": 5
+      }
+    },
+    {
+      "Label": "wp5-clone-cad-retry-sql-followup",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:12:40.4962301Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-cad-retry-sql-followup.json",
+      "ReportSha256": "0F685B48ED366E8DB214CD173FA18853A5233928A5137EB311D3FD2996A1FCF8",
+      "Total": 5,
+      "Outcomes": {
+        "Passed": 5
+      }
+    },
+    {
+      "Label": "wp5-space-only-idempotency-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:07:39.9017884Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-space-only-idempotency-sql-first-reference.json",
+      "ReportSha256": "97DC545E9549C086687ADCF93AC20F4D1B3E817B4E1F7E2E0E52DB5F1CC202A4",
+      "Total": 2,
+      "Outcomes": {
+        "Passed": 2
+      }
+    },
+    {
+      "Label": "wp5-asset-legacy-failure-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:13:45.9479549Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-asset-legacy-failure-sql-first-reference.json",
+      "ReportSha256": "A57852C580AAB8F405DF78AEF6B594216E93263C65F4ECBF5D13012728516EFD",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-ai-retention-script-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:14:05.3201877Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-retention-script-sql-first-reference.json",
+      "ReportSha256": "CB161E933948164EEE00D39D519DE69C5369FB9BE1EE2CB50E569344C279ECDE",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-publish-recovery-failure-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:14:27.5688143Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-publish-recovery-failure-sql-first-reference.json",
+      "ReportSha256": "24313D0E9549DEB18D923B17082F1212A54681738A7DC547E2682128C86189DF",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-publish-recovery-script-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:14:40.0807141Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-publish-recovery-script-sql-first-reference.json",
+      "ReportSha256": "583C19CC2328F12310CDBF316B6F71FB84A27B177AF45AFF8F64BE4C95F8CD75",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-space-only-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:03:22.1103836Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-space-only-pg-first-run.json",
+      "ReportSha256": "393602A9867CF41B629D3171F4046743696A969D8815DBD4BF1AC6984FC1ED68",
+      "Total": 1,
+      "Outcomes": {
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-mapping-concurrency-sql-first-reference",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:03:52.6313144Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-mapping-concurrency-sql-first-reference.json",
+      "ReportSha256": "39DA56FE4F39DCED3E6AC150F1B66D74BCCEA605681D1140972600AC423E8884",
+      "Total": 2,
+      "Outcomes": {
+        "Failed": 2
+      }
+    },
+    {
+      "Label": "wp5-mapping-concurrency-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:04:35.9907079Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-mapping-concurrency-pg-first-run.json",
+      "ReportSha256": "0F680B468372845E2B2FEBC2F1BD74995962861983133BE37597602C12E26A71",
+      "Total": 2,
+      "Outcomes": {
+        "Failed": 2
+      }
+    },
+    {
+      "Label": "wp5-prerequisite-space-core-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:22:26.3188256Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-space-core-pg-first-run.json",
+      "ReportSha256": "DABAA77410A4E53D42FA45AE1CE98E16A1E7D21C062FB40EFD250ADC779576A5",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-prerequisite-core-space-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:23:22.1270866Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-core-space-pg-first-run.json",
+      "ReportSha256": "030C1E4897D9D33BAA304707E4A9DB40CD602334CA0320CC7AAE3F514CD2C017",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-prerequisite-space-script-pg-first-run",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:23:38.3845054Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-space-script-pg-first-run.json",
+      "ReportSha256": "CE883FCC1DFE78C324EAB466C4F14B475E8AEA0BDD72E4A566441256DC29DFE5",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-space-only-pg-prerequisite-followup",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:23:51.8613852Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-space-only-pg-prerequisite-followup.json",
+      "ReportSha256": "D53B3613169C43EED6C6C5AA5E5C00FB36EDB51072E2871E336BF14E0228B94D",
+      "Total": 1,
+      "Outcomes": {
+        "Passed": 1
+      }
+    },
+    {
+      "Label": "wp5-prerequisite-sql-generation",
+      "Provider": "ProviderIndependent",
+      "FinishedUtc": "2026-10-03T14:21:50.9313941Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-sql-generation.json",
+      "ReportSha256": "3714AF7FE2BED0B0F249193238A4CFFE41C9FAD6C4FED80AB55A87E9D3662DDD",
+      "Total": 8,
+      "Outcomes": {
+        "Passed": 8
+      }
+    },
+    {
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "Provider": "ProviderIndependent",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-sql-generation-review-followup.json",
+      "ReportSha256": "EA15EB9F45D6D45F0D43261CF7E9DF8F8BDBDA95B92CDAA8990F16CA99661154",
+      "Total": 8,
+      "Outcomes": {
+        "Passed": 8
+      }
+    },
+    {
+      "Label": "wp5-legacy-recovery-selector-red",
+      "Provider": "ProviderIndependent",
+      "FinishedUtc": "2026-10-03T14:47:31.4429527Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-legacy-recovery-selector-red.json",
+      "ReportSha256": "006DF08315E174492FB6BFA3CB315258D6246DC3B3D8D42C397C102C4C5D72B7",
+      "Total": 2,
+      "Outcomes": {
+        "Failed": 2
+      }
+    },
+    {
+      "Label": "wp5-legacy-recovery-selector-green",
+      "Provider": "ProviderIndependent",
+      "FinishedUtc": "2026-10-03T14:50:21.5996578Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-legacy-recovery-selector-green.json",
+      "ReportSha256": "49B518C3A54102B8A7BA81880D68CC02AAE010D34AFC339983007517E7820771",
+      "Total": 2,
+      "Outcomes": {
+        "Passed": 2
+      }
+    },
+    {
+      "Label": "wp5-ai-caller-pending-pg-red",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:47:45.7232036Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-ai-caller-pending-pg-red.json",
+      "ReportSha256": "FB393112A8D478B1E98BB0EE9B5ABBDE6F4790BEC418D507DC50F3C3B6125DC0",
+      "Total": 1,
+      "Outcomes": {
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-ai-caller-pending-pg-green",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:50:29.1513628Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-ai-caller-pending-pg-green.json",
+      "ReportSha256": "4F4034D9C3EC1FA915FFDF0F170C0E99E29C3010B450F139A842665600F99B92",
+      "Total": 1,
+      "Outcomes": {
+        "Failed": 1
+      }
+    },
+    {
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-ai-cad-review-followup-pg.json",
+      "ReportSha256": "EB048F54D3BDACBDDEFA9DD84EF4A2B915555B363AB29364C5E3E3294EF8DBA8",
+      "Total": 15,
+      "Outcomes": {
+        "Passed": 15
+      }
+    },
+    {
+      "Label": "wp5-mapping-bug150-pg-integration",
+      "Provider": "PostgreSql",
+      "FinishedUtc": "2026-10-03T14:58:25.0094877Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-mapping-bug150-pg-integration.json",
+      "ReportSha256": "E9CF4A4D693A1AFBC76874F7A4AF9C14EEF6BE7E94009C954AF1E5E4B146CF0C",
+      "Total": 4,
+      "Outcomes": {
+        "Passed": 4
+      }
+    },
+    {
+      "Label": "wp5-mapping-bug150-sql-integration",
+      "Provider": "SqlServer",
+      "FinishedUtc": "2026-10-03T14:58:55.9176215Z",
+      "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-mapping-bug150-sql-integration.json",
+      "ReportSha256": "4D8A2CB27401B73BE81206898E6BD3BFE98528BD6BF797709BE263EDBE15930F",
+      "Total": 4,
+      "Outcomes": {
+        "Passed": 4
+      }
+    }
+  ],
+  "Cases": [
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Abc_query_translates_and_enforces_warehouse_and_half_open_window",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Inventory_spatial_filter_joins_container_to_its_unique_stock_owner",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Migration_adapter_and_transaction_contracts_close",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_cancel_same_key_replays_after_row_version_changes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Draft_change_marks_run_stale_without_apply_writes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Failed_recovery_retires_current_run_before_replacement",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Queued_apply_cancels_idempotently_without_draft_writes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Resource_failure_retries_same_apply_job_and_frozen_run",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Running_apply_acknowledges_cancel_at_worker_safe_point",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Stale_recovery_creates_new_run_and_obsoletes_old_proposals",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Budget_is_atomic_idempotent_and_usage_charges_once",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Expired_unsent_budget_releases_but_monthly_charge_remains",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Three_concurrent_slots_succeed_and_fourth_is_rejected",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiRetentionTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiRetentionTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-pg-integration",
+      "FinishedUtc": "2026-10-03T14:58:25.0094877Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-pg-integration",
+      "FinishedUtc": "2026-10-03T14:58:25.0094877Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-cad-review-followup-pg",
+      "FinishedUtc": "2026-10-03T14:51:17.0656389Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Create_element_accepts_null_content_hash_and_stale_fence_is_zero_write",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_commands_update_delete_replay_and_audit_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_merge_and_saved_compensation_are_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_split_compensation_and_redo_keep_new_identities_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_polygon_redraw_and_saved_compensation_keep_identity_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Layout_commands_create_coded_warehouse_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Location_coding_previews_without_writes_and_applies_with_fences",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Manual_correction_lock_persists_and_fences_CAD_changesets",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Mixed_editor_batches_array_and_saved_compensation_are_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Published_viewer_scene_uses_only_current_published_pointer",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Scene_uses_revision_authority_without_runtime_overlay",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Tenant_warehouse_template_is_idempotent_isolated_and_applyable",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Warehouse_template_floor_apply_is_leased_atomic_and_replayable",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests.Idempotency_key_is_unique_per_tenant_principal_and_operation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Concurrent_acquire_preserves_one_floor_slot",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Expired_lease_can_be_reacquired_using_database_time",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Lifecycle_uses_database_time_and_fences_browser_sessions",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Renew_and_takeover_compete_without_deadlock_or_duplicate_slot",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Sql_takeover_audit_is_immutable_for_async_update_and_delete",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-pg-integration",
+      "FinishedUtc": "2026-10-03T14:58:25.0094877Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-pg-integration",
+      "FinishedUtc": "2026-10-03T14:58:25.0094877Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_design_revision_blocks_source_removal",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Clean_scan_commits_file_job_and_attempt_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Concurrent_source_reference_and_expiration_never_delete_a_referenced_file",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Ready_underlay_attachment_is_revisioned_and_idempotent",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scan_and_retention_stores_do_not_cross_tenants",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scanner_outage_returns_file_to_quarantine_and_schedules_retry",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Tombstone_survives_object_failure_and_can_be_completed_later",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Underlay_calibration_is_audited_revisioned_and_idempotent",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Unused_source_is_logically_removed_idempotently_and_file_is_retained",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-pg-provider",
+      "FinishedUtc": "2026-10-03T13:24:28.2439009Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:37:18.1555035Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests.Core_first_then_Space_reuses_prerequisites",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-core-space-pg-first-run",
+      "FinishedUtc": "2026-10-03T14:23:22.1270866Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests.Generated_Space_script_runs_twice_without_Core",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-space-script-pg-first-run",
+      "FinishedUtc": "2026-10-03T14:23:38.3845054Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests.Space_first_then_Core_reuses_prerequisites",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-space-core-pg-first-run",
+      "FinishedUtc": "2026-10-03T14:22:26.3188256Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Historical_version_is_republished_as_new_attempt_without_rewriting_history",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Success_activates_runtime_and_partial_requires_reconciliation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_retry_rejects_tampered_persisted_mutation_before_applying",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_timeout_keeps_production_and_automatic_retry_completes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-pg-followup",
+      "FinishedUtc": "2026-10-03T13:43:43.3648147Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Adopted_location_create_is_wms_noop_in_publish_preview",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Blocked_rename_preview_exposes_wms_impact",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Preview_is_deterministic_filterable_and_tenant_scoped",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:54:32.4997425Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Common_elements_and_attributes_persist_with_tenant_isolation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Composite_foreign_keys_reject_cross_tenant_source_lineage",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Database_restricts_physical_delete_of_a_referenced_file",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-restrict-file-pg-classifier",
+      "FinishedUtc": "2026-10-03T13:53:41.8185652Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Device_mapping_and_event_ledger_persist_with_rowversion_and_identity",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.File_hash_deduplication_is_enforced_per_tenant",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Migration_creates_only_design_tables_and_separate_history",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-space-only-pg-prerequisite-followup",
+      "FinishedUtc": "2026-10-03T14:23:51.8613852Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Personnel_runtime_queries_translate_and_return_utc_timestamps",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Personnel_source_event_identity_is_unique_per_tenant_site_source",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Published_version_cannot_be_mutated_through_the_context",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Rack_levels_persist_independent_specifications_with_tenant_isolation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.RowVersion_rejects_the_second_concurrent_model_update",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Same_file_can_feed_multiple_versions_and_source_hash_lookup",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Same_site_id_is_isolated_between_tenants",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Tenant_site_and_version_number_constraints_are_enforced",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:45:00.7615371Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_same_input_reuses_one_run_and_one_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Incomplete_rack_blocks_version_and_emits_unified_issue",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_job_passes_reuses_and_preserves_ai_category",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-pg-followup",
+      "FinishedUtc": "2026-10-03T14:12:14.4233379Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Clone_remaps_row_ids_and_preserves_logical_identity",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Concurrent_same_operation_returns_one_reservation_and_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-pg-followup",
+      "FinishedUtc": "2026-10-03T14:12:14.4233379Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_blank_create_supports_replay_and_rejects_a_base_version",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_is_explicit_idempotent_and_listed",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_endpoints_reject_external_principals",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-fixture-followup",
+      "FinishedUtc": "2026-10-03T13:10:33.4929155Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Duplicate_operation_returns_the_same_reservation_and_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-pg-followup",
+      "FinishedUtc": "2026-10-03T14:12:14.4233379Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Empty_published_warehouse_clones_to_an_empty_draft",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Migration_creates_clone_snapshot_tables_and_column",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-fixture-followup",
+      "FinishedUtc": "2026-10-03T13:10:33.4929155Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Native_last_table_failure_rolls_back_snapshot_and_scheduled_retry_succeeds",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-edges-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:55:30.4779203Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-pg-followup",
+      "FinishedUtc": "2026-10-03T14:12:14.4233379Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.System_template_mode_initializes_every_floor_and_persists_provenance",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Tenant_template_mode_uses_only_the_current_tenant_template_scope",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-pg-business-first-run",
+      "FinishedUtc": "2026-10-03T13:05:01.3010057Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_batch_conflict_is_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_place_uses_wms_identity_and_level_dimensions",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_refresh_and_bind_persist_rowversion_and_identity",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:39:23.5527285Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.DashboardRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-pg-provider",
+      "FinishedUtc": "2026-10-03T13:07:48.6533846Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Native_tombstone_failure_rolls_back_purge_and_allows_later_success",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-gdpr-rollback-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:26:44.4169532Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-gdpr-pg-provider",
+      "FinishedUtc": "2026-10-03T13:07:56.4947927Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-pg-provider",
+      "FinishedUtc": "2026-10-03T13:07:48.6533846Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-pg-provider",
+      "FinishedUtc": "2026-10-03T13:07:48.6533846Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-pg-provider",
+      "FinishedUtc": "2026-10-03T13:07:48.6533846Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Dashboard_preserves_global_kpis_recent_top_eight_soft_deleted_rows_and_cache",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:26:15.3606188Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_daily_trend_preserves_reachable_day_boundaries_and_failure_category",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:26:15.3606188Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_process_progress_preserves_code_and_name_groups_and_code_order",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:26:15.3606188Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_summary_and_trend_preserve_global_dates_states_and_decimal_rounding",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:26:15.3606188Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:09:26.7841575Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.RowVersion_ConcurrentUpdate_SecondThrows",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:09:26.7841575Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:09:26.7841575Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_SameNonNullCode_SecondInsertThrows",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:09:26.7841575Z"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_TwoNullCodes_BothCoexist",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-pg-first-run",
+      "FinishedUtc": "2026-10-03T13:09:26.7841575Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: \"PostgreSql\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-legacy-recovery-selector-green",
+      "FinishedUtc": "2026-10-03T14:50:21.5996578Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: \"SqlServer\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-legacy-recovery-selector-green",
+      "FinishedUtc": "2026-10-03T14:50:21.5996578Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.All_PostgreSql_profiles_register_the_common_migration_generator(kind: Core)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.All_PostgreSql_profiles_register_the_common_migration_generator(kind: ErpIntegration)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.All_PostgreSql_profiles_register_the_common_migration_generator(kind: IdentityPriority)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.All_PostgreSql_profiles_register_the_common_migration_generator(kind: Space)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.Exact_Core_creates_become_one_guarded_install_without_mutating_source_operations",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.Space_table_prerequisites_precede_the_first_dependent_column",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.SqlServer_keeps_its_native_migration_generator",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceMigrationSqlGenerationTests.Unrelated_operations_keep_the_original_PostgreSql_SQL",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-prerequisite-sql-generation-review-followup",
+      "FinishedUtc": "2026-10-03T14:24:24.6300795Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Broad_DbUpdateException_does_not_imply_retry_or_integrity_failure",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: \"\", requestedName: \"\", expectedMatch: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: \"UX_Exact\", requestedName: \"\", expectedMatch: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: \"UX_Exact\", requestedName: \"UX_Exact \", expectedMatch: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: \"UX_Exact\", requestedName: \"UX_Exact\", expectedMatch: True)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: \"UX_Exact\", requestedName: \"UX_Exact_Extra\", expectedMatch: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: \"UX_Exact\", requestedName: \"ux_exact\", expectedMatch: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: \"UX_Exact\", requestedName: null, expectedMatch: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Constraint_match_is_exact_ordinal_and_never_empty(constraintName: null, requestedName: \"UX_Exact\", expectedMatch: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 0)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 1)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.DbUpdateException_and_generic_inner_wrappers_retain_provider_details(depth: 3)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: CheckConstraint, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: Deadlock, expectedRetry: True)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: ForeignKey, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: OptimisticConcurrency, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: SerializationFailure, expectedRetry: True)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: UniqueConstraint, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: Unknown, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Default_retry_policy_is_limited_to_deadlock_or_serialization(kind: UnknownIntegrity, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_concurrency_takes_precedence_over_inner_retry_code_but_retains_it",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Explicit_EF_optimistic_concurrency_is_not_a_default_whole_transaction_retry",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: \"1205 deadlock victim\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: \"23505 duplicate key constraint \\\"UX_DocNumber\\\"\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Generic_exception_message_never_impersonates_a_provider_error(message: \"The INSERT statement conflicted with the FOREIGN K\"···)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Missing_constraint_name_is_not_guessed_from_PostgreSql_message",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Null_exception_is_rejected_as_an_argument_error",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: \"08006\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: \"23P01\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: \"53300\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Other_PostgreSql_codes_stay_unknown_and_are_not_automatic_transaction_retries(sqlState: \"57014\")",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: \"23001\", expectedKind: ForeignKey)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: \"23503\", expectedKind: ForeignKey)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: \"23505\", expectedKind: UniqueConstraint)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_constraint_identity_comes_from_the_provider_field(sqlState: \"23514\", expectedKind: CheckConstraint)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: \"23001\", expectedKind: ForeignKey, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: \"23503\", expectedKind: ForeignKey, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: \"23505\", expectedKind: UniqueConstraint, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: \"23514\", expectedKind: CheckConstraint, expectedRetry: False)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: \"40001\", expectedKind: SerializationFailure, expectedRetry: True)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.PostgreSql_sqlstate_controls_kind_and_whole_transaction_retry(sqlState: \"40P01\", expectedKind: Deadlock, expectedRetry: True)",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "ProviderIndependent",
+      "Class": "CP6.Tests.Persistence.DatabaseFailureClassifierTests",
+      "Case": "CP6.Tests.Persistence.DatabaseFailureClassifierTests.Typed_SQL_application_lock_deadlock_is_retryable_without_fabricating_error_1205",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-failure-classifier-unit",
+      "FinishedUtc": "2026-10-03T13:58:32.1304909Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Abc_query_translates_and_enforces_warehouse_and_half_open_window",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Inventory_spatial_filter_joins_container_to_its_unique_stock_owner",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.Cp6SpaceWmsAdapterSqlServerTests.Migration_adapter_and_transaction_contracts_close",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_cancel_same_key_replays_after_row_version_changes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Draft_change_marks_run_stale_without_apply_writes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Failed_recovery_retires_current_run_before_replacement",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Queued_apply_cancels_idempotently_without_draft_writes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Resource_failure_retries_same_apply_job_and_frozen_run",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Running_apply_acknowledges_cancel_at_worker_safe_point",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Stale_recovery_creates_new_run_and_obsoletes_old_proposals",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-atomic-sql-provider",
+      "FinishedUtc": "2026-10-03T13:36:34.3197280Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Budget_is_atomic_idempotent_and_usage_charges_once",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Expired_unsent_budget_releases_but_monthly_charge_remains",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Three_concurrent_slots_succeed_and_fourth_is_rejected",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiRetentionTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_idempotent_deployment_script_runs_twice",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-ai-retention-script-sql-first-reference",
+      "FinishedUtc": "2026-10-03T14:14:05.3201877Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiRetentionTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAiRetentionTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Migration_fails_closed_for_unverified_legacy_asset_ids",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-asset-legacy-failure-sql-first-reference",
+      "FinishedUtc": "2026-10-03T14:13:45.9479549Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-sql-integration",
+      "FinishedUtc": "2026-10-03T14:58:55.9176215Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-sql-integration",
+      "FinishedUtc": "2026-10-03T14:58:55.9176215Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-sql-followup",
+      "FinishedUtc": "2026-10-03T14:12:40.4962301Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Create_element_accepts_null_content_hash_and_stale_fence_is_zero_write",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_commands_update_delete_replay_and_audit_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_merge_and_saved_compensation_are_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_group_split_compensation_and_redo_keep_new_identities_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Element_polygon_redraw_and_saved_compensation_keep_identity_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Layout_commands_create_coded_warehouse_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Location_coding_previews_without_writes_and_applies_with_fences",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Manual_correction_lock_persists_and_fences_CAD_changesets",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Mixed_editor_batches_array_and_saved_compensation_are_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Published_viewer_scene_uses_only_current_published_pointer",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Scene_uses_revision_authority_without_runtime_overlay",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Tenant_warehouse_template_is_idempotent_isolated_and_applyable",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignSceneSqlServerTests.Warehouse_template_floor_apply_is_leased_atomic_and_replayable",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests.Idempotency_key_is_unique_per_tenant_principal_and_operation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests.Migration_creates_only_the_idempotency_table_and_indexes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-space-only-idempotency-sql-first-reference",
+      "FinishedUtc": "2026-10-03T14:07:39.9017884Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Concurrent_acquire_preserves_one_floor_slot",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Expired_lease_can_be_reacquired_using_database_time",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Lifecycle_uses_database_time_and_fences_browser_sessions",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Renew_and_takeover_compete_without_deadlock_or_duplicate_slot",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceEditLeaseSqlServerTests.Sql_takeover_audit_is_immutable_for_async_update_and_delete",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-sql-integration",
+      "FinishedUtc": "2026-10-03T14:58:55.9176215Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-mapping-bug150-sql-integration",
+      "FinishedUtc": "2026-10-03T14:58:55.9176215Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_design_revision_blocks_source_removal",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Clean_scan_commits_file_job_and_attempt_atomically",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Concurrent_source_reference_and_expiration_never_delete_a_referenced_file",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Ready_underlay_attachment_is_revisioned_and_idempotent",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scan_and_retention_stores_do_not_cross_tenants",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scanner_outage_returns_file_to_quarantine_and_schedules_retry",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Tombstone_survives_object_failure_and_can_be_completed_later",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Underlay_calibration_is_audited_revisioned_and_idempotent",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Unused_source_is_logically_removed_idempotently_and_file_is_retained",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-capacity-file-sql-provider",
+      "FinishedUtc": "2026-10-03T13:24:47.3245568Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-jobs-generation-retention-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:36:57.3607439Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Historical_version_is_republished_as_new_attempt_without_rewriting_history",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Success_activates_runtime_and_partial_requires_reconciliation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_retry_rejects_tampered_persisted_mutation_before_applying",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishOrchestratorSqlServerTests.Wms_timeout_keeps_production_and_automatic_retry_completes",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-lease-sql-followup",
+      "FinishedUtc": "2026-10-03T13:44:26.8527871Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Adopted_location_create_is_wms_noop_in_publish_preview",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Blocked_rename_preview_exposes_wms_impact",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishPreviewSqlServerTests.Preview_is_deterministic_filterable_and_tenant_scoped",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishRecoveryMigrationTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishRecoveryMigrationTests.Idempotent_recovery_script_runs_twice_from_E06_S03",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-publish-recovery-script-sql-first-reference",
+      "FinishedUtc": "2026-10-03T14:14:40.0807141Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpacePublishRecoveryMigrationTests",
+      "Case": "CP6.Space.IntegrationTests.SpacePublishRecoveryMigrationTests.Recovery_migration_refuses_an_active_E06_S03_publish",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-publish-recovery-failure-sql-first-reference",
+      "FinishedUtc": "2026-10-03T14:14:27.5688143Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-cad-assets-collaboration-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:15.1613643Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Common_elements_and_attributes_persist_with_tenant_isolation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Composite_foreign_keys_reject_cross_tenant_source_lineage",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Database_restricts_physical_delete_of_a_referenced_file",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-restrict-file-sql-classifier",
+      "FinishedUtc": "2026-10-03T13:53:52.5428669Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Device_mapping_and_event_ledger_persist_with_rowversion_and_identity",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.File_hash_deduplication_is_enforced_per_tenant",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Migration_creates_only_design_tables_and_separate_history",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-space-only-idempotency-sql-first-reference",
+      "FinishedUtc": "2026-10-03T14:07:39.9017884Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Personnel_runtime_queries_translate_and_return_utc_timestamps",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Personnel_source_event_identity_is_unique_per_tenant_site_source",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Published_version_cannot_be_mutated_through_the_context",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Rack_levels_persist_independent_specifications_with_tenant_isolation",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.RowVersion_rejects_the_second_concurrent_model_update",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Same_file_can_feed_multiple_versions_and_source_hash_lookup",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Same_site_id_is_isolated_between_tenants",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceSqlServerTests.Tenant_site_and_version_number_constraints_are_enforced",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-base-space-job-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:44:46.8733604Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_same_input_reuses_one_run_and_one_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Incomplete_rack_blocks_version_and_emits_unified_issue",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Validation_job_passes_reuses_and_preserves_ai_category",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-sql-followup",
+      "FinishedUtc": "2026-10-03T14:12:40.4962301Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Clone_remaps_row_ids_and_preserves_logical_identity",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Concurrent_same_operation_returns_one_reservation_and_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-sql-followup",
+      "FinishedUtc": "2026-10-03T14:12:40.4962301Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_blank_create_supports_replay_and_rejects_a_base_version",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_is_explicit_idempotent_and_listed",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_endpoints_reject_external_principals",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Duplicate_operation_returns_the_same_reservation_and_job",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-sql-followup",
+      "FinishedUtc": "2026-10-03T14:12:40.4962301Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Empty_published_warehouse_clones_to_an_empty_draft",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Migration_creates_clone_snapshot_tables_and_column",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Native_last_table_failure_rolls_back_snapshot_and_scheduled_retry_succeeds",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-edges-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:54:56.4959034Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-cad-retry-sql-followup",
+      "FinishedUtc": "2026-10-03T14:12:40.4962301Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.System_template_mode_initializes_every_floor_and_persists_provenance",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Tenant_template_mode_uses_only_the_current_tenant_template_scope",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-clone-sql-native-matrix",
+      "FinishedUtc": "2026-10-03T13:12:00.0164796Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_batch_conflict_is_atomic",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_place_uses_wms_identity_and_level_dimensions",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests",
+      "Case": "CP6.Space.IntegrationTests.SpaceWmsAdoptionServiceTests.SqlServer_refresh_and_bind_persist_rowversion_and_identity",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-design-publish-wms-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:38:43.5058258Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.DashboardRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-sql-provider",
+      "FinishedUtc": "2026-10-03T13:08:31.6878705Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Native_tombstone_failure_rolls_back_purge_and_allows_later_success",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-gdpr-rollback-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:26:30.7047714Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-gdpr-sql-provider",
+      "FinishedUtc": "2026-10-03T13:08:40.8729624Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-sql-provider",
+      "FinishedUtc": "2026-10-03T13:08:31.6878705Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-sql-provider",
+      "FinishedUtc": "2026-10-03T13:08:31.6878705Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-sql-provider",
+      "FinishedUtc": "2026-10-03T13:08:31.6878705Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Dashboard_preserves_global_kpis_recent_top_eight_soft_deleted_rows_and_cache",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:26:03.9693801Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_daily_trend_preserves_reachable_day_boundaries_and_failure_category",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:26:03.9693801Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_process_progress_preserves_code_and_name_groups_and_code_order",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:26:03.9693801Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests",
+      "Case": "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_summary_and_trend_preserve_global_dates_states_and_decimal_rounding",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-reports-parity-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:26:03.9693801Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:09:20.1174417Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.RowVersion_ConcurrentUpdate_SecondThrows",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:09:20.1174417Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:09:20.1174417Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_SameNonNullCode_SecondInsertThrows",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:09:20.1174417Z"
+    },
+    {
+      "Provider": "SqlServer",
+      "Class": "CP6.Tests.SpaceSqlIntegrationTests",
+      "Case": "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_TwoNullCodes_BothCoexist",
+      "LastRecordedOutcome": "Passed",
+      "Label": "wp5-core-space-sql-first-reference",
+      "FinishedUtc": "2026-10-03T13:09:20.1174417Z"
+    }
+  ]
+}

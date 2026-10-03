@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
@@ -96,6 +97,7 @@ public static class DatabaseContextOptions
     }
 
     private static DbContextOptionsBuilder ConfigurePostgreSql(DbContextOptionsBuilder builder) => builder
+        .ReplaceService<IMigrationsSqlGenerator, PostgreSqlPrerequisiteMigrationsSqlGenerator>()
         .ReplaceService<IRelationalTypeMappingSource, PostgreSqlTextTypeMappingSource>()
         .ReplaceService<IQuerySqlGeneratorFactory, PostgreSqlTextQuerySqlGeneratorFactory>();
 }

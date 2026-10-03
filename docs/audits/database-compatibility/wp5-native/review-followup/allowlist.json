@@ -1,0 +1,188 @@
+[
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-legacy-recovery-selector-red.json",
+    "RelativePath": "reports/wp5-legacy-recovery-selector-red.json",
+    "Category": "report",
+    "Label": "wp5-legacy-recovery-selector-red"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-legacy-recovery-selector-red\\process.log",
+    "RelativePath": "runs/wp5-legacy-recovery-selector-red/process.log",
+    "Category": "process-log",
+    "Label": "wp5-legacy-recovery-selector-red"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-legacy-recovery-selector-red\\results.trx",
+    "RelativePath": "runs/wp5-legacy-recovery-selector-red/results.trx",
+    "Category": "trx",
+    "Label": "wp5-legacy-recovery-selector-red"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-legacy-recovery-selector-green.json",
+    "RelativePath": "reports/wp5-legacy-recovery-selector-green.json",
+    "Category": "report",
+    "Label": "wp5-legacy-recovery-selector-green"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-legacy-recovery-selector-green\\process.log",
+    "RelativePath": "runs/wp5-legacy-recovery-selector-green/process.log",
+    "Category": "process-log",
+    "Label": "wp5-legacy-recovery-selector-green"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-legacy-recovery-selector-green\\results.trx",
+    "RelativePath": "runs/wp5-legacy-recovery-selector-green/results.trx",
+    "Category": "trx",
+    "Label": "wp5-legacy-recovery-selector-green"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-caller-pending-pg-red.json",
+    "RelativePath": "reports/wp5-ai-caller-pending-pg-red.json",
+    "Category": "report",
+    "Label": "wp5-ai-caller-pending-pg-red"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-caller-pending-pg-red\\process.log",
+    "RelativePath": "runs/wp5-ai-caller-pending-pg-red/process.log",
+    "Category": "process-log",
+    "Label": "wp5-ai-caller-pending-pg-red"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-caller-pending-pg-red\\results.trx",
+    "RelativePath": "runs/wp5-ai-caller-pending-pg-red/results.trx",
+    "Category": "trx",
+    "Label": "wp5-ai-caller-pending-pg-red"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-caller-pending-pg-green.json",
+    "RelativePath": "reports/wp5-ai-caller-pending-pg-green.json",
+    "Category": "report",
+    "Label": "wp5-ai-caller-pending-pg-green"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-caller-pending-pg-green\\process.log",
+    "RelativePath": "runs/wp5-ai-caller-pending-pg-green/process.log",
+    "Category": "process-log",
+    "Label": "wp5-ai-caller-pending-pg-green"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-caller-pending-pg-green\\results.trx",
+    "RelativePath": "runs/wp5-ai-caller-pending-pg-green/results.trx",
+    "Category": "trx",
+    "Label": "wp5-ai-caller-pending-pg-green"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-cad-review-followup-pg.json",
+    "RelativePath": "reports/wp5-ai-cad-review-followup-pg.json",
+    "Category": "report",
+    "Label": "wp5-ai-cad-review-followup-pg"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-cad-review-followup-pg\\process.log",
+    "RelativePath": "runs/wp5-ai-cad-review-followup-pg/process.log",
+    "Category": "process-log",
+    "Label": "wp5-ai-cad-review-followup-pg"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-cad-review-followup-pg\\results.trx",
+    "RelativePath": "runs/wp5-ai-cad-review-followup-pg/results.trx",
+    "Category": "trx",
+    "Label": "wp5-ai-cad-review-followup-pg"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mapping-bug150-pg-integration.json",
+    "RelativePath": "reports/wp5-mapping-bug150-pg-integration.json",
+    "Category": "report",
+    "Label": "wp5-mapping-bug150-pg-integration"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-bug150-pg-integration\\process.log",
+    "RelativePath": "runs/wp5-mapping-bug150-pg-integration/process.log",
+    "Category": "process-log",
+    "Label": "wp5-mapping-bug150-pg-integration"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-bug150-pg-integration\\results.trx",
+    "RelativePath": "runs/wp5-mapping-bug150-pg-integration/results.trx",
+    "Category": "trx",
+    "Label": "wp5-mapping-bug150-pg-integration"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mapping-bug150-sql-integration.json",
+    "RelativePath": "reports/wp5-mapping-bug150-sql-integration.json",
+    "Category": "report",
+    "Label": "wp5-mapping-bug150-sql-integration"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-bug150-sql-integration\\process.log",
+    "RelativePath": "runs/wp5-mapping-bug150-sql-integration/process.log",
+    "Category": "process-log",
+    "Label": "wp5-mapping-bug150-sql-integration"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-bug150-sql-integration\\results.trx",
+    "RelativePath": "runs/wp5-mapping-bug150-sql-integration/results.trx",
+    "Category": "trx",
+    "Label": "wp5-mapping-bug150-sql-integration"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-review-regressions-red-build.log",
+    "RelativePath": "builds/wp5-review-regressions-red-build.log",
+    "Category": "build-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-review-regressions-green-build.log",
+    "RelativePath": "builds/wp5-review-regressions-green-build.log",
+    "Category": "build-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-caller-wrapper-followup-build.log",
+    "RelativePath": "builds/wp5-ai-caller-wrapper-followup-build.log",
+    "Category": "build-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-bug150-integration-build.log",
+    "RelativePath": "builds/wp5-bug150-integration-build.log",
+    "Category": "build-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-space-task-review-initial.json",
+    "RelativePath": "reviews/wp5-space-task-review-initial.json",
+    "Category": "review-json",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-core-task-review-initial.json",
+    "RelativePath": "reviews/wp5-core-task-review-initial.json",
+    "Category": "review-json",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-task-review-targeted-followup.json",
+    "RelativePath": "reviews/wp5-task-review-targeted-followup.json",
+    "Category": "review-json",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-pre-dependency-stage-evidence.json",
+    "RelativePath": "dependency/wp5-pre-dependency-stage-evidence.json",
+    "Category": "dependency-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-bug150-dependency-merge.log",
+    "RelativePath": "dependency/wp5-bug150-dependency-merge.log",
+    "Category": "dependency-merge-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-bug150-dependency-integrated.json",
+    "RelativePath": "dependency/wp5-bug150-dependency-integrated.json",
+    "Category": "dependency-proof",
+    "Label": null
+  }
+]

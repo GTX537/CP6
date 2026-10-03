@@ -1,0 +1,574 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "CapturedUtc": "2026-10-03T15:10:43.945188+00:00",
+  "Scope": "Final relevant-input review against origin/main 522433a3. No new build or business test execution. The initial task reviews and resolved targeted follow-up are retained as the task review; this is the final scope/evidence reconciliation.",
+  "ProductionFilesRelativeToDeliveredMain": [
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "Sha256": "58BAE7257EA922DC2D8CE6703402EB36D090A5627ABD9647AEBA6E8D07CD5ACA",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-prerequisite-space-core-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-space-core-pg-first-run.json",
+          "ReportSha256": "DABAA77410A4E53D42FA45AE1CE98E16A1E7D21C062FB40EFD250ADC779576A5",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-prerequisite-sql-generation-review-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-sql-generation-review-followup.json",
+          "ReportSha256": "EA15EB9F45D6D45F0D43261CF7E9DF8F8BDBDA95B92CDAA8990F16CA99661154",
+          "RecordedCounts": {
+            "Total": 8,
+            "Passed": 8,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 8
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "Sha256": "3628F471409D979C089B9F492319B4E2A4498FFF2A581643BA1349B96C4FA662",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-failure-classifier-unit",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-failure-classifier-unit.json",
+          "ReportSha256": "69C4B32AAD985A8985C692E049AD11C1A8DECD4DD061913ECB52AD97AC169A82",
+          "RecordedCounts": {
+            "Total": 42,
+            "Passed": 42,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 42
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlMigrationPrerequisitesV1.cs",
+      "Sha256": "7C4C06BB5BD6C4B093B3EB07B6EACC7A255C421C50B181D4DB62FE2B3FA9A8F8",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-prerequisite-space-core-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-space-core-pg-first-run.json",
+          "ReportSha256": "DABAA77410A4E53D42FA45AE1CE98E16A1E7D21C062FB40EFD250ADC779576A5",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-prerequisite-core-space-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-core-space-pg-first-run.json",
+          "ReportSha256": "030C1E4897D9D33BAA304707E4A9DB40CD602334CA0320CC7AAE3F514CD2C017",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-prerequisite-space-script-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-space-script-pg-first-run.json",
+          "ReportSha256": "CE883FCC1DFE78C324EAB466C4F14B475E8AEA0BDD72E4A566441256DC29DFE5",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-prerequisite-sql-generation-review-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-sql-generation-review-followup.json",
+          "ReportSha256": "EA15EB9F45D6D45F0D43261CF7E9DF8F8BDBDA95B92CDAA8990F16CA99661154",
+          "RecordedCounts": {
+            "Total": 8,
+            "Passed": 8,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 8
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlPrerequisiteMigrationsSqlGenerator.cs",
+      "Sha256": "AAB3A78EB47EFCCBAC2D9A108DE361010630B4ADFCEE0400F9D4C3EDD609FDFA",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-prerequisite-space-core-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-space-core-pg-first-run.json",
+          "ReportSha256": "DABAA77410A4E53D42FA45AE1CE98E16A1E7D21C062FB40EFD250ADC779576A5",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-prerequisite-core-space-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-core-space-pg-first-run.json",
+          "ReportSha256": "030C1E4897D9D33BAA304707E4A9DB40CD602334CA0320CC7AAE3F514CD2C017",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-prerequisite-space-script-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-space-script-pg-first-run.json",
+          "ReportSha256": "CE883FCC1DFE78C324EAB466C4F14B475E8AEA0BDD72E4A566441256DC29DFE5",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-prerequisite-sql-generation-review-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-prerequisite-sql-generation-review-followup.json",
+          "ReportSha256": "EA15EB9F45D6D45F0D43261CF7E9DF8F8BDBDA95B92CDAA8990F16CA99661154",
+          "RecordedCounts": {
+            "Total": 8,
+            "Passed": 8,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 8
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/MesDashboardDapperService.cs",
+      "Sha256": "0D20FC74645C2DAE477557C74BC5394BB17888FAADE2B25918210FFB27A3A27F",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-reports-parity-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-parity-pg-first-run.json",
+          "ReportSha256": "05DC6AA1968E9DF3BB01D30EE52030063BF6449EC4051A38F0516E22BC9B7286",
+          "RecordedCounts": {
+            "Total": 4,
+            "Passed": 4,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 4
+          }
+        },
+        {
+          "Label": "wp5-reports-parity-sql-first-reference",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-parity-sql-first-reference.json",
+          "ReportSha256": "C7AE5578ECB3BF1C733CF145DBDFE12F9481FDCC79B51D006103FAB624FB2632",
+          "RecordedCounts": {
+            "Total": 4,
+            "Passed": 4,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 4
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/GdprService.cs",
+      "Sha256": "41055EAD42BE93425ECC7FCC997C6E08D6FB20231DC0150FCAA06D90A3272FBD",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-gdpr-rollback-pg-first-run",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-rollback-pg-first-run.json",
+          "ReportSha256": "69D0E55A4F8CBF97228CAE1C86DFF0541EB58035F60CE79806F8B8C87F073F65",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        },
+        {
+          "Label": "wp5-gdpr-rollback-sql-first-reference",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-gdpr-rollback-sql-first-reference.json",
+          "ReportSha256": "4FAE13D91F5ACC956921D1E368E74DF001CAC7106BFE40D3214C0E2306D8133B",
+          "RecordedCounts": {
+            "Total": 1,
+            "Passed": 1,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 1
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs",
+      "Sha256": "4A1B044EBF3FD0C21958650196BD2FF70BB22A46037FE6073A54DF9FB5CFD1FC",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-capacity-file-pg-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-pg-provider.json",
+          "ReportSha256": "24B85E3834D29C92EC8E226A923C39812D910B1602EA9ECBCD84E722A96DE33E",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        },
+        {
+          "Label": "wp5-capacity-file-sql-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-sql-provider.json",
+          "ReportSha256": "9889732F6591C0E240331D815B4AD158691D114727572190BA4E37EDBB752408",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceFileSafety.cs",
+      "Sha256": "A1331DF279A6454007F3C2ED84CEE6AC8120321CCB00D9A658580CC80BD5B6CE",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-capacity-file-pg-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-pg-provider.json",
+          "ReportSha256": "24B85E3834D29C92EC8E226A923C39812D910B1602EA9ECBCD84E722A96DE33E",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        },
+        {
+          "Label": "wp5-capacity-file-sql-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-capacity-file-sql-provider.json",
+          "ReportSha256": "9889732F6591C0E240331D815B4AD158691D114727572190BA4E37EDBB752408",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceVersionClone.cs",
+      "Sha256": "85B56C289BAD9EA8341642C4ECA480C843CF9A3002CE93E029559803ADC7CB16",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-clone-cad-retry-pg-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-cad-retry-pg-followup.json",
+          "ReportSha256": "5B49E99A09640932550D39FFCBD8F124D9BAF17EF3683CE3CBA6568578C96441",
+          "RecordedCounts": {
+            "Total": 5,
+            "Passed": 5,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 5
+          }
+        },
+        {
+          "Label": "wp5-clone-cad-retry-sql-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-cad-retry-sql-followup.json",
+          "ReportSha256": "0F685B48ED366E8DB214CD173FA18853A5233928A5137EB311D3FD2996A1FCF8",
+          "RecordedCounts": {
+            "Total": 5,
+            "Passed": 5,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 5
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "Sha256": "2EC73E1B8177C1260B253ADF58A940BFD518BF7555ACC05290F4D70C02D28C73",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-ai-cad-review-followup-pg",
+          "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-ai-cad-review-followup-pg.json",
+          "ReportSha256": "EB048F54D3BDACBDDEFA9DD84EF4A2B915555B363AB29364C5E3E3294EF8DBA8",
+          "RecordedCounts": {
+            "Total": 15,
+            "Passed": 15,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 15
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiRunRecoveryService.cs",
+      "Sha256": "E40F0D5FEF13584CF89A078DFC8CE7C8B2A5B4D0B97D9929E998A29D6D6C61BA",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-ai-atomic-pg-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-pg-provider.json",
+          "ReportSha256": "40C9003DA6AAF2694BC06B5FCD88A24C898D7366DE431DBEDE7B9ECE63C85D1B",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        },
+        {
+          "Label": "wp5-ai-atomic-sql-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-sql-provider.json",
+          "ReportSha256": "5DC473D0AC1871838818EEB26974DCEE60B1FAFC8F451C693AFE1A6B5DB599A8",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "Sha256": "989A5B0B08936BA827089154B88FEEDE8280E2283E4263059435A038A4AC457D",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-ai-cad-review-followup-pg",
+          "Report": "docs/audits/database-compatibility/wp5-native/review-followup/reports/wp5-ai-cad-review-followup-pg.json",
+          "ReportSha256": "EB048F54D3BDACBDDEFA9DD84EF4A2B915555B363AB29364C5E3E3294EF8DBA8",
+          "RecordedCounts": {
+            "Total": 15,
+            "Passed": 15,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 15
+          }
+        },
+        {
+          "Label": "wp5-clone-cad-retry-sql-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-clone-cad-retry-sql-followup.json",
+          "ReportSha256": "0F685B48ED366E8DB214CD173FA18853A5233928A5137EB311D3FD2996A1FCF8",
+          "RecordedCounts": {
+            "Total": 5,
+            "Passed": 5,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 5
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+      "Sha256": "0EE1B4CF121ABED241636AA7DEE23BBAC2685EF604ED1DD1A9B4639CBEFFEF03",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-design-publish-lease-pg-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-design-publish-lease-pg-followup.json",
+          "ReportSha256": "C07A67C141DC07DC7E98AFAFBEB52C354347C588B24C895F85DFA7A48B6D460C",
+          "RecordedCounts": {
+            "Total": 8,
+            "Passed": 8,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 8
+          }
+        },
+        {
+          "Label": "wp5-design-publish-lease-sql-followup",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-design-publish-lease-sql-followup.json",
+          "ReportSha256": "F69B6A24F195452F475FBDAD092C03C07BB1A40F75050221248202664662834F",
+          "RecordedCounts": {
+            "Total": 8,
+            "Passed": 8,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 8
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceGenerationApplyStepExecutor.cs",
+      "Sha256": "EF2D5EA6C1CFCCBE123B9E3ADAA7E5A505D64C8F13D11C1764D499DC02A4DC52",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-ai-atomic-pg-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-pg-provider.json",
+          "ReportSha256": "40C9003DA6AAF2694BC06B5FCD88A24C898D7366DE431DBEDE7B9ECE63C85D1B",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        },
+        {
+          "Label": "wp5-ai-atomic-sql-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-ai-atomic-sql-provider.json",
+          "ReportSha256": "5DC473D0AC1871838818EEB26974DCEE60B1FAFC8F451C693AFE1A6B5DB599A8",
+          "RecordedCounts": {
+            "Total": 13,
+            "Passed": 13,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 13
+          }
+        }
+      ]
+    },
+    {
+      "Path": "CP6.WebApi/Controllers/Sys/DashboardController.cs",
+      "Sha256": "29B508FBE06E1D2A8A7A8B7D42CF79092D474881288562E8C15A308E3DB15A43",
+      "SuccessfulRelevantSourceBindings": [
+        {
+          "Label": "wp5-reports-pg-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-pg-provider.json",
+          "ReportSha256": "2A0EF77C51C1C799DD0ED6B68C4155335D8A166C9518670EA5FE530AF38F90C7",
+          "RecordedCounts": {
+            "Total": 4,
+            "Passed": 4,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 4
+          }
+        },
+        {
+          "Label": "wp5-reports-sql-provider",
+          "Report": "docs/audits/database-compatibility/wp5-native/initial/reports/wp5-reports-sql-provider.json",
+          "ReportSha256": "E0C4C0C5E21E78E62A29A155F9C5CC6D63F57B10AEC5F30CF9B1C15B96137244",
+          "RecordedCounts": {
+            "Total": 4,
+            "Passed": 4,
+            "Failed": 0,
+            "Other": 0,
+            "Expected": 4
+          }
+        }
+      ]
+    }
+  ],
+  "CurrentSpaceBinariesMatchMappingIntegration": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "CFE4A3A8F819B2CDBE2C61F2EE88867437D96C24948FB41822B5ECFD614FB21F"
+    },
+    {
+      "Name": "CP6.Entity.dll",
+      "Sha256": "DF620C6DE14B2C4F514C7529CC8C944AF98FEFE29FA2ABAD21EE2EBA13950826"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "67CED03682FC716F0FBD1B92886AC7BA02A21FB83522621B63200E01704CBC51"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions.dll",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.Contracts.dll",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework.dll",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging.dll",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "CP6.Space.Application.dll",
+      "Sha256": "09818E84D9DC897263ACA7B0C70E7E6328FBE7BB7825D7D1CE5B4DEC83E261EF"
+    },
+    {
+      "Name": "CP6.Space.Contracts.dll",
+      "Sha256": "97DF08136557E0B7BF7706CFF3D6BDC0DBF8D35B58CEAA7751C67084A65545A8"
+    },
+    {
+      "Name": "CP6.Space.Domain.dll",
+      "Sha256": "FD421F0B48785AE4E57DBE118C84AFF3A0E796E4411113391B976F0B022D2B7F"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure.dll",
+      "Sha256": "05CC476D5541495F6DEAB1E25BF7728CBEAA99066C346E7A1FFD924EC4E76612"
+    },
+    {
+      "Name": "CP6.Space.IntegrationTests.dll",
+      "Sha256": "199A970B51EED928A0E0AB92729EB4C4DB6FC4C462C49620B0F16493EA47B93E"
+    }
+  ],
+  "ClassifierNativeBinaryBindings": [
+    {
+      "Label": "wp5-restrict-file-pg-classifier",
+      "Counts": {
+        "Total": 1,
+        "Passed": 1,
+        "Failed": 0,
+        "Other": 0,
+        "Expected": 1
+      },
+      "CoreBinarySha256": "CFBB0957D70DAA9424E2D8A9446F7ECF7BE272D1B898B1E3E65F4F8763D3BB7E",
+      "SourceBinding": "Same Core binary as the 42-case unit batch which records the final classifier source bytes. The earlier native runner did not record that source directly."
+    },
+    {
+      "Label": "wp5-restrict-file-sql-classifier",
+      "Counts": {
+        "Total": 1,
+        "Passed": 1,
+        "Failed": 0,
+        "Other": 0,
+        "Expected": 1
+      },
+      "CoreBinarySha256": "CFBB0957D70DAA9424E2D8A9446F7ECF7BE272D1B898B1E3E65F4F8763D3BB7E",
+      "SourceBinding": "Same Core binary as the 42-case unit batch which records the final classifier source bytes. The earlier native runner did not record that source directly."
+    }
+  ],
+  "PreparationCorrections": [
+    "First accounting preparation rejected a final-source binding to the earlier SQL migration report because PostgreSQL options changed later. The final SQL-generation contract batch supplies the direct final-source binding; historical SQL migration results remain their original runs.",
+    "Second accounting preparation rejected a direct classifier source binding because that earlier native runner did not capture the classifier source path. The unchanged actual Core binary is now matched to the classifier unit report that recorded the final source. No old report was edited."
+  ],
+  "ReuseLimits": [
+    "Each binding proves exact source bytes in a relevant successful historical batch, not that every archived case ran against the final binary.",
+    "Clone whole-command retries changed Start/Blank only; their two-provider five-case follow-up covers the changed commands. Earlier successful twelve-table copy/late-rollback cases and SQL native fourteen-case batch remain their original executions, with unchanged reviewed copy paths.",
+    "AI final pending/ambient/enlisted eligibility change is PostgreSQL-only; the existing non-PostgreSQL short-circuit preserves SQL behavior. Final PG AI/CAD15 covers that change; SQL AI13 is reused from its original successful batch.",
+    "The prerequisite generator only changes PostgreSQL prerequisite installation; SQL generated operations are unchanged and the SQL native migration six-case evidence is retained.",
+    "BUG150 is already independently delivered on main. Its three production hashes match the dependency proof; final WP5 CAD/Excel4 per provider validates integration. The two test-only Assert.Single overload changes preserve the assertions.",
+    "Selector2 checks discovery isolation only. It does not execute backup/restore; complete application/worker and native restore remain WP6.",
+    "Preparation failures, RED batches, the incorrectly green-labelled failed wrapper assertion, and passing reruns remain immutable; latest-outcome accounting is not a synthetic full-matrix test result."
+  ],
+  "FinalTaskReview": "review-followup/reviews/wp5-task-review-targeted-followup.json",
+  "RequiredGateFailuresOutstanding": 0,
+  "OverallGoalComplete": false,
+  "Wp6AcceptanceClaimed": false
+}

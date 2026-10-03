@@ -6,11 +6,12 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpacePublishPreviewSqlServerTests
+public sealed class SpacePublishPreviewSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     [SqlServerFact]
     public async Task Preview_is_deterministic_filterable_and_tenant_scoped()
@@ -336,7 +337,7 @@ public sealed class SpacePublishPreviewSqlServerTests
         });
     }
 
-    private static async Task ValidateAsync(
+    private async Task ValidateAsync(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock,
@@ -678,9 +679,17 @@ public sealed class SpacePublishPreviewSqlServerTests
             {"schemaVersion":1,"kind":"box","width":{{width}},"height":1000,"depth":1000}
             """);
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString,
+                new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -708,11 +717,19 @@ public sealed class SpacePublishPreviewSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "publish-preview"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

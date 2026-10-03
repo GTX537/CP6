@@ -5,11 +5,12 @@ using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceDesignSceneSqlServerTests
+public sealed class SpaceDesignSceneSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private const string ContentHash =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -239,7 +240,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                     {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
                     """);
                 var modelAsset = SpaceAsset.CreateSystem(
-                    "SYS-COLUMN",
+                    "SYS-COLUMN-" + execution.TenantId.ToString("N"),
                     "System Column",
                     "Structure",
                     null,
@@ -3404,9 +3405,17 @@ public sealed class SpaceDesignSceneSqlServerTests
         await context.SaveChangesAsync();
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString,
+                new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -3433,11 +3442,19 @@ public sealed class SpaceDesignSceneSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "design-scene"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

@@ -1,12 +1,24 @@
 # AI 可读变更日志
 
-## 2026-10-03：映射保存并发修复本地通过，待远端交付
+## 2026-10-03：WP5 本地验证与集中审查完成，待远端交付
+
+[PR149](https://github.com/GTX537/CP6/pull/149)已正常合入远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，包含候选`cfe479124fb04d770462b874bc2a70508a8bf79e`且完整树相同。合并后原业务快照保存SQL/PG各2/2、零skip（含owner/迁移setup）；六个WP4自有临时库已普通DROP并确认不存在，receipt和PG角色保留。[交付/清理原件](../audits/database-compatibility/wp4-native/post-merge/manifest.json)新增17份，[父任务更新记录](../audits/database-compatibility/wp4-native/post-merge/parent-progress/manifest.json)另三份；原211与七份manifest及各次失败/复用范围保持。
+
+WP5当前为`LocalVerifiedRemotePending`：独立`codex/db-compat-wp5-20261003`分支已完成Space及报表/GDPR相关本地验证、一次任务级集中审查与发现问题的定向修复。克隆SQL14/14及PG分批限定通过、报表4/GDPR1/Core Space5、容量/文件13、带数据报表4和清理故障回滚1均保留原双库执行来源；AI应用原13两库各13通过，设计/发布35及任务/基础约束分批通过。CAD Retry与克隆同key并发定向两库各5/5、SQL独立及历史迁移6项、PG两种安装顺序/脚本重复/Space-only各1/1，详见[WP5实施记录](../audits/database-compatibility/WP5-IMPLEMENTATION.md)与[首轮原件](../audits/database-compatibility/wp5-native/initial/manifest.json)。
+
+集中审查两项P2均已修复并定向复核：PG AI原13＋caller-pending回归1＋CAD1实际15/15，legacy恢复选择器2/2，均零skip；前置SQL生成断言修正后的同8项8/8另按原来源保留，不与首次执行相加。[BUG150](https://github.com/GTX537/CP6/issues/150)已由[PR151](https://github.com/GTX537/CP6/pull/151)交付远端main `522433a370c0c247a98b300c69e88e403217d53a`并关闭，合并后原并发两库各2/2及自有库清理完成，见[BUG150交付原件](../audits/2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json)。WP5在`97e4a9f2e0881c4f423111848632bbc821cde11d`纳入该依赖后，实际整合构建0warning/0error，映射SQL/PG各4/4通过；[审查修复与整合原件](../audits/database-compatibility/wp5-native/review-followup/manifest.json)保留真实RED、异常包装断言失败及后续成功，不改写历史结果或累加重复测试。
+
+WP5正常提交/PR合并、必要合并后冒烟及远端main包含性核对仍待完成；[父Issue134](https://github.com/GTX537/CP6/issues/134)保持Open，WP5/6远端阶段未勾选。WP6完整应用启动、初始化及原生备份恢复验收尚未执行，普通PG API/worker guard保留；本地WP5通过不代替WP6或整体兼容交付。
+
+Actions启动/取消均0，无工作流/保护变更或生产部署。根工作区原改动保持，早期Pending/Open文字保留各历史时点，当前以本节和真实Issue读回为准。
+
+## 2026-10-03 历史快照：映射保存并发修复本地通过，待远端交付
 
 [BUG150](https://github.com/GTX537/CP6/issues/150)在WP5对照测试中确认原SQL Server同键并发死锁，PG对应路径唯一约束冲突未回放。独立修复只调整CAD/Excel映射保存的自有事务恢复，保留调用方待提交状态和事务。真实SQL/PG各4/4、原映射相关12/12、零skip，最终构建零warning/error，一次集中代码审查无实质阻断；[实际证据与边界](../audits/2026-10-03-bug-150-mapping-idempotency/README.md)保留原RED。
 
-当前LocalVerified/RemotePending，Issue仍Open；正常合并、远端包含性和原步骤冒烟后才关闭。WP4已由PR149交付，WP5草稿保留在另一独立工作树，父任务134与WP5/6继续。无Actions启动/取消、工作流/保护变更或生产部署；根工作区原改动保持。下方历史状态保留原时点。
+本段为PR151合入前的历史LocalVerified/RemotePending记录：当时Issue仍Open，正常合并、远端包含性和原步骤冒烟待完成；现BUG150已交付并Closed，实际主线、双库冒烟及清理见上方和[交付原件](../audits/2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json)。WP4已由PR149交付，WP5草稿保留在另一独立工作树，父任务134与WP5/6继续。无Actions启动/取消、工作流/保护变更或生产部署；根工作区原改动保持。下方历史状态保留原时点。
 
-## 2026-10-03：WP4 本地双库验收与集中审查通过，待远端交付
+## 2026-10-03 历史快照：WP4 本地双库验收与集中审查通过，待远端交付
 
 [BUG147](https://github.com/GTX537/CP6/issues/147) 已经 [PR148](https://github.com/GTX537/CP6/pull/148) 正常合入远端 main `974e57c0650279565330a67c844355ba3e1b563d`，候选 `8f42a76b` 的包含性与完整树一致已核对；2026-10-03 10:48:57 UTC Closed。原118项本地结果按相同源码/程序集复用，合并后原业务保存另执行1/1、零跳过，独占库正常清理且只读核对零残留。[14份交付原件](../audits/2026-10-03-bug-147-snapshot-batch/native/post-merge/manifest.json)保留发布检查、首次HTTP408及正常重试、合并后冒烟与关闭记录，不改写原24份证据。
 

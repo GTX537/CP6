@@ -1,14 +1,16 @@
 using CP6.Space.Application;
+using CP6.Core.Persistence;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceFieldPolicySqlServerTests
+public sealed class SpaceFieldPolicySqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 8, 1, 19, 0, 0, DateTimeKind.Utc);
@@ -82,9 +84,9 @@ public sealed class SpaceFieldPolicySqlServerTests
                     false));
                 var error = await Assert.ThrowsAsync<DbUpdateException>(
                     () => duplicate.SaveChangesAsync());
-                Assert.Contains(
-                    ((SqlException)error.GetBaseException()).Number,
-                    new[] { 2601, 2627 });
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.UniqueConstraint, failure.Kind);
+                Assert.Equal("UX_Space_FieldPolicy_CurrentName", failure.ConstraintName);
             }
 
             await using (var forged = CreateContext(connectionString, tenantB))
@@ -97,14 +99,23 @@ public sealed class SpaceFieldPolicySqlServerTests
                     SpaceFieldMaskingRule.None));
                 var error = await Assert.ThrowsAsync<DbUpdateException>(
                     () => forged.SaveChangesAsync());
-                Assert.Equal(547, ((SqlException)error.GetBaseException()).Number);
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.ForeignKey, failure.Kind);
+                Assert.Equal("FK_Space_FieldPolicyField_Policy_Tenant", failure.ConstraintName);
                 Assert.Empty(await forged.FieldPolicies.ToListAsync());
             }
         });
     }
 
-    private static async Task WithDatabaseAsync(Func<string, Task> action)
+    private async Task WithDatabaseAsync(Func<string, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -123,17 +134,25 @@ public sealed class SpaceFieldPolicySqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         Guid tenantId) =>
         CreateContext(
             connectionString,
             new TestExecutionContext(tenantId, Guid.NewGuid()));
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
-        TestExecutionContext execution) =>
-        new(
+        TestExecutionContext execution)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, new FixedClock(),
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "field-policy"));
+        }
+        return new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(
                     connectionString,
@@ -142,6 +161,7 @@ public sealed class SpaceFieldPolicySqlServerTests
                 .Options,
             execution,
             new FixedClock());
+    }
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :
         ISpaceExecutionContext;

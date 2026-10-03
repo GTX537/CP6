@@ -1,0 +1,338 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:05.33]     CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Concurrent_source_reference_and_expiration_never_delete_a_referenced_file [FAIL]
+[xUnit.net 00:00:05.34]     CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Tombstone_survives_object_failure_and_can_be_completed_later [FAIL]
+[xUnit.net 00:00:05.36]     CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_design_revision_blocks_source_removal [FAIL]
+[xUnit.net 00:00:05.39]     CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit [FAIL]
+[xUnit.net 00:00:05.42]     CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Unused_source_is_logically_removed_idempotently_and_file_is_retained [FAIL]
+[xUnit.net 00:00:05.64]     CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scanner_outage_returns_file_to_quarantine_and_schedules_retry [FAIL]
+[xUnit.net 00:00:05.65]     CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scan_and_retention_stores_do_not_cross_tenants [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Concurrent_source_reference_and_expiration_never_delete_a_referenced_file [61 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 448
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 367
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 453
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 454
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<>c__DisplayClass9_3.<<Concurrent_source_reference_and_expiration_never_delete_a_referenced_file>b__2>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 614
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Concurrent_source_reference_and_expiration_never_delete_a_referenced_file>b__9_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 620
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Concurrent_source_reference_and_expiration_never_delete_a_referenced_file>b__9_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 644
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Concurrent_source_reference_and_expiration_never_delete_a_referenced_file>b__9_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 644
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 1115
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Concurrent_source_reference_and_expiration_never_delete_a_referenced_file() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 557
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+  Failed CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Tombstone_survives_object_failure_and_can_be_completed_later [7 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 448
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 367
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 453
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 454
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Tombstone_survives_object_failure_and_can_be_completed_later>b__13_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 899
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Tombstone_survives_object_failure_and_can_be_completed_later>b__13_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 927
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 1115
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Tombstone_survives_object_failure_and_can_be_completed_later() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 879
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+  Failed CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_design_revision_blocks_source_removal [22 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 448
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3658
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3712
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3713
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Active_design_revision_blocks_source_removal>b__12_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 836
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Active_design_revision_blocks_source_removal>b__12_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 872
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 1115
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_design_revision_blocks_source_removal() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 815
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+  Failed CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit [27 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 448
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3658
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3712
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3713
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit>b__11_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 744
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit>b__11_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 807
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 1115
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 723
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+  Failed CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Unused_source_is_logically_removed_idempotently_and_file_is_retained [26 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 448
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3658
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3712
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateSourceAsync(Guid versionId, CreateSpaceSourceRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 3713
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Unused_source_is_logically_removed_idempotently_and_file_is_retained>b__10_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 673
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Unused_source_is_logically_removed_idempotently_and_file_is_retained>b__10_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 716
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 1115
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Unused_source_is_logically_removed_idempotently_and_file_is_retained() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 652
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+  Failed CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scanner_outage_returns_file_to_quarantine_and_schedules_retry [217 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 448
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 367
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 453
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 454
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Scanner_outage_returns_file_to_quarantine_and_schedules_retry>b__5_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 120
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Scanner_outage_returns_file_to_quarantine_and_schedules_retry>b__5_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 126
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Scanner_outage_returns_file_to_quarantine_and_schedules_retry>b__5_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 126
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 1115
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scanner_outage_returns_file_to_quarantine_and_schedules_retry() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 85
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+  Failed CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scan_and_retention_stores_do_not_cross_tenants [14 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 448
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 367
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 453
+   at CP6.Space.Infrastructure.EfSpaceFileRetentionStore.TryTombstoneAsync(Guid tenantId, Guid fileId, DateTime nowUtc, Boolean requireExpired, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceFileSafety.cs:line 454
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Scan_and_retention_stores_do_not_cross_tenants>b__8_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 542
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Scan_and_retention_stores_do_not_cross_tenants>b__8_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 548
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.<Scan_and_retention_stores_do_not_cross_tenants>b__8_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 548
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 1115
+   at CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scan_and_retention_stores_do_not_cross_tenants() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceFileSafetySqlServerTests.cs:line 513
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=file-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+[xUnit.net 00:00:06.37]     CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Expired_unsent_budget_releases_but_monthly_charge_remains [FAIL]
+[xUnit.net 00:00:06.39]     CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Budget_is_atomic_idempotent_and_usage_charges_once [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Expired_unsent_budget_releases_but_monthly_charge_remains [57 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 315
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.EfSpaceAiCapacityLedger.TryReserveBudgetAsync(SpaceAiBudgetReservationRequest request, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceAiCapacityLedger.cs:line 212
+   at CP6.Space.Infrastructure.EfSpaceAiCapacityLedger.TryReserveBudgetAsync(SpaceAiBudgetReservationRequest request, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceAiCapacityLedger.cs:line 296
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.ReserveAsync(String connectionString, Guid tenantId, MutableClock clock, SpaceAiBudgetReservationRequest request) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 444
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.ReserveAsync(String connectionString, Guid tenantId, MutableClock clock, SpaceAiBudgetReservationRequest request) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 444
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.<>c__DisplayClass7_0.<<Expired_unsent_budget_releases_but_monthly_charge_remains>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 323
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.WithDatabaseAsync(Guid tenantId, MutableClock clock, Func`2 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 564
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Expired_unsent_budget_releases_but_monthly_charge_remains() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 308
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=ai-capacity-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+  Failed CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Budget_is_atomic_idempotent_and_usage_charges_once [20 ms]
+  Error Message:
+   Npgsql.PostgresException : 42601: "["またはその近辺で構文エラー
+
+POSITION: 315
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.EfSpaceAiCapacityLedger.TryReserveBudgetAsync(SpaceAiBudgetReservationRequest request, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceAiCapacityLedger.cs:line 212
+   at CP6.Space.Infrastructure.EfSpaceAiCapacityLedger.TryReserveBudgetAsync(SpaceAiBudgetReservationRequest request, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\EfSpaceAiCapacityLedger.cs:line 296
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.ReserveAsync(String connectionString, Guid tenantId, MutableClock clock, SpaceAiBudgetReservationRequest request) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 444
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.ReserveAsync(String connectionString, Guid tenantId, MutableClock clock, SpaceAiBudgetReservationRequest request) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 444
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.<>c__DisplayClass6_0.<<Budget_is_atomic_idempotent_and_usage_charges_once>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 209
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.WithDatabaseAsync(Guid tenantId, MutableClock clock, Func`2 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 564
+   at CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Budget_is_atomic_idempotent_and_usage_charges_once() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiCapacityPersistenceTests.cs:line 189
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=ai-capacity-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+ Provider=PostgreSql; Stage=ai-capacity-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.
+
+
+Results File: D:\CP6\tmp\db-compat-wp5-tests\wp5-capacity-file-pg-first-run\results.trx
+
+Failed!  - Failed:     9, Passed:     4, Skipped:     0, Total:    13, Duration: 2 s - CP6.Space.IntegrationTests.dll (net8.0)

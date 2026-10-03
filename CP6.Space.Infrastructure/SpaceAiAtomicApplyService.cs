@@ -2,6 +2,7 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -20,7 +21,17 @@ public sealed class SpaceAiAtomicApplyService(
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
 
-    public async Task<SpaceAiAtomicApplyAcceptedDto> QueueAsync(
+    public Task<SpaceAiAtomicApplyAcceptedDto> QueueAsync(
+        Guid runId,
+        CreateSpaceAiAtomicApplyRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        SpaceAiOwnedCommandRetry.ExecuteAsync(
+            context,
+            () => QueueOnceAsync(runId, request, idempotencyKey, cancellationToken),
+            cancellationToken);
+
+    private async Task<SpaceAiAtomicApplyAcceptedDto> QueueOnceAsync(
         Guid runId,
         CreateSpaceAiAtomicApplyRequest request,
         string idempotencyKey,
@@ -185,7 +196,8 @@ public sealed class SpaceAiAtomicApplyService(
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (transaction is not null && !transactionCompleted)
+            if (transaction is not null && !transactionCompleted &&
+                (!context.Database.IsNpgsql() || transaction.GetDbTransaction().Connection is not null))
                 await transaction.RollbackAsync(CancellationToken.None);
             throw Problem(
                 SpaceErrorCodes.AiReviewConflict,
@@ -195,7 +207,8 @@ public sealed class SpaceAiAtomicApplyService(
         }
         catch
         {
-            if (transaction is not null && !transactionCompleted)
+            if (transaction is not null && !transactionCompleted &&
+                (!context.Database.IsNpgsql() || transaction.GetDbTransaction().Connection is not null))
             {
                 await transaction.RollbackAsync(CancellationToken.None);
             }
@@ -434,6 +447,46 @@ public sealed class SpaceAiAtomicApplyService(
         string title,
         string recovery) =>
         new(code, status, title, recoveryAction: recovery);
+}
+
+/// <summary>Retries a complete PostgreSQL command after its own transaction has been disposed.</summary>
+internal static class SpaceAiOwnedCommandRetry
+{
+    public static async Task<T> ExecuteAsync<T>(
+        SpaceContext context,
+        Func<Task<T>> operation,
+        CancellationToken cancellationToken)
+    {
+        // Existing SQL/non-relational behavior and caller-owned work keep their original path.
+        // Retrying may clear state only when no caller transaction or pending changes entered here.
+        if (!context.Database.IsNpgsql()
+            || context.Database.CurrentTransaction is not null
+            || System.Transactions.Transaction.Current is not null
+            || System.Transactions.TransactionsDatabaseFacadeExtensions.GetEnlistedTransaction(context.Database) is not null
+            || context.ChangeTracker.HasChanges())
+            return await operation();
+
+        const int maximumAttempts = 3;
+        for (var attempt = 0; ; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                return await operation();
+            }
+            catch (Exception exception) when (
+                DatabaseFailureClassifier.Classify(exception).CanRetryTransaction)
+            {
+                // Each operation rolls back and await-disposes its transaction before it throws.
+                // Never reread a PostgreSQL aborted transaction or take over a caller's transaction.
+                if (context.Database.CurrentTransaction is not null)
+                    throw;
+                context.ChangeTracker.Clear();
+                if (attempt + 1 >= maximumAttempts)
+                    throw;
+            }
+        }
+    }
 }
 
 internal sealed record SpaceAiReviewState(

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="98118794-2d30-4d77-89be-0b4ea5072f76" name="tt@LAPTOP-3QQ44FJS 2026-10-03 10:47:31" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T10:47:31.3414434-04:00" queuing="2026-10-03T10:47:31.3414438-04:00" start="2026-10-03T10:47:30.6687971-04:00" finish="2026-10-03T10:47:31.3453507-04:00" />
+  <TestSettings name="default" id="bdc557d7-bb29-4e28-aec0-d2e99a1520c4">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_10_47_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="227b2d02-4abc-4394-aae3-b1a8bcffb4e1" testId="beb056c7-af97-71b9-6216-2695cec3464b" testName="CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: &quot;PostgreSql&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0027188" startTime="2026-10-03T10:47:31.2357585-04:00" endTime="2026-10-03T10:47:31.2508738-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="227b2d02-4abc-4394-aae3-b1a8bcffb4e1">
+      <Output>
+        <ErrorInfo>
+          <Message>Selecting a WP5 Space provider must not enable the legacy SQL backup/restore fact, even when CP6_TEST_SQLSERVER is set.</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(String provider) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceLegacyRecoverySelectionTests.cs:line 41&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4c7d9eba-10f2-475f-b384-624cd7fdb5cf" testId="4dd70826-b592-2039-cc38-29f4628cc7c4" testName="CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: &quot;SqlServer&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002304" startTime="2026-10-03T10:47:31.2583012-04:00" endTime="2026-10-03T10:47:31.2583681-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c7d9eba-10f2-475f-b384-624cd7fdb5cf">
+      <Output>
+        <ErrorInfo>
+          <Message>Selecting a WP5 Space provider must not enable the legacy SQL backup/restore fact, even when CP6_TEST_SQLSERVER is set.</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(String provider) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceLegacyRecoverySelectionTests.cs:line 41&#xD;
+   at InvokeStub_SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: &quot;SqlServer&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="4dd70826-b592-2039-cc38-29f4628cc7c4">
+      <Execution id="4c7d9eba-10f2-475f-b384-624cd7fdb5cf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests" name="Selected_Space_provider_does_not_enable_legacy_backup_restore" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: &quot;PostgreSql&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="beb056c7-af97-71b9-6216-2695cec3464b">
+      <Execution id="227b2d02-4abc-4394-aae3-b1a8bcffb4e1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests" name="Selected_Space_provider_does_not_enable_legacy_backup_restore" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="beb056c7-af97-71b9-6216-2695cec3464b" executionId="227b2d02-4abc-4394-aae3-b1a8bcffb4e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4dd70826-b592-2039-cc38-29f4628cc7c4" executionId="4c7d9eba-10f2-475f-b384-624cd7fdb5cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.12]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.23]       Selecting a WP5 Space provider must not enable the legacy SQL backup/restore fact, even when CP6_TEST_SQLSERVER is set.&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceLegacyRecoverySelectionTests.cs(41,0): at CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(String provider)&#xD;
+[xUnit.net 00:00:00.23]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.23]       Selecting a WP5 Space provider must not enable the legacy SQL backup/restore fact, even when CP6_TEST_SQLSERVER is set.&#xD;
+[xUnit.net 00:00:00.23]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.23]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceLegacyRecoverySelectionTests.cs(41,0): at CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(String provider)&#xD;
+[xUnit.net 00:00:00.23]            at InvokeStub_SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.23]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T10:47:31.2525871-04:00">
+        <Text>[xUnit.net 00:00:00.23]     CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: "PostgreSql") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T10:47:31.2587442-04:00">
+        <Text>[xUnit.net 00:00:00.23]     CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: "SqlServer") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

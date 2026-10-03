@@ -9,6 +9,7 @@ public sealed class DatabaseFailureClassifierTests
     [Theory]
     [InlineData("23505", DatabaseFailureKind.UniqueConstraint, false)]
     [InlineData("23503", DatabaseFailureKind.ForeignKey, false)]
+    [InlineData("23001", DatabaseFailureKind.ForeignKey, false)]
     [InlineData("23514", DatabaseFailureKind.CheckConstraint, false)]
     [InlineData("40P01", DatabaseFailureKind.Deadlock, true)]
     [InlineData("40001", DatabaseFailureKind.SerializationFailure, true)]
@@ -26,6 +27,7 @@ public sealed class DatabaseFailureClassifierTests
     [Theory]
     [InlineData("23505", DatabaseFailureKind.UniqueConstraint)]
     [InlineData("23503", DatabaseFailureKind.ForeignKey)]
+    [InlineData("23001", DatabaseFailureKind.ForeignKey)]
     [InlineData("23514", DatabaseFailureKind.CheckConstraint)]
     public void PostgreSql_constraint_identity_comes_from_the_provider_field(
         string sqlState, DatabaseFailureKind expectedKind)

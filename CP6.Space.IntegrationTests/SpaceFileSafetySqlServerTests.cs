@@ -1,14 +1,16 @@
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceFileSafetySqlServerTests
+public sealed class SpaceFileSafetySqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 7, 26, 16, 0, 0, DateTimeKind.Utc);
@@ -920,7 +922,7 @@ public sealed class SpaceFileSafetySqlServerTests
             cleanup.ChangeTracker.Clear();
             var tombstone = await cleanup.Files
                 .IgnoreQueryFilters()
-                .SingleAsync();
+                .SingleAsync(candidate => candidate.TenantId == execution.TenantId && candidate.Id == file.Id);
             Assert.True(tombstone.IsDeleted);
             Assert.Equal(
                 Now.AddSeconds(1),
@@ -928,7 +930,7 @@ public sealed class SpaceFileSafetySqlServerTests
         });
     }
 
-    private static async Task<(SpaceFile File, SpaceJob Job)> SeedFileScanAsync(
+    private async Task<(SpaceFile File, SpaceJob Job)> SeedFileScanAsync(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
@@ -990,7 +992,7 @@ public sealed class SpaceFileSafetySqlServerTests
         return file;
     }
 
-    private static async Task<(
+    private async Task<(
         Guid SiteId,
         Guid DraftVersionId,
         Guid FloorLogicalId,
@@ -1043,10 +1045,7 @@ public sealed class SpaceFileSafetySqlServerTests
             "F1",
             "Floor 1");
         var clientInstanceId = Guid.NewGuid();
-        var leaseNow = await context.Database
-            .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
-            .SingleAsync();
-        leaseNow = DateTime.SpecifyKind(leaseNow, DateTimeKind.Utc);
+        var leaseNow = await DatabaseUtcClock.ReadUtcNowAsync(context);
         var lease = SpaceEditLease.Create(
             execution.TenantId,
             draft.Id,
@@ -1106,9 +1105,17 @@ public sealed class SpaceFileSafetySqlServerTests
             clock);
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            var ownedExecution = new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+            await action(database.ConnectionString, ownedExecution, new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -1136,11 +1143,19 @@ public sealed class SpaceFileSafetySqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected file contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "file-business"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

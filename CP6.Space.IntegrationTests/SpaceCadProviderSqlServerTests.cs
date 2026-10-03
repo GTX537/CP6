@@ -5,11 +5,14 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceCadProviderSqlServerTests
+public sealed class SpaceCadProviderSqlServerTests(
+    SpaceRelationalFixture database,
+    ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 8, 14, 3, 0, 0, DateTimeKind.Utc);
@@ -129,7 +132,19 @@ public sealed class SpaceCadProviderSqlServerTests
                 siteId,
                 Configuration(expectedRevision: 0),
                 "qualified-config");
-            await context.Database.ExecuteSqlRawAsync("""
+            await context.Database.ExecuteSqlRawAsync(context.Database.IsNpgsql() ? """
+                UPDATE "Space_CadSiteProviderCertification"
+                SET "LicensingApproved" = FALSE,
+                    "SecurityApproved" = FALSE,
+                    "DataRegionApproved" = FALSE,
+                    "DeletionRetentionApproved" = FALSE,
+                    "QualificationScore" = NULL,
+                    "QualificationRubricVersion" = NULL,
+                    "GoldenDatasetSha256" = NULL,
+                    "FrozenEnvironmentSha256" = NULL,
+                    "QualificationEvidenceReference" = NULL
+                WHERE "TenantId" = {0} AND "SiteId" = {1}
+                """ : """
                 UPDATE [Space_CadSiteProviderCertification]
                 SET [LicensingApproved] = 0,
                     [SecurityApproved] = 0,
@@ -185,7 +200,11 @@ public sealed class SpaceCadProviderSqlServerTests
                 siteId,
                 Configuration(expectedRevision: 0),
                 "qualified-config");
-            await context.Database.ExecuteSqlRawAsync("""
+            await context.Database.ExecuteSqlRawAsync(context.Database.IsNpgsql() ? """
+                UPDATE "Space_CadSiteProviderCertification"
+                SET "ProviderVersion" = ''
+                WHERE "TenantId" = {0} AND "SiteId" = {1}
+                """ : """
                 UPDATE [Space_CadSiteProviderCertification]
                 SET [ProviderVersion] = ''
                 WHERE [TenantId] = {0} AND [SiteId] = {1}
@@ -293,9 +312,16 @@ public sealed class SpaceCadProviderSqlServerTests
         ]);
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, Guid, Guid, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString, Guid.NewGuid(), Guid.NewGuid());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -358,10 +384,18 @@ public sealed class SpaceCadProviderSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         ISpaceExecutionContext execution)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected CAD provider contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, new FixedClock(),
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "cad-provider-business"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

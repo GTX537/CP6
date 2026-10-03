@@ -4,11 +4,12 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceValidationSqlServerTests
+public sealed class SpaceValidationSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     [SqlServerFact]
     public async Task Validation_job_passes_reuses_and_preserves_ai_category()
@@ -188,9 +189,21 @@ public sealed class SpaceValidationSqlServerTests
                 clock,
                 siteId);
 
-            var results = await Task.WhenAll(
-                first.RequestValidationAsync(versionId),
-                second.RequestValidationAsync(versionId));
+            using var budget = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var workers = new[] {
+                first.RequestValidationAsync(versionId, budget.Token),
+                second.RequestValidationAsync(versionId, budget.Token) };
+            CreateSpaceValidationResponse[] results;
+            try
+            {
+                results = await Task.WhenAll(workers).WaitAsync(budget.Token);
+            }
+            finally
+            {
+                await budget.CancelAsync();
+                try { await Task.WhenAll(workers); }
+                catch { /* The primary await retains the failure; dispose happens only after both requests settle. */ }
+            }
 
             Assert.Equal(
                 results[0].Validation.Id,
@@ -272,7 +285,7 @@ public sealed class SpaceValidationSqlServerTests
         });
     }
 
-    private static async Task ProcessNextAsync(
+    private async Task ProcessNextAsync(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
@@ -418,9 +431,17 @@ public sealed class SpaceValidationSqlServerTests
         return new SeededCandidate(model, version, rack);
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString,
+                new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -448,11 +469,19 @@ public sealed class SpaceValidationSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "validation"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

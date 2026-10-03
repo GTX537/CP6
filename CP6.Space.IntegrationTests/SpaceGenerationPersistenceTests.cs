@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceGenerationPersistenceTests
+public sealed class SpaceGenerationPersistenceTests(SpaceRelationalFixture fixture, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 7, 30, 18, 30, 0, DateTimeKind.Utc);
@@ -590,10 +591,20 @@ public sealed class SpaceGenerationPersistenceTests
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             new FixedClock());
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Guid tenantId,
         Func<SpaceContext, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            fixture.WriteSetupEvidence(output);
+            await using var selected = fixture.CreateSpaceContext(
+                new TestExecutionContext(tenantId, Guid.NewGuid()), new FixedClock(),
+                new SpaceNativeFailureObserver(fixture.Database.Provider, message => output.WriteLine(message), "generation-business"));
+            await action(selected);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -628,8 +639,9 @@ public sealed class SpaceGenerationPersistenceTests
         await context.Database.OpenConnectionAsync();
         await using var command =
             context.Database.GetDbConnection().CreateCommand();
-        command.CommandText =
-            "SELECT [name] FROM sys.tables ORDER BY [name]";
+        command.CommandText = context.Database.IsNpgsql()
+            ? "SELECT c.relname FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' ORDER BY c.relname"
+            : "SELECT [name] FROM sys.tables ORDER BY [name]";
         var names = new List<string>();
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())

@@ -1,0 +1,41 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "ObservedUtc": "2026-10-03T12:37:46.2706487Z",
+  "PullRequest": {
+    "headRefOid": "cfe479124fb04d770462b874bc2a70508a8bf79e",
+    "mergeCommit": {
+      "oid": "c6c662f5b744b44a51427e26fb2faff96472fcc2"
+    },
+    "mergedAt": "2026-10-03T12:37:28Z",
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/149"
+  },
+  "RemoteMain": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "CandidateTree": "60114519e08ddd33ee9be122a616d00ae5ce85c3",
+  "MergeTree": "60114519e08ddd33ee9be122a616d00ae5ce85c3",
+  "EqualTrees": true,
+  "CandidateContained": true,
+  "ReviewedSourceHashesMatched": 53,
+  "ValidatedBinaryReuseSource": "D:\\CP6\\tmp\\wp4-dispatch-deadletter-pg-first-run.json",
+  "BinaryReuseReportSha256": "AC74874751909A1112A68FB6692E832A91AA4AF4A869EA89149AA384B6E583B9",
+  "ReusedBinaries": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "34C52D7B49BD5D515FF2899207C0C34FDC40248DC6D1580403A0CC493608DC54"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "5AB46EAB498DD90521906970376DBB7FBEE7B0C125F1C2CBD7D84C483161AED8"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "44B4196000B71099014759220294C189C5ADEDB3B2823EBFAF2BC3F7E5463FDC"
+    },
+    {
+      "Name": "CP6.IdentityEvents.Fixture.dll",
+      "Sha256": "7320AA5BF3DD5530B3B4F40BC365B326E24B60E9B3C63685735050F16B673BE2"
+    }
+  ],
+  "RootPreexistingLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5",
+  "Scope": "Remote delivery/input binding before two small identity producer smoke runs; prior native matrices are reused by original scope, not rerun."
+}

@@ -4,11 +4,12 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceEditLeaseSqlServerTests
+public sealed class SpaceEditLeaseSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     [SqlServerFact]
     public async Task Lifecycle_uses_database_time_and_fences_browser_sessions()
@@ -108,6 +109,7 @@ public sealed class SpaceEditLeaseSqlServerTests
     {
         await WithDatabaseAsync(async (connectionString, tenantId, siteId, versionId, floorId) =>
         {
+            using var budget = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             async Task<SpaceEditLeaseDto> AcquireAsync(Guid actorId)
             {
                 var execution = new TestExecutionContext(
@@ -128,12 +130,23 @@ public sealed class SpaceEditLeaseSqlServerTests
                 return await service.AcquireAsync(
                     versionId,
                     floorId,
-                    new AcquireSpaceEditLeaseRequest(Guid.NewGuid()));
+                    new AcquireSpaceEditLeaseRequest(Guid.NewGuid()), budget.Token);
             }
 
-            var attempts = await Task.WhenAll(
+            var workers = new[] {
                 CaptureAsync(() => AcquireAsync(Guid.NewGuid())),
-                CaptureAsync(() => AcquireAsync(Guid.NewGuid())));
+                CaptureAsync(() => AcquireAsync(Guid.NewGuid())) };
+            LeaseAttempt[] attempts;
+            try
+            {
+                attempts = await Task.WhenAll(workers).WaitAsync(budget.Token);
+            }
+            finally
+            {
+                await budget.CancelAsync();
+                try { await Task.WhenAll(workers); }
+                catch { /* The primary await retains the failure after all contexts have been disposed. */ }
+            }
 
             Assert.Single(attempts, result => result.Lease is not null);
             var denied = Assert.Single(attempts, result => result.Problem is not null);
@@ -180,8 +193,10 @@ public sealed class SpaceEditLeaseSqlServerTests
                     versionId,
                     floorId,
                     new AcquireSpaceEditLeaseRequest(firstClient));
-                await firstContext.Database.ExecuteSqlRawAsync(
-                    "UPDATE [Space_EditLease] SET [ExpiresAtUtc] = DATEADD(second, -1, SYSUTCDATETIME())");
+                FormattableString expire = firstContext.Database.IsNpgsql()
+                    ? (FormattableString)$"UPDATE public.\"Space_EditLease\" SET \"ExpiresAtUtc\"=clock_timestamp()-interval '1 second' WHERE \"TenantId\"={tenantId} AND \"ModelVersionId\"={versionId} AND \"FloorLogicalId\"={floorId}"
+                    : $"UPDATE [Space_EditLease] SET [ExpiresAtUtc]=DATEADD(second,-1,SYSUTCDATETIME()) WHERE [TenantId]={tenantId} AND [ModelVersionId]={versionId} AND [FloorLogicalId]={floorId}";
+                Assert.Equal(1, await firstContext.Database.ExecuteSqlInterpolatedAsync(expire));
             }
 
             var secondExecution = new TestExecutionContext(
@@ -248,13 +263,14 @@ public sealed class SpaceEditLeaseSqlServerTests
                 "race-test");
             var start = new TaskCompletionSource(
                 TaskCreationOptions.RunContinuationsAsynchronously);
+            using var budget = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var renewTask = CaptureAsync(async () =>
             {
                 await using var context = CreateContext(
                     connectionString,
                     ownerExecution,
                     clock);
-                await start.Task;
+                await start.Task.WaitAsync(budget.Token);
                 return await NewService(
                     context,
                     ownerExecution,
@@ -263,7 +279,7 @@ public sealed class SpaceEditLeaseSqlServerTests
                     versionId,
                     floorId,
                     leaseId,
-                    new ContinueSpaceEditLeaseRequest(clientId));
+                    new ContinueSpaceEditLeaseRequest(clientId), budget.Token);
             });
             var takeoverTask = CaptureAsync(async () =>
             {
@@ -271,7 +287,7 @@ public sealed class SpaceEditLeaseSqlServerTests
                     connectionString,
                     takeoverExecution,
                     clock);
-                await start.Task;
+                await start.Task.WaitAsync(budget.Token);
                 return await NewService(
                     context,
                     takeoverExecution,
@@ -281,11 +297,21 @@ public sealed class SpaceEditLeaseSqlServerTests
                     floorId,
                     new TakeoverSpaceEditLeaseRequest(
                         Guid.NewGuid(),
-                        "Concurrent session recovery"));
+                        "Concurrent session recovery"), budget.Token);
             });
-            start.SetResult();
-            var outcomes = await Task.WhenAll(renewTask, takeoverTask)
-                .WaitAsync(TimeSpan.FromSeconds(30));
+            LeaseAttempt[] outcomes;
+            try
+            {
+                start.SetResult();
+                outcomes = await Task.WhenAll(renewTask, takeoverTask).WaitAsync(budget.Token);
+            }
+            finally
+            {
+                start.TrySetResult();
+                await budget.CancelAsync();
+                try { await Task.WhenAll(renewTask, takeoverTask); }
+                catch { /* Preserve the primary failure and join both contexts before leaving this case. */ }
+            }
 
             Assert.Contains(outcomes, result =>
                 result.Lease?.OwnerUserId == takeoverExecution.ActorId);
@@ -387,12 +413,13 @@ public sealed class SpaceEditLeaseSqlServerTests
             new AllowSiteAccess(siteId),
             new FixedCorrelation(Guid.NewGuid()));
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, Guid, Guid, Guid, Guid, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected) database.WriteSetupEvidence(output);
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
-        var connectionString = new SqlConnectionStringBuilder(baseConnection)
+        var connectionString = SpaceRelationalFixture.IsSelected ? database.ConnectionString : new SqlConnectionStringBuilder(baseConnection)
         {
             InitialCatalog = $"CP6SpaceLease_{Guid.NewGuid():N}",
             TrustServerCertificate = true,
@@ -408,7 +435,7 @@ public sealed class SpaceEditLeaseSqlServerTests
         await using var setup = CreateContext(connectionString, execution, clock);
         try
         {
-            await setup.Database.MigrateAsync();
+            if (!SpaceRelationalFixture.IsSelected) await setup.Database.MigrateAsync();
             var siteId = Guid.NewGuid();
             var model = SpaceModel.Create(tenantId, siteId);
             var published = SpaceModelVersion.CreateDraft(
@@ -462,15 +489,23 @@ public sealed class SpaceEditLeaseSqlServerTests
         }
         finally
         {
-            await setup.Database.EnsureDeletedAsync();
+            if (!SpaceRelationalFixture.IsSelected) await setup.Database.EnsureDeletedAsync();
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         ISpaceExecutionContext execution,
         ISpaceClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "edit-lease"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

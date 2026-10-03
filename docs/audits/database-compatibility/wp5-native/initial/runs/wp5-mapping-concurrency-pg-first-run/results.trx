@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e6023ecd-7ad2-46d2-89b6-6dcdad4932c2" name="tt@LAPTOP-3QQ44FJS 2026-10-03 10:04:35" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T10:04:35.8969652-04:00" queuing="2026-10-03T10:04:35.8969656-04:00" start="2026-10-03T10:04:30.8618181-04:00" finish="2026-10-03T10:04:35.9013868-04:00" />
+  <TestSettings name="default" id="9816af88-e949-4884-abec-e6cd727d0d51">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_10_04_35" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7b0f0f8d-90f2-49ff-ac2d-c0b4b48db784" testId="405d2313-a31c-9579-a7f8-f4685581b2d2" testName="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5059547" startTime="2026-10-03T10:04:35.1575811-04:00" endTime="2026-10-03T10:04:35.6608009-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b0f0f8d-90f2-49ff-ac2d-c0b4b48db784">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Excel mapping physical sessions: 32616, 23036.&#xD;
+Both commands read empty idempotency before their first profile INSERT; no test retry.&#xD;
+Provider=PostgreSql; Stage=excel-mapping-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.</StdOut>
+        <ErrorInfo>
+          <Message>Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_ExcelMappingProfile_CurrentName"違反となります&#xD;
+&#xD;
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.</Message>
+          <StackTrace>   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at CP6.Space.Infrastructure.SpaceExcelMappingService.SaveProfileAsync(SaveSpaceExcelMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceExcelMappingService.cs:line 357&#xD;
+   at CP6.Space.Infrastructure.SpaceExcelMappingService.SaveProfileAsync(SaveSpaceExcelMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceExcelMappingService.cs:line 407&#xD;
+   at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs:line 174&#xD;
+   at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs:line 180&#xD;
+   at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs:line 180&#xD;
+   at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs:line 180&#xD;
+   at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.WithDatabaseAsync(Func`2 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs:line 224&#xD;
+   at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs:line 87&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4954ea56-9606-47b1-944c-6c085e5c63fe" testId="14794b26-84b6-8b9b-0652-01d0f5b0b1e4" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1469281" startTime="2026-10-03T10:04:35.6723099-04:00" endTime="2026-10-03T10:04:35.8113024-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4954ea56-9606-47b1-944c-6c085e5c63fe">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+CAD mapping physical sessions: 23036, 32616.&#xD;
+Both commands read empty idempotency before their first profile INSERT; no test retry.&#xD;
+Provider=PostgreSql; Stage=cad-mapping-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.</StdOut>
+        <ErrorInfo>
+          <Message>Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_LayerMappingProfile_CurrentName"違反となります&#xD;
+&#xD;
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.</Message>
+          <StackTrace>   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at CP6.Space.Infrastructure.SpaceCadMappingProfileService.SaveProfileAsync(SaveSpaceCadMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadMappingProfileService.cs:line 220&#xD;
+   at CP6.Space.Infrastructure.SpaceCadMappingProfileService.SaveProfileAsync(SaveSpaceCadMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadMappingProfileService.cs:line 270&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs:line 163&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs:line 169&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs:line 169&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs:line 169&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.WithDatabaseAsync(Func`2 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs:line 213&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="14794b26-84b6-8b9b-0652-01d0f5b0b1e4">
+      <Execution id="4954ea56-9606-47b1-944c-6c085e5c63fe" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests" name="Concurrent_same_key_create_returns_one_profile_and_replay" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="405d2313-a31c-9579-a7f8-f4685581b2d2">
+      <Execution id="7b0f0f8d-90f2-49ff-ac2d-c0b4b48db784" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests" name="Concurrent_same_key_create_returns_one_profile_and_replay" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="405d2313-a31c-9579-a7f8-f4685581b2d2" executionId="7b0f0f8d-90f2-49ff-ac2d-c0b4b48db784" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14794b26-84b6-8b9b-0652-01d0f5b0b1e4" executionId="4954ea56-9606-47b1-944c-6c085e5c63fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.11]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:04.45]       Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+[xUnit.net 00:00:04.45]       ---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_ExcelMappingProfile_CurrentName"違反となります&#xD;
+[xUnit.net 00:00:04.45]       &#xD;
+[xUnit.net 00:00:04.45]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+[xUnit.net 00:00:04.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceExcelMappingService.cs(357,0): at CP6.Space.Infrastructure.SpaceExcelMappingService.SaveProfileAsync(SaveSpaceExcelMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceExcelMappingService.cs(407,0): at CP6.Space.Infrastructure.SpaceExcelMappingService.SaveProfileAsync(SaveSpaceExcelMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs(174,0): at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs(180,0): at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs(180,0): at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs(180,0): at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__5_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs(224,0): at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.WithDatabaseAsync(Func`2 action)&#xD;
+[xUnit.net 00:00:04.45]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceExcelMappingSqlServerTests.cs(87,0): at CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay()&#xD;
+[xUnit.net 00:00:04.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.45]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:04.45]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:04.45]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:04.45]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.45]       Output:&#xD;
+[xUnit.net 00:00:04.45]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:04.45]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:04.45]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:04.45]         Excel mapping physical sessions: 32616, 23036.&#xD;
+[xUnit.net 00:00:04.45]         Both commands read empty idempotency before their first profile INSERT; no test retry.&#xD;
+[xUnit.net 00:00:04.45]         Provider=PostgreSql; Stage=excel-mapping-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+[xUnit.net 00:00:04.60]       Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+[xUnit.net 00:00:04.60]       ---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_LayerMappingProfile_CurrentName"違反となります&#xD;
+[xUnit.net 00:00:04.60]       &#xD;
+[xUnit.net 00:00:04.60]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+[xUnit.net 00:00:04.60]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadMappingProfileService.cs(220,0): at CP6.Space.Infrastructure.SpaceCadMappingProfileService.SaveProfileAsync(SaveSpaceCadMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadMappingProfileService.cs(270,0): at CP6.Space.Infrastructure.SpaceCadMappingProfileService.SaveProfileAsync(SaveSpaceCadMappingProfileRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs(163,0): at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs(169,0): at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs(169,0): at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs(169,0): at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.&lt;Concurrent_same_key_create_returns_one_profile_and_replay&gt;b__4_0(String connectionString)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs(213,0): at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.WithDatabaseAsync(Func`2 action)&#xD;
+[xUnit.net 00:00:04.60]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadMappingProfileSqlServerTests.cs(80,0): at CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay()&#xD;
+[xUnit.net 00:00:04.60]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.60]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:04.60]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]       Output:&#xD;
+[xUnit.net 00:00:04.60]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:04.60]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:04.60]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:04.60]         CAD mapping physical sessions: 23036, 32616.&#xD;
+[xUnit.net 00:00:04.60]         Both commands read empty idempotency before their first profile INSERT; no test retry.&#xD;
+[xUnit.net 00:00:04.60]         Provider=PostgreSql; Stage=cad-mapping-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+[xUnit.net 00:00:04.60]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T10:04:35.6629414-04:00">
+        <Text>[xUnit.net 00:00:04.45]     CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T10:04:35.8118202-04:00">
+        <Text>[xUnit.net 00:00:04.60]     CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

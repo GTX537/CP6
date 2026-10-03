@@ -1,0 +1,164 @@
+{
+  "SchemaVersion": 1,
+  "Task": "BUG-150",
+  "ArchiveKind": "Independent post-merge delivery and ordinary cleanup public originals",
+  "CapturedUtc": "2026-10-03T14:59:25.4386744Z",
+  "RemoteMain": "522433a370c0c247a98b300c69e88e403217d53a",
+  "Candidate": "af47a6936f0057e7ff0ae6b58e54d47d215dd0bd",
+  "EqualCandidateAndRemoteTree": "d4efdeb7dc52ca761695db1a23f782d4e223faa8",
+  "OriginalFileCount": 15,
+  "OriginalBytes": 214569.0,
+  "PreviousDeliveredOriginalCount": 29,
+  "PreviousDeliveredManifestSha256": "C30AAD42D1ED8E1AACE2CA7ADAB9DB5ED371261BF277D4EC694EDF6D88709498",
+  "PreviousDeliveredEvidenceModified": false,
+  "AllowlistSha256": "03E3DB08947CCD99B91618CD1A9506CDBBD6D62B8F3B270D9BF2D94B3083C231",
+  "PublicContentChecks": {
+    "CredentialValuesCompared": true,
+    "PrivateInputsCopied": 0,
+    "PrivateValuesRecorded": 0,
+    "RejectedFiles": 0
+  },
+  "SmokeBindings": [
+    {
+      "Label": "bug150-sql-post-merge-smoke",
+      "Passed": 2,
+      "Failed": 0,
+      "Total": 2,
+      "ProcessLogHashMatched": true,
+      "TrxCountsMatched": true,
+      "Scope": "Actual original same-key concurrency smoke only; not a rerun of all regression cases."
+    },
+    {
+      "Label": "bug150-pg-post-merge-smoke",
+      "Passed": 2,
+      "Failed": 0,
+      "Total": 2,
+      "ProcessLogHashMatched": true,
+      "TrxCountsMatched": true,
+      "Scope": "Actual original same-key concurrency smoke only; not a rerun of all regression cases."
+    }
+  ],
+  "Files": [
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-before-push-workflow-input-inspection.json",
+      "RelativePath": "bug150-before-push-workflow-input-inspection.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "087785D57483FCD2EAB0B8D63E042965A728BB79ED3B2B32A135AB52C42D00AD",
+      "Bytes": 6762
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-before-pr-create-workflow-input-inspection.json",
+      "RelativePath": "bug150-before-pr-create-workflow-input-inspection.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "396F31E67AA5BD7266A2602C53A86418CB8BEB43FA554370BB03BC45D70F268A",
+      "Bytes": 6762
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-before-merge-workflow-input-inspection.json",
+      "RelativePath": "bug150-before-merge-workflow-input-inspection.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "F5CE6EDB1EA5B8FE17BB5D7E3EB82F79BD6FEED2F5DF60CC371AC544834F2A57",
+      "Bytes": 6762
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-staged-evidence-check.json",
+      "RelativePath": "bug150-staged-evidence-check.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "7EE2B305DBF8A5220172616E99A4F04A3292B9E98C3F5EB5DCA3A9EB9EF2752C",
+      "Bytes": 95
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-remote-main-observation.json",
+      "RelativePath": "bug150-remote-main-observation.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "2EAA180A274B3E00919322670F3B3F4ED812946D34394C993FF76A79C5E5D65D",
+      "Bytes": 611
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-sql-post-merge-smoke.json",
+      "RelativePath": "bug150-sql-post-merge-smoke.json",
+      "Category": "public-proof",
+      "Label": "bug150-sql-post-merge-smoke",
+      "Sha256": "9955DD5C7A6C5FC0DC733BEF5F14DC7C9C7D6E1408BA19E6D088DF313E4B7DB8",
+      "Bytes": 80154
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-pg-post-merge-smoke.json",
+      "RelativePath": "bug150-pg-post-merge-smoke.json",
+      "Category": "public-proof",
+      "Label": "bug150-pg-post-merge-smoke",
+      "Sha256": "A6BD7B8987CA1C8B37361B0683B92423A3166F827127FEC7A47F978E93EEE77D",
+      "Bytes": 80153
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-owned-databases-cleanup.json",
+      "RelativePath": "bug150-owned-databases-cleanup.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "4E5E9C9B41A4399C16EF5A514EA2EBE142310F4728ACB858E96AE08656EF459B",
+      "Bytes": 531
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Remove-Bug150OwnedDatabases.ps1",
+      "RelativePath": "Remove-Bug150OwnedDatabases.ps1",
+      "Category": "cleanup-script",
+      "Label": null,
+      "Sha256": "FE1204F12D01D5FCB2359CA10AF8306445F93EE98865E63F18EC0077E40A4253",
+      "Bytes": 4633
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-issue-closed-observation.json",
+      "RelativePath": "bug150-issue-closed-observation.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "FB2BCFD919E744749CB5BA1EE80DE4ABE4CB44B9D7493D9AA6D348CFA7C167C7",
+      "Bytes": 421
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-delivery-closure.json",
+      "RelativePath": "bug150-delivery-closure.json",
+      "Category": "public-proof",
+      "Label": null,
+      "Sha256": "F9CF37CB44D576D10A65928F1CE81773097FF967D0D5DCEEE644BFEA49E16CA8",
+      "Bytes": 985
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-post-merge-smoke\\process.log",
+      "RelativePath": "runs/bug150-sql-post-merge-smoke/process.log",
+      "Category": "raw-process-log",
+      "Label": "bug150-sql-post-merge-smoke",
+      "Sha256": "B55D49D900D7AB1EFA231F1ACFCFEE38B7CB0F1924605285323A2DC1479300C1",
+      "Bytes": 439
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-post-merge-smoke\\results.trx",
+      "RelativePath": "runs/bug150-sql-post-merge-smoke/results.trx",
+      "Category": "raw-trx",
+      "Label": "bug150-sql-post-merge-smoke",
+      "Sha256": "E4A98BB41E37080CAB77212AA39C30C75E0693FEEAA0D582BD87712B6C5BEC11",
+      "Bytes": 19638
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-post-merge-smoke\\process.log",
+      "RelativePath": "runs/bug150-pg-post-merge-smoke/process.log",
+      "Category": "raw-process-log",
+      "Label": "bug150-pg-post-merge-smoke",
+      "Sha256": "04903409F7822E0A5089CF0483C711F5F6BA42C86F46E4026E72D850601980A6",
+      "Bytes": 441
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-post-merge-smoke\\results.trx",
+      "RelativePath": "runs/bug150-pg-post-merge-smoke/results.trx",
+      "Category": "raw-trx",
+      "Label": "bug150-pg-post-merge-smoke",
+      "Sha256": "FAD79348A0D799B4EFDEA99B129FDB5113850DB3761D57E4BB1DA853DFA388A6",
+      "Bytes": 6182
+    }
+  ],
+  "Scope": "Copies only the 15 explicit public post-merge originals. Preserves original 29-file evidence and WP5 initial evidence. Does not run builds, database operations, remote checks, commit, stage, or broaden the original smoke scope."
+}

@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a3de2b49-881f-40ad-b8a7-a7b6ba3bf6df" name="tt@LAPTOP-3QQ44FJS 2026-10-03 08:57:02" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T08:57:02.9794443-04:00" queuing="2026-10-03T08:57:02.9794446-04:00" start="2026-10-03T08:56:52.6095201-04:00" finish="2026-10-03T08:57:02.9837980-04:00" />
+  <TestSettings name="default" id="62ac820c-8a3a-461d-ba0d-440210ffec48">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_08_57_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3a051f36-1b3c-40c4-961f-1126f08cb327" testId="541f5b7f-957c-c555-06e3-79c2ec354dd0" testName="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0089313" startTime="2026-10-03T08:57:02.8574860-04:00" endTime="2026-10-03T08:57:02.8586092-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a051f36-1b3c-40c4-961f-1126f08cb327">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.</StdOut>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42883: プロシージャ usp_getmesprocessprogress() は存在しません&#xD;
+&#xD;
+POSITION: 6</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434&#xD;
+   at CP6.Core.Services.Mes.MesDashboardDapperService.GetProcessProgressAsync() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Mes\MesDashboardDapperService.cs:line 44&#xD;
+   at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs:line 52&#xD;
+   at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs:line 52&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9a7a2d9c-fe45-4a11-a32a-8b3bca9de0dc" testId="f27a93dd-83f9-c964-bf00-bc5b7e34098f" testName="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0084131" startTime="2026-10-03T08:57:02.8598609-04:00" endTime="2026-10-03T08:57:02.8679317-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a7a2d9c-fe45-4a11-a32a-8b3bca9de0dc">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.</StdOut>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42883: プロシージャ usp_getmesdailytrend(Days =&gt; integer) は存在しません&#xD;
+&#xD;
+POSITION: 6</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434&#xD;
+   at CP6.Core.Services.Mes.MesDashboardDapperService.GetDailyTrendAsync(Int32 days) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Mes\MesDashboardDapperService.cs:line 34&#xD;
+   at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs:line 36&#xD;
+   at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ad097d02-35fa-4d86-bb64-2551f0e56d63" testId="99a68eeb-c7e1-14bf-ea39-6b0bed63d0b3" testName="CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0137402" startTime="2026-10-03T08:57:02.8692587-04:00" endTime="2026-10-03T08:57:02.8965556-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad097d02-35fa-4d86-bb64-2551f0e56d63">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.</StdOut>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: リレーション"t_order"は存在しません&#xD;
+&#xD;
+POSITION: 69</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489&#xD;
+   at CP6.WebApi.Controllers.Sys.DashboardController.&lt;GetSummary&gt;b__3_0() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.WebApi\Controllers\Sys\DashboardController.cs:line 55&#xD;
+   at CP6.Core.Utilities.CacheService.GetOrSetAsync[T](String key, Func`1 factory, Nullable`1 expiration) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Utilities\CacheService.cs:line 76&#xD;
+   at CP6.WebApi.Controllers.Sys.DashboardController.GetSummary() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.WebApi\Controllers\Sys\DashboardController.cs:line 37&#xD;
+   at CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\DashboardRelationalTests.cs:line 22&#xD;
+   at CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\DashboardRelationalTests.cs:line 27&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5b02272f-b3de-46d3-b239-28847b2188c3" testId="511cc003-950e-f719-030b-af338fe288cc" testName="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1015510" startTime="2026-10-03T08:57:02.7356575-04:00" endTime="2026-10-03T08:57:02.8481241-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b02272f-b3de-46d3-b239-28847b2188c3">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.</StdOut>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42883: プロシージャ usp_getmesdashboardsummary() は存在しません&#xD;
+&#xD;
+POSITION: 6</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489&#xD;
+   at CP6.Core.Services.Mes.MesDashboardDapperService.GetSummaryAsync() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Mes\MesDashboardDapperService.cs:line 25&#xD;
+   at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs:line 18&#xD;
+   at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="541f5b7f-957c-c555-06e3-79c2ec354dd0">
+      <Execution id="3a051f36-1b3c-40c4-961f-1126f08cb327" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests" name="Process_progress_empty_returns_empty" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f27a93dd-83f9-c964-bf00-bc5b7e34098f">
+      <Execution id="9a7a2d9c-fe45-4a11-a32a-8b3bca9de0dc" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests" name="Daily_trend_fills_three_zero_days" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="99a68eeb-c7e1-14bf-ea39-6b0bed63d0b3">
+      <Execution id="ad097d02-35fa-4d86-bb64-2551f0e56d63" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.DashboardRelationalTests" name="Summary_reads_empty_native_database" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="511cc003-950e-f719-030b-af338fe288cc">
+      <Execution id="5b02272f-b3de-46d3-b239-28847b2188c3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests" name="Summary_empty_returns_zero" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="541f5b7f-957c-c555-06e3-79c2ec354dd0" executionId="3a051f36-1b3c-40c4-961f-1126f08cb327" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f27a93dd-83f9-c964-bf00-bc5b7e34098f" executionId="9a7a2d9c-fe45-4a11-a32a-8b3bca9de0dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99a68eeb-c7e1-14bf-ea39-6b0bed63d0b3" executionId="ad097d02-35fa-4d86-bb64-2551f0e56d63" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="511cc003-950e-f719-030b-af338fe288cc" executionId="5b02272f-b3de-46d3-b239-28847b2188c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.51]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.53]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:09.89]       Npgsql.PostgresException : 42883: プロシージャ usp_getmesdashboardsummary() は存在しません&#xD;
+[xUnit.net 00:00:09.89]       &#xD;
+[xUnit.net 00:00:09.89]       POSITION: 6&#xD;
+[xUnit.net 00:00:09.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.89]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:09.89]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:09.89]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.89]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.89]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.89]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.89]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.89]         /_/Dapper/SqlMapper.Async.cs(489,0): at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command)&#xD;
+[xUnit.net 00:00:09.89]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Mes\MesDashboardDapperService.cs(25,0): at CP6.Core.Services.Mes.MesDashboardDapperService.GetSummaryAsync()&#xD;
+[xUnit.net 00:00:09.89]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs(18,0): at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero()&#xD;
+[xUnit.net 00:00:09.89]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs(24,0): at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero()&#xD;
+[xUnit.net 00:00:09.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.89]       Output:&#xD;
+[xUnit.net 00:00:09.89]         Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.&#xD;
+[xUnit.net 00:00:09.90]       Npgsql.PostgresException : 42883: プロシージャ usp_getmesprocessprogress() は存在しません&#xD;
+[xUnit.net 00:00:09.90]       &#xD;
+[xUnit.net 00:00:09.90]       POSITION: 6&#xD;
+[xUnit.net 00:00:09.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.90]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:09.90]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:09.90]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.90]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.90]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.90]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.90]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.90]         /_/Dapper/SqlMapper.Async.cs(434,0): at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command)&#xD;
+[xUnit.net 00:00:09.90]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Mes\MesDashboardDapperService.cs(44,0): at CP6.Core.Services.Mes.MesDashboardDapperService.GetProcessProgressAsync()&#xD;
+[xUnit.net 00:00:09.90]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs(52,0): at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty()&#xD;
+[xUnit.net 00:00:09.90]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs(52,0): at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty()&#xD;
+[xUnit.net 00:00:09.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.90]       Output:&#xD;
+[xUnit.net 00:00:09.90]         Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.&#xD;
+[xUnit.net 00:00:09.91]       Npgsql.PostgresException : 42883: プロシージャ usp_getmesdailytrend(Days =&gt; integer) は存在しません&#xD;
+[xUnit.net 00:00:09.91]       &#xD;
+[xUnit.net 00:00:09.91]       POSITION: 6&#xD;
+[xUnit.net 00:00:09.91]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.91]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:09.91]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:09.91]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.91]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.91]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.91]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.91]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.91]         /_/Dapper/SqlMapper.Async.cs(434,0): at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command)&#xD;
+[xUnit.net 00:00:09.91]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Mes\MesDashboardDapperService.cs(34,0): at CP6.Core.Services.Mes.MesDashboardDapperService.GetDailyTrendAsync(Int32 days)&#xD;
+[xUnit.net 00:00:09.91]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs(36,0): at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days()&#xD;
+[xUnit.net 00:00:09.91]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\MesReportsRelationalTests.cs(43,0): at CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days()&#xD;
+[xUnit.net 00:00:09.91]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.91]       Output:&#xD;
+[xUnit.net 00:00:09.91]         Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.&#xD;
+[xUnit.net 00:00:09.94]       Npgsql.PostgresException : 42P01: リレーション"t_order"は存在しません&#xD;
+[xUnit.net 00:00:09.94]       &#xD;
+[xUnit.net 00:00:09.94]       POSITION: 69&#xD;
+[xUnit.net 00:00:09.94]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.94]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:09.94]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:09.94]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.94]         /_/Dapper/SqlMapper.Async.cs(489,0): at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.WebApi\Controllers\Sys\DashboardController.cs(55,0): at CP6.WebApi.Controllers.Sys.DashboardController.&lt;GetSummary&gt;b__3_0()&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Utilities\CacheService.cs(76,0): at CP6.Core.Utilities.CacheService.GetOrSetAsync[T](String key, Func`1 factory, Nullable`1 expiration)&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.WebApi\Controllers\Sys\DashboardController.cs(37,0): at CP6.WebApi.Controllers.Sys.DashboardController.GetSummary()&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\DashboardRelationalTests.cs(22,0): at CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database()&#xD;
+[xUnit.net 00:00:09.94]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\DashboardRelationalTests.cs(27,0): at CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database()&#xD;
+[xUnit.net 00:00:09.94]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.94]       Output:&#xD;
+[xUnit.net 00:00:09.94]         Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.&#xD;
+[xUnit.net 00:00:09.94]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T08:57:02.8499330-04:00">
+        <Text>[xUnit.net 00:00:09.89]     CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T08:57:02.8592250-04:00">
+        <Text>[xUnit.net 00:00:09.90]     CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T08:57:02.8683693-04:00">
+        <Text>[xUnit.net 00:00:09.91]     CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T08:57:02.8970293-04:00">
+        <Text>[xUnit.net 00:00:09.94]     CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

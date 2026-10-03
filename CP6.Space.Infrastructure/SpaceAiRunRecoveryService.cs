@@ -77,7 +77,17 @@ public sealed class SpaceAiRunRecoveryService(
             ReconcileRunAsync,
             cancellationToken);
 
-    public async Task<SpaceAiGenerationRunActionDto> RecoverAsync(
+    public Task<SpaceAiGenerationRunActionDto> RecoverAsync(
+        Guid versionId,
+        CreateSpaceAiGenerationRecoveryRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        SpaceAiOwnedCommandRetry.ExecuteAsync(
+            context,
+            () => RecoverOnceAsync(versionId, request, idempotencyKey, cancellationToken),
+            cancellationToken);
+
+    private async Task<SpaceAiGenerationRunActionDto> RecoverOnceAsync(
         Guid versionId,
         CreateSpaceAiGenerationRecoveryRequest request,
         string idempotencyKey,
@@ -275,7 +285,19 @@ public sealed class SpaceAiRunRecoveryService(
         }
     }
 
-    private async Task<SpaceAiGenerationRunActionDto> MutateRunAsync(
+    private Task<SpaceAiGenerationRunActionDto> MutateRunAsync(
+        string operation,
+        Guid runId,
+        SpaceAiRunActionRequest request,
+        string idempotencyKey,
+        Func<SpaceGenerationRun, SpaceJob?, CancellationToken, Task> mutation,
+        CancellationToken cancellationToken) =>
+        SpaceAiOwnedCommandRetry.ExecuteAsync(
+            context,
+            () => MutateRunOnceAsync(operation, runId, request, idempotencyKey, mutation, cancellationToken),
+            cancellationToken);
+
+    private async Task<SpaceAiGenerationRunActionDto> MutateRunOnceAsync(
         string operation,
         Guid runId,
         SpaceAiRunActionRequest request,
@@ -540,6 +562,17 @@ public sealed class SpaceAiRunRecoveryService(
         {
             run = await context.GenerationRuns.FromSqlInterpolated(
                     $"SELECT * FROM [Space_GenerationRun] WITH (UPDLOCK, HOLDLOCK) WHERE [TenantId] = {execution.TenantId} AND [Id] = {runId} AND [IsDeleted] = CAST(0 AS bit)")
+                .SingleOrDefaultAsync(cancellationToken);
+        }
+        else if (context.Database.IsNpgsql())
+        {
+            run = await context.GenerationRuns.FromSqlInterpolated(
+                    $"""
+                    SELECT * FROM "Space_GenerationRun"
+                    WHERE "TenantId" = {execution.TenantId}
+                      AND "Id" = {runId} AND "IsDeleted" = FALSE
+                    FOR UPDATE
+                    """)
                 .SingleOrDefaultAsync(cancellationToken);
         }
         else
@@ -824,10 +857,11 @@ public sealed class SpaceAiRunRecoveryService(
         CancellationToken cancellationToken) =>
         transaction?.CommitAsync(cancellationToken) ?? Task.CompletedTask;
 
-    private static async Task RollbackAsync(
+    private async Task RollbackAsync(
         IDbContextTransaction? transaction)
     {
-        if (transaction is not null)
+        if (transaction is not null &&
+            (!context.Database.IsNpgsql() || transaction.GetDbTransaction().Connection is not null))
             await transaction.RollbackAsync(CancellationToken.None);
     }
 

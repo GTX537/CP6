@@ -8,11 +8,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceAiCapacityPersistenceTests
+public sealed class SpaceAiCapacityPersistenceTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private static readonly DateTime InitialNow =
         new(2026, 7, 30, 19, 30, 0, DateTimeKind.Utc);
@@ -409,7 +410,7 @@ public sealed class SpaceAiCapacityPersistenceTests
             });
     }
 
-    private static async Task<SpaceAiWorkSlotLease?> AcquireAsync(
+    private async Task<SpaceAiWorkSlotLease?> AcquireAsync(
         string connectionString,
         Guid tenantId,
         MutableClock clock,
@@ -429,7 +430,7 @@ public sealed class SpaceAiCapacityPersistenceTests
             TimeSpan.FromSeconds(60));
     }
 
-    private static async Task<SpaceAiBudgetReservationLease?> ReserveAsync(
+    private async Task<SpaceAiBudgetReservationLease?> ReserveAsync(
         string connectionString,
         Guid tenantId,
         MutableClock clock,
@@ -528,11 +529,20 @@ public sealed class SpaceAiCapacityPersistenceTests
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             clock);
 
-    private static SpaceContext CreateSqlContext(
+    private SpaceContext CreateSqlContext(
         string connectionString,
         Guid tenantId,
-        MutableClock clock) =>
-        new(
+        MutableClock clock)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected capacity contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(new TestExecutionContext(tenantId, Guid.NewGuid()), clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "ai-capacity-business"));
+        }
+
+        return new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(
                     connectionString,
@@ -541,12 +551,20 @@ public sealed class SpaceAiCapacityPersistenceTests
                 .Options,
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             clock);
+    }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Guid tenantId,
         MutableClock clock,
         Func<string, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)

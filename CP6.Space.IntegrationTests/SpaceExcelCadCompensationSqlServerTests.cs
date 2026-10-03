@@ -7,11 +7,14 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceExcelCadCompensationSqlServerTests
+public sealed class SpaceExcelCadCompensationSqlServerTests(
+    SpaceRelationalFixture database,
+    ITestOutputHelper output)
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -331,9 +334,17 @@ public sealed class SpaceExcelCadCompensationSqlServerTests
             SHA256.HashData(Encoding.UTF8.GetBytes(value)))
         .ToLowerInvariant();
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecution, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString,
+                new TestExecution(Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -355,10 +366,20 @@ public sealed class SpaceExcelCadCompensationSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecution execution,
-        TestClock clock) => new(
+        TestClock clock)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Excel CAD compensation contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "excel-cad-compensation-business"));
+        }
+
+        return new(
         new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,
@@ -367,6 +388,7 @@ public sealed class SpaceExcelCadCompensationSqlServerTests
             .Options,
         execution,
         clock);
+    }
 
     private sealed record TestExecution(Guid TenantId, Guid ActorId) :
         ISpaceExecutionContext

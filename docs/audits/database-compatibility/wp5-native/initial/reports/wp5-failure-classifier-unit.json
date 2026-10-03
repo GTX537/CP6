@@ -1,0 +1,46 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Suite": "FailureClassifierUnit",
+  "StartedUtc": "2026-10-03T13:58:29.5659596Z",
+  "FinishedUtc": "2026-10-03T13:58:32.1304909Z",
+  "ProcessExitCode": 0,
+  "Counts": {
+    "Total": 42,
+    "Passed": 42,
+    "Failed": 0,
+    "Other": 0,
+    "Expected": 42
+  },
+  "RequiredCaseCountValidated": true,
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "Sha256": "3628F471409D979C089B9F492319B4E2A4498FFF2A581643BA1349B96C4FA662"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseFailureClassifierTests.cs",
+      "Sha256": "2D73C3F93AE2A88731B6C8468650F3FD787BFBD37DB4F739D887FEDC574580EA"
+    },
+    {
+      "Path": "CP6.Tests/CP6.Tests.csproj",
+      "Sha256": "B9EF4AA8B037F65DE63EAFD8BDB30BDC042ED67DFB82E0E7973105B77AA883A3"
+    },
+    {
+      "Path": "CP6.Tests/packages.lock.json",
+      "Sha256": "654973D7905B5E124BB2DC2C97D5A7ED1E334C175E02699C225B9B097313C6E5"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "CFBB0957D70DAA9424E2D8A9446F7ECF7BE272D1B898B1E3E65F4F8763D3BB7E"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "C4F3CA35C51CB9E6112D42C7375573F189814BCFDA04BB80264B45B9360A3209"
+    }
+  ],
+  "ProcessLog": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-failure-classifier-unit\\process.log",
+  "ProcessLogSha256": "A29CC0914E988E794A7267C5C4E0B9F9BA12AF056C4A46752E5D4F8065AC60A3",
+  "Scope": "Classifier unit contract only; native restrict failure and database regressions recorded separately."
+}

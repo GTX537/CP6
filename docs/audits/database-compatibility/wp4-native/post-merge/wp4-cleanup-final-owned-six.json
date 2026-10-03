@@ -1,0 +1,130 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "ScriptSha256": "D3E0DC4200C71DA4CAC25443CE8FBE70BCFC3DD9F8022AE465686A71C4635F8A",
+  "Scope": "Only six exact WP4 receipt-owned databases; all-target read-only preflight, per-target ownership/identity/activity recheck, ordinary DROP, no session termination.",
+  "StartedUtc": "2026-10-03T12:41:02.7949216Z",
+  "FinishedUtc": "2026-10-03T12:41:06.9417204Z",
+  "Status": "Completed",
+  "Phase": "Completed",
+  "FailureCode": null,
+  "ExpectedDatabaseCount": 6,
+  "AllSixPreflightPassed": true,
+  "Dropped": 6,
+  "AllSixAbsent": true,
+  "DroppedCountScope": "Confirmed native DROP successes; attempted-but-unconfirmed outcomes remain explicit on each target.",
+  "ReceiptBytesUnchanged": true,
+  "PostgreSqlRolesRetained": true,
+  "PostgreSqlEnvironmentRestored": true,
+  "Receipts": [
+    {
+      "File": "db-compat.wp4-owned.json",
+      "Path": "D:\\CP6\\tmp\\db-compat.wp4-owned.json",
+      "Sha256": "02624F8BC4F52BCC8A73C3853C3456FA801ABD10750EB2770491EDD1B6EDDCFD",
+      "BytesUnchanged": true
+    },
+    {
+      "File": "db-compat.wp4-erp-owned.json",
+      "Path": "D:\\CP6\\tmp\\db-compat.wp4-erp-owned.json",
+      "Sha256": "791D864FA457DB80A6CE703ABF81FE3C79F64620BDADE7CF47A75BC0763AA50B",
+      "BytesUnchanged": true
+    },
+    {
+      "File": "db-compat.wp4-business-owned.json",
+      "Path": "D:\\CP6\\tmp\\db-compat.wp4-business-owned.json",
+      "Sha256": "F2855E3A1C7FC77429387035203A5B56C7CAD04909CBFD0FA3A84A6A61BE9DAD",
+      "BytesUnchanged": true
+    }
+  ],
+  "Targets": [
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP4_20261003_032b2139",
+      "OwnerSuffix": "032b2139",
+      "Receipt": "db-compat.wp4-owned.json",
+      "PreflightPassed": true,
+      "DatabaseId": 68,
+      "ActiveSessions": 0,
+      "ActiveRequests": 0,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP4_20261003_032b2139",
+      "OwnerSuffix": "032b2139",
+      "Receipt": "db-compat.wp4-owned.json",
+      "PreflightPassed": true,
+      "DatabaseId": "76950",
+      "ActiveSessions": 0,
+      "ActiveRequests": null,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP4_20261003_c4e6beaf",
+      "OwnerSuffix": "c4e6beaf",
+      "Receipt": "db-compat.wp4-erp-owned.json",
+      "PreflightPassed": true,
+      "DatabaseId": 69,
+      "ActiveSessions": 0,
+      "ActiveRequests": 0,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP4_20261003_c4e6beaf",
+      "OwnerSuffix": "c4e6beaf",
+      "Receipt": "db-compat.wp4-erp-owned.json",
+      "PreflightPassed": true,
+      "DatabaseId": "84752",
+      "ActiveSessions": 0,
+      "ActiveRequests": null,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP4_20261003_07fbd783",
+      "OwnerSuffix": "07fbd783",
+      "Receipt": "db-compat.wp4-business-owned.json",
+      "PreflightPassed": true,
+      "DatabaseId": 70,
+      "ActiveSessions": 0,
+      "ActiveRequests": 0,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP4_20261003_07fbd783",
+      "OwnerSuffix": "07fbd783",
+      "Receipt": "db-compat.wp4-business-owned.json",
+      "PreflightPassed": true,
+      "DatabaseId": "92541",
+      "ActiveSessions": 0,
+      "ActiveRequests": null,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    }
+  ]
+}

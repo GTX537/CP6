@@ -1,0 +1,13 @@
+{
+  "Issue": 150,
+  "State": "closed",
+  "StateReason": "completed",
+  "ClosedAt": "2026-10-03T14:47:22Z",
+  "Url": "https://github.com/GTX537/CP6/issues/150",
+  "RemoteMain": "522433a370c0c247a98b300c69e88e403217d53a",
+  "Candidate": "af47a6936f0057e7ff0ae6b58e54d47d215dd0bd",
+  "ActualPostMergeSqlCases": 2,
+  "ActualPostMergePostgreSqlCases": 2,
+  "OwnedCleanupComplete": true,
+  "ActionsTriggered": 0
+}

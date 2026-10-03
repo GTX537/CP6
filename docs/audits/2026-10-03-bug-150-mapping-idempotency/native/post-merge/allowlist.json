@@ -1,0 +1,92 @@
+[
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-before-push-workflow-input-inspection.json",
+    "RelativePath": "bug150-before-push-workflow-input-inspection.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-before-pr-create-workflow-input-inspection.json",
+    "RelativePath": "bug150-before-pr-create-workflow-input-inspection.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-before-merge-workflow-input-inspection.json",
+    "RelativePath": "bug150-before-merge-workflow-input-inspection.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-staged-evidence-check.json",
+    "RelativePath": "bug150-staged-evidence-check.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-remote-main-observation.json",
+    "RelativePath": "bug150-remote-main-observation.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-sql-post-merge-smoke.json",
+    "RelativePath": "bug150-sql-post-merge-smoke.json",
+    "Category": "public-proof",
+    "Label": "bug150-sql-post-merge-smoke"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-pg-post-merge-smoke.json",
+    "RelativePath": "bug150-pg-post-merge-smoke.json",
+    "Category": "public-proof",
+    "Label": "bug150-pg-post-merge-smoke"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-owned-databases-cleanup.json",
+    "RelativePath": "bug150-owned-databases-cleanup.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Remove-Bug150OwnedDatabases.ps1",
+    "RelativePath": "Remove-Bug150OwnedDatabases.ps1",
+    "Category": "cleanup-script",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-issue-closed-observation.json",
+    "RelativePath": "bug150-issue-closed-observation.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-delivery-closure.json",
+    "RelativePath": "bug150-delivery-closure.json",
+    "Category": "public-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-post-merge-smoke\\process.log",
+    "RelativePath": "runs/bug150-sql-post-merge-smoke/process.log",
+    "Category": "raw-process-log",
+    "Label": "bug150-sql-post-merge-smoke"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-post-merge-smoke\\results.trx",
+    "RelativePath": "runs/bug150-sql-post-merge-smoke/results.trx",
+    "Category": "raw-trx",
+    "Label": "bug150-sql-post-merge-smoke"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-post-merge-smoke\\process.log",
+    "RelativePath": "runs/bug150-pg-post-merge-smoke/process.log",
+    "Category": "raw-process-log",
+    "Label": "bug150-pg-post-merge-smoke"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\bug150-tests\\bug150-pg-post-merge-smoke\\results.trx",
+    "RelativePath": "runs/bug150-pg-post-merge-smoke/results.trx",
+    "Category": "raw-trx",
+    "Label": "bug150-pg-post-merge-smoke"
+  }
+]

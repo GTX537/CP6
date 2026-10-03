@@ -5,20 +5,18 @@ using CP6.Space.Application;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class Cp6SpaceWmsAdapterSqlServerTests
+public sealed class Cp6SpaceWmsAdapterSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
-    private static readonly Guid TenantId =
-        Guid.Parse("11111111-1111-1111-1111-111111111111");
-    private static readonly Guid SiteId =
-        Guid.Parse("22222222-2222-2222-2222-222222222222");
-    private static readonly Guid AttemptId =
-        Guid.Parse("33333333-3333-3333-3333-333333333333");
-    private static readonly Guid CorrelationId =
-        Guid.Parse("44444444-4444-4444-4444-444444444444");
+    private readonly Guid TenantId = Guid.NewGuid();
+    private readonly Guid SiteId = Guid.NewGuid();
+    private readonly Guid AttemptId = Guid.NewGuid();
+    private readonly Guid CorrelationId = Guid.NewGuid();
+    private readonly Dictionary<int, Guid> locationIds = new();
     private static readonly string PlanHash = new('1', 64);
 
     [SqlServerFact]
@@ -240,9 +238,16 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
         });
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -262,8 +267,16 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
         }
     }
 
-    private static CP6Context CreateContext(string connectionString)
+    private CP6Context CreateContext(string connectionString)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Core contexts must use the fixture-owned connection.");
+            return database.CreateCoreContext(TenantId,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "wms-adapter"));
+        }
+
         var tenant = new TenantContext
         {
             CurrentTenantId = TenantId,
@@ -274,7 +287,7 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
         return new CP6Context(options, tenant);
     }
 
-    private static SpaceWmsContext Context() =>
+    private SpaceWmsContext Context() =>
         new(TenantId, SiteId, "WH-01", CorrelationId);
 
     private static StockTransaction Transaction(
@@ -297,7 +310,7 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
             Qty = quantity,
         };
 
-    private static SpaceWmsBatch Batch(
+    private SpaceWmsBatch Batch(
         int batchNo,
         params SpaceWmsLocationMutation[] items) =>
         SpaceWmsBatch.Create(
@@ -307,7 +320,7 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
             PlanHash,
             items);
 
-    private static SpaceWmsLocationMutation Mutation(
+    private SpaceWmsLocationMutation Mutation(
         int sequenceNo,
         string code,
         SpaceWmsLocationAction action = SpaceWmsLocationAction.Create,
@@ -328,6 +341,9 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
                 1),
             version: version);
 
-    private static Guid LocationId(int value) =>
-        Guid.Parse($"aaaaaaaa-aaaa-aaaa-aaaa-{value:D12}");
+    private Guid LocationId(int value)
+    {
+        if (!locationIds.TryGetValue(value, out var id)) locationIds[value] = id = Guid.NewGuid();
+        return id;
+    }
 }

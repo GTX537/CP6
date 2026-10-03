@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="95828caa-4578-445d-88e3-4e9797b11f4d" name="tt@LAPTOP-3QQ44FJS 2026-10-03 10:58:24" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T10:58:24.8958838-04:00" queuing="2026-10-03T10:58:24.8958841-04:00" start="2026-10-03T10:58:19.6752697-04:00" finish="2026-10-03T10:58:24.8997184-04:00" />
+  <TestSettings name="default" id="ca377ca9-116e-4f84-bb5f-7dde0e84038a">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_10_58_24" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="72f1cc90-a3cb-4f29-a242-aba69b09dc2a" testId="5f64d7ed-d89c-db51-bfa2-b0e85da429bf" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2074639" startTime="2026-10-03T10:58:24.5612999-04:00" endTime="2026-10-03T10:58:24.7688589-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72f1cc90-a3cb-4f29-a242-aba69b09dc2a">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d86039b9-652c-4403-bb7b-a76c7af0ca43" testId="c784cbc8-a636-374d-2cb1-1727f5948706" testName="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0563070" startTime="2026-10-03T10:58:24.5089638-04:00" endTime="2026-10-03T10:58:24.5599361-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d86039b9-652c-4403-bb7b-a76c7af0ca43">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e1733e41-7362-4d3a-9187-2df5e08020a1" testId="14794b26-84b6-8b9b-0652-01d0f5b0b1e4" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0474606" startTime="2026-10-03T10:58:24.7690408-04:00" endTime="2026-10-03T10:58:24.8166636-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1733e41-7362-4d3a-9187-2df5e08020a1">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+CAD mapping physical sessions: 32600, 3028.&#xD;
+Both commands read empty idempotency before their first profile INSERT; no test retry.&#xD;
+Provider=PostgreSql; Stage=cad-mapping-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="879818ae-ff6e-40c9-8886-ce389841b13c" testId="405d2313-a31c-9579-a7f8-f4685581b2d2" testName="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6154243" startTime="2026-10-03T10:58:23.8973572-04:00" endTime="2026-10-03T10:58:24.5026234-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="879818ae-ff6e-40c9-8886-ce389841b13c">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Excel mapping physical sessions: 13408, 3028.&#xD;
+Both commands read empty idempotency before their first profile INSERT; no test retry.&#xD;
+Provider=PostgreSql; Stage=excel-mapping-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="5f64d7ed-d89c-db51-bfa2-b0e85da429bf">
+      <Execution id="72f1cc90-a3cb-4f29-a242-aba69b09dc2a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests" name="Sql_migration_persists_rowversion_versions_and_tenant_scope" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="14794b26-84b6-8b9b-0652-01d0f5b0b1e4">
+      <Execution id="e1733e41-7362-4d3a-9187-2df5e08020a1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests" name="Concurrent_same_key_create_returns_one_profile_and_replay" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="c784cbc8-a636-374d-2cb1-1727f5948706">
+      <Execution id="d86039b9-652c-4403-bb7b-a76c7af0ca43" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests" name="Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="405d2313-a31c-9579-a7f8-f4685581b2d2">
+      <Execution id="879818ae-ff6e-40c9-8886-ce389841b13c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests" name="Concurrent_same_key_create_returns_one_profile_and_replay" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5f64d7ed-d89c-db51-bfa2-b0e85da429bf" executionId="72f1cc90-a3cb-4f29-a242-aba69b09dc2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c784cbc8-a636-374d-2cb1-1727f5948706" executionId="d86039b9-652c-4403-bb7b-a76c7af0ca43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14794b26-84b6-8b9b-0652-01d0f5b0b1e4" executionId="e1733e41-7362-4d3a-9187-2df5e08020a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="405d2313-a31c-9579-a7f8-f4685581b2d2" executionId="879818ae-ff6e-40c9-8886-ce389841b13c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.16]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.22]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.23]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:04.60]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -34,4 +34,12 @@ CAD 和 Excel 映射保存采用 Serializable 事务。两个独立会话同时�
 dotnet test CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj --filter 'FullyQualifiedName~CP6.Space.IntegrationTests.SpaceMappingProfileConcurrencyTests'
 ```
 
-当前为本地验证完成、远端交付待核对，Issue150 仍 Open。后续正常 PR 合并、远端包含性核对与原步骤冒烟后才关闭。没有 Actions 运行/取消、工作流或保护变更，也没有生产部署；完整 WP5/6 仍待完成。
+## 远端交付与清理
+
+[PR151](https://github.com/GTX537/CP6/pull/151)已正常合并。候选`af47a6936f0057e7ff0ae6b58e54d47d215dd0bd`与远端main `522433a370c0c247a98b300c69e88e403217d53a`的完整树均为`d4efdeb7dc52ca761695db1a23f782d4e223faa8`，远端包含性和实际观察见[主线证明](native/post-merge/bug150-remote-main-observation.json)。合并后原同key并发步骤在SQL/PG各新执行2/2、零skip；这次冒烟只复测两个并发事实，原四项完整回归和12项单元结果按未变化的已验证输入复用，不宣称又执行一套完整回归。
+
+两自有临时库实际核对owner后普通DROP，并确认不存在；未强制断开会话，PG角色和原receipt保留。见[清理原件](native/post-merge/bug150-owned-databases-cleanup.json)及[清理脚本](native/post-merge/Remove-Bug150OwnedDatabases.ps1)。Issue150于`2026-10-03T14:47:22Z`关闭，[关闭观察](native/post-merge/bug150-issue-closed-observation.json)与[交付闭环](native/post-merge/bug150-delivery-closure.json)记录实际状态。
+
+交付后公共证据独立归档为[15份显式清单](native/post-merge/allowlist.json)、[manifest](native/post-merge/manifest.json)及[逐字节核对](native/post-merge/verification.json)，原件共214,569字节，15/15核对通过；包含push/PR/merge前工作流检查、staged核对、远端main、两份冒烟报告及对应process.log/TRX、清理脚本与结果、Issue关闭和交付证明。原已交付29份原件、其manifest及RED/GREEN记录保持不可变，归档核对不计新测试。
+
+已交付修复现纳入WP5，整合构建0警告、0错误，WP5原映射事实及新增并发在两库各4/4；来源与复用限制见[WP5实施记录](../database-compatibility/WP5-IMPLEMENTATION.md)。BUG150为DeliveredAndClosed；WP5自身为LocalVerifiedRemotePending，WP6全应用/恢复尚未验收。Actions运行/取消均0，无工作流或保护变更，没有生产部署。

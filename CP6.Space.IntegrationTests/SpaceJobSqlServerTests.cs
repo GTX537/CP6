@@ -1,13 +1,15 @@
 using CP6.Space.Application;
+using CP6.Core.Persistence;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceJobSqlServerTests
+public sealed class SpaceJobSqlServerTests(SpaceRelationalFixture fixture, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 7, 26, 14, 0, 0, DateTimeKind.Utc);
@@ -296,7 +298,8 @@ public sealed class SpaceJobSqlServerTests
                 Assert.Single(await contextB.Jobs.ToListAsync());
                 Assert.Equal(
                     2,
-                    await contextB.Jobs.IgnoreQueryFilters().CountAsync());
+                    await contextB.Jobs.IgnoreQueryFilters()
+                        .CountAsync(candidate => candidate.TenantId == tenantA || candidate.TenantId == tenantB));
         });
     }
 
@@ -365,19 +368,34 @@ public sealed class SpaceJobSqlServerTests
 
                 Assert.Empty(await contextB.Jobs.ToListAsync());
                 var attemptId = Guid.NewGuid();
-                var sql = $"""
+                FormattableString sql = contextB.Database.IsNpgsql()
+                    ? (FormattableString)$"""
+                    INSERT INTO "Space_JobAttempt"
+                        ("Id", "JobId", "AttemptNo", "WorkerId", "StartedAtUtc",
+                         "Outcome", "InputHash", "ProcessorVersion", "TenantId",
+                         "CreatedAtUtc", "IsDeleted")
+                    VALUES
+                        ({attemptId}, {job.Id}, 1, 'forbidden-worker', clock_timestamp(),
+                         0, {InputHash}, 'parser-v1', {tenantB},
+                         clock_timestamp(), FALSE)
+                    """
+                    : $"""
                     INSERT INTO [Space_JobAttempt]
                         ([Id], [JobId], [AttemptNo], [WorkerId], [StartedAtUtc],
                          [Outcome], [InputHash], [ProcessorVersion], [TenantId],
                          [CreatedAtUtc], [IsDeleted])
                     VALUES
-                        ('{attemptId}', '{job.Id}', 1, 'forbidden-worker', SYSUTCDATETIME(),
-                         0, '{InputHash}', 'parser-v1', '{tenantB}',
+                        ({attemptId}, {job.Id}, 1, 'forbidden-worker', SYSUTCDATETIME(),
+                         0, {InputHash}, 'parser-v1', {tenantB},
                          SYSUTCDATETIME(), 0)
                     """;
 
-                await Assert.ThrowsAsync<SqlException>(
-                    () => contextB.Database.ExecuteSqlRawAsync(sql));
+                var error = await Assert.ThrowsAnyAsync<System.Data.Common.DbException>(
+                    () => contextB.Database.ExecuteSqlInterpolatedAsync(sql));
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.ForeignKey, failure.Kind);
+                if (contextB.Database.IsNpgsql()) Assert.Equal("23503", failure.SqlState);
+                else Assert.Equal(547, failure.DatabaseErrorCode);
             });
     }
 
@@ -453,7 +471,7 @@ public sealed class SpaceJobSqlServerTests
             Now,
             Guid.NewGuid());
 
-    private static async Task SeedJobAsync(
+    private async Task SeedJobAsync(
         string connectionString,
         Guid tenantId,
         SpaceJob job)
@@ -466,9 +484,17 @@ public sealed class SpaceJobSqlServerTests
         await context.SaveChangesAsync();
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<SpaceContext, string, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            fixture.WriteSetupEvidence(output);
+            await using var selected = CreateContext(fixture.ConnectionString, Guid.NewGuid(), new MutableClock(Now));
+            await action(selected, fixture.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -492,11 +518,15 @@ public sealed class SpaceJobSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         Guid tenantId,
         ISpaceClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+            return fixture.CreateSpaceContext(new TestExecutionContext(tenantId, Guid.NewGuid()), clock,
+                new SpaceNativeFailureObserver(fixture.Database.Provider, message => output.WriteLine(message), "job-business"));
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

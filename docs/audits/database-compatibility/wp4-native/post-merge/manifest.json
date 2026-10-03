@@ -1,0 +1,111 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Scope": "Post-merge public original preflight, exact two-provider producer smoke, ordinary owned-database cleanup, delivery closure, and observed PR/workflow checks. No private diagnostics or receipts.",
+  "ArchivedUtc": "2026-10-03T12:44:57.5164856Z",
+  "FileCount": 17,
+  "TotalOriginalBytes": 59607.0,
+  "Files": [
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-post-merge-preflight.json",
+      "RelativePath": "wp4-post-merge-preflight.json",
+      "Sha256": "067F85CBD60ABD7AB5D2BB1262E3EFB015CF19477CE2B3C1DE46C8CD666CE0D0",
+      "Length": 1688
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-post-merge-identity-pg-smoke.json",
+      "RelativePath": "wp4-post-merge-identity-pg-smoke.json",
+      "Sha256": "AE0C19C08B71A3B191B6CAF9ECF9C0713A2218FC5895FE2EACC9B4109A01D42E",
+      "Length": 5394
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-post-merge-identity-sql-smoke.json",
+      "RelativePath": "wp4-post-merge-identity-sql-smoke.json",
+      "Sha256": "2DFA5C8D0563324EA6C8F4EC5D8FDA18DCB25A2BDADAB3BC2AD10A33BD9587A5",
+      "Length": 5395
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-cleanup-final-owned-six.json",
+      "RelativePath": "wp4-cleanup-final-owned-six.json",
+      "Sha256": "2DC1864E558DF1234A3017D35C91CE7A553F7EA93BB184087A9498A439E3FEBD",
+      "Length": 4279
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Remove-DbCompatWp4OwnedDatabases.ps1",
+      "RelativePath": "Remove-DbCompatWp4OwnedDatabases.ps1",
+      "Sha256": "D3E0DC4200C71DA4CAC25443CE8FBE70BCFC3DD9F8022AE465686A71C4635F8A",
+      "Length": 16595
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-delivery-closure.json",
+      "RelativePath": "wp4-delivery-closure.json",
+      "Sha256": "DD0D324F5A3FC26C344B596DCCB70DE8848628D1A9BC5F1DA020322158995946",
+      "Length": 2196
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-pr-before-merge.json",
+      "RelativePath": "wp4-pr-before-merge.json",
+      "Sha256": "583B92D12CC99F0E0D1C29C81EFBC140A8A430EB16AF3C49521AD460BBB6192E",
+      "Length": 352
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-pr-review-threads.json",
+      "RelativePath": "wp4-pr-review-threads.json",
+      "Sha256": "868EDC23050D8B6CB6949823AE2EF7DB66F369E60170161FF109D2A5181ACB49",
+      "Length": 220
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-before-push-workflow-input-inspection.json",
+      "RelativePath": "wp4-before-push-workflow-input-inspection.json",
+      "Sha256": "B67AA8E6640EB5D9C288F4CF2C12746EE9D286B11835F3A4EAE5173992CE4C8C",
+      "Length": 6748
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-before-pr-create-workflow-input-inspection.json",
+      "RelativePath": "wp4-before-pr-create-workflow-input-inspection.json",
+      "Sha256": "10419999824D27368F09691B53429C5FFC0247C98783BC1546613C100E0A06DE",
+      "Length": 6748
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-before-merge-workflow-input-inspection.json",
+      "RelativePath": "wp4-before-merge-workflow-input-inspection.json",
+      "Sha256": "54254A350031524B33C7859518AE4FFDDA9FE8A92BEB3D45B1BFBD6CD84064B5",
+      "Length": 6748
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-post-merge-identity-pg-smoke\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-post-merge-identity-pg-smoke/process.log",
+      "Sha256": "E984A4252B4A63A12ED2111D3A5A9BA142B701CB07BA2AE024A4F81ED47E1467",
+      "Length": 115
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-post-merge-identity-pg-smoke\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-post-merge-identity-pg-smoke/evidence/summary.json",
+      "Sha256": "002E44CA1339A9425D038897F8FBEBCC8CE692622BDEED750AB35009AB82BBDB",
+      "Length": 1252
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-post-merge-identity-pg-smoke\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-post-merge-identity-pg-smoke/evidence/junit.xml",
+      "Sha256": "BA587FA7DA7C734FE0878E4CDCCD3907932F2FCFBC58AEAE6D17A70C79478091",
+      "Length": 256
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-post-merge-identity-sql-smoke\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-post-merge-identity-sql-smoke/process.log",
+      "Sha256": "E984A4252B4A63A12ED2111D3A5A9BA142B701CB07BA2AE024A4F81ED47E1467",
+      "Length": 115
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-post-merge-identity-sql-smoke\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-post-merge-identity-sql-smoke/evidence/summary.json",
+      "Sha256": "B96D51B7B74659FF9E9F6394B96964FF349169B09C46C06CD0C783887A1DEC1C",
+      "Length": 1251
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-post-merge-identity-sql-smoke\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-post-merge-identity-sql-smoke/evidence/junit.xml",
+      "Sha256": "749AB7F8062658548780578FC08B297A04CD2AAF702CB10FE8F5EAD46B23B795",
+      "Length": 255
+    }
+  ]
+}

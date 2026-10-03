@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-COMPAT-01 WP5",
+  "reviewKind": "initial single task-level review, Space production half",
+  "reviewDate": "2026-10-03",
+  "reviewer": "/root/wp5_space_final_review",
+  "worktree": "D:/CP6/tmp/worktrees/db-compat-wp5-20261003",
+  "confirmedMain": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "sourceProvenance": "Recorded from this agent's initial read-only review final answer to /root before the follow-up regression-writing task. Hashes identify the reviewed working files, not a claim of a committed candidate or test execution.",
+  "reviewedProductionSha256": {
+    "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs": "4A1B044EBF3FD0C21958650196BD2FF70BB22A46037FE6073A54DF9FB5CFD1FC",
+    "CP6.Space.Infrastructure/EfSpaceFileSafety.cs": "A1331DF279A6454007F3C2ED84CEE6AC8120321CCB00D9A658580CC80BD5B6CE",
+    "CP6.Space.Infrastructure/EfSpaceVersionClone.cs": "85B56C289BAD9EA8341642C4ECA480C843CF9A3002CE93E029559803ADC7CB16",
+    "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs": "0F01BD8365D773CDBBD3AED76445A6C2D11C8A88E24C12D76F00D44E3B4DF0AB",
+    "CP6.Space.Infrastructure/SpaceAiRunRecoveryService.cs": "E40F0D5FEF13584CF89A078DFC8CE7C8B2A5B4D0B97D9929E998A29D6D6C61BA",
+    "CP6.Space.Infrastructure/SpaceCadParseService.cs": "989A5B0B08936BA827089154B88FEEDE8280E2283E4263059435A038A4AC457D",
+    "CP6.Space.Infrastructure/SpaceEditLeaseService.cs": "0EE1B4CF121ABED241636AA7DEE23BBAC2685EF604ED1DD1A9B4639CBEFFEF03",
+    "CP6.Space.Infrastructure/SpaceGenerationApplyStepExecutor.cs": "EF2D5EA6C1CFCCBE123B9E3ADAA7E5A505D64C8F13D11C1764D499DC02A4DC52"
+  },
+  "correlatedTestSha256": {
+    "CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.cs": "48747742677749C949375A5595926FB63D5117207DF6446EF18A7DFE66775F79",
+    "CP6.Space.IntegrationTests/SpaceVersionCloneRelationalEdgeTests.cs": "B350B54EB54471D8626AF5B68E2DBF47703587117631463CBF25DFD6B7419054",
+    "CP6.Space.IntegrationTests/SpaceAiAtomicApplySqlServerTests.cs": "F0505C68654579CF48C800A3C15CA523FDB1F45A12A253E0897226D4B46CF56B",
+    "CP6.Space.IntegrationTests/SpaceAiCapacityPersistenceTests.cs": "7FDE79E3C0F50D76994808BD3990E9981B6FC4512C0D1EAB2C1D1132D899ED4B",
+    "CP6.Space.IntegrationTests/SpaceFileSafetySqlServerTests.cs": "E0187688CF2AF84A8B7A515AFDA4BF2A562446F8B9BEA315DE68B204A23755B1",
+    "CP6.Space.IntegrationTests/SpaceEditLeaseSqlServerTests.cs": "C5C1D38847265EE093EFB600A476D0C997198CDC702A25AA0C6BE40DFEB2E2FE",
+    "CP6.Space.IntegrationTests/SpaceCadParseSqlServerTests.cs": "5694317280618902B0F9879BF4BD8A700B9D55744AD4BF0BCA49A20BEA9C3402"
+  },
+  "conclusion": "One substantive P2 finding; no other merge-blocking correctness findings in the complete diff of the eight listed Space production files. Root accepted the P2 and directed a targeted fix and native regression; these are not yet included in this initial conclusion.",
+  "findings": [
+    {
+      "id": "WP5-SPACE-REVIEW-P2-1",
+      "priority": "P2",
+      "file": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "line": 461,
+      "relatedLine": 479,
+      "title": "AI whole-command retry can discard pending caller changes",
+      "trigger": "A PostgreSQL Recovery command enters with caller-owned tracked pending changes and no EF CurrentTransaction, then its owned attempt receives native 40001 or 40P01. The helper clears the whole tracker and may return a successful idempotency replay on its next attempt, silently losing pending caller changes.",
+      "reason": "SpaceAiOwnedCommandRetry excludes only CurrentTransaction. Recovery methods do not clear caller changes at entry. There is no HasChanges or ambient/enlisted eligibility check, unlike the existing EditLease retry wrapper.",
+      "acceptedFix": "Use the EditLease eligibility boundary: pending changes or EF/ambient/enlisted caller transactions keep the original single operation path, without new whole-command retry or tracker clearing.",
+      "regressionSeed": "SpaceAiAtomicApplySqlServerTests.Concurrent_cancel_same_key_replays_after_row_version_changes, line 287; SeedReviewedZoneAsync, line 952; RecoveryService, line 1169.",
+      "statusAtInitialReview": "Confirmed by root; fix and native regression pending."
+    }
+  ],
+  "checks": [
+    "PostgreSQL snapshot clone matches retained SQL Server batch column lists, copy order, tenant/soft-delete conditions and source/calibration/element remapping for twelve tables.",
+    "Clone stays within caller transaction. Distinct invocation map names, ON COMMIT DROP and explicit success cleanup retain the intended rollback boundary.",
+    "New clone edge tests use a real final-table CHECK, two physical sessions and a SaveChanges barrier; they assert full rollback, source fingerprints, temporary map cleanup and scheduled retry.",
+    "Capacity and file retry boundaries cover complete owned database transactions. Budget empty intervals receive a tenant transaction resource lock. External object operations are outside replayed commands.",
+    "AI Run/Version/Model row locks explicitly scope tenant and entity. Worker external effects are not wrapped by the newly added command retry helper.",
+    "Relevant native test changes preserve business assertions and provider-specific native failure evidence; original failed batches are retained rather than relabeled as a single green matrix."
+  ],
+  "validationPerformed": [
+    "Read AGENTS.md",
+    "Read WP5-IMPLEMENTATION.md and its batch/limitation statements",
+    "Read complete production diff against confirmed main and relevant surrounding methods",
+    "Correlate changed/new native integration tests",
+    "Compute SHA-256 of the listed reviewed working files"
+  ],
+  "notPerformed": [
+    "No file edits during initial review",
+    "No builds or .NET execution",
+    "No database operations",
+    "No remote calls or Actions runs"
+  ],
+  "scopeLimits": [
+    "Frozen migrations were excluded and reviewed separately.",
+    "BUG150 mapping production fix was outside this review; it has its independent review and delivery.",
+    "Core/reports/migrations/fixture review belongs to the other reviewer.",
+    "WP6 full PostgreSQL application/API/worker startup remains outside this WP5 review; no production acceptance or deployment claim.",
+    "Subsequent edits require targeted recheck against these hashes and evidence, not another full task review absent widened risk."
+  ]
+}

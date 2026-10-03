@@ -1,0 +1,27 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.24]     CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped [412 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 2
+Actual:   97
+  Stack Trace:
+     at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.<>c__DisplayClass10_0.<<Active_business_key_is_unique_and_tenant_scoped>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 299
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.<>c__DisplayClass10_0.<<Active_business_key_is_unique_and_tenant_scoped>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 299
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 493
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 494
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 277
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=job-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.
+
+
+Results File: D:\CP6\tmp\db-compat-wp5-tests\wp5-jobs-generation-retention-pg-first-run\results.trx
+
+Failed!  - Failed:     1, Passed:    16, Skipped:     0, Total:    17, Duration: 2 s - CP6.Space.IntegrationTests.dll (net8.0)

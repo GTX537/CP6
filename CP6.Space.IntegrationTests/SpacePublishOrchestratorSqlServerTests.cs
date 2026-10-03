@@ -15,7 +15,9 @@ using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpacePublishOrchestratorSqlServerTests(
+    SpaceRelationalFixture database,
     ITestOutputHelper output)
 {
     [SqlServerFact]
@@ -82,6 +84,9 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
                         execution,
                         clock),
                     new SpacePublishPlanEngine());
+                // Production metrics intentionally aggregate all tenants; other owned cases retain recovery evidence.
+                var recoveryBaseline = (await new SpacePublishRecoveryMetricsSnapshotProvider(space, clock)
+                    .GetSnapshotAsync()).ByState[SpacePublishRecoveryMetricStates.WaitingRetry];
                 var queued = await orchestrator.StartAsync(
                     seeded.TargetVersionId,
                     new CreateSpacePublishAttemptRequest(
@@ -118,12 +123,12 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
                             clock)
                         .GetSnapshotAsync();
                 Assert.Equal(
-                    1,
+                    recoveryBaseline.Count + 1,
                     recoveryMetrics.ByState[
                             SpacePublishRecoveryMetricStates.WaitingRetry]
                         .Count);
                 Assert.Equal(
-                    0,
+                    recoveryBaseline.SloBreachedCount,
                     recoveryMetrics.ByState[
                             SpacePublishRecoveryMetricStates.WaitingRetry]
                         .SloBreachedCount);
@@ -188,7 +193,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
                             clock)
                         .GetSnapshotAsync();
                 Assert.Equal(
-                    0,
+                    recoveryBaseline.Count,
                     recoveryMetrics.ByState[
                             SpacePublishRecoveryMetricStates.WaitingRetry]
                         .Count);
@@ -724,7 +729,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
                 new SpacePublishReconciliationJobProcessor(executor),
             ]);
 
-    private static async Task<Guid> PublishCandidateAsync(
+    private async Task<Guid> PublishCandidateAsync(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock,
@@ -830,7 +835,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         }
     }
 
-    private static async Task<SeededVersions> SeedCp6AndDesignAsync(
+    private async Task<SeededVersions> SeedCp6AndDesignAsync(
         string connectionString,
         CP6Context cp6,
         TestExecutionContext execution,
@@ -1009,7 +1014,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
             model.Id);
     }
 
-    private static async Task<Guid> SeedNextCandidateAsync(
+    private async Task<Guid> SeedNextCandidateAsync(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock,
@@ -1107,7 +1112,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         return version.Id;
     }
 
-    private static async Task<ValidationEvidence> ValidateAndPreviewAsync(
+    private async Task<ValidationEvidence> ValidateAndPreviewAsync(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock,
@@ -1188,7 +1193,7 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
             preview.PlanHash);
     }
 
-    private static async Task AssertCompletedRuntimeAsync(
+    private async Task AssertCompletedRuntimeAsync(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock,
@@ -1437,9 +1442,17 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
             IsActive = true,
         };
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString,
+                new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -1472,10 +1485,18 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         }
     }
 
-    private static CP6Context CreateCp6Context(
+    private CP6Context CreateCp6Context(
         string connectionString,
         Guid tenantId)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Core contexts must use the fixture-owned connection.");
+            return database.CreateCoreContext(tenantId,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "publish-core"));
+        }
+
         var tenant = new TenantContext
         {
             CurrentTenantId = tenantId,
@@ -1486,11 +1507,19 @@ public sealed class SpacePublishOrchestratorSqlServerTests(
         return new CP6Context(options, tenant);
     }
 
-    private static SpaceContext CreateSpaceContext(
+    private SpaceContext CreateSpaceContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "publish-space"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

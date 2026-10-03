@@ -1,0 +1,27 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Scope": "Observed parent Issue progress: two HTTP499 operational attempts followed by actual REST update/readback; no database or business execution outcome.",
+  "ArchivedUtc": "2026-10-03T12:47:39.6926298Z",
+  "FileCount": 3,
+  "TotalOriginalBytes": 804.0,
+  "Files": [
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-parent-progress-first-attempt.json",
+      "RelativePath": "wp4-parent-progress-first-attempt.json",
+      "Sha256": "7E4113194D94114593C994C7C84526BD3CAF33FC5AB7F003142C50B645772A4C",
+      "Length": 284
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-parent-progress-second-attempt.json",
+      "RelativePath": "wp4-parent-progress-second-attempt.json",
+      "Sha256": "D9449DB23E4A45DBA4FC15DFCAEA65385169002363831C9EE6DCC61E2BD869DB",
+      "Length": 203
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-parent-progress-updated.json",
+      "RelativePath": "wp4-parent-progress-updated.json",
+      "Sha256": "C50DA05E41407D8B772E60A83E41E1838A451BF2535D653131F554C4E9A19D41",
+      "Length": 317
+    }
+  ]
+}

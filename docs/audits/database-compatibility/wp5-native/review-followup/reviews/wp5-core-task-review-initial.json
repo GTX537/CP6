@@ -1,0 +1,272 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Kind": "Initial single task-level review, Core/reports/migration/fixtures part 2",
+  "Reviewer": "/root/wp5_core_final_review",
+  "Base": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "Branch": "codex/db-compat-wp5-20261003",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp5-20261003",
+  "RecordedUtc": "2026-10-03T14:44:28.0336945Z",
+  "ReviewSource": "Initial final answer from /root/wp5_core_final_review; recorded on root follow-up instruction. All 53 reviewed source hashes and the extra consumer were verified unchanged before writing.",
+  "Findings": [
+    {
+      "Severity": "P2",
+      "File": "CP6.Space.IntegrationTests/SqlServerFactAttribute.cs",
+      "Line": 10,
+      "Consumer": "CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs",
+      "ConsumerLine": 14,
+      "Trigger": "A WP5 Space provider is selected and the legacy recovery fact is selected directly or by a broader test selection. The shared attribute enables it although it still reads only CP6_TEST_SQLSERVER and manages a separate SQL database lifecycle.",
+      "Impact": "Missing legacy connection causes failure; an existing legacy SQL connection enables unrelated SQL BACKUP/RESTORE even when PostgreSQL was selected.",
+      "Fix": "Use a dedicated legacy-only attribute for the WP6 recovery fact. Selected WP5 Space mode must skip it even when CP6_TEST_SQLSERVER is set; preserve original legacy behavior when WP5 is not selected.",
+      "Status": "Accepted by root; fix and selector-only RED/GREEN pending at this initial snapshot"
+    }
+  ],
+  "ConfirmedOtherFindings": 0,
+  "Scope": "Core/MES/Dashboard/GDPR and 23001 classification; common PostgreSQL migration prerequisites/generator; reports/GDPR native tests; shared Space fixture, provider selection, historical migration rewiring and original assertion preservation. Space production and new clone edge tests reviewed by the other reviewer; BUG150 dependency and final documentation handled by root.",
+  "Confirmations": [
+    "Original global metrics scope and tenant-scoped GDPR purge preserved",
+    "MES decimal and calendar expressions compared with frozen SQL procedures",
+    "Shared database exact assertions retained with case tenant scope or strict global metric baseline delta",
+    "Owner receipts and actual provider migration-prefix checks present",
+    "Core, Space and PostgreSQL frozen migration directories unchanged against the base"
+  ],
+  "EvidenceReused": [
+    "wp5-reports-parity-sql-first-reference:4/4",
+    "wp5-reports-parity-pg-first-run:4/4",
+    "wp5-gdpr-rollback-sql-first-reference:1/1",
+    "wp5-gdpr-rollback-pg-first-run:1/1",
+    "wp5-failure-classifier-unit:42/42",
+    "wp5-prerequisite-space-core-pg-first-run:1/1",
+    "wp5-prerequisite-core-space-pg-first-run:1/1",
+    "wp5-prerequisite-space-script-pg-first-run:1/1",
+    "wp5-space-only-pg-prerequisite-followup:1/1",
+    "wp5-prerequisite-sql-generation-review-followup:8/8"
+  ],
+  "PriorTargetedReview": {
+    "Path": "D:\\CP6\\tmp\\wp5-prerequisite-targeted-review.json",
+    "Sha256": "DF12F3806D0B8BE3F4F418AAE5007451D8EDD4E38BCC14C6F7AAD408A7976753",
+    "Reviewer": "/root/wp5_migration_review",
+    "Finding": "P2 IndexOf(-1) could satisfy prerequisite ordering assertion; resolved with explicit Assert.Contains and targeted follow-up."
+  },
+  "Limitations": "Read-only source/diff review and existing evidence inspection. No new .NET build/test, database operation or remote action. Does not establish full application startup, HTTP authorization, backup/restore, production acceptance or WP6 readiness.",
+  "SourceCount": 53,
+  "ManifestFormat": "PowerShell Sort-Object -Unique path order; UTF-8 path<TAB>uppercase SHA256<LF>; final LF included",
+  "ManifestSha256": "64C606CD34A6F8E5C3020811C3C3622FC543D7303F22D0B9A3DAD2663F4A3230",
+  "Sources": [
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "Sha256": "58BAE7257EA922DC2D8CE6703402EB36D090A5627ABD9647AEBA6E8D07CD5ACA"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "Sha256": "3628F471409D979C089B9F492319B4E2A4498FFF2A581643BA1349B96C4FA662"
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlMigrationPrerequisitesV1.cs",
+      "Sha256": "7C4C06BB5BD6C4B093B3EB07B6EACC7A255C421C50B181D4DB62FE2B3FA9A8F8"
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlPrerequisiteMigrationsSqlGenerator.cs",
+      "Sha256": "AAB3A78EB47EFCCBAC2D9A108DE361010630B4ADFCEE0400F9D4C3EDD609FDFA"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/MesDashboardDapperService.cs",
+      "Sha256": "0D20FC74645C2DAE477557C74BC5394BB17888FAADE2B25918210FFB27A3A27F"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/GdprService.cs",
+      "Sha256": "41055EAD42BE93425ECC7FCC997C6E08D6FB20231DC0150FCAA06D90A3272FBD"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "Sha256": "14D4F495D48A10FDC7DE98FEA027E197200A4862FBAEFBC9874396FE9E9BB40B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/Cp6SpaceWmsAdapterSqlServerTests.cs",
+      "Sha256": "E17FFC20D7449B429ACC7393A679ECE62CE07D34EAC309C25D91EDDF272E81C9"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/packages.lock.json",
+      "Sha256": "B97672D5CE68BB364010ADAE9DD8C554B3D1972135A083989E662A3F616BA067"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiAtomicApplySqlServerTests.cs",
+      "Sha256": "F0505C68654579CF48C800A3C15CA523FDB1F45A12A253E0897226D4B46CF56B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiCapacityPersistenceTests.cs",
+      "Sha256": "7FDE79E3C0F50D76994808BD3990E9981B6FC4512C0D1EAB2C1D1132D899ED4B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiRetentionTests.cs",
+      "Sha256": "8B3335D509B9A71011EA9D9ED17DE2B1F5946F50B713FD5147D93367CE9DC34B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAssetLibrarySqlServerTests.cs",
+      "Sha256": "17B7CC80E5DDF047E5B7D3228BA22193BD42C4FF2336D5453CD34DCBADAB7DA0"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadMappingProfileSqlServerTests.cs",
+      "Sha256": "05B0B3A36540A97EEF47CFABB49C3E6B5A679217B3D92BBD3A4AA15D63D29571"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadParseSqlServerTests.cs",
+      "Sha256": "5694317280618902B0F9879BF4BD8A700B9D55744AD4BF0BCA49A20BEA9C3402"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadProviderSqlServerTests.cs",
+      "Sha256": "3DD1C719D819CE82344FD2F8A781F9450A375CCD9038CD3384FC49643534833A"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDesignSceneSqlServerTests.cs",
+      "Sha256": "DFA50D5AA91631D85739FBEB2CC85364BB381E5913CC9D1CD21B1212E9367AA8"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDesignV1SqlServerTests.cs",
+      "Sha256": "AE89730AEB2598231FAECD75B957E1631EE5E57295A3CCFAF0E0E013071186EC"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceEditLeaseSqlServerTests.cs",
+      "Sha256": "C5C1D38847265EE093EFB600A476D0C997198CDC702A25AA0C6BE40DFEB2E2FE"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelCadCompensationSqlServerTests.cs",
+      "Sha256": "BCBA7CE7BCF9F9B245E82FB408BA2E87CF5D84F1E2E36E39A976DFB4FFAF5CA1"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelMappingSqlServerTests.cs",
+      "Sha256": "D923419D262E2F9396FCBD95B59874F1623F745F4D847230337A9E5F18BCB549"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelPreflightSqlServerTests.cs",
+      "Sha256": "6117164FAFEC06DD1BE570FF7497921C08DC1D4D8D4A92118FE3627A2FC17C31"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalGrantSqlServerTests.cs",
+      "Sha256": "9CBF0D2862B2A6A837BB6326FF6CD335072C07F2F00AFA6E5690F95B70CC5D4A"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalOrganizationSqlServerTests.cs",
+      "Sha256": "ED232F32D9ADCA424CBBE505B0C69762348B9E95051E1265A3AAEE6330B5B233"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalTenantIsolationTests.cs",
+      "Sha256": "E2A8E608249BD90B0EA686593907989CFFABD8EA7134A02AA3F8A2AF760B6119"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceFieldPolicySqlServerTests.cs",
+      "Sha256": "C947722278374C7C519E58F359152869B20F85B74CE4F0B7C4622FE8BAC2772B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceFileSafetySqlServerTests.cs",
+      "Sha256": "E0187688CF2AF84A8B7A515AFDA4BF2A562446F8B9BEA315DE68B204A23755B1"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceGenerationPersistenceTests.cs",
+      "Sha256": "279E59D523580DAB8BB52DEA01E2A2CA869A8D69F4255801BE36DDB1A96D16C3"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceJobProcessorPersistenceTests.cs",
+      "Sha256": "56C1CEE3554B536A96F8F58ED9A0C11C091F26283EECF45E39B3AD4C88EB5EFD"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceJobSqlServerTests.cs",
+      "Sha256": "381E8540288D268B47E6350B89CEAB5678ED8983BF70CD2F550AA03DFDE5C009"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMigrationSqlGenerationTests.cs",
+      "Sha256": "C9F8E36AE34E858FE0132DC19340007A56071030C0A653DC7B991ECC46C35056"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMigrationTestDatabase.cs",
+      "Sha256": "EC7A9B2723736750DF4C66879573A7CEC4409FC8B3BC5DEB95D5DCCFDEA79C0D"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePostgreSqlPrerequisiteTests.cs",
+      "Sha256": "FD72012E69084FB12066FB8C9E967110690BCD193A83A3ED5582A88A30AD25EA"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePublishOrchestratorSqlServerTests.cs",
+      "Sha256": "C097C490D31CEE540F582CC16CFF987C5F10B4DD8920F032722E2E23356545B3"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePublishPreviewSqlServerTests.cs",
+      "Sha256": "3F2EAA35F659C5F7435FB974F2856F4EF4F0068EF99C77747D7C8CD7BC75FF0A"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePublishRecoveryMigrationTests.cs",
+      "Sha256": "D99D511E4381FEA1E841F68E4D4BBF434EED6A57B930EAFD77F0635B08CC1C53"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceRackGenerationProfileSqlServerTests.cs",
+      "Sha256": "B73E1ED1FBA68E24CE88A7E6A15663E809382EAACB58ACA4FB8C1A9D35891800"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceRelationalFixture.cs",
+      "Sha256": "DD0FA8570995A5199121878BB69EC9177EC3B28F6DC0B10A9EE2B40A8654A3C8"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceSqlServerCollection.cs",
+      "Sha256": "FBAA6CAC8E571818C49556699712392212CD7FBDEBE8C50DA78F7DEFD090A047"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceSqlServerTests.cs",
+      "Sha256": "95A55275AEE8BF857AE6CA06FA71F94975D95913C38F06CF4B0B73CF45BFAD2B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceValidationSqlServerTests.cs",
+      "Sha256": "2CBDBEAC676BEEB0733354F2474F204B927FA3F0856B98D9AD452748CD77F193"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.cs",
+      "Sha256": "48747742677749C949375A5595926FB63D5117207DF6446EF18A7DFE66775F79"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceWmsAdoptionServiceTests.cs",
+      "Sha256": "6C84EF6C0168E8FA31ACCACBA36FF605EAD78A37AA5A2D645F7B22ECBEBB0C98"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SqlServerFactAttribute.cs",
+      "Sha256": "0E8EA25C532006CA0D1F21F4AC7FF51C1D0D7B89435878C8B3E4FCFB38AE46A6"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/DashboardRelationalTests.cs",
+      "Sha256": "E5927DC8FF184974AA8835C09AC5B3749E37EC7C8B173F7A218C13E044ADEC71"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/GdprRelationalRollbackTests.cs",
+      "Sha256": "8BED89B2303AE7A51D60A5A6ADB656A221B1DB65A170EAF0B09B4A6DDC9DB0BC"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/GdprRelationalTests.cs",
+      "Sha256": "428CD574A2CD5C1ED627DB3EEA14401D5F933A1D890232FE27CF910265CF0D25"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/MesReportsRelationalTests.cs",
+      "Sha256": "EF7E2BC94087DEC60782E518F8528DC368DA5C012C9333F0577C4A34F15C4490"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/ReportParityRelationalTests.cs",
+      "Sha256": "68C5AC31176E9C3825140795F3D01B7D3B2C2E59D1DC02A9D408843D78820D2E"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/Wp5ReportsRelationalFixture.cs",
+      "Sha256": "7A29B23D736AFB006A1C19849430632A5829823932EB00EE4FC35E45CB13693E"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseFailureClassifierTests.cs",
+      "Sha256": "2D73C3F93AE2A88731B6C8468650F3FD787BFBD37DB4F739D887FEDC574580EA"
+    },
+    {
+      "Path": "CP6.Tests/SpaceSqlIntegrationTests.cs",
+      "Sha256": "5437A0F1EADE3A10F3157569AF4305E858646FFF81D0E9CFB319AC06ACA0D272"
+    },
+    {
+      "Path": "CP6.WebApi/Controllers/Sys/DashboardController.cs",
+      "Sha256": "29B508FBE06E1D2A8A7A8B7D42CF79092D474881288562E8C15A308E3DB15A43"
+    }
+  ],
+  "ExtraConsumer": {
+    "Path": "CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs",
+    "Sha256": "102E9BC28F1047A583B77B1E34A89EA58329BD6D675AE9F2AAA1BF244200AFBF"
+  }
+}

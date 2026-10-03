@@ -1,0 +1,33 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Dependency": "BUG-150",
+  "DeliveredMain": "522433a370c0c247a98b300c69e88e403217d53a",
+  "Wp5Checkpoint": "3107716973482fb5309b7ccbf57e79e8f4debbf2",
+  "IntegrationCommit": "97e4a9f2e0881c4f423111848632bbc821cde11d",
+  "ObservedUtc": "2026-10-03T15:00:59.1884696Z",
+  "ConflictResolution": "Only .gitattributes and four project-memory documents conflicted. Both archive byte rules and historical sections preserved; latest BUG closure status recorded. No production conflict.",
+  "Production": [
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadMappingProfileService.cs",
+      "Sha256": "F8B4A2BFBF083FEE1731B2F78168859483855F7CCB242833C7B09547CC0419A6",
+      "MatchesDeliveredBug150": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelMappingService.cs",
+      "Sha256": "B2BBAB86887DA2567062D92FAB968BC5E27DC721865109BB2DEA85816A6681AD",
+      "MatchesDeliveredBug150": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceMappingSaveTransaction.cs",
+      "Sha256": "7C08DEAE1F0AB72384C498238479B70F7ED6010316B0A95A772D07E39EC36340",
+      "MatchesDeliveredBug150": true
+    }
+  ],
+  "NativeIntegration": [
+    "wp5-mapping-bug150-pg-integration:4/4",
+    "wp5-mapping-bug150-sql-integration:4/4"
+  ],
+  "Build": "wp5-bug150-integration-build.log:0 warning/0 error",
+  "TestOnlyChange": "Four equivalent Assert.Single predicate overloads in the two mapping classes removed new style warnings; native assertions unchanged.",
+  "Reuse": "Previously reviewed and successful unrelated WP5 paths retain their relevant production sources. Earlier binary hashes and raw results are kept as original sources, not relabelled as executions of this later build."
+}

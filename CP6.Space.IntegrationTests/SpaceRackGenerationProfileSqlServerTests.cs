@@ -1,15 +1,20 @@
 using System.Text.RegularExpressions;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceRackGenerationProfileSqlServerTests
+public sealed class SpaceRackGenerationProfileSqlServerTests(
+    SpaceRelationalFixture database,
+    ITestOutputHelper output)
 {
     [SqlServerFact]
     public async Task Store_is_migrated_idempotent_immutable_and_tenant_scoped()
@@ -81,8 +86,22 @@ public sealed class SpaceRackGenerationProfileSqlServerTests
                              execution,
                              clock))
             {
-                await Assert.ThrowsAsync<SqlException>(() =>
+                var error = await Assert.ThrowsAnyAsync<Exception>(() =>
                     constraintContext.Database.ExecuteSqlInterpolatedAsync(
+                        constraintContext.Database.IsNpgsql() ?
+                        (FormattableString)$"""
+                        INSERT INTO "Space_RackGenerationProfile"
+                            ("Id", "Scope", "OwnerTenantId", "ProfileCode",
+                             "Name", "Description", "Status", "CreatedAtUtc",
+                             "CreatedBy", "IsDeleted")
+                        VALUES
+                            ({Guid.NewGuid()},
+                             {(short)SpaceRackGenerationProfileScope.System},
+                             {execution.TenantId}, 'INVALID-SYSTEM',
+                             'Invalid system owner', NULL,
+                             {(short)SpaceRackGenerationProfileStatus.Active},
+                             {clock.UtcNow}, {execution.ActorId}, FALSE);
+                        """ :
                         $"""
                         INSERT INTO [Space_RackGenerationProfile]
                             ([Id], [Scope], [OwnerTenantId], [ProfileCode],
@@ -96,6 +115,19 @@ public sealed class SpaceRackGenerationProfileSqlServerTests
                              {(short)SpaceRackGenerationProfileStatus.Active},
                              {clock.UtcNow}, {execution.ActorId}, 0);
                         """));
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.CheckConstraint, failure.Kind);
+                Assert.True(failure.MatchesConstraint("CK_Space_RackGenerationProfile_ScopeOwner"));
+                if (constraintContext.Database.IsNpgsql())
+                {
+                    Assert.IsType<PostgresException>(error);
+                    Assert.Equal("23514", failure.SqlState);
+                }
+                else
+                {
+                    Assert.IsType<SqlException>(error);
+                    Assert.Equal(547, failure.DatabaseErrorCode);
+                }
             }
         });
     }
@@ -116,9 +148,17 @@ public sealed class SpaceRackGenerationProfileSqlServerTests
             5000,
             [new(1, 0, 2200, 4, 2, 600, 500, 100, 1000)]);
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString,
+                new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -178,11 +218,19 @@ public sealed class SpaceRackGenerationProfileSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected rack profile contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "rack-profile-business"));
+        }
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,

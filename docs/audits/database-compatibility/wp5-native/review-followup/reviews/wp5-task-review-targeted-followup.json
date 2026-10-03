@@ -1,0 +1,55 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Kind": "Targeted follow-up to two initial task-review findings",
+  "Reviewer": "/root/wp5_migration_review",
+  "ObservedUtc": "2026-10-03T14:54:00.9803405Z",
+  "InitialReviews": [
+    "wp5-space-task-review-initial.json",
+    "wp5-core-task-review-initial.json"
+  ],
+  "Findings": [
+    {
+      "Name": "Caller pending work lost during whole-command retry",
+      "Status": "Resolved",
+      "Red": "wp5-ai-caller-pending-pg-red",
+      "FirstFixAttempt": "wp5-ai-caller-pending-pg-green: correct native propagation and Added state, failed outer DbException assumption due EF InvalidOperationException wrapper",
+      "Green": "wp5-ai-cad-review-followup-pg:15/15 including originalAI13/newpending1/CAD1",
+      "Change": "Retry eligibility excludes pending and caller/current/ambient/enlisted transactions; exact GetBaseException PostgresException assertion"
+    },
+    {
+      "Name": "Selected Space lane enables legacy backup/restore lifecycle",
+      "Status": "Resolved",
+      "Red": "wp5-legacy-recovery-selector-red:0/2",
+      "Green": "wp5-legacy-recovery-selector-green:2/2",
+      "Change": "Dedicated legacy attribute rejects either selected Space lane; legacy behavior unchanged when no lane selected"
+    }
+  ],
+  "FinalSources": [
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "Sha256": "2EC73E1B8177C1260B253ADF58A940BFD518BF7555ACC05290F4D70C02D28C73"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiCallerPendingPostgreSqlTests.cs",
+      "Sha256": "3CEDEFC66EC54DE1B19C7BEBF4FB13E45D74D3EBEF4571D46CF4BD031FFF74A5"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiAtomicApplySqlServerTests.cs",
+      "Sha256": "E6A33BB207C1988A2B3E90A530366FC6B6B263B13E0B5839705DFADF51DA0AD6"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SqlServerFactAttribute.cs",
+      "Sha256": "C1487CA98E2276188390FD0C5BDBEA299D9A5405FE2EFDFA59341FEF3EE41DD7"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs",
+      "Sha256": "0D0F1FD7965B3E5A99CBF2A14D28F92D7572E08332ACBE97517994DAECC03931"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceLegacyRecoverySelectionTests.cs",
+      "Sha256": "D2205664FB2E9D7E2522C12B3D5EA60063A23BAE9C9488DBA5AD39AFDA5AB182"
+    }
+  ],
+  "Conclusion": "Both P2 findings resolved; no new substantive issue on independent incremental review. Unchanged initial review scope reused, not a second complete review.",
+  "Scope": "No backup/restore execution or complete WP6/production acceptance."
+}

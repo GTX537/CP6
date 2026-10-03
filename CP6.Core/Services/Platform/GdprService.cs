@@ -8,6 +8,9 @@ using CP6.Core.Services.Sys;
 using CP6.Entity;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
 using CP6.Core.Services.CrmIdentity;
 
 namespace CP6.Core.Services.Platform;
@@ -216,8 +219,17 @@ public class GdprService : IGdprService
                 await _db.Sys_Depts.IgnoreQueryFilters().Where(x => x.TenantId == tenantId).Select(x => x.Id).ToArrayAsync(),
                 await _db.Sys_Roles.IgnoreQueryFilters().Where(x => x.TenantId == tenantId).Select(x => x.RoleId).ToArrayAsync());
             await new IdentitySnapshotWriter(_db, _identity).RevokeTenantTokensAsync(tenantId);
-            await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE l FROM dbo.CrmOidcLogout l INNER JOIN dbo.CrmOidcGrant g ON l.GrantId=g.Id WHERE g.OrganizationId={tenantId}");
-            await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM dbo.CrmOidcGrant WHERE OrganizationId={tenantId}");
+            if (_db.Database.IsNpgsql())
+            {
+                await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM public.\"CrmOidcLogout\" AS l USING public.\"CrmOidcGrant\" AS g WHERE l.\"GrantId\"=g.\"Id\" AND g.\"OrganizationId\"={tenantId}");
+                await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM public.\"CrmOidcGrant\" WHERE \"OrganizationId\"={tenantId}");
+            }
+            else if (_db.Database.IsSqlServer())
+            {
+                await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE l FROM dbo.CrmOidcLogout l INNER JOIN dbo.CrmOidcGrant g ON l.GrantId=g.Id WHERE g.OrganizationId={tenantId}");
+                await _db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM dbo.CrmOidcGrant WHERE OrganizationId={tenantId}");
+            }
+            else throw new InvalidOperationException("GDPR identity purge requires SQL Server or PostgreSQL.");
         }
 
         // 1. 先打断自引用环：把 cycleNodes 的自指 FK 列 null 化（按 TenantId 过滤）。
@@ -315,16 +327,22 @@ public class GdprService : IGdprService
         if (et == null) return;
         var tableName = et.GetTableName();
         if (tableName == null) return;
+        var schema = et.GetSchema();
+        var table = StoreObjectIdentifier.Table(tableName, schema);
+        var sqlGeneration = _db.GetService<ISqlGenerationHelper>();
+        var tenantColumn = et.FindProperty("TenantId")?.GetColumnName(table)
+            ?? throw new InvalidOperationException("GDPR owner table must have a mapped tenant column.");
+        var quotedTable = sqlGeneration.DelimitIdentifier(tableName, schema);
 
         foreach (var fk in et.GetForeignKeys())
         {
             if (fk.PrincipalEntityType.ClrType != clr) continue;     // 仅自引用 FK
             foreach (var prop in fk.Properties)
             {
-                var col = prop.GetColumnName();
+                var col = prop.GetColumnName(table);
                 if (col == null) continue;
                 // 列名/表名来自 EF 模型元数据（非用户输入），且 tenantId 走参数化 → 无注入面。
-                var sql = $"UPDATE [{tableName}] SET [{col}] = NULL WHERE [TenantId] = {{0}}";
+                var sql = $"UPDATE {quotedTable} SET {sqlGeneration.DelimitIdentifier(col)} = NULL WHERE {sqlGeneration.DelimitIdentifier(tenantColumn)} = {{0}}";
                 await _db.Database.ExecuteSqlRawAsync(sql, tenantId);
             }
         }

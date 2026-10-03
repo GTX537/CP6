@@ -1,0 +1,1805 @@
+{
+  "Task": "BUG-150",
+  "Suite": "SpaceMappingIdempotency",
+  "Provider": "SqlServer",
+  "Label": "bug150-sql-post-merge-smoke",
+  "StartedUtc": "2026-10-03T14:37:55.3759606Z",
+  "FinishedUtc": "2026-10-03T14:38:07.6206107Z",
+  "ExitCode": 0,
+  "ProcessExitCode": 0,
+  "Selection": "FullyQualifiedName~CP6.Space.IntegrationTests.SpaceMappingProfileConcurrencyTests&FullyQualifiedName~same_key_concurrent_create",
+  "Counts": {
+    "Total": 2,
+    "Passed": 2,
+    "Failed": 0,
+    "Other": 0,
+    "Expected": 2
+  },
+  "RequiredCaseCountValidated": true,
+  "DatabaseName": "CP6Bug150_20261003_a73bd1b9",
+  "ReceiptSha256": "02CE6B9B7B903AD8816155E6A7A3586902834B91624CEC4CF233A0CDE1E9331D",
+  "RunnerSha256": "15DBB8DDC83BD36EF5A2D15C762BC612BB982AF182D32E1C9999E00C86E0ADF6",
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "Sha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseFailureClassifier.cs",
+      "Sha256": "A4FEF97093EA0DE8F7924CE3B33D4368D35907845EFBDFC2D67FCF7C7C1B357D"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+      "Sha256": "C8F3521C294F15793A8CB3BE0AB8D598A7DDBC88573A52042AF12C6CC16BFB26"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+      "Sha256": "C67D762EBCB5EC391D449A65C267076EE4CDF42D8C18CAD4ED967BA1D27ACCC7"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/IdentityGenerationPostgreSqlV1.cs",
+      "Sha256": "4C70788A5624AE415201DC9A8C4344DC9E890BD57883A272A20CFF6FEF4C44E8"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.cs",
+      "Sha256": "E9E2B24685A83E4D223CDA8497884C0420AB74293892B9C3D63FD8CDD6F98A4A"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.Designer.cs",
+      "Sha256": "F1C8DDD9F2890ABC0D101C12948899253722EAA855FD1167BE1189CE694F40F1"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+      "Sha256": "B1B190952C5102DB7C0B30097256DAAECDF4DF1C2ABCB6F0D874A43BA1521D35"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.cs",
+      "Sha256": "E3219787477F49408850DA5907C63F07AAB87D9A8934B31DB0CE02C8F460DCB2"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.Designer.cs",
+      "Sha256": "57E5B41BA3DCC8F5D5013B425FB68350BA869A4C39C9C2CA0DDF1CAFC0A8F1C4"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/ErpIntegrationContextModelSnapshot.cs",
+      "Sha256": "9F27F2C58E742C822E0481897AE7EFF7B005D34D026E166C22B205CE6C4E56A2"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.cs",
+      "Sha256": "6AF32769F1B80B58BD95F6503934BE1292DEC8138FEFE6D339378D55B185641F"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.Designer.cs",
+      "Sha256": "514E1537CCCE366419184F1488724FEBCEA98D5CFF4CADA2499696C6B024CDD5"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/IdentityMessagingContextModelSnapshot.cs",
+      "Sha256": "78CA6A9C91016B1B6F0979CD52161DC2EF8851D6730CF7236714A7666958102D"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.cs",
+      "Sha256": "88A09564B7560D102F5F8F62683B809A5879AB871D8DD8904BD60EF0A0B8410F"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.Designer.cs",
+      "Sha256": "289EE74DF3AC9A1E34C9BC654E819BE280BB8CF3839F336BC02937F84C869D61"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/Migrations/Space/SpaceContextModelSnapshot.cs",
+      "Sha256": "F0089ED85BC42769C9288FC37E6FC7B0C6BF61B3BB133E75475E37CED796901D"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/packages.lock.json",
+      "Sha256": "565334CC9393B7F9796A652007CBED6887AD67BA5F7C14052E2E32E8B383B7F8"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlCoreObjectsV1.cs",
+      "Sha256": "964F5FD2B3D7DD711BF4FA61BF22115ABFC592AFB14525326B2ED037BA4F1355"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlCoreTokenTablesV1.cs",
+      "Sha256": "247532FC7A6435B66BA15292AA8921C222CC54E267E0B9B94ACD0B40A3F26B20"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlErpIntegrationTokenTablesV1.cs",
+      "Sha256": "7FD7F46B2B2DF4FAC89279C3F2E4DBE00D0F86C5B89375D801582E835EDF6AFC"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlFreshSeedV1.cs",
+      "Sha256": "6AF5B0946484B0667DDEC6E546147FA87FB67073CF1DCB9CAA12F95014F432EC"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlIdentityPriorityTokenTablesV1.cs",
+      "Sha256": "68EA396487AA904E3025D7BCAC15F95F94DCDF2C75B0B827DCBA7166B8555C9B"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlMigrationsAssembly.cs",
+      "Sha256": "29552F4AAF128C77734C327C8057EF155E7D2FC5CB49709A8B6036DC74FD9D88"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlRestoredOrderDefaultsV1.cs",
+      "Sha256": "41E5D3B34EBB7E98E778DA6210301602DE7CDB59347B16706445BECEC352A05A"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlSpaceTokenTablesV1.cs",
+      "Sha256": "191990EB77B9EF294D64167D3E24448C226B4472B5EA38B9F804D1A6381A92EA"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/PostgreSqlTokenV1.cs",
+      "Sha256": "A907FBF347ED4776BD696A8C4FC31B83F0A08BA37B202AEC9FDFA1E2C96B8CB1"
+    },
+    {
+      "Path": "CP6.Space.Application/CP6.Space.Application.csproj",
+      "Sha256": "93DF62A00DA7097E7B70D0DF8070E069E42E36917A35A98BC68E8509DE27D6E1"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiAdministration.cs",
+      "Sha256": "FB301E4C004C732946D96093A38AC645F2CC2B7C5C82BC6DB5BCF4E009DFCA5F"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiAtomicApply.cs",
+      "Sha256": "FD8BAA894438BFEF8150F8FC14E44115A178AD701CE0143FF2EDD521E54DD268"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiCadFeatureMinimization.cs",
+      "Sha256": "13F9400C4651F79990219460D832E3453DEAABA54062101EE61B5E50A8567116"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiCapacity.cs",
+      "Sha256": "D0065B6DEBAA3B6C17D715116A05655D6D937ECEE15F36C2374F7C7D5B488BE5"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiExternalProviderRequestGate.cs",
+      "Sha256": "FC611C7F44ED1DA8DC9DC3EFAE88B82DD1FB6A34976AF330137FF3546ED010B5"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiGenerationContracts.cs",
+      "Sha256": "25C95F7F7E052C5FDDE98FE5D701106FE1C59F2179EECA886EB5E160CF6B2191"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiGenerationOutputValidation.cs",
+      "Sha256": "83843D096380D739C188BEE551CB48AA868ED3C05D858FB1777F17A37158A485"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiGenerationProviders.cs",
+      "Sha256": "0C3ECA214B802D60DF9C84A09FB35131D6D8716E9BCEFF666DEC86CB8CF07929"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiLockedFacts.cs",
+      "Sha256": "8F443A862281ADF862929F99DBAAE1628EBB0B1991057C37B2882BF8F920D093"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiOfflineEvaluation.cs",
+      "Sha256": "1042989FE38543B6E1F3DCE0A77C754CC8BB3647FEB661BA3C963403CA23742F"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiPolicy.cs",
+      "Sha256": "D785DAE85825EE4B891F4F13F1A2ADA80E25A5C2F010958563ADDC5D1AEB0D2E"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiProposalDecisions.cs",
+      "Sha256": "F75C2E6F68D27C3499D8D5591340D51E76A313589CB9E4AA954F50EBD35D5460"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiProposalReview.cs",
+      "Sha256": "C8BBDA185E41195CA63EA63432B855B6083590EE8DDD9E3A72D68073555D2085"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiProposalReviewContracts.cs",
+      "Sha256": "2176096AF70E2261002801F224B8DF663CF99799CFC4086C8FC55C0EDD40E89A"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiRetention.cs",
+      "Sha256": "09D457C03A933D4ECCAFF85EBD00A30284B58D5E4B04B8BBEF08C08E7A2C9CEB"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiWarehouseSynthesis.cs",
+      "Sha256": "785581EC90B1CF6295F5E5CD37A17584798860480D3BB7336A6F72AE7E10D002"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceAiWarehouseSynthesisContracts.cs",
+      "Sha256": "DDC1DA4FB28B939B0D862130DC927FB85569FCF0DBCEBA8D1FBF739DCD4DC5F3"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceBuiltInWarehouseTemplates.cs",
+      "Sha256": "F0D4D5AF82D55A01847F9EA8742E5B55D69F6BEF6D9AD9FA3B364A075BE52D37"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadConversion.cs",
+      "Sha256": "DB26BA5FBD60A1FC4A3D40BAE57FB39A12969BFF18EF93456F2FF76F1ECB3A06"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadConverterContractRunner.cs",
+      "Sha256": "1E4858E9B0506776EE4D26A59509CC2DCDB630F4AD444DE201342AFB8AD944AB"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadCoordinatePreparation.cs",
+      "Sha256": "A98F3F2951C9213B8B395EED729250035D657D5F5D17DD702A7C97F21C0A7B10"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadInventory.cs",
+      "Sha256": "DC58C8DABB7858E69EE5A3C0A4BB5D16BB64412146BB50B85892193E719E424B"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadMapping.cs",
+      "Sha256": "AC5D85FDF519CF58C854152178E81112928A034647957F33BD96FD9C2B6ABBEA"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadMappingReplaySnapshot.cs",
+      "Sha256": "AF64CC8C7214B9041163712633DA3A5B357EA190DF0AB0E6F130CB30EB4876A7"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadParseJobs.cs",
+      "Sha256": "0BC2773530C7981EC9BB3735C24D387708A8176F05DA4640A4009FF48968F62A"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadPreparation.cs",
+      "Sha256": "7E611AFEE63DE151BA7B0F2F7893D79C23121C1CE98FFDB6EB4E3CEEFC8C7CE5"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadPreviewSet.cs",
+      "Sha256": "4F80DA82682981B490C51818603F55E7DBD0214A0C637ED68FE4A463A491CB00"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadProviders.cs",
+      "Sha256": "BB7C91F46AB3F22C6447E0777C78ADB4E691234BC024D3A2E0CC7F2B59760A39"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadReviewWorkspace.cs",
+      "Sha256": "12842B1E10DC4AD3E0E049480BC9155663DB337B47F4E14CE72A0F48B5FFCFD0"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadSemanticDiagnostics.cs",
+      "Sha256": "982016917D61771BCAA765A1CF774BC8C83D7098BC2DFAEF71EE559C53A4CE5B"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadSemanticParsing.cs",
+      "Sha256": "AA958C863E050C202E364B1146382AF8FD382FF7A6ECD09D3BE01058E4CC0C4D"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadSemanticQualityDiagnostics.cs",
+      "Sha256": "274B71CA1F8768EDB4F028BAF4DD1B8CD5C4FF0FA7CF545CD9C455C1B1EBC42D"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceCadWorkerProtocol.cs",
+      "Sha256": "B79D4D73911EBC49281D28B99EF27859373620EE4499641B6446A8C1A47BD222"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceDesignV1.cs",
+      "Sha256": "B44328A0D8D51BADBEF9D46B95CA61A4AA5C186930EEF37D0EF859A48F40FD5B"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceDeviceEvents.cs",
+      "Sha256": "2442618CBC9B4027EA6EE172AADEE16CBF0C2FE251ABAC7CAB4D59BB823E46B5"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceDeviceRuntime.cs",
+      "Sha256": "759329AE92A0F423E0074F294A03021C9B1F53212C7DC07770F116529C3686C9"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceDispatchApproval.cs",
+      "Sha256": "2FF6084E54415A42404F83771707D350B0FC5352EC9205B93D4BA6D0644A76C5"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceDispatchOutcomeEvaluation.cs",
+      "Sha256": "A0B214B5AC9C070A3435CA9737244042E9A76F9606490C1B22292E342D662BC2"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceDispatchRecommendation.cs",
+      "Sha256": "0BC75DC4CBD7BBE6A36009A575EF89102D152A6B9E4581F5771540EC9B2F565E"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceEditLeaseService.cs",
+      "Sha256": "9A9D688BE58C4A8623EF8A5B75BF8F5B4FB8B4214EF7429BAAA6D03AA3CD5AC2"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExcelCadApply.cs",
+      "Sha256": "30843179F65EE020E1EFCB2FED77EAC23E7C048351CFECB79860E0B008414524"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExcelCadMatchArtifacts.cs",
+      "Sha256": "AFC7AEE9E7CC9F0F9B810547164F4C8A03D1CD6170E5F610702F1598F49D6E2F"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExcelCadMatching.cs",
+      "Sha256": "EFA6F80D6BAE2B1DF1E76AE6480F623E144B73A2B7CFD4E1734EBC5768C70FF5"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExcelMapping.cs",
+      "Sha256": "FCFB1E26DE3CACFE76F487151CAE9F41A3E535E28B33FC2692213AE1603855A0"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExcelPreflight.cs",
+      "Sha256": "9C3C684BABBF0FC09EB52B7B20AAAC7E645981070A97F73D1D7118A4D28855C1"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExcelPreflightProcessor.cs",
+      "Sha256": "CFCA16B4D9E37FF837C9BA37B588F03ECC7FF77B8074734083C5E49385F490F3"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExecutionAbstractions.cs",
+      "Sha256": "E2F97D9779E23D82769AB9745E55DBAE30D48D489F57059877E0A479704F77A3"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExternalGrant.cs",
+      "Sha256": "DEF5DDDD8EF943488C3760179B2D26AB910CE4D6D7782B5457E536AA19C897D7"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExternalOrganization.cs",
+      "Sha256": "5F0475518FBB4D7537BE505DF842551A35DC87126477AA576F967FE8A3FF46C2"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceExternalPortal.cs",
+      "Sha256": "B3712C77E135723FE02923C2157422BAA7FB6271C93B6C1955AB8184D4713F22"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceFileAbstractions.cs",
+      "Sha256": "7B812D1CACE7D12E938B07E894EE90184CF37F56D47ECA243BC22C8DCD29677A"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceFileLifecycleService.cs",
+      "Sha256": "9F56A80F7B4D1CAC55AF80F53F94F072B07DCB31BCD8A55A9DF73284C3648E5C"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceFileRetention.cs",
+      "Sha256": "02161342C2AE5C84B7E4C0F0EA485B5CAD620705B987E235B7C0229E0C4AB9A0"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceFileSafety.cs",
+      "Sha256": "8F881DE4A47C4B75A6C238C2AEA523D4BC324FCEF0285BB9798935971C1153DF"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceFileUploadService.cs",
+      "Sha256": "F1AB873A1F70665D07BC87CC11A6BF01208103AB877EF3F52B4FEE60C4B97E67"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceHistoricalRepublish.cs",
+      "Sha256": "C914BC2E1497073B8BC23B0344DB4B7FC9FEB5301551D6A3E393478367A73780"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceImportBuildSceneProcessors.cs",
+      "Sha256": "0B57A1CD89516738E8355D0F6C85104A250E795D29D38CB35F81DF9E3C2DFF1B"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceJobAbstractions.cs",
+      "Sha256": "07E9F0293054C3CE5735F962A9FBC864F20F0DBDA5A085571FF5560A62B7EB1D"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceJobCoordinator.cs",
+      "Sha256": "CB758D4993C3705E6CC30A7F72B990AFE94D5CDC335FFFDE139368D8FF760351"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceModelingTemplate.cs",
+      "Sha256": "1CE47F3F0263FE6A30C0E5F3AC6040FB10279506155413B14C76C01C3AE53B73"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceModelVersionCoordinator.cs",
+      "Sha256": "BE52B56E552284F193B85960108EC05F9026D47D1FC422D1CCFDC01B2DDEF9DB"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceOperationsDiagnostics.cs",
+      "Sha256": "A53CBC6CBDF3E3E7BFEA35104CE7A42D88C81331515729DF3F2082EC4980FBC2"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePersonnelEvents.cs",
+      "Sha256": "B3DFF7101F189FCAAB896E4A0D1D9CAD509E855FA3F54F1ABF1BB186C3DD6946"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePersonnelRuntime.cs",
+      "Sha256": "8BB14D05F4CFBA65228259C43FC641BA24DDE6300DF20C22EA996FD1DC819524"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePlanningComparisons.cs",
+      "Sha256": "26C87E5021691C39A22B95262A083A0B721D03F8322CE09FB32BE2FB8BE13812"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePlanningDatasets.cs",
+      "Sha256": "B1CF132EB9A25FCBC12B4F8D690F53479CE3F2F6B032A0CD685CE639C61FB279"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePlanningExchange.cs",
+      "Sha256": "66A4D37B02C883F511A175098AB3B8D78B0B5200887D48B4A5ECD00507768E7E"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePlanningScenarios.cs",
+      "Sha256": "53882E1EE9E3C5F5ADB3160CA73DA15B8FE6608CD0A1CF9C4420EBEC069A77F1"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePlanningSimulations.cs",
+      "Sha256": "4D3DAC455039F85879B0F5BDEF9A31AF2D64793FE2552B914BA158AB02F27C8D"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePublishExecution.cs",
+      "Sha256": "6EB48FAB0F9926C6E4793F15D5AB9C4771C609201649888630E0AB104B987B94"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePublishPreview.cs",
+      "Sha256": "9606BF09882BAD18E737EF3D7B932D06E8E55599270E8EFACF933A8C655BA3BC"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePublishRecoveryMetrics.cs",
+      "Sha256": "25736F0DDD399F9B9651967555BBF7CED83F4E1147740B5FD90766E553981D5B"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePublishWarningAcknowledgement.cs",
+      "Sha256": "F35AC868A08DAFB22A9BD3EB08BEC4DFBABB49E4F64CEFD7D5CB5C6D9FBE5E16"
+    },
+    {
+      "Path": "CP6.Space.Application/SpacePutawayRecommendation.cs",
+      "Sha256": "542882074FA9B1D39F6E7CE1D1629288FD0992A382AFCCB8729776E8362B4900"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceRackGenerationProfiles.cs",
+      "Sha256": "B561E80FFD893EFED4455F428BDF1BD5447CD97C4716C1FE9B9EEC5DDD4B8ECB"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceSourceCoordinator.cs",
+      "Sha256": "8D206C30CFA76F6A83C81816CB72ADA406350F1AC00E8622DEFCBEDA9B4ABE03"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceStandardWarehouseDataset.cs",
+      "Sha256": "8B7FF670C56216374EF4E0BD3333423A61448D9679DC5BBA6B123FF71F4834EA"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceUnderlayV1.cs",
+      "Sha256": "9E9CC0B9B3C6CDB8ED0EECDAF82D9B326763BB78F3763A51ADA739FF3D84E7E6"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceValidation.cs",
+      "Sha256": "DFE92A36AA425EC8B39F1C8D6DAF7B44A2BBBF50C0BBF53622B2BAD879434DC5"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceVersionClone.cs",
+      "Sha256": "B41B23FEE82D314B2CB054C4CD1AB73878A7E5A5311531E5134DAB933DD7B8AA"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceWarehouseTemplatePlanCodec.cs",
+      "Sha256": "789ECF0335D3F897F90CEDD33AE8DBA01BB1A4FF7DD89CCB3070D8B8B7A0B914"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceWmsAdapter.cs",
+      "Sha256": "BCB0BCBFC7158DFA67FE23F29F2D77368C6255CB066F8120685776E25104F295"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceWmsAdoption.cs",
+      "Sha256": "0CFDA8EC5D4F7645225E353BC562BBE243DED1102AD34734BD5CEA7DB6898569"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceWmsRuntime.cs",
+      "Sha256": "764FA1323058C085E39CB3EE7CE9A6AC0D0FE8D3577EF16EBD5081862E6CE416"
+    },
+    {
+      "Path": "CP6.Space.Application/SpaceWmsSimulator.cs",
+      "Sha256": "09326B5F8A34D787FDFC47CA800495994D7A994BAC69DCEF63E3CD7DDF0D8EB4"
+    },
+    {
+      "Path": "CP6.Space.Domain/CP6.Space.Domain.csproj",
+      "Sha256": "427D1E050E34969C21ED62AE104C9F0D53391D4C9F6F6D67E43AC6CADA4D0DCA"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceAiCapacity.cs",
+      "Sha256": "3CC7F8B49C5323FFB10AA665E054DD972AC71108C2432077DFABC41FE6C79B23"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceAiTenantPolicyConfiguration.cs",
+      "Sha256": "95371CD76B0527BDB06B9981E3224AB6604063359B7D2E07AC7C68C024626995"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceAiUsageRecord.cs",
+      "Sha256": "44DFD15CCBB7752EDD9383B6497DDBA430626184581670AAAC619980AD877341"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceArtifact.cs",
+      "Sha256": "3C974D97DBAC4F8ED3E3D7CEDF0987DF52F31B7E97C9E61F6613BF7264FB6A11"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceAssets.cs",
+      "Sha256": "7DE0E584DF664C6936F09845BF83E2704D2A3DC24CB1DDD24B07B0D894E60D17"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceCadMappingProfile.cs",
+      "Sha256": "37CA7573600D9ED691CCA5E765E1F178FC4CF2C93161F38B34502438AB8B7DE9"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceCadParsePreparation.cs",
+      "Sha256": "9ED04AC7C27F2261F27C94151FEDA1223E75547ABFD255D43B7486C163968836"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceCadSiteProviderConfiguration.cs",
+      "Sha256": "592A7D9456D6C47E1F5A32426CA7D5BBD76A56B07626A6B07667EA319BB3DA5D"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceDeviceEvents.cs",
+      "Sha256": "312D27FBD5F2D0E8E4518290E5B95535E942512AF4F009AA8BACD3E0D5C32BBF"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceDispatchRecommendation.cs",
+      "Sha256": "D1ACA220EBD309EF6D90332BE20A6053D8F524591895E7C36DE56A93361BC5FA"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceDomainExceptions.cs",
+      "Sha256": "5A7C08852A674B217714FB2FFD44EBC87C29253536211C69A776DD2C155B25A0"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceEditLease.cs",
+      "Sha256": "1A1301E68D4C507A38AB71461CF72907A7D25A3A9602B4E5C47D18514F2C9D50"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceElementCommands.cs",
+      "Sha256": "A461C6585F9FF2792E9F18DEA237868F8AC8969A32D762F202B72D29BA2357F5"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceElementValues.cs",
+      "Sha256": "B6F88FDAEB449433F14B12749B3114333BEE23C5118BBB451416AD10383D75FA"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceEnums.cs",
+      "Sha256": "0597A821F85AB86340A09617981057C822EED9D60A65ACADEF35D6B06A6A75CB"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceExcelDesignMetadata.cs",
+      "Sha256": "CDD6EF19D23ED5FC5A088800FE5D9C361870C3AD68459755CB76099089AEA875"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceExcelMappingProfile.cs",
+      "Sha256": "E77459BFDCC29BB94D74270611BA04C281C3639EDD033BE64A2E911F2BA12EAE"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceExternalAccess.cs",
+      "Sha256": "7590EC9803A5771A7F3688AFB13ED7B85671DDD4B809462226CD85E885DA208A"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceExternalGrant.cs",
+      "Sha256": "1B37348A20DAE06D960C19AD252EC14C03D54658B5FF282A0554E35B739D5C30"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceFieldPolicy.cs",
+      "Sha256": "E6F9F1515E61B157A9DFCF024B041EEA8B9206E1A1F1A5A73A361A0B8B7F1268"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceFile.cs",
+      "Sha256": "9A19FA34705C3388EDE0040D8F50B70D046C176344F23C891F3636D4CAA3346A"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceGenerationLockedFact.cs",
+      "Sha256": "9AC3FE1479FCDB51E8590B7E26978BBEB919EBB9D4CD9A9979BD450038384560"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceGenerationProposal.cs",
+      "Sha256": "36AE35056BBED1F151633B8D3967F6488816F0FB3E8136F617AFF3A204379D02"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceGenerationRun.cs",
+      "Sha256": "396434497F2CE9183AD8DAFE5749446280F41C6629AF1B4D85F555137140A515"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceGenerationStagingElement.cs",
+      "Sha256": "9223252AF29F3BF1468D2D31B4AAC20631239133AEA3CE222F71B9EFE44F9CFA"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceHistoricalRepublish.cs",
+      "Sha256": "D737BB2AC368F83370EEF66CB957D82AC3CF148835C99B0C61138129259EF693"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceIdempotencyRecord.cs",
+      "Sha256": "10A72CC94CB3C2781CA60511164EE294F6B5EC25277EE974C7C3FE8DD200F6AA"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceJob.cs",
+      "Sha256": "56437A1A3568C72A18CCEE6DFEDB662A8FE205A74FB1175D42E35D15AC459193"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceJobAttempt.cs",
+      "Sha256": "70D1164E99E12D4A075A945D938ECA7F395D5772E483DFBCA1E4C4970B838F4C"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceJobRetryPolicy.cs",
+      "Sha256": "DC8445FE7FC226999151FC287850C78339BF578C27E9FEF2216BF2EC7F7B2C08"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceJobStep.cs",
+      "Sha256": "B8B890AA0160D964BC0CE7E47B35432DA4588768B2646042CE34BE68495AF4FA"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceModel.cs",
+      "Sha256": "3F0EDD933DBBD88F81C30FBA03A4BF5A2780B88165F4855DCAB6ECFB033C93A6"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceModelIssue.cs",
+      "Sha256": "A58A16870ECDE679A3B11145D9171F70C2D5BC3F7A5D4D1466EF48CEBADECACB"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceModelSource.cs",
+      "Sha256": "4473E1F091CEC9186DB440F550F39BD46DA9E3B70DD82E32285957DD8982BFEB"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceModelVersion.cs",
+      "Sha256": "C280941B39A4A6D252E8F22970D62D05569C77A94B833E67C1C64458D5D75F32"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpacePersonnelEvents.cs",
+      "Sha256": "9A18D2791985B1C316F23D7A748715516C88022A740C2C6A31CA3102C0057B28"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpacePlanningComparison.cs",
+      "Sha256": "F9303F55B857AD52E37C99AE139E806449F1E2517685F22EBCBD699E5AE0392A"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpacePlanningHistoricalDataset.cs",
+      "Sha256": "4C3C8A67E91B231401FF87516D7175AB88AFE1FA4069C98B74795FEDB082E944"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpacePlanningScenarioBranch.cs",
+      "Sha256": "A46E42FCE625B6D05D2720D46F7100C3B0CC5593D1FCC9B239E0F90CB2B899FC"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpacePlanningSimulation.cs",
+      "Sha256": "351DFC494C79D80AB5AF39C5F96EE3B39DAD2514A6EB9393C849C167C6824B6F"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceProposalDecision.cs",
+      "Sha256": "D9C8873017D72F9F3D6BC97F326C34E276DFFA735BA8162574418DEA41B79C54"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpacePublishing.cs",
+      "Sha256": "3294786AE7384C11184FF25BFAC7E4EDC3889FEAC0B5D01EFC97D2730073E133"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpacePutawayRecommendation.cs",
+      "Sha256": "CC434059C000257C63584106F010C446A32813E93650F0E73019DCDA94A4D0C4"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceRackGenerationProfiles.cs",
+      "Sha256": "194042A204B428C918BA772798792CA8DC3E21DFA64C4AC9D006595E18754E5B"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceRevisions.cs",
+      "Sha256": "789149B136ECD99B876F28581109467D9969A6E01D50EF08FB3F175E731FF115"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceTenantEntity.cs",
+      "Sha256": "B50ADD6E539C00042002D4679D30F4087E5DEF9875C7D38AFA066510FB70D1B3"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceUnderlayCalibration.cs",
+      "Sha256": "93247C00DC9D27F33B1B67B5E68F14A0919637B8226954D83E3974237AEBADD7"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceValidationRun.cs",
+      "Sha256": "4DDF36B282B63A3C1679009CFE13D34C5A0A76F402DAECE0637C3D7805D350EE"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceWarehouseTemplates.cs",
+      "Sha256": "68C67038FCD8E199D40AA91E46FE4318327E87B9D0785551BC3807343925B318"
+    },
+    {
+      "Path": "CP6.Space.Domain/SpaceWmsAdoption.cs",
+      "Sha256": "305BF2225D350EB1CF7840BADDFCF837CAEF51353EA1F31C115EA01DBF52CE5B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj",
+      "Sha256": "1AD4FAD052DFB9C947CF5105906886D165FBD267692ED61F377EC4E06BCD1872"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Cp6SpaceDispatchTaskAdapter.cs",
+      "Sha256": "CAA0117274FD577FAF1F7461CF309E8214029829766D21BCDDF9CE2E0C58E9E7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Cp6SpaceLocationCodeRuleProvider.cs",
+      "Sha256": "D94F1C3091F0FC94335AEDBB858B614B2693034CBB6D211FC5A508E8A175D7A1"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Cp6SpaceRuntimeMaterializer.cs",
+      "Sha256": "23445EE85999123C69CE704A66C5DF4671F374654B4648851D56C494C657CE2D"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Cp6SpaceWarehouseResolver.cs",
+      "Sha256": "8BE3C954B29CE76CEFD7F0ECEFEC4C64C2EE0B1B7C40D03AFBBD77D5158C5427"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Cp6SpaceWmsAdapter.cs",
+      "Sha256": "4FB5BF8E589A2E6CDA4BD351C96DE562265E425A418644E0F9098D75CA3630D4"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceAiCapacityLedger.cs",
+      "Sha256": "9ACC6327D216F7BF0A8D805F815DC8C80DD15D8AB1D8553CAFE27B8C376F929C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceFileCatalog.cs",
+      "Sha256": "824FD32AA0C45F9D2743A7305A670D0067431DDBF892F0CCE716269EC015F6D5"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceFileSafety.cs",
+      "Sha256": "9068898E600129630E66AE3BDAB54EF2AFC30478A05F59F3FEB12DE6454E6AD2"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceJobLedger.cs",
+      "Sha256": "14CE4DC46EF1BEFF8CC0C55B26C1CEE664CC61007CD25007444203F45B273D01"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceVersionClone.cs",
+      "Sha256": "D234FCA1FDA2DFF326F04674341BEC3872F0059FC62496FFD22963A3682122B7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/FileSystemSpaceFileStore.cs",
+      "Sha256": "EFF1253EA78584679D52C95C0CBB98CAFD3EE43BAE1604BE9FAED7FE2EA2B42A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/ManagedFileSafetyScanner.cs",
+      "Sha256": "0CFC43CBA39BE6023AF2E2BF693143D9F7E7E42EE23E51A07F0CFDD711A83756"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726064940_SpaceE01S01ModelVersionBaseline.cs",
+      "Sha256": "181D4D761A531E97A9F829EDE0197708EC1DF48B6CD4CF828D8EF75E8AD6F9C1"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726064940_SpaceE01S01ModelVersionBaseline.Designer.cs",
+      "Sha256": "76DE79B7F68B57419884B397CC019268B9CE57D2FCF5AE332BBFA8474D6D29FD"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726072628_SpaceE01S02SourceFileLineage.cs",
+      "Sha256": "E9C4B45BCCC52BAB1F83EB5B040F16CA6AD46F92828B64893AE2D33CC1368E54"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726072628_SpaceE01S02SourceFileLineage.Designer.cs",
+      "Sha256": "B5B431DCE69EC1FE70F32F96E77D1ECF136716977A02A2B0773026877FCBC942"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726080918_SpaceE01S03JobLedger.cs",
+      "Sha256": "4B50D6C0EE27748AD370251C19E07BE32414709915278CF44E2F51EC19D1B040"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726080918_SpaceE01S03JobLedger.Designer.cs",
+      "Sha256": "0935D564043B432B5C0CBFC7619DC7ABDC7145ADEA2E93F7B716A279F578E5E8"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726085852_SpaceE01S04PublishedClone.cs",
+      "Sha256": "688577DDD30FD3DDAF06C7654EAB8D1E4E8652A4BAA991981E18B41AE6103500"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726085852_SpaceE01S04PublishedClone.Designer.cs",
+      "Sha256": "D231E3625562EF13F97DCE5EAB9E98AD3C5B7D93A4DAB66B0FE7C49E8BA382ED"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726092519_SpaceE01S05DesignApiIdempotency.cs",
+      "Sha256": "58B9D390C8F386A7E3D7B83EDD6840F94F4992B73CA77B38E7D7641F517575B2"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260726092519_SpaceE01S05DesignApiIdempotency.Designer.cs",
+      "Sha256": "E1C2BF71A9B5995996D4199A91C4439BB130784DCE090682DC800CC0E650EFD0"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260730152005_SpaceE01S06FileSafetyRetention.cs",
+      "Sha256": "000D560D2235EDB6935F0973228DF6F7D7D3647AA65FA123A847907D1E661FC7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260730152005_SpaceE01S06FileSafetyRetention.Designer.cs",
+      "Sha256": "8F6D223FF21F9032DDC16860E156976EF434B36B8DC1C39FE4BB4B77F7D7C801"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260730174231_SpaceE13S02GenerationDataModel.cs",
+      "Sha256": "5A84B7D6519F48F39CF2CD83C1B62B3B626CDE18A000EA6F178F17333B8A80C5"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260730174231_SpaceE13S02GenerationDataModel.Designer.cs",
+      "Sha256": "9AF6B1FB6E4178DC823DE019E46D039DAB557640DCE31EE47C22D0C349D04330"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260730183757_SpaceE13S12AiCapacityLedger.cs",
+      "Sha256": "D3D3343D7AEF872C6B29CE44331D8D802D4296476BC0429AE23667A94D040C74"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260730183757_SpaceE13S12AiCapacityLedger.Designer.cs",
+      "Sha256": "08DE013BE338C72C88051DFF5100593BB191BB4C62F46C38AE8DAE6BC49BCD31"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731001924_SpaceE05S02RackLevelSpecification.cs",
+      "Sha256": "4C7223692EF0853851B51EC847D18F4B85FD4DE3D8AEE792243196780CEC9E19"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731001924_SpaceE05S02RackLevelSpecification.Designer.cs",
+      "Sha256": "7AC2671097B89BD5228D66D3AA7C33A0392ACE90E42DCF680E123EF156C119B7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731010047_SpaceE05S04AssetLibrary.cs",
+      "Sha256": "558E42F820E3DAED872577A36A29F400F6C8EB5B6D498F150AC8869880A95D1E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731010047_SpaceE05S04AssetLibrary.Designer.cs",
+      "Sha256": "64CCA740351723404EB50CCBDE99F40F673A3F3B3B8E5DE2A177BE33F145E665"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731032506_SpaceE04S02UnderlayCalibration.cs",
+      "Sha256": "0C3DB85FD888630326EC20FF61A344CADDB29B801894D27AE2453ADD77D43C22"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731032506_SpaceE04S02UnderlayCalibration.Designer.cs",
+      "Sha256": "DAE7E75291973D4FFD7E695D5F31F8527B26C6BBD69534B0F1E5F0AE39A0775A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731035237_SpaceE04S03ElementCommands.cs",
+      "Sha256": "31E5611C0D516F63DF41D0A5B57A73FD5E9014F9FFFC9E015C2F1A2103CB88A2"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731035237_SpaceE04S03ElementCommands.Designer.cs",
+      "Sha256": "C88C8F880C0C327AB34C4EC391D64EE3C1AB6076140C90979578E35C1BADAC7A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731090933_SpaceE07S05WmsAdoption.cs",
+      "Sha256": "F276858814296FC1F3B2E67D2FDB1CC649F3CE1C1A3221846FE226BA81F502CA"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260731090933_SpaceE07S05WmsAdoption.Designer.cs",
+      "Sha256": "745713A6555604D72DE740D519CC90AC32E3C08EF12E39F415F6426211B8503C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260801172135_SpaceE09S01ExternalOrganizations.cs",
+      "Sha256": "51143DD40833EC854FD9D6C101D5E9CD4E2653D477EE924DC04AAE82BD958C04"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260801172135_SpaceE09S01ExternalOrganizations.Designer.cs",
+      "Sha256": "054B51735B1B779BB1037FF3F1F1E1BE7DFF8C950C90FC13F8FB8BBD5414D9A0"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260801182535_SpaceE09S02ExternalGrants.cs",
+      "Sha256": "82707859FEC4A4C4D023695B239F6BBA7A21DF0A7DA7A7B2802FEBE42A66B946"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260801182535_SpaceE09S02ExternalGrants.Designer.cs",
+      "Sha256": "FF714AD6DD0F96173B573DBE199C70D8AECF4507A690ADD2DF6030CAACF2BFB9"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260801191107_SpaceE09S03ExternalPortal.cs",
+      "Sha256": "57DC1EE05B2670F2F25A8315FBA0E7EE4AF15CB7D7FF49BB35870F3F5D282275"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260801191107_SpaceE09S03ExternalPortal.Designer.cs",
+      "Sha256": "D56B0152952938F98A8A3CC21A27877A08E3E09196F2EE652138A5F4951D94F9"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802103430_SpaceE03S02ExcelMappingProfiles.cs",
+      "Sha256": "D6C04F55D7F6AAFAFD15C1063C1FBE5205160E021043A4042D1EC2967B9F2CBB"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802103430_SpaceE03S02ExcelMappingProfiles.Designer.cs",
+      "Sha256": "056F4BF4C11F575B4F4F6301E98D33ABE0AADDE532FCEEB33B6B6ECEDAEEDD16"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802115537_SpaceE13S16AiPolicyManagement.cs",
+      "Sha256": "8CEEA81D0570C02D6A1722DEEFCA1298F7C7AEBB49FD848C21D6DFA9ED3C72C1"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802115537_SpaceE13S16AiPolicyManagement.Designer.cs",
+      "Sha256": "D962A122894C136FA17B4E50D8DC5F5C4CCAEC0E412D4A116D2602595055526A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802125928_SpaceE10S01PersonnelEvents.cs",
+      "Sha256": "3BA2087D888A12D642C0D4AED9794EE1A35D15FBA46A6AE674546E0E374A1CFC"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802125928_SpaceE10S01PersonnelEvents.Designer.cs",
+      "Sha256": "3C2B68F2CC0AE815DE20EF2E5221516EFF9CD82E1D5D349B937AC4BE1F187C6B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802141148_SpaceE10S03DeviceEvents.cs",
+      "Sha256": "F101A5A8072FD930930E1579EDBF40170ADDC73BDCE15D6833DFB083165B7E7A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802141148_SpaceE10S03DeviceEvents.Designer.cs",
+      "Sha256": "5B5CD382748D031B40B9516302EA9AAD1C0F67F055252BDA4959D384BBE17E6A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802144027_SpaceE10S04DeviceRuntime.cs",
+      "Sha256": "55CD60E8F0D76DF386EC982BBFC8A7940713CAB6EB02C5715B9027C7F9224AF6"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802144027_SpaceE10S04DeviceRuntime.Designer.cs",
+      "Sha256": "C7EBA086A19376FBCB2675ABC721B5D7B0797B47EE57AC08B10900914C51E9C2"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802172258_SpaceE11S02PutawayRecommendations.cs",
+      "Sha256": "3B05068AE22570FCBC8B7E6B9DD2E0678B2692FAE091DAF5FB6674196A3F8C44"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802172258_SpaceE11S02PutawayRecommendations.Designer.cs",
+      "Sha256": "620BD30E0BC3B8CBAA019376622BD36DED62CFBB46F5F911BA0047CF930D63D5"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802180049_SpaceE11S03DispatchRecommendations.cs",
+      "Sha256": "C4C6DDD1F785CB9AC7D96657C96BBDC52C7ECF1A7D9C475BF7406872F8498078"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802180049_SpaceE11S03DispatchRecommendations.Designer.cs",
+      "Sha256": "A50B0AC5D39AC6E84B9904CE0F25C9C9AEAAFD348FDD2FB67816C7C62F4278AF"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802204901_SpaceE12S01PlanningScenarioBranches.cs",
+      "Sha256": "58E98FE0CD01A0CD4AAEEC0612FDCD668CAD4DEDF041D9D40AFD63A68FF2C34C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802204901_SpaceE12S01PlanningScenarioBranches.Designer.cs",
+      "Sha256": "B0DE42508C17FC7C0E324E5E63D08ABA340CA201497584EA8DD4C6545CC9F350"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802212845_SpaceE12S02HistoricalReplayDataset.cs",
+      "Sha256": "D748A8AE9BC0E2B10C9ADE873C54F4B951757AE5DFDA918F1BB691375FC17340"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802212845_SpaceE12S02HistoricalReplayDataset.Designer.cs",
+      "Sha256": "92FDDFF6E113903F978016D340494201A330FB09E63C5C085A0959DB9198E82E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802221548_SpaceE12S03PlanningSimulation.cs",
+      "Sha256": "BE29725F599528458E4B471DCF5CD409A4D54B0874C97C1B91136E104DEB0B94"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802221548_SpaceE12S03PlanningSimulation.Designer.cs",
+      "Sha256": "F895420544AA50EC784E94C9BC04693DC8DB9249040942E89FF73AAC8EECE267"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802224514_SpaceE12S04PlanningComparisonDecision.cs",
+      "Sha256": "D828E4F991A89ADA6F7E7AE6245C63FCAA01881DCFD4AEA3394E0F0C84BBAA81"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260802224514_SpaceE12S04PlanningComparisonDecision.Designer.cs",
+      "Sha256": "0842873CE53C09A48E5DD87EB92771CD91937789D8240E895776DB16A55EFC7C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260806054950_SpaceE13S09ProposalDecisions.cs",
+      "Sha256": "A75DC5E90384DAFE0E74A158944E76525F992A763C8331AD137A343E508B43DA"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260806054950_SpaceE13S09ProposalDecisions.Designer.cs",
+      "Sha256": "B152D0F409B8024B3C939CB51D414716262299B00E87CDA647DA46ADD6664310"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260806110504_SpaceE13S10AtomicApply.cs",
+      "Sha256": "F1625CB6CF6B3DA083C5C219C0C7BDE33F00666580CC87BE43E5B27D080CA27E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260806110504_SpaceE13S10AtomicApply.Designer.cs",
+      "Sha256": "447D0B838AA6DEB77238B6F7DA3DB7E98B37CDA89E5C6E505EA9C765A6104A4A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260806160931_SpaceE13S17AiRetention.cs",
+      "Sha256": "DDD4EEE7782BD71C1EB45BCC54234196908D80DA666006B62B7DBCB096F704EA"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260806160931_SpaceE13S17AiRetention.Designer.cs",
+      "Sha256": "A5BD294BD1439719825A60E2EEE4A0113FD25E4A3B37A54B6899B82721E74889"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807105256_SpaceE06S01ValidationEngine.cs",
+      "Sha256": "E6C07C0C379BC641547D503ED04C9CEBA4A10D8D0CBF782E1A789EF60DDB4AEF"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807105256_SpaceE06S01ValidationEngine.Designer.cs",
+      "Sha256": "FE6B475E26D0725819BB4C2B56FD0FFB73EBABB9773B5D0298144E04A090790D"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807135544_SpaceE06S03PublishOrchestration.cs",
+      "Sha256": "818543B2ADEE3320B2C1F2260A75EBC56EB468632F6A3A34C3327E069CD4576B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807135544_SpaceE06S03PublishOrchestration.Designer.cs",
+      "Sha256": "F6358DEFA4074C8864429AF5349DD4F5B56B9BA9A09EF104FD31DF3021D59378"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807144532_SpaceE06S04PublishRecovery.cs",
+      "Sha256": "5A0A6AF29026FA6C8D440AE567B30B7F88D7F6A6A4F0DF6062818012758F6DCD"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807144532_SpaceE06S04PublishRecovery.Designer.cs",
+      "Sha256": "79EA420FAF8A9309CFAE64A02D631C4572E2DEEA41A11B6FDF52F15DC9AEFE6B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807170204_SpaceE06S05HistoricalRepublish.cs",
+      "Sha256": "995B911155394AA544E4EF551F23005AEB5F851CC0EEF1F5C50DB824BB485BDD"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260807170204_SpaceE06S05HistoricalRepublish.Designer.cs",
+      "Sha256": "652B0A04A30AFFD98F503E9F22EAB32552C86C7B8D4FF739E218A962AFB58E03"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260808131619_SpaceE03S05ExcelDesignMetadata.cs",
+      "Sha256": "E96C9721498F23C85FDE138D9351E2DF90BBAD7FA9767ED7E04B4064ACA72B82"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260808131619_SpaceE03S05ExcelDesignMetadata.Designer.cs",
+      "Sha256": "2835B50B56D0AEBC1838A8BA680A12053BBB13B28EF181196F35008447240E8C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260808164544_SpaceE13RackGenerationProfiles.cs",
+      "Sha256": "51D9BF8201170408E3119C46B1AEA33BB2BDE9734EC582E78EC0129E14F83B6F"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260808164544_SpaceE13RackGenerationProfiles.Designer.cs",
+      "Sha256": "D609DD33726096990E7AA823E3D9194714AD32860AC739523A39E850845692AB"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260813045207_SpaceStudioEditLease.cs",
+      "Sha256": "239D898CCF27AAF008EA2CD7A77F441584E53F3FA9030E9784A790D72D8D26FA"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260813045207_SpaceStudioEditLease.Designer.cs",
+      "Sha256": "87BC703125AC5CAF594A06EF8608598E5C8923A3F8C1A4387DE2EC2747AC64FA"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260813062308_SpaceCadChangesetFence.cs",
+      "Sha256": "B84F3C997650EC501BDFCE069E70A53D85E052B1683053B850F3F3E27969519C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260813062308_SpaceCadChangesetFence.Designer.cs",
+      "Sha256": "66BB6180CF35DEFC105DC7DC4D1FFEDFBA2A144C991820BD7AAE5687FCF67422"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814004311_SpaceCadStartWizardPreparation.cs",
+      "Sha256": "1689F83C3926863529784D534D55A0425FE570F7443A531AE2FFD42D02B4B97F"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814004311_SpaceCadStartWizardPreparation.Designer.cs",
+      "Sha256": "45EFE8E7C7618EB9995E8D62B093095A64331AE764FC9FDFA45D24979B59BEC6"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814011926_SpaceCadProviderRouting.cs",
+      "Sha256": "80173F840630947C568C27F81C2DB8F439D2CDDC5625F1A15F4562D483999911"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814011926_SpaceCadProviderRouting.Designer.cs",
+      "Sha256": "2C909E2E46E0B234ED6B2A7F3D3EF177F0D3932CCB50EB258509AEFCC64AA910"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814051514_SpaceCadProviderQualificationEvidence.cs",
+      "Sha256": "CCA257FFF047C2447FB188FEA7CA8BBE13477307A68CE981332B4F5B608F1C1E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814051514_SpaceCadProviderQualificationEvidence.Designer.cs",
+      "Sha256": "F0D97D4CF2B3EF969C64D5EC0BE967DB48E7D24E10B75B63AA6B5AF0FD5009FE"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814060254_SpaceCadMappingReplaySnapshot.cs",
+      "Sha256": "C13724EE22AFB647530CB4D103DEF2799B04C7782ED60901F757F282B6FA7ED8"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814060254_SpaceCadMappingReplaySnapshot.Designer.cs",
+      "Sha256": "F2B4B5A8CB81BCEC5F379ED2AA45986A453D62D8F0B71ED757FEC86957E7A6EE"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814063519_SpaceCadProviderVersionFence.cs",
+      "Sha256": "59F17995CB211FE7C9F60CEA3F50004EFA44641EBD3ADF4B59FEA925EAB133D0"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260814063519_SpaceCadProviderVersionFence.Designer.cs",
+      "Sha256": "01CEFD63A2854FE5BAD7A50EFF8C90E3E380B56E99EA80214BA3DB2AB35E1508"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260815201701_SpaceCadManualCorrectionLock.cs",
+      "Sha256": "C43767F67A399D97127A89BDA020C9EE15D8E40FDE40E455FBD91F8E6189E25E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260815201701_SpaceCadManualCorrectionLock.Designer.cs",
+      "Sha256": "2A9F7A3102E533BE53DE62AFE8E1FD8FD7BF0E73702FD5EBB022EB31213255CF"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260816054703_SpaceCadTenantMappingProfiles.cs",
+      "Sha256": "31B9A19313F7AD3F169BC5935BFD6B03B9930E1E91D059664A16BC370A95FC63"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260816054703_SpaceCadTenantMappingProfiles.Designer.cs",
+      "Sha256": "9B5B615838317DF9B49231F8582F186FA88235CD99FCE8DCDAE5D2C567EE91F7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260816094318_SpaceTenantWarehouseTemplates.cs",
+      "Sha256": "76979B93D7B96B2B96DB00AEC349F35D1430C1C2C59BB559ECF9278A20FBFF5C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260816094318_SpaceTenantWarehouseTemplates.Designer.cs",
+      "Sha256": "437A4C3C5FA4E6F91184A1C14AEA289D9510C2CB5B61FB9B03E6AB6DD6383BB8"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260827053057_SpaceV1UnifiedDraftCreation.cs",
+      "Sha256": "024BA18D88E0C0CABE6760B370720E84495154D46AFB3558D6648CFE0EFB96CF"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/20260827053057_SpaceV1UnifiedDraftCreation.Designer.cs",
+      "Sha256": "9D119318FB9A6166BC78319BD5FCBCF141A51C107901D2E88B56211FAB618488"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+      "Sha256": "35EFAC197C9B883BF0321547FDDEC6F5079DD5DCA844CEF5300AFD81F6000E6C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/OpenXmlSpaceExcelWorkbookReader.cs",
+      "Sha256": "2E72F36863322775F03A3C2A22ABD4710A7496B0D8063EC86C572EC4F78D2328"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/OpenXmlSpaceModelingTemplateService.cs",
+      "Sha256": "196DBE3D88EBBA52C9D99E58A7BCD60921E015C3BA8607E711AE685AE460F906"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/packages.lock.json",
+      "Sha256": "393AF9E3E2C8C4F193A381A873AEAB0262226BADFFFC2F4B8963F2B94A6BD328"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAccessEvaluator.cs",
+      "Sha256": "61AF9B5DF3B525DA1E3522EB3A6994C7B95A0EA73C0665F2E0E7E18BCFA30AC5"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiAdministrationService.cs",
+      "Sha256": "6014C9561CE0BB433CC4C0B982C0E03B05F112DE29BD59B3790C0D2DCF877C39"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiAtomicApplyService.cs",
+      "Sha256": "9492D494CBD54D360FC0D65476089297231D813B6C66708C91FBCB0C58AEAEEE"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiGenerationRunService.cs",
+      "Sha256": "87AFA471DC0F18AEA2725A61ED0E6E41F05BBB658307463D11882753AA1BF80C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiLockedFactService.cs",
+      "Sha256": "28B93FA50F5EE3CC315C06746F6884B3DE848F0CC79E9FCC7FFC13ACC1FEF18E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiProposalDecisionService.cs",
+      "Sha256": "98539CDAB3EB0C71AFE594E1E69A4AF76E41261F32E67E933EDA48CAF63DD7E6"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiRetentionStore.cs",
+      "Sha256": "C3B605326F49A6E255BDF009394393D5B5567C8A7E70D47FC1C571535A489928"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiRunRecoveryService.cs",
+      "Sha256": "175D7FDFD2817A5BC6AAAECFDE694AF50B0C590602DB52B8A46B35EFCB04F822"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceAiWorkSlotQueries.cs",
+      "Sha256": "C3FF9547A4AC21EC2164E97651C0C0125BF3CB5D1A83C17A9A048B2EC3D62F34"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceBuildSceneJobStepExecutor.cs",
+      "Sha256": "39EFADC42B2C03FDB5138BD103AA75EF877D97B065BD1A75B7C035227C8E3C89"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadMappingProfileService.cs",
+      "Sha256": "F8B4A2BFBF083FEE1731B2F78168859483855F7CCB242833C7B09547CC0419A6"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseJobStepExecutor.cs",
+      "Sha256": "58B6C7780979BBE30260C4389A2D6B6F7D961A88F1924B962E4A5137AFB9459D"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+      "Sha256": "7F55D890C7BB1F074438497E9E956EC1F923651DB46F09BD088357A04DFAF419"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadPreparationDefaults.cs",
+      "Sha256": "AB5CD09B613F11526590D475F89294E9ADA840E49B2B39F7D97622235590D6A2"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadPreparationService.cs",
+      "Sha256": "8A6D68160AC0113F56E880CB1D44AFA14C47239B91598D3085C8A61509B0F92A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+      "Sha256": "A9DB4DD6726CB365DCC59A75001F562F6A05B3DE4DC11B6943A7B3DBA9E1E09B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadProviderRouter.cs",
+      "Sha256": "8B3758AB56A15E5788117EBD1A75CA1114408BEC89F9D653F0815C5EBA48D9A8"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadRemoteWorkerClient.cs",
+      "Sha256": "9CDFC08E818042C93C056185965CC5881AEBD27DEE916485D259343DCD04DC3A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadRemoteWorkerOptions.cs",
+      "Sha256": "6C6F8E2136F1DC56D0567480B4918E05BC347ADCBEF22D704A91E813C782B48C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadRemoteWorkerProvider.cs",
+      "Sha256": "CD7321AFFC739A37678707A189738153E88335AD2157DDC0DD28212E278C7275"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadRemoteWorkerRegistration.cs",
+      "Sha256": "8028B297E54525F5DC5F0EDEA40D62DD38371E181FD7461617D45F332738173D"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCloneReservationCleanup.cs",
+      "Sha256": "724D98BB8206F8C27382C9F016C9E350CCBC4EBB6F61B2C3F21D6C18EEFF53EB"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceContext.cs",
+      "Sha256": "888A747CDE65F68370589C30FE871C21871A56A8835FBB0EB0D74D54EF772F27"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceContextDesignFactory.cs",
+      "Sha256": "57AC3E048677672D5DAC851FEADB7F34287456179A5332924B95EFAAEB051689"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "Sha256": "6D95545E4AD578B52AB8AAFC9D4F70AE0B757320F0EB4327BB75776F96DDC37F"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDeviceEventService.cs",
+      "Sha256": "4B27CD3A498760E83A3DEA125221B3E58E7F30A8C91C0BC0301A2E93E7A4BDF4"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDeviceRuntimeService.cs",
+      "Sha256": "BD2BA6033DC096ECBB2561A27944C0C908682CBA97D174905AE3F688F3D61373"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDispatchApprovalCallback.cs",
+      "Sha256": "C72ECE1A63C5698B51C2757F59F6C19ECD9ED6288855C97AB6F3D7FA6A803B51"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDispatchApprovalService.cs",
+      "Sha256": "272EBCF434A58991436EA95A875C4F6A409DE2D2A63B77DDD240291C3BA1AE76"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDispatchOutcomeEvaluationService.cs",
+      "Sha256": "1A26F597C71541ED8B35EB56C51225EC3FC4B95A6101F807565DEEC2C9668EE9"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDispatchRecommendationService.cs",
+      "Sha256": "52D6CF54BB2ED1E267B473F834508C52AE2A5312092FDC1F672F794E0EF5C464"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceEditLeaseService.cs",
+      "Sha256": "B089108692C5ED2AE0F85EC62DA28F9BA9A38F97C8D8AA58ED6697198F39FDF7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyJobStepExecutor.cs",
+      "Sha256": "5F2B6B08837F493E34F4201883E3BF4EC1D7BFE0030D0FC6B477119A86689809"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadApplyService.cs",
+      "Sha256": "8650C084411C8C2CF7C95421790DF9806AA98C5DD4FA48438447774BEBE2E5B9"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadCompensation.cs",
+      "Sha256": "9A3AB33B9546E331285BEF83DB7BD91D9BDF20C52AE658A49C9DD31DFEE49570"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadMatchJobStepExecutor.cs",
+      "Sha256": "EE60513F5A836B17D0D7E5EB8EAF7D7E81F730C075A8A9E71E1348F70B604B00"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelCadMatchService.cs",
+      "Sha256": "286E0FADCBCD0497656D4CF4FB35F8B93FDE1C8F9ACCB2B0089A7FF6AD50D88D"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelMappingService.cs",
+      "Sha256": "B2BBAB86887DA2567062D92FAB968BC5E27DC721865109BB2DEA85816A6681AD"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelPreflightJobStepExecutor.cs",
+      "Sha256": "F99305195088BCF36228BC202AEBB963BD30482BFC8D21A54D32B2898BC9090C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExcelPreflightService.cs",
+      "Sha256": "B25947DA53C1BF109ACD9BF3B9C91AC6F06E09A304C0E3D305EF5818AD581DBC"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExternalGrantService.cs",
+      "Sha256": "CE7C9DE191F9A781D70C56D7EE71C96AA8D8C92E10416C5BF0E81B886EFE47B0"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExternalOrganizationService.cs",
+      "Sha256": "A6E5CDA26B7E730AA0F6B1687427402A2FA6B8FCB2E8398DDE3A3874A00E982C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceExternalPortalService.cs",
+      "Sha256": "F0F9B814C45ECAA74EE6B1E09F24D9D6F5FBF896A097808BF9B03FCDF440E04A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceFieldPolicyService.cs",
+      "Sha256": "046970EACE91FE151565C0A02461D8BD1EB3EF080A29D898AF0C6216C4E288CC"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceGenerationApplyStepExecutor.cs",
+      "Sha256": "17066CE2AB2D673C3581B6D40EE270A8F688D292032A869C618D38A11FC4C2FC"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceHistoricalRepublishService.cs",
+      "Sha256": "E010609B35655C333402040A3C2C53D3BA4F1797683B457DD25F5A24000673ED"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceInfrastructureRegistration.cs",
+      "Sha256": "5BD89B0128BE340B393BECB726854DA5F9C76ED8E303BD6DD0038B8F6308B920"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceMappingSaveTransaction.cs",
+      "Sha256": "7C08DEAE1F0AB72384C498238479B70F7ED6010316B0A95A772D07E39EC36340"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceOperationsDiagnosticService.cs",
+      "Sha256": "1EE65BD5518AF8B55ABC1311212501AE9DE9608BE0CB8C55E60123ECAFB5EBB7"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePersonnelEventService.cs",
+      "Sha256": "5722398B6DFFCA7459DB524AA7C0F715A7DDD77BB5934F55510E951974E3336B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePersonnelRuntimeService.cs",
+      "Sha256": "9A9B62FED87D3E0BAA503CD2050A29A6CB27311A625ADEC04A906608C66B01B0"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePlanningComparisonService.cs",
+      "Sha256": "EDB105C2C26255532A4A382595D78B10C11FF0903A34C47E2CFDC105F4D96D2A"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePlanningDatasetService.cs",
+      "Sha256": "403912FBB89111C83DF1CB7842A77DDBA21DBFFDB63DB20A78268BF52A1B838D"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePlanningExchangeService.cs",
+      "Sha256": "CA01E999ED758546C38B2C7A7DF311D58D2132C6B53CD5708860418216CF972E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePlanningScenarioService.cs",
+      "Sha256": "C95C22A430F7B60EFC2422D341EC68B96CA431FDE78DC354208129D158E8CE53"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePlanningSimulationService.cs",
+      "Sha256": "ECB2CA18BEB5052EEF19B6FAF0C8AD6990FF13FD520662D0D0C498F9243FA32E"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePostgreSqlModelConfiguration.cs",
+      "Sha256": "C1F1013157A6FB6D59DF1A216B53E23A3F5D8F8B219F601699488D5FC22D8EB3"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePublishActivityService.cs",
+      "Sha256": "27AC8C9F7F9DC0B0777A41E90565B01923C14926388D0D3C5D3526BC2FE27BB5"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.cs",
+      "Sha256": "0840736BA0467582AB2516AE388F19B80C1B0F5482771CB59FCCDECD3680484B"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs",
+      "Sha256": "30F79C2ABC0FE6EC1C21A33377804C56896330C3101A2ADA1CD5DC89DD413463"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePublishPreviewInfrastructure.cs",
+      "Sha256": "D83D36118F172B1AB7A73A61CB011F34A341A990F82BFFFD70A27B56C260F2ED"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePublishRecoveryMetricsSnapshotProvider.cs",
+      "Sha256": "B4E316B156C0BFFB24B74B74CC85AE67DA6FE7F14A46E08044F71D837BF4B82C"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpacePutawayRecommendationService.cs",
+      "Sha256": "3173EDEE833C7D6A863C7885C74894F9B79E2F73D4AB206094C46B9428E26B71"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceRackGenerationProfileService.cs",
+      "Sha256": "C366FF0E5CED7F931911E1D6D31679358A10D96CD229809885E240BDB9B80EB1"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceResourceLocks.cs",
+      "Sha256": "852ADFCE1AF8E342B75FED6D7190822B56EFF701C339A3FDBB9F68691BAB7B34"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceUnderlayHistory.cs",
+      "Sha256": "BD2E7BCEEFAB4935FE07F69C4BC25B61ACF3FC431E52E527303789B9D972CA77"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceUnderlayV1Service.cs",
+      "Sha256": "2AC25175528F875D1B37318A474A3F58B965BCE1A026B51CB0344CCB5955DFFB"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+      "Sha256": "EAC645F69E7CFE9235A0972B33370C6E2636D69F174D03B84E5CC5E6350FCF8F"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceWmsAdoptionService.cs",
+      "Sha256": "449B843DE5C6FF4BD95C26661B5F81D0276F4CBA0A520656F323A42BA95BC343"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceWmsRuntimeService.cs",
+      "Sha256": "5230C710194EAE58AC0E4C5E9DC4BE7BF54E5C50407114F849047DBA59FB12A6"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/StandardSpaceWarehouseDatasetLoader.cs",
+      "Sha256": "A264DACBA410F9FB4F1CD80E925A1DB32A0F569111D72B102BCBDF6539D0C9E9"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/StandardSpaceWmsSimulator.cs",
+      "Sha256": "284088F68C4DBB50F1B16B42BBB804BF21D0E5F350A96357D38D492281725E55"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/Bug150RelationalFixture.cs",
+      "Sha256": "E851988323C80549C26B3ADC999D52ACDD951B3205A88D612F1E9BC222A32947"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "Sha256": "14D4F495D48A10FDC7DE98FEA027E197200A4862FBAEFBC9874396FE9E9BB40B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/Cp6SpaceDispatchTaskAdapterTests.cs",
+      "Sha256": "6F3639F2D5E051A1A1EE224A20226B42FF7A3C5409D34C1CDC72A13220412FE4"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/Cp6SpaceWmsAdapterSqlServerTests.cs",
+      "Sha256": "7F73F406AB0FF086BB36DB4DB33CCA0BC78472A23F80FCC30E22BFB16C432136"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/Cp6SpaceWmsAdapterTests.cs",
+      "Sha256": "6957381F0DABA08AF204FEF809ACCCD1D4606A23891848A6C35B6EBF1F92B058"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/FileSystemSpaceFileStoreTests.cs",
+      "Sha256": "87D060ABE190B4B1EE4D9F2BEA7C80350815C543AA9957E11BC1AA39B655E9C6"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/ManagedFileSafetyScannerTests.cs",
+      "Sha256": "2326446F87AA374B4AA7B95CEDFFB3D0F21780F53CF7CD669D8E78C9C7FA170E"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/OpenXmlSpaceExcelWorkbookReaderTests.cs",
+      "Sha256": "058B93CBD076C06C85626FE1E61D7C1173E9E8E85B2E06B01B96F5A07A0409A4"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/OpenXmlSpaceModelingTemplateServiceTests.cs",
+      "Sha256": "D50BBBDA472C0BD8BB3FCE9E32C534E3DB7D9C57025F40C921E5A430DA02A5CD"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/packages.lock.json",
+      "Sha256": "B97672D5CE68BB364010ADAE9DD8C554B3D1972135A083989E662A3F616BA067"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAccessEvaluatorTests.cs",
+      "Sha256": "1676DECA8353D1C0502D0458AC014D26C537214A58C9E148C4DFE8D16EE56012"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiAdministrationServiceTests.cs",
+      "Sha256": "639AE616668018ACB393EB3E88DAEB76468DB9D5ED2D93CC2826AFE667C36C73"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiAtomicApplySqlServerTests.cs",
+      "Sha256": "630627CDE2CC8AD86D4FAA1080DF76BF8CD893B3C3789B72DA4EE8E571A549D6"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiCapacityPersistenceTests.cs",
+      "Sha256": "A02A8E769B6E51E49EA492E7D053ABCD6B2429B27FBB6F02ECD03BB8664DDAF7"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiDefaultRegistrationTests.cs",
+      "Sha256": "D7232AA1CCF2D4C947579F8C736E65143B975911B1AD417F2E04EAA1DAA0A30B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiExternalPrincipalSecurityTests.cs",
+      "Sha256": "C82EA155E4AFE71D787B906C8C52F955FA1174A379CBF1A60EC3B187910493C0"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiGenerationRunServiceTests.cs",
+      "Sha256": "E243AC6ECF60E8894DE94444262FA8D0312986BA06CF7901C196CB6EFAAFB334"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAiRetentionTests.cs",
+      "Sha256": "D96515646D1F132B8CFDBD17A538E102E9F198439E4ADEAD57E057F2A5B82FD9"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceAssetLibrarySqlServerTests.cs",
+      "Sha256": "8E9D395B595F4A29EA29C4FE4866A20F198FADE74893170B4700D44F8F66EB5A"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceBuildSceneJobStepExecutorTests.cs",
+      "Sha256": "DEEC4557192125831479CBD04601656C7EE967D5792AE7E0914B2D8E0281C992"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadMappingProfileServiceTests.cs",
+      "Sha256": "9BF255ED24AA0A472F89B66D0B32713909314DCE9874675383F59EA5C9216192"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadMappingProfileSqlServerTests.cs",
+      "Sha256": "5236021979CDDA2E67C4F739F57C716AF90CAAC1D5AC17B77BCAAA558C650469"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadParseJobTests.cs",
+      "Sha256": "CD9D8D4168960F07357EBD518CF1936F5B832385A1541F320875BB79ACBEED0B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadParseSqlServerTests.cs",
+      "Sha256": "D48D80DEC7D77BCA57E66C2BEE4C478941D5226E91B7B224EDB6E7CBD67F1093"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadPreparationServiceTests.cs",
+      "Sha256": "3844CB84F99EE497973BBDF8862E721730F6777A235261342FCEF5E37DA2E797"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadProviderRoutingTests.cs",
+      "Sha256": "17CF3340DF277588F1830D928AF5328B6445F4D22398C14C4A0E52573563412B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadProviderSqlServerTests.cs",
+      "Sha256": "5CA0406B133273ECD9E370501228BB01DD1EC9E6DF8A26F56010E35478A8B908"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadRemoteWorkerProviderTests.cs",
+      "Sha256": "1BC40A95C07C63489047EED2493AC1CD07635B7161592FF621CFD2CD32B63186"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceContextTenantTests.cs",
+      "Sha256": "F073E36A7B0B78490BD5E64EA7365D671B3839C66C63CA788F44542E7848BF87"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDesignSceneSqlServerTests.cs",
+      "Sha256": "EFB7649CA32BADE232505366AF2CB1CF5DA3A678FBB52F5A6FA9CDA7802EC811"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDesignV1SqlServerTests.cs",
+      "Sha256": "423C1C233E0FB3FDEA7BFD4CB0CFA394115446BC092B9F4DB80B6829A0D49B87"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDeviceEventServiceTests.cs",
+      "Sha256": "5D4B3963FEC634FBA132D6A2F9CE4CE45F1F7F6FFCF083BB3D457DAF5F0CA11A"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDispatchApprovalServiceTests.cs",
+      "Sha256": "77C9640CDE2172BECDEF95B528B97A16F4D7FE6027D8B23ABCC138FA74FBDA89"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDispatchOutcomeEvaluationServiceTests.cs",
+      "Sha256": "306E365EB96F1E57B32E7CFB75C001E3985A43AF9297087FDE546DD76B5028AB"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceDispatchRecommendationServiceTests.cs",
+      "Sha256": "0737F311771A0F702F41AAD8813CD153F78EDE0F68B0F25830B3DDFD0FCC5022"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceEditLeaseAuditImmutabilityTests.cs",
+      "Sha256": "0FEB1146303BEB55E022F60BDE7D029603C537EE7B71F6B454FF9249DB45610D"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceEditLeaseSqlServerTests.cs",
+      "Sha256": "99096CBC50B373011B178A0C8B05A5BDFD6F8768E4A5F1610D6D1B5FFD9B1CD9"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelCadCompensationSqlServerTests.cs",
+      "Sha256": "270FEDE5666E188C93BBF1C7F141C5E3896406CEA872BC5DB3C64062DA2917B0"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelCadMatchServiceTests.cs",
+      "Sha256": "831F9069A1B9AE161EEE21723B3997B04D4E912E5F4513EB920DFC929AE9503A"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelMappingServiceTests.cs",
+      "Sha256": "4B09E246F3BF1932A753E36C04A8C051879A01C749388DED0A1B3F9EAA3EC62C"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelMappingSqlServerTests.cs",
+      "Sha256": "6D907A33333ABEF8088CBCA1AED19A5B257E9932541FAB594C9A77916E4B9214"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelPreflightServiceTests.cs",
+      "Sha256": "5592797B31290B2A38AF3C98CBBDD648EBC8770315390D0C03CD9F56ADE61069"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelPreflightSqlServerTests.cs",
+      "Sha256": "74D912D1133B1AD7E91526866D511F8139A4C463E9D08E11C46001878D49409F"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExcelPreflightValidatorTests.cs",
+      "Sha256": "8C12054773D4787F39480A1C8588AE0DCB788379E614E202AF20B82A6EDFE129"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalGrantServiceTests.cs",
+      "Sha256": "072A7310999DD36603E8BE0AD572E53DA97326207F79BD7420BA37E5A54ED521"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalGrantSqlServerTests.cs",
+      "Sha256": "659AACFF7305ED8CA4538A445E2E9273D1BBFA551B3F73680DCDA63086C45923"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalOrganizationSqlServerTests.cs",
+      "Sha256": "A06B0F34B53B05BD80E40CD062140AF6DFDB8718892531E83C05C480F8F40244"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalOrganizationTests.cs",
+      "Sha256": "08BC027A1817A101C9487141E842D31FFB89E77BF72DD6C17EDEE3C2DAD6F890"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalPortalServiceTests.cs",
+      "Sha256": "14C0F2BEB276A181263F17231D7A749C0861DDFF47F823AE06BE0770A38B4754"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceExternalTenantIsolationTests.cs",
+      "Sha256": "185834CA9B06298AD4BE5CBFDF1D2D1BA61E29FA7C1155094D46BB1EFDAE93BE"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceFieldPolicyServiceTests.cs",
+      "Sha256": "928EB33478C8073411634CD4A8C28FFAE87F05E24BA5246AAE0AA3EC7D78C4F7"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceFieldPolicySqlServerTests.cs",
+      "Sha256": "09AE7DE8EE2EAB23CBF215BBC15A68EEFDDE302A93647C7FFA66137599B9ABBC"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceFileSafetySqlServerTests.cs",
+      "Sha256": "DAC3F777F88F76A3F3EA88F9E43C831B8CD8064D0BE86D981C3A44EB5F0AABA8"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceGenerationPersistenceTests.cs",
+      "Sha256": "6FC2721D73A5987A7E7D00D6E0C9779034199CC7031D3BB3EBEC8733D517842D"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceHistoricalRepublishMigrationTests.cs",
+      "Sha256": "4347EB7E11D4D6FFF55DA787F4E8BC383828DA81203D71DE0FFE879F0B90CF37"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceJobProcessorPersistenceTests.cs",
+      "Sha256": "18B7E67C7998B365800041AAB857879DF90ADF41DE06D3EE874EDB8AE3EDE000"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceJobSqlServerTests.cs",
+      "Sha256": "4AEACD19A7502B5A1CBB37628C3F28A8D662C9A76E560746FCEBB8E0192BCE0E"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMappingProfileConcurrencyTests.cs",
+      "Sha256": "8A87E223B3013047A3887C1301CB31B13BAAA4C6F7447EEF7FE2AEF180A17489"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceOperationsDiagnosticServiceTests.cs",
+      "Sha256": "E65BBBCD1A899C3A246798F0A7E34E272630D9FBED7EC0C2588B46F523F59B8D"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePersonnelEventServiceTests.cs",
+      "Sha256": "A5A0F7F117A1862C0FFDAD2C74713C4142335C728B2F5AA0E4ACB11D42A327E9"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePersonnelRuntimeServiceTests.cs",
+      "Sha256": "CBBBB9906293A88E839E5C07182EACCA0D31868DF340135464392FD0F186995B"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePlanningComparisonServiceTests.cs",
+      "Sha256": "854AB7B5CB18069ACC2CB5C0991DCD44BC792F07A05CDC74C29BBA3F43C48F94"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePlanningDatasetServiceTests.cs",
+      "Sha256": "B219C2132302F97179239759C89A09FE3DC22EE1D0CEF651CE1F5FC1AE9EE990"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePlanningExchangeServiceTests.cs",
+      "Sha256": "8C1875CF128DB065A64054EC6C6F91AAE67E4802621578F1A115DDC03ACDB420"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePlanningScenarioServiceTests.cs",
+      "Sha256": "D597A996A7F6C62DF3220417AC4134B3237265AF389DDBF2143452A6914BCD00"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePlanningSimulationServiceTests.cs",
+      "Sha256": "49EA2F7BCEEDB6BDFE98AEE94C2F934A1D740AAD6B523C35F6AE65FCC75A490D"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePublishActivityServiceTests.cs",
+      "Sha256": "F28CE21B7BCD9F2B1FAE15D0F2717920AD81A35473EDAABA9C63366506028BB9"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePublishOrchestratorSqlServerTests.cs",
+      "Sha256": "B71853625323EDE8E302CFBC952D6BAF311EE703DE5B1B5EC84E5EE8BD72C652"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePublishPreviewSqlServerTests.cs",
+      "Sha256": "25080C96614AAF1ED00481045970ACB75FCEBFA17708CC0D6327EC169C943DD4"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePublishRecoveryMigrationTests.cs",
+      "Sha256": "3C7FCAEFB3C7C6BD52B37C45A23D8DEC43C756F29B52440C86C0B2F49BA25CF6"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePutawayRecommendationServiceTests.cs",
+      "Sha256": "968199BA7AE9AB222822DC255216F3829912B7192C8741AA9565051965C579AA"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceRackGenerationProfileServiceTests.cs",
+      "Sha256": "4050B466516B630BF1EE3DC453202B0C11937A4D65CB8CC15582E6BB3E2370AC"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceRackGenerationProfileSqlServerTests.cs",
+      "Sha256": "D96967E5F8C30C1AE94DEF3076E1F45F3DE72BCA571D849C92D6AD30256D3AA6"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceReleaseRehearsalRecoverySqlServerTests.cs",
+      "Sha256": "102E9BC28F1047A583B77B1E34A89EA58329BD6D675AE9F2AAA1BF244200AFBF"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceSqlServerCollection.cs",
+      "Sha256": "2D981F7849BDC2A49245B3DDD9027458E406A43E728DD72984585A9FF3B75629"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceSqlServerTests.cs",
+      "Sha256": "4D225DA1B608484045DAC7ED2026725AFD075458EAAD697160B7640BF3BFA267"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceTestDatabaseRoots.cs",
+      "Sha256": "397FF3AFD650A3A19D22AF8DC504D6D456BABC79B209F4F5DB98DD7E13B1F2FC"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceValidationSqlServerTests.cs",
+      "Sha256": "89854D50EFF2A5885E3D3A8F4838E364F6B6C69FFEE37B9F59D28DD8480EE7C1"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.cs",
+      "Sha256": "63D664F92746974BFEC84DA97A22AF3360EAB8E3807170016EDB537927148DC4"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceWmsAdoptionServiceTests.cs",
+      "Sha256": "60E18D0A7D4863373C5C6DB532D0DBFE41B8D53F1C3D717103276935FA6FB5CA"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceWmsRuntimeServiceTests.cs",
+      "Sha256": "5AEC8CF6CC9D29B9105CA55F54C279151A85FDCDA7772C7D32367E0D0958C292"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SqlServerFactAttribute.cs",
+      "Sha256": "A36E5764AD81D70B3BE3E89BC22BE006E45601B8120D951481FA0917E8AD98F9"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/StandardSpaceWarehouseDatasetLoaderTests.cs",
+      "Sha256": "92CBBD0397783CCF174446103B939DBCE5D99DD88BD4870BB62369192210DC4D"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/StandardSpaceWmsSimulatorTests.cs",
+      "Sha256": "5F0145FFAB4009DCDA6DAEFD29CDDE7C70A144817082E5666CD58CF4D0007C1E"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "D22B225EE43DAE8BB0FA94ED32643C9E9EF4F6B8803D73ED5CA300CF5EA4C719"
+    },
+    {
+      "Name": "CP6.Entity.dll",
+      "Sha256": "70C506D6D81E5E79468E242F0B89773ACCE2573E9260EFD36563C0C85B878809"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "CED7A470A6FE5184DAC8939388DB6BCC949E44507A677262D7EE461B5061F2F2"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions.dll",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.Contracts.dll",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework.dll",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging.dll",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "CP6.Space.Application.dll",
+      "Sha256": "913425AA6D718C3DFBF01A57BB8296F69C927289DAD218228905532B2EFBB25B"
+    },
+    {
+      "Name": "CP6.Space.Contracts.dll",
+      "Sha256": "3EF3D581A6CF8E7A59854A2E552946B28F078E309E91C54FBBA7196C0607552A"
+    },
+    {
+      "Name": "CP6.Space.Domain.dll",
+      "Sha256": "F54A381F5190FA1DD4DFFCB93D289FFD0DB7E18C7F7A88E867567ECE3E5C7997"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure.dll",
+      "Sha256": "5E2FE1F595D63849E80D10B517668EAA3121E4454FB27EAAA467F45E07622B6C"
+    },
+    {
+      "Name": "CP6.Space.IntegrationTests.dll",
+      "Sha256": "A8193FD6E5FB0DF812876D7512665765158968DE8B21AFC3E20611249E38B49D"
+    }
+  ],
+  "ProcessLog": "D:\\CP6\\tmp\\bug150-tests\\bug150-sql-post-merge-smoke\\process.log",
+  "ProcessLogSha256": "B55D49D900D7AB1EFA231F1ACFCFEE38B7CB0F1924605285323A2DC1479300C1",
+  "Scope": "Actual selected Space tests on owned native database; fixture validates owner and real migration profiles. No full BUG150 acceptance inferred."
+}

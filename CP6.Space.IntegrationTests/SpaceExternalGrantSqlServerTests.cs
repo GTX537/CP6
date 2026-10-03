@@ -1,14 +1,17 @@
 using CP6.Space.Application;
+using CP6.Core.Persistence;
+using System.Data.Common;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceExternalGrantSqlServerTests
+public sealed class SpaceExternalGrantSqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 8, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -56,8 +59,11 @@ public sealed class SpaceExternalGrantSqlServerTests
                         tenantA,
                         grant.Id,
                         floorId));
-                await Assert.ThrowsAsync<DbUpdateException>(
+                var error = await Assert.ThrowsAsync<DbUpdateException>(
                     () => duplicate.SaveChangesAsync());
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.UniqueConstraint, failure.Kind);
+                Assert.Equal("UX_Space_ExternalGrantFloor_Current", failure.ConstraintName);
             }
 
             await using (var forged = CreateContext(connectionString, tenantB))
@@ -67,16 +73,34 @@ public sealed class SpaceExternalGrantSqlServerTests
                         tenantB,
                         grant.Id,
                         Guid.NewGuid()));
-                await Assert.ThrowsAsync<DbUpdateException>(
+                var error = await Assert.ThrowsAsync<DbUpdateException>(
                     () => forged.SaveChangesAsync());
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.ForeignKey, failure.Kind);
+                Assert.Equal("FK_Space_ExternalGrantFloor_Grant_Tenant", failure.ConstraintName);
                 Assert.Empty(await forged.ExternalGrants.ToListAsync());
             }
 
             await using (var invalid = CreateContext(connectionString, tenantA))
             {
-                var error = await Assert.ThrowsAsync<SqlException>(() =>
-                    invalid.Database.ExecuteSqlInterpolatedAsync(
-                        $$"""
+                FormattableString invalidGrantSql;
+                if (invalid.Database.IsNpgsql())
+                {
+                    invalidGrantSql = $$"""
+                        INSERT INTO public."Space_ExternalGrant"
+                            ("Id", "OrganizationId", "SiteId", "FieldPolicyId",
+                             "CanExport", "ValidFromUtc", "ValidToUtc", "Status",
+                             "GrantVersion", "TenantId", "CreatedAtUtc",
+                             "CreatedBy", "ModifiedAtUtc", "ModifiedBy", "IsDeleted")
+                        VALUES
+                            ({{Guid.NewGuid()}}, {{organization.Id}},
+                             {{Guid.NewGuid()}}, NULL, FALSE, {{Now}}, {{Now}}, 0,
+                             1, {{tenantA}}, {{Now}}, NULL, NULL, NULL, FALSE);
+                        """;
+                }
+                else
+                {
+                    invalidGrantSql = $$"""
                         INSERT INTO [Space_ExternalGrant]
                             ([Id], [OrganizationId], [SiteId], [FieldPolicyId],
                              [CanExport], [ValidFromUtc], [ValidToUtc], [Status],
@@ -87,8 +111,13 @@ public sealed class SpaceExternalGrantSqlServerTests
                             ({{Guid.NewGuid()}}, {{organization.Id}},
                              {{Guid.NewGuid()}}, NULL, 0, {{Now}}, {{Now}}, 0,
                              1, {{tenantA}}, {{Now}}, NULL, NULL, NULL, 0);
-                        """));
-                Assert.Equal(547, error.Number);
+                        """;
+                }
+                var error = await Assert.ThrowsAnyAsync<DbException>(() =>
+                    invalid.Database.ExecuteSqlInterpolatedAsync(invalidGrantSql));
+                var failure = DatabaseFailureClassifier.Classify(error);
+                Assert.Equal(DatabaseFailureKind.CheckConstraint, failure.Kind);
+                Assert.Equal("CK_Space_ExternalGrant_Validity", failure.ConstraintName);
             }
         });
     }
@@ -302,8 +331,15 @@ public sealed class SpaceExternalGrantSqlServerTests
         });
     }
 
-    private static async Task WithDatabaseAsync(Func<string, Task> action)
+    private async Task WithDatabaseAsync(Func<string, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -324,23 +360,31 @@ public sealed class SpaceExternalGrantSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         Guid tenantId) =>
         CreateContext(
             connectionString,
             new TestExecutionContext(tenantId, Guid.NewGuid()));
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution) =>
         CreateContext(connectionString, execution, new FixedClock());
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         ISpaceExecutionContext execution,
-        ISpaceClock clock) =>
-        new(
+        ISpaceClock clock)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "external-grant"));
+        }
+        return new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(
                     connectionString,
@@ -349,6 +393,7 @@ public sealed class SpaceExternalGrantSqlServerTests
                 .Options,
             execution,
             clock);
+    }
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :
         ISpaceExecutionContext;

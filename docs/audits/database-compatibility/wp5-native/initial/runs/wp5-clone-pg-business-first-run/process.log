@@ -1,0 +1,66 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.20]     CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count [211 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 2026-10-03T13:04:46.2895355Z
+Actual:   2026-10-03T13:04:46.2895350Z
+  Stack Trace:
+     at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.<>c.<<Draft_summary_reports_provenance_audit_times_and_open_blocking_count>b__6_0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 156
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1421
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1422
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 84
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+
+
+[xUnit.net 00:00:18.48]     CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers [18 ms]
+  Error Message:
+   Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_Asset_Scope_Owner_Code_Active"違反となります
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.SeedPublishedAsync(SpaceContext context, Guid actorId, Boolean includeSnapshot) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1372
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.<>c.<<Planning_scenario_clones_pinned_history_without_taking_production_pointers>b__21_0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1079
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1421
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1422
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1077
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=clone-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.
+
+
+Results File: D:\CP6\tmp\db-compat-wp5-tests\wp5-clone-pg-business-first-run\results.trx
+
+Failed!  - Failed:     2, Passed:    11, Skipped:     0, Total:    13, Duration: 15 s - CP6.Space.IntegrationTests.dll (net8.0)
