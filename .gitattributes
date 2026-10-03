@@ -90,3 +90,7 @@ docs/audits/2026-10-02-bug-143-quotation-audit-capacity/*.sql -text whitespace=c
 docs/audits/2026-10-02-bug-143-quotation-audit-capacity/*.ps1 -text whitespace=cr-at-eol
 # Preserve the original failing EF script's final blank line as evidence.
 docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-generated-migration.sql whitespace=cr-at-eol,-blank-at-eof
+# Final native proofs retain original JSON/SQL/log/TRX/script and gzip bytes.
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/native/** -text whitespace=cr-at-eol,-blank-at-eof
+# Preserve space-only lines in the four original executed fixture scripts.
+docs/audits/2026-10-02-bug-143-quotation-audit-capacity/native/bug-143-native-cp143-final-*.sql whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

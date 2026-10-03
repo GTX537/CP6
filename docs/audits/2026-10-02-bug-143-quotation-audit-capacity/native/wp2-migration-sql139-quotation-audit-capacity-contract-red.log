@@ -1,0 +1,1 @@
+Failed: Write.QuotationAuditUnicodeCapacity: Installed T_Quotation.Creator must reject the full 101-unit non-space overflow with its exact native storage error.

@@ -1,0 +1,23 @@
+{
+  "Case": "correct-existing",
+  "Stage": "cp143-final-correct-existing",
+  "Status": "Passed",
+  "FailureKind": null,
+  "IsExpectedMigrationRejection": false,
+  "ExpectedError": 0,
+  "ExpectedOrdinal": 0,
+  "ActualError": 0,
+  "ActualOrdinal": 0,
+  "PrefixFiveCommandsProved": false,
+  "SetupError": 0,
+  "NativeExitCode": 0,
+  "CapturedUtc": "2026-10-03T07:04:11.1770090Z",
+  "GeneratedMigrationSqlSha256": "8000E0C053EF66D439DF847A020A18E409CCA71EE3343473468A67CA2491E519",
+  "InputSha256": "E994176DEA7106D42A8437EE08B7254917EC534B1BDD033553672187AAC0CFF5",
+  "FixturePrimitiveSha256": "602630CF8B7F7AF59CC4E4A0E22E1DB55B2294698DEA8170C45B6F5DFC3BCC75",
+  "BaselineSha256": "F39C9BA1C8CA884BC2EFBD162D47C78C8A7E96C2443A8532B7F0BA0FB1D929B1",
+  "QuerySha256": "3E0CB7C17D6764CDAA0B9D08D16D82863F99CA1C4278E5A276E616FC398B72BD",
+  "BusinessValuesReturned": false,
+  "RestorationVerified": true,
+  "RestorationComparisonSha256": "7A9F4BBBD8DCFB7B830CA2D7E3BAC3B9DAE2DECD4BE18812D1A364DDAAF76C65"
+}

@@ -1,0 +1,117 @@
+{
+  "Scope": "BUG143 final frozen migration capacity-repair candidate and actual compiled API/Core dependencies after one targeted metadata-consistency review fix. Native acceptance recorded separately.",
+  "CapturedUtc": "2026-10-03T06:08:01.7335043Z",
+  "ConfirmedMainBase": "4d4e260819f0a1b59810403d016c69a2fd7319ae",
+  "FunctionalCommit": "2b6548b10251477dfcbbcf11e2b4334896baebab",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\bug-143-quotation-audit-capacity",
+  "Sources": [
+    {
+      "Path": "CP6.Core/Persistence/QuotationAuditColumnCapacityRepairSql.cs",
+      "Sha256": "7475F1E6F2CDA8A610A99AC509627B2B51D01B7CE305F4B98D287516DAFA0236"
+    },
+    {
+      "Path": "CP6.Core/Migrations/20261002193500_RestoreQuotationAuditColumnCapacity.cs",
+      "Sha256": "08E68829AE9BB581EDD7907D2F124B113B668E8FF6CA8D27F1DE84B1987DA42D"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/QuotationAuditColumnCapacityRepairTests.cs",
+      "Sha256": "667FCCDFD6E90B5E925F679DEDAA10A0DF23CD82FDD3AABA618B7E28316B9035"
+    }
+  ],
+  "Runtime": [
+    {
+      "Name": "CP6.WebApi",
+      "Sha256": "E4D6519CC66893C30B8C1A59AED9FA5EAC40D0F95E948C717CF0AE6FB5D823EF"
+    },
+    {
+      "Name": "CP6.Core",
+      "Sha256": "A76A5F9F349E0851335CCDF1CB099C0F8B6F803EA5DFF2092A74CA7A62F9EEF3"
+    },
+    {
+      "Name": "CP6.Entity",
+      "Sha256": "D9303BB3CC500D0FCEC7ACFAE31C6BB630B78692DFA2C2E92F8DDCD4C0A815BD"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "Sha256": "0953BEFB117D3F5E9C9F67766C3564A34B361F60C2DF128BC0F674B46560B2BC"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.AspNetCore",
+      "Sha256": "B4D0FB90E153961A65AD65A8D096CEDEB76C61EAE488469B836064E70EF31DD8"
+    },
+    {
+      "Name": "CP6.Platform.Contracts",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "Microsoft.EntityFrameworkCore",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    {
+      "Name": "Microsoft.EntityFrameworkCore.SqlServer",
+      "Sha256": "6B6316970F12A420C89DC6D7988DE49D840052526201066EA80219E990EA83D7"
+    }
+  ],
+  "Evidence": [
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-generated-migration-final.sql",
+      "Sha256": "8000E0C053EF66D439DF847A020A18E409CCA71EE3343473468A67CA2491E519",
+      "Bytes": 23210
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-generated-migration-final.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Bytes": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-red.log",
+      "Sha256": "98202E98CC6F2EF5E5BE804FD8F890AC85AF7B79BD3A4489E5B78811D0ECFA07",
+      "Bytes": 582
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-red\\bug-143-identity-fix-red.trx",
+      "Sha256": "D5C4E76B08FF40A1743E7B7543ABFD5634631FA43CED3C088EF6F9DF4340F9A0",
+      "Bytes": 30437
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-green.log",
+      "Sha256": "8BAB94423B0E3B184D14D23746E3EA2EDF6820FC2A253422AA8AC8F0B02B970F",
+      "Bytes": 396
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-tests\\identity-fix-green\\bug-143-identity-fix-green.trx",
+      "Sha256": "4F5060C031FFCE23071934494AEC2875E732BAFFA36FA80E2B663DE76E0DC3D0",
+      "Bytes": 28276
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\bug-143-actual-input-verified.json",
+      "Sha256": "3D3E04F3F3868A94107415308BC6DBAB5F911BA29647E7C971DB76BFDBF04DCA",
+      "Bytes": 4607
+    }
+  ],
+  "MigrationId": "20261002193500_RestoreQuotationAuditColumnCapacity",
+  "ExpectedSqlOperations": 6,
+  "SnapshotGitBlob": "21ed77b4056ee44b4f44e61de13d5d34774d6934",
+  "UnitResults": {
+    "TargetedRedPassed": 16,
+    "TargetedRedFailed": 1,
+    "FinalPassed": 17,
+    "FinalFailed": 0,
+    "Skipped": 0,
+    "Warnings": 0
+  },
+  "BuildProvenance": "Actual dotnet test transitive ProjectReference build produced API/Core; standalone API build was not performed. Exact source bytes reused across local commit.",
+  "NativeAcceptanceStatus": "Pending separately hashed actual migration rejection/success/repeat and data/column comparisons."
+}

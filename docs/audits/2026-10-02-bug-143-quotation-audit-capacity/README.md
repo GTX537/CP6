@@ -1,5 +1,36 @@
 # BUG #143：恢复六个报价审计姓名列的容量
 
+## 2026-10-03 当前结论：LocalVerified / RemotePending
+
+六列容量修复的真实本地验收已通过，[Issue #143](https://github.com/GTX537/CP6/issues/143) 仍 Open，正常 PR、远端 main 包含性及必要整合核对待负责人执行。功能提交 `2b6548b10251477dfcbbcf11e2b4334896baebab` 的[最终执行输入](native/bug-143-actual-input-final.json)绑定实际 API `E4D6519CC66893C30B8C1A59AED9FA5EAC40D0F95E948C717CF0AE6FB5D823EF` 与 Core `A76A5F9F349E0851335CCDF1CB099C0F8B6F803EA5DFF2092A74CA7A62F9EEF3`。实际 dotnet test 的 ProjectReference 构建产生 API/Core，没有另行 API build；文档、证据和提交变化不要求重复同输入构建。
+
+[同一编译应用首次初始化](native/wp2-init-bug143-capacity-upgrade-final-first.json)和[重复初始化](native/wp2-init-bug143-capacity-upgrade-final-repeat.json)均 exit0、无 HTTP 监听。已有 generation 的任务隔离 SQL36ef 库实际 Core139→140；此 BUG 在 main 上独立为138→139，父任务最终旧136→140四个前向迁移仍需另外验收。[实际 EF8 脚本](native/bug-143-generated-migration-final.sql) SHA256 `8000E0C053EF66D439DF847A020A18E409CCA71EE3343473468A67CA2491E519` 对应六条默认同事务 SQL operations。
+
+[首次升级比较](native/bug-143-sql-compare-before-upgrade-final-to-after-upgrade-final.json) **15/15**：352表的身份、业务内容摘要/行数和已存 token 保持；6832列只允许六个既定 `max_length=-1→200`，1378索引、202外键、checks/triggers及其他列定义完全相同，history只追加指定 MigrationId/ProductVersion 一行。只有三张报价表的 `modify_date` 因 ALTER 严格前进，其他表元数据不变。history自身内容摘要变化由精确一行追加断言覆盖。[重复比较](native/bug-143-sql-compare-after-upgrade-final-to-after-repeat-final.json) **15/15**，数据、目录和历史完全保持。
+
+[实际六批命令校验](native/bug-143-native-guards-cp143-final.json) **4/4**，每次外层回滚后的完整原生捕获比较均 **15/15**：
+
+| 实际案例 | 结果 | 完整恢复 |
+| --- | --- | --- |
+| correct-existing | 六列已100时全部命令成功，原列身份/可空/排序规则保持 | 15/15 |
+| missing-column | 第一条命令准确报51043，未变成缺列编译207 | 15/15 |
+| overlong-trailing-spaces | 101空格的202字节实际值在第一条准确报51043 | 15/15 |
+| last-column-late-atomic | 前五列已实际收窄至200字节，第六列超长准确报51043，整个事务恢复 | 15/15 |
+
+[最终清理比较](native/bug-143-cleanup-restoration-compare-verified.json) **29/29**：原始351张业务表的完整 PK 排序内容摘要和行数恢复、352表身份保持，三张报价 fixture 从0→1→0；原139条 history前缀及唯一容量修复追加保持，重复后到清理后的全部列/index/FK/check/trigger与表 metadata相同。这是对已保存原生捕获的只读比较，原始旧版本 capture 只作为原始业务数据基线，不能称为最终 runtime 的执行验收。第一次[清理比较](native/bug-143-cleanup-restoration-compare.json)为 **28通过/1失败**，仅摘要绑定误用 wrapper 路径而非 native SQL；原脚本原字节保留，定向修正比较脚本后29/29，没有重跑 DB 或将准备问题算作产品 RED。
+
+独立实际报价门禁保留[修复前有效 SQL 容量 RED](native/wp2-migration-sql139-quotation-audit-capacity-contract-red.json)：第一列错误接受101个非空格 UTF16 码元。[修复后 SQL](native/wp2-migration-sql140-quotation-audit-capacity-restored.json)和[PG参考](native/wp2-migration-pg-quotation-audit-capacity-reference.json)各 **2/2**，实际 EF 三行 graph及六列 native 边界覆盖100 ASCII、50 supplementary字符和合法100码元含尾空格的原值/字节保留；101 ASCII及supplementary加x以准确原生错误拒绝，savepoint留住此前值，外层事务及全表行数恢复。另测的“100 ASCII+最后1空格”在 SQL Server ANSI_WARNINGS ON 下截到100，在 PG 以准确容量 check拒绝，这项超长末尾空格行为不纳入两库等价承诺；迁移前 DATALENGTH 拒绝合同仍包含所有超200字节值。
+
+[早期 reader 准备失败](native/wp2-migration-sql139-quotation-audit-capacity-valid-red.json)的文件名虽含valid-red，其实际错误是SQL nvarchar(max)的DATALENGTH返回Int64，而Dapper实际构造函数要求Int32；[真实程序集诊断](native/wp2-quotation-old-max-dapper-reader-setup-failure.json)明确 `IsCapacityContractRed=false`。仅两处SQL结果显式转int后重新执行才得到上面的有效容量RED。相关两次 build日志均零warning/error，[WP2增量审查](native/wp2-review-quotation-and-final-forward-delta.json)覆盖该两行修正，不重复之前完整审查。
+
+[BUG143独立审查记录](native/bug-143-independent-review.json)复用 `f144b06f` 的完整30文件审查，原P2由 `2b6548b1` 的helper/tests两文件变化解决，定向复查无新增P0/P1/P2，其他28文件不重审。最终定向source RED为 **1失败/16通过**，[最终TRX](native/bug-143-identity-fix-green.trx) **17/17、零skip/warning/error**。原full review时间与原23文件manifest完整SHA未记录，保持null；新独立记录的hash有单独来源，不冒充旧值。[旧identity注入失败](native/bug-143-identity-interval-original.json)是受限 in-batch fixture，不是实际两会话schema竞态；原件保留，此次没有增加该竞态验收。
+
+原102/207、snapshot反射、manifest/reader准备失败及所有早期结果原样保留。小证据逐字节归档，完整大 native JSON 使用 gzip 并验证解压 SHA256 等于原件，[最终文件清单](native/manifest.json)记录字节、路径和hash。凭据、seed-state及原应用stdout/stderr保留在 ignored tmp；归档只含sanitized进程报告和stream hash。旧FK12/索引25仅按未改source与原范围复用。未触发Actions、部署或迁移既有业务环境；此 BUG 通过不替代WP2、全部业务或PG API验收。
+
+## 2026-10-02 历史实施记录
+
+以下 Pending、旧 runtime/hash 与原失败描述保留其当时时点；当前结果以上方2026-10-03结论及逐件证据为准。
+
 [Issue #143](https://github.com/GTX537/CP6/issues/143) 修复历史 SQL Server 重建迁移把三张报价表的 Creator、Modifier 放宽为 `nvarchar(max)`，而模型和继承属性始终要求 nullable `nvarchar(100)` 的缺口。独立分支 `codex/bug-143-quotation-audit-capacity` 从已确认远端 main `4d4e260819f0a1b59810403d016c69a2fd7319ae` 创建；该基线已含 BUG141，经 [PR142](https://github.com/GTX537/CP6/pull/142) 合入后 Issue141 于 `2026-10-02T19:34:16Z` Closed。
 
 本 BUG 有效 RED **6 Failed / 7 Passed / 0 Skipped**。初版静态目标测试 **17/17** 后，真实 SQL 揭示 **102**（COLLATE方括号语法）与 **207**（缺列提前绑定）两个生产缺陷；各全目录/数据回滚 **15/15** 只证明恢复，不是容量迁移通过。定向纠错后目标仍 **17 Passed / 0 Failed / 0 Skipped、零 warning/error**；修正版本的 SQL 原生安装/重复、容量边界/依赖/晚失败回滚、独立完整审查和远端交付仍 Pending，Issue143 Open。不把脚本/模型断言当作真实 ALTER 验收，不宣称 WP2、全部业务或 PG API 完成。

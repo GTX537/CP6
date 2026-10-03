@@ -1,0 +1,20 @@
+{
+  "Scope": "BUG143 native exact initial-metadata/data-lock interval table-identity replacement injection using first actual EF8 guard. Explicit in-batch fixture injection, not a real two-session schema race.",
+  "Version": "PreIdentityFix",
+  "CapturedUtc": "2026-10-02T20:07:45.8607113Z",
+  "Status": "Failed",
+  "FixtureEstablished": true,
+  "NativeExitCode": 0,
+  "Native": {
+    "ExpectedGuardError": 51043,
+    "ReplacementColumnBytes": 200,
+    "ReplacementColumnNullable": true,
+    "UnknownReplacementRejectedAndPreserved": false,
+    "OriginalIdentityColumnAndHistoryRestored": true
+  },
+  "OriginalGeneratedSqlSha256": "5F457F83F2E7B2A4E30E9D9D415894244E1F8AB4EB02881B85EC598A7EDC0B2B",
+  "InjectedQuerySha256": "F03C064C4F7915C4AA890CADCD645971E25EA2F8302F8099611690FE0B936505",
+  "LogSha256": "359540BA0C6DAFC680F437FC6C075635AFBBA4232716DAEF572829ACB9CA6F21",
+  "ActualConcurrentRaceExecuted": false,
+  "FullStateRollback": "Verified separately by native complete capture/compare"
+}

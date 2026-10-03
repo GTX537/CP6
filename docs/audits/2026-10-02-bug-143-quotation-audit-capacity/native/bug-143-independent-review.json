@@ -1,0 +1,323 @@
+{
+  "issue": 143,
+  "task": "DB-COMPAT-01",
+  "type": "Independent targeted follow-up with explicit reuse of prior full task review",
+  "reviewer": "/root/bug143_review_finalize",
+  "sourceBase": "4d4e260819f0a1b59810403d016c69a2fd7319ae",
+  "reviewedCommit": "2b6548b10251477dfcbbcf11e2b4334896baebab",
+  "worktree": "D:/CP6/tmp/worktrees/bug-143-quotation-audit-capacity",
+  "priorFullReview": {
+    "performedBy": "/root/wp1_review",
+    "sourceCommit": "f144b06fee99bf67f20116850ad74bb045b47979",
+    "scopeFileCount": 30,
+    "provenance": "Parent /root handed off the prior review result; source commit and all 30 changed paths/Git blobs were independently captured in this follow-up. The original 30-file review was not rerun.",
+    "reviewStartedUtc": null,
+    "reviewCompletedUtc": null,
+    "nullTimeReason": "Exact start and finish timestamps were not recorded in the inherited prior-review report.",
+    "scopeGitObjects": [
+      {
+        "Path": ".gitattributes",
+        "GitBlob": "bfe5999fe76354e0c03c54b0b20a0302bc6c0544"
+      },
+      {
+        "Path": "CP6.Core/Migrations/20261002193500_RestoreQuotationAuditColumnCapacity.cs",
+        "GitBlob": "689a01725620a62c6493a1c9afff3bbab2696213"
+      },
+      {
+        "Path": "CP6.Core/Persistence/QuotationAuditColumnCapacityRepairSql.cs",
+        "GitBlob": "f445ed9b9026275b0551c55bde67f52ecb5d16e2"
+      },
+      {
+        "Path": "CP6.Tests/Persistence/QuotationAuditColumnCapacityRepairTests.cs",
+        "GitBlob": "dd6925f1836f06aa59036a1c6cde13c17c1d90e6"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/README.md",
+        "GitBlob": "9962033d2f217b7891cafcfb84905842c1e919ad"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green-verified.log",
+        "GitBlob": "85e6e4fb1df5c5ea49dfac607f9d936132d66768"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green-verified.trx",
+        "GitBlob": "df1730997223a7bf59ee67900302bff47782d4d9"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green.log",
+        "GitBlob": "2b4883d4fbb0338506c87eaedb8777cf7057c949"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green.trx",
+        "GitBlob": "2b69a07c13d8a830df1b972ca173e19a08c7ed4e"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-input-manifest-setup-failure.json",
+        "GitBlob": "7b0202b3922d3fc01326658e36648b2c06578e39"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-missing-column-original.json",
+        "GitBlob": "86fd97b67964d08401afd067c3db9ed7efb982a6"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-missing-column-original.sql",
+        "GitBlob": "f68efcd961c37b4e9f16232d0c2e51b63446392b"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-native-fix-green.log",
+        "GitBlob": "d4f85af7b162fc06e3234989f8f7e38343baf089"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-native-fix-green.trx",
+        "GitBlob": "1a42feed8615be7e373607e3e9b6ff72be971d5a"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-actual-input.json",
+        "GitBlob": "855272a1321d44fb748698a8dce8d0aee96dd077"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-generated-migration.sql",
+        "GitBlob": "39388290d2b2e1a22dc6425fff0678981ffdd896"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-real-ef-syntax-failure.json",
+        "GitBlob": "af187803982b2df84937905ca5cdbc4fa23443a9"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red-verified.log",
+        "GitBlob": "06e942126dac54feb99a4e8c916386b691fd8c85"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red-verified.trx",
+        "GitBlob": "fb86ae2b7c3b55e88ab541793605474c1bc9b5d1"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red.log",
+        "GitBlob": "229a9aa75231853b7ec60fe09956567a7e8465be"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red.trx",
+        "GitBlob": "3742ea5582661eed1137dc71607423a50a9b5aca"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-restore.log",
+        "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-sql-compare-after-real-ef-rejection-to-after-original-missing-column.json",
+        "GitBlob": "30934510ca9de2958b78ee9db2cc00bbc0b94214"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-sql-compare-before-real-ef-rejection-to-after-real-ef-rejection.json",
+        "GitBlob": "70db54e750fe5240502b48ff9beea9bacb3c6426"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/verification.json",
+        "GitBlob": "54acfbe89893cb6fb58260b552bb894dbf96d5fd"
+      },
+      {
+        "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/wp2-init-bug143-real-ef-late-overlong-rejected.json",
+        "GitBlob": "f389927fde487b15512f5fd998e144a764ba4b74"
+      },
+      {
+        "Path": "docs/project-memory/05-Completed.md",
+        "GitBlob": "0ddd28688e3e541adbdd5fd1b093d0c7932c84f9"
+      },
+      {
+        "Path": "docs/project-memory/06-Todo.md",
+        "GitBlob": "46ef0c0e84275f2f483564bb876f5928ca01c4a2"
+      },
+      {
+        "Path": "docs/project-memory/CHANGELOG-AI.md",
+        "GitBlob": "8ab6475e18c6ad7423a7480ffa082b37cca2bc9d"
+      },
+      {
+        "Path": "docs/project-memory/PROJECT_STATE.md",
+        "GitBlob": "21d0b58d0f6526c873314778c8b761ca5aecb030"
+      }
+    ],
+    "findings": [
+      {
+        "priority": "P2",
+        "description": "The dynamic read locks a name that could identify a replacement object after the initial object_id lookup; the original statement did not recheck table-name/object_id identity before ALTER.",
+        "resolution": "Resolved by 2b6548b10251477dfcbbcf11e2b4334896baebab; current independent targeted follow-up checks the identity guard and regression assertions."
+      }
+    ],
+    "otherActionableFindings": "None reported by the prior full reviewer.",
+    "evidenceSubscope": {
+      "reportedCaptureUtc": "2026-10-02T20:06:59.3953326Z",
+      "fileCount": 23,
+      "reportedOriginalManifestSha256": null,
+      "reportedOriginalManifestHashAbbreviation": "b264e365...3a7d145f0",
+      "hashProvenance": "Only the abbreviated original hash was present in the inherited task handoff. The independently captured current 23-file manifest below uses a separate explicit algorithm; it does not replace or claim to reproduce the original manifest.",
+      "originalReviewReportedChecks": "20 raw/TRX evidence files and -text treatment were checked by the prior reviewer; no missing sensitive-information handling was reported.",
+      "independentlyCapturedAtUtc": "2026-10-03T07:01:08.7392720Z",
+      "independentlyCapturedManifestAlgorithm": "SHA-256 over UTF-8 of ordinal git-diff path order, each row Path + '|' + uppercase SHA256, LF joined, no final LF.",
+      "independentlyCapturedManifestSha256": "A30FED4E0473DD180FF6F600DD9563A22A35A11324FDB3A6297AC14AAD80D9B0",
+      "independentlyCapturedFiles": [
+        {
+          "Path": ".gitattributes",
+          "Sha256": "ED5991749E8289C056404253C6278FB14F5A645D3ADB68467C03DEB4031C1FB7"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/README.md",
+          "Sha256": "E530389BCE4FFEC478F9ECBE8BB712D83C3F0A09C1786D556E01DA8393786F8A"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green-verified.log",
+          "Sha256": "64071ACFDFA37993EA068B7F5E800407DBE8B22EF148D56C9B8E8F696F748001"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green-verified.trx",
+          "Sha256": "D33F4F993CABA37A654E836979E77B8BAA409ACF556FA0DADCBDBA1B1C7C1187"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green.log",
+          "Sha256": "8541A571C3C06031932EF62B341100F9A4D19C37C8A4898539FF565EB2CA06FD"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-green.trx",
+          "Sha256": "40DD2829988A04B530A683B6574E00DA74D9B859581DA4D01FA091CB6A439E15"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-input-manifest-setup-failure.json",
+          "Sha256": "5C79608D852227D6010D6A231E11A330BA246135971A874A4D489FA6FDE9F649"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-missing-column-original.json",
+          "Sha256": "42E68D6005C799EA32F28E80673CB07703D13BB871094B007674B0D7AC2124F7"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-missing-column-original.sql",
+          "Sha256": "5E5F3FC23F9FDA0D6FCC762BA45D2BCBE8E43736995A911BDC2B18B547A6DA00"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-native-fix-green.log",
+          "Sha256": "684A1452DA508D46F867B17BE284A569F306DA64BFFFF23A206D5B8D5F4CC4AC"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-native-fix-green.trx",
+          "Sha256": "54334250E8CFF579BAA650F09728A50F6C5253EAA9838D62031CCDC4DF69D77B"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-actual-input.json",
+          "Sha256": "5AE3F3E93AFAFAC07B5226E9B329ADB72AC7129F62430AA3FA488136E3C6A7ED"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-generated-migration.sql",
+          "Sha256": "C2934D6A635A8D45903203C862E60A822A0A092A715439449BCDF68C5034313E"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-real-ef-syntax-failure.json",
+          "Sha256": "699E8A402EAA8D449166A90CCDA5790FA7216A3967C26FD1402108C6AC1BDE34"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red-verified.log",
+          "Sha256": "395669E730B275EC8CF00EC111C9E6AD4EE1A12C6DD0FD0342CE808AC394BAE9"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red-verified.trx",
+          "Sha256": "A66DF03862F2307267AC3BC453C6509FC595EFA222ACF620D77BC507E5B72294"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red.log",
+          "Sha256": "7E04901B4B42BE200964EA3DCAE29DF3D4E9C52A3201B7249F4B745A3D86CB82"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-red.trx",
+          "Sha256": "E57B23645BB65ECB598ECF719B8E517A69B3C745DEC16973B8D6A3222EBD2FDC"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-restore.log",
+          "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-sql-compare-after-real-ef-rejection-to-after-original-missing-column.json",
+          "Sha256": "5FBA5B095DB391825CC4C65D6B7194C9C5B01E65AD1521B880CB0B1A9933E682"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-sql-compare-before-real-ef-rejection-to-after-real-ef-rejection.json",
+          "Sha256": "8B0EBE43493ED4852F32C00CB768120E372415139F91D3433E621D2FD044659B"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/verification.json",
+          "Sha256": "8EE574D164CFC01954011B5C33AFA9437D326C4D2B1C390DBB90157C79EBFD09"
+        },
+        {
+          "Path": "docs/audits/2026-10-02-bug-143-quotation-audit-capacity/wp2-init-bug143-real-ef-late-overlong-rejected.json",
+          "Sha256": "E018E0F7DEDC2B642852B37ECB26C26538DCB0E09A7984CB06E3B358FB10656B"
+        }
+      ]
+    }
+  },
+  "targetedReview": {
+    "startedUtc": null,
+    "startTimeReason": "The exact first-read timestamp was not recorded; no timestamp is inferred from an earlier review or source commit.",
+    "scopeCapturedUtc": "2026-10-03T07:01:08.7392720Z",
+    "completedUtc": "2026-10-03 07:01:40 UTC",
+    "files": [
+      {
+        "path": "CP6.Core/Persistence/QuotationAuditColumnCapacityRepairSql.cs",
+        "sha256": "7475F1E6F2CDA8A610A99AC509627B2B51D01B7CE305F4B98D287516DAFA0236"
+      },
+      {
+        "path": "CP6.Tests/Persistence/QuotationAuditColumnCapacityRepairTests.cs",
+        "sha256": "667FCCDFD6E90B5E925F679DEDAA10A0DF23CD82FDD3AABA618B7E28316B9035"
+      }
+    ],
+    "unchangedContractWitness": {
+      "path": "CP6.Core/Migrations/20261002193500_RestoreQuotationAuditColumnCapacity.cs",
+      "sha256": "08E68829AE9BB581EDD7907D2F124B113B668E8FF6CA8D27F1DE84B1987DA42D",
+      "observedSource": "SQL Server provider guard, six separate migrationBuilder.Sql(statement) calls, default EF transaction behavior, and forward-only Down remain unchanged from the full-reviewed commit. No migration operations were executed by this reviewer."
+    },
+    "inspectedDelta": "git diff f144b06fee99bf67f20116850ad74bb045b47979 2b6548b10251477dfcbbcf11e2b4334896baebab contains only the two files above; the other 28 paths of the original full review are unchanged.",
+    "conclusions": [
+      "After the dynamic data read acquires TABLOCKX/HOLDLOCK and before ALTER, the statement checks that OBJECT_ID of the exact dbo table name is non-null and equals the initially captured object_id.",
+      "The same guard queries sys.tables to verify the captured object_id remains in dbo and retains the exact BIN2 table name, then rejects any mismatch with THROW 51043.",
+      "The subsequent column guard still verifies the original object_id/column_id, exact column name, built-in nvarchar(max), nullable/noncomputed/nonidentity flags, and unchanged exact native collation before ALTER.",
+      "Regression assertions cover all six commands, prove the lock/read precedes identity verification, the identity verification precedes column revalidation, and column revalidation precedes ALTER. Both table and column guard branches require 51043.",
+      "No new actionable P0/P1/P2 finding was identified in the inspected delta. The original P2 is resolved."
+    ],
+    "findings": [],
+    "priorP2Status": "Resolved",
+    "fullReviewRepeated": false,
+    "dotnetCommandsRun": false,
+    "databaseConnectionsOpened": false,
+    "sourceOrDocumentationModified": false,
+    "limits": [
+      "This follow-up is a source review, not native concurrent rename/swap acceptance or database upgrade execution.",
+      "Native upgrade/repeat and guard execution remain the parent task's responsibility and are not declared passed here."
+    ]
+  },
+  "reusedActualUnitEvidence": {
+    "executionPerformedBy": "Parent /root before this follow-up",
+    "rerunByThisReviewer": false,
+    "countersReadFromOriginalTrx": true,
+    "red": {
+      "path": "tmp/bug-143-tests/identity-fix-red/bug-143-identity-fix-red.trx",
+      "sha256": "D5C4E76B08FF40A1743E7B7543ABFD5634631FA43CED3C088EF6F9DF4340F9A0",
+      "total": 17,
+      "executed": 17,
+      "passed": 16,
+      "failed": 1,
+      "notExecuted": 0,
+      "recordedStart": "2026-10-02T16:10:21.2563629-04:00",
+      "recordedFinish": "2026-10-02T16:10:50.8330307-04:00",
+      "failingTest": "Guards_check_native_metadata_raw_byte_capacity_and_preserve_collation_without_data_rewrites",
+      "originalRetained": true
+    },
+    "green": {
+      "path": "tmp/bug-143-tests/identity-fix-green/bug-143-identity-fix-green.trx",
+      "sha256": "4F5060C031FFCE23071934494AEC2875E732BAFFA36FA80E2B663DE76E0DC3D0",
+      "total": 17,
+      "executed": 17,
+      "passed": 17,
+      "failed": 0,
+      "notExecuted": 0,
+      "recordedStart": "2026-10-02T16:11:37.1103399-04:00",
+      "recordedFinish": "2026-10-02T16:12:05.7371523-04:00",
+      "compileWarnings": 0,
+      "compileWarningProvenance": "Parent's execution handoff reported zero warnings; this reviewer did not rebuild."
+    }
+  }
+}

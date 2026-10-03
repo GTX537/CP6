@@ -1,0 +1,17 @@
+{
+  "Scope": "Exact SQL36ef three owned quotation rows, native checked required facets/defaults/generated tokens; committed fixture action, no production acceptance.",
+  "Action": "poison",
+  "StartedUtc": "2026-10-02T19:49:14.1151333Z",
+  "FinishedUtc": "2026-10-02T19:49:14.5296515Z",
+  "NativeExitCode": 0,
+  "Status": "Passed",
+  "ScriptSha256": "602630CF8B7F7AF59CC4E4A0E22E1DB55B2294698DEA8170C45B6F5DFC3BCC75",
+  "LogSha256": "007F1625D0146388351FF205B7081B5EB757F5BA34C989840810A0D8307CD4DC",
+  "NativeSummary": {
+    "FixtureAction": "poison",
+    "OwnerVerified": true,
+    "OwnedGraphRows": 3,
+    "LastModifierBytes": 202,
+    "BusinessValuesReturned": false
+  }
+}

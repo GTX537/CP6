@@ -1,0 +1,32 @@
+{
+  "Scope": "Actual three-row Quotation EF graph and six native Creator/Modifier UTF-16 storage boundaries with exact error identities, separate excess-trailing-space behavior and complete fixture rollback; no migration currency or full quotation business acceptance claimed",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-02T20:06:25.4397909Z",
+  "FinishedUtc": "2026-10-02T20:06:29.4957153Z",
+  "SourceBase": "4d4e260819f0a1b59810403d016c69a2fd7319ae",
+  "SourceState": "WP2 uncommitted task input; applicable build log and file hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "B4E308A581B58AC0B86FFE50729AF1D57B62DC7DC20E5EB52674884844CAF685",
+    "CP6.DatabaseCompatibility.MigrationProbe": "6E11CD008245908A3DFA6A5A2CD29FD1EE8ACCEC917223AA7E74B69EE3CED89C",
+    "CP6.Persistence.PostgreSql": "DD97021207F5FB19BA4D4A0726ADE7CD9597BC888DAFB260D773C11AE7800E95",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Space.Infrastructure": "1155F10E27F3D3250FF95A7027F48E4DDDC96354D2F7C828F6E23A9DD21B4B9E",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+    },
+    {
+      "Name": "Write.QuotationAuditUnicodeCapacity",
+      "Status": "Failed",
+      "Detail": "Installed T_Quotation.Creator must reject the full 101-unit non-space overflow with its exact native storage error."
+    }
+  ]
+}
