@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
@@ -10,10 +11,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
-public sealed class SpaceAiRetentionTests
+[Collection(SpaceSqlServerCollection.Name)]
+public sealed class SpaceAiRetentionTests(SpaceRelationalFixture fixture, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 8, 6, 18, 0, 0, DateTimeKind.Utc);
@@ -157,12 +160,12 @@ public sealed class SpaceAiRetentionTests
     public async Task SqlServer_migration_and_cleanup_are_retry_safe()
     {
         var tenantId = Guid.NewGuid();
-        var connectionString = NewSqlServerDatabase();
+        var connectionString = BusinessConnectionString();
         var clock = new MutableClock(Now.AddDays(-400));
-        await using var context = CreateSqlContext(connectionString, tenantId, clock);
+        await using var context = CreateBusinessContext(connectionString, tenantId, clock);
         try
         {
-            await context.Database.MigrateAsync();
+            if (!SpaceRelationalFixture.IsSelected) await context.Database.MigrateAsync();
             var graph = NewGraph(tenantId, clock.UtcNow);
             context.AddRange(graph.Entities);
             await context.SaveChangesAsync();
@@ -192,7 +195,7 @@ public sealed class SpaceAiRetentionTests
         }
         finally
         {
-            await context.Database.EnsureDeletedAsync();
+            if (!SpaceRelationalFixture.IsSelected) await context.Database.EnsureDeletedAsync();
         }
     }
 
@@ -200,18 +203,21 @@ public sealed class SpaceAiRetentionTests
     public async Task SqlServer_tenant_lock_rejects_concurrent_cleanup()
     {
         var tenantId = Guid.NewGuid();
-        var connectionString = NewSqlServerDatabase();
+        var connectionString = BusinessConnectionString();
         var clock = new MutableClock(Now);
-        await using var owner = CreateSqlContext(connectionString, tenantId, clock);
+        await using var owner = CreateBusinessContext(connectionString, tenantId, clock);
         try
         {
-            await owner.Database.MigrateAsync();
+            if (!SpaceRelationalFixture.IsSelected) await owner.Database.MigrateAsync();
             await using var transaction = await owner.Database.BeginTransactionAsync();
             var resource = $"cp6:space:ai-retention:{tenantId:N}";
-            await owner.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sys.sp_getapplock @Resource={resource}, @LockMode=N'Exclusive', @LockOwner=N'Transaction', @LockTimeout=0;");
+            if (owner.Database.IsNpgsql())
+                Assert.True(await DatabaseResourceLocks.TryAcquireTransactionAsync(owner, resource, 0));
+            else
+                await owner.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC sys.sp_getapplock @Resource={resource}, @LockMode=N'Exclusive', @LockOwner=N'Transaction', @LockTimeout=0;");
 
-            await using var contender = CreateSqlContext(
+            await using var contender = CreateBusinessContext(
                 connectionString,
                 tenantId,
                 clock);
@@ -225,35 +231,36 @@ public sealed class SpaceAiRetentionTests
         }
         finally
         {
-            await owner.Database.EnsureDeletedAsync();
+            if (!SpaceRelationalFixture.IsSelected) await owner.Database.EnsureDeletedAsync();
         }
     }
 
-    [SqlServerFact]
+    [SpaceMigrationFact]
     public async Task SqlServer_idempotent_deployment_script_runs_twice()
     {
+        if (SpaceRelationalFixture.IsSelected)
+            throw new InvalidOperationException("This SQL Server historical script test requires the separate legacy database lane.");
+        var selected = await SpaceMigrationTestDatabase.OpenIfSelectedAsync(output);
         var tenantId = Guid.NewGuid();
-        var connectionString = NewSqlServerDatabase();
+        var connectionString = selected?.ConnectionString ?? NewSqlServerDatabase();
         var clock = new MutableClock(Now);
-        await using var context = CreateSqlContext(connectionString, tenantId, clock);
+        await using var context = selected is null
+            ? CreateSqlContext(connectionString, tenantId, clock)
+            : selected.CreateContext(new TestExecutionContext(tenantId, Guid.NewGuid()), clock);
         try
         {
-            var migrator = context.Database.GetService<IMigrator>();
-            await migrator.MigrateAsync(
-                "20260806110504_SpaceE13S10AtomicApply");
-            var repositoryRoot = Path.GetFullPath(
-                Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
-            var script = await File.ReadAllTextAsync(
-                Path.Combine(
-                    repositoryRoot,
-                    "CP6.Space.Infrastructure",
-                    "Migrations",
-                    "Scripts",
-                    "20260806160931_SpaceE13S17AiRetention.sql"));
+            const string historicalStart = "20260806110504_SpaceE13S10AtomicApply";
+            if (selected is null)
+                await context.Database.GetService<IMigrator>().MigrateAsync(historicalStart);
+            else
+                await selected.MigrateAsync(context, historicalStart);
+            var script = await SpaceMigrationTestDatabase.ReadScriptAsync(
+                "CP6.Space.Infrastructure/Migrations/Scripts/20260806160931_SpaceE13S17AiRetention.sql", output);
 
             await context.Database.OpenConnectionAsync();
             await ExecuteSqlBatchesAsync(context, script);
             await ExecuteSqlBatchesAsync(context, script);
+            output.WriteLine("AiRetentionScriptExecutions=2.");
 
             var historyCount = await ExecuteScalarAsync(
                 context,
@@ -272,7 +279,10 @@ public sealed class SpaceAiRetentionTests
         finally
         {
             await context.Database.CloseConnectionAsync();
-            await context.Database.EnsureDeletedAsync();
+            if (selected is null)
+                await context.Database.EnsureDeletedAsync();
+            else
+                await selected.RecordStateAsync(context, "ai-retention-script-final");
         }
     }
 
@@ -429,6 +439,19 @@ public sealed class SpaceAiRetentionTests
                 .Options,
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             clock);
+
+    private string BusinessConnectionString()
+    {
+        if (!SpaceRelationalFixture.IsSelected) return NewSqlServerDatabase();
+        fixture.WriteSetupEvidence(output);
+        return fixture.ConnectionString;
+    }
+
+    private SpaceContext CreateBusinessContext(string connectionString, Guid tenantId, MutableClock clock)
+        => SpaceRelationalFixture.IsSelected
+            ? fixture.CreateSpaceContext(new TestExecutionContext(tenantId, Guid.NewGuid()), clock,
+                new SpaceNativeFailureObserver(fixture.Database.Provider, message => output.WriteLine(message), "ai-retention-business"))
+            : CreateSqlContext(connectionString, tenantId, clock);
 
     private static SpaceContext CreateSqlContext(
         string connectionString,

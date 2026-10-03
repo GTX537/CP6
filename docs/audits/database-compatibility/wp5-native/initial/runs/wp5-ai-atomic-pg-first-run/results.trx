@@ -1,0 +1,430 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="09df993b-fa2a-4922-847f-0ec513c13211" name="tt@LAPTOP-3QQ44FJS 2026-10-03 09:25:23" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T09:25:23.3817568-04:00" queuing="2026-10-03T09:25:23.3817573-04:00" start="2026-10-03T09:25:17.5506007-04:00" finish="2026-10-03T09:25:25.3044388-04:00" />
+  <TestSettings name="default" id="16f9d3d0-bce3-4877-8fbc-b06f2140f94b">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_09_25_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1636045f-99f4-48ae-ab17-ee9af5970d71" testId="3aefe667-fc6a-5d33-ba9f-951efbf24721" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1287580" startTime="2026-10-03T09:25:24.9579928-04:00" endTime="2026-10-03T09:25:25.1049262-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1636045f-99f4-48ae-ab17-ee9af5970d71">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.</StdOut>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+-------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+&#xD;
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.</Message>
+          <StackTrace>   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at CP6.Space.Infrastructure.SpaceAiAtomicApplyService.QueueAsync(Guid runId, CreateSpaceAiAtomicApplyRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceAiAtomicApplyService.cs:line 178&#xD;
+   at CP6.Space.Infrastructure.SpaceAiAtomicApplyService.QueueAsync(Guid runId, CreateSpaceAiAtomicApplyRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceAiAtomicApplyService.cs:line 202&#xD;
+   at CP6.Space.Infrastructure.SpaceAiAtomicApplyService.QueueAsync(Guid runId, CreateSpaceAiAtomicApplyRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceAiAtomicApplyService.cs:line 203&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c__DisplayClass8_1.&lt;&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;g__QueueAsync|1&gt;d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 216&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;b__8_0(SpaceContext context, TestExecutionContext execution, MutableClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 229&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;b__8_0(SpaceContext context, TestExecutionContext execution, MutableClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 237&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;b__8_0(SpaceContext context, TestExecutionContext execution, MutableClock clock) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 237&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1193&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1194&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 183&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ad6e52ac-db62-440b-a06f-0ac889847065" testId="5250d0d9-612f-c9d2-14c0-db72f34a5171" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Resource_failure_retries_same_apply_job_and_frozen_run" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0574327" startTime="2026-10-03T09:25:24.9009242-04:00" endTime="2026-10-03T09:25:24.9578244-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad6e52ac-db62-440b-a06f-0ac889847065">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4abbb86c-3c2e-4e8a-93cb-43a3c3094525" testId="79d9ee39-bc2b-6084-b70e-fba054f75fc5" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3803588" startTime="2026-10-03T09:25:23.1856375-04:00" endTime="2026-10-03T09:25:23.5774889-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4abbb86c-3c2e-4e8a-93cb-43a3c3094525">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Succeeded&#xD;
+Actual:   Applying</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Reconcile_repairs_run_from_authoritative_committed_batch&gt;b__14_0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 500&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1193&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1194&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 486&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8d378e70-b23b-4192-b9fa-0edf2b197f36" testId="393b7525-5060-3629-07cd-8a4def0b9071" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1734107" startTime="2026-10-03T09:25:24.4714470-04:00" endTime="2026-10-03T09:25:24.6455081-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d378e70-b23b-4192-b9fa-0edf2b197f36">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Succeeded&#xD;
+Actual:   Applying</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Apply_materializes_hierarchy_rack_derivation_and_element&gt;b__16_0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 659&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1193&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1194&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 597&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f0e0060b-e181-41e3-b2ad-600e8365026a" testId="fc4558eb-ed5c-b0fd-8339-9a2f1c7ed7a4" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5566759" startTime="2026-10-03T09:25:23.7786496-04:00" endTime="2026-10-03T09:25:24.3361285-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f0e0060b-e181-41e3-b2ad-600e8365026a">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "AI-ZONE-1"&#xD;
+Actual:   "OLD-ZONE"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Apply_updates_existing_baseline_and_reconciles_rack_derivation&gt;b__17_0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 894&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1193&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1194&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 699&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="63681aa3-b331-4ece-8eeb-5df52414c3e9" testId="16cb5666-1da3-e124-d0ff-48011f33d0b0" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Draft_change_marks_run_stale_without_apply_writes" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.2229695" startTime="2026-10-03T09:25:21.8570776-04:00" endTime="2026-10-03T09:25:23.0696632-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63681aa3-b331-4ece-8eeb-5df52414c3e9">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e5878fae-22bc-42f7-9b7b-dbd4fa7c17fd" testId="37e36e26-9b1a-5656-9927-12b125c32ccb" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Running_apply_acknowledges_cancel_at_worker_safe_point" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1144666" startTime="2026-10-03T09:25:23.0761488-04:00" endTime="2026-10-03T09:25:23.1849600-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5878fae-22bc-42f7-9b7b-dbd4fa7c17fd">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a0e065d2-6870-42b4-a85b-62888cb4dce9" testId="548b88a6-6170-8035-849c-6a63af1561e7" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Stale_recovery_creates_new_run_and_obsoletes_old_proposals" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0609845" startTime="2026-10-03T09:25:24.6462694-04:00" endTime="2026-10-03T09:25:24.7067433-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a0e065d2-6870-42b4-a85b-62888cb4dce9">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2ba7b092-30cd-4141-9bbc-2ca57a18d807" testId="e5ebf77b-7b0e-baf2-14e4-6a1088661964" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1310268" startTime="2026-10-03T09:25:25.1072983-04:00" endTime="2026-10-03T09:25:25.2366040-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2ba7b092-30cd-4141-9bbc-2ca57a18d807">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Succeeded&#xD;
+Actual:   Applying</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Apply_is_idempotent_and_commits_one_atomic_revision&gt;b__5_0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 65&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1193&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1194&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f9e3bd9f-d59e-4570-8bc3-6a15336311cb" testId="50ec905a-8ccc-5206-9145-dc34167b61f6" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Failed_recovery_retires_current_run_before_replacement" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1349842" startTime="2026-10-03T09:25:24.3370750-04:00" endTime="2026-10-03T09:25:24.4712709-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9e3bd9f-d59e-4570-8bc3-6a15336311cb">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f46c9e51-bf42-428b-831f-c1901c229ce9" testId="b2d3ff18-8a7d-dc33-8ae2-185df46aa5e4" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_cancel_same_key_replays_after_row_version_changes" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1291399" startTime="2026-10-03T09:25:23.6491192-04:00" endTime="2026-10-03T09:25:23.7784705-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f46c9e51-bf42-428b-831f-c1901c229ce9">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="73b07c4b-b600-4a53-91d4-fefcd9535859" testId="2abefd99-3c6f-c004-45bd-e5bcb0a09408" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1923983" startTime="2026-10-03T09:25:24.7069174-04:00" endTime="2026-10-03T09:25:24.9001567-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73b07c4b-b600-4a53-91d4-fefcd9535859">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Succeeded&#xD;
+Actual:   Queued</Message>
+          <StackTrace>   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Commit_fault_rolls_back_then_reuses_plan_on_retry&gt;b__7_0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 165&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1193&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 1194&#xD;
+   at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs:line 130&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c8ba695f-b36b-4ff8-a6f0-d60398e24820" testId="e2da4c69-2743-8d19-20ed-e309d277d0e4" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Queued_apply_cancels_idempotently_without_draft_writes" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0714342" startTime="2026-10-03T09:25:23.5815670-04:00" endTime="2026-10-03T09:25:23.6489343-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8ba695f-b36b-4ff8-a6f0-d60398e24820">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="393b7525-5060-3629-07cd-8a4def0b9071">
+      <Execution id="8d378e70-b23b-4192-b9fa-0edf2b197f36" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Apply_materializes_hierarchy_rack_derivation_and_element" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="2abefd99-3c6f-c004-45bd-e5bcb0a09408">
+      <Execution id="73b07c4b-b600-4a53-91d4-fefcd9535859" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Commit_fault_rolls_back_then_reuses_plan_on_retry" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Running_apply_acknowledges_cancel_at_worker_safe_point" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="37e36e26-9b1a-5656-9927-12b125c32ccb">
+      <Execution id="e5878fae-22bc-42f7-9b7b-dbd4fa7c17fd" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Running_apply_acknowledges_cancel_at_worker_safe_point" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Draft_change_marks_run_stale_without_apply_writes" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="16cb5666-1da3-e124-d0ff-48011f33d0b0">
+      <Execution id="63681aa3-b331-4ece-8eeb-5df52414c3e9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Draft_change_marks_run_stale_without_apply_writes" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="e5ebf77b-7b0e-baf2-14e4-6a1088661964">
+      <Execution id="2ba7b092-30cd-4141-9bbc-2ca57a18d807" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Apply_is_idempotent_and_commits_one_atomic_revision" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="3aefe667-fc6a-5d33-ba9f-951efbf24721">
+      <Execution id="1636045f-99f4-48ae-ab17-ee9af5970d71" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Concurrent_same_key_creates_one_apply_job_and_replays" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Resource_failure_retries_same_apply_job_and_frozen_run" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="5250d0d9-612f-c9d2-14c0-db72f34a5171">
+      <Execution id="ad6e52ac-db62-440b-a06f-0ac889847065" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Resource_failure_retries_same_apply_job_and_frozen_run" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Stale_recovery_creates_new_run_and_obsoletes_old_proposals" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="548b88a6-6170-8035-849c-6a63af1561e7">
+      <Execution id="a0e065d2-6870-42b4-a85b-62888cb4dce9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Stale_recovery_creates_new_run_and_obsoletes_old_proposals" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="79d9ee39-bc2b-6084-b70e-fba054f75fc5">
+      <Execution id="4abbb86c-3c2e-4e8a-93cb-43a3c3094525" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Reconcile_repairs_run_from_authoritative_committed_batch" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Failed_recovery_retires_current_run_before_replacement" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="50ec905a-8ccc-5206-9145-dc34167b61f6">
+      <Execution id="f9e3bd9f-d59e-4570-8bc3-6a15336311cb" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Failed_recovery_retires_current_run_before_replacement" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Queued_apply_cancels_idempotently_without_draft_writes" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="e2da4c69-2743-8d19-20ed-e309d277d0e4">
+      <Execution id="c8ba695f-b36b-4ff8-a6f0-d60398e24820" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Queued_apply_cancels_idempotently_without_draft_writes" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="fc4558eb-ed5c-b0fd-8339-9a2f1c7ed7a4">
+      <Execution id="f0e0060b-e181-41e3-b2ad-600e8365026a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Apply_updates_existing_baseline_and_reconciles_rack_derivation" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_cancel_same_key_replays_after_row_version_changes" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="b2d3ff18-8a7d-dc33-8ae2-185df46aa5e4">
+      <Execution id="f46c9e51-bf42-428b-831f-c1901c229ce9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="Concurrent_cancel_same_key_replays_after_row_version_changes" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3aefe667-fc6a-5d33-ba9f-951efbf24721" executionId="1636045f-99f4-48ae-ab17-ee9af5970d71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5250d0d9-612f-c9d2-14c0-db72f34a5171" executionId="ad6e52ac-db62-440b-a06f-0ac889847065" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79d9ee39-bc2b-6084-b70e-fba054f75fc5" executionId="4abbb86c-3c2e-4e8a-93cb-43a3c3094525" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="393b7525-5060-3629-07cd-8a4def0b9071" executionId="8d378e70-b23b-4192-b9fa-0edf2b197f36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc4558eb-ed5c-b0fd-8339-9a2f1c7ed7a4" executionId="f0e0060b-e181-41e3-b2ad-600e8365026a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16cb5666-1da3-e124-d0ff-48011f33d0b0" executionId="63681aa3-b331-4ece-8eeb-5df52414c3e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="37e36e26-9b1a-5656-9927-12b125c32ccb" executionId="e5878fae-22bc-42f7-9b7b-dbd4fa7c17fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="548b88a6-6170-8035-849c-6a63af1561e7" executionId="a0e065d2-6870-42b4-a85b-62888cb4dce9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5ebf77b-7b0e-baf2-14e4-6a1088661964" executionId="2ba7b092-30cd-4141-9bbc-2ca57a18d807" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50ec905a-8ccc-5206-9145-dc34167b61f6" executionId="f9e3bd9f-d59e-4570-8bc3-6a15336311cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2d3ff18-8a7d-dc33-8ae2-185df46aa5e4" executionId="f46c9e51-bf42-428b-831f-c1901c229ce9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2abefd99-3c6f-c004-45bd-e5bcb0a09408" executionId="73b07c4b-b600-4a53-91d4-fefcd9535859" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e2da4c69-2743-8d19-20ed-e309d277d0e4" executionId="c8ba695f-b36b-4ff8-a6f0-d60398e24820" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="7" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:05.67]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.67]       Expected: Succeeded&#xD;
+[xUnit.net 00:00:05.67]       Actual:   Applying&#xD;
+[xUnit.net 00:00:05.67]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.67]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(500,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Reconcile_repairs_run_from_authoritative_committed_batch&gt;b__14_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:05.67]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.67]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1193,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:05.67]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1194,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:05.68]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(486,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch()&#xD;
+[xUnit.net 00:00:05.68]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.68]       Output:&#xD;
+[xUnit.net 00:00:05.68]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:05.68]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:05.68]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:05.68]         Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.&#xD;
+[xUnit.net 00:00:06.43]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:06.43]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:06.43]       Expected: "AI-ZONE-1"&#xD;
+[xUnit.net 00:00:06.43]       Actual:   "OLD-ZONE"&#xD;
+[xUnit.net 00:00:06.43]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:06.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.43]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(894,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Apply_updates_existing_baseline_and_reconciles_rack_derivation&gt;b__17_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:06.43]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.43]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1193,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:06.43]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1194,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:06.43]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(699,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation()&#xD;
+[xUnit.net 00:00:06.43]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.43]       Output:&#xD;
+[xUnit.net 00:00:06.43]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:06.43]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:06.43]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:06.43]         Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.&#xD;
+[xUnit.net 00:00:06.74]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:06.74]       Expected: Succeeded&#xD;
+[xUnit.net 00:00:06.74]       Actual:   Applying&#xD;
+[xUnit.net 00:00:06.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.74]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(659,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Apply_materializes_hierarchy_rack_derivation_and_element&gt;b__16_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:06.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.74]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1193,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:06.74]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1194,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:06.74]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(597,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element()&#xD;
+[xUnit.net 00:00:06.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.74]       Output:&#xD;
+[xUnit.net 00:00:06.74]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:06.74]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:06.74]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:06.74]         Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.&#xD;
+[xUnit.net 00:00:06.99]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:06.99]       Expected: Succeeded&#xD;
+[xUnit.net 00:00:06.99]       Actual:   Queued&#xD;
+[xUnit.net 00:00:06.99]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.99]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(165,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Commit_fault_rolls_back_then_reuses_plan_on_retry&gt;b__7_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:06.99]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.99]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1193,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:06.99]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1194,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:07.00]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(130,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry()&#xD;
+[xUnit.net 00:00:07.00]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.00]       Output:&#xD;
+[xUnit.net 00:00:07.00]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:07.00]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:07.00]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:07.00]         Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.&#xD;
+[xUnit.net 00:00:07.20]       System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+[xUnit.net 00:00:07.20]       ---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+[xUnit.net 00:00:07.20]       -------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+[xUnit.net 00:00:07.20]       &#xD;
+[xUnit.net 00:00:07.20]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+[xUnit.net 00:00:07.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceAiAtomicApplyService.cs(178,0): at CP6.Space.Infrastructure.SpaceAiAtomicApplyService.QueueAsync(Guid runId, CreateSpaceAiAtomicApplyRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceAiAtomicApplyService.cs(202,0): at CP6.Space.Infrastructure.SpaceAiAtomicApplyService.QueueAsync(Guid runId, CreateSpaceAiAtomicApplyRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceAiAtomicApplyService.cs(203,0): at CP6.Space.Infrastructure.SpaceAiAtomicApplyService.QueueAsync(Guid runId, CreateSpaceAiAtomicApplyRequest request, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(216,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c__DisplayClass8_1.&lt;&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;g__QueueAsync|1&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:07.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(229,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;b__8_0(SpaceContext context, TestExecutionContext execution, MutableClock clock)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(237,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;b__8_0(SpaceContext context, TestExecutionContext execution, MutableClock clock)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(237,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;Concurrent_same_key_creates_one_apply_job_and_replays&gt;b__8_0(SpaceContext context, TestExecutionContext execution, MutableClock clock)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1193,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1194,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:07.20]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(183,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays()&#xD;
+[xUnit.net 00:00:07.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.20]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:07.20]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.20]       Output:&#xD;
+[xUnit.net 00:00:07.20]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:07.20]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:07.20]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:07.20]         Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.&#xD;
+[xUnit.net 00:00:07.33]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:07.33]       Expected: Succeeded&#xD;
+[xUnit.net 00:00:07.33]       Actual:   Applying&#xD;
+[xUnit.net 00:00:07.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.33]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(65,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.&lt;&gt;c.&lt;&lt;Apply_is_idempotent_and_commits_one_atomic_revision&gt;b__5_0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:07.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.33]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1193,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:07.33]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(1194,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.WithDatabaseAsync(Func`4 action)&#xD;
+[xUnit.net 00:00:07.33]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceAiAtomicApplySqlServerTests.cs(24,0): at CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision()&#xD;
+[xUnit.net 00:00:07.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.33]       Output:&#xD;
+[xUnit.net 00:00:07.33]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:07.33]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:07.33]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:07.33]         Provider=PostgreSql; Stage=ai-apply-business; SQLSTATE=42601; NativeCode=none; Kind=Unknown.&#xD;
+[xUnit.net 00:00:07.34]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T09:25:23.5796184-04:00">
+        <Text>[xUnit.net 00:00:05.67]     CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T09:25:24.3365721-04:00">
+        <Text>[xUnit.net 00:00:06.43]     CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T09:25:24.6462597-04:00">
+        <Text>[xUnit.net 00:00:06.74]     CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T09:25:24.9005593-04:00">
+        <Text>[xUnit.net 00:00:06.99]     CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T09:25:25.1055194-04:00">
+        <Text>[xUnit.net 00:00:07.20]     CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T09:25:25.2369016-04:00">
+        <Text>[xUnit.net 00:00:07.33]     CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

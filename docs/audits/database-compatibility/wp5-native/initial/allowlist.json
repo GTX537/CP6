@@ -1,0 +1,1316 @@
+[
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-sql-first-reference.json",
+    "RelativePath": "reports/wp5-clone-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-clone-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-clone-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-pg-first-run.json",
+    "RelativePath": "reports/wp5-clone-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-clone-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-clone-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-pg-business-first-run.json",
+    "RelativePath": "reports/wp5-clone-pg-business-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-pg-business-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-pg-business-first-run\\process.log",
+    "RelativePath": "runs/wp5-clone-pg-business-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-pg-business-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-pg-business-first-run\\results.trx",
+    "RelativePath": "runs/wp5-clone-pg-business-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-pg-business-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-pg-fixture-followup.json",
+    "RelativePath": "reports/wp5-clone-pg-fixture-followup.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-pg-fixture-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-pg-fixture-followup\\process.log",
+    "RelativePath": "runs/wp5-clone-pg-fixture-followup/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-pg-fixture-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-pg-fixture-followup\\results.trx",
+    "RelativePath": "runs/wp5-clone-pg-fixture-followup/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-pg-fixture-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-sql-native-matrix.json",
+    "RelativePath": "reports/wp5-clone-sql-native-matrix.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-sql-native-matrix"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-sql-native-matrix\\process.log",
+    "RelativePath": "runs/wp5-clone-sql-native-matrix/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-sql-native-matrix"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-sql-native-matrix\\results.trx",
+    "RelativePath": "runs/wp5-clone-sql-native-matrix/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-sql-native-matrix"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-sql-first-reference.json",
+    "RelativePath": "reports/wp5-reports-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-reports-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-reports-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-reports-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-reports-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-reports-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-pg-first-run.json",
+    "RelativePath": "reports/wp5-reports-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-reports-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-reports-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-reports-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-reports-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-reports-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-gdpr-sql-first-reference.json",
+    "RelativePath": "reports/wp5-gdpr-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-gdpr-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-gdpr-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-gdpr-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-gdpr-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-gdpr-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-gdpr-pg-first-run.json",
+    "RelativePath": "reports/wp5-gdpr-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-gdpr-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-gdpr-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-gdpr-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-gdpr-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-gdpr-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-pg-provider.json",
+    "RelativePath": "reports/wp5-reports-pg-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-reports-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-pg-provider\\process.log",
+    "RelativePath": "runs/wp5-reports-pg-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-reports-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-pg-provider\\results.trx",
+    "RelativePath": "runs/wp5-reports-pg-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-reports-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-sql-provider.json",
+    "RelativePath": "reports/wp5-reports-sql-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-reports-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-sql-provider\\process.log",
+    "RelativePath": "runs/wp5-reports-sql-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-reports-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-sql-provider\\results.trx",
+    "RelativePath": "runs/wp5-reports-sql-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-reports-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-gdpr-pg-provider.json",
+    "RelativePath": "reports/wp5-gdpr-pg-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-gdpr-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-pg-provider\\process.log",
+    "RelativePath": "runs/wp5-gdpr-pg-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-gdpr-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-pg-provider\\results.trx",
+    "RelativePath": "runs/wp5-gdpr-pg-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-gdpr-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-gdpr-sql-provider.json",
+    "RelativePath": "reports/wp5-gdpr-sql-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-gdpr-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-sql-provider\\process.log",
+    "RelativePath": "runs/wp5-gdpr-sql-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-gdpr-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-sql-provider\\results.trx",
+    "RelativePath": "runs/wp5-gdpr-sql-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-gdpr-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-core-space-sql-first-reference.json",
+    "RelativePath": "reports/wp5-core-space-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-core-space-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-core-space-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-core-space-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-core-space-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-core-space-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-core-space-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-core-space-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-core-space-pg-first-run.json",
+    "RelativePath": "reports/wp5-core-space-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-core-space-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-core-space-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-core-space-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-core-space-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-core-space-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-core-space-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-core-space-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-capacity-file-sql-first-reference.json",
+    "RelativePath": "reports/wp5-capacity-file-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-capacity-file-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-capacity-file-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-capacity-file-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-capacity-file-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-capacity-file-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-capacity-file-pg-first-run.json",
+    "RelativePath": "reports/wp5-capacity-file-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-capacity-file-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-capacity-file-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-capacity-file-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-capacity-file-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-capacity-file-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-capacity-file-pg-provider.json",
+    "RelativePath": "reports/wp5-capacity-file-pg-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-capacity-file-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-pg-provider\\process.log",
+    "RelativePath": "runs/wp5-capacity-file-pg-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-capacity-file-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-pg-provider\\results.trx",
+    "RelativePath": "runs/wp5-capacity-file-pg-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-capacity-file-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-capacity-file-sql-provider.json",
+    "RelativePath": "reports/wp5-capacity-file-sql-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-capacity-file-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-sql-provider\\process.log",
+    "RelativePath": "runs/wp5-capacity-file-sql-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-capacity-file-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-capacity-file-sql-provider\\results.trx",
+    "RelativePath": "runs/wp5-capacity-file-sql-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-capacity-file-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-atomic-sql-first-reference.json",
+    "RelativePath": "reports/wp5-ai-atomic-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-ai-atomic-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-ai-atomic-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-ai-atomic-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-ai-atomic-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-ai-atomic-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-atomic-pg-first-run.json",
+    "RelativePath": "reports/wp5-ai-atomic-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-ai-atomic-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-ai-atomic-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-ai-atomic-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-ai-atomic-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-ai-atomic-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-parity-sql-first-reference.json",
+    "RelativePath": "reports/wp5-reports-parity-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-reports-parity-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-parity-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-reports-parity-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-reports-parity-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-parity-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-reports-parity-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-reports-parity-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-parity-pg-first-run.json",
+    "RelativePath": "reports/wp5-reports-parity-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-reports-parity-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-parity-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-reports-parity-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-reports-parity-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-reports-parity-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-reports-parity-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-reports-parity-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-gdpr-rollback-sql-first-reference.json",
+    "RelativePath": "reports/wp5-gdpr-rollback-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-gdpr-rollback-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-rollback-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-gdpr-rollback-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-gdpr-rollback-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-rollback-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-gdpr-rollback-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-gdpr-rollback-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-gdpr-rollback-pg-first-run.json",
+    "RelativePath": "reports/wp5-gdpr-rollback-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-gdpr-rollback-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-rollback-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-gdpr-rollback-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-gdpr-rollback-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-rollback-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-gdpr-rollback-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-gdpr-rollback-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-atomic-pg-provider.json",
+    "RelativePath": "reports/wp5-ai-atomic-pg-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-ai-atomic-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-pg-provider\\process.log",
+    "RelativePath": "runs/wp5-ai-atomic-pg-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-ai-atomic-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-pg-provider\\results.trx",
+    "RelativePath": "runs/wp5-ai-atomic-pg-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-ai-atomic-pg-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-atomic-sql-provider.json",
+    "RelativePath": "reports/wp5-ai-atomic-sql-provider.json",
+    "Category": "run-report",
+    "Label": "wp5-ai-atomic-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-sql-provider\\process.log",
+    "RelativePath": "runs/wp5-ai-atomic-sql-provider/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-ai-atomic-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-atomic-sql-provider\\results.trx",
+    "RelativePath": "runs/wp5-ai-atomic-sql-provider/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-ai-atomic-sql-provider"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-jobs-generation-retention-sql-first-reference.json",
+    "RelativePath": "reports/wp5-jobs-generation-retention-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-jobs-generation-retention-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-jobs-generation-retention-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-jobs-generation-retention-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-jobs-generation-retention-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-jobs-generation-retention-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-jobs-generation-retention-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-jobs-generation-retention-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-jobs-generation-retention-pg-first-run.json",
+    "RelativePath": "reports/wp5-jobs-generation-retention-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-jobs-generation-retention-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-jobs-generation-retention-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-jobs-generation-retention-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-jobs-generation-retention-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-jobs-generation-retention-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-jobs-generation-retention-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-jobs-generation-retention-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-design-publish-wms-sql-first-reference.json",
+    "RelativePath": "reports/wp5-design-publish-wms-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-design-publish-wms-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-wms-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-design-publish-wms-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-design-publish-wms-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-wms-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-design-publish-wms-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-design-publish-wms-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-design-publish-wms-pg-first-run.json",
+    "RelativePath": "reports/wp5-design-publish-wms-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-design-publish-wms-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-wms-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-design-publish-wms-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-design-publish-wms-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-wms-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-design-publish-wms-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-design-publish-wms-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-design-publish-lease-pg-followup.json",
+    "RelativePath": "reports/wp5-design-publish-lease-pg-followup.json",
+    "Category": "run-report",
+    "Label": "wp5-design-publish-lease-pg-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-lease-pg-followup\\process.log",
+    "RelativePath": "runs/wp5-design-publish-lease-pg-followup/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-design-publish-lease-pg-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-lease-pg-followup\\results.trx",
+    "RelativePath": "runs/wp5-design-publish-lease-pg-followup/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-design-publish-lease-pg-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-design-publish-lease-sql-followup.json",
+    "RelativePath": "reports/wp5-design-publish-lease-sql-followup.json",
+    "Category": "run-report",
+    "Label": "wp5-design-publish-lease-sql-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-lease-sql-followup\\process.log",
+    "RelativePath": "runs/wp5-design-publish-lease-sql-followup/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-design-publish-lease-sql-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-design-publish-lease-sql-followup\\results.trx",
+    "RelativePath": "runs/wp5-design-publish-lease-sql-followup/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-design-publish-lease-sql-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-base-space-job-sql-first-reference.json",
+    "RelativePath": "reports/wp5-base-space-job-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-base-space-job-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-base-space-job-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-base-space-job-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-base-space-job-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-base-space-job-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-base-space-job-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-base-space-job-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-base-space-job-pg-first-run.json",
+    "RelativePath": "reports/wp5-base-space-job-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-base-space-job-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-base-space-job-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-base-space-job-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-base-space-job-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-base-space-job-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-base-space-job-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-base-space-job-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-restrict-file-pg-classifier.json",
+    "RelativePath": "reports/wp5-restrict-file-pg-classifier.json",
+    "Category": "run-report",
+    "Label": "wp5-restrict-file-pg-classifier"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-restrict-file-pg-classifier\\process.log",
+    "RelativePath": "runs/wp5-restrict-file-pg-classifier/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-restrict-file-pg-classifier"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-restrict-file-pg-classifier\\results.trx",
+    "RelativePath": "runs/wp5-restrict-file-pg-classifier/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-restrict-file-pg-classifier"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-restrict-file-sql-classifier.json",
+    "RelativePath": "reports/wp5-restrict-file-sql-classifier.json",
+    "Category": "run-report",
+    "Label": "wp5-restrict-file-sql-classifier"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-restrict-file-sql-classifier\\process.log",
+    "RelativePath": "runs/wp5-restrict-file-sql-classifier/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-restrict-file-sql-classifier"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-restrict-file-sql-classifier\\results.trx",
+    "RelativePath": "runs/wp5-restrict-file-sql-classifier/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-restrict-file-sql-classifier"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-failure-classifier-unit.json",
+    "RelativePath": "reports/wp5-failure-classifier-unit.json",
+    "Category": "run-report",
+    "Label": "wp5-failure-classifier-unit"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-failure-classifier-unit\\process.log",
+    "RelativePath": "runs/wp5-failure-classifier-unit/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-failure-classifier-unit"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-failure-classifier-unit\\results.trx",
+    "RelativePath": "runs/wp5-failure-classifier-unit/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-failure-classifier-unit"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-cad-assets-collaboration-sql-first-reference.json",
+    "RelativePath": "reports/wp5-cad-assets-collaboration-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-cad-assets-collaboration-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-cad-assets-collaboration-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-cad-assets-collaboration-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-cad-assets-collaboration-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-cad-assets-collaboration-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-cad-assets-collaboration-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-cad-assets-collaboration-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-cad-assets-collaboration-pg-first-run.json",
+    "RelativePath": "reports/wp5-cad-assets-collaboration-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-cad-assets-collaboration-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-cad-assets-collaboration-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-cad-assets-collaboration-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-cad-assets-collaboration-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-cad-assets-collaboration-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-cad-assets-collaboration-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-cad-assets-collaboration-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-edges-sql-first-reference.json",
+    "RelativePath": "reports/wp5-clone-edges-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-edges-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-edges-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-clone-edges-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-edges-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-edges-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-clone-edges-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-edges-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-edges-pg-first-run.json",
+    "RelativePath": "reports/wp5-clone-edges-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-edges-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-edges-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-clone-edges-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-edges-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-edges-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-clone-edges-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-edges-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-cad-retry-pg-followup.json",
+    "RelativePath": "reports/wp5-clone-cad-retry-pg-followup.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-cad-retry-pg-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-cad-retry-pg-followup\\process.log",
+    "RelativePath": "runs/wp5-clone-cad-retry-pg-followup/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-cad-retry-pg-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-cad-retry-pg-followup\\results.trx",
+    "RelativePath": "runs/wp5-clone-cad-retry-pg-followup/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-cad-retry-pg-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-cad-retry-sql-followup.json",
+    "RelativePath": "reports/wp5-clone-cad-retry-sql-followup.json",
+    "Category": "run-report",
+    "Label": "wp5-clone-cad-retry-sql-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-cad-retry-sql-followup\\process.log",
+    "RelativePath": "runs/wp5-clone-cad-retry-sql-followup/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-clone-cad-retry-sql-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-clone-cad-retry-sql-followup\\results.trx",
+    "RelativePath": "runs/wp5-clone-cad-retry-sql-followup/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-clone-cad-retry-sql-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-space-only-idempotency-sql-first-reference.json",
+    "RelativePath": "reports/wp5-space-only-idempotency-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-space-only-idempotency-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-space-only-idempotency-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-space-only-idempotency-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-space-only-idempotency-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-space-only-idempotency-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-space-only-idempotency-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-space-only-idempotency-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-asset-legacy-failure-sql-first-reference.json",
+    "RelativePath": "reports/wp5-asset-legacy-failure-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-asset-legacy-failure-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-asset-legacy-failure-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-asset-legacy-failure-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-asset-legacy-failure-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-asset-legacy-failure-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-asset-legacy-failure-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-asset-legacy-failure-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-retention-script-sql-first-reference.json",
+    "RelativePath": "reports/wp5-ai-retention-script-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-ai-retention-script-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-retention-script-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-ai-retention-script-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-ai-retention-script-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-ai-retention-script-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-ai-retention-script-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-ai-retention-script-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-publish-recovery-failure-sql-first-reference.json",
+    "RelativePath": "reports/wp5-publish-recovery-failure-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-publish-recovery-failure-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-publish-recovery-failure-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-publish-recovery-failure-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-publish-recovery-failure-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-publish-recovery-failure-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-publish-recovery-failure-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-publish-recovery-failure-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-publish-recovery-script-sql-first-reference.json",
+    "RelativePath": "reports/wp5-publish-recovery-script-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-publish-recovery-script-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-publish-recovery-script-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-publish-recovery-script-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-publish-recovery-script-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-publish-recovery-script-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-publish-recovery-script-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-publish-recovery-script-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-space-only-pg-first-run.json",
+    "RelativePath": "reports/wp5-space-only-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-space-only-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-space-only-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-space-only-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-space-only-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-space-only-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-space-only-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-space-only-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mapping-concurrency-sql-first-reference.json",
+    "RelativePath": "reports/wp5-mapping-concurrency-sql-first-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-mapping-concurrency-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-concurrency-sql-first-reference\\process.log",
+    "RelativePath": "runs/wp5-mapping-concurrency-sql-first-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-mapping-concurrency-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-concurrency-sql-first-reference\\results.trx",
+    "RelativePath": "runs/wp5-mapping-concurrency-sql-first-reference/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-mapping-concurrency-sql-first-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mapping-concurrency-pg-first-run.json",
+    "RelativePath": "reports/wp5-mapping-concurrency-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-mapping-concurrency-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-concurrency-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-mapping-concurrency-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-mapping-concurrency-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-mapping-concurrency-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-mapping-concurrency-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-mapping-concurrency-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mes-sql-boundary-reference.json",
+    "RelativePath": "reports/wp5-mes-sql-boundary-reference.json",
+    "Category": "run-report",
+    "Label": "wp5-mes-sql-boundary-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mes-sql-boundary-reference.log",
+    "RelativePath": "runs/wp5-mes-sql-boundary-reference/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-mes-sql-boundary-reference"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mes-sql-boundary-reference-v2.json",
+    "RelativePath": "reports/wp5-mes-sql-boundary-reference-v2.json",
+    "Category": "run-report",
+    "Label": "wp5-mes-sql-boundary-reference-v2"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-space-core-pg-first-run.json",
+    "RelativePath": "reports/wp5-prerequisite-space-core-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-prerequisite-space-core-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-prerequisite-space-core-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-prerequisite-space-core-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-prerequisite-space-core-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-prerequisite-space-core-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-prerequisite-space-core-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-prerequisite-space-core-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-core-space-pg-first-run.json",
+    "RelativePath": "reports/wp5-prerequisite-core-space-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-prerequisite-core-space-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-prerequisite-core-space-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-prerequisite-core-space-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-prerequisite-core-space-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-prerequisite-core-space-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-prerequisite-core-space-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-prerequisite-core-space-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-space-script-pg-first-run.json",
+    "RelativePath": "reports/wp5-prerequisite-space-script-pg-first-run.json",
+    "Category": "run-report",
+    "Label": "wp5-prerequisite-space-script-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-prerequisite-space-script-pg-first-run\\process.log",
+    "RelativePath": "runs/wp5-prerequisite-space-script-pg-first-run/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-prerequisite-space-script-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-prerequisite-space-script-pg-first-run\\results.trx",
+    "RelativePath": "runs/wp5-prerequisite-space-script-pg-first-run/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-prerequisite-space-script-pg-first-run"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-space-only-pg-prerequisite-followup.json",
+    "RelativePath": "reports/wp5-space-only-pg-prerequisite-followup.json",
+    "Category": "run-report",
+    "Label": "wp5-space-only-pg-prerequisite-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-space-only-pg-prerequisite-followup\\process.log",
+    "RelativePath": "runs/wp5-space-only-pg-prerequisite-followup/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-space-only-pg-prerequisite-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-space-only-pg-prerequisite-followup\\results.trx",
+    "RelativePath": "runs/wp5-space-only-pg-prerequisite-followup/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-space-only-pg-prerequisite-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-sql-generation.json",
+    "RelativePath": "reports/wp5-prerequisite-sql-generation.json",
+    "Category": "run-report",
+    "Label": "wp5-prerequisite-sql-generation"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-prerequisite-sql-generation\\process.log",
+    "RelativePath": "runs/wp5-prerequisite-sql-generation/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-prerequisite-sql-generation"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-prerequisite-sql-generation\\results.trx",
+    "RelativePath": "runs/wp5-prerequisite-sql-generation/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-prerequisite-sql-generation"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-sql-generation-review-followup.json",
+    "RelativePath": "reports/wp5-prerequisite-sql-generation-review-followup.json",
+    "Category": "run-report",
+    "Label": "wp5-prerequisite-sql-generation-review-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-prerequisite-sql-generation-review-followup\\process.log",
+    "RelativePath": "runs/wp5-prerequisite-sql-generation-review-followup/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-prerequisite-sql-generation-review-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\local-required-tests\\wp5-prerequisite-sql-generation-review-followup\\results.trx",
+    "RelativePath": "runs/wp5-prerequisite-sql-generation-review-followup/results.trx",
+    "Category": "raw-trx",
+    "Label": "wp5-prerequisite-sql-generation-review-followup"
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp5MigrationCase.before-prerequisite.ps1",
+    "RelativePath": "scripts/Invoke-DbCompatWp5MigrationCase.before-prerequisite.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp5MigrationCase.ps1",
+    "RelativePath": "scripts/Invoke-DbCompatWp5MigrationCase.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp5PrerequisiteCase.ps1",
+    "RelativePath": "scripts/Invoke-DbCompatWp5PrerequisiteCase.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp5ReportsCase.before-core-space.ps1",
+    "RelativePath": "scripts/Invoke-DbCompatWp5ReportsCase.before-core-space.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp5ReportsCase.ps1",
+    "RelativePath": "scripts/Invoke-DbCompatWp5ReportsCase.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp5SpaceCase.before-migration-env.ps1",
+    "RelativePath": "scripts/Invoke-DbCompatWp5SpaceCase.before-migration-env.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp5SpaceCase.ps1",
+    "RelativePath": "scripts/Invoke-DbCompatWp5SpaceCase.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\New-DbCompatWp5Databases.ps1",
+    "RelativePath": "scripts/New-DbCompatWp5Databases.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\New-DbCompatWp5MigrationDatabases.ps1",
+    "RelativePath": "scripts/New-DbCompatWp5MigrationDatabases.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\New-DbCompatWp5PrerequisiteDatabases.ps1",
+    "RelativePath": "scripts/New-DbCompatWp5PrerequisiteDatabases.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\New-DbCompatWp5ReportsDatabases.ps1",
+    "RelativePath": "scripts/New-DbCompatWp5ReportsDatabases.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Probe-Wp5MesSqlBoundaries.first.ps1",
+    "RelativePath": "scripts/Probe-Wp5MesSqlBoundaries.first.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Probe-Wp5MesSqlBoundaries.ps1",
+    "RelativePath": "scripts/Probe-Wp5MesSqlBoundaries.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-RequiredLocalTestCases.initial.ps1",
+    "RelativePath": "scripts/Invoke-RequiredLocalTestCases.initial.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\Invoke-RequiredLocalTestCases.ps1",
+    "RelativePath": "scripts/Invoke-RequiredLocalTestCases.ps1",
+    "Category": "runner-or-creator",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-design-jobs-provider-build-v2.log",
+    "RelativePath": "build/wp5-ai-design-jobs-provider-build-v2.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-ai-design-jobs-provider-build.log",
+    "RelativePath": "build/wp5-ai-design-jobs-provider-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-capacity-file-ai-provider-build.log",
+    "RelativePath": "build/wp5-capacity-file-ai-provider-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-cad-collaboration-restrict-build-v2.log",
+    "RelativePath": "build/wp5-clone-cad-collaboration-restrict-build-v2.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-cad-collaboration-restrict-build.log",
+    "RelativePath": "build/wp5-clone-cad-collaboration-restrict-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-capacity-file-tests-build.log",
+    "RelativePath": "build/wp5-clone-capacity-file-tests-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-fixture-followup-build.log",
+    "RelativePath": "build/wp5-clone-fixture-followup-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-clone-provider-infrastructure-build.log",
+    "RelativePath": "build/wp5-clone-provider-infrastructure-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-lease-base-job-followup-build.log",
+    "RelativePath": "build/wp5-lease-base-job-followup-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-migration-mapping-clone-build.log",
+    "RelativePath": "build/wp5-migration-mapping-clone-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-build.log",
+    "RelativePath": "build/wp5-prerequisite-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-review-followup-build.log",
+    "RelativePath": "build/wp5-prerequisite-review-followup-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-fixture-build.log",
+    "RelativePath": "build/wp5-reports-fixture-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-parity-rollback-build.log",
+    "RelativePath": "build/wp5-reports-parity-rollback-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-provider-core-space-build.log",
+    "RelativePath": "build/wp5-reports-provider-core-space-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-restrict-classifier-core-build.log",
+    "RelativePath": "build/wp5-restrict-classifier-core-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-space-fixture-build.log",
+    "RelativePath": "build/wp5-space-fixture-build.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-fixture-locked-restore.log",
+    "RelativePath": "build/wp5-reports-fixture-locked-restore.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-space-fixture-locked-restore.log",
+    "RelativePath": "build/wp5-space-fixture-locked-restore.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-space-fixture-restore.log",
+    "RelativePath": "build/wp5-space-fixture-restore.log",
+    "Category": "build-or-restore-log",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-worktree-created.json",
+    "RelativePath": "reports/wp5-worktree-created.json",
+    "Category": "creation-or-review-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-databases-created.json",
+    "RelativePath": "reports/wp5-databases-created.json",
+    "Category": "creation-or-review-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-reports-databases-created.json",
+    "RelativePath": "reports/wp5-reports-databases-created.json",
+    "Category": "creation-or-review-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-migration-databases-created.json",
+    "RelativePath": "reports/wp5-migration-databases-created.json",
+    "Category": "creation-or-review-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-databases-created.json",
+    "RelativePath": "reports/wp5-prerequisite-databases-created.json",
+    "Category": "creation-or-review-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-prerequisite-targeted-review.json",
+    "RelativePath": "reports/wp5-prerequisite-targeted-review.json",
+    "Category": "creation-or-review-proof",
+    "Label": null
+  },
+  {
+    "SourcePath": "D:\\CP6\\tmp\\wp5-mes-sql-boundary-reference-v2.log",
+    "RelativePath": "runs/wp5-mes-sql-boundary-reference-v2/process.log",
+    "Category": "raw-process-log",
+    "Label": "wp5-mes-sql-boundary-reference-v2"
+  }
+]

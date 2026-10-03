@@ -1003,6 +1003,13 @@
           "Microsoft.EntityFrameworkCore": "[8.0.30, )"
         }
       },
+      "cp6.persistence.postgresql": {
+        "type": "Project",
+        "dependencies": {
+          "CP6.Core": "[1.0.0, )",
+          "CP6.Space.Infrastructure": "[1.0.0, )"
+        }
+      },
       "cp6.space.application": {
         "type": "Project",
         "dependencies": {

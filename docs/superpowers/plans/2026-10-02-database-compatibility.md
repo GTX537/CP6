@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1已由PR136、WP2已由PR145交付远端main；WP3已由PR146交付远端main0b0ab74a并完成合并后冒烟；WP4从该主线开始身份/核心业务适配，WP4–WP6未完成。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。阶段实际来源与当前范围见[WP3实施记录](../../audits/database-compatibility/WP3-IMPLEMENTATION.md)。下文WP2的Pending保留提交前历史时点，远端交付以本条与项目状态为准；不提前声明整体兼容。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1/2/3已分别由PR136/145/146交付；WP4已由PR149交付远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，合并后两库冒烟及六库清理完成。WP5在该主线独立分支准备实施，WP5/6未验收。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)仍Open，WP4已勾选、WP5/6未勾选。来源见[WP4交付记录](../../audits/database-compatibility/WP4-IMPLEMENTATION.md)及[WP5入口](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)。下文早期Pending保留各历史时点，不提前声明整体兼容。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -102,11 +102,13 @@
 
 **必须通过：** 认证一次消费、撤销与轮换；ERP/消息原子性；WMS 台账与业务一致性；采购审批幂等；工作流领取；真实租户/权限隔离。外部 CRM 消费端未参与时记录其未验证范围，不代称 CRM 已兼容。
 
-WP4本地上述五项已按实际双库/专有门禁分批通过，集中代码审查无实质阻断；[实施记录](../../audits/database-compatibility/WP4-IMPLEMENTATION.md)保留各次范围、失败与复用来源。当前待正常PR交付与远端main核对，勾选不代表阶段已交付或父任务完成。
+WP4上述五项已按实际双库/专有门禁分批通过，集中代码审查无实质阻断；PR149已正常交付并核对远端main包含性/完整树，合并后SQL/PG各2/2（含setup），六库普通DROP及不存在核对完成。[实施记录](../../audits/database-compatibility/WP4-IMPLEMENTATION.md)保留各次范围、失败、复用与交付原件。父任务仍Open，不将阶段完成扩大为整体兼容。
 
 ## WP5：Space/CAD/AI/发布与报表
 
 **前置：** WP3；依赖 WP4 的 WMS/ERP 集成场景按其交付版本验证。**产出：** Space 与专有报表的双库实现。
+
+当前入口从PR149远端main建立`codex/db-compat-wp5-20261003`；Space与报表各自owner-marked两库已实际运行；容量/AI、报表/GDPR与多个Space原生组已有两库限定通过结果，CAD/克隆及mapping并发、历史迁移/目录专项继续执行，尚未完成WP5交付。具体来源与未验收范围见[WP5实施记录](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)。
 
 - [ ] 适配 Space 编辑/Underlay/CAD/AI apply/retention/validation/publish 等资源锁、容量 ledger 与租约，消除 PostgreSQL 上跳过锁或执行 T-SQL 的路径。
 - [ ] 为 EfSpaceVersionClone 的表变量/NEWID/批量复制提供 PostgreSQL 等价实现；验证 source map、名称/类型字段、版本 token、失败原子回滚与幂等，不以简化克隆替代完整行为。

@@ -4,11 +4,14 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceExcelPreflightSqlServerTests
+public sealed class SpaceExcelPreflightSqlServerTests(
+    SpaceRelationalFixture database,
+    ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 8, 2, 19, 0, 0, DateTimeKind.Utc);
@@ -146,8 +149,15 @@ public sealed class SpaceExcelPreflightSqlServerTests
         return (draft.Id, source.Id);
     }
 
-    private static async Task WithDatabaseAsync(Func<string, Task> action)
+    private async Task WithDatabaseAsync(Func<string, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -168,12 +178,21 @@ public sealed class SpaceExcelPreflightSqlServerTests
         }
     }
 
-    private static ContextFixture CreateContext(
+    private ContextFixture CreateContext(
         string connectionString,
         Guid tenantId)
     {
         var execution = new TestExecutionContext(tenantId, Guid.NewGuid());
         var clock = new FixedClock();
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected excel-preflight contexts must use the fixture-owned connection.");
+            return new ContextFixture(database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "excel-preflight-business")),
+                execution, clock);
+        }
+
         var context = new SpaceContext(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(

@@ -1,0 +1,46 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "SourceBase": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "CreatedHostUtc": "2026-10-03T13:58:49.5421137Z",
+  "ReceiptSha256": "5E4E9B08DD87145623028B38526167C71094E3378D42CDF26D2FFB4613DF693A",
+  "CreatorSha256": "3E0055987A1AE045452154E54BD7FB3F89BD4A66EEB1A48CCDE10BB54C116B63",
+  "Databases": [
+    {
+      "Provider": "SqlServer",
+      "Purpose": "space-only",
+      "DatabaseName": "CP6Compat_WP5_20261003_5eb979dd",
+      "State": "CreatedAndOwnerMarked"
+    },
+    {
+      "Provider": "SqlServer",
+      "Purpose": "asset-legacy-failure",
+      "DatabaseName": "CP6Compat_WP5_20261003_77338f4a",
+      "State": "CreatedAndOwnerMarked"
+    },
+    {
+      "Provider": "SqlServer",
+      "Purpose": "ai-retention-script",
+      "DatabaseName": "CP6Compat_WP5_20261003_09c6f323",
+      "State": "CreatedAndOwnerMarked"
+    },
+    {
+      "Provider": "SqlServer",
+      "Purpose": "publish-recovery-failure",
+      "DatabaseName": "CP6Compat_WP5_20261003_e9817587",
+      "State": "CreatedAndOwnerMarked"
+    },
+    {
+      "Provider": "SqlServer",
+      "Purpose": "publish-recovery-script",
+      "DatabaseName": "CP6Compat_WP5_20261003_0ae62399",
+      "State": "CreatedAndOwnerMarked"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Purpose": "space-only",
+      "DatabaseName": "CP6Compat_WP5_20261003_4f8d0aa0",
+      "State": "CreatedAndOwnerMarked"
+    }
+  ],
+  "Scope": "Empty owner-marked test databases only; no migrations or business validation claimed."
+}

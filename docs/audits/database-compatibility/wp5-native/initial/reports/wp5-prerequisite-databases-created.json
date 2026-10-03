@@ -1,0 +1,28 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "SourceBase": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "CreatedHostUtc": "2026-10-03T14:15:07.1435082Z",
+  "ReceiptSha256": "2A956AEE9FEA5759FD0D294B87FCDF5AE507EB913E0068D164AB78311A4F11EF",
+  "CreatorSha256": "9263AA33D100FF3955BDB2E4916E6D2E60FEC74B3434CA42B1DF0BFF16C841E0",
+  "Databases": [
+    {
+      "Provider": "PostgreSql",
+      "Purpose": "space-then-core",
+      "DatabaseName": "CP6Compat_WP5_20261003_374b0729",
+      "State": "CreatedAndOwnerMarked"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Purpose": "core-then-space",
+      "DatabaseName": "CP6Compat_WP5_20261003_dca7d132",
+      "State": "CreatedAndOwnerMarked"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Purpose": "space-script",
+      "DatabaseName": "CP6Compat_WP5_20261003_db401972",
+      "State": "CreatedAndOwnerMarked"
+    }
+  ],
+  "Scope": "New empty owner-marked PostgreSQL test databases only."
+}

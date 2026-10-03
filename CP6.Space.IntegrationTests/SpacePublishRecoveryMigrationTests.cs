@@ -5,27 +5,33 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
-public sealed class SpacePublishRecoveryMigrationTests
+public sealed class SpacePublishRecoveryMigrationTests(ITestOutputHelper output)
 {
-    [SqlServerFact]
+    [SpaceMigrationFact]
     public async Task Recovery_migration_refuses_an_active_E06_S03_publish()
     {
+        var selected = await SpaceMigrationTestDatabase.OpenIfSelectedAsync(output);
         var tenantId = Guid.NewGuid();
-        var connectionString = new SqlConnectionStringBuilder(
+        var connectionString = selected?.ConnectionString ?? new SqlConnectionStringBuilder(
             Environment.GetEnvironmentVariable(SqlServerFactAttribute.EnvVar)!)
         {
             InitialCatalog = $"CP6SpaceE06S04Gate_{Guid.NewGuid():N}",
             TrustServerCertificate = true,
         }.ConnectionString;
-        await using var context = CreateContext(connectionString, tenantId);
+        await using var context = selected is null
+            ? CreateContext(connectionString, tenantId)
+            : selected.CreateContext(new TestExecutionContext(tenantId, Guid.NewGuid()), new SystemSpaceClock());
         try
         {
-            var migrator = context.Database.GetService<IMigrator>();
-            await migrator.MigrateAsync(
-                "20260807135544_SpaceE06S03PublishOrchestration");
+            const string historicalStart = "20260807135544_SpaceE06S03PublishOrchestration";
+            if (selected is null)
+                await context.Database.GetService<IMigrator>().MigrateAsync(historicalStart);
+            else
+                await selected.MigrateAsync(context, historicalStart);
             await context.Database.OpenConnectionAsync();
             var planId = Guid.NewGuid();
             var attemptId = Guid.NewGuid();
@@ -59,6 +65,7 @@ public sealed class SpacePublishRecoveryMigrationTests
                 () => ExecuteBatchesAsync(context, script));
 
             Assert.Equal(51020, failure.Number);
+            output.WriteLine($"PublishRecoveryGuardNativeCode={failure.Number}.");
             Assert.Equal(
                 0,
                 await ScalarAsync(
@@ -75,31 +82,40 @@ public sealed class SpacePublishRecoveryMigrationTests
         finally
         {
             await context.Database.CloseConnectionAsync();
-            await context.Database.EnsureDeletedAsync();
+            if (selected is null)
+                await context.Database.EnsureDeletedAsync();
+            else
+                await selected.RecordStateAsync(context, "publish-recovery-gate-final");
         }
     }
 
-    [SqlServerFact]
+    [SpaceMigrationFact]
     public async Task Idempotent_recovery_script_runs_twice_from_E06_S03()
     {
+        var selected = await SpaceMigrationTestDatabase.OpenIfSelectedAsync(output);
         var tenantId = Guid.NewGuid();
-        var connectionString = new SqlConnectionStringBuilder(
+        var connectionString = selected?.ConnectionString ?? new SqlConnectionStringBuilder(
             Environment.GetEnvironmentVariable(SqlServerFactAttribute.EnvVar)!)
         {
             InitialCatalog = $"CP6SpaceE06S04_{Guid.NewGuid():N}",
             TrustServerCertificate = true,
         }.ConnectionString;
-        await using var context = CreateContext(connectionString, tenantId);
+        await using var context = selected is null
+            ? CreateContext(connectionString, tenantId)
+            : selected.CreateContext(new TestExecutionContext(tenantId, Guid.NewGuid()), new SystemSpaceClock());
         try
         {
-            var migrator = context.Database.GetService<IMigrator>();
-            await migrator.MigrateAsync(
-                "20260807135544_SpaceE06S03PublishOrchestration");
+            const string historicalStart = "20260807135544_SpaceE06S03PublishOrchestration";
+            if (selected is null)
+                await context.Database.GetService<IMigrator>().MigrateAsync(historicalStart);
+            else
+                await selected.MigrateAsync(context, historicalStart);
             var script = await ReadScriptAsync();
 
             await context.Database.OpenConnectionAsync();
             await ExecuteBatchesAsync(context, script);
             await ExecuteBatchesAsync(context, script);
+            output.WriteLine("PublishRecoveryScriptExecutions=2.");
 
             Assert.Equal(
                 1,
@@ -132,7 +148,10 @@ public sealed class SpacePublishRecoveryMigrationTests
         finally
         {
             await context.Database.CloseConnectionAsync();
-            await context.Database.EnsureDeletedAsync();
+            if (selected is null)
+                await context.Database.EnsureDeletedAsync();
+            else
+                await selected.RecordStateAsync(context, "publish-recovery-script-final");
         }
     }
 
@@ -175,18 +194,8 @@ public sealed class SpacePublishRecoveryMigrationTests
         await command.ExecuteNonQueryAsync();
     }
 
-    private static Task<string> ReadScriptAsync()
-    {
-        var repositoryRoot = Path.GetFullPath(
-            Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
-        return File.ReadAllTextAsync(
-            Path.Combine(
-                repositoryRoot,
-                "CP6.Space.Infrastructure",
-                "Migrations",
-                "Scripts",
-                "20260807144532_SpaceE06S04PublishRecovery.sql"));
-    }
+    private Task<string> ReadScriptAsync() => SpaceMigrationTestDatabase.ReadScriptAsync(
+        "CP6.Space.Infrastructure/Migrations/Scripts/20260807144532_SpaceE06S04PublishRecovery.sql", output);
 
     private static async Task<int> ScalarAsync(
         SpaceContext context,

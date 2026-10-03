@@ -1,0 +1,321 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Suite": "ReportsAndGdpr",
+  "Provider": "PostgreSql",
+  "Label": "wp5-gdpr-pg-provider",
+  "StartedUtc": "2026-10-03T13:07:50.0183691Z",
+  "FinishedUtc": "2026-10-03T13:07:56.4947927Z",
+  "ExitCode": 0,
+  "ProcessExitCode": 0,
+  "Selection": "FullyQualifiedName~CP6.Tests.DatabaseCompatibility.GdprRelationalTests",
+  "Counts": {
+    "Total": 1,
+    "Passed": 1,
+    "Failed": 0,
+    "Other": 0,
+    "Expected": 1
+  },
+  "RequiredCaseCountValidated": true,
+  "DatabaseName": "CP6Compat_WP5_20261003_87e10506",
+  "ReceiptSha256": "AF0DC82DAA107731563041E36A2EF4A4DCC94D8DCD07F7F07B2D3F2055B3E15D",
+  "RunnerSha256": "8860864F1622BE00211595FDD128714E4E32FDCD81BEE82BCE0BD83DDCB8E80E",
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "Sha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+      "Sha256": "C8F3521C294F15793A8CB3BE0AB8D598A7DDBC88573A52042AF12C6CC16BFB26"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/BackflushService.cs",
+      "Sha256": "2B0C66055EB1193157E899CECA9945F7BED4084E701EAA91479B35EC8BBD343C"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/DefectRecordService.cs",
+      "Sha256": "DEC57957A6AC812DA5A1E5F2BC75DD4693816E35BA6FFF0B549E9814CBA496A7"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IBackflushService.cs",
+      "Sha256": "FF5029E12C55B9DD86C49BEAD8C29DCCD6B374204CEFC72C0B3BE054A652B01F"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IDefectRecordService.cs",
+      "Sha256": "2E7D7E4BCA262EDBFB76568335DA7CBDA60779E29FF6871FF8833446C121E888"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IMachineService.cs",
+      "Sha256": "1BB35FB84089AA3B7D241E43CB182938B8DD8C5D6E29CA90B864CB1292C845DC"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IMesDashboardService.cs",
+      "Sha256": "F5B392048C5B336A625572F039FE5374D499D3E60587BE3A9BEA511CEC575AAF"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IMesNotifier.cs",
+      "Sha256": "98C2E2B2FBA8D1D4324F492EA94D84ED382F317A73EFE9370E8CA3967C456A13"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IMesSequenceService.cs",
+      "Sha256": "6CE58FC98F85D76A0430C17371817097D6C31233D94B4C91871C4B90E975B654"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IOeeService.cs",
+      "Sha256": "CBB5681906F270166207F3D89A1880F63E567A82EB026BEB39E234C6E173DFDD"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IPlanAchievementService.cs",
+      "Sha256": "5AF689BAED7B2776AD49FAA70CC8127EA0885373D8640FB928C774583C12E0CB"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IPlanningBoardService.cs",
+      "Sha256": "468D6AE6BA490C7E825311D5E9F2174AE336DF5978C03368AB226819ABA1572D"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IProcessCostRateService.cs",
+      "Sha256": "1158DB857831D668F50A845B342D561C008135002E5C89C773A3C5CD5174CF91"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IProductionResultService.cs",
+      "Sha256": "8731D3DBA45E681C7D4AFAA9CA83733A87887CC610ED76EC06CFD516043CC727"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IQualityInspectionService.cs",
+      "Sha256": "7B5A5B99BE60D3B53118317098162FE08BEE0C8D51E00291C9CADA4EC208C2D1"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IWorkCenterService.cs",
+      "Sha256": "5DD9E0DBBC9F2760EDE66D290075FE01A6E8D38A326FB33514C0FE6A9D5D84E4"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/IWorkOrderService.cs",
+      "Sha256": "4CF6E01A0147BA70821630BA04333DF96E9D558BCF8CD0F48A5119FB1AF6C7E2"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/MachineService.cs",
+      "Sha256": "A6E59F709C720C8C1ACCE829991AE59B8EBE02C5AD325F7EE228A9EF76376B1A"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/MesBridgeHook.cs",
+      "Sha256": "504ED43BD48C69E8A8A8549CB82454C008F4EF51C086CBC612686C140E4F2924"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/MesDashboardDapperService.cs",
+      "Sha256": "6D5BD615E141CE383DC5B3C789F91BC6D0922A51968F2426C3FF52213BA9EF1D"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/MesDashboardService.cs",
+      "Sha256": "3975E6B5036F8C53FB8505C8D4B3FCE446507FF56747809DAA8DFBABD7D2019A"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/MesSequenceService.cs",
+      "Sha256": "3220B83AB7AAB94207F5B322CA26C554AC9032715B91A2263685B38F09414406"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/OeeService.cs",
+      "Sha256": "F59986EF09401C4341C29D9BB603B897CA15CB5D830791D199EEBC5CCCEA2F16"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/PlanAchievementService.cs",
+      "Sha256": "6E4D7B0632546E05EB9B423EFF5BCF4CC6DDAAD2FFCCD99CD609F90A244C397D"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/PlanningBoardService.cs",
+      "Sha256": "E3F29E5CE8CBCA8A4FCB5D3BFACEA261C12F3A1718DF722965114394F93982D1"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/ProcessCostRateService.cs",
+      "Sha256": "19034D3B795C51F9E928222B75FF258F6FB74E7C4A7F9EE967ED69D60A6C2D7F"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/ProductionResultService.cs",
+      "Sha256": "55DB553D382A059A0B46CF585CC683D9FB8A9641F111172719BB7F2E04C2DA3E"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/QualityInspectionService.cs",
+      "Sha256": "722E768D0FA6FEA824C7DE4DB09B59162C2D8E410F2B92D518606DD675B4017E"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/WorkCenterService.cs",
+      "Sha256": "4487D6408148AA16F26F257EB894E89BD1A9F48E2282E677AFEA17BCDE6E4D40"
+    },
+    {
+      "Path": "CP6.Core/Services/Mes/WorkOrderService.cs",
+      "Sha256": "B5E49D9138AC444CA24228FBC4F0965F194CB9EACA88C88C65FDDDEE668D6746"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/GdprService.cs",
+      "Sha256": "41055EAD42BE93425ECC7FCC997C6E08D6FB20231DC0150FCAA06D90A3272FBD"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/IGdprService.cs",
+      "Sha256": "AD734D3FAB48DB1A23E918B93B2B0BA82E8A764136702522B7A45246FF911445"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/IImpersonationService.cs",
+      "Sha256": "58E58E9808CC02090B98D98F7EB2B772A5B6F34E47B29A56F5D87A13ACAA656B"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/ImpersonationService.cs",
+      "Sha256": "985ECD5669F13865EF77F9C925A99D09466B6AE49FA2D59B91AE6A5D7C4D5659"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/IPlatformAdminService.cs",
+      "Sha256": "24326041F86B16D111A698C8C066027ADE9D61AE76F789C91E3C44BF6F428004"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/ITenantAdminService.cs",
+      "Sha256": "9CB0E29E6B4AC822010304304203904D5F85EC16549E550EC1A2E1CCC13073AA"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/PlatformAdminService.cs",
+      "Sha256": "671A942F178E175A03FA01333AE410EE923FD1CA803CD4A060B21A562F0B86D5"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/SensitiveFieldPolicy.cs",
+      "Sha256": "376005FFA05B7A603DA8C342CA64C763BABBA538E7AF1383E7A193A627538030"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/TenantAdminService.cs",
+      "Sha256": "0E87DE1F4461B8D2DC0C6F3D3D926BA22FD23F878C54E1FCBA5FDBF572A745B2"
+    },
+    {
+      "Path": "CP6.Core/Services/Platform/TenantPurgeTopology.cs",
+      "Sha256": "691B94BE67C8ADB689CF6D7DDFF2FF5814F153CFA2509BBD98A8235150D9E59C"
+    },
+    {
+      "Path": "CP6.Core/Services/Space/SpaceAnalyticsService.cs",
+      "Sha256": "C12BC39EBD129A0CFDE34ABE58F0F9411AF68FC9B1A57DEA46A940C975AC2F84"
+    },
+    {
+      "Path": "CP6.Core/Utilities/CacheService.cs",
+      "Sha256": "4AA256B0CBF00343B873E7148BF760A2C426735936A3A7AE4C5101FF91D791D3"
+    },
+    {
+      "Path": "CP6.Tests/CP6.Tests.csproj",
+      "Sha256": "B9EF4AA8B037F65DE63EAFD8BDB30BDC042ED67DFB82E0E7973105B77AA883A3"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/CoreBusinessRelationalFixture.cs",
+      "Sha256": "A3FC8A05DCDEA7FAC33E3BDF6A21A6CBCD9D3AEEDD2809234C57C6247087C978"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/DashboardRelationalTests.cs",
+      "Sha256": "E5927DC8FF184974AA8835C09AC5B3749E37EC7C8B173F7A218C13E044ADEC71"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/FinanceRelationalTests.cs",
+      "Sha256": "44AFAD8F691E861C45DBA396A2C495724BD1D987DD40881CF9BAE8A85747AE7A"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/GdprRelationalTests.cs",
+      "Sha256": "5A8F4539C561BDB3CD34A44A59A333DFC457E41B33F4492E857614587C981DE3"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/IntegrationEventRetryRelationalTests.cs",
+      "Sha256": "CC27D8FA8534491E8E54616779D7588AFA9E03E26123DD263E4B19C28527126E"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/MesReportsRelationalTests.cs",
+      "Sha256": "EF7E2BC94087DEC60782E518F8528DC368DA5C012C9333F0577C4A34F15C4490"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/PermissionsRelationalTests.cs",
+      "Sha256": "3C56A9612ECC1440D18009FDF553E187BA1911D71E9AE99ABC61380AF4677069"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/PurchaseRequestRelationalTests.cs",
+      "Sha256": "68A61106C0CF15CEAE53B52264C5F12C395915E08EC296710AB34D7FA9EEC384"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/WorkflowNotificationRelationalTests.cs",
+      "Sha256": "15D00FF6B7322A13176343F868467879B5C12F7C98E8E93212611A1EA56F08E2"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/WorkflowServiceJobRelationalTests.cs",
+      "Sha256": "E7F023D2D7C586059A6BE8CC099A8B549BC56E27CE54464CECA4BBB698B5896B"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/Wp5ReportsRelationalFixture.cs",
+      "Sha256": "7A29B23D736AFB006A1C19849430632A5829823932EB00EE4FC35E45CB13693E"
+    },
+    {
+      "Path": "CP6.Tests/packages.lock.json",
+      "Sha256": "654973D7905B5E124BB2DC2C97D5A7ED1E334C175E02699C225B9B097313C6E5"
+    },
+    {
+      "Path": "CP6.Tests/SpaceSqlIntegrationTests.cs",
+      "Sha256": "5437A0F1EADE3A10F3157569AF4305E858646FFF81D0E9CFB319AC06ACA0D272"
+    },
+    {
+      "Path": "CP6.WebApi/Controllers/Sys/DashboardController.cs",
+      "Sha256": "29B508FBE06E1D2A8A7A8B7D42CF79092D474881288562E8C15A308E3DB15A43"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "E9D4283ECE126512CE0C64B46BFE307B9807B7BDFCEB0FD1BE3BF055601844CA"
+    },
+    {
+      "Name": "CP6.Entity.dll",
+      "Sha256": "AB5019E0B073E54800446769D4D1CCBFFD1109A8CB549D9D2A623F4898A32C49"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "D27154B3BB1BFE34864EFA4661AD3C209BBE741A740CC3059CB0C2102BBB07F5"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions.dll",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.AspNetCore.dll",
+      "Sha256": "B4D0FB90E153961A65AD65A8D096CEDEB76C61EAE488469B836064E70EF31DD8"
+    },
+    {
+      "Name": "CP6.Platform.Contracts.dll",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework.dll",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging.dll",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "CP6.Space.Application.dll",
+      "Sha256": "002A390E990115E1BEBEEA3F57709497F2F4D6126F89C45C641498FE85D4D801"
+    },
+    {
+      "Name": "CP6.Space.Contracts.dll",
+      "Sha256": "92047CFB6A8DF0E8F7CD923DB986114249734DBDED486E84421BF0E0D0179A77"
+    },
+    {
+      "Name": "CP6.Space.Domain.dll",
+      "Sha256": "5A477B6B426AD33570FE39E415B8B9B0293F3D475AD24131085A9E2D6A86E120"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure.dll",
+      "Sha256": "937A32A1C601F5AACE6878FBB4DFE4837A654DAF6499E701DA859B1C1C7E4FB6"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "AA095A9814C3BB0B471E01E8150FE3F2D7645149FEF36699CF717F87763EB4CE"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "B552D4533B141FD09DF13731C9E537ED7E5381B83B6FB3BB84F8EEE514D86B22"
+    }
+  ],
+  "ProcessLog": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-gdpr-pg-provider\\process.log",
+  "ProcessLogSha256": "880E8B3AC647ED3FFE8C30A7E1A990B7EE6A886FEAC5CB650A4BB0F8118A0B45",
+  "Scope": "Actual selected WP5 Core tests on owned native database; fixture validates owner and real migration profiles. No full WP5 acceptance inferred."
+}

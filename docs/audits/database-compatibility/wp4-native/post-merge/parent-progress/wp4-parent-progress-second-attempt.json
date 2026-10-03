@@ -1,0 +1,8 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Action": "gh issue edit 134",
+  "Attempt": 2,
+  "ExitCode": 1,
+  "ObservedError": "HTTP 499, empty response",
+  "ObservedUtc": "2026-10-03T12:45:32.9387715Z"
+}

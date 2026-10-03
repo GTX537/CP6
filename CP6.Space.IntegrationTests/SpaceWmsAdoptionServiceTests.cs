@@ -6,11 +6,12 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceWmsAdoptionServiceTests
+public sealed class SpaceWmsAdoptionServiceTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private const string PlanHash =
         "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
@@ -357,7 +358,7 @@ public sealed class SpaceWmsAdoptionServiceTests
     [SqlServerFact]
     public async Task SqlServer_refresh_and_bind_persist_rowversion_and_identity()
     {
-        await using var fixture = await Fixture.CreateSqlAsync(locationCount: 1);
+        await using var fixture = await Fixture.CreateSqlAsync(database, output, locationCount: 1);
         var wmsLogicalId = Guid.NewGuid();
         await fixture.SeedWmsAsync((wmsLogicalId, "WMS-SQL-01"));
 
@@ -390,7 +391,7 @@ public sealed class SpaceWmsAdoptionServiceTests
     [SqlServerFact]
     public async Task SqlServer_place_uses_wms_identity_and_level_dimensions()
     {
-        await using var fixture = await Fixture.CreateSqlAsync(locationCount: 0);
+        await using var fixture = await Fixture.CreateSqlAsync(database, output, locationCount: 0);
         var wmsLogicalId = Guid.NewGuid();
         await fixture.SeedWmsAsync((wmsLogicalId, "WMS-SQL-P-01"));
         await fixture.Service.RefreshAsync(fixture.VersionId);
@@ -427,7 +428,7 @@ public sealed class SpaceWmsAdoptionServiceTests
     [SqlServerFact]
     public async Task SqlServer_batch_conflict_is_atomic()
     {
-        await using var fixture = await Fixture.CreateSqlAsync(locationCount: 2);
+        await using var fixture = await Fixture.CreateSqlAsync(database, output, locationCount: 2);
         await fixture.SeedWmsAsync(
             (Guid.NewGuid(), "WMS-SQL-B-01"),
             (Guid.NewGuid(), "WMS-SQL-B-02"));
@@ -520,15 +521,26 @@ public sealed class SpaceWmsAdoptionServiceTests
                 .UseInMemoryDatabase($"space-wms-adoption-{Guid.NewGuid():N}")
                 .Options;
             return await CreateCoreAsync(
-                options,
+                new SpaceContext(options, execution, clock),
                 execution,
                 clock,
                 locationCount,
                 deleteDatabase: false);
         }
 
-        public static async Task<Fixture> CreateSqlAsync(int locationCount)
+        public static async Task<Fixture> CreateSqlAsync(SpaceRelationalFixture database, ITestOutputHelper output, int locationCount)
         {
+            if (SpaceRelationalFixture.IsSelected)
+            {
+                database.WriteSetupEvidence(output);
+                var selectedExecution = new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid());
+                var selectedClock = new TestClock();
+                return await CreateCoreAsync(
+                    database.CreateSpaceContext(selectedExecution, selectedClock,
+                        new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "wms-adoption")),
+                    selectedExecution, selectedClock, locationCount, deleteDatabase: false, migrate: false);
+            }
+
             var baseConnection = Environment.GetEnvironmentVariable(
                 SqlServerFactAttribute.EnvVar)!;
             var connectionString = new SqlConnectionStringBuilder(
@@ -549,7 +561,7 @@ public sealed class SpaceWmsAdoptionServiceTests
                         SpaceContext.MigrationsHistoryTable))
                 .Options;
             return await CreateCoreAsync(
-                options,
+                new SpaceContext(options, execution, clock),
                 execution,
                 clock,
                 locationCount,
@@ -557,16 +569,16 @@ public sealed class SpaceWmsAdoptionServiceTests
         }
 
         private static async Task<Fixture> CreateCoreAsync(
-            DbContextOptions<SpaceContext> options,
+            SpaceContext context,
             TestExecutionContext execution,
             TestClock clock,
             int locationCount,
-            bool deleteDatabase)
+            bool deleteDatabase,
+            bool migrate = true)
         {
-            var context = new SpaceContext(options, execution, clock);
             try
             {
-                if (context.Database.IsRelational())
+                if (migrate && context.Database.IsRelational())
                     await context.Database.MigrateAsync();
                 var seeded = await SeedDesignAsync(context, locationCount);
                 var simulator = new StandardSpaceWmsSimulator();

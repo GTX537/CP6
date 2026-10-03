@@ -1,0 +1,33 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.26]     CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant [FAIL]
+  Failed CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant [1 s]
+  Error Message:
+   Npgsql.PostgresException : 42601: "l"またはその近辺で構文エラー
+
+POSITION: 8
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRawAsync(DatabaseFacade databaseFacade, String sql, IEnumerable`1 parameters, CancellationToken cancellationToken)
+   at CP6.Core.Services.Platform.GdprService.PurgeTenantAsync(Guid tenantId) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Platform\GdprService.cs:line 219
+   at CP6.Core.Services.Platform.GdprService.PurgeTenantAsync(Guid tenantId) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Platform\GdprService.cs:line 240
+   at CP6.Core.Services.Platform.GdprService.EraseTenantAsync(Guid tenantId, String mode) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Core\Services\Platform\GdprService.cs:line 159
+   at CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\GdprRelationalTests.cs:line 52
+   at CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Tests\DatabaseCompatibility\GdprRelationalTests.cs:line 53
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP5 owner verified.
+
+
+Results File: D:\CP6\tmp\db-compat-wp5-tests\wp5-gdpr-pg-first-run\results.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - CP6.Tests.dll (net8.0)

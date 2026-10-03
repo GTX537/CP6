@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e8eec870-d453-4980-a4fd-f25d1a422e49" name="tt@LAPTOP-3QQ44FJS 2026-10-03 09:54:30" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T09:54:30.6546066-04:00" queuing="2026-10-03T09:54:30.6546070-04:00" start="2026-10-03T09:54:25.0356093-04:00" finish="2026-10-03T09:54:32.4062409-04:00" />
+  <TestSettings name="default" id="d1b32d22-a963-441a-adff-54457cb0bddd">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_09_54_30" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="66df0fd9-f71e-43fb-be0d-98c7f36bebc4" testId="09f4641d-70cd-b8ed-f5d0-ab9bb2c25a84" testName="CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2638480" startTime="2026-10-03T09:54:29.8285934-04:00" endTime="2026-10-03T09:54:30.0926246-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66df0fd9-f71e-43fb-be0d-98c7f36bebc4">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="17ddcb11-3a6b-4f55-a20c-c0fc1461f1af" testId="c784cbc8-a636-374d-2cb1-1727f5948706" testName="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1388191" startTime="2026-10-03T09:54:30.7748140-04:00" endTime="2026-10-03T09:54:30.9138167-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17ddcb11-3a6b-4f55-a20c-c0fc1461f1af">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="629bf5a8-bbbd-4989-aba1-49b788bde34d" testId="0e8e8bf4-1fb7-663f-bc49-0602124625e1" testName="CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0151799" startTime="2026-10-03T09:54:29.8144408-04:00" endTime="2026-10-03T09:54:29.8283628-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="629bf5a8-bbbd-4989-aba1-49b788bde34d">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=field-policy; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+Provider=PostgreSql; Stage=field-policy; SQLSTATE=23503; NativeCode=none; Kind=ForeignKey.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="207e9c24-372b-439f-af44-e4980920b03a" testId="bd5a9fe2-c847-7a94-5f41-bc99163c6199" testName="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0136363" startTime="2026-10-03T09:54:30.2004003-04:00" endTime="2026-10-03T09:54:30.2141812-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="207e9c24-372b-439f-af44-e4980920b03a">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=external-grant; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+Provider=PostgreSql; Stage=external-grant; SQLSTATE=23503; NativeCode=none; Kind=ForeignKey.&#xD;
+Provider=PostgreSql; Stage=external-grant; SQLSTATE=23514; NativeCode=none; Kind=CheckConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6bb3920f-6a64-4e74-a4dd-a5a62e5969c2" testId="45cdc1d1-7184-7c6e-2eb7-13521deae132" testName="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1093680" startTime="2026-10-03T09:54:31.4819241-04:00" endTime="2026-10-03T09:54:31.5916023-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6bb3920f-6a64-4e74-a4dd-a5a62e5969c2">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c7fcda1f-7ad0-4c51-9e26-a4cef6fe0bc8" testId="d8d060b1-25c8-1a57-0aea-dbda4bb92502" testName="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0170419" startTime="2026-10-03T09:54:31.5917817-04:00" endTime="2026-10-03T09:54:31.6089542-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7fcda1f-7ad0-4c51-9e26-a4cef6fe0bc8">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b08111db-9d71-4824-8d67-0c0eac87e273" testId="0413909f-8a0e-cce9-d6b8-3c0b5b7e9615" testName="CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2179412" startTime="2026-10-03T09:54:32.1192179-04:00" endTime="2026-10-03T09:54:32.3372478-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b08111db-9d71-4824-8d67-0c0eac87e273">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=asset-library-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+Provider=PostgreSql; Stage=asset-library-business; SQLSTATE=23514; NativeCode=none; Kind=CheckConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="663a3d0e-0d16-4715-a1ff-8b9ded1421b0" testId="ab5d9faf-f040-c159-b3cb-ace81d5d1326" testName="CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2758811" startTime="2026-10-03T09:54:31.6091497-04:00" endTime="2026-10-03T09:54:31.9034307-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="663a3d0e-0d16-4715-a1ff-8b9ded1421b0">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=cad-parse-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.</StdOut>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+-------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+&#xD;
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.</Message>
+          <StackTrace>   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at CP6.Space.Infrastructure.SpaceCadParseService.RetryAsync(Guid versionId, Guid sourceId, Guid jobId, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadParseService.cs:line 1585&#xD;
+   at CP6.Space.Infrastructure.SpaceCadParseService.RetryAsync(Guid versionId, Guid sourceId, Guid jobId, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadParseService.cs:line 1620&#xD;
+   at CP6.Space.Infrastructure.SpaceCadParseService.RetryAsync(Guid versionId, Guid sourceId, Guid jobId, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadParseService.cs:line 1626&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.&lt;&gt;c__DisplayClass4_1.&lt;&lt;Sql_start_cancel_and_retry_preserve_one_idempotent_lineage&gt;g__RetryAsync|0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs:line 110&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs:line 126&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs:line 146&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs:line 146&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs:line 155&#xD;
+   at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs:line 155&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1cbccd12-d608-4596-b30e-b990c32ca6b9" testId="edd5924f-ee7a-3639-91d5-71d1ca960283" testName="CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0238899" startTime="2026-10-03T09:54:30.0928214-04:00" endTime="2026-10-03T09:54:30.1168404-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1cbccd12-d608-4596-b30e-b990c32ca6b9">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=external-organization; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+Provider=PostgreSql; Stage=external-organization; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+Provider=PostgreSql; Stage=external-organization; SQLSTATE=23503; NativeCode=none; Kind=ForeignKey.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dfcac40b-f7cf-4b98-b86d-46f99f0587e0" testId="d47c9edf-4755-cc8c-fefe-ee57999a566b" testName="CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3169325" startTime="2026-10-03T09:54:30.4571772-04:00" endTime="2026-10-03T09:54:30.7744246-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dfcac40b-f7cf-4b98-b86d-46f99f0587e0">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9bb865ec-20ed-4e9d-a3ea-71b1a6dc4f90" testId="68386a19-4429-1c99-4e34-f1eb6fb18a09" testName="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2425324" startTime="2026-10-03T09:54:30.2144402-04:00" endTime="2026-10-03T09:54:30.4569639-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9bb865ec-20ed-4e9d-a3ea-71b1a6dc4f90">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="743126a5-68fd-4f62-ace1-a11a6fc2fefc" testId="c6d6afa2-80f9-92dd-6401-3c28eb2d977a" testName="CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1988748" startTime="2026-10-03T09:54:29.6170396-04:00" endTime="2026-10-03T09:54:29.8126550-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="743126a5-68fd-4f62-ace1-a11a6fc2fefc">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8df67df1-d471-4472-b373-2abd0ad5095d" testId="fe826077-14de-d54c-1acb-217c7e42f368" testName="CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4895226" startTime="2026-10-03T09:54:29.1320181-04:00" endTime="2026-10-03T09:54:29.6103788-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8df67df1-d471-4472-b373-2abd0ad5095d">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=rack-profile-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.&#xD;
+Provider=PostgreSql; Stage=rack-profile-business; SQLSTATE=23514; NativeCode=none; Kind=CheckConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="32a90553-8101-4ab7-b349-ca80fc136d41" testId="5f64d7ed-d89c-db51-bfa2-b0e85da429bf" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2153939" startTime="2026-10-03T09:54:31.9080588-04:00" endTime="2026-10-03T09:54:32.1189133-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32a90553-8101-4ab7-b349-ca80fc136d41">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="008aae2e-1a80-4d0f-afb2-1660f5132598" testId="b2805993-c88c-7aef-ceae-84805754800c" testName="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0829730" startTime="2026-10-03T09:54:30.1170161-04:00" endTime="2026-10-03T09:54:30.2002335-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="008aae2e-1a80-4d0f-afb2-1660f5132598">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1c7677bb-35d9-479b-80df-d96a498ffd9c" testId="6613bfab-110a-2652-1752-4737cdd446a7" testName="CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4389590" startTime="2026-10-03T09:54:30.9169563-04:00" endTime="2026-10-03T09:54:31.3532812-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c7677bb-35d9-479b-80df-d96a498ffd9c">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="93cb9340-9031-4c46-b61b-9564f90996e7" testId="0d2765f3-7ed7-869a-da42-8972bcc59192" testName="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1280336" startTime="2026-10-03T09:54:31.3534726-04:00" endTime="2026-10-03T09:54:31.4817418-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="93cb9340-9031-4c46-b61b-9564f90996e7">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Grant_update_can_replace_the_same_scopes_atomically" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="68386a19-4429-1c99-4e34-f1eb6fb18a09">
+      <Execution id="9bb865ec-20ed-4e9d-a3ea-71b1a6dc4f90" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests" name="Grant_update_can_replace_the_same_scopes_atomically" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests.Collaboration_graph_filters_same_business_ids_in_sql_server" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="09f4641d-70cd-b8ed-f5d0-ab9bb2c25a84">
+      <Execution id="66df0fd9-f71e-43fb-be0d-98c7f36bebc4" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExternalTenantIsolationTests" name="Collaboration_graph_filters_same_business_ids_in_sql_server" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="bd5a9fe2-c847-7a94-5f41-bc99163c6199">
+      <Execution id="207e9c24-372b-439f-af44-e4980920b03a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests" name="Sql_constraints_enforce_grant_scope_uniqueness_validity_and_tenant_fk" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_constraints_enforce_current_uniqueness_and_tenant_fk" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="0e8e8bf4-1fb7-663f-bc49-0602124625e1">
+      <Execution id="629bf5a8-bbbd-4989-aba1-49b788bde34d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests" name="Policy_constraints_enforce_current_uniqueness_and_tenant_fk" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Library_is_scope_aware_idempotent_and_cross_tenant_safe" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="0413909f-8a0e-cce9-d6b8-3c0b5b7e9615">
+      <Execution id="b08111db-9d71-4824-8d67-0c0eac87e273" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests" name="Library_is_scope_aware_idempotent_and_cross_tenant_safe" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="ab5d9faf-f040-c159-b3cb-ace81d5d1326">
+      <Execution id="663a3d0e-0d16-4715-a1ff-8b9ded1421b0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests" name="Sql_start_cancel_and_retry_preserve_one_idempotent_lineage" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_provider_version_is_fail_closed" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="d8d060b1-25c8-1a57-0aea-dbda4bb92502">
+      <Execution id="c7fcda1f-7ad0-4c51-9e26-a4cef6fe0bc8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests" name="Legacy_certification_without_provider_version_is_fail_closed" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Legacy_certification_without_qualification_is_fail_closed" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="0d2765f3-7ed7-869a-da42-8972bcc59192">
+      <Execution id="93cb9340-9031-4c46-b61b-9564f90996e7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests" name="Legacy_certification_without_qualification_is_fail_closed" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests.Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="edd5924f-ee7a-3639-91d5-71d1ca960283">
+      <Execution id="1cbccd12-d608-4596-b30e-b990c32ca6b9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExternalOrganizationSqlServerTests" name="Sql_constraints_enforce_type_scoped_code_current_member_and_tenant_fk" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests.Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="6613bfab-110a-2652-1752-4737cdd446a7">
+      <Execution id="1c7677bb-35d9-479b-80df-d96a498ffd9c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelCadCompensationSqlServerTests" name="Sealed_apply_history_undoes_and_redoes_atomically_in_sql_server" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests.Sql_access_scope_revalidates_expiry_and_policy_on_every_request" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="b2805993-c88c-7aef-ceae-84805754800c">
+      <Execution id="008aae2e-1a80-4d0f-afb2-1660f5132598" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExternalGrantSqlServerTests" name="Sql_access_scope_revalidates_expiry_and_policy_on_every_request" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests.Sql_start_atomically_pins_source_job_and_idempotency" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="d47c9edf-4755-cc8c-fefe-ee57999a566b">
+      <Execution id="dfcac40b-f7cf-4b98-b86d-46f99f0587e0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelPreflightSqlServerTests" name="Sql_start_atomically_pins_source_job_and_idempotency" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests.Policy_update_can_replace_the_same_field_under_filtered_index" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="c6d6afa2-80f9-92dd-6401-3c28eb2d977a">
+      <Execution id="743126a5-68fd-4f62-ace1-a11a6fc2fefc" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceFieldPolicySqlServerTests" name="Policy_update_can_replace_the_same_field_under_filtered_index" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="5f64d7ed-d89c-db51-bfa2-b0e85da429bf">
+      <Execution id="32a90553-8101-4ab7-b349-ca80fc136d41" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests" name="Sql_migration_persists_rowversion_versions_and_tenant_scope" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests.Store_is_migrated_idempotent_immutable_and_tenant_scoped" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="fe826077-14de-d54c-1acb-217c7e42f368">
+      <Execution id="8df67df1-d471-4472-b373-2abd0ad5095d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceRackGenerationProfileSqlServerTests" name="Store_is_migrated_idempotent_immutable_and_tenant_scoped" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="c784cbc8-a636-374d-2cb1-1727f5948706">
+      <Execution id="17ddcb11-3a6b-4f55-a20c-c0fc1461f1af" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests" name="Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence" storage="d:\cp6\tmp\worktrees\db-compat-wp5-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="45cdc1d1-7184-7c6e-2eb7-13521deae132">
+      <Execution id="6bb3920f-6a64-4e74-a4dd-a5a62e5969c2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests" name="Concurrent_replace_preserves_one_current_revision_and_immutable_evidence" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="09f4641d-70cd-b8ed-f5d0-ab9bb2c25a84" executionId="66df0fd9-f71e-43fb-be0d-98c7f36bebc4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c784cbc8-a636-374d-2cb1-1727f5948706" executionId="17ddcb11-3a6b-4f55-a20c-c0fc1461f1af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0e8e8bf4-1fb7-663f-bc49-0602124625e1" executionId="629bf5a8-bbbd-4989-aba1-49b788bde34d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bd5a9fe2-c847-7a94-5f41-bc99163c6199" executionId="207e9c24-372b-439f-af44-e4980920b03a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45cdc1d1-7184-7c6e-2eb7-13521deae132" executionId="6bb3920f-6a64-4e74-a4dd-a5a62e5969c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8d060b1-25c8-1a57-0aea-dbda4bb92502" executionId="c7fcda1f-7ad0-4c51-9e26-a4cef6fe0bc8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0413909f-8a0e-cce9-d6b8-3c0b5b7e9615" executionId="b08111db-9d71-4824-8d67-0c0eac87e273" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab5d9faf-f040-c159-b3cb-ace81d5d1326" executionId="663a3d0e-0d16-4715-a1ff-8b9ded1421b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="edd5924f-ee7a-3639-91d5-71d1ca960283" executionId="1cbccd12-d608-4596-b30e-b990c32ca6b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d47c9edf-4755-cc8c-fefe-ee57999a566b" executionId="dfcac40b-f7cf-4b98-b86d-46f99f0587e0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="68386a19-4429-1c99-4e34-f1eb6fb18a09" executionId="9bb865ec-20ed-4e9d-a3ea-71b1a6dc4f90" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c6d6afa2-80f9-92dd-6401-3c28eb2d977a" executionId="743126a5-68fd-4f62-ace1-a11a6fc2fefc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe826077-14de-d54c-1acb-217c7e42f368" executionId="8df67df1-d471-4472-b373-2abd0ad5095d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f64d7ed-d89c-db51-bfa2-b0e85da429bf" executionId="32a90553-8101-4ab7-b349-ca80fc136d41" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2805993-c88c-7aef-ceae-84805754800c" executionId="008aae2e-1a80-4d0f-afb2-1660f5132598" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6613bfab-110a-2652-1752-4737cdd446a7" executionId="1c7677bb-35d9-479b-80df-d96a498ffd9c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d2765f3-7ed7-869a-da42-8972bcc59192" executionId="93cb9340-9031-4c46-b61b-9564f90996e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="17" executed="17" passed="16" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.11]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:06.52]       System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.&#xD;
+[xUnit.net 00:00:06.52]       ---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+[xUnit.net 00:00:06.52]       -------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした&#xD;
+[xUnit.net 00:00:06.52]       &#xD;
+[xUnit.net 00:00:06.52]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+[xUnit.net 00:00:06.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadParseService.cs(1585,0): at CP6.Space.Infrastructure.SpaceCadParseService.RetryAsync(Guid versionId, Guid sourceId, Guid jobId, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadParseService.cs(1620,0): at CP6.Space.Infrastructure.SpaceCadParseService.RetryAsync(Guid versionId, Guid sourceId, Guid jobId, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.Infrastructure\SpaceCadParseService.cs(1626,0): at CP6.Space.Infrastructure.SpaceCadParseService.RetryAsync(Guid versionId, Guid sourceId, Guid jobId, String idempotencyKey, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs(110,0): at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.&lt;&gt;c__DisplayClass4_1.&lt;&lt;Sql_start_cancel_and_retry_preserve_one_idempotent_lineage&gt;g__RetryAsync|0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:06.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs(126,0): at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage()&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs(146,0): at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage()&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs(146,0): at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage()&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs(155,0): at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage()&#xD;
+[xUnit.net 00:00:06.52]         D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceCadParseSqlServerTests.cs(155,0): at CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage()&#xD;
+[xUnit.net 00:00:06.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.52]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:06.52]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.52]       Output:&#xD;
+[xUnit.net 00:00:06.52]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:06.52]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:06.52]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:06.52]         Provider=PostgreSql; Stage=cad-parse-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.&#xD;
+[xUnit.net 00:00:06.96]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T09:54:31.9052046-04:00">
+        <Text>[xUnit.net 00:00:06.52]     CP6.Space.IntegrationTests.SpaceCadParseSqlServerTests.Sql_start_cancel_and_retry_preserve_one_idempotent_lineage [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

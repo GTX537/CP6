@@ -1,37 +1,49 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Space;
 using CP6.Tests.Infra;
+using CP6.Tests.DatabaseCompatibility;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Xunit.Abstractions;
 
 namespace CP6.Tests;
 
 /// <summary>
-/// Space 真库（SQL Server）集成测试（ch04 D-9）——由 <c>CP6_TEST_SQLSERVER</c> 环境变量门控。
+/// Space runtime 真库集成测试（ch04 D-9）：WP5 显式选择 SQL Server/PostgreSQL 时使用真实 Core 迁移。
 ///
-/// SQLite 无法覆盖以下三条真库语义，故这里改用真实 SQL Server（缺环境变量则 Skip，CI 恒绿）：
+/// 验证原生数据库语义；已选择 WP5 provider 时配置、迁移或连接失败均使测试失败：
 ///   · 过滤唯一索引：Space_Location 的 (TenantId, LocationCode) UNIQUE WHERE [LocationCode] IS NOT NULL
 ///     ——非空码租户内唯一，草稿期多行 NULL 码不互撞（CP6Context OnModelCreating HasFilter）。
 ///   · 两阶段换码：草稿→发布重排时经 NULL 中转规避唯一冲突（ch00 §4.6 / ch03 §7）。
-///   · RowVersion 乐观锁：SQL Server 原生 rowversion，并发第二写抛 DbUpdateConcurrencyException。
+///   · RowVersion 乐观锁：数据库生成的版本令牌使陈旧第二写抛 DbUpdateConcurrencyException。
 ///
-/// 每个测试实例建一个唯一名临时库（CP6Test_{Guid:N}），EnsureCreated 建 schema，
-/// Dispose 时 EnsureDeleted 清理（try/catch 兜底，不在真库留垃圾）。
-/// 租户由 CP6Context 默认盖章（TenantContext.DefaultTenant），故两行同码即同租户冲突。
+/// WP5 使用 runner 自有库、每 case 独立租户，不建删数据库。
+/// 原 CP6_TEST_SQLSERVER 入口仍保留每 case EnsureCreated/EnsureDeleted 的历史夹具。
 /// </summary>
+[Collection(Wp5ReportsRelationalCollection.Name)]
 public sealed class SpaceSqlIntegrationTests : IDisposable
 {
     private readonly string? _connString;
+    private readonly Wp5ReportsRelationalFixture _database;
+    private readonly Guid _tenant = Guid.NewGuid();
 
-    public SpaceSqlIntegrationTests()
+    public SpaceSqlIntegrationTests(Wp5ReportsRelationalFixture database, ITestOutputHelper output)
     {
+        _database = database;
+        if (Wp5ReportsFactAttribute.IsSelected)
+        {
+            output.WriteLine(database.SetupSummary);
+            return;
+        }
+
         var baseConn = Environment.GetEnvironmentVariable(SqlServerFactAttribute.EnvVar);
         if (string.IsNullOrEmpty(baseConn))
-            return;   // 无环境变量：测试全被 [SqlServerFact] Skip，构造函数无需建库
+            return;   // 未选择任何原生数据库：属性会跳过这些测试，不建库。
 
         // 从传入连接串派生唯一名临时库（Database 段被覆盖）
         _connString = new SqlConnectionStringBuilder(baseConn)
@@ -45,13 +57,16 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
 
     private CP6Context NewContext()
     {
+        if (Wp5ReportsFactAttribute.IsSelected)
+            return _database.CreateContext(_tenant);
+
         var options = new DbContextOptionsBuilder<CP6Context>()
             .UseSqlServer(_connString!)
             .Options;
         return new CP6Context(options);
     }
 
-    [SqlServerFact]
+    [SpaceCoreRelationalFact]
     public async Task AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer()
     {
         using var ctx = NewContext();
@@ -99,6 +114,7 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
 
     public void Dispose()
     {
+        if (Wp5ReportsFactAttribute.IsSelected) return;
         if (_connString == null) return;
         try
         {
@@ -119,7 +135,7 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
     // ── D-9.1: 过滤唯一索引 ──────────────────────────────────────────────
 
     /// <summary>同租户内两行相同非空 LocationCode → 第二次写入触发唯一索引冲突（DbUpdateException）。</summary>
-    [SqlServerFact]
+    [SpaceCoreRelationalFact]
     public void UniqueIndex_SameNonNullCode_SecondInsertThrows()
     {
         using (var ctx = NewContext())
@@ -132,12 +148,16 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
         ctx2.Space_Locations.Add(new Space_Location { LocationCode = "DUP-001", Status = 1 });
 
         var ex = Assert.Throws<DbUpdateException>(() => ctx2.SaveChanges());
-        // 内层为 SqlException 2601/2627（唯一键/唯一索引冲突）
-        Assert.IsType<SqlException>(ex.GetBaseException());
+        var failure = DatabaseFailureClassifier.Classify(ex);
+        Assert.Equal(DatabaseFailureKind.UniqueConstraint, failure.Kind);
+        if (ctx2.Database.IsNpgsql())
+            Assert.Equal("23505", failure.SqlState);
+        else
+            Assert.Contains(failure.DatabaseErrorCode, new int?[] { 2601, 2627 });
     }
 
     /// <summary>过滤索引 HasFilter([LocationCode] IS NOT NULL)：多行 NULL 码不互撞，可共存。</summary>
-    [SqlServerFact]
+    [SpaceCoreRelationalFact]
     public void UniqueIndex_TwoNullCodes_BothCoexist()
     {
         using (var ctx = NewContext())
@@ -154,7 +174,7 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
     // ── D-9.2: 两阶段重排 ────────────────────────────────────────────────
 
     /// <summary>两阶段换码：直接互换会撞唯一索引，经 NULL 中转（腾空→占用→回填）可成功交换两码。</summary>
-    [SqlServerFact]
+    [SpaceCoreRelationalFact]
     public void TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds()
     {
         Guid id1, id2;
@@ -191,7 +211,7 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
     // ── D-9.3: RowVersion 并发测试 ────────────────────────────────────────
 
     /// <summary>两上下文并发改同一行：先写者提交后 rowversion 改变，后写者 WHERE RowVersion 命中 0 行 → DbUpdateConcurrencyException。</summary>
-    [SqlServerFact]
+    [SpaceCoreRelationalFact]
     public void RowVersion_ConcurrentUpdate_SecondThrows()
     {
         Guid id;
@@ -215,5 +235,15 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
         b.Status = 0;
         // 后写者 UPDATE ... WHERE Id=@id AND RowVersion=@stale → 影响 0 行
         Assert.Throws<DbUpdateConcurrencyException>(() => ctxB.SaveChanges());
+    }
+}
+
+public sealed class SpaceCoreRelationalFactAttribute : FactAttribute
+{
+    public SpaceCoreRelationalFactAttribute()
+    {
+        if (!Wp5ReportsFactAttribute.IsSelected
+            && string.IsNullOrEmpty(Environment.GetEnvironmentVariable(SqlServerFactAttribute.EnvVar)))
+            Skip = "Select the WP5 Core provider/connection or the legacy SQL Server fixture.";
     }
 }

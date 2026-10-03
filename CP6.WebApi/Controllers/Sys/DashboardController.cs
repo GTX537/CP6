@@ -3,6 +3,8 @@ using CP6.Core.Utilities;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Npgsql;
 
 namespace CP6.WebApi.Controllers.Sys;
 
@@ -28,12 +30,20 @@ public class DashboardController : ControllerBase
         _cache = cache;
     }
 
+    private bool IsPostgreSql => _db switch
+    {
+        NpgsqlConnection => true,
+        SqlConnection => false,
+        _ => throw new InvalidOperationException("Dashboard requires a configured SQL Server or PostgreSQL connection.")
+    };
+
     /// <summary>
     /// 获取业务经营总览数据（缓存 1 分钟）
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetSummary()
     {
+        var postgres = IsPostgreSql;
         var result = await _cache.GetOrSetAsync(CacheService.DashboardKey, async () =>
         {
             var today = DateTime.Today;
@@ -52,7 +62,24 @@ public class DashboardController : ControllerBase
                         + (SELECT COUNT(*) FROM T_StockTake WHERE Status = 3)                                     AS PendingApprovals,
                     (SELECT COUNT(*) FROM T_ProductMaster)                                                        AS TotalProducts";
 
-            var summary = await _db.QueryFirstAsync<SummaryDto>(kpiSql, new { Today = today, MonthStart = monthStart });
+            // Preserve the existing global scope, application wall-clock boundaries and int DTO contract.
+            const string postgresKpiSql = """
+                SELECT
+                    (SELECT COUNT(*)::integer FROM public."T_Order" WHERE "CreateDate">=@Today) AS "TodayOrders",
+                    (SELECT COUNT(*)::integer FROM public."T_Order" WHERE "CreateDate">=@MonthStart) AS "MonthOrders",
+                    (SELECT COUNT(*)::integer FROM public."T_WorkOrder" WHERE "Status" BETWEEN 1 AND 5) AS "ActiveWorkOrders",
+                    (SELECT COUNT(*)::integer FROM public."T_WorkOrder" WHERE "Status" IN (4,6) AND "ActualEndDate">=@MonthStart) AS "MonthCompleted",
+                    (SELECT COUNT(*)::integer FROM public."T_OutboundOrder" WHERE "Status" BETWEEN 1 AND 3) AS "PendingOutbound",
+                    (SELECT COUNT(*)::integer FROM public."T_Stock" WHERE "AvailableQty"<=0) AS "StockWarnings",
+                    (SELECT COUNT(*)::integer FROM public."T_ProductMaster" WHERE "Status"=0)
+                        +(SELECT COUNT(*)::integer FROM public."T_StockTake" WHERE "Status"=3) AS "PendingApprovals",
+                    (SELECT COUNT(*)::integer FROM public."T_ProductMaster") AS "TotalProducts"
+                """;
+            var summary = await _db.QueryFirstAsync<SummaryDto>(postgres ? postgresKpiSql : kpiSql, new
+            {
+                Today = postgres ? DateTime.SpecifyKind(today, DateTimeKind.Unspecified) : today,
+                MonthStart = postgres ? DateTime.SpecifyKind(monthStart, DateTimeKind.Unspecified) : monthStart
+            });
 
             // ───── 最近の受注（TOP 8）─────
             const string recentOrdersSql = @"
@@ -60,7 +87,13 @@ public class DashboardController : ControllerBase
                     WebOrderNo, CustomerCd, Quantity, OrderDate, ShipStatus
                 FROM T_Order
                 ORDER BY CreateDate DESC";
-            var recentOrders = (await _db.QueryAsync<RecentOrderDto>(recentOrdersSql)).ToList();
+            const string postgresRecentOrdersSql = """
+                SELECT "WebOrderNo", "CustomerCd", "Quantity", "OrderDate", "ShipStatus"
+                FROM public."T_Order"
+                ORDER BY "CreateDate" DESC
+                LIMIT 8
+                """;
+            var recentOrders = (await _db.QueryAsync<RecentOrderDto>(postgres ? postgresRecentOrdersSql : recentOrdersSql)).ToList();
 
             // ───── 製造指図ステータス分布 ─────
             const string woStatusSql = @"
@@ -68,7 +101,13 @@ public class DashboardController : ControllerBase
                 FROM T_WorkOrder
                 GROUP BY Status
                 ORDER BY Status";
-            var workOrderStatus = (await _db.QueryAsync<StatusCountDto>(woStatusSql)).ToList();
+            const string postgresWoStatusSql = """
+                SELECT "Status", COUNT(*)::integer AS "Count"
+                FROM public."T_WorkOrder"
+                GROUP BY "Status"
+                ORDER BY "Status"
+                """;
+            var workOrderStatus = (await _db.QueryAsync<StatusCountDto>(postgres ? postgresWoStatusSql : woStatusSql)).ToList();
 
             return new DashboardData(summary, recentOrders, workOrderStatus);
         }, TimeSpan.FromMinutes(1));

@@ -1,14 +1,16 @@
 using CP6.Space.Application;
+using CP6.Core.Persistence;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceSqlServerTests
+public sealed class SpaceSqlServerTests(SpaceRelationalFixture fixture, ITestOutputHelper output)
 {
     private const string ContentHash =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -16,10 +18,12 @@ public sealed class SpaceSqlServerTests
     private const string WmsHash =
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
-    [SqlServerFact]
+    [SpaceMigrationFact(allowPostgreSql: true)]
     public async Task Migration_creates_only_design_tables_and_separate_history()
     {
-        await WithDatabaseAsync(async context =>
+        if (SpaceRelationalFixture.IsSelected)
+            throw new InvalidOperationException("This schema isolation test requires a separate Space-only database lane.");
+        await WithSchemaDatabaseAsync(async context =>
         {
             var tables = await ReadTableNamesAsync(context);
 
@@ -459,19 +463,30 @@ public sealed class SpaceSqlServerTests
                     tenantA,
                     Guid.NewGuid());
                 var sourceId = Guid.NewGuid();
-                var sql = $"""
+                FormattableString sql = context.Database.IsNpgsql()
+                    ? (FormattableString)$"""
+                    INSERT INTO "Space_ModelSource"
+                        ("Id", "ModelVersionId", "SourceType", "FileId",
+                         "DisplayName", "Sha256", "State", "TenantId",
+                         "CreatedAtUtc", "IsDeleted")
+                    VALUES
+                        ({sourceId}, {versionB}, 2, {fileA},
+                         'Cross tenant', {new string('e', 64)}, 2, {tenantA},
+                         clock_timestamp(), FALSE)
+                    """
+                    : $"""
                     INSERT INTO [Space_ModelSource]
                         ([Id], [ModelVersionId], [SourceType], [FileId],
                          [DisplayName], [Sha256], [State], [TenantId],
                          [CreatedAtUtc], [IsDeleted])
                     VALUES
-                        ('{sourceId}', '{versionB}', 2, '{fileA}',
-                         'Cross tenant', '{new string('e', 64)}', 2, '{tenantA}',
+                        ({sourceId}, {versionB}, 2, {fileA},
+                         'Cross tenant', {new string('e', 64)}, 2, {tenantA},
                          SYSUTCDATETIME(), 0)
                     """;
 
-                await Assert.ThrowsAsync<SqlException>(
-                    () => context.Database.ExecuteSqlRawAsync(sql));
+                await AssertNativeConstraintAsync(context,
+                    () => context.Database.ExecuteSqlInterpolatedAsync(sql), DatabaseFailureKind.ForeignKey);
             });
     }
 
@@ -502,9 +517,14 @@ public sealed class SpaceSqlServerTests
                 context.AddRange(model, version, file, source);
                 await context.SaveChangesAsync();
 
-                await Assert.ThrowsAsync<SqlException>(
-                    () => context.Database.ExecuteSqlInterpolatedAsync(
-                        $"DELETE FROM [Space_File] WHERE [Id] = {file.Id}"));
+                FormattableString delete = context.Database.IsNpgsql()
+                    ? (FormattableString)$"DELETE FROM \"Space_File\" WHERE \"Id\" = {file.Id}"
+                    : $"DELETE FROM [Space_File] WHERE [Id] = {file.Id}";
+                await AssertNativeConstraintAsync(context,
+                    () => context.Database.ExecuteSqlInterpolatedAsync(delete), DatabaseFailureKind.ForeignKey,
+                    "FK_Space_ModelSource_File_Tenant", restrict: true);
+                Assert.True(await context.Files.AsNoTracking().AnyAsync(item => item.Id == file.Id));
+                Assert.True(await context.Sources.AsNoTracking().AnyAsync(item => item.Id == source.Id));
             },
             tenantId);
     }
@@ -761,10 +781,11 @@ public sealed class SpaceSqlServerTests
                         6,
                         await otherTenant.ElementRevisions
                             .IgnoreQueryFilters()
-                            .CountAsync());
+                            .CountAsync(item => item.TenantId == tenantA || item.TenantId == tenantB));
                     Assert.Single(
                         await otherTenant.ElementAttributes
                             .IgnoreQueryFilters()
+                            .Where(item => item.TenantId == tenantA || item.TenantId == tenantB)
                             .ToListAsync());
                 }
 
@@ -883,9 +904,11 @@ public sealed class SpaceSqlServerTests
                     Assert.Equal(80, persisted[1].BeamHeight);
                     Assert.Equal(750m, persisted[1].MaxLoad);
 
-                    await Assert.ThrowsAsync<SqlException>(
-                        () => writer.Database.ExecuteSqlInterpolatedAsync(
-                            $"UPDATE [Space_RackLevelRevision] SET [BeamHeight] = -1 WHERE [Id] = {lower.Id}"));
+                    FormattableString negativeHeight = writer.Database.IsNpgsql()
+                        ? (FormattableString)$"UPDATE \"Space_RackLevelRevision\" SET \"BeamHeight\" = -1 WHERE \"Id\" = {lower.Id}"
+                        : $"UPDATE [Space_RackLevelRevision] SET [BeamHeight] = -1 WHERE [Id] = {lower.Id}";
+                    await AssertNativeConstraintAsync(writer,
+                        () => writer.Database.ExecuteSqlInterpolatedAsync(negativeHeight), DatabaseFailureKind.CheckConstraint);
 
                     writer.RackLevelRevisions.Add(
                         SpaceRackLevelRevision.Create(
@@ -913,13 +936,35 @@ public sealed class SpaceSqlServerTests
                     2,
                     await otherTenant.RackLevelRevisions
                         .IgnoreQueryFilters()
-                        .CountAsync());
+                        .CountAsync(item => item.TenantId == tenantA || item.TenantId == tenantB));
             },
             tenantA,
             actorId);
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithSchemaDatabaseAsync(Func<SpaceContext, Task> action)
+    {
+        var selected = await SpaceMigrationTestDatabase.OpenIfSelectedAsync(output, allowPostgreSql: true);
+        if (selected is null)
+        {
+            await WithDatabaseAsync(action);
+            return;
+        }
+
+        await using var context = selected.CreateContext(
+            new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+        await selected.MigrateAsync(context);
+        try
+        {
+            await action(context);
+        }
+        finally
+        {
+            await selected.RecordStateAsync(context, "space-only-schema-final");
+        }
+    }
+
+    private async Task WithDatabaseAsync(
         Func<SpaceContext, Task> action,
         Guid? tenantId = null,
         Guid? actorId = null)
@@ -930,11 +975,20 @@ public sealed class SpaceSqlServerTests
             actorId);
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<SpaceContext, string, Task> action,
         Guid? tenantId = null,
         Guid? actorId = null)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            fixture.WriteSetupEvidence(output);
+            await using var selected = CreateContext(fixture.ConnectionString,
+                tenantId ?? Guid.NewGuid(), actorId ?? Guid.NewGuid());
+            await action(selected, fixture.ConnectionString);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -959,11 +1013,15 @@ public sealed class SpaceSqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         Guid tenantId,
         Guid actorId)
     {
+        if (SpaceRelationalFixture.IsSelected)
+            return fixture.CreateSpaceContext(new TestExecutionContext(tenantId, actorId), new TestClock(),
+                new SpaceNativeFailureObserver(fixture.Database.Provider, message => output.WriteLine(message), "space-schema-business"));
+
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,
@@ -975,12 +1033,30 @@ public sealed class SpaceSqlServerTests
             new TestClock());
     }
 
+    private static async Task AssertNativeConstraintAsync(SpaceContext context, Func<Task> command,
+        DatabaseFailureKind kind, string? constraint = null, bool restrict = false)
+    {
+        var error = await Assert.ThrowsAnyAsync<System.Data.Common.DbException>(command);
+        var failure = DatabaseFailureClassifier.Classify(error);
+        Assert.Equal(kind, failure.Kind);
+        Assert.False(failure.CanRetryTransaction);
+        if (constraint is not null) Assert.Equal(constraint, failure.ConstraintName);
+        if (context.Database.IsNpgsql())
+        {
+            if (restrict) Assert.Contains(failure.SqlState, new[] { "23001", "23503" });
+            else Assert.Equal(kind == DatabaseFailureKind.ForeignKey ? "23503" : "23514", failure.SqlState);
+        }
+        else Assert.Equal(547, failure.DatabaseErrorCode);
+    }
+
     private static async Task<IReadOnlyList<string>> ReadTableNamesAsync(
         SpaceContext context)
     {
         await context.Database.OpenConnectionAsync();
         await using var command = context.Database.GetDbConnection().CreateCommand();
-        command.CommandText = "SELECT [name] FROM sys.tables ORDER BY [name]";
+        command.CommandText = context.Database.IsNpgsql()
+            ? "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname='public' ORDER BY tablename"
+            : "SELECT [name] FROM sys.tables ORDER BY [name]";
         var result = new List<string>();
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())

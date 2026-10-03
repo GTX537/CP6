@@ -89,7 +89,7 @@ public static class DatabaseFailureClassifier
         exception.SqlState switch
         {
             "23505" => DatabaseFailureKind.UniqueConstraint,
-            "23503" => DatabaseFailureKind.ForeignKey,
+            "23503" or "23001" => DatabaseFailureKind.ForeignKey,
             "23514" => DatabaseFailureKind.CheckConstraint,
             "40P01" => DatabaseFailureKind.Deadlock,
             "40001" => DatabaseFailureKind.SerializationFailure,

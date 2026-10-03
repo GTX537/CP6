@@ -1,0 +1,10 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Issue": 134,
+  "State": "OPEN",
+  "Wp4Checked": true,
+  "Wp5Wp6RemainUnchecked": true,
+  "Method": "REST PATCH after two gh issue edit HTTP499 responses and readbacks",
+  "ObservedUtc": "2026-10-03T12:45:58.3492138Z",
+  "Url": "https://github.com/GTX537/CP6/issues/134"
+}

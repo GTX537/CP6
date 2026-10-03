@@ -1,5 +1,6 @@
 using System.Data;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -47,7 +48,7 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
                     cancellationToken);
             }
             catch (Exception exception)
-                when (ContainsSqlError(exception, 1205))
+                when (IsRetryableStartTransactionFailure(exception))
             {
                 _context.ChangeTracker.Clear();
                 if (attempt + 1 >= StartRetries)
@@ -56,8 +57,8 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
                         "Another request won the model Draft reservation.");
                 }
             }
-            catch (DbUpdateException exception)
-                when (IsUniqueViolation(exception))
+            catch (Exception exception)
+                when (IsReservationUniqueViolation(exception))
             {
                 _context.ChangeTracker.Clear();
                 var existing = await FindExistingAsync(
@@ -103,7 +104,7 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
                     cancellationToken);
             }
             catch (Exception exception)
-                when (ContainsSqlError(exception, 1205))
+                when (IsRetryableStartTransactionFailure(exception))
             {
                 _context.ChangeTracker.Clear();
                 if (attempt + 1 >= StartRetries)
@@ -112,8 +113,8 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
                         "Another request won the model Draft reservation.");
                 }
             }
-            catch (DbUpdateException exception)
-                when (IsUniqueViolation(exception))
+            catch (Exception exception)
+                when (IsReservationUniqueViolation(exception))
             {
                 _context.ChangeTracker.Clear();
                 var existing = await FindExistingBlankAsync(
@@ -482,9 +483,30 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
         return normalized;
     }
 
-    private static bool IsUniqueViolation(DbUpdateException exception) =>
-        ContainsSqlError(exception, 2601) ||
-        ContainsSqlError(exception, 2627);
+    // Both StartOnce methods roll back and await-dispose their owned transaction
+    // before these outer catches can retry or reread the operation's reservation.
+    private bool IsRetryableStartTransactionFailure(Exception exception) =>
+        ContainsSqlError(exception, 1205) ||
+        _context.Database.IsNpgsql() &&
+        DatabaseFailureClassifier.Classify(exception).SqlState is "40001" or "40P01";
+
+    private bool IsReservationUniqueViolation(Exception exception)
+    {
+        if (exception is DbUpdateException &&
+            (ContainsSqlError(exception, 2601) || ContainsSqlError(exception, 2627)))
+        {
+            return true;
+        }
+
+        if (!_context.Database.IsNpgsql())
+            return false;
+
+        var failure = DatabaseFailureClassifier.Classify(exception);
+        return failure.Kind == DatabaseFailureKind.UniqueConstraint &&
+            failure.SqlState == "23505" &&
+            (failure.MatchesConstraint("UX_Space_ModelVersion_Tenant_Model_VersionNo") ||
+             failure.MatchesConstraint("UX_Space_ModelVersion_Tenant_Model_CloneOperation"));
+    }
 
     private static bool ContainsSqlError(Exception? exception, int number)
     {
@@ -933,8 +955,20 @@ public sealed class EfSpaceVersionCloneProcessor :
         Guid tenantId,
         Guid actorId,
         DateTime nowUtc,
-        CancellationToken cancellationToken) =>
-        _context.Database.ExecuteSqlInterpolatedAsync(
+        CancellationToken cancellationToken)
+    {
+        if (_context.Database.IsNpgsql())
+        {
+            return CloneSnapshotPostgreSqlAsync(
+                sourceVersionId,
+                targetVersionId,
+                tenantId,
+                actorId,
+                nowUtc,
+                cancellationToken);
+        }
+
+        return _context.Database.ExecuteSqlInterpolatedAsync(
             $"""
              SET NOCOUNT ON;
 
@@ -1212,6 +1246,314 @@ public sealed class EfSpaceVersionCloneProcessor :
                AND a.[IsDeleted] = 0;
              """,
             cancellationToken);
+    }
+
+    private Task<int> CloneSnapshotPostgreSqlAsync(
+        Guid sourceVersionId,
+        Guid targetVersionId,
+        Guid tenantId,
+        Guid actorId,
+        DateTime nowUtc,
+        CancellationToken cancellationToken)
+    {
+        if (_context.Database.CurrentTransaction is null)
+        {
+            throw new InvalidOperationException(
+                "Snapshot cloning requires the caller's current transaction.");
+        }
+
+        // Each invocation owns its map names, including repeated calls in one transaction.
+        // Rollback removes newly created maps; successful execution also drops them before commit.
+        var mapSuffix = Guid.NewGuid().ToString("N");
+        var sourceMap = "cp6_clone_source_" + mapSuffix;
+        var calibrationMap = "cp6_clone_calibration_" + mapSuffix;
+        var elementMap = "cp6_clone_element_" + mapSuffix;
+
+        // Only the generated identifiers are interpolated here; all business values are parameters.
+        var sql = $$"""
+             CREATE TEMP TABLE pg_temp."{{sourceMap}}"
+             (
+                 "OldId" uuid NOT NULL PRIMARY KEY,
+                 "NewId" uuid NOT NULL UNIQUE
+             ) ON COMMIT DROP;
+             INSERT INTO pg_temp."{{sourceMap}}" ("OldId", "NewId")
+             SELECT "Id", gen_random_uuid()
+             FROM public."Space_ModelSource"
+             WHERE "TenantId" = {0}
+               AND "ModelVersionId" = {1};
+
+             INSERT INTO public."Space_ModelSource"
+                 ("Id", "ModelVersionId", "SourceType", "FileId", "DisplayName",
+                  "Sha256", "ParserVersion", "MappingProfileId",
+                  "MappingProfileVersion", "Unit", "ScaleToMillimeters",
+                  "TransformJson", "State", "ImportedCommandBatchId",
+                  "TenantId", "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc",
+                  "ModifiedBy", "IsDeleted")
+             SELECT m."NewId", {2}, s."SourceType", s."FileId",
+                    s."DisplayName", s."Sha256", s."ParserVersion",
+                    s."MappingProfileId", s."MappingProfileVersion", s."Unit",
+                    s."ScaleToMillimeters", s."TransformJson", s."State",
+                    s."ImportedCommandBatchId", {0}, {3}, {4},
+                    NULL, NULL, s."IsDeleted"
+             FROM public."Space_ModelSource" s
+             INNER JOIN pg_temp."{{sourceMap}}" m ON m."OldId" = s."Id"
+             WHERE s."TenantId" = {0}
+               AND s."ModelVersionId" = {1};
+
+             CREATE TEMP TABLE pg_temp."{{calibrationMap}}"
+             (
+                 "OldId" uuid NOT NULL PRIMARY KEY,
+                 "NewId" uuid NOT NULL UNIQUE
+             ) ON COMMIT DROP;
+             INSERT INTO pg_temp."{{calibrationMap}}" ("OldId", "NewId")
+             SELECT "Id", gen_random_uuid()
+             FROM public."Space_UnderlayCalibration"
+             WHERE "TenantId" = {0}
+               AND "ModelVersionId" = {1}
+               AND "IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_UnderlayCalibration"
+                 ("Id", "ModelVersionId", "FloorLogicalId", "SourceId",
+                  "PageNumber", "PixelWidth", "PixelHeight",
+                  "Point1PixelX", "Point1PixelY", "Point1WorldX",
+                  "Point1WorldY", "Point2PixelX", "Point2PixelY",
+                  "Point2WorldX", "Point2WorldY", "ValidationPixelX",
+                  "ValidationPixelY", "ValidationWorldX", "ValidationWorldY",
+                  "MillimetersPerPixel", "OffsetX", "OffsetY", "RotationZ",
+                  "ValidationErrorMillimeters", "ErrorThresholdMillimeters",
+                  "TenantId", "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc",
+                  "ModifiedBy", "IsDeleted")
+             SELECT cm."NewId", {2}, c."FloorLogicalId",
+                    sm."NewId", c."PageNumber", c."PixelWidth",
+                    c."PixelHeight", c."Point1PixelX", c."Point1PixelY",
+                    c."Point1WorldX", c."Point1WorldY", c."Point2PixelX",
+                    c."Point2PixelY", c."Point2WorldX", c."Point2WorldY",
+                    c."ValidationPixelX", c."ValidationPixelY",
+                    c."ValidationWorldX", c."ValidationWorldY",
+                    c."MillimetersPerPixel", c."OffsetX", c."OffsetY",
+                    c."RotationZ", c."ValidationErrorMillimeters",
+                    c."ErrorThresholdMillimeters", {0}, {3},
+                    {4}, NULL, NULL, FALSE
+             FROM public."Space_UnderlayCalibration" c
+             INNER JOIN pg_temp."{{calibrationMap}}" cm ON cm."OldId" = c."Id"
+             INNER JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = c."SourceId"
+             WHERE c."TenantId" = {0}
+               AND c."ModelVersionId" = {1}
+               AND c."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_FloorRevision"
+                 ("Id", "ModelVersionId", "LogicalId", "SourceId", "SourceRef",
+                  "LifecycleState", "SiteLogicalId", "Level", "FloorCode", "Name",
+                  "Elevation", "Height", "BoundaryJson", "CoordinateSystem",
+                  "UnderlaySourceId", "UnderlayCalibrationId",
+                  "UnderlayScale", "UnderlayOffsetX",
+                  "UnderlayOffsetY", "UnderlayRotationZ", "Revision",
+                  "TenantId", "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc",
+                  "ModifiedBy", "IsDeleted")
+             SELECT gen_random_uuid(), {2}, r."LogicalId", sm."NewId",
+                    r."SourceRef", r."LifecycleState", r."SiteLogicalId", r."Level",
+                    r."FloorCode", r."Name", r."Elevation", r."Height",
+                    r."BoundaryJson", r."CoordinateSystem", um."NewId",
+                    cm."NewId",
+                    r."UnderlayScale", r."UnderlayOffsetX", r."UnderlayOffsetY",
+                    r."UnderlayRotationZ", r."Revision", {0}, {3},
+                    {4}, NULL, NULL, FALSE
+             FROM public."Space_FloorRevision" r
+             LEFT JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = r."SourceId"
+             LEFT JOIN pg_temp."{{sourceMap}}" um ON um."OldId" = r."UnderlaySourceId"
+             LEFT JOIN pg_temp."{{calibrationMap}}" cm
+                ON cm."OldId" = r."UnderlayCalibrationId"
+             WHERE r."TenantId" = {0}
+               AND r."ModelVersionId" = {1}
+               AND r."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_ZoneRevision"
+                 ("Id", "ModelVersionId", "LogicalId", "SourceId", "SourceRef",
+                  "LifecycleState", "FloorLogicalId", "ZoneCode", "Name",
+                  "ZoneType", "PolygonJson", "Color", "CapabilityFlags", "TenantId",
+                  "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc", "ModifiedBy",
+                  "IsDeleted")
+             SELECT gen_random_uuid(), {2}, r."LogicalId", sm."NewId",
+                    r."SourceRef", r."LifecycleState", r."FloorLogicalId",
+                    r."ZoneCode", r."Name", r."ZoneType", r."PolygonJson", r."Color",
+                    r."CapabilityFlags", {0}, {3}, {4},
+                    NULL, NULL, FALSE
+             FROM public."Space_ZoneRevision" r
+             LEFT JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = r."SourceId"
+             WHERE r."TenantId" = {0}
+               AND r."ModelVersionId" = {1}
+               AND r."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_AisleRevision"
+                 ("Id", "ModelVersionId", "LogicalId", "SourceId", "SourceRef",
+                  "LifecycleState", "ZoneLogicalId", "AisleCode", "Name",
+                  "PolygonJson", "CenterlineJson", "Direction", "TenantId", "CreatedAtUtc",
+                  "CreatedBy", "ModifiedAtUtc", "ModifiedBy", "IsDeleted")
+             SELECT gen_random_uuid(), {2}, r."LogicalId", sm."NewId",
+                    r."SourceRef", r."LifecycleState", r."ZoneLogicalId",
+                    r."AisleCode", r."Name", r."PolygonJson", r."CenterlineJson",
+                    r."Direction", {0}, {3}, {4}, NULL, NULL, FALSE
+             FROM public."Space_AisleRevision" r
+             LEFT JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = r."SourceId"
+             WHERE r."TenantId" = {0}
+               AND r."ModelVersionId" = {1}
+               AND r."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_RackRevision"
+                 ("Id", "ModelVersionId", "LogicalId", "SourceId", "SourceRef",
+                  "LifecycleState", "FloorLogicalId", "ZoneLogicalId",
+                  "AisleLogicalId", "RackCode", "Name", "RackType",
+                  "TemplateVersionId", "X", "Y", "Z", "RotationZ", "Width",
+                  "Depth", "Height", "TenantId",
+                  "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc", "ModifiedBy",
+                  "IsDeleted")
+             SELECT gen_random_uuid(), {2}, r."LogicalId", sm."NewId",
+                    r."SourceRef", r."LifecycleState", r."FloorLogicalId",
+                    r."ZoneLogicalId", r."AisleLogicalId", r."RackCode",
+                    r."Name", r."RackType", r."TemplateVersionId", r."X", r."Y",
+                    r."Z", r."RotationZ",
+                    r."Width", r."Depth", r."Height", {0}, {3},
+                    {4}, NULL, NULL, FALSE
+             FROM public."Space_RackRevision" r
+             LEFT JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = r."SourceId"
+             WHERE r."TenantId" = {0}
+               AND r."ModelVersionId" = {1}
+               AND r."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_RackLevelRevision"
+                 ("Id", "ModelVersionId", "LogicalId", "SourceId", "SourceRef",
+                  "LifecycleState", "RackLogicalId", "LevelNo", "BottomZ",
+                  "ClearHeight", "BinCount", "DepthCount", "CellWidth",
+                  "CellDepth", "BeamHeight", "MaxLoad", "TenantId", "CreatedAtUtc",
+                  "CreatedBy", "ModifiedAtUtc", "ModifiedBy", "IsDeleted")
+             SELECT gen_random_uuid(), {2}, r."LogicalId", sm."NewId",
+                    r."SourceRef", r."LifecycleState", r."RackLogicalId",
+                    r."LevelNo", r."BottomZ", r."ClearHeight", r."BinCount",
+                    r."DepthCount", r."CellWidth", r."CellDepth", r."BeamHeight",
+                    r."MaxLoad",
+                    {0}, {3}, {4}, NULL, NULL, FALSE
+             FROM public."Space_RackLevelRevision" r
+             LEFT JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = r."SourceId"
+             WHERE r."TenantId" = {0}
+               AND r."ModelVersionId" = {1}
+               AND r."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_LocationRevision"
+                 ("Id", "ModelVersionId", "LogicalId", "SourceId", "SourceRef",
+                  "LifecycleState", "FloorLogicalId", "RackLogicalId",
+                  "LocationCode", "ColumnNo", "LevelNo", "DepthNo", "Width",
+                  "Height", "Depth", "MaxLoad", "LocationType", "CodeOrigin",
+                  "ExternalBindingState", "TenantId", "CreatedAtUtc",
+                  "CreatedBy", "ModifiedAtUtc", "ModifiedBy", "IsDeleted")
+             SELECT gen_random_uuid(), {2}, r."LogicalId", sm."NewId",
+                    r."SourceRef", r."LifecycleState", r."FloorLogicalId",
+                    r."RackLogicalId", r."LocationCode", r."ColumnNo",
+                    r."LevelNo", r."DepthNo", r."Width", r."Height", r."Depth",
+                    r."MaxLoad", r."LocationType", r."CodeOrigin",
+                    r."ExternalBindingState",
+                    {0}, {3}, {4}, NULL, NULL, FALSE
+             FROM public."Space_LocationRevision" r
+             LEFT JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = r."SourceId"
+             WHERE r."TenantId" = {0}
+               AND r."ModelVersionId" = {1}
+               AND r."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_LocationExternalBinding"
+                 ("Id", "ModelVersionId", "LocationLogicalId", "AdapterId",
+                  "WarehouseCode", "ExternalLocationId", "BindingMode",
+                  "SourceId", "SourceRef", "TenantId", "CreatedAtUtc",
+                  "CreatedBy", "ModifiedAtUtc", "ModifiedBy", "IsDeleted")
+             SELECT gen_random_uuid(), {2}, b."LocationLogicalId",
+                    b."AdapterId", b."WarehouseCode", b."ExternalLocationId",
+                    b."BindingMode", sm."NewId", b."SourceRef", {0},
+                    {3}, {4}, NULL, NULL, FALSE
+             FROM public."Space_LocationExternalBinding" b
+             INNER JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = b."SourceId"
+             WHERE b."TenantId" = {0}
+               AND b."ModelVersionId" = {1}
+               AND b."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_DesignAttribute"
+                 ("Id", "ModelVersionId", "ObjectType", "ObjectLogicalId",
+                  "Namespace", "Key", "Value", "Unit", "SourceId", "SourceRef",
+                  "TenantId", "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc",
+                  "ModifiedBy", "IsDeleted")
+             SELECT gen_random_uuid(), {2}, a."ObjectType",
+                    a."ObjectLogicalId", a."Namespace", a."Key", a."Value",
+                    a."Unit", sm."NewId", a."SourceRef", {0}, {3},
+                    {4}, NULL, NULL, FALSE
+             FROM public."Space_DesignAttribute" a
+             INNER JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = a."SourceId"
+             WHERE a."TenantId" = {0}
+               AND a."ModelVersionId" = {1}
+               AND a."IsDeleted" = FALSE;
+
+             CREATE TEMP TABLE pg_temp."{{elementMap}}"
+             (
+                 "OldId" uuid NOT NULL PRIMARY KEY,
+                 "NewId" uuid NOT NULL UNIQUE
+             ) ON COMMIT DROP;
+             INSERT INTO pg_temp."{{elementMap}}" ("OldId", "NewId")
+             SELECT "Id", gen_random_uuid()
+             FROM public."Space_ElementRevision"
+             WHERE "TenantId" = {0}
+               AND "ModelVersionId" = {1}
+               AND "IsDeleted" = FALSE;
+
+               INSERT INTO public."Space_ElementRevision"
+                   ("Id", "ModelVersionId", "LogicalId", "SourceId", "SourceRef",
+                    "LifecycleState", "FloorLogicalId", "ParentLogicalId",
+                    "ElementType", "GeometryJson", "ModelAssetId", "ModelAssetScope",
+                    "ModelAssetOwnerTenantId", "X", "Y", "Z",
+                    "RotationZ", "Width", "Height", "Depth", "BusinessCode",
+                  "LinkedEntityType", "LinkedLogicalId",
+                  "IsManualCorrectionLocked", "UserCorrectionVersion",
+                  "ManualCorrectionUpdatedBy", "ManualCorrectionUpdatedAtUtc",
+                  "TenantId",
+                  "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc", "ModifiedBy",
+                  "IsDeleted")
+             SELECT em."NewId", {2}, r."LogicalId", sm."NewId",
+                      r."SourceRef", r."LifecycleState", r."FloorLogicalId",
+                      r."ParentLogicalId", r."ElementType", r."GeometryJson",
+                      r."ModelAssetId", r."ModelAssetScope",
+                      r."ModelAssetOwnerTenantId", r."X", r."Y", r."Z", r."RotationZ",
+                    r."Width", r."Height", r."Depth", r."BusinessCode",
+                    r."LinkedEntityType", r."LinkedLogicalId",
+                    r."IsManualCorrectionLocked", r."UserCorrectionVersion",
+                    r."ManualCorrectionUpdatedBy",
+                    r."ManualCorrectionUpdatedAtUtc", {0},
+                    {3}, {4}, NULL, NULL, FALSE
+             FROM public."Space_ElementRevision" r
+             INNER JOIN pg_temp."{{elementMap}}" em ON em."OldId" = r."Id"
+             LEFT JOIN pg_temp."{{sourceMap}}" sm ON sm."OldId" = r."SourceId"
+             WHERE r."TenantId" = {0}
+               AND r."ModelVersionId" = {1}
+               AND r."IsDeleted" = FALSE;
+
+             INSERT INTO public."Space_ElementAttribute"
+                 ("Id", "ModelVersionId", "ElementRevisionId", "Namespace",
+                  "Key", "ValueType", "Value", "Unit", "TenantId",
+                  "CreatedAtUtc", "CreatedBy", "ModifiedAtUtc", "ModifiedBy",
+                  "IsDeleted")
+             SELECT gen_random_uuid(), {2}, em."NewId", a."Namespace",
+                    a."Key", a."ValueType", a."Value", a."Unit", {0},
+                    {3}, {4}, NULL, NULL, FALSE
+             FROM public."Space_ElementAttribute" a
+             INNER JOIN pg_temp."{{elementMap}}" em ON em."OldId" = a."ElementRevisionId"
+             WHERE a."TenantId" = {0}
+               AND a."ModelVersionId" = {1}
+               AND a."IsDeleted" = FALSE;
+
+             DROP TABLE pg_temp."{{elementMap}}";
+             DROP TABLE pg_temp."{{calibrationMap}}";
+             DROP TABLE pg_temp."{{sourceMap}}";
+             """;
+
+        return _context.Database.ExecuteSqlRawAsync(
+            sql,
+            new object[] { tenantId, sourceVersionId, targetVersionId, nowUtc, actorId },
+            cancellationToken);
+    }
 
     private DateTime RequireUtcNow()
     {

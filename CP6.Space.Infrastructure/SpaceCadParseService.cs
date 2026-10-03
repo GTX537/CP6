@@ -1506,7 +1506,18 @@ public sealed class SpaceCadParseService(
         return Action(input.Job, versionId, sourceId);
     }
 
-    public async Task<SpaceCadParseActionResponse> RetryAsync(
+    public Task<SpaceCadParseActionResponse> RetryAsync(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        SpaceAiOwnedCommandRetry.ExecuteAsync(
+            context,
+            () => RetryOnceAsync(versionId, sourceId, jobId, idempotencyKey, cancellationToken),
+            cancellationToken);
+
+    private async Task<SpaceCadParseActionResponse> RetryOnceAsync(
         Guid versionId,
         Guid sourceId,
         Guid jobId,
@@ -1586,6 +1597,15 @@ public sealed class SpaceCadParseService(
             if (transaction is not null)
                 await transaction.CommitAsync(cancellationToken);
             return response;
+        }
+        catch (Exception exception) when (
+            context.Database.IsNpgsql() &&
+            DatabaseFailureClassifier.Classify(exception).CanRetryTransaction)
+        {
+            if (transaction is not null && transaction.GetDbTransaction().Connection is not null)
+                await transaction.RollbackAsync(CancellationToken.None);
+            // The finally block disposes this owned transaction before the complete command retries.
+            throw;
         }
         catch (DbUpdateException)
         {

@@ -3,11 +3,12 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceDesignV1SqlServerTests
+public sealed class SpaceDesignV1SqlServerTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private const string KeyHash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -15,10 +16,10 @@ public sealed class SpaceDesignV1SqlServerTests
     private const string RequestHash =
         "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
 
-    [SqlServerFact]
+    [SpaceMigrationFact]
     public async Task Migration_creates_only_the_idempotency_table_and_indexes()
     {
-        await WithDatabaseAsync(async (context, _, _) =>
+        await WithMigrationDatabaseAsync(async context =>
         {
             var table = await context.Database
                 .SqlQueryRaw<string>(
@@ -110,7 +111,46 @@ public sealed class SpaceDesignV1SqlServerTests
             nowUtc.AddHours(24),
             nowUtc.AddDays(90));
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithMigrationDatabaseAsync(Func<SpaceContext, Task> action)
+    {
+        var selected = await SpaceMigrationTestDatabase.OpenIfSelectedAsync(output);
+        if (selected is null)
+        {
+            await WithLegacyDatabaseAsync((context, _, _) => action(context));
+            return;
+        }
+
+        await using var context = selected.CreateContext(
+            new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+        await selected.MigrateAsync(context);
+        try
+        {
+            await action(context);
+        }
+        finally
+        {
+            await selected.RecordStateAsync(context, "design-idempotency-final");
+        }
+    }
+
+    private async Task WithDatabaseAsync(
+        Func<SpaceContext, TestExecutionContext, TestClock, Task> action)
+    {
+        if (!SpaceRelationalFixture.IsSelected)
+        {
+            await WithLegacyDatabaseAsync(action);
+            return;
+        }
+
+        database.WriteSetupEvidence(output);
+        var execution = new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid());
+        var clock = new TestClock();
+        await using var context = database.CreateSpaceContext(execution, clock,
+            new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "design-idempotency"));
+        await action(context, execution, clock);
+    }
+
+    private static async Task WithLegacyDatabaseAsync(
         Func<SpaceContext, TestExecutionContext, TestClock, Task> action)
     {
         var baseConnection = Environment.GetEnvironmentVariable(

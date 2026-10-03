@@ -1,0 +1,47 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Kind": "Targeted migration prerequisite risk review; not whole WP5 review",
+  "Reviewer": "/root/wp5_migration_review",
+  "Base": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "ObservedUtc": "2026-10-03T14:24:54.6043177Z",
+  "Finding": "P2: IndexOf returned -1 could satisfy prerequisite-before-table assertion when prerequisite absent.",
+  "Resolution": "Added explicit Assert.Contains for prerequisite SQL. Reviewer targeted follow-up: Resolved; 3 equivalent Assert.Single changes have no new issue.",
+  "NativeResults": [
+    "wp5-prerequisite-space-core-pg-first-run",
+    "wp5-prerequisite-core-space-pg-first-run",
+    "wp5-prerequisite-space-script-pg-first-run",
+    "wp5-space-only-pg-prerequisite-followup"
+  ],
+  "UnitResults": [
+    "wp5-prerequisite-sql-generation",
+    "wp5-prerequisite-sql-generation-review-followup"
+  ],
+  "FinalSources": [
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlMigrationPrerequisitesV1.cs",
+      "Sha256": "7C4C06BB5BD6C4B093B3EB07B6EACC7A255C421C50B181D4DB62FE2B3FA9A8F8"
+    },
+    {
+      "Path": "CP6.Core/Persistence/PostgreSqlPrerequisiteMigrationsSqlGenerator.cs",
+      "Sha256": "AAB3A78EB47EFCCBAC2D9A108DE361010630B4ADFCEE0400F9D4C3EDD609FDFA"
+    },
+    {
+      "Path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+      "Sha256": "58BAE7257EA922DC2D8CE6703402EB36D090A5627ABD9647AEBA6E8D07CD5ACA"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMigrationTestDatabase.cs",
+      "Sha256": "EC7A9B2723736750DF4C66879573A7CEC4409FC8B3BC5DEB95D5DCCFDEA79C0D"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpacePostgreSqlPrerequisiteTests.cs",
+      "Sha256": "FD72012E69084FB12066FB8C9E967110690BCD193A83A3ED5582A88A30AD25EA"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMigrationSqlGenerationTests.cs",
+      "Sha256": "C9F8E36AE34E858FE0132DC19340007A56071030C0A653DC7B991ECC46C35056"
+    }
+  ],
+  "ProductionChangedAfterNative": false,
+  "Scope": "Runtime/script prerequisites, frozen baseline preservation, definition checks, provider/profile order and targeted assertion fix only. Whole WP5, production deployment and other platforms remain outside this review."
+}

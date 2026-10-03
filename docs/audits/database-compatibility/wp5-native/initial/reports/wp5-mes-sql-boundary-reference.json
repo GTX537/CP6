@@ -1,0 +1,9 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Stage": "Probe preparation",
+  "ExitCode": 1,
+  "NativeQueryExecuted": false,
+  "Reason": "sqlcmd rejected mutually exclusive -h and -y 0 before query execution",
+  "ScriptSha256": "475B71BE38B06A7C917B49897512E841CBB4890007FBDFB16DAAEC29AEE46E5D",
+  "ProcessLog": "D:\\CP6\\tmp\\wp5-mes-sql-boundary-reference.log"
+}

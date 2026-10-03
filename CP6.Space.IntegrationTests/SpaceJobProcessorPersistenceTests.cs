@@ -8,11 +8,12 @@ using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceJobProcessorPersistenceTests
+public sealed class SpaceJobProcessorPersistenceTests(SpaceRelationalFixture fixture, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 7, 30, 20, 30, 0, DateTimeKind.Utc);
@@ -415,11 +416,21 @@ public sealed class SpaceJobProcessorPersistenceTests
                     SHA256.HashData(Encoding.UTF8.GetBytes(stepCode)))
                 .ToLowerInvariant());
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Guid tenantId,
         ISpaceClock clock,
         Func<SpaceContext, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            fixture.WriteSetupEvidence(output);
+            await using var selected = fixture.CreateSpaceContext(
+                new TestExecutionContext(tenantId, Guid.NewGuid()), clock,
+                new SpaceNativeFailureObserver(fixture.Database.Provider, message => output.WriteLine(message), "job-processor-business"));
+            await action(selected);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)

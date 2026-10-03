@@ -5,11 +5,14 @@ using CP6.Space.Infrastructure;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceAiAtomicApplySqlServerTests
+public sealed partial class SpaceAiAtomicApplySqlServerTests(
+    SpaceRelationalFixture database,
+    ITestOutputHelper output)
 {
     private static readonly DateTime Start =
         new(2026, 8, 6, 15, 0, 0, DateTimeKind.Utc);
@@ -502,8 +505,23 @@ public sealed class SpaceAiAtomicApplySqlServerTests
             const string failureSummary =
                 "Simulated post-commit status uncertainty.";
             var failedStatus = (short)SpaceGenerationRunStatus.Failed;
-            _ = await context.Database.ExecuteSqlInterpolatedAsync(
-                $"UPDATE [Space_GenerationRun] SET [Status] = {failedStatus}, [FailureCode] = {failureCode}, [FailureSummary] = {failureSummary} WHERE [Id] = {graph.RunId}");
+            if (context.Database.IsNpgsql())
+            {
+                _ = await context.Database.ExecuteSqlInterpolatedAsync(
+                    $"""
+                    UPDATE "Space_GenerationRun"
+                    SET "Status" = {failedStatus},
+                        "FailureCode" = {failureCode},
+                        "FailureSummary" = {failureSummary}
+                    WHERE "TenantId" = {execution.TenantId}
+                      AND "Id" = {graph.RunId}
+                    """);
+            }
+            else
+            {
+                _ = await context.Database.ExecuteSqlInterpolatedAsync(
+                    $"UPDATE [Space_GenerationRun] SET [Status] = {failedStatus}, [FailureCode] = {failureCode}, [FailureSummary] = {failureSummary} WHERE [Id] = {graph.RunId}");
+            }
             context.ChangeTracker.Clear();
             var uncertain = await context.GenerationRuns.SingleAsync(
                 item => item.Id == graph.RunId);
@@ -1162,12 +1180,20 @@ public sealed class SpaceAiAtomicApplySqlServerTests
             new SpaceAiLockedFactService(context, execution, access));
     }
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<SpaceContext, TestExecutionContext, MutableClock, Task> action)
     {
         var tenantId = Guid.NewGuid();
         var execution = new TestExecutionContext(tenantId, Guid.NewGuid());
         var clock = new MutableClock(Start);
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await using var ownedContext = CreateContext(database.ConnectionString, execution, clock);
+            await action(ownedContext, execution, clock);
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -1190,11 +1216,20 @@ public sealed class SpaceAiAtomicApplySqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
         string connectionString,
         ISpaceExecutionContext execution,
-        ISpaceClock clock) =>
-        new(
+        ISpaceClock clock)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected AI Apply contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "ai-apply-business"));
+        }
+
+        return new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(
                     connectionString,
@@ -1203,6 +1238,7 @@ public sealed class SpaceAiAtomicApplySqlServerTests
                 .Options,
             execution,
             clock);
+    }
 
     private sealed record ApplyGraph(
         Guid RunId,

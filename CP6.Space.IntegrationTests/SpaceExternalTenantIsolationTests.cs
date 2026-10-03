@@ -4,11 +4,12 @@ using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceExternalTenantIsolationTests
+public sealed class SpaceExternalTenantIsolationTests(SpaceRelationalFixture database, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 8, 2, 12, 0, 0, DateTimeKind.Utc);
@@ -17,11 +18,11 @@ public sealed class SpaceExternalTenantIsolationTests
     public async Task Collaboration_graph_filters_same_business_ids_in_memory()
     {
         var root = new InMemoryDatabaseRoot();
-        var database = Guid.NewGuid().ToString("N");
+        var databaseName = Guid.NewGuid().ToString("N");
 
         await AssertIsolationAsync(tenantId => new SpaceContext(
             new DbContextOptionsBuilder<SpaceContext>()
-                .UseInMemoryDatabase(database, root)
+                .UseInMemoryDatabase(databaseName, root)
                 .Options,
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             new FixedClock()));
@@ -30,6 +31,13 @@ public sealed class SpaceExternalTenantIsolationTests
     [SqlServerFact]
     public async Task Collaboration_graph_filters_same_business_ids_in_sql_server()
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await AssertIsolationAsync(tenantId => CreateSqlContext(database.ConnectionString, tenantId));
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -83,33 +91,35 @@ public sealed class SpaceExternalTenantIsolationTests
         await AssertVisibleGraphAsync(createContext, tenantB, graphB, graphA);
 
         await using var audit = createContext(tenantA);
+        // Keep the unfiltered graph assertion scoped to this case's two tenants in the shared owned database.
+        var tenantIds = new[] { tenantA, tenantB };
         Assert.Equal(
             2,
-            await audit.ExternalOrganizations.IgnoreQueryFilters().CountAsync());
+            await audit.ExternalOrganizations.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.ExternalMemberships.IgnoreQueryFilters().CountAsync());
+            await audit.ExternalMemberships.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.ExternalGrants.IgnoreQueryFilters().CountAsync());
+            await audit.ExternalGrants.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.ExternalGrantFloors.IgnoreQueryFilters().CountAsync());
+            await audit.ExternalGrantFloors.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.ExternalGrantZones.IgnoreQueryFilters().CountAsync());
+            await audit.ExternalGrantZones.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.ExternalGrantOwners.IgnoreQueryFilters().CountAsync());
+            await audit.ExternalGrantOwners.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.ExternalGrantObjects.IgnoreQueryFilters().CountAsync());
+            await audit.ExternalGrantObjects.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.FieldPolicies.IgnoreQueryFilters().CountAsync());
+            await audit.FieldPolicies.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
         Assert.Equal(
             2,
-            await audit.FieldPolicyFields.IgnoreQueryFilters().CountAsync());
+            await audit.FieldPolicyFields.IgnoreQueryFilters().CountAsync(item => tenantIds.Contains(item.TenantId)));
     }
 
     private static async Task<GraphIds> SeedAsync(
@@ -243,10 +253,18 @@ public sealed class SpaceExternalTenantIsolationTests
             item => item.Id == other.PolicyId);
     }
 
-    private static SpaceContext CreateSqlContext(
+    private SpaceContext CreateSqlContext(
         string connectionString,
-        Guid tenantId) =>
-        new(
+        Guid tenantId)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected Space contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(new TestExecutionContext(tenantId, Guid.NewGuid()), new FixedClock(),
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "external-tenant-isolation"));
+        }
+        return new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(
                     connectionString,
@@ -255,6 +273,7 @@ public sealed class SpaceExternalTenantIsolationTests
                 .Options,
             new TestExecutionContext(tenantId, Guid.NewGuid()),
             new FixedClock());
+    }
 
     private sealed record GraphIds(
         Guid OrganizationId,

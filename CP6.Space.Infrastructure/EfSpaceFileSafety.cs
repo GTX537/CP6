@@ -357,101 +357,95 @@ public sealed class EfSpaceFileRetentionStore : ISpaceFileRetentionStore
         if (fileId == Guid.Empty)
             throw new ArgumentException("File is required.", nameof(fileId));
 
-        _context.ChangeTracker.Clear();
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
-        try
-        {
-            var file = await SpaceFileReferenceLock.LoadAsync(
-                _context,
-                tenantId,
-                fileId,
-                includeDeleted: true,
-                cancellationToken);
-            if (file is null)
+        return await SpaceOwnedTransaction.ExecuteAsync(
+            _context,
+            IsolationLevel.Serializable,
+            async transaction =>
             {
-                await transaction.CommitAsync(cancellationToken);
-                return new SpaceFileTombstoneResult(
-                    SpaceFileTombstoneStatus.NotFound);
-            }
-
-            var candidate = new SpaceFileDeletionCandidate(
-                file.TenantId,
-                file.Id,
-                file.StorageKey);
-            if (file.IsDeleted || file.State == SpaceFileState.Deleted)
-            {
-                await transaction.CommitAsync(cancellationToken);
-                return new SpaceFileTombstoneResult(
-                    SpaceFileTombstoneStatus.AlreadyTombstoned,
-                    file.ContentDeletedAtUtc.HasValue ? null : candidate);
-            }
-            if (requireExpired &&
-                (!file.RetainUntilUtc.HasValue ||
-                 file.RetainUntilUtc > nowUtc))
-            {
-                await transaction.CommitAsync(cancellationToken);
-                return new SpaceFileTombstoneResult(
-                    SpaceFileTombstoneStatus.NotExpired);
-            }
-            if (file.State is
-                SpaceFileState.Uploading or
-                SpaceFileState.Scanning)
-            {
-                await transaction.CommitAsync(cancellationToken);
-                return new SpaceFileTombstoneResult(
-                    SpaceFileTombstoneStatus.NotExpired);
-            }
-
-            var hasSource = await _context.Sources
-                .IgnoreQueryFilters()
-                .AnyAsync(
-                    source =>
-                        source.TenantId == tenantId &&
-                        source.FileId == fileId &&
-                        !source.IsDeleted,
+                var file = await SpaceFileReferenceLock.LoadAsync(
+                    _context,
+                    tenantId,
+                    fileId,
+                    includeDeleted: true,
                     cancellationToken);
-            var hasArtifact = await _context.Artifacts
-                .IgnoreQueryFilters()
-                .AnyAsync(
-                    artifact =>
-                        artifact.TenantId == tenantId &&
-                        artifact.FileId == fileId &&
-                        !artifact.IsDeleted,
-                    cancellationToken);
-            var hasActiveScanJob = await _context.Jobs
-                .IgnoreQueryFilters()
-                .AnyAsync(
-                    job =>
-                        job.TenantId == tenantId &&
-                        job.JobType == SpaceJobType.FileScan &&
-                        job.SubjectType == SpaceJobSubjectType.File &&
-                        job.SubjectId == fileId &&
-                        (job.Status == SpaceJobStatus.Queued ||
-                         job.Status == SpaceJobStatus.Running) &&
-                        !job.IsDeleted,
-                    cancellationToken);
-            if (hasSource || hasArtifact || hasActiveScanJob)
-            {
+                if (file is null)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return new SpaceFileTombstoneResult(
+                        SpaceFileTombstoneStatus.NotFound);
+                }
+
+                var candidate = new SpaceFileDeletionCandidate(
+                    file.TenantId,
+                    file.Id,
+                    file.StorageKey);
+                if (file.IsDeleted || file.State == SpaceFileState.Deleted)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return new SpaceFileTombstoneResult(
+                        SpaceFileTombstoneStatus.AlreadyTombstoned,
+                        file.ContentDeletedAtUtc.HasValue ? null : candidate);
+                }
+                if (requireExpired &&
+                    (!file.RetainUntilUtc.HasValue ||
+                     file.RetainUntilUtc > nowUtc))
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return new SpaceFileTombstoneResult(
+                        SpaceFileTombstoneStatus.NotExpired);
+                }
+                if (file.State is
+                    SpaceFileState.Uploading or
+                    SpaceFileState.Scanning)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return new SpaceFileTombstoneResult(
+                        SpaceFileTombstoneStatus.NotExpired);
+                }
+
+                var hasSource = await _context.Sources
+                    .IgnoreQueryFilters()
+                    .AnyAsync(
+                        source =>
+                            source.TenantId == tenantId &&
+                            source.FileId == fileId &&
+                            !source.IsDeleted,
+                        cancellationToken);
+                var hasArtifact = await _context.Artifacts
+                    .IgnoreQueryFilters()
+                    .AnyAsync(
+                        artifact =>
+                            artifact.TenantId == tenantId &&
+                            artifact.FileId == fileId &&
+                            !artifact.IsDeleted,
+                        cancellationToken);
+                var hasActiveScanJob = await _context.Jobs
+                    .IgnoreQueryFilters()
+                    .AnyAsync(
+                        job =>
+                            job.TenantId == tenantId &&
+                            job.JobType == SpaceJobType.FileScan &&
+                            job.SubjectType == SpaceJobSubjectType.File &&
+                            job.SubjectId == fileId &&
+                            (job.Status == SpaceJobStatus.Queued ||
+                             job.Status == SpaceJobStatus.Running) &&
+                            !job.IsDeleted,
+                        cancellationToken);
+                if (hasSource || hasArtifact || hasActiveScanJob)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return new SpaceFileTombstoneResult(
+                        SpaceFileTombstoneStatus.Referenced);
+                }
+
+                file.RequestDeletion(0, nowUtc);
+                await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
                 return new SpaceFileTombstoneResult(
-                    SpaceFileTombstoneStatus.Referenced);
-            }
-
-            file.RequestDeletion(0, nowUtc);
-            await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-            return new SpaceFileTombstoneResult(
-                SpaceFileTombstoneStatus.Tombstoned,
-                candidate);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
+                    SpaceFileTombstoneStatus.Tombstoned,
+                    candidate);
+            },
+            cancellationToken);
     }
 
     public async Task MarkContentDeletedAsync(
@@ -461,39 +455,34 @@ public sealed class EfSpaceFileRetentionStore : ISpaceFileRetentionStore
     {
         ArgumentNullException.ThrowIfNull(candidate);
         EnsureTenantAndTime(candidate.TenantId, nowUtc);
-        _context.ChangeTracker.Clear();
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.ReadCommitted,
-                cancellationToken);
-        try
-        {
-            var file = await SpaceFileReferenceLock.LoadAsync(
-                           _context,
-                           candidate.TenantId,
-                           candidate.FileId,
-                           includeDeleted: true,
-                           cancellationToken)
-                       ?? throw new KeyNotFoundException(
-                           "The Space file tombstone was not found.");
-            if (!string.Equals(
-                    file.StorageKey,
-                    candidate.StorageKey,
-                    StringComparison.Ordinal))
+        _ = await SpaceOwnedTransaction.ExecuteAsync(
+            _context,
+            IsolationLevel.ReadCommitted,
+            async transaction =>
             {
-                throw new SpaceFileStateException(
-                    "The object key no longer matches the file tombstone.");
-            }
+                var file = await SpaceFileReferenceLock.LoadAsync(
+                               _context,
+                               candidate.TenantId,
+                               candidate.FileId,
+                               includeDeleted: true,
+                               cancellationToken)
+                           ?? throw new KeyNotFoundException(
+                               "The Space file tombstone was not found.");
+                if (!string.Equals(
+                        file.StorageKey,
+                        candidate.StorageKey,
+                        StringComparison.Ordinal))
+                {
+                    throw new SpaceFileStateException(
+                        "The object key no longer matches the file tombstone.");
+                }
 
-            file.MarkContentDeleted(nowUtc);
-            await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
+                file.MarkContentDeleted(nowUtc);
+                await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return true;
+            },
+            cancellationToken);
     }
 
     private void EnsureTenant(Guid tenantId)
@@ -522,8 +511,18 @@ internal static class SpaceFileReferenceLock
         bool includeDeleted,
         CancellationToken cancellationToken)
     {
-        var query = context.Files
-            .FromSqlInterpolated(
+        // The caller owns the transaction, including any whole-command recovery.
+        // FOR UPDATE protects an existing file; a missing file is returned without a write.
+        var query = context.Database.IsNpgsql()
+            ? context.Files.FromSqlInterpolated(
+                $"""
+                 SELECT *
+                 FROM "Space_File"
+                 WHERE "TenantId" = {tenantId}
+                   AND "Id" = {fileId}
+                 FOR UPDATE
+                 """)
+            : context.Files.FromSqlInterpolated(
                 $"""
                  SELECT *
                  FROM [Space_File] WITH (UPDLOCK, HOLDLOCK, ROWLOCK)

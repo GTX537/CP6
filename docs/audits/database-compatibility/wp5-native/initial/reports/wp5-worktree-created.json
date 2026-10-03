@@ -1,0 +1,9 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "CreatedUtc": "2026-10-03T12:38:12.7141598Z",
+  "Base": "c6c662f5b744b44a51427e26fb2faff96472fcc2",
+  "Branch": "codex/db-compat-wp5-20261003",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp5-20261003",
+  "RootMainPreserved": "605246ca",
+  "SourcePullRequest": 149
+}

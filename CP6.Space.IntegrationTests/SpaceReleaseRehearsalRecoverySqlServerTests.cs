@@ -11,7 +11,7 @@ namespace CP6.Space.IntegrationTests;
 public sealed class SpaceReleaseRehearsalRecoverySqlServerTests(
     ITestOutputHelper output)
 {
-    [SqlServerFact]
+    [LegacySqlServerFact]
     public async Task Checksum_backup_restore_preserves_published_and_wms_state()
     {
         var baseConnection = Environment.GetEnvironmentVariable(

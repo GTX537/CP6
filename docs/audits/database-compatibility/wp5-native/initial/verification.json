@@ -1,0 +1,1330 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "VerifiedUtc": "2026-10-03T14:41:34.2193531Z",
+  "ManifestSha256": "ADFF094972A8E4C1B8EC95FA81919DAEFEAFE237A6EA5B256E17C336EE0BB27A",
+  "OriginalFileCount": 219,
+  "Passed": 219,
+  "Failed": 0,
+  "OriginalSourceAndCopyBytesIdentical": true,
+  "ExistingOriginalsOverwritten": 0,
+  "ProcessLogBindingsChecked": 58,
+  "TrxCounterBindingsChecked": 58,
+  "HistoricalRunnerVersionsAllMatched": true,
+  "Scope": "Byte/hash/content check only. Test results retain their original execution labels and outcomes; no database/test/build execution occurs during archiving.",
+  "Files": [
+    {
+      "RelativePath": "reports/wp5-clone-sql-first-reference.json",
+      "Sha256": "EF9B4A04F87567B826A7D33EA4CB94EE76229C1DED350D790683CF32AA012E42",
+      "Bytes": 79783,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-sql-first-reference/process.log",
+      "Sha256": "543F191D1BA3730B203ABCF22CE986ADFF32314E54A6FFF77780E31FAD607FD7",
+      "Bytes": 434,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-sql-first-reference/results.trx",
+      "Sha256": "84C74191A75EC2E3F0D4C812426460A10048C77CFF272A9CBA7C24757E01A0D9",
+      "Bytes": 19128,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-pg-first-run.json",
+      "Sha256": "86D65F78FAA6B5AF34B37A3461616760CDFCA109484A4B38196FB819B4FC334B",
+      "Bytes": 79771,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-pg-first-run/process.log",
+      "Sha256": "12A03E451F076348B9AFBE697A29BFE96B3530CE6ED5E09690F9B49986635D04",
+      "Bytes": 2766,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-pg-first-run/results.trx",
+      "Sha256": "F0EC6A409C47EC9EB05579F8B5335718A6BC85CC8C71E57FBAB4B27F0584F668",
+      "Bytes": 10010,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-pg-business-first-run.json",
+      "Sha256": "50EF875CA4DB5755F910AD147F775DDAFC1381648D04A0849D27F1808D4E9117",
+      "Bytes": 79893,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-pg-business-first-run/process.log",
+      "Sha256": "776D56AD537BA811C79AD61177F5E67A833CE50123076346D42A059D252AD6A2",
+      "Bytes": 7728,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-pg-business-first-run/results.trx",
+      "Sha256": "CC67467C4F7CD0A9D4E0329008D52B94CC95ACFA7382B5EAE55C7F68BE1F84CB",
+      "Bytes": 40640,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-pg-fixture-followup.json",
+      "Sha256": "46EC0280F4F1B90938DD8C38D3C0EFEC783DCEE3901C7DD5BC31FC266F20A517",
+      "Bytes": 79935,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-pg-fixture-followup/process.log",
+      "Sha256": "CBC1F1F295E2B6E95CB449DC23B52533B51A771BAD18ECB1A1B585F4A95B8C2C",
+      "Bytes": 434,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-pg-fixture-followup/results.trx",
+      "Sha256": "EF28A6E016617C667CCA09F048763DB998B2CE5DAD57CB60346557F5DA7B5CD3",
+      "Bytes": 7091,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-sql-native-matrix.json",
+      "Sha256": "13DEF8B9104C45D7AF381FE3E75957EA7FB0AACF8E96BE9E4542B03120F4EC8E",
+      "Bytes": 79812,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-sql-native-matrix/process.log",
+      "Sha256": "3152E3EBA5C2FC9746975CE1BAB62EF76C7C157AE2295519E6092EA8E519AC66",
+      "Bytes": 437,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-sql-native-matrix/results.trx",
+      "Sha256": "6BB905104FFF65761CFBFD139CABDE506E6B49156E067379AF7F1890CC128909",
+      "Bytes": 124080,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-reports-sql-first-reference.json",
+      "Sha256": "0C52A6DCC480021CB8051E68CF185132F40D909F6EF372015A9344B6F09F0468",
+      "Bytes": 12648,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-sql-first-reference/process.log",
+      "Sha256": "B72635197512E4B6C790F1308B710EB2F27C58D2AFBC6166BC45A01927A714CA",
+      "Bytes": 388,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-sql-first-reference/results.trx",
+      "Sha256": "C214C23ABE539A82FC0B2CA421741B456E19EBAA42D9F7FD349C50A2DE308F07",
+      "Bytes": 7745,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-reports-pg-first-run.json",
+      "Sha256": "4F7275A062D52EF0085157EC14F298457F6DF7329CDE2C557BCD2C1A1396887B",
+      "Bytes": 12636,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-pg-first-run/process.log",
+      "Sha256": "83EF4845DCDAF82C09EA03A071C7024C58020CCA3F625370037C5E9336677D97",
+      "Bytes": 10013,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-pg-first-run/results.trx",
+      "Sha256": "A4733A52C0FEAAE27CFD2755911D190B9F0ED8C618268A0BC8A66DDBABF8024A",
+      "Bytes": 28458,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-gdpr-sql-first-reference.json",
+      "Sha256": "5396B470BFA48A3C2F6F814AE7005DA59F5456C80DF3E7B0645F66F8001116E3",
+      "Bytes": 12560,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-sql-first-reference/process.log",
+      "Sha256": "866DD045BBCD84AFEA466EF6843CB915C52F79724B10B41873CB7E09E7B17A3B",
+      "Bytes": 382,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-sql-first-reference/results.trx",
+      "Sha256": "86722028E46AFB80BBB7F02048DB5FFA7C0274C3369B4516340E2B9ADBE0487A",
+      "Bytes": 3161,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-gdpr-pg-first-run.json",
+      "Sha256": "BF1C07BABC363E890FBD5A21920C091DF46133848BE85A6E8CFE118D63A1771F",
+      "Bytes": 12548,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-pg-first-run/process.log",
+      "Sha256": "69729EB1E730EBC024BF89BB4AA246C2A1F36CDCF5A0669C9A556874C969F24A",
+      "Bytes": 3604,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-pg-first-run/results.trx",
+      "Sha256": "084C232B08460BEDFBB0B902EEE09144A6693608B9153B2A1A88269E2BB2C69C",
+      "Bytes": 10138,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-reports-pg-provider.json",
+      "Sha256": "2A0EF77C51C1C799DD0ED6B68C4155335D8A166C9518670EA5FE530AF38F90C7",
+      "Bytes": 12951,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-pg-provider/process.log",
+      "Sha256": "6432B55DDA807E9F9438D95DEB842CD2E9289CA2BA404334C6725B6424ADD708",
+      "Bytes": 380,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-pg-provider/results.trx",
+      "Sha256": "1B52E34BD3EBEF90D5B2F387ED8DCB933F8CE4C5B77D5CF09425004A531602F2",
+      "Bytes": 7781,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-reports-sql-provider.json",
+      "Sha256": "E0C4C0C5E21E78E62A29A155F9C5CC6D63F57B10AEC5F30CF9B1C15B96137244",
+      "Bytes": 12952,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-sql-provider/process.log",
+      "Sha256": "C1394011E3993E568AFEC8B72C6C0BDC87A4BCEF98EA5ACF9A2FA1F7A25457CE",
+      "Bytes": 381,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-sql-provider/results.trx",
+      "Sha256": "BC36B9FC4AB007CF3AF9A6DDEA0561837694EA131AFFAA7FAD381E7760E409AE",
+      "Bytes": 7745,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-gdpr-pg-provider.json",
+      "Sha256": "C1AF57A68D928353CA1246F8F653AAA76F957750E38285FC029C1FE59DE760C1",
+      "Bytes": 12863,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-pg-provider/process.log",
+      "Sha256": "880E8B3AC647ED3FFE8C30A7E1A990B7EE6A886FEAC5CB650A4BB0F8118A0B45",
+      "Bytes": 374,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-pg-provider/results.trx",
+      "Sha256": "73206032B758DA4198D41C24F7BAC42CFCFB448C4A80621F550EAB048134AFD4",
+      "Bytes": 3170,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-gdpr-sql-provider.json",
+      "Sha256": "6FEC870F4234F027C9BB80CF0DC35E605D3605AFA686AFD33678E2D1E0E9AADE",
+      "Bytes": 12864,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-sql-provider/process.log",
+      "Sha256": "D286183D976AD7F633DD4B93390927F9E83506979B75220A9BD7465B23EBC896",
+      "Bytes": 375,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-sql-provider/results.trx",
+      "Sha256": "E2427AD70320205883853A4A256C418A4C3E92818A0C3EFFED98177505F91DDC",
+      "Bytes": 3161,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-core-space-sql-first-reference.json",
+      "Sha256": "1EAF58B5E8A308B038F558145E2EACE8419E297F9131D7FE8C6B2C5C89181BA1",
+      "Bytes": 12868,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-core-space-sql-first-reference/process.log",
+      "Sha256": "F9AEA11AB5FE78F57C052F7D592EB5C573B0E3451DBCBD16C1116A41FCB243BE",
+      "Bytes": 391,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-core-space-sql-first-reference/results.trx",
+      "Sha256": "6B7551775DAF7782888749E21E1CD629407695E61BB3F630AC3730F0E2E8BAF0",
+      "Bytes": 9166,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-core-space-pg-first-run.json",
+      "Sha256": "3B9FAF0C9B088172878CCA0668EA5763AC25D45E3C56FBC6DED8D4A1EFC0C4E0",
+      "Bytes": 12855,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-core-space-pg-first-run/process.log",
+      "Sha256": "92E07E23817BB0FEBDC8192A4004C99A6B0F9F953F6C776BB3A3CA3C8CF06180",
+      "Bytes": 384,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-core-space-pg-first-run/results.trx",
+      "Sha256": "CBC9E1E2FF9836C7E60B9B93DA3D880FCF34F351AE744FA3CBB1B4CE23FCBC4A",
+      "Bytes": 9211,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-capacity-file-sql-first-reference.json",
+      "Sha256": "2641CA4ED60714F0BA0FA4271FD8C2D57A06013287F0AA65FBEB86E8B4DEB840",
+      "Bytes": 79753,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-sql-first-reference/process.log",
+      "Sha256": "B3E8A316DF9B0CE60887D3352F95CC34DC75AA5157BD3A7904B5EB8701311E3A",
+      "Bytes": 442,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-sql-first-reference/results.trx",
+      "Sha256": "4298BD1AEC00D1F5814D9C1E947BD844A278D4C318748E09E48B5AF2CB23CA0C",
+      "Bytes": 115111,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-capacity-file-pg-first-run.json",
+      "Sha256": "5D7D988AE4D0CD06CB8D10526D31588258433EAFB14B4D1E63D19A2A3D5685DE",
+      "Bytes": 79740,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-pg-first-run/process.log",
+      "Sha256": "54F231946187728B5C4DB5F4B8CFA7A0ABBC31C04004AB49091DBD65065EB000",
+      "Bytes": 46288,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-pg-first-run/results.trx",
+      "Sha256": "6052D2315C267ACDF4102D0F8542CA959BF2053A575EE8CFB0BBAFBDEFC0C1E8",
+      "Bytes": 123064,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-capacity-file-pg-provider.json",
+      "Sha256": "24B85E3834D29C92EC8E226A923C39812D910B1602EA9ECBCD84E722A96DE33E",
+      "Bytes": 79738,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-pg-provider/process.log",
+      "Sha256": "B2C79E2B7692EBBCC9C8B89F934BEF695C37E96FD82B9411F0798899FA4A64B4",
+      "Bytes": 434,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-pg-provider/results.trx",
+      "Sha256": "9891920F174A25E80096A1A51F9394F7B8EA38D2C8622B2BC86A168FF370C34F",
+      "Bytes": 25666,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-capacity-file-sql-provider.json",
+      "Sha256": "9889732F6591C0E240331D815B4AD158691D114727572190BA4E37EDBB752408",
+      "Bytes": 79739,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-sql-provider/process.log",
+      "Sha256": "ED2DF09E0FF74592F81A9D65A7B27CFDBB6E5256A34619D40C39C12E1D0E3D95",
+      "Bytes": 435,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-capacity-file-sql-provider/results.trx",
+      "Sha256": "999B9759479178F8873430E0CA8B8C68673A3309FDE6DA3CB3D0EFD6548C3B99",
+      "Bytes": 115111,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-atomic-sql-first-reference.json",
+      "Sha256": "5676AAD221FB181FA142A195AEB408E98A398199A3064EC38D3209247CE5FA9F",
+      "Bytes": 79674,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-sql-first-reference/process.log",
+      "Sha256": "E3137914FA697CD0869663C41531DD368501E34EEC4AAC006A5D084A3BB13E21",
+      "Bytes": 438,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-sql-first-reference/results.trx",
+      "Sha256": "B99B37CA8BC563C1336C93D0E635BBD14769D3F89BCE0C22929C197D18C006EB",
+      "Bytes": 115111,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-atomic-pg-first-run.json",
+      "Sha256": "B16AA86CB4C4F1D15612D72F75ED3F6D6AA8C397BD41EDDFC3308CACE9531819",
+      "Bytes": 79661,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-pg-first-run/process.log",
+      "Sha256": "8846A38F4CBD0437E984A8E25FA0328CF03249D5DFE41851C1D57A919892A0B1",
+      "Bytes": 16973,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-pg-first-run/results.trx",
+      "Sha256": "E57B736BF624C0DE5D4D8C56FFC8807A7ECA06E5329973BA07578095D526F662",
+      "Bytes": 59605,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-reports-parity-sql-first-reference.json",
+      "Sha256": "C7AE5578ECB3BF1C733CF145DBDFE12F9481FDCC79B51D006103FAB624FB2632",
+      "Bytes": 13266,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-parity-sql-first-reference/process.log",
+      "Sha256": "99354E535CD9C0CC3684EAB0253BCAB68991264B20B2C6D5AA769DD7C6A85AB0",
+      "Bytes": 392,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-parity-sql-first-reference/results.trx",
+      "Sha256": "B90A9F0004F223427C82D7270547C1C9A19E73557C4CF6B0CE3BC1829D44284F",
+      "Bytes": 8424,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-reports-parity-pg-first-run.json",
+      "Sha256": "05DC6AA1968E9DF3BB01D30EE52030063BF6449EC4051A38F0516E22BC9B7286",
+      "Bytes": 13253,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-parity-pg-first-run/process.log",
+      "Sha256": "2D804B45E1848772D5EEAA51F2348DB78A423D3536AA667A4B219FDC70F64B00",
+      "Bytes": 385,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-reports-parity-pg-first-run/results.trx",
+      "Sha256": "FCED3E0DEE4744A55FE0649D6CB1B743441E89E4180CF2BD5EAD01B47C614C5B",
+      "Bytes": 8483,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-gdpr-rollback-sql-first-reference.json",
+      "Sha256": "4FAE13D91F5ACC956921D1E368E74DF001CAC7106BFE40D3214C0E2306D8133B",
+      "Bytes": 13323,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-rollback-sql-first-reference/process.log",
+      "Sha256": "988E0B7FFC2FA9DB644536858761DE604CCFAAB7B825E56CCDAD6D41ABA16E78",
+      "Bytes": 391,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-rollback-sql-first-reference/results.trx",
+      "Sha256": "0BA29AC606B0D931F1766A22FB56F5899B4E9918E94C55FA0266D9E8A7E5BBC8",
+      "Bytes": 3337,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-gdpr-rollback-pg-first-run.json",
+      "Sha256": "69D0E55A4F8CBF97228CAE1C86DFF0541EB58035F60CE79806F8B8C87F073F65",
+      "Bytes": 13310,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-rollback-pg-first-run/process.log",
+      "Sha256": "D69176DE9F8FF0F179A5E1431A8C7CC931B85C0CC9314B9149CBB89BB2136E3A",
+      "Bytes": 384,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-gdpr-rollback-pg-first-run/results.trx",
+      "Sha256": "F4B7548B2795C2A8C7D2BE39B87B2C27214A7BAE3F953E1BCCAB54196305B331",
+      "Bytes": 3349,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-atomic-pg-provider.json",
+      "Sha256": "40C9003DA6AAF2694BC06B5FCD88A24C898D7366DE431DBEDE7B9ECE63C85D1B",
+      "Bytes": 79659,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-pg-provider/process.log",
+      "Sha256": "72128BEBDDF99DFD782F210AE480FE7CBB37E856130A1A6473134EF5CDAB093F",
+      "Bytes": 430,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-pg-provider/results.trx",
+      "Sha256": "C2D1ADC0A681132F1B0BA7E759EB0E2E924D27EBEDC5004CE21D8AADC3E806D1",
+      "Bytes": 25028,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-atomic-sql-provider.json",
+      "Sha256": "5DC473D0AC1871838818EEB26974DCEE60B1FAFC8F451C693AFE1A6B5DB599A8",
+      "Bytes": 79660,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-sql-provider/process.log",
+      "Sha256": "983EADE76A9C9FDB0CDAB7E4071A156D929AB5FFC9BC62061ECAA46DA6C585C1",
+      "Bytes": 431,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-atomic-sql-provider/results.trx",
+      "Sha256": "240E16B1ECB9038141E1411BF41B70F50B93EDB4725BFDA54CC2EC27E03EF873",
+      "Bytes": 115111,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-jobs-generation-retention-sql-first-reference.json",
+      "Sha256": "80D88DD4B39136A65E08ADA0A10256D759CCB0C581BD01A261C664D78FE48C93",
+      "Bytes": 80283,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-jobs-generation-retention-sql-first-reference/process.log",
+      "Sha256": "7BBF57326677FA211C6A0B55E3C62802634E11B774B38543AE9B943B9AD0AC29",
+      "Bytes": 9290,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-jobs-generation-retention-sql-first-reference/results.trx",
+      "Sha256": "4422BB29FBC5531FE2F17E5C8E6AA05F29532341B98CEB3D49E98F4E3AA48681",
+      "Bytes": 160850,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-jobs-generation-retention-pg-first-run.json",
+      "Sha256": "30E41BCAD5FE74A3A2EF534D2769D1E602216A4047595A6FEBF8DF99E8640CC8",
+      "Bytes": 80270,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-jobs-generation-retention-pg-first-run/process.log",
+      "Sha256": "5D6DFEFA2E9731FDE8FEA044DD65980C2CD7816CA75F037AFABE4E0D6C870F6C",
+      "Bytes": 2444,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-jobs-generation-retention-pg-first-run/results.trx",
+      "Sha256": "E1F35EC9F80293DC11E9D9E620EA90B76DEB659A33109E614DC9A3DC1D7064AE",
+      "Bytes": 36416,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-design-publish-wms-sql-first-reference.json",
+      "Sha256": "1BBCBA3D5FC527D64A122C6881D78BD767CA9E62B5F2D1BD5276879EF25964CE",
+      "Bytes": 80228,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-wms-sql-first-reference/process.log",
+      "Sha256": "49F2ECD4F2F8E52DFF83E8120E2221C9DA25205DCA2BC5992DBE45A37B51CFA4",
+      "Bytes": 9943,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-wms-sql-first-reference/results.trx",
+      "Sha256": "D8F920E84D91A04BCDFED9A1B3E7092F8FEB7259EBC6BA71202AAB327FCA1D22",
+      "Bytes": 319667,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-design-publish-wms-pg-first-run.json",
+      "Sha256": "8AC675C65D757B1076C13B17CE7767FE2DEF48762B70E9B7C30ED40F21784987",
+      "Bytes": 80215,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-wms-pg-first-run/process.log",
+      "Sha256": "5D16EFE2244D5FFEF9122AEE7D35738729D4C3B0E8C876AD6D323C521CBDC5A6",
+      "Bytes": 22985,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-wms-pg-first-run/results.trx",
+      "Sha256": "0586FEF5526A7E928181B5AEF6691DBCC1656678E848A4F86ECF3A1EEB39483B",
+      "Bytes": 113712,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-design-publish-lease-pg-followup.json",
+      "Sha256": "C07A67C141DC07DC7E98AFAFBEB52C354347C588B24C895F85DFA7A48B6D460C",
+      "Bytes": 80017,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-lease-pg-followup/process.log",
+      "Sha256": "033C5D6E1C88BDD2E0C4B022894B1DB2DCA45F92F9F2F0CAAC48940F5F16E656",
+      "Bytes": 441,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-lease-pg-followup/results.trx",
+      "Sha256": "285FA6685FDE34C012981624BE76B93743939F2A7E396124FDBB712EF22E8DE7",
+      "Bytes": 16168,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-design-publish-lease-sql-followup.json",
+      "Sha256": "F69B6A24F195452F475FBDAD092C03C07BB1A40F75050221248202664662834F",
+      "Bytes": 80202,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-lease-sql-followup/process.log",
+      "Sha256": "4A5121A2F16A92D6BA76276637E6638206E15CAB8F7876FD6F289C977C17072E",
+      "Bytes": 442,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-design-publish-lease-sql-followup/results.trx",
+      "Sha256": "A729F45DF840ABF6E8B6E5F1FBC9C0699203BF424E90B3DE2DD83551803C838F",
+      "Bytes": 71552,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-base-space-job-sql-first-reference.json",
+      "Sha256": "2A4E08A23BAD9F4E835F90002CA389081410FE32AC5DE6312A48155B63545D31",
+      "Bytes": 79973,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-base-space-job-sql-first-reference/process.log",
+      "Sha256": "517C5AE0FCE84E775E406C9F8E3F5A3F0F7C4D34E9B2AC673FAE994B84DCE69E",
+      "Bytes": 443,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-base-space-job-sql-first-reference/results.trx",
+      "Sha256": "426A676ACA225AECDA024F1804EAC1A2DE93A7BC23A12777CE9BFFCC867F7A8A",
+      "Bytes": 123683,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-base-space-job-pg-first-run.json",
+      "Sha256": "F654160B2CF40801ED58AB0900B3C364E2BE7C819EEE59294F36C48F4B7A69FC",
+      "Bytes": 79961,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-base-space-job-pg-first-run/process.log",
+      "Sha256": "AA87390584F818A5F67D46A87384F611B59506D6AEFC3FA80C43089A9593B3D5",
+      "Bytes": 2981,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-base-space-job-pg-first-run/results.trx",
+      "Sha256": "C7D62AB855546E964965FA83FD4745F58756D67EAFFBDA8A8774A148D8808F2A",
+      "Bytes": 32496,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-restrict-file-pg-classifier.json",
+      "Sha256": "455AE7475B632CF896A029046D863DC69CADDC004006FED5C469C5A38C0DDA53",
+      "Bytes": 79816,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-restrict-file-pg-classifier/process.log",
+      "Sha256": "3F426F1027C7FA5964304CFD28FC7001D5DF574C5B2BC5B03DE70335D63A70EB",
+      "Bytes": 439,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-restrict-file-pg-classifier/results.trx",
+      "Sha256": "12D602821A42174EB2D2F3824AD30A2EE9F07D4C167AB697EAFB6BC8016FEFD9",
+      "Bytes": 3503,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-restrict-file-sql-classifier.json",
+      "Sha256": "E9BD88EB5D42DF8ABA19F1D72E11B4AA11A192DCBE2A531E6211F7168353CF55",
+      "Bytes": 79817,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-restrict-file-sql-classifier/process.log",
+      "Sha256": "FFCF3910B3873F4286BCA5ED862AA385D8B0FFCF1C7ADC084233B3357EA4EA3C",
+      "Bytes": 440,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-restrict-file-sql-classifier/results.trx",
+      "Sha256": "3243387AD75F5FAAEC45C80E085106CC3AE8307011BF452807B95C29D91C692B",
+      "Bytes": 10438,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-failure-classifier-unit.json",
+      "Sha256": "69C4B32AAD985A8985C692E049AD11C1A8DECD4DD061913ECB52AD97AC169A82",
+      "Bytes": 1604,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-failure-classifier-unit/process.log",
+      "Sha256": "A29CC0914E988E794A7267C5C4E0B9F9BA12AF056C4A46752E5D4F8065AC60A3",
+      "Bytes": 383,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-failure-classifier-unit/results.trx",
+      "Sha256": "94FFAD08839004424EDDA813E41F905561545CF715C5AC201A1C6D01A30E5C4F",
+      "Bytes": 64951,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-cad-assets-collaboration-sql-first-reference.json",
+      "Sha256": "D6616B9CD0E4C97A88E30CDD6D3E85ED47698A532879AAC6ED189146DAF5BEBF",
+      "Bytes": 80622,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-cad-assets-collaboration-sql-first-reference/process.log",
+      "Sha256": "9984CD8AB6E32CC4E376A9DBD0E19BBC113D24ECC0FC3D3BAA978EFB953005E7",
+      "Bytes": 453,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-cad-assets-collaboration-sql-first-reference/results.trx",
+      "Sha256": "0218D710A190C0841FD939024F2EF40D1172A356BA25D83E6FBCF33D89C7EE7B",
+      "Bytes": 150687,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-cad-assets-collaboration-pg-first-run.json",
+      "Sha256": "9B0708D14540D9C47BB43AC535FC4F5E757FCFDD44DDA5E184CC773D5E29BA55",
+      "Bytes": 80610,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-cad-assets-collaboration-pg-first-run/process.log",
+      "Sha256": "07E0277B22B02B5628B15DA1559537BA75BE3B032D4C75172E8F13F69DF70571",
+      "Bytes": 7326,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-cad-assets-collaboration-pg-first-run/results.trx",
+      "Sha256": "2D3C6A144529679CC20D120FEB1FCCE6890D5C924C59CD433C86B9923B436F31",
+      "Bytes": 48677,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-edges-sql-first-reference.json",
+      "Sha256": "D95C3CFF798D1B2854A35B0E9C9175BDD6647394351D81BAF1C6A5CE6DF47570",
+      "Bytes": 79990,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-edges-sql-first-reference/process.log",
+      "Sha256": "4E34DB6AD4A810C7787F460982D8AD5A78B374E13C893D9B255A3A4E6A1419CA",
+      "Bytes": 440,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-edges-sql-first-reference/results.trx",
+      "Sha256": "49817984D4357706A474D745D8969C2F3EB0AA0A4B564B76DE4CCE8E91AC7041",
+      "Bytes": 19333,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-edges-pg-first-run.json",
+      "Sha256": "9939EE7DBE312A6B76026C916C79933A9A089E79EF65FE533ACFF63CC0C7AD9B",
+      "Bytes": 79978,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-edges-pg-first-run/process.log",
+      "Sha256": "4B2E726624A2E83437B191BAD48A693A6A4C1093678ACAFF74B9E061B0BA5D14",
+      "Bytes": 7496,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-edges-pg-first-run/results.trx",
+      "Sha256": "E8F9AB66234B8526B1D1C61758D7895D9F3A1B4952B3ED03F6DFD326DAE77962",
+      "Bytes": 20671,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-cad-retry-pg-followup.json",
+      "Sha256": "5B49E99A09640932550D39FFCBD8F124D9BAF17EF3683CE3CBA6568578C96441",
+      "Bytes": 80450,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-cad-retry-pg-followup/process.log",
+      "Sha256": "92F1A53E13B85F5BE387230B2A77B79D1584CBC0BF49E92FA6832B280DB17E3A",
+      "Bytes": 436,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-cad-retry-pg-followup/results.trx",
+      "Sha256": "793435CD32762DA1B40E3817EE830E56F777491CF51EA6934F2F6C3FE1B49BB1",
+      "Bytes": 10806,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-clone-cad-retry-sql-followup.json",
+      "Sha256": "0F685B48ED366E8DB214CD173FA18853A5233928A5137EB311D3FD2996A1FCF8",
+      "Bytes": 80451,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-cad-retry-sql-followup/process.log",
+      "Sha256": "5D87B0B12FEE78D3F72F9B6DAD1309E48A4ACCAE2E06DA6A6D95A8CCE80405D5",
+      "Bytes": 437,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-clone-cad-retry-sql-followup/results.trx",
+      "Sha256": "DCBC3A2C62A5A53523CBC1449B5C1A4ED05FFE02662487CDC409D69EBD24426C",
+      "Bytes": 45384,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-space-only-idempotency-sql-first-reference.json",
+      "Sha256": "97DC545E9549C086687ADCF93AC20F4D1B3E817B4E1F7E2E0E52DB5F1CC202A4",
+      "Bytes": 87056,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-space-only-idempotency-sql-first-reference/process.log",
+      "Sha256": "0B6BEBC60AC70954106213833C8014A8FF17B9B45CFE202B8B45ACC08633425E",
+      "Bytes": 451,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-space-only-idempotency-sql-first-reference/results.trx",
+      "Sha256": "3BC3BF7CEFA7C08F152520B639380E3DEF56AE8E4F15518547A38451C026AA48",
+      "Bytes": 35000,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-asset-legacy-failure-sql-first-reference.json",
+      "Sha256": "A57852C580AAB8F405DF78AEF6B594216E93263C65F4ECBF5D13012728516EFD",
+      "Bytes": 86940,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-asset-legacy-failure-sql-first-reference/process.log",
+      "Sha256": "3D5BAA87690857C088CA2DFE3C640EACFFA95F754A8319097A5B49242EEAB728",
+      "Bytes": 449,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-asset-legacy-failure-sql-first-reference/results.trx",
+      "Sha256": "B229298CC0153DCEE6520C7C24B142A853A44AEA6B5A95E44D10D1080D2B59AB",
+      "Bytes": 18518,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-retention-script-sql-first-reference.json",
+      "Sha256": "CB161E933948164EEE00D39D519DE69C5369FB9BE1EE2CB50E569344C279ECDE",
+      "Bytes": 86922,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-retention-script-sql-first-reference/process.log",
+      "Sha256": "1C558FF8FE9B190E0B8219398DCF9E5AF142F58C7B5CE1F5581CD928BF5F18A0",
+      "Bytes": 448,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-retention-script-sql-first-reference/results.trx",
+      "Sha256": "4B241989C3348FB7497B9E416A5719043200B82ADE21566B7118B29B49EE6A6F",
+      "Bytes": 18535,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-publish-recovery-failure-sql-first-reference.json",
+      "Sha256": "24313D0E9549DEB18D923B17082F1212A54681738A7DC547E2682128C86189DF",
+      "Bytes": 86953,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-publish-recovery-failure-sql-first-reference/process.log",
+      "Sha256": "FB6A6C4E1A07AC37AC13A1A1E4D6BE9A500FCC606A3238C8517215A53410D8C1",
+      "Bytes": 453,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-publish-recovery-failure-sql-first-reference/results.trx",
+      "Sha256": "0D698CE55BF9C144E09B96179FF69A0DBFF916E1EC1FCC500F73872BE5048EC0",
+      "Bytes": 18605,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-publish-recovery-script-sql-first-reference.json",
+      "Sha256": "583C19CC2328F12310CDBF316B6F71FB84A27B177AF45AFF8F64BE4C95F8CD75",
+      "Bytes": 86948,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-publish-recovery-script-sql-first-reference/process.log",
+      "Sha256": "63AD04572260FF6827FE1DF346BA17C5AF7CFE35EAB7EED522E04FF8328D160A",
+      "Bytes": 452,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-publish-recovery-script-sql-first-reference/results.trx",
+      "Sha256": "326238DC63A2D5F67DF864DB83224BCF10B11F88B9DC587C1CBAADCDD194F599",
+      "Bytes": 18598,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-space-only-pg-first-run.json",
+      "Sha256": "393602A9867CF41B629D3171F4046743696A969D8815DBD4BF1AC6984FC1ED68",
+      "Bytes": 86889,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-space-only-pg-first-run/process.log",
+      "Sha256": "31B4A2FF24FE63ED15B70F23E894A0D8DDE85BA25037AF7A10E707111EBDFC7A",
+      "Bytes": 4950,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-space-only-pg-first-run/results.trx",
+      "Sha256": "31AD20DACD71ACD07CE125746739B60A8DAA4987DD68A1E5243A370EEC04E01B",
+      "Bytes": 13209,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-mapping-concurrency-sql-first-reference.json",
+      "Sha256": "39DA56FE4F39DCED3E6AC150F1B66D74BCCEA605681D1140972600AC423E8884",
+      "Bytes": 80336,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-concurrency-sql-first-reference/process.log",
+      "Sha256": "168C3A158FEE965562D10A610F6DE0B93F8F832BCB5E9A7648D13B48C4130F73",
+      "Bytes": 28813,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-concurrency-sql-first-reference/results.trx",
+      "Sha256": "6A1AC411189024AD084F930F5A13FD254D13059958B303304A73A35CDE38D432",
+      "Bytes": 64506,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-mapping-concurrency-pg-first-run.json",
+      "Sha256": "0F680B468372845E2B2FEBC2F1BD74995962861983133BE37597602C12E26A71",
+      "Bytes": 80323,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-concurrency-pg-first-run/process.log",
+      "Sha256": "CF40E3D4D8E244F884FAD9FDFDD8398707AAF5AC6635CA3EF750F1D49D900304",
+      "Bytes": 13402,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-concurrency-pg-first-run/results.trx",
+      "Sha256": "7C85B0022A8059FC2C1436FF25069810F689D11919C81FFD4D840AB8EBF57BDA",
+      "Bytes": 33330,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-mes-sql-boundary-reference.json",
+      "Sha256": "17C87A1B0B62E6CC040CCCC838C0236C90E7CAD121397F82A7D3242A53785674",
+      "Bytes": 362,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-mes-sql-boundary-reference/process.log",
+      "Sha256": "BAFF312EFBDCB4EAF4DA66BBFB219FD766100CF6CE325AAECA0E12E4355AD63D",
+      "Bytes": 61,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-mes-sql-boundary-reference-v2.json",
+      "Sha256": "E5ED01BA16E63B676933DC4AE37E7D322971A73FCD416B4122EE2D4C0552A6DB",
+      "Bytes": 2155,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-prerequisite-space-core-pg-first-run.json",
+      "Sha256": "DABAA77410A4E53D42FA45AE1CE98E16A1E7D21C062FB40EFD250ADC779576A5",
+      "Bytes": 87639,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-space-core-pg-first-run/process.log",
+      "Sha256": "2B191E5670846522C9B850F8E93017BE3FBAB7BA0DC338223FBA79F1ECE5E72F",
+      "Bytes": 446,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-space-core-pg-first-run/results.trx",
+      "Sha256": "1C721145D2299D0B3848FFEDF4228E4F936DDD89E2D2C389D5C4643FEEBFFE04",
+      "Bytes": 5250,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-prerequisite-core-space-pg-first-run.json",
+      "Sha256": "030C1E4897D9D33BAA304707E4A9DB40CD602334CA0320CC7AAE3F514CD2C017",
+      "Bytes": 87639,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-core-space-pg-first-run/process.log",
+      "Sha256": "E939A610F7217CD566AFC9E72DFA97AB2E6CA7F6671137DBE8DF9F5A645A6A27",
+      "Bytes": 446,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-core-space-pg-first-run/results.trx",
+      "Sha256": "D7986A09605E41136DE432CFB9004A86CB4072373B84E414F539E617A9B432D5",
+      "Bytes": 4287,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-prerequisite-space-script-pg-first-run.json",
+      "Sha256": "CE883FCC1DFE78C324EAB466C4F14B475E8AEA0BDD72E4A566441256DC29DFE5",
+      "Bytes": 87644,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-space-script-pg-first-run/process.log",
+      "Sha256": "B328DC091F37ADB72C74729250C535CBF7E1F5163F3C2A169CA6AABE21B5070F",
+      "Bytes": 447,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-space-script-pg-first-run/results.trx",
+      "Sha256": "D269C13F41EB5DABC1CAA162F1C2FFD71FA3510A6DAC7D5A8B72002A6B2E9897",
+      "Bytes": 4011,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-space-only-pg-prerequisite-followup.json",
+      "Sha256": "D53B3613169C43EED6C6C5AA5E5C00FB36EDB51072E2871E336BF14E0228B94D",
+      "Bytes": 87634,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-space-only-pg-prerequisite-followup/process.log",
+      "Sha256": "88127A68191B8F0F829FE2DD45C0C680F85565F7C889784D467B500BECCE6271",
+      "Bytes": 444,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-space-only-pg-prerequisite-followup/results.trx",
+      "Sha256": "049FB0F3F4388F72B10FD7CC6BD15B9EFE0EEEB9C1A1203AF242AA9F24CD0388",
+      "Bytes": 4029,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-prerequisite-sql-generation.json",
+      "Sha256": "3714AF7FE2BED0B0F249193238A4CFFE41C9FAD6C4FED80AB55A87E9D3662DDD",
+      "Bytes": 68335,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-sql-generation/process.log",
+      "Sha256": "FA9C05E77DADEA08B30B419B5A6E8383B0ECB5DA645D1229E246885FF87A4243",
+      "Bytes": 440,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-sql-generation/results.trx",
+      "Sha256": "73B8534D3C159166B84BC63004286907AC6471191C0B419852A1586B6422FF5E",
+      "Bytes": 13757,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-prerequisite-sql-generation-review-followup.json",
+      "Sha256": "EA15EB9F45D6D45F0D43261CF7E9DF8F8BDBDA95B92CDAA8990F16CA99661154",
+      "Bytes": 68367,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-sql-generation-review-followup/process.log",
+      "Sha256": "2A8F2263764A9B1F0EF964CE81A18C03400A014F950A89E181BCC983820D670A",
+      "Bytes": 456,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-prerequisite-sql-generation-review-followup/results.trx",
+      "Sha256": "C21B07D5C1B2EDB82BD022F545693CCF092D879B0B4D7F29021417CE84316792",
+      "Bytes": 13757,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-DbCompatWp5MigrationCase.before-prerequisite.ps1",
+      "Sha256": "D734B042094D9C171220906899F32F052AEA7E6538D27BB4F4A48465C87ABDAA",
+      "Bytes": 6011,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-DbCompatWp5MigrationCase.ps1",
+      "Sha256": "1DD39C214EF4F366BC499231E05B5FFA42CA5F715F41975F9903A14FFD7FCF67",
+      "Bytes": 6143,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-DbCompatWp5PrerequisiteCase.ps1",
+      "Sha256": "BC26E101572CD068B6C5FEF730F86D1C5BD6BF79BC5BFD49FACA0892C9D4097F",
+      "Bytes": 6086,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-DbCompatWp5ReportsCase.before-core-space.ps1",
+      "Sha256": "13E76BCE5D53B2F4F8F84AEB88A40EB01548A082401F0759B4E0F49A01E0B72C",
+      "Bytes": 5638,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-DbCompatWp5ReportsCase.ps1",
+      "Sha256": "8860864F1622BE00211595FDD128714E4E32FDCD81BEE82BCE0BD83DDCB8E80E",
+      "Bytes": 5796,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-DbCompatWp5SpaceCase.before-migration-env.ps1",
+      "Sha256": "5074ECC422D36FC46E5CADA2993D46F79A9CB50EDBF4DFE4C6982F1BD9292B4E",
+      "Bytes": 5543,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-DbCompatWp5SpaceCase.ps1",
+      "Sha256": "DD1D3B7B3064655D21F58A1BB9B3510BFEAE0D205F408E8702B18ED47AF54889",
+      "Bytes": 5669,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/New-DbCompatWp5Databases.ps1",
+      "Sha256": "AEC4D9940768F7D68BA775F2EEC9EFEF9A2C8657B9A25A225A7CAC91891D85FC",
+      "Bytes": 4227,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/New-DbCompatWp5MigrationDatabases.ps1",
+      "Sha256": "3E0055987A1AE045452154E54BD7FB3F89BD4A66EEB1A48CCDE10BB54C116B63",
+      "Bytes": 5192,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/New-DbCompatWp5PrerequisiteDatabases.ps1",
+      "Sha256": "9263AA33D100FF3955BDB2E4916E6D2E60FEC74B3434CA42B1DF0BFF16C841E0",
+      "Bytes": 3551,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/New-DbCompatWp5ReportsDatabases.ps1",
+      "Sha256": "9ECD10E30DC9B666EBBF573BA786714FF9D2EFB3D080BCA1280070EB60C9BD25",
+      "Bytes": 4245,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Probe-Wp5MesSqlBoundaries.first.ps1",
+      "Sha256": "475B71BE38B06A7C917B49897512E841CBB4890007FBDFB16DAAEC29AEE46E5D",
+      "Bytes": 4551,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Probe-Wp5MesSqlBoundaries.ps1",
+      "Sha256": "8C2CD08F8E1353290192D989157EE2B00D60C32574A3E9D30ED35E8652416F9D",
+      "Bytes": 4560,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-RequiredLocalTestCases.initial.ps1",
+      "Sha256": "B33BCB1AF27EDA92308E10E5CC8E9B46A5FB71DC455EE1798BEE5D5A459815F8",
+      "Bytes": 4281,
+      "Passed": true
+    },
+    {
+      "RelativePath": "scripts/Invoke-RequiredLocalTestCases.ps1",
+      "Sha256": "F2EBB252369E004976263FC58D9A647F64B49861821ABC8A2823D809EC8AC79B",
+      "Bytes": 4297,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-ai-design-jobs-provider-build-v2.log",
+      "Sha256": "F4BEEED183720D6AF9457960DF6BFB2EBC1AD50D9676C9DEBF2E38B93D92DCFC",
+      "Bytes": 1124,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-ai-design-jobs-provider-build.log",
+      "Sha256": "1D4B7B1E93D2C32979B0D69C8F3E1A4680C0342A17C56C685874E1F609B5F9B6",
+      "Bytes": 2175,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-capacity-file-ai-provider-build.log",
+      "Sha256": "25039E8CB8EF17D4DCD63EFE3110243DA2D794D2F024D9E01C484A34EE742F24",
+      "Bytes": 1124,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-clone-cad-collaboration-restrict-build-v2.log",
+      "Sha256": "1E2A9FE673055C1200242F3165D143CB2FA5387C59BA15306D6ADB33FF601F0D",
+      "Bytes": 1124,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-clone-cad-collaboration-restrict-build.log",
+      "Sha256": "20D9F4A983450A684B45DFDD9856AA9841D392885F6C42D8A919E4718C530D3D",
+      "Bytes": 2219,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-clone-capacity-file-tests-build.log",
+      "Sha256": "5FC139F9157AFC26BE17FC1BED7B9240F22187EE01B4C9C182F5B09900743B30",
+      "Bytes": 234,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-clone-fixture-followup-build.log",
+      "Sha256": "77E9D64D98885337D7C2813539E18A19CEF5FFD846F9DA54F63579025F24043B",
+      "Bytes": 234,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-clone-provider-infrastructure-build.log",
+      "Sha256": "2A2B74538461E505F8BC82B6CC96E3F08918ED40E1690E791334431817834CB2",
+      "Bytes": 228,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-lease-base-job-followup-build.log",
+      "Sha256": "D08AB71A13E138C6BAD86F9BB454D80211FD52BA482D3EEA69404D0A16FFFBEB",
+      "Bytes": 1124,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-migration-mapping-clone-build.log",
+      "Sha256": "A9123F18A474B172ABB3AE58F356265E70102A4772E8FC5E450497B19B1DC962",
+      "Bytes": 4578,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-prerequisite-build.log",
+      "Sha256": "3F6D26E1C52414361319F3A793039558BF109CEA1E320E1F007F36F5243AA5D8",
+      "Bytes": 6834,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-prerequisite-review-followup-build.log",
+      "Sha256": "A393B3FD760B9A18BCDFB037C112CAC82A8C5C4A83D74F2BD1ED8B5B7B928921",
+      "Bytes": 3688,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-reports-fixture-build.log",
+      "Sha256": "90E66472E50107DCB19FFAB92F2017C75EBE25B520136947A8D2B0B51E6F772C",
+      "Bytes": 1907,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-reports-parity-rollback-build.log",
+      "Sha256": "B695B2F44D0E613E3E8599EAE6E8104827DD48CC6A71AA326A2151B0C6AC942F",
+      "Bytes": 1907,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-reports-provider-core-space-build.log",
+      "Sha256": "3FDBF2DFED297EFD09BA3A87ADC93CDD7B587DAC5C6E1D6BB321D1D59D110EFD",
+      "Bytes": 1907,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-restrict-classifier-core-build.log",
+      "Sha256": "34C42D677B35FD159DDEE25E8D161B38611413C98EB3F1B561B78D7562FEB61C",
+      "Bytes": 1907,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-space-fixture-build.log",
+      "Sha256": "89C0AC9207C491341776F47942FAC70F469D0F048EB5272D06C1F655DF58C2E4",
+      "Bytes": 1124,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-reports-fixture-locked-restore.log",
+      "Sha256": "0197F3A1433E4A91E80952B87D574127C47867424ABD8282F851FDD51A288A9F",
+      "Bytes": 279,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-space-fixture-locked-restore.log",
+      "Sha256": "12BA1BECEE255EB8E5CEC79FF576BF495286399B9786E8398353419CBA6BC867",
+      "Bytes": 962,
+      "Passed": true
+    },
+    {
+      "RelativePath": "build/wp5-space-fixture-restore.log",
+      "Sha256": "CCB1A2F5C288B137797AF473AFC408F3546D62976BEFA28BBAC67D63ABE051F3",
+      "Bytes": 969,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-worktree-created.json",
+      "Sha256": "6AB060F6170F6E5839B5546815A6735E3C8A74DD1373DCC86CEB21DF1A796D43",
+      "Bytes": 316,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-databases-created.json",
+      "Sha256": "01E2F02307256D22A6EA7964EDA32559E7B926C8C6D1B9E9D0D2B558AA40FB56",
+      "Bytes": 226,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-reports-databases-created.json",
+      "Sha256": "72940B1F37A7100A5C4BDDE16176F83F3799E61BA6998A5DFB5892BE44DB7669",
+      "Bytes": 226,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-migration-databases-created.json",
+      "Sha256": "BA2114A05249B06B903D428E4505004555159051C4765370704E46B1749E08DB",
+      "Bytes": 1559,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-prerequisite-databases-created.json",
+      "Sha256": "6CAABEAE3E2491BD0361B845C075A76D48C0E24A46827E9E6A69BC5048383E82",
+      "Bytes": 965,
+      "Passed": true
+    },
+    {
+      "RelativePath": "reports/wp5-prerequisite-targeted-review.json",
+      "Sha256": "DF12F3806D0B8BE3F4F418AAE5007451D8EDD4E38BCC14C6F7AAD408A7976753",
+      "Bytes": 2253,
+      "Passed": true
+    },
+    {
+      "RelativePath": "runs/wp5-mes-sql-boundary-reference-v2/process.log",
+      "Sha256": "DAFBEB31EAC5345E40C6E388B3DCCEF42C64CB115E052AF80E63397D37B11658",
+      "Bytes": 4002,
+      "Passed": true
+    }
+  ]
+}

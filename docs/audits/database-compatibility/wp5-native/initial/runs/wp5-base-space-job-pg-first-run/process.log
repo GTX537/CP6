@@ -1,0 +1,29 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:05.66]     CP6.Space.IntegrationTests.SpaceSqlServerTests.Database_restricts_physical_delete_of_a_referenced_file [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceSqlServerTests.Database_restricts_physical_delete_of_a_referenced_file [19 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: ForeignKey
+Actual:   Unknown
+  Stack Trace:
+     at CP6.Space.IntegrationTests.SpaceSqlServerTests.AssertNativeConstraintAsync(SpaceContext context, Func`1 command, DatabaseFailureKind kind) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceSqlServerTests.cs:line 1015
+   at CP6.Space.IntegrationTests.SpaceSqlServerTests.<>c__DisplayClass12_0.<<Database_restricts_physical_delete_of_a_referenced_file>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceSqlServerTests.cs:line 523
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceSqlServerTests.<>c__DisplayClass19_0.<<WithDatabaseAsync>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceSqlServerTests.cs:line 948
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceSqlServerTests.WithDatabaseAsync(Func`3 action, Nullable`1 tenantId, Nullable`1 actorId) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceSqlServerTests.cs:line 963
+   at CP6.Space.IntegrationTests.SpaceSqlServerTests.WithDatabaseAsync(Func`3 action, Nullable`1 tenantId, Nullable`1 actorId) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceSqlServerTests.cs:line 964
+   at CP6.Space.IntegrationTests.SpaceSqlServerTests.WithDatabaseAsync(Func`2 action, Nullable`1 tenantId, Nullable`1 actorId) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceSqlServerTests.cs:line 947
+   at CP6.Space.IntegrationTests.SpaceSqlServerTests.Database_restricts_physical_delete_of_a_referenced_file() in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceSqlServerTests.cs:line 498
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=space-schema-business; SQLSTATE=23001; NativeCode=none; Kind=Unknown.
+
+
+Results File: D:\CP6\tmp\db-compat-wp5-tests\wp5-base-space-job-pg-first-run\results.trx
+
+Failed!  - Failed:     1, Passed:    13, Skipped:     0, Total:    14, Duration: 1 s - CP6.Space.IntegrationTests.dll (net8.0)

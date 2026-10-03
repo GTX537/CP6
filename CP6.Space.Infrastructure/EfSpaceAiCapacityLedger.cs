@@ -2,7 +2,6 @@ using System.Data;
 using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -197,20 +196,34 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
         }
         var tenantId = RequireTenant();
 
-        for (var retry = 0; retry < ConcurrencyRetries; retry++)
-        {
-            _context.ChangeTracker.Clear();
-            await using var transaction =
-                await _context.Database.BeginTransactionAsync(
-                    IsolationLevel.ReadCommitted,
-                    cancellationToken);
-            try
+        return await SpaceOwnedTransaction.ExecuteAsync<SpaceAiBudgetReservationLease?>(
+            _context,
+            IsolationLevel.ReadCommitted,
+            async transaction =>
             {
+                // Row locks alone cannot protect an empty period or a missing request key.
+                // ReadCommitted reads after the logical lock wait receive a fresh snapshot.
+                if (_context.Database.IsNpgsql() &&
+                    !await DatabaseResourceLocks.TryAcquireTransactionAsync(
+                        _context, $"space:ai-budget:{tenantId:D}", 15000, cancellationToken))
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return null;
+                }
                 var now = RequireUtcNow();
                 var day = DateOnly.FromDateTime(now);
                 var month = day.Year * 100 + day.Month;
-                var existing = await _context.AiBudgetReservations
-                    .FromSqlInterpolated(
+                var existingQuery = _context.Database.IsNpgsql()
+                    ? _context.AiBudgetReservations.FromSqlInterpolated(
+                        $"""
+                        SELECT *
+                        FROM "Space_AiBudgetReservation"
+                        WHERE "TenantId" = {tenantId}
+                          AND "ProviderRequestKey" = {key}
+                          AND "IsDeleted" = FALSE
+                        FOR UPDATE
+                        """)
+                    : _context.AiBudgetReservations.FromSqlInterpolated(
                         $"""
                         SELECT *
                         FROM [Space_AiBudgetReservation]
@@ -218,8 +231,8 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                         WHERE [TenantId] = {tenantId}
                           AND [ProviderRequestKey] = {key}
                           AND [IsDeleted] = CAST(0 AS bit)
-                        """)
-                    .SingleOrDefaultAsync(cancellationToken);
+                        """);
+                var existing = await existingQuery.SingleOrDefaultAsync(cancellationToken);
                 if (existing is not null)
                 {
                     RequireMatchingReservation(
@@ -234,8 +247,20 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
 
                 if (request.ReservedCostMinor > 0)
                 {
-                    var holdings = await _context.AiBudgetReservations
-                        .FromSqlInterpolated(
+                    var holdingsQuery = _context.Database.IsNpgsql()
+                        ? _context.AiBudgetReservations.FromSqlInterpolated(
+                            $"""
+                            SELECT *
+                            FROM "Space_AiBudgetReservation"
+                            WHERE "TenantId" = {tenantId}
+                              AND "Currency" = {limits.Currency}
+                              AND "IsDeleted" = FALSE
+                              AND (
+                                  "PeriodDay" = {day} OR
+                                  "PeriodMonth" = {month})
+                            FOR UPDATE
+                            """)
+                        : _context.AiBudgetReservations.FromSqlInterpolated(
                             $"""
                             SELECT *
                             FROM [Space_AiBudgetReservation]
@@ -246,8 +271,8 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                               AND (
                                   [PeriodDay] = {day} OR
                                   [PeriodMonth] = {month})
-                            """)
-                        .ToListAsync(cancellationToken);
+                            """);
+                    var holdings = await holdingsQuery.ToListAsync(cancellationToken);
                     foreach (var holding in holdings)
                         holding.ReleaseIfExpired(now);
 
@@ -265,6 +290,7 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                             limits.MonthlyBudgetMinor))
                     {
                         await transaction.RollbackAsync(cancellationToken);
+                        _context.ChangeTracker.Clear();
                         return null;
                     }
                 }
@@ -282,21 +308,9 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
                 return ToLease(reservation);
-            }
-            catch (DbUpdateException) when (
-                retry + 1 < ConcurrencyRetries)
-            {
-                await transaction.RollbackAsync(CancellationToken.None);
-            }
-            catch (SqlException exception) when (
-                exception.Number == 1205 &&
-                retry + 1 < ConcurrencyRetries)
-            {
-                await transaction.RollbackAsync(CancellationToken.None);
-            }
-        }
-
-        return null;
+            },
+            cancellationToken,
+            IsRetryableBudgetReservationFailure);
     }
 
     public async Task<SpaceAiBudgetReservationLease>
@@ -342,70 +356,81 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
                 nameof(report));
         }
         var tenantId = RequireTenant();
-        _context.ChangeTracker.Clear();
-        await using var transaction =
-            await _context.Database.BeginTransactionAsync(
-                IsolationLevel.ReadCommitted,
-                cancellationToken);
-        var reservation = await _context.AiBudgetReservations
-            .FromSqlInterpolated(
-                $"""
-                SELECT *
-                FROM [Space_AiBudgetReservation]
-                    WITH (UPDLOCK, HOLDLOCK, ROWLOCK)
-                WHERE [TenantId] = {tenantId}
-                  AND [Id] = {report.ReservationId}
-                  AND [IsDeleted] = CAST(0 AS bit)
-                """)
-            .SingleOrDefaultAsync(cancellationToken)
-            ?? throw new KeyNotFoundException(
-                "The AI budget reservation was not found.");
-        var existingUsage = await _context.AiUsageRecords
-            .SingleOrDefaultAsync(
-                usage =>
-                    usage.ProviderRequestIdHash ==
+        return await SpaceOwnedTransaction.ExecuteAsync(
+            _context,
+            IsolationLevel.ReadCommitted,
+            async transaction =>
+            {
+                var reservationQuery = _context.Database.IsNpgsql()
+                    ? _context.AiBudgetReservations.FromSqlInterpolated(
+                        $"""
+                        SELECT *
+                        FROM "Space_AiBudgetReservation"
+                        WHERE "TenantId" = {tenantId}
+                          AND "Id" = {report.ReservationId}
+                          AND "IsDeleted" = FALSE
+                        FOR UPDATE
+                        """)
+                    : _context.AiBudgetReservations.FromSqlInterpolated(
+                        $"""
+                        SELECT *
+                        FROM [Space_AiBudgetReservation]
+                            WITH (UPDLOCK, HOLDLOCK, ROWLOCK)
+                        WHERE [TenantId] = {tenantId}
+                          AND [Id] = {report.ReservationId}
+                          AND [IsDeleted] = CAST(0 AS bit)
+                        """);
+                var reservation = await reservationQuery.SingleOrDefaultAsync(cancellationToken)
+                    ?? throw new KeyNotFoundException(
+                        "The AI budget reservation was not found.");
+                var existingUsage = await _context.AiUsageRecords
+                    .SingleOrDefaultAsync(
+                        usage =>
+                            usage.ProviderRequestIdHash ==
+                            reservation.ProviderRequestKey,
+                        cancellationToken);
+                if (reservation.Status ==
+                    SpaceAiBudgetReservationStatus.Reconciled)
+                {
+                    RequireMatchingUsage(
+                        existingUsage,
+                        reservation,
+                        report);
+                    await transaction.CommitAsync(cancellationToken);
+                    return ToLease(reservation);
+                }
+
+                FenceRowVersion(
+                    reservation.RowVersion,
+                    report.ReservationRowVersion);
+                if (existingUsage is not null)
+                {
+                    throw new SpaceAiCapacityStateException(
+                        "Usage exists before its budget reservation is reconciled.");
+                }
+
+                reservation.Report(report.ActualCostMinor);
+                var usage = SpaceAiUsageRecord.Create(
+                    tenantId,
+                    reservation.RunId,
+                    report.ProviderCode,
+                    report.ProviderModel,
                     reservation.ProviderRequestKey,
-                cancellationToken);
-        if (reservation.Status ==
-            SpaceAiBudgetReservationStatus.Reconciled)
-        {
-            RequireMatchingUsage(
-                existingUsage,
-                reservation,
-                report);
-            await transaction.CommitAsync(cancellationToken);
-            return ToLease(reservation);
-        }
-
-        FenceRowVersion(
-            reservation.RowVersion,
-            report.ReservationRowVersion);
-        if (existingUsage is not null)
-        {
-            throw new SpaceAiCapacityStateException(
-                "Usage exists before its budget reservation is reconciled.");
-        }
-
-        reservation.Report(report.ActualCostMinor);
-        var usage = SpaceAiUsageRecord.Create(
-            tenantId,
-            reservation.RunId,
-            report.ProviderCode,
-            report.ProviderModel,
-            reservation.ProviderRequestKey,
-            report.InputUnits,
-            report.OutputUnits,
-            reservation.ReservedCostMinor,
-            report.ActualCostMinor,
-            reservation.Currency,
-            report.LatencyMs,
-            report.Outcome,
-            report.RecordedAtUtc);
-        _context.AiUsageRecords.Add(usage);
-        reservation.Reconcile();
-        await _context.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-        return ToLease(reservation);
+                    report.InputUnits,
+                    report.OutputUnits,
+                    reservation.ReservedCostMinor,
+                    report.ActualCostMinor,
+                    reservation.Currency,
+                    report.LatencyMs,
+                    report.Outcome,
+                    report.RecordedAtUtc);
+                _context.AiUsageRecords.Add(usage);
+                reservation.Reconcile();
+                await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return ToLease(reservation);
+            },
+            cancellationToken);
     }
 
     public async Task<int> ReleaseExpiredBudgetReservationsAsync(
@@ -413,28 +438,48 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
     {
         var tenantId = RequireTenant();
         var now = RequireUtcNow();
-        _context.ChangeTracker.Clear();
-        await using var transaction =
-            await _context.Database.BeginTransactionAsync(
-                IsolationLevel.ReadCommitted,
-                cancellationToken);
-        var expired = await _context.AiBudgetReservations
-            .FromSqlInterpolated(
-                $"""
-                SELECT *
-                FROM [Space_AiBudgetReservation]
-                    WITH (UPDLOCK, READPAST, ROWLOCK)
-                WHERE [TenantId] = {tenantId}
-                  AND [Status] = {SpaceAiBudgetReservationStatus.Reserved}
-                  AND [ExpiresAtUtc] <= {now}
-                  AND [IsDeleted] = CAST(0 AS bit)
-                """)
-            .ToListAsync(cancellationToken);
-        var released = expired.Count(item => item.ReleaseIfExpired(now));
-        if (released > 0)
-            await _context.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-        return released;
+        return await SpaceOwnedTransaction.ExecuteAsync(
+            _context,
+            IsolationLevel.ReadCommitted,
+            async transaction =>
+            {
+                var expiredQuery = _context.Database.IsNpgsql()
+                    ? _context.AiBudgetReservations.FromSqlInterpolated(
+                        $"""
+                        SELECT *
+                        FROM "Space_AiBudgetReservation"
+                        WHERE "TenantId" = {tenantId}
+                          AND "Status" = {SpaceAiBudgetReservationStatus.Reserved}
+                          AND "ExpiresAtUtc" <= {now}
+                          AND "IsDeleted" = FALSE
+                        FOR UPDATE SKIP LOCKED
+                        """)
+                    : _context.AiBudgetReservations.FromSqlInterpolated(
+                        $"""
+                        SELECT *
+                        FROM [Space_AiBudgetReservation]
+                            WITH (UPDLOCK, READPAST, ROWLOCK)
+                        WHERE [TenantId] = {tenantId}
+                          AND [Status] = {SpaceAiBudgetReservationStatus.Reserved}
+                          AND [ExpiresAtUtc] <= {now}
+                          AND [IsDeleted] = CAST(0 AS bit)
+                        """);
+                var expired = await expiredQuery.ToListAsync(cancellationToken);
+                var released = expired.Count(item => item.ReleaseIfExpired(now));
+                if (released > 0)
+                    await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return released;
+            },
+            cancellationToken);
+    }
+
+    private static bool IsRetryableBudgetReservationFailure(Exception exception)
+    {
+        var failure = DatabaseFailureClassifier.Classify(exception);
+        return failure.CanRetryTransaction ||
+            failure.Kind == DatabaseFailureKind.UniqueConstraint &&
+            failure.MatchesConstraint("UX_AiBudgetReservation_Tenant_Request");
     }
 
     private Task EnsureWorkSlotsAsync(
@@ -673,4 +718,53 @@ public sealed class EfSpaceAiCapacityLedger : ISpaceAiCapacityLedger
             reservation.Status,
             reservation.ExpiresAtUtc,
             reservation.RowVersion.ToArray());
+}
+
+/// <summary>Runs only a complete database command whose transaction this helper owns.</summary>
+internal static class SpaceOwnedTransaction
+{
+    private const int MaximumAttempts = 3;
+
+    public static async Task<T> ExecuteAsync<T>(
+        SpaceContext context,
+        IsolationLevel isolationLevel,
+        Func<IDbContextTransaction, Task<T>> operation,
+        CancellationToken cancellationToken,
+        Func<Exception, bool>? retryableFailure = null)
+    {
+        // Never clear tracked caller changes or dispose a transaction supplied by another operation.
+        if (context.Database.CurrentTransaction is not null)
+            throw new InvalidOperationException("This Space command requires its own transaction.");
+
+        for (var attempt = 0; ; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            context.ChangeTracker.Clear();
+            await using var transaction = await context.Database.BeginTransactionAsync(
+                isolationLevel, cancellationToken);
+            try
+            {
+                return await operation(transaction);
+            }
+            catch (Exception exception)
+            {
+                try
+                {
+                    // A native SQL deadlock victim may already have completed its transaction.
+                    if (transaction.GetDbTransaction().Connection is not null)
+                        await transaction.RollbackAsync(CancellationToken.None);
+                }
+                finally
+                {
+                    context.ChangeTracker.Clear();
+                }
+
+                var canRetry = retryableFailure?.Invoke(exception)
+                    ?? DatabaseFailureClassifier.Classify(exception).CanRetryTransaction;
+                if (attempt + 1 >= MaximumAttempts || !canRetry)
+                    throw;
+                // Disposal at the end of this iteration precedes every read in the next transaction.
+            }
+        }
+    }
 }

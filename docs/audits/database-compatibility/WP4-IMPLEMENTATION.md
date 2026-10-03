@@ -1,6 +1,6 @@
 # DB-COMPAT-01 WP4：身份与核心业务双库适配
 
-日期：2026-10-03。父任务[Issue #134](https://github.com/GTX537/CP6/issues/134)继续Open。工作包依据[已接受计划](../../superpowers/plans/2026-10-02-database-compatibility.md)，从已确认远端main `0b0ab74a04c4d840a2c0bb05e36395aff8b89d32` 建立分支 `codex/db-compat-wp4-20261003`，工作树 `D:\CP6\tmp\worktrees\db-compat-wp4-20261003`。后续保留草稿提交 `b10719b4`，以 `539e5a8b` 合入 BUG147 已验证远端 main `974e57c0650279565330a67c844355ba3e1b563d`。当前WP4本地专项、一次集中代码审查及原件归档已通过；远端交付尚待完成，WP5/6未验收。
+日期：2026-10-03。父任务[Issue #134](https://github.com/GTX537/CP6/issues/134)继续Open，WP4已勾选、WP5/6未勾选。工作包依据[已接受计划](../../superpowers/plans/2026-10-02-database-compatibility.md)，从已确认远端main `0b0ab74a04c4d840a2c0bb05e36395aff8b89d32` 建立分支 `codex/db-compat-wp4-20261003`，工作树 `D:\CP6\tmp\worktrees\db-compat-wp4-20261003`。后续保留草稿提交 `b10719b4`，以 `539e5a8b` 合入 BUG147 已验证远端 main `974e57c0650279565330a67c844355ba3e1b563d`。WP4已由PR149交付，并完成合并后冒烟和六库清理；具体原件见末节。WP5/6未验收。
 
 WP3已由[PR #146](https://github.com/GTX537/CP6/pull/146)正常交付，候选`4ddc6c9d8d75f47711fce1c5e56fbb0ac8733e21`为远端main的ancestor，完整树`3755dbec61fd5f4579327302009a35dce65ff351`相同。合并后同一已验证API再次拒绝普通PG运行、非零退出、未观察到HTTP；[交付/冒烟原件](wp3-native/post-merge/manifest.json)保留七份原始记录，原WP3 manifest不改写。WP3真实门禁按原来源复用，不因SHA变化重跑。
 
@@ -23,7 +23,7 @@ WP3已由[PR #146](https://github.com/GTX537/CP6/pull/146)正常交付，候选`
 
 已新建两库独占`CP6Compat_WP4_20261003_032b2139`，有本任务owner标记；连接/凭据只在根`tmp/db-compat.wp4-owned.json`，不提交。测试通过显式Provider、测试连接与owner环境变量使用这些库，配置缺失/不可达/迁移失败直接失败，不Skip、不接入现有业务库。root统一安排串行.NET构建；同一数据库上的不同suite不并发执行。
 
-普通PG API/worker运行guard仍保留，WP4/5/6和父任务均未完成。未运行或取消Actions、修改工作流/保护、替换现有环境或部署生产。
+普通PG API/worker运行guard仍保留，WP5/6和父任务仍未完成。未运行或取消Actions、修改工作流/保护、替换现有环境或部署生产。
 
 ## 实际失败与首段通过记录
 
@@ -93,4 +93,12 @@ ERP原95的绿色不代表两个新增retry catch已被强制触发。新增PG�
 
 [七份收尾补充原件](wp4-native/final-local-checks/manifest.json)另存最终输入绑定、文档链接及暂存字节核对、归档回执和较早的OIDC历史库清理观察，manifest SHA256 `93AE3654E6A2D4FC8FA6C6F9DDFA74939BD91C80C3117B1A0BA26186A3F8F64D`，不改写211项原manifest。50个变化代码/锁文件全部在审查范围内，53个已审文件的最终字节相同；232份原件及3个manifest（含WP3/BUG147交付证据）已验证Git index与磁盘SHA一致，补充七份与其manifest也独立核对。
 
-本记录是本地验收候选，尚未冒称远端main包含该阶段。六个owner-marked临时库保留至正常合并后的必要冒烟，再按原receipt核对并正常删除；不使用wildcard、force或中断其它连接。提交、PR、最终工作流输入检查、远端包含性和清理回执在实际执行后单独保存，不能预先填通过。
+以上保留合并前各次本地验收的原始范围；实际交付和清理结果如下，不改写原211份及七份补充manifest。
+
+## 远端交付与清理
+
+[PR149](https://github.com/GTX537/CP6/pull/149)于2026-10-03 12:37:28 UTC合并到远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，包含候选 `cfe479124fb04d770462b874bc2a70508a8bf79e`；[交付前置核对](wp4-native/post-merge/wp4-post-merge-preflight.json)确认完整树均为 `60114519e08ddd33ee9be122a616d00ae5ce85c3`，53个已审源码字节与已验证程序集可复用。合并后使用该程序集执行原业务快照保存，SQL和PG分别[2/2](wp4-native/post-merge/wp4-post-merge-identity-sql-smoke.json)、[2/2](wp4-native/post-merge/wp4-post-merge-identity-pg-smoke.json)，均含实际迁移/owner setup、零skip；原完整矩阵按原来源复用。
+
+[六库清理](wp4-native/post-merge/wp4-cleanup-final-owned-six.json)完成全目标只读预检、逐库owner/物理身份/零连接复核及普通DROP，六个WP4临时库全部确认不存在；receipt字节、PG角色和环境保持。[交付闭环](wp4-native/post-merge/wp4-delivery-closure.json)记录Actions启动/取消均0、无工作流或保护变更，根工作区原改动保持。父Issue134的[实际更新与读回](wp4-native/post-merge/parent-progress/wp4-parent-progress-updated.json)确认WP4勾选、WP5/6未勾选且仍Open。
+
+[合并后manifest](wp4-native/post-merge/manifest.json)新增17份原件、59,607 bytes，SHA256 `425BAE58D7A6D21E900B1533A0A6346E34DBCDBF97753B476F1321806F813556`；[父任务更新manifest](wp4-native/post-merge/parent-progress/manifest.json)另保留三份操作记录、804 bytes，SHA256 `5E8055F8DB14A4ECC22AF81A47388D69B8FB2007068F9717E1AEB4C838334757`。全部副本逐字节hash/length匹配，未复制receipt或私有诊断。后续见[WP5入口记录](WP5-IMPLEMENTATION.md)；普通PG应用guard、完整应用/恢复与外部传输未验证范围继续由后续阶段承担。

@@ -1,6 +1,14 @@
 # AI 可读变更日志
 
-## 2026-10-03：WP4 本地双库验收与集中审查通过，待远端交付
+## 2026-10-03：WP4 已交付，WP5 原生业务适配中
+
+[PR149](https://github.com/GTX537/CP6/pull/149)已正常合入远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，包含候选`cfe479124fb04d770462b874bc2a70508a8bf79e`且完整树相同。合并后原业务快照保存SQL/PG各2/2、零skip（含owner/迁移setup）；六个WP4自有临时库已普通DROP并确认不存在，receipt和PG角色保留。[交付/清理原件](../audits/database-compatibility/wp4-native/post-merge/manifest.json)新增17份，[父任务更新记录](../audits/database-compatibility/wp4-native/post-merge/parent-progress/manifest.json)另三份；原211与七份manifest及各次失败/复用范围保持。
+
+WP5从该主线在独立`codex/db-compat-wp5-20261003`工作树准备Space及报表/GDPR。Space、报表各自两库已创建并标记owner；已取得克隆SQL14/14及PG分批限定通过、报表4/GDPR1/Core Space5两库各自通过；容量/文件原13已两库各13通过，新增带数据报表4和清理故障回滚1也各自两库通过。AI应用原13两库各13通过；设计/发布35及任务/基础约束分批通过，CAD Retry与克隆新增同key并发的修复已定向两库各5/5，SQL独立及历史迁移6项通过；PG Space-only缺共享前置对象正在补齐，mapping同key并发的原SQL缺陷已拆为独立[BUG150](https://github.com/GTX537/CP6/issues/150)修复，详见[WP5实施记录](../audits/database-compatibility/WP5-IMPLEMENTATION.md)。[父Issue134](https://github.com/GTX537/CP6/issues/134)实际已勾选WP4，WP5/6未勾选且仍Open；普通PG应用guard保留。
+
+Actions启动/取消均0，无工作流/保护变更或生产部署。根工作区原改动保持，早期Pending/Open文字保留各历史时点，当前以本节和真实Issue读回为准。
+
+## 2026-10-03 历史快照：WP4 本地双库验收与集中审查通过，待远端交付
 
 [BUG147](https://github.com/GTX537/CP6/issues/147) 已经 [PR148](https://github.com/GTX537/CP6/pull/148) 正常合入远端 main `974e57c0650279565330a67c844355ba3e1b563d`，候选 `8f42a76b` 的包含性与完整树一致已核对；2026-10-03 10:48:57 UTC Closed。原118项本地结果按相同源码/程序集复用，合并后原业务保存另执行1/1、零跳过，独占库正常清理且只读核对零残留。[14份交付原件](../audits/2026-10-03-bug-147-snapshot-batch/native/post-merge/manifest.json)保留发布检查、首次HTTP408及正常重试、合并后冒烟与关闭记录，不改写原24份证据。
 

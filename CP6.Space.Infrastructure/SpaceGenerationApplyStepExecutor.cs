@@ -1605,6 +1605,17 @@ public sealed class SpaceGenerationApplyStepExecutor(
                 item => item.Id == runId,
                 CancellationToken.None);
         }
+        if (context.Database.IsNpgsql())
+        {
+            return await context.GenerationRuns.FromSqlInterpolated(
+                    $"""
+                    SELECT * FROM "Space_GenerationRun"
+                    WHERE "TenantId" = {execution.TenantId}
+                      AND "Id" = {runId} AND "IsDeleted" = FALSE
+                    FOR UPDATE
+                    """)
+                .SingleAsync(CancellationToken.None);
+        }
         return await context.GenerationRuns
             .FromSqlInterpolated(
                 $"SELECT * FROM [Space_GenerationRun] WITH (UPDLOCK, HOLDLOCK) WHERE [TenantId] = {execution.TenantId} AND [Id] = {runId} AND [IsDeleted] = CAST(0 AS bit)")
@@ -1619,6 +1630,17 @@ public sealed class SpaceGenerationApplyStepExecutor(
                 item => item.Id == versionId,
                 CancellationToken.None);
         }
+        if (context.Database.IsNpgsql())
+        {
+            return await context.Versions.FromSqlInterpolated(
+                    $"""
+                    SELECT * FROM "Space_ModelVersion"
+                    WHERE "TenantId" = {execution.TenantId}
+                      AND "Id" = {versionId} AND "IsDeleted" = FALSE
+                    FOR UPDATE
+                    """)
+                .SingleAsync(CancellationToken.None);
+        }
         return await context.Versions
             .FromSqlInterpolated(
                 $"SELECT * FROM [Space_ModelVersion] WITH (UPDLOCK, HOLDLOCK) WHERE [TenantId] = {execution.TenantId} AND [Id] = {versionId} AND [IsDeleted] = CAST(0 AS bit)")
@@ -1632,6 +1654,17 @@ public sealed class SpaceGenerationApplyStepExecutor(
             return await context.Models.SingleAsync(
                 item => item.Id == modelId,
                 CancellationToken.None);
+        }
+        if (context.Database.IsNpgsql())
+        {
+            return await context.Models.FromSqlInterpolated(
+                    $"""
+                    SELECT * FROM "Space_Model"
+                    WHERE "TenantId" = {execution.TenantId}
+                      AND "Id" = {modelId} AND "IsDeleted" = FALSE
+                    FOR UPDATE
+                    """)
+                .SingleAsync(CancellationToken.None);
         }
         return await context.Models
             .FromSqlInterpolated(

@@ -105,3 +105,5 @@ docs/audits/database-compatibility/wp3-native/** -text whitespace=cr-at-eol,-bla
 docs/audits/2026-10-03-bug-147-snapshot-batch/native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
 # WP4 original successes, failures, scripts, logs and TRX remain byte-exact.
 docs/audits/database-compatibility/wp4-native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+# WP5 original successes, failures, scripts, logs and TRX remain byte-exact.
+docs/audits/database-compatibility/wp5-native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

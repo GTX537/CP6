@@ -1,16 +1,21 @@
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceAssetLibrarySqlServerTests
+public sealed class SpaceAssetLibrarySqlServerTests(
+    SpaceRelationalFixture database,
+    ITestOutputHelper output)
 {
     private const string ContentHash =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -23,6 +28,8 @@ public sealed class SpaceAssetLibrarySqlServerTests
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>
         {
+            var libraryCategory = SpaceRelationalFixture.IsSelected ? $"Rack-{execution.TenantId:N}" : null;
+            var category = libraryCategory ?? "Rack";
             SpaceAssetVersion systemVersion;
             await using (var seed = CreateContext(
                              connectionString,
@@ -30,9 +37,9 @@ public sealed class SpaceAssetLibrarySqlServerTests
                              clock))
             {
                 var systemAsset = SpaceAsset.CreateSystem(
-                    "SYS-RACK",
+                    SpaceRelationalFixture.IsSelected ? $"SYS-RACK-{execution.TenantId:N}" : "SYS-RACK",
                     "System Rack",
-                    "Rack",
+                    category,
                     "Platform public",
                     execution.ActorId,
                     clock.UtcNow);
@@ -54,7 +61,7 @@ public sealed class SpaceAssetLibrarySqlServerTests
                     tenantContext,
                     execution,
                     clock);
-                var request = NewAssetRequest("TENANT-RACK");
+                var request = NewAssetRequest("TENANT-RACK", category);
                 var created = await service.CreateAssetAsync(
                     request,
                     "asset-key");
@@ -71,7 +78,7 @@ public sealed class SpaceAssetLibrarySqlServerTests
 
                 var assets = await service.GetAssetsAsync(
                     null,
-                    null,
+                    libraryCategory,
                     50,
                     null);
                 Assert.Equal(2, assets.Items.Count);
@@ -88,14 +95,14 @@ public sealed class SpaceAssetLibrarySqlServerTests
 
                 var firstPage = await service.GetAssetsAsync(
                     null,
-                    null,
+                    libraryCategory,
                     1,
                     null);
                 Assert.Single(firstPage.Items);
                 Assert.NotNull(firstPage.NextCursor);
                 var secondPage = await service.GetAssetsAsync(
                     null,
-                    null,
+                    libraryCategory,
                     1,
                     firstPage.NextCursor);
                 Assert.Single(secondPage.Items);
@@ -105,7 +112,7 @@ public sealed class SpaceAssetLibrarySqlServerTests
 
                 var systemOnly = await service.GetAssetsAsync(
                     "System",
-                    "Rack",
+                    category,
                     50,
                     null);
                 Assert.Single(systemOnly.Items);
@@ -158,7 +165,7 @@ public sealed class SpaceAssetLibrarySqlServerTests
                     otherExecution.TenantId,
                     "OTHER-RACK",
                     "Other Tenant Rack",
-                    "Rack",
+                    category,
                     null,
                     otherExecution.ActorId,
                     clock.UtcNow);
@@ -175,7 +182,7 @@ public sealed class SpaceAssetLibrarySqlServerTests
                     clock);
                 var visible = await otherService.GetAssetsAsync(
                     null,
-                    null,
+                    libraryCategory,
                     50,
                     null);
                 Assert.Equal(2, visible.Items.Count);
@@ -253,8 +260,16 @@ public sealed class SpaceAssetLibrarySqlServerTests
                 () => tenantVerify.SaveChangesAsync());
             tenantVerify.ChangeTracker.Clear();
 
-            await Assert.ThrowsAsync<SqlException>(
+            var error = await Assert.ThrowsAnyAsync<Exception>(
                 () => tenantVerify.Database.ExecuteSqlInterpolatedAsync(
+                    tenantVerify.Database.IsNpgsql() ?
+                    (FormattableString)$"""
+                    UPDATE "Space_ElementRevision"
+                    SET "ModelAssetScope" = {(short)SpaceAssetScope.Tenant},
+                        "ModelAssetOwnerTenantId" = {otherExecution.TenantId},
+                        "ModelAssetId" = {foreignVersion.Id}
+                    WHERE "TenantId" = {execution.TenantId} AND "Id" = {element.Id};
+                    """ :
                     $"""
                     UPDATE [Space_ElementRevision]
                     SET [ModelAssetScope] = {(short)SpaceAssetScope.Tenant},
@@ -262,15 +277,29 @@ public sealed class SpaceAssetLibrarySqlServerTests
                         [ModelAssetId] = {foreignVersion.Id}
                     WHERE [Id] = {element.Id};
                     """));
+            var failure = DatabaseFailureClassifier.Classify(error);
+            Assert.Equal(DatabaseFailureKind.CheckConstraint, failure.Kind);
+            Assert.True(failure.MatchesConstraint("CK_Space_ElementRevision_ModelAssetScope"));
+            if (tenantVerify.Database.IsNpgsql())
+            {
+                Assert.IsType<PostgresException>(error);
+                Assert.Equal("23514", failure.SqlState);
+            }
+            else
+            {
+                Assert.IsType<SqlException>(error);
+                Assert.Equal(547, failure.DatabaseErrorCode);
+            }
         });
     }
 
-    [SqlServerFact]
+    [SpaceMigrationFact]
     public async Task Migration_fails_closed_for_unverified_legacy_asset_ids()
     {
+        var selected = await SpaceMigrationTestDatabase.OpenIfSelectedAsync(output);
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
-        var connectionString = new SqlConnectionStringBuilder(baseConnection)
+        var connectionString = selected?.ConnectionString ?? new SqlConnectionStringBuilder(baseConnection)
         {
             InitialCatalog = $"CP6SpaceAssetUpgrade_{Guid.NewGuid():N}",
             TrustServerCertificate = true,
@@ -279,16 +308,16 @@ public sealed class SpaceAssetLibrarySqlServerTests
             Guid.NewGuid(),
             Guid.NewGuid());
         var clock = new TestClock();
-        await using var context = CreateContext(
-            connectionString,
-            execution,
-            clock);
+        await using var context = selected is null
+            ? CreateLegacySqlContext(connectionString, execution, clock)
+            : selected.CreateContext(execution, clock);
         try
         {
-            await context.Database
-                .GetService<IMigrator>()
-                .MigrateAsync(
-                    "20260731001924_SpaceE05S02RackLevelSpecification");
+            const string historicalStart = "20260731001924_SpaceE05S02RackLevelSpecification";
+            if (selected is null)
+                await context.Database.GetService<IMigrator>().MigrateAsync(historicalStart);
+            else
+                await selected.MigrateAsync(context, historicalStart);
 
             var modelId = Guid.NewGuid();
             var siteId = Guid.NewGuid();
@@ -373,6 +402,7 @@ public sealed class SpaceAssetLibrarySqlServerTests
             var error = await Assert.ThrowsAsync<SqlException>(
                 () => context.Database.MigrateAsync());
             Assert.Equal(51000, error.Number);
+            output.WriteLine($"LegacyAssetGuardNativeCode={error.Number}.");
             Assert.Contains(
                 "legacy ModelAssetId",
                 error.Message,
@@ -391,7 +421,10 @@ public sealed class SpaceAssetLibrarySqlServerTests
         }
         finally
         {
-            await context.Database.EnsureDeletedAsync();
+            if (selected is null)
+                await context.Database.EnsureDeletedAsync();
+            else
+                await selected.RecordStateAsync(context, "asset-fail-closed-final");
         }
     }
 
@@ -444,11 +477,11 @@ public sealed class SpaceAssetLibrarySqlServerTests
         return (model, published);
     }
 
-    private static CreateSpaceAssetRequest NewAssetRequest(string assetCode) =>
+    private static CreateSpaceAssetRequest NewAssetRequest(string assetCode, string category = "Rack") =>
         new(
             assetCode,
             "Tenant Rack",
-            "Rack",
+            category,
             "Glb",
             """{"type":"object","additionalProperties":false}""",
             new string('c', 64),
@@ -480,9 +513,17 @@ public sealed class SpaceAssetLibrarySqlServerTests
                 assetVersionId.ToString(),
                 StringComparison.Ordinal);
 
-    private static async Task WithDatabaseAsync(
+    private async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
     {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            database.WriteSetupEvidence(output);
+            await action(database.ConnectionString,
+                new TestExecutionContext(Guid.NewGuid(), Guid.NewGuid()), new TestClock());
+            return;
+        }
+
         var baseConnection = Environment.GetEnvironmentVariable(
             SqlServerFactAttribute.EnvVar)!;
         var connectionString = new SqlConnectionStringBuilder(baseConnection)
@@ -509,7 +550,23 @@ public sealed class SpaceAssetLibrarySqlServerTests
         }
     }
 
-    private static SpaceContext CreateContext(
+    private SpaceContext CreateContext(
+        string connectionString,
+        TestExecutionContext execution,
+        TestClock clock)
+    {
+        if (SpaceRelationalFixture.IsSelected)
+        {
+            Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
+                "Selected asset library contexts must use the fixture-owned connection.");
+            return database.CreateSpaceContext(execution, clock,
+                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "asset-library-business"));
+        }
+
+        return CreateLegacySqlContext(connectionString, execution, clock);
+    }
+
+    private static SpaceContext CreateLegacySqlContext(
         string connectionString,
         TestExecutionContext execution,
         TestClock clock)
