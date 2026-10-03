@@ -1,0 +1,195 @@
+{
+  "Task": "BUG-155",
+  "PullRequest": "https://github.com/GTX537/CP6/pull/156",
+  "RemoteMain": "2e1f90c629340944d95fadd7aee428f639304ed6",
+  "ArchivedUtc": "2026-10-03T18:24:05.8972562Z",
+  "Originals": [
+    {
+      "Path": "bug155-final-staging-proof.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-final-staging-proof.json",
+      "Sha256": "6F77198D85430D461C20D3979FEC64A624A0D0C7DDADA1C53A187363AFA07A51",
+      "Length": 28098
+    },
+    {
+      "Path": "bug155-before-push-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-before-push-workflow-input-inspection.json",
+      "Sha256": "93DAA8E082891F7612A2572F85D4C7E87BC4A545482A9429F33EC6D88675EB74",
+      "Length": 6756
+    },
+    {
+      "Path": "bug155-before-pr-create-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-before-pr-create-workflow-input-inspection.json",
+      "Sha256": "1E948FF987EA65420E1F23797EA0216DE23973D98740761F5C52EFAECEBEC55B",
+      "Length": 6756
+    },
+    {
+      "Path": "bug155-before-merge-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-before-merge-workflow-input-inspection.json",
+      "Sha256": "932C50CEFA02DB5178F6083869A68FFC1FAC1CB8123F9C00AC51AFB90A573A60",
+      "Length": 6756
+    },
+    {
+      "Path": "bug155-before-merge-final-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-before-merge-final-workflow-input-inspection.json",
+      "Sha256": "24035E71B39DE371ABEF76E690065CDC4998FCA97AC9910084165CBEC84B86F1",
+      "Length": 6756
+    },
+    {
+      "Path": "bug155-pr-premerge-readback.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pr-premerge-readback.json",
+      "Sha256": "DF0FA1CE2E437EC6A3B702B2C7428C1D6ADC332F1BA9ECA115E78817E517DB84",
+      "Length": 18430
+    },
+    {
+      "Path": "bug155-pr-files-paginated.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pr-files-paginated.json",
+      "Sha256": "2DB7FECAE450416D1BD1170193B136039254E6C56FC091FD9C83DFD41A89195C",
+      "Length": 27954
+    },
+    {
+      "Path": "bug155-pr-review-threads.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pr-review-threads.json",
+      "Sha256": "EE948D473F7A4956120EBD511C7A9E12FDEF87ED82ACD4B23DA2776B4527E379",
+      "Length": 103
+    },
+    {
+      "Path": "bug155-main-protection-observation.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-main-protection-observation.json",
+      "Sha256": "501F568B8E156061633D7D26DA61BF604008B2005CE4828566385967F032EE2E",
+      "Length": 879
+    },
+    {
+      "Path": "bug155-remote-main-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-remote-main-verification.json",
+      "Sha256": "ED16A59554C24A4DA95B2148544D1A265C30B78884541885A04D9CD93A6E097F",
+      "Length": 1013
+    },
+    {
+      "Path": "bug155-postmerge-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-postmerge-verification.json",
+      "Sha256": "FD9FAEA11C9E834280242BD2C9F5CB7C8BA8BB1BD87DD5B2BF4C1312AD944E29",
+      "Length": 1479
+    },
+    {
+      "Path": "bug155-cleanup-owned-two.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-cleanup-owned-two.json",
+      "Sha256": "1998C3C2D93C6F6D701966F5D8C3DBA167A98BFDF3E776CD924E88EFB57CA471",
+      "Length": 2032
+    },
+    {
+      "Path": "bug155-closure.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-closure.json",
+      "Sha256": "A38C694728D706E4280CF7380DCB13B3B5982CC54D9C1C3AB0A16D052EC33C23",
+      "Length": 689
+    },
+    {
+      "Path": "bug155-closure-comment.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-closure-comment.md",
+      "Sha256": "47B6EBCC14D8E4392DBCCE792140EC128695722AEF7F66274EE73F7E9FCA0B73",
+      "Length": 1854
+    },
+    {
+      "Path": "bug155-pr-body.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pr-body.md",
+      "Sha256": "F0000D87E23B87F6E218854E9362316C50ED92A850177BEAD4D093DE3C42CB5A",
+      "Length": 2057
+    },
+    {
+      "Path": "Remove-Bug155OwnedDatabases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Remove-Bug155OwnedDatabases.ps1",
+      "Sha256": "C5AF89CC328D44F10E5FE25D65F2009FED80203D4FFA4EE12F16069FAA1B8C83",
+      "Length": 16450
+    },
+    {
+      "Path": "Invoke-Bug155Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug155Tests.ps1",
+      "Sha256": "984014A9F4925A5FC30BA4608EC6FFF154D1418A0C8533DE26E41E3D802FFE6C",
+      "Length": 5990
+    },
+    {
+      "Path": "bug155-pg-postmerge-smoke/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pg-postmerge-smoke\\result.json",
+      "Sha256": "219579144BB2030322BBC046BA90AD8858B391775C757FB3D04EC9B545A91B7E",
+      "Length": 2274
+    },
+    {
+      "Path": "bug155-pg-postmerge-smoke/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pg-postmerge-smoke\\runtime-artifact-before.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "Length": 52985
+    },
+    {
+      "Path": "bug155-pg-postmerge-smoke/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pg-postmerge-smoke\\runtime-artifact-after.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "Length": 52985
+    },
+    {
+      "Path": "bug155-pg-postmerge-smoke/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pg-postmerge-smoke\\source-inputs.json",
+      "Sha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A",
+      "Length": 276078
+    },
+    {
+      "Path": "bug155-pg-postmerge-smoke/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pg-postmerge-smoke\\private\\trx\\results.trx",
+      "Sha256": "103D4FF9463295A3D1158930EF8376AF0117064825421AE06D4AF6943B1D6BB5",
+      "Length": 5539
+    },
+    {
+      "Path": "bug155-pg-postmerge-smoke/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pg-postmerge-smoke\\private\\test\\stdout.log",
+      "Sha256": "F92AF24445B1FC19B0BC96FB70930A843081E7382F8628C393E317DE60EF344A",
+      "Length": 430
+    },
+    {
+      "Path": "bug155-pg-postmerge-smoke/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-pg-postmerge-smoke\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug155-sql-postmerge-smoke/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-sql-postmerge-smoke\\result.json",
+      "Sha256": "1D893AC3225ABE75A7725A39420A431072C6D2E129B7858212DC4080334297C5",
+      "Length": 1970
+    },
+    {
+      "Path": "bug155-sql-postmerge-smoke/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-sql-postmerge-smoke\\runtime-artifact-before.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "Length": 52985
+    },
+    {
+      "Path": "bug155-sql-postmerge-smoke/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-sql-postmerge-smoke\\runtime-artifact-after.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F",
+      "Length": 52985
+    },
+    {
+      "Path": "bug155-sql-postmerge-smoke/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-sql-postmerge-smoke\\source-inputs.json",
+      "Sha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A",
+      "Length": 276078
+    },
+    {
+      "Path": "bug155-sql-postmerge-smoke/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-sql-postmerge-smoke\\private\\trx\\results.trx",
+      "Sha256": "53A9127A30E1E6103B14CC4623B4FB2241D4896292BFB767CF51A70CF532FCB1",
+      "Length": 19124
+    },
+    {
+      "Path": "bug155-sql-postmerge-smoke/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-sql-postmerge-smoke\\private\\test\\stdout.log",
+      "Sha256": "2347BC1E4B035AA6A63EEA6FFE118331409FCBAE10FF7751E2AF8EDADD26E846",
+      "Length": 431
+    },
+    {
+      "Path": "bug155-sql-postmerge-smoke/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug155-sql-postmerge-smoke\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    }
+  ],
+  "Scope": "Normal PR/main inclusion, complete 114-file paginated remote blob comparison, preserved initial 100-file CLI readback, same-input fresh two-provider post-merge 2/2 smoke, exact two-database ordinary cleanup and Issue closure. Original 105-file archive remains unchanged; no rerun of full 41-case groups, Actions or production acceptance is claimed."
+}

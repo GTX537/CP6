@@ -1,0 +1,686 @@
+[
+  {
+    "Path": ".gitattributes",
+    "Blob": "7b80390cda332985fd27cedbfbd57339d48c46ca",
+    "Status": "modified",
+    "PreviousPath": null
+  },
+  {
+    "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+    "Blob": "69e3a1558869bb6ca51ddcbabc7d33e85b620401",
+    "Status": "modified",
+    "PreviousPath": null
+  },
+  {
+    "Path": "CP6.Space.IntegrationTests/SpaceValidationSqlServerTests.cs",
+    "Blob": "1d6e85abc9bb915e2bf0e6093f24cf7669a85587",
+    "Status": "modified",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/README.md",
+    "Blob": "4a1cee582750b8dfc26a1619c11b7093ac5d79b3",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/build-result.json",
+    "Blob": "66223674f03859444bc90821e635222767426573",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/private/01-build/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/private/01-build/stdout.log",
+    "Blob": "d4f95afe71f91ebc0c63e1e31bc29eb4e91a763f",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/private/01-restore/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/private/01-restore/stdout.log",
+    "Blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/private/sdk-version/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/private/sdk-version/stdout.log",
+    "Blob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/build/project-01.json",
+    "Blob": "1504bce28da3726750786d5a8ceae3ea1977b519",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/private/test/stderr.log",
+    "Blob": "542713d5874ef34ae1348fbf2fc18ae6a28ee80f",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/private/test/stdout.log",
+    "Blob": "b1058debcb1e5d772b4d0fd392461f3c616e3df3",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/private/trx/results.trx",
+    "Blob": "18595f8a617d1f91cd8c2fe783788802b0e9d97a",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/result.json",
+    "Blob": "ff5622bbc8449dd39c1c10d6f7278925bc3100db",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/runtime-artifact-after.json",
+    "Blob": "f67d59948a06e7acf65177b5fa6f127c99fd5352",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/runtime-artifact-before.json",
+    "Blob": "f67d59948a06e7acf65177b5fa6f127c99fd5352",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red-v2/source-inputs.json",
+    "Blob": "971952f39559e101d6e53034dea34caec989732b",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/build-result.json",
+    "Blob": "5f293632c243dbcff55c2f4b7ce7900a771837e2",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/private/01-build/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/private/01-build/stdout.log",
+    "Blob": "27612c1bdc5bc4cf62756d493d23158f508e8ec2",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/private/01-restore/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/private/01-restore/stdout.log",
+    "Blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/private/sdk-version/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/private/sdk-version/stdout.log",
+    "Blob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/build/project-01.json",
+    "Blob": "b2d375c9a25a06f18b4bd5a89dd30e34d3983ac3",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/private/test/stderr.log",
+    "Blob": "7b71db58357783e0bad7d65fb7099c4a140d89cc",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/private/test/stdout.log",
+    "Blob": "480fe768f7022162f33fdcd25080fac796bf1a50",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/private/trx/results.trx",
+    "Blob": "7e390cf09aea917d76c225e3e270e5dfd6296f5a",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/result.json",
+    "Blob": "1b693d8e4c8f5b8e996f91bb49cfeacbe260bf7d",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/runtime-artifact-after.json",
+    "Blob": "3e603782292e1b828865aa98508f60b30b868546",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/runtime-artifact-before.json",
+    "Blob": "3e603782292e1b828865aa98508f60b30b868546",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-native-red/source-inputs.json",
+    "Blob": "c0ec94a0d03fbdb1cf1d2d938f0133baedbc0435",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/build/build-result.json",
+    "Blob": "c40fa457d7a145ff985863c8cf8c00be092a53b9",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/build/private/01-build/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/build/private/01-build/stdout.log",
+    "Blob": "95c3e8fe8cb358cf61ab898c918558159a56599c",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/build/private/01-restore/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/build/private/01-restore/stdout.log",
+    "Blob": "897fa25a881195b782fcfb9ed00abab721efdf8b",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/build/private/sdk-version/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/build/private/sdk-version/stdout.log",
+    "Blob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-coordinated-red/source-inputs.json",
+    "Blob": "d844fe7226d9766af25e41ba8350899ca320181e",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/exact-case-set-audit.json",
+    "Blob": "15568924111b1b9929e7ce9c915662d1205dc65e",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/private/test/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/private/test/stdout.log",
+    "Blob": "a48b9bff60ac6633c9aa9542df9fed8b318e64f0",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/private/trx/results.trx",
+    "Blob": "085d352a5fd9dcdbcea8d876ce15e59ae38a6482",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/result.json",
+    "Blob": "33a7b1b08b9b4de49b34181f7eee08d0950a99bd",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/runtime-artifact-after.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/runtime-artifact-before.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-design-publish-green/source-inputs.json",
+    "Blob": "523a7cc0e1d9cb91daa904cfd74513d8ad5b9e74",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/build-result.json",
+    "Blob": "ed7b670d43268e837c58e8bcd83eebeb2fdaa213",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/private/01-build/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/private/01-build/stdout.log",
+    "Blob": "1f4b089de7c10cf75b4d8bbe891bc95fb9035293",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/private/01-restore/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/private/01-restore/stdout.log",
+    "Blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/private/sdk-version/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/private/sdk-version/stdout.log",
+    "Blob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/build/project-01.json",
+    "Blob": "90a74132d4feb33d8c48a7e8ac67ed683bd19755",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/private/test/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/private/test/stdout.log",
+    "Blob": "e7c82d34f1afe00993b23389d3bde93ca71b7fdc",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/private/trx/results.trx",
+    "Blob": "a6efdca9a5e7294a1ce9d7b168cb9786fc5d4aec",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/result.json",
+    "Blob": "76bac2941e70ab2633270b30c4922ee594793861",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/runtime-artifact-after.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/runtime-artifact-before.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green-v2/source-inputs.json",
+    "Blob": "523a7cc0e1d9cb91daa904cfd74513d8ad5b9e74",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/build/build-result.json",
+    "Blob": "988401bc033626823c0491f77fb7bde8dd4324ed",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/build/private/01-build/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/build/private/01-build/stdout.log",
+    "Blob": "5ea7f069e769e9746c224757addedbce21bfeb6c",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/build/private/01-restore/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/build/private/01-restore/stdout.log",
+    "Blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/build/private/sdk-version/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/build/private/sdk-version/stdout.log",
+    "Blob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-pg-validation-green/source-inputs.json",
+    "Blob": "1b916ad2169ac8b0d9caabfdd6c1ac9a58ad87b3",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/exact-case-set-audit.json",
+    "Blob": "8825874b00a77b9b4da85440639c4768a5de0a3f",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/private/test/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/private/test/stdout.log",
+    "Blob": "bf1f6eaeeaae909824c0bf7abb98221edadc8c6d",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/private/trx/results.trx",
+    "Blob": "e0953447599f24ade6150ab77695fddb01b567fd",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/result.json",
+    "Blob": "afa9ace9de9ad5b88da6ebe9f50a41ee1918ea5b",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/runtime-artifact-after.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/runtime-artifact-before.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-design-publish-green/source-inputs.json",
+    "Blob": "523a7cc0e1d9cb91daa904cfd74513d8ad5b9e74",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-validation-green/private/test/stderr.log",
+    "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-validation-green/private/test/stdout.log",
+    "Blob": "a7765e786afb22a5b80335b8b448b84bc81e7d42",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-validation-green/private/trx/results.trx",
+    "Blob": "af341232fcb55fb6b2a986aa49635457e9c3f6dc",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-validation-green/result.json",
+    "Blob": "dfdd50649ab41a353723f632653d1ce555968db1",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-validation-green/runtime-artifact-after.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-validation-green/runtime-artifact-before.json",
+    "Blob": "eca8b026b31eeafa52d75b915ab465680511fa54",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/bug155-sql-validation-green/source-inputs.json",
+    "Blob": "523a7cc0e1d9cb91daa904cfd74513d8ad5b9e74",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/Invoke-Bug155DesignPublish.ps1",
+    "Blob": "ece05840875b7652a8f4925cf05ffee09e4a7101",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/Invoke-Bug155Tests.ps1",
+    "Blob": "d2793fc46c4794446f572f1c5effb07fc9e26d25",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/New-Bug155Databases.ps1",
+    "Blob": "fdf558ada601b85d2451039b666eb8c89f9b890d",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/Test-Bug155LocalEvidence.ps1",
+    "Blob": "23f6f4759c7a577864f155b34f65fded59bf86ec",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/bug155-databases-created.json",
+    "Blob": "19aa9af8480a7b85365a29cc23bda0d8d039547b",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/bug155-exact-local-verification.json",
+    "Blob": "b061b4658a717b27cd21976e1955ff0e64178a22",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/bug155-review.md",
+    "Blob": "215d6f5c40b782df7da37ac0ef487149b395a802",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/bug155-task-start-workflow-input-inspection.json",
+    "Blob": "51ed5efbb803f119e5eae83d131b3a9b44d1a2fb",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/modules/DatabaseCompatibilityEntries.psm1",
+    "Blob": "4dea88c9d33b9fd74b8a400e17fbf6b85356b02f",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/modules/DatabaseCompatibilityLifecycle.psm1",
+    "Blob": "c835155233a031d2b596b3f2573bfdd5f885c081",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/modules/DatabaseCompatibilityProcess.psm1",
+    "Blob": "f2044d91f6c11a873a4854e4fc7cc317a1644be3",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/modules/DatabaseCompatibilityResults.psm1",
+    "Blob": "01036f646f59eabe83e617c1cc7030577a198679",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/execution/original-required-cases.json",
+    "Blob": "2a2bfe5cbca254874f6d9a94459f6122ed50133f",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/manifest.json",
+    "Blob": "a5ed89e5d49369a1d9fa314a03b5f9e7b653bdcb",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/entry-result.json",
+    "Blob": "eb4edc9c7e0eaa43fd632fdae60cfd29f3523ffd",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/private/process/stderr.log",
+    "Blob": "d36bdd6d826eb8eab7c5becdbd872d89b91544b9",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/private/process/stdout.log",
+    "Blob": "3628c54020231e3bead2af58873084fdc4c0d8a6",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/private/trx/results.trx",
+    "Blob": "94929de022c69251249228c5ec2fa75ae8cc85bf",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/runtime-artifact-after.json",
+    "Blob": "a4a96d859b074aea9abba75a87854358b3a287ca",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/runtime-artifact-before.json",
+    "Blob": "a4a96d859b074aea9abba75a87854358b3a287ca",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/source-inputs.json",
+    "Blob": "ce4f453acc108275d9cd83df342797b1e06d2703",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/original-wp6-failure/summary.json",
+    "Blob": "7b1b3860b9d9288940aa1284cd63231e5e8b10b0",
+    "Status": "added",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/project-memory/05-Completed.md",
+    "Blob": "9fed1b81e7fc26d29a01e770103b145dfac3da79",
+    "Status": "modified",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/project-memory/06-Todo.md",
+    "Blob": "9ea08cfd77f055ee7293cb14ebc964b324d08633",
+    "Status": "modified",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/project-memory/CHANGELOG-AI.md",
+    "Blob": "9a4984f25e82b81f9cafea0232f8036a01bcbc5b",
+    "Status": "modified",
+    "PreviousPath": null
+  },
+  {
+    "Path": "docs/project-memory/PROJECT_STATE.md",
+    "Blob": "a1920fe7cac8f315abbf65ed571541abc4ca288a",
+    "Status": "modified",
+    "PreviousPath": null
+  }
+]

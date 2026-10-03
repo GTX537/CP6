@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。WP1–WP5 已分别由 PR136/145/146/149/152 交付；WP5 合并后两库各 3/3 冒烟及 13 库清理见 [交付原件](../../audits/database-compatibility/wp5-native/post-merge/manifest.json)。BUG153 已由 PR154 交付并关闭，最新已确认主线为 `59e09f6e68a36734c64144abfcefc81b7c9c8d9d`，WP6 已接入。正式 Application 两库各 17 个入口及清理通过，包含真实 WebSocket、恢复后的 worker/重放和旧游标；最终 Matrix、归档及远端交付仍待完成，见 [WP6 实施记录](../../audits/database-compatibility/WP6-IMPLEMENTATION.md)。[Issue #134](https://github.com/GTX537/CP6/issues/134) 保持 Open，WP6 阶段交付未勾选。更新日期：2026-10-03；下文早期 Pending 保留各历史时点。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。WP1–WP5 已分别由 PR136/145/146/149/152 交付；WP5 合并后两库各 3/3 冒烟及 13 库清理见 [交付原件](../../audits/database-compatibility/wp5-native/post-merge/manifest.json)。BUG153/155 已由 PR154/156 交付并关闭，最新已确认主线为 `2e1f90c629340944d95fadd7aee428f639304ed6`，WP6 已接入。修复前正式 Application 两库各 17 个入口及清理通过，包含真实 WebSocket、恢复后的 worker/重放和旧游标；BUG155 改变生产依赖后，最终 Matrix 与新发布物 Application 采用新执行目录。新增六项回归已纳入必需清单，最终验收、归档及远端交付仍待完成，见 [WP6 实施记录](../../audits/database-compatibility/WP6-IMPLEMENTATION.md)。[Issue #134](https://github.com/GTX537/CP6/issues/134) 保持 Open，WP6 阶段交付未勾选。更新日期：2026-10-03；下文早期 Pending 保留各历史时点。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 

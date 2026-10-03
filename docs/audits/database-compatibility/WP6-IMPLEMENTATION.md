@@ -24,7 +24,8 @@
 | ERP 并发诊断 | 实际 PostgreSQL 40001 / SerializationFailure；独立 [BUG153](https://github.com/GTX537/CP6/issues/153) 修正测试投递流程，双库原 ERP 各 95/95；[PR154](https://github.com/GTX537/CP6/pull/154) 已合入主线 59e09f6e，两库原两项合并后各 2/2；两个自有库已清理且 Issue 已关闭，见 [交付原件](../2026-10-03-bug-153-erp-concurrency-retry/native/post-merge/manifest.json) |
 | 正式 PG 应用入口 | Application 分项 17 个入口全部通过，包含真实 SignalR 9 项、恢复后的待发通知/幂等重放、前后产物核验、源输入不变检查；两个正式临时库已普通清理并确认不存在。FullAcceptance=false，不代称完整矩阵 |
 | 正式 SQL 应用入口 | Application 分项 17 个入口全部通过，包含真实 SignalR、恢复后的待发通知/幂等重放及实际输入、产物核验；两个正式临时库已普通清理并确认不存在。与 PG 使用相同发布文件，FullAcceptance=false |
-| 最终业务矩阵 | PG 七个相关项目构建通过，25 个入口通过后在 Space 设计/发布组失败（35 项中 34P/1F），实际原生 40001；独立 [BUG155](https://github.com/GTX537/CP6/issues/155) 正在修复生产校验申请的完整事务恢复。SQL Matrix 待执行。原失败保持，不合称单次 Full |
+| 最终业务矩阵的首轮失败 | PG 七个相关项目构建通过，25 个入口通过后在 Space 设计/发布组失败（35 项中 34P/1F），实际原生 40001；独立 [BUG155](https://github.com/GTX537/CP6/issues/155) 已由 PR156 交付并关闭，两库原 35＋新六项各 41/41、合并后原并发/协调并发各 2/2 及两个自有库清理完成，见[交付原件](../2026-10-03-bug-155-space-validation-retry/native/post-merge/manifest.json)。原失败保持，不合称单次 Full |
+| 接入修复后的最终验收 | 接入最新主线 2e1f90c6，设计/发布必需清单由 35 扩展至 41，其他 61 个入口保持。生产依赖改变，最终两库 Matrix 与 Application 将使用新构建和目录；修复前两库 17/17 和旧运行物仅保留历史适用范围 |
 
 首次 PG 生命周期执行明确记录本机服务未启用 SSL；仅本次 loopback 测试显式采用 Disable，没有修改服务、全局连接或生产模板的 TLS 设置。SQL 初次原生命令参数失败也保留，修正参数后才完成实际运行。
 
