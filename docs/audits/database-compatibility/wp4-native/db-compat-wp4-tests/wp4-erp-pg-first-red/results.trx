@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1a03bda6-64c6-4ce6-a359-d93e8d50823d" name="tt@LAPTOP-3QQ44FJS 2026-10-03 06:58:51" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T06:58:51.8450320-04:00" queuing="2026-10-03T06:58:51.8450321-04:00" start="2026-10-03T06:58:46.3521578-04:00" finish="2026-10-03T06:58:51.8494619-04:00" />
+  <TestSettings name="default" id="8d706993-93da-43cc-931f-0657aee67023">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_06_58_51" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="47aa86c5-f784-4dc8-b106-f33f610bb3f3" testId="d0cb3ed0-10f9-8ee4-63cb-05ce593ab4c9" testName="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.7634175" startTime="2026-10-03T06:58:50.9620829-04:00" endTime="2026-10-03T06:58:51.7243865-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47aa86c5-f784-4dc8-b106-f33f610bb3f3">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Stage=real preregistration and ERP authority; failures here remain business prerequisite failures.&#xD;
+Stage=handler; prerequisite=real preregistration completed.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Item not found in collection&#xD;
+Collection: [Applied, Duplicate]&#xD;
+Not found:  RetryScheduled</Message>
+          <StackTrace>   at CP6.ErpIntegration.SqlTests.ErpScenario.ConsumeAsync(Cp6OutboxEnvelope envelope, ErpRequestHandler handler) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpScenario.cs:line 72&#xD;
+   at CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpHandlerRelationalTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="020c9a73-2208-40d7-a529-e58d3e6ed7a4" testId="33f2ca2e-b229-b7c2-9f16-55b0c5974c2f" testName="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0390309" startTime="2026-10-03T06:58:51.7345638-04:00" endTime="2026-10-03T06:58:51.7648652-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="020c9a73-2208-40d7-a529-e58d3e6ed7a4">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Stage=handler; prerequisite=actual tenant save and valid contract envelope, no preregistration.</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Item not found in collection&#xD;
+Collection: [Applied, Duplicate]&#xD;
+Not found:  RetryScheduled</Message>
+          <StackTrace>   at CP6.ErpIntegration.SqlTests.ErpScenario.ConsumeAsync(Cp6OutboxEnvelope envelope, ErpRequestHandler handler) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpScenario.cs:line 72&#xD;
+   at CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpHandlerRelationalTests.cs:line 24&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="33f2ca2e-b229-b7c2-9f16-55b0c5974c2f">
+      <Execution id="020c9a73-2208-40d7-a529-e58d3e6ed7a4" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests" name="Missing_partner_has_stable_terminal_result_without_business_mutation" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="d0cb3ed0-10f9-8ee4-63cb-05ce593ab4c9">
+      <Execution id="47aa86c5-f784-4dc8-b106-f33f610bb3f3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests" name="Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d0cb3ed0-10f9-8ee4-63cb-05ce593ab4c9" executionId="47aa86c5-f784-4dc8-b106-f33f610bb3f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="33f2ca2e-b229-b7c2-9f16-55b0c5974c2f" executionId="020c9a73-2208-40d7-a529-e58d3e6ed7a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.12]   Starting:    CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:04.97]       Assert.Contains() Failure: Item not found in collection&#xD;
+[xUnit.net 00:00:04.97]       Collection: [Applied, Duplicate]&#xD;
+[xUnit.net 00:00:04.97]       Not found:  RetryScheduled&#xD;
+[xUnit.net 00:00:04.97]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.97]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpScenario.cs(72,0): at CP6.ErpIntegration.SqlTests.ErpScenario.ConsumeAsync(Cp6OutboxEnvelope envelope, ErpRequestHandler handler)&#xD;
+[xUnit.net 00:00:04.97]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpHandlerRelationalTests.cs(43,0): at CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox()&#xD;
+[xUnit.net 00:00:04.97]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.97]       Output:&#xD;
+[xUnit.net 00:00:04.97]         Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+[xUnit.net 00:00:04.97]         Stage=real preregistration and ERP authority; failures here remain business prerequisite failures.&#xD;
+[xUnit.net 00:00:04.97]         Stage=handler; prerequisite=real preregistration completed.&#xD;
+[xUnit.net 00:00:05.01]       Assert.Contains() Failure: Item not found in collection&#xD;
+[xUnit.net 00:00:05.01]       Collection: [Applied, Duplicate]&#xD;
+[xUnit.net 00:00:05.01]       Not found:  RetryScheduled&#xD;
+[xUnit.net 00:00:05.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.01]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpScenario.cs(72,0): at CP6.ErpIntegration.SqlTests.ErpScenario.ConsumeAsync(Cp6OutboxEnvelope envelope, ErpRequestHandler handler)&#xD;
+[xUnit.net 00:00:05.01]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ErpHandlerRelationalTests.cs(24,0): at CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation()&#xD;
+[xUnit.net 00:00:05.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.01]       Output:&#xD;
+[xUnit.net 00:00:05.01]         Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+[xUnit.net 00:00:05.01]         Stage=handler; prerequisite=actual tenant save and valid contract envelope, no preregistration.&#xD;
+[xUnit.net 00:00:05.01]   Finished:    CP6.ErpIntegration.SqlTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T06:58:51.7262602-04:00">
+        <Text>[xUnit.net 00:00:04.97]     CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T06:58:51.7656387-04:00">
+        <Text>[xUnit.net 00:00:05.01]     CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

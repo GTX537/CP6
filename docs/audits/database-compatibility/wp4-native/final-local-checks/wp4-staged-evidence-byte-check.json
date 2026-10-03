@@ -1,0 +1,8 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "OriginalEvidenceFiles": 232,
+  "Manifests": 3,
+  "AllManifestDiskHashesMatched": true,
+  "AllGitIndexBytesMatched": true,
+  "Scope": "WP4 originals plus carried WP3 and BUG147 postmerge evidence; force-add limited to the exact hash-verified manifest files."
+}

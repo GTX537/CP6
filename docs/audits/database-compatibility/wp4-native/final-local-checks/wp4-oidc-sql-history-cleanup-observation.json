@@ -1,0 +1,19 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "ObservedUtc": "2026-10-03T11:01:28.7738571Z",
+  "Suite": "Original SQL historical OIDC migration two cases",
+  "CompletedReport": "wp4-oidc-sql-historical-migrations.json",
+  "RemainingNamespaceRows": [
+    {
+      "name": "CP6OidcTest_ab44d486b6c8409d841c5161096d8617",
+      "CreatedLocal": "2026-09-07T23:30:19.597"
+    },
+    {
+      "name": "CP6OidcTest_257e818adaa2401eb8188bd3ce5d8da3",
+      "CreatedLocal": "2026-09-09T15:16:24.067"
+    }
+  ],
+  "RemainingCreatedOnOrAfterTaskDate": 0,
+  "ExistingDatabasesUntouched": true,
+  "Scope": "Read-only post-run observation: two September databases predate this task and were not modified or deleted. Original per-case fixture disposed its generated databases; their generated names were not captured in the test output."
+}

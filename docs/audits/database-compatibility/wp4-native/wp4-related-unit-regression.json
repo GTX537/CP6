@@ -1,0 +1,58 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Suite": "RelatedUnit",
+  "Scope": "Existing identity/OIDC/refresh and purchase unit/SQLite regression; NOT native provider acceptance",
+  "StartedUtc": "2026-10-03T12:22:03.3586611Z",
+  "FinishedUtc": "2026-10-03T12:22:11.5978438Z",
+  "Selection": "FullyQualifiedName~CP6.Tests.CrmIdentity|FullyQualifiedName~CP6.Tests.Sys.RefreshToken|FullyQualifiedName~CP6.Tests.Sys.CrmOidc|FullyQualifiedName~CP6.Tests.Pur.PurchaseRequestApprovalP0Tests|FullyQualifiedName~CP6.Tests.Pur.PurchaseRequestServiceTests",
+  "ProcessExitCode": 0,
+  "Passed": true,
+  "Counts": {
+    "total": "198",
+    "executed": "198",
+    "passed": "198",
+    "failed": "0",
+    "notExecuted": "0"
+  },
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Core/Services/Pur/PurchaseRequestService.cs",
+      "Sha256": "F2A4EB622177BA764D44CA60FEED4D5D496438CA9E8583328853D986D3B9016D"
+    },
+    {
+      "Path": "CP6.Core/Services/Sys/RefreshTokenService.cs",
+      "Sha256": "DA6825167D4F01DDF7F5CE12041B4D08ABA5D08D09E363D12A61531CB017073F"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "Sha256": "E3C8AA0ECE3CB5EC473C30206DED2249CD71326BB73DAB433764910AFF6CC508"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+      "Sha256": "675F9F97016BBB82EFB5A9FE2B2AAC7DC06F8AF2560CEE5DFB4AB66B625AAB4F"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+      "Sha256": "3C3C0B09A4C3362BEC0A86E6802C3352E92D1496C5247A48AF0B5ED84A45DE70"
+    },
+    {
+      "Path": "CP6.WebApi/Services/CrmOidcGrantStore.cs",
+      "Sha256": "71645DDE1C963E590CEC27A3A6EABF20A506350EEF3D9C0B7BF182E9207D541A"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "34C52D7B49BD5D515FF2899207C0C34FDC40248DC6D1580403A0CC493608DC54"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "5AB46EAB498DD90521906970376DBB7FBEE7B0C125F1C2CBD7D84C483161AED8"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "4AE4089F0A7158A3E78076A39811E265C69EDE3BC02F01C2689AA94A75602D93"
+    }
+  ],
+  "RunnerSha256": "5DD48E14C0257401EA87208E51D12FEA51395C17614870EC83376B42B308CC39"
+}

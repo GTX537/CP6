@@ -1,0 +1,48 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Scope": "Supplemental final local checks and earlier OIDC historical cleanup observation; original 211-file manifest remains immutable. No remote delivery or postmerge cleanup is claimed.",
+  "Entries": [
+    {
+      "File": "wp4-oidc-sql-history-cleanup-observation.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp4-oidc-sql-history-cleanup-observation.json",
+      "Bytes": 830,
+      "Sha256": "F9AD4BD390D88C7F0236B0F4046888B9D5C54B672B6A50016E411AAD652E9D87"
+    },
+    {
+      "File": "wp4-final-doc-links.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp4-final-doc-links.log",
+      "Bytes": 67,
+      "Sha256": "582E885BA89FE45F3CDBDC78D6F0D52656D032E22778BCA6D0619E530AE1B24B"
+    },
+    {
+      "File": "wp4-staged-evidence-byte-check.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp4-staged-evidence-byte-check.json",
+      "Bytes": 303,
+      "Sha256": "06B7BD8F8D0CD531AD417B6C4C213A6DE3685B5C5BF77E07EA1EC9B8FAEC02BC"
+    },
+    {
+      "File": "wp4-archive-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp4-archive-result.json",
+      "Bytes": 354,
+      "Sha256": "B9DC866B9CC6AEEA1E99EB818EC152D0FA546A53F28E839F0FEA1EC06A6EEE56"
+    },
+    {
+      "File": "wp4-final-input-review.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp4-final-input-review.json",
+      "Bytes": 540,
+      "Sha256": "9A5F43E4C9ACDF72C5D6F6F136B951FBA24D2122BF59413C90BEBA8991AC7F53"
+    },
+    {
+      "File": "Check-Wp4FinalInputs.py",
+      "OriginalPath": "D:\\CP6\\tmp\\Check-Wp4FinalInputs.py",
+      "Bytes": 1911,
+      "Sha256": "24E0009DE1D8F10A65D085FB24C83112710AE770B9469FEB39873458C1FC1FE3"
+    },
+    {
+      "File": "Stage-Wp4Evidence.py",
+      "OriginalPath": "D:\\CP6\\tmp\\Stage-Wp4Evidence.py",
+      "Bytes": 1904,
+      "Sha256": "81C5A2E69FF2A89CCAD6E58B4B0CDC49F8611E045A976B50A420E005919F3CA7"
+    }
+  ]
+}

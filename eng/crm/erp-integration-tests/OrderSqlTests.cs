@@ -1,19 +1,21 @@
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.ErpIntegration;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DTOs.Erp;
 using CP6.Platform.EntityFramework;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.ErpIntegration.SqlTests;
 
 [Collection(SqlDatabaseCollection.Name)]
-public sealed class OrderSqlTests(SqlDatabaseFixture database)
+public sealed class OrderSqlTests(SqlDatabaseFixture database, ITestOutputHelper output)
 {
     private async Task<ErpScenario> ScenarioAsync()
     {
+        output.WriteLine(database.SetupSummary);
         var scenario = new ErpScenario(database);
         await scenario.InitializeAsync();
         return scenario;
@@ -309,7 +311,7 @@ public sealed class OrderSqlTests(SqlDatabaseFixture database)
         var third = await s.NewAcceptedQuotationAsync();
         var product = "";
         await using (var db = s.Db()) product = await db.ProductMasters.Where(x => x.QuotationNo == first.QuotationKey).Select(x => x.ProductCd).SingleAsync();
-        using var sqlFailures = new SqlFailureProbe();
+        using var sqlFailures = new SqlFailureProbe(database.Database.Provider, output);
         var envelopes = new[] { s.Envelope(first), s.Envelope(second), s.Envelope(third) };
         Task<Cp6InboxProcessingResult> Deliver(Cp6OutboxEnvelope envelope) =>
             s.Handler().ConsumeAsync(envelope.Payload, envelope.TopicName, envelope.PartitionKey);
@@ -319,7 +321,7 @@ public sealed class OrderSqlTests(SqlDatabaseFixture database)
         await Task.WhenAll(crmTasks.Cast<Task>().Concat(ordinaryTasks));
         var dispositions = await Task.WhenAll(crmTasks);
         if (dispositions.Any(x => x.Disposition == Cp6InboxDisposition.RetryScheduled))
-            Assert.Contains(1205, sqlFailures.Numbers); // Real SQL deadlock was the observed concurrency failure.
+            sqlFailures.AssertObservedTransactionConflict(); // Require a real native deadlock/serialization failure.
         for (var attempt = 0; attempt < 5 && dispositions.Any(x => x.Disposition == Cp6InboxDisposition.RetryScheduled); attempt++)
         {
             s.Clock.Advance(TimeSpan.FromSeconds(9)); // Greater than this fixture's bounded eight-second backoff.
@@ -329,7 +331,7 @@ public sealed class OrderSqlTests(SqlDatabaseFixture database)
         }
         Assert.All(dispositions, result => Assert.Contains(result.Disposition,
             new[] { Cp6InboxDisposition.Applied, Cp6InboxDisposition.Duplicate }));
-        Assert.All(sqlFailures.Numbers, number => Assert.Contains(number, new[] { 1205, 3903 }));
+        sqlFailures.AssertOnlyTransactionConflicts();
         await using var verify = s.Db();
         var orders = await verify.Orders.ToArrayAsync();
         Assert.Equal(6, orders.Length);
@@ -366,9 +368,15 @@ public sealed class OrderSqlTests(SqlDatabaseFixture database)
         var product = await db.ProductMasters.Select(x => x.ProductCd).SingleAsync();
         var ordinary = await OrdinaryOrderAsync(s, product);
         // Mutate a real ordinary order to collide; SQL, rather than a preflight service check, must reject it.
-        var error = await Assert.ThrowsAsync<SqlException>(() => db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE dbo.T_Order SET CrmOpportunityId={request.OpportunityId} WHERE TenantId={s.Tenant} AND WebOrderNo={ordinary}"));
-        Assert.Contains(error.Number, new[] { 2601, 2627 });
+        FormattableString collisionSql;
+        if (database.IsPostgreSql)
+            collisionSql = $"UPDATE public.\"T_Order\" SET \"CrmOpportunityId\"={request.OpportunityId} WHERE \"TenantId\"={s.Tenant} AND \"WebOrderNo\"={ordinary}";
+        else
+            collisionSql = $"UPDATE dbo.T_Order SET CrmOpportunityId={request.OpportunityId} WHERE TenantId={s.Tenant} AND WebOrderNo={ordinary}";
+        var error = await Record.ExceptionAsync(() => db.Database.ExecuteSqlInterpolatedAsync(collisionSql));
+        Assert.NotNull(error);
+        SqlFailureProbe.AssertConstraint(error, database.Database.Provider, DatabaseFailureKind.UniqueConstraint,
+            "IX_T_Order_TenantId_CrmOpportunityId", output);
         Assert.Equal(1, await db.Orders.CountAsync(x => x.CrmOpportunityId == request.OpportunityId));
         Assert.Null((await db.Orders.SingleAsync(x => x.WebOrderNo == ordinary)).CrmOpportunityId);
     }

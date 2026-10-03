@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="17574eb6-2c59-4d7a-a420-f6be61f3bd23" name="tt@LAPTOP-3QQ44FJS 2026-10-03 06:42:11" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T06:42:11.8183296-04:00" queuing="2026-10-03T06:42:11.8183299-04:00" start="2026-10-03T06:41:41.4070473-04:00" finish="2026-10-03T06:42:11.8218430-04:00" />
+  <TestSettings name="default" id="6c3ac80d-7591-432b-acb2-d2f0a889b9a9">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_06_42_11" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2405cb94-0305-437c-8855-5985787aebbc" testId="bdf1d3df-afe9-7a54-ac46-06b333cd8be7" testName="CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Real_business_save_emits_five_versioned_snapshots_and_five_valid_outbox_messages" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.0897870" startTime="2026-10-03T06:42:10.4901101-04:00" endTime="2026-10-03T06:42:11.5707957-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2405cb94-0305-437c-8855-5985787aebbc">
+      <Output>
+        <StdOut>BUG147 database=CP6Test_Bug147_6b56fcac48f84ac79a01788d01c796d5; applied=140; pending=0; database-collation=Chinese_PRC_CI_AS; Snapshot.AggregateId-collation=Latin1_General_100_BIN2; generation-trigger-enabled=true.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Real_business_save_emits_five_versioned_snapshots_and_five_valid_outbox_messages" storage="d:\cp6\tmp\worktrees\bug-147-snapshot-batch-collation\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bdf1d3df-afe9-7a54-ac46-06b333cd8be7">
+      <Execution id="2405cb94-0305-437c-8855-5985787aebbc" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-147-snapshot-batch-collation\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests" name="Real_business_save_emits_five_versioned_snapshots_and_five_valid_outbox_messages" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="bdf1d3df-afe9-7a54-ac46-06b333cd8be7" executionId="2405cb94-0305-437c-8855-5985787aebbc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.52]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.53]   Starting:    CP6.Tests&#xD;
+BUG147 database=CP6Test_Bug147_6b56fcac48f84ac79a01788d01c796d5; applied=140; pending=0; database-collation=Chinese_PRC_CI_AS; Snapshot.AggregateId-collation=Latin1_General_100_BIN2; generation-trigger-enabled=true.&#xD;
+BUG147 cleanup-completed database=CP6Test_Bug147_6b56fcac48f84ac79a01788d01c796d5; absent=true; force=false.&#xD;
+[xUnit.net 00:00:29.79]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

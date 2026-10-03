@@ -1,0 +1,21 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Oidc.IntegrationTests\bin\Debug\net8.0\CP6.Oidc.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:14.41]     CP6.Oidc.IntegrationTests.GrantStoreRelationalTests.Twenty_four_independent_connections_redeem_exactly_once [FAIL]
+  Failed CP6.Oidc.IntegrationTests.GrantStoreRelationalTests.Twenty_four_independent_connections_redeem_exactly_once [605 ms]
+  Error Message:
+   System.ArgumentException : Keyword not supported: 'host'.
+  Stack Trace:
+     at Microsoft.Data.Common.DbConnectionOptions.ParseInternal(Dictionary`2 parsetable, String connectionString, Boolean buildChain, Dictionary`2 synonyms, Boolean firstKey)
+   at Microsoft.Data.Common.DbConnectionOptions..ctor(String connectionString, Dictionary`2 synonyms)
+   at Microsoft.Data.SqlClient.SqlConnectionString..ctor(String connectionString)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnectionOptions(String connectionString, DbConnectionOptions previous)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.GetConnectionPoolGroup(DbConnectionPoolKey key, DbConnectionPoolGroupOptions poolOptions, DbConnectionOptions& userConnectionOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.ConnectionString_Set(DbConnectionPoolKey key)
+   at Microsoft.Data.SqlClient.SqlConnection.set_ConnectionString(String value)
+   at Microsoft.Data.SqlClient.SqlConnection..ctor(String connectionString)
+   at CP6.WebApi.Services.SqlCrmOidcGrantStore.SaveAsync(CrmOidcGrant grant) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\Services\CrmOidcGrantStore.cs:line 56
+   at CP6.Oidc.IntegrationTests.GrantStoreRelationalTests.Twenty_four_independent_connections_redeem_exactly_once() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Oidc.IntegrationTests\GrantStoreRelationalTests.cs:line 21
+--- End of stack trace from previous location ---
+Results File: D:\CP6\tmp\db-compat-wp4-tests\wp4-oidc-pg-first-red\results.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 609 ms - CP6.Oidc.IntegrationTests.dll (net8.0)

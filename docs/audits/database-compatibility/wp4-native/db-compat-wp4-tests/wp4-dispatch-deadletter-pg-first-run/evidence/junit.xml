@@ -1,0 +1,4 @@
+<testsuite name="c02-producer-PostgreSql" tests="2" failures="0" skipped="0">
+  <testcase name="current-provider-core-and-identity-priority-installed"></testcase>
+  <testcase name="actual-platform-outbox-ten-failures-persist-deadletter"></testcase>
+</testsuite>

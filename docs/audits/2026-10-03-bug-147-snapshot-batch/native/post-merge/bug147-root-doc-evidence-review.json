@@ -1,0 +1,46 @@
+{
+  "Task": "BUG147",
+  "ReviewKind": "Root portion of one concentrated task review: full remaining documentation, attributes and evidence diff",
+  "ObservedUtc": "2026-10-03T10:36:19.1076255Z",
+  "CodeReviewSha256": "82F03D62C19D3A47FABE64866CE3F10663A1381011D21E208CEBBFBC162D7E9C",
+  "DocumentationInputs": [
+    {
+      "Path": ".gitattributes",
+      "Sha256": "1815667E0352535A6FC599D5826FDB040F53C8034D51CCE78421D844D9754743"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-147-snapshot-batch/README.md",
+      "Sha256": "2673BD5175CC44072536ECD8B31FA7E25A55FA40604728A1287727538B3D881E"
+    },
+    {
+      "Path": "docs/project-memory/PROJECT_STATE.md",
+      "Sha256": "07FE550CE410C765DD9A330C90744B91B97E392F33BB7A1EFF80FD4821498837"
+    },
+    {
+      "Path": "docs/project-memory/05-Completed.md",
+      "Sha256": "864950D57273A29BCB4ACC36906EFE36DD4722850D586E37DB3A0547EE5D4244"
+    },
+    {
+      "Path": "docs/project-memory/06-Todo.md",
+      "Sha256": "3D79FC3D758E08367EB1C01A4609F4E300F4517120E056D8124D91CBD16216E9"
+    },
+    {
+      "Path": "docs/project-memory/CHANGELOG-AI.md",
+      "Sha256": "9B0798AC649AC9C4A99B20810826E1EDA00FDC824B09529DFE872EECC5732AF6"
+    }
+  ],
+  "EvidenceManifestSha256": "E716771664D25883838EDFFC753935BA9B173346E64ED73A85990828A425C36D",
+  "OriginalEvidenceCount": 24,
+  "StagedOriginalBytesVerified": true,
+  "StagedFileCount": 34,
+  "NoOutOfTaskSourceOrMachineConfiguration": true,
+  "DocumentationLinks": {
+    "LocalLinks": 349,
+    "Files": 5,
+    "Errors": 0
+  },
+  "BlockingFindings": [],
+  "SourceAndMigrationChanges": "Two SQL-only source files; no migration/model/dependency/workflow change",
+  "Unverified": "Complete WP4, PostgreSQL native business flows, production rollout",
+  "RootUnrelatedLockPreservedSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5"
+}

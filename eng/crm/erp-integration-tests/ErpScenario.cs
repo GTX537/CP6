@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.ErpIntegration.SqlTests;
 
-internal sealed class ErpScenario(SqlDatabaseFixture database)
+internal sealed class ErpScenario(IErpScenarioDatabase database)
 {
     public Guid Tenant { get; } = Guid.NewGuid();
     public Guid OtherTenant { get; } = Guid.NewGuid();

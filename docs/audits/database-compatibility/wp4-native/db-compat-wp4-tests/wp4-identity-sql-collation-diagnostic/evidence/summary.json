@@ -1,0 +1,26 @@
+{
+  "schemaId": "cp6.c02.producer-provider-verification.v1",
+  "conclusion": "failure",
+  "verificationKind": "selected production identity save pipeline on an owned current-provider database; not full producer/HTTP or cross-repository transport acceptance",
+  "provider": "SqlServer",
+  "assemblySha256": "b90eaa7f133d040d6c97d804a352ddd902300479ce46484b571bf22822677119",
+  "fixtureAssemblySha256": "b45797508c048898b3c858ef6b51a8f3f9d1074011ac692a265aa6329de62791",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "business-save-produces-valid-versioned-snapshots",
+  "expectedCases": 2,
+  "total": 2,
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "current-provider-core-and-identity-priority-installed",
+      "passed": true
+    },
+    {
+      "name": "business-save-produces-valid-versioned-snapshots",
+      "passed": false
+    }
+  ],
+  "observedAtUtc": "2026-10-03T10:07:49.8404815+00:00"
+}

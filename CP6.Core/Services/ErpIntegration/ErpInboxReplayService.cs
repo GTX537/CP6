@@ -24,8 +24,25 @@ public sealed class ErpInboxReplayService(IDbContextFactory<ErpIntegrationContex
             input.ReasonCode is not ("dependency-recovered" or "contract-verified") ||
             actor is not { Length: > 0 and <= 100 } || actor.Any(char.IsControl))
             throw Error("C03_REPLAY_INPUT_INVALID");
+
+        for (var attempt = 0; ; attempt++)
+        {
+            try { return await ScheduleOnceAsync(tenant, messageId, input, actor, ct); }
+            catch (Exception error) when (attempt < 2 && DatabaseFailureClassifier.Classify(error) is
+                { CanRetryTransaction: true, SqlState: "40001" or "40P01" })
+            {
+                ct.ThrowIfCancellationRequested();
+                // The failed owned transaction and both contexts are fully disposed before this fresh attempt.
+            }
+        }
+    }
+
+    private async Task<ErpReplayScheduled> ScheduleOnceAsync(Guid tenant, string messageId, ErpReplayRequest input,
+        string actor, CancellationToken ct)
+    {
         await using var db = await factory.CreateDbContextAsync(ct);
-        if (!db.Database.IsSqlServer()) throw new InvalidOperationException("C03_REQUIRES_REAL_SQL_SERVER");
+        if (!(db.Database.IsSqlServer() || db.Database.IsNpgsql()))
+            throw new InvalidOperationException("C03_REQUIRES_REAL_SQL_SERVER");
         await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         await using var business = await DatabaseSharedContext.CreateAsync<CP6Context>(db, DatabaseContextKind.Core,
             options => new(options, new TenantContext { CurrentTenantId = tenant }), ct);

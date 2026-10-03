@@ -1,0 +1,76 @@
+{
+  "schemaId": "cp6.c02.provider-dispatcher-failure-verification.v1",
+  "provider": "PostgreSql",
+  "scope": "actual-owner-race-and-expired-lease-takeover-fencing",
+  "completed": true,
+  "boundary": "actual signed Platform store/dispatcher, production factory options and native owned queues; recording/failing publisher only; no Dapr/Kafka/CRM delivery",
+  "clockScope": "TimeProvider injected through formal package constructors; logical time advance, no claim of OS waiting for retry or lease expiry",
+  "platformAssemblySha256": "a5e782142413f76266232234a0c1e6a6f1274f203fdd6195b7a337be1597d7ac",
+  "observations": [
+    {
+      "queue": "CP6Context",
+      "batchSize": 32,
+      "messageId": "44e999b4798a4f7197bfd3d86b193eaa",
+      "preUpdateActualTargetArrivals": 2,
+      "distinctPhysicalSessions": 2,
+      "nativeClaimUpdateCounts": [
+        5,
+        0
+      ],
+      "ownerActualClaimCounts": [
+        5,
+        0
+      ],
+      "actualTargetPublisherCalls": 1,
+      "attemptCount": 1,
+      "allActualDispatcherTasksJoined": true,
+      "payloadSha256": "28d590bb169fb8c1c8bdc6301ae2eb10fa207c2587c91d68f86b25d07cde1801"
+    },
+    {
+      "queue": "IdentityMessagingContext",
+      "batchSize": 16,
+      "messageId": "33f68defca4e40559c17589aab492f4e",
+      "preUpdateActualTargetArrivals": 2,
+      "distinctPhysicalSessions": 2,
+      "nativeClaimUpdateCounts": [
+        1,
+        0
+      ],
+      "ownerActualClaimCounts": [
+        0,
+        1
+      ],
+      "actualTargetPublisherCalls": 1,
+      "attemptCount": 1,
+      "allActualDispatcherTasksJoined": true,
+      "payloadSha256": "07d1aa1d54b2c7584e6a11592f5bdf4270e1e42f99d48ca530f8a65b228dd99b"
+    },
+    {
+      "queue": "CP6Context",
+      "batchSize": 32,
+      "messageId": "207de3ccef9947c5a9cb787a5929b8ba",
+      "oldActualLeaseExpiresAtUtc": "2026-10-03T12:16:29.288+00:00",
+      "injectedTakeoverUtc": "2026-10-03T12:16:29.289+00:00",
+      "oldPublishRejectedAfterActualTakeover": true,
+      "oldRetryRejectedAfterActualTakeover": true,
+      "rejectedOldOperationsLeftCurrentNativeTokenUnchanged": true,
+      "currentOwnerPublished": true,
+      "attemptCount": 2,
+      "payloadSha256": "17d9f8dad166e46f0c396679f305aac40650baeff2a644c3c4d77ca859484d86"
+    },
+    {
+      "queue": "IdentityMessagingContext",
+      "batchSize": 16,
+      "messageId": "92223ed787a54f3795fd236f0aa0368c",
+      "oldActualLeaseExpiresAtUtc": "2026-10-03T12:21:29.289+00:00",
+      "injectedTakeoverUtc": "2026-10-03T12:21:29.29+00:00",
+      "oldPublishRejectedAfterActualTakeover": true,
+      "oldRetryRejectedAfterActualTakeover": true,
+      "rejectedOldOperationsLeftCurrentNativeTokenUnchanged": true,
+      "currentOwnerPublished": true,
+      "attemptCount": 2,
+      "payloadSha256": "8e2a5c353ffa4ef6a3c913c1421efd207284c181ca94d519c7884ca3ff652822"
+    }
+  ],
+  "observedAtUtc": "2026-10-03T12:11:31.3514098+00:00"
+}

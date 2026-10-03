@@ -228,17 +228,22 @@ public class PurchaseRequestService : IPurchaseRequestService
             .FirstOrDefault(x => x.Entity.PrNo == prNo && !x.Entity.IsDeleted);
         if (tracked != null && tracked.State != EntityState.Unchanged) return tracked.Entity;
 
-        if (_db.Database.IsSqlServer())
+        if (_db.Database.IsSqlServer() || _db.Database.IsNpgsql())
         {
-            // The FlowEngine owns the ambient transaction. Hold an update lock
+            // The FlowEngine owns the ambient transaction. Hold a row lock
             // through its final SaveChanges/commit so a stale callback cannot
             // race a reject/resubmit transition.
-            var locked = await _db.PurchaseRequests
-                .FromSqlInterpolated($"""
+            var targets = _db.Database.IsNpgsql()
+                ? _db.PurchaseRequests.FromSqlInterpolated($"""
+                    SELECT * FROM "Pur_PurchaseRequest"
+                    WHERE "TenantId" = {_db.CurrentTenantId} AND "PrNo" = CAST({prNo} AS bpchar)
+                      AND NOT "IsDeleted" FOR UPDATE
+                    """)
+                : _db.PurchaseRequests.FromSqlInterpolated($"""
                     SELECT * FROM [Pur_PurchaseRequest] WITH (UPDLOCK, HOLDLOCK, ROWLOCK)
                     WHERE [PrNo] = {prNo} AND [IsDeleted] = CAST(0 AS bit)
-                    """)
-                .FirstOrDefaultAsync()
+                    """);
+            var locked = await targets.FirstOrDefaultAsync()
                 ?? throw new InvalidOperationException("E-PUR-056");
             if (tracked != null) await tracked.ReloadAsync();
             return tracked?.Entity ?? locked;

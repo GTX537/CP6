@@ -10,6 +10,8 @@ internal static class IdentityProviderCase
 {
     internal const string SetupCase = "current-provider-core-and-identity-priority-installed";
     internal const string FirstCase = "business-save-produces-valid-versioned-snapshots";
+    internal const string DispatcherCase = "actual-platform-dual-dispatchers-preserve-bytes-and-priority-progress";
+    internal const string HttpCase = "actual-http-tls-service-token-reader-and-native-issuance-failure";
 
     public static async Task<int> RunAsync(string[] args)
     {
@@ -19,15 +21,18 @@ internal static class IdentityProviderCase
             "PostgreSql" => DatabaseProvider.PostgreSql,
             _ => throw new ArgumentException("An explicit SqlServer or PostgreSql provider is required.")
         };
-        if (args[4] != FirstCase) throw new ArgumentException("This provider entry currently supports only the exact production snapshot/outbox case.");
-        var evidence = new Evidence(Path.GetFullPath(args[0]), Path.GetFullPath(args[1]), args[4], provider);
-        var fixture = new IdentitySqlFixture(new(provider));
+        var fixture = new IdentitySqlFixture(new(provider)) { DispatcherEvidenceDirectory = Path.GetFullPath(args[0]) };
+        var cases = Cases(fixture);
+        var all = args[4] == "all-provider";
+        if (!all && !cases.Any(item => item.Name == args[4]))
+            throw new ArgumentException("Select all-provider or an exact supported identity producer case.");
+        var evidence = new Evidence(Path.GetFullPath(args[0]), Path.GetFullPath(args[1]), args[4], provider,
+            expectedCaseCount: all ? cases.Length + 1 : 2);
         var exit = 0;
         try
         {
             await evidence.Case(SetupCase, fixture.InitializeCurrentProviderAsync);
-            // Preserve the existing 23-case fixture's actual assertions and production Save pipeline.
-            await evidence.Case(FirstCase, fixture.ValidSnapshotsAsync);
+            foreach (var item in cases) await evidence.Case(item.Name, item.Run);
             evidence.MarkComplete();
         }
         catch (Exception) { exit = 1; }
@@ -40,6 +45,38 @@ internal static class IdentityProviderCase
         }
         return exit;
     }
+
+    private static (string Name, Func<Task> Run)[] Cases(IdentitySqlFixture fixture) =>
+    [
+        (FirstCase, fixture.ValidSnapshotsAsync),
+        ("unchanged-authorization-does-not-advance-version", fixture.UnchangedAsync),
+        ("envelope-failure-rolls-back-business-version-and-outbox", fixture.EnvelopeRollbackAsync),
+        ("snapshot-failure-rolls-back-priority-enqueue", fixture.SnapshotRollbackAsync),
+        ("outbox-insert-failure-rolls-back-business-and-version", fixture.OutboxRollbackAsync),
+        ("concurrent-commands-commit-a-dense-version-sequence", fixture.ConcurrentVersionsAsync),
+        ("savechanges-false-preserves-caller-state-with-one-write", () => fixture.SaveFalseAsync(false)),
+        ("savechangesasync-false-preserves-caller-state-with-one-write", () => fixture.SaveFalseAsync(true)),
+        ("native-user-disable-revokes-actual-crm-grant-jti", fixture.NativeRevocationAsync),
+        ("direct-grant-revocation-is-atomic-and-idempotent", fixture.ProviderDirectRevocationAsync),
+        ("service-revocation-is-bound-to-issuer-client-and-tenant", fixture.ServiceRevocationAsync),
+        ("bootstrap-is-idempotent-and-pagination-restarts-on-change", fixture.BootstrapAndCursorAsync),
+        ("department-move-emits-updated-descendant-paths", fixture.DepartmentMoveAsync),
+        ("role-membership-and-empty-permissions-are-full-snapshots", fixture.RoleChangesAsync),
+        ("password-and-two-factor-changes-revoke-real-grants", fixture.CredentialRevocationAsync),
+        // The original method manually mutates EF refresh rows; actual RefreshTokenService is a separate suite.
+        ("refresh-rotation-preserves-grant-terminal-revoke-invalidates-family", fixture.RefreshFamilyAsync),
+        ("direct-family-revocation-is-atomic-across-both-sessions", fixture.ProviderDirectFamilyAsync),
+        ("tenant-disable-revokes-browser-and-service-tokens", fixture.TenantDisableAsync),
+        ("concurrent-bootstrap-and-business-write-preserve-latest-state", fixture.ProviderConcurrentBootstrapAsync),
+        ("failed-command-restores-caller-owned-transaction-savepoint", fixture.ProviderExternalTransactionRollbackAsync),
+        (DispatcherCase, fixture.ProviderIndependentDispatchersAsync),
+        (HttpCase, fixture.ProviderHttpAuthorizationAndIssuanceFailureAsync),
+        ("concurrent-service-revocations-commit-one-token-snapshot-and-priority-message", fixture.ProviderConcurrentServiceRevocationAsync),
+        ("service-revocation-priority-failure-rolls-back-record-snapshot-and-outbox", fixture.ProviderServiceRevocationRollbackAsync),
+        ("actual-platform-outbox-retry-recovers-original-bytes", fixture.ProviderDispatcherRetryRecoveryAsync),
+        ("actual-platform-outbox-owner-competition-and-expired-lease-fencing", fixture.ProviderDispatcherOwnersAndLeaseAsync),
+        ("actual-platform-outbox-ten-failures-persist-deadletter", fixture.ProviderDispatcherTenFailuresAsync)
+    ];
 }
 
 sealed partial class IdentitySqlFixture

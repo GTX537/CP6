@@ -1,0 +1,34 @@
+{
+  "schemaId": "cp6.c02.producer-provider-verification.v1",
+  "conclusion": "success",
+  "verificationKind": "selected production identity producer/component scenarios on an owned current-provider database; not whole-application or cross-repository transport acceptance",
+  "provider": "SqlServer",
+  "assemblySha256": "34c52d7b49bd5d515ff2899207c0c34fdc40248dc6d1580403a0cc493608dc54",
+  "fixtureAssemblySha256": "7320aa5bf3dd5530b3b4f40bc365b326e24b60e9b3c63685735050f16b673be2",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "actual-platform-outbox-ten-failures-persist-deadletter",
+  "expectedCases": 2,
+  "excludedScopes": [
+    "SQL historical upgrade",
+    "SQL MARS connection",
+    "GDPR purge",
+    "actual HTTP/TLS",
+    "actual RefreshTokenService rotation/reuse",
+    "cross-repository transport acceptance"
+  ],
+  "total": 2,
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "current-provider-core-and-identity-priority-installed",
+      "passed": true
+    },
+    {
+      "name": "actual-platform-outbox-ten-failures-persist-deadletter",
+      "passed": true
+    }
+  ],
+  "observedAtUtc": "2026-10-03T12:15:55.738769+00:00"
+}

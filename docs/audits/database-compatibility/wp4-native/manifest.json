@@ -1,0 +1,1487 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "ArchivedUtc": "2026-10-03T12:27:27.2768352Z",
+  "ArchiveRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp4-20261003\\docs\\audits\\database-compatibility\\wp4-native",
+  "FileCount": 211,
+  "TotalOriginalBytes": 1430940.0,
+  "Scope": "Byte-exact public local originals, including failures; no execution or acceptance is inferred from archiving.",
+  "Files": [
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Archive-DbCompatWp4Evidence.ps1",
+      "RelativePath": "Archive-DbCompatWp4Evidence.ps1",
+      "Sha256": "6585BECF1339BD4EBF30C8781DCEA64AFFF3080F45EDF4583613E8F8F5EF43A3",
+      "Length": 10141,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-core-business-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-core-business-pg-first-run/process.log",
+      "Sha256": "46E633072EF0975705882619E715628B86C8BB7FBF23AE2A52F53BC7BE95ED14",
+      "Length": 1720,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-core-business-pg-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-core-business-pg-first-run/results.trx",
+      "Sha256": "A25A4900225DF861EEB3FC3B934A79D2555CE730171EDABB2D57A33AFBE57829",
+      "Length": 39659,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-core-business-sql-first-reference\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-core-business-sql-first-reference/process.log",
+      "Sha256": "DE2947AB2D876B1EC7540EBEC3164C91D918B843F4431D26CD06131C6D4F8D25",
+      "Length": 392,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-core-business-sql-first-reference\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-core-business-sql-first-reference/results.trx",
+      "Sha256": "8D052B7B3995C5790B000AF4FD4808E503F5B90609BBB88B5A72771482B27253",
+      "Length": 37288,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-pg-first-run\\evidence\\dispatcher-ten-failures-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-pg-first-run/evidence/dispatcher-ten-failures-proof.json",
+      "Sha256": "72E3C26255AFB74DB72480F79C35D69DDBE102A151631D1F0B493E7268CB6933",
+      "Length": 9022,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-pg-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-pg-first-run/evidence/junit.xml",
+      "Sha256": "BD5D894FF764CCE4D6603942DA155389A116555B7668BD5D913D47D0A7EB95C3",
+      "Length": 262,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-pg-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-pg-first-run/evidence/summary.json",
+      "Sha256": "3EE280B9B42CD01C7DBA203A233FE762DE15CDB629D89C004F9943DAD2A2D1C8",
+      "Length": 1264,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-pg-first-run/process.log",
+      "Sha256": "28ACD661264E13BE5818154EF5751D6B3307BAC63C5C76F1A297092FEE307AC6",
+      "Length": 303,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-sql-first-run\\evidence\\dispatcher-ten-failures-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-sql-first-run/evidence/dispatcher-ten-failures-proof.json",
+      "Sha256": "FEF341F01BB91197ADF8D403E4372E3622CC40EAEA254A82298A06AE69E93433",
+      "Length": 9061,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-sql-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-sql-first-run/evidence/junit.xml",
+      "Sha256": "9DE782258A138BB9FD34F0B5478F99C2BB180725F30AF9DCBF27F90C6CB61F1D",
+      "Length": 261,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-sql-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-sql-first-run/evidence/summary.json",
+      "Sha256": "EE42FD573824048278DF6E69BC297C7CAD994DD833031E8D0A5B7715B60F7121",
+      "Length": 1262,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-deadletter-sql-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-deadletter-sql-first-run/process.log",
+      "Sha256": "28ACD661264E13BE5818154EF5751D6B3307BAC63C5C76F1A297092FEE307AC6",
+      "Length": 303,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-pg-first-run\\evidence\\dispatcher-owners-and-leases-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-pg-first-run/evidence/dispatcher-owners-and-leases-proof.json",
+      "Sha256": "D50E17DD2A396ACE313833C6AE874FF4C6BF1BC460A2B2F2585202E065EC1F6E",
+      "Length": 2991,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-pg-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-pg-first-run/evidence/junit.xml",
+      "Sha256": "CA8C8DCF718FD29EE554CF1973C7A1787DE0457EE44DE39CCB73BEBA282A61CB",
+      "Length": 274,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-pg-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-pg-first-run/evidence/summary.json",
+      "Sha256": "2EE9B793A85B3B2DA16E97F23D277090A1B719653D80EBEC27404CFCAFA2FA06",
+      "Length": 1288,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-pg-first-run/process.log",
+      "Sha256": "D67BADAA63EFB9D43B4875F897BE21420DCD3ABA1EAD5826D6FA5CC66C76E011",
+      "Length": 497,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-sql-first-run\\evidence\\dispatcher-owners-and-leases-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-sql-first-run/evidence/dispatcher-owners-and-leases-proof.json",
+      "Sha256": "C1690AD2047FF8C311D24D345227221CE718DA8DECAA635F90658551DDC7C7CB",
+      "Length": 2991,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-sql-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-sql-first-run/evidence/junit.xml",
+      "Sha256": "5C63C31587674A76FF5859B4C927E51D3D3557FD909C221EA286109049C1FA21",
+      "Length": 273,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-sql-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-sql-first-run/evidence/summary.json",
+      "Sha256": "5927970A71F673B0C20EFABED2B554A98C0161D9CC539906B6DB544E26C79007",
+      "Length": 1287,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-lease-sql-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-lease-sql-first-run/process.log",
+      "Sha256": "D67BADAA63EFB9D43B4875F897BE21420DCD3ABA1EAD5826D6FA5CC66C76E011",
+      "Length": 497,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-pg-first-run\\evidence\\dispatcher-retry-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-pg-first-run/evidence/dispatcher-retry-proof.json",
+      "Sha256": "7F0571F964538F311E160218D36DA8BDF4FEEA86B4EDC3023A56406D331CD7E1",
+      "Length": 2060,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-pg-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-pg-first-run/evidence/junit.xml",
+      "Sha256": "D43370A85E6F28500209E4F06236A05178664C6D74B915CF1C6902EA75DE6EFD",
+      "Length": 260,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-pg-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-pg-first-run/evidence/summary.json",
+      "Sha256": "A52A22E799D7DD8585AD436B8A6B5E440BD3E8D3D35B7DC32AB73A3AE3CBDCAA",
+      "Length": 1260,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-pg-first-run/process.log",
+      "Sha256": "9BEA0D5AB88C484A3D2048E5A853E9A66EB71A1A623AA24C20566033A1EECFCE",
+      "Length": 302,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-sql-first-run\\evidence\\dispatcher-retry-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-sql-first-run/evidence/dispatcher-retry-proof.json",
+      "Sha256": "60050457604212C35102D40A4DDE3BDA8E17C3A44055E938DA837F90A083280F",
+      "Length": 2059,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-sql-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-sql-first-run/evidence/junit.xml",
+      "Sha256": "C48A0697E722BA6B4BB7AA0419E7FBB814D81CC6D34342A6DFBB2A8F699D7E01",
+      "Length": 259,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-sql-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-sql-first-run/evidence/summary.json",
+      "Sha256": "4117F302D7D87CEF395F4F9DB182D4216B6EFCA23767E02157B043870592DF22",
+      "Length": 1259,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-dispatch-retry-sql-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-dispatch-retry-sql-first-run/process.log",
+      "Sha256": "9BEA0D5AB88C484A3D2048E5A853E9A66EB71A1A623AA24C20566033A1EECFCE",
+      "Length": 302,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-order-pg-first-red\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-order-pg-first-red/process.log",
+      "Sha256": "687CC8DB412DCDAC52D179DFDECEE600818D9A6ACA7F35F743C7C1683BE9AB93",
+      "Length": 1549,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-order-pg-first-red\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-order-pg-first-red/results.trx",
+      "Sha256": "DCB332D7AEB62E89ADCBF3E1E3BA81C253BC2C3B29AF40DBA733B735E7BCD202",
+      "Length": 5503,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-order-pg-provider\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-order-pg-provider/process.log",
+      "Sha256": "9A5116F055A32F8442135167C6A23CC283772BF306E0C1664D8EDA69876E3296",
+      "Length": 435,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-order-pg-provider\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-order-pg-provider/results.trx",
+      "Sha256": "851E4F7BD4E5A09C51F0749CE182800E91FA856F4A341F2EA9E6962DA3ABCE32",
+      "Length": 3358,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-order-sql-reference\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-order-sql-reference/process.log",
+      "Sha256": "AAE2DA3F7EA333F578BFD5E233071FBFCFB46699D4463EAAB4102A7BD39EA34D",
+      "Length": 437,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-order-sql-reference\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-order-sql-reference/results.trx",
+      "Sha256": "8835A6C377368A849D33B48B22827EE9E8D93E1D6FF1C49A0A66BD631EF04827",
+      "Length": 3377,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-pg-first-red\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-pg-first-red/process.log",
+      "Sha256": "83A9A1E858A76F4EEBC982B25B5B0149D95BF0F06A9413AF6324DAD7F1D85D44",
+      "Length": 2973,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-pg-first-red\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-pg-first-red/results.trx",
+      "Sha256": "0390675FEFD3E5CCF11E8437026171F3D1E0E623C8604D3CEA5F22CDCED11840",
+      "Length": 10058,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-pg-handler-provider\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-pg-handler-provider/process.log",
+      "Sha256": "B6739FC00885F9A62C65A79DCD19FBBA4FFCE2EEF9744361E204748DD4F5E2CA",
+      "Length": 437,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-pg-handler-provider\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-pg-handler-provider/results.trx",
+      "Sha256": "B08DBE072DCC28DC0CB71B059EFD201D1CA942AEF0DAEF5C6519E857C2DD00A0",
+      "Length": 5360,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-pg-original-business-matrix\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-pg-original-business-matrix/process.log",
+      "Sha256": "3E82DAB34C2B197DB0E2C79DB7F7190BDFDB3EB3D9BF1258856B3904341AB10B",
+      "Length": 446,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-pg-original-business-matrix\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-pg-original-business-matrix/results.trx",
+      "Sha256": "42EC1C5E8873DAAFCB8B48EDFB72385A5682C8C08ACB04425390B1277CC456CF",
+      "Length": 159155,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-replay-bridge-pg-first-red\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-replay-bridge-pg-first-red/process.log",
+      "Sha256": "3A73158F5DD03E3BED3544437A80B3B1120F61DF43E6E8CBB71D509F1D89C44E",
+      "Length": 8611,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-replay-bridge-pg-first-red\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-replay-bridge-pg-first-red/results.trx",
+      "Sha256": "EF6404A3A30B868830C7EE413E67B8DBC38412C385CA3D5ED4D34006BD2B8E69",
+      "Length": 24848,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-serialization-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-serialization-pg-first-run/process.log",
+      "Sha256": "7F62CDDB226F4AE7CBB80853DCCDA86FF56C5FA77B0F3D1BEC5A76C247F20AAF",
+      "Length": 444,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-serialization-pg-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-serialization-pg-first-run/results.trx",
+      "Sha256": "16C36FC21E53EBEBF07F2913E7E32D414CF3B669B87AF6662402325381A84206",
+      "Length": 11379,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-sql-first-reference\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-sql-first-reference/process.log",
+      "Sha256": "404B44834E0815621BA85614BE591448108D45539177D90138C187BC8F96D310",
+      "Length": 437,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-sql-first-reference\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-sql-first-reference/results.trx",
+      "Sha256": "BB3A2382B130776F22C0361E69431CD955F1F04ECECCD93383F8C6199C5E51DE",
+      "Length": 5398,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-sql-handler-provider\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-sql-handler-provider/process.log",
+      "Sha256": "CD7328F86BC6B643C5CC774CB146C0D53520084753B2C8D8E886D83FE3913A00",
+      "Length": 438,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-sql-handler-provider\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-sql-handler-provider/results.trx",
+      "Sha256": "917031137DAABE563CDF0B20FDC8C9208F83079E201EF1ECB39729D3889EA07C",
+      "Length": 5398,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-sql-original-business-matrix\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-sql-original-business-matrix/process.log",
+      "Sha256": "2AD8700A09384A6198527B9DF46B15B987A99B05F154ECC8638BEFB4AD765C05",
+      "Length": 447,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-sql-original-business-matrix\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-erp-sql-original-business-matrix/results.trx",
+      "Sha256": "6886657D63B9E8DE13079844D6E7590CBA9543DE6815923096454FA5871279C1",
+      "Length": 159776,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-pg-component\\evidence\\dispatcher-component-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-pg-component/evidence/dispatcher-component-proof.json",
+      "Sha256": "DACAD02526BAC3451C7434B045F2321433B6CFA54C5E74A80472C4385FC7CC42",
+      "Length": 3135,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-pg-component\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-pg-component/evidence/junit.xml",
+      "Sha256": "5721BF7AD35DA6852F5FAE5FCF186433B568D6DBF04AEA1B3129E68A784D39F6",
+      "Length": 277,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-pg-component\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-pg-component/evidence/summary.json",
+      "Sha256": "BC28C7F15EE008CDD80967C72B1CCE3188A9A5B9E6FCFCCB8DFD7D57D0E55607",
+      "Length": 1285,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-pg-component\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-pg-component/process.log",
+      "Sha256": "467F0F4491041D52DE06745ADB3484AAEB822A930270A0343DB50CE90E28D033",
+      "Length": 248,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-sql-component\\evidence\\dispatcher-component-proof.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-sql-component/evidence/dispatcher-component-proof.json",
+      "Sha256": "D7CCC81DA3F6F70890B47B81DBA2EE1905EC750E8E5F18CCA77676CC37BABE94",
+      "Length": 3134,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-sql-component\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-sql-component/evidence/junit.xml",
+      "Sha256": "50CDBA7DEAC7967ECA32CDAC8D92D672FE5E998569E54D19D3501B552593C7CE",
+      "Length": 276,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-sql-component\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-sql-component/evidence/summary.json",
+      "Sha256": "C6C672E251CFB512AFED1109104F14209EC1A9B305A0F2857BDF2760664864B1",
+      "Length": 1284,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-dispatch-sql-component\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-dispatch-sql-component/process.log",
+      "Sha256": "467F0F4491041D52DE06745ADB3484AAEB822A930270A0343DB50CE90E28D033",
+      "Length": 248,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-http-pg-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-http-pg-first-run/evidence/junit.xml",
+      "Sha256": "8EEDA4F44E29788CA48DBDB6B6EE45053E3DC5D9D8F72F8E68F1E00A027F97FE",
+      "Length": 272,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-http-pg-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-http-pg-first-run/evidence/summary.json",
+      "Sha256": "295DCDAAD6B4781A7753E4A8F226ADE775BF3615A0923CD1ACE41891C257FAB9",
+      "Length": 1260,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-http-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-http-pg-first-run/process.log",
+      "Sha256": "148FACDA300FE5CE0E25D3CF78D01634B480FC46B1C363160385721FE235B170",
+      "Length": 366,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-http-sql-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-http-sql-first-run/evidence/junit.xml",
+      "Sha256": "305CFBA9BA01FB2834F4AE86FD00CA71FA09E09E692F6873DFBE5772C0F26185",
+      "Length": 271,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-http-sql-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-http-sql-first-run/evidence/summary.json",
+      "Sha256": "998B58B445DFBA48A202CA89EC722C70E603F90D9A74905E4A0C6F75EB40F0A3",
+      "Length": 1259,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-http-sql-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-http-sql-first-run/process.log",
+      "Sha256": "20E106832D759E08D42FED52FB749EBCACECC53D3BC10818958F9FF3DC6D503F",
+      "Length": 363,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-pg-common-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-pg-common-first-run/evidence/junit.xml",
+      "Sha256": "C02E6F7ADF004A5D97652D1EE9EDAC4F9316655ACBEB8D79B8AA96AE0E0FF7D1",
+      "Length": 1881,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-pg-common-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-pg-common-first-run/evidence/summary.json",
+      "Sha256": "F8FFC6B61561FF78268DA4B5AE545E82DF8CAF425DF555BE8B4FD32F582EC409",
+      "Length": 3290,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-pg-common-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-pg-common-first-run/process.log",
+      "Sha256": "416115726CB4F4EB148DC6A967EBD55B058EC7D3C2744162E684017B7D8EDCEB",
+      "Length": 1264,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-pg-first-red\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-pg-first-red/evidence/junit.xml",
+      "Sha256": "E0E5EEBE7FD5A66B96AE2393E3FBE52CFE0FDC38C21F916B87A5A11FC203802F",
+      "Length": 299,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-pg-first-red\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-pg-first-red/evidence/summary.json",
+      "Sha256": "B4649E20C26AF2ED7A294B35A36DA577DCC9705A675AA0B7D48E8B0632A1300F",
+      "Length": 1013,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-pg-first-red\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-pg-first-red/process.log",
+      "Sha256": "D1B9570BAF11DDCF094067431FF319B85E7EFDBC0992CE4D46DA67306C7D5CFA",
+      "Length": 115,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-collation-diagnostic\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-collation-diagnostic/evidence/junit.xml",
+      "Sha256": "E0E5EEBE7FD5A66B96AE2393E3FBE52CFE0FDC38C21F916B87A5A11FC203802F",
+      "Length": 299,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-collation-diagnostic\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-collation-diagnostic/evidence/summary.json",
+      "Sha256": "E9ADB38FCAF6D7092B1C2590325ADEE9F53136AD2A0373D2D312BFF7BC58CAB9",
+      "Length": 1012,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-collation-diagnostic\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-collation-diagnostic/process.log",
+      "Sha256": "D1B9570BAF11DDCF094067431FF319B85E7EFDBC0992CE4D46DA67306C7D5CFA",
+      "Length": 115,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-common-first-run\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-common-first-run/evidence/junit.xml",
+      "Sha256": "4DD33FEC9CDFD7C3100346281D72D2260D884C57CFCB3AA466779A979E87D19E",
+      "Length": 1880,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-common-first-run\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-common-first-run/evidence/summary.json",
+      "Sha256": "9CE3CFB59618E18600601F0F3C4BEA0ADB4ECFF45F00FD6BC4238E21841BBCDF",
+      "Length": 3289,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-common-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-common-first-run/process.log",
+      "Sha256": "416115726CB4F4EB148DC6A967EBD55B058EC7D3C2744162E684017B7D8EDCEB",
+      "Length": 1264,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-original-reference\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-original-reference/evidence/junit.xml",
+      "Sha256": "E0E5EEBE7FD5A66B96AE2393E3FBE52CFE0FDC38C21F916B87A5A11FC203802F",
+      "Length": 299,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-original-reference\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-original-reference/evidence/summary.json",
+      "Sha256": "8552757856226ED6790D4ACD2692AD433FE023FE9FFB3035092D2CF8C5695257",
+      "Length": 1012,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-original-reference\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-identity-sql-original-reference/process.log",
+      "Sha256": "D1B9570BAF11DDCF094067431FF319B85E7EFDBC0992CE4D46DA67306C7D5CFA",
+      "Length": 115,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-integration-retry-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-integration-retry-pg-first-run/process.log",
+      "Sha256": "0739C37C98241D96904C5ECE1979739427C1D7A31E9B8ADF19ED681592734EA4",
+      "Length": 388,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-integration-retry-pg-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-integration-retry-pg-first-run/results.trx",
+      "Sha256": "1CC187807D3B0C717901D4811A0DB0460B226F65A6FEFA124357D2BD3981FF5A",
+      "Length": 6786,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-integration-retry-sql-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-integration-retry-sql-first-run/process.log",
+      "Sha256": "347BC72F9DAAFC5BC2AD6E0ED598FB48E3F4C8DE8AE3B198E187B512FDB378C9",
+      "Length": 389,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-integration-retry-sql-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-integration-retry-sql-first-run/results.trx",
+      "Sha256": "053E3A7F3C03D89F54CDB945D18690AAD23A174B297D529CDA6AE4A2E8A3EF3E",
+      "Length": 6788,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-pg-first-red\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-pg-first-red/process.log",
+      "Sha256": "2CFF4208350CC5DFF83A690C1FE9C9CECF1986901C1630115ACE32948C92C34B",
+      "Length": 2178,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-pg-first-red\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-pg-first-red/results.trx",
+      "Sha256": "3101732A995B39194459BF31C3C17C58131CB7CDC2BC12F6DE0C1728BF4A1546",
+      "Length": 6971,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-pg-provider-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-pg-provider-first-run/process.log",
+      "Sha256": "260A572E2BD950CA92369FB49E0C6166D3C3F6874B66D53C68A2E059848BDC48",
+      "Length": 432,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-pg-provider-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-pg-provider-first-run/results.trx",
+      "Sha256": "980E99ED2940D421E53A58C690DB41CD4993C0E2FC0627E39E1C6836E2A3ACB2",
+      "Length": 42599,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-sql-historical-migrations\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-sql-historical-migrations/process.log",
+      "Sha256": "7888EB9B69908D287FAA5C4C19428A87A6B2FA14E0BB1CFD71F450AA71CF2CB3",
+      "Length": 436,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-sql-historical-migrations\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-sql-historical-migrations/results.trx",
+      "Sha256": "B3CB0079E4F8ACCC41BC1D45A4DFCF41042B73D83AB79C6CF7FA9604A1199D4F",
+      "Length": 4648,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-sql-original-reference\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-sql-original-reference/process.log",
+      "Sha256": "5A949043D8D8979F146FC7A07F2AF7A099727FEF30B9AE5652D9CE1572DD44AE",
+      "Length": 436,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-sql-original-reference\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-sql-original-reference/results.trx",
+      "Sha256": "6503BB07111D102C3EDB3854FF70CC3D30BA67818A91066523307661FFCE6521",
+      "Length": 3091,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-sql-provider-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-sql-provider-first-run/process.log",
+      "Sha256": "88FAD1A3703174CEFACC412A5FB6D93529253DBC3CFD1A7CE1087B342F3A5F76",
+      "Length": 433,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-oidc-sql-provider-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-oidc-sql-provider-first-run/results.trx",
+      "Sha256": "DD54B49BB320979CAE6C5B4853C16F355C9B3E3F9ED9CF12497DDADE2E5DF917",
+      "Length": 42599,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-purchase-pg-provider\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-purchase-pg-provider/process.log",
+      "Sha256": "0DE8F874B0986EAFF2821DD5C30430A2D6EC60C411185B257C92F9369E5784BA",
+      "Length": 378,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-purchase-pg-provider\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-purchase-pg-provider/results.trx",
+      "Sha256": "B5DD8ED08753A844883B1AA98D0F9B0529FCB3BCC1DF6AE770F9AE5A5B7A79CE",
+      "Length": 10101,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-purchase-sql-provider\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-purchase-sql-provider/process.log",
+      "Sha256": "848A11BFC9A2404BCFADB0DDC278DA46FC84EB882A3D15BECA633EF77287AF52",
+      "Length": 379,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-purchase-sql-provider\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-purchase-sql-provider/results.trx",
+      "Sha256": "41F66A3607D5548BBBBAF1BCA3DCA2DC71BE0761C06C6EE7917EA449E44DDFAA",
+      "Length": 10104,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-related-unit-regression\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-related-unit-regression/process.log",
+      "Sha256": "EB13B49B6EE45FDB249AABFD69DE9A1297858C4005D8FAD368C5D3EA3306290E",
+      "Length": 381,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-related-unit-regression\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-related-unit-regression/results.trx",
+      "Sha256": "71D33B0101EA8B33294258EB0533876B350F0709927EFFA8BB26364A9C6ADBA8",
+      "Length": 280246,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-pg-concurrent\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-pg-concurrent/evidence/junit.xml",
+      "Sha256": "7C6132A2F946B68291E30376E7702367DEE91EB19FD4DB34D5F450CB5614E1BA",
+      "Length": 285,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-pg-concurrent\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-pg-concurrent/evidence/summary.json",
+      "Sha256": "F89F64B33B6109EA26E1616668263771622212539035A730C925F16499ABB493",
+      "Length": 1310,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-pg-concurrent\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-pg-concurrent/process.log",
+      "Sha256": "9D00D015E3150F6C290BB76996F31E540AFC62429722F6BDD06EFFF92D4AA0F0",
+      "Length": 267,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-pg-rollback\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-pg-rollback/evidence/junit.xml",
+      "Sha256": "B9F9AF1082EEE567413EFE87B81B38545A5622D8CB321B3F2FA915E7B1EC374A",
+      "Length": 281,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-pg-rollback\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-pg-rollback/evidence/summary.json",
+      "Sha256": "62D5F3D685056155D8839FABF9B2EBEF5916BE41956183A173561C7A62CED5F0",
+      "Length": 1301,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-pg-rollback\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-pg-rollback/process.log",
+      "Sha256": "A573239496E58D841571551F3966F91326ED8DBF717E0DE5FE4775B33254F668",
+      "Length": 140,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-sql-concurrent\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-sql-concurrent/evidence/junit.xml",
+      "Sha256": "CFE1FA9EB67DD79EEB2C09856A54830E19CF45E4DF3E9460964178C580F9BE5C",
+      "Length": 284,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-sql-concurrent\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-sql-concurrent/evidence/summary.json",
+      "Sha256": "7FD29E94B996D5C609A62D4ACC2E2E6F3C9BA8DB7E59E3BD805B9A723303FD7C",
+      "Length": 1309,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-sql-concurrent\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-sql-concurrent/process.log",
+      "Sha256": "115C8263D77E3E3592D6ACC1D1A631E4BFDB8B08C30BDF5F69C0F089398A1946",
+      "Length": 260,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-sql-rollback\\evidence\\junit.xml",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-sql-rollback/evidence/junit.xml",
+      "Sha256": "62C315847846D04D1E262B61C4EB6ACB0C9D45CE9795774411CFF760FE60A489",
+      "Length": 280,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-sql-rollback\\evidence\\summary.json",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-sql-rollback/evidence/summary.json",
+      "Sha256": "181DE4FC85DB2854145917223C3BFE9A087AA1C2E727779DA7D21B153B9E53A8",
+      "Length": 1300,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-service-revoke-sql-rollback\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-service-revoke-sql-rollback/process.log",
+      "Sha256": "A573239496E58D841571551F3966F91326ED8DBF717E0DE5FE4775B33254F668",
+      "Length": 140,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-pg-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-pg-first-run/process.log",
+      "Sha256": "B23398E71DAF5ADC109F333F5E9DF5B15281B8ABC35211CADD9AF50535A6A2CC",
+      "Length": 374,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-pg-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-pg-first-run/results.trx",
+      "Sha256": "0535D719C363EB51BE0FEFA2A4D337A3D13703045DA5283331FB4E2BB3E9772A",
+      "Length": 12478,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-sql-first-run\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-sql-first-run/process.log",
+      "Sha256": "7BDD72234ABF865D3200BB0822E65EF33276B04DD342A9B9D94B2FE6CD10E77C",
+      "Length": 375,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-sql-first-run\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-sql-first-run/results.trx",
+      "Sha256": "6B06C923723365C7A0BD3C9A321757A2298C5D1BE17E573D246A8883D49E7CD5",
+      "Length": 12478,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-unselected-core-owner-discovery-v2\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-unselected-core-owner-discovery-v2/process.log",
+      "Sha256": "0231B44C82AFB471DE7AA29F08AFA1F97C4F82AA8D528299FC248ADEA7D633DC",
+      "Length": 2437,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-unselected-core-owner-discovery-v2\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-unselected-core-owner-discovery-v2/results.trx",
+      "Sha256": "155F0B7E6BE728EDDCD3D6BD41D9834EBBC7A09C23E2B0328223C5D858F81422",
+      "Length": 18383,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-unselected-core-owner-discovery\\process.log",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-unselected-core-owner-discovery/process.log",
+      "Sha256": "742A21035F33DB1ACE35C30302E40FFEDC471C0813F9D52A694407953BC31E3C",
+      "Length": 2434,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-wms-unselected-core-owner-discovery\\results.trx",
+      "RelativePath": "db-compat-wp4-tests/wp4-wms-unselected-core-owner-discovery/results.trx",
+      "Sha256": "4EC905BD10281783CA8432FBBC8B993857A78675780A505033E5D59008C655BE",
+      "Length": 18383,
+      "Origin": "NativeRunOriginal"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp4Case.before-identity-http.ps1",
+      "RelativePath": "Invoke-DbCompatWp4Case.before-identity-http.ps1",
+      "Sha256": "6FF63A157563208DC61AE6ACD4D5CE972F35B18917822F22B85B02AC50D190FB",
+      "Length": 11033,
+      "Origin": "RequiredRunnerOrCreationScript"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp4Case.first-red.ps1",
+      "RelativePath": "Invoke-DbCompatWp4Case.first-red.ps1",
+      "Sha256": "F87B919606BE56E39495065B53AB4B179B04331620C8B5059190B1C024A68F11",
+      "Length": 5512,
+      "Origin": "RequiredRunnerOrCreationScript"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Invoke-DbCompatWp4Case.ps1",
+      "RelativePath": "Invoke-DbCompatWp4Case.ps1",
+      "Sha256": "4C6822530CA04BE9CDDB5D7CAD0A3E653D1992BC7AA28616F8E81088660FA3D6",
+      "Length": 11833,
+      "Origin": "RequiredRunnerOrCreationScript"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\New-DbCompatWp4BusinessDatabases.ps1",
+      "RelativePath": "New-DbCompatWp4BusinessDatabases.ps1",
+      "Sha256": "A71A0D4DCB32D65E1F36B3026D9172F2E29800EA77FF8B2B9A4F941550391C6C",
+      "Length": 4245,
+      "Origin": "RequiredRunnerOrCreationScript"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\New-DbCompatWp4Databases.ps1",
+      "RelativePath": "New-DbCompatWp4Databases.ps1",
+      "Sha256": "53D2D4A1C4D65EC20E784B125C5C01DEF30B6B5E6BBDF1E78CD298CFE1127935",
+      "Length": 4225,
+      "Origin": "RequiredRunnerOrCreationScript"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\New-DbCompatWp4ErpDatabases.ps1",
+      "RelativePath": "New-DbCompatWp4ErpDatabases.ps1",
+      "Sha256": "FE406FA5E2378145D107A737691086A7CD4452BE51152BAFD32D6A85B6048E4A",
+      "Length": 4235,
+      "Origin": "RequiredRunnerOrCreationScript"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Test-Wp4PublicEvidenceInputs.ps1",
+      "RelativePath": "Test-Wp4PublicEvidenceInputs.ps1",
+      "Sha256": "589693846E21818EFE58904E72EF3FBB89A22434AAB4C3F37670C1464E1A5957",
+      "Length": 2809,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Test-Wp4RelatedUnit.ps1",
+      "RelativePath": "Test-Wp4RelatedUnit.ps1",
+      "Sha256": "5DD48E14C0257401EA87208E51D12FEA51395C17614870EC83376B42B308CC39",
+      "Length": 2779,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Test-Wp4WmsSelection.first.ps1",
+      "RelativePath": "Test-Wp4WmsSelection.first.ps1",
+      "Sha256": "33794F5A95E978DA59AEB9FCDB8EBA3DB5D1E9753FA1413FD6B24A329D20EBB0",
+      "Length": 3171,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\Test-Wp4WmsSelection.ps1",
+      "RelativePath": "Test-Wp4WmsSelection.ps1",
+      "Sha256": "487E946E23878391685D1121D5E21F79D380506EA99565FE770FF25F8ED31E81",
+      "Length": 3673,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-business-databases-created.json",
+      "RelativePath": "wp4-business-databases-created.json",
+      "Sha256": "AF1A3F872FF6BAA553547BC665F7B9B153C90649DE7E95F1629DD3778AED7986",
+      "Length": 226,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-core-business-fixture-build.log",
+      "RelativePath": "wp4-core-business-fixture-build.log",
+      "Sha256": "0C0C923E06CEDE18075C7045F22CF43F3F783F7E3C8CD67222DF233970EBEC72",
+      "Length": 1907,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-core-business-pg-first-run.json",
+      "RelativePath": "wp4-core-business-pg-first-run.json",
+      "Sha256": "739E8EAF63BAEBD1F7E1D824EE3AD8F8D9E7621EBCB69E64137DD9254C180515",
+      "Length": 6384,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-core-business-sql-first-reference.json",
+      "RelativePath": "wp4-core-business-sql-first-reference.json",
+      "Sha256": "DC23E49BDF5BF851FA9153DA01E85F65B3A15A2854A6DD808081467ADE17FC73",
+      "Length": 6436,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-core-tests-locked-restore.log",
+      "RelativePath": "wp4-core-tests-locked-restore.log",
+      "Sha256": "0E012A2B38C70F5C5D81FD626FD3B2BB954D3C7B6FEF7EBD5456D77F64CC4666",
+      "Length": 181,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-databases-created.json",
+      "RelativePath": "wp4-databases-created.json",
+      "Sha256": "F27EF1DAF0CDC21177E4F5216EE1253FAEC09C5E14B7394FC4CE7F6DF74260E9",
+      "Length": 226,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-dispatch-deadletter-pg-first-run.json",
+      "RelativePath": "wp4-dispatch-deadletter-pg-first-run.json",
+      "Sha256": "AC74874751909A1112A68FB6692E832A91AA4AF4A869EA89149AA384B6E583B9",
+      "Length": 5408,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-dispatch-deadletter-sql-first-run.json",
+      "RelativePath": "wp4-dispatch-deadletter-sql-first-run.json",
+      "Sha256": "0254ED852F8A7A32828BF82D40442239F048FB1E67DCF5165AFAFB4D6D4BF620",
+      "Length": 5409,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-dispatch-lease-pg-first-run.json",
+      "RelativePath": "wp4-dispatch-lease-pg-first-run.json",
+      "Sha256": "7752E7D4EE6A399743799AC317303682010C0A7EFAC46B6CEFBD5137BEAD5A58",
+      "Length": 5410,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-dispatch-lease-sql-first-run.json",
+      "RelativePath": "wp4-dispatch-lease-sql-first-run.json",
+      "Sha256": "36CCA717BFA1997E2D167B883A5D25F3F89CEDE9A91CECFF1902286872FA402A",
+      "Length": 5411,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-dispatch-retry-pg-first-run.json",
+      "RelativePath": "wp4-dispatch-retry-pg-first-run.json",
+      "Sha256": "C11577BEFED0DE68B1145606BDAF6587DEE7EB1B9D604FC641D3B5EEC261AE65",
+      "Length": 5396,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-dispatch-retry-sql-first-run.json",
+      "RelativePath": "wp4-dispatch-retry-sql-first-run.json",
+      "Sha256": "8F5BF52E64E952AE42393C4B5B1AE3EBF13FB567FBF408203FAA979148BCE61C",
+      "Length": 5397,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-common-fixture-build-corrected.log",
+      "RelativePath": "wp4-erp-common-fixture-build-corrected.log",
+      "Sha256": "B92D259C0ADC01A0262CA033405418B0E12D4F6969D5F0402011ED179768C4BF",
+      "Length": 2035,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-common-fixture-build.log",
+      "RelativePath": "wp4-erp-common-fixture-build.log",
+      "Sha256": "D67C8ABC1999DD308AD644614AC099134A3C0FD8C32B89291A1328D5BFB20433",
+      "Length": 4315,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-databases-created.json",
+      "RelativePath": "wp4-erp-databases-created.json",
+      "Sha256": "0C1AFA521DAC2C2AF7FE74C372AEA794731C9E1B5E52F3FAD539A2B0F20C56A9",
+      "Length": 226,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-first-red-build.log",
+      "RelativePath": "wp4-erp-first-red-build.log",
+      "Sha256": "B9BCF753E9BEAEE0CBDBD4C6702512EA5EBA21E984E8332978B8C9C873A1A604",
+      "Length": 2035,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-handler-provider-build.log",
+      "RelativePath": "wp4-erp-handler-provider-build.log",
+      "Sha256": "0CAF1867478F1203FC3931DB863DC59992490E7109A1337B7E4B50604CF80CDC",
+      "Length": 1233,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-lock-refresh.log",
+      "RelativePath": "wp4-erp-lock-refresh.log",
+      "Sha256": "2929B2459908160244A6090BF5543BC78A8B107F7A1C61E66A1605928A011B82",
+      "Length": 1073,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-order-pg-first-red.json",
+      "RelativePath": "wp4-erp-order-pg-first-red.json",
+      "Sha256": "A4287A7FE94A5CB0D65ECE11E9F9787E075522B773755264826BBCF4EE77722C",
+      "Length": 8010,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-order-pg-provider.json",
+      "RelativePath": "wp4-erp-order-pg-provider.json",
+      "Sha256": "03650BD3990D018F662FEA6B0F213C4260356AD22BF12681370466F455EF09E4",
+      "Length": 8008,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-order-provider-build.log",
+      "RelativePath": "wp4-erp-order-provider-build.log",
+      "Sha256": "A4856BCC61A02F0AD5373D385529F0548CC9632CCD7F42433A4C4EC0EE142A0A",
+      "Length": 1233,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-order-sql-reference.json",
+      "RelativePath": "wp4-erp-order-sql-reference.json",
+      "Sha256": "BB8BDEF5CA7506B75AD7CE829380391A5EBE616C50691077F66E12BBEBCD830B",
+      "Length": 8011,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-pg-first-red.json",
+      "RelativePath": "wp4-erp-pg-first-red.json",
+      "Sha256": "AE7F87569895062D21EE861F2A7A6B2B0D9887F800A17DB10E5FCABA0999D87F",
+      "Length": 5647,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-pg-handler-provider.json",
+      "RelativePath": "wp4-erp-pg-handler-provider.json",
+      "Sha256": "EF83C882C2E4544CF3AAFA7D81DABC1E54C9E61835D471D31CAB3E1444504285",
+      "Length": 5661,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-pg-original-business-matrix.json",
+      "RelativePath": "wp4-erp-pg-original-business-matrix.json",
+      "Sha256": "6D5168BDDC938CD472DCAC47A841E0900F8290AF48700113629E7CD0D710A1B0",
+      "Length": 8183,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-refreshed-locked-restore.log",
+      "RelativePath": "wp4-erp-refreshed-locked-restore.log",
+      "Sha256": "926E632E1A01738D2E0CC242BB1C10B436C9E542BE2C30CF331DE669D92EE5EA",
+      "Length": 1064,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-replay-bridge-pg-first-red.json",
+      "RelativePath": "wp4-erp-replay-bridge-pg-first-red.json",
+      "Sha256": "1F0F083673EF906D3D1259F87A235F4B69F24B8F0828842191F80AD6BAA647DB",
+      "Length": 8484,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-replay-bridge-provider-build.log",
+      "RelativePath": "wp4-erp-replay-bridge-provider-build.log",
+      "Sha256": "B999F38FA76181F86B6A08D9654FADDE256379241722EAEA8A0E33AA4EC0F633",
+      "Length": 2035,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-serialization-fixture-build.log",
+      "RelativePath": "wp4-erp-serialization-fixture-build.log",
+      "Sha256": "AFDDA1F30BC67610A9CA9861EFE4EA68EE978664A0C0309C2BCCC78E64EA1C7D",
+      "Length": 2035,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-serialization-pg-first-run.json",
+      "RelativePath": "wp4-erp-serialization-pg-first-run.json",
+      "Sha256": "7EA69D16F21BE89B8497CFFD10F7B2613BA9623AE7C21CFD30063DC28F200E7A",
+      "Length": 8377,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-sql-first-reference.json",
+      "RelativePath": "wp4-erp-sql-first-reference.json",
+      "Sha256": "77B80EC31BA11578416970D6DE62F293C26FA503BCD646B5993FD2376D77C1B4",
+      "Length": 5660,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-sql-handler-provider.json",
+      "RelativePath": "wp4-erp-sql-handler-provider.json",
+      "Sha256": "E9D23FF0692B205A9F405E43B0203D6667879707AA1E1BDBF699F1A98F492642",
+      "Length": 5662,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-erp-sql-original-business-matrix.json",
+      "RelativePath": "wp4-erp-sql-original-business-matrix.json",
+      "Sha256": "F7FF71C095184E357A55D677FEE0B9E061115FD0F7DDDB55C0C363F4D73C7E8E",
+      "Length": 8184,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-dispatch-failure-fixture-build.log",
+      "RelativePath": "wp4-identity-dispatch-failure-fixture-build.log",
+      "Sha256": "2A86D6F2EB64CC09959176A1807A961A8F878B3713723F778875DD4C8CE309E9",
+      "Length": 1233,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-dispatch-fixture-build.log",
+      "RelativePath": "wp4-identity-dispatch-fixture-build.log",
+      "Sha256": "948B4F1959703B4A5D21D1699F90976AB9B94111DA1E884BC40E3ACCA6AC5B30",
+      "Length": 239,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-dispatch-pg-component.json",
+      "RelativePath": "wp4-identity-dispatch-pg-component.json",
+      "Sha256": "692179B093257C6A80EFAEC825A417201FA7E190897D5032F6BE9B520C5C53AF",
+      "Length": 4318,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-dispatch-sql-component.json",
+      "RelativePath": "wp4-identity-dispatch-sql-component.json",
+      "Sha256": "395D1FF96B504B9F619B34FE6F044B16BA13892C0DD3C931C957FA5DADA1C6CD",
+      "Length": 4319,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-first-red-build-corrected.log",
+      "RelativePath": "wp4-identity-first-red-build-corrected.log",
+      "Sha256": "65C3F0C4F8B6FA27D2141BB321EFF9C4E8AF1BFD7CDFD9A66747471A89BDE4E6",
+      "Length": 1233,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-first-red-build.log",
+      "RelativePath": "wp4-identity-first-red-build.log",
+      "Sha256": "F4DE23FD98D01792D2618FCCAF5E41D646C5CF88D7C0FE84937AFB83385B7DF1",
+      "Length": 2007,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-first-red-fixture-input.json",
+      "RelativePath": "wp4-identity-first-red-fixture-input.json",
+      "Sha256": "C3DF8566A0853D60768319B0B85A45EDBE55F4833E972D0B7ECBE30473843B8F",
+      "Length": 2039,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-http-and-service-fixture-build.log",
+      "RelativePath": "wp4-identity-http-and-service-fixture-build.log",
+      "Sha256": "47391B59F30B5EDD11AC4BCDADC499B34AF024655DE10AC614561DA54E88A0CC",
+      "Length": 1233,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-http-pg-first-run.json",
+      "RelativePath": "wp4-identity-http-pg-first-run.json",
+      "Sha256": "90F1E108973B86C2350F5CCB5FE15EEF86F470D136FA9639B2E88DDBA029CD65",
+      "Length": 5223,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-http-sql-first-run.json",
+      "RelativePath": "wp4-identity-http-sql-first-run.json",
+      "Sha256": "3717AF0858474507911F5CAAEFA62634E3189068038D9F275E0C15C383494303",
+      "Length": 5224,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-initial-locked-restore.log",
+      "RelativePath": "wp4-identity-initial-locked-restore.log",
+      "Sha256": "22B7D14E444D8A86A51FFB7992556469C57CF7F205FD9B513B25DAC38AFD8E3B",
+      "Length": 3145,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-lock-refresh.log",
+      "RelativePath": "wp4-identity-lock-refresh.log",
+      "Sha256": "225257C0FCE97C2088153AF74526066784B2673E8FDC1128A938502636CBE6C4",
+      "Length": 1055,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-pg-common-first-run.json",
+      "RelativePath": "wp4-identity-pg-common-first-run.json",
+      "Sha256": "D83D415666B4AD8AEC5942BCC2EB2F1C2C315FE92ACDAA456913135180084972",
+      "Length": 4058,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-pg-first-red.json",
+      "RelativePath": "wp4-identity-pg-first-red.json",
+      "Sha256": "D40C982536E3EDAF669B9B7C001843DA44DB5B9A760EBD0C85BED8CBB5794CAA",
+      "Length": 2897,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-provider-cases-build.log",
+      "RelativePath": "wp4-identity-provider-cases-build.log",
+      "Sha256": "65C3F0C4F8B6FA27D2141BB321EFF9C4E8AF1BFD7CDFD9A66747471A89BDE4E6",
+      "Length": 1233,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-refreshed-locked-restore.log",
+      "RelativePath": "wp4-identity-refreshed-locked-restore.log",
+      "Sha256": "26BD6FE6CDE8C53480501DFB4F785312CB55A22AE77E13B98AF15917881740EF",
+      "Length": 1054,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-sql-collation-diagnostic.json",
+      "RelativePath": "wp4-identity-sql-collation-diagnostic.json",
+      "Sha256": "E72AE2412D43407DBF54551A6FC52F658ECF3494956C240EDCD3E3228E180E47",
+      "Length": 2920,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-sql-common-first-run.json",
+      "RelativePath": "wp4-identity-sql-common-first-run.json",
+      "Sha256": "786426F55DF56B4E12DEE0D3A2760C2AB069FF4BAF27A7703C5CE5BFD370F7CF",
+      "Length": 4059,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-sql-diagnostic-fixture-build.log",
+      "RelativePath": "wp4-identity-sql-diagnostic-fixture-build.log",
+      "Sha256": "3FA2B8ED40C1447F384D090C594C17671EAFBAF23120564ABBCAF9D4DD25D11B",
+      "Length": 239,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-identity-sql-original-reference.json",
+      "RelativePath": "wp4-identity-sql-original-reference.json",
+      "Sha256": "2D2C3BE64C10E414C2E3D39FD2ACC00AF693B0DB591F92053435C33DB3E45B63",
+      "Length": 2916,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-integration-retry-fixture-build.log",
+      "RelativePath": "wp4-integration-retry-fixture-build.log",
+      "Sha256": "6DF540D3FFE098A7878A431E3CF157D18B27775F69438026AAB79242722FE6E3",
+      "Length": 1907,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-integration-retry-pg-first-run.json",
+      "RelativePath": "wp4-integration-retry-pg-first-run.json",
+      "Sha256": "D423F4CB749768FEE385B62A92BDDDF4FF873D89581418F4E8545C4A1EE5537C",
+      "Length": 8782,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-integration-retry-sql-first-run.json",
+      "RelativePath": "wp4-integration-retry-sql-first-run.json",
+      "Sha256": "9185B9406AE8EF9D4A44F3E79DF95B4A87A68C6EFE17EA4FCCF075B1CA861C18",
+      "Length": 8783,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-first-red-build.log",
+      "RelativePath": "wp4-oidc-first-red-build.log",
+      "Sha256": "A6041055B5858F4097C48D44318EAF196C754E96A68D755AE2E0B49892E331A4",
+      "Length": 1225,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-initial-locked-restore.log",
+      "RelativePath": "wp4-oidc-initial-locked-restore.log",
+      "Sha256": "730FBC81F1EBC07F86273DB31AB8C7CA38D9D4965704322D9C8E88769871EB25",
+      "Length": 3953,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-lock-refresh.log",
+      "RelativePath": "wp4-oidc-lock-refresh.log",
+      "Sha256": "0A2EC37F3807BC59D41472095B607DAA6FE16145DEF3655F08FBBD6F18893E56",
+      "Length": 1047,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-pg-first-red.json",
+      "RelativePath": "wp4-oidc-pg-first-red.json",
+      "Sha256": "955D6013E0F37EC845CA4213510800EC3B27EDA5B04B5D50617BC96575D66604",
+      "Length": 2971,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-pg-provider-first-run.json",
+      "RelativePath": "wp4-oidc-pg-provider-first-run.json",
+      "Sha256": "1AB8F6301C5F74C9A0669E2509C087D067D2F37B26FC140680AE8C00E95F800E",
+      "Length": 2936,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-provider-draft-build.log",
+      "RelativePath": "wp4-oidc-provider-draft-build.log",
+      "Sha256": "C3A0631683778440A5FACE444790354F83F5CDB1215219EAAF534D936EA018AE",
+      "Length": 1225,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-refreshed-locked-restore.log",
+      "RelativePath": "wp4-oidc-refreshed-locked-restore.log",
+      "Sha256": "80E6D86837417E6CF5B5C7A388B91E42EDC2389B421470D9185B7D8577AF8FBD",
+      "Length": 1048,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-sql-historical-migrations.json",
+      "RelativePath": "wp4-oidc-sql-historical-migrations.json",
+      "Sha256": "4EA759B741879B2AF579418D8C2D010CBA6AD454EE9F3249DF97962195B2BBEA",
+      "Length": 3134,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-sql-original-reference.json",
+      "RelativePath": "wp4-oidc-sql-original-reference.json",
+      "Sha256": "B5A6D03AF0958AC7AB0E9EF2311C0946EF69F7193806E95DDEA2E943CBEC80FE",
+      "Length": 2990,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-oidc-sql-provider-first-run.json",
+      "RelativePath": "wp4-oidc-sql-provider-first-run.json",
+      "Sha256": "B51A1523C5DF8AF51C837F01DDC20B480041BE1FED5886AABD5B32F607797C54",
+      "Length": 2937,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-public-evidence-input-check.json",
+      "RelativePath": "wp4-public-evidence-input-check.json",
+      "Sha256": "EA7D050826ED9681822FC1C375E88FCF3D1461494A698CD3F3C59B8FBA6CEE21",
+      "Length": 297,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-purchase-callback-provider-build.log",
+      "RelativePath": "wp4-purchase-callback-provider-build.log",
+      "Sha256": "0F1DB463D5543FA9DCB984EF0162053DD8FB748027DA7E0CB90053F1B70293FE",
+      "Length": 1177,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-purchase-pg-provider.json",
+      "RelativePath": "wp4-purchase-pg-provider.json",
+      "Sha256": "8A895809D27BD7CC777FD4D6FCABC05525F3A3A2B389AD02FE4D86B310B07100",
+      "Length": 8567,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-purchase-sql-provider.json",
+      "RelativePath": "wp4-purchase-sql-provider.json",
+      "Sha256": "8672F93C7E0D55218B6633AB371FDEA05FC3C79941FB498559535E46BECFD4F0",
+      "Length": 8568,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-related-unit-regression.json",
+      "RelativePath": "wp4-related-unit-regression.json",
+      "Sha256": "90B82F580A83CA6F1A41D915FE3122C07BD18D9291978645D62C3F8E1B692C77",
+      "Length": 2275,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-service-revoke-pg-concurrent.json",
+      "RelativePath": "wp4-service-revoke-pg-concurrent.json",
+      "Sha256": "9AA8BDDAA400BAD52824D74D279C99563B3E3BA1D98043F74CD659BCC8C7CE01",
+      "Length": 5240,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-service-revoke-pg-rollback.json",
+      "RelativePath": "wp4-service-revoke-pg-rollback.json",
+      "Sha256": "F4DB2FDC1106030EBB5C5AC1ACFBBE7ED0161782FE97815963EA969790445EC4",
+      "Length": 5232,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-service-revoke-sql-concurrent.json",
+      "RelativePath": "wp4-service-revoke-sql-concurrent.json",
+      "Sha256": "A929AB89D7E0E3A6706AD127A8BA0D44BC9F4A341A15608F138C91A13F4CA3EC",
+      "Length": 5241,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-service-revoke-sql-rollback.json",
+      "RelativePath": "wp4-service-revoke-sql-rollback.json",
+      "Sha256": "317928392E952A61B792FDC75563049980E2D1D0FC708CE7BBD67AF6745AB839",
+      "Length": 5233,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-task-code-review.md",
+      "RelativePath": "wp4-task-code-review.md",
+      "Sha256": "9BBDD3273C2681DB21E5FD820A48CAA7EAB3B5162ACF3EF6489FBEE072D0C62C",
+      "Length": 20777,
+      "Origin": "RootExplicitAdditionalPath"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-wms-pg-first-run.json",
+      "RelativePath": "wp4-wms-pg-first-run.json",
+      "Sha256": "7EB270A67D4BFD55689839538AF6B9BB0EC1D8D63680C4B3741B28CCBA1F2AA1",
+      "Length": 4220,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-wms-provider-fixture-build.log",
+      "RelativePath": "wp4-wms-provider-fixture-build.log",
+      "Sha256": "ABFBD0A5F4B6D7259D8C675B3DD769C9F3BCDD253466BA93BB0E20CBC8955254",
+      "Length": 1177,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-wms-sql-first-run.json",
+      "RelativePath": "wp4-wms-sql-first-run.json",
+      "Sha256": "B86BEB7B13F2D343174359EDF106046FCDC5A3F263C697EC1951E38D97FCB122",
+      "Length": 4221,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-wms-unselected-core-owner-discovery-v2.json",
+      "RelativePath": "wp4-wms-unselected-core-owner-discovery-v2.json",
+      "Sha256": "187C2A747903E6ABAD052C23B708887B74419CB59CA5C816D4DF3FC61B169BD8",
+      "Length": 1378,
+      "Origin": "PublicTopLevel"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp4-wms-unselected-core-owner-discovery.json",
+      "RelativePath": "wp4-wms-unselected-core-owner-discovery.json",
+      "Sha256": "E1A30D2132056AAC5A04357EDDB9F6EE75B243E55063BFF9C54B7248B4F199D3",
+      "Length": 1130,
+      "Origin": "PublicTopLevel"
+    }
+  ]
+}

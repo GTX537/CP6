@@ -30,7 +30,11 @@ using Microsoft.IdentityModel.Tokens;
 
 sealed partial class IdentitySqlFixture
 {
-    public async Task HttpAuthorizationAsync()
+    public Task HttpAuthorizationAsync() => HttpAuthorizationAsync(false);
+
+    public Task ProviderHttpAuthorizationAndIssuanceFailureAsync() => HttpAuthorizationAsync(true);
+
+    private async Task HttpAuthorizationAsync(bool verifyNativeIssuanceFailure)
     {
         var tenant = await SeedAsync();
         var otherTenant = await SeedAsync();
@@ -66,8 +70,8 @@ sealed partial class IdentitySqlFixture
         builder.Services.AddSingleton(oidc);
         builder.Services.AddSingleton(runtime);
         builder.Services.AddSingleton(protection);
-        builder.Services.AddScoped(_ => new CP6Context(new DbContextOptionsBuilder<CP6Context>().UseSqlServer(connection).Options,
-            new TenantContext { CurrentTenantId = tenant }, identity: runtime));
+        var insertFailures = new HttpServiceTokenInsertObserver(tenant, "reader-a");
+        builder.Services.AddScoped(_ => CreateHttpContext(tenant, runtime, verifyNativeIssuanceFailure ? insertFailures : null));
         builder.Services.AddScoped<IdentitySnapshotReader>();
         builder.Services.AddScoped<CrmServiceTokenRecordStore>();
         builder.Services.AddScoped<CrmOidcDirectory>(p => new(p.GetRequiredService<CP6Context>(), new TenantContext { CurrentTenantId = tenant }, null!, null!, oidc));
@@ -96,7 +100,7 @@ sealed partial class IdentitySqlFixture
         builder.Services.AddControllers().AddApplicationPart(typeof(CrmIdentityController).Assembly)
             .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new IdentityControllersOnly())).AddControllersAsServices();
         builder.Services.RemoveAll<CrmOidcController>();
-        builder.Services.AddTransient<CrmOidcController>(p => new(oidc, crypto, new SqlCrmOidcGrantStore(connection, runtime),
+        builder.Services.AddTransient<CrmOidcController>(p => new(oidc, crypto, new SqlCrmOidcGrantStore(database, connection, runtime),
             p.GetRequiredService<CrmOidcDirectory>(), builder.Configuration, null!, null!,
             new CrmOidcServiceTokens(oidc, crypto, p.GetRequiredService<ICrmOidcServiceDirectory>(),
                 records: p.GetRequiredService<CrmServiceTokenRecordStore>())));
@@ -126,7 +130,10 @@ sealed partial class IdentitySqlFixture
                 if (response.StatusCode != HttpStatusCode.OK)
                     throw new InvalidOperationException($"real service token endpoint failed with HTTP {(int)response.StatusCode}", serverFailure);
                 using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-                return json.RootElement.GetProperty("access_token").GetString()!;
+                var issued = json.RootElement.GetProperty("access_token").GetString()!;
+                if (verifyNativeIssuanceFailure)
+                    await AssertHttpTokenIndexAsync(issued, clientId, oidc.ServiceClients.Single(client => client.ClientId == clientId).TenantId);
+                return issued;
             }
             AuthenticationHeaderValue Basic(string id) => new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(
                 Uri.EscapeDataString(id) + ":" + Uri.EscapeDataString(secret))));
@@ -138,6 +145,8 @@ sealed partial class IdentitySqlFixture
                 Require(response.StatusCode == expected, $"identity HTTP status mismatch: expected {(int)expected}, actual {(int)response.StatusCode}");
                 return await response.Content.ReadAsStringAsync();
             }
+            if (verifyNativeIssuanceFailure)
+                await AssertHttpIssuanceFailureAsync(http, tenant, Basic("reader-a"), insertFailures);
             var token = await Issue("reader-a");
             var other = await Issue("reader-b");
             var excluded = await Issue("not-reader");

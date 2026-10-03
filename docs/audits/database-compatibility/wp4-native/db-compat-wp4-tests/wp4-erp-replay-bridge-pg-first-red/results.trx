@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6ca96c53-3aae-4a27-9bad-77034fdd3a9b" name="tt@LAPTOP-3QQ44FJS 2026-10-03 07:29:02" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T07:29:02.0843104-04:00" queuing="2026-10-03T07:29:02.0843108-04:00" start="2026-10-03T07:28:56.4237753-04:00" finish="2026-10-03T07:29:02.8977855-04:00" />
+  <TestSettings name="default" id="dcebdf5b-ea39-4f94-a47a-484968da3af6">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_07_29_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="95340ebc-4be1-4e73-a570-c110b3533426" testId="d9aee183-4518-7fef-644b-67a64cc3cec7" testName="CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.8899935" startTime="2026-10-03T07:29:00.1506713-04:00" endTime="2026-10-03T07:29:02.0500970-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95340ebc-4be1-4e73-a570-c110b3533426">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : C03_REQUIRES_REAL_SQL_SERVER</Message>
+          <StackTrace>   at CP6.Core.Services.ErpIntegration.ErpInboxReplayService.ScheduleAsync(Guid tenant, String messageId, ErpReplayRequest input, String actor, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpInboxReplayService.cs:line 28&#xD;
+   at CP6.Core.Services.ErpIntegration.ErpInboxReplayService.ScheduleAsync(Guid tenant, String messageId, ErpReplayRequest input, String actor, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpInboxReplayService.cs:line 74&#xD;
+   at CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ReplaySqlTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="32174759-7833-4597-819b-e1e5dcfca845" testId="e77f44d1-b5cc-b106-b8c2-d240d7b037b7" testName="CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3556927" startTime="2026-10-03T07:29:02.2633242-04:00" endTime="2026-10-03T07:29:02.6188253-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32174759-7833-4597-819b-e1e5dcfca845">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : C03_REQUIRES_REAL_SQL_SERVER</Message>
+          <StackTrace>   at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.RequireSql(ErpIntegrationContext queue) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs:line 182&#xD;
+   at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs:line 68&#xD;
+   at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs:line 98&#xD;
+   at CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\DeliveryReplaySqlTests.cs:line 27&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b59487ff-c845-4ba4-9942-4553e442fcde" testId="b884b6cd-e787-ee04-7afb-64d836e40bbe" testName="CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1987485" startTime="2026-10-03T07:29:02.6201144-04:00" endTime="2026-10-03T07:29:02.8317049-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b59487ff-c845-4ba4-9942-4553e442fcde">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42601: "WITH"またはその近辺で構文エラー&#xD;
+&#xD;
+POSITION: 230</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()&#xD;
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+   at CP6.WebApi.BackgroundServices.ErpOrderBridgeWorker.DispatchOneAsync(Guid tenant, String key, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\BackgroundServices\ErpOrderBridgeWorker.cs:line 46&#xD;
+   at CP6.WebApi.BackgroundServices.ErpOrderBridgeWorker.DispatchOneAsync(Guid tenant, String key, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\BackgroundServices\ErpOrderBridgeWorker.cs:line 72&#xD;
+   at CP6.WebApi.BackgroundServices.ErpOrderBridgeWorker.DispatchOneAsync(Guid tenant, String key, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\BackgroundServices\ErpOrderBridgeWorker.cs:line 72&#xD;
+   at CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs:line 30&#xD;
+   at CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e1b347ca-536a-4385-bc5b-cd5eaf74657f" testId="890f7e22-1efc-042a-8507-2e859115a653" testName="CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2092387" startTime="2026-10-03T07:29:02.0703821-04:00" endTime="2026-10-03T07:29:02.2623260-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1b347ca-536a-4385-bc5b-cd5eaf74657f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : C03_REQUIRES_REAL_SQL_SERVER</Message>
+          <StackTrace>   at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.RequireSql(ErpIntegrationContext queue) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs:line 182&#xD;
+   at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs:line 68&#xD;
+   at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs:line 98&#xD;
+   at CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity() in D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\DeliveryReplaySqlTests.cs:line 87&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="d9aee183-4518-7fef-644b-67a64cc3cec7">
+      <Execution id="95340ebc-4be1-4e73-a570-c110b3533426" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.ReplaySqlTests" name="Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="890f7e22-1efc-042a-8507-2e859115a653">
+      <Execution id="e1b347ca-536a-4385-bc5b-cd5eaf74657f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests" name="Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="e77f44d1-b5cc-b106-b8c2-d240d7b037b7">
+      <Execution id="32174759-7833-4597-819b-e1e5dcfca845" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests" name="Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="b884b6cd-e787-ee04-7afb-64d836e40bbe">
+      <Execution id="b59487ff-c845-4ba4-9942-4553e442fcde" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests" name="Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d9aee183-4518-7fef-644b-67a64cc3cec7" executionId="95340ebc-4be1-4e73-a570-c110b3533426" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e77f44d1-b5cc-b106-b8c2-d240d7b037b7" executionId="32174759-7833-4597-819b-e1e5dcfca845" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b884b6cd-e787-ee04-7afb-64d836e40bbe" executionId="b59487ff-c845-4ba4-9942-4553e442fcde" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="890f7e22-1efc-042a-8507-2e859115a653" executionId="e1b347ca-536a-4385-bc5b-cd5eaf74657f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.12]   Starting:    CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:05.27]       System.InvalidOperationException : C03_REQUIRES_REAL_SQL_SERVER&#xD;
+[xUnit.net 00:00:05.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.27]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpInboxReplayService.cs(28,0): at CP6.Core.Services.ErpIntegration.ErpInboxReplayService.ScheduleAsync(Guid tenant, String messageId, ErpReplayRequest input, String actor, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.27]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpInboxReplayService.cs(74,0): at CP6.Core.Services.ErpIntegration.ErpInboxReplayService.ScheduleAsync(Guid tenant, String messageId, ErpReplayRequest input, String actor, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.27]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\ReplaySqlTests.cs(44,0): at CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order()&#xD;
+[xUnit.net 00:00:05.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.48]       System.InvalidOperationException : C03_REQUIRES_REAL_SQL_SERVER&#xD;
+[xUnit.net 00:00:05.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.48]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs(182,0): at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.RequireSql(ErpIntegrationContext queue)&#xD;
+[xUnit.net 00:00:05.48]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs(68,0): at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.48]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs(98,0): at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.48]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\DeliveryReplaySqlTests.cs(87,0): at CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity()&#xD;
+[xUnit.net 00:00:05.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.83]       System.InvalidOperationException : C03_REQUIRES_REAL_SQL_SERVER&#xD;
+[xUnit.net 00:00:05.83]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.83]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs(182,0): at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.RequireSql(ErpIntegrationContext queue)&#xD;
+[xUnit.net 00:00:05.83]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs(68,0): at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.83]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\Services\ErpIntegration\ErpDeliveryReplayService.cs(98,0): at CP6.Core.Services.ErpIntegration.ErpDeliveryReplayService.ScheduleAsync(Guid tenant, String kind, String target, ErpReplayRequest input, String actor, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.83]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\DeliveryReplaySqlTests.cs(27,0): at CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order()&#xD;
+[xUnit.net 00:00:05.83]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.05]       Npgsql.PostgresException : 42601: "WITH"またはその近辺で構文エラー&#xD;
+[xUnit.net 00:00:06.05]       &#xD;
+[xUnit.net 00:00:06.05]       POSITION: 230&#xD;
+[xUnit.net 00:00:06.05]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.05]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:06.05]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:06.05]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()&#xD;
+[xUnit.net 00:00:06.05]            at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]            at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.05]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\BackgroundServices\ErpOrderBridgeWorker.cs(46,0): at CP6.WebApi.BackgroundServices.ErpOrderBridgeWorker.DispatchOneAsync(Guid tenant, String key, CancellationToken ct)&#xD;
+[xUnit.net 00:00:06.05]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\BackgroundServices\ErpOrderBridgeWorker.cs(72,0): at CP6.WebApi.BackgroundServices.ErpOrderBridgeWorker.DispatchOneAsync(Guid tenant, String key, CancellationToken ct)&#xD;
+[xUnit.net 00:00:06.05]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\BackgroundServices\ErpOrderBridgeWorker.cs(72,0): at CP6.WebApi.BackgroundServices.ErpOrderBridgeWorker.DispatchOneAsync(Guid tenant, String key, CancellationToken ct)&#xD;
+[xUnit.net 00:00:06.05]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs(30,0): at CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit()&#xD;
+[xUnit.net 00:00:06.05]         D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs(44,0): at CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit()&#xD;
+[xUnit.net 00:00:06.05]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.05]   Finished:    CP6.ErpIntegration.SqlTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T07:29:02.0522405-04:00">
+        <Text>[xUnit.net 00:00:05.26]     CP6.ErpIntegration.SqlTests.ReplaySqlTests.Deadletter_replay_preserves_original_message_and_audits_one_operation_then_creates_one_order [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T07:29:02.2629651-04:00">
+        <Text>[xUnit.net 00:00:05.48]     CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_bridge_requeues_only_original_committed_order_and_audits_identity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T07:29:02.6193422-04:00">
+        <Text>[xUnit.net 00:00:05.83]     CP6.ErpIntegration.SqlTests.DeliveryReplaySqlTests.Exhausted_result_requeues_original_event_and_audits_one_operation_without_recreating_order [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T07:29:02.8321947-04:00">
+        <Text>[xUnit.net 00:00:06.04]     CP6.ErpIntegration.SqlTests.BridgeWorkerSqlTests.Worker_calls_each_hook_once_in_event_tenant_scope_after_order_commit [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

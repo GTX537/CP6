@@ -1,0 +1,40 @@
+{
+  "schemaId": "cp6.c02.provider-dispatcher-failure-verification.v1",
+  "provider": "PostgreSql",
+  "scope": "retry-and-original-byte-recovery",
+  "completed": true,
+  "boundary": "actual signed Platform store/dispatcher, production factory options and native owned queues; recording/failing publisher only; no Dapr/Kafka/CRM delivery",
+  "clockScope": "TimeProvider injected through formal package constructors; logical time advance, no claim of OS waiting for retry or lease expiry",
+  "platformAssemblySha256": "a5e782142413f76266232234a0c1e6a6f1274f203fdd6195b7a337be1597d7ac",
+  "observations": [
+    {
+      "queue": "CP6Context",
+      "batchSize": 32,
+      "messageId": "204617f8255c440bba5e091c26173bf5",
+      "payloadSha256": "3a58771f8fd96ce5c5b5f369a5a162a48afca09ca5bf73935e9dc5aec39dd597",
+      "actualFailedAtInjectedUtc": "2026-10-03T12:08:32.267+00:00",
+      "actualStoredAvailableAtUtc": "2026-10-03T12:08:33.267+00:00",
+      "earlyActualBatchClaimed": 0,
+      "actualAttemptCount": 2,
+      "actualSuccessfulTargetPublishes": 1,
+      "publishedAtInjectedUtc": "2026-10-03T12:08:33.267+00:00",
+      "originalBytesAndMetadataPreserved": true,
+      "finalNativeTokenSha256": "6db2d5fc76c7e56a09f0410d0aa8338903cc142665fb0044c1d132a07993a6f3"
+    },
+    {
+      "queue": "IdentityMessagingContext",
+      "batchSize": 16,
+      "messageId": "e2836dc7864f4988bb7264f90cdf938f",
+      "payloadSha256": "bd351eb9ceeeecbe14c45ede886a2e009713c25c0e4c821ccbfaa3ff68ca7179",
+      "actualFailedAtInjectedUtc": "2026-10-03T12:08:33.267+00:00",
+      "actualStoredAvailableAtUtc": "2026-10-03T12:08:34.267+00:00",
+      "earlyActualBatchClaimed": 0,
+      "actualAttemptCount": 2,
+      "actualSuccessfulTargetPublishes": 1,
+      "publishedAtInjectedUtc": "2026-10-03T12:08:34.267+00:00",
+      "originalBytesAndMetadataPreserved": true,
+      "finalNativeTokenSha256": "c8588f3d546814a4cf78ea1bd5d544de310438a05a1d657bb03ea60fdb2d83bd"
+    }
+  ],
+  "observedAtUtc": "2026-10-03T12:08:34.2975277+00:00"
+}

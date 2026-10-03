@@ -25,6 +25,7 @@ public sealed class ProductionRegistrationSqlTests(SqlDatabaseFixture database)
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["ConnectionStrings:DefaultConnection"] = connection,
+            ["Database:Provider"] = database.Database.Provider.ToString(),
             ["CrmIdentity:Enabled"] = "true",
             [$"CrmIdentity:Tenants:{s.Tenant:D}"] = "local",
             ["ErpIntegration:Enabled"] = "true",
@@ -45,7 +46,7 @@ public sealed class ProductionRegistrationSqlTests(SqlDatabaseFixture database)
         services.AddSingleton<TimeProvider>(s.Clock);
         // Anonymous sidecar ingress does not establish an authenticated request tenant.
         services.AddScoped<ITenantContext, TenantContext>();
-        services.AddDbContext<CP6Context>(options => options.UseSqlServer(connection));
+        services.AddDbContext<CP6Context>(database.ConfigureBusinessOptions);
         services.AddScoped<IFxRateService, FxRateService>();
         services.AddSingleton<IPowerEggWorkflowService>(s.ExternalCalls);
         services.AddSingleton<IWmsBridgeHook>(s.ExternalCalls);

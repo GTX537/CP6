@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-03：WP4 本地双库验收与集中审查通过，待远端交付
+
+[BUG147](https://github.com/GTX537/CP6/issues/147) 已经 [PR148](https://github.com/GTX537/CP6/pull/148) 正常合入远端 main `974e57c0650279565330a67c844355ba3e1b563d`，候选 `8f42a76b` 的包含性与完整树一致已核对；2026-10-03 10:48:57 UTC Closed。原118项本地结果按相同源码/程序集复用，合并后原业务保存另执行1/1、零跳过，独占库正常清理且只读核对零残留。[14份交付原件](../audits/2026-10-03-bug-147-snapshot-batch/native/post-merge/manifest.json)保留发布检查、首次HTTP408及正常重试、合并后冒烟与关闭记录，不改写原24份证据。
+
+WP4已在独立分支完成本地实现及一次集中代码审查，无实质阻断。两库各通过 OIDC/Refresh 27、原ERP 95、WMS 8；身份原共同21与七个新增专项（每项2，含setup）按各自执行来源保留。财务/权限/采购/WF/通知及事件retry共同25项分批完成；PG采购锁的初次21/22和修复后采购5/5不改写为单次25/25。PG另两项实际40001证明整事务释放后重建并成功幂等；相关unit/SQLite另198/198。必需通过批次均零跳过，WMS未选择专项的预期8skip单列，不计原生验收。全部原失败、复用与外部传输/完整应用运行边界见[实施记录](../audits/database-compatibility/WP4-IMPLEMENTATION.md)。211份公共原件已按字节归档；当前待提交、正常PR合并及远端包含性核对；WP4尚未交付，WP5/6与父任务134继续Open。
+
+根工作区原改动保持；全部验证本地执行，未触发/取消Actions、改工作流/保护或部署生产。下方Open/Pending均保留各历史时点，当前以本节和GitHub Issue为准。
+
 ## 2026-10-03：WP3 远端交付与 BUG147 本地回归
 
 WP3 已由 [PR146](https://github.com/GTX537/CP6/pull/146) 合入远端 main `0b0ab74a04c4d840a2c0bb05e36395aff8b89d32`。后续 WP4 对照测试复现的 [BUG147](https://github.com/GTX537/CP6/issues/147) 已完成本地最小修复验证：原 SQL468 RED 保留，七个真实 SQL 场景与 111 个相关检查共118/118、零skip，构建零warning/error，测试库零残留。见[范围与原件](../audits/2026-10-03-bug-147-snapshot-batch/README.md)。

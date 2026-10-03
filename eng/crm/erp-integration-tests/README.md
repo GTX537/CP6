@@ -1,4 +1,27 @@
-# C03 ERP SQL acceptance tests
+# C03 ERP relational acceptance tests
+
+## WP4 provider lanes (2026-10-03)
+
+The original 95 scenarios now share an explicit SQL Server/PostgreSQL fixture. Select `CP6_ERP_TEST_PROVIDER=SqlServer|PostgreSql`, supply `CP6_ERP_TEST_CONNECTION` privately, and set `CP6_TEST_DATABASE_OWNER` from the root-created WP4 receipt. The selected connection must identify its owner-marked loopback `CP6Compat_WP4_<date>_<owner-prefix>` database. Configuration, connection or migration failure fails the lane; it never falls back to a different provider or skips selected native tests. The fixture applies the real Core/IdentityPriority/ERP migration profiles and retains the database for root-coordinated cleanup.
+
+Use explicit filters to keep common and provider-specific acceptance separate:
+
+```powershell
+# Original 95 scenarios: either explicitly selected provider, or the legacy SQL fixture below.
+dotnet test eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj --filter 'FullyQualifiedName!~ErpHandlerRelationalTests&FullyQualifiedName!~ErpReplaySerializationRelationalTests' --logger 'trx;LogFileName=erp-common.trx' --results-directory <fresh-output>
+
+# Two additional required handler cases: explicit provider/connection/owner inputs.
+dotnet test eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj --filter 'FullyQualifiedName~ErpHandlerRelationalTests' --logger 'trx;LogFileName=erp-handler.trx' --results-directory <another-fresh-output>
+
+# PostgreSQL-only native serialization lane: explicit PostgreSql inputs, two cases.
+dotnet test eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj --filter 'FullyQualifiedName~ErpReplaySerializationRelationalTests' --logger 'trx;LogFileName=erp-serialization.trx' --results-directory <pg-fresh-output>
+```
+
+WP4 passed the original 95 and additional two handler cases on each provider in separate executions. PostgreSQL's additional two serialization cases actually observe two old Serializable snapshots competing for the real advisory resource, a typed `40001`, disposal of the failed transaction/context before creation of a third context, and a single immutable replay audit. They cover Inbox and Delivery bridge replay; they do not claim to force `40P01` or a result-replay serialization failure. No test-layer retry fabricates success. The [WP4 evidence record](../../../docs/audits/database-compatibility/WP4-IMPLEMENTATION.md) retains the actual source/assembly inputs, failures and individual execution scopes; it does not present these as one 99-case run.
+
+The mixed order-concurrency case retains its original bounded durable redelivery behavior. For the selected PostgreSQL provider it recognizes only classified `40001`/`40P01`; SQL Server retains `1205`/`3903`. Ordinary ERP creation is not retried by the fixture. Native constraint assertions preserve both the provider's error code and the exact constraint identity.
+
+## Legacy SQL lane
 
 This suite exercises actual SQL Server transactions and the ERP command handler using the frozen six-event contract bundle. It creates a fresh `CP6C03Test_<guid>` database, applies all `CP6Context` migrations, and drops only the database successfully created by that fixture. Each case uses separate enabled tenants. No InMemory, SQLite, `EnsureCreated`, skipped SQL cases, production database, or existing preview database is used.
 
@@ -7,7 +30,7 @@ Supply `CP6_C03_TEST_SQL` privately as a SQL Server connection string whose serv
 Run from the repository root:
 
 ```powershell
-dotnet test eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj --logger 'trx;LogFileName=c03-erp-sql.trx' --results-directory <private-evidence-directory>
+dotnet test eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj --filter 'FullyQualifiedName!~ErpHandlerRelationalTests&FullyQualifiedName!~ErpReplaySerializationRelationalTests' --logger 'trx;LogFileName=c03-erp-sql.trx' --results-directory <private-evidence-directory>
 Remove-Item Env:CP6_C03_TEST_SQL
 ```
 

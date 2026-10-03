@@ -64,6 +64,22 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
             input.PayloadSha256 is not { Length: 64 } || !input.PayloadSha256.All(c => c is >= '0' and <= '9' or >= 'a' and <= 'f') ||
             input.ReasonCode is not ("dependency-recovered" or "contract-verified") ||
             actor is not { Length: > 0 and <= 100 } || actor.Any(char.IsControl)) throw Error("INPUT_INVALID");
+
+        for (var attempt = 0; ; attempt++)
+        {
+            try { return await ScheduleOnceAsync(tenant, kind, target, input, actor, ct); }
+            catch (Exception error) when (attempt < 2 && DatabaseFailureClassifier.Classify(error) is
+                { CanRetryTransaction: true, SqlState: "40001" or "40P01" })
+            {
+                ct.ThrowIfCancellationRequested();
+                // The failed owned transaction and both contexts are fully disposed before this fresh attempt.
+            }
+        }
+    }
+
+    private async Task<ErpDeliveryReplayScheduled> ScheduleOnceAsync(Guid tenant, string kind, string target,
+        ErpReplayRequest input, string actor, CancellationToken ct)
+    {
         await using var queue = await factory.CreateDbContextAsync(ct);
         RequireSql(queue);
         await using var transaction = await queue.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
@@ -102,9 +118,12 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
         ErpDeliveryReplayAudit audit, DateTimeOffset now, CancellationToken ct)
     {
         await ErpSqlLock.AcquireAsync(queue, $"c03:delivery-result:{tenant:D}:{id:D}", ct);
-        var message = await queue.Set<Cp6OutboxMessage>().FromSqlInterpolated(
-                $"SELECT * FROM erp_integration.Cp6_OutboxMessage WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND Id={id}")
-            .SingleOrDefaultAsync(ct) ?? throw Error("NOT_FOUND");
+        var messageQuery = queue.Database.IsNpgsql()
+            ? queue.Set<Cp6OutboxMessage>().FromSqlInterpolated(
+                $"""SELECT * FROM erp_integration."Cp6_OutboxMessage" WHERE "TenantId"={tenant} AND "Id"={id} FOR UPDATE""")
+            : queue.Set<Cp6OutboxMessage>().FromSqlInterpolated(
+                $"SELECT * FROM erp_integration.Cp6_OutboxMessage WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND Id={id}");
+        var message = await messageQuery.SingleOrDefaultAsync(ct) ?? throw Error("NOT_FOUND");
         RequirePrecondition(message.RowVersion, message.PayloadSha256, input);
         if (message.Status != Cp6OutboxStatus.DeadLettered) throw Error("NOT_DEADLETTERED");
         var envelope = new Cp6OutboxEnvelope(message.MessageId, message.TenantId, message.TopicName, message.PartitionKey,
@@ -141,9 +160,12 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
     {
         // This is the same transaction-owned lock used by ErpOrderBridgeWorker around its real hooks.
         await ErpSqlLock.AcquireAsync(queue, $"c03:bridge:{tenant:D}:{key}", ct);
-        var bridge = await queue.OrderBridges.FromSqlInterpolated(
-                $"SELECT * FROM erp_integration.OrderBridgeDispatch WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND OrderKey={key}")
-            .SingleOrDefaultAsync(ct) ?? throw Error("NOT_FOUND");
+        var bridgeQuery = queue.Database.IsNpgsql()
+            ? queue.OrderBridges.FromSqlInterpolated(
+                $"""SELECT * FROM erp_integration."OrderBridgeDispatch" WHERE "TenantId"={tenant} AND "OrderKey"=CAST({key} AS bpchar) FOR UPDATE""")
+            : queue.OrderBridges.FromSqlInterpolated(
+                $"SELECT * FROM erp_integration.OrderBridgeDispatch WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND OrderKey={key}");
+        var bridge = await bridgeQuery.SingleOrDefaultAsync(ct) ?? throw Error("NOT_FOUND");
         RequirePrecondition(bridge.RowVersion, BridgeHash(tenant, key), input);
         if (bridge.CompletedAtUtc is not null || bridge.AttemptCount < 10 ||
             bridge.LastErrorCode != "C03_BRIDGE_REPLAY_REQUIRED" || bridge.LeaseExpiresAtUtc > now ||
@@ -179,7 +201,8 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
 
     private static void RequireSql(ErpIntegrationContext queue)
     {
-        if (!queue.Database.IsSqlServer()) throw new InvalidOperationException("C03_REQUIRES_REAL_SQL_SERVER");
+        if (!(queue.Database.IsSqlServer() || queue.Database.IsNpgsql()))
+            throw new InvalidOperationException("C03_REQUIRES_REAL_SQL_SERVER");
     }
 
     private static void RequirePrecondition(byte[] version, string hash, ErpReplayRequest input)

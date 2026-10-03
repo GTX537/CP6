@@ -1,0 +1,220 @@
+{
+  "schemaId": "cp6.c02.provider-dispatcher-failure-verification.v1",
+  "provider": "SqlServer",
+  "scope": "ten-actual-publisher-failures-and-bound-deadletter",
+  "completed": true,
+  "boundary": "actual signed Platform store/dispatcher, production factory options and native owned queues; recording/failing publisher only; no Dapr/Kafka/CRM delivery",
+  "clockScope": "TimeProvider injected through formal package constructors; logical time advance, no claim of OS waiting for retry or lease expiry",
+  "platformAssemblySha256": "a5e782142413f76266232234a0c1e6a6f1274f203fdd6195b7a337be1597d7ac",
+  "observations": [
+    {
+      "queue": "CP6Context",
+      "batchSize": 32,
+      "maxAttempts": 10,
+      "messageId": "40df4c12847f47a19264c27340158d06",
+      "actualTargetPublisherFailures": 10,
+      "nativeAttemptCount": 10,
+      "deadLetterId": "a70415bf-f5db-4768-bf88-ee8d4229e908",
+      "deadLetterPayloadSha256": "eed3d6a9831727e9a939b8ebb0a269675ad85b7573022055f51dd7846231193e",
+      "boundNativeDeadletter": true,
+      "extraActualBatchClaimed": 0,
+      "attempts": [
+        {
+          "actualTargetAttempt": 1,
+          "atInjectedUtc": "2026-10-03T12:15:54.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:15:55.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "f7403e7c9980617f4086f5527efdca3765204afd553ae71a32da21851d80282c"
+        },
+        {
+          "actualTargetAttempt": 2,
+          "atInjectedUtc": "2026-10-03T12:15:55.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:15:57.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "7dc398eb13bff4ee675d5cb7d282676b6b94849f84394b6185fce6d522edd87f"
+        },
+        {
+          "actualTargetAttempt": 3,
+          "atInjectedUtc": "2026-10-03T12:15:57.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:16:01.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "f9202b88e4980ebe503f02c13eb96b738b870d6ac3b13b08cf187107c003a889"
+        },
+        {
+          "actualTargetAttempt": 4,
+          "atInjectedUtc": "2026-10-03T12:16:01.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:16:09.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "87ce4e81bfa0f5dc7fbd20ddb55c4ecfe3ff43714f48380616bdcd32398d2ff9"
+        },
+        {
+          "actualTargetAttempt": 5,
+          "atInjectedUtc": "2026-10-03T12:16:09.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:16:25.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "f2030736a6757c11e57b1c997055014f72784d63d246ab55a9edeae45e1ae16d"
+        },
+        {
+          "actualTargetAttempt": 6,
+          "atInjectedUtc": "2026-10-03T12:16:25.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:16:57.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "a93c96c1a57fcd19e1bc9a7015917c982e18b48351e6c2bc417c72ea9afaf814"
+        },
+        {
+          "actualTargetAttempt": 7,
+          "atInjectedUtc": "2026-10-03T12:16:57.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:18:01.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "219d7c8217a5d776abdde1428e803692d6f5bb856184b053c4214afa80d6ee2e"
+        },
+        {
+          "actualTargetAttempt": 8,
+          "atInjectedUtc": "2026-10-03T12:18:01.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:20:09.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "97b2c260abd3336bbe99c27e027ad79d8eb89d3004d3a28beafa8da7bbc61b0e"
+        },
+        {
+          "actualTargetAttempt": 9,
+          "atInjectedUtc": "2026-10-03T12:20:09.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:24:25.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "cb816f20a774979d8aa15f86a5c3192fac5494bf3f2c56fdea291de269effe4b"
+        },
+        {
+          "actualTargetAttempt": 10,
+          "atInjectedUtc": "2026-10-03T12:24:25.218+00:00",
+          "status": 3,
+          "availableAtUtc": "2026-10-03T12:24:25.218+00:00",
+          "retryScheduled": 0,
+          "deadLettered": 1,
+          "nativeTokenSha256": "8f266b69d5c467235d860a1069f353bd3d13ecf6ad1d520115d12ce266472d5c"
+        }
+      ]
+    },
+    {
+      "queue": "IdentityMessagingContext",
+      "batchSize": 16,
+      "maxAttempts": 10,
+      "messageId": "644e90e015c44e428363e0affa8cf3a0",
+      "actualTargetPublisherFailures": 10,
+      "nativeAttemptCount": 10,
+      "deadLetterId": "f2e45404-d40f-4fce-a393-f05da88128e5",
+      "deadLetterPayloadSha256": "4b9ac019948297c1c0ca95ce05f6278aaef58c1159aa0831d0c4308c49b0a6c0",
+      "boundNativeDeadletter": true,
+      "extraActualBatchClaimed": 0,
+      "attempts": [
+        {
+          "actualTargetAttempt": 1,
+          "atInjectedUtc": "2026-10-03T12:24:25.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:24:26.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "91ea4be24a788b0c1c6d8b29900df71e12b01a8229faf214a9e6a321d76a6e7a"
+        },
+        {
+          "actualTargetAttempt": 2,
+          "atInjectedUtc": "2026-10-03T12:24:26.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:24:28.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "7d16afb91f43e1c71de71ed7da5e420993a1a97d9b518eee747dd8ef9718c0d3"
+        },
+        {
+          "actualTargetAttempt": 3,
+          "atInjectedUtc": "2026-10-03T12:24:28.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:24:32.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "3fa9ecebd55ca1f681cc17757ba3da05ee496eaa665775b8b91589b7db0fb73f"
+        },
+        {
+          "actualTargetAttempt": 4,
+          "atInjectedUtc": "2026-10-03T12:24:32.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:24:40.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "60feb7eea471a6e725550cf7dd0fed86a2a155fb6684fe39966c2f2da9bf94ce"
+        },
+        {
+          "actualTargetAttempt": 5,
+          "atInjectedUtc": "2026-10-03T12:24:40.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:24:56.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "5800f80d1ccc66c02a21e02a85ed2c945cdc2750f9aab6fa05b09f8e3e1cd133"
+        },
+        {
+          "actualTargetAttempt": 6,
+          "atInjectedUtc": "2026-10-03T12:24:56.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:25:28.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "6a676b52ba009c2bee63fc3b0394273d7d051c7b2b804c7e78fb9cf010c92d66"
+        },
+        {
+          "actualTargetAttempt": 7,
+          "atInjectedUtc": "2026-10-03T12:25:28.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:26:32.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "27bb606abeab4a38975d0417d70afc621bd7e99ea5b1c0d5d889c098e7fdf45e"
+        },
+        {
+          "actualTargetAttempt": 8,
+          "atInjectedUtc": "2026-10-03T12:26:32.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:28:40.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "c56de6a517b8ba3364d16aff7ebfcc7d441504f458db14649202f476acb3f0e2"
+        },
+        {
+          "actualTargetAttempt": 9,
+          "atInjectedUtc": "2026-10-03T12:28:40.218+00:00",
+          "status": 0,
+          "availableAtUtc": "2026-10-03T12:32:56.218+00:00",
+          "retryScheduled": 1,
+          "deadLettered": 0,
+          "nativeTokenSha256": "62a2116df9a2bde2d8818a5c1f28a2ce4b4dbb81c761eeecd7b65f2dbb5f131c"
+        },
+        {
+          "actualTargetAttempt": 10,
+          "atInjectedUtc": "2026-10-03T12:32:56.218+00:00",
+          "status": 3,
+          "availableAtUtc": "2026-10-03T12:32:56.218+00:00",
+          "retryScheduled": 0,
+          "deadLettered": 1,
+          "nativeTokenSha256": "7587de30c97317d8ca2c4d2ac74156a8a4aa0b130f8e4101578572c16440e29b"
+        }
+      ]
+    }
+  ],
+  "observedAtUtc": "2026-10-03T12:15:55.6590191+00:00"
+}

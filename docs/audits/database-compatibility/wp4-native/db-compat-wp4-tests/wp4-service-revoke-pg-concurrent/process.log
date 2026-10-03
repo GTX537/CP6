@@ -1,0 +1,3 @@
+PASS current-provider-core-and-identity-priority-installed
+{"observation":"service-token-revoke-native-block","provider":"PostgreSql","blocker":32612,"waiter":27904,"blocked":true}
+PASS concurrent-service-revocations-commit-one-token-snapshot-and-priority-message

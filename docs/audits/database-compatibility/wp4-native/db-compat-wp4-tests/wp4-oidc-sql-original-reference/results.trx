@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b9bd78c7-6eca-46d5-9f28-6755ebc99966" name="tt@LAPTOP-3QQ44FJS 2026-10-03 06:05:12" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T06:05:12.1279204-04:00" queuing="2026-10-03T06:05:12.1279207-04:00" start="2026-10-03T06:04:42.6558263-04:00" finish="2026-10-03T06:05:12.1319232-04:00" />
+  <TestSettings name="default" id="6bab3855-640f-4133-9e20-6c845f2058af">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_06_05_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c8fd4af3-2bcc-45e8-9271-0fba7dd4faa2" testId="c9b13dac-5475-17c6-b999-555010af0b64" testName="CP6.Oidc.IntegrationTests.GrantStoreRelationalTests.Twenty_four_independent_connections_redeem_exactly_once" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1955494" startTime="2026-10-03T06:05:11.7801435-04:00" endTime="2026-10-03T06:05:11.9665779-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8fd4af3-2bcc-45e8-9271-0fba7dd4faa2" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Oidc.IntegrationTests.GrantStoreRelationalTests.Twenty_four_independent_connections_redeem_exactly_once" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\cp6.oidc.integrationtests\bin\debug\net8.0\cp6.oidc.integrationtests.dll" id="c9b13dac-5475-17c6-b999-555010af0b64">
+      <Execution id="c8fd4af3-2bcc-45e8-9271-0fba7dd4faa2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Oidc.IntegrationTests\bin\Debug\net8.0\CP6.Oidc.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Oidc.IntegrationTests.GrantStoreRelationalTests" name="Twenty_four_independent_connections_redeem_exactly_once" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c9b13dac-5475-17c6-b999-555010af0b64" executionId="c8fd4af3-2bcc-45e8-9271-0fba7dd4faa2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: CP6.Oidc.IntegrationTests&#xD;
+[xUnit.net 00:00:00.09]   Discovered:  CP6.Oidc.IntegrationTests&#xD;
+[xUnit.net 00:00:00.10]   Starting:    CP6.Oidc.IntegrationTests&#xD;
+[xUnit.net 00:00:28.97]   Finished:    CP6.Oidc.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

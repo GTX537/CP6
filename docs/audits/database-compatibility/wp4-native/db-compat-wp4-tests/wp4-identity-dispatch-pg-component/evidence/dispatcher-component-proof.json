@@ -1,0 +1,64 @@
+{
+  "schemaId": "cp6.c02.provider-dispatcher-component-verification.v1",
+  "provider": "PostgreSql",
+  "success": true,
+  "boundary": "actual production factories/options and Platform dispatcher with recording publisher; no Dapr/Kafka/CRM delivery",
+  "platformAssemblySha256": "a5e782142413f76266232234a0c1e6a6f1274f203fdd6195b7a337be1597d7ac",
+  "webApiAssemblySha256": "96a1d23d0f318cc674875921c2352ae1bee3f905171a96eba5860ead8a5fa104",
+  "existingEligibleOrdinary": 149,
+  "existingEligiblePriority": 13,
+  "ordinaryBatchSize": 32,
+  "priorityBatchSize": 16,
+  "ordinaryBatches": 5,
+  "priorityBatches": 1,
+  "priorityProgressedWhileBlocked": true,
+  "ordinaryReleased": true,
+  "allDispatcherTasksJoined": true,
+  "ordinaryTargetCount": 5,
+  "priorityTargetCount": 1,
+  "targetPayloadSha256": [
+    {
+      "messageId": "6817237330de4d8891f1a0048b5acc2b",
+      "aggregateId": "department:64ae67b3-3be1-425d-a897-b139b28f2802",
+      "aggregateVersion": 1,
+      "partitionKey": "306d621a-4c86-4a1d-991a-f69b23a5d335:department:64ae67b3-3be1-425d-a897-b139b28f2802",
+      "sha256": "30ae8470ef7d24c82c61e1055fc25451c771faeade916fbc7d65d6e98426cca3"
+    },
+    {
+      "messageId": "58983770bd9343328aea01f6af981cdd",
+      "aggregateId": "department:ed39b1bb-a286-4d16-aa5e-faee1a5e299c",
+      "aggregateVersion": 1,
+      "partitionKey": "306d621a-4c86-4a1d-991a-f69b23a5d335:department:ed39b1bb-a286-4d16-aa5e-faee1a5e299c",
+      "sha256": "370288061bbc462ce5e7c29d84bda82f156cc8f8b6485ff6cf9f1f04662e83e0"
+    },
+    {
+      "messageId": "7a80cd07d79d4aaea3910a8fe458f2cc",
+      "aggregateId": "permission:role:7",
+      "aggregateVersion": 1,
+      "partitionKey": "306d621a-4c86-4a1d-991a-f69b23a5d335:permission:role:7",
+      "sha256": "f7de97f9bd8edef379d864f7f0416fcabd549a1dedf735b1ca8804d2ea89c547"
+    },
+    {
+      "messageId": "6a122cc8ae5b49fd9cff4c23127b3e24",
+      "aggregateId": "tenant:306d621a-4c86-4a1d-991a-f69b23a5d335",
+      "aggregateVersion": 1,
+      "partitionKey": "306d621a-4c86-4a1d-991a-f69b23a5d335:tenant:306d621a-4c86-4a1d-991a-f69b23a5d335",
+      "sha256": "f080174339b28648b0c506bf95401b86d58f432e8e729bc8d0545a14fae75ad8"
+    },
+    {
+      "messageId": "9af9c9031aba422f930cf0f42eebf120",
+      "aggregateId": "user:97c66043-a81b-4e0f-b8db-c42724578d35",
+      "aggregateVersion": 1,
+      "partitionKey": "306d621a-4c86-4a1d-991a-f69b23a5d335:user:97c66043-a81b-4e0f-b8db-c42724578d35",
+      "sha256": "e6b7391ef0622a5c4e076b3c6da9d235243099cc07030a66a6f65ccbbc1b6a1d"
+    },
+    {
+      "messageId": "f27b5b9950764957a5790408adc12e78",
+      "aggregateId": "token:62e72f7c40be78057b080ff3f5b15d958aec07b55950f32b7df11915a6fe44ce:75846b8a-fad8-4e2a-a6ba-4f89e2e76c45",
+      "aggregateVersion": 1,
+      "partitionKey": "306d621a-4c86-4a1d-991a-f69b23a5d335:token:62e72f7c40be78057b080ff3f5b15d958aec07b55950f32b7df11915a6fe44ce:75846b8a-fad8-4e2a-a6ba-4f89e2e76c45",
+      "sha256": "086cb082136be4daffd8a26140ed8acd9634ba353caeede257b919c82ef33ee0"
+    }
+  ],
+  "observedAtUtc": "2026-10-03T11:22:39.5055087+00:00"
+}

@@ -106,7 +106,7 @@ public class OrderService : IOrderService
 
     internal Task<string> CreateForIntegrationAsync(OrderDto dto, ErpOrderOrigin origin)
     {
-        if (!_db.Database.IsSqlServer() || _db.Database.CurrentTransaction is null || _fxRate is null ||
+        if (!(_db.Database.IsSqlServer() || _db.Database.IsNpgsql()) || _db.Database.CurrentTransaction is null || _fxRate is null ||
             origin.TenantId != _db.CurrentTenantId)
             throw new InvalidOperationException("C03_ORDER_REQUIRES_TENANT_SQL_TRANSACTION_AND_FX");
         return CreateCoreAsync(dto, "crm-integration", origin);

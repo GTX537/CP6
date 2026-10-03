@@ -1,13 +1,15 @@
 using System.Text;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Core.Services.ErpIntegration;
 using CP6.Platform.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.ErpIntegration.SqlTests;
 
 [Collection(SqlDatabaseCollection.Name)]
-public sealed class DeliveryReplaySqlTests(SqlDatabaseFixture database)
+public sealed class DeliveryReplaySqlTests(SqlDatabaseFixture database, ITestOutputHelper output)
 {
     private const string Actor = "erp-delivery-operator";
     private static readonly Cp6TransactionalMessagingOptions TransportOptions = new()
@@ -259,17 +261,25 @@ public sealed class DeliveryReplaySqlTests(SqlDatabaseFixture database)
         var input = Input(kind == "result" ? result.RowVersion : bridge.RowVersion,
             kind == "result" ? result.PayloadSha256 : BridgeHash(s.Tenant, bridge.OrderKey));
         await using var queue = s.Queue();
-        // SQL DDL cannot parameterize a CHECK definition. The only interpolated value is a generated Guid.
-        var faultDdl = $"ALTER TABLE erp_integration.DeliveryReplayAudit WITH NOCHECK ADD CONSTRAINT C03_DeliveryReplayAuditFault CHECK (TenantId <> '{s.Tenant:D}')";
+        // Only generated Guid/identifier values enter this test-only constraint definition.
+        var constraint = "C03_DeliveryReplayAuditFault_" + Guid.NewGuid().ToString("N");
+        var faultDdl = database.IsPostgreSql
+            ? $"ALTER TABLE erp_integration.\"DeliveryReplayAudit\" ADD CONSTRAINT \"{constraint}\" CHECK (\"TenantId\" <> '{s.Tenant:D}'::uuid) NOT VALID"
+            : $"ALTER TABLE erp_integration.DeliveryReplayAudit WITH NOCHECK ADD CONSTRAINT [{constraint}] CHECK (TenantId <> '{s.Tenant:D}')";
+        var dropDdl = database.IsPostgreSql
+            ? $"ALTER TABLE erp_integration.\"DeliveryReplayAudit\" DROP CONSTRAINT \"{constraint}\""
+            : $"ALTER TABLE erp_integration.DeliveryReplayAudit DROP CONSTRAINT [{constraint}]";
         await queue.Database.ExecuteSqlRawAsync(faultDdl);
         try
         {
             var service = new ErpDeliveryReplayService(database, s.Runtime);
-            await Assert.ThrowsAsync<DbUpdateException>(() => kind == "result"
+            var error = await Assert.ThrowsAsync<DbUpdateException>(() => kind == "result"
                 ? service.ScheduleResultAsync(s.Tenant, result.Id, input, Actor)
                 : service.ScheduleBridgeAsync(s.Tenant, bridge.OrderKey, input, Actor));
+            SqlFailureProbe.AssertConstraint(error, database.Database.Provider, DatabaseFailureKind.CheckConstraint,
+                constraint, output);
         }
-        finally { await queue.Database.ExecuteSqlRawAsync("ALTER TABLE erp_integration.DeliveryReplayAudit DROP CONSTRAINT C03_DeliveryReplayAuditFault"); }
+        finally { await queue.Database.ExecuteSqlRawAsync(dropDdl); }
         Assert.Equal(result.RowVersion, (await ResultAsync(s, result.Id)).RowVersion);
         Assert.Equal(bridge.RowVersion, (await queue.OrderBridges.AsNoTracking().SingleAsync(x => x.TenantId == s.Tenant)).RowVersion);
         Assert.Null((await queue.Set<Cp6DeadLetterRecord>().SingleAsync(x => x.MessageId == result.MessageId)).ReplayedAtUtc);
