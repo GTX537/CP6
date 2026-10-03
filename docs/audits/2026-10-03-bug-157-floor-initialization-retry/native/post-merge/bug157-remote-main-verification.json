@@ -1,0 +1,23 @@
+{
+  "Task": "BUG-157",
+  "PR": 158,
+  "Candidate": "5a339cbcf4f00740cad8672c75398bd879211b7e",
+  "RemoteMain": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "CandidateAncestor": true,
+  "FullTreesEqual": true,
+  "CandidateTree": "7b18e4f3cb1996f8a3df85823fe0952896764ff4",
+  "MainTree": "7b18e4f3cb1996f8a3df85823fe0952896764ff4",
+  "PRReadback": {
+    "baseRefOid": "2e1f90c629340944d95fadd7aee428f639304ed6",
+    "headRefOid": "5a339cbcf4f00740cad8672c75398bd879211b7e",
+    "mergeCommit": {
+      "oid": "5587a2a67ae73715596ca1a135b5863005abac8d"
+    },
+    "mergedAt": "2026-10-03T19:32:15Z",
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/158"
+  },
+  "OwnWorktreeHead": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "CheckedUtc": "2026-10-03T19:32:41.3550536Z",
+  "Scope": "Normal PR merge, fresh remote main and full tree proof; post-merge native smoke and owned cleanup pending"
+}

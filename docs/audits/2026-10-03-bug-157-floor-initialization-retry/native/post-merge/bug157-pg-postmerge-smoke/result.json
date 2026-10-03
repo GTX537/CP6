@@ -1,0 +1,47 @@
+{
+  "Task": "BUG-157",
+  "Provider": "PostgreSql",
+  "ExecutionHead": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "WorkingTreeDirty": false,
+  "DatabaseName": "CP6Compat_WP5_20261003_da5837dd",
+  "OwnershipProtocol": "DB-COMPAT-01-WP5",
+  "BuildExecuted": false,
+  "Filter": "FullyQualifiedName=CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner|FullyQualifiedName=CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict|FullyQualifiedName=CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+  "Counts": {
+    "Expected": 3,
+    "Total": 3,
+    "Passed": 3,
+    "Failed": 0,
+    "Other": 0
+  },
+  "Process": {
+    "ProcessId": 26040,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T19:34:09.4476486Z",
+    "FinishedUtc": "2026-10-03T19:34:15.8426173Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "5C8A6F0B2A6D36479200731075772476872C2FB8CF93914759BC094026F9C2AA",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Success": true,
+  "SourcesUnchanged": true,
+  "RuntimeUnchanged": true,
+  "SourceInputsSha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+  "RuntimeManifestSha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+  "TrxSha256": "AFA6A1B256E2C55F5E3146C4FB1B23B196EDF15E9DADB56352FCA5BEAEA4CED5",
+  "CaseNames": [
+    "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+    "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+    "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict"
+  ],
+  "NativeEvidence": [
+    "Provider=PostgreSql; Stage=clone-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.",
+    "Provider=PostgreSql; Stage=clone-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.",
+    "BUG157 floor native failure: SQLSTATE=40001; Kind=SerializationFailure.",
+    "Provider=PostgreSql; Stage=clone-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.",
+    "BUG157 floor native failure: SQLSTATE=40001; Kind=SerializationFailure."
+  ],
+  "Scope": "Selected actual native database tests; controlled unknown/cancellation/exhaustion injections are distinguished in source from the coordinated native serialization regression",
+  "FinishedUtc": "2026-10-03T19:34:16.9038080Z"
+}
