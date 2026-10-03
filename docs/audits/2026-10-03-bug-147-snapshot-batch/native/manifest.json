@@ -1,0 +1,178 @@
+{
+  "Schema": "cp6.bug147.original-evidence.v1",
+  "Task": "BUG147",
+  "CreatedUtc": "2026-10-03T10:34:55.6233660Z",
+  "OriginalCount": 24,
+  "AllOriginalBytesVerified": true,
+  "Scope": "SQL collation discovery, preparation failure, corrected native RED, final 7 native and 111 related passes, cleanup, source applicability and concentrated review. Does not claim full WP4 or production acceptance.",
+  "Entries": [
+    {
+      "File": "bug147-code-task-review.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-code-task-review.json",
+      "Bytes": 7429,
+      "Sha256": "82F03D62C19D3A47FABE64866CE3F10663A1381011D21E208CEBBFBC162D7E9C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-core-fix-build.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-core-fix-build.log",
+      "Bytes": 304,
+      "Sha256": "A109162393483C99373DCB29AF3694A66E02285419D47213584A4E4726C08A5E",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-corrected-red-test-build.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-corrected-red-test-build.log",
+      "Bytes": 193,
+      "Sha256": "78BD8D6FFF759DE9FD745281828E75980CFE7B280D4BECF9534A55DA8A636629",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-final-cleanup-and-case-observation.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-final-cleanup-and-case-observation.json",
+      "Bytes": 475,
+      "Sha256": "3F15BA814468FFB979832063D4CB4D4ADF80AFCDD5709CDEF7CF11BB9FA4DD2A",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-final-doc-links.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-final-doc-links.log",
+      "Bytes": 66,
+      "Sha256": "E218EDEE74A83C5EDA5B3E305088728E90D1B45D3D1653D5964EAA2E58F0BA2F",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-final-input-applicability.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-final-input-applicability.json",
+      "Bytes": 1307,
+      "Sha256": "A2C4E626D913713AB03E56C8F5E6C419EDF85F6DE318F506AC8B12A8B8B4E510",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-final-regression-build.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-final-regression-build.log",
+      "Bytes": 1267,
+      "Sha256": "BDAFCFE686D8B93E17661B9DDDAAD1C4F2CA5800D8046441D9330AF313E74A68",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-final-related-and-native-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-final-related-and-native\\process.log",
+      "Bytes": 389,
+      "Sha256": "F455EB1F3CB356DB989F30BF82F82D46F87AAB4EDFDF5781628B6E6F33303CA8",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-final-related-and-native.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-final-related-and-native.json",
+      "Bytes": 1820,
+      "Sha256": "72A9A9B441352612075AAF1F30B4A6CE1646CFE3E699A910FEA34F991C1EAF29",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-final-related-and-native.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-final-related-and-native\\results.trx",
+      "Bytes": 182336,
+      "Sha256": "9F0D1115CDAFD8F705C89B31FB3CF8DC0DA3E88DA88FF3F7C408F5490753934C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-first-red-build.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-first-red-build.log",
+      "Bytes": 1267,
+      "Sha256": "BC1BAE424AFD679FD67C125782B533F1F5A2BA0DF01FF02435EC7EEAC6E9011A",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-native-corrected-red-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-native-corrected-red\\process.log",
+      "Bytes": 4978,
+      "Sha256": "8514B3AF7CFA14B81AD0438400FCB6454F676028930ABF1C090C11DA62A4A0A8",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-native-corrected-red.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-native-corrected-red.json",
+      "Bytes": 1489,
+      "Sha256": "2713CF75E8F49C216A7662BECC3F0EADA6FD13C58C2D1383F3CB3E60F5FAC359",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-native-corrected-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-native-corrected-red\\results.trx",
+      "Bytes": 13527,
+      "Sha256": "4D44F5ACAEC48B5153A2006A5C11649BDAF906FCA962C065D7B447B5A16FDB74",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-native-first-red-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-native-first-red\\process.log",
+      "Bytes": 3898,
+      "Sha256": "9A7EA0711F9C6431EC0143DF2F2A911FCE4075CC87D54168A93FD37B02039D5F",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-native-first-red.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-native-first-red.json",
+      "Bytes": 1485,
+      "Sha256": "A670BA3A28C1C6A3ECB6B30DA4812271BB35D0A2F545DD5D04C5D171D62BB844",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-native-first-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-native-first-red\\results.trx",
+      "Bytes": 10952,
+      "Sha256": "8DD9663388F6FAD1DF259AF7FF4ED2A0BDDDB89EE489D5804F2DCC6C26005D1E",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-start-observation.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-start-observation.json",
+      "Bytes": 395,
+      "Sha256": "83F9BC57C915962ABDEE121FE81BD50B46F6390E308832E477FA26B6A76A778C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-tests-initial-locked-restore.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests-initial-locked-restore.log",
+      "Bytes": 1109,
+      "Sha256": "A99A7D3B4FC10E1911F1B4FEDA8909925B4623F82FAA428FB74545AD80D33B30",
+      "OriginalMatches": true
+    },
+    {
+      "File": "Invoke-Bug147Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug147Tests.ps1",
+      "Bytes": 2933,
+      "Sha256": "974EF4187F5C0C535B512F9256D36625069A40688CC224150DE78883F2E2BA65",
+      "OriginalMatches": true
+    },
+    {
+      "File": "private-command-failure.log",
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-collation-diagnostic\\private-command-failure.log",
+      "Bytes": 10942,
+      "Sha256": "E02747ECB4DD45F661E43376EB672F04557E50D244E7DC3F1D3EC7F2C90BF46C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "wp4-identity-sql-collation-diagnostic.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp4-identity-sql-collation-diagnostic.json",
+      "Bytes": 2920,
+      "Sha256": "E72AE2412D43407DBF54551A6FC52F658ECF3494956C240EDCD3E3228E180E47",
+      "OriginalMatches": true
+    },
+    {
+      "File": "wp4-identity-sql-original-reference-diagnostic.log",
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-identity-sql-original-reference\\private-diagnostics\\business-save-produces-valid-versioned-snapshots.log",
+      "Bytes": 4523,
+      "Sha256": "6474C0B973E29DD51934CF3E5458CBA1826F73528F12DFB5673F0984208FDD5D",
+      "OriginalMatches": true
+    },
+    {
+      "File": "wp4-identity-sql-original-reference.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp4-identity-sql-original-reference.json",
+      "Bytes": 2916,
+      "Sha256": "2D2C3BE64C10E414C2E3D39FD2ACC00AF693B0DB591F92053435C33DB3E45B63",
+      "OriginalMatches": true
+    }
+  ]
+}

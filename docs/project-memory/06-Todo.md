@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-03：先交付 BUG147，再恢复 WP4 双库业务验收
+
+WP3 已通过 [PR146](https://github.com/GTX537/CP6/pull/146) 进入远端 main。当前优先完成 [BUG147](https://github.com/GTX537/CP6/issues/147) 的正常 PR、必要合并核对与关闭；集中审查无实质阻断，活动状态以 GitHub Issue 为准，本地118/118结果见[专项记录](../audits/2026-10-03-bug-147-snapshot-batch/README.md)。
+
+随后在保留的 WP4 分支接入修复，继续 OIDC/refresh、身份/priority、ERP/WMS、采购/工作流和财务两库真实业务验收；WP5/6及父任务134仍未完成。继续只在本地执行验证，不启动 Actions 或切换现有环境。
+
 ## 2026-10-03：WP3 本地验收与集中审查完成，远端交付待核对
 
 WP1/2已分别由PR136/145交付；本阶段基线为main `605246ca83cbb8e1a89d3ff7209ba9df65176e98`。WP3已实现两库资源锁、数据库UTC、错误分类、ORD原子分配、共享Context事务、generation/v2游标与工作槽领取，并登记全部指定Provider分支及后续业务责任。

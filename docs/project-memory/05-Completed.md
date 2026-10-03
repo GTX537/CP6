@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-03：WP3 远端交付与 BUG147 本地回归
+
+WP3 已由 [PR146](https://github.com/GTX537/CP6/pull/146) 合入远端 main `0b0ab74a04c4d840a2c0bb05e36395aff8b89d32`。后续 WP4 对照测试复现的 [BUG147](https://github.com/GTX537/CP6/issues/147) 已完成本地最小修复验证：原 SQL468 RED 保留，七个真实 SQL 场景与 111 个相关检查共118/118、零skip，构建零warning/error，测试库零残留。见[范围与原件](../audits/2026-10-03-bug-147-snapshot-batch/README.md)。
+
+这里仅记录已完成的本地验证与无实质阻断的任务级审查；BUG147 远端交付仍待完成，整个 WP4 与父任务134尚未完成。
+
 ## 2026-10-03：WP3 本地验收与集中审查完成，远端交付待核对
 
 WP1/2已分别由PR136/145交付；本阶段基线为main `605246ca83cbb8e1a89d3ff7209ba9df65176e98`。WP3已实现两库资源锁、数据库UTC、错误分类、ORD原子分配、共享Context事务、generation/v2游标与工作槽领取，并登记全部指定Provider分支及后续业务责任。
