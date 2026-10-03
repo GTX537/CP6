@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Core\CP6.Core.csproj (in 10.77 sec).
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj (in 83 ms).
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 72 ms).
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 4 ms).
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Application\CP6.Space.Application.csproj (in 2 ms).
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Entity\CP6.Entity.csproj (in 35 ms).
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Domain\CP6.Space.Domain.csproj (in 0.8 ms).
+  Restored D:\CP6\tmp\worktrees\bug-161-cad-provider-recovery\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 33 ms).
