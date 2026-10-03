@@ -1,0 +1,28 @@
+{
+  "Task": "BUG147",
+  "ObservedUtc": "2026-10-03T10:27:37.1185255Z",
+  "InputComparisons": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "RecordedSha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB",
+      "CurrentSha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB",
+      "Equal": true
+    },
+    {
+      "Path": "CP6.Core/Persistence/SqlServerIdentitySnapshotUpdateSqlGenerator.cs",
+      "RecordedSha256": "5FAE858D64ABB36730E918BAE7003BF506A778F94356D4D2DC96BDC6BB74AFDC",
+      "CurrentSha256": "5FAE858D64ABB36730E918BAE7003BF506A778F94356D4D2DC96BDC6BB74AFDC",
+      "Equal": true
+    },
+    {
+      "Path": "CP6.Tests/Persistence/IdentitySnapshotBatchSqlServerTests.cs",
+      "RecordedSha256": "197060AC3442D9132671DA4265146464222C9189D3E8D91588023847073E9B52",
+      "CurrentSha256": "197060AC3442D9132671DA4265146464222C9189D3E8D91588023847073E9B52",
+      "Equal": true
+    }
+  ],
+  "NativeAndRelatedPass": 118,
+  "SourceBase": "0b0ab74a04c4d840a2c0bb05e36395aff8b89d32",
+  "UnrelatedRootLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5",
+  "ReuseScope": "Same production/test source inputs as actual 118-case run; subsequent edits are documentation/evidence only."
+}

@@ -20,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Platform.EntityFramework;
 using CP6.Core.Persistence;
+using Microsoft.EntityFrameworkCore.Update;
 
 namespace CP6.Core.EFDbContext;
 
@@ -44,6 +45,16 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         _tenant = tenant;
         _user = user;
         _identity = identity;
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        // Also cover callers that configure UseSqlServer directly. Accessing Database
+        // here would recursively initialize this context's options.
+        if (optionsBuilder.Options.Extensions.Any(extension => extension.Info.IsDatabaseProvider &&
+            extension.GetType().Assembly == typeof(SqlServerDbContextOptionsExtensions).Assembly))
+            optionsBuilder.ReplaceService<IUpdateSqlGenerator, SqlServerIdentitySnapshotUpdateSqlGenerator>();
     }
 
     /// <summary>当前租户 Id（全局查询过滤 + 写入盖章用）。无注入则默认租户。</summary>

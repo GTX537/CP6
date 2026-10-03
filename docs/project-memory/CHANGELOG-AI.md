@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-03：WP3 远端交付已确认，WP4 进入业务回归
+
+[PR146](https://github.com/GTX537/CP6/pull/146) 已正常合并到远端 main `0b0ab74a04c4d840a2c0bb05e36395aff8b89d32`。WP4 执行中发现的 SQL Server 保存阻断由独立 [BUG147](https://github.com/GTX537/CP6/issues/147) 跟踪，尚未关闭；后续按其远端交付证据记录修复结论。没有 Actions/触发配置/分支保护变更或生产部署。
+
 ## 2026-10-03：WP3 本地验收与集中审查完成，远端交付待核对
 
 WP1/2已分别由PR136/145交付；本阶段基线为main `605246ca83cbb8e1a89d3ff7209ba9df65176e98`。WP3已实现两库资源锁、数据库UTC、错误分类、ORD原子分配、共享Context事务、generation/v2游标与工作槽领取，并登记全部指定Provider分支及后续业务责任。

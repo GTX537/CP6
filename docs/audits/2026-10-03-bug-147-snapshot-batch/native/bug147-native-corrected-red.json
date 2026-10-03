@@ -1,0 +1,43 @@
+{
+  "Task": "BUG147",
+  "Label": "bug147-native-corrected-red",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-03T10:18:58.3407249Z",
+  "FinishedUtc": "2026-10-03T10:19:26.9054747Z",
+  "ExitCode": 1,
+  "Filter": "FullyQualifiedName~IdentitySnapshotBatchSqlServerTests",
+  "Counts": {
+    "total": "1",
+    "executed": "1",
+    "passed": "0",
+    "failed": "1",
+    "notExecuted": "0"
+  },
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "69DCBD468C3CB742CFAEFDE5FFA8B2A518230C2710E3CE31E46F5AE9A9DA2106"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/IdentitySnapshotBatchSqlServerTests.cs",
+      "Sha256": "4D70558ACF0EF67DF38A58D504154CB7633E05E41B4EEDBF97C3B064D2F68085"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "8FE2E5B06AC6114101BB3136B670816F256D953FCBA5EA48B0E4FF8723C94AF4"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "1F1AF16E964F4D1703A448B545292AE0B4CAEBA6535B9DA7E043759A861663EE"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "B7CB63A9E73C3CC060B5DB008DB549821A4051583B48AEB529F342468D170C55"
+    }
+  ],
+  "RunnerSha256": "974EF4187F5C0C535B512F9256D36625069A40688CC224150DE78883F2E2BA65",
+  "ProcessLogSha256": "8514B3AF7CFA14B81AD0438400FCB6454F676028930ABF1C090C11DA62A4A0A8",
+  "Scope": "Actual SQL Server regression in fixture-created isolated databases; no production or remote Actions."
+}

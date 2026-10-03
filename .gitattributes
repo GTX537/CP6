@@ -101,3 +101,5 @@ CP6.Tests/Persistence/Fixtures/sql-server-d6074aaa-contracts.json -text whitespa
 docs/audits/database-compatibility/wp2-native/** -text whitespace=cr-at-eol,-blank-at-eof
 # WP3 original runtime reports, scripts, logs and TRX retain exact byte hashes.
 docs/audits/database-compatibility/wp3-native/** -text whitespace=cr-at-eol,-blank-at-eof
+# BUG147 original SQL regression evidence retains its recorded byte hashes.
+docs/audits/2026-10-03-bug-147-snapshot-batch/native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
