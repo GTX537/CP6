@@ -1,5 +1,14 @@
 # 项目当前状态
 
+## 2026-10-03：Space worker 领取兼容修复双库本地通过，待交付
+
+WP1–WP5 已交付；BUG157 已由 PR158 正常合入远端 main `5587a2a67ae73715596ca1a135b5863005abac8d` 并关闭，合并后两库冒烟与自有库清理完成。WP6 新 PG Matrix 已通过 26 个入口，随后任务领取并发出现原生 23505，原失败保留。
+
+本次独立修复精准恢复 attempt-number 唯一冲突，并沿用五次完整事务重试、未知错误传播与取消。SQL Server / PostgreSQL 原任务/处理/生成/保留 17 项加新六项各 23/23、零 skip，同一源码/产物，locked build 零 warning/error。实际证据和限制见 [专项记录](../audits/2026-10-03-bug-159-space-job-claim-recovery/README.md)。一次集中审查无实质阻断，62份公共原件按字节归档；正常远端交付、合并后冒烟及两库清理仍待完成；整体 WP6 最终双库矩阵、新应用恢复验收和交付仍待完成，父任务 #134 保持 Open。
+
+没有启动/取消 Actions、修改工作流/保护或部署既有环境；下方旧状态保留各历史时点。
+
+
 ## 2026-10-03：BUG155 已交付，楼层并发修复双库本地通过
 
 WP1–WP5 已交付；[BUG155](https://github.com/GTX537/CP6/issues/155) 已由 [PR156](https://github.com/GTX537/CP6/pull/156) 正常合入远端 main `2e1f90c629340944d95fadd7aee428f639304ed6` 并关闭，两库原并发/协调冒烟及两个自有库清理完成。WP6 接入后的新 PG Matrix 前 24 个入口通过，楼层并发入口原 16 项中 15P/1F，实际 native 40001，已另登记 [BUG157](https://github.com/GTX537/CP6/issues/157)。

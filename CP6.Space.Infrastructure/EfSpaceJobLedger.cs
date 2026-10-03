@@ -1,5 +1,6 @@
 using System.Data;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -157,6 +158,7 @@ public sealed class EfSpaceJobLeaseStore :
 
         for (var retry = 0; retry < ClaimConflictRetries; retry++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _context.ChangeTracker.Clear();
             var now = RequireUtcNow();
             await using var transaction = await _context.Database.BeginTransactionAsync(
@@ -237,14 +239,27 @@ public sealed class EfSpaceJobLeaseStore :
                 await transaction.CommitAsync(cancellationToken);
                 return CreateLease(job, attempt);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception exception) when (IsClaimConflict(exception))
             {
                 await transaction.RollbackAsync(CancellationToken.None);
                 _context.ChangeTracker.Clear();
+                cancellationToken.ThrowIfCancellationRequested();
             }
         }
 
         return null;
+    }
+
+    private static bool IsClaimConflict(Exception exception)
+    {
+        var failure = DatabaseFailureClassifier.Classify(exception);
+        // EF can insert the attempt before checking the Job's concurrency token.
+        // Only this unique index identifies the competing claim; other integrity
+        // failures must retain their original error rather than appear as no work.
+        return failure.Kind == DatabaseFailureKind.OptimisticConcurrency
+            || failure.CanRetryTransaction
+            || failure.Kind == DatabaseFailureKind.UniqueConstraint
+                && failure.MatchesConstraint("UX_Space_JobAttempt_Tenant_Job_AttemptNo");
     }
 
     public async Task<SpaceJobLease> RenewAsync(

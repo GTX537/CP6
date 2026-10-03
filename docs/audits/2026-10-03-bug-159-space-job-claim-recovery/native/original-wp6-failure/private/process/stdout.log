@@ -1,0 +1,52 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt [152 ms]
+  Error Message:
+   Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_JobAttempt_Tenant_Job_AttemptNo"違反となります
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.EfSpaceJobLeaseStore.TryClaimNextCoreAsync(String workerId, String processorVersion, TimeSpan leaseDuration, IReadOnlyCollection`1 supportedJobTypes, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\EfSpaceJobLedger.cs:line 236
+   at CP6.Space.Infrastructure.EfSpaceJobLeaseStore.TryClaimNextCoreAsync(String workerId, String processorVersion, TimeSpan leaseDuration, IReadOnlyCollection`1 supportedJobTypes, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\EfSpaceJobLedger.cs:line 244
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.<>c__DisplayClass5_0.<<Two_workers_competing_for_one_job_create_one_attempt>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 44
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.<>c__DisplayClass5_0.<<Two_workers_competing_for_one_job_create_one_attempt>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 64
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.<>c__DisplayClass5_0.<<Two_workers_competing_for_one_job_create_one_attempt>b__0>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 64
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 494
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 495
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 25
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.Consume(Boolean async, Exception firstException)
+   at Npgsql.NpgsqlDataReader.Consume(Boolean async, Exception firstException)
+   at Npgsql.NpgsqlDataReader.Close(Boolean async, Boolean connectionClosing, Boolean isDisposing)
+   at Npgsql.NpgsqlDataReader.Close(Boolean async, Boolean connectionClosing, Boolean isDisposing)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.CloseAsync()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.DisposeAsync()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.DisposeAsync()
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+
+
+Results File: D:\CP6\tmp\wp6-pg-formal-matrix-floor-fix\entries\space-jobs-generation-retention\private\trx\results.trx
+
+Failed!  - Failed:     1, Passed:    16, Skipped:     0, Total:    17, Duration: 35 s - CP6.Space.IntegrationTests.dll (net8.0)

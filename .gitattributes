@@ -115,3 +115,6 @@ docs/audits/2026-10-03-bug-153-erp-concurrency-retry/native/** -text whitespace=
 docs/audits/2026-10-03-bug-155-space-validation-retry/native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
 # BUG157 original native failures, passes and review retain exact evidence bytes.
 docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+
+# BUG159 original native failure, exact results and review retain evidence bytes.
+docs/audits/2026-10-03-bug-159-space-job-claim-recovery/native/** -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

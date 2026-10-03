@@ -1,0 +1,15 @@
+{
+  "Task": "BUG-159",
+  "OriginalSummarySuccess": false,
+  "OriginalSummarySha256": "AFB53D4AE12AC5D43C00DAFA12945C4E4FE3C313B9650BF03A5047E3F5A281E5",
+  "OriginalEntry": "space-jobs-generation-retention",
+  "Counts": {
+    "Expected": 17,
+    "Total": 17,
+    "Passed": 16,
+    "NonPassing": 1
+  },
+  "TrxSha256": "2038CECC286F9676FCAB7EE95E865A45AA40676AEEF79374B2A2FEEF9EA79D7F",
+  "FrozenManifestSha256": "1EA3B68A17F79DFACC3FF5A85D20D45DD7BDA4603A5566BD9BC9C76A1741307C",
+  "VerifiedUtc": "2026-10-03T20:34:40.5661669Z"
+}

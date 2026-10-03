@@ -1,0 +1,39 @@
+{
+  "Task": "BUG-159",
+  "Status": "LocalVerifiedRemotePending",
+  "CheckedUtc": "2026-10-03T20:46:16.3394072Z",
+  "SourceBase": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "Runs": [
+    {
+      "Label": "bug159-pg-jobs-exact-green",
+      "Provider": "PostgreSql",
+      "Total": 23,
+      "Passed": 23,
+      "Other": 0,
+      "ResultSha256": "DB486CAA587C9404E752BE3BEC0FE1963805D4DE92C618C3EA1D6E6D110B2B65",
+      "TrxSha256": "854A1593302F64A5F1702CB829B1AEF7523AE8BAA6C0750426F374E329DD561C",
+      "CurrentSourceFileCount": 1702,
+      "SourceInputsSha256": "A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "ExitCode": 0
+    },
+    {
+      "Label": "bug159-sql-jobs-exact-green",
+      "Provider": "SqlServer",
+      "Total": 23,
+      "Passed": 23,
+      "Other": 0,
+      "ResultSha256": "8C7C0BA0F2C24B32384CF95C86C086C0E64B3A11B21CAE8170041CA23ABD1D95",
+      "TrxSha256": "D05427A53BA4ABD78467564DAAE85A01F84146FD113102D5382AF386B540D2D1",
+      "CurrentSourceFileCount": 1702,
+      "SourceInputsSha256": "A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7",
+      "CurrentRuntimeFileCount": 296,
+      "RuntimeManifestSha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "ExitCode": 0
+    }
+  ],
+  "AllCurrentSourcesAndRuntimeMatch": true,
+  "SourceReviewSha256": "FC9D18A7E6CE287BA88C8D050B11898A248F232043177C2F57E87132B17CAEC5",
+  "Scope": "Raw native TRX and exact required sets verified; two executions use the same current source/runtime. The exact 23 cases include the original 17 required job/processing/generation/retention cases and six focused recovery regressions. Injected recovery controls are not native deadlock reproductions. Full WP6, post-merge smoke, cleanup and remote delivery remain pending."
+}
