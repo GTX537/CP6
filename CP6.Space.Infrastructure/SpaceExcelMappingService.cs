@@ -5,7 +5,6 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -300,113 +299,100 @@ public sealed class SpaceExcelMappingService(
         if (replay is not null)
             return replay;
 
-        await using var transaction = await BeginTransactionAsync(cancellationToken);
-        try
+        async Task<SaveSpaceExcelMappingProfileResponse> SaveOnceAsync()
         {
-            var concurrentReplay = await ReadReplayAsync(
-                keyHash,
-                requestHash,
-                cancellationToken);
-            if (concurrentReplay is not null)
+            await using var transaction = await BeginTransactionAsync(cancellationToken);
+            try
             {
+                var concurrentReplay = await ReadReplayAsync(
+                    keyHash,
+                    requestHash,
+                    cancellationToken);
+                if (concurrentReplay is not null)
+                {
+                    if (transaction is not null)
+                        await transaction.CommitAsync(cancellationToken);
+                    return concurrentReplay;
+                }
+
+                SpaceExcelMappingProfile profile;
+                int version;
+                Guid? basedOnProfileId;
+                int? basedOnVersion;
+                var created = !request.ProfileId.HasValue;
+                if (created)
+                {
+                    await ValidateCopySourceAsync(
+                        request.CopyFromProfileId,
+                        request.CopyFromVersion,
+                        cancellationToken);
+                    profile = SpaceExcelMappingProfile.Create(tenantId, name);
+                    version = 1;
+                    basedOnProfileId = request.CopyFromProfileId;
+                    basedOnVersion = request.CopyFromVersion;
+                    context.ExcelMappingProfiles.Add(profile);
+                }
+                else
+                {
+                    if (request.CopyFromProfileId.HasValue || request.CopyFromVersion.HasValue)
+                        throw Invalid("An existing profile version is based on its current version.");
+                    profile = await context.ExcelMappingProfiles.SingleOrDefaultAsync(
+                        item => item.Id == request.ProfileId,
+                        cancellationToken) ?? throw NotFound();
+                    ApplyExpectedRowVersion(profile, request.ExpectedRowVersion);
+                    version = checked(profile.CurrentVersion + 1);
+                    basedOnProfileId = profile.Id;
+                    basedOnVersion = profile.CurrentVersion;
+                }
+
+                profile.Advance(name, version);
+                var versionEntity = SpaceExcelMappingProfileVersion.Create(
+                    tenantId,
+                    profile.Id,
+                    version,
+                    definitionJson,
+                    definitionHash,
+                    basedOnProfileId,
+                    basedOnVersion);
+                context.ExcelMappingProfileVersions.Add(versionEntity);
+                await context.SaveChangesAsync(cancellationToken);
+
+                var response = new SaveSpaceExcelMappingProfileResponse(
+                    ToDto(profile, versionEntity),
+                    created,
+                    IdempotentReplay: false);
+                var now = RequireUtcNow();
+                context.IdempotencyRecords.Add(SpaceIdempotencyRecord.Create(
+                    tenantId,
+                    actorId,
+                    Operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    200,
+                    now.AddHours(24),
+                    now.AddDays(90)));
+                await context.SaveChangesAsync(cancellationToken);
                 if (transaction is not null)
                     await transaction.CommitAsync(cancellationToken);
-                return concurrentReplay;
+                return response;
             }
-
-            SpaceExcelMappingProfile profile;
-            int version;
-            Guid? basedOnProfileId;
-            int? basedOnVersion;
-            var created = !request.ProfileId.HasValue;
-            if (created)
+            catch
             {
-                await ValidateCopySourceAsync(
-                    request.CopyFromProfileId,
-                    request.CopyFromVersion,
-                    cancellationToken);
-                profile = SpaceExcelMappingProfile.Create(tenantId, name);
-                version = 1;
-                basedOnProfileId = request.CopyFromProfileId;
-                basedOnVersion = request.CopyFromVersion;
-                context.ExcelMappingProfiles.Add(profile);
+                if (transaction is not null && transaction.GetDbTransaction().Connection is not null)
+                    await transaction.RollbackAsync(CancellationToken.None);
+                throw;
             }
-            else
-            {
-                if (request.CopyFromProfileId.HasValue || request.CopyFromVersion.HasValue)
-                    throw Invalid("An existing profile version is based on its current version.");
-                profile = await context.ExcelMappingProfiles.SingleOrDefaultAsync(
-                    item => item.Id == request.ProfileId,
-                    cancellationToken) ?? throw NotFound();
-                ApplyExpectedRowVersion(profile, request.ExpectedRowVersion);
-                version = checked(profile.CurrentVersion + 1);
-                basedOnProfileId = profile.Id;
-                basedOnVersion = profile.CurrentVersion;
-            }
-
-            profile.Advance(name, version);
-            var versionEntity = SpaceExcelMappingProfileVersion.Create(
-                tenantId,
-                profile.Id,
-                version,
-                definitionJson,
-                definitionHash,
-                basedOnProfileId,
-                basedOnVersion);
-            context.ExcelMappingProfileVersions.Add(versionEntity);
-            await context.SaveChangesAsync(cancellationToken);
-
-            var response = new SaveSpaceExcelMappingProfileResponse(
-                ToDto(profile, versionEntity),
-                created,
-                IdempotentReplay: false);
-            var now = RequireUtcNow();
-            context.IdempotencyRecords.Add(SpaceIdempotencyRecord.Create(
-                tenantId,
-                actorId,
-                Operation,
-                keyHash,
-                requestHash,
-                JsonSerializer.Serialize(response, JsonOptions),
-                200,
-                now.AddHours(24),
-                now.AddDays(90)));
-            await context.SaveChangesAsync(cancellationToken);
-            if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
-            return response;
-        }
-        catch (DbUpdateException exception)
-            when (exception.GetBaseException() is SqlException
-                  {
-                      Number: 2601 or 2627,
-                  })
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(cancellationToken);
-            context.ChangeTracker.Clear();
-            var concurrentReplay = await ReadReplayAsync(
-                keyHash,
-                requestHash,
-                cancellationToken);
-            if (concurrentReplay is not null)
-                return concurrentReplay;
-            throw Conflict();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(cancellationToken);
-            context.ChangeTracker.Clear();
-            var concurrentReplay = await ReadReplayAsync(
-                keyHash,
-                requestHash,
-                cancellationToken);
-            if (concurrentReplay is not null)
-                return concurrentReplay;
-            throw Conflict();
         }
 
+        return await SpaceMappingSaveTransaction.ExecuteAsync(
+            context,
+            SaveOnceAsync,
+            () => ReadReplayAsync(keyHash, requestHash, cancellationToken),
+            () => Conflict(),
+            "UX_Space_ExcelMappingProfile_CurrentName",
+            "UX_Space_ExcelMappingProfileVersion_Profile_Version",
+            cancellationToken);
     }
 
     private async Task ValidateCopySourceAsync(

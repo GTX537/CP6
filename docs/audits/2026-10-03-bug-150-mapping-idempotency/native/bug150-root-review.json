@@ -1,0 +1,13 @@
+{
+  "Task": "BUG-150",
+  "ObservedUtc": "2026-10-03T14:33:29.8790764Z",
+  "CodeReview": "bug150-task-review-and-inputs.json",
+  "RootReview": "Reviewed complete task production diff, three new code/test files, project/lock delta, four state documents, audit README, exact-byte attribute and 27 public allowlisted originals; no sensitive configuration, scope drift or substantive blocker found.",
+  "DocumentationCheck": "5 Markdown files, 364 local links, 0 errors (file targets only).",
+  "RootOriginalLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5",
+  "LocalScope": "SQL4 + PG4 native cases and 12 existing related cases. No other task or production acceptance.",
+  "RemoteStatus": "Pending",
+  "ActionsStarted": 0,
+  "ActionsCancelled": 0,
+  "WorkflowChanges": 0
+}

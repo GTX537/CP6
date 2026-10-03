@@ -5,7 +5,6 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -141,134 +140,122 @@ public sealed class SpaceCadMappingProfileService(
         if (replay is not null)
             return replay;
 
-        await using var transaction = await BeginTransactionAsync(cancellationToken);
-        try
+        async Task<SaveSpaceCadMappingProfileResponse> SaveOnceAsync()
         {
-            var concurrentReplay = await ReadReplayAsync(
-                keyHash,
-                requestHash,
-                cancellationToken);
-            if (concurrentReplay is not null)
+            await using var transaction = await BeginTransactionAsync(cancellationToken);
+            try
             {
-                if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
-                return concurrentReplay;
-            }
-
-            SpaceCadMappingProfile container;
-            SpaceCadMappingProfileV1 sealedProfile;
-            var created = !request.ProfileId.HasValue;
-            if (created)
-            {
-                await ValidateCopySourceAsync(
-                    request.CopyFromProfileId,
-                    request.CopyFromVersion,
+                var concurrentReplay = await ReadReplayAsync(
+                    keyHash,
+                    requestHash,
                     cancellationToken);
-                container = SpaceCadMappingProfile.Create(tenantId, name);
-                sealedProfile = SealTenantProfile(
-                    tenantId,
-                    container.Id,
-                    1,
-                    name,
-                    request.IsEnabled,
-                    request.CopyFromProfileId,
-                    request.CopyFromVersion,
-                    rules);
-                context.CadMappingProfiles.Add(container);
-            }
-            else
-            {
-                if (request.CopyFromProfileId.HasValue || request.CopyFromVersion.HasValue)
+                if (concurrentReplay is not null)
                 {
-                    throw Invalid(
-                        "An existing CAD mapping profile version keeps its original copy lineage.");
+                    if (transaction is not null)
+                        await transaction.CommitAsync(cancellationToken);
+                    return concurrentReplay;
                 }
 
-                container = await context.CadMappingProfiles
-                    .SingleOrDefaultAsync(
-                        candidate => candidate.Id == request.ProfileId,
-                        cancellationToken) ?? throw NotFound();
-                ApplyExpectedRowVersion(container, request.ExpectedRowVersion);
-                var currentVersion = await context.CadMappingProfileVersions
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(
-                        candidate => candidate.ProfileId == container.Id &&
-                            candidate.Version == container.CurrentVersion,
-                        cancellationToken) ?? throw NotFound();
-                var current = DeserializeStored(currentVersion);
-                sealedProfile = SpaceCadMapping.CreateNextTenantVersion(
-                    current,
+                SpaceCadMappingProfile container;
+                SpaceCadMappingProfileV1 sealedProfile;
+                var created = !request.ProfileId.HasValue;
+                if (created)
+                {
+                    await ValidateCopySourceAsync(
+                        request.CopyFromProfileId,
+                        request.CopyFromVersion,
+                        cancellationToken);
+                    container = SpaceCadMappingProfile.Create(tenantId, name);
+                    sealedProfile = SealTenantProfile(
+                        tenantId,
+                        container.Id,
+                        1,
+                        name,
+                        request.IsEnabled,
+                        request.CopyFromProfileId,
+                        request.CopyFromVersion,
+                        rules);
+                    context.CadMappingProfiles.Add(container);
+                }
+                else
+                {
+                    if (request.CopyFromProfileId.HasValue || request.CopyFromVersion.HasValue)
+                    {
+                        throw Invalid(
+                            "An existing CAD mapping profile version keeps its original copy lineage.");
+                    }
+
+                    container = await context.CadMappingProfiles
+                        .SingleOrDefaultAsync(
+                            candidate => candidate.Id == request.ProfileId,
+                            cancellationToken) ?? throw NotFound();
+                    ApplyExpectedRowVersion(container, request.ExpectedRowVersion);
+                    var currentVersion = await context.CadMappingProfileVersions
+                        .AsNoTracking()
+                        .SingleOrDefaultAsync(
+                            candidate => candidate.ProfileId == container.Id &&
+                                candidate.Version == container.CurrentVersion,
+                            cancellationToken) ?? throw NotFound();
+                    var current = DeserializeStored(currentVersion);
+                    sealedProfile = SpaceCadMapping.CreateNextTenantVersion(
+                        current,
+                        tenantId,
+                        rules,
+                        name,
+                        request.IsEnabled);
+                }
+
+                container.Advance(name, sealedProfile.Version);
+                var definitionJson = SpaceCadMapping.SerializeProfile(sealedProfile);
+                if (Encoding.UTF8.GetByteCount(definitionJson) > MaximumDefinitionBytes)
+                    throw Invalid("The sealed CAD mapping profile is too large.");
+                var versionEntity = SpaceCadMappingProfileVersion.Create(
                     tenantId,
-                    rules,
-                    name,
-                    request.IsEnabled);
+                    container.Id,
+                    sealedProfile.Version,
+                    definitionJson,
+                    sealedProfile.DefinitionSha256,
+                    sealedProfile.BasedOnProfileId,
+                    sealedProfile.BasedOnVersion);
+                context.CadMappingProfileVersions.Add(versionEntity);
+                await context.SaveChangesAsync(cancellationToken);
+
+                var response = new SaveSpaceCadMappingProfileResponse(
+                    ToDto(container, versionEntity, sealedProfile),
+                    created,
+                    IdempotentReplay: false);
+                var now = RequireUtcNow();
+                context.IdempotencyRecords.Add(SpaceIdempotencyRecord.Create(
+                    tenantId,
+                    actorId,
+                    Operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    200,
+                    now.AddHours(24),
+                    now.AddDays(90)));
+                await context.SaveChangesAsync(cancellationToken);
+                if (transaction is not null)
+                    await transaction.CommitAsync(cancellationToken);
+                return response;
             }
+            catch
+            {
+                if (transaction is not null && transaction.GetDbTransaction().Connection is not null)
+                    await transaction.RollbackAsync(CancellationToken.None);
+                throw;
+            }
+        }
 
-            container.Advance(name, sealedProfile.Version);
-            var definitionJson = SpaceCadMapping.SerializeProfile(sealedProfile);
-            if (Encoding.UTF8.GetByteCount(definitionJson) > MaximumDefinitionBytes)
-                throw Invalid("The sealed CAD mapping profile is too large.");
-            var versionEntity = SpaceCadMappingProfileVersion.Create(
-                tenantId,
-                container.Id,
-                sealedProfile.Version,
-                definitionJson,
-                sealedProfile.DefinitionSha256,
-                sealedProfile.BasedOnProfileId,
-                sealedProfile.BasedOnVersion);
-            context.CadMappingProfileVersions.Add(versionEntity);
-            await context.SaveChangesAsync(cancellationToken);
-
-            var response = new SaveSpaceCadMappingProfileResponse(
-                ToDto(container, versionEntity, sealedProfile),
-                created,
-                IdempotentReplay: false);
-            var now = RequireUtcNow();
-            context.IdempotencyRecords.Add(SpaceIdempotencyRecord.Create(
-                tenantId,
-                actorId,
-                Operation,
-                keyHash,
-                requestHash,
-                JsonSerializer.Serialize(response, JsonOptions),
-                200,
-                now.AddHours(24),
-                now.AddDays(90)));
-            await context.SaveChangesAsync(cancellationToken);
-            if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
-            return response;
-        }
-        catch (DbUpdateException exception)
-            when (exception.GetBaseException() is SqlException
-                  {
-                      Number: 2601 or 2627,
-                  })
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(cancellationToken);
-            context.ChangeTracker.Clear();
-            var concurrentReplay = await ReadReplayAsync(
-                keyHash,
-                requestHash,
-                cancellationToken);
-            if (concurrentReplay is not null)
-                return concurrentReplay;
-            throw Conflict();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(cancellationToken);
-            context.ChangeTracker.Clear();
-            var concurrentReplay = await ReadReplayAsync(
-                keyHash,
-                requestHash,
-                cancellationToken);
-            if (concurrentReplay is not null)
-                return concurrentReplay;
-            throw Conflict();
-        }
+        return await SpaceMappingSaveTransaction.ExecuteAsync(
+            context,
+            SaveOnceAsync,
+            () => ReadReplayAsync(keyHash, requestHash, cancellationToken),
+            () => Conflict(),
+            "UX_Space_LayerMappingProfile_CurrentName",
+            "UX_Space_LayerMappingProfileVersion_Profile_Version",
+            cancellationToken);
     }
 
     private async Task<StoredProfile[]> LoadCurrentAsync(
