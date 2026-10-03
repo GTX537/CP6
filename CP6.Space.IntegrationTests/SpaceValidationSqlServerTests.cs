@@ -1,9 +1,13 @@
+using System.Data;
+using System.Data.Common;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
@@ -285,6 +289,147 @@ public sealed class SpaceValidationSqlServerTests(SpaceRelationalFixture databas
         });
     }
 
+    [SqlServerFact]
+    public async Task Concurrent_waiter_recovers_native_conflict_and_reuses_validation()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            SeededCandidate graph;
+            await using (var seed = CreateContext(connectionString, execution, clock))
+                graph = await SeedCandidateAsync(seed, completeRack: true);
+
+            using var budget = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var profileGate = new WaitingProfileProvider();
+            var waiter = new ValidationLockWaiter();
+            var failures = new ValidationSerializationObserver(output.WriteLine);
+            await using var firstContext = CreateContext(connectionString, execution, clock);
+            await using var secondContext = CreateContext(connectionString, execution, clock, waiter, failures);
+            var first = NewValidationService(firstContext, execution, clock, graph.Model.SiteId, profileGate);
+            var second = NewValidationService(secondContext, execution, clock, graph.Model.SiteId);
+            Task<CreateSpaceValidationResponse>? firstRequest = null;
+            Task<CreateSpaceValidationResponse>? secondRequest = null;
+            try
+            {
+                firstRequest = first.RequestValidationAsync(graph.Version.Id, budget.Token);
+                await profileGate.Entered.Task.WaitAsync(budget.Token);
+                secondRequest = second.RequestValidationAsync(graph.Version.Id, budget.Token);
+                if (await Task.WhenAny(waiter.Waiting.Task, secondRequest).WaitAsync(budget.Token) == secondRequest)
+                    await secondRequest;
+                await waiter.Waiting.Task.WaitAsync(budget.Token);
+                profileGate.Release();
+                var results = await Task.WhenAll(firstRequest, secondRequest).WaitAsync(budget.Token);
+                Assert.Equal(results[0].Validation.Id, results[1].Validation.Id);
+                Assert.Single(results, value => value.Reused);
+                if (secondContext.Database.IsNpgsql())
+                    Assert.True(failures.SerializationFailures > 0, "The coordinated PostgreSQL waiter must observe actual native 40001 before recovering.");
+            }
+            finally
+            {
+                profileGate.Release();
+                await budget.CancelAsync();
+                foreach (var request in new[] { firstRequest, secondRequest })
+                {
+                    if (request is null) continue;
+                    try { await request; }
+                    catch { /* Preserve the primary await failure and drain both owned requests. */ }
+                }
+            }
+
+            await using var verify = CreateContext(connectionString, execution, clock);
+            Assert.Single(await verify.ValidationRuns.ToListAsync());
+            Assert.Single(await verify.Jobs.Where(value => value.JobType == SpaceJobType.Validate).ToListAsync());
+            Assert.Equal(SpaceVersionStatus.Validating,
+                await verify.Versions.Where(value => value.Id == graph.Version.Id).Select(value => value.Status).SingleAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Validation_request_preserves_unsaved_caller_changes()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            SeededCandidate graph;
+            await using (var seed = CreateContext(connectionString, execution, clock))
+                graph = await SeedCandidateAsync(seed, completeRack: true);
+            await using var context = CreateContext(connectionString, execution, clock);
+            var pending = SpaceModel.Create(execution.TenantId, Guid.NewGuid());
+            context.Add(pending);
+            var service = NewValidationService(context, execution, clock, graph.Model.SiteId);
+            await Assert.ThrowsAsync<InvalidOperationException>(() => service.RequestValidationAsync(graph.Version.Id));
+            Assert.Equal(EntityState.Added, context.Entry(pending).State);
+            Assert.Null(context.Database.CurrentTransaction);
+            await using var verify = CreateContext(connectionString, execution, clock);
+            Assert.Single(await verify.Models.ToListAsync());
+            Assert.Empty(await verify.ValidationRuns.ToListAsync());
+            Assert.Empty(await verify.Jobs.ToListAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Validation_request_preserves_caller_owned_transaction()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            SeededCandidate graph;
+            await using (var seed = CreateContext(connectionString, execution, clock))
+                graph = await SeedCandidateAsync(seed, completeRack: true);
+            await using var context = CreateContext(connectionString, execution, clock);
+            await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+            var service = NewValidationService(context, execution, clock, graph.Model.SiteId);
+            await Assert.ThrowsAsync<InvalidOperationException>(() => service.RequestValidationAsync(graph.Version.Id));
+            Assert.Same(transaction, context.Database.CurrentTransaction);
+            context.Add(SpaceModel.Create(execution.TenantId, Guid.NewGuid()));
+            await context.SaveChangesAsync();
+            await transaction.RollbackAsync();
+            await using var verify = CreateContext(connectionString, execution, clock);
+            Assert.Single(await verify.Models.ToListAsync());
+            Assert.Empty(await verify.ValidationRuns.ToListAsync());
+            Assert.Empty(await verify.Jobs.ToListAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public Task Validation_unknown_failure_is_not_retried() => ValidationRecoveryStopsAsync("unknown", 1);
+
+    [SqlServerFact]
+    public Task Validation_recovery_honors_cancellation() => ValidationRecoveryStopsAsync("cancel", 1);
+
+    [SqlServerFact]
+    public Task Validation_recovery_is_bounded_and_rolls_back() => ValidationRecoveryStopsAsync("exhaust", 3);
+
+    private async Task ValidationRecoveryStopsAsync(string mode, int expectedAttempts)
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            SeededCandidate graph;
+            await using (var seed = CreateContext(connectionString, execution, clock))
+                graph = await SeedCandidateAsync(seed, completeRack: true);
+            using var cancellation = new CancellationTokenSource();
+            var failure = new ValidationSaveFailure(mode, cancellation);
+            await using var context = CreateContext(connectionString, execution, clock, failure);
+            var service = NewValidationService(context, execution, clock, graph.Model.SiteId);
+            if (mode == "unknown")
+            {
+                var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => service.RequestValidationAsync(graph.Version.Id, cancellation.Token));
+                Assert.Same(failure.UnknownFailure, exception);
+            }
+            else if (mode == "cancel")
+                await Assert.ThrowsAnyAsync<OperationCanceledException>(
+                    () => service.RequestValidationAsync(graph.Version.Id, cancellation.Token));
+            else
+                await Assert.ThrowsAsync<DatabaseResourceLockDeadlockException>(
+                    () => service.RequestValidationAsync(graph.Version.Id, cancellation.Token));
+            Assert.Equal(expectedAttempts, failure.Attempts);
+            Assert.Null(context.Database.CurrentTransaction);
+            await using var verify = CreateContext(connectionString, execution, clock);
+            Assert.Empty(await verify.ValidationRuns.ToListAsync());
+            Assert.Empty(await verify.Jobs.ToListAsync());
+            Assert.Equal(SpaceVersionStatus.Draft,
+                await verify.Versions.Where(value => value.Id == graph.Version.Id).Select(value => value.Status).SingleAsync());
+        });
+    }
+
     private async Task ProcessNextAsync(
         string connectionString,
         TestExecutionContext execution,
@@ -322,13 +467,14 @@ public sealed class SpaceValidationSqlServerTests(SpaceRelationalFixture databas
         SpaceContext context,
         TestExecutionContext execution,
         TestClock clock,
-        Guid allowedSiteId) =>
+        Guid allowedSiteId,
+        ISpaceValidationProfileProvider? profiles = null) =>
         new(
             context,
             execution,
             clock,
             new TestAccessEvaluator(allowedSiteId),
-            new TestProfileProvider(),
+            profiles ?? new TestProfileProvider(),
             new SpaceValidationEngine());
 
     private static async Task<SeededCandidate> SeedCandidateAsync(
@@ -472,14 +618,15 @@ public sealed class SpaceValidationSqlServerTests(SpaceRelationalFixture databas
     private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
-        TestClock clock)
+        TestClock clock,
+        params IInterceptor[] interceptors)
     {
         if (SpaceRelationalFixture.IsSelected)
         {
             Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
                 "Selected Space contexts must use the fixture-owned connection.");
             return database.CreateSpaceContext(execution, clock,
-                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "validation"));
+                [new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "validation"), .. interceptors]);
         }
 
         var options = new DbContextOptionsBuilder<SpaceContext>()
@@ -487,8 +634,77 @@ public sealed class SpaceValidationSqlServerTests(SpaceRelationalFixture databas
                 connectionString,
                 sql => sql.MigrationsHistoryTable(
                     SpaceContext.MigrationsHistoryTable))
+            .AddInterceptors(interceptors)
             .Options;
         return new SpaceContext(options, execution, clock);
+    }
+
+    private sealed class WaitingProfileProvider : ISpaceValidationProfileProvider
+    {
+        public TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource released = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public void Release() => released.TrySetResult();
+        public async Task<SpaceValidationProfile> GetProfileAsync(Guid tenantId, Guid siteId, Guid correlationId,
+            CancellationToken cancellationToken = default)
+        {
+            Entered.TrySetResult();
+            await released.Task.WaitAsync(cancellationToken);
+            return await new TestProfileProvider().GetProfileAsync(tenantId, siteId, correlationId, cancellationToken);
+        }
+    }
+
+    private sealed class ValidationLockWaiter : DbTransactionInterceptor
+    {
+        public TaskCompletionSource Waiting { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private bool started;
+        public override async ValueTask<DbTransaction> TransactionStartedAsync(DbConnection connection,
+            TransactionEndEventData eventData, DbTransaction result, CancellationToken cancellationToken = default)
+        {
+            if (!started)
+            {
+                started = true;
+                if (eventData.Context!.Database.IsNpgsql())
+                {
+                    // Establish a real PostgreSQL Serializable snapshot before the
+                    // first request is released; the production lock is not replaced.
+                    await using var command = connection.CreateCommand();
+                    command.Transaction = result;
+                    command.CommandText = "SELECT pg_catalog.txid_current_snapshot()::text;";
+                    await command.ExecuteScalarAsync(cancellationToken);
+                }
+                Waiting.TrySetResult();
+            }
+            return result;
+        }
+    }
+
+    private sealed class ValidationSerializationObserver(Action<string> report) : SaveChangesInterceptor
+    {
+        public int SerializationFailures { get; private set; }
+        public override Task SaveChangesFailedAsync(DbContextErrorEventData eventData,
+            CancellationToken cancellationToken = default)
+        {
+            var failure = DatabaseFailureClassifier.Classify(eventData.Exception);
+            if (failure.SqlState == "40001") SerializationFailures++;
+            report($"BUG155 coordinated native failure: SQLSTATE={failure.SqlState ?? "none"}; Kind={failure.Kind}.");
+            return Task.CompletedTask;
+        }
+    }
+
+    // These bounded-recovery controls inject failures before any write; they are
+    // distinct from the coordinated test's actual PostgreSQL serialization error.
+    private sealed class ValidationSaveFailure(string mode, CancellationTokenSource cancellation) : SaveChangesInterceptor
+    {
+        public int Attempts { get; private set; }
+        public InvalidOperationException UnknownFailure { get; } = new("BUG155 controlled unknown failure");
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+            InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        {
+            Attempts++;
+            if (mode == "unknown") throw UnknownFailure;
+            if (mode == "cancel") cancellation.Cancel();
+            throw new DatabaseResourceLockDeadlockException(DatabaseProvider.SqlServer);
+        }
     }
 
     private sealed record SeededCandidate(

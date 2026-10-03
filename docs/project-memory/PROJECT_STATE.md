@@ -1,10 +1,10 @@
 # 项目当前状态
 
-## 2026-10-03：WP5 已交付，WP6 修正 ERP 并发验收入口
+## 2026-10-03：WP1–WP5 已交付，WP6 Space 并发修复本地通过
 
-[PR152](https://github.com/GTX537/CP6/pull/152) 已合入远端 main `cbbb7fc8e99290f6aba7589830a98a98726280e9`；WP5 合并后两库各 3/3 冒烟及 13 个自有库清理完成。父任务 #134 保持 Open，WP1–WP5 已交付，WP6 继续。
+[PR152](https://github.com/GTX537/CP6/pull/152) 完成 WP5 交付，两库各 3/3 合并后冒烟及 13 个自有库清理完成。[BUG153](https://github.com/GTX537/CP6/issues/153) 已由 [PR154](https://github.com/GTX537/CP6/pull/154) 交付并关闭，当前已确认远端 main 为 `59e09f6e68a36734c64144abfcefc81b7c9c8d9d`。父任务 #134 保持 Open，WP1–WP5 已交付，WP6 继续。
 
-WP6 两库完整应用、重复初始化和原生恢复已取得分项本地结果，尚未完成正式矩阵与交付。ERP 原 95 项 PG 回归的两项并发失败已定位为测试未执行既有 RETRY 协议，独立 [BUG153](https://github.com/GTX537/CP6/issues/153) 修复中：原两项修复后 PG 2/2，均观察到真实 40001 后完成最终断言；两库原 ERP 全套各 95/95、零 skip，集中审查无实质阻断，正常 PR 和远端交付待完成，详见[专项记录](../audits/2026-10-03-bug-153-erp-concurrency-retry/README.md)。生产订单逻辑未改。
+WP6 正式 Application 两库各 17/17 入口通过，包括重复初始化、真实 SignalR、恢复后待发消息/重放及游标检查；这些是修复前发布物的历史证据。最终 PG Matrix 的设计/发布组出现真实 native 40001，独立 [BUG155](https://github.com/GTX537/CP6/issues/155) 已补全生产校验申请的有界完整事务恢复。两库各 9/9 校验及各 41/41 完整设计/发布回归、零 skip，本地构建与一次集中源码审查通过；状态为本地验证完成、远端待交付，见[专项记录](../audits/2026-10-03-bug-155-space-validation-retry/README.md)。WP6 最终矩阵、受影响发布物的新应用验收与交付仍待完成。
 
 全部本地执行，未启动/取消 Actions，未改工作流/保护或部署生产。下方记录保留各历史时点，以本节及 GitHub Issue 当前状态为准。
 

@@ -1,0 +1,14 @@
+  CP6.Space.Contracts -> D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Contracts\bin\Debug\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Domain -> D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Domain\bin\Debug\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Application -> D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Application\bin\Debug\net8.0\CP6.Space.Application.dll
+  CP6.Entity -> D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.Core -> D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Core\bin\Debug\net8.0\CP6.Core.dll
+D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Infrastructure\SpaceValidationInfrastructure.cs(97,35): error CS1061: 'DatabaseFacade' does not contain a definition for 'GetEnlistedTransaction' and no accessible extension method 'GetEnlistedTransaction' accepting a first argument of type 'DatabaseFacade' could be found (are you missing a using directive or an assembly reference?) [D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj]
+
+Build FAILED.
+
+D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Infrastructure\SpaceValidationInfrastructure.cs(97,35): error CS1061: 'DatabaseFacade' does not contain a definition for 'GetEnlistedTransaction' and no accessible extension method 'GetEnlistedTransaction' accepting a first argument of type 'DatabaseFacade' could be found (are you missing a using directive or an assembly reference?) [D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:03.69

@@ -1,10 +1,10 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-03：WP5 交付确认与 ERP 并发诊断
+## 2026-10-03：WP5/BUG153 已交付，Space 并发修复本地验证完成
 
-WP5 已由 [PR152](https://github.com/GTX537/CP6/pull/152) 进入远端 main `cbbb7fc8e99290f6aba7589830a98a98726280e9`，两库各 3/3 合并后冒烟通过，13 个自有临时库正常清理。WP6 和父任务 #134 尚未完成。
+WP5 已由 [PR152](https://github.com/GTX537/CP6/pull/152) 交付，两库各 3/3 合并后冒烟通过，13 个自有临时库正常清理。[BUG153](https://github.com/GTX537/CP6/issues/153) 已由 [PR154](https://github.com/GTX537/CP6/pull/154) 交付并关闭。WP6 和父任务 #134 尚未完成。
 
-[BUG153](https://github.com/GTX537/CP6/issues/153) 已保留 ERP 并发测试原失败，并以实际 native 40001 确认首次投递断言与 RETRY 协议不符；修复后的 PG 原两项 2/2、零 skip。SQL/PG 原 ERP 全套另各 95/95、零 skip；此处仅记录本地诊断与回归结果，尚不声明 BUG 交付，完整证据见[专项记录](../audits/2026-10-03-bug-153-erp-concurrency-retry/README.md)。
+[BUG155](https://github.com/GTX537/CP6/issues/155) 保留原 PG Matrix 34/35 失败及确定性实际 40001 RED；生产修复后，两库校验各 9/9、完整设计/发布各 41/41，零 skip。原 35 项和新增六项逐项核对，9 项是 41 项子集。候选构建零 warning/error，源码集中审查无实质阻断，105 份原件归档并核对当前源码/运行物；此处只记录本地完成，正常 PR、合并后冒烟和清理尚待完成，见[专项证据](../audits/2026-10-03-bug-155-space-validation-retry/README.md)。
 
 ## 2026-10-03：WP5 本地验证与集中审查完成，待远端交付
 
