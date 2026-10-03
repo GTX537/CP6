@@ -79,8 +79,10 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
                     throw new ErpCommerceException("C03_TENANT_DISABLED");
                 if (command.BusinessPartner is { } bpRequest)
                 {
-                    var partner = await db.BusinessPartners.FromSqlInterpolated($"SELECT * FROM dbo.T_WebBusinessPartner WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={command.TenantId} AND CrmAccountId={command.AccountId}")
-                        .SingleOrDefaultAsync(ct);
+                    var partnerQuery = db.Database.IsNpgsql()
+                        ? db.BusinessPartners.FromSqlInterpolated($"""SELECT * FROM public."T_WebBusinessPartner" WHERE "TenantId"={command.TenantId} AND "CrmAccountId"={command.AccountId} FOR UPDATE""")
+                        : db.BusinessPartners.FromSqlInterpolated($"SELECT * FROM dbo.T_WebBusinessPartner WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={command.TenantId} AND CrmAccountId={command.AccountId}");
+                    var partner = await partnerQuery.SingleOrDefaultAsync(ct);
                     ErpQuotationOrderFactory.RequireBusinessPartner(partner, command.AccountId, allowPreRegistered: true);
                     var service = new BusinessPartnerService(db);
                     var dto = await service.GetByCdAsync(partner!.BpCd);
@@ -269,7 +271,8 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
         => ErpSqlLock.AcquireAsync(queue, "c03:message:" + ErpEventContracts.Hash(Encoding.UTF8.GetBytes(c.MessageId)), ct);
     private static void RequireSql(ErpIntegrationContext queue)
     {
-        if (!queue.Database.IsSqlServer()) throw new InvalidOperationException("C03_REQUIRES_REAL_SQL_SERVER");
+        if (!(queue.Database.IsSqlServer() || queue.Database.IsNpgsql()))
+            throw new InvalidOperationException("C03_REQUIRES_REAL_SQL_SERVER");
     }
     private static Cp6InboxProcessingResult Invalid(string digest) => new(Cp6InboxDisposition.Invalid, "C03_EVENT_INVALID", digest);
 

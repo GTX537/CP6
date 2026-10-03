@@ -1,0 +1,47 @@
+{
+  "Task": "BUG147",
+  "Label": "bug147-post-merge-business-smoke",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-03T10:41:40.4989070Z",
+  "FinishedUtc": "2026-10-03T10:42:11.9195415Z",
+  "ExitCode": 0,
+  "Filter": "FullyQualifiedName~CP6.Tests.Persistence.IdentitySnapshotBatchSqlServerTests.Real_business_save_emits_five_versioned_snapshots_and_five_valid_outbox_messages",
+  "Counts": {
+    "total": "1",
+    "executed": "1",
+    "passed": "1",
+    "failed": "0",
+    "notExecuted": "0"
+  },
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB"
+    },
+    {
+      "Path": "CP6.Core/Persistence/SqlServerIdentitySnapshotUpdateSqlGenerator.cs",
+      "Sha256": "5FAE858D64ABB36730E918BAE7003BF506A778F94356D4D2DC96BDC6BB74AFDC"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/IdentitySnapshotBatchSqlServerTests.cs",
+      "Sha256": "197060AC3442D9132671DA4265146464222C9189D3E8D91588023847073E9B52"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "8AAB3487AFAAD7FDCF799C80812D7387CF393F455A0A5DA365EA9A71C529ACC4"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "3DFB64EDDB463C4D99D8248B185F7AE7E7B2724401EF3E04F9834D3F4AAC3A72"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "969BCF8B1C0338F742F0E296FB90738C133717CCE1E3652108D7FF168FB77CC1"
+    }
+  ],
+  "RunnerSha256": "974EF4187F5C0C535B512F9256D36625069A40688CC224150DE78883F2E2BA65",
+  "ProcessLogSha256": "AF9F21182671CBBFEC36EC39C590A7D71DCDA406F7944FF7081756F4866B9CE6",
+  "Scope": "Actual SQL Server regression in fixture-created isolated databases; no production or remote Actions."
+}

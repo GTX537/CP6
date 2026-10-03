@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\identity-events-fixture\CP6.IdentityEvents.Fixture.csproj (in 467 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Space.Domain\CP6.Space.Domain.csproj (in 5 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 48 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Space.Application\CP6.Space.Application.csproj (in 3 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Core\CP6.Core.csproj (in 12 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.WebApi\CP6.WebApi.csproj (in 35 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 15 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Entity\CP6.Entity.csproj (in 10 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 1 ms).

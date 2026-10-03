@@ -1,0 +1,14 @@
+{
+  "Task": "BUG147",
+  "Scope": "Observation of the first push tool result; not a captured stderr file",
+  "FirstPushSession": 45400,
+  "FirstPushExitCode": 1,
+  "Error": "HTTP 408 curl 22; unexpected disconnect while reading sideband packet; remote end hung up unexpectedly",
+  "AfterFirstFailureBranchAbsent": true,
+  "BranchAbsenceCheck": "git ls-remote --heads origin refs/heads/codex/bug-147-snapshot-batch-collation returned exit0 with empty output",
+  "Retry": "Same commit, per-command http.version=HTTP/1.1, no global Git configuration change",
+  "RetryExitCode": 0,
+  "RetryPackKiB": 61.87,
+  "ForceUsed": false,
+  "Candidate": "8f42a76be7a0de70170e1209bc3e534f0cae5da9"
+}

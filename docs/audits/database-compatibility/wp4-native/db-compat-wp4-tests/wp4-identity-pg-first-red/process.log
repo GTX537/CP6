@@ -1,0 +1,2 @@
+PASS current-provider-core-and-identity-priority-installed
+FAIL business-save-produces-valid-versioned-snapshots

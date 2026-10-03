@@ -1,0 +1,136 @@
+{
+  "Scope": "Immediate candidate/protected-main workflow, working-file, event and Azure dependency input recheck; known reviewed bytes reused only when all 17 blobs match.",
+  "CheckedUtc": "2026-10-03T10:36:33.8645872Z",
+  "Worktree": "D:\\CP6\\tmp\\worktrees\\bug-147-snapshot-batch-collation",
+  "Candidate": "8f42a76be7a0de70170e1209bc3e534f0cae5da9",
+  "RemoteMain": "0b0ab74a04c4d840a2c0bb05e36395aff8b89d32",
+  "OriginalInspectionSha256": "97C3178FB366483B27798CD7B4F58FFCB24E6E6DB519F29D64397E83A69F800D",
+  "WorkflowCount": 17,
+  "WorkflowFiles": [
+    {
+      "Path": ".github/workflows/client-contract.yml",
+      "CandidateBlob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "ProtectedMainBlob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "WorkingFileBlob": "249536408f530504df1dec9f45a2b7f6dab34447",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/crm-saas-public-contract.yml",
+      "CandidateBlob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "ProtectedMainBlob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "WorkingFileBlob": "8b413426ca9b8b47f157dc851559ef638d5ad832",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/crm-v1-prd-head.yml",
+      "CandidateBlob": "7826de728d692846184dc7113848109a6a56a92e",
+      "ProtectedMainBlob": "7826de728d692846184dc7113848109a6a56a92e",
+      "WorkingFileBlob": "7826de728d692846184dc7113848109a6a56a92e",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/crm-v1-prd.yml",
+      "CandidateBlob": "be9a37138cb903c45c4638c65929610d24362730",
+      "ProtectedMainBlob": "be9a37138cb903c45c4638c65929610d24362730",
+      "WorkingFileBlob": "be9a37138cb903c45c4638c65929610d24362730",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/p10-platform-audit.yml",
+      "CandidateBlob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "ProtectedMainBlob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "WorkingFileBlob": "4e59c58be46a17b1906fc461b0c2dcb1485913c8",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/p10-platform-candidate.yml",
+      "CandidateBlob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "ProtectedMainBlob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "WorkingFileBlob": "d16139b13d3bdec51175c09a03a3615fa4310510",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/p10-platform-preflight.yml",
+      "CandidateBlob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "ProtectedMainBlob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "WorkingFileBlob": "1499ecc86e12004bdf7e837f28e363b2e70e8932",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/p10-platform-validation.yml",
+      "CandidateBlob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "ProtectedMainBlob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "WorkingFileBlob": "ff07b463d57d07e8ddff472b7690d486648a2702",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/r2-candidate.yml",
+      "CandidateBlob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "ProtectedMainBlob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "WorkingFileBlob": "f02caf4a14ecd36ce4d5f012775e69a0956a940c",
+      "PreviouslyReviewedTrigger": "Tag v*.*.* only"
+    },
+    {
+      "Path": ".github/workflows/r2-deploy.yml",
+      "CandidateBlob": "d259013345adf115865007cc5f05c70939a902bf",
+      "ProtectedMainBlob": "d259013345adf115865007cc5f05c70939a902bf",
+      "WorkingFileBlob": "d259013345adf115865007cc5f05c70939a902bf",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/r2-freeze.yml",
+      "CandidateBlob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "ProtectedMainBlob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "WorkingFileBlob": "bf6ede91aa63b827dc3a56ca1c6131fbd021e9cd",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/space-ga-evidence.yml",
+      "CandidateBlob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "ProtectedMainBlob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "WorkingFileBlob": "509c106958bfbed448a6571ea5f0d15bacd4c57a",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": ".github/workflows/wms-production-sql.yml",
+      "CandidateBlob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "ProtectedMainBlob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "WorkingFileBlob": "921df4ee38846592bff7f6ba0119269e171f6b14",
+      "PreviouslyReviewedTrigger": "workflow_dispatch only"
+    },
+    {
+      "Path": "azure-pipelines-deploy-agent-readiness.yml",
+      "CandidateBlob": "3e5ad534e70326cf2ba72d19b5936c66a24de869",
+      "ProtectedMainBlob": "3e5ad534e70326cf2ba72d19b5936c66a24de869",
+      "WorkingFileBlob": "3e5ad534e70326cf2ba72d19b5936c66a24de869",
+      "PreviouslyReviewedTrigger": "No git/PR trigger"
+    },
+    {
+      "Path": "azure-pipelines-dev.yml",
+      "CandidateBlob": "b0f6d4afab9f9fa7af5d893e9584b5672c4fa4f7",
+      "ProtectedMainBlob": "b0f6d4afab9f9fa7af5d893e9584b5672c4fa4f7",
+      "WorkingFileBlob": "b0f6d4afab9f9fa7af5d893e9584b5672c4fa4f7",
+      "PreviouslyReviewedTrigger": "No git/PR trigger; completion resource depends on manual azure-pipelines.yml CI bridge"
+    },
+    {
+      "Path": "azure-pipelines-release-shadow.yml",
+      "CandidateBlob": "dec2f58657d5e0a313457cf708a579df192c5cce",
+      "ProtectedMainBlob": "dec2f58657d5e0a313457cf708a579df192c5cce",
+      "WorkingFileBlob": "dec2f58657d5e0a313457cf708a579df192c5cce",
+      "PreviouslyReviewedTrigger": "No git/PR trigger"
+    },
+    {
+      "Path": "azure-pipelines.yml",
+      "CandidateBlob": "9c3217891b2519753d7b83e43a1caddb7932689a",
+      "ProtectedMainBlob": "9c3217891b2519753d7b83e43a1caddb7932689a",
+      "WorkingFileBlob": "9c3217891b2519753d7b83e43a1caddb7932689a",
+      "PreviouslyReviewedTrigger": "No git/PR trigger"
+    }
+  ],
+  "OrdinaryBuildTestTriggers": "12 GitHub workflow_dispatch only; R2 candidate protected v*.*.* tags only. Branch push and PR cannot start ordinary remote build/test.",
+  "AzureCompletionDependsOnManualCiBridge": true,
+  "QueuedOrRunningRuns": [],
+  "RemoteRunsTriggered": 0,
+  "RunsCancelled": 0,
+  "TriggerConfigurationChanges": 0
+}

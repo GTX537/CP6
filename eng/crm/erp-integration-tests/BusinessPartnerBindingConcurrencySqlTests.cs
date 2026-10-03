@@ -18,10 +18,9 @@ public sealed class BusinessPartnerBindingConcurrencySqlTests(SqlDatabaseFixture
         await scenario.InitializeAsync();
         var first = await CreateUnboundPartnerAsync(scenario, scenario.Tenant);
         var second = await CreateUnboundPartnerAsync(scenario, scenario.Tenant);
-        await using var connectionSource = scenario.Db();
         var rendezvous = new BindingSaveRendezvous(scenario.Account);
-        await using var firstContext = ConcurrentContext(connectionSource, scenario.Tenant, rendezvous);
-        await using var secondContext = ConcurrentContext(connectionSource, scenario.Tenant, rendezvous);
+        await using var firstContext = ConcurrentContext(scenario.Tenant, rendezvous);
+        await using var secondContext = ConcurrentContext(scenario.Tenant, rendezvous);
 
         var attempts = await Task.WhenAll(
             BindAsync(firstContext, scenario, first, "binding-race-first"),
@@ -55,10 +54,9 @@ public sealed class BusinessPartnerBindingConcurrencySqlTests(SqlDatabaseFixture
         await scenario.InitializeAsync();
         var first = await CreateUnboundPartnerAsync(scenario, scenario.Tenant, scenario.PartnerKey);
         var second = await CreateUnboundPartnerAsync(scenario, scenario.OtherTenant, scenario.PartnerKey);
-        await using var connectionSource = scenario.Db();
         var rendezvous = new BindingSaveRendezvous(scenario.Account);
-        await using var firstContext = ConcurrentContext(connectionSource, scenario.Tenant, rendezvous);
-        await using var secondContext = ConcurrentContext(connectionSource, scenario.OtherTenant, rendezvous);
+        await using var firstContext = ConcurrentContext(scenario.Tenant, rendezvous);
+        await using var secondContext = ConcurrentContext(scenario.OtherTenant, rendezvous);
 
         var attempts = await Task.WhenAll(
             BindAsync(firstContext, scenario, first, "binding-tenant-first"),
@@ -74,13 +72,15 @@ public sealed class BusinessPartnerBindingConcurrencySqlTests(SqlDatabaseFixture
         }
     }
 
-    private static CP6Context ConcurrentContext(CP6Context connectionSource, Guid tenant,
-        BindingSaveRendezvous rendezvous) => new(
-        new DbContextOptionsBuilder<CP6Context>()
-            .UseSqlServer(connectionSource.Database.GetConnectionString()
-                ?? throw new InvalidOperationException("C03_SQL_NOT_INITIALIZED"), sql => sql.CommandTimeout(60))
-            .AddInterceptors(rendezvous).Options,
-        new TenantContext { CurrentTenantId = tenant });
+    private CP6Context ConcurrentContext(Guid tenant, BindingSaveRendezvous rendezvous)
+    {
+        var options = new DbContextOptionsBuilder<CP6Context>();
+        database.ConfigureBusinessOptions(options);
+        var context = new CP6Context(options.AddInterceptors(rendezvous).Options,
+            new TenantContext { CurrentTenantId = tenant });
+        context.Database.SetCommandTimeout(60);
+        return context;
+    }
 
     private static async Task<PartnerBefore> CreateUnboundPartnerAsync(ErpScenario scenario, Guid tenant,
         string? key = null)

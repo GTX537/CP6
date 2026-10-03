@@ -1,15 +1,17 @@
+using CP6.Core.Persistence;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.ErpIntegration;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.ErpIntegration.SqlTests;
 
 [Collection(SqlDatabaseCollection.Name)]
-public sealed class BusinessPartnerSqlTests(SqlDatabaseFixture database)
+public sealed class BusinessPartnerSqlTests(SqlDatabaseFixture database, ITestOutputHelper output)
 {
     private async Task<ErpScenario> ScenarioAsync()
     {
+        output.WriteLine(database.SetupSummary);
         var scenario = new ErpScenario(database);
         await scenario.InitializeAsync();
         return scenario;
@@ -130,9 +132,15 @@ public sealed class BusinessPartnerSqlTests(SqlDatabaseFixture database)
             BpCd = secondKey, BpName = "Second SQL customer", BaseCd = "B01", CustomerFlg = true,
             AccountsReceivableCd = "AR001", SalesStaffCd = "S01", BusinessStaffCd = "S02"
         }, "erp-staff", preRegister: true);
-        var binding = await Assert.ThrowsAsync<SqlException>(() => db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE dbo.T_WebBusinessPartner SET CrmAccountId={s.Account} WHERE TenantId={s.Tenant} AND BpCd={secondKey}"));
-        Assert.Contains(binding.Number, new[] { 2601, 2627 });
+        FormattableString bindingSql;
+        if (database.IsPostgreSql)
+            bindingSql = $"UPDATE public.\"T_WebBusinessPartner\" SET \"CrmAccountId\"={s.Account} WHERE \"TenantId\"={s.Tenant} AND \"BpCd\"={secondKey}";
+        else
+            bindingSql = $"UPDATE dbo.T_WebBusinessPartner SET CrmAccountId={s.Account} WHERE TenantId={s.Tenant} AND BpCd={secondKey}";
+        var binding = await Record.ExceptionAsync(() => db.Database.ExecuteSqlInterpolatedAsync(bindingSql));
+        Assert.NotNull(binding);
+        SqlFailureProbe.AssertConstraint(binding, database.Database.Provider, DatabaseFailureKind.UniqueConstraint,
+            "IX_T_WebBusinessPartner_TenantId_CrmAccountId", output);
         var secondPartner = await db.BusinessPartners.SingleAsync(x => x.BpCd == secondKey);
         Assert.Null(secondPartner.CrmAccountId);
         await new ErpCommerceAuthority(db, s.Clock).SetBusinessPartnerProfileAsync(secondKey,
@@ -140,12 +148,24 @@ public sealed class BusinessPartnerSqlTests(SqlDatabaseFixture database)
         var second = new ErpBusinessPartnerRequested(s.Tenant, Guid.NewGuid(), secondAccount, 1);
         await s.ConsumeAsync(s.Envelope(second));
         await using var queue = s.Queue();
-        var requestId = await Assert.ThrowsAsync<SqlException>(() => queue.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE erp_integration.Request SET RequestId={first.RequestId} WHERE TenantId={s.Tenant} AND Kind=1 AND AggregateId={secondAccount}"));
-        Assert.Contains(requestId.Number, new[] { 2601, 2627 });
-        var businessKey = await Assert.ThrowsAsync<SqlException>(() => queue.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE erp_integration.Request SET AggregateId={s.Account} WHERE TenantId={s.Tenant} AND Kind=1 AND AggregateId={secondAccount}"));
-        Assert.Contains(businessKey.Number, new[] { 2601, 2627 });
+        FormattableString requestIdSql;
+        if (database.IsPostgreSql)
+            requestIdSql = $"UPDATE erp_integration.\"Request\" SET \"RequestId\"={first.RequestId} WHERE \"TenantId\"={s.Tenant} AND \"Kind\"=1 AND \"AggregateId\"={secondAccount}";
+        else
+            requestIdSql = $"UPDATE erp_integration.Request SET RequestId={first.RequestId} WHERE TenantId={s.Tenant} AND Kind=1 AND AggregateId={secondAccount}";
+        var requestId = await Record.ExceptionAsync(() => queue.Database.ExecuteSqlInterpolatedAsync(requestIdSql));
+        Assert.NotNull(requestId);
+        SqlFailureProbe.AssertConstraint(requestId, database.Database.Provider, DatabaseFailureKind.UniqueConstraint,
+            "IX_Request_TenantId_RequestId", output);
+        FormattableString businessKeySql;
+        if (database.IsPostgreSql)
+            businessKeySql = $"UPDATE erp_integration.\"Request\" SET \"AggregateId\"={s.Account} WHERE \"TenantId\"={s.Tenant} AND \"Kind\"=1 AND \"AggregateId\"={secondAccount}";
+        else
+            businessKeySql = $"UPDATE erp_integration.Request SET AggregateId={s.Account} WHERE TenantId={s.Tenant} AND Kind=1 AND AggregateId={secondAccount}";
+        var businessKey = await Record.ExceptionAsync(() => queue.Database.ExecuteSqlInterpolatedAsync(businessKeySql));
+        Assert.NotNull(businessKey);
+        SqlFailureProbe.AssertConstraint(businessKey, database.Database.Provider, DatabaseFailureKind.UniqueConstraint,
+            "PK_Request", output);
         Assert.Equal(2, await queue.Requests.CountAsync(x => x.TenantId == s.Tenant));
         Assert.Equal(second.RequestId, (await queue.Requests.SingleAsync(x => x.TenantId == s.Tenant && x.AggregateId == secondAccount)).RequestId);
         await s.AssertNoOrderAsync();

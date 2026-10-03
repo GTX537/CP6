@@ -1,0 +1,11 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Base": "974e57c0650279565330a67c844355ba3e1b563d",
+  "ReviewedFileHashesMatched": 53,
+  "ChangedCodeAndLockFiles": 50,
+  "AllChangedCodeCoveredByReview": true,
+  "NoUnstagedInputs": true,
+  "RootPreexistingLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5",
+  "ReviewSha256": "9BBDD3273C2681DB21E5FD820A48CAA7EAB3B5162ACF3EF6489FBEE072D0C62C",
+  "Scope": "Final local source/input binding; not remote delivery, full application startup or production acceptance."
+}

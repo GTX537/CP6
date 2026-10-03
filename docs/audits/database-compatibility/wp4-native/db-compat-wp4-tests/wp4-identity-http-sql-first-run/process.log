@@ -1,0 +1,4 @@
+PASS current-provider-core-and-identity-priority-installed
+OBSERVE C02 HTTP SqlServer ServiceToken INSERT rejected by C02_HttpInsertReject_1da932a636b64335ae2f3830159f8c7b; native=547; HTTP=503; committedIndex=0.
+OBSERVE C02 HTTP exact native INSERT fault constraint removed; remaining=0.
+PASS actual-http-tls-service-token-reader-and-native-issuance-failure

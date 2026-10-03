@@ -3,11 +3,12 @@ using CP6.Core.Services.ErpIntegration;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Platform.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CP6.ErpIntegration.SqlTests;
 
 [Collection(SqlDatabaseCollection.Name)]
-public sealed class OrderAmountBoundarySqlTests(SqlDatabaseFixture database)
+public sealed class OrderAmountBoundarySqlTests(SqlDatabaseFixture database, ITestOutputHelper output)
 {
     private const decimal FirstOverflowingAmount = 10_000_000_000_000m;
     private const decimal LargestRepresentableQuotationAmount = 9_999_999_999_999.99m;
@@ -108,10 +109,10 @@ public sealed class OrderAmountBoundarySqlTests(SqlDatabaseFixture database)
         var request = await RequestAsync(s, key, FirstOverflowingAmount);
         var sequenceBefore = await OrderSequenceAsync(s);
         var envelope = s.Envelope(request);
-        using var sqlFailures = new SqlFailureProbe();
+        using var sqlFailures = new SqlFailureProbe(database.Database.Provider, output);
         var result = await s.Handler().ConsumeAsync(envelope.Payload, envelope.TopicName, envelope.PartitionKey);
         Assert.True(result.Disposition == Cp6InboxDisposition.Applied,
-            $"Expected terminal business outcome, got {result.Disposition}/{result.ErrorCode}; SQL numbers: {string.Join(',', sqlFailures.Numbers)}");
+            $"Expected terminal business outcome, got {result.Disposition}/{result.ErrorCode}; {sqlFailures.Description}");
         await s.AssertTerminalAsync(request.OpportunityId, "C03_QUOTATION_AMOUNT_INVALID", true);
         var original = await s.JournalAsync(request.OpportunityId);
         await s.ConsumeAsync(envelope);
@@ -120,7 +121,7 @@ public sealed class OrderAmountBoundarySqlTests(SqlDatabaseFixture database)
         Assert.Equal(original.ResultDataJson, repeated.ResultDataJson);
         Assert.Equal(original.ResultVersion, repeated.ResultVersion);
         Assert.Equal(original.RowVersion, repeated.RowVersion);
-        Assert.Empty(sqlFailures.Numbers);
+        sqlFailures.AssertNoErrors();
         Assert.Equal(sequenceBefore, await OrderSequenceAsync(s));
         await s.AssertNoOrderAsync();
         await using var queue = s.Queue();

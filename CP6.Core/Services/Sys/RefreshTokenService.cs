@@ -183,7 +183,9 @@ public class RefreshTokenService : IRefreshTokenService
     {
         var sessions = lockForRotation && _db.Database.IsSqlServer()
             ? _db.Sys_BrowserSessions.FromSqlInterpolated($"SELECT * FROM dbo.Sys_BrowserSessions WITH (UPDLOCK,HOLDLOCK) WHERE Id={token.BrowserSessionId}")
-            : _db.Sys_BrowserSessions;
+            : lockForRotation && _db.Database.IsNpgsql()
+                ? _db.Sys_BrowserSessions.FromSqlInterpolated($"SELECT * FROM public.\"Sys_BrowserSessions\" WHERE \"Id\"={token.BrowserSessionId} FOR UPDATE")
+                : _db.Sys_BrowserSessions;
         var session = await sessions.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(s =>
             s.Id == token.BrowserSessionId && s.UserId == token.UserId && s.TenantId == token.TenantId);
         if (session == null || session.LoggedOutAtUtc != null

@@ -1,0 +1,110 @@
+{
+  "schemaId": "cp6.c02.producer-provider-verification.v1",
+  "conclusion": "success",
+  "verificationKind": "selected production identity producer scenarios on an owned current-provider database; not full producer/HTTP or cross-repository transport acceptance",
+  "provider": "SqlServer",
+  "assemblySha256": "04035e3a5627481749a934130f828bcc15595d0dbbdb33284a2a6b1a8d482c2e",
+  "fixtureAssemblySha256": "e587a458b814d18354d013a84ffe24eeb20cd87bc3007828351134dbe0b1f316",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "all-provider",
+  "expectedCases": 21,
+  "excludedScopes": [
+    "SQL historical upgrade",
+    "SQL MARS connection",
+    "GDPR purge",
+    "actual HTTP/TLS",
+    "actual RefreshTokenService rotation/reuse",
+    "cross-repository transport acceptance"
+  ],
+  "total": 21,
+  "passed": 21,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "current-provider-core-and-identity-priority-installed",
+      "passed": true
+    },
+    {
+      "name": "business-save-produces-valid-versioned-snapshots",
+      "passed": true
+    },
+    {
+      "name": "unchanged-authorization-does-not-advance-version",
+      "passed": true
+    },
+    {
+      "name": "envelope-failure-rolls-back-business-version-and-outbox",
+      "passed": true
+    },
+    {
+      "name": "snapshot-failure-rolls-back-priority-enqueue",
+      "passed": true
+    },
+    {
+      "name": "outbox-insert-failure-rolls-back-business-and-version",
+      "passed": true
+    },
+    {
+      "name": "concurrent-commands-commit-a-dense-version-sequence",
+      "passed": true
+    },
+    {
+      "name": "savechanges-false-preserves-caller-state-with-one-write",
+      "passed": true
+    },
+    {
+      "name": "savechangesasync-false-preserves-caller-state-with-one-write",
+      "passed": true
+    },
+    {
+      "name": "native-user-disable-revokes-actual-crm-grant-jti",
+      "passed": true
+    },
+    {
+      "name": "direct-grant-revocation-is-atomic-and-idempotent",
+      "passed": true
+    },
+    {
+      "name": "service-revocation-is-bound-to-issuer-client-and-tenant",
+      "passed": true
+    },
+    {
+      "name": "bootstrap-is-idempotent-and-pagination-restarts-on-change",
+      "passed": true
+    },
+    {
+      "name": "department-move-emits-updated-descendant-paths",
+      "passed": true
+    },
+    {
+      "name": "role-membership-and-empty-permissions-are-full-snapshots",
+      "passed": true
+    },
+    {
+      "name": "password-and-two-factor-changes-revoke-real-grants",
+      "passed": true
+    },
+    {
+      "name": "refresh-rotation-preserves-grant-terminal-revoke-invalidates-family",
+      "passed": true
+    },
+    {
+      "name": "direct-family-revocation-is-atomic-across-both-sessions",
+      "passed": true
+    },
+    {
+      "name": "tenant-disable-revokes-browser-and-service-tokens",
+      "passed": true
+    },
+    {
+      "name": "concurrent-bootstrap-and-business-write-preserve-latest-state",
+      "passed": true
+    },
+    {
+      "name": "failed-command-restores-caller-owned-transaction-savepoint",
+      "passed": true
+    }
+  ],
+  "observedAtUtc": "2026-10-03T11:09:14.6395028+00:00"
+}

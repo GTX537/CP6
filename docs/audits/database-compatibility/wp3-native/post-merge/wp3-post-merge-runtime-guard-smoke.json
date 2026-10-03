@@ -1,0 +1,20 @@
+{
+  "Scope": "Actual same validated API after remote main tree containment: ordinary PG Application mode must still reject before database work. Sentinel loopback connection, no database required. No new full business/native suite executed.",
+  "SourceMain": "0b0ab74a04c4d840a2c0bb05e36395aff8b89d32",
+  "SourceCandidate": "4ddc6c9d8d75f47711fce1c5e56fbb0ac8733e21",
+  "SourceTree": "3755dbec61fd5f4579327302009a35dce65ff351",
+  "StartedHostUtc": "2026-10-03T09:50:47.0475382Z",
+  "FinishedHostUtc": "2026-10-03T09:50:58.4218368Z",
+  "ApiPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp3-20261003\\CP6.WebApi\\bin\\Debug\\net8.0\\CP6.WebApi.dll",
+  "ApiSha256": "DE6D3F97F77A0941A29FC96AEAEAC0DE83AD1F31BA393D3DE6F0597D721F3758",
+  "ScriptSha256": "A1CD2A4F8C93EB19ADB93A782868BB94A2269602E5D45E0D506246F94E5C19DE",
+  "ProcessId": 19160,
+  "ExitCode": -532462766,
+  "Port": 57884,
+  "TimedOut": false,
+  "ListenerObserved": false,
+  "RuntimeGuardRejected": true,
+  "Passed": true,
+  "StdoutSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "StderrSha256": "0A65C312D2A01DE7E747F1C37051BDD6C0D26FB9CBDD8E97D2875D79E43E0101"
+}

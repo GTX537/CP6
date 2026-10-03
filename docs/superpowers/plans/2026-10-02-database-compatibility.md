@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1已由PR136、WP2已由PR145交付远端main；WP3在main605246ca基线的独立分支完成适用本地实施/真实门禁/集中审查/清理，远端交付待核对。WP4–WP6未完成。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。阶段实际来源与当前范围见[WP3实施记录](../../audits/database-compatibility/WP3-IMPLEMENTATION.md)。下文WP2的Pending保留提交前历史时点，远端交付以本条与项目状态为准；不提前声明整体兼容。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1已由PR136、WP2已由PR145交付远端main；WP3已由PR146交付远端main0b0ab74a并完成合并后冒烟；WP4从该主线开始身份/核心业务适配，WP4–WP6未完成。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)。阶段实际来源与当前范围见[WP3实施记录](../../audits/database-compatibility/WP3-IMPLEMENTATION.md)。下文WP2的Pending保留提交前历史时点，远端交付以本条与项目状态为准；不提前声明整体兼容。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -88,19 +88,21 @@
 
 **必须通过：** 事务锁释放/超时/隔离；首次创建互斥；原子编号；唯一冲突分类；租约抢占与旧 owner fence；两库真实并发 token。串行测试不能替代并发试验。
 
-本地阶段结果、失败/复用与151个原始路径证据见[WP3实施记录](../../audits/database-compatibility/WP3-IMPLEMENTATION.md)。本节勾选表示能力实施及对应门禁完成；WP3提交/PR/远端main仍待核对，WP4–WP6与父任务没有完成。
+本地阶段结果、失败/复用与151个原始路径证据见[WP3实施记录](../../audits/database-compatibility/WP3-IMPLEMENTATION.md)。WP3现已由PR146完成提交/合并/远端main核对及必要冒烟；本节勾选不代表后续WP4–WP6与父任务完成。
 
 ## WP4：身份、ERP/WMS、采购和工作流
 
 **前置：** WP3。**产出：** 关键业务链使用统一能力，接口和安全语义保持一致。
 
-- [ ] 适配 CrmOidcGrantStore 的 grant/logout ticket 原子消费与 refresh 轮换；验证两个并发请求仅一个成功、旧 token 重放被拒绝、全局登出/撤销以及精确 hash 比较。
-- [ ] 适配 IdentitySnapshotWriter/Reader、priority dispatcher、ERP request/replay/order bridge。验证重复消息、业务幂等键/不同 payload 冲突、乱序、重试、死信和授权重放；所有需要原子性的业务与 Outbox 共事务。
-- [ ] 复用 WmsProductionSqlServerTests 的业务断言，在两库执行 MOVE/LPN/serial/补货/审批与台账对账；库存通过领域入口操作，不直接更新库存表。验证权限查询实际翻译及失败关闭。
-- [ ] 适配采购审批 callback、OA/WF job/notification worker、刷新/撤销/后台 retry。验证同一任务只被一个 owner 推进、失败回滚及重放不重复写入；保持租户过滤和权限作用域。
-- [ ] 财务、采购和 ERP 相关 EF 查询也运行两库回归，尤其金额精度、乐观并发、预算版本、编号与事务一致性；没有 raw SQL 热点不等于已验收。
+- [x] 适配 CrmOidcGrantStore 的 grant/logout ticket 原子消费与 refresh 轮换；验证两个并发请求仅一个成功、旧 token 重放被拒绝、全局登出/撤销以及精确 hash 比较。
+- [x] 适配 IdentitySnapshotWriter/Reader、priority dispatcher、ERP request/replay/order bridge。验证重复消息、业务幂等键/不同 payload 冲突、乱序、重试、死信和授权重放；所有需要原子性的业务与 Outbox 共事务。
+- [x] 复用 WmsProductionSqlServerTests 的业务断言，在两库执行 MOVE/LPN/serial/补货/审批与台账对账；库存通过领域入口操作，不直接更新库存表。验证权限查询实际翻译及失败关闭。
+- [x] 适配采购审批 callback、OA/WF job/notification worker、刷新/撤销/后台 retry。验证同一任务只被一个 owner 推进、失败回滚及重放不重复写入；保持租户过滤和权限作用域。
+- [x] 财务、采购和 ERP 相关 EF 查询也运行两库回归，尤其金额精度、乐观并发、预算版本、编号与事务一致性；没有 raw SQL 热点不等于已验收。
 
 **必须通过：** 认证一次消费、撤销与轮换；ERP/消息原子性；WMS 台账与业务一致性；采购审批幂等；工作流领取；真实租户/权限隔离。外部 CRM 消费端未参与时记录其未验证范围，不代称 CRM 已兼容。
+
+WP4本地上述五项已按实际双库/专有门禁分批通过，集中代码审查无实质阻断；[实施记录](../../audits/database-compatibility/WP4-IMPLEMENTATION.md)保留各次范围、失败与复用来源。当前待正常PR交付与远端main核对，勾选不代表阶段已交付或父任务完成。
 
 ## WP5：Space/CAD/AI/发布与报表
 

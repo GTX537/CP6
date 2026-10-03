@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="441aabd8-46fd-4994-a4f0-750c4d62b490" name="tt@LAPTOP-3QQ44FJS 2026-10-03 07:28:21" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T07:28:21.9345564-04:00" queuing="2026-10-03T07:28:21.9345565-04:00" start="2026-10-03T07:28:16.2566322-04:00" finish="2026-10-03T07:28:21.9382827-04:00" />
+  <TestSettings name="default" id="dc9dc175-cec0-48b3-b39b-ec8d69d91d4b">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_07_28_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="11c7e590-5abe-43e1-978a-610be7bbfa0a" testId="29fc2c67-49e7-dd2d-7c85-a5d53dd480ba" testName="CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.8206299" startTime="2026-10-03T07:28:20.0395537-04:00" endTime="2026-10-03T07:28:21.8527391-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11c7e590-5abe-43e1-978a-610be7bbfa0a">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="29fc2c67-49e7-dd2d-7c85-a5d53dd480ba">
+      <Execution id="11c7e590-5abe-43e1-978a-610be7bbfa0a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.OrderSqlTests" name="Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="29fc2c67-49e7-dd2d-7c85-a5d53dd480ba" executionId="11c7e590-5abe-43e1-978a-610be7bbfa0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.12]   Starting:    CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:05.20]   Finished:    CP6.ErpIntegration.SqlTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Entity.DomainModels.Sys;
@@ -17,6 +18,11 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+if (args.Length == 5 && args[2] == "provider-case")
+{
+    Environment.ExitCode = await IdentityProviderCase.RunAsync(args);
+    return;
+}
 if (args.Length == 3 && args[0] == "live-initialize")
 {
     await IdentityLiveFixture.InitializeAsync(args[1], args[2]);
@@ -80,26 +86,31 @@ sealed class Evidence
     private readonly string output;
     private readonly string diagnostics;
     private readonly string? selection;
+    private readonly DatabaseProvider? provider;
+    private readonly int expectedCaseCount;
     private readonly List<CaseResult> cases = [];
     private bool complete;
-    public Evidence(string output, string diagnostics, string? selection)
+    public Evidence(string output, string diagnostics, string? selection, DatabaseProvider? provider = null, int? expectedCaseCount = null)
     {
         this.output = output;
         this.diagnostics = diagnostics;
         this.selection = selection;
+        this.provider = provider;
+        this.expectedCaseCount = expectedCaseCount ?? (selection is null ? 23 : 2);
         Directory.CreateDirectory(output);
         Directory.CreateDirectory(diagnostics);
         Save();
     }
     public async Task Case(string name, Func<Task> run)
     {
-        if (selection is not null && name != "forward-migration-preserves-baseline-and-creates-both-queues" && name != selection) return;
+        var setup = provider is null ? "forward-migration-preserves-baseline-and-creates-both-queues" : IdentityProviderCase.SetupCase;
+        if (selection is not null && !(provider is not null && selection == "all-provider") && name != setup && name != selection) return;
         try { await run(); cases.Add(new(name, true)); Console.WriteLine("PASS " + name); Save(); }
         catch (Exception ex) { Failure(name, ex); Save(); throw; }
     }
     public void MarkComplete()
     {
-        if (cases.Count != (selection is null ? 23 : 2)) throw new InvalidOperationException("C02_CASE_SELECTION_OR_COUNT_MISMATCH");
+        if (cases.Count != expectedCaseCount) throw new InvalidOperationException("C02_CASE_SELECTION_OR_COUNT_MISMATCH");
         complete = true;
     }
     public void Failure(string name, Exception ex)
@@ -114,16 +125,21 @@ sealed class Evidence
         var index = Path.Combine(AppContext.BaseDirectory, "contracts/events/platform/contract-bundle.v1.json");
         File.WriteAllText(Path.Combine(output, "summary.json"), JsonSerializer.Serialize(new
         {
-            schemaId = "cp6.c02.producer-sql-verification.v1", conclusion = complete && failed == 0 ? "success" : "failure",
-            verificationKind = "working-tree SQL integration; not cross-repository transport acceptance",
+            schemaId = provider is null ? "cp6.c02.producer-sql-verification.v1" : "cp6.c02.producer-provider-verification.v1", conclusion = complete && failed == 0 ? "success" : "failure",
+            verificationKind = provider is null ? "working-tree SQL integration; not cross-repository transport acceptance" : "selected production identity producer/component scenarios on an owned current-provider database; not whole-application or cross-repository transport acceptance",
+            provider = (provider ?? DatabaseProvider.SqlServer).ToString(),
             assemblySha256 = IdentityEventContracts.Hash(File.ReadAllBytes(typeof(CP6Context).Assembly.Location)),
+            fixtureAssemblySha256 = IdentityEventContracts.Hash(File.ReadAllBytes(typeof(IdentitySqlFixture).Assembly.Location)),
             contractBundleSha256 = File.Exists(index) ? IdentityEventContracts.Hash(File.ReadAllBytes(index)) : null,
-            scope = selection ?? "all producer SQL/HTTP cases", expectedCases = selection is null ? 23 : 2,
+            scope = selection ?? "all producer SQL/HTTP cases", expectedCases = expectedCaseCount,
+            excludedScopes = provider is null ? null : new[] { "SQL historical upgrade", "SQL MARS connection", "GDPR purge", "actual HTTP/TLS", "actual RefreshTokenService rotation/reuse", "cross-repository transport acceptance" }
+                .Where(scope => scope != "actual HTTP/TLS" || !cases.Any(item => item.Name == IdentityProviderCase.HttpCase)).ToArray(),
             total = cases.Count, passed = cases.Count(x => x.Passed), failed, skipped = 0, cases,
             observedAtUtc = DateTimeOffset.UtcNow
         }, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true }));
-        var xml = new StringBuilder($"<testsuite name=\"c02-producer-sql\" tests=\"{cases.Count}\" failures=\"{failed}\" skipped=\"0\">\n");
-        foreach (var item in cases) xml.Append($"  <testcase name=\"{SecurityElement.Escape(item.Name)}\">{(item.Passed ? "" : "<failure message=\"C02 SQL verification failed.\" />")}</testcase>\n");
+        var suite = provider is null ? "c02-producer-sql" : "c02-producer-" + provider.Value;
+        var xml = new StringBuilder($"<testsuite name=\"{suite}\" tests=\"{cases.Count}\" failures=\"{failed}\" skipped=\"0\">\n");
+        foreach (var item in cases) xml.Append($"  <testcase name=\"{SecurityElement.Escape(item.Name)}\">{(item.Passed ? "" : "<failure message=\"C02 producer verification failed.\" />")}</testcase>\n");
         File.WriteAllText(Path.Combine(output, "junit.xml"), xml.Append("</testsuite>\n").ToString());
     }
     private sealed record CaseResult(string Name, bool Passed);
@@ -365,15 +381,22 @@ sealed partial class IdentitySqlFixture : IAsyncDisposable
             OrganizationId = tenant, SourceJti = Guid.NewGuid().ToString("D"), SourceRefreshHash = Guid.NewGuid().ToString("N"), SecurityStamp = "fixture-stamp",
             ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1), SourceExpiresAtUtc = DateTime.UtcNow.AddMinutes(5), AccessExpiresAtUtc = DateTime.UtcNow.AddMinutes(5)
         };
-        await new SqlCrmOidcGrantStore(connection).SaveAsync(grant);
+        await new SqlCrmOidcGrantStore(database, connection).SaveAsync(grant);
         return grant;
     }
 
     private CP6Context Create(Guid tenant, bool enabled = true, IInterceptor? interceptor = null)
     {
-        var options = new DbContextOptionsBuilder<CP6Context>().UseSqlServer(connection, sql => sql.CommandTimeout(120));
+        var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.Core);
+        var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), database,
+            connection, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
         if (interceptor is not null) options.AddInterceptors(interceptor);
-        return new(options.Options, new TenantContext { CurrentTenantId = tenant }, identity: enabled ? Runtime(tenant) : null);
+        var commandDiagnostic = Environment.GetEnvironmentVariable("CP6_C02_COMMAND_DIAGNOSTIC");
+        if (!string.IsNullOrWhiteSpace(commandDiagnostic))
+            options.LogTo(message => File.AppendAllText(commandDiagnostic, message + Environment.NewLine), [RelationalEventId.CommandError]);
+        var context = new CP6Context(options.Options, new TenantContext { CurrentTenantId = tenant }, identity: enabled ? Runtime(tenant) : null);
+        context.Database.SetCommandTimeout(120);
+        return context;
     }
     private CrmIdentityRuntime Runtime(Guid tenant) => new(new CrmIdentityOptions
     {
@@ -381,11 +404,13 @@ sealed partial class IdentitySqlFixture : IAsyncDisposable
     }, new IdentityEventValidator(bundle, Issuer));
     private async Task<T> Scalar<T>(string sql, object? args = null)
     {
+        if (database.Provider == DatabaseProvider.PostgreSql) return await ProviderScalarAsync<T>(sql, args);
         await using var db = new SqlConnection(connection);
         return await db.QuerySingleAsync<T>(sql, args);
     }
     private async Task Execute(string sql)
     {
+        if (database.Provider == DatabaseProvider.PostgreSql) { await ProviderExecuteAsync(sql); return; }
         await using var db = new SqlConnection(connection);
         await db.ExecuteAsync(sql);
     }

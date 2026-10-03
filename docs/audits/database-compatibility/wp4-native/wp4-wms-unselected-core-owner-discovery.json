@@ -1,0 +1,34 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Scope": "WMS suite selection only; NOT native WMS acceptance",
+  "StartedUtc": "2026-10-03T12:19:47.7020576Z",
+  "FinishedUtc": "2026-10-03T12:19:49.6064563Z",
+  "CoreInputsAndSharedOwnerPresent": true,
+  "WmsInputsAndLegacySqlAbsent": true,
+  "ExpectedUnselectedSkips": 8,
+  "Passed": false,
+  "ProcessExitCode": 0,
+  "Counts": {
+    "total": "8",
+    "executed": "0",
+    "passed": "0",
+    "failed": "0",
+    "notExecuted": "0"
+  },
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Tests/Infra/WmsProductionFactAttribute.cs",
+      "Sha256": "65224BDF808E4E073AFB7284278E90FE69C10ED6F4D53957323BF14D4304D4F4"
+    },
+    {
+      "Path": "CP6.Tests/WmsProductionSqlServerTests.cs",
+      "Sha256": "521F8D61FE562DCA9CEF2225CAC1903492410C779B09D2F7BD88EA5C3F12C2AB"
+    }
+  ],
+  "TestAssemblySha256": "4AE4089F0A7158A3E78076A39811E265C69EDE3BC02F01C2689AA94A75602D93",
+  "RunnerSha256": "33794F5A95E978DA59AEB9FCDB8EBA3DB5D1E9753FA1413FD6B24A329D20EBB0",
+  "NativeAcceptanceReusedFrom": [
+    "wp4-wms-pg-first-run.json",
+    "wp4-wms-sql-first-run.json"
+  ]
+}

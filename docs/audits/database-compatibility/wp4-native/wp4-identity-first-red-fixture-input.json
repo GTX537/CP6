@@ -1,0 +1,43 @@
+{
+  "Task": "DB-COMPAT-01 WP4 identity provider first native RED preparation",
+  "Status": "PreparedFrozenAwaitingRootBuildAndNativeExecution",
+  "SourceBase": "0b0ab74a04c4d840a2c0bb05e36395aff8b89d32",
+  "SourceState": "Uncommitted WP4 fixture task",
+  "Sources": [
+    {
+      "Path": "eng/crm/identity-events-fixture/Program.cs",
+      "Sha256": "CD939AF4C3D6B3465BD9712E356C66231EBB04A7CB3CBF21A2B54A9C68C505B0"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/ProviderCases.cs",
+      "Sha256": "62B65F9D8474C23EBB144A3048D2FDF639ACEAA695B3021287239E9C90FC6ED7"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/README.md",
+      "Sha256": "9FD7F79A5A5DF6698C17DF06824CA63B2DC33229E7E45B06B69A7F03315723E8"
+    }
+  ],
+  "FirstCase": "business-save-produces-valid-versioned-snapshots",
+  "ExpectedCases": 2,
+  "ExpectedSkipped": 0,
+  "OriginalCaseBodyUnchangedAfterNewlineNormalization": true,
+  "HistoricalSql23CaseEntryRetained": true,
+  "CliArguments": [
+    "<public-output>",
+    "<private-diagnostics>",
+    "provider-case",
+    "SqlServer|PostgreSql",
+    "business-save-produces-valid-versioned-snapshots"
+  ],
+  "EnvironmentNames": [
+    "CP6_C02_TEST_SQL",
+    "CP6_C02_TEST_POSTGRES",
+    "CP6_TEST_DATABASE_OWNER"
+  ],
+  "Setup": "Exact WP4 loopback/name/actual owner; known current Core140SQL/Core1PG plus independent Priority1PG profiles; selected provider unavailable fails",
+  "ExpectedOriginalWriterRed": "After setup, actual CP6Context SaveChanges pipeline reaches original C02_REQUIRES_CALLER_SQL_TRANSACTION guard on PostgreSQL",
+  "ProductionWriterObservedSha256": "64B8389F9D1AE1AD667AB03F7AE3F4CA896E8F8082AAAE7C2E8725DE2C9027C7",
+  "OwnedDatabaseLifecycle": "Root-created owner-marked physical database retained; provider fixture does not create or drop it",
+  "ExecutedByThisAgent": [],
+  "Scope": "Only selected original snapshot/outbox producer case; not SQL historical upgrade, full23, HTTP, transport or real RefreshTokenService rotation"
+}

@@ -1,4 +1,6 @@
+using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Wf;
 using CP6.Core.Services.Wms;
@@ -8,6 +10,7 @@ using CP6.Tests.Infra;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Npgsql;
 using Xunit.Sdk;
 
 namespace CP6.Tests;
@@ -20,11 +23,41 @@ public sealed class WmsProductionSqlCollection : ICollectionFixture<WmsProductio
 
 public sealed class WmsProductionSqlFixture : IAsyncLifetime
 {
+    private const string TaskName = "DB-COMPAT-01-WP4";
     private bool _ownsDatabase;
+    private bool _usesTaskOwnedDatabase;
+    private DatabaseOptions? _database;
     public string ConnectionString { get; private set; } = string.Empty;
 
     public async Task InitializeAsync()
     {
+        if (WmsProductionFactAttribute.UsesTaskOwnedInputs)
+        {
+            _usesTaskOwnedDatabase = true;
+            _database = new DatabaseOptions(Environment.GetEnvironmentVariable(WmsProductionFactAttribute.ProviderVariable) switch
+            {
+                "SqlServer" => DatabaseProvider.SqlServer,
+                "PostgreSql" => DatabaseProvider.PostgreSql,
+                _ => throw new InvalidOperationException("WMS_REQUIRED_DATABASE_PROVIDER_INVALID")
+            });
+            var owner = Environment.GetEnvironmentVariable(WmsProductionFactAttribute.OwnerVariable) ?? "";
+            Require(Regex.IsMatch(owner, "\\A[a-f0-9]{32}\\z"), "WMS_WP4_DATABASE_OWNER_REQUIRED");
+            var supplied = Environment.GetEnvironmentVariable(WmsProductionFactAttribute.ConnectionVariable) ?? "";
+            Require(!string.IsNullOrWhiteSpace(supplied), "WMS_REQUIRED_DATABASE_CONNECTION_MISSING");
+            ConnectionString = ValidateTaskOwnedConnection(supplied, owner);
+            await VerifyTaskOwnerAsync(owner);
+            await using var required = Create(Guid.NewGuid());
+            required.Database.SetCommandTimeout(180);
+            var available = required.Database.GetMigrations().ToArray();
+            var before = (await required.Database.GetAppliedMigrationsAsync()).ToArray();
+            Require(available.Length > 0 && before.SequenceEqual(available.Take(before.Length)),
+                "WMS_REQUIRED_DATABASE_HISTORY_INVALID");
+            await required.Database.MigrateAsync();
+            Require(available.SequenceEqual(await required.Database.GetAppliedMigrationsAsync())
+                && !(await required.Database.GetPendingMigrationsAsync()).Any(), "WMS_REQUIRED_DATABASE_MIGRATIONS_INCOMPLETE");
+            return;
+        }
+
         var configured = Environment.GetEnvironmentVariable(SqlServerFactAttribute.EnvVar);
         if (string.IsNullOrWhiteSpace(configured)) return;
         var builder = new SqlConnectionStringBuilder(configured)
@@ -46,7 +79,20 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
     public CP6Context Create(Guid tenantId)
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))
+        {
+            if (_usesTaskOwnedDatabase)
+                throw new InvalidOperationException("WMS_REQUIRED_DATABASE_NOT_INITIALIZED");
             throw SkipException.ForSkip("SQL Server integration connection is not configured.");
+        }
+        if (_usesTaskOwnedDatabase)
+        {
+            var profile = DatabaseMigrationProfile.For(_database!, DatabaseContextKind.Core);
+            var ownedOptions = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), _database!,
+                ConnectionString, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
+            var owned = new CP6Context(ownedOptions.Options, new TenantContext { CurrentTenantId = tenantId });
+            owned.Database.SetCommandTimeout(60);
+            return owned;
+        }
         var options = new DbContextOptionsBuilder<CP6Context>()
             .UseSqlServer(ConnectionString, sql => sql.CommandTimeout(60))
             .Options;
@@ -55,16 +101,73 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        if (!_ownsDatabase || string.IsNullOrWhiteSpace(ConnectionString)) return;
+        if (_usesTaskOwnedDatabase || !_ownsDatabase || string.IsNullOrWhiteSpace(ConnectionString)) return;
         await using var db = Create(Guid.NewGuid());
         await db.Database.EnsureDeletedAsync();
+    }
+
+    private string ValidateTaskOwnedConnection(string supplied, string owner)
+    {
+        const string namePattern = "\\ACP6Compat_WP4_[0-9]{8}_[a-f0-9]{8}\\z";
+        try
+        {
+            if (_database!.Provider == DatabaseProvider.PostgreSql)
+            {
+                var pg = new NpgsqlConnectionStringBuilder(supplied);
+                Require(pg.Host is "localhost" or "127.0.0.1" or "::1", "WMS_WP4_DATABASE_REQUIRES_LOOPBACK");
+                Require(Regex.IsMatch(pg.Database ?? "", namePattern)
+                    && pg.Database!.EndsWith("_" + owner[..8], StringComparison.Ordinal), "WMS_WP4_DATABASE_NAME_INVALID");
+                pg.IncludeErrorDetail = false;
+                pg.ApplicationName = "CP6Compat.WP4.WmsTests";
+                pg.Timeout = 15;
+                pg.CommandTimeout = 60;
+                return pg.ConnectionString;
+            }
+
+            var sql = new SqlConnectionStringBuilder(supplied);
+            var source = sql.DataSource.StartsWith("tcp:", StringComparison.OrdinalIgnoreCase) ? sql.DataSource[4..] : sql.DataSource;
+            var host = source.Split('\\', ',')[0];
+            Require(host is "localhost" or "127.0.0.1" or "::1" or "[::1]" or "." or "(local)",
+                "WMS_WP4_DATABASE_REQUIRES_LOOPBACK");
+            Require(Regex.IsMatch(sql.InitialCatalog, namePattern)
+                && sql.InitialCatalog.EndsWith("_" + owner[..8], StringComparison.Ordinal)
+                && string.IsNullOrEmpty(sql.AttachDBFilename), "WMS_WP4_DATABASE_NAME_INVALID");
+            Require(!sql.MultipleActiveResultSets, "WMS_WP4_DATABASE_REQUIRES_MARS_DISABLED");
+            sql.ApplicationName = "CP6Compat.WP4.WmsTests";
+            sql.ConnectTimeout = 15;
+            sql.CommandTimeout = 60;
+            return sql.ConnectionString;
+        }
+        catch (ArgumentException)
+        {
+            throw new InvalidOperationException("WMS_REQUIRED_DATABASE_CONNECTION_INVALID");
+        }
+    }
+
+    private async Task VerifyTaskOwnerAsync(string owner)
+    {
+        await using var connection = new DatabaseConnectionFactory(_database!).Create(ConnectionString);
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandTimeout = 30;
+        var isPostgreSql = _database!.Provider == DatabaseProvider.PostgreSql;
+        command.CommandText = isPostgreSql
+            ? "SELECT shobj_description(oid,'pg_database') FROM pg_database WHERE datname=current_database()"
+            : "SELECT CONVERT(nvarchar(200),value) FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatOwner' AND EXISTS(SELECT 1 FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatTask' AND CONVERT(nvarchar(200),value)=N'DB-COMPAT-01-WP4')";
+        var actual = await command.ExecuteScalarAsync() as string;
+        Require(actual == (isPostgreSql ? TaskName + ":" + owner : owner), "WMS_WP4_DATABASE_OWNER_MISMATCH");
+    }
+
+    private static void Require(bool condition, string code)
+    {
+        if (!condition) throw new InvalidOperationException(code);
     }
 }
 
 [Collection(WmsProductionSqlCollection.Name)]
 public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
 {
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic()
     {
         var tenant = Guid.NewGuid();
@@ -153,7 +256,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
             .Where(x => x.OperationId == completionId).ToListAsync());
     }
 
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion()
     {
         var tenant = Guid.NewGuid();
@@ -249,7 +352,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
             x => x.TxnType == WmsTxnType.MOVE));
     }
 
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task SourceDocumentScopes_TranslateAndFailClosedOnSqlServer()
     {
         var tenant = Guid.NewGuid();
@@ -324,7 +427,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
                 "W01", 90, "supervisor"));
     }
 
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation()
     {
         var tenant = Guid.NewGuid();
@@ -401,7 +504,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
                 .ToListAsync());
     }
 
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task Serial_EnableTracking_RequiresFeatureAndExactControlledCount()
     {
         var tenant = Guid.NewGuid();
@@ -476,7 +579,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
         Assert.Equal("WM-SERIAL-TRACKING-LOCKED", downgrade.Message);
     }
 
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply()
     {
         var tenant = Guid.NewGuid();
@@ -579,7 +682,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
         }
     }
 
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks()
     {
         var tenant = Guid.NewGuid();
@@ -662,7 +765,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
         Assert.Empty(await db.StockSerials.ToListAsync());
     }
 
-    [SqlServerFact]
+    [WmsProductionFact]
     public async Task Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree()
     {
         var tenant = Guid.NewGuid();

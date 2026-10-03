@@ -1,0 +1,9 @@
+{
+  "Scope": "Original manifest entry versus exact staged Git blob bytes, not a new test execution",
+  "OriginalEntriesChecked": 151,
+  "UniqueArchivedFiles": 147,
+  "StagedTree": "3755dbec61fd5f4579327302009a35dce65ff351",
+  "ManifestSha256": "873EEFC919057995C9A3BA0E58F26A6BB2BB38C195793AFAA46B71C706EBD8F5",
+  "Passed": true,
+  "DocumentationCorrection": "Provider census document final redundant blank line removed after its original static document-check report; source table/lines/hashes and links unchanged."
+}

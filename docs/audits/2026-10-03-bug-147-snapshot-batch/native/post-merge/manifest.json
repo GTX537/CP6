@@ -1,0 +1,108 @@
+{
+  "Schema": "cp6.bug147.post-merge-evidence.v1",
+  "Task": "BUG147",
+  "CreatedUtc": "2026-10-03T10:51:50.5495451Z",
+  "OriginalCount": 14,
+  "AllOriginalBytesVerified": true,
+  "Scope": "Delivery and one actual postmerge business smoke; original 24-item premerge manifest remains immutable. Complete WP4 still in progress.",
+  "Entries": [
+    {
+      "File": "Complete-Bug147Delivery.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Complete-Bug147Delivery.ps1",
+      "Bytes": 4637,
+      "Sha256": "199DE6C9C752C1D65EC0C88FDAA36E07F98C30EF8F95CBB68A37A6A664AC1D47",
+      "OriginalMatches": true
+    },
+    {
+      "File": "Invoke-Bug147Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug147Tests.ps1",
+      "Bytes": 2933,
+      "Sha256": "974EF4187F5C0C535B512F9256D36625069A40688CC224150DE78883F2E2BA65",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-delivery-closure.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-delivery-closure.json",
+      "Bytes": 1890,
+      "Sha256": "CBA4A928F6EBE44D3B27CB63B60C6AC29127926B0F86F8103D8F2F4EBBC052BF",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-post-merge-business-smoke.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-post-merge-business-smoke.json",
+      "Bytes": 1782,
+      "Sha256": "E1926BCC6CC7DACEDABD57C776AAAB982DB0A9D26EAE047DFDB1B911BAA290E4",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-issue-closed-observation.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-issue-closed-observation.json",
+      "Bytes": 103,
+      "Sha256": "DDEB581E4C70FB4B9EB1F884CF3329E535443EA48E990A0625D515DF609D2707",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-root-doc-evidence-review.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-root-doc-evidence-review.json",
+      "Bytes": 1905,
+      "Sha256": "76C23EF1A369A5D8679930575D2C41F87AB044CE803E65142168B57D435BD0E5",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-staged-evidence-byte-check.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-staged-evidence-byte-check.json",
+      "Bytes": 380,
+      "Sha256": "BB8A4466874156B6D6322927AEB3827C49325866B02645FFD96FE95052F4AC0D",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-first-push-network-failure.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-first-push-network-failure.json",
+      "Bytes": 698,
+      "Sha256": "44DA115D61EDE2F2DD45506C400AA95777542CDD3E84A89E45F8FD3E161E017F",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-before-push-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-before-push-workflow-input-inspection.json",
+      "Bytes": 6758,
+      "Sha256": "046D57745CD71FE0819CD886E9326094AE8610BFE1EF3E0EAA90301D7BC8BA2C",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-before-push-retry-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-before-push-retry-workflow-input-inspection.json",
+      "Bytes": 6758,
+      "Sha256": "20062825A949545535520DD8E4385CD8692FD011B830AFD125776063C626B8DA",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-before-pr-create-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-before-pr-create-workflow-input-inspection.json",
+      "Bytes": 6758,
+      "Sha256": "565ADD2D54629CE4A32CC675E5BED364E18FD146DCBD7A20EEF23D66ABCA5ED2",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-before-merge-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-before-merge-workflow-input-inspection.json",
+      "Bytes": 6758,
+      "Sha256": "9692DB25E1F759A19A8D23CC572843847D07BBF0B809697D0AA069A095254EC8",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-post-merge-business-smoke.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-post-merge-business-smoke\\results.trx",
+      "Bytes": 3707,
+      "Sha256": "915164A97DE62EB18A2767A47F11149148E910A5EA6FEE0D9CBEA6D2D29EBDD0",
+      "OriginalMatches": true
+    },
+    {
+      "File": "bug147-post-merge-business-smoke-process.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug147-tests\\bug147-post-merge-business-smoke\\process.log",
+      "Bytes": 389,
+      "Sha256": "AF9F21182671CBBFEC36EC39C590A7D71DCDA406F7944FF7081756F4866B9CE6",
+      "OriginalMatches": true
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # DB-COMPAT-01 WP3：运行时数据库能力
 
+2026-10-03交付补记：PR146已合入远端main0b0ab74a，候选与main完整树一致，合并后同一API普通PG启动限制冒烟通过。见[远端交付与冒烟原件](wp3-native/post-merge/manifest.json)。下文LocalVerified/RemotePending保留本阶段提交前的实际时点；后续工作为WP4。
+
 日期2026-10-03；主任务 [Issue #134](https://github.com/GTX537/CP6/issues/134) 保持Open。本阶段从已确认main `605246ca83cbb8e1a89d3ff7209ba9df65176e98` 建立独立分支 `codex/db-compat-wp3-20261003`，工作树 `D:\CP6\tmp\worktrees\db-compat-wp3-20261003`。本地实施、适用双库门禁、集中审查和测试库清理已完成，提交/PR/远端交付待核对；普通PostgreSQL API/worker门禁保留。
 
 WP2已由 [PR #145](https://github.com/GTX537/CP6/pull/145) 正常合并，远端main完整树与已验证candidate45cf2ca一致。合并后实际同一API709710…740A的普通PG启动guard冒烟：拒绝运行、非零退出、未开HTTP；没有重新执行已通过的35/36原生门禁。[WP2记录](WP2-IMPLEMENTATION.md) 的交付Pending保留提交前的历史时点，当前父任务已勾选WP2。

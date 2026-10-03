@@ -1,0 +1,47 @@
+{
+  "Scope": "WP3 remote delivery and post-merge observations captured after PR146 merge; added with the next WP4 task state. Original WP3 manifest and raw evidence remain unchanged.",
+  "Entries": [
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-delivery-closure.json",
+      "Path": "wp3-delivery-closure.json",
+      "Sha256": "D5A351CB8ECF77123BE48CBB6B155BCDE994BD42819EC84FD7D61CF097E5028D",
+      "Bytes": 1704
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-post-merge-runtime-guard-smoke.json",
+      "Path": "wp3-post-merge-runtime-guard-smoke.json",
+      "Sha256": "C8CDC77CCAE5EF402B9C7F9CEA2E8BDEA90C08C3F7B02ABABCD320FF85018692",
+      "Bytes": 1172
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\Test-DbCompatWp3PostMerge.ps1",
+      "Path": "Test-DbCompatWp3PostMerge.ps1",
+      "Sha256": "A1CD2A4F8C93EB19ADB93A782868BB94A2269602E5D45E0D506246F94E5C19DE",
+      "Bytes": 4274
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-staged-evidence-byte-check.json",
+      "Path": "wp3-staged-evidence-byte-check.json",
+      "Sha256": "1ECE9DF23EF710A7536E1C85597EA4595AD2BAC453263DF95A58210847529097",
+      "Bytes": 526
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-before-push-workflow-input-inspection.json",
+      "Path": "wp3-before-push-workflow-input-inspection.json",
+      "Sha256": "6D2857FC55C2682F07BF802490C3A1EC34829F361E841126359EB5FF9CAED564",
+      "Bytes": 6748
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-before-pr-create-workflow-input-inspection.json",
+      "Path": "wp3-before-pr-create-workflow-input-inspection.json",
+      "Sha256": "B0EFB3664F0A2A11EC035394D001AE600526E75EBB35AA9F541DEE212ECC8978",
+      "Bytes": 6748
+    },
+    {
+      "OriginalPath": "D:\\CP6\\tmp\\wp3-before-merge-workflow-input-inspection.json",
+      "Path": "wp3-before-merge-workflow-input-inspection.json",
+      "Sha256": "F0621966AFB4C44A002BFF9C2F1E9906CB4D25921234D1E71BFD0EF21ADA6667",
+      "Bytes": 6748
+    }
+  ]
+}

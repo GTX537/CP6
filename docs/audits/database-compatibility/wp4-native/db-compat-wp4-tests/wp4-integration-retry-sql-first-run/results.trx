@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="81b98488-90ca-4182-946a-8f242f5fb866" name="tt@LAPTOP-3QQ44FJS 2026-10-03 08:18:41" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T08:18:41.1648440-04:00" queuing="2026-10-03T08:18:41.1648445-04:00" start="2026-10-03T08:18:36.5116930-04:00" finish="2026-10-03T08:18:47.7359459-04:00" />
+  <TestSettings name="default" id="447968ca-5209-4985-81c1-fd2410d92efc">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_08_18_41" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="353a986a-41fc-4e0e-a0a4-d15c45b7a6a9" testId="4a203aff-5413-d113-0461-f902b61492a5" testName="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_persisted_backoff_recovers_without_rewriting_due_time_or_alert" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.1125000" startTime="2026-10-03T08:18:45.5544583-04:00" endTime="2026-10-03T08:18:47.6661367-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="353a986a-41fc-4e0e-a0a4-d15c45b7a6a9">
+      <Output>
+        <StdOut>Actual DateTime.UtcNow worker; configured backoff [2,3,4] seconds; awaited the stored UTC due time without editing NextRetryAt. Hook is a recording boundary.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cdd24fd3-a7fd-4717-bbcf-2f8fc10c258d" testId="180e38a0-44d4-a9a8-b8e4-2e6a2344276f" testName="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Due_non_space_event_uses_actual_dispatcher_and_persists_success" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6612292" startTime="2026-10-03T08:18:39.6254777-04:00" endTime="2026-10-03T08:18:40.2799863-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cdd24fd3-a7fd-4717-bbcf-2f8fc10c258d">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP4 owner verified.; actual ERP-&gt;MES route persisted success; future event and successful event were not dispatched again.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e7a23429-1fee-4d74-9d79-932c142bc667" testId="e82c57d3-2254-475a-ad6d-69787095c86c" testName="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_backoff_exhaustion_persists_dead_letter_and_actual_alert_log" computerName="LAPTOP-3QQ44FJS" duration="00:00:05.2722685" startTime="2026-10-03T08:18:40.2859255-04:00" endTime="2026-10-03T08:18:45.5532238-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7a23429-1fee-4d74-9d79-932c142bc667">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP4 owner verified.; three real polls separated by stored 2s/3s backoff; actual DeadLetterNotifier persisted one alert. No SignalR acceptance or non-Space claim guarantee is asserted.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_backoff_exhaustion_persists_dead_letter_and_actual_alert_log" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e82c57d3-2254-475a-ad6d-69787095c86c">
+      <Execution id="e7a23429-1fee-4d74-9d79-932c142bc667" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests" name="Real_backoff_exhaustion_persists_dead_letter_and_actual_alert_log" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Due_non_space_event_uses_actual_dispatcher_and_persists_success" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="180e38a0-44d4-a9a8-b8e4-2e6a2344276f">
+      <Execution id="cdd24fd3-a7fd-4717-bbcf-2f8fc10c258d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests" name="Due_non_space_event_uses_actual_dispatcher_and_persists_success" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_persisted_backoff_recovers_without_rewriting_due_time_or_alert" storage="d:\cp6\tmp\worktrees\db-compat-wp4-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4a203aff-5413-d113-0461-f902b61492a5">
+      <Execution id="353a986a-41fc-4e0e-a0a4-d15c45b7a6a9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests" name="Real_persisted_backoff_recovers_without_rewriting_due_time_or_alert" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="4a203aff-5413-d113-0461-f902b61492a5" executionId="353a986a-41fc-4e0e-a0a4-d15c45b7a6a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="180e38a0-44d4-a9a8-b8e4-2e6a2344276f" executionId="cdd24fd3-a7fd-4717-bbcf-2f8fc10c258d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e82c57d3-2254-475a-ad6d-69787095c86c" executionId="e7a23429-1fee-4d74-9d79-932c142bc667" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.22]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.56]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.58]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:10.78]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

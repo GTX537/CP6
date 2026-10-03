@@ -1,0 +1,42 @@
+{
+  "Task": "BUG147",
+  "Status": "DeliveredToRemoteMain",
+  "ObservedUtc": "2026-10-03T10:47:47.0140856Z",
+  "PullRequest": {
+    "headRefOid": "8f42a76be7a0de70170e1209bc3e534f0cae5da9",
+    "mergeCommit": {
+      "oid": "974e57c0650279565330a67c844355ba3e1b563d"
+    },
+    "mergedAt": "2026-10-03T10:41:09Z",
+    "number": 148,
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/148"
+  },
+  "RemoteMain": "974e57c0650279565330a67c844355ba3e1b563d",
+  "ValidatedCandidate": "8f42a76be7a0de70170e1209bc3e534f0cae5da9",
+  "CandidateAndMainTree": "935a6e40bf5b7dbe50b2dfb22df23aed8591dc19",
+  "AncestorConfirmed": true,
+  "PostMergeSmoke": "bug147-post-merge-business-smoke.json",
+  "PostMergeSmokeSha256": "E1926BCC6CC7DACEDABD57C776AAAB982DB0A9D26EAE047DFDB1B911BAA290E4",
+  "PostMergeBusinessPassed": 1,
+  "PostMergeFailed": 0,
+  "PostMergeSkipped": 0,
+  "RemainingOwnedDatabaseCount": 0,
+  "PriorGate": "bug147-final-related-and-native.json",
+  "PriorGatePassed": 118,
+  "PriorGateReexecutedAfterMerge": false,
+  "Reuse": "Final 118-case evidence reused with all three source and binary hashes unchanged. Only the actual five-snapshot/five-outbox business case rerun after merge.",
+  "RootMain": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "RootMainSync": "Pre-existing dirty root preserved; WP4 worktree integrated verified remote main.",
+  "UnrelatedRootLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5",
+  "FirstPush": "HTTP 408; branch absent on remote. Normal retry used per-command HTTP/1.1; no global configuration or history change.",
+  "ParentIssue": 134,
+  "ParentState": "Open",
+  "Remaining": "WP4, WP5, WP6",
+  "ActionsQueuedOrRunning": [],
+  "ActionsDispatched": 0,
+  "ActionsCancelled": 0,
+  "WorkflowTriggerChanges": 0,
+  "ProtectionChanges": 0,
+  "ProductionDeployments": 0
+}

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
@@ -162,7 +163,8 @@ static class IdentityLiveFixture
             throw new InvalidOperationException("C02_OWNED_DISPATCH_FIXTURE_REQUIRED");
         var options = CP6.WebApi.Configuration.CrmIdentityConfiguration.BindOptions(config);
         var runtime = new CrmIdentityRuntime(options, new(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/platform")), options.Issuer));
-        using var worker = new IdentityEventDispatchWorker(runtime, config, NullLogger<IdentityEventDispatchWorker>.Instance);
+        using var worker = new IdentityEventDispatchWorker(runtime, config, new DatabaseOptions(DatabaseProvider.SqlServer),
+            NullLogger<IdentityEventDispatchWorker>.Instance);
         await worker.StartAsync(CancellationToken.None);
         Console.WriteLine("C02 actual priority and ordinary dispatch loops started.");
         await worker.ExecuteTask!;

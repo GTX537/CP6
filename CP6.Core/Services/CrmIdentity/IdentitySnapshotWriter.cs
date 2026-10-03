@@ -98,11 +98,17 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         RequireTransaction();
         if (!runtime.Options.Tenants.ContainsKey(tenant)) return;
         await RevokeBrowserGrantsAsync(tenant, null, null, cancellationToken).ConfigureAwait(false);
-        var command = new CommandDefinition("""
+        var sql = db.Database.IsNpgsql() ? """
+            UPDATE crm_identity."ServiceToken" SET "RevokedAtUtc"=clock_timestamp()
+            WHERE "TenantId"=@tenant AND "Issuer"=CAST(@issuer AS bpchar) AND "RevokedAtUtc" IS NULL
+            RETURNING "Jti", "ClientId", "ExpiresAtUtc"
+            """ : """
             UPDATE crm_identity.ServiceToken SET RevokedAtUtc=SYSUTCDATETIME()
             OUTPUT inserted.Jti, inserted.ClientId, inserted.ExpiresAtUtc
             WHERE TenantId=@tenant AND Issuer=@issuer AND RevokedAtUtc IS NULL
-            """, new { tenant, issuer = runtime.Options.Issuer }, db.Database.CurrentTransaction!.GetDbTransaction(), cancellationToken: cancellationToken);
+            """;
+        var command = new CommandDefinition(sql, new { tenant, issuer = runtime.Options.Issuer },
+            db.Database.CurrentTransaction!.GetDbTransaction(), cancellationToken: cancellationToken);
         var tokens = await db.Database.GetDbConnection().QueryAsync<RevokedServiceToken>(command).ConfigureAwait(false);
         foreach (var token in tokens.OrderBy(x => x.Jti, StringComparer.Ordinal))
             await RevokeTokenAsync(tenant, token.Jti, "service:" + token.ClientId, token.ExpiresAtUtc, cancellationToken).ConfigureAwait(false);
@@ -145,17 +151,38 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         await queue.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private Task<CrmIdentitySnapshot?> LoadLockedAsync(Guid tenant, string aggregate, CancellationToken cancellationToken)
+    private async Task<CrmIdentitySnapshot?> LoadLockedAsync(Guid tenant, string aggregate, CancellationToken cancellationToken)
     {
+        if (db.Database.IsNpgsql())
+        {
+            // FOR UPDATE cannot lock a missing row. The transaction resource also protects the
+            // first version, and must be acquired even when this context already tracks the row.
+            if (!await DatabaseResourceLocks.TryAcquireTransactionAsync(db,
+                    $"cp6:c02:snapshot:{tenant:N}:{aggregate}", 30_000, cancellationToken).ConfigureAwait(false))
+                throw new TimeoutException("C02_SNAPSHOT_LOCK_TIMEOUT");
+        }
         var tracked = db.CrmIdentitySnapshots.Local.SingleOrDefault(x => x.TenantId == tenant && x.AggregateId == aggregate);
-        if (tracked is not null) return Task.FromResult<CrmIdentitySnapshot?>(tracked);
-        return db.CrmIdentitySnapshots.FromSqlInterpolated($"SELECT * FROM crm_identity.Snapshot WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND AggregateId={aggregate}")
-            .SingleOrDefaultAsync(cancellationToken);
+        if (tracked is not null) return tracked;
+        var snapshots = db.Database.IsNpgsql()
+            ? db.CrmIdentitySnapshots.FromSqlInterpolated($"""
+                SELECT * FROM crm_identity."Snapshot"
+                WHERE "TenantId"={tenant} AND "AggregateId"=CAST({aggregate} AS bpchar) FOR UPDATE
+                """)
+            : db.CrmIdentitySnapshots.FromSqlInterpolated($"SELECT * FROM crm_identity.Snapshot WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND AggregateId={aggregate}");
+        return await snapshots.SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task RevokeBrowserGrantsAsync(Guid tenant, Guid? user, Guid? family, CancellationToken cancellationToken)
     {
-        var command = new CommandDefinition("""
+        var sql = db.Database.IsNpgsql() ? """
+            UPDATE public."CrmOidcGrant" g SET "Revoked"=TRUE
+            WHERE g."OrganizationId"=@tenant
+              AND (CAST(@user AS uuid) IS NULL OR g."SubjectId"=CAST(@user AS uuid)) AND g."Revoked"=FALSE
+              AND (CAST(@family AS uuid) IS NULL OR EXISTS (SELECT 1 FROM public."Sys_RefreshTokens" r
+                WHERE r."BrowserSessionId"=CAST(@family AS uuid) AND r."UserId"=g."SubjectId" AND r."TenantId"=g."OrganizationId"
+                  AND r."TokenHash" COLLATE "C"=g."SourceRefreshHash"))
+            RETURNING g."Id", g."SubjectId", g."OrganizationId", g."AccessExpiresAtUtc"
+            """ : """
             UPDATE g SET Revoked=1
             OUTPUT inserted.Id, inserted.SubjectId, inserted.OrganizationId, inserted.AccessExpiresAtUtc
             FROM dbo.CrmOidcGrant g
@@ -163,7 +190,8 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
               AND (@family IS NULL OR EXISTS (SELECT 1 FROM dbo.Sys_RefreshTokens r
                 WHERE r.BrowserSessionId=@family AND r.UserId=g.SubjectId AND r.TenantId=g.OrganizationId
                   AND r.TokenHash COLLATE Latin1_General_100_BIN2=g.SourceRefreshHash))
-            """, new { tenant, user, family }, db.Database.CurrentTransaction!.GetDbTransaction(),
+            """;
+        var command = new CommandDefinition(sql, new { tenant, user, family }, db.Database.CurrentTransaction!.GetDbTransaction(),
             cancellationToken: cancellationToken);
         var grants = await db.Database.GetDbConnection().QueryAsync<RevokedGrant>(command).ConfigureAwait(false);
         foreach (var grant in grants.OrderBy(x => x.Id))
@@ -173,7 +201,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
 
     private void RequireTransaction()
     {
-        if (!db.Database.IsSqlServer() || db.Database.CurrentTransaction is null)
+        if ((!db.Database.IsSqlServer() && !db.Database.IsNpgsql()) || db.Database.CurrentTransaction is null)
             throw new InvalidOperationException("C02_REQUIRES_CALLER_SQL_TRANSACTION");
     }
 

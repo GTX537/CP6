@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.ErpIntegration;
 using Microsoft.Data.SqlClient;
@@ -13,16 +14,35 @@ public sealed class SqlDatabaseCollection : ICollectionFixture<SqlDatabaseFixtur
     public const string Name = "C03 real SQL";
 }
 
-/// <summary>One new migrated database per run; each test has separate tenants. Never attaches to an existing database.</summary>
-public sealed class SqlDatabaseFixture : IAsyncLifetime, IDbContextFactory<ErpIntegrationContext>
+/// <summary>Explicit ERP configuration uses the owned relational fixture; otherwise preserves the legacy SQL database lifecycle.</summary>
+public sealed class SqlDatabaseFixture : IAsyncLifetime, IErpScenarioDatabase
 {
+    private readonly ErpRelationalFixture? relational = Environment.GetEnvironmentVariables().Keys.Cast<string>()
+        .Any(name => name.StartsWith("CP6_ERP_TEST_", StringComparison.OrdinalIgnoreCase)) ? new() : null;
     private readonly string database = "CP6C03Test_" + Guid.NewGuid().ToString("N");
     private string? masterConnection;
     private string? connection;
     private bool created;
 
+    public DatabaseOptions Database => relational?.Database ?? new(DatabaseProvider.SqlServer);
+    public bool IsPostgreSql => Database.Provider == DatabaseProvider.PostgreSql;
+    public string SetupSummary => relational?.SetupSummary ?? "Provider=SqlServer; legacy isolated SQL database lifecycle.";
+
+    public void ConfigureBusinessOptions(DbContextOptionsBuilder options)
+    {
+        var profile = DatabaseMigrationProfile.For(Database, DatabaseContextKind.Core);
+        DatabaseContextOptions.Configure(options, Database,
+            relational?.ConnectionString ?? connection ?? throw new InvalidOperationException("C03_DATABASE_NOT_INITIALIZED"),
+            profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
+    }
+
     public async Task InitializeAsync()
     {
+        if (relational is not null)
+        {
+            await relational.InitializeAsync();
+            return;
+        }
         var supplied = Environment.GetEnvironmentVariable("CP6_C03_TEST_SQL");
         if (string.IsNullOrWhiteSpace(supplied))
             throw new InvalidOperationException("C03_REAL_SQL_REQUIRED: Set CP6_C03_TEST_SQL to an explicit loopback SQL Server master connection. This suite never skips unavailable SQL.");
@@ -72,17 +92,22 @@ public sealed class SqlDatabaseFixture : IAsyncLifetime, IDbContextFactory<ErpIn
         }
     }
 
-    public CP6Context CreateBusinessContext(Guid tenant) => new(
+    public CP6Context CreateBusinessContext(Guid tenant) => relational?.CreateBusinessContext(tenant) ?? new(
         new DbContextOptionsBuilder<CP6Context>().UseSqlServer(
             connection ?? throw new InvalidOperationException("C03_SQL_NOT_INITIALIZED"), o => o.CommandTimeout(180)).Options,
         new TenantContext { CurrentTenantId = tenant });
 
-    public ErpIntegrationContext CreateDbContext() => new(
+    public ErpIntegrationContext CreateDbContext() => relational?.CreateDbContext() ?? new(
         new DbContextOptionsBuilder<ErpIntegrationContext>().UseSqlServer(
             connection ?? throw new InvalidOperationException("C03_SQL_NOT_INITIALIZED"), o => o.CommandTimeout(60)).Options);
 
     public async Task DisposeAsync()
     {
+        if (relational is not null)
+        {
+            await relational.DisposeAsync();
+            return;
+        }
         if (!created) return;
         RequireOwnedName();
         var sql = new SqlConnectionStringBuilder(masterConnection!);

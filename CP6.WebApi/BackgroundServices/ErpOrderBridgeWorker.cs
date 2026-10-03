@@ -39,12 +39,16 @@ public sealed class ErpOrderBridgeWorker(IDbContextFactory<ErpIntegrationContext
     {
         if (!runtime.Options.Tenants.ContainsKey(tenant)) return;
         await using var queue = await factory.CreateDbContextAsync(ct);
+        if (!(queue.Database.IsSqlServer() || queue.Database.IsNpgsql()))
+            throw new InvalidOperationException("C03_REQUIRES_SQL_TRANSACTION");
         // Hold only the dispatch record lock while hooks use their own committed ERP context.
         // This prevents a second worker entering even if a wall-clock lease would expire.
         await using var transaction = await queue.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
         await ErpSqlLock.AcquireAsync(queue, $"c03:bridge:{tenant:D}:{key}", ct);
-        var dispatch = await queue.OrderBridges.FromSqlInterpolated($"SELECT * FROM erp_integration.OrderBridgeDispatch WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND OrderKey={key}")
-            .SingleOrDefaultAsync(ct);
+        var dispatchQuery = queue.Database.IsNpgsql()
+            ? queue.OrderBridges.FromSqlInterpolated($"""SELECT * FROM erp_integration."OrderBridgeDispatch" WHERE "TenantId"={tenant} AND "OrderKey"=CAST({key} AS bpchar) FOR UPDATE""")
+            : queue.OrderBridges.FromSqlInterpolated($"SELECT * FROM erp_integration.OrderBridgeDispatch WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND OrderKey={key}");
+        var dispatch = await dispatchQuery.SingleOrDefaultAsync(ct);
         if (dispatch is null || dispatch.CompletedAtUtc is not null || dispatch.AttemptCount >= 10 ||
             dispatch.AvailableAtUtc > runtime.Clock.GetUtcNow()) return;
         dispatch.AttemptCount++;

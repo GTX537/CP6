@@ -1,0 +1,4 @@
+<testsuite name="c02-producer-sql" tests="2" failures="1" skipped="0">
+  <testcase name="current-provider-core-and-identity-priority-installed"></testcase>
+  <testcase name="business-save-produces-valid-versioned-snapshots"><failure message="C02 SQL verification failed." /></testcase>
+</testsuite>

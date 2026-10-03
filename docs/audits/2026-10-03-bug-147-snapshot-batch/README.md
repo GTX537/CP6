@@ -47,4 +47,12 @@ dotnet test CP6.Tests/CP6.Tests.csproj --filter 'FullyQualifiedName~CP6.Tests.Pe
 
 一次任务级集中审查由独立 reviewer 核对三份代码/测试及真实门禁（[原件](native/bug147-code-task-review.json)），root 核对全部文档、属性及证据差异，无实质阻断。最终代码与实际118项门禁/审查输入一致，文档变更未触发业务重跑。
 
-测试未覆盖生产部署、完整 WP4 PostgreSQL 业务，也没有重跑未受影响的 WP1–WP3 全部门禁。模型/迁移没有变化，EF 内部扩展点的升级风险和 opaque generation 语义如上。当前本地验证与审查通过，正常 PR 与远端交付待完成；Issue147 保持 Open。
+测试未覆盖生产部署、完整 WP4 PostgreSQL 业务，也没有重跑未受影响的 WP1–WP3 全部门禁。模型/迁移没有变化，EF 内部扩展点的升级风险和 opaque generation 语义如上。本地验收之后，修复已经正常 PR 合并并核对远端 main，Issue147 已关闭；具体交付来源见下节。
+
+## 远端交付与合并后验证
+
+[PR148](https://github.com/GTX537/CP6/pull/148)于2026-10-03 10:41:09 UTC合并；main `974e57c0650279565330a67c844355ba3e1b563d`包含候选 `8f42a76be7a0de70170e1209bc3e534f0cae5da9`，完整树同为 `935a6e40bf5b7dbe50b2dfb22df23aed8591dc19`。首次普通push遇HTTP408且远端尚无分支，随后仅该命令使用HTTP/1.1正常重试成功，没有改全局配置或历史。
+
+合并后相同Core/Test/API程序集实际重跑五快照/五Outbox原业务用例，1/1、零跳过；root只读确认BUG147测试库前缀零残留。此前118项门禁按三个源码及程序集hash完全相同复用，未重新执行整套。Issue147于10:48:57 UTC Closed；父任务134继续Open。工作流输入核对、doc/evidence审查余项、真实冒烟与关闭原件见[独立manifest](native/post-merge/manifest.json)，原24份manifest保持字节不变。
+
+根工作区原锁文件保持，WP4草稿在独立分支合入修复后继续。此交付不代表完整WP4或生产验收；无Actions运行/取消、工作流或保护变更及生产部署。

@@ -91,7 +91,7 @@ builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(service
     services.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>());
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcServiceTokens>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcGrantStore>(services =>
-    new CP6.WebApi.Services.SqlCrmOidcGrantStore(builder.Configuration.GetConnectionString("DefaultConnection")!,
+    new CP6.WebApi.Services.SqlCrmOidcGrantStore(database, databaseConnection,
         services.GetService<CP6.Core.Services.CrmIdentity.CrmIdentityRuntime>()));
 builder.Services.AddHealthChecks()
     .AddCheck(

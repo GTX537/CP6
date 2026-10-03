@@ -1,0 +1,3 @@
+PASS current-provider-core-and-identity-priority-installed
+{"observation":"service-token-revoke-native-block","provider":"SqlServer","blocker":54,"waiter":56,"blocked":true}
+PASS concurrent-service-revocations-commit-one-token-snapshot-and-priority-message

@@ -1,0 +1,10 @@
+{
+  "Task": "BUG147",
+  "ArchivedOriginals": 24,
+  "StagedOriginalBytesMatch": true,
+  "ManifestBytesMatch": true,
+  "ManifestSha256": "E716771664D25883838EDFFC753935BA9B173346E64ED73A85990828A425C36D",
+  "ReviewedSourceCount": 3,
+  "ReviewedSourcesStillMatch": true,
+  "Scope": "Staged artifact bytes and current reviewed source identity; not a new business test run."
+}

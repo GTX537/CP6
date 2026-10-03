@@ -1,0 +1,36 @@
+{
+  "Task": "DB-COMPAT-01-WP3",
+  "Status": "DeliveredToRemoteMain",
+  "ObservedUtc": "2026-10-03T09:55:01.9178980Z",
+  "PullRequest": {
+    "headRefOid": "4ddc6c9d8d75f47711fce1c5e56fbb0ac8733e21",
+    "mergeCommit": {
+      "oid": "0b0ab74a04c4d840a2c0bb05e36395aff8b89d32"
+    },
+    "mergedAt": "2026-10-03T09:50:04Z",
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/146"
+  },
+  "RemoteMain": "0b0ab74a04c4d840a2c0bb05e36395aff8b89d32",
+  "ValidatedCandidate": "4ddc6c9d8d75f47711fce1c5e56fbb0ac8733e21",
+  "CandidateAndMainTree": "3755dbec61fd5f4579327302009a35dce65ff351",
+  "AncestorConfirmed": true,
+  "PostMergeSmoke": "wp3-post-merge-runtime-guard-smoke.json",
+  "NativeSuitesReexecutedAfterMerge": false,
+  "Reuse": "Actual per-run WP3 evidence, unchanged source tree and dependencies; same premerge validated API used for postmerge guard smoke.",
+  "RootMain": "605246ca83cbb8e1a89d3ff7209ba9df65176e98",
+  "RootFastForward": "Git refused because of pre-existing modified CP6.Space.IntegrationTests/packages.lock.json. No stash/reset/stage/overwrite of that file; independent task-generated incoming lock happens to have identical bytes.",
+  "UnrelatedRootLockSha256": "71D6B6B9EC4446E92D25842310633AA9E49E994EC6211A353B5140251B1870A5",
+  "NextWorktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp4-20261003",
+  "NextBranch": "codex/db-compat-wp4-20261003",
+  "ParentIssue": 134,
+  "ParentState": "Open",
+  "Wp3Checkbox": "Completed",
+  "Remaining": "WP4, WP5, WP6",
+  "ActionsQueuedOrRunning": [],
+  "ActionsDispatched": 0,
+  "ActionsCancelled": 0,
+  "WorkflowTriggerChanges": 0,
+  "ProtectionChanges": 0,
+  "ProductionDeployments": 0
+}

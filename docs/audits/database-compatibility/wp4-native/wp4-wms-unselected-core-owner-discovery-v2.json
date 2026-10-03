@@ -1,0 +1,36 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Scope": "WMS suite selection only; NOT native WMS acceptance",
+  "StartedUtc": "2026-10-03T12:20:56.4305064Z",
+  "FinishedUtc": "2026-10-03T12:20:58.3127149Z",
+  "CoreInputsAndSharedOwnerPresent": true,
+  "WmsInputsAndLegacySqlAbsent": true,
+  "ExpectedUnselectedSkips": 8,
+  "Passed": true,
+  "ProcessExitCode": 0,
+  "Counts": {
+    "total": "8",
+    "executed": "0",
+    "passed": "0",
+    "failed": "0",
+    "notExecuted": "0"
+  },
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Tests/Infra/WmsProductionFactAttribute.cs",
+      "Sha256": "65224BDF808E4E073AFB7284278E90FE69C10ED6F4D53957323BF14D4304D4F4"
+    },
+    {
+      "Path": "CP6.Tests/WmsProductionSqlServerTests.cs",
+      "Sha256": "521F8D61FE562DCA9CEF2225CAC1903492410C779B09D2F7BD88EA5C3F12C2AB"
+    }
+  ],
+  "TestAssemblySha256": "4AE4089F0A7158A3E78076A39811E265C69EDE3BC02F01C2689AA94A75602D93",
+  "RunnerSha256": "487E946E23878391685D1121D5E21F79D380506EA99565FE770FF25F8ED31E81",
+  "NativeAcceptanceReusedFrom": [
+    "wp4-wms-pg-first-run.json",
+    "wp4-wms-sql-first-run.json"
+  ],
+  "ActualSkippedTestOutcomes": 8,
+  "PrecedingHarnessFailure": "wp4-wms-unselected-core-owner-discovery.json: test process succeeded with eight expected skips; the first harness incorrectly read the summary counter instead of per-test outcomes."
+}

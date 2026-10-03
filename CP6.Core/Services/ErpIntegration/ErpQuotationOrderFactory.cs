@@ -14,15 +14,23 @@ internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService order
 {
     public async Task<(string OrderKey, decimal Amount)> CreateAsync(ErpOrderRequested request, string inputHash, CancellationToken ct)
     {
-        if (db.Database.CurrentTransaction is null || !db.Database.IsSqlServer() || db.CurrentTenantId != request.TenantId)
+        if (db.Database.CurrentTransaction is null || !(db.Database.IsSqlServer() || db.Database.IsNpgsql()) ||
+            db.CurrentTenantId != request.TenantId)
             throw new InvalidOperationException("C03_ORDER_REQUIRES_TENANT_SQL_TRANSACTION");
-        var bp = await db.BusinessPartners.FromSqlInterpolated($"SELECT * FROM dbo.T_WebBusinessPartner WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND BpCd={request.BusinessPartnerKey}")
-            .SingleOrDefaultAsync(ct);
+        var bpQuery = db.Database.IsNpgsql()
+            ? db.BusinessPartners.FromSqlInterpolated($"""SELECT * FROM public."T_WebBusinessPartner" WHERE "TenantId"={request.TenantId} AND "BpCd"=CAST({request.BusinessPartnerKey} AS bpchar) FOR UPDATE""")
+            : db.BusinessPartners.FromSqlInterpolated($"SELECT * FROM dbo.T_WebBusinessPartner WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND BpCd={request.BusinessPartnerKey}");
+        var bp = await bpQuery.SingleOrDefaultAsync(ct);
         RequireBusinessPartner(bp, request.AccountId, allowPreRegistered: false);
-        var quotation = await db.Quotations.FromSqlInterpolated($"SELECT * FROM dbo.T_Quotation WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND QtnNo={request.QuotationKey}")
-            .SingleOrDefaultAsync(ct) ?? throw new ErpCommerceException("C03_QUOTATION_NOT_FOUND");
-        quotation.Details = await db.QuotationDetails.FromSqlInterpolated($"SELECT * FROM dbo.T_QuotationDetail WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND QtnNo={request.QuotationKey}")
-            .Where(d => !d.IsDeleted).OrderBy(d => d.DetailNo).ToListAsync(ct);
+        var quotationQuery = db.Database.IsNpgsql()
+            ? db.Quotations.FromSqlInterpolated($"""SELECT * FROM public."T_Quotation" WHERE "TenantId"={request.TenantId} AND "QtnNo"=CAST({request.QuotationKey} AS bpchar) FOR UPDATE""")
+            : db.Quotations.FromSqlInterpolated($"SELECT * FROM dbo.T_Quotation WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND QtnNo={request.QuotationKey}");
+        var quotation = await quotationQuery.SingleOrDefaultAsync(ct)
+            ?? throw new ErpCommerceException("C03_QUOTATION_NOT_FOUND");
+        var detailsQuery = db.Database.IsNpgsql()
+            ? db.QuotationDetails.FromSqlInterpolated($"""SELECT * FROM public."T_QuotationDetail" WHERE "TenantId"={request.TenantId} AND "QtnNo"=CAST({request.QuotationKey} AS bpchar) FOR UPDATE""")
+            : db.QuotationDetails.FromSqlInterpolated($"SELECT * FROM dbo.T_QuotationDetail WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND QtnNo={request.QuotationKey}");
+        quotation.Details = await detailsQuery.Where(d => !d.IsDeleted).OrderBy(d => d.DetailNo).ToListAsync(ct);
         if (quotation.CustomerCd != bp!.BpCd) throw new ErpCommerceException("C03_QUOTATION_CUSTOMER_MISMATCH");
         if (quotation.RowVersion is null || Convert.ToBase64String(quotation.RowVersion) != request.QuotationVersion)
             throw new ErpCommerceException("C03_QUOTATION_VERSION_CHANGED");

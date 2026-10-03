@@ -1,0 +1,33 @@
+{
+  "schemaId": "cp6.c02.producer-provider-verification.v1",
+  "conclusion": "success",
+  "verificationKind": "selected production identity producer/component scenarios on an owned current-provider database; not whole-application or cross-repository transport acceptance",
+  "provider": "SqlServer",
+  "assemblySha256": "34c52d7b49bd5d515ff2899207c0c34fdc40248dc6d1580403a0cc493608dc54",
+  "fixtureAssemblySha256": "398707b3f3d0766b28a97ab1ddc89b4b658209fa7e70dc6b991d52864a330e1c",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "actual-http-tls-service-token-reader-and-native-issuance-failure",
+  "expectedCases": 2,
+  "excludedScopes": [
+    "SQL historical upgrade",
+    "SQL MARS connection",
+    "GDPR purge",
+    "actual RefreshTokenService rotation/reuse",
+    "cross-repository transport acceptance"
+  ],
+  "total": 2,
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "current-provider-core-and-identity-priority-installed",
+      "passed": true
+    },
+    {
+      "name": "actual-http-tls-service-token-reader-and-native-issuance-failure",
+      "passed": true
+    }
+  ],
+  "observedAtUtc": "2026-10-03T11:56:06.4991978+00:00"
+}

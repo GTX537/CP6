@@ -1,0 +1,34 @@
+{
+  "schemaId": "cp6.c02.producer-provider-verification.v1",
+  "conclusion": "success",
+  "verificationKind": "selected production identity producer scenarios on an owned current-provider database; not full producer/HTTP or cross-repository transport acceptance",
+  "provider": "SqlServer",
+  "assemblySha256": "04035e3a5627481749a934130f828bcc15595d0dbbdb33284a2a6b1a8d482c2e",
+  "fixtureAssemblySha256": "34853ac75f23c16d54e1f126c54d38a8677ce3b34e0673a2e5f052ffc99a8f59",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "actual-platform-dual-dispatchers-preserve-bytes-and-priority-progress",
+  "expectedCases": 2,
+  "excludedScopes": [
+    "SQL historical upgrade",
+    "SQL MARS connection",
+    "GDPR purge",
+    "actual HTTP/TLS",
+    "actual RefreshTokenService rotation/reuse",
+    "cross-repository transport acceptance"
+  ],
+  "total": 2,
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "current-provider-core-and-identity-priority-installed",
+      "passed": true
+    },
+    {
+      "name": "actual-platform-dual-dispatchers-preserve-bytes-and-priority-progress",
+      "passed": true
+    }
+  ],
+  "observedAtUtc": "2026-10-03T11:22:58.4906521+00:00"
+}

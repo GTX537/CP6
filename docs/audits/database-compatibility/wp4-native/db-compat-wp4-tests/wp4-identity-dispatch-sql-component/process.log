@@ -1,0 +1,3 @@
+PASS current-provider-core-and-identity-priority-installed
+C02 dispatcher existing eligible ordinary=149, priority=13; budgets=32/16; recording publisher component only.
+PASS actual-platform-dual-dispatchers-preserve-bytes-and-priority-progress

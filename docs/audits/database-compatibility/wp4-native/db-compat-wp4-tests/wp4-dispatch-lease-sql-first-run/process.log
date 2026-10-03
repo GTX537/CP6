@@ -1,0 +1,6 @@
+PASS current-provider-core-and-identity-priority-installed
+C02 failure gates normal backlog drain: context=CP6Context, published=0, batch=32.
+C02 failure gates normal backlog drain: context=IdentityMessagingContext, published=0, batch=16.
+C02 failure gates normal backlog drain: context=CP6Context, published=0, batch=32.
+C02 failure gates normal backlog drain: context=IdentityMessagingContext, published=0, batch=16.
+PASS actual-platform-outbox-owner-competition-and-expired-lease-fencing

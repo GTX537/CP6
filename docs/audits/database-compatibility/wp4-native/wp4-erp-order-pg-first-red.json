@@ -1,0 +1,192 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Suite": "Erp",
+  "Provider": "PostgreSql",
+  "Label": "wp4-erp-order-pg-first-red",
+  "StartedUtc": "2026-10-03T11:20:11.0396381Z",
+  "FinishedUtc": "2026-10-03T11:20:23.0301008Z",
+  "ExitCode": 1,
+  "Selection": "FullyQualifiedName=CP6.ErpIntegration.SqlTests.OrderSqlTests.Accepted_real_quotation_creates_order_lines_origin_outbox_and_postcommit_bridge",
+  "Counts": {
+    "total": "1",
+    "executed": "1",
+    "passed": "0",
+    "failed": "1",
+    "notExecuted": "0"
+  },
+  "DatabaseName": "CP6Compat_WP4_20261003_c4e6beaf",
+  "ReceiptSha256": "791D864FA457DB80A6CE703ABF81FE3C79F64620BDADE7CF47A75BC0763AA50B",
+  "RunnerSha256": "C11299B7DED6D9B33006EECB531CD8FBD00698F3458CA533B630C143EEC14FEC",
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+      "Sha256": "3C3C0B09A4C3362BEC0A86E6802C3352E92D1496C5247A48AF0B5ED84A45DE70"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+      "Sha256": "675F9F97016BBB82EFB5A9FE2B2AAC7DC06F8AF2560CEE5DFB4AB66B625AAB4F"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "Sha256": "E3C8AA0ECE3CB5EC473C30206DED2249CD71326BB73DAB433764910AFF6CC508"
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpDeliveryReplayService.cs",
+      "Sha256": "8499B1D9A00A3F09CB52DA799B1B69CAF9E6F3ADA5404B418195FE072A60D1AD"
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpInboxReplayService.cs",
+      "Sha256": "3AF8AA0E0FFF79BD468CAD836F2AF1F36C48DE2C69828602DB41DF645DE7AC4F"
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpQuotationOrderFactory.cs",
+      "Sha256": "F7097AC543C3917EE9F63C268E0430CCED5D3AACB38719651F0FE84665933106"
+    },
+    {
+      "Path": "CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+      "Sha256": "1AD924EEF55CB9FB18FB95F15DE6024D3477FC5386BA2DC4A138E7C4B294C511"
+    },
+    {
+      "Path": "CP6.Core/Services/Sys/RefreshTokenService.cs",
+      "Sha256": "DA6825167D4F01DDF7F5CE12041B4D08ABA5D08D09E363D12A61531CB017073F"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/BrowserSessionRelationalTests.cs",
+      "Sha256": "654F64DE7E4A2A37A6E96AA08D436B963B014CF7F60850A60375B6524C905FB1"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/GrantStoreRelationalCases.cs",
+      "Sha256": "368EB4A03ADF156D7AACC5B84D4B0DB9750F5A20F4790E847E2A0DA639F35876"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/GrantStoreRelationalTests.cs",
+      "Sha256": "C446CD06B69C2A3835946CAC103633E57A6DA33C05FFFFAC8B734907CD098248"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/OidcRelationalFixture.cs",
+      "Sha256": "14B1C858F2042582F784CA4898A24B980C7084A6B1DA15EA5D13A3AAADE7C98A"
+    },
+    {
+      "Path": "CP6.WebApi/BackgroundServices/ErpOrderBridgeWorker.cs",
+      "Sha256": "E086EFD4E107091E779CB4C36E5F1FF9E0B6BFE26BF53915D287644C26146433"
+    },
+    {
+      "Path": "CP6.WebApi/Program.cs",
+      "Sha256": "680EBE62AFBE616AE79368137AABAFA4EFEF11FA8673B15CD837A1E9408FBF19"
+    },
+    {
+      "Path": "CP6.WebApi/Services/CrmOidcGrantStore.cs",
+      "Sha256": "71645DDE1C963E590CEC27A3A6EABF20A506350EEF3D9C0B7BF182E9207D541A"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/BridgeWorkerSqlTests.cs",
+      "Sha256": "1150950EBF196F7F6A20B2AD9A566DF5E28E3A9C235570AC3053518340762A56"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/BusinessPartnerBindingConcurrencySqlTests.cs",
+      "Sha256": "E7ABED68E5DFC9FC48E817A40555543410DC6FC3C3AE3969DCD6D5A09AC52973"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/BusinessPartnerSqlTests.cs",
+      "Sha256": "21E2823ACBC595FA379D8EFA9EB87F717BF6EDC3966DD4B6391A8033EFE90E14"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/CommandRetryWorkerSqlTests.cs",
+      "Sha256": "A10682A8A4D99193ADA0FDDF774A07D998C466AC819F1C6DAF1DC6465FABEB42"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/DeliveryLeadTimeSqlTests.cs",
+      "Sha256": "ABEED2E10CE286AB4B818F20486ED9524CC59013F940AD7BEDB6AF67CB2C1124"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/DeliveryReplaySqlTests.cs",
+      "Sha256": "203FD37477801BB54043DE35A67178D15B60BB7BCD1E5C828914DAD1D836F6BB"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/ErpHandlerRelationalTests.cs",
+      "Sha256": "EA44A1D098E39681C91945FEEBD3D37436A3D33DC291D096F0205FDE0969C5E7"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/ErpRelationalFixture.cs",
+      "Sha256": "917D8F367C94AF9DB05728B35E958EFD4E5702F1C012BF378912BAAE18777A89"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/ErpScenario.cs",
+      "Sha256": "FBD8F201A908D9D141DC6F07542BB6E6E0906052033E7A89C2328314E9D2CFDC"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/ForeignExchangeSqlTests.cs",
+      "Sha256": "7E14B53D2DF1FE89034073F70750FA9E874222F62A2F543DA46F89881A3E0B70"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/OrderAmountBoundarySqlTests.cs",
+      "Sha256": "A521775016A93A5EDA2783592DFF5414B2AFEEA85260D58B16197D3D8EBEFF76"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/OrderSqlTests.cs",
+      "Sha256": "7A28266A92CD9F0DB86D86BB4FFAB4E96509EEC97F2D561B5E6847CC1B78886B"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/OrderUnitSqlTests.cs",
+      "Sha256": "E87AD6107B9E6E3252C53FD8C0C4196F4EA88B99E3AE6D05F4E4E49984029727"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/ProductionRegistrationSqlTests.cs",
+      "Sha256": "E295A5E8AF30C769CE0CA7BAB3806E8C9846BDAF87186CC49F14C9291C492D97"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/ReplaySqlTests.cs",
+      "Sha256": "66B14B466B353D9E5D4FA1CA64F7416A3CA487590DE6D80D75493E554DF83531"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/SqlDatabaseFixture.cs",
+      "Sha256": "6E156C39E6C96D395F9A95BF7ABEA16516BE0473712A825F7FC94DD7453070EC"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/SqlFailureProbe.cs",
+      "Sha256": "32C8E49D6F0FBD8CEDA8E6539F715AB9F94851517D90EFB3097D12F4DC304627"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/BusinessCases.cs",
+      "Sha256": "6A4356D0EEC5C60237F6B77C412391051067150A3BA311EBB749A66B48858943"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/Program.cs",
+      "Sha256": "5172175BE78D0594D6C23A5B9FD5F93F6AA2C9188C17C6100A063A6232C7CC7D"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/ProviderCases.cs",
+      "Sha256": "5C4BE07E6BD77AA1492BF2026938420AC281C6A747CB24CB91BAC7ADAB24A2BF"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/ProviderFixtureSupport.cs",
+      "Sha256": "5C289F42CA894CB5F17CB654AEDB4ACD9B7D595E739FD9CF92526AD72F96909B"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "04035E3A5627481749A934130F828BCC15595D0DBBDB33284A2A6B1A8D482C2E"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "96A1D23D0F318CC674875921C2352AE1BEE3F905171A96EBA5860EAD8A5FA104"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "ADC7EB05BF5E0AC31165C76B0453BE7713ECB04013DB8F3A2B49DFA3DAC3D64D"
+    },
+    {
+      "Name": "CP6.ErpIntegration.SqlTests.dll",
+      "Sha256": "A8BD3EF3933A3A3A1B0980888B26EA426724B8E6C07147637FDC62D3AA8E82CB"
+    }
+  ],
+  "ProcessLog": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-erp-order-pg-first-red\\process.log",
+  "ProcessLogSha256": "687CC8DB412DCDAC52D179DFDECEE600818D9A6ACA7F35F743C7C1683BE9AB93",
+  "Scope": "Actual selected provider test; fixture verifies ownership and migrations. No full WP4 acceptance claimed.",
+  "DatabaseSet": "Erp"
+}

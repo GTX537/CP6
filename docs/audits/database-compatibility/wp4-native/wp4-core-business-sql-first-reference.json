@@ -1,0 +1,158 @@
+{
+  "Task": "DB-COMPAT-01-WP4",
+  "Suite": "CoreBusiness",
+  "Provider": "SqlServer",
+  "Label": "wp4-core-business-sql-first-reference",
+  "StartedUtc": "2026-10-03T11:49:39.1134332Z",
+  "FinishedUtc": "2026-10-03T11:50:20.0587220Z",
+  "ExitCode": 0,
+  "Selection": "FullyQualifiedName~CP6.Tests.DatabaseCompatibility",
+  "Counts": {
+    "total": "22",
+    "executed": "22",
+    "passed": "22",
+    "failed": "0",
+    "notExecuted": "0"
+  },
+  "DatabaseName": "CP6Compat_WP4_20261003_07fbd783",
+  "ReceiptSha256": "F2855E3A1C7FC77429387035203A5B56C7CAD04909CBFD0FA3A84A6A61BE9DAD",
+  "RunnerSha256": "6FF63A157563208DC61AE6ACD4D5CE972F35B18917822F22B85B02AC50D190FB",
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Oidc.IntegrationTests/OidcRelationalFixture.cs",
+      "Sha256": "14B1C858F2042582F784CA4898A24B980C7084A6B1DA15EA5D13A3AAADE7C98A"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/GrantStoreRelationalTests.cs",
+      "Sha256": "C446CD06B69C2A3835946CAC103633E57A6DA33C05FFFFAC8B734907CD098248"
+    },
+    {
+      "Path": "CP6.WebApi/Services/CrmOidcGrantStore.cs",
+      "Sha256": "71645DDE1C963E590CEC27A3A6EABF20A506350EEF3D9C0B7BF182E9207D541A"
+    },
+    {
+      "Path": "CP6.Core/Services/Sys/RefreshTokenService.cs",
+      "Sha256": "DA6825167D4F01DDF7F5CE12041B4D08ABA5D08D09E363D12A61531CB017073F"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+      "Sha256": "E3C8AA0ECE3CB5EC473C30206DED2249CD71326BB73DAB433764910AFF6CC508"
+    },
+    {
+      "Path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "Sha256": "7132DF3B55B4EE48E67E88D067AC8303AFD9FBCC0B101FA609EF9D8780C63CEB"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/Program.cs",
+      "Sha256": "2A9975D07D3CA9586616637B06F277AD5267E7550D422332365489940D7CBA46"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/ProviderCases.cs",
+      "Sha256": "DAC083A2C95D2496F32AB1A2053E959B5B50B642C7FCC5A20CDB31FD8965845E"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/GrantStoreRelationalCases.cs",
+      "Sha256": "368EB4A03ADF156D7AACC5B84D4B0DB9750F5A20F4790E847E2A0DA639F35876"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/BrowserSessionRelationalTests.cs",
+      "Sha256": "654F64DE7E4A2A37A6E96AA08D436B963B014CF7F60850A60375B6524C905FB1"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+      "Sha256": "675F9F97016BBB82EFB5A9FE2B2AAC7DC06F8AF2560CEE5DFB4AB66B625AAB4F"
+    },
+    {
+      "Path": "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+      "Sha256": "3C3C0B09A4C3362BEC0A86E6802C3352E92D1496C5247A48AF0B5ED84A45DE70"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/ProviderFixtureSupport.cs",
+      "Sha256": "5C289F42CA894CB5F17CB654AEDB4ACD9B7D595E739FD9CF92526AD72F96909B"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/BusinessCases.cs",
+      "Sha256": "6A4356D0EEC5C60237F6B77C412391051067150A3BA311EBB749A66B48858943"
+    },
+    {
+      "Path": "CP6.WebApi/Program.cs",
+      "Sha256": "680EBE62AFBE616AE79368137AABAFA4EFEF11FA8673B15CD837A1E9408FBF19"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/CoreBusinessRelationalFixture.cs",
+      "Sha256": "FC71C4E04E939D1A0ACDDD1793F99DBCAD8AA52C10521E4F54C05B5B94E6CB65"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/FinanceRelationalTests.cs",
+      "Sha256": "77699F2652A814431DD21559CC4B23C0EFF3E6ACB24D77AA368BAE3C394C05E7"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/PermissionsRelationalTests.cs",
+      "Sha256": "6E2B627EAC1E055DF1C65621B194A4983A96033025D851C277C22EACD878D214"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/PurchaseRequestRelationalTests.cs",
+      "Sha256": "43C8D67F46F589C0EFEAEBFD2DB37E818D0BA6EDDA58D4AA8A44D211290D5186"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/WorkflowNotificationRelationalTests.cs",
+      "Sha256": "BA355CC7BA42082262598D57DBEED77B8D50A061D461B6C4D39E50259BF46CE0"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/WorkflowServiceJobRelationalTests.cs",
+      "Sha256": "3230FDDA2BA997CD70A3DC6409F50A57BB594178CCAA64F20E8AE340E5BEA09F"
+    },
+    {
+      "Path": "CP6.Core/Services/Pur/PurchaseRequestService.cs",
+      "Sha256": "FDA1D92D4652C33EB78C0866E5E23BEC8A83F3084D7E59F7140140CEFB11F001"
+    },
+    {
+      "Path": "CP6.Core/Services/Wf/WfServiceJobService.cs",
+      "Sha256": "8B021D730B20354FE067A5A4907671D0D98D0AA306A1F78FF3D17075F508CF1A"
+    },
+    {
+      "Path": "CP6.WebApi/BackgroundServices/WfNotificationDispatchWorker.cs",
+      "Sha256": "941080C57F8DE31BE449C8B3793D4533C427887D34AD43FD74521F9CC8E98967"
+    },
+    {
+      "Path": "CP6.Core/Services/Fin/BudgetLineService.cs",
+      "Sha256": "33FA926701A607CE3DA38A38C6C8C7CF323BB9C85912D22649CAF0A64FEF4DD6"
+    },
+    {
+      "Path": "CP6.Core/Services/Fin/JournalEntryService.cs",
+      "Sha256": "081687537CF23EFEA059BE2993FE6C21A989DC49FDF9BB5E8B7786931A4A7846"
+    },
+    {
+      "Path": "CP6.Core/Services/Sys/DataScopeFilter.cs",
+      "Sha256": "9EBDBB995327171398D022FB77A526283EC432E009887EAFB0A554C409FD8042"
+    },
+    {
+      "Path": "CP6.Core/Services/Sys/PermissionAggregator.cs",
+      "Sha256": "53BBE8AD1CAD4938B624861F31F307F6D764F13FAB235AB8A4E8DFC1BC857DF2"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "D54FEF4BD0E01953CC973CBB2CAFFBD0AE4473313982CEC5817476C5722802E7"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "5AB46EAB498DD90521906970376DBB7FBEE7B0C125F1C2CBD7D84C483161AED8"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "44B4196000B71099014759220294C189C5ADEDB3B2823EBFAF2BC3F7E5463FDC"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "C833496499E14C7A9CE0CB83DF9F85FC842ED7C1FBD9BFCC942566E64A149B6F"
+    }
+  ],
+  "ProcessLog": "D:\\CP6\\tmp\\db-compat-wp4-tests\\wp4-core-business-sql-first-reference\\process.log",
+  "ProcessLogSha256": "DE2947AB2D876B1EC7540EBEC3164C91D918B843F4431D26CD06131C6D4F8D25",
+  "Scope": "Actual selected provider test; fixture verifies ownership and migrations. No full WP4 acceptance claimed.",
+  "DatabaseSet": "Business",
+  "ProcessExitCode": 0,
+  "RequiredCaseCountValidated": true
+}

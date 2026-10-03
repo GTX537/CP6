@@ -1,0 +1,21 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp4-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.54]     CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer [SKIP]
+[xUnit.net 00:00:00.55]     CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply [SKIP]
+[xUnit.net 00:00:00.55]     CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount [SKIP]
+[xUnit.net 00:00:00.55]     CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree [SKIP]
+[xUnit.net 00:00:00.55]     CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation [SKIP]
+[xUnit.net 00:00:00.55]     CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic [SKIP]
+[xUnit.net 00:00:00.55]     CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion [SKIP]
+[xUnit.net 00:00:00.55]     CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks [SKIP]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer [1 ms]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply [1 ms]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount [1 ms]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree [1 ms]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation [1 ms]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic [1 ms]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion [1 ms]
+  Skipped CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks [1 ms]
+Results File: D:\CP6\tmp\db-compat-wp4-tests\wp4-wms-unselected-core-owner-discovery-v2\results.trx
+
+Skipped! - Failed:     0, Passed:     0, Skipped:     8, Total:     8, Duration: 8 ms - CP6.Tests.dll (net8.0)

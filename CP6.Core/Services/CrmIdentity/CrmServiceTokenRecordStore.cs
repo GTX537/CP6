@@ -29,8 +29,14 @@ public sealed class CrmServiceTokenRecordStore(CP6Context db, CrmIdentityRuntime
         if (!runtime.Options.Tenants.ContainsKey(tenantId)) return;
         if (issuer != runtime.Options.Issuer) throw new InvalidOperationException("C02_SERVICE_ISSUER_MISMATCH");
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
-        var record = await db.CrmServiceTokenRecords.FromSqlInterpolated($"SELECT * FROM crm_identity.ServiceToken WITH (UPDLOCK,HOLDLOCK) WHERE Issuer={issuer} AND Jti={jti} AND ClientId={clientId} AND TenantId={tenantId}")
-            .SingleOrDefaultAsync(cancellationToken);
+        var records = db.Database.IsNpgsql()
+            ? db.CrmServiceTokenRecords.FromSqlInterpolated($"""
+                SELECT * FROM crm_identity."ServiceToken"
+                WHERE "Issuer"=CAST({issuer} AS bpchar) AND "Jti"=CAST({jti} AS bpchar)
+                  AND "ClientId"=CAST({clientId} AS bpchar) AND "TenantId"={tenantId} FOR UPDATE
+                """)
+            : db.CrmServiceTokenRecords.FromSqlInterpolated($"SELECT * FROM crm_identity.ServiceToken WITH (UPDLOCK,HOLDLOCK) WHERE Issuer={issuer} AND Jti={jti} AND ClientId={clientId} AND TenantId={tenantId}");
+        var record = await records.SingleOrDefaultAsync(cancellationToken);
         if (record is not null && record.RevokedAtUtc is null)
         {
             record.RevokedAtUtc = runtime.Clock.GetUtcNow();
