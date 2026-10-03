@@ -1,0 +1,11 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Stage": "Local checkpoint before verified BUG150 dependency merge",
+  "OriginalArtifacts": 239,
+  "AllIndexBytesMatchOriginals": true,
+  "Manifests": [
+    "docs/audits/database-compatibility/wp5-native/initial/manifest.json",
+    "docs/audits/database-compatibility/wp4-native/post-merge/manifest.json",
+    "docs/audits/database-compatibility/wp4-native/post-merge/parent-progress/manifest.json"
+  ]
+}

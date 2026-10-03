@@ -1,0 +1,266 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "ArchiveKind": "review-followup-public-originals",
+  "ManifestSha256": "FAAB4C57292FDC2792EC6F62BE7741859F1D473E98FA3BD2ABD79A6A164EEA91",
+  "VerifiedUtc": "2026-10-03T15:03:04.2508347Z",
+  "OriginalFileCount": 31,
+  "Passed": 31,
+  "Failed": 0,
+  "ExistingEvidenceOverwritten": false,
+  "PublicOriginalBytesCompared": true,
+  "RunnerVersionsMatchedToInitialArchive": 7,
+  "ProcessLogShaBindingsMatched": 7,
+  "TrxCountsMatched": 7,
+  "NativeTestsExecutedByArchive": false,
+  "Files": [
+    {
+      "RelativePath": "reports/wp5-legacy-recovery-selector-red.json",
+      "Sha256": "006DF08315E174492FB6BFA3CB315258D6246DC3B3D8D42C397C102C4C5D72B7",
+      "Bytes": 68703,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-legacy-recovery-selector-red/process.log",
+      "Sha256": "B6C381AD52CBCF4363504575FA281575032AEE4DB9D1802858CE62EF49934F3F",
+      "Bytes": 2516,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-legacy-recovery-selector-red/results.trx",
+      "Sha256": "3C91FAC89C1E8ADB7E7799A1337A9116DA12BA2981A5CCC7AAD1CA1376D4434E",
+      "Bytes": 8781,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reports/wp5-legacy-recovery-selector-green.json",
+      "Sha256": "49B518C3A54102B8A7BA81880D68CC02AAE010D34AFC339983007517E7820771",
+      "Bytes": 68706,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-legacy-recovery-selector-green/process.log",
+      "Sha256": "A88C86A8655101E275E3C635334B3C7FBD9063A4B319C6A4AFBF7ECC82330EA5",
+      "Bytes": 442,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-legacy-recovery-selector-green/results.trx",
+      "Sha256": "FB49796D9DA36ECD5E430551EB9BA45C6B082AC8FE011C71530AA9C497B9694B",
+      "Bytes": 4776,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-caller-pending-pg-red.json",
+      "Sha256": "FB393112A8D478B1E98BB0EE9B5ABBDE6F4790BEC418D507DC50F3C3B6125DC0",
+      "Bytes": 80909,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-caller-pending-pg-red/process.log",
+      "Sha256": "A73B2FB83D6C6BDE89F696E61C7B6D4E9414A3912BDB2EEBC8355508434D85F9",
+      "Bytes": 2723,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-caller-pending-pg-red/results.trx",
+      "Sha256": "5C5B8584CFE1102B445A2E5D9C59DC7DA94B7A415E7B5C2EE3C7C4406A74DD77",
+      "Bytes": 8020,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-caller-pending-pg-green.json",
+      "Sha256": "4F4034D9C3EC1FA915FFDF0F170C0E99E29C3010B450F139A842665600F99B92",
+      "Bytes": 80913,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-caller-pending-pg-green/process.log",
+      "Sha256": "5201D4AAC5D417AA4B068D82C4C47E78D1984515BD2A1181ACB8FAF96F29590D",
+      "Bytes": 2847,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-caller-pending-pg-green/results.trx",
+      "Sha256": "8010D3EF6C00A0E95E4473B96A3AC9D4EDAD8B5A8FBEFD2BA4E60F6B3918EC0E",
+      "Bytes": 8340,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reports/wp5-ai-cad-review-followup-pg.json",
+      "Sha256": "EB048F54D3BDACBDDEFA9DD84EF4A2B915555B363AB29364C5E3E3294EF8DBA8",
+      "Bytes": 80996,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-cad-review-followup-pg/process.log",
+      "Sha256": "5EC02352614DD3BC44F8D16A99F36B6949CCB08D20B7DE746A4AA4D4CB618117",
+      "Bytes": 434,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-ai-cad-review-followup-pg/results.trx",
+      "Sha256": "12BAA4ED7858F692F246A76C58CDE8A19FBCBD484176AC595E6518C6A5F8281A",
+      "Bytes": 29014,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reports/wp5-mapping-bug150-pg-integration.json",
+      "Sha256": "E9CF4A4D693A1AFBC76874F7A4AF9C14EEF6BE7E94009C954AF1E5E4B146CF0C",
+      "Bytes": 81451,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-bug150-pg-integration/process.log",
+      "Sha256": "0E3DB666CB0F9A55A443CB6E24777BC420CC497F3B0AE58EEBCC8987007C94D4",
+      "Bytes": 441,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-bug150-pg-integration/results.trx",
+      "Sha256": "55985B89AAE04B16D3A9AC8FB3C3A8BD8BFE8DA5B600630614395322191C5586",
+      "Bytes": 9406,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reports/wp5-mapping-bug150-sql-integration.json",
+      "Sha256": "4D8A2CB27401B73BE81206898E6BD3BFE98528BD6BF797709BE263EDBE15930F",
+      "Bytes": 81452,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-bug150-sql-integration/process.log",
+      "Sha256": "D9908681A22BD1C11FA8A3F7A057A66B856C0E92123559FB37E2CFC5228CBC46",
+      "Bytes": 439,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "runs/wp5-mapping-bug150-sql-integration/results.trx",
+      "Sha256": "63790FCF77AA80C75FB8485C75CDF084F2ED4F7B505C9518D3A54964FD7D31F6",
+      "Bytes": 36926,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "builds/wp5-review-regressions-red-build.log",
+      "Sha256": "2D7BAD11C376B9D9A9C4793311D3585EAAF54A907734671ACA80F7A9E475180F",
+      "Bytes": 4578,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "builds/wp5-review-regressions-green-build.log",
+      "Sha256": "554E60CE824C8F5A83737650BD2BF40CDDFAA5A8E0BC61CF34694AA5085DE9D9",
+      "Bytes": 4578,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "builds/wp5-ai-caller-wrapper-followup-build.log",
+      "Sha256": "F3C98F8328CD5E5D1F3776982FDFEAE6B91236CE59A8C33AAD430A16783B4B2C",
+      "Bytes": 3688,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "builds/wp5-bug150-integration-build.log",
+      "Sha256": "ADE3300D479B706BDD7B3FE4896633F567AA34C9FCBB08F500B935FF8BEAE27E",
+      "Bytes": 1124,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reviews/wp5-space-task-review-initial.json",
+      "Sha256": "E0276B10FA18DE8347379F7CEDA44759199D84FAA80B075B11CC405985A98E96",
+      "Bytes": 6412,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reviews/wp5-core-task-review-initial.json",
+      "Sha256": "EFCEDC3CBA47EF07E4E95B237EB1540ABAC27533FAE62066B537B8083DE528B3",
+      "Bytes": 13465,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "reviews/wp5-task-review-targeted-followup.json",
+      "Sha256": "5239B29D447E1C8010EFF70CFFC6B273EDC09E7A1C192F489E0C31F213FC13D5",
+      "Bytes": 2651,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "dependency/wp5-pre-dependency-stage-evidence.json",
+      "Sha256": "5154D6B48512FCD74CC2AFD189D07C1C429879827FBE1968EDEE0BF4A8C2D2DF",
+      "Bytes": 448,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "dependency/wp5-bug150-dependency-merge.log",
+      "Sha256": "79C08AC3BF8937DA8F23BC834858C0237AB89ADB3E9FEB9A60D080EDC6C9F73E",
+      "Bytes": 705,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    },
+    {
+      "RelativePath": "dependency/wp5-bug150-dependency-integrated.json",
+      "Sha256": "9078AA3313E4FA7A8DDE4B41AF0986264C0B66E43CEFAC05E9E8AE00E1229379",
+      "Bytes": 1760,
+      "SourceLengthAndShaMatched": true,
+      "CopiedLengthAndShaMatched": true,
+      "ByteForByteMatched": true
+    }
+  ],
+  "Scope": "Passed counts file-copy verification, not tests. Original failed runs are retained with their true results."
+}

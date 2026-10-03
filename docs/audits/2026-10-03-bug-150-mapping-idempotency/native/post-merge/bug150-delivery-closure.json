@@ -1,0 +1,23 @@
+{
+  "Task": "BUG-150",
+  "Status": "DeliveredAndClosed",
+  "Issue": 150,
+  "PullRequest": 151,
+  "RemoteMain": "522433a370c0c247a98b300c69e88e403217d53a",
+  "Candidate": "af47a6936f0057e7ff0ae6b58e54d47d215dd0bd",
+  "Tree": "d4efdeb7dc52ca761695db1a23f782d4e223faa8",
+  "ClosedAt": "2026-10-03T14:47:22Z",
+  "NativeBeforeFix": "SQL0/2;PG0/2;zero skip",
+  "NativeAfterFix": "SQL4/4;PG4/4;zero skip",
+  "RelatedExisting": "12/12;zero skip",
+  "PostMergeActual": "SQL2/2;PG2/2;zero skip",
+  "ReusedSource": "bug150-task-review-and-inputs.json",
+  "OriginalArchiveCount": 29,
+  "OriginalArchiveManifestSha256": "C30AAD42D1ED8E1AACE2CA7ADAB9DB5ED371261BF277D4EC694EDF6D88709498",
+  "Cleanup": "Both actual owner markers verified, normal DROP and absence readback; role and receipts retained",
+  "ActionsDispatched": 0,
+  "ActionsCancelled": 0,
+  "WorkflowChanges": 0,
+  "ProductionDeployment": false,
+  "ParentGoal": "DB-COMPAT-01 remains active; WP5/6 incomplete"
+}

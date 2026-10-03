@@ -1,0 +1,12 @@
+Auto-merging .gitattributes
+CONFLICT (content): Merge conflict in .gitattributes
+Auto-merging docs/project-memory/05-Completed.md
+CONFLICT (content): Merge conflict in docs/project-memory/05-Completed.md
+Auto-merging docs/project-memory/06-Todo.md
+CONFLICT (content): Merge conflict in docs/project-memory/06-Todo.md
+Auto-merging docs/project-memory/CHANGELOG-AI.md
+CONFLICT (content): Merge conflict in docs/project-memory/CHANGELOG-AI.md
+Auto-merging docs/project-memory/PROJECT_STATE.md
+CONFLICT (content): Merge conflict in docs/project-memory/PROJECT_STATE.md
+Automatic merge failed; fix conflicts and then commit the result.
+origin/main is not a valid attribute name: .gitattributes:115

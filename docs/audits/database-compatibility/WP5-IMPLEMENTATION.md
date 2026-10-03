@@ -2,6 +2,8 @@
 
 日期：2026-10-03。依据[已接受计划](../../superpowers/plans/2026-10-02-database-compatibility.md)，分支`codex/db-compat-wp5-20261003`、工作树`D:\CP6\tmp\worktrees\db-compat-wp5-20261003`从已确认远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`建立。父[Issue134](https://github.com/GTX537/CP6/issues/134)仍Open；WP4已勾选，WP5/6未勾选。
 
+当前状态为 **LocalVerifiedRemotePending**：WP5 本地业务、迁移专项及任务审查的适用范围已验证，BUG150 依赖已正常交付并整合；WP5 自身远端交付待完成。WP6 全应用启动、初始化和备份恢复尚未验收，各批真实结果、复用来源及限制如下。
+
 ## 已交付前置
 
 [WP4 PR149](https://github.com/GTX537/CP6/pull/149)的候选`cfe479124fb04d770462b874bc2a70508a8bf79e`已被主线包含，候选/合并完整树均为`60114519e08ddd33ee9be122a616d00ae5ce85c3`。合并后SQL/PG原业务快照保存分别2/2、零skip，均包含owner/实际迁移setup；六个WP4自有临时库已普通DROP并确认不存在，receipt和PG角色保留。Actions启动/取消均0，无工作流/保护变更。[交付、冒烟和清理原件](wp4-native/post-merge/manifest.json)与[WP4实施记录](WP4-IMPLEMENTATION.md)说明复用来源及限制；不重复原完整矩阵。
@@ -15,7 +17,7 @@
 
 创建来源为公共[工作树证明](wp5-native/initial/reports/wp5-worktree-created.json)、[Space库证明](wp5-native/initial/reports/wp5-databases-created.json)及[报表库证明](wp5-native/initial/reports/wp5-reports-databases-created.json)；创建证明不代替实际迁移或业务验收。连接与所有权receipt仅本机未跟踪文件，未复制入文档。root统一安排本地构建与数据库执行，必需场景选择Provider后不能Skip。
 
-后续按计划连续完成Space租约、完整克隆的故障/并发专项、发布/恢复与CAD，再进行一次任务级集中审查和专项验证。WP5/6均未验收交付。普通PG API/worker guard继续保留，WP6负责完整应用启动、初始化、备份恢复与运行配置验收；没有现有数据搬迁、环境替换或生产部署。
+Space租约、克隆故障/并发、发布恢复及CAD已按下列原批次和定向复测完成本地验证；一次任务级集中审查的两项P2已修复并增量复查。WP5远端交付仍待完成。普通PG API/worker guard继续保留，WP6负责完整应用启动、初始化、备份恢复与运行配置验收；没有现有数据搬迁、环境替换或生产部署。
 
 ## 首轮真实结果与限定范围
 
@@ -65,4 +67,31 @@ MES与首页继续原全局汇总口径、缓存和授权入口；不以带EF租
 
 PG前置专项[Space→Core](wp5-native/initial/reports/wp5-prerequisite-space-core-pg-first-run.json)、[Core→Space](wp5-native/initial/reports/wp5-prerequisite-core-space-pg-first-run.json)、[生成脚本连续执行两次](wp5-native/initial/reports/wp5-prerequisite-space-script-pg-first-run.json)及[Space-only复测](wp5-native/initial/reports/wp5-space-only-pg-prerequisite-followup.json)各1/1、零skip。SQL生成合同原8项[首次8/8](wp5-native/initial/reports/wp5-prerequisite-sql-generation.json)，P2断言修正后[相同8项定向8/8](wp5-native/initial/reports/wp5-prerequisite-sql-generation-review-followup.json)，不相加成16个不同案例。[前置专项审查](wp5-native/initial/reports/wp5-prerequisite-targeted-review.json)的P2已resolved，仅覆盖前置runtime/script、定义校验、profile顺序及该断言修正；不是完整WP5任务审查或交付结论。
 
-`wp5-mapping-concurrency-sql-first-reference`和`wp5-mapping-concurrency-pg-first-run`各0/2，均有两真实会话及first-save barrier。SQL实际deadlock，PG CurrentName唯一键23505；两个映射生产服务尚为已交付主线原码，因此按BUG规则单独登记[BUG150](https://github.com/GTX537/CP6/issues/150)，从c6c662f5建立修复工作树及独占双库，完成独立RED/GREEN和交付后再纳入WP5。原结果全部保留。
+`wp5-mapping-concurrency-sql-first-reference`和`wp5-mapping-concurrency-pg-first-run`各0/2，均有两真实会话及first-save barrier。SQL实际deadlock，PG CurrentName唯一键23505；发现时两个映射生产服务为已交付主线原码，因此按BUG规则单独登记[BUG150](https://github.com/GTX537/CP6/issues/150)，从c6c662f5建立修复工作树及独占双库。该依赖现已独立交付并纳入WP5，见下节；原失败结果全部保留。
+
+## 任务审查与定向修复
+
+[Space初始审查](wp5-native/review-followup/reviews/wp5-space-task-review-initial.json)与[Core/报表/迁移/夹具初始审查](wp5-native/review-followup/reviews/wp5-core-task-review-initial.json)共同构成本次任务级审查。两项P2分别为：AI完整命令重试可能清空调用方待保存实体；选择WP5 Space provider会错误启用仍只支持旧SQL入口的备份恢复事实。
+
+AI修复将待保存变化和EF当前、ambient、enlisted调用方事务排除在新增完整命令重试之外，保持原单次操作并向上抛出原生故障，不清空调用方tracker。首RED为0/1；首次修复批次虽命名`green`，实际仍为0/1，原因是断言错误要求EF外层异常为`DbException`，实际为`InvalidOperationException`。后续改为准确核对`GetBaseException()`的原生`PostgresException`，保留Added状态和原生40001断言，再完成15/15。原失败批次未改写。
+
+备份恢复事实改用专门的legacy attribute；选择任一WP5 Space lane时不启用旧SQL生命周期，即使同时配置`CP6_TEST_SQLSERVER`。未选择WP5时保留原入口。两个selector回归只核对选择行为，未执行BACKUP/RESTORE，不能计作WP6恢复验收。
+
+| 新执行label | 真实结果与用例范围 |
+| --- | --- |
+| `wp5-legacy-recovery-selector-red` / `wp5-legacy-recovery-selector-green` | 同两个selector事实先0/2、修复后2/2，零skip |
+| `wp5-ai-caller-pending-pg-red` / `wp5-ai-caller-pending-pg-green` | 同一个真实PG竞争事实两次均0/1；后者为EF外层wrapper类型断言失败，不能称GREEN |
+| `wp5-ai-cad-review-followup-pg` | 15/15、零skip：原AI13＋新调用方待保存变化1＋原CAD竞争1；这是本次定向新执行，和之前AI/CAD批次有重叠 |
+| `wp5-mapping-bug150-pg-integration` / `wp5-mapping-bug150-sql-integration` | 纳入已交付BUG150后两库各4/4、零skip：原CAD/Excel顺序事实2＋新增同key并发2；两库执行相同四个事实 |
+
+[增量复查](wp5-native/review-followup/reviews/wp5-task-review-targeted-followup.json)确认两项P2均Resolved，无新实质问题；未变化的初始审查范围复用，未启动第二次完整审查。各复测批次也不相加成新的不同用例总数，之前成功批次按其实际源码、程序集和未受影响路径复用，未改称最终构建的新执行。
+
+本轮新增公共原件为[31份显式allowlist](wp5-native/review-followup/allowlist.json)、[独立manifest](wp5-native/review-followup/manifest.json)及[逐字节核对](wp5-native/review-followup/verification.json)，原件共697,644字节，归档核对31/31；7份报告、process.log和TRX一一对应，runner字节均引用初始归档的已核对版本。包括原RED、失败的`green`、最终复测、4份构建日志、3份审查和3份依赖检查；initial219及BUG150交付后15份原件保持不可变。归档核对数量不计测试用例。
+
+## BUG150交付与WP5整合
+
+[PR151](https://github.com/GTX537/CP6/pull/151)已正常交付，远端main为`522433a370c0c247a98b300c69e88e403217d53a`；Issue150于`2026-10-03T14:47:22Z`关闭。BUG独立双库RED/GREEN、原12项单元回归和合并后两库各2/2冒烟的范围见[BUG150审计记录](../2026-10-03-bug-150-mapping-idempotency/README.md)。两自有库已普通DROP并核对不存在，未终止会话；[交付后15份公共原件清单](../2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json)独立于原已交付29份清单。
+
+WP5以`97e4a9f2e0881c4f423111848632bbc821cde11d`整合该main；三处映射生产文件与已交付BUG150字节一致，生产无合并冲突。[整合证明](wp5-native/review-followup/dependency/wp5-bug150-dependency-integrated.json)和[完整Space测试项目构建日志](wp5-native/review-followup/builds/wp5-bug150-integration-build.log)记录0警告、0错误，随后SQL/PG映射各4/4。原不相关WP5成功结果保留原执行输入和来源，不因整合提交或程序集哈希改变而冒称已重新执行。WP5当前仍为LocalVerifiedRemotePending，WP6全应用与恢复验收未完成。
+
+收尾[结果核算](wp5-native/final-result-accounting.json)按Provider、测试类和案例名称关联65份原TRX，所有已记录案例的最后一次记录均为Passed；它是历史记录核算，不是又执行一轮完整矩阵。[最终源码与复用核对](wp5-native/final-source-reuse-review.json)为相对已交付main的15份生产文件绑定相关成功批次，核对当前12个Space程序集与映射整合批次一致，并保留旧runner未直接记录classifier源码时的同程序集交叉证明。准备阶段两次绑定校正、未重新运行的范围及WP6边界均明确记录。

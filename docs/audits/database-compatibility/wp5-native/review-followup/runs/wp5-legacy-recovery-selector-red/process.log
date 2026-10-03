@@ -1,0 +1,21 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.23]     CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: "PostgreSql") [FAIL]
+[xUnit.net 00:00:00.23]     CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: "SqlServer") [FAIL]
+  Failed CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: "PostgreSql") [2 ms]
+  Error Message:
+   Selecting a WP5 Space provider must not enable the legacy SQL backup/restore fact, even when CP6_TEST_SQLSERVER is set.
+  Stack Trace:
+     at CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(String provider) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceLegacyRecoverySelectionTests.cs:line 41
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(provider: "SqlServer") [< 1 ms]
+  Error Message:
+   Selecting a WP5 Space provider must not enable the legacy SQL backup/restore fact, even when CP6_TEST_SQLSERVER is set.
+  Stack Trace:
+     at CP6.Space.IntegrationTests.SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(String provider) in D:\CP6\tmp\worktrees\db-compat-wp5-20261003\CP6.Space.IntegrationTests\SpaceLegacyRecoverySelectionTests.cs:line 41
+   at InvokeStub_SpaceLegacyRecoverySelectionTests.Selected_Space_provider_does_not_enable_legacy_backup_restore(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+Results File: D:\CP6\tmp\local-required-tests\wp5-legacy-recovery-selector-red\results.trx
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 22 ms - CP6.Space.IntegrationTests.dll (net8.0)

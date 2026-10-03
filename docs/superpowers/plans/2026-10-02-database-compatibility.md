@@ -10,7 +10,7 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1/2/3已分别由PR136/145/146交付；WP4已由PR149交付远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，合并后两库冒烟及六库清理完成。WP5在该主线独立分支准备实施，WP5/6未验收。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)仍Open，WP4已勾选、WP5/6未勾选。来源见[WP4交付记录](../../audits/database-compatibility/WP4-IMPLEMENTATION.md)及[WP5入口](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)。下文早期Pending保留各历史时点，不提前声明整体兼容。
+用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1/2/3已分别由PR136/145/146交付；WP4已由PR149交付远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，合并后两库冒烟及六库清理完成。WP5已完成相关本地验证、一次任务级集中审查和定向修复，为`LocalVerifiedRemotePending`；已纳入PR151交付的BUG150并完成映射双库整合复测。WP5远端交付待完成，WP6完整应用与原生备份恢复验收尚未执行。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)仍Open，WP4已勾选、WP5/6远端阶段未勾选。来源见[WP4交付记录](../../audits/database-compatibility/WP4-IMPLEMENTATION.md)及[WP5实施记录](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)。下文早期Pending保留各历史时点，不提前声明整体兼容。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -108,15 +108,18 @@ WP4上述五项已按实际双库/专有门禁分批通过，集中代码审查�
 
 **前置：** WP3；依赖 WP4 的 WMS/ERP 集成场景按其交付版本验证。**产出：** Space 与专有报表的双库实现。
 
-当前入口从PR149远端main建立`codex/db-compat-wp5-20261003`；Space与报表各自owner-marked两库已实际运行；容量/AI、报表/GDPR与多个Space原生组已有两库限定通过结果，CAD/克隆及mapping并发、历史迁移/目录专项继续执行，尚未完成WP5交付。具体来源与未验收范围见[WP5实施记录](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)。
+当前分支`codex/db-compat-wp5-20261003`从PR149远端main建立，状态为`LocalVerifiedRemotePending`。Space与报表各自owner-marked两库已完成适用业务、CAD/克隆并发、历史迁移与目录专项；下方勾选仅表示本地实施及相关验证完成，具体各次成功、失败和复用范围见[WP5实施记录](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)及[首轮原件](../../audits/database-compatibility/wp5-native/initial/manifest.json)。
 
-- [ ] 适配 Space 编辑/Underlay/CAD/AI apply/retention/validation/publish 等资源锁、容量 ledger 与租约，消除 PostgreSQL 上跳过锁或执行 T-SQL 的路径。
-- [ ] 为 EfSpaceVersionClone 的表变量/NEWID/批量复制提供 PostgreSQL 等价实现；验证 source map、名称/类型字段、版本 token、失败原子回滚与幂等，不以简化克隆替代完整行为。
-- [ ] 验证 Space 发布/历史 republish/补偿恢复、CAD provider revision fence、外部授权、文件安全与 AI 容量。保持 CP6Context/SpaceContext 同连接事务及 published 版本/库存来源一致性。
-- [ ] 为 MES 三个 usp 报表、Dashboard TOP 查询、GDPR joined DELETE 与标识符引号选择 EF 或 Provider 查询实现；明确每个 Dapper 查询的租户/全局作用域，不能依赖 EF query filter 自动覆盖 Dapper。
-- [ ] 逐项复用 Space 真库场景，同时保留 Provider 专项 DDL/错误断言。SpaceSqlIntegrationTests 的 EnsureCreated 仅作为业务夹具，另用全量迁移夹具证明安装/升级。
+- [x] 适配 Space 编辑/Underlay/CAD/AI apply/retention/validation/publish 等资源锁、容量 ledger 与租约，消除 PostgreSQL 上跳过锁或执行 T-SQL 的路径。
+- [x] 为 EfSpaceVersionClone 的表变量/NEWID/批量复制提供 PostgreSQL 等价实现；验证 source map、名称/类型字段、版本 token、失败原子回滚与幂等，不以简化克隆替代完整行为。
+- [x] 验证 Space 发布/历史 republish/补偿恢复、CAD provider revision fence、外部授权、文件安全与 AI 容量。保持 CP6Context/SpaceContext 同连接事务及 published 版本/库存来源一致性。
+- [x] 为 MES 三个 usp 报表、Dashboard TOP 查询、GDPR joined DELETE 与标识符引号选择 EF 或 Provider 查询实现；明确每个 Dapper 查询的租户/全局作用域，不能依赖 EF query filter 自动覆盖 Dapper。
+- [x] 逐项复用 Space 真库场景，同时保留 Provider 专项 DDL/错误断言。SpaceSqlIntegrationTests 已接入全量迁移夹具，另用隔离的迁移场景证明安装/升级。
+- [ ] 完成WP5正常提交/PR合并、必要合并后冒烟及远端main包含性核对，再更新父Issue134的WP5阶段交付状态。
 
 **必须通过：** 双库租约与容量竞争；完整克隆与回滚；发布/恢复/WMS 集成；CAD/外部授权 fence；报表结果、排序分页与权限一致；GDPR 作用域正确。
+
+一次集中审查的两项P2已修复并定向复核；实际PG AI原13＋caller-pending1＋CAD1为15/15，legacy恢复选择器2/2，均零skip。[BUG150](https://github.com/GTX537/CP6/issues/150)已由[PR151](https://github.com/GTX537/CP6/pull/151)交付远端main `522433a370c0c247a98b300c69e88e403217d53a`并关闭，合并后两库原并发各2/2及自有库清理完成，见[BUG150交付原件](../../audits/2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json)。WP5在`97e4a9f2e0881c4f423111848632bbc821cde11d`纳入修复后，整合构建0warning/0error、映射SQL/PG各4/4通过。[定向修复与整合原件](../../audits/database-compatibility/wp5-native/review-followup/manifest.json)保留原RED及首轮异常包装断言失败，不将后续成功改写为首次通过，也不将重复测试相加。普通PG API/worker guard继续保留；WP6完整应用启动、初始化与原生备份恢复仍未执行。
 
 ## WP6：本地验收、初始化、恢复与运行配置
 

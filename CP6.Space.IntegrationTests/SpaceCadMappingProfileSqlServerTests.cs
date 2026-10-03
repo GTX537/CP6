@@ -124,8 +124,8 @@ public sealed class SpaceCadMappingProfileSqlServerTests(
                 output.WriteLine("Both commands read empty idempotency before their first profile INSERT; no test retry.");
                 barrier.Release();
                 var responses = await Task.WhenAll(started).WaitAsync(budget.Token);
-                Assert.Single(responses.Where(item => !item.IdempotentReplay));
-                Assert.Single(responses.Where(item => item.IdempotentReplay));
+                Assert.Single(responses, item => !item.IdempotentReplay);
+                Assert.Single(responses, item => item.IdempotentReplay);
                 Assert.All(responses, item =>
                 {
                     Assert.True(item.Created);

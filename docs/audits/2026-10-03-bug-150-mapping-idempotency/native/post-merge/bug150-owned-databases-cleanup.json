@@ -1,0 +1,13 @@
+{
+  "Task": "BUG-150",
+  "DatabaseName": "CP6Bug150_20261003_a73bd1b9",
+  "StartedUtc": "2026-10-03T14:46:28.7738234Z",
+  "ReceiptSha256": "02CE6B9B7B903AD8816155E6A7A3586902834B91624CEC4CF233A0CDE1E9331D",
+  "ScriptSha256": "FE1204F12D01D5FCB2359CA10AF8306445F93EE98865E63F18EC0077E40A4253",
+  "SqlServer": "DroppedAndAbsenceVerified",
+  "PostgreSql": "DroppedAndAbsenceVerified",
+  "ForcedDisconnects": 0,
+  "RoleRemoved": false,
+  "BothActualOwnersVerified": true,
+  "FinishedUtc": "2026-10-03T14:46:29.6731884Z"
+}
