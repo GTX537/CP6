@@ -1,0 +1,41 @@
+{
+  "Task": "BUG-159",
+  "Provider": "PostgreSql",
+  "ExecutionHead": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "WorkingTreeDirty": true,
+  "DatabaseName": "CP6Compat_WP5_20261003_37dc8a6c",
+  "OwnershipProtocol": "DB-COMPAT-01-WP5",
+  "BuildExecuted": true,
+  "Filter": "FullyQualifiedName=CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict",
+  "Counts": {
+    "Expected": 1,
+    "Total": 1,
+    "Passed": 0,
+    "Failed": 1,
+    "Other": 0
+  },
+  "Process": {
+    "ProcessId": 27404,
+    "ExitCode": 1,
+    "StartedUtc": "2026-10-03T20:29:22.0030616Z",
+    "FinishedUtc": "2026-10-03T20:29:36.7521546Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "F429A6ED2C483FCD52A449FFD7CA499966A02EF98FA3CC100C34C8B3BF6C131E",
+    "StandardErrorSha256": "E9994F676D50870338760FBDDF0766492F0C8DDE79DCFD9E6F9BA078BAD16828",
+    "TimedOut": false
+  },
+  "Success": false,
+  "SourcesUnchanged": true,
+  "RuntimeUnchanged": true,
+  "SourceInputsSha256": "7A40595EC31F1655696C5D1448260D9FEE42A82F36BEB3FED73338137BB4BC2A",
+  "RuntimeManifestSha256": "DDF11988C979690681259E97BF737B93ED3EECA34F1BF959A64B2AFA5827E246",
+  "TrxSha256": "0D445FC2EFD3958E269674F4F0327A65DE7B490BE1488124734E87617C990720",
+  "CaseNames": [
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict"
+  ],
+  "NativeEvidence": [
+    "BUG159 claim native failure: SQLSTATE=23505; Kind=UniqueConstraint; Constraint=UX_Space_JobAttempt_Tenant_Job_AttemptNo."
+  ],
+  "Scope": "Selected actual native database tests; controlled unknown/cancellation/exhaustion injections are distinguished in source from the coordinated native attempt-number regression",
+  "FinishedUtc": "2026-10-03T20:29:37.7045360Z"
+}

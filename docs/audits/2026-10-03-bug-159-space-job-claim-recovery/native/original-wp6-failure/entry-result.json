@@ -1,0 +1,71 @@
+{
+  "EntryId": "space-jobs-generation-retention",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_0ed75b9d_space",
+  "Role": "space",
+  "SourceSha": "e9fed72ba46015ddcf2be14c3c804487bad65a72",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "27D909E277A208C91F905A5F887CAACB70474F77C9003F56CAEAC91C13D60362",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "01660F354A4F153D68E37F98130531F119BE5BEE86BF6657FA74737B5C3E2655",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "01660F354A4F153D68E37F98130531F119BE5BEE86BF6657FA74737B5C3E2655",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 16968,
+    "ExitCode": 1,
+    "StartedUtc": "2026-10-03T20:11:24.4282502Z",
+    "FinishedUtc": "2026-10-03T20:12:05.4624156Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "442CEFACAB0FC8EAD9F68302C02171865F7FDF8EE1AD9E66A5AA617A4AF94542",
+    "StandardErrorSha256": "7A9503D8C6909FDD019316C09D4C408869AB88DF97D8627992EED36C9FBB3952",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-jobs-generation-retention",
+    "Provider": "PostgreSql",
+    "Success": false,
+    "Status": "Failed",
+    "FailureCodes": [
+      "ProcessFailed",
+      "RunNotSuccessful",
+      "CounterMismatch",
+      "NonPassingCase"
+    ],
+    "Counts": {
+      "Expected": 17,
+      "Total": 17,
+      "Passed": 16,
+      "NonPassing": 1
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt",
+      "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access",
+      "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again",
+      "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker",
+      "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun",
+      "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays",
+      "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor",
+      "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped",
+      "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts"
+    ],
+    "ReportSha256": "2038CECC286F9676FCAB7EE95E865A45AA40676AEEF79374B2A2FEEF9EA79D7F",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\private\\trx\\results.trx",
+  "ReportSha256": "2038CECC286F9676FCAB7EE95E865A45AA40676AEEF79374B2A2FEEF9EA79D7F",
+  "FailureCode": null,
+  "Success": false
+}

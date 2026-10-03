@@ -1,0 +1,1482 @@
+[
+  {
+    "Path": ".msCoverageSourceRootsMapping_CP6.Space.IntegrationTests",
+    "Length": 8462,
+    "Sha256": "8AEAD5C7577FFCE2FC405C8CFF6E0B52E9C1D0CBB8095DF6A93CB2AD9FA73DB8"
+  },
+  {
+    "Path": "AWSSDK.Core.dll",
+    "Length": 2729128,
+    "Sha256": "CD5A47FFF93BDFBC08F2222B1D256C0DD7D0F9DDB191FF8FC82990A609C221EA"
+  },
+  {
+    "Path": "AWSSDK.S3.dll",
+    "Length": 909992,
+    "Sha256": "543FABCD901744BD9E549B6D0A1D3F5E7E4723DF3FC440E8416AE765BED00FAE"
+  },
+  {
+    "Path": "Azure.Core.dll",
+    "Length": 423456,
+    "Sha256": "619CDA55095BB19F09382C0A07BC16517473CB0ECF224DAE7E52537D778AB022"
+  },
+  {
+    "Path": "Azure.Identity.dll",
+    "Length": 350768,
+    "Sha256": "4C2BABB3CEBDE608691D611F5C037CF73E833FE60505FF8D233175B3379BCDDC"
+  },
+  {
+    "Path": "BCrypt.Net-Next.dll",
+    "Length": 23040,
+    "Sha256": "115B9FAFF8B909A1A08B65B315058EB182C0C4C3A77C19FCD5F4DA9DA49D4A63"
+  },
+  {
+    "Path": "ClosedXML.dll",
+    "Length": 1691136,
+    "Sha256": "AB2C0487BA2F199986E6E47A295DB1ECCD2C9B78A55C8FC808C58B85FA59A8FD"
+  },
+  {
+    "Path": "ClosedXML.Parser.dll",
+    "Length": 192000,
+    "Sha256": "8D36E75B9B238E57DDD4122D0E2F6105ACDC873BCE2F297277AE0A25DDF610EB"
+  },
+  {
+    "Path": "CloudNative.CloudEvents.dll",
+    "Length": 62464,
+    "Sha256": "D0F0B3886002397C0B9B55CF50C308E6C98FD09CAC07120A1B31F259BBCC6054"
+  },
+  {
+    "Path": "CloudNative.CloudEvents.SystemTextJson.dll",
+    "Length": 20992,
+    "Sha256": "BDD3C3FFD09208BEDFCC0521E27811A21A862E6DC948E57EE74DB03FBB11926E"
+  },
+  {
+    "Path": "Confluent.Kafka.dll",
+    "Length": 444928,
+    "Sha256": "A4C33363D287D9DD992EC28269179E26847C7D465DA573E2E88FB87CEE3327B4"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-failed/v1/examples/missing-required.json",
+    "Length": 903,
+    "Sha256": "A9D5F0074C89464B9593CE5DF9EFB791724765B8D9490B5950BE924EE1F1DD4A"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-failed/v1/examples/pii-negative.json",
+    "Length": 1025,
+    "Sha256": "BD4A056852B3B189D2E1DE3F35B504A9A5222B547885601595B8E77EC82990FD"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-failed/v1/examples/unknown-optional.json",
+    "Length": 1056,
+    "Sha256": "A7E3E466443776B2A00BD7C888675899BF628CB8E7A8B29698FE28B4D725DC35"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-failed/v1/examples/valid.json",
+    "Length": 960,
+    "Sha256": "87657324458C47B2FD25645C6A67B2C10AD3982303F78AADBAFD1086AE246380"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-failed/v1/examples/wrong-type.json",
+    "Length": 962,
+    "Sha256": "B91B0F2E3EC586B85384755FBE62B6DF584ABA012469F6FA766153E21862ED81"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-failed/v1/schema.json",
+    "Length": 6439,
+    "Sha256": "09AA452AF9601E107133B848F1D4E98E8AC52CEC355D207B345E2DDEEED85452"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-requested/v1/examples/missing-required.json",
+    "Length": 836,
+    "Sha256": "47B7866FB89D0A9C55424689732E8B8281F051EB135B8370FB4CC00433B71EBE"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-requested/v1/examples/pii-negative.json",
+    "Length": 958,
+    "Sha256": "A5FF5175659461679DCF57A04924DE5D76971C83094CA3DAB2A3FBB01CCFD087"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-requested/v1/examples/unknown-optional.json",
+    "Length": 989,
+    "Sha256": "8293DF8986302D80F3656ABCCF01BEAA031C5CE6D85F8F41FEDBB99DF2768B06"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-requested/v1/examples/valid.json",
+    "Length": 893,
+    "Sha256": "FC5AADDA842E1056716AEECCF8F392235B7B90BA5C075468837211EBA1926828"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-requested/v1/examples/wrong-type.json",
+    "Length": 895,
+    "Sha256": "6D6C6C38BF4DD9D6FCAEE97A5DB4C6802F582689328AF273CB734149691AE6B0"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-requested/v1/schema.json",
+    "Length": 6020,
+    "Sha256": "F6F60FFDABCABD1B37D4D125A2D23B6D81EB1C11744229D0CE19EEEE4E62F2D2"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-synchronized/v1/examples/missing-required.json",
+    "Length": 898,
+    "Sha256": "BBE6F5CA8F4310580D14871A0B2634864D029B1F2E74E1BCE70A1293F04F88BC"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-synchronized/v1/examples/pii-negative.json",
+    "Length": 1020,
+    "Sha256": "2C8BED01338004AE6222DB2F28E06D465BA59CC424E11314C74943AFA6B5E16A"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-synchronized/v1/examples/unknown-optional.json",
+    "Length": 1051,
+    "Sha256": "701A3E317E663BD662487C7A7A230E3D1B0F7D2C9F93F9845E2E5340BCB5F398"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-synchronized/v1/examples/valid.json",
+    "Length": 955,
+    "Sha256": "3B9688958026B6FA1D70E3F458D5CD745B60BCF17B0E8AB76968BE22F01438F6"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-synchronized/v1/examples/wrong-type.json",
+    "Length": 957,
+    "Sha256": "B62AFD7F1C3A3EDD5EFC11AFD5C5BEA3AA1223181A36A3A13B504F7CE16B8DA4"
+  },
+  {
+    "Path": "contracts/events/erp/business-partner-synchronized/v1/schema.json",
+    "Length": 6383,
+    "Sha256": "8DB791845DD28968FE2BD9BEFA5689672C003F10385FCB36A6E44F292A2F649E"
+  },
+  {
+    "Path": "contracts/events/erp/contract-bundle.v1.json",
+    "Length": 9582,
+    "Sha256": "758C9B853FDACF3BD18C1822FB3D8DD603354618BEF0132E940CCF92CE659A20"
+  },
+  {
+    "Path": "contracts/events/erp/order-created/v1/examples/missing-required.json",
+    "Length": 1019,
+    "Sha256": "80B46E0F7510EB3BF633FB5287E401D7E692C355BC82EBB55BB7CA7DC5FC19E5"
+  },
+  {
+    "Path": "contracts/events/erp/order-created/v1/examples/pii-negative.json",
+    "Length": 1141,
+    "Sha256": "A7D1BC20BE4A5E69D90FC694F2885E05A7E2BC158507C8621C852F6C3FCE0D52"
+  },
+  {
+    "Path": "contracts/events/erp/order-created/v1/examples/unknown-optional.json",
+    "Length": 1172,
+    "Sha256": "C5543D02E445D112242A77C3518FFAA88A84D6AF93630B82131F54CF9C9A8D7B"
+  },
+  {
+    "Path": "contracts/events/erp/order-created/v1/examples/valid.json",
+    "Length": 1076,
+    "Sha256": "86F192D579F07B5CF2A59B6EB087A04084A1BB5F943A9D591245CDD434C26761"
+  },
+  {
+    "Path": "contracts/events/erp/order-created/v1/examples/wrong-type.json",
+    "Length": 1078,
+    "Sha256": "A216FFB72430949C20AC1C732073A48ACA60DB8B75D7F66B284BFC6D212D6F56"
+  },
+  {
+    "Path": "contracts/events/erp/order-created/v1/schema.json",
+    "Length": 7389,
+    "Sha256": "7367BF431035A017B19FEAF4EA21D4E416F2F155713C0780E2E3C24F1E47A575"
+  },
+  {
+    "Path": "contracts/events/erp/order-failed/v1/examples/missing-required.json",
+    "Length": 937,
+    "Sha256": "683D334C6666A4DB75F1751559F39AF9550754F9B7A266054AC0EC5D37F6E2C0"
+  },
+  {
+    "Path": "contracts/events/erp/order-failed/v1/examples/pii-negative.json",
+    "Length": 1059,
+    "Sha256": "8AD3369241CD4331B5D345759ADB517A2DD3916BAF03CFF92E1599CB04C73537"
+  },
+  {
+    "Path": "contracts/events/erp/order-failed/v1/examples/unknown-optional.json",
+    "Length": 1090,
+    "Sha256": "B9E950395816EF7DFA9BB46FBCC0FF188B817B4C758C2BE1AC1F5CF75486A90D"
+  },
+  {
+    "Path": "contracts/events/erp/order-failed/v1/examples/valid.json",
+    "Length": 994,
+    "Sha256": "C87EEDD72B16B998E687718351D59E9E4AC82C7A585228FCCDFB4320BC4E4380"
+  },
+  {
+    "Path": "contracts/events/erp/order-failed/v1/examples/wrong-type.json",
+    "Length": 996,
+    "Sha256": "63E10D24D77A1357DFA55A6A5EA236BDD7124111E4FC8C0B26A2CFDDF0BA7EE5"
+  },
+  {
+    "Path": "contracts/events/erp/order-failed/v1/schema.json",
+    "Length": 6714,
+    "Sha256": "F4C8BF33D0163FBCAC08BF350C349AC6979F9CE5ADD2367F53C3C8F7B8D30339"
+  },
+  {
+    "Path": "contracts/events/erp/order-requested/v1/examples/missing-required.json",
+    "Length": 1024,
+    "Sha256": "9E1F776B0E77A1AB8D5D905F1F592D16699B6F1579056A9846D3D88BD6A0517A"
+  },
+  {
+    "Path": "contracts/events/erp/order-requested/v1/examples/pii-negative.json",
+    "Length": 1146,
+    "Sha256": "B2B038BFACB7B97A0556495F98B7F449406F65C5D2F2F2CE48599110176D2C46"
+  },
+  {
+    "Path": "contracts/events/erp/order-requested/v1/examples/unknown-optional.json",
+    "Length": 1177,
+    "Sha256": "BFED5C85E3E388BAFC67B2170C1D2E70FA6E3FC73EAD17A1209F7F1528554959"
+  },
+  {
+    "Path": "contracts/events/erp/order-requested/v1/examples/valid.json",
+    "Length": 1081,
+    "Sha256": "E9CAAEAF802F9419FBEB1545A9A9EA9EE79349BFF59CDE3327A48155426ABD50"
+  },
+  {
+    "Path": "contracts/events/erp/order-requested/v1/examples/wrong-type.json",
+    "Length": 1083,
+    "Sha256": "EB55CC2AF08B35BD1EF11C893DC0C0462127F9EB1178F46D0317DA50AF1E98BF"
+  },
+  {
+    "Path": "contracts/events/erp/order-requested/v1/schema.json",
+    "Length": 7289,
+    "Sha256": "71958A8B37D6F156A979293614BB58AFDF1B810E73DC8DAD642AA4A31EF383DF"
+  },
+  {
+    "Path": "contracts/events/platform/contract-bundle.v1.json",
+    "Length": 7861,
+    "Sha256": "24DF72E9446723FA4CF3AD12B7E273FF937EF9B0ED154B8C926B1BAC6C7EAB63"
+  },
+  {
+    "Path": "contracts/events/platform/department-changed/v1/examples/missing-required.json",
+    "Length": 910,
+    "Sha256": "72ACF2376E15BC776641CBE345D90923079F11574B18DFFE3312FF1A609DFA13"
+  },
+  {
+    "Path": "contracts/events/platform/department-changed/v1/examples/pii-negative.json",
+    "Length": 965,
+    "Sha256": "C4456CF47076395D6DC735AB1B9AE0E202B46B2710D67D4C05613025A813BEBC"
+  },
+  {
+    "Path": "contracts/events/platform/department-changed/v1/examples/unknown-optional.json",
+    "Length": 986,
+    "Sha256": "F28B15E3572B6577B5E1A13C0B6DB9F4D6A2B1C4246D28F23CF1517EA488EF4D"
+  },
+  {
+    "Path": "contracts/events/platform/department-changed/v1/examples/valid.json",
+    "Length": 928,
+    "Sha256": "5D1C792F40BE9FFB1E25E1607A19A8E5FD43F3CB689F4E56FB790179B2780FF3"
+  },
+  {
+    "Path": "contracts/events/platform/department-changed/v1/examples/wrong-type.json",
+    "Length": 930,
+    "Sha256": "3F3E8AA67F105E3A3B617816BC383AB572B51D757E2A33156E0F51FB18D821D0"
+  },
+  {
+    "Path": "contracts/events/platform/department-changed/v1/schema.json",
+    "Length": 4997,
+    "Sha256": "CCC83AF2F626FB66288D5B2EAC3505EE342380DEA8C5FB527CC9BD3738CDA3E7"
+  },
+  {
+    "Path": "contracts/events/platform/permission-changed/v1/examples/missing-required.json",
+    "Length": 909,
+    "Sha256": "4E1A6B006FC08E215C3972691000CA7C16FEAE3B0BEE3AE5BEC9FF1D234E196F"
+  },
+  {
+    "Path": "contracts/events/platform/permission-changed/v1/examples/pii-negative.json",
+    "Length": 964,
+    "Sha256": "159578B9866995C6BE36E69A8815503DE6DB731B2CECB2C3CE0A3CD1BD6A1EE9"
+  },
+  {
+    "Path": "contracts/events/platform/permission-changed/v1/examples/unknown-optional.json",
+    "Length": 985,
+    "Sha256": "D74E8199C381F90080792C6908CF393F1156DE48167D99BDDF59ED81671359F9"
+  },
+  {
+    "Path": "contracts/events/platform/permission-changed/v1/examples/valid.json",
+    "Length": 927,
+    "Sha256": "A1F3A2DEBEB148662FB407B185AF88A8785F8264A7F4355F363C3F0F65FDA2B6"
+  },
+  {
+    "Path": "contracts/events/platform/permission-changed/v1/examples/wrong-type.json",
+    "Length": 929,
+    "Sha256": "098B3BA53244DDE3BABF15855EDF2DEF6DA38AEBC424592FA0BDDF20E8F3A7E7"
+  },
+  {
+    "Path": "contracts/events/platform/permission-changed/v1/schema.json",
+    "Length": 7550,
+    "Sha256": "230D70E4CC16DF6704CDA7C8CBF54D23BB64AD3E5335B3D9A26D1EF8924756B7"
+  },
+  {
+    "Path": "contracts/events/platform/tenant-changed/v1/examples/missing-required.json",
+    "Length": 786,
+    "Sha256": "613AB30E47E66E333E41E76C914A741F67028F9D5CDEFE48D0EDB9718C79FE10"
+  },
+  {
+    "Path": "contracts/events/platform/tenant-changed/v1/examples/pii-negative.json",
+    "Length": 841,
+    "Sha256": "F05AB5A2DA781DE55E8792C59A29C8B756A45C42A46B774F96597E7034FEDECB"
+  },
+  {
+    "Path": "contracts/events/platform/tenant-changed/v1/examples/unknown-optional.json",
+    "Length": 862,
+    "Sha256": "508DA385FD5AC62558BC1FD79959C09AD983C573078809B04C15CC9255F1E5AC"
+  },
+  {
+    "Path": "contracts/events/platform/tenant-changed/v1/examples/valid.json",
+    "Length": 804,
+    "Sha256": "0A6C9B151FA9DA487CADC4AB3397B6FB5E388FA61BF38895D67AC664E541F979"
+  },
+  {
+    "Path": "contracts/events/platform/tenant-changed/v1/examples/wrong-type.json",
+    "Length": 806,
+    "Sha256": "8AAB946B0AA7643A96C29513C41C9CCFB34EAA82D1E39EF470765042496074D7"
+  },
+  {
+    "Path": "contracts/events/platform/tenant-changed/v1/schema.json",
+    "Length": 3945,
+    "Sha256": "9DA76058825E09B19AE42F148E689F14A695BBD2E81C5C7CA0AF679180AD047D"
+  },
+  {
+    "Path": "contracts/events/platform/token-revoked/v1/examples/missing-required.json",
+    "Length": 1064,
+    "Sha256": "6C315EDE5F6440414B81D64D783D011453AC073A7963F133946134A95F1EFDEA"
+  },
+  {
+    "Path": "contracts/events/platform/token-revoked/v1/examples/pii-negative.json",
+    "Length": 1119,
+    "Sha256": "DDC1F5CD5147CBE1C892B52054377E81D4633072DB433B581BBA9C0C0040E513"
+  },
+  {
+    "Path": "contracts/events/platform/token-revoked/v1/examples/unknown-optional.json",
+    "Length": 1140,
+    "Sha256": "76E313A5807CA326395538B1EE4AD77A7A83F6010210AB3512E6B48981F5AA3B"
+  },
+  {
+    "Path": "contracts/events/platform/token-revoked/v1/examples/valid.json",
+    "Length": 1082,
+    "Sha256": "B34E129F5308A84B7204C14D6D31257ECE3BB367874811A510B41DAE6CC5978C"
+  },
+  {
+    "Path": "contracts/events/platform/token-revoked/v1/examples/wrong-type.json",
+    "Length": 1084,
+    "Sha256": "A36C77FECB619FB8CEF70DCDD9E1E666F1D867E3B393B05B1679136A7D035489"
+  },
+  {
+    "Path": "contracts/events/platform/token-revoked/v1/schema.json",
+    "Length": 4389,
+    "Sha256": "16A5ECAC3AD69ACA118B4A4700C33D53E7BB72A62E3E1EAC072F963DD77C9165"
+  },
+  {
+    "Path": "contracts/events/platform/user-changed/v1/examples/missing-required.json",
+    "Length": 995,
+    "Sha256": "F429B9D652A27124557B5992A16118F3E74975F057801D19116601B24B842E60"
+  },
+  {
+    "Path": "contracts/events/platform/user-changed/v1/examples/pii-negative.json",
+    "Length": 1050,
+    "Sha256": "7D2ED8391CC263C866F9402342E3383763C7C10F860F786FC6C229EA62FA7E32"
+  },
+  {
+    "Path": "contracts/events/platform/user-changed/v1/examples/unknown-optional.json",
+    "Length": 1071,
+    "Sha256": "3FAB88E05CE1469FFEC89E1ACFAD834AADA83F2322379C49838F3534D86C00EE"
+  },
+  {
+    "Path": "contracts/events/platform/user-changed/v1/examples/valid.json",
+    "Length": 1013,
+    "Sha256": "F5EE090FD26F826EEA3C187E1C8866AC8BDAA409C32CF7AD62F432B03EC93954"
+  },
+  {
+    "Path": "contracts/events/platform/user-changed/v1/examples/wrong-type.json",
+    "Length": 1015,
+    "Sha256": "97144AA20871E8371461C005900D5FDDF406EF37D3E6FC2A2433167896917690"
+  },
+  {
+    "Path": "contracts/events/platform/user-changed/v1/schema.json",
+    "Length": 6194,
+    "Sha256": "1631B88AAA240FE20300C19B880C010E0B290E451B7999A4EEB75AFE24ADE9C2"
+  },
+  {
+    "Path": "CP6.Core.dll",
+    "Length": 23086592,
+    "Sha256": "B4F7C3D0400E7F9BC97ED634C7C4BDC3262A837FD05BBAAD43548A56F9207E9C"
+  },
+  {
+    "Path": "CP6.Core.pdb",
+    "Length": 2985188,
+    "Sha256": "F965B31520E0FE866D42FE493BFEFCA7DA789BE0490164F85B7C03F6016B5B1D"
+  },
+  {
+    "Path": "CP6.Entity.dll",
+    "Length": 971776,
+    "Sha256": "71DC04281B0DD0ECBA14BFBB6AFBEA34D7E51280A91686F645516FAF3A04CC79"
+  },
+  {
+    "Path": "CP6.Entity.pdb",
+    "Length": 332852,
+    "Sha256": "E1E08539FFA5C1B5A3067060FC9F8A259E9F54983B7EED257F87C3B94B7D3BD6"
+  },
+  {
+    "Path": "CP6.Persistence.PostgreSql.dll",
+    "Length": 5460992,
+    "Sha256": "11D23BE8555A16C7DC621E7918E249F8F0C7C44D0829AF291B773C9F8979528D"
+  },
+  {
+    "Path": "CP6.Persistence.PostgreSql.pdb",
+    "Length": 326972,
+    "Sha256": "ED862E11F5570C261D2D17517976FBB2971E112F9092223FECCD198F141451AA"
+  },
+  {
+    "Path": "CP6.Platform.Abstractions.dll",
+    "Length": 11264,
+    "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+  },
+  {
+    "Path": "CP6.Platform.Contracts.dll",
+    "Length": 57856,
+    "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+  },
+  {
+    "Path": "CP6.Platform.EntityFramework.dll",
+    "Length": 107008,
+    "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+  },
+  {
+    "Path": "CP6.Platform.Messaging.dll",
+    "Length": 86528,
+    "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+  },
+  {
+    "Path": "CP6.Space.Application.dll",
+    "Length": 1720320,
+    "Sha256": "003F255B3BD8E80F779C7B50809900552FCDA70354B5CE339C749A1D0A39DD3E"
+  },
+  {
+    "Path": "CP6.Space.Application.pdb",
+    "Length": 334220,
+    "Sha256": "61148FDC6C273A4CC4645387FAAF65035836252EA1CC533E8EAD09491E58D809"
+  },
+  {
+    "Path": "CP6.Space.Contracts.dll",
+    "Length": 1732608,
+    "Sha256": "A2E76BADB992EE9945F3B48C9D7E901570C900F80A483F858E961FC2AC359DB6"
+  },
+  {
+    "Path": "CP6.Space.Contracts.pdb",
+    "Length": 235640,
+    "Sha256": "6D6EE430416BFD1974DE10E9FD6CBC9EF2A6E8D4223348BD4768B7E88D8C8416"
+  },
+  {
+    "Path": "CP6.Space.Domain.dll",
+    "Length": 485888,
+    "Sha256": "512181D7B974BC8AFA822EE788245DF3C60603897E68EBC4383C01EF88D14374"
+  },
+  {
+    "Path": "CP6.Space.Domain.pdb",
+    "Length": 155048,
+    "Sha256": "A9CC4B0334A6227C53B7135B1714A4837C66B331116B34CB5C46689C10807385"
+  },
+  {
+    "Path": "CP6.Space.Infrastructure.dll",
+    "Length": 8290304,
+    "Sha256": "EDE59C41DD1BC8A850556E0CDAFB710E225C60BA25E704AE53B6EA7C71A7CE74"
+  },
+  {
+    "Path": "CP6.Space.Infrastructure.pdb",
+    "Length": 1156152,
+    "Sha256": "86C62699ED0C1996349A7EA82912258A8D62B6CC0632095B3547F04C3B8FFAC2"
+  },
+  {
+    "Path": "CP6.Space.IntegrationTests.deps.json",
+    "Length": 94242,
+    "Sha256": "4BF9088B2BDCF7FBDE35C3498DA1EC0A07EF7DC34C7C2CD68C02C89ACF1C739C"
+  },
+  {
+    "Path": "CP6.Space.IntegrationTests.dll",
+    "Length": 2939392,
+    "Sha256": "C6C90537F4EE824DE46A2529E18225956234D4EF4333C6E0AC7D91ED06E1EF19"
+  },
+  {
+    "Path": "CP6.Space.IntegrationTests.pdb",
+    "Length": 514308,
+    "Sha256": "B9E4B8BA0F8BF14C3E70D47FB4E37CEAFE2B4A2BAD9CC7EC0AA7C04D95A9729C"
+  },
+  {
+    "Path": "CP6.Space.IntegrationTests.runtimeconfig.json",
+    "Length": 500,
+    "Sha256": "2CC52A300B205F829E3408F03F3F6ED7F3B7E78512626673A9D052067BF0A882"
+  },
+  {
+    "Path": "cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16440,
+    "Sha256": "B983773DC5112854FE411FA22223E929C7FA230A1A843FCC58023237ACA326F4"
+  },
+  {
+    "Path": "cs/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16944,
+    "Sha256": "26BE9BB3A8932BA04014E4AE9B8F20A0222A3E2C1A1B41CEC11D49BFF609CE72"
+  },
+  {
+    "Path": "cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21040,
+    "Sha256": "2F776BF0E946FFCD3F8A38AF2653137785EB55DB3CDB0C5A392BBE07D2CCC082"
+  },
+  {
+    "Path": "cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 20520,
+    "Sha256": "CD637384E1B3973BE3C18409ED886F8234E2E3C3A65EDF7D721D154E26AA64F3"
+  },
+  {
+    "Path": "cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 23624,
+    "Sha256": "12B0829D24F6F53F0E22FCBE370D3F91B67BBCACA7F0D82323D08CD7752F4519"
+  },
+  {
+    "Path": "Dapper.dll",
+    "Length": 246272,
+    "Sha256": "32EB214303B7DEA7792C462FDF528F46B52F3471F44E7F5E646FB90EFE94CBDF"
+  },
+  {
+    "Path": "Dapr.Client.dll",
+    "Length": 174080,
+    "Sha256": "D827719966D8334BC3874B41EF3E13D221FE8550AF45E60AF7E54F28EF24DAEE"
+  },
+  {
+    "Path": "Dapr.Common.dll",
+    "Length": 77824,
+    "Sha256": "6A30456A0813827FBD11FEEB7F354AA37FC4787850D3BD943AD2A36C3DF88B11"
+  },
+  {
+    "Path": "Dapr.Protos.dll",
+    "Length": 635904,
+    "Sha256": "BE1F11DB9C7403B4B969D5C15F0703A1A6BFC355A7BE5FF9E5700486C5E46A79"
+  },
+  {
+    "Path": "de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "D11F2A5262947FC1B6D426A6E1828325CEDF40FEE28E29ED856804EC9EF3F15C"
+  },
+  {
+    "Path": "de/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16952,
+    "Sha256": "403E0EAF8528656C0B47C31CD5FE9A25B8FD733ADCCB8E6D47A09F28658B5283"
+  },
+  {
+    "Path": "de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21048,
+    "Sha256": "7AD3C45F58AA4D030FD5D65D9D4AC9CABBC06D79D071C29727B5376CD3459D77"
+  },
+  {
+    "Path": "de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21064,
+    "Sha256": "CA308A5D314FA7D7E9CAE94083CC1F62375AC225094D289961D9BCE49B564B65"
+  },
+  {
+    "Path": "de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24136,
+    "Sha256": "E91489BB7EC3E2E97D19CF32BC5E3F7FC57E994E0315F0870FD2024CCB2CF337"
+  },
+  {
+    "Path": "DocumentFormat.OpenXml.dll",
+    "Length": 6349424,
+    "Sha256": "5A0C237A7467DDE85BCE402D124B7A07777531607837EB59EE62A9A79905FF43"
+  },
+  {
+    "Path": "DocumentFormat.OpenXml.Framework.dll",
+    "Length": 471152,
+    "Sha256": "DDAE1F34E78971A731193E459C3AED54314F93A54D51C2457E12CCC169BF5663"
+  },
+  {
+    "Path": "es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "DDBDD3BF9AFE6DDD3BABD4F0358AB2F4697FC5D5EC72B60CB772085AF9BF9859"
+  },
+  {
+    "Path": "es/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16952,
+    "Sha256": "7EC8E83494A8A50F1158C85D29B98E87C85D74AD5C4D94E2E9656E1CF60B0DFF"
+  },
+  {
+    "Path": "es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21032,
+    "Sha256": "67063A36CFCAE95B3EA4646B88C3CF3642F0914DFC06ECC5FC4D3F77E0E97E64"
+  },
+  {
+    "Path": "es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21040,
+    "Sha256": "B5340851BD9CB979D497F67123D09F91BA20AC9D2B3E0E17076FD2ABD615C933"
+  },
+  {
+    "Path": "es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24120,
+    "Sha256": "F19C11474E9074D5407F9B5A78CFB0BC1B4AEB90FFEC819A676F63509CEC443A"
+  },
+  {
+    "Path": "ExcelNumberFormat.dll",
+    "Length": 30720,
+    "Sha256": "D7C45B8E4E1027831E2FC8CDF941FAF51D28A66FEACFCAAA737DA73262E7B507"
+  },
+  {
+    "Path": "fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16952,
+    "Sha256": "044CF1373CC4527FFF78ADB5AD70489532303B58BA0DE2C059C422926AF46C4B"
+  },
+  {
+    "Path": "fr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16944,
+    "Sha256": "78D675CBAB45A56CC8916466BA13F16FAB18A44FD3AD4481C8F5F4E13B1F8B5D"
+  },
+  {
+    "Path": "fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21040,
+    "Sha256": "3FE869C312793444F9509AF17CA0B14F444CBDDEF60A47251F441A5D7859A05F"
+  },
+  {
+    "Path": "fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21048,
+    "Sha256": "5A8F4F4EA8B5A332883A67202877BD19100B21D766BF0443FFEC21610DFB2ECF"
+  },
+  {
+    "Path": "fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24096,
+    "Sha256": "BA030AF725DEA6BCEB72C4EB49CCC3520222A97EA0FAE812E16B7BA78450B98A"
+  },
+  {
+    "Path": "Google.Api.CommonProtos.dll",
+    "Length": 450048,
+    "Sha256": "329CF0F2B66C5CBF675321F0D6B33C17D1092E5761F32D3D2C1307A110C0DBBD"
+  },
+  {
+    "Path": "Google.Protobuf.dll",
+    "Length": 501400,
+    "Sha256": "E9B892AC667931162FFEFA411EF8DC3EAE777D634D8BFE8BEDDC28B1DE95A612"
+  },
+  {
+    "Path": "Grpc.Core.Api.dll",
+    "Length": 70296,
+    "Sha256": "5674C1203706B5A261E8BBD3499147D94FC80B5F077BF45F9934CA28A9C8574B"
+  },
+  {
+    "Path": "Grpc.Net.Client.dll",
+    "Length": 359064,
+    "Sha256": "C1A0F38D3815C6B7E508D73DC322F05B2318A9FF5C7DFFDC3657C3C269135C92"
+  },
+  {
+    "Path": "Grpc.Net.Common.dll",
+    "Length": 22168,
+    "Sha256": "3F73FF2444130E120EB1741C1EFBC77B9BBAB991DE88E944CD513439649B4B54"
+  },
+  {
+    "Path": "Grpc.Reflection.dll",
+    "Length": 77976,
+    "Sha256": "87795D17C1385E7C05469C447AD8EECC883C3C71B4804319C5918A5A490C8D57"
+  },
+  {
+    "Path": "Humanizer.dll",
+    "Length": 355944,
+    "Sha256": "D6853075547D7E303EFD60354D911A2FF18EDBA582CDA2FA59D91A2E5DCF9E98"
+  },
+  {
+    "Path": "it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "B023B85F510D1E5C6D5183BA51614EA1B6DEE5C25AB287773BEBC8CDB36E3168"
+  },
+  {
+    "Path": "it/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "A1AC732615A7DC5C59E01A1570DA23210EDE65EF24D5BB101294CF68481FE984"
+  },
+  {
+    "Path": "it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21048,
+    "Sha256": "B6B4B25E77F51F4EF5252512D1EA2CD8025FF388852EA93897B136BCC33BB5E0"
+  },
+  {
+    "Path": "it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21040,
+    "Sha256": "B9F6BE59CC1C05594F9B19DB9E72ADD58D6B37661397F81A62D4FEE37E7BE621"
+  },
+  {
+    "Path": "it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24096,
+    "Sha256": "93911F7A3C20CECD88DDB85DFDAAA9BF768E72A0FA5F745F3F3AE40DC78DA66B"
+  },
+  {
+    "Path": "ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "5DB61A11E8C40176F0293658E48BC955EBED6A3DD46D3808AACC762F71732544"
+  },
+  {
+    "Path": "ja/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 17440,
+    "Sha256": "1DED53CDFDE469BBB90D12F371891D3789A835E976557541C43166F027F7F111"
+  },
+  {
+    "Path": "ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 22088,
+    "Sha256": "F6D2748EE250F131374C306D7DC8A905464DBDA3F75E857D333946C7FF89494C"
+  },
+  {
+    "Path": "ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21552,
+    "Sha256": "C55083E71E3A5BB8DBE36E10EB12B301CCFD809E8FE1187350BEB6774C7F794B"
+  },
+  {
+    "Path": "ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24632,
+    "Sha256": "C2C077136E3CCFD8A249758979C0F754FE3C8A35B0C6478AA7A87EA38A817690"
+  },
+  {
+    "Path": "Json.More.dll",
+    "Length": 55296,
+    "Sha256": "574554F92F8C58C63FC767315C1FDF0FDF259BA7EEF96F5458062BA1CD5CD647"
+  },
+  {
+    "Path": "JsonPointer.Net.dll",
+    "Length": 26624,
+    "Sha256": "2A01ECBFE23CB9F05C1867C8BA0C05330BDBC44F5924350232BB3F57610E0C8B"
+  },
+  {
+    "Path": "JsonSchema.Net.dll",
+    "Length": 292352,
+    "Sha256": "ABFEACCC6CD0AF3DD573924337434999E2E880B2FC978B05BD632F1613BB38EC"
+  },
+  {
+    "Path": "ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16944,
+    "Sha256": "7026D9D93B3FB7B521FC4A35FCB8348020FE466C054309E8EC0D27E84A555CB9"
+  },
+  {
+    "Path": "ko/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16936,
+    "Sha256": "FDC5422BB6F99CB357515AC6EDD47C6F495DA1DA0ECA43B7F85FDB7FD1C2492A"
+  },
+  {
+    "Path": "ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21560,
+    "Sha256": "E5231E879C215210CFE0B6D8F5740F8ECB2B08AFA98EE4055FFF6BA10DDAC96C"
+  },
+  {
+    "Path": "ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21048,
+    "Sha256": "E90AC368F79EA0E99F44FE1133DB10AF08C3653749056362822B2C8F414CCD64"
+  },
+  {
+    "Path": "ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24120,
+    "Sha256": "4F427ED5C7C78043C7A9A7C9DC659133D96F6100CA9BA8719857709832E4BB58"
+  },
+  {
+    "Path": "Microsoft.AspNetCore.Cryptography.Internal.dll",
+    "Length": 52560,
+    "Sha256": "D0BA4AB9EBBC304A27643AA15E512F66A9D1D402C7BA7426AD454639DBE798F7"
+  },
+  {
+    "Path": "Microsoft.AspNetCore.DataProtection.Abstractions.dll",
+    "Length": 27472,
+    "Sha256": "31EF4529B1BB5EB3D10D7222524C3AC977FB2BC6AB2CF641A9AE4FB0643C51F7"
+  },
+  {
+    "Path": "Microsoft.AspNetCore.DataProtection.dll",
+    "Length": 189736,
+    "Sha256": "D54F0AE8E810853C8752C28DD0998111C03917E5535538A55031BE9F2D849E33"
+  },
+  {
+    "Path": "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll",
+    "Length": 24400,
+    "Sha256": "13F4FD79ADAD4C0B4BBD0E6D65DD36BF9998217A707FE99C0000B1883D82D0AF"
+  },
+  {
+    "Path": "Microsoft.Bcl.AsyncInterfaces.dll",
+    "Length": 14720,
+    "Sha256": "11C0E8FC6419910ACE4F55DDD2330F1373704F996C32AE4336C3F11D589D2C34"
+  },
+  {
+    "Path": "Microsoft.Data.SqlClient.dll",
+    "Length": 276128,
+    "Sha256": "0B8BDA81D16FECFACFC73893F367241B00FBDDC3B63F76B74CC6012375436B45"
+  },
+  {
+    "Path": "Microsoft.EntityFrameworkCore.Abstractions.dll",
+    "Length": 34616,
+    "Sha256": "EC81B528082D4D012178EA9F725D5B860C4E5C801CCDD8F1193B6E8729F6ED03"
+  },
+  {
+    "Path": "Microsoft.EntityFrameworkCore.dll",
+    "Length": 2535224,
+    "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+  },
+  {
+    "Path": "Microsoft.EntityFrameworkCore.InMemory.dll",
+    "Length": 210272,
+    "Sha256": "F4BBD92EE2A143AEE25A61AC79D8E0017A4A708C9EBA7817B0C30D0AA7C1A4F9"
+  },
+  {
+    "Path": "Microsoft.EntityFrameworkCore.Relational.dll",
+    "Length": 1995576,
+    "Sha256": "4BC2D9AD587455EBE4B6E8D60B4639B556AB4AF3F8A8C4A68DDA00ECFE306A4E"
+  },
+  {
+    "Path": "Microsoft.EntityFrameworkCore.SqlServer.dll",
+    "Length": 548664,
+    "Sha256": "6B6316970F12A420C89DC6D7988DE49D840052526201066EA80219E990EA83D7"
+  },
+  {
+    "Path": "Microsoft.Extensions.Caching.Memory.dll",
+    "Length": 45832,
+    "Sha256": "A6BC869C530A2ED7573575DD61E40F0A1079EF6074251AFE9701F927C5355CA8"
+  },
+  {
+    "Path": "Microsoft.Extensions.Caching.StackExchangeRedis.dll",
+    "Length": 40208,
+    "Sha256": "2FFA7C906B7F1E91D09FE8044E9C0728F750C33791FCC24566C0F423F5FC6586"
+  },
+  {
+    "Path": "Microsoft.Extensions.Configuration.Abstractions.dll",
+    "Length": 27472,
+    "Sha256": "D9943874039E2190A36E1FF23436C1ECA9BF4DC5A86EE2EE28A67614E92CCA03"
+  },
+  {
+    "Path": "Microsoft.Extensions.Configuration.Binder.dll",
+    "Length": 42280,
+    "Sha256": "C4E4B6116E7FEB30A9B4A0C294B083172DB870FCD236D38359868D513A1B4DD2"
+  },
+  {
+    "Path": "Microsoft.Extensions.Configuration.dll",
+    "Length": 43304,
+    "Sha256": "4F43FC53C114A963B8C4EE75C19D7FA91DE23E1243F245AD12E4D0E5021C8CD4"
+  },
+  {
+    "Path": "Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+    "Length": 64848,
+    "Sha256": "392E9B29BD2FDA4426DE916C7E3ED71D3E10984599D83AD96F4BBD6A13F0E7F6"
+  },
+  {
+    "Path": "Microsoft.Extensions.DependencyInjection.dll",
+    "Length": 94504,
+    "Sha256": "C61126FA0A573F7736BB5544449B971A01778B709689B65979DC26B1BFFFE613"
+  },
+  {
+    "Path": "Microsoft.Extensions.Diagnostics.Abstractions.dll",
+    "Length": 29992,
+    "Sha256": "6A2AAF92BCDFE0B6FECED6405E47B2101E1A6B6B5F8E954EB4ADE1270BE36BAC"
+  },
+  {
+    "Path": "Microsoft.Extensions.Diagnostics.dll",
+    "Length": 35112,
+    "Sha256": "84347CFE978185D034AFC94FFE4AEB335B7FAE51D0AD7F2F586E36597070F1DE"
+  },
+  {
+    "Path": "Microsoft.Extensions.Hosting.Abstractions.dll",
+    "Length": 51472,
+    "Sha256": "27F074952005F74BA37FC62756690255E5F743FF3F7426FCDEB65A0D6EC9FF77"
+  },
+  {
+    "Path": "Microsoft.Extensions.Http.dll",
+    "Length": 91944,
+    "Sha256": "831C1AEE76E724F942CE6650AADFA84931BB8A8A8883BF309DBCDB7297B9E177"
+  },
+  {
+    "Path": "Microsoft.Extensions.Logging.Abstractions.dll",
+    "Length": 65832,
+    "Sha256": "B54C06BAE479114565221CE27273555476B9C0EDC3511EB6C8DC3913108E5167"
+  },
+  {
+    "Path": "Microsoft.Extensions.Logging.dll",
+    "Length": 50472,
+    "Sha256": "72E5E6453E068A4503DE74C42406CAAC09FE937845DA255C217EA32C758C8117"
+  },
+  {
+    "Path": "Microsoft.Extensions.Options.ConfigurationExtensions.dll",
+    "Length": 21800,
+    "Sha256": "F020FFE7F3A665432EADB1997C5B03C73D86F0FD126293FF629497398646AC3B"
+  },
+  {
+    "Path": "Microsoft.Extensions.Options.dll",
+    "Length": 64296,
+    "Sha256": "71A7D96F252253EC66E260B5F769ADAE57166E5713AE942950715965386D64BC"
+  },
+  {
+    "Path": "Microsoft.Extensions.Primitives.dll",
+    "Length": 43856,
+    "Sha256": "3E7725E55414DF9CC486E66F0DFC3CEABA4B100FF4085199013D7598ECB08DB0"
+  },
+  {
+    "Path": "Microsoft.Identity.Client.dll",
+    "Length": 1046576,
+    "Sha256": "181623347707574F8D3577FD1857F2E30182C310B29866EDB8C3BCC4266D6013"
+  },
+  {
+    "Path": "Microsoft.Identity.Client.Extensions.Msal.dll",
+    "Length": 66592,
+    "Sha256": "C6FFB3B19D6EE6F9C4E430B28FEB009BE5F91714F6175C74C6BA8409B5634F4F"
+  },
+  {
+    "Path": "Microsoft.IdentityModel.Abstractions.dll",
+    "Length": 19528,
+    "Sha256": "194BADDDD6A2DABA1487831320ADD72C2DEE45E78CFC7CBCC19033623B6770A7"
+  },
+  {
+    "Path": "Microsoft.IdentityModel.JsonWebTokens.dll",
+    "Length": 172576,
+    "Sha256": "0FD04FEBDB80DE484FA757F2860D8F943B553614050A2AFB51C737F44661D23D"
+  },
+  {
+    "Path": "Microsoft.IdentityModel.Logging.dll",
+    "Length": 38472,
+    "Sha256": "D4A0170BE9376BAF8AE9BF4A3DC6D2391CE8ADB4182169FE790847E45777A2C1"
+  },
+  {
+    "Path": "Microsoft.IdentityModel.Protocols.dll",
+    "Length": 53280,
+    "Sha256": "AB2A0F532194A34FABD9B8F8ECE34AE321C45ED0435560EEE468164D57356085"
+  },
+  {
+    "Path": "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+    "Length": 137248,
+    "Sha256": "75126FAB5A7A7AD907BEC3221BC3408DADA61311ED509E2E5AAA0C6AAE076116"
+  },
+  {
+    "Path": "Microsoft.IdentityModel.Tokens.dll",
+    "Length": 392264,
+    "Sha256": "B3DD9D48778EEBEE8BDCEA881307875D9F1B49E713186F1AB93F2914F6554077"
+  },
+  {
+    "Path": "Microsoft.SqlServer.Server.dll",
+    "Length": 23976,
+    "Sha256": "A9DCA1B42BC875F966B78B2C0880E62B838F0ED6567166D7F1F07AE4B76EC4BF"
+  },
+  {
+    "Path": "Microsoft.TestPlatform.CommunicationUtilities.dll",
+    "Length": 137776,
+    "Sha256": "E38A359AA502BB1867D6092DCA9ABA5C130DD6F9111DECEA8156AA746B2C69E6"
+  },
+  {
+    "Path": "Microsoft.TestPlatform.CoreUtilities.dll",
+    "Length": 98336,
+    "Sha256": "F6E2495C44640D8915B2AEFC938F391C970300266DA014350FF35512A448EE84"
+  },
+  {
+    "Path": "Microsoft.TestPlatform.CrossPlatEngine.dll",
+    "Length": 316960,
+    "Sha256": "D55399BC66DC5B451D60AD82662452CA4A5F735918135DFC91CA9B5E3E38A6AB"
+  },
+  {
+    "Path": "Microsoft.TestPlatform.PlatformAbstractions.dll",
+    "Length": 51232,
+    "Sha256": "7B919CE4429C3B7B8FA2C36FD641B70B2F459A30ECB7C65FD80F437673CEC930"
+  },
+  {
+    "Path": "Microsoft.TestPlatform.Utilities.dll",
+    "Length": 67104,
+    "Sha256": "01FFD64D25A4BD905AEF9594D2AA700E020273A90A77A8720AF6BEC8B4FD5444"
+  },
+  {
+    "Path": "Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+    "Length": 17464,
+    "Sha256": "A753BC15F23A957F4F91A059376E4472C6BACD1503622DE4B9B2B079AD8EA289"
+  },
+  {
+    "Path": "Microsoft.VisualStudio.TestPlatform.Common.dll",
+    "Length": 248352,
+    "Sha256": "059AA2F335C3F7B14AC3FB7CAA1625BC2767581B9548E9FF53A246C7F2F94D6A"
+  },
+  {
+    "Path": "Microsoft.VisualStudio.TestPlatform.ObjectModel.dll",
+    "Length": 334392,
+    "Sha256": "F83E38EE9020BAA42E284E2299E233070FFA86CE4B10213583F9B7C8A521BCD0"
+  },
+  {
+    "Path": "Microsoft.Win32.SystemEvents.dll",
+    "Length": 26224,
+    "Sha256": "CA495BF6C86B7F092D624928101985A941532D149DCD8ACFEA170F8A53BE8850"
+  },
+  {
+    "Path": "NCrontab.dll",
+    "Length": 22528,
+    "Sha256": "2DFC5258A60C277C4279088EF7C555859FDD3F0055D42F40A644E3EC49287F68"
+  },
+  {
+    "Path": "Newtonsoft.Json.dll",
+    "Length": 712464,
+    "Sha256": "22C649F75FCE5BE7C7CCDA8880473B634EF69ECF33F5D1AB8AD892CAF47D5A07"
+  },
+  {
+    "Path": "Npgsql.dll",
+    "Length": 1409024,
+    "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  {
+    "Path": "Npgsql.EntityFrameworkCore.PostgreSQL.dll",
+    "Length": 623616,
+    "Sha256": "E0A329C94CA198007947D38E89B38FA7F332E65B8A63A2035D06143E759B7D3C"
+  },
+  {
+    "Path": "Otp.NET.dll",
+    "Length": 17920,
+    "Sha256": "3EAD7572047FC51B51DE2A4577B1D18ED8FAC4EBCAB733651D0B75912D28A4C1"
+  },
+  {
+    "Path": "Pipelines.Sockets.Unofficial.dll",
+    "Length": 167424,
+    "Sha256": "FA2CDB1D5FFBB2B06512C92CE8BD18918A1A996171D0A72DFC73035BC586A711"
+  },
+  {
+    "Path": "pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "0D1C05F1C3DFA21FBACA7537910BEA9A54A52A9A800CAF1C7D46691FB3A41EAA"
+  },
+  {
+    "Path": "pl/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16936,
+    "Sha256": "4B7843359AEA21962C73C7474D374410FE8D039A30AC7902F5F09A19A52C778A"
+  },
+  {
+    "Path": "pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21536,
+    "Sha256": "2F82D58FB67A8261AD060A2633B872C7867F48608368144DB3A93BF4DEBE2444"
+  },
+  {
+    "Path": "pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21048,
+    "Sha256": "911EF37EE7D78EB7132581AEAEB7753E81589600535C3C2244B1C447B61E1A5A"
+  },
+  {
+    "Path": "pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24136,
+    "Sha256": "88993B0056F183385A9E9E67931932BCE0E564D288164AD43B2CC1BF6CACFB1C"
+  },
+  {
+    "Path": "pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16416,
+    "Sha256": "F2292EF0DD72F1A95892714F17E5D49259452E27332D54DBFF308236A50D7D40"
+  },
+  {
+    "Path": "pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "119F896F964CE17DA4558C72B728D832FA19ABC2DCF12BBED7CC386B741EDD6B"
+  },
+  {
+    "Path": "pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21048,
+    "Sha256": "EA5D8ECFFCB9371D3E559E1D477EBDF5E7C3BD0663746FDCCEBD9330DF2B9008"
+  },
+  {
+    "Path": "pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 21048,
+    "Sha256": "B33E6B979805FA9047EBFB7722C4C3B07B1D3706ACC108883B8C30D77D10DB72"
+  },
+  {
+    "Path": "pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 24120,
+    "Sha256": "976FAE7C172B9170340633A3FE1A3F0EC6FC0731F4BF089DDAF611D60D446F40"
+  },
+  {
+    "Path": "RabbitMQ.Client.dll",
+    "Length": 352256,
+    "Sha256": "716CC2608CA92E9D286C23826D4033BA69ECC3889C10FD084DE7FFD6A8D8066B"
+  },
+  {
+    "Path": "RBush.dll",
+    "Length": 34816,
+    "Sha256": "047E48AB058A783A1D0021EDE9AC238E158ED43FA2368A15FD4CCD8F920AB6A1"
+  },
+  {
+    "Path": "ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 17440,
+    "Sha256": "4B29D6FADB5B709C5C90F25A8934E6C3C58027CF35AA28C6EF7100AB30F9CD39"
+  },
+  {
+    "Path": "ru/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 17464,
+    "Sha256": "67820043048CCA339E29B563B1ED9DA9F7D702B67C0CADD0B643F5781BC78789"
+  },
+  {
+    "Path": "ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 23072,
+    "Sha256": "4970C26BED952ECCEA42FBD3C7064BDD690EB5A7E538A77CE78FFED487877D9B"
+  },
+  {
+    "Path": "ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 23096,
+    "Sha256": "FCAEDB770D94BE752A6C9BEFE5D2B8219BB8D1BFCE83F2DC9011FA4B7EEBD00A"
+  },
+  {
+    "Path": "ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 26168,
+    "Sha256": "F7084DF5889CD4A8D141F73BE63B267519AE4DAA75C6394CF39C4A96FBA35D68"
+  },
+  {
+    "Path": "runtimes/linux-arm64/native/librdkafka.so",
+    "Length": 8292736,
+    "Sha256": "0EAA572CB4BDAF32414F922D62CFC6C7578DC0D9ACFA8DA6C101C5E291A8745B"
+  },
+  {
+    "Path": "runtimes/linux-x64/native/alpine-librdkafka.so",
+    "Length": 8970752,
+    "Sha256": "437D537F9D9B529ECAA75207A0FDFC6B4F31E1AA12A6DCB1FB2F7F727BEE3D73"
+  },
+  {
+    "Path": "runtimes/linux-x64/native/centos8-librdkafka.so",
+    "Length": 9001088,
+    "Sha256": "A4A7D1419355D3BB862EAC27C77E4D6A69C402EDE0681016B6174A54E50A07D7"
+  },
+  {
+    "Path": "runtimes/linux-x64/native/librdkafka.so",
+    "Length": 9006808,
+    "Sha256": "0B5F06EF5B892B0BA2DCC984CC9A74511563F07D2866CA616D31C3AE6C1C3A9B"
+  },
+  {
+    "Path": "runtimes/osx-arm64/native/librdkafka.dylib",
+    "Length": 6741040,
+    "Sha256": "6CFAC676AEE62F00AC5F2E9B8394A2AEC5DF07323B8608A153DE1185EF582431"
+  },
+  {
+    "Path": "runtimes/osx-x64/native/librdkafka.dylib",
+    "Length": 7720352,
+    "Sha256": "9A57E63E3CA98E6DB22DF1C98DF6A53D1F5CD8905B92B3D17CEB8773E15BCFE0"
+  },
+  {
+    "Path": "runtimes/unix/lib/net6.0/Microsoft.Data.SqlClient.dll",
+    "Length": 1561208,
+    "Sha256": "4E7F65622F34F4D9DD1908BC2B9269D0934B1B5F0B671609C6E0F0801F375288"
+  },
+  {
+    "Path": "runtimes/unix/lib/net6.0/System.Drawing.Common.dll",
+    "Length": 427112,
+    "Sha256": "89EA595CCB1FD1384480C1E30BD487C92AF5D06D3B06F295323EFF601ACD9019"
+  },
+  {
+    "Path": "runtimes/win-arm/native/Microsoft.Data.SqlClient.SNI.dll",
+    "Length": 440368,
+    "Sha256": "040F5F4E955DAB5E5C47DA53CBCC61AF20C6621E198104F1959AA847C99F56D7"
+  },
+  {
+    "Path": "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
+    "Length": 549936,
+    "Sha256": "F85BDD8AC148B89E42851C4A808FB3C94338FB520F72CD9F6F61168799C8F86F"
+  },
+  {
+    "Path": "runtimes/win-x64/native/libcrypto-3-x64.dll",
+    "Length": 4659712,
+    "Sha256": "2F113A12649AA6FC10BB7362BA31D245468E9C4E28D3DEEA9CCFB48D28515BDB"
+  },
+  {
+    "Path": "runtimes/win-x64/native/libcurl.dll",
+    "Length": 584192,
+    "Sha256": "F7B0B9152015D94455B96BD57A9014ED7E7AD5C90E3A09CE2E7A915E173C724B"
+  },
+  {
+    "Path": "runtimes/win-x64/native/librdkafka.dll",
+    "Length": 2323968,
+    "Sha256": "872EF2BB994B211EAC950C51E32ADF68FCDD8B097E94355753AE38B77FBD1F47"
+  },
+  {
+    "Path": "runtimes/win-x64/native/librdkafkacpp.dll",
+    "Length": 92160,
+    "Sha256": "61C634D939A913B8E4456DDBA1035A63951B98480F98140D05744209C6D5F38A"
+  },
+  {
+    "Path": "runtimes/win-x64/native/libssl-3-x64.dll",
+    "Length": 819200,
+    "Sha256": "E79C99FB8D9607BF27A0B093172E162BFBB6B70911F35F14DAAD50BF53A259D1"
+  },
+  {
+    "Path": "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
+    "Length": 564784,
+    "Sha256": "04F90F27EF907154649722BEF5A026E33E1FFB4E79D279C22B06CB7E90B45A22"
+  },
+  {
+    "Path": "runtimes/win-x64/native/msvcp140.dll",
+    "Length": 575056,
+    "Sha256": "7B8A6F283884E6448559DCF510B00C1A885BFB8E598EA05CD2C290C874657326"
+  },
+  {
+    "Path": "runtimes/win-x64/native/vcruntime140.dll",
+    "Length": 119888,
+    "Sha256": "642AE52687A7A6BFB03D0B20DC7E07F4B11CECA634F7EB7BA184D6711AB51A51"
+  },
+  {
+    "Path": "runtimes/win-x64/native/zlib1.dll",
+    "Length": 89088,
+    "Sha256": "2EEF591AD791C3A7665AB7BB11270290D8FD79A8BC8AE7B9B234FFEC25F2B051"
+  },
+  {
+    "Path": "runtimes/win-x64/native/zstd.dll",
+    "Length": 654336,
+    "Sha256": "89889966A22C86A844FEA0A0487A121AF25B2150B7E5B788A6845DB266DD449D"
+  },
+  {
+    "Path": "runtimes/win-x86/native/libcrypto-3.dll",
+    "Length": 2961408,
+    "Sha256": "50BFD976FA92030B21C83F424256B91A3D21D0B7FA8231645321EE6A5C13A57C"
+  },
+  {
+    "Path": "runtimes/win-x86/native/libcurl.dll",
+    "Length": 497152,
+    "Sha256": "D2F7408C0111051C8CBACF323CB94E484A0ED0BEE759220267E3945E8DAF75FE"
+  },
+  {
+    "Path": "runtimes/win-x86/native/librdkafka.dll",
+    "Length": 1858048,
+    "Sha256": "7770DDE13832F310613CBCE72AA1714F96A43DA96C80CA3B1AC60BE851A0BDDF"
+  },
+  {
+    "Path": "runtimes/win-x86/native/librdkafkacpp.dll",
+    "Length": 75776,
+    "Sha256": "C690B4C1FD0FCFD2DAEBF56C95E3EDE7AFEB19A1813149AC26C5B6F590BA1041"
+  },
+  {
+    "Path": "runtimes/win-x86/native/libssl-3.dll",
+    "Length": 678400,
+    "Sha256": "62BF3DBA11584CD8934B12DD7B4ABF8A8D1FBC64BC974E4181199240A062F8E4"
+  },
+  {
+    "Path": "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll",
+    "Length": 475680,
+    "Sha256": "E86B856F3327DCBBA2205FB041B98FF738B56B439B4159942D12D2128FE5CB2D"
+  },
+  {
+    "Path": "runtimes/win-x86/native/msvcp140.dll",
+    "Length": 449616,
+    "Sha256": "FAAA4870BF745444022F409BD494095B7B3796637CF9994AD9FAF7A43F393B88"
+  },
+  {
+    "Path": "runtimes/win-x86/native/vcruntime140.dll",
+    "Length": 91272,
+    "Sha256": "A088131E8EB4E2178789AF49B646AB463CF9A1F48DA51698448206DF21DB5C95"
+  },
+  {
+    "Path": "runtimes/win-x86/native/zlib1.dll",
+    "Length": 77312,
+    "Sha256": "5DF0B2FF0205CEB586FB721670C542CB3AE11347A4B8D2614209C1DDA607533A"
+  },
+  {
+    "Path": "runtimes/win-x86/native/zstd.dll",
+    "Length": 547840,
+    "Sha256": "66D40C938831E871FFE93141CC843DAE610E7D6CFE33C67DE8F76E05FE1987EF"
+  },
+  {
+    "Path": "runtimes/win/lib/net6.0/Microsoft.Data.SqlClient.dll",
+    "Length": 1645176,
+    "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+  },
+  {
+    "Path": "runtimes/win/lib/net6.0/Microsoft.Win32.SystemEvents.dll",
+    "Length": 53352,
+    "Sha256": "142CCE4ED8AC9DA22D69C38A6F22738ABFB22090DC9313E8B58E6F91978E89AF"
+  },
+  {
+    "Path": "runtimes/win/lib/net6.0/System.Drawing.Common.dll",
+    "Length": 454248,
+    "Sha256": "4D3001697DF50CCA54F32ED2DBBD1F3F415B48D5D756B1BF9500A43AE9B68DA0"
+  },
+  {
+    "Path": "runtimes/win/lib/net6.0/System.Runtime.Caching.dll",
+    "Length": 91240,
+    "Sha256": "2CA88A05EA536C3B9507F52378AAA69B2E67DD3C4DAD2FA36426245818F6CC77"
+  },
+  {
+    "Path": "runtimes/win/lib/net6.0/System.Security.Cryptography.ProtectedData.dll",
+    "Length": 33904,
+    "Sha256": "104CDC6D20406A144ABD373ED297EF803217C15012A0F22CACF6C676421D53EE"
+  },
+  {
+    "Path": "runtimes/win/lib/net6.0/System.Windows.Extensions.dll",
+    "Length": 43112,
+    "Sha256": "E72863F75A5ADB5697158F16B00369AD3A95710235647626675A5C070F10ECD9"
+  },
+  {
+    "Path": "runtimes/win/lib/net8.0/System.Security.Cryptography.Pkcs.dll",
+    "Length": 319784,
+    "Sha256": "D8E4B733FBAEC1FE0E808FD6391479F190B170DF03E309C5F07DC85445447D22"
+  },
+  {
+    "Path": "Scriban.dll",
+    "Length": 561664,
+    "Sha256": "168FC33419B54DAC46D79E43423942BBB93B54A786439BFC9F0DDBC014289E21"
+  },
+  {
+    "Path": "SixLabors.Fonts.dll",
+    "Length": 1135616,
+    "Sha256": "E1E2F107E7C78FB859F1B23383107A125ACD8B3A7470140850DAA6F6F6C45D9F"
+  },
+  {
+    "Path": "StackExchange.Redis.dll",
+    "Length": 838656,
+    "Sha256": "E78CBEE5A5A1071E45246C9B400DE869BA6C9BEC5C67870F0B99253923D67799"
+  },
+  {
+    "Path": "System.ClientModel.dll",
+    "Length": 28608,
+    "Sha256": "A06523028979F420ABC209BE62A06B3038289932A9942B1AD3CEE52AF2CDBC0A"
+  },
+  {
+    "Path": "System.Configuration.ConfigurationManager.dll",
+    "Length": 396424,
+    "Sha256": "D274BDD71F75F5005FCAEC028921F71D89CB6D622022D74D2E07897A3A1D141A"
+  },
+  {
+    "Path": "System.Diagnostics.DiagnosticSource.dll",
+    "Length": 191784,
+    "Sha256": "5DE9DC5C14E36E7798B69805B57B6D2C4136A6C2266C6DB2C2351EB8EDA792F6"
+  },
+  {
+    "Path": "System.Drawing.Common.dll",
+    "Length": 175216,
+    "Sha256": "98D07E6B1E7D3641A8608A360B3DC273FE8A0F78926B6E1E5F679A7A074D491F"
+  },
+  {
+    "Path": "System.IdentityModel.Tokens.Jwt.dll",
+    "Length": 91680,
+    "Sha256": "533B45AE2CEACF6CD62457579231D4FA76994BDDB12C3D7E00E1461DF2F5B06F"
+  },
+  {
+    "Path": "System.IO.Packaging.dll",
+    "Length": 142136,
+    "Sha256": "12DDC8BFF279FAD856551A74894DC52B80FA437D5D2B32722E70AE6899217B7C"
+  },
+  {
+    "Path": "System.Memory.Data.dll",
+    "Length": 21368,
+    "Sha256": "293CA5D86358FB2CE00DA02C63EEFCB344689FC0C636B61C97C3F1B15A80AA51"
+  },
+  {
+    "Path": "System.Runtime.Caching.dll",
+    "Length": 89200,
+    "Sha256": "77C77CE3B1FC7D098765AF31F19195522E2C675F63248B699F64441D299F3EAD"
+  },
+  {
+    "Path": "System.Security.Cryptography.Pkcs.dll",
+    "Length": 264864,
+    "Sha256": "E2352938ED4F664F770A5C98EF067CB145304456D014D2C311D725C95C8A21A9"
+  },
+  {
+    "Path": "System.Security.Cryptography.ProtectedData.dll",
+    "Length": 20592,
+    "Sha256": "D186453EEBBA21E19A90E4FEA16C11C3DF59ED9610201C5A3C6D636B9864D840"
+  },
+  {
+    "Path": "System.Security.Cryptography.Xml.dll",
+    "Length": 203560,
+    "Sha256": "B022F4A6AB061D80B94DF072BADFBABF00489181229AE5B74140AEB07D89513B"
+  },
+  {
+    "Path": "System.Security.Permissions.dll",
+    "Length": 104048,
+    "Sha256": "62068C0F6BFFB0EB4EC1C6A45A16784CAEE7565F6C5404D8342089F4FF4B3712"
+  },
+  {
+    "Path": "System.Windows.Extensions.dll",
+    "Length": 25712,
+    "Sha256": "810E8767D02D70AF173BC33CC1048FF31A7DF015FD46CF423A309CC89C50DC69"
+  },
+  {
+    "Path": "testhost.dll",
+    "Length": 49696,
+    "Sha256": "92CBDF52DB5249112F9F53F1FCDAF9F9AA3FCE467141C688A31A7FE095E4D304"
+  },
+  {
+    "Path": "testhost.exe",
+    "Length": 150576,
+    "Sha256": "FB63EB314F25584A532683DE7ABF4CA8A0B43103F3699F5D5D87317338EEDA76"
+  },
+  {
+    "Path": "tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16952,
+    "Sha256": "EF6BF78A0FD4613B1FFE8DC560B0F2F5CF2C05724FC8AED314F9CED18A90CF03"
+  },
+  {
+    "Path": "tr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "A4D0C1D36F10425E39CDAADE487220A9808E6F6954998644C57011FBEB3A33A0"
+  },
+  {
+    "Path": "tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 21024,
+    "Sha256": "6AD665B04F30253B05ACDBCF02196AF45332A95091E112E55D2F2379273D9CAC"
+  },
+  {
+    "Path": "tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 20536,
+    "Sha256": "96EFBCB535B02AD348598505210AE60B3D24BA7B8D364547EC89D353E891FAE2"
+  },
+  {
+    "Path": "tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 23608,
+    "Sha256": "5A392FBA8650B4B574E5E7C42615F5C6D2A879C3838CF5B5219856185B33C8F5"
+  },
+  {
+    "Path": "xunit.abstractions.dll",
+    "Length": 21928,
+    "Sha256": "3166DC70323FB30CCF1CEDB0FE86F2AD122C46D254542342D90386EFC4C9285C"
+  },
+  {
+    "Path": "xunit.assert.dll",
+    "Length": 187088,
+    "Sha256": "BCD9711B22D227AC8CD4C1568E72433A0F576D2EC8AAE64AC508081892015B1D"
+  },
+  {
+    "Path": "xunit.core.dll",
+    "Length": 70352,
+    "Sha256": "2F7FEEEC8C6DEC7DF684C25FB80AADB292B963D09723460F03D53C5AD2088ACC"
+  },
+  {
+    "Path": "xunit.execution.dotnet.dll",
+    "Length": 279760,
+    "Sha256": "E70FEBE547C15F8155DB3E2D95C3BA4445A59CBC21A3E7541AB22ED49D3DCF7B"
+  },
+  {
+    "Path": "xunit.runner.visualstudio.testadapter.dll",
+    "Length": 1251840,
+    "Sha256": "98A7395CD6ABD03D0AC8EEB82D720C24DB00602F047CA49BD6E88E77FC6D1153"
+  },
+  {
+    "Path": "zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16416,
+    "Sha256": "61E5B362940CA90E3B89A452218FB1D3882AEA679A1B73E6AD868D0AC1BB88FC"
+  },
+  {
+    "Path": "zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16928,
+    "Sha256": "4A8C0EF1C60069942082FA7493DBE683033E14E15DFF09C8BA8C230E2A4443C6"
+  },
+  {
+    "Path": "zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 20008,
+    "Sha256": "0B12A586CD3759757F641A6219F491AFF7C5FBDF603A6339B98FAA57CE6EB7C0"
+  },
+  {
+    "Path": "zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 20040,
+    "Sha256": "8FB34ECF4343A77647006F0AD1FB41E8C4DD48CF38FE97B93C345B743F538908"
+  },
+  {
+    "Path": "zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 23072,
+    "Sha256": "396CC3C959CFC9F24BBE7A2D38846DFB97B696A9610EB95234306CBCDEBD4F06"
+  },
+  {
+    "Path": "zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+    "Length": 16416,
+    "Sha256": "B411FE26D281EC982D0432F1B0BCE2C1C86F200D17E837BBBE91086F8E38270F"
+  },
+  {
+    "Path": "zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+    "Length": 16952,
+    "Sha256": "A9012F419D3B66A730D635760F63FEA1721A63B2105A4146C2D1309BB6F31B14"
+  },
+  {
+    "Path": "zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+    "Length": 20552,
+    "Sha256": "540BEE11C69534FC48BB4A9626683A6203E9F1F4BAE15FF72069EAF9F65F5E81"
+  },
+  {
+    "Path": "zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+    "Length": 20024,
+    "Sha256": "D69E7127DE46141B6406FD968D4A66271DDA99271701F912D56CE6813AF48CF2"
+  },
+  {
+    "Path": "zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+    "Length": 23096,
+    "Sha256": "B90F264A4D72987FD0AA0D11FC51DD248F831740BCD72D281045E16936FDA16B"
+  }
+]
