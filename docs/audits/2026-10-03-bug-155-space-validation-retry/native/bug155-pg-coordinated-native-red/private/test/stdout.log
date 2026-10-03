@@ -1,0 +1,22 @@
+Test run for D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_waiter_recovers_native_conflict_and_reuses_validation [30 s]
+  Error Message:
+   System.Threading.Tasks.TaskCanceledException : A task was canceled.
+  Stack Trace:
+     at CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.<Concurrent_waiter_recovers_native_conflict_and_reuses_validation>b__6_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\SpaceValidationSqlServerTests.cs:line 316
+   at CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.<Concurrent_waiter_recovers_native_conflict_and_reuses_validation>b__6_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\SpaceValidationSqlServerTests.cs:line 334
+   at CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.<Concurrent_waiter_recovers_native_conflict_and_reuses_validation>b__6_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\SpaceValidationSqlServerTests.cs:line 339
+   at CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.<Concurrent_waiter_recovers_native_conflict_and_reuses_validation>b__6_0(String connectionString, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\SpaceValidationSqlServerTests.cs:line 339
+   at CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\SpaceValidationSqlServerTests.cs:line 584
+   at CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_waiter_recovers_native_conflict_and_reuses_validation() in D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\SpaceValidationSqlServerTests.cs:line 295
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+
+
+Results File: D:\CP6\tmp\bug155-pg-coordinated-native-red\private\trx\results.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 30 s - CP6.Space.IntegrationTests.dll (net8.0)

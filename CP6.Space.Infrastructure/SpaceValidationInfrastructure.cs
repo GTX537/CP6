@@ -2,6 +2,7 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -88,6 +89,51 @@ public sealed class SpaceValidationService : ISpaceValidationService
         if (versionId == Guid.Empty)
             throw Invalid("A non-empty versionId is required.");
 
+        var relational = _context.Database.IsRelational();
+        if (relational)
+        {
+            if (_context.Database.CurrentTransaction is not null ||
+                System.Transactions.Transaction.Current is not null ||
+                System.Transactions.TransactionsDatabaseFacadeExtensions.GetEnlistedTransaction(_context.Database) is not null)
+            {
+                throw new InvalidOperationException(
+                    "Validation requests require their own transaction; a caller transaction cannot be retried or committed here.");
+            }
+
+            _context.ChangeTracker.DetectChanges();
+            if (_context.ChangeTracker.HasChanges())
+            {
+                throw new InvalidOperationException(
+                    "Validation requests require a clean context so caller changes are not saved or discarded by transaction recovery.");
+            }
+        }
+
+        const int maximumAttempts = 3;
+        for (var attempt = 1; ; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                return await RequestValidationAttemptAsync(versionId, cancellationToken);
+            }
+            catch (Exception exception) when (relational &&
+                DatabaseFailureClassifier.Classify(exception).CanRetryTransaction)
+            {
+                // The attempt's await-using must finish rollback/disposal before
+                // discarding its tracked writes and obtaining a fresh snapshot.
+                if (_context.Database.CurrentTransaction is not null)
+                    throw new InvalidOperationException("Validation recovery requires the failed transaction to be disposed first.", exception);
+                _context.ChangeTracker.Clear();
+                if (attempt >= maximumAttempts)
+                    throw;
+            }
+        }
+    }
+
+    private async Task<CreateSpaceValidationResponse> RequestValidationAttemptAsync(
+        Guid versionId,
+        CancellationToken cancellationToken)
+    {
         await using var transaction = _context.Database.IsRelational()
             ? await _context.Database.BeginTransactionAsync(
                 IsolationLevel.Serializable,

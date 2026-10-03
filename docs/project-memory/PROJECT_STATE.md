@@ -1,14 +1,12 @@
 # 项目当前状态
 
-## 2026-10-03：WP1–WP5 已交付，WP6 最终双库验收中
+## 2026-10-03：WP1–WP5/BUG155 已交付，WP6 接入最终验收
 
-[PR152](https://github.com/GTX537/CP6/pull/152) 已合入远端 main `cbbb7fc8e99290f6aba7589830a98a98726280e9`；WP5 合并后两库各 3/3 冒烟及 13 个自有库清理完成。父任务 #134 保持 Open，WP1–WP5 已交付，WP6 继续。
+WP1–WP5 已交付；BUG153 经 PR154、[BUG155](https://github.com/GTX537/CP6/issues/155) 经 [PR156](https://github.com/GTX537/CP6/pull/156) 正常合入远端 main，最新确认主线为 `2e1f90c629340944d95fadd7aee428f639304ed6`。BUG155 的 Space 校验完整事务恢复，两库各 9/9 校验、各 41/41 完整设计/发布通过，集中审查无实质阻断；合并后原并发/协调并发各 2/2 和两个自有库普通清理完成，Issue 已关闭，见[专项记录](../audits/2026-10-03-bug-155-space-validation-retry/README.md)。
 
-WP6 正式 Application 两库各 17 个必需入口通过，包含重复初始化、真实登录权限、两个 WebSocket 用户的通知隔离、原生新库恢复、恢复 worker 与幂等重放及旧游标续页；各两个正式临时库已清理并确认不存在。两库使用相同 261 个发布文件和 2009 个相关源码/配置输入。最终业务 Matrix、公共归档和 WP6 远端交付仍待完成，见 [WP6 实施记录](../audits/database-compatibility/WP6-IMPLEMENTATION.md)。分项不冒称单次 Full。
+WP6 已保存自有草稿并接入上述主线。修复前正式 Application 两库各 17/17、真实 SignalR 和原生恢复通过，原最终 PG Matrix 在 25 个入口后遇到 BUG155 的 34/35 失败；这些历史结果保持。生产程序集改变，新增六项将纳入必需清单，并以新构建/目录完成最终两库 Matrix 和 Application、证据归档、自有库清理及远端交付。父任务 #134 保持 Open，WP6 未完成。
 
-[BUG153](https://github.com/GTX537/CP6/issues/153) 已由 [PR154](https://github.com/GTX537/CP6/pull/154) 交付远端 main `59e09f6e68a36734c64144abfcefc81b7c9c8d9d` 并关闭；原 ERP 两库各 95/95、合并后原并发各 2/2 及两个自有库清理完成。WP6 已接入修复，生产订单逻辑未改，见 [交付原件](../audits/2026-10-03-bug-153-erp-concurrency-retry/native/post-merge/manifest.json)。
-
-全部本地执行，未启动/取消 Actions，未改工作流/保护或部署生产。下方记录保留各历史时点，以本节及 GitHub Issue 当前状态为准。
+全部本地执行；Actions 启动/取消均 0，无工作流/保护变更或生产部署，根工作区原改动保持。下方记录保留历史时点，以本节与 GitHub Issue 当前状态为准。
 
 ## 2026-10-03：WP5 本地验证与集中审查完成，待远端交付
 

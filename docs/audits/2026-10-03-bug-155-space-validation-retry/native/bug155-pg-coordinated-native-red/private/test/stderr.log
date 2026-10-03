@@ -1,0 +1,1 @@
+[xUnit.net 00:00:43.44]     CP6.Space.IntegrationTests.SpaceValidationSqlServerTests.Concurrent_waiter_recovers_native_conflict_and_reuses_validation [FAIL]

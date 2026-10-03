@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 4.1 sec).
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Application\CP6.Space.Application.csproj (in 6 ms).
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Entity\CP6.Entity.csproj (in 34 ms).
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Core\CP6.Core.csproj (in 14 ms).
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Domain\CP6.Space.Domain.csproj (in 1 ms).
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.IntegrationTests\CP6.Space.IntegrationTests.csproj (in 64 ms).
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 23 ms).
+  Restored D:\CP6\tmp\worktrees\bug-155-space-validation-retry\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 0.7 ms).
