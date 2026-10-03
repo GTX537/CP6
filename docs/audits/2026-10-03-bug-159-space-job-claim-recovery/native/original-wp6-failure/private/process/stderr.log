@@ -1,0 +1,1 @@
+[xUnit.net 00:00:06.30]     CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt [FAIL]

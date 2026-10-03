@@ -1,0 +1,487 @@
+{
+  "Task": "BUG-159",
+  "SourceBase": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "ArchivedUtc": "2026-10-03T20:46:18.9670439Z",
+  "Originals": [
+    {
+      "Path": "original-wp6-failure/entry-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\entry-result.json",
+      "Sha256": "54719FE2C457D392B0B1D419ECCD52DB722EB4A1F30ED1F17B6330C0743B809F",
+      "Length": 4457
+    },
+    {
+      "Path": "original-wp6-failure/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\runtime-artifact-before.json",
+      "Sha256": "01660F354A4F153D68E37F98130531F119BE5BEE86BF6657FA74737B5C3E2655",
+      "Length": 56079
+    },
+    {
+      "Path": "original-wp6-failure/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\runtime-artifact-after.json",
+      "Sha256": "01660F354A4F153D68E37F98130531F119BE5BEE86BF6657FA74737B5C3E2655",
+      "Length": 56079
+    },
+    {
+      "Path": "original-wp6-failure/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\private\\trx\\results.trx",
+      "Sha256": "2038CECC286F9676FCAB7EE95E865A45AA40676AEEF79374B2A2FEEF9EA79D7F",
+      "Length": 45820
+    },
+    {
+      "Path": "original-wp6-failure/private/process/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\private\\process\\stdout.log",
+      "Sha256": "442CEFACAB0FC8EAD9F68302C02171865F7FDF8EE1AD9E66A5AA617A4AF94542",
+      "Length": 6451
+    },
+    {
+      "Path": "original-wp6-failure/private/process/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\entries\\space-jobs-generation-retention\\private\\process\\stderr.log",
+      "Sha256": "7A9503D8C6909FDD019316C09D4C408869AB88DF97D8627992EED36C9FBB3952",
+      "Length": 139
+    },
+    {
+      "Path": "original-wp6-failure/summary.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\summary.json",
+      "Sha256": "AFB53D4AE12AC5D43C00DAFA12945C4E4FE3C313B9650BF03A5047E3F5A281E5",
+      "Length": 589959
+    },
+    {
+      "Path": "original-wp6-failure/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-floor-fix\\source-inputs.json",
+      "Sha256": "3364CFAEF5BDD671EF563C35171EC487B3DC989CE728EB83F03360D17B4ADA82",
+      "Length": 453549
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\result.json",
+      "Sha256": "A3530F2572E156C08D4AFA3BD183BAA8DE2D0D032A32301B8CA54DCB94837A20",
+      "Length": 1826
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\runtime-artifact-after.json",
+      "Sha256": "DDF11988C979690681259E97BF737B93ED3EECA34F1BF959A64B2AFA5827E246",
+      "Length": 52985
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\runtime-artifact-before.json",
+      "Sha256": "DDF11988C979690681259E97BF737B93ED3EECA34F1BF959A64B2AFA5827E246",
+      "Length": 52985
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\source-inputs.json",
+      "Sha256": "7A40595EC31F1655696C5D1448260D9FEE42A82F36BEB3FED73338137BB4BC2A",
+      "Length": 276449
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\build-result.json",
+      "Sha256": "3D690E708A0E28AFD4C306E165783B98F93CE02962C0A8FAD178F53A9764693E",
+      "Length": 394168
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\project-01.json",
+      "Sha256": "59CC9043AF46B4B572428255F3C39CA30F71BBC454EC554484F681B957F545DC",
+      "Length": 360066
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\private\\01-build\\stdout.log",
+      "Sha256": "C8A2D5CF1B35A0F6DBA59A8A3A6685533E95B3156D45303C52AC4386E31EF861",
+      "Length": 1204
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "3A73FDE189248F323C725FBD6A3311256CC0310617A16FC42220F72D73599F68",
+      "Length": 1036
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\private\\test\\stderr.log",
+      "Sha256": "E9994F676D50870338760FBDDF0766492F0C8DDE79DCFD9E6F9BA078BAD16828",
+      "Length": 139
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\private\\test\\stdout.log",
+      "Sha256": "F429A6ED2C483FCD52A449FFD7CA499966A02EF98FA3CC100C34C8B3BF6C131E",
+      "Length": 7043
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-coordinated-native-red\\private\\trx\\results.trx",
+      "Sha256": "0D445FC2EFD3958E269674F4F0327A65DE7B490BE1488124734E87617C990720",
+      "Length": 18338
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\exact-case-set-audit.json",
+      "Sha256": "42C371C4E78149BD2FF00EEC44E1C0F8F39D424D853FE45BD4615CE7F96FB2A7",
+      "Length": 3390
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\result.json",
+      "Sha256": "DB486CAA587C9404E752BE3BEC0FE1963805D4DE92C618C3EA1D6E6D110B2B65",
+      "Length": 7229
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\runtime-artifact-after.json",
+      "Sha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "Length": 52985
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\runtime-artifact-before.json",
+      "Sha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "Length": 52985
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\source-inputs.json",
+      "Sha256": "A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7",
+      "Length": 276449
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\build-result.json",
+      "Sha256": "5DE000B4C364031883296A3457ABB70A6C4F26CA68485C0F16076F65CF70F254",
+      "Length": 394168
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\project-01.json",
+      "Sha256": "EFF7AE2025CE9987D25094D7235399D2CA003046E2978589326C7A8DAD50232C",
+      "Length": 360066
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\private\\01-build\\stdout.log",
+      "Sha256": "606CC7F3AA838BFC3F297824FC6FE190F96C45EE9924CE7F3E9CB61FF06C850B",
+      "Length": 1204
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "2AD9967F2280D0195AD457A92FE6A353A8492625846632386DF6DFC446EFE4BC",
+      "Length": 82
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\private\\test\\stdout.log",
+      "Sha256": "BBC4915235816EA2E342376550DE2ABED9A255CD946E90F450869C30103B391C",
+      "Length": 433
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-pg-jobs-exact-green\\private\\trx\\results.trx",
+      "Sha256": "854A1593302F64A5F1702CB829B1AEF7523AE8BAA6C0750426F374E329DD561C",
+      "Length": 43354
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\exact-case-set-audit.json",
+      "Sha256": "DD0322E6B1050DD1652B35D42927CA409DB5DF92A9D0C7CBBAE2E38886E4E5B1",
+      "Length": 3389
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\result.json",
+      "Sha256": "8C7C0BA0F2C24B32384CF95C86C086C0E64B3A11B21CAE8170041CA23ABD1D95",
+      "Length": 7098
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\runtime-artifact-after.json",
+      "Sha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "Length": 52985
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\runtime-artifact-before.json",
+      "Sha256": "45120859AAEA5113C225945E36E78098DED276B27E83309685B61A8D44F6BE13",
+      "Length": 52985
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\source-inputs.json",
+      "Sha256": "A7C99E1BF0E50C03A6A3672B5742444A920E7A222F17599661A3FD2AF32817B7",
+      "Length": 276449
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\private\\test\\stdout.log",
+      "Sha256": "3E112CEEC63CF7A61CF4B1C1725599DE92C9EC194EB49C0B1910F0295FE85BBD",
+      "Length": 434
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-sql-jobs-exact-green\\private\\trx\\results.trx",
+      "Sha256": "D05427A53BA4ABD78467564DAAE85A01F84146FD113102D5382AF386B540D2D1",
+      "Length": 202486
+    },
+    {
+      "Path": "execution/Invoke-Bug159Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug159Tests.ps1",
+      "Sha256": "24B38D317EE9F1B90A30C6831189DFB817B629D11BB0315673E3A091703D1CF1",
+      "Length": 5972
+    },
+    {
+      "Path": "execution/Invoke-Bug159Groups.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug159Groups.ps1",
+      "Sha256": "1788632728674DC8BF920B6DCFB686BAA5C5F60D5C80D854CF63E012C5E1E1E8",
+      "Length": 2778
+    },
+    {
+      "Path": "execution/New-Bug159Databases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\New-Bug159Databases.ps1",
+      "Sha256": "401426991C8BEF5E705F05123115D42F6D9DCD6A567E124A1EAFA60AF00DFEA5",
+      "Length": 4274
+    },
+    {
+      "Path": "execution/Test-Bug159LocalEvidence.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Test-Bug159LocalEvidence.ps1",
+      "Sha256": "7F28118D5E43A98DB26885F655FAD93C10B858655EE3451ACEEA068BDCF46234",
+      "Length": 5769
+    },
+    {
+      "Path": "execution/bug159-review.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-review.md",
+      "Sha256": "FC9D18A7E6CE287BA88C8D050B11898A248F232043177C2F57E87132B17CAEC5",
+      "Length": 10460
+    },
+    {
+      "Path": "execution/bug159-exact-local-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-exact-local-verification.json",
+      "Sha256": "64F7C5D19EF68E1BD1C7714B3BD5A1B99C9EF1AE62ADAA9635399655BF377BBD",
+      "Length": 1978
+    },
+    {
+      "Path": "execution/bug159-databases-created.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-databases-created.json",
+      "Sha256": "7840B990FA9F1B6952405893FAE3B1A76A6001FDD9D449A2583CD6A6049E194C",
+      "Length": 226
+    },
+    {
+      "Path": "execution/bug159-task-start-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-task-start-workflow-input-inspection.json",
+      "Sha256": "F6BB28FBB0E09895BA6DF8A1C33978DE4F6689E6B63352B4BF8FD07F903FDF3C",
+      "Length": 6758
+    },
+    {
+      "Path": "execution/bug159-original-failure-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug159-original-failure-verification.json",
+      "Sha256": "C3902E1CB0E71F2822A429203CE16D6AEAD39DCC21E2248ED3877B92D9FC61F6",
+      "Length": 543
+    },
+    {
+      "Path": "execution/wp6-failed-claim-matrix-owned-cleanup.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-failed-claim-matrix-owned-cleanup.json",
+      "Sha256": "C2318444E32EDC783702162884B3059979F3BC70596FF0E5D453BED96B08AD68",
+      "Length": 3942
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityEntries.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityEntries.psm1",
+      "Sha256": "5CF53766FEAC54CEF69C6F1768C75D508EC99EA1DB34D80E85DF52647AF94299",
+      "Length": 24992
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityProcess.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityProcess.psm1",
+      "Sha256": "B95CDE488E14B7D4AE986458FBAE589934912DBDDA1EC08413D945C6DAF56B25",
+      "Length": 6892
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityResults.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityResults.psm1",
+      "Sha256": "AD66A8EDA85E1283649AF010043D85B1D1744008837EB01E529FB7D79491D9C1",
+      "Length": 20078
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityLifecycle.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityLifecycle.psm1",
+      "Sha256": "BF192F54A51140FB3162BDDD15553EA565972CA31A105B77C026A7EC4E972D39",
+      "Length": 38371
+    },
+    {
+      "Path": "execution/original-required-cases.json",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\eng\\database-compatibility\\required-cases.json",
+      "Sha256": "1EA3B68A17F79DFACC3FF5A85D20D45DD7BDA4603A5566BD9BC9C76A1741307C",
+      "Length": 245873
+    }
+  ],
+  "DerivedTrxCounts": [
+    {
+      "Path": "original-wp6-failure/private/trx/results.trx",
+      "Sha256": "2038CECC286F9676FCAB7EE95E865A45AA40676AEEF79374B2A2FEEF9EA79D7F",
+      "Total": 17,
+      "Passed": 16,
+      "Failed": 1,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe",
+        "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt"
+      ]
+    },
+    {
+      "Path": "bug159-pg-coordinated-native-red/private/trx/results.trx",
+      "Sha256": "0D445FC2EFD3958E269674F4F0327A65DE7B490BE1488124734E87617C990720",
+      "Total": 1,
+      "Passed": 0,
+      "Failed": 1,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict"
+      ]
+    },
+    {
+      "Path": "bug159-pg-jobs-exact-green/private/trx/results.trx",
+      "Sha256": "854A1593302F64A5F1702CB829B1AEF7523AE8BAA6C0750426F374E329DD561C",
+      "Total": 23,
+      "Passed": 23,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe",
+        "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_deadlock_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_serialization_failure_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_unknown_unique_constraint_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt"
+      ]
+    },
+    {
+      "Path": "bug159-sql-jobs-exact-green/private/trx/results.trx",
+      "Sha256": "D05427A53BA4ABD78467564DAAE85A01F84146FD113102D5382AF386B540D2D1",
+      "Total": 23,
+      "Passed": 23,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe",
+        "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication",
+        "CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps",
+        "CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_honors_cancellation",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_is_bounded_and_rolls_back",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_deadlock_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_serialization_failure_retries_the_whole_transaction",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_unknown_unique_constraint_is_not_retried",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor",
+        "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt"
+      ]
+    }
+  ],
+  "Scope": "Original WP6 native 23505 failure, deterministic actual native 23505 RED, exact two-provider 23-case GREEN results, review and actual execution modules are retained byte-for-byte. Original 17 and six new cases are checked as one exact group per provider; injected recovery controls are not native deadlock reproductions. Remote delivery, post-merge smoke and cleanup remain pending.",
+  "Excluded": "Private credentials, connection/ownership receipts, database state, JWT/Cookie and backups are excluded."
+}

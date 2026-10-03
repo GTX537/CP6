@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9ec84763-0d0f-4ff5-b407-e521a2e99922" name="tt@LAPTOP-3QQ44FJS 2026-10-03 16:29:36" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T16:29:36.5928921-04:00" queuing="2026-10-03T16:29:36.5928923-04:00" start="2026-10-03T16:29:22.7560368-04:00" finish="2026-10-03T16:29:36.5968382-04:00" />
+  <TestSettings name="default" id="de4cfa96-1d9a-4379-a0dd-7b5fabfa31a7">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_16_29_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4c07a77a-1c20-484a-89f2-679305479ba8" testId="3ea57d1f-587a-cdcf-5ce1-250af8b0a3c6" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4768901" startTime="2026-10-03T16:29:36.0234566-04:00" endTime="2026-10-03T16:29:36.5064570-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c07a77a-1c20-484a-89f2-679305479ba8">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+BUG159 claim native failure: SQLSTATE=23505; Kind=UniqueConstraint; Constraint=UX_Space_JobAttempt_Tenant_Job_AttemptNo.</StdOut>
+        <ErrorInfo>
+          <Message>Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_JobAttempt_Tenant_Job_AttemptNo"違反となります&#xD;
+&#xD;
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.</Message>
+          <StackTrace>   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+   at CP6.Space.Infrastructure.EfSpaceJobLeaseStore.TryClaimNextCoreAsync(String workerId, String processorVersion, TimeSpan leaseDuration, IReadOnlyCollection`1 supportedJobTypes, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.Infrastructure\EfSpaceJobLedger.cs:line 236&#xD;
+   at CP6.Space.Infrastructure.EfSpaceJobLeaseStore.TryClaimNextCoreAsync(String workerId, String processorVersion, TimeSpan leaseDuration, IReadOnlyCollection`1 supportedJobTypes, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.Infrastructure\EfSpaceJobLedger.cs:line 244&#xD;
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs:line 57&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs:line 60&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs:line 68&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext() in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs:line 68&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action) in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 495&#xD;
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action) in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs:line 496&#xD;
+   at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict() in D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs:line 19&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.Consume(Boolean async, Exception firstException)&#xD;
+   at Npgsql.NpgsqlDataReader.Consume(Boolean async, Exception firstException)&#xD;
+   at Npgsql.NpgsqlDataReader.Close(Boolean async, Boolean connectionClosing, Boolean isDisposing)&#xD;
+   at Npgsql.NpgsqlDataReader.Close(Boolean async, Boolean connectionClosing, Boolean isDisposing)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.CloseAsync()&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.DisposeAsync()&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.DisposeAsync()&#xD;
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict" storage="d:\cp6\tmp\worktrees\bug-159-space-job-claim-recovery\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="3ea57d1f-587a-cdcf-5ce1-250af8b0a3c6">
+      <Execution id="4c07a77a-1c20-484a-89f2-679305479ba8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Claim_waiter_recovers_native_attempt_number_conflict" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3ea57d1f-587a-cdcf-5ce1-250af8b0a3c6" executionId="4c07a77a-1c20-484a-89f2-679305479ba8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.13]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:13.17]       Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.&#xD;
+[xUnit.net 00:00:13.17]       ---- Npgsql.PostgresException : 23505: 重複したキー値は一意性制約"UX_Space_JobAttempt_Tenant_Job_AttemptNo"違反となります&#xD;
+[xUnit.net 00:00:13.17]       &#xD;
+[xUnit.net 00:00:13.17]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+[xUnit.net 00:00:13.17]       Stack Trace:&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]            at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.Infrastructure\EfSpaceJobLedger.cs(236,0): at CP6.Space.Infrastructure.EfSpaceJobLeaseStore.TryClaimNextCoreAsync(String workerId, String processorVersion, TimeSpan leaseDuration, IReadOnlyCollection`1 supportedJobTypes, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.Infrastructure\EfSpaceJobLedger.cs(244,0): at CP6.Space.Infrastructure.EfSpaceJobLeaseStore.TryClaimNextCoreAsync(String workerId, String processorVersion, TimeSpan leaseDuration, IReadOnlyCollection`1 supportedJobTypes, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs(57,0): at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs(60,0): at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs(68,0): at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs(68,0): at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.&lt;&gt;c__DisplayClass1_0.&lt;&lt;Claim_waiter_recovers_native_attempt_number_conflict&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:13.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs(495,0): at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action)&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.cs(496,0): at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.WithDatabaseAsync(Func`3 action)&#xD;
+[xUnit.net 00:00:13.17]         D:\CP6\tmp\worktrees\bug-159-space-job-claim-recovery\CP6.Space.IntegrationTests\SpaceJobSqlServerTests.ClaimRecoveryTests.cs(19,0): at CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict()&#xD;
+[xUnit.net 00:00:13.17]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.18]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:13.18]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:13.18]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:13.18]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.18]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.18]            at Npgsql.NpgsqlDataReader.Consume(Boolean async, Exception firstException)&#xD;
+[xUnit.net 00:00:13.18]            at Npgsql.NpgsqlDataReader.Consume(Boolean async, Exception firstException)&#xD;
+[xUnit.net 00:00:13.18]            at Npgsql.NpgsqlDataReader.Close(Boolean async, Boolean connectionClosing, Boolean isDisposing)&#xD;
+[xUnit.net 00:00:13.18]            at Npgsql.NpgsqlDataReader.Close(Boolean async, Boolean connectionClosing, Boolean isDisposing)&#xD;
+[xUnit.net 00:00:13.18]            at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.CloseAsync()&#xD;
+[xUnit.net 00:00:13.18]            at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.DisposeAsync()&#xD;
+[xUnit.net 00:00:13.18]            at Microsoft.EntityFrameworkCore.Storage.RelationalDataReader.DisposeAsync()&#xD;
+[xUnit.net 00:00:13.18]            at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.18]       Output:&#xD;
+[xUnit.net 00:00:13.18]         Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP5 owner verified; shared database.&#xD;
+[xUnit.net 00:00:13.18]         CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+[xUnit.net 00:00:13.18]         SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+[xUnit.net 00:00:13.18]         BUG159 claim native failure: SQLSTATE=23505; Kind=UniqueConstraint; Constraint=UX_Space_JobAttempt_Tenant_Job_AttemptNo.&#xD;
+[xUnit.net 00:00:13.18]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T16:29:36.5082800-04:00">
+        <Text>[xUnit.net 00:00:13.17]     CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

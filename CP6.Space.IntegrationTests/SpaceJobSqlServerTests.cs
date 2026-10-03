@@ -4,12 +4,13 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Xunit.Abstractions;
 
 namespace CP6.Space.IntegrationTests;
 
 [Collection(SpaceSqlServerCollection.Name)]
-public sealed class SpaceJobSqlServerTests(SpaceRelationalFixture fixture, ITestOutputHelper output)
+public sealed partial class SpaceJobSqlServerTests(SpaceRelationalFixture fixture, ITestOutputHelper output)
 {
     private static readonly DateTime Now =
         new(2026, 7, 26, 14, 0, 0, DateTimeKind.Utc);
@@ -521,16 +522,18 @@ public sealed class SpaceJobSqlServerTests(SpaceRelationalFixture fixture, ITest
     private SpaceContext CreateContext(
         string connectionString,
         Guid tenantId,
-        ISpaceClock clock)
+        ISpaceClock clock,
+        params IInterceptor[] interceptors)
     {
         if (SpaceRelationalFixture.IsSelected)
             return fixture.CreateSpaceContext(new TestExecutionContext(tenantId, Guid.NewGuid()), clock,
-                new SpaceNativeFailureObserver(fixture.Database.Provider, message => output.WriteLine(message), "job-business"));
+                interceptors.Prepend(new SpaceNativeFailureObserver(fixture.Database.Provider, message => output.WriteLine(message), "job-business")).ToArray());
 
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,
                 sql => sql.MigrationsHistoryTable(SpaceContext.MigrationsHistoryTable))
+            .AddInterceptors(interceptors)
             .Options;
         return new SpaceContext(
             options,

@@ -1,0 +1,1 @@
+[xUnit.net 00:00:13.17]     CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict [FAIL]
