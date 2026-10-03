@@ -207,6 +207,54 @@ public sealed class SpaceDesignV1Service :
         EnsureExecutionContext();
         EnsureInternalEditor();
         ArgumentNullException.ThrowIfNull(request);
+
+        var relational = _context.Database.IsRelational();
+        if (relational)
+        {
+            if (_context.Database.CurrentTransaction is not null ||
+                System.Transactions.Transaction.Current is not null ||
+                System.Transactions.TransactionsDatabaseFacadeExtensions.GetEnlistedTransaction(_context.Database) is not null)
+            {
+                throw new InvalidOperationException(
+                    "Floor creation requires its own transaction; a caller transaction cannot be retried or committed here.");
+            }
+
+            _context.ChangeTracker.DetectChanges();
+            if (_context.ChangeTracker.HasChanges())
+            {
+                throw new InvalidOperationException(
+                    "Floor creation requires a clean context so caller changes are not saved or discarded by transaction recovery.");
+            }
+        }
+
+        const int maximumAttempts = 3;
+        for (var attempt = 1; ; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                return await CreateFloorAttemptAsync(versionId, request, idempotencyKey, cancellationToken);
+            }
+            catch (Exception exception) when (relational &&
+                DatabaseFailureClassifier.Classify(exception).CanRetryTransaction)
+            {
+                // Finish rollback/disposal before discarding the failed writes.
+                // A fresh attempt rechecks access, replay and content revision.
+                if (_context.Database.CurrentTransaction is not null)
+                    throw new InvalidOperationException("Floor recovery requires the failed transaction to be disposed first.", exception);
+                _context.ChangeTracker.Clear();
+                if (attempt >= maximumAttempts)
+                    throw;
+            }
+        }
+    }
+
+    private async Task<CreateSpaceFloorResponse> CreateFloorAttemptAsync(
+        Guid versionId,
+        CreateSpaceFloorRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken)
+    {
         var model = await FindModelByVersionAsync(versionId, cancellationToken);
         EnsureWritable(model);
 

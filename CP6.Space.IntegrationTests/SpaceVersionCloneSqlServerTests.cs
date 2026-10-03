@@ -4,6 +4,7 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
 using Xunit.Abstractions;
 
@@ -1484,20 +1485,22 @@ public sealed partial class SpaceVersionCloneSqlServerTests(SpaceRelationalFixtu
     private SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution,
-        TestClock clock)
+        TestClock clock,
+        params IInterceptor[] interceptors)
     {
         if (SpaceRelationalFixture.IsSelected)
         {
             Assert.True(string.Equals(database.ConnectionString, connectionString, StringComparison.Ordinal),
                 "Selected Space contexts must use the fixture-owned connection.");
             return database.CreateSpaceContext(execution, clock,
-                new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "clone-business"));
+                [new SpaceNativeFailureObserver(database.Database.Provider, output.WriteLine, "clone-business"), .. interceptors]);
         }
 
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseSqlServer(
                 connectionString,
                 sql => sql.MigrationsHistoryTable(SpaceContext.MigrationsHistoryTable))
+            .AddInterceptors(interceptors)
             .Options;
         return new SpaceContext(options, execution, clock);
     }
