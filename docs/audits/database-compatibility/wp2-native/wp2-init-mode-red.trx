@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ac168d7f-c5b3-4248-8315-3630f5b7c96a" name="tt@LAPTOP-3QQ44FJS 2026-10-02 10:23:54" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T10:23:54.0895064-04:00" queuing="2026-10-02T10:23:54.0895065-04:00" start="2026-10-02T10:23:53.0130860-04:00" finish="2026-10-02T10:23:54.0931462-04:00" />
+  <TestSettings name="default" id="b5369ac7-b829-4bd3-a19f-17cbca3b1637">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_10_23_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="612dc91c-fdff-447a-9ded-0ef732c1271c" testId="2332a479-c0f4-7fdb-f9ef-1bfdbd373b67" testName="CP6.Tests.Persistence.DatabaseInitializationModeTests.NullProviderCannotBypassValidationInInitializationMode" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0044347" startTime="2026-10-02T10:23:53.9414178-04:00" endTime="2026-10-02T10:23:53.9541624-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="612dc91c-fdff-447a-9ded-0ef732c1271c" />
+    <UnitTestResult executionId="4d0abf3c-78c1-4379-8c57-889ae5dd5d91" testId="5abc4cbc-330e-1706-319a-2828139a433c" testName="CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization(initializeOnly: False)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002030" startTime="2026-10-02T10:23:53.9633280-04:00" endTime="2026-10-02T10:23:53.9633568-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d0abf3c-78c1-4379-8c57-889ae5dd5d91" />
+    <UnitTestResult executionId="7f3a4456-9cbb-451e-8ac8-237f0bdf8cbb" testId="95d013d4-8656-1e71-2048-9fb83b716f86" testName="CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlApplicationRuntimeRemainsRejected" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0051028" startTime="2026-10-02T10:23:53.9628242-04:00" endTime="2026-10-02T10:23:53.9628795-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f3a4456-9cbb-451e-8ac8-237f0bdf8cbb" />
+    <UnitTestResult executionId="63b431d3-d53b-4540-b520-845ce640faff" testId="6588e92b-c97e-8ca2-6dc4-bc87d5a029bb" testName="CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization(initializeOnly: True)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002261" startTime="2026-10-02T10:23:53.9634071-04:00" endTime="2026-10-02T10:23:53.9634275-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63b431d3-d53b-4540-b520-845ce640faff" />
+    <UnitTestResult executionId="4e70321a-10da-4e8e-a1f2-4ea3e4c0adbf" testId="cdf73a81-a9d4-274d-1dff-89c620aa222b" testName="CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlOneShotInitializationCanRunWithoutEnablingApplicationRuntime" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003934" startTime="2026-10-02T10:23:53.9634744-04:00" endTime="2026-10-02T10:23:53.9766792-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e70321a-10da-4e8e-a1f2-4ea3e4c0adbf">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Database:Provider=PostgreSql is not yet supported by the application runtime. Database compatibility work must complete model, migrations, SQL and messaging validation before startup is enabled.</Message>
+          <StackTrace>   at CP6.WebApi.Configuration.DatabaseRuntimeSupport.EnsureSupported(DatabaseOptions database, Boolean databaseInitializationOnly) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.WebApi\Configuration\DatabaseRuntimeSupport.cs:line 11&#xD;
+   at CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlOneShotInitializationCanRunWithoutEnablingApplicationRuntime() in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseInitializationModeTests.cs:line 22&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization(initializeOnly: False)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5abc4cbc-330e-1706-319a-2828139a433c">
+      <Execution id="4d0abf3c-78c1-4379-8c57-889ae5dd5d91" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseInitializationModeTests" name="SqlServerSupportsApplicationAndOneShotInitialization" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseInitializationModeTests.NullProviderCannotBypassValidationInInitializationMode" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="2332a479-c0f4-7fdb-f9ef-1bfdbd373b67">
+      <Execution id="612dc91c-fdff-447a-9ded-0ef732c1271c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseInitializationModeTests" name="NullProviderCannotBypassValidationInInitializationMode" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlOneShotInitializationCanRunWithoutEnablingApplicationRuntime" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cdf73a81-a9d4-274d-1dff-89c620aa222b">
+      <Execution id="4e70321a-10da-4e8e-a1f2-4ea3e4c0adbf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseInitializationModeTests" name="PostgreSqlOneShotInitializationCanRunWithoutEnablingApplicationRuntime" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlApplicationRuntimeRemainsRejected" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="95d013d4-8656-1e71-2048-9fb83b716f86">
+      <Execution id="7f3a4456-9cbb-451e-8ac8-237f0bdf8cbb" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseInitializationModeTests" name="PostgreSqlApplicationRuntimeRemainsRejected" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization(initializeOnly: True)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="6588e92b-c97e-8ca2-6dc4-bc87d5a029bb">
+      <Execution id="63b431d3-d53b-4540-b520-845ce640faff" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseInitializationModeTests" name="SqlServerSupportsApplicationAndOneShotInitialization" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2332a479-c0f4-7fdb-f9ef-1bfdbd373b67" executionId="612dc91c-fdff-447a-9ded-0ef732c1271c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5abc4cbc-330e-1706-319a-2828139a433c" executionId="4d0abf3c-78c1-4379-8c57-889ae5dd5d91" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95d013d4-8656-1e71-2048-9fb83b716f86" executionId="7f3a4456-9cbb-451e-8ac8-237f0bdf8cbb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6588e92b-c97e-8ca2-6dc4-bc87d5a029bb" executionId="63b431d3-d53b-4540-b520-845ce640faff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cdf73a81-a9d4-274d-1dff-89c620aa222b" executionId="4e70321a-10da-4e8e-a1f2-4ea3e4c0adbf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="4" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.49]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.53]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:00.59]       System.InvalidOperationException : Database:Provider=PostgreSql is not yet supported by the application runtime. Database compatibility work must complete model, migrations, SQL and messaging validation before startup is enabled.&#xD;
+[xUnit.net 00:00:00.59]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.59]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.WebApi\Configuration\DatabaseRuntimeSupport.cs(11,0): at CP6.WebApi.Configuration.DatabaseRuntimeSupport.EnsureSupported(DatabaseOptions database, Boolean databaseInitializationOnly)&#xD;
+[xUnit.net 00:00:00.59]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseInitializationModeTests.cs(22,0): at CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlOneShotInitializationCanRunWithoutEnablingApplicationRuntime()&#xD;
+[xUnit.net 00:00:00.59]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.59]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.59]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T10:23:53.9811602-04:00">
+        <Text>[xUnit.net 00:00:00.59]     CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlOneShotInitializationCanRunWithoutEnablingApplicationRuntime [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,4 +1,5 @@
 using CP6.Platform.EntityFramework;
+using CP6.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.ErpIntegration;
@@ -15,6 +16,7 @@ public sealed class ErpIntegrationContext(DbContextOptions<ErpIntegrationContext
 
     protected override void OnModelCreating(ModelBuilder model)
     {
+        if (Database.IsNpgsql()) model.Model.SetMaxIdentifierLength(int.MaxValue);
         model.AddCp6TransactionalMessaging(Schema);
         model.Ignore<Cp6InboxMessage>();
         model.Ignore<Cp6InboxAggregateCheckpoint>();
@@ -68,6 +70,7 @@ public sealed class ErpIntegrationContext(DbContextOptions<ErpIntegrationContext
             e.HasIndex(x => new { x.TenantId, x.MessageId, x.ReplayedAtUtc });
         });
         ErpDeliveryReplayAudit.Configure(model);
+        if (Database.IsNpgsql()) PostgreSqlModelConfiguration.Apply(model);
     }
 
     private void GuardAudit()

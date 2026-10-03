@@ -1,0 +1,48 @@
+{
+  "Scope": "BUG143 completed normal delivery, real postmerge smoke/native no-change and issue closure; no production acceptance.",
+  "RecordedUtc": "2026-10-03T07:23:39.6690240Z",
+  "RemoteContainment": {
+    "Scope": "BUG143 normal merge and freshly fetched remote-main containment/tree equality; no test rerun implied.",
+    "CheckedUtc": "2026-10-03T07:15:13.9646175Z",
+    "RemoteMain": "94c0f8c9cac63a72008c4e6b242c94358f25b305",
+    "Candidate": "5348a2a5431d761805637d48e5b6651e2639c30a",
+    "FunctionalCommit": "2b6548b10251477dfcbbcf11e2b4334896baebab",
+    "EvidenceCommit": "5348a2a5431d761805637d48e5b6651e2639c30a",
+    "AllThreeCommitsContained": true,
+    "CompleteTreeEqual": true,
+    "PullRequest": {
+      "mergeCommit": {
+        "oid": "94c0f8c9cac63a72008c4e6b242c94358f25b305"
+      },
+      "mergedAt": "2026-10-03T07:15:02Z",
+      "state": "MERGED",
+      "url": "https://github.com/GTX537/CP6/pull/144"
+    },
+    "RemoteActionsTriggered": 0,
+    "UsedAdminBypass": false,
+    "ForcePush": false,
+    "PostMergeSmoke": "Pending separate actual process/native comparison."
+  },
+  "PostMergeInitializer": {
+    "Path": "tmp/wp2-init-bug143-post-merge-smoke.json",
+    "Sha256": "AFF3932C2CC5CB7401D2CB3DA986FEF488EF5B34D4872B1399891C16556F2F86",
+    "ExitCode": 0,
+    "HttpListenerObserved": false
+  },
+  "PostMergeNativeComparison": {
+    "Path": "tmp/bug-143-sql-compare-after-cleanup-final-to-after-post-merge-smoke.json",
+    "Sha256": "AB3DAB275953C3BEE356DE4D1AC55CB0E7E1CD69B955F85F8D31FEFDBF373B50",
+    "Passed": 15,
+    "Failed": 0
+  },
+  "Issue": {
+    "closedAt": "2026-10-03T07:23:27Z",
+    "number": 143,
+    "state": "CLOSED",
+    "url": "https://github.com/GTX537/CP6/issues/143"
+  },
+  "ClosureComment": "https://github.com/GTX537/CP6/issues/143#issuecomment-5966733612",
+  "ParentIssue": 134,
+  "ParentGoalComplete": false,
+  "SourceRuntimeResultsReusedAsOriginallyExecuted": true
+}

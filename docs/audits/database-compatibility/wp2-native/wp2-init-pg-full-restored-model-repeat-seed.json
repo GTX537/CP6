@@ -1,0 +1,16 @@
+{
+  "Scope": "Real compiled application DatabaseInit; isolated owned database only, no API/workers",
+  "Provider": "PostgreSql",
+  "Database": "CP6Compat_WP2_20261002_31d68591",
+  "SourceWorktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002",
+  "SourceCommit": "d507f389fdcadd8e2fc5dcb9e40f752cde613703",
+  "StartedUtc": "2026-10-02T18:16:10.0686978Z",
+  "FinishedUtc": "2026-10-02T18:16:16.1920932Z",
+  "ProcessId": 37756,
+  "ExitCode": 0,
+  "ListenerObserved": false,
+  "CompletionMessage": true,
+  "BinarySha256": "8CB786C21F42B5EDDF05989E1794635FA6372D79EDEFD037B7EA389F0B0F02AB",
+  "StdoutSha256": "4DE03FCA972782FB80A13AD555C2F72FE4FB92AC624686C231DC812C96295023",
+  "StderrSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6"
+}

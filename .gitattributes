@@ -94,3 +94,8 @@ docs/audits/2026-10-02-bug-143-quotation-audit-capacity/bug-143-original-generat
 docs/audits/2026-10-02-bug-143-quotation-audit-capacity/native/** -text whitespace=cr-at-eol,-blank-at-eof
 # Preserve space-only lines in the four original executed fixture scripts.
 docs/audits/2026-10-02-bug-143-quotation-audit-capacity/native/bug-143-native-cp143-final-*.sql whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+
+# WP2 independently captured d607 SQL contracts remain byte-exact.
+CP6.Tests/Persistence/Fixtures/sql-server-d6074aaa-contracts.json -text whitespace=cr-at-eol,-blank-at-eof
+# WP2 original native reports, scripts, logs and TRX retain exact byte hashes.
+docs/audits/database-compatibility/wp2-native/** -text whitespace=cr-at-eol,-blank-at-eof

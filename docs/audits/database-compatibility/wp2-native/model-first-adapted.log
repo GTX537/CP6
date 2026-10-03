@@ -1,0 +1,36 @@
+  CP6.Space.Contracts -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Space.Contracts\bin\Debug\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Domain -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Space.Domain\bin\Debug\net8.0\CP6.Space.Domain.dll
+  CP6.Entity -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.Space.Application -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Space.Application\bin\Debug\net8.0\CP6.Space.Application.dll
+D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Core\Persistence\PostgreSqlModelIdentifiers.cs(80,38): warning CS8604: Possible null reference argument for parameter 'identifier' in 'string PostgreSqlModelIdentifiers.Shorten(string identifier)'. [D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Core\CP6.Core.csproj]
+  CP6.Core -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Core\bin\Debug\net8.0\CP6.Core.dll
+  CP6.Space.Infrastructure -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Space.Infrastructure\bin\Debug\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Persistence.PostgreSql\bin\Debug\net8.0\CP6.Persistence.PostgreSql.dll
+  CP6.WebApi -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.WebApi\bin\Debug\net8.0\CP6.WebApi.dll
+  CP6.Tests -> D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll
+Test run for D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:11.86]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Core") [FAIL]
+[xUnit.net 00:00:11.87]     CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Space") [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Core") [167 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: [Index: LpnContent.TenantId, LpnContent.LpnNo, LpnContent.ProductCd, LpnContent.LotNo, LpnContent.SerialNo Unique]
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 141
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(kind: "Space") [6 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                                  ↓ (pos 23)
+Expected: ···"aBoundary|System.Int16|False|||,|0|DataBo"···
+Actual:   ···"aBoundary|System.Int32|False|||,|0|DataBo"···
+                                  ↑ (pos 23)
+  Stack Trace:
+     at CP6.Tests.Persistence.DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(String kind) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseModelCompatibilityTests.cs:line 131
+   at InvokeStub_DatabaseModelCompatibilityTests.Postgre_sql_retains_all_existing_keys_foreign_keys_indexes_facets_and_tenant_filters(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+Results File: D:\CP6\tmp\worktrees\db-compat-wp2-20261002\tmp\db-compat-wp2-tests\model-first-adapted\wp2-model-first-adapted.trx
+
+Failed!  - Failed:     2, Passed:    49, Skipped:     0, Total:    51, Duration: 11 s - CP6.Tests.dll (net8.0)

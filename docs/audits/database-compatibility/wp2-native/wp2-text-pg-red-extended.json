@@ -1,0 +1,205 @@
+{
+  "Scope": "WP2 real isolated text contract, not full migrations or production acceptance",
+  "Provider": "PostgreSql",
+  "Adapted": false,
+  "DatabaseVersion": "18.6",
+  "SourceBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "SourceState": "Uncommitted WP2 source identified by SHA256 inputs; applicable build success log is required.",
+  "SourceInputs": {
+    "../../CP6.Core/Persistence/PostgreSqlManagedTextV1.cs": "9DA15A8E63E7CDDBE5713575E6CAEAA53CCE86B4171923E00F0E9A4D10E2ED4F",
+    "../../CP6.Core/Persistence/PostgreSqlTextQuerySqlGenerator.cs": "D88AB3BFD18781633F11D51AE854B168D4D8CCCB475D48B0CBA667C44B539F76",
+    "../../CP6.Core/Persistence/PostgreSqlTextTypeMappingSource.cs": "16B15E1C7CE839C469EAAD1B9419F65673C727BDFCC1AF2BBD1AC74C3FCA62CA",
+    "CP6.DatabaseCompatibility.TextProbe.csproj": "416DD100E0462CB69987C419A2D49CF521EDF61E513D319DAF4B9E1BCBC1561B",
+    "Program.cs": "E64FB480EFBC00B57E772CC7D3C0B1F36B070ED6BEA0E9502AAD1EFE2E851C8D",
+    "packages.lock.json": "2A5E1D0A3EE84DA6D9FD1F74F2ABBF0056B24E3E37DAA79D69320C98467FABC0"
+  },
+  "ExecutableSha256": "3EBA982FB4E7DC795BA2694C666A339915107F7F9F97FB5A32C2EDDF988F9CC9",
+  "Schema": "CP6Compat_text_a9ce83faaa474ccd82ed3f82a523c85f",
+  "Checks": [
+    {
+      "Name": "Text.RawRoundTrip",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.FixedCharPaddingRoundTrip",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.PadSpaceParameter",
+      "Status": "Failed",
+      "Detail": "Parameter equality must preserve the source collation contract."
+    },
+    {
+      "Name": "Text.CaseParameter",
+      "Status": "Failed",
+      "Detail": "Parameter equality must preserve the source collation contract."
+    },
+    {
+      "Name": "Text.WidthParameter",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.NfcParameter",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.AccentDistinct",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.MiddleSpaceDistinct",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ArrayParameterPadSpace",
+      "Status": "Failed",
+      "Detail": "Array membership must retain scalar comparison semantics."
+    },
+    {
+      "Name": "Text.ContainsTailSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.SubstringTailSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ConcatTailSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.LenUtf16",
+      "Status": "Failed",
+      "Detail": "SQL LEN counts the astral UTF-16 pair and excludes U\u002B0020 tails."
+    },
+    {
+      "Name": "Text.LenUtf16NoTail",
+      "Status": "Failed",
+      "Detail": "Astral UTF-16 pair must count as two after trimming."
+    },
+    {
+      "Name": "Text.ConcatThenEquality",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.TrimTail",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Capacity.Cp936.Emoji",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Capacity.Cp936.Euro",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Capacity.Cp936.Chinese",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Capacity.Cp936.Fullwidth",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Capacity.Cp936.SharpS",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Capacity.Cp936.RareHan",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Capacity.Cp936.Variation",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.U41",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.UFF26",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.UE4",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.UE9",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.U107",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.UDF",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.U67",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.Hex.U20",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.AlphaLowerCase",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Range.NullPropagation",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ForeignKeyPadSpace",
+      "Status": "Failed",
+      "Detail": "PostgresException SQLSTATE=23503"
+    },
+    {
+      "Name": "Text.UniquePadSpace",
+      "Status": "Failed",
+      "Detail": "Native unique key must reject the case/tail-space equivalent value."
+    },
+    {
+      "Name": "Isolation.RollbackCleanup",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Isolation.CollationCleanup",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    }
+  ]
+}

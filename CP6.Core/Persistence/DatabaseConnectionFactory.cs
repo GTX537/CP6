@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Data;
 using Microsoft.Data.SqlClient;
 using Npgsql;
 
@@ -19,7 +20,7 @@ public sealed class DatabaseConnectionFactory(DatabaseOptions database)
             return _database.Provider switch
             {
                 DatabaseProvider.SqlServer => new SqlConnection(connectionString),
-                DatabaseProvider.PostgreSql => new NpgsqlConnection(connectionString),
+                DatabaseProvider.PostgreSql => new NpgsqlConnection(PostgreSqlConnectionString(connectionString)),
                 _ => throw new InvalidOperationException("Database:Provider must be SqlServer or PostgreSql.")
             };
         }
@@ -43,5 +44,26 @@ public sealed class DatabaseConnectionFactory(DatabaseOptions database)
 
         if (!matchesProvider)
             throw new InvalidOperationException("The database connection does not match Database:Provider.");
+
+        if (connection is NpgsqlConnection postgres)
+        {
+            var canonical = PostgreSqlConnectionString(postgres.ConnectionString);
+            var configured = new NpgsqlConnectionStringBuilder(postgres.ConnectionString).SearchPath;
+            if (configured is null)
+            {
+                if (postgres.State != ConnectionState.Closed)
+                    throw new InvalidOperationException("An open PostgreSQL caller connection must already pin Search Path=public.");
+                postgres.ConnectionString = canonical;
+            }
+        }
+    }
+
+    private static string PostgreSqlConnectionString(string input)
+    {
+        var options = new NpgsqlConnectionStringBuilder(input);
+        if (options.SearchPath is not null && options.SearchPath != "public")
+            throw new InvalidOperationException("CP6 PostgreSQL requires Search Path=public; custom schema search paths are not supported.");
+        options.SearchPath = "public";
+        return options.ConnectionString;
     }
 }

@@ -1,0 +1,126 @@
+{
+  "Scope": "Read-only installed catalog validation; migration currency not claimed",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-02T17:16:43.8790963Z",
+  "FinishedUtc": "2026-10-02T17:16:49.7899343Z",
+  "SourceBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "SourceState": "WP2 uncommitted task input; applicable build log and file hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "A2643EE8D0051A1E8406944A39E77F38FBEC0C0189B6D98AFF1FF149510D8560",
+    "CP6.Persistence.PostgreSql": "B32CF2EDED10CF8238B0297BEE475902BB0F5456D64A86EDA4F7F3BE9A702F1C",
+    "CP6.Space.Infrastructure": "A5B4E42C40D8683B944679F5250DFDA0521809A1DDF1C5B1C8A2C4E0A9C62399",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [
+    {
+      "Context": "Core",
+      "Tables": 233,
+      "TokenTables": 157
+    },
+    {
+      "Context": "Space",
+      "Tables": 83,
+      "TokenTables": 41
+    },
+    {
+      "Context": "IdentityPriority",
+      "Tables": 4,
+      "TokenTables": 4
+    },
+    {
+      "Context": "ErpIntegration",
+      "Tables": 8,
+      "TokenTables": 6
+    }
+  ],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded loopback, dedicated name and task ownership verified before migration."
+    },
+    {
+      "Name": "Catalog.Core.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.Core.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 233 actual model tables."
+    },
+    {
+      "Name": "Catalog.Core.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 157 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.Core.ModelConstraintsAndStorage",
+      "Status": "Failed",
+      "Detail": "InvalidOperationException"
+    },
+    {
+      "Name": "Catalog.Space.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.Space.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 83 actual model tables."
+    },
+    {
+      "Name": "Catalog.Space.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 41 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.Space.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 4 actual model tables."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 4 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.ModelConstraintsAndStorage",
+      "Status": "Failed",
+      "Detail": "InvalidOperationException"
+    },
+    {
+      "Name": "Catalog.ErpIntegration.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 8 actual model tables."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 6 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.ModelConstraintsAndStorage",
+      "Status": "Failed",
+      "Detail": "InvalidOperationException"
+    }
+  ]
+}

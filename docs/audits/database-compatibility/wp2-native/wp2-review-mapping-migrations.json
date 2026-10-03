@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-COMPAT-01 WP2 concentrated task-level review: mapping and migrations partition",
+  "reviewer": "/root/wp1_wiring",
+  "worktree": "D:/CP6/tmp/worktrees/db-compat-wp2-20261002",
+  "branch": "codex/db-compat-wp2-20261002",
+  "reviewBaseHead": "2d9747360a38dfc519ddebea7aced06a9466b879",
+  "frozenSqlOracleBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "sourceState": "Uncommitted WP2 candidate. Exact file-byte hashes, rather than HEAD alone, identify the reviewed source.",
+  "hashCapturedAtUtc": "2026-10-02T19:25:52Z",
+  "reviewCompletedAtUtc": "2026-10-02T19:26:59Z",
+  "artifactPurpose": "Archive of the already completed review. The exact 45-file list was reconstructed and required to match the original 45/12 scope digests before writing. No new review or source edit.",
+  "algorithm": {
+    "fileHash": "SHA-256 over original file bytes; uppercase hexadecimal.",
+    "sourceScopeEncoding": "Sort repository-relative paths ordinally; use forward slashes; concatenate each path + TAB (U+0009) + uppercase file SHA-256 + LF (U+000A), including final LF; encode UTF-8 without BOM; SHA-256 of concatenation, lowercase hexadecimal.",
+    "migrationSubset": "Exactly the 12 sourceScope entries with prefix CP6.Persistence.PostgreSql/Migrations/, using the same algorithm."
+  },
+  "conclusion": {
+    "result": "No new material blocker/P1/P2 in the reviewed mapping/migrations partition.",
+    "newBlockingFindings": [],
+    "newP1Findings": [],
+    "newP2Findings": [],
+    "doesNotDeclareWp2Complete": true,
+    "ordinaryPostgreSqlRuntimeGuardRequired": true
+  },
+  "reviewedResults": [
+    "The frozen SQL fixture independently references d607 snapshots (Core232/Space83/IdentityPriority4/ERP8). All four GitBlob identifiers match original Git objects; expected contracts do not come from the updated Core snapshot.",
+    "All four PostgreSQL Designer BuildTargetModel bodies equal corresponding Snapshot BuildModel bodies.",
+    "Static Up versus Snapshot comparison: all6503 physical columns (type/nullability/column set),872 indexes (ordered keys/unique/filter/descending),421 PK/AK,2869 check expressions and181 FK (ordered child/principal columns/schema/table/delete action) match exactly. SpaceFK includes95 inline plus51 deferred AddForeignKey.",
+    "All126 original business checks retain exact OriginalSql matching the frozen SQL fixture (Core6/Space120).",
+    "All208 generated RowVersion columns match frozen installation manifests (Core157/Space41/Identity4/ERP6). bytea8 token generation is BEFORE INSERT/UPDATE, AddOrUpdate with save-ignore; no xmin token.",
+    "All83 fixed-text entity/property/capacity tuples match frozen SQL contracts exactly. Unknown general fixed text rejects model construction; supported ASCII domains remain bounded.",
+    "All current migration physical identifiers fit63 UTF-8 bytes; column names fit44 bytes; no cross-context relation namespace collision. Shortening hashes full original names and records OriginalName annotations.",
+    "Only Sys_Lang TenantId/LangKey is a frozen unfiltered unique model index containing nullable columns; PostgreSQL explicitly uses NULLS NOT DISTINCT. SQL convention filters remain preserved. Four raw restored global unique indexes retain original ordered keys and NULLS NOT DISTINCT.",
+    "SQL snapshot changes are limited to intentional generation table plus Snapshot trigger/OUTPUT compatibility metadata and generated BOM. Historical SQL migrations are unchanged. Generation migration Designer body equals updated SQL snapshot body.",
+    "All4 PostgreSQL Down paths and new SQL generation Down throw forward-only errors; no baseline Drop operation.",
+    "UTC, wall-clock, DateOnly, zero-offset DateTimeOffset and explicit Min/Max sentinel exceptions remain separate contracts. PostgreSQL temporal precision is microseconds, not SQL extra100ns.",
+    "Text mapper preserves raw bpchar values/parameters and tested PAD SPACE/CI-AS/BIN2 behavior; LEN retains UTF16/U+0020 semantics; ISJSON remains object/array-only with NULL three-valued logic; original JSON/hash string data is retained. Audited translation paths reject unknown functions/patterns/columns/types/default/computed SQL."
+  ],
+  "coverageBoundaries": [
+    "Read-only source/static review; no .NET build/test, DB connection, remote Actions, credential reading or source editing.",
+    "Model check/filter assertions prove retention and references/structure, not arbitrary predicate semantic equivalence. Runtime current-model DDL alone is not a frozen migration oracle; static12-file and independently owned native gates are separate evidence.",
+    "Real text/write evidence is bounded to documented samples; it does not prove all Unicode collations/varchar replacement behavior/all Space or business writers/API/worker/recovery/later WPs.",
+    "At original review time root's actual SQL catalog audit had found inherited Quotation capacity drift; BUG141 native/delivery closure was independently root-owned. These external gates are not marked passed by this mapping review.",
+    "Subsequent parent native reports, including PG36/36, are later evidence, not relabeled as executions performed by this completed review.",
+    "An unchanged source-byte scope may reuse the conclusion after main/base changes. Changed source inputs need affected-area/impact review."
+  ],
+  "nonBlockingRecommendations": [
+    {
+      "recommendation": "Add independent model-construction negative fixtures for an unknown SQL function and a NOT LIKE pattern outside the two audited hex/alpha patterns; assert rejection.",
+      "reason": "Source rejection exists; positive actual-model tests and new-fixed-text negatives do not independently exercise these two rejection paths.",
+      "blocking": false
+    }
+  ],
+  "sourceScope": {
+    "fileCount": 45,
+    "sha256": "3b32a0976118e3a4cca0c0b76b18c8061dd2b52beddfa44d9f1f7fdd757324ba",
+    "files": [
+      {
+        "path": "CP6.Core/EFDbContext/CP6Context.cs",
+        "sha256": "69DCBD468C3CB742CFAEFDE5FFA8B2A518230C2710E3CE31E46F5AE9A9DA2106"
+      },
+      {
+        "path": "CP6.Core/Migrations/20261002151353_CrmIdentityTenantGenerationV1.Designer.cs",
+        "sha256": "F446F0D99D120A460BF7ACD52182E12A23E7933DDC9520C44DEE611F2E516F7B"
+      },
+      {
+        "path": "CP6.Core/Migrations/20261002151353_CrmIdentityTenantGenerationV1.cs",
+        "sha256": "0F1E26A71F4C68B63A4A6F2E1792A94ACF9A2C559800354A8FDA38D1CCA2E8F9"
+      },
+      {
+        "path": "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+        "sha256": "BA2BC258453450BBD8B043359A746E2977E9CF45FE9B40874442ADCB127FCDCF"
+      },
+      {
+        "path": "CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs",
+        "sha256": "17938C6F13CD7CB5D23DFD2D7807E0397042A18091FB673594A8762233D3D59D"
+      },
+      {
+        "path": "CP6.Core/Persistence/DatabaseConnectionFactory.cs",
+        "sha256": "D7B729E3B44DE38DC8413ECFC9869ED381CB8768B246300F61B6178E102A018A"
+      },
+      {
+        "path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+        "sha256": "0E9412A582B86F2485AC724CE8DB0C1C316087E45ABAC2C3CC30EDFE13102190"
+      },
+      {
+        "path": "CP6.Core/Persistence/IdentityGenerationSqlServerV1.cs",
+        "sha256": "F32CC3F7E27542D844532919273D682FA050BF1A7A0ED71B852CBED09FE4E101"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlBusinessTextComparer.cs",
+        "sha256": "BE18D4DB60D06D6BAA4D4036E03647FCCC11A8A719A9CCB728AAE681AA37F5BE"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlFixedTextDomainsV1.cs",
+        "sha256": "09800C1D34971EB8561A46ABCD0E979EC40689537D7735A173CC3E8D874FBBFA"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlManagedTextV1.cs",
+        "sha256": "A8EA97F5D8994E99DC7383FFC1E27B4E85A8FAAF500774891A083B68C6BBD803"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlModelConfiguration.cs",
+        "sha256": "7EE4E3D0ED5C121EC4832B4BB3C756842322891BA1A509CA4D5CAD0316552596"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlModelExpressions.cs",
+        "sha256": "EEB3CED0E9262E0A2CD26AE00DA4D39C0C8F2660E1232093130396C91AADC7AC"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlModelIdentifiers.cs",
+        "sha256": "04B2E8C76938C3C88E784CCD068327B957CE0D1790C60AE2DF3590F9CDDEE19B"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlTextQuerySqlGenerator.cs",
+        "sha256": "A9866D893D5211625914E3A71998651974F911855D60F13FA5240634D56CBC4E"
+      },
+      {
+        "path": "CP6.Core/Persistence/PostgreSqlTextTypeMappingSource.cs",
+        "sha256": "7C30EC66D6AAD9C1B566E142C2E161966310DB28892958256CAB03507C8B589A"
+      },
+      {
+        "path": "CP6.Core/Services/CrmIdentity/CrmIdentityTenantGeneration.cs",
+        "sha256": "9E74A662580D52BAC04C826B93F4401A05DCF9E8A7DAD0C0F67E167A4FD1813C"
+      },
+      {
+        "path": "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+        "sha256": "B4F7F011111FBC133EDF78BE7E359F3A3CC4312E3E147A2E2E3083737D9D98F7"
+      },
+      {
+        "path": "CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs",
+        "sha256": "673425FB7B02A971ACDFDEE220882681A92FC15E42AB0BF698AE9A0976513DB0"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/IdentityGenerationPostgreSqlV1.cs",
+        "sha256": "7B3EDADFA14D9D8B1D0CF4CED0117FC0EAD84EC09D33D3162C144DD5A1FDA6CD"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.Designer.cs",
+        "sha256": "F1C8DDD9F2890ABC0D101C12948899253722EAA855FD1167BE1189CE694F40F1"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.cs",
+        "sha256": "E9E2B24685A83E4D223CDA8497884C0420AB74293892B9C3D63FD8CDD6F98A4A"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+        "sha256": "B1B190952C5102DB7C0B30097256DAAECDF4DF1C2ABCB6F0D874A43BA1521D35"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.Designer.cs",
+        "sha256": "57E5B41BA3DCC8F5D5013B425FB68350BA869A4C39C9C2CA0DDF1CAFC0A8F1C4"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.cs",
+        "sha256": "E3219787477F49408850DA5907C63F07AAB87D9A8934B31DB0CE02C8F460DCB2"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/ErpIntegrationContextModelSnapshot.cs",
+        "sha256": "9F27F2C58E742C822E0481897AE7EFF7B005D34D026E166C22B205CE6C4E56A2"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.Designer.cs",
+        "sha256": "514E1537CCCE366419184F1488724FEBCEA98D5CFF4CADA2499696C6B024CDD5"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.cs",
+        "sha256": "6AF32769F1B80B58BD95F6503934BE1292DEC8138FEFE6D339378D55B185641F"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/IdentityMessagingContextModelSnapshot.cs",
+        "sha256": "78CA6A9C91016B1B6F0979CD52161DC2EF8851D6730CF7236714A7666958102D"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.Designer.cs",
+        "sha256": "289EE74DF3AC9A1E34C9BC654E819BE280BB8CF3839F336BC02937F84C869D61"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.cs",
+        "sha256": "88A09564B7560D102F5F8F62683B809A5879AB871D8DD8904BD60EF0A0B8410F"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Space/SpaceContextModelSnapshot.cs",
+        "sha256": "F0089ED85BC42769C9288FC37E6FC7B0C6BF61B3BB133E75475E37CED796901D"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlCoreObjectsV1.cs",
+        "sha256": "463C5A535036DBB8F9F1DFE89711184C8E6CDCB9684350B9093D0A4C5F93920A"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlCoreTokenTablesV1.cs",
+        "sha256": "247532FC7A6435B66BA15292AA8921C222CC54E267E0B9B94ACD0B40A3F26B20"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlErpIntegrationTokenTablesV1.cs",
+        "sha256": "7FD7F46B2B2DF4FAC89279C3F2E4DBE00D0F86C5B89375D801582E835EDF6AFC"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlFreshSeedV1.cs",
+        "sha256": "71EC39F3F1140ACC8BD9F9DDFEE752EE59A2533A9512F28C006EEE9170F34F0F"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlIdentityPriorityTokenTablesV1.cs",
+        "sha256": "68EA396487AA904E3025D7BCAC15F95F94DCDF2C75B0B827DCBA7166B8555C9B"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlMigrationsAssembly.cs",
+        "sha256": "A7B571DF365979E7A064C06DDCD000FA25DE70005FFB880ED18F850CE909AF2C"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlRestoredOrderDefaultsV1.cs",
+        "sha256": "186D2E6B0DFC3C2C23020F9867A288EBE43BEC77D55C92B34581388F42E50356"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlSpaceTokenTablesV1.cs",
+        "sha256": "191990EB77B9EF294D64167D3E24448C226B4472B5EA38B9F804D1A6381A92EA"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/PostgreSqlTokenV1.cs",
+        "sha256": "173200BBBF02E117E7AF9CE49D9A1D12FD3213FA1F5B00F9CAA2902A68167D54"
+      },
+      {
+        "path": "CP6.Space.Infrastructure/SpaceContext.cs",
+        "sha256": "888A747CDE65F68370589C30FE871C21871A56A8835FBB0EB0D74D54EF772F27"
+      },
+      {
+        "path": "CP6.Space.Infrastructure/SpacePostgreSqlModelConfiguration.cs",
+        "sha256": "20A152990AED41BFB93D7C2EEC5C1C8FD23F4A5FF2EF4DF01889AF089B16FF23"
+      },
+      {
+        "path": "CP6.Tests/Persistence/DatabaseModelCompatibilityTests.cs",
+        "sha256": "E57E9EE7681F0A518BC9456D674117D38B21B38F4383D9CF8A11AA1FEFBFE81D"
+      },
+      {
+        "path": "CP6.Tests/Persistence/Fixtures/sql-server-d6074aaa-contracts.json",
+        "sha256": "441CBCB228624370995EE735C8CEC52104A8B1481A5A6457589547B78EC52618"
+      }
+    ]
+  },
+  "postgreSqlMigrationScope": {
+    "fileCount": 12,
+    "sha256": "02caf49de89bb60c702f84119d0df9d706985c40081e3833f62594bb8d5cc4a9",
+    "files": [
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.Designer.cs",
+        "sha256": "F1C8DDD9F2890ABC0D101C12948899253722EAA855FD1167BE1189CE694F40F1"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Core/20261002161715_PostgreSqlCoreBaselineV1.cs",
+        "sha256": "E9E2B24685A83E4D223CDA8497884C0420AB74293892B9C3D63FD8CDD6F98A4A"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+        "sha256": "B1B190952C5102DB7C0B30097256DAAECDF4DF1C2ABCB6F0D874A43BA1521D35"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.Designer.cs",
+        "sha256": "57E5B41BA3DCC8F5D5013B425FB68350BA869A4C39C9C2CA0DDF1CAFC0A8F1C4"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/20261002151345_PostgreSqlErpIntegrationBaselineV1.cs",
+        "sha256": "E3219787477F49408850DA5907C63F07AAB87D9A8934B31DB0CE02C8F460DCB2"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/ErpIntegration/ErpIntegrationContextModelSnapshot.cs",
+        "sha256": "9F27F2C58E742C822E0481897AE7EFF7B005D34D026E166C22B205CE6C4E56A2"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.Designer.cs",
+        "sha256": "514E1537CCCE366419184F1488724FEBCEA98D5CFF4CADA2499696C6B024CDD5"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/20261002151342_PostgreSqlIdentityPriorityBaselineV1.cs",
+        "sha256": "6AF32769F1B80B58BD95F6503934BE1292DEC8138FEFE6D339378D55B185641F"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/IdentityPriority/IdentityMessagingContextModelSnapshot.cs",
+        "sha256": "78CA6A9C91016B1B6F0979CD52161DC2EF8851D6730CF7236714A7666958102D"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.Designer.cs",
+        "sha256": "289EE74DF3AC9A1E34C9BC654E819BE280BB8CF3839F336BC02937F84C869D61"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Space/20261002161945_PostgreSqlSpaceBaselineV1.cs",
+        "sha256": "88A09564B7560D102F5F8F62683B809A5879AB871D8DD8904BD60EF0A0B8410F"
+      },
+      {
+        "path": "CP6.Persistence.PostgreSql/Migrations/Space/SpaceContextModelSnapshot.cs",
+        "sha256": "F0089ED85BC42769C9288FC37E6FC7B0C6BF61B3BB133E75475E37CED796901D"
+      }
+    ]
+  },
+  "fourContextSources": [
+    {
+      "path": "CP6.Core/EFDbContext/CP6Context.cs",
+      "sha256": "69DCBD468C3CB742CFAEFDE5FFA8B2A518230C2710E3CE31E46F5AE9A9DA2106"
+    },
+    {
+      "path": "CP6.Space.Infrastructure/SpaceContext.cs",
+      "sha256": "888A747CDE65F68370589C30FE871C21871A56A8835FBB0EB0D74D54EF772F27"
+    },
+    {
+      "path": "CP6.Core/Services/CrmIdentity/IdentityMessagingContext.cs",
+      "sha256": "B4F7F011111FBC133EDF78BE7E359F3A3CC4312E3E147A2E2E3083737D9D98F7"
+    },
+    {
+      "path": "CP6.Core/Services/ErpIntegration/ErpIntegrationContext.cs",
+      "sha256": "673425FB7B02A971ACDFDEE220882681A92FC15E42AB0BF698AE9A0976513DB0"
+    }
+  ],
+  "frozenSqlFixture": {
+    "path": "CP6.Tests/Persistence/Fixtures/sql-server-d6074aaa-contracts.json",
+    "sha256": "441CBCB228624370995EE735C8CEC52104A8B1481A5A6457589547B78EC52618"
+  }
+}

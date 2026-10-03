@@ -1,0 +1,16 @@
+Passed: Text.RawRoundTrip: Observed expected SQL Server contract.
+Passed: Text.PadSpaceParameter: Observed expected SQL Server contract.
+Passed: Text.CaseParameter: Observed expected SQL Server contract.
+Passed: Text.WidthParameter: Observed expected SQL Server contract.
+Passed: Text.NfcParameter: Observed expected SQL Server contract.
+Passed: Text.AccentDistinct: Observed expected SQL Server contract.
+Passed: Text.MiddleSpaceDistinct: Observed expected SQL Server contract.
+Passed: Text.ArrayParameterPadSpace: Observed expected SQL Server contract.
+Passed: Text.ContainsTailSpace: Observed expected SQL Server contract.
+Passed: Text.SubstringTailSpace: Observed expected SQL Server contract.
+Passed: Text.ConcatTailSpace: Observed expected SQL Server contract.
+Passed: Text.LenUtf16: Observed expected SQL Server contract.
+Passed: Text.ForeignKeyPadSpace: Observed expected SQL Server contract.
+Passed: Text.UniquePadSpace: Observed expected SQL Server contract.
+Passed: Isolation.RollbackCleanup: Observed expected SQL Server contract.
+Passed: Isolation.CollationCleanup: Observed expected SQL Server contract.

@@ -1,0 +1,867 @@
+{
+  "Task": "DB-COMPAT-01 WP2",
+  "ArchivedUtc": "2026-10-03T07:54:02.8263557Z",
+  "ConfirmedMainBase": "94c0f8c9cac63a72008c4e6b242c94358f25b305",
+  "CandidateState": "Uncommitted task sources; executions retain their own actual source/runtime identities.",
+  "PreparedListSha256": "6CFA69617A9676CB37F5CA3772F05D17E2E0A289B02A82FAB7C40A098718451A",
+  "PreparedFileCount": 140,
+  "AddedFinalByteVerificationFiles": 2,
+  "FileCount": 142,
+  "TotalOriginalBytes": 2829993.0,
+  "Method": "Original explicit files copied byte-for-byte; no result edits, recomputation of old tests, recompression, credential receipts, private seed state or raw application streams.",
+  "EvidenceBoundaries": "Historical failures and invalid input metadata are retained as recorded. Test/review counts belong to individual runs. Earlier PostgreSQL results and delivered BUG139/141/143 evidence are reused only within documented unchanged source scopes.",
+  "Files": [
+    {
+      "Name": "wp2-final-provider-model-initialization.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-final-provider-model-initialization.log",
+      "Sha256": "74FF23107041860BC0193A66D3FAC8AFCE2CDDAC92389D9A657C40DCE12094C9",
+      "Bytes": 422
+    },
+    {
+      "Name": "wp2-index-repair-integration.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-index-repair-integration.log",
+      "Sha256": "27480640ABF3FA5A3E50C91BC75BCDFB7EA7F692C4865B60594AD210873B5F55",
+      "Bytes": 400
+    },
+    {
+      "Name": "wp2-final-provider-model-initialization.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp2-tests\\final-provider-model-initialization\\wp2-final-provider-model-initialization.trx",
+      "Sha256": "A4297E89005C6B895615DBD0184CCD5A72E9ADDDAA67DAA29C4DAC5222EE5F05",
+      "Bytes": 224236
+    },
+    {
+      "Name": "wp2-index-repair-integration.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\db-compat-wp2-tests\\index-repair-integration\\wp2-index-repair-integration.trx",
+      "Sha256": "A9BC8ACF1EF3DBA72B827EB1D199E397427D0EDBA498AA5C6E767455A6C5256D",
+      "Bytes": 42742
+    },
+    {
+      "Name": "wp2-migration-pg-final-exact-history-full-write-gates.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-final-exact-history-full-write-gates.json",
+      "Sha256": "265D3F6E15963D871391F0C90463EE45665A4FFAC6EE7051349AE1D07F765C0C",
+      "Bytes": 10334
+    },
+    {
+      "Name": "wp2-migration-pg-final-exact-history-full-write-gates.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-final-exact-history-full-write-gates.log",
+      "Sha256": "E5DFF9CE631167CB0FC100756CF56C3FC409AC84445B41B5149F7F9168E29596",
+      "Bytes": 6665
+    },
+    {
+      "Name": "wp2-migration-pg-final-exact-history-full-write-input.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-final-exact-history-full-write-input.json",
+      "Sha256": "673605C9B5CAA253AC6AE03B4F8DBABE5CD62F44CAC1FE4DE792249F13AA2B33",
+      "Bytes": 248077
+    },
+    {
+      "Name": "wp2-migration-pg-final-exact-history-full-write-input.invalid-missing-sdk-file.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-final-exact-history-full-write-input.invalid-missing-sdk-file.json",
+      "Sha256": "08838AA5D27C56E7736CF552864F29639A7D7407FB5BD93CD4B26B36526746B9",
+      "Bytes": 247857
+    },
+    {
+      "Name": "wp2-migration-pg-fresh-restored-order-full-write.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-fresh-restored-order-full-write.json",
+      "Sha256": "D66DF2EA7C5F8DB4C74FA8E40379CA5D313DC2EC784599299C90132D2F3BD7C8",
+      "Bytes": 9204
+    },
+    {
+      "Name": "wp2-migration-pg-fresh-restored-order-full-write.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-fresh-restored-order-full-write.log",
+      "Sha256": "BAAB4BF1CABD232A69F8605321E42F22EFEA2FEE0F17084D5571332A97C72135",
+      "Bytes": 5847
+    },
+    {
+      "Name": "wp2-migration-pg-fresh-restored-order-full-write-input.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-fresh-restored-order-full-write-input.json",
+      "Sha256": "28E60FE420FEFC0C57227FE877ABD66E32EB3882D844BDFBEEA908CD603BACDE",
+      "Bytes": 147850
+    },
+    {
+      "Name": "wp2-migration-pg-unknown-history-identity-rollback.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-unknown-history-identity-rollback.json",
+      "Sha256": "E605923F15FE3A33E1EE2AF38711F3069390BC206E69483515A60C21E1605D07",
+      "Bytes": 1840
+    },
+    {
+      "Name": "wp2-migration-pg-unknown-history-identity-rollback.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-unknown-history-identity-rollback.log",
+      "Sha256": "EFDD4664BAEEAE7E4816AA3275066081B10675E9BDA7421FC058DA544BA34D3B",
+      "Bytes": 238
+    },
+    {
+      "Name": "wp2-init-pg-full-restored-model-first-seed.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-init-pg-full-restored-model-first-seed.json",
+      "Sha256": "16363331680504A211E56E282C27A77041E06065BC11D5A600F4FCDA006534A3",
+      "Bytes": 780
+    },
+    {
+      "Name": "wp2-init-pg-full-restored-model-repeat-seed.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-init-pg-full-restored-model-repeat-seed.json",
+      "Sha256": "B0A12819FE06B73E41397AD03968A5A7CDDD98407EDF8A53F0B5A4E14FB3ACD7",
+      "Bytes": 780
+    },
+    {
+      "Name": "wp2-migration-pg-full-restored-model-seed-prepare.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-full-restored-model-seed-prepare.json",
+      "Sha256": "1E12C4BF2FDA61A30BE1FA1FF36FF39395B585BAC7FB96EA6210557E0F03B272",
+      "Bytes": 1709
+    },
+    {
+      "Name": "wp2-migration-pg-full-restored-model-seed-prepare.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-full-restored-model-seed-prepare.log",
+      "Sha256": "1C8DA8CE6FF27D0BD051ED7741E1BD564DD839930EDDC248608FF7E02991291D",
+      "Bytes": 165
+    },
+    {
+      "Name": "wp2-migration-pg-full-restored-model-seed-verify.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-full-restored-model-seed-verify.json",
+      "Sha256": "B386DEC9F47403006A041B8D59196C3B018EB3521A65F9066A04D3DDCF80C728",
+      "Bytes": 1753
+    },
+    {
+      "Name": "wp2-migration-pg-full-restored-model-seed-verify.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-full-restored-model-seed-verify.log",
+      "Sha256": "80478ADB3FCB81CB82A62CED9F6263A7F0A9145588D7A6DC5C3A96BC6ED46A19",
+      "Bytes": 208
+    },
+    {
+      "Name": "wp2-init-pg-ordinary-runtime-guard-preserved.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-init-pg-ordinary-runtime-guard-preserved.json",
+      "Sha256": "E1C69C49E649641478C05B53BB7BA4062E2871C090EA1C90F8AE4622B76F7AA0",
+      "Bytes": 839
+    },
+    {
+      "Name": "wp2-migration-conflicting-modes-rejected.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-conflicting-modes-rejected.json",
+      "Sha256": "3CA2834A3D0B8BAA4D4CCDEEA083485B14E302DF6433B90A323B1546A5C9B042",
+      "Bytes": 1439
+    },
+    {
+      "Name": "wp2-migration-conflicting-modes-rejected.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-conflicting-modes-rejected.log",
+      "Sha256": "859590E17A1F2372980E8235834405AE0CFDF4E1F79255B7907E6315B78FE829",
+      "Bytes": 118
+    },
+    {
+      "Name": "wp2-migration-missing-seed-mode-value-rejected.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-missing-seed-mode-value-rejected.json",
+      "Sha256": "B036E2A1A8EF555CD57A5CCF4E66496FE96548199FE8847F65B1B43FFE254CA3",
+      "Bytes": 1434
+    },
+    {
+      "Name": "wp2-migration-missing-seed-mode-value-rejected.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-missing-seed-mode-value-rejected.log",
+      "Sha256": "62CB11AA8E461207C5AC85A706817A293C94FEDDFA776C95B7D9B2558E7F377C",
+      "Bytes": 112
+    },
+    {
+      "Name": "wp2-migration-missing-seed-state-path-rejected.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-missing-seed-state-path-rejected.json",
+      "Sha256": "13515F3F2C3B7892D7376F8D53B805A41069E556646A42C50B2F7EFC328DEACB",
+      "Bytes": 1413
+    },
+    {
+      "Name": "wp2-migration-missing-seed-state-path-rejected.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-missing-seed-state-path-rejected.log",
+      "Sha256": "3662C0DB0A99BE802E2E6ADCA3780ADF563FA37C580FE5A921DA925F25467C4F",
+      "Bytes": 91
+    },
+    {
+      "Name": "build-migration-probe-exact-history-and-seed-mode.log",
+      "OriginalPath": "D:\\CP6\\tmp\\build-migration-probe-exact-history-and-seed-mode.log",
+      "Sha256": "5537B2B1D2CD013BCAB65972059BB023166E16582B0C0150E133B58EE1B23DFA",
+      "Bytes": 1172
+    },
+    {
+      "Name": "wp2-text-pg-adapted-orm-and-empty.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-adapted-orm-and-empty.json",
+      "Sha256": "2D6313D1AA88FCE4096442F8274DE2A046E43044A81B5C5B463CD2912C5A37BA",
+      "Bytes": 7822
+    },
+    {
+      "Name": "wp2-text-pg-adapted-orm-and-empty.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-adapted-orm-and-empty.log",
+      "Sha256": "29AC6BBA84142D065BF5701F8B4A88D3C16EDCCF75D1A7827D212596DFBFC8BD",
+      "Bytes": 3252
+    },
+    {
+      "Name": "wp2-text-sql-reference-orm-boundaries.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-sql-reference-orm-boundaries.json",
+      "Sha256": "9B8D2DF932EF4B1CB81B4EFDD6DE550CD5AEBDDF19C162EA83CBD39590A4D282",
+      "Bytes": 4497
+    },
+    {
+      "Name": "wp2-text-sql-reference-orm-boundaries.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-sql-reference-orm-boundaries.log",
+      "Sha256": "0002C4939052BA84A87871336CCD78CA1FA16B1F52AFBA7CAF6D1C69FCB8452A",
+      "Bytes": 1577
+    },
+    {
+      "Name": "wp2-cp936-reference-verified.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cp936-reference-verified.log",
+      "Sha256": "49558F79B7DDD8E811EDEDB0C4A0F9C497E3A9A71063A89A3B574BF3844428E1",
+      "Bytes": 172
+    },
+    {
+      "Name": "wp2-review-initialization-probes.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-review-initialization-probes.json",
+      "Sha256": "734BA6F4051E42CE43A1FF9FDBF3E4D7589262AB29E85682F978B35CA24D4C23",
+      "Bytes": 27432
+    },
+    {
+      "Name": "wp2-review-mapping-migrations.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-review-mapping-migrations.json",
+      "Sha256": "0E59B8D5CF06B529A8D21B3399C6B17FCB7DD777445A3B4C074EF77EAEF6CA21",
+      "Bytes": 18011
+    },
+    {
+      "Name": "wp2-bug143-four-state-conflict-resolution.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-bug143-four-state-conflict-resolution.json",
+      "Sha256": "A769614F23302D13F1BBE19267EC1B52120199150D1785180A8255736CBB7B3B",
+      "Bytes": 1644
+    },
+    {
+      "Name": "wp2-migration-sql-populated136-to137-upgrade.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-populated136-to137-upgrade.json",
+      "Sha256": "896306BA1DD7F0A623C0B71479F2523331D9F9DBF4E782468ABE506D00F65133",
+      "Bytes": 2445
+    },
+    {
+      "Name": "wp2-migration-sql-populated136-to137-upgrade.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-populated136-to137-upgrade.log",
+      "Sha256": "6E51EEA8818691EB1E19BDD30BB7F7F5B335B6B70D24B603333A710180983290",
+      "Bytes": 1075
+    },
+    {
+      "Name": "wp2-init-sql-final-upgrade-legacy136-first-seed.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-init-sql-final-upgrade-legacy136-first-seed.json",
+      "Sha256": "7EF39C566F48E23D49EAA344B348EB2A7B8A32807D14FFFAC156A0894BC75529",
+      "Bytes": 779
+    },
+    {
+      "Name": "wp2-migration-sql-final-upgrade-legacy136-seed-prepare.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final-upgrade-legacy136-seed-prepare.json",
+      "Sha256": "33A42944CA8E2EDE0F2F4E1F585C86F3D93E6881E87EC61E6C126FAA0FBB83FC",
+      "Bytes": 1715
+    },
+    {
+      "Name": "wp2-migration-sql-final-upgrade-legacy136-seed-prepare.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final-upgrade-legacy136-seed-prepare.log",
+      "Sha256": "B1C617DB807EE3B7908888C9F3D7BAE5521A1E97F2CEED028F2E11965375CC65",
+      "Bytes": 165
+    },
+    {
+      "Name": "wp2-migration-sql-raw-order-defaults-reference.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-raw-order-defaults-reference.json",
+      "Sha256": "18F10773CF4E18E19878DD6DB60EB29AE7CAAE8A71BDBA185B93916D959BEA57",
+      "Bytes": 1920
+    },
+    {
+      "Name": "wp2-migration-sql-raw-order-defaults-reference.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-raw-order-defaults-reference.log",
+      "Sha256": "C5A18324690011D482F8FDCE3797D3196CFD4E944F710D755725103B1782F937",
+      "Bytes": 432
+    },
+    {
+      "Name": "wp2-migration-sql-finance-race-reference.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-finance-race-reference.json",
+      "Sha256": "9D3DC6793CBDEAD5B0A74B8960D3224120C534DE3F0449708AE49AB0625D20E8",
+      "Bytes": 6778
+    },
+    {
+      "Name": "wp2-migration-sql-finance-race-reference.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-finance-race-reference.log",
+      "Sha256": "34845421FB2F06ED2826B5B1D8685A4E701599F23C865C0D5D9D4E361B3EEA82",
+      "Bytes": 3475
+    },
+    {
+      "Name": "wp2-migration-pg-financial-space-constraint-writes.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-financial-space-constraint-writes.json",
+      "Sha256": "ACCD0CEEA2CBB824F0FB67E72A3FB48E0E5DBBB08735753A4557A1C6F2890204",
+      "Bytes": 2143
+    },
+    {
+      "Name": "wp2-migration-pg-financial-space-constraint-writes.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-financial-space-constraint-writes.log",
+      "Sha256": "652DBFB0B0940E45CB67AFB52889E8F667030A31214B9E39D70EE6ECAB0D7E02",
+      "Bytes": 464
+    },
+    {
+      "Name": "wp2-migration-sql-financial-space-constraint-writes.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-financial-space-constraint-writes.json",
+      "Sha256": "FCBD11A0E1E6703D6BC7B65EE464BE2152891DDFAB83C9990227605E42330F37",
+      "Bytes": 2148
+    },
+    {
+      "Name": "wp2-migration-sql-financial-space-constraint-writes.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-financial-space-constraint-writes.log",
+      "Sha256": "652DBFB0B0940E45CB67AFB52889E8F667030A31214B9E39D70EE6ECAB0D7E02",
+      "Bytes": 464
+    },
+    {
+      "Name": "wp2-migration-pg-finance-race-red.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-finance-race-red.json",
+      "Sha256": "31A5F29E09D684E94A6F2AF61D575092EC5F5DCCEE49D0C1CF7663A0F77F5147",
+      "Bytes": 6999
+    },
+    {
+      "Name": "wp2-migration-pg-finance-race-red.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-finance-race-red.log",
+      "Sha256": "E70E5EC571209CF12F26EE51CD5C25B52AD2129C16A7A6B0A1736371DD8BAB39",
+      "Bytes": 3563
+    },
+    {
+      "Name": "wp2-migration-pg-raw-order-defaults-contract-red.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-raw-order-defaults-contract-red.json",
+      "Sha256": "F71587A7696C7BEAC4CD25409247761A24CFF7341F61938C5DAB4C7AB20B8599",
+      "Bytes": 5060
+    },
+    {
+      "Name": "wp2-migration-pg-raw-order-defaults-contract-red.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-raw-order-defaults-contract-red.log",
+      "Sha256": "38EE177942602EB04BC982211E1AF423AFFFB17680B09CD171A4071D7200BE81",
+      "Bytes": 3577
+    },
+    {
+      "Name": "wp2-migration-pg-raw-order-defaults-preinstall-red.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-raw-order-defaults-preinstall-red.json",
+      "Sha256": "D1D57153F30FB29718CCF8CB15B98FDAA84CB84E53F97CF9FFB4DE348C32C0D9",
+      "Bytes": 1590
+    },
+    {
+      "Name": "wp2-migration-pg-raw-order-defaults-preinstall-red.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-raw-order-defaults-preinstall-red.log",
+      "Sha256": "624EF291D0B3D276B0C3881175FC33B02ED767AC8B164ECB96205E4B276A6C56",
+      "Bytes": 107
+    },
+    {
+      "Name": "wp2-migration-pg-seed-verify.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-verify.json",
+      "Sha256": "F2307DAF09D2DFC12BBC81389AEFD26F701082A0D9C7E8C8D96439CE92C64EF2",
+      "Bytes": 1456
+    },
+    {
+      "Name": "wp2-migration-pg-seed-verify.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-verify.log",
+      "Sha256": "0A19CB957888DEBE9B75075E4F4252B0EEAA55CB326B2132ACD9977F2F46ACD3",
+      "Bytes": 118
+    },
+    {
+      "Name": "wp2-migration-pg-seed-verify-diagnostic.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-verify-diagnostic.json",
+      "Sha256": "7DD544489F03DA050D34E4EA55DDE3976C252D5697FC1825AF50FE9118A7A025",
+      "Bytes": 1509
+    },
+    {
+      "Name": "wp2-migration-pg-seed-verify-diagnostic.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-verify-diagnostic.log",
+      "Sha256": "114DE75A11308FA4584EDE685CA24F314AB6D81321A11B0B1102F05AB29A2FBE",
+      "Bytes": 165
+    },
+    {
+      "Name": "wp2-migration-pg-seed-audit-metadata.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-audit-metadata.json",
+      "Sha256": "5D2735CF39E61CF15DDA9172B07D3AFBA15D3AC2782082870CA6BBB3E38099B2",
+      "Bytes": 1576
+    },
+    {
+      "Name": "wp2-migration-pg-seed-audit-metadata.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-audit-metadata.log",
+      "Sha256": "258613015900878C5C4210F8E985F44CFFE9ED791B11E6D2BDB3193C0C4F89C0",
+      "Bytes": 232
+    },
+    {
+      "Name": "wp2-migration-pg-seed-menu-metadata.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-menu-metadata.json",
+      "Sha256": "CE7AD48973769EF1A910010A1627787BB91BCC330579403FD6A79B7956939031",
+      "Bytes": 1602
+    },
+    {
+      "Name": "wp2-migration-pg-seed-menu-metadata.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-pg-seed-menu-metadata.log",
+      "Sha256": "1C93D1E09FA6AFF9FFAAD09F2537A7E7A1DE65B2AF97D1A7D6225F57D333875F",
+      "Bytes": 259
+    },
+    {
+      "Name": "wp2-migration-sql-seed-verify-diagnostic.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-seed-verify-diagnostic.json",
+      "Sha256": "EDAD1F32D930ABF649FA6416B58662C437410EE6E01F49414846418614E8F469",
+      "Bytes": 1511
+    },
+    {
+      "Name": "wp2-migration-sql-seed-verify-diagnostic.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-seed-verify-diagnostic.log",
+      "Sha256": "20D6F51CEDFF3230D72213416446852C3E5509CD7FADFA4B6FFD4FDC3074461B",
+      "Bytes": 162
+    },
+    {
+      "Name": "wp2-migration-sql-seed-audit-metadata.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-seed-audit-metadata.json",
+      "Sha256": "3CCFD0338EA19EECCBCCA01F495F5BDCF061197EA9F666E0C0C96EE7F36A0BFF",
+      "Bytes": 1578
+    },
+    {
+      "Name": "wp2-migration-sql-seed-audit-metadata.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-seed-audit-metadata.log",
+      "Sha256": "D46B21C07C4D40EEC1ACA27954B15B066513A1206751FAB41C5E7B08BA80FBCE",
+      "Bytes": 229
+    },
+    {
+      "Name": "wp2-migration-sql-first-install.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-first-install.json",
+      "Sha256": "91D8811896B18D505B492C1FB2DC41CA7E94BE2A3E89FBC0EE3CC5DE9A42891C",
+      "Bytes": 2907
+    },
+    {
+      "Name": "wp2-migration-sql-first-install.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-first-install.log",
+      "Sha256": "BE99434F4912763456820B4450F97BE0CFA6D82517E12D2D685CB4A0E9F1371E",
+      "Bytes": 831
+    },
+    {
+      "Name": "wp2-migration-sql-upgraded-catalog-diagnostic.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-upgraded-catalog-diagnostic.json",
+      "Sha256": "A5B6F02F5B55F49C5A27ADD76CFF6EAE9956FA0019BCAAB97D92BC6C1384382B",
+      "Bytes": 4951
+    },
+    {
+      "Name": "wp2-migration-sql-upgraded-catalog-diagnostic.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-upgraded-catalog-diagnostic.log",
+      "Sha256": "EDD22D683BE723A7A418A2BCF37635FDBF4EDA029538833F97EBB4C576435EB6",
+      "Bytes": 1776
+    },
+    {
+      "Name": "wp2-migration-sql-upgraded-catalog-write-negative.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-upgraded-catalog-write-negative.json",
+      "Sha256": "758AD4F25F4FC7E3A58606AF1FD32298013224E97BD4CAA5B33487A1EED940AA",
+      "Bytes": 4544
+    },
+    {
+      "Name": "wp2-migration-sql-upgraded-catalog-write-negative.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-upgraded-catalog-write-negative.log",
+      "Sha256": "CE80C428222AB9D150D4C32C6A235CA38C23C585623A40CF73D80EA2B9D9FAAA",
+      "Bytes": 1486
+    },
+    {
+      "Name": "wp2-text-pg-red-verified.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-red-verified.json",
+      "Sha256": "FD8F65F699A90FAF170281041A442A4A058A4ABCA0960C0881BAA546760C9AD6",
+      "Bytes": 3327
+    },
+    {
+      "Name": "wp2-text-pg-red-verified.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-red-verified.log",
+      "Sha256": "1E1BAA7265A7A85EF8330FB120B2F4F3F52EEB9F4D4DF0DBAE1C2C65E39AA362",
+      "Bytes": 1226
+    },
+    {
+      "Name": "wp2-text-pg-red-extended.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-red-extended.json",
+      "Sha256": "92B14A1ACD52C0993845948CE169227272930908F4A8E441D3A7812B6E3C7478",
+      "Bytes": 6519
+    },
+    {
+      "Name": "wp2-text-pg-red-extended.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-red-extended.log",
+      "Sha256": "8D67231D0B995047B0876020171161C7F9E5D8A092CAFA7A263AF3D491074FE6",
+      "Bytes": 2701
+    },
+    {
+      "Name": "wp2-text-pg-red.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-red.log",
+      "Sha256": "07E4BA6E6404D9A8E83CF3E34C5A2F25A318085A22DB541C61786074FC18F869",
+      "Bytes": 3940
+    },
+    {
+      "Name": "wp2-text-pg-adapted-range.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-adapted-range.json",
+      "Sha256": "80D664E21A9CA2074E3F41F5D8086BCFEC3DC13C257D7149A45F72813DED5C34",
+      "Bytes": 3234
+    },
+    {
+      "Name": "wp2-text-pg-adapted-range.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-pg-adapted-range.log",
+      "Sha256": "E5A168F924E6FF81B2A84D2A8184977F5BD327166C8DD8334143C47A25551514",
+      "Bytes": 1134
+    },
+    {
+      "Name": "wp2-text-sql-orm-first.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-sql-orm-first.json",
+      "Sha256": "935C9CFA08DB2D99CC32F243A7CE329321DD15175F547D134BE69B862C917844",
+      "Bytes": 1668
+    },
+    {
+      "Name": "wp2-text-sql-orm-first.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-text-sql-orm-first.log",
+      "Sha256": "0DED81925E5FC61AD403DCF88341451B95EE0B0998747AD10584E678140333A1",
+      "Bytes": 128
+    },
+    {
+      "Name": "build-9.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\text\\build-9.log",
+      "Sha256": "6BD9A21F2BB86C5C9F987061C5CFB4A684DC2F83EE21AB80C809DE5422863264",
+      "Bytes": 267
+    },
+    {
+      "Name": "build-4.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\text\\build-4.log",
+      "Sha256": "5FC1321DED514F61C9F2AA3A578A3248236B544BF81F5DD0F8A2C62A3108274C",
+      "Bytes": 1701
+    },
+    {
+      "Name": "build-6.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\text\\build-6.log",
+      "Sha256": "09B914061CC6845046B1E2F49F358BAA132E53FCEEFED498CF28052F731C5BA1",
+      "Bytes": 1111
+    },
+    {
+      "Name": "frozen-sql-oracle-green.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\frozen-sql-oracle-green.log",
+      "Sha256": "90E275BCAEF0186917DE736F80FE3EB1E2B3D908B96C402609E22C855DFAC089",
+      "Bytes": 1465
+    },
+    {
+      "Name": "build-migration-probe-catalog-final-source.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\build-migration-probe-catalog-final-source.log",
+      "Sha256": "8B4C109A5E3DD494880DD38FF16C8D43602E0604718498060448CA9942275507",
+      "Bytes": 1625
+    },
+    {
+      "Name": "wp2-model-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-red\\wp2-model-red.trx",
+      "Sha256": "DCAEA5C03E3AEC5626E6663329697B18A7BAAA0B8EC6726AD14815C90DCD8620",
+      "Bytes": 134078
+    },
+    {
+      "Name": "wp2-model-red.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-red\\wp2-model-red.log",
+      "Sha256": "891FBDAA34FF09372FCA252BC5F0AC28B7B1ADC866963A55EA1056D8CD2840E4",
+      "Bytes": 6997
+    },
+    {
+      "Name": "wp2-model-red-verified.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-red-verified\\wp2-model-red-verified.trx",
+      "Sha256": "E99859DFB5E554CC2D228BD5812D3B62D1E248D61A4763FD7A1EDB90AE6EEDF6",
+      "Bytes": 120229
+    },
+    {
+      "Name": "wp2-model-red-verified.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-red-verified\\wp2-model-red-verified.log",
+      "Sha256": "36BB4F877CE416EEEAB9A147104F6A8DD59025A24593D38814CC5208E84DD383",
+      "Bytes": 4517
+    },
+    {
+      "Name": "wp2-model-first-adapted.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-first-adapted\\wp2-model-first-adapted.trx",
+      "Sha256": "5CE5F95F42951CDAE69EFB78849453B228CBEAD8D9DB11AA681DA88CCE4BC981",
+      "Bytes": 82838
+    },
+    {
+      "Name": "model-first-adapted.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-first-adapted.log",
+      "Sha256": "35DE04672CA498EED700E176542A197B1EDE334ACAA7C8AD8B6B94BEF708A4A3",
+      "Bytes": 4194
+    },
+    {
+      "Name": "wp2-model-adapted-2.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-adapted-2\\wp2-model-adapted-2.trx",
+      "Sha256": "93AA3EC5B95D78BA4646063897D2200A6A6C5DF393BFCD4C22D3A24A4ABCE211",
+      "Bytes": 80696
+    },
+    {
+      "Name": "model-adapted-2.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\model-adapted-2.log",
+      "Sha256": "AC37B27ADE81E07CB56BB3EFC62642F98037DB1550AC6F3A8A54DABACF39BAE1",
+      "Bytes": 2761
+    },
+    {
+      "Name": "wp2-fixed-ascii-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\fixed-ascii-red\\wp2-fixed-ascii-red.trx",
+      "Sha256": "C95F318DD18BF51BFCF3C635666B56380F6586D7CA5412B783848220E0E17777",
+      "Bytes": 18540
+    },
+    {
+      "Name": "fixed-ascii-red.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\fixed-ascii-red.log",
+      "Sha256": "61A66979E45191769BEB393251D0E7D6581EB3560934A06D3F90461C9CAC6F0C",
+      "Bytes": 5531
+    },
+    {
+      "Name": "wp2-init-mode-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\init-mode-red\\wp2-init-mode-red.trx",
+      "Sha256": "B2FD49E0938EC4C395FAC333123C785615079293CA8D55A1CD465A8135397297",
+      "Bytes": 11198
+    },
+    {
+      "Name": "wp2-search-path-red.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\search-path-red\\wp2-search-path-red.trx",
+      "Sha256": "E5DB50B4B21B56260B819209692FC081C2290C45CE20D9EE30B13D1B967692C0",
+      "Bytes": 24554
+    },
+    {
+      "Name": "search-path-red.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\search-path-red.log",
+      "Sha256": "D799B65FA4A3795880205B0DB9A73546ECA2E9BC736CB37D1111DAFAAC63A032",
+      "Bytes": 7874
+    },
+    {
+      "Name": "scaffold-pg-core-audited-final.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\scaffold-pg-core-audited-final.log",
+      "Sha256": "FDAE6E8A7531FC5789E2AF151AAE83D5DE9310ACD13616D8B6F97ACD2109A0CF",
+      "Bytes": 424
+    },
+    {
+      "Name": "scaffold-pg-space-audited-final.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\scaffold-pg-space-audited-final.log",
+      "Sha256": "FDAE6E8A7531FC5789E2AF151AAE83D5DE9310ACD13616D8B6F97ACD2109A0CF",
+      "Bytes": 424
+    },
+    {
+      "Name": "scaffold-IdentityPriority-3.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\scaffold-IdentityPriority-3.log",
+      "Sha256": "3EA3198C8CE48D92A6D7A55A87B0C6F764E2D7DCC374B56B722C109C9929C4E4",
+      "Bytes": 388
+    },
+    {
+      "Name": "scaffold-ErpIntegration-3.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\scaffold-ErpIntegration-3.log",
+      "Sha256": "4B6565F665F7D4A9819C8D6D844BB71D5D7DBCB093E3ED1DDE4FE3C27F094368",
+      "Bytes": 676
+    },
+    {
+      "Name": "scaffold-sql-generation.log",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\scaffold-sql-generation.log",
+      "Sha256": "3B37E330A054A7D31A4068F3D0D6964B1AD48330E40C1F21AEB243AC3F6BEC3B",
+      "Bytes": 55
+    },
+    {
+      "Name": "token-manifest-Core.json",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\token-manifest-Core.json",
+      "Sha256": "6FF902155CBAB41E3EFF3094DAADD3E3C612AFCE10055B3DD1C62E2EF0118BBA",
+      "Bytes": 15339
+    },
+    {
+      "Name": "token-manifest-Space.json",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\token-manifest-Space.json",
+      "Sha256": "E3626D86FCFD24CA89AB2557EE8F84FA28ED21CF256517E99AC8A8A85F5F17F1",
+      "Bytes": 4202
+    },
+    {
+      "Name": "token-manifest-IdentityPriority.json",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\token-manifest-IdentityPriority.json",
+      "Sha256": "5A61552B83471953D0B4BA92368E031C2AF544D8DD08629531C3ED3D2533D3A4",
+      "Bytes": 474
+    },
+    {
+      "Name": "token-manifest-ErpIntegration.json",
+      "OriginalPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002\\tmp\\db-compat-wp2-tests\\token-manifest-ErpIntegration.json",
+      "Sha256": "D594E09E1307329038F5D5703F4C85FA3F4C4AFAC15A6233E252669129338EE3",
+      "Bytes": 635
+    },
+    {
+      "Name": "wp2-migration-sql-final-populated136-to140.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final-populated136-to140.json",
+      "Sha256": "665A73B441C14C0CB6C8697A46BEEB38821E43626ED3B56564F9230BA90D0966",
+      "Bytes": 2857
+    },
+    {
+      "Name": "wp2-migration-sql-final-populated136-to140.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final-populated136-to140.log",
+      "Sha256": "F07E591E3421E1AF42468AB469D0082076ACE10D9BCE08FBD10DD14EF18BEF7D",
+      "Bytes": 1227
+    },
+    {
+      "Name": "wp2-migration-sql-final140-full-write-negative.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-full-write-negative.json",
+      "Sha256": "1CAF204D7C2D1CC8C617D6CFCDBB8A396D655DFB8FAC50AAB9D9C38C7E8013D9",
+      "Bytes": 10969
+    },
+    {
+      "Name": "wp2-migration-sql-final140-full-write-negative.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-full-write-negative.log",
+      "Sha256": "3BFA333C965B76BF7AEC7A03E2F18019D5311ABD4D392C211F3903F7B7E975D0",
+      "Bytes": 7364
+    },
+    {
+      "Name": "wp2-migration-sql-final140-unknown-history-rollback.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-unknown-history-rollback.json",
+      "Sha256": "38C132E2176B9C90678B895E81A476C84F51A57377F352618FEC1F2AD0623497",
+      "Bytes": 1846
+    },
+    {
+      "Name": "wp2-migration-sql-final140-unknown-history-rollback.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-unknown-history-rollback.log",
+      "Sha256": "938B962E596B18E3F98F9B03769737E68BF90D8BBF51F874D3F712CB5D570984",
+      "Bytes": 240
+    },
+    {
+      "Name": "wp2-migration-sql-final140-seed-capture-before-new-initializer.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-seed-capture-before-new-initializer.json",
+      "Sha256": "CFCD87B4B03A7C962E446CAE54D69E6849460146C3CEC6BCFD4A7F0B065857BD",
+      "Bytes": 1743
+    },
+    {
+      "Name": "wp2-migration-sql-final140-seed-capture-before-new-initializer.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-seed-capture-before-new-initializer.log",
+      "Sha256": "12FC5AB405FB8E564DDA08806D8EC8C8EB5D76EA60470B86D8F65A818D516150",
+      "Bytes": 193
+    },
+    {
+      "Name": "wp2-migration-sql-final140-seed-verify-first-initializer.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-seed-verify-first-initializer.json",
+      "Sha256": "85D7E418C6A318BF1947828C3FEC855AF13CC692A6ED974C6E49AF81C227B5F9",
+      "Bytes": 1758
+    },
+    {
+      "Name": "wp2-migration-sql-final140-seed-verify-first-initializer.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-seed-verify-first-initializer.log",
+      "Sha256": "00289DB884831C8FA9ACC8243CB7FF7EE6D08BE85C51235366A1933CC2CB6725",
+      "Bytes": 208
+    },
+    {
+      "Name": "wp2-migration-sql-final140-seed-verify-repeat-initializer.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-seed-verify-repeat-initializer.json",
+      "Sha256": "F9B9D8056326C8263B838C94CF8C6A225040ED0D168FFA013812456AAC9BEE0C",
+      "Bytes": 1758
+    },
+    {
+      "Name": "wp2-migration-sql-final140-seed-verify-repeat-initializer.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-migration-sql-final140-seed-verify-repeat-initializer.log",
+      "Sha256": "00289DB884831C8FA9ACC8243CB7FF7EE6D08BE85C51235366A1933CC2CB6725",
+      "Bytes": 208
+    },
+    {
+      "Name": "wp2-init-sql-final140-after-upgrade-first-initializer.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-init-sql-final140-after-upgrade-first-initializer.json",
+      "Sha256": "7FB01272A9C043D32F0DC9D3E302031122514E54B33BD0FD48579D6F514B0BE9",
+      "Bytes": 779
+    },
+    {
+      "Name": "wp2-init-sql-final140-repeat-initializer.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-init-sql-final140-repeat-initializer.json",
+      "Sha256": "7A1F84E60CA6DA4F28093B6C43EBE4970E426CA60D5628582BE7EDA72DD3B59F",
+      "Bytes": 778
+    },
+    {
+      "Name": "wp2-final-sql140-probe-input.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-final-sql140-probe-input.json",
+      "Sha256": "2472836FA21E96C50A7B3C2E9F27141665A9E4EA7CED80FCA802AC42609B7816",
+      "Bytes": 497067
+    },
+    {
+      "Name": "wp2-final-sql140-probe-input-verified.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-final-sql140-probe-input-verified.json",
+      "Sha256": "301657FED2370B7A1066583F2AECFDEC4A3B4DD8935DC811CD81A7805706F10B",
+      "Bytes": 500459
+    },
+    {
+      "Name": "wp2-final-sql140-api-input.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-final-sql140-api-input.json",
+      "Sha256": "CA59A1E92D571E2CA3901575E52AA04309797A65DB60442A2C326B1CF1477EB7",
+      "Bytes": 2602
+    },
+    {
+      "Name": "build-wp2-final-sql140-api.log",
+      "OriginalPath": "D:\\CP6\\tmp\\build-wp2-final-sql140-api.log",
+      "Sha256": "C4D32D6B13BB106FCD48C16E7250A3DDEB6A76995102540E9B989ADF963915EC",
+      "Bytes": 82
+    },
+    {
+      "Name": "build-wp2-final-sql140-migration-probe.log",
+      "OriginalPath": "D:\\CP6\\tmp\\build-wp2-final-sql140-migration-probe.log",
+      "Sha256": "328AB9BFE597372D548FA8CFF38B41F7431BE8BD81050D9441AC6DA46920AD2A",
+      "Bytes": 82
+    },
+    {
+      "Name": "bug-143-remote-main-closure-proof.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug-143-remote-main-closure-proof.json",
+      "Sha256": "368EE6347BD927D87C0B7617A0CE984EB97D328C37FF5B8A2A20F2E8B129606A",
+      "Bytes": 1976
+    },
+    {
+      "Name": "wp2-init-bug143-post-merge-smoke.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-init-bug143-post-merge-smoke.json",
+      "Sha256": "AFF3932C2CC5CB7401D2CB3DA986FEF488EF5B34D4872B1399891C16556F2F86",
+      "Bytes": 789
+    },
+    {
+      "Name": "bug-143-sql-compare-after-cleanup-final-to-after-post-merge-smoke.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug-143-sql-compare-after-cleanup-final-to-after-post-merge-smoke.json",
+      "Sha256": "AB3DAB275953C3BEE356DE4D1AC55CB0E7E1CD69B955F85F8D31FEFDBF373B50",
+      "Bytes": 5069
+    },
+    {
+      "Name": "wp2-cleanup-final-owned-eight.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cleanup-final-owned-eight.json",
+      "Sha256": "11FBEC88E11DE3346F5E089D3AB94E5923D3CF4D54F169EF52443FFF80A2EE87",
+      "Bytes": 7165
+    },
+    {
+      "Name": "wp2-cleanup-final-owned-eight-verified.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cleanup-final-owned-eight-verified.json",
+      "Sha256": "087E67F786BEF4B2B574E43BC5D21BFED9782F07BFC8E2DA3CB66B60C2D0B695",
+      "Bytes": 8219
+    },
+    {
+      "Name": "wp2-cleanup-final-owned-eight-verified-env.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cleanup-final-owned-eight-verified-env.json",
+      "Sha256": "16C6C78F558FADF56861E5EC13CBE53CBC1747B2DECE3E92610AFF7339851EB2",
+      "Bytes": 11238
+    },
+    {
+      "Name": "Complete-DbCompatWp2Cleanup.original-sqlcmd-output-options.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Complete-DbCompatWp2Cleanup.original-sqlcmd-output-options.ps1",
+      "Sha256": "9F8E56C99DA2CD456DC97D71AB5245D1A73FC320D720545CAE7DFE4A8FDEFD52",
+      "Bytes": 24945
+    },
+    {
+      "Name": "Complete-DbCompatWp2Cleanup.original-empty-pgservice-env.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Complete-DbCompatWp2Cleanup.original-empty-pgservice-env.ps1",
+      "Sha256": "4097EEB71AC9A7336F6F2760F7BA2E631A4754523A89D8DF8D23987078EA8711",
+      "Bytes": 24948
+    },
+    {
+      "Name": "Complete-DbCompatWp2Cleanup.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Complete-DbCompatWp2Cleanup.ps1",
+      "Sha256": "8DA601BEF6C4C4982B61E01EA3580ED454E61ED490F7E8D2EC0007C1FF3980EA",
+      "Bytes": 25094
+    },
+    {
+      "Name": "wp2-cleanup-final-script-review.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cleanup-final-script-review.json",
+      "Sha256": "E3DA86F877BB15C689C19B8640DF548E13BFED10DD4E617EEFFB7D9C5FC115D4",
+      "Bytes": 465
+    },
+    {
+      "Name": "wp2-cleanup-sqlcmd-option-correction.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cleanup-sqlcmd-option-correction.json",
+      "Sha256": "E93CCB10EB0A425E6DB9E4D63C86D1E52B93B3C32AE542314183C19E63DFEB2B",
+      "Bytes": 740
+    },
+    {
+      "Name": "wp2-cleanup-pgservice-env-correction.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cleanup-pgservice-env-correction.json",
+      "Sha256": "A9F28FA9EC9B5ED1B90565A7D5E926FB85B9CFDC46A0A5124A0C522F4F2A168B",
+      "Bytes": 763
+    },
+    {
+      "Name": "wp2-cleanup-pg-preflight-original.sql",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-cleanup-pg-preflight-original.sql",
+      "Sha256": "8689FD69995D5734F99E56CC5998709B3C3642064CBA16FA41CCABA42FBF23BF",
+      "Bytes": 761
+    },
+    {
+      "Name": "wp2-final-review-source-applicability.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp2-final-review-source-applicability.json",
+      "Sha256": "28A7910531BAE917049DE3A13DD1B22B225533A2AABCF668709AD1350E39EE35",
+      "Bytes": 31805
+    },
+    {
+      "Name": "Verify-Wp2FinalReviewApplicability.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Verify-Wp2FinalReviewApplicability.ps1",
+      "Sha256": "B40B61DE72568B9DD69E75F105DC16590387065091F875BFBA57632732707247",
+      "Bytes": 3203
+    }
+  ]
+}

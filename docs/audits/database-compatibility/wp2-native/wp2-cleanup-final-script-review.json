@@ -1,0 +1,11 @@
+{
+  "Scope": "One targeted cleanup-script review of exact owned task resources; not a new repository review or native dry run.",
+  "ReviewedUtc": "2026-10-03T07:40:27.1177126Z",
+  "ScriptSha256": "9F8E56C99DA2CD456DC97D71AB5245D1A73FC320D720545CAE7DFE4A8FDEFD52",
+  "SyntaxErrors": 0,
+  "Targets": 8,
+  "ExplicitReceiptFiles": 5,
+  "NoForceOrSessionTermination": true,
+  "RequiredNativeEvidenceAlreadyPassed": true,
+  "Execution": "Pending separately"
+}

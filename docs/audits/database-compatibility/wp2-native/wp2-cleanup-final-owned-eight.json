@@ -1,0 +1,209 @@
+{
+  "Scope": "Exact eight explicitly receipt-listed WP2 task databases only; all-target preflight followed by per-target recheck, native non-FORCE DROP and absence proof.",
+  "Task": "DB-COMPAT-01-WP2",
+  "Label": "wp2-cleanup-final-owned-eight",
+  "StartedUtc": "2026-10-03T07:40:39.6552321Z",
+  "UpdatedUtc": "2026-10-03T07:40:39.9104203Z",
+  "FinishedUtc": "2026-10-03T07:40:39.9083274Z",
+  "ScriptSha256": "9F8E56C99DA2CD456DC97D71AB5245D1A73FC320D720545CAE7DFE4A8FDEFD52",
+  "Status": "Failed",
+  "Phase": "AllEightNativePreflight",
+  "CurrentTarget": "SqlServer|CP6Compat_WP2_20261002_3ac63d7a",
+  "ExpectedTargetCount": 8,
+  "AllEightPreflightPassed": false,
+  "DroppedAndAbsenceVerified": 0,
+  "AllEightAbsentVerified": false,
+  "AnyDropOutcomeUnknown": false,
+  "ReceiptHashes": [
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-initial-owned.json",
+      "Sha256": "D18D0005279E452A3CFCCC68DE0AFCA6FF0847E3DCE073C6803C1F9348C02D99"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-pre-review-owned.json",
+      "Sha256": "916A2B990F35E8EC920EAAB64FDE4AF347DEC5CAD1954B6B5CD06D95C0A5AA61"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-before-raw-final-owned.json",
+      "Sha256": "2CBBC834A88BB83E51782123E6DCEEE46269E9B1BCFE0DC2D228FF0D40949C68"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-before-sql-final-upgrade-owned.json",
+      "Sha256": "0B8681AC50D0CA8AABB84F9561301CC8EC57C1E178554F9F57E3DC4BBAFDDE2C"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\db-compat.wp2-owned.json",
+      "Sha256": "2C757B8977F7DFD42C4AF99791C1353435C59CACD6863308290A5E4A328D2AB9"
+    }
+  ],
+  "ReceiptsModified": false,
+  "ReceiptBytesUnchanged": null,
+  "Targets": [
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_3ac63d7a",
+      "ExpectedOwnerMarker": "3ac63d7a823843d492620af048349491",
+      "ReceiptSources": [
+        "db-compat.wp2-initial-owned.json"
+      ],
+      "Status": "PreflightChecking",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_3ac63d7a",
+      "ExpectedOwnerMarker": "3ac63d7a823843d492620af048349491",
+      "ReceiptSources": [
+        "db-compat.wp2-initial-owned.json"
+      ],
+      "Status": "ValidatedReceipt",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_844f5957",
+      "ExpectedOwnerMarker": "844f5957ba5047a0a3cf4c53a981e64f",
+      "ReceiptSources": [
+        "db-compat.wp2-pre-review-owned.json"
+      ],
+      "Status": "ValidatedReceipt",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_844f5957",
+      "ExpectedOwnerMarker": "844f5957ba5047a0a3cf4c53a981e64f",
+      "ReceiptSources": [
+        "db-compat.wp2-pre-review-owned.json"
+      ],
+      "Status": "ValidatedReceipt",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_36ef9cae",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-before-raw-final-owned.json",
+        "db-compat.wp2-before-sql-final-upgrade-owned.json"
+      ],
+      "Status": "ValidatedReceipt",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_36ef9cae",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-before-raw-final-owned.json"
+      ],
+      "Status": "ValidatedReceipt",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP2_20261002_31d68591",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-before-sql-final-upgrade-owned.json",
+        "db-compat.wp2-owned.json"
+      ],
+      "Status": "ValidatedReceipt",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    },
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP2_20261002_63d019b6",
+      "ExpectedOwnerMarker": "36ef9cae14704ac88eb994416f628e24",
+      "ReceiptSources": [
+        "db-compat.wp2-owned.json"
+      ],
+      "Status": "ValidatedReceipt",
+      "Preflight": null,
+      "PreflightUtc": null,
+      "BeforeDropRecheck": null,
+      "BeforeDropUtc": null,
+      "DropAttempted": false,
+      "DropOutcome": "NotAttempted",
+      "Dropped": false,
+      "AbsenceVerified": false,
+      "DropCompletedUtc": null,
+      "FinalAbsent": null
+    }
+  ],
+  "PostgreSqlRole": {
+    "Name": "cp6compat_wp1_0b54dc81",
+    "Retained": null
+  },
+  "Failure": {
+    "Code": "SqlNativeOperationRejected",
+    "Phase": "AllEightNativePreflight",
+    "Target": "SqlServer|CP6Compat_WP2_20261002_3ac63d7a",
+    "AtUtc": "2026-10-03T07:40:39.9083274Z",
+    "OriginalExceptionOrNativeTextLogged": false
+  },
+  "Limits": "Caller-owned final-gate evidence is a prerequisite. No prefix discovery, force option, session termination, role/authentication/service changes, business-row cleanup, or root-workspace cleanup."
+}

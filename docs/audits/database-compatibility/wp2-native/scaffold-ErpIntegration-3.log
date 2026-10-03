@@ -1,0 +1,4 @@
+An error occurred while accessing the Microsoft.Extensions.Hosting services. Continuing without the application service provider. Error: Database:Provider=PostgreSql is not yet supported by the application runtime. Database compatibility work must complete model, migrations, SQL and messaging validation before startup is enabled.
+The entity type 'Cp6InboxMessage' was first mapped explicitly and then ignored. Consider not mapping the entity type in the first place.
+The entity type 'Cp6InboxAggregateCheckpoint' was first mapped explicitly and then ignored. Consider not mapping the entity type in the first place.
+Done. To undo this action, use 'ef migrations remove'

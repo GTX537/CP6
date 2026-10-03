@@ -1,0 +1,4 @@
+Build started...
+Build succeeded.
+An error occurred while accessing the Microsoft.Extensions.Hosting services. Continuing without the application service provider. Error: Database:Provider=PostgreSql is not yet supported by the application runtime. Database compatibility work must complete model, migrations, SQL and messaging validation before startup is enabled.
+Done. To undo this action, use 'ef migrations remove'

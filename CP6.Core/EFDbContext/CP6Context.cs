@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Platform.EntityFramework;
+using CP6.Core.Persistence;
 
 namespace CP6.Core.EFDbContext;
 
@@ -50,6 +51,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     public DbSet<CrmIdentitySnapshot> CrmIdentitySnapshots => Set<CrmIdentitySnapshot>();
     public DbSet<CrmServiceTokenRecord> CrmServiceTokenRecords => Set<CrmServiceTokenRecord>();
     public DbSet<CrmIdentityBootstrapState> CrmIdentityBootstrapStates => Set<CrmIdentityBootstrapState>();
+    public DbSet<CrmIdentityTenantGeneration> CrmIdentityTenantGenerations => Set<CrmIdentityTenantGeneration>();
 
     /// <summary>
     /// 用户表
@@ -609,6 +611,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        // Preserve complete convention names until the PG adapter applies byte-safe, collision-checked names.
+        if (Database.IsNpgsql()) modelBuilder.Model.SetMaxIdentifierLength(int.MaxValue);
         modelBuilder.AddCp6TransactionalMessaging("crm_identity");
         modelBuilder.Entity<CrmIdentityBootstrapState>(e =>
         {
@@ -620,6 +624,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         modelBuilder.Entity<CrmIdentitySnapshot>(e =>
         {
             e.ToTable("Snapshot", "crm_identity");
+            if (Database.IsSqlServer())
+                e.ToTable("Snapshot", "crm_identity", table => table.HasTrigger("trg_CrmIdentitySnapshot_TenantGeneration"));
             e.HasKey(x => new { x.TenantId, x.AggregateId });
             e.Property(x => x.AggregateId).HasMaxLength(128).UseCollation("Latin1_General_100_BIN2");
             e.Property(x => x.EventType).HasMaxLength(128).IsRequired();
@@ -2609,6 +2615,15 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
                 if (filter != null) newIdx.SetFilter(filter);
             }
         }
+
+        modelBuilder.Entity<CrmIdentityTenantGeneration>(e =>
+        {
+            e.ToTable("CrmIdentityTenantGenerations", table => table.HasCheckConstraint(
+                "CK_CrmIdentityTenantGenerations_Generation", "[Generation] >= 0"));
+            e.HasKey(x => x.TenantId);
+            e.Property(x => x.TenantId).ValueGeneratedNever();
+        });
+        if (Database.IsNpgsql()) CorePostgreSqlModelConfiguration.Apply(modelBuilder);
     }
 
     // ═══════════════════════════════════════════════════════════════════════

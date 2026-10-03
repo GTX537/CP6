@@ -12,7 +12,7 @@ namespace CP6.Tests.Persistence;
 public sealed class DatabaseProviderTests
 {
     private const string SqlConnectionString = "Server=localhost;Database=provider_fixture;User Id=fixture;Password=secret-value;MultipleActiveResultSets=False;TrustServerCertificate=True";
-    private const string PostgreSqlConnectionString = "Host=localhost;Database=provider_fixture;Username=fixture;Password=secret-value";
+    private const string PostgreSqlConnectionString = "Host=localhost;Database=provider_fixture;Username=fixture;Password=secret-value;Search Path=public";
 
     [Fact]
     public void Missing_provider_defaults_to_sql_server_without_guessing_from_connection_string()

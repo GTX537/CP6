@@ -1,0 +1,1 @@
+Passed: History.UnknownIdentityRollbackNegativeControl: Actual Core history rejected one unknown provider/context identity before migration; rollback retained the exact 140 original identities. No migration or business-row write occurred.

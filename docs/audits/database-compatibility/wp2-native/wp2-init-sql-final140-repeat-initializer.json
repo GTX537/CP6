@@ -1,0 +1,16 @@
+{
+  "Scope": "Real compiled application DatabaseInit; isolated owned database only, no API/workers",
+  "Provider": "SqlServer",
+  "Database": "CP6Compat_WP2_20261002_63d019b6",
+  "SourceWorktree": "D:\\CP6\\tmp\\worktrees\\db-compat-wp2-20261002",
+  "SourceCommit": "94c0f8c9cac63a72008c4e6b242c94358f25b305",
+  "StartedUtc": "2026-10-03T07:30:50.7543025Z",
+  "FinishedUtc": "2026-10-03T07:30:58.5191921Z",
+  "ProcessId": 6712,
+  "ExitCode": 0,
+  "ListenerObserved": false,
+  "CompletionMessage": true,
+  "BinarySha256": "709710CFC2888819D99CCA9559142475A4BD072A0B17AFC152F1F9F738A9740A",
+  "StdoutSha256": "4DE03FCA972782FB80A13AD555C2F72FE4FB92AC624686C231DC812C96295023",
+  "StderrSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6"
+}

@@ -1,0 +1,35 @@
+{
+  "Scope": "Only four owned WP2 project-memory document conflicts; all owned stash non-heading lines and new upstream BUG143 non-heading lines retained, except duplicate/renamed historical headings. Older main BUG137 Pending is correctly superseded by the already-closed owned stash record.",
+  "OriginalStash": "351df257fbb00af694b9cab361421a1c21fd733c",
+  "RetainedStash": true,
+  "ConfirmedUpstream": "94c0f8c9cac63a72008c4e6b242c94358f25b305",
+  "Files": [
+    {
+      "Path": "docs/project-memory/PROJECT_STATE.md",
+      "AllOwnedStashNonHeadingLinesPreserved": true,
+      "NewUpstreamBug143NonHeadingLinesPreserved": true,
+      "Sha256": "997D20742EF59452BE8798FC6FA4AFA033F7FC9A7BC23895A1D3E4C287C4AC9D"
+    },
+    {
+      "Path": "docs/project-memory/05-Completed.md",
+      "AllOwnedStashNonHeadingLinesPreserved": true,
+      "NewUpstreamBug143NonHeadingLinesPreserved": true,
+      "Sha256": "B3BB842F50DD5BA1C1D190F3E637D4C3F0955ECD3AE079C08B1FAB463404E4F7"
+    },
+    {
+      "Path": "docs/project-memory/06-Todo.md",
+      "AllOwnedStashNonHeadingLinesPreserved": true,
+      "NewUpstreamBug143NonHeadingLinesPreserved": true,
+      "Sha256": "C22F88F8CF00DCEC6F956FBF4A91ADDCC67C9F74952A12D1A28D14B5CBA0E01A"
+    },
+    {
+      "Path": "docs/project-memory/CHANGELOG-AI.md",
+      "AllOwnedStashNonHeadingLinesPreserved": true,
+      "NewUpstreamBug143NonHeadingLinesPreserved": true,
+      "Sha256": "29EAE2281D2B98A9328D92E6093FF0AA51F3DE9C9F5411FC059CDCDEAEFF887F"
+    }
+  ],
+  "GitAddAndRestoreStagedOnlyFourPaths": true,
+  "UnmergedPathsRemaining": [],
+  "StagedPathsRemaining": []
+}

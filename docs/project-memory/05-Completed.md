@@ -1,6 +1,14 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-03：BUG #143 完成真实本地容量迁移与回归验收
+## 2026-10-03：最终 SQL 门禁与双库初始化本地通过
+
+[PR #144](https://github.com/GTX537/CP6/pull/144) 于07:15:02 UTC正常合入，main `94c0f8c9cac63a72008c4e6b242c94358f25b305` 确认包含功能 `2b6548b1` 与证据 `5348a2a5`；WP2保留任务改动并fast-forward。BUG143原17/17、升级/重复15/15、四案例及恢复、fixture清理29/29和报价SQL/PG各2/2保持原范围；合并后同API原步骤exit0/noHTTP及native完整比较15/15已完成，[Issue143](https://github.com/GTX537/CP6/issues/143) 于07:23:27 UTC Closed，closure原件由WP2交付记录引用。
+
+2026-10-03 WP2最终SQL136→140四指定前向升级实际2/2、完整目录/定向写入/负对照35/35、未知history2/2通过。新API首次/重复DatabaseInit均exit0、无HTTP，seed capture及两次verify各2/2，全部352表计数/history、自定义global/tenant翻译、管理员昵称和密码摘要保持。实际probe BFB8…314C0、Core F84…0DE1、API7097…740A，源码为main94加未提交WP2输入；probe源码/build观察在首次native期间完成，API观察在首次initializer之后，原pre-native误词与root-only SqlClient hash准备比较失败均保留分类，不称native失败或重跑。2950源码hash仅为输入观察，不扩大测试/review范围。
+
+PG完整限定36/36、historical fresh33/33、unknown-history2/2、实际APP首次/重复和334表保持、151/151及独立25/25按原输入复用；另一次PG报价2/2保持独立来源。SQL oracle仍d607，原失败、30/45集中review、两P2及后加四文件/reader两行增量review的来源见[实施记录](../audits/database-compatibility/WP2-IMPLEMENTATION.md)。当前LocalVerified；8个owned测试库已全部清理并确认不存在，原所有权记录字节保持，PG测试role保留（[实际清理原件](../audits/database-compatibility/wp2-native/wp2-cleanup-final-owned-eight-verified-env.json)）；首两次清理工具准备失败均0drop并保留，非迁移失败。原始140份清单加最终输入证明/脚本2份，共142份已归档且全数hash/bytes匹配（[manifest](../audits/database-compatibility/wp2-native/manifest.json)、[源码字节证明](../audits/database-compatibility/wp2-native/wp2-final-review-source-applicability.json)）；75个记录输入一致不称新75测试或review。WP2提交/PR/远端main核对Pending，WP3–WP6及[父任务134](https://github.com/GTX537/CP6/issues/134)继续。普通PG API/worker guard保留，没有Actions、保护变更或部署。下方Current/Open/Pending保留历史时点，以本节与后续实际核对为准。
+
+## 2026-10-03 历史快照：BUG #143 完成真实本地容量迁移与回归验收
 
 六个报价Creator/Modifier nullable nvarchar(max)按既有模型收敛至100，原排序规则、行值和已存token保留；最终源 `2b6548b1` 目标17/17。同编译应用真实首次/重复exit0无HTTP，隔离SQL139→140升级/重复各15/15，四实际命令案例4/4且各完整恢复15/15；第六列超长时前五已实际ALTER、同事务全部恢复。三行fixture归零后的完整只读比较29/29，351业务表原始hash/count、352表身份、原history前缀/唯一追加及全部最终metadata核对。实际EF报价图与六列native边界SQL修复后/PG各2/2，原SQL容量RED及最后超长空格差异单独记录。
 
@@ -12,7 +20,29 @@
 
 初版17静态GREEN之后实际SQL102（COLLATE方括号）/缺列207失败已保留；两次全数据/目录恢复15/15不是容量迁移通过。已最小修native collation校验后safe literal拼接和metadata之后动态DATALENGTH bitOUT，新target17/17；APIhash不变但Corehash变更须重新绑定。修正版native与完整审查/远端交付仍Pending，不预写GREEN。
 
-## 2026-10-02：BUG #141 四条订单外键修复完成本地及真实 SQL 验证
+## 2026-10-02 历史快照：BUG #141 已交付，WP2 PG 门禁通过，SQL 四项前向升级待验
+
+[BUG #141](https://github.com/GTX537/CP6/issues/141) 已经 [PR #142](https://github.com/GTX537/CP6/pull/142) 正常合入，远端 main 已核对为 `4d4e260819f0a1b59810403d016c69a2fd7319ae`，Issue Closed。WP2 分支保留本任务改动并 fast-forward 到该主线；SQL 原合同 oracle 仍冻结 `d6074aaa`。该 BUG 的真实 Core138→139、首次/重复初始化、四 FK/级联和 rollback 证据保持原范围，详见[原始审计](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)。
+
+WP2 最新实际 PostgreSQL 完整限定门禁 **36/36**，包括四 Context、65 个 raw 默认、四个全局 NULLS NOT DISTINCT 唯一索引、令牌/generation、时间与代表性关系/金融写入。执行原件 `wp2-migration-pg-final-exact-history-full-write-gates.json` 的源码基线为 `2d974736`，保留执行输入和二进制哈希；文档及主线 SHA 更新不改称新执行。输入 sidecar 补正实际 SDK `10.0.302` 与 1439 个源码哈希，原缺失 SDK 文件的无效 sidecar 保留，未因此重跑 build 或 native gate。实际 PG DatabaseInit 首次/重复退出 0、无 HTTP；其 **334 张表**行数/历史与全局/租户自定义翻译、管理员昵称和密码哈希保留。相关测试 **151/151** 与另一次索引回归 **25/25** 均零跳过，各自保留真实来源；双库金额/FK 和 Space 租户/Unicode 存储门禁各 **3/3**。这些证据证明限定初始化、结构和存储合同，全业务验收尚未完成，普通 PG API/worker 仍受运行门禁限制。
+
+实际 PG 迁移历史负对照 **2/2**：未知 ID 在 `Migrate` 前被拒绝，外部事务回滚后原历史完整恢复；缺失 `--seed-mode` 值或 seed state 路径均实际 exit 1、`DatabaseVersion=null`，在数据库访问前拒绝。这些预期失败分别保留原件，不计为业务成功。WP2 一次集中审查已按分工完成初始化/Provider/工具 **30 文件**及映射/帮助器/迁移/模型测试 **45 文件**两个范围；前者两个 P2 已修复并仅定向复查 seed 参数前置校验与迁移历史精确合同，未因文档更新重启完整审查。执行来源、复用边界及历史失败见[实施记录](../audits/database-compatibility/WP2-IMPLEMENTATION.md)与[模型测试记录](../audits/database-compatibility/WP2-MODEL-TESTS.md)。
+
+[BUG #143](https://github.com/GTX537/CP6/issues/143) 仍 Open，正从最新已确认 main 的独立分支恢复六个报价 Creator/Modifier 历史容量。WP2 最终 SQL **Core136→140** 的 generation、21 个索引、四 FK、六列容量 **四项前向升级尚未执行**；旧 generation-only 136→137 及 BUG #141 的 138→139 分项成功不扩大为最终升级通过。WP2 冻结、最终 SQL 验收、远端交付及 owner 库清理仍待完成，WP3–WP6 与 Issue #134 未完成。未触发/取消 Actions、改变触发或保护、迁移既有业务环境或部署。下方保留各历史快照，其中 Open/Pending 仅指相应记录时点，当前状态以本节为准。
+
+## 2026-10-02 历史快照：WP2 PG 初始化与定向门禁通过，SQL 最终升级待验
+
+本段保留 BUG #141 交付前的 WP2 执行快照；33/33、三项 136→139 计划和当时 Open/Pending 不改称最新执行或当前状态，最新进度见顶部。
+
+[索引修复 PR #140](https://github.com/GTX537/CP6/pull/140)已正常合入并核对远端 main `2d9747360a38dfc519ddebea7aced06a9466b879`，包含功能 `083e9c4d` 与原始证据 `94124c62`；合并后原步骤目录冒烟通过，[Issue #139](https://github.com/GTX537/CP6/issues/139)已关闭。WP2 worktree 保留本任务改动并 fast-forward 到该主线；SQL 原合同 oracle 继续冻结 d607。
+
+WP2 新空 PostgreSQL 结构/代表性写入门禁 **33/33**（65 默认和四个全局唯一索引已安装）；双库金融金额/外键及 Space 租户复合 FK/Unicode 存储边界各 **3/3**。相关 Provider、接线、模型及初始化测试 **151/151**，另一次索引集成回归 **25/25**，两次均零跳过，保留各自真实来源。实际 compiled PG DatabaseInit 首次与重复均退出 0、不启动 HTTP；全部 **334 张表**行数/迁移历史保持，全局及租户翻译、管理员昵称和密码保留。PG 实际 Order graph/四 FK/删除级联专项 **2/2**，旧 SQL136 同专项 **1 通过 / 1 失败**是有效缺 FK RED。成功结果及历史失败见[实施记录](../audits/database-compatibility/WP2-IMPLEMENTATION.md)，这些限定门禁不替代全业务验收。
+
+SQL 完整目录发现四条 Order 外键缺失，由独立 [BUG #141](https://github.com/GTX537/CP6/issues/141) 修复；该源码相关 **37/37 GREEN**，真实 SQL 验收及远端交付仍 Pending，Issue Open。两个 alternate key 已确认由明确的全局 unique index 等价实现，目录继续验证定义。最终 SQL136→139 的 generation/索引/FK 三项正常前向升级尚未执行，旧升级证据不扩大为本轮通过。模式冲突已在访问数据库前拒绝；普通 PG API/worker guard 实际拒绝仍保留。WP2 收尾、集中审查、远端交付和 owner 库清理待完成；后续按授权继续 WP3，WP3–WP6/Issue #134 未完成。未运行/取消 Actions，未改触发、保护、现有数据库或部署。下方记录保留对应历史时点。
+
+## 2026-10-02 历史快照：BUG #141 四条订单外键修复完成本地及真实 SQL 验证
+
+本段保留 PR #142 合入前的 BUG #141 本地验收快照；其中 Issue Open、远端 Pending 为当时状态，当前已 Closed，交付事实见顶部。
 
 [Issue #141](https://github.com/GTX537/CP6/issues/141) 已实现四条 SQL-only WITH CHECK 外键前向修复和完整既有对象 guard，不改模型、snapshot、旧迁移或数据。旧链 RED **4 失败 / 5 通过**，相关 **37/37、零跳过、最终零 warning/error**（含原索引25），一次独立完整审查无实质阻塞。真实同 API首次/重复初始化 exit 0、无 HTTP；升级/重复比较各 **9/9**，352 表内容摘要/行数与1378旧索引、198旧FK保留，仅新增4FK。native guard最终 **11/11**、各恢复 **9/9**；五项复用、六项新执行，保留原NFR夹具51003失败及组合旗标证明边界。独立WP2实际订单关系SQL **2/2**，合法六行图、四孤儿拒绝和四级联，写入回滚后状态比较 **9/9**。[原始证据](../audits/2026-10-02-bug-141-order-foreign-keys/README.md)保留失败/源码/二进制和外部probe范围。本条完成仅本BUG本地验收；正常远端交付待负责人执行，Issue Open，不替代WP2全结构/业务或PG API验收。未运行 Actions 或部署。
 
@@ -20,11 +50,17 @@
 
 [订单查询索引遗漏](https://github.com/GTX537/CP6/issues/139) 的 21 项 SQL-only 修复已通过单元 **25/25**（保留 RED **21 失败 / 1 通过**）、真实同 binary 首次/重复初始化 exit 0 且无 HTTP、升级/重复比较各 **25/25** 及 native guard **8/8**。352 表 count/摘要状态及全部旧索引捕获 metadata 保留，负场景均恢复原状态；晚冲突证明外层事务撤销前 20 项创建。一次独立完整审查无实质阻塞，[原始证据与失败范围](../audits/2026-10-02-bug-139-order-indexes/README.md)完整保留。功能源码 `083e9c4d` 未变，后续文档复用结果。此条完成范围为本地验收；正常 PR/远端 main/Issue 关闭待交付，Issue Open，不代表 WP2 其他结构或 PG API 完成。未运行 Actions 或部署。
 
-## 2026-10-02：BUG #137 本地及真实 SQL 原步骤复测通过，待正常 PR 交付
+## 2026-10-02：DB-COMPAT-01 WP1 远端交付，开始 WP2
+
+[PR #136](https://github.com/GTX537/CP6/pull/136) 已正常合入远端 main `d6074aaad3098b61adaeda902b92bf24b3eb0c04`，包含 `d30da70e` / `7bbe2eca`；本地/远端 main 一致，WP1 交付闭环。复用相同代码/依赖的真实 133 配置测试、SQL28 / PG31 限量试验，不重新执行或称为全量业务验收。未触发/取消 Actions，未改保护或环境。
+
+从该基线创建独立 `codex/db-compat-wp2-20261002` worktree，进入四 Context 完整映射、PG 迁移与初始化，见 [WP2 实施记录](../audits/database-compatibility/WP2-IMPLEMENTATION.md)。WP2 尚未验收/交付，WP3–WP6 未完成，整体目标及 Issue #134 保持进行中；PG API/worker runtime guard 保留。下方 WP1“待交付”条目保留提交时的历史时点。
+
+## 2026-10-02：BUG #137 已正常 PR 合并，远端核对后关闭
 
 [采购对账菜单首次资源键修复](https://github.com/GTX537/CP6/issues/137)已在独立分支提交。旧逻辑 RED **2 失败 / 1 通过**；修复后相关测试 **20/20 通过、零跳过**。真实隔离 SQL 空库首次初始化即有菜单资源键；同一 compiled API 再次初始化后，**全部 351 张表行数和迁移历史不变**，包括字段审计。全局/租户翻译、管理员昵称与密码哈希原样保留，两次进程退出 0、不启动 HTTP。详见[执行证据与适用边界](../audits/2026-10-02-bug-137-menu-seed/README.md)。
 
-功能执行源 `bab643750111beef610eba911bb530b422f9d99f`；后续文档及证据提交复用相同功能源码的测试。正常 PR 合并、远端 main 包含性核对及 Issue 关闭待交付步骤完成；当前 Issue Open。不执行 Actions、现有数据库迁移或部署；触发配置未改、取消项 0。
+功能执行源 `bab643750111beef610eba911bb530b422f9d99f`；后续文档及证据提交复用相同功能源码的测试。[PR #138](https://github.com/GTX537/CP6/pull/138)已合入远端 main `d507f389fdcadd8e2fc5dcb9e40f752cde613703`，祖先关系核对包含功能提交，Issue #137 已关闭。不执行 Actions、现有数据库迁移或部署；触发配置未改、取消项 0。
 
 ## 2026-10-02：DB-COMPAT-01 WP1 本地门禁完成（待正常 PR 交付）
 

@@ -1,0 +1,13 @@
+Passed: Catalog.Core.EveryTableAndColumn: Verified every column in 233 actual model tables.
+Passed: Catalog.Core.EveryDatabaseToken: Verified 157 native token generators; no application-only token substitute.
+Failed: Catalog.Core.ModelConstraintsAndStorage: InvalidOperationException
+Passed: Catalog.Space.EveryTableAndColumn: Verified every column in 83 actual model tables.
+Passed: Catalog.Space.EveryDatabaseToken: Verified 41 native token generators; no application-only token substitute.
+Verified catalog model objects in 83 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.Space.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Catalog.IdentityPriority.EveryTableAndColumn: Verified every column in 4 actual model tables.
+Passed: Catalog.IdentityPriority.EveryDatabaseToken: Verified 4 native token generators; no application-only token substitute.
+Failed: Catalog.IdentityPriority.ModelConstraintsAndStorage: InvalidOperationException
+Passed: Catalog.ErpIntegration.EveryTableAndColumn: Verified every column in 8 actual model tables.
+Passed: Catalog.ErpIntegration.EveryDatabaseToken: Verified 6 native token generators; no application-only token substitute.
+Failed: Catalog.ErpIntegration.ModelConstraintsAndStorage: InvalidOperationException

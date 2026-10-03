@@ -17,7 +17,7 @@ namespace CP6.Tests.Persistence;
 [Collection(DatabaseDesignTimeEnvironmentCollection.Name)]
 public sealed class DatabaseWiringTests
 {
-    private const string PostgreSqlConnection = "Host=database.cp6.test;Database=fixture;Username=fixture;Password=fixture-password";
+    private const string PostgreSqlConnection = "Host=database.cp6.test;Database=fixture;Username=fixture;Password=fixture-password;Search Path=public";
     private const string SqlServerConnection = "Server=database.cp6.test;Database=fixture;Integrated Security=True;MultipleActiveResultSets=False";
     private static readonly Guid Tenant = Guid.Parse("11111111-1111-4111-8111-111111111111");
 

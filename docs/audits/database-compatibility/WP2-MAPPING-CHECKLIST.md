@@ -1,14 +1,14 @@
 # DB-COMPAT-01 WP2 映射与迁移语义检查清单
 
-日期：2026-10-02。状态：**Pending；WP1 双库限量实测前置已完成，WP2 实体、完整模型与 PostgreSQL 全量基线仍未开始。** 本报告初始盘点依据已接受[设计](../../superpowers/specs/2026-10-02-database-compatibility-design.md)，只读 WP1 worktree 中的当前四 Context、四 snapshot、相关实体/写入源码和历史迁移；盘点自身没有编译、restore、数据库连接或 Platform 旧 checkout 操作。后续独立探针与本次文档补记的执行边界分开记录。
+日期：2026-10-03。当前状态：**WP2映射、完整模型、独立PG四迁移基线与限定双库native/初始化门禁LocalVerified；8个owned库清理/不存在核对完成，远端交付Pending。** 实际151/151、独立25/25、PG fresh33/33/既有36/36与另一次报价2/2、最终SQL136→1402/2/full35/35、两库compiled首次/重复和全表种子保留各按[实施记录](WP2-IMPLEMENTATION.md)区分真实输入；BUG137/139/141/143均Closed。当前基线main94加未提交WP2输入，SQL原合同oracle仍d607，WP3–WP6与整体兼容未完成。本报告主体保留2026-10-02初始只读盘点：依据已接受[设计](../../superpowers/specs/2026-10-02-database-compatibility-design.md)，只读当时四Context/snapshot、实体/writer及历史迁移，盘点自身未编译、restore或连接DB。旧Pending列和出口要求是初始时点，后续实际实施/验收单独记录，不能把盘点改称native执行。
 
 本清单是后续映射/迁移验收的输入，不是兼容性证明。SQL Server 历史迁移保持原样。PostgreSQL 独立基线须从完整当前模型加历史必要对象、种子和数据规则建立，不能把当前 snapshot 当作最终数据库对象全集，也不能机械转换 187 个 T-SQL 迁移。
 
-## WP1 前置实测完成与 WP2 待实施边界
+## 历史盘点：WP1 前置实测与当时 WP2 待实施边界
 
 真实 SQL Server 最终报告为 **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PostgreSQL **18.6** 为 **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。双库源码/运行程序集输入 fingerprint 一致：`0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`。计数属于整个限量探针；PG 的 Rejected 是 raw SQL / ExecuteUpdate 实证否决 SaveChanges-only 应用 token 候选，不是跳过必需门禁。旧失败、负对照、临时对象清理与出处区别均保留在 [WP1-PROBE 执行记录](WP1-PROBE.md#executed-results)；[Platform 审计补记](WP1-PLATFORM.md#双库执行证据与剩余实施范围) 记录实际固定包范围。父任务正式冻结见 [WP1 决策](WP1-DECISIONS.md)。
 
-| 已完成的机制实测 | 对后续方案的约束 | 本清单仍为 Pending 的实施/验收 |
+| 已完成的机制实测 | 对后续方案的约束 | 初始盘点时为 Pending 的实施/验收 |
 | --- | --- | --- |
 | SQL Server native rowversion；PG 数据库生成 8 字节 bytea，EF 生成值回读与 raw / bulk / trigger / actual package 写入及陈旧写冲突通过 | 保留 `byte[]` / 12 字符 Base64 opaque 合同；PG 使用消费者模型覆盖和数据库 BEFORE INSERT OR UPDATE token 触发器，不能退回 SaveChanges-only 应用 token | 四 Context 全量属性映射；所有适用表的 sequence / function / trigger 与 generated/concurrency 元数据；独立 PG 基线安装和正式 writer 清单 |
 | 实际 Platform NuGet `[0.10.2]` 四实体、公开 store/processor API、两方同候选 claim、Inbox / checkpoint 竞争、replay 与 retention 通过 | 保持当前固定包和 public API；包内 informational version 仍为 `0.8.0-alpha.2+fbcd21528078a04e5b53c42c5fdfebe6ffa9655f`，与解析包版本分开记录，不复制包实现 | 真实消费者模型覆盖、触发器生命周期、worker / transport 接入和完整业务验收；本次限量成功不是 327 条模型映射兼容证明 |
@@ -424,7 +424,7 @@
 | [20260807170204_SpaceE06S05HistoricalRepublish.cs](../../../CP6.Space.Infrastructure/Migrations/20260807170204_SpaceE06S05HistoricalRepublish.cs#L139)<br>Down: 139 | 1 | H/forward-only | raw Down THROW保留historical-republish evidence；最终幂等、状态与context关系由模型创建，但forward-only不会从snapshot生成。 |
 | [20260827053057_SpaceV1UnifiedDraftCreation.cs](../../../CP6.Space.Infrastructure/Migrations/20260827053057_SpaceV1UnifiedDraftCreation.cs#L42)<br>Up: 42 | 1 | H/K | BasedOnVersionId非空的旧draft设CreationSource=1，最终creation-source/template-shape check同步；不能让clone被默认0误标为blank。 |
 
-## WP2 出口核对项
+## 历史盘点：WP2 出口核对项
 
 - WP1 双库限量机制实测前置已完成，实际固定 Platform 包保持；按父任务正式冻结的 provider/Npgsql版本、并发token、identity watermark、schema与独立migration assembly方案开展后续完整模型和PG基线工作。本清单当前仅准备输入，尚未开始实体/模型/迁移实施，不把机制通过外推为完整模型兼容。
 - 四 Context 各自输出 property/type/default/time/collation、key/FK/AK/index/predicate/check、schema/history/object/seed 清单。这里已列全部当前字面类型、95 filter与126 check，以及已识别超长名称；完整属性级时间来源、所有推导PK/FK名称和现场catalog仍是未完成项。
@@ -432,4 +432,6 @@
 - 独立PG基线除327模型映射条目外，明确包含模型外OIDC ledger、MES等价查询对象、财务DB保护、token函数/触发器、最终种子/默认。保留28历史raw SQL文件逐项适用/等价/旧库专用理由和原SQLServer升级路径；不得以“不在snapshot”认定不需要。
 - 空库初始化及第二次初始化核对真实对象/约束/种子，不能重写租户归属、重新生成认证版本、标记新死信已通知或重复业务副作用。正式后续升级与历史SQLServer验证使用隔离数据库，生产变更仍不在本阶段授权范围。
 
-初始盘点实际验证仅为源码读数、表达式/迁移调用清单与文档链接检查；盘点自身未编译、restore、连接数据库、执行迁移/业务测试或触发 GitHub Actions。后续独立探针双库实测已另行完成并留存真实记录；本次文档补记没有重跑探针。全部 Pending 映射项保留给 WP1 正式冻结后的 WP2 / WP3 实施与真实验收。
+初始盘点实际验证仅为源码读数、表达式/迁移调用清单与文档链接检查；盘点自身未编译、restore、连接DB或触发Actions。后续WP2完整映射/基线/限定native、实际seed、相关测试及集中review已另行完成，来源见当前状态和实施记录，旧Pending文字保留历史含义。8个owned库已清理并确认全不存在（[实际原件](wp2-native/wp2-cleanup-final-owned-eight-verified-env.json)），远端交付尚待真实核对；完整业务/worker/API验收仍在WP3–WP6，文档更新没有重跑探针。
+
+实际原始证据已归档142份（prepared140＋最终字节证明/脚本2），全部原件/副本hash和bytes一致，见[manifest](wp2-native/manifest.json)和[最终已记录输入比对](wp2-native/wp2-final-review-source-applicability.json)。75个唯一输入源码字节一致不称新75文件AI审查或测试；原盘点、原review与各次native范围保持，WP2远端交付Pending。

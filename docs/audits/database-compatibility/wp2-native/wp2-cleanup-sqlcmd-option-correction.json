@@ -1,0 +1,13 @@
+{
+  "Scope": "Targeted cleanup tool-output option correction only; original failure and source retained.",
+  "CapturedUtc": "2026-10-03T07:42:04.7826778Z",
+  "OriginalScriptSha256": "9F8E56C99DA2CD456DC97D71AB5245D1A73FC320D720545CAE7DFE4A8FDEFD52",
+  "FinalScriptSha256": "4097EEB71AC9A7336F6F2760F7BA2E631A4754523A89D8DF8D23987078EA8711",
+  "OnlyChange": "sqlcmd -y 0 to -y 4000; -h -1 retained",
+  "OriginalFailurePath": "tmp/wp2-cleanup-final-owned-eight.json",
+  "OriginalFailureDroppedCount": 0,
+  "OriginalAnyUnknown": false,
+  "ReadOnlyOptionReproduction": "-h -1/-y0 rejected as mutually exclusive; -h -1/-y4000 SELECT JSON returned expected true, exit0",
+  "SyntaxErrors": 0,
+  "NativeOrUnitGatesReexecuted": false
+}

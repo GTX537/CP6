@@ -1,0 +1,131 @@
+{
+  "Scope": "WP2 real isolated text contract, not full migrations or production acceptance",
+  "Provider": "SqlServer",
+  "Adapted": false,
+  "DatabaseVersion": "16.00.1000",
+  "SourceBase": "d6074aaad3098b61adaeda902b92bf24b3eb0c04",
+  "SourceState": "Uncommitted WP2 source identified by SHA256 inputs; applicable build success log is required.",
+  "SourceInputs": {
+    "../../CP6.Core/Persistence/PostgreSqlBusinessTextComparer.cs": "BE18D4DB60D06D6BAA4D4036E03647FCCC11A8A719A9CCB728AAE681AA37F5BE",
+    "../../CP6.Core/Persistence/PostgreSqlManagedTextV1.cs": "A8EA97F5D8994E99DC7383FFC1E27B4E85A8FAAF500774891A083B68C6BBD803",
+    "../../CP6.Core/Persistence/PostgreSqlTextQuerySqlGenerator.cs": "A9866D893D5211625914E3A71998651974F911855D60F13FA5240634D56CBC4E",
+    "../../CP6.Core/Persistence/PostgreSqlTextTypeMappingSource.cs": "7C30EC66D6AAD9C1B566E142C2E161966310DB28892958256CAB03507C8B589A",
+    "CP6.DatabaseCompatibility.TextProbe.csproj": "5A263FEFD434CEEF41E7A0CE616E5D5E2E3A097E7D899E3D6CB6C651A509CE35",
+    "Program.cs": "ECCCE33B94A871436A789695C096A8E4EF470FABF7640FBCAFF56C47355351A4",
+    "packages.lock.json": "2A5E1D0A3EE84DA6D9FD1F74F2ABBF0056B24E3E37DAA79D69320C98467FABC0"
+  },
+  "ExecutableSha256": "E977424DE97C6B4BF7CECE0637ED453B3B61A79E2E138C60A23D527FE846156B",
+  "Schema": "CP6Compat_text_b81ee715eee74ff2af68d9ebd153bd6f",
+  "Checks": [
+    {
+      "Name": "Text.RawRoundTrip",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.FixedCharPaddingRoundTrip",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.PadSpaceParameter",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.CaseParameter",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.WidthParameter",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.NfcParameter",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.AccentDistinct",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.MiddleSpaceDistinct",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ArrayParameterPadSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ContainsTailSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.SubstringTailSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ConcatTailSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.LenUtf16",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.LenUtf16NoTail",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ConcatThenEquality",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ConcatThenCaseEquality",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.SubstringThenWidthEquality",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ConcatThenNfcEquality",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.TrimTail",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.ForeignKeyPadSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Text.UniquePadSpace",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    },
+    {
+      "Name": "Isolation.RollbackCleanup",
+      "Status": "Passed",
+      "Detail": "Observed expected SQL Server contract."
+    }
+  ]
+}

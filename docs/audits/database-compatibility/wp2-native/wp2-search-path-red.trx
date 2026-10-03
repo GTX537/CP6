@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4ddb7b64-cc6c-493a-a150-4c3d2249ea7b" name="tt@LAPTOP-3QQ44FJS 2026-10-02 12:03:37" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T12:03:37.3402573-04:00" queuing="2026-10-02T12:03:37.3402579-04:00" start="2026-10-02T12:03:35.8216744-04:00" finish="2026-10-02T12:03:37.3468896-04:00" />
+  <TestSettings name="default" id="9c5424bd-0723-49c7-ba95-93c8a371b1fc">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-02_12_03_37" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e0de28c9-9fb1-4647-94ee-69a1f7406758" testId="5ba6caec-d3f6-e2e9-2ddf-8c71548072c0" testName="CP6.Tests.Persistence.DatabaseSearchPathTests.Factory_pins_missing_search_path_to_public_before_opening" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002489" startTime="2026-10-02T12:03:37.2304220-04:00" endTime="2026-10-02T12:03:37.2304461-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0de28c9-9fb1-4647-94ee-69a1f7406758">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "public"&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSearchPathTests.Factory_pins_missing_search_path_to_public_before_opening() in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs:line 16&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="24755d76-0662-4b31-83c6-bc4762e62a60" testId="417f216f-6a9b-3819-bfc4-4148520ce3db" testName="CP6.Tests.Persistence.DatabaseSearchPathTests.Ef_string_path_uses_the_same_fixed_public_schema" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002713" startTime="2026-10-02T12:03:37.2307442-04:00" endTime="2026-10-02T12:03:37.2307675-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="24755d76-0662-4b31-83c6-bc4762e62a60">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "public"&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSearchPathTests.Ef_string_path_uses_the_same_fixed_public_schema() in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs:line 24&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ef563574-a73f-4a70-acc5-619e368cbd59" testId="f5a11abb-c6e1-d263-c0d0-957b817919b8" testName="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;$user, public&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003116" startTime="2026-10-02T12:03:37.2289191-04:00" endTime="2026-10-02T12:03:37.2289657-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef563574-a73f-4a70-acc5-619e368cbd59">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.InvalidOperationException)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs:line 46&#xD;
+   at InvokeStub_DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="29573e3c-14c0-486e-9b1b-44b5bb9175ff" testId="065cb9f9-86a3-261a-50bd-83857881e1b0" testName="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;public,pg_catalog&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0006518" startTime="2026-10-02T12:03:37.2280696-04:00" endTime="2026-10-02T12:03:37.2281356-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="29573e3c-14c0-486e-9b1b-44b5bb9175ff">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.InvalidOperationException)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs:line 46&#xD;
+   at InvokeStub_DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c16e0ef8-6d2e-4911-b330-9d3fa5f29626" testId="a328aa7e-00cf-3e55-aa88-edbf0ffc42bf" testName="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;Public&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0771135" startTime="2026-10-02T12:03:37.1243766-04:00" endTime="2026-10-02T12:03:37.2183394-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c16e0ef8-6d2e-4911-b330-9d3fa5f29626">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.InvalidOperationException)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs:line 46&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2efad69c-26a0-40e5-95d8-63cfa1af8869" testId="cbe96418-2562-9751-2d6a-7fab784524b5" testName="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;custom&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0001893" startTime="2026-10-02T12:03:37.2293131-04:00" endTime="2026-10-02T12:03:37.2293377-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2efad69c-26a0-40e5-95d8-63cfa1af8869">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.InvalidOperationException)</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath) in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs:line 46&#xD;
+   at InvokeStub_DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0f6e1bcd-a7fc-4043-994d-fbd88eeb8f7d" testId="bf32ab20-70e9-df54-71c7-5935d0e9e8ff" testName="CP6.Tests.Persistence.DatabaseSearchPathTests.Caller_owned_closed_connection_is_pinned_before_open_without_replacing_it" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0043496" startTime="2026-10-02T12:03:37.2300155-04:00" endTime="2026-10-02T12:03:37.2300408-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f6e1bcd-a7fc-4043-994d-fbd88eeb8f7d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "public"&#xD;
+Actual:   null</Message>
+          <StackTrace>   at CP6.Tests.Persistence.DatabaseSearchPathTests.Caller_owned_closed_connection_is_pinned_before_open_without_replacing_it() in D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs:line 34&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;Public&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a328aa7e-00cf-3e55-aa88-edbf0ffc42bf">
+      <Execution id="c16e0ef8-6d2e-4911-b330-9d3fa5f29626" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSearchPathTests" name="Unsupported_search_path_fails_before_provider_or_connection_use" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSearchPathTests.Caller_owned_closed_connection_is_pinned_before_open_without_replacing_it" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bf32ab20-70e9-df54-71c7-5935d0e9e8ff">
+      <Execution id="0f6e1bcd-a7fc-4043-994d-fbd88eeb8f7d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSearchPathTests" name="Caller_owned_closed_connection_is_pinned_before_open_without_replacing_it" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSearchPathTests.Factory_pins_missing_search_path_to_public_before_opening" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="5ba6caec-d3f6-e2e9-2ddf-8c71548072c0">
+      <Execution id="e0de28c9-9fb1-4647-94ee-69a1f7406758" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSearchPathTests" name="Factory_pins_missing_search_path_to_public_before_opening" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;public,pg_catalog&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="065cb9f9-86a3-261a-50bd-83857881e1b0">
+      <Execution id="29573e3c-14c0-486e-9b1b-44b5bb9175ff" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSearchPathTests" name="Unsupported_search_path_fails_before_provider_or_connection_use" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;custom&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cbe96418-2562-9751-2d6a-7fab784524b5">
+      <Execution id="2efad69c-26a0-40e5-95d8-63cfa1af8869" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSearchPathTests" name="Unsupported_search_path_fails_before_provider_or_connection_use" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: &quot;$user, public&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f5a11abb-c6e1-d263-c0d0-957b817919b8">
+      <Execution id="ef563574-a73f-4a70-acc5-619e368cbd59" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSearchPathTests" name="Unsupported_search_path_fails_before_provider_or_connection_use" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.Persistence.DatabaseSearchPathTests.Ef_string_path_uses_the_same_fixed_public_schema" storage="d:\cp6\tmp\worktrees\db-compat-wp2-20261002\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="417f216f-6a9b-3819-bfc4-4148520ce3db">
+      <Execution id="24755d76-0662-4b31-83c6-bc4762e62a60" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.Persistence.DatabaseSearchPathTests" name="Ef_string_path_uses_the_same_fixed_public_schema" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5ba6caec-d3f6-e2e9-2ddf-8c71548072c0" executionId="e0de28c9-9fb1-4647-94ee-69a1f7406758" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="417f216f-6a9b-3819-bfc4-4148520ce3db" executionId="24755d76-0662-4b31-83c6-bc4762e62a60" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f5a11abb-c6e1-d263-c0d0-957b817919b8" executionId="ef563574-a73f-4a70-acc5-619e368cbd59" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="065cb9f9-86a3-261a-50bd-83857881e1b0" executionId="29573e3c-14c0-486e-9b1b-44b5bb9175ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a328aa7e-00cf-3e55-aa88-edbf0ffc42bf" executionId="c16e0ef8-6d2e-4911-b330-9d3fa5f29626" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cbe96418-2562-9751-2d6a-7fab784524b5" executionId="2efad69c-26a0-40e5-95d8-63cfa1af8869" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf32ab20-70e9-df54-71c7-5935d0e9e8ff" executionId="0f6e1bcd-a7fc-4043-994d-fbd88eeb8f7d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="0" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.39]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.73]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.75]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:00.87]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.87]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:00.87]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.87]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs(46,0): at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath)&#xD;
+[xUnit.net 00:00:00.87]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.87]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.88]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.88]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs(46,0): at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath)&#xD;
+[xUnit.net 00:00:00.88]            at InvokeStub_DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.88]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.88]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.88]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs(46,0): at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath)&#xD;
+[xUnit.net 00:00:00.88]            at InvokeStub_DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.88]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.88]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.88]       Expected: typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs(46,0): at CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(String searchPath)&#xD;
+[xUnit.net 00:00:00.88]            at InvokeStub_DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.88]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.88]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.88]       Expected: "public"&#xD;
+[xUnit.net 00:00:00.88]       Actual:   null&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs(34,0): at CP6.Tests.Persistence.DatabaseSearchPathTests.Caller_owned_closed_connection_is_pinned_before_open_without_replacing_it()&#xD;
+[xUnit.net 00:00:00.88]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.88]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.88]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.88]       Expected: "public"&#xD;
+[xUnit.net 00:00:00.88]       Actual:   null&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs(16,0): at CP6.Tests.Persistence.DatabaseSearchPathTests.Factory_pins_missing_search_path_to_public_before_opening()&#xD;
+[xUnit.net 00:00:00.88]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.88]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.88]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.88]       Expected: "public"&#xD;
+[xUnit.net 00:00:00.88]       Actual:   null&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         D:\CP6\tmp\worktrees\db-compat-wp2-20261002\CP6.Tests\Persistence\DatabaseSearchPathTests.cs(24,0): at CP6.Tests.Persistence.DatabaseSearchPathTests.Ef_string_path_uses_the_same_fixed_public_schema()&#xD;
+[xUnit.net 00:00:00.88]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.88]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.88]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:03:37.2202870-04:00">
+        <Text>[xUnit.net 00:00:00.87]     CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: "Public") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:03:37.2285730-04:00">
+        <Text>[xUnit.net 00:00:00.88]     CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: "public,pg_catalog") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:03:37.2291224-04:00">
+        <Text>[xUnit.net 00:00:00.88]     CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: "$user, public") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:03:37.2294479-04:00">
+        <Text>[xUnit.net 00:00:00.88]     CP6.Tests.Persistence.DatabaseSearchPathTests.Unsupported_search_path_fails_before_provider_or_connection_use(searchPath: "custom") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:03:37.2302019-04:00">
+        <Text>[xUnit.net 00:00:00.88]     CP6.Tests.Persistence.DatabaseSearchPathTests.Caller_owned_closed_connection_is_pinned_before_open_without_replacing_it [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:03:37.2305773-04:00">
+        <Text>[xUnit.net 00:00:00.88]     CP6.Tests.Persistence.DatabaseSearchPathTests.Factory_pins_missing_search_path_to_public_before_opening [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-02T12:03:37.2308675-04:00">
+        <Text>[xUnit.net 00:00:00.88]     CP6.Tests.Persistence.DatabaseSearchPathTests.Ef_string_path_uses_the_same_fixed_public_schema [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
