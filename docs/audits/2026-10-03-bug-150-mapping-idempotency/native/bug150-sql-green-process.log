@@ -1,0 +1,5 @@
+Test run for D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6\tmp\bug150-tests\bug150-sql-green\results.trx
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 8 s - CP6.Space.IntegrationTests.dll (net8.0)

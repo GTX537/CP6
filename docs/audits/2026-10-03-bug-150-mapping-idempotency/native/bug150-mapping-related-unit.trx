@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="656b7b3b-3e0d-414f-b052-5c34491497e1" name="tt@LAPTOP-3QQ44FJS 2026-10-03 10:30:38" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T10:30:38.9953296-04:00" queuing="2026-10-03T10:30:38.9953299-04:00" start="2026-10-03T10:30:37.1147173-04:00" finish="2026-10-03T10:30:39.1158615-04:00" />
+  <TestSettings name="default" id="42889634-8c97-4b9b-bdd1-cfb658869f5d">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_10_30_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e87a4b94-70a2-4a29-8b64-44f75256be07" testId="64dd1ce6-c0de-8348-7ca9-732ff9a3c00f" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.Ef_model_freezes_tenant_relationships_and_append_only_versions" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0008764" startTime="2026-10-03T10:30:38.9748198-04:00" endTime="2026-10-03T10:30:38.9756649-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e87a4b94-70a2-4a29-8b64-44f75256be07" />
+    <UnitTestResult executionId="8382b719-3ef7-424f-9b4f-dfa6af9a14c7" testId="8aee4b5f-4fa9-f660-2b60-0e146fc691af" testName="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Saved_versions_are_immutable_and_idempotent_replays_do_not_append" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0303895" startTime="2026-10-03T10:30:38.9599842-04:00" endTime="2026-10-03T10:30:38.9904022-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8382b719-3ef7-424f-9b4f-dfa6af9a14c7" />
+    <UnitTestResult executionId="5106c3e3-972b-4315-ba17-a3746236dad1" testId="ce56fa64-4da1-9fb8-b087-6e030029383c" testName="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Preview_reports_missing_duplicate_and_rejected_unknown_headers" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0016463" startTime="2026-10-03T10:30:38.9905202-04:00" endTime="2026-10-03T10:30:38.9920736-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5106c3e3-972b-4315-ba17-a3746236dad1" />
+    <UnitTestResult executionId="3c46b2a6-254a-407a-90f6-b5c0328e200f" testId="5a31e213-1c06-6b6f-6713-55c4a603d39d" testName="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.System_profile_freezes_the_standard_workbook_contract" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0049921" startTime="2026-10-03T10:30:38.9550058-04:00" endTime="2026-10-03T10:30:38.9598990-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c46b2a6-254a-407a-90f6-b5c0328e200f" />
+    <UnitTestResult executionId="166c0638-e551-4108-98d2-6f7a541ae7f7" testId="2f3aa99a-0121-8cca-db72-ec0159bfa1b5" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.Tenant_profiles_are_not_visible_or_copyable_across_tenants" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0254664" startTime="2026-10-03T10:30:39.0383704-04:00" endTime="2026-10-03T10:30:39.0636551-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="166c0638-e551-4108-98d2-6f7a541ae7f7" />
+    <UnitTestResult executionId="124ba297-f73b-4b64-958d-fc276e14a2c8" testId="34763f7f-d07c-2e53-f60c-62338e6a2b0a" testName="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Tenant_profiles_and_versions_are_filtered_by_tenant" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.2664607" startTime="2026-10-03T10:30:37.6436027-04:00" endTime="2026-10-03T10:30:38.9146762-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="124ba297-f73b-4b64-958d-fc276e14a2c8" />
+    <UnitTestResult executionId="4e8315b1-565f-4215-ac15-5e86bc21e453" testId="47b5a61d-6de8-9b73-723c-936581c81bde" testName="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.System_profile_is_read_only_and_updates_require_concurrency_token" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0095972" startTime="2026-10-03T10:30:38.9441453-04:00" endTime="2026-10-03T10:30:38.9533394-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e8315b1-565f-4215-ac15-5e86bc21e453" />
+    <UnitTestResult executionId="acf0b83e-7230-4e4f-a24f-5e7d23735e8f" testId="b899a4c3-13fd-0927-a49c-6bba7d0281e3" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.Catalog_returns_current_tenant_profile_and_historical_versions" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.3124240" startTime="2026-10-03T10:30:37.6444061-04:00" endTime="2026-10-03T10:30:38.9594507-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="acf0b83e-7230-4e4f-a24f-5e7d23735e8f" />
+    <UnitTestResult executionId="d21027bf-793c-4897-bbde-21df4bcf59da" testId="70b2186f-e286-ce80-8bdf-7f0ebbf08e52" testName="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Custom_headers_can_be_previewed_and_saved_as_a_tenant_profile" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0288710" startTime="2026-10-03T10:30:38.9418100-04:00" endTime="2026-10-03T10:30:38.9436834-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d21027bf-793c-4897-bbde-21df4bcf59da" />
+    <UnitTestResult executionId="ea639e55-b6f7-46f9-8a42-c652df600636" testId="a56ff01b-efbc-d4bf-c0fd-52da94b384d0" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.System_profile_is_read_only_and_updates_require_rowversion" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0151702" startTime="2026-10-03T10:30:38.9596523-04:00" endTime="2026-10-03T10:30:38.9747017-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea639e55-b6f7-46f9-8a42-c652df600636" />
+    <UnitTestResult executionId="19032cbe-f0bf-4dd6-9cd6-5b3193984580" testId="5d7eea23-c42f-49fb-1f01-6794701fe9a2" testName="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Ef_model_freezes_profile_versioning_and_tenant_relationships" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0015424" startTime="2026-10-03T10:30:38.9534658-04:00" endTime="2026-10-03T10:30:38.9549188-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19032cbe-f0bf-4dd6-9cd6-5b3193984580" />
+    <UnitTestResult executionId="57ae2118-43f4-4c52-b063-33062b45b83b" testId="d0c0acf0-46ca-2264-8f0a-24cd323db1bc" testName="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.System_profile_can_be_copied_and_new_versions_are_immutable" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0624360" startTime="2026-10-03T10:30:38.9828941-04:00" endTime="2026-10-03T10:30:39.0382414-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="57ae2118-43f4-4c52-b063-33062b45b83b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Saved_versions_are_immutable_and_idempotent_replays_do_not_append" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="8aee4b5f-4fa9-f660-2b60-0e146fc691af">
+      <Execution id="8382b719-3ef7-424f-9b4f-dfa6af9a14c7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests" name="Saved_versions_are_immutable_and_idempotent_replays_do_not_append" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.Tenant_profiles_are_not_visible_or_copyable_across_tenants" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="2f3aa99a-0121-8cca-db72-ec0159bfa1b5">
+      <Execution id="166c0638-e551-4108-98d2-6f7a541ae7f7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests" name="Tenant_profiles_are_not_visible_or_copyable_across_tenants" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.Catalog_returns_current_tenant_profile_and_historical_versions" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="b899a4c3-13fd-0927-a49c-6bba7d0281e3">
+      <Execution id="acf0b83e-7230-4e4f-a24f-5e7d23735e8f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests" name="Catalog_returns_current_tenant_profile_and_historical_versions" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.Ef_model_freezes_tenant_relationships_and_append_only_versions" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="64dd1ce6-c0de-8348-7ca9-732ff9a3c00f">
+      <Execution id="e87a4b94-70a2-4a29-8b64-44f75256be07" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests" name="Ef_model_freezes_tenant_relationships_and_append_only_versions" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.System_profile_freezes_the_standard_workbook_contract" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="5a31e213-1c06-6b6f-6713-55c4a603d39d">
+      <Execution id="3c46b2a6-254a-407a-90f6-b5c0328e200f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests" name="System_profile_freezes_the_standard_workbook_contract" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Preview_reports_missing_duplicate_and_rejected_unknown_headers" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="ce56fa64-4da1-9fb8-b087-6e030029383c">
+      <Execution id="5106c3e3-972b-4315-ba17-a3746236dad1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests" name="Preview_reports_missing_duplicate_and_rejected_unknown_headers" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Custom_headers_can_be_previewed_and_saved_as_a_tenant_profile" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="70b2186f-e286-ce80-8bdf-7f0ebbf08e52">
+      <Execution id="d21027bf-793c-4897-bbde-21df4bcf59da" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests" name="Custom_headers_can_be_previewed_and_saved_as_a_tenant_profile" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.System_profile_is_read_only_and_updates_require_rowversion" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="a56ff01b-efbc-d4bf-c0fd-52da94b384d0">
+      <Execution id="ea639e55-b6f7-46f9-8a42-c652df600636" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests" name="System_profile_is_read_only_and_updates_require_rowversion" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Ef_model_freezes_profile_versioning_and_tenant_relationships" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="5d7eea23-c42f-49fb-1f01-6794701fe9a2">
+      <Execution id="19032cbe-f0bf-4dd6-9cd6-5b3193984580" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests" name="Ef_model_freezes_profile_versioning_and_tenant_relationships" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests.System_profile_can_be_copied_and_new_versions_are_immutable" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="d0c0acf0-46ca-2264-8f0a-24cd323db1bc">
+      <Execution id="57ae2118-43f4-4c52-b063-33062b45b83b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceCadMappingProfileServiceTests" name="System_profile_can_be_copied_and_new_versions_are_immutable" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.Tenant_profiles_and_versions_are_filtered_by_tenant" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="34763f7f-d07c-2e53-f60c-62338e6a2b0a">
+      <Execution id="124ba297-f73b-4b64-958d-fc276e14a2c8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests" name="Tenant_profiles_and_versions_are_filtered_by_tenant" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests.System_profile_is_read_only_and_updates_require_concurrency_token" storage="d:\cp6\tmp\worktrees\bug-150-mapping-idempotency-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="47b5a61d-6de8-9b73-723c-936581c81bde">
+      <Execution id="4e8315b1-565f-4215-ac15-5e86bc21e453" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-150-mapping-idempotency-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceExcelMappingServiceTests" name="System_profile_is_read_only_and_updates_require_concurrency_token" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="64dd1ce6-c0de-8348-7ca9-732ff9a3c00f" executionId="e87a4b94-70a2-4a29-8b64-44f75256be07" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8aee4b5f-4fa9-f660-2b60-0e146fc691af" executionId="8382b719-3ef7-424f-9b4f-dfa6af9a14c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce56fa64-4da1-9fb8-b087-6e030029383c" executionId="5106c3e3-972b-4315-ba17-a3746236dad1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a31e213-1c06-6b6f-6713-55c4a603d39d" executionId="3c46b2a6-254a-407a-90f6-b5c0328e200f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f3aa99a-0121-8cca-db72-ec0159bfa1b5" executionId="166c0638-e551-4108-98d2-6f7a541ae7f7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34763f7f-d07c-2e53-f60c-62338e6a2b0a" executionId="124ba297-f73b-4b64-958d-fc276e14a2c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="47b5a61d-6de8-9b73-723c-936581c81bde" executionId="4e8315b1-565f-4215-ac15-5e86bc21e453" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b899a4c3-13fd-0927-a49c-6bba7d0281e3" executionId="acf0b83e-7230-4e4f-a24f-5e7d23735e8f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70b2186f-e286-ce80-8bdf-7f0ebbf08e52" executionId="d21027bf-793c-4897-bbde-21df4bcf59da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a56ff01b-efbc-d4bf-c0fd-52da94b384d0" executionId="ea639e55-b6f7-46f9-8a42-c652df600636" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d7eea23-c42f-49fb-1f01-6794701fe9a2" executionId="19032cbe-f0bf-4dd6-9cd6-5b3193984580" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0c0acf0-46ca-2264-8f0a-24cd323db1bc" executionId="57ae2118-43f4-4c52-b063-33062b45b83b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="12" executed="12" passed="12" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:01.61]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

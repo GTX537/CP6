@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-03：映射保存并发修复本地通过，待远端交付
+
+[BUG150](https://github.com/GTX537/CP6/issues/150)在WP5对照测试中确认原SQL Server同键并发死锁，PG对应路径唯一约束冲突未回放。独立修复只调整CAD/Excel映射保存的自有事务恢复，保留调用方待提交状态和事务。真实SQL/PG各4/4、原映射相关12/12、零skip，最终构建零warning/error，一次集中代码审查无实质阻断；[实际证据与边界](../audits/2026-10-03-bug-150-mapping-idempotency/README.md)保留原RED。
+
+当前LocalVerified/RemotePending，Issue仍Open；正常合并、远端包含性和原步骤冒烟后才关闭。WP4已由PR149交付，WP5草稿保留在另一独立工作树，父任务134与WP5/6继续。无Actions启动/取消、工作流/保护变更或生产部署；根工作区原改动保持。下方历史状态保留原时点。
+
 ## 2026-10-03：WP4 本地双库验收与集中审查通过，待远端交付
 
 [BUG147](https://github.com/GTX537/CP6/issues/147) 已经 [PR148](https://github.com/GTX537/CP6/pull/148) 正常合入远端 main `974e57c0650279565330a67c844355ba3e1b563d`，候选 `8f42a76b` 的包含性与完整树一致已核对；2026-10-03 10:48:57 UTC Closed。原118项本地结果按相同源码/程序集复用，合并后原业务保存另执行1/1、零跳过，独占库正常清理且只读核对零残留。[14份交付原件](../audits/2026-10-03-bug-147-snapshot-batch/native/post-merge/manifest.json)保留发布检查、首次HTTP408及正常重试、合并后冒烟与关闭记录，不改写原24份证据。
