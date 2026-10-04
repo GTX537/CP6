@@ -1,0 +1,7 @@
+[xUnit.net 00:00:08.53]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted [FAIL]
+[xUnit.net 00:00:09.06]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback [FAIL]
+[xUnit.net 00:00:10.25]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce [FAIL]
+[xUnit.net 00:00:10.51]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce [FAIL]
+[xUnit.net 00:00:11.69]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce [FAIL]
+[xUnit.net 00:00:13.04]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted [FAIL]
+[xUnit.net 00:00:14.58]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce [FAIL]

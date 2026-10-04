@@ -1,0 +1,87 @@
+{
+  "Task": "BUG-163",
+  "Status": "LocalNativeVerifiedRemotePending",
+  "CheckedUtc": "2026-10-04T00:14:36.2094849Z",
+  "SourceBase": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "NativeRed": [
+    {
+      "Label": "bug163-sql-native-red-valid-seed",
+      "Passed": 3,
+      "Failed": 14,
+      "TrxSha256": "7D87DA4B6077CBE14CF4D34DEF4935D22C90DA1F0A60445D02C167F7BB3907B0"
+    },
+    {
+      "Label": "bug163-pg-native-red",
+      "Passed": 10,
+      "Failed": 7,
+      "TrxSha256": "09AEB51A4286CE9E52874D053D7DA51F9268DE63F3B18185AD887A5A2E116E98"
+    }
+  ],
+  "Runs": [
+    {
+      "Label": "bug163-sql-wms-green",
+      "Provider": "SqlServer",
+      "Total": 25,
+      "Passed": 25,
+      "Failed": 0,
+      "Other": 0,
+      "OriginalCases": 8,
+      "NewCases": 17,
+      "NativeDiagnosticCases": 4,
+      "SourceFiles": 2492,
+      "RuntimeFiles": 378,
+      "SourceInputsSha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "RuntimeManifestSha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "ResultSha256": "7B044B8A8EC95EFF283A8CCC41B84D534E4B9B8B9F7ED83EDF6EAE1509634702",
+      "TrxSha256": "9312B1964258B1A53E907BA9F7348E8D9AAA2758951A63E4EF45566B6108E386",
+      "ExitCode": 0
+    },
+    {
+      "Label": "bug163-pg-wms-green",
+      "Provider": "PostgreSql",
+      "Total": 25,
+      "Passed": 25,
+      "Failed": 0,
+      "Other": 0,
+      "OriginalCases": 8,
+      "NewCases": 17,
+      "NativeDiagnosticCases": 4,
+      "SourceFiles": 2492,
+      "RuntimeFiles": 378,
+      "SourceInputsSha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "RuntimeManifestSha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "ResultSha256": "361EA91C0AD8C7D14C69654B07819664467D9BEC8BB70C5BDE7D9741C3FABEA7",
+      "TrxSha256": "9AD41FC9535855CA0AF7153CE1FB688B82286ADC439E9CEC74E0A763892A485A",
+      "ExitCode": 0
+    }
+  ],
+  "RequiredCaseNames": [
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+    "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent",
+    "CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply",
+    "CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree",
+    "CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic",
+    "CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion",
+    "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount",
+    "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks",
+    "CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation",
+    "CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer"
+  ],
+  "AllCurrentSourcesAndRuntimeMatch": true,
+  "Scope": "Two native providers, exact original8 plus new17, one actual build reused with complete source/runtime byte proof. Injected failures occur after real business SaveChanges. Original WP6 and intermediate preflight/fixture failures retained. Task review, remote delivery, post-merge smoke, owned cleanup and full WP6 pending."
+}

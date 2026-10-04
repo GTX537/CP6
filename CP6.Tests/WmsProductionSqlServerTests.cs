@@ -10,9 +10,11 @@ using CP6.Entity.DomainModels.Wms;
 using CP6.Tests.Infra;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Npgsql;
 using Xunit.Sdk;
+using Xunit.Abstractions;
 
 namespace CP6.Tests;
 
@@ -85,7 +87,7 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
         await db.Database.MigrateAsync();
     }
 
-    public CP6Context Create(Guid tenantId)
+    public CP6Context Create(Guid tenantId, params IInterceptor[] interceptors)
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))
         {
@@ -98,12 +100,14 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
             var profile = DatabaseMigrationProfile.For(_database!, DatabaseContextKind.Core);
             var ownedOptions = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), _database!,
                 ConnectionString, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
+            ownedOptions.AddInterceptors(interceptors);
             var owned = new CP6Context(ownedOptions.Options, new TenantContext { CurrentTenantId = tenantId });
             owned.Database.SetCommandTimeout(60);
             return owned;
         }
         var options = new DbContextOptionsBuilder<CP6Context>()
             .UseSqlServer(ConnectionString, sql => sql.CommandTimeout(60))
+            .AddInterceptors(interceptors)
             .Options;
         return new CP6Context(options, new TenantContext { CurrentTenantId = tenantId });
     }
@@ -179,7 +183,7 @@ public sealed class WmsProductionSqlFixture : IAsyncLifetime
 }
 
 [Collection(WmsProductionSqlCollection.Name)]
-public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
+public sealed partial class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture, ITestOutputHelper output)
 {
     [WmsProductionFact]
     public async Task Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic()

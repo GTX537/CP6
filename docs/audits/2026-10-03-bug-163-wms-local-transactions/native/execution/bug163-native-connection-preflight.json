@@ -1,0 +1,8 @@
+{
+  "Task": "BUG-163",
+  "Change": "Set explicit PostgreSQL Pooling=False and correct private receipt path before any test execution",
+  "OriginalPrivateReceiptPreserved": true,
+  "PostgreSqlPooling": false,
+  "UserConfigurationChanged": false,
+  "TestsExecutedBeforeCorrection": false
+}

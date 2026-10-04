@@ -1,0 +1,906 @@
+{
+  "Task": "BUG-163",
+  "SourceBase": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "ArchivedUtc": "2026-10-04T00:18:54.0169166Z",
+  "Originals": [
+    {
+      "Path": "original-wp6-failure/entries/core-business/entry-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\core-business\\entry-result.json",
+      "Sha256": "21F432E0BFAFDC3999C146A8DD50C6E5457CEA460763AE43C9F56D69554F9105",
+      "Length": 5655
+    },
+    {
+      "Path": "original-wp6-failure/entries/core-business/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\core-business\\runtime-artifact-before.json",
+      "Sha256": "194D2A9D7D236533FD225E9EBDA6D82F9DEE5A0CD34EF4F78C1EC1EB82892347",
+      "Length": 70625
+    },
+    {
+      "Path": "original-wp6-failure/entries/core-business/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\core-business\\runtime-artifact-after.json",
+      "Sha256": "194D2A9D7D236533FD225E9EBDA6D82F9DEE5A0CD34EF4F78C1EC1EB82892347",
+      "Length": 70625
+    },
+    {
+      "Path": "original-wp6-failure/entries/core-business/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\core-business\\private\\trx\\results.trx",
+      "Sha256": "D70487B918306DED1829DEDF410E439B8B2CE9DA106E08C1041D5BB1127C764F",
+      "Length": 42498
+    },
+    {
+      "Path": "original-wp6-failure/entries/core-business/private/process/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\core-business\\private\\process\\stdout.log",
+      "Sha256": "D0A4E045F838365F87C35BCD82C7945FC3EA5182ACD6F5B4E265F091B99DDD72",
+      "Length": 406
+    },
+    {
+      "Path": "original-wp6-failure/entries/core-business/private/process/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\core-business\\private\\process\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "original-wp6-failure/entries/wms-business/entry-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\wms-business\\entry-result.json",
+      "Sha256": "8728AA8E106573325A69202079E17209109CE6D60A06D72E3DF205A2A21E7F03",
+      "Length": 3163
+    },
+    {
+      "Path": "original-wp6-failure/entries/wms-business/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\wms-business\\runtime-artifact-before.json",
+      "Sha256": "194D2A9D7D236533FD225E9EBDA6D82F9DEE5A0CD34EF4F78C1EC1EB82892347",
+      "Length": 70625
+    },
+    {
+      "Path": "original-wp6-failure/entries/wms-business/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\wms-business\\runtime-artifact-after.json",
+      "Sha256": "194D2A9D7D236533FD225E9EBDA6D82F9DEE5A0CD34EF4F78C1EC1EB82892347",
+      "Length": 70625
+    },
+    {
+      "Path": "original-wp6-failure/entries/wms-business/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\wms-business\\private\\trx\\results.trx",
+      "Sha256": "5AD8388203E589148B68795BFBC56C2478BC0D95EF9646C6A3A5D06C042A2870",
+      "Length": 26635
+    },
+    {
+      "Path": "original-wp6-failure/entries/wms-business/private/process/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\wms-business\\private\\process\\stdout.log",
+      "Sha256": "7E4C02B11FF6066D1F2EA3F1C566B4AF3E0F60006FD93D452DD290AD54C89555",
+      "Length": 6546
+    },
+    {
+      "Path": "original-wp6-failure/entries/wms-business/private/process/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\entries\\wms-business\\private\\process\\stderr.log",
+      "Sha256": "CEE213B46E7515B039D0BC5CDF670C015837DAAF650159B0A6B6C33433F3EC17",
+      "Length": 136
+    },
+    {
+      "Path": "original-wp6-failure/summary.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\summary.json",
+      "Sha256": "8259FAEA4EEEF0786705CB4501F1072F79D0CA7DC116606B9EEB5364A7205F50",
+      "Length": 487553
+    },
+    {
+      "Path": "original-wp6-failure/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-cad-cleanup-fix\\source-inputs.json",
+      "Sha256": "B75D6536576142F56E9A0755A8765E4A74CB19B6E27CF05DC5C07AEDC4439E23",
+      "Length": 454116
+    },
+    {
+      "Path": "bug163-sql-native-red/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\source-inputs.json",
+      "Sha256": "2992B7342CF16D0E4719188BDECF7399D9E0F1E111B849E1371F8E4C6FCFC229",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-sql-native-red/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\build-result.json",
+      "Sha256": "FC67775CA0382D0B0F56F37414B3919CB4B386B2AB808F385F273C717D869FC8",
+      "Length": 546642
+    },
+    {
+      "Path": "bug163-sql-native-red/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\project-01.json",
+      "Sha256": "22B628E05D29F6D6043BE723266265B2E25C5A3C03D29564603AEC8CA38ABA8A",
+      "Length": 498294
+    },
+    {
+      "Path": "bug163-sql-native-red/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\private\\01-build\\stdout.log",
+      "Sha256": "940564E5A8769BFEBF572DC0B33E9F39D4D576788300994D16420BCA5F07A3F5",
+      "Length": 3909
+    },
+    {
+      "Path": "bug163-sql-native-red/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "5B5FAA18852B621637BB9BA641EA8279468A577B526CC11626B35885514920FD",
+      "Length": 1093
+    },
+    {
+      "Path": "bug163-sql-native-red/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-corrected\\result.json",
+      "Sha256": "4333DD9FB9B11981059613A4B2F8B71555C4153C854B1C2D947FD2EE48CEA372",
+      "Length": 4066
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-corrected\\runtime-artifact-after.json",
+      "Sha256": "D6A70EA69D0F066914E5EDE86F0B5148819415758E38F0CE16E0EB2434CAB406",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-corrected\\runtime-artifact-before.json",
+      "Sha256": "D6A70EA69D0F066914E5EDE86F0B5148819415758E38F0CE16E0EB2434CAB406",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-corrected\\source-inputs.json",
+      "Sha256": "2992B7342CF16D0E4719188BDECF7399D9E0F1E111B849E1371F8E4C6FCFC229",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-corrected\\private\\test\\stderr.log",
+      "Sha256": "219AFC7B78A6DE04FF679A4A110AB8150C887EF7F9404F875D30F81348E084B4",
+      "Length": 1683
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-corrected\\private\\test\\stdout.log",
+      "Sha256": "9B7678EAD34CF2891942098614B0255A56E9D7F98F911638658C0A52B7FA93C8",
+      "Length": 70852
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-corrected\\private\\trx\\results.trx",
+      "Sha256": "4A1D07DAC10A369C0900E15864B324FAB13F5F5293FE4D3F779705DC64C1D5F5",
+      "Length": 184444
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\result.json",
+      "Sha256": "B93249A30E30ACCD87069642BFC90A379D318B3943A89202DAC0BBAE289ADAD7",
+      "Length": 4286
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\runtime-artifact-after.json",
+      "Sha256": "3E995DD9A57347910FEF9EDCA3908F754543E2A25C2DE401BD0DF527AF0D00F8",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\runtime-artifact-before.json",
+      "Sha256": "3E995DD9A57347910FEF9EDCA3908F754543E2A25C2DE401BD0DF527AF0D00F8",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\source-inputs.json",
+      "Sha256": "D73EF0BFAD54E239EBB3933444069A9FB6977DE603923FB95B0D549C0B06354D",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\build-result.json",
+      "Sha256": "7D5CE56672329480FB5442DE1AD42AB063193697A6A9BF3A884AF2721590DD41",
+      "Length": 546644
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\project-01.json",
+      "Sha256": "1F8D144382DABC196A144F24B111D4579B5F622D97C0B4066A01D4DCB1360AD0",
+      "Length": 498296
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\private\\01-build\\stdout.log",
+      "Sha256": "90CA7EE04DF29A24B232832B9A7DBAD313B439A0515A12DD60734D74A1466EB0",
+      "Length": 2011
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "2AD9967F2280D0195AD457A92FE6A353A8492625846632386DF6DFC446EFE4BC",
+      "Length": 82
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\private\\test\\stderr.log",
+      "Sha256": "8F457D62421A171277B8226D378574C977E5A3AAFC1689527D537C7F6DF21811",
+      "Length": 1827
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\private\\test\\stdout.log",
+      "Sha256": "5DBFAB241FEE96B9403FFC2471128559463A47BFF31042440CF7316E9E705FDE",
+      "Length": 75812
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-isolated\\private\\trx\\results.trx",
+      "Sha256": "7E6E35C5A5A23A916709B037669D9A63A4CFFE2B131FF5AB32F6A956E4CFE3FF",
+      "Length": 198356
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\result.json",
+      "Sha256": "17EE8B7C4C3BDC2D6BB460D97E4B7F692593B08F63B73C3C7A97B92F11C09A03",
+      "Length": 4286
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\runtime-artifact-after.json",
+      "Sha256": "519B369F9A4543AE34BDAA12632A02F057EBC09592F0BD92405261224FEEA429",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\runtime-artifact-before.json",
+      "Sha256": "519B369F9A4543AE34BDAA12632A02F057EBC09592F0BD92405261224FEEA429",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\source-inputs.json",
+      "Sha256": "AFCC398A5A6ECC15409EB8DC250142FBEB4868B548FE0FEE0CFA642F4D596324",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\build-result.json",
+      "Sha256": "A23C9CAB115266ECD2AA07E7CD74638A9E01EC377A0757A6BC8AB1294EED10D6",
+      "Length": 546644
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\project-01.json",
+      "Sha256": "90547A61ED15F3DDA128D6A15CDDF1B4274DFAAB4ACA6173E3AABD292DB402A9",
+      "Length": 498296
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\private\\01-build\\stdout.log",
+      "Sha256": "CB3B55DFBAE4513A0FB9FE479EAAC6E437A314D7D6A114E17371669D28495B54",
+      "Length": 2011
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "2AD9967F2280D0195AD457A92FE6A353A8492625846632386DF6DFC446EFE4BC",
+      "Length": 82
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\private\\test\\stderr.log",
+      "Sha256": "3916188772A114801C896FC8B09620609A194FAC56A5B29532A1B051F73C19BB",
+      "Length": 1827
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\private\\test\\stdout.log",
+      "Sha256": "381CC73E5C3108DE68C7BB8CBFE7E7E23710373771404ECBA0057CE6598E964F",
+      "Length": 79878
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-native-red-valid-seed\\private\\trx\\results.trx",
+      "Sha256": "7D87DA4B6077CBE14CF4D34DEF4935D22C90DA1F0A60445D02C167F7BB3907B0",
+      "Length": 208425
+    },
+    {
+      "Path": "bug163-pg-native-red/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-native-red\\result.json",
+      "Sha256": "5878F367769BA94D8FED783206BE4DE2DD5DB25A24FCFC37CBCED1A9D05093BD",
+      "Length": 5324
+    },
+    {
+      "Path": "bug163-pg-native-red/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-native-red\\runtime-artifact-after.json",
+      "Sha256": "519B369F9A4543AE34BDAA12632A02F057EBC09592F0BD92405261224FEEA429",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-pg-native-red/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-native-red\\runtime-artifact-before.json",
+      "Sha256": "519B369F9A4543AE34BDAA12632A02F057EBC09592F0BD92405261224FEEA429",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-pg-native-red/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-native-red\\source-inputs.json",
+      "Sha256": "AFCC398A5A6ECC15409EB8DC250142FBEB4868B548FE0FEE0CFA642F4D596324",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-pg-native-red/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-native-red\\private\\test\\stderr.log",
+      "Sha256": "CF4CDD3BAB9B6B1B92F6931560FBB045EF4E1A17AE9697FA646550C8FF2B1B9B",
+      "Length": 921
+    },
+    {
+      "Path": "bug163-pg-native-red/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-native-red\\private\\test\\stdout.log",
+      "Sha256": "B55B02CFEB7E4C578866457B913B77EA892AD467AF1AB83804BC0EC83E410718",
+      "Length": 11371
+    },
+    {
+      "Path": "bug163-pg-native-red/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-native-red\\private\\trx\\results.trx",
+      "Sha256": "09AEB51A4286CE9E52874D053D7DA51F9268DE63F3B18185AD887A5A2E116E98",
+      "Length": 51527
+    },
+    {
+      "Path": "bug163-sql-wms-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\exact-case-set-audit.json",
+      "Sha256": "B0D4214C20B3B7F607DB8FD8A00A0CC98ACBE0B3653488A8A49BA9128015F0FA",
+      "Length": 2770
+    },
+    {
+      "Path": "bug163-sql-wms-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\result.json",
+      "Sha256": "7B044B8A8EC95EFF283A8CCC41B84D534E4B9B8B9F7ED83EDF6EAE1509634702",
+      "Length": 7030
+    },
+    {
+      "Path": "bug163-sql-wms-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\runtime-artifact-after.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-wms-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\runtime-artifact-before.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-wms-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\source-inputs.json",
+      "Sha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/build-result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\build-result.json",
+      "Sha256": "7B913A6E017E8C876F99090BA54920DA9B35540656FF01281E6E7FA3C9778BA3",
+      "Length": 546644
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/project-01.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\project-01.json",
+      "Sha256": "45EAD125C0F277052C2E9EF7627B942A2DF86051DFB022BBCBC338C67F6DE763",
+      "Length": 498296
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/private/01-build/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\private\\01-build\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/private/01-build/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\private\\01-build\\stdout.log",
+      "Sha256": "98DD3C431B1C1B5C51590379B7E81BD2DE1903BFFAC3897CB48822A21730EF00",
+      "Length": 2011
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/private/01-restore/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\private\\01-restore\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/private/01-restore/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\private\\01-restore\\stdout.log",
+      "Sha256": "2AD9967F2280D0195AD457A92FE6A353A8492625846632386DF6DFC446EFE4BC",
+      "Length": 82
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/private/sdk-version/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\private\\sdk-version\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-wms-green/build/private/sdk-version/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\build\\private\\sdk-version\\stdout.log",
+      "Sha256": "08720ABC427003BBF97BAAFE0C1A41EFFC73EBBFBE3DAE5628EB54A482510DFF",
+      "Length": 10
+    },
+    {
+      "Path": "bug163-sql-wms-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-wms-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\private\\test\\stdout.log",
+      "Sha256": "0A6B0415CFBB2F0CF3BB7C120228784D4B22E06D20CEB5F21AEEF30A41BB2CC7",
+      "Length": 374
+    },
+    {
+      "Path": "bug163-sql-wms-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-wms-green\\private\\trx\\results.trx",
+      "Sha256": "9312B1964258B1A53E907BA9F7348E8D9AAA2758951A63E4EF45566B6108E386",
+      "Length": 38882
+    },
+    {
+      "Path": "bug163-pg-wms-green/exact-case-set-audit.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\exact-case-set-audit.json",
+      "Sha256": "F3B3B46FBE988E9D0B17BBDB05D14A046241DBA4AED528A37191F36C97E5F4D9",
+      "Length": 2770
+    },
+    {
+      "Path": "bug163-pg-wms-green/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\result.json",
+      "Sha256": "361EA91C0AD8C7D14C69654B07819664467D9BEC8BB70C5BDE7D9741C3FABEA7",
+      "Length": 6215
+    },
+    {
+      "Path": "bug163-pg-wms-green/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\runtime-artifact-after.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-pg-wms-green/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\runtime-artifact-before.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-pg-wms-green/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\source-inputs.json",
+      "Sha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-pg-wms-green/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-pg-wms-green/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\private\\test\\stdout.log",
+      "Sha256": "3EF621B3C519558A862EEB692A5595D0ECB50DDE19ACCAFD87C980AA5B7DA11A",
+      "Length": 374
+    },
+    {
+      "Path": "bug163-pg-wms-green/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-wms-green\\private\\trx\\results.trx",
+      "Sha256": "9AD41FC9535855CA0AF7153CE1FB688B82286ADC439E9CEC74E0A763892A485A",
+      "Length": 38065
+    },
+    {
+      "Path": "execution/Invoke-Bug163Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug163Tests.ps1",
+      "Sha256": "F8AD8DF0DA1F04627033C3B645041FBEF34CBEB79E831F5D98419049726A868C",
+      "Length": 7321
+    },
+    {
+      "Path": "execution/New-Bug163Databases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\New-Bug163Databases.ps1",
+      "Sha256": "ADDFBA174AC9C90E7B136241B4EA255BF97C92D3D7BB0F2C555D1B631B351C21",
+      "Length": 4339
+    },
+    {
+      "Path": "execution/Test-Bug163LocalEvidence.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Test-Bug163LocalEvidence.ps1",
+      "Sha256": "2A3AE56631C073D720C4934031F2DD1CB7ECBEB8B248EC299E3613CCAC45883C",
+      "Length": 7424
+    },
+    {
+      "Path": "execution/Archive-Bug163Evidence.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Archive-Bug163Evidence.ps1",
+      "Sha256": "91E14B86C4EA5DEEF6863256235F690CCD935FB5535EBDC8FBCA51A3E26010A8",
+      "Length": 5794
+    },
+    {
+      "Path": "execution/bug163-review.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-review.md",
+      "Sha256": "7F3151141024F00DD5C049CD940C2E97C24500A4C5BEA9CC71F4703C0804DDA7",
+      "Length": 1853
+    },
+    {
+      "Path": "execution/bug163-exact-local-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-exact-local-verification.json",
+      "Sha256": "38D3F782B86985DB42A4941EA9FC71709CA73A1B218F5BD5D5594BD3E857241E",
+      "Length": 5044
+    },
+    {
+      "Path": "execution/bug163-databases-created.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-databases-created.json",
+      "Sha256": "EECAE731B74740E69EEF0EBB70F6F5869CD0CA2971A212E4053F3AF79D3CCBD0",
+      "Length": 226
+    },
+    {
+      "Path": "execution/bug163-task-start-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-task-start-workflow-input-inspection.json",
+      "Sha256": "55C4850271F1E090713406935B24A6B288A231FB6CF8746B2A2FC7450E16C306",
+      "Length": 6756
+    },
+    {
+      "Path": "execution/bug163-unfixed-production-source-proof.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-unfixed-production-source-proof.json",
+      "Sha256": "87C61313EDEA5598E44B378FA64A3371CD038F7DDE05F628C92AD9FF90D1BB44",
+      "Length": 450
+    },
+    {
+      "Path": "execution/bug163-native-red-proof.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-native-red-proof.json",
+      "Sha256": "BED53ECD1AE51E00842C3692F5B5D750010CB66C1D3FEB267E7A94CBCE1465F8",
+      "Length": 18094
+    },
+    {
+      "Path": "execution/bug163-native-connection-preflight.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-native-connection-preflight.json",
+      "Sha256": "A4924C576C9E563F0F5AFC0238BA6E0E07718DC52F1AEE31E682C6BF0B122408",
+      "Length": 296
+    },
+    {
+      "Path": "execution/bug163-test-runner-preflight-rejection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-test-runner-preflight-rejection.json",
+      "Sha256": "06A80B076E836BB73E37968A225F644D323F98F97C22F7FA1F403BA101EFE57B",
+      "Length": 380
+    },
+    {
+      "Path": "execution/bug163-runner-module-snapshot.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-module-snapshot.json",
+      "Sha256": "497BA73EC4A82E6B98C5D876E8D1D6FA8F9D2952517E3ABF183E42772E4513CF",
+      "Length": 1687
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityApplication.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-modules\\DatabaseCompatibilityApplication.psm1",
+      "Sha256": "EE12DD7410221E66A3FAE553631E8603A80323B43630D849384DCF6B51817350",
+      "Length": 11792
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityBaseline.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-modules\\DatabaseCompatibilityBaseline.psm1",
+      "Sha256": "69D6033531FBF7E47E33789741128E37D3B7E90B2724E1380F1E2069800B8E8D",
+      "Length": 19950
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityEntries.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-modules\\DatabaseCompatibilityEntries.psm1",
+      "Sha256": "5CF53766FEAC54CEF69C6F1768C75D508EC99EA1DB34D80E85DF52647AF94299",
+      "Length": 24992
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityHttp.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-modules\\DatabaseCompatibilityHttp.psm1",
+      "Sha256": "FE9D5FD101ABC122F221C954B25A404392FE945DCE6D27FA009364F97E78FA7E",
+      "Length": 23344
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityLifecycle.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-modules\\DatabaseCompatibilityLifecycle.psm1",
+      "Sha256": "D96CC5903DABA60CB242D715E80173C955C0191E854044F5C1F412ED1977796C",
+      "Length": 39024
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityProcess.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-modules\\DatabaseCompatibilityProcess.psm1",
+      "Sha256": "B95CDE488E14B7D4AE986458FBAE589934912DBDDA1EC08413D945C6DAF56B25",
+      "Length": 6892
+    },
+    {
+      "Path": "execution/modules/DatabaseCompatibilityResults.psm1",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-runner-modules\\DatabaseCompatibilityResults.psm1",
+      "Sha256": "AD66A8EDA85E1283649AF010043D85B1D1744008837EB01E529FB7D79491D9C1",
+      "Length": 20078
+    }
+  ],
+  "DerivedTrxCounts": [
+    {
+      "Path": "original-wp6-failure/entries/core-business/private/trx/results.trx",
+      "Sha256": "D70487B918306DED1829DEDF410E439B8B2CE9DA106E08C1041D5BB1127C764F",
+      "Total": 25,
+      "Passed": 25,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.Decimal_annual_amount_and_last_period_remainder_round_trip_through_native_storage",
+        "CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.PostAsync_BlockExceeded_Rejected",
+        "CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.PostAsync_WithinBudget_Posts",
+        "CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.SelfApproval_MakerEqualsChecker_RollsBack_workflow_task_and_voucher",
+        "CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.Stale_version_token_rejects_second_writer_on_a_different_line",
+        "CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Due_non_space_event_uses_actual_dispatcher_and_persists_success",
+        "CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_backoff_exhaustion_persists_dead_letter_and_actual_alert_log",
+        "CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_persisted_backoff_recovers_without_rewriting_due_time_or_alert",
+        "CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests.Production_data_scope_filters_real_purchase_requests_and_preserves_tenant_boundary",
+        "CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests.Production_permission_aggregator_reads_role_unions_scopes_and_fields_from_native_tables",
+        "CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Actual_flow_engine_dispatcher_callback_commits_purchase_and_workflow_together",
+        "CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Callback_target_read_holds_native_lock_until_owning_workflow_transaction_finishes",
+        "CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Concurrent_double_submit_returns_one_native_active_instance",
+        "CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Native_callback_write_failure_rolls_back_purchase_and_workflow_transaction",
+        "CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Old_callback_cannot_overwrite_actual_rejected_then_resubmitted_correlation",
+        "CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Actual_dispatch_targets_only_recipient_and_persists_delivery_without_repeat",
+        "CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Caller_transaction_rolls_back_native_business_change_and_outbox",
+        "CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Duplicate_event_key_creates_one_native_outbox_row_across_contexts",
+        "CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Failed_actual_send_persists_backoff_and_retries_only_after_due_time",
+        "CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Two_actual_workers_selecting_same_due_row_publish_once",
+        "CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Due_job_success_persists_token_progress_and_succeeded_state",
+        "CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Failed_job_preserves_backoff_then_exhaustion_and_suspension",
+        "CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Reaper_only_reclaims_expired_leases_without_burning_attempts",
+        "CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Two_contexts_claiming_same_pending_version_call_executor_once",
+        "CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Withdrawn_instance_cancels_due_job_before_executor_call"
+      ]
+    },
+    {
+      "Path": "original-wp6-failure/entries/wms-business/private/trx/results.trx",
+      "Sha256": "5AD8388203E589148B68795BFBC56C2478BC0D95EF9646C6A3A5D06C042A2870",
+      "Total": 8,
+      "Passed": 7,
+      "Failed": 1,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply",
+        "CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree",
+        "CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic",
+        "CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation",
+        "CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer"
+      ]
+    },
+    {
+      "Path": "bug163-sql-native-red-corrected/private/trx/results.trx",
+      "Sha256": "4A1D07DAC10A369C0900E15864B324FAB13F5F5293FE4D3F779705DC64C1D5F5",
+      "Total": 15,
+      "Passed": 2,
+      "Failed": 13,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent"
+      ]
+    },
+    {
+      "Path": "bug163-sql-native-red-isolated/private/trx/results.trx",
+      "Sha256": "7E6E35C5A5A23A916709B037669D9A63A4CFFE2B131FF5AB32F6A956E4CFE3FF",
+      "Total": 17,
+      "Passed": 3,
+      "Failed": 14,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent"
+      ]
+    },
+    {
+      "Path": "bug163-sql-native-red-valid-seed/private/trx/results.trx",
+      "Sha256": "7D87DA4B6077CBE14CF4D34DEF4935D22C90DA1F0A60445D02C167F7BB3907B0",
+      "Total": 17,
+      "Passed": 3,
+      "Failed": 14,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent"
+      ]
+    },
+    {
+      "Path": "bug163-pg-native-red/private/trx/results.trx",
+      "Sha256": "09AEB51A4286CE9E52874D053D7DA51F9268DE63F3B18185AD887A5A2E116E98",
+      "Total": 17,
+      "Passed": 10,
+      "Failed": 7,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent"
+      ]
+    },
+    {
+      "Path": "bug163-sql-wms-green/private/trx/results.trx",
+      "Sha256": "9312B1964258B1A53E907BA9F7348E8D9AAA2758951A63E4EF45566B6108E386",
+      "Total": 25,
+      "Passed": 25,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply",
+        "CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree",
+        "CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic",
+        "CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation",
+        "CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer"
+      ]
+    },
+    {
+      "Path": "bug163-pg-wms-green/private/trx/results.trx",
+      "Sha256": "9AD41FC9535855CA0AF7153CE1FB688B82286ADC439E9CEC74E0A763892A485A",
+      "Total": 25,
+      "Passed": 25,
+      "Failed": 0,
+      "Other": 0,
+      "CaseNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent",
+        "CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply",
+        "CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree",
+        "CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic",
+        "CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks",
+        "CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation",
+        "CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer"
+      ]
+    }
+  ],
+  "Scope": "Original WP6 SQL failure and core success retained; initial wrapper rejection and two intermediate seed failures remain separate from valid SQL17/PG17 RED and exact two-provider original8/new17 GREEN. Actual source/runtime manifests, trace, review, execution helpers and frozen modules retained byte-for-byte. Remote delivery, post-merge smoke, owned cleanup and full WP6 remain pending.",
+  "Excluded": "Private connection/ownership receipts, credentials, database state, JWT/Cookie and backups excluded."
+}
