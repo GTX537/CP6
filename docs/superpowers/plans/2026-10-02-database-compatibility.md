@@ -1,5 +1,17 @@
 # CP6 双数据库兼容 Implementation Plan
 
+最新阻断（2026-10-03，BUG163 Open）：SqlServer cad-cleanup-fix Matrix在原核心25/25后，WMS8项为7P/1F，原Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree的CreateAsync第二查询触发Implicit distributed transactions have not been enabled；后35入口未执行。原summary SHA256 8259FAEA4EEEF0786705CB4501F1072F79D0CA7DC116606B9EEB5364A7205F50与WMS TRX 5AD8388203E589148B68795BFBC56C2478BC0D95EF9646C6A3A5D06C042A2870保留Failed，一个该次SQL owned库暂留。已登记[Issue163](https://github.com/GTX537/CP6/issues/163)，修复从最新已确认main ce49012d37da4b1b01f074d5b5b7fd227780e656创建独立codex/bug-163-wms-local-transactions分支。源码确认LPN四处自建ambient事务，runner明确Pooling=False；须原生确认与修复本地事务生命周期，Label相似路径尚待实际确认。PG Matrix34/34/11库Absent仍是修复前该次证据；修复影响编译输入后最新双库最终Matrix/Application需要重新适用验证，WP6与父Issue134未完成。首次SQL连接缺失为配置预检拒绝，未创建运行目录/DB；随后仅进程内使用既有本机KOUSQLSERVER Windows登录，未改用户PG配置/环境。
+
+
+最新验收进展（2026-10-03 23:17Z）：新cad-cleanup-fix PostgreSql Matrix已实际Passed，34/34必需入口、零失败/跳过，11个owned库AbsentVerified；summary SHA256 5AD4D28C008E705F9DF355572ED9B532B1D80723BE1FB4D18439FDA1321BB107。该轮明确SkipBuild，复用原实际7项成功构建：编译输入与2059运行文件逐字节一致，PowerShell限定清理变化另有RED/GREEN及native控制证据；不把上一轮清理Failed改成Passed。进入SqlServer Matrix37，SQL136旧基线仍单独构建/安装；两库最新发布物Application17各仍待执行，最终105入口/恢复核对、归档、正常远端WP6交付与父任务关闭尚未完成。
+
+
+最新本地进展（2026-10-03）：cad-provider-fix PG Matrix 的34/34入口全部通过，CAD25/25且零skip；收尾owned-database-cleanup遇到短暂会话，整轮仍为Failed，原summary SHA256 EEF84ED7808D7D83D7389708102C3989BA03DEEDD4EA17C367123D476AC4BCD1及34入口原件不变。七库原已Absent、余四库由实际限定等待控制后普通DROP，11库均Absent；原会话类型未记录，不推断其来源。WP6新清理模块默认逐库最多等待15秒，只对会话未结束重试，每次重核owner/principal/physical，超时或身份变化仍拒绝，保留全目标预检及逐库复检；新离线控制RED后41项GREEN，原42项契约通过，真PG持续会话1秒超时拒绝且receipt不变，短暂会话自行结束后清理通过。仅此PowerShell与控制变化，不改业务编译输入，7个既有真实成功构建/2059运行文件逐字节核对后复用；新完整Matrix和双库Application使用cad-cleanup-fix目录，最终验收/远端交付仍待完成，父Issue134保持Open。下文旧目录及状态保留历史时点。
+
+
+最新交付（2026-10-03，BUG161 Closed）：PR162 正常合并到远端 main ce49012d37da4b1b01f074d5b5b7fd227780e656，并已接入 WP6。两库 CAD/资产/协作原15＋新十项各25/25、零skip，补充 InMemory17/17；合并后两库各3/3，PG两项协调测试再次实际40001后恢复。两个 BUG 自有库已普通DROP并核对不存在，Issue161于22:11:25Z关闭。[源码/原始失败及双库回归](../../audits/2026-10-03-bug-161-cad-provider-recovery/README.md)与交付/冒烟/清理原件保留；原 claim-fix Matrix 28P后14P/1F及后五入口未执行仍为失败，七个该次PG库清理且原summary不变。最新清单仅把CAD组15扩为25，其他61入口不变；最终两库Matrix与最新产物Application采用新cad-provider-fix目录，仍待实际执行。WP6未完成，父Issue134仍Open。下文BUG161 Open及旧claim-fix计划保留历史时点。
+
+
 最新状态（2026-10-03，BUG161 Open）：claim-fix PostgreSQL 最终 Matrix 已终止为 Failed；7 个相关项目构建通过，28 个入口 Passed，第 29 个 CAD/资产/协作入口 15 项为 14P/1F，后五入口未执行。原 Concurrent_replace_preserves_one_current_revision_and_immutable_evidence 出现实际 PostgreSQL 40001，失败 summary SHA256 9A788F5E6450F4B4FE4258FEDA9FFC99B959EB7A7E997F2A8EB2BEAD49F6284C，TRX SHA256 32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364；原件保留。修复从已确认远端 main 4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0 建立独立 codex/bug-161-cad-provider-recovery 分支，活动缺陷以 [Issue #161](https://github.com/GTX537/CP6/issues/161) 为准。最新 SQL Matrix / 双库 Application 仍未开始；WP6 与父 Issue134 未完成。下文 claim-fix 计划及状态保留历史时点。
 
 

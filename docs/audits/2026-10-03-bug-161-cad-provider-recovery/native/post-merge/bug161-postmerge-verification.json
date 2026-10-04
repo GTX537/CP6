@@ -1,0 +1,52 @@
+{
+  "Task": "BUG-161",
+  "PR": 162,
+  "RemoteMain": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "Candidate": "15ee2055e1f8930907eadcee6323ba3181f68033",
+  "Status": "RemoteMergedPostSmokePassedCleanupPending",
+  "Runs": [
+    {
+      "Provider": "PostgreSql",
+      "Label": "bug161-pg-postmerge-smoke",
+      "ExecutionHead": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+      "Passed": 3,
+      "Other": 0,
+      "TrxSha256": "C8781DD4486BEA2BBD60C65AB19672908578CFEDA9242EE6F532089EA1F228AB",
+      "SourceInputsSha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+      "RuntimeManifestSha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "ResultSha256": "5C8712FC6BB14C637E37DE2C2098A66F60F23CCB541A75E42D518F518F86620F",
+      "ExactNames": [
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict"
+      ],
+      "SourceCount": 1703,
+      "RuntimeCount": 296,
+      "ActualNativeEvidence": [
+        "BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure.",
+        "BUG161 CAD provider native failure: SQLSTATE=40001; Kind=SerializationFailure."
+      ]
+    },
+    {
+      "Provider": "SqlServer",
+      "Label": "bug161-sql-postmerge-smoke",
+      "ExecutionHead": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+      "Passed": 3,
+      "Other": 0,
+      "TrxSha256": "14EE08E53E1DC5B6F012C5BDF4DEE13C22D7A8B0693A51755B2DA81D2CE3F7ED",
+      "SourceInputsSha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+      "RuntimeManifestSha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+      "ResultSha256": "8D53861197D9E3BDD2F62CE9B4BFDEDD589C97C48CB330435F9343278BE69A88",
+      "ExactNames": [
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+        "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict"
+      ],
+      "SourceCount": 1703,
+      "RuntimeCount": 296,
+      "ActualNativeEvidence": []
+    }
+  ],
+  "CheckedUtc": "2026-10-03T22:08:53.3917750Z",
+  "Scope": "Fresh two-provider original-step smoke on merged main using verified unchanged actual code/runtime; earlier 25-case results are reused as their historical executions, not rerun. Full WP6 and production remain pending."
+}

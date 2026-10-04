@@ -1,0 +1,423 @@
+{
+  "Task": "BUG-161",
+  "PR": 162,
+  "Candidate": "15ee2055e1f8930907eadcee6323ba3181f68033",
+  "Base": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "Status": "CompletePrDiffVerified",
+  "Files": [
+    {
+      "Path": ".gitattributes",
+      "Blob": "7d9627968e02cd4cb40ff11fbfcd6d04f540d5d1",
+      "Matched": true
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+      "Blob": "83d1e61b7d89751cebc60702025c7712b6055677",
+      "Matched": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadProviderSqlServerTests.RecoveryTests.cs",
+      "Blob": "532b625d7bd83bb114543b2fff84c0626a13cdc2",
+      "Matched": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadProviderSqlServerTests.cs",
+      "Blob": "37eafaaad1c533f4617835bc0f59ea6fc9a47312",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/README.md",
+      "Blob": "87bf5fdd0c7b84a07e23f4682dcd0c288829f581",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-inmemory-routing-green/private/test/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-inmemory-routing-green/private/test/stdout.log",
+      "Blob": "059528db859793e83f7186df9d12e20cb8105f2b",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-inmemory-routing-green/private/trx/results.trx",
+      "Blob": "8d0ecc3e64c8137d260a9692188d62c0d2191e25",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-inmemory-routing-green/result.json",
+      "Blob": "ec89a08410b13e5e3f9361a4d1789c39f842db34",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-inmemory-routing-green/runtime-artifact-after.json",
+      "Blob": "c46dc2afc850788b2ad1d95f17b4471a4dcb04d9",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-inmemory-routing-green/runtime-artifact-before.json",
+      "Blob": "c46dc2afc850788b2ad1d95f17b4471a4dcb04d9",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-inmemory-routing-green/source-inputs.json",
+      "Blob": "9bb2e78fdbfd5c2adc46bd257ef7c18dea42d899",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/build-result.json",
+      "Blob": "4dd338a8931aca0ff01055b8815b62a59a04106e",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/private/01-build/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/private/01-build/stdout.log",
+      "Blob": "e1512539670e583d40eb9af3fc0aa333411c51a9",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/private/01-restore/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/private/01-restore/stdout.log",
+      "Blob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/private/sdk-version/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/private/sdk-version/stdout.log",
+      "Blob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/build/project-01.json",
+      "Blob": "ddde881ee57dac08747afc059c5d1804f47ac187",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/exact-case-set-audit.json",
+      "Blob": "65c0bb301455bbbccc908b440bd37b4e43ec50ca",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/private/test/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/private/test/stdout.log",
+      "Blob": "a7c172a481a73a98ad3e3ac9d829b6622d59690e",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/private/trx/results.trx",
+      "Blob": "9d4b27c254efaed4af4c76665da43240b3480937",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/result.json",
+      "Blob": "8a437130fc6309304740d5009709f711808eabf4",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/runtime-artifact-after.json",
+      "Blob": "c46dc2afc850788b2ad1d95f17b4471a4dcb04d9",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/runtime-artifact-before.json",
+      "Blob": "c46dc2afc850788b2ad1d95f17b4471a4dcb04d9",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-cad-exact-green/source-inputs.json",
+      "Blob": "9bb2e78fdbfd5c2adc46bd257ef7c18dea42d899",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/build-result.json",
+      "Blob": "291bb0835fe59e1398e3a3708ca76e1bb036c103",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/private/01-build/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/private/01-build/stdout.log",
+      "Blob": "e42460f993d1ccecba3e9aa8b7041b1c27867565",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/private/01-restore/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/private/01-restore/stdout.log",
+      "Blob": "33016122cb3e03fa84b9f90011fc883d51cba456",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/private/sdk-version/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/private/sdk-version/stdout.log",
+      "Blob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/build/project-01.json",
+      "Blob": "63c56c3b477b32f8c80d2c8890981bd85092f444",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/private/test/stderr.log",
+      "Blob": "599fdfd47deb2d627adad5757de1c836ce6b43cb",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/private/test/stdout.log",
+      "Blob": "709566a940a135d78d7d43dc348756a855b6bf89",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/private/trx/results.trx",
+      "Blob": "89e824ccdf95acfa6550d678d8dc2581af30aa73",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/result.json",
+      "Blob": "9a8454acb1d7e45d8e2d9ad19173dca22c88806f",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/runtime-artifact-after.json",
+      "Blob": "d54fcd4b89c9958056f614ebb9214656045ae192",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/runtime-artifact-before.json",
+      "Blob": "d54fcd4b89c9958056f614ebb9214656045ae192",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-pg-coordinated-native-red/source-inputs.json",
+      "Blob": "d30b112b13baf695c45a37d7b7e0da901074900a",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/exact-case-set-audit.json",
+      "Blob": "e4800d33f77d003f1c796a539a0d1f8bf5731b38",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/private/test/stderr.log",
+      "Blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/private/test/stdout.log",
+      "Blob": "110370f7fffabb53fdb6c5804e1793c19157e52a",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/private/trx/results.trx",
+      "Blob": "6d38df06dbb0387cdd23521ecddcd2316a1f0958",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/result.json",
+      "Blob": "ce70f1b903c2757397708bedb232dae0b9f47dc3",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/runtime-artifact-after.json",
+      "Blob": "c46dc2afc850788b2ad1d95f17b4471a4dcb04d9",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/runtime-artifact-before.json",
+      "Blob": "c46dc2afc850788b2ad1d95f17b4471a4dcb04d9",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/bug161-sql-cad-exact-green/source-inputs.json",
+      "Blob": "9bb2e78fdbfd5c2adc46bd257ef7c18dea42d899",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/Archive-Bug161Evidence.ps1",
+      "Blob": "0c1c1ee1280c11f721a760f914cd4662ede5729d",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/Invoke-Bug161Groups.ps1",
+      "Blob": "c874d4584fd346be123369e21eec89ee96f30189",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/Invoke-Bug161Routing.ps1",
+      "Blob": "0fd66675d1c54cbc8a934890a3a4182f2510ae02",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/Invoke-Bug161Tests.ps1",
+      "Blob": "154ac0b5603f6cf12a86fc01f3b28bfe7829b4c5",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/New-Bug161Databases.ps1",
+      "Blob": "2ff8dffdbb3b0428605a000dc6380bd8121da6f6",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/Test-Bug161LocalEvidence.ps1",
+      "Blob": "5628e877c83d14f05cc5ffb8ebc37a692ab097ad",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/bug161-databases-created.json",
+      "Blob": "86c424bffcaa42d4dea36d1293f8b4850668fc17",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/bug161-exact-local-verification.json",
+      "Blob": "a3b2e7b967f9b3216f8a3bb548c22a6c0b63c831",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/bug161-original-failure-verification.json",
+      "Blob": "57a8926c671a887a01557c8acc9443d8aeeb7cf5",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/bug161-review.md",
+      "Blob": "3ecfc3af8b7ed68a8352ace10282821aed2f7be8",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/bug161-task-start-workflow-input-inspection-workflow-input-inspection.json",
+      "Blob": "0b6e4bfc15ec21cb8ff965c066ab10b34c8ec5c2",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/modules/DatabaseCompatibilityEntries.psm1",
+      "Blob": "4dea88c9d33b9fd74b8a400e17fbf6b85356b02f",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/modules/DatabaseCompatibilityLifecycle.psm1",
+      "Blob": "c835155233a031d2b596b3f2573bfdd5f885c081",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/modules/DatabaseCompatibilityProcess.psm1",
+      "Blob": "f2044d91f6c11a873a4854e4fc7cc317a1644be3",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/modules/DatabaseCompatibilityResults.psm1",
+      "Blob": "01036f646f59eabe83e617c1cc7030577a198679",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/original-required-cases.json",
+      "Blob": "c499c2dfc5fe8ac6d086b8ed7bb1850bc6da389a",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/execution/wp6-failed-cad-matrix-owned-cleanup.json",
+      "Blob": "cd3e9ba085da0dc1619fe3b3c3a33618a99e4e65",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/manifest.json",
+      "Blob": "52075f5339f3bd8433c5e4105901aeb012d5ff46",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/entry-result.json",
+      "Blob": "a91db91078f324c8da64654dd1f89d19054bdee3",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/private/process/stderr.log",
+      "Blob": "1eda40a254588d4c2f165e786c48ee90549be189",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/private/process/stdout.log",
+      "Blob": "4250d3a91aa58f4d2742eb3d7fe201db707663bf",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/private/trx/results.trx",
+      "Blob": "6533f49c8e95af77f808f90b8e30e4170088ab16",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/runtime-artifact-after.json",
+      "Blob": "52313ddf90a74aac18cf36f17c4b8cf7c2ad1f94",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/runtime-artifact-before.json",
+      "Blob": "52313ddf90a74aac18cf36f17c4b8cf7c2ad1f94",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/source-inputs.json",
+      "Blob": "2ec9130c2bcd3d5970a5dd3153a2966c6a93fdfb",
+      "Matched": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/original-wp6-failure/summary.json",
+      "Blob": "3928875413feb4d516c41a20f5c6aa70a2ebe8f2",
+      "Matched": true
+    },
+    {
+      "Path": "docs/project-memory/05-Completed.md",
+      "Blob": "9aa3d6115a23f67aacd46fe7b60076c90be2ae72",
+      "Matched": true
+    },
+    {
+      "Path": "docs/project-memory/06-Todo.md",
+      "Blob": "9d92d0c2435b6d1751d0e0a38047eee842eda1f4",
+      "Matched": true
+    },
+    {
+      "Path": "docs/project-memory/CHANGELOG-AI.md",
+      "Blob": "46d1907b49760bb5c309eadb1422aa8b7157869a",
+      "Matched": true
+    },
+    {
+      "Path": "docs/project-memory/PROJECT_STATE.md",
+      "Blob": "4610e7b21f5f9f024f6fc0eba4cad666993e0b2b",
+      "Matched": true
+    }
+  ],
+  "FileCount": 81,
+  "AllBlobsMatch": true,
+  "Mergeable": "MERGEABLE",
+  "MergeStateStatus": "CLEAN",
+  "RequiredReviews": 0,
+  "RequiredChecks": null,
+  "UnresolvedThreads": 0,
+  "ProtectionUnchanged": true,
+  "CheckedUtc": "2026-10-03T22:06:01.7899007Z"
+}

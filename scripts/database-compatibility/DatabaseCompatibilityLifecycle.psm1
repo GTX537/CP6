@@ -276,14 +276,29 @@ function Test-Cp6OwnedDatabase {
     }
     return $actual
 }
+function Wait-Cp6OwnedDatabaseIdle {
+    param($Context,$Receipt,[ValidateRange(0,60)][int]$SessionWaitSeconds)
+    $watch=[Diagnostics.Stopwatch]::StartNew()
+    while($true){
+        try{
+            # Recheck receipt, owner, principal and physical identity on every poll.
+            return Test-Cp6OwnedDatabase $Context $Receipt -RequireNoSessions
+        }catch{
+            if($_.Exception.Message -cne 'CP6_COMPAT_DATABASE_HAS_SESSIONS' -or
+                $watch.Elapsed.TotalSeconds -ge $SessionWaitSeconds){throw}
+            Start-Sleep -Milliseconds 250
+        }
+    }
+}
 function Remove-Cp6OwnedDatabases {
     [CmdletBinding()]
-    param([Parameter(Mandatory)]$Context,[Parameter(Mandatory)][array]$Receipts)
+    param([Parameter(Mandatory)]$Context,[Parameter(Mandatory)][array]$Receipts,
+        [ValidateRange(0,60)][int]$SessionWaitSeconds=15)
     Assert-Cp6 ($Receipts.Count -gt 0 -and @($Receipts.DatabaseName|Sort-Object -Unique).Count -eq $Receipts.Count) 'CP6_COMPAT_CLEANUP_TARGETS_INVALID'
-    foreach($receipt in $Receipts){$null=Test-Cp6OwnedDatabase $Context $receipt -RequireNoSessions}
+    foreach($receipt in $Receipts){$null=Wait-Cp6OwnedDatabaseIdle $Context $receipt $SessionWaitSeconds}
     $results=@()
     foreach($receipt in $Receipts){
-        $actual=Test-Cp6OwnedDatabase $Context $receipt -RequireNoSessions
+        $actual=Wait-Cp6OwnedDatabaseIdle $Context $receipt $SessionWaitSeconds
         if($actual.Exists){
             $receipt.Status='DropPending';Write-Cp6Json $receipt.ReceiptPath $receipt
             if($Context.Provider -ceq 'SqlServer'){Invoke-Cp6Statement $Context master "DROP DATABASE [$($receipt.DatabaseName)];"}else{Invoke-Cp6Statement $Context postgres ('DROP DATABASE "'+$receipt.DatabaseName+'";')}

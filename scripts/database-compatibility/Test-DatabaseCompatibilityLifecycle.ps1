@@ -65,7 +65,7 @@ try {
             & $module {param($n,$m) $script:fakeDatabases[$n].Marker=$m} $two.DatabaseName ($two.Task+':'+$two.Owner)
         }
         & $module {param($n) $script:fakeDatabases[$n].Sessions=1} $two.DatabaseName
-        $errorCode='';try{$null=Remove-Cp6OwnedDatabases $context @($one,$two)}catch{$errorCode=$_.Exception.Message}
+        $errorCode='';try{$null=Remove-Cp6OwnedDatabases $context @($one,$two) -SessionWaitSeconds 0}catch{$errorCode=$_.Exception.Message}
         Assert-Offline ($errorCode -ceq 'CP6_COMPAT_DATABASE_HAS_SESSIONS') 'cleanup rejects active session'
         Assert-Offline ((& $module {$script:drops}) -eq $(if($provider -ceq 'SqlServer'){0}else{2})) 'all-target preflight before any drop'
         & $module {param($n) $script:fakeDatabases[$n].Sessions=0;$script:fakeDatabases[$n].Owner='wrong'} $two.DatabaseName
