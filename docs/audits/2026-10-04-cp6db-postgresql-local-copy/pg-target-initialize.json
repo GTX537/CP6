@@ -1,0 +1,18 @@
+{
+  "Provider": "PostgreSql",
+  "Process": {
+    "ProcessId": 36808,
+    "ExitCode": -532462766,
+    "StartedUtc": "2026-10-04T10:13:07.2265492Z",
+    "FinishedUtc": "2026-10-04T10:14:51.4015901Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "3ED23BE9DA304BBE2AE3D394CA66328F84A4F4A4129A387488283350F312BE46",
+    "StandardErrorSha256": "8B2004AEF68E2F90346A517E15C76FC19E55C22C1EFC0B5967C09F1C5FE86FA4",
+    "TimedOut": false
+  },
+  "InitializerCompletionObserved": false,
+  "Success": false,
+  "SourceIsNewOwnedDatabase": true,
+  "OriginalSourceChanged": false,
+  "BuildReused": true
+}

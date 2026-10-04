@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-10-04：PostgreSQL 真实数据副本的后续测试
+
+- 用户确认原CP6DB两条历史T_IntegrationEvent.CreateDate的时区后，校正本机副本的UTC派生排序字段；原日期和完整SQL备份已保留，当前UTC仅是测试暂定解释。
+- 用户使用原业务账号在独立本地API测试订单、库存、Space等实际流程；本次完整数据对账与API冒烟不冒称所有业务回归、后台调度或外部集成验收。
+- PostgreSQL测试副本及SQL一致性备份/SQL升级副本暂留；另获清理授权后只按确切身份逐个操作，不按名字通配清理。
+
+数据搬迁与启动入口见[本地运行手册](../devops/CP6DB-POSTGRESQL-LOCAL-COPY.md)，原SQL CP6DB及既有本地连接未切换。
+
 ## 2026-10-04：双库兼容版已交付并通过合并后冒烟
 
 [PR165](https://github.com/GTX537/CP6/pull/165)已正常保护合并到远端main 8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3；候选4243c67d7ac2e3cfafb809d2a4efba54f4ec927a是其ancestor，完整树68f7d4accfc58897a6bb430f5f90dded50c4ba94相同，2,389个PR文件均完成分页与Git blob核对。原洁净实现e940825fc7511b41a1a80b4b73897dcc69e51bbb的双库105个适用入口、当前配置/接线139项、56项HTTP与真实原生独立恢复均通过，所有31个正式库已清理。2,091份原始证据与Git index字节一致，失败及复用来源保持。

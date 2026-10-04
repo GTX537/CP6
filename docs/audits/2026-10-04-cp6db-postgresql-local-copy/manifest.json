@@ -1,0 +1,74 @@
+{
+  "Scope": "Original safe summaries only. No settings, passwords, backup bytes, business values, raw private API/SQL logs, cookies or tokens.",
+  "Files": [
+    {
+      "Name": "api-smoke-auth-route-fix-stopped.json",
+      "Bytes": 370,
+      "Sha256": "CD9A3FE2BB4D8ECA64843524A6FDE22B4D9661464455655DC7EA718BC1F02E05"
+    },
+    {
+      "Name": "api-smoke-auth-route-fix.json",
+      "Bytes": 934,
+      "Sha256": "59D91E3111E0903CF9B30BF39F99A02F0209FCEFAB3CE5191086C61AAC0F8F15"
+    },
+    {
+      "Name": "api-smoke-profile-stopped.json",
+      "Bytes": 370,
+      "Sha256": "F6B649E45CE62956F35C4ADEB09E7BE3C3640734D954566ED6ACEA8EF78C6729"
+    },
+    {
+      "Name": "api-smoke-profile.json",
+      "Bytes": 1592,
+      "Sha256": "12FACC660469E1E63B9AAEDDFA24717699C626064B8F13952E5D32661225AC19"
+    },
+    {
+      "Name": "api-smoke-stopped.json",
+      "Bytes": 370,
+      "Sha256": "BE28F7A1A65B4D42B04FF759C569BFCB0F9E83EA91A6E0946BF00633579C3B49"
+    },
+    {
+      "Name": "pg-target-initialize-retry.json",
+      "Bytes": 616,
+      "Sha256": "DA090AFFA9C39FCB309522E53BF5645D6B247AC0F14F9639AA79C725BE573B1A"
+    },
+    {
+      "Name": "pg-target-initialize.json",
+      "Bytes": 627,
+      "Sha256": "230889D2ECFA647F5C899E82A2EA2ED037EFCD2FD3D6ADF0491E20BFAD3BFD35"
+    },
+    {
+      "Name": "runtime-copy.json",
+      "Bytes": 236,
+      "Sha256": "4AFF2C546B64753DECFABA941F9C2D24571DE560F77EA9D652D5763D11C948BC"
+    },
+    {
+      "Name": "snapshot.json",
+      "Bytes": 750,
+      "Sha256": "2C435C73E1D19825CA011BF5232CA3F18806965BF8D9D8776760ADD080CBEB92"
+    },
+    {
+      "Name": "sql-snapshot-initialize.json",
+      "Bytes": 615,
+      "Sha256": "671E95674A4B3BAF99BAECD1350F55BA3A7040DF98694D311BA73C23BD1B3B03"
+    },
+    {
+      "Name": "token-sequence-verification.json",
+      "Bytes": 907,
+      "Sha256": "CBBDC952B53F1A08AC109DDF0FED920E052A08C73E5A601807098D06B289CFD2"
+    },
+    {
+      "Name": "transfer-result.json",
+      "Bytes": 301444,
+      "Sha256": "D3267C421F700212753C2CF9978C52C0A960540720E2CA9EC21A9F5B916BFC1F"
+    }
+  ],
+  "NativeDatabaseChecks": "684 mapped row multisets, 181 FKs, 6 identity sequences, zero disabled trigger or unvalidated constraint; supplemental four token sequences strictly exceed imported token maxima",
+  "LocalApiChecks": "5 HTTP200 and existing GET profile HTTP401",
+  "PreservedPrivateFailures": [
+    "initializer/copy overlap and rollback",
+    "original COPY 30s timeout with full rollback",
+    "first smoke nonexistent GET me",
+    "second smoke POST CSRF boundary"
+  ],
+  "HistoryTimeZone": "Two original legacy event timestamps are preserved; current derived UTC interpretation provisional pending user confirmation."
+}

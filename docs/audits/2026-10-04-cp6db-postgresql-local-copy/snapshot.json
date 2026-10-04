@@ -1,0 +1,19 @@
+{
+  "Status": "SnapshotRestoredVerified",
+  "SourceDatabase": "CP6DB",
+  "SqlSnapshotDatabase": "CP6MIG_SNAPSHOT_20261004_acc202d6",
+  "PostgreSqlTarget": "cp6db_pg_test_20261004_acc202d6",
+  "BackupSha256": "38800DFDA2DC429BC17322927CB335D58E6CB242DACBF9AAA9B6CEEAC88ACB2F",
+  "BackupBytes": 197259264,
+  "CopyOnly": true,
+  "Checksum": true,
+  "RestoreVerifyOnly": true,
+  "RestoredIntoNewDatabase": true,
+  "SourceSchemaOrDataModified": false,
+  "ArtifactFilesVerified": 261,
+  "SourceInputsVerified": 2010,
+  "ArtifactBuiltInThisRun": false,
+  "OriginalArtifactSource": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "CurrentSource": "272e92cfc1c6c177d0227aa19815d603eef1a99e",
+  "RecordedUtc": "2026-10-04T10:10:42.5846820Z"
+}
