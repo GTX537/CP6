@@ -1,6 +1,16 @@
 # DB-COMPAT-01：WP6 最终本地验收
 
-状态：本地适用验收已完成；WP6 正常远端交付、合并后冒烟和父任务关闭待完成。下文是当前真实证据，不改写各阶段历史报告中的当时状态。
+状态：本地适用验收、WP6 正常远端代码交付和合并后双库冒烟均已完成。父任务只在本次结案原件正常合入并核对远端完整包含性后关闭，活动状态以 [Issue134](https://github.com/GTX537/CP6/issues/134) 为准。下文各原始报告的历史待办状态保留，不改写当时证据。
+
+## 正常交付与合并后验证
+
+[PR165](https://github.com/GTX537/CP6/pull/165) 于2026-10-04 02:49:23 UTC正常合并至远端main `8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3`。候选 `4243c67d7ac2e3cfafb809d2a4efba54f4ec927a` 是其ancestor，完整树均为 `68f7d4accfc58897a6bb430f5f90dded50c4ba94`；24页共2,389个PR文件逐项匹配候选Git blob。没有管理员绕过、force push或分支保护变更。第一次push网络reset确认远端未收到，单命令HTTP/1.1重试成功；失败记录保留。
+
+必要合并后冒烟在该main上串行新执行，复用原e940实际构建的261文件API，每库全新owned数据库：一次实际初始化、精确迁移history、所属PID/API三个health端点、管理员登录及12项权限/改密/401/403验证均通过。HTTP新建用户均从确切owned数据库原生查得；两个新库普通DROP并确认不存在。它证明主线集成及应用运行，没有重建或重复完整矩阵/恢复验收；执行main与原构建source分别记录。
+
+第一次PG冒烟的本机辅助脚本通过PowerShell属性读取连接字符串，丢失SSL Disable覆盖，原生psql退出2、未进入建库；纯内存复现后改用正式runner已采用的set/get方法，使用新目录成功。原Failed summary和Planned receipt字节保留，该原计划名经真实只读查询确认不存在；保护方法拒绝把Planned receipt称为owned的诊断也保留。没有改动CP6源代码、数据库服务认证或生产TLS要求。
+
+[交付/合并后原件清单](wp6-native/post-merge/manifest.json)保存155份原件，manifest SHA-256 为 `CBC510512DD8E310E4A6A09647AD1E16861C32FD98F482376E021735AC983B24`。其中[远端完整包含性](wp6-native/post-merge/delivery/wp6-pr165-remote-main-verification.json)、[PG新冒烟](wp6-native/post-merge/wp6-pg-postmerge-application-smoke-ssl-fix/summary.json)、[SQL新冒烟](wp6-native/post-merge/wp6-sql-postmerge-application-smoke/summary.json)及[原失败目标不存在](wp6-native/post-merge/delivery/wp6-postmerge-initial-pg-failure-absence.json)按实际source/状态记录。当前AC1–7及AC8的代码、测试、原验收和必要合并后部分已有直接证据；新增结案文件还须正常合入后核对包含性，随后关闭父任务。
 
 ## 当前代码与实际执行
 
@@ -30,7 +40,7 @@ PG Matrix 实际 restore/build 七个项目。SQL Matrix 在全部2698矩阵输�
 | AC5 核心业务、锁及消息 | 每库ERP95、handler2、核心25、WMS25，编号、资源锁、共享事务、错误分类和领取/租约/fence入口通过；PG实际40001专项2保留。生产Platform竞争dispatcher、重试/十次失败死信、workflow并发/回滚与实际通知投递均按精确case覆盖。 |
 | AC6 Space与报表 | 每库克隆23、设计发布41、任务/生成/保留23、CAD/资产/协作25及AI/容量/映射/历史专项、MES/Dashboard/GDPR报表入口通过；适用的SQL历史及PG前置顺序分别验证。 |
 | AC7 原生独立恢复 | 每库真实原生备份/新库恢复、4次所属API启动、28项HTTP，共56项HTTP与8次API启动。SQL352表/6532行/6序列、PG334表/6349行/10序列全部对账；history/持久key/权限/游标保持，恢复待发消息一次领取投递后零重复重放；真实双用户WebSocket投递和隔离通过。 |
-| AC8 可审计交付 | 本地零必需跳过，原始失败、真实复用及集中审查/定向复核保留。正常PR/main交付、合并后冒烟、远端完整包含性和父任务关闭仍待完成。 |
+| AC8 可审计交付 | 本地零必需跳过，原始失败、真实复用及集中审查/定向复核保留。PR165正常main交付、完整树/所有文件blob及双库合并后冒烟和清理均已核对；本次新增结案文件正常合入并验证后关闭父任务。 |
 
 [逐条件证据绑定](wp6-native/wms-final/development/wp6-wms-local-completion-audit.json)明确AC1–7本地成立、AC8远端部分尚未成立；绑定全部105份真实入口及断言源位置。[精确入口审计](wp6-native/wms-final/development/wp6-wms-final-evidence-verification.json) SHA-256 为 `92AAABA85F4BDEB96C26C33F039972E29745FF143C4126732C054031F119054B`；[初始化/实际HTTP/独立恢复专项审计](wp6-native/wms-final/development/wp6-wms-final-application-recovery-audit.json)为 `D5B89E6A9EB39239660D825C68ABA8679595DE3DF82DD2943BD8121A5D4E7BDF`。两项审计重读已执行原件，不计为新native执行。
 

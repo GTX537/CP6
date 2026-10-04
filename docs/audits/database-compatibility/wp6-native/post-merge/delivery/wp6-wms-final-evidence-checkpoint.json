@@ -1,0 +1,13 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "FinalEvidenceCommitted",
+  "CommittedUtc": "2026-10-04T02:37:03.8056840Z",
+  "Head": "4243c67d7ac2e3cfafb809d2a4efba54f4ec927a",
+  "StagedOwnedFiles": 2101,
+  "OriginalArchiveFiles": 2091,
+  "AllNativeIndexBlobsMatchOriginalBytes": true,
+  "ArchiveManifestSha256": "8A7C8CE9A81AEF3C1369A521507C22E5347F054C68F59615A504BB0138A5BB27",
+  "WorkingTreeClean": true,
+  "NativeExecution": false,
+  "RemoteDelivery": "Pending"
+}

@@ -1,0 +1,13 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "InitialFailedSmokeDatabaseAbsentVerified",
+  "CheckedUtc": "2026-10-04T02:58:33.9178199Z",
+  "DatabaseName": "CP6Compat_WP6_20261004_312541d8_application",
+  "OriginalReceiptStatus": "Planned",
+  "ActualExists": false,
+  "ReceiptBytesUnchanged": true,
+  "OriginalFailedSummarySha256": "54C6389DF892311CA6DA56D98E635517B00B0DA014F589E6FEBF6A428EC4FACD",
+  "NativeReadOnlyAbsenceCheck": true,
+  "DatabaseCreatedByFailure": false,
+  "PriorOwnedProbeRejection": "CP6_COMPAT_RECEIPT_NOT_OWNED correctly refuses a Planned receipt; this separate read-only absence check validates the exact unchanged planned receipt and queries actual presence, with no DROP or status promotion"
+}

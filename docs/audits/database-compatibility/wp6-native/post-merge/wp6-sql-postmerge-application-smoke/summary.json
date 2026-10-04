@@ -1,0 +1,193 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Passed",
+  "Provider": "SqlServer",
+  "ExecutionMergedMain": "8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3",
+  "OriginalBuildSource": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "BuildExecuted": false,
+  "PublishExecuted": false,
+  "BoundOriginalSourceInputs": 2010,
+  "OriginalPublishedFiles": 261,
+  "OriginalApiSha256": "D226FA352B4E207574948FBA53EBCA7CBFE0A66541178F1ADB737380030DF9D1",
+  "Scope": "New necessary post-merge initialization/API/permission smoke on one new owned database, reusing the original verified artifact and unchanged source. This is not a rebuild, the full native matrix, restore repetition or production acceptance.",
+  "Initializer": {
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "DatabaseName": "CP6Compat_WP6_20261004_f887e95d_application",
+    "Label": "database-init",
+    "ArtifactManifestSha256": "9CD81660F8F9291A0E38DDF0CEE219F51750A2093E0F049D949BC3657E0CB974",
+    "Process": {
+      "ProcessId": 29348,
+      "ExitCode": 0,
+      "StartedUtc": "2026-10-04T02:55:13.5948233Z",
+      "FinishedUtc": "2026-10-04T02:56:01.7850758Z",
+      "OwnedProcessTerminated": false,
+      "StandardOutputSha256": "EEB731F209E384B77B0E670D4131B753196ABB8009B2D81E956B698EBF881E32",
+      "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "TimedOut": false
+    },
+    "InitializerCompletionObserved": true,
+    "Success": true
+  },
+  "HistoryEntry": {
+    "EntryId": "application-histories-first",
+    "Provider": "SqlServer",
+    "DatabaseName": "CP6Compat_WP6_20261004_f887e95d_application",
+    "Role": "application",
+    "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+    "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+    "BinarySha256": "634D635269B0E3CFA294F217FF0B4DCBE261C8AEA9D9D40ACB1F94E8AC49078E",
+    "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\histories\\runtime-artifact-before.json",
+    "RuntimeArtifactManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+    "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\histories\\runtime-artifact-after.json",
+    "RuntimeArtifactAfterManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+    "RuntimeArtifactsUnchanged": true,
+    "Process": {
+      "ProcessId": 30916,
+      "ExitCode": 0,
+      "StartedUtc": "2026-10-04T02:56:02.5155017Z",
+      "FinishedUtc": "2026-10-04T02:56:05.8257601Z",
+      "OwnedProcessTerminated": false,
+      "StandardOutputSha256": "74B68048C45EA86454711ECDE67F2AFDAE2FD63EE08109D8AFB8CFCB4B2781F4",
+      "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "TimedOut": false
+    },
+    "Validation": {
+      "EntryId": "application-histories-first",
+      "Provider": "SqlServer",
+      "Success": true,
+      "Status": "Passed",
+      "FailureCodes": [],
+      "Counts": {
+        "Expected": 2,
+        "Total": 2,
+        "Passed": 2,
+        "NonPassing": 0
+      },
+      "MissingCaseNames": [],
+      "UnexpectedCaseNames": [],
+      "DuplicateCaseNames": [],
+      "ActualCaseNames": [
+        "owner-and-physical-database-verified",
+        "four-effective-history-profiles-complete"
+      ],
+      "ReportSha256": "1BCB46BF8E6D5D6552EC4F463065BC643ABAA2A6F65EB8C0E6CC437B4E97F157",
+      "ReportDatabaseName": "CP6Compat_WP6_20261004_f887e95d_application",
+      "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+    },
+    "ReportPath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\histories\\reports\\report.json",
+    "ReportSha256": "1BCB46BF8E6D5D6552EC4F463065BC643ABAA2A6F65EB8C0E6CC437B4E97F157",
+    "FailureCode": null,
+    "Success": true
+  },
+  "ApiReady": {
+    "Success": true,
+    "ProcessId": 35084,
+    "Port": 59930,
+    "DatabaseName": "CP6Compat_WP6_20261004_f887e95d_application",
+    "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+    "ArtifactManifestSha256": "9CD81660F8F9291A0E38DDF0CEE219F51750A2093E0F049D949BC3657E0CB974",
+    "LatestCoreMigration": "20261002193500_RestoreQuotationAuditColumnCapacity",
+    "Http": [
+      {
+        "Path": "/health/live",
+        "StatusCode": 200,
+        "BodySha256": "CF7B027A9A54CAADD16816AF5704E3A20D7469ED72FFFB64DB9A62B39E867E47"
+      },
+      {
+        "Path": "/health/ready",
+        "StatusCode": 200,
+        "BodySha256": "3A4E7C8545C0964EBC32A9103D9BF1BA801A6286BE2182A7650CF53B5C03A691"
+      },
+      {
+        "Path": "/health/release",
+        "StatusCode": 200,
+        "BodySha256": "40B17748C5B4D2699216CBCBC0F266275FF7E33E99E70B1AC2B027DB4F7D02C3"
+      }
+    ],
+    "CheckedUtc": "2026-10-04T02:56:17.4408704Z"
+  },
+  "ActualHttpCreatedUserPresentInOwnedDatabase": true,
+  "HttpAuthorization": {
+    "Task": "DB-COMPAT-01-WP6",
+    "Stage": "authorization",
+    "Success": true,
+    "Checks": [
+      {
+        "Name": "admin-profile-authenticated",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "admin-role-query-authorized",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "admin-id-matches-user-api",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "anonymous-role-rejected",
+        "Passed": true,
+        "StatusCode": 401
+      },
+      {
+        "Name": "anonymous-profile-rejected",
+        "Passed": true,
+        "StatusCode": 401
+      },
+      {
+        "Name": "unprivileged-user-created-through-api",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "new-user-requires-password-change",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "new-user-password-changed-through-api",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "unprivileged-profile-authenticated-after-relogin",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "unprivileged-role-denied-by-permission",
+        "Passed": true,
+        "StatusCode": 403
+      },
+      {
+        "Name": "unprivileged-own-inbox-readable",
+        "Passed": true,
+        "StatusCode": 200
+      },
+      {
+        "Name": "unprivileged-inbox-write-denied-by-permission",
+        "Passed": true,
+        "StatusCode": 403
+      }
+    ],
+    "ExpectedCases": 12,
+    "VerificationKind": "Actual loopback HTTP requests; application process ownership is checked by the caller.",
+    "UserId": "6c94441d-a7da-4f22-a6e4-08df21c31064"
+  },
+  "ApiStopped": {
+    "ProcessId": 35084,
+    "ExitCode": -1,
+    "StartedUtc": "2026-10-04T02:56:06.5866558Z",
+    "FinishedUtc": "2026-10-04T02:56:20.2125983Z",
+    "OwnedProcessTerminated": true,
+    "StandardOutputSha256": "D5BD3AA18E33C87AF4F338CB76001E7463C169BC5D56806E74924C5AE29011A1",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "CleanupStatus": "AbsentVerified",
+  "CleanedDatabases": 1,
+  "FinishedUtc": "2026-10-04T02:56:21.1434431Z"
+}
