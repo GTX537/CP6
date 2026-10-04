@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a59c1104-87c8-4aaa-af6f-b46890ec5104" name="tt@LAPTOP-3QQ44FJS 2026-10-03 20:30:52" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T20:30:52.1674235-04:00" queuing="2026-10-03T20:30:52.1674237-04:00" start="2026-10-03T20:30:48.3515609-04:00" finish="2026-10-03T20:30:52.1715319-04:00" />
+  <TestSettings name="default" id="019cadce-f1dd-434c-b06c-5d219c3534c7">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_20_30_52" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8eba9931-cf14-49ff-8626-5a585d23afd7" testId="82ad53f2-b877-9d14-9ab8-03d6d043ee26" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2239750" startTime="2026-10-03T20:30:51.8634330-04:00" endTime="2026-10-03T20:30:52.0871732-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8eba9931-cf14-49ff-8626-5a585d23afd7">
+      <Output>
+        <StdOut>BUG163 native command physical=773954c78efe4991857035304ab169e4 ambient=False local=False&#xD;
+BUG163 native command physical=89c93c05e67e4d30985dee6abfc342f4 ambient=False local=True&#xD;
+BUG163 native command physical=89c93c05e67e4d30985dee6abfc342f4 ambient=False local=True&#xD;
+BUG163 native command physical=89c93c05e67e4d30985dee6abfc342f4 ambient=False local=True&#xD;
+BUG163 native command physical=89c93c05e67e4d30985dee6abfc342f4 ambient=False local=True&#xD;
+BUG163 native command physical=89c93c05e67e4d30985dee6abfc342f4 ambient=False local=True&#xD;
+BUG163 native command physical=89c93c05e67e4d30985dee6abfc342f4 ambient=False local=True&#xD;
+BUG163 native command physical=43e24ce85fd04c72b081896502820ae2 ambient=False local=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="99808cae-4b8d-44c1-95c5-e9c085823eb5" testId="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1374716" startTime="2026-10-03T20:30:51.7303567-04:00" endTime="2026-10-03T20:30:51.8628801-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="99808cae-4b8d-44c1-95c5-e9c085823eb5">
+      <Output>
+        <StdOut>BUG163 native command physical=81a39d4509784e769ce037312027219f ambient=False local=False&#xD;
+BUG163 native command physical=46655c6a76ca4aa2b2ffafdca8825591 ambient=False local=False&#xD;
+BUG163 native command physical=3fa92228ff03443787619b29e3b7f441 ambient=False local=True&#xD;
+BUG163 native command physical=3fa92228ff03443787619b29e3b7f441 ambient=False local=True&#xD;
+BUG163 native command physical=3fa92228ff03443787619b29e3b7f441 ambient=False local=True&#xD;
+BUG163 native command physical=3fa92228ff03443787619b29e3b7f441 ambient=False local=True&#xD;
+BUG163 native command physical=3fa92228ff03443787619b29e3b7f441 ambient=False local=True&#xD;
+BUG163 native command physical=0c18917a49114f4486a7f2d3f74eea9f ambient=False local=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="53234899-80f3-4cc2-ab61-49a08dde3939" testId="c9992fc7-c9f0-89f0-6de3-943ab45308af" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6005279" startTime="2026-10-03T20:30:51.1334634-04:00" endTime="2026-10-03T20:30:51.7245155-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="53234899-80f3-4cc2-ab61-49a08dde3939">
+      <Output>
+        <StdOut>BUG163 native command physical=97832288564d433d959a523068487933 ambient=False local=False&#xD;
+BUG163 native command physical=6cba80e2a7274a1c97b4afc2342dfa59 ambient=False local=False&#xD;
+BUG163 native command physical=5385a373b5db4b3293d0c157aba3244d ambient=False local=True&#xD;
+BUG163 native command physical=5385a373b5db4b3293d0c157aba3244d ambient=False local=True&#xD;
+BUG163 native command physical=5385a373b5db4b3293d0c157aba3244d ambient=False local=True&#xD;
+BUG163 native command physical=5385a373b5db4b3293d0c157aba3244d ambient=False local=True&#xD;
+BUG163 native command physical=e8a66c98c64e4d96b19718590b00789d ambient=False local=False</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af">
+      <Execution id="99808cae-4b8d-44c1-95c5-e9c085823eb5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="82ad53f2-b877-9d14-9ab8-03d6d043ee26">
+      <Execution id="8eba9931-cf14-49ff-8626-5a585d23afd7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c9992fc7-c9f0-89f0-6de3-943ab45308af">
+      <Execution id="53234899-80f3-4cc2-ab61-49a08dde3939" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="82ad53f2-b877-9d14-9ab8-03d6d043ee26" executionId="8eba9931-cf14-49ff-8626-5a585d23afd7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af" executionId="99808cae-4b8d-44c1-95c5-e9c085823eb5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9992fc7-c9f0-89f0-6de3-943ab45308af" executionId="53234899-80f3-4cc2-ab61-49a08dde3939" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.18]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.48]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.50]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:03.38]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

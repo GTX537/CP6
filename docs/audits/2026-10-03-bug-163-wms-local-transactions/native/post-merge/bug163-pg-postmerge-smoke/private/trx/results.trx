@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f6c0ab1e-d139-4f8d-89ed-5aecbc9d6d2e" name="tt@LAPTOP-3QQ44FJS 2026-10-03 20:32:30" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T20:32:30.2953552-04:00" queuing="2026-10-03T20:32:30.2953553-04:00" start="2026-10-03T20:32:25.1985087-04:00" finish="2026-10-03T20:32:30.7139230-04:00" />
+  <TestSettings name="default" id="c217ca77-7176-4907-bc27-399199152e74">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_20_32_30" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ee6fc707-7565-41b4-8e92-0364d94fe47c" testId="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4850379" startTime="2026-10-03T20:32:29.6800688-04:00" endTime="2026-10-03T20:32:30.1601658-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee6fc707-7565-41b4-8e92-0364d94fe47c">
+      <Output>
+        <StdOut>BUG163 native command physical=11440 ambient=False local=False&#xD;
+BUG163 native command physical=28980 ambient=False local=False&#xD;
+BUG163 native command physical=6908 ambient=False local=True&#xD;
+BUG163 native command physical=6908 ambient=False local=True&#xD;
+BUG163 native command physical=6908 ambient=False local=True&#xD;
+BUG163 native command physical=6908 ambient=False local=True&#xD;
+BUG163 native command physical=6908 ambient=False local=True&#xD;
+BUG163 native command physical=36176 ambient=False local=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="235c5e04-c169-41f3-a6b6-7a982d31871a" testId="82ad53f2-b877-9d14-9ab8-03d6d043ee26" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4854247" startTime="2026-10-03T20:32:30.1607664-04:00" endTime="2026-10-03T20:32:30.6459110-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="235c5e04-c169-41f3-a6b6-7a982d31871a">
+      <Output>
+        <StdOut>BUG163 native command physical=27372 ambient=False local=False&#xD;
+BUG163 native command physical=34388 ambient=False local=True&#xD;
+BUG163 native command physical=34388 ambient=False local=True&#xD;
+BUG163 native command physical=34388 ambient=False local=True&#xD;
+BUG163 native command physical=34388 ambient=False local=True&#xD;
+BUG163 native command physical=34388 ambient=False local=True&#xD;
+BUG163 native command physical=34388 ambient=False local=True&#xD;
+BUG163 native command physical=16164 ambient=False local=False</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ff439368-5fc4-426c-93db-b1f2cf126747" testId="c9992fc7-c9f0-89f0-6de3-943ab45308af" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.9203344" startTime="2026-10-03T20:32:28.7617523-04:00" endTime="2026-10-03T20:32:29.6740755-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ff439368-5fc4-426c-93db-b1f2cf126747">
+      <Output>
+        <StdOut>BUG163 native command physical=17552 ambient=False local=False&#xD;
+BUG163 native command physical=23416 ambient=False local=False&#xD;
+BUG163 native command physical=35908 ambient=False local=True&#xD;
+BUG163 native command physical=35908 ambient=False local=True&#xD;
+BUG163 native command physical=35908 ambient=False local=True&#xD;
+BUG163 native command physical=35908 ambient=False local=True&#xD;
+BUG163 native command physical=33976 ambient=False local=False</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af">
+      <Execution id="ee6fc707-7565-41b4-8e92-0364d94fe47c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="82ad53f2-b877-9d14-9ab8-03d6d043ee26">
+      <Execution id="235c5e04-c169-41f3-a6b6-7a982d31871a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c9992fc7-c9f0-89f0-6de3-943ab45308af">
+      <Execution id="ff439368-5fc4-426c-93db-b1f2cf126747" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af" executionId="ee6fc707-7565-41b4-8e92-0364d94fe47c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82ad53f2-b877-9d14-9ab8-03d6d043ee26" executionId="235c5e04-c169-41f3-a6b6-7a982d31871a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9992fc7-c9f0-89f0-6de3-943ab45308af" executionId="ff439368-5fc4-426c-93db-b1f2cf126747" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.18]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.47]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.48]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:05.10]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,225 @@
+{
+  "Task": "BUG-163",
+  "PullRequest": "https://github.com/GTX537/CP6/pull/164",
+  "RemoteMain": "6322ac152cab7d462719169fb0301f49e9ee39ba",
+  "ArchivedUtc": "2026-10-04T00:44:05.1649459Z",
+  "Originals": [
+    {
+      "Path": "bug163-final-staging-proof.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-final-staging-proof.json",
+      "Sha256": "235D03D51F1671B912B5E4A47E3ADEDB147D810C22E8AC4A371BEB9E8129B813",
+      "Length": 29351
+    },
+    {
+      "Path": "bug163-review-documentation-followup.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-review-documentation-followup.json",
+      "Sha256": "0C4C50C0FE8235B015E2477B95E71853C0D42285A5878858B1355428A9640107",
+      "Length": 542
+    },
+    {
+      "Path": "bug163-premerge-protection-note.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-premerge-protection-note.json",
+      "Sha256": "1BD764EBB884A480F4DF158CD6B7A8E7EF609B1C72E518483F7DACC50B90FB15",
+      "Length": 262
+    },
+    {
+      "Path": "wp6-sql-wms-cleanup-recovery.json",
+      "OriginalPath": "D:\\CP6\\tmp\\wp6-sql-wms-cleanup-recovery.json",
+      "Sha256": "8D45DC7FF688703326CF58B57CDE6987096E27144FBE0CCE7EE26B0EAD781C30",
+      "Length": 1801
+    },
+    {
+      "Path": "Complete-Wp6WmsSqlCleanup.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Complete-Wp6WmsSqlCleanup.ps1",
+      "Sha256": "2788B1F69A396D2A36764B0CAEAE76A3C50F2625A74F781AB2B48E2AB93A1EB0",
+      "Length": 7654
+    },
+    {
+      "Path": "bug163-pre-push-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pre-push-workflow-input-inspection.json",
+      "Sha256": "75C79B07FC2C97A0B918AE2BE970A74C5FF7DEB0AA506DB3FC726C440A32DB20",
+      "Length": 6756
+    },
+    {
+      "Path": "bug163-pre-pr-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pre-pr-workflow-input-inspection.json",
+      "Sha256": "845B76392B04D0ADDE66EBC7933315628745BDEFA9E0276CC785CBC862D20224",
+      "Length": 6756
+    },
+    {
+      "Path": "bug163-pre-merge-workflow-input-inspection.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pre-merge-workflow-input-inspection.json",
+      "Sha256": "F6FF342D7FF4B83409A1AB102C739B44C687CD8E316DBF969D7E81AF8A8882F0",
+      "Length": 6756
+    },
+    {
+      "Path": "bug163-pr-full-file-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pr-full-file-verification.json",
+      "Sha256": "B05A23B8F0632E62CC5869543911F962D43260E28F07E637EFDBCB260BA18260",
+      "Length": 36310
+    },
+    {
+      "Path": "bug163-remote-main-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-remote-main-verification.json",
+      "Sha256": "5AEFF07500F225DAF6123DE65061B56394FFC476A15296D8A0DBC2735D05A5EA",
+      "Length": 363
+    },
+    {
+      "Path": "bug163-postmerge-verification.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-postmerge-verification.json",
+      "Sha256": "DCFA4BA1910F287A008E0ACC68EEF59860386C63DB1F7F39686603BAD0FD2AA7",
+      "Length": 2474
+    },
+    {
+      "Path": "bug163-cleanup-owned-two.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-cleanup-owned-two.json",
+      "Sha256": "90402983A69D8FF41CF88B93BF1E54B24FC2292F8A076AC6532E42DE24ED355B",
+      "Length": 2032
+    },
+    {
+      "Path": "bug163-closure.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-closure.json",
+      "Sha256": "51C4A7BB11FA5DBCDFEF23BD5A2486C283AD4632F776318D99F4698E84119582",
+      "Length": 346
+    },
+    {
+      "Path": "bug163-closure-comment.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-closure-comment.md",
+      "Sha256": "B41EF5E188DA2AEC579D5DD21F410F3A2D0B44D533FE29DF6E87867663CF9298",
+      "Length": 1531
+    },
+    {
+      "Path": "bug163-pr-body.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pr-body.md",
+      "Sha256": "C46668617DE211108B9BA6877A51118E8837FD1F0D35FEB5211D67862F1AE2C5",
+      "Length": 1636
+    },
+    {
+      "Path": "bug163-issue-before-closure.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-issue-before-closure.md",
+      "Sha256": "9ED98305FEB0583D85D57081C28A65330E513114E46F6E2D3CBBDA04165CA21B",
+      "Length": 4586
+    },
+    {
+      "Path": "bug163-issue-completed-checklist.md",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-issue-completed-checklist.md",
+      "Sha256": "F9EA73BACC4D3B348A84CE227953B6BD3BBACE077F16CBE8FB6EC9666840B494",
+      "Length": 6118
+    },
+    {
+      "Path": "Remove-Bug163OwnedDatabases.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Remove-Bug163OwnedDatabases.ps1",
+      "Sha256": "30B9A652CD06C1F10EFBCF9BD3FD15E9CC67A4E55E779ABCD3965652829237D5",
+      "Length": 17962
+    },
+    {
+      "Path": "Invoke-Bug163Tests.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Invoke-Bug163Tests.ps1",
+      "Sha256": "F8AD8DF0DA1F04627033C3B645041FBEF34CBEB79E831F5D98419049726A868C",
+      "Length": 7321
+    },
+    {
+      "Path": "Test-Bug163PostMerge.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Test-Bug163PostMerge.ps1",
+      "Sha256": "407FC62553AC52948E46F9E107C6C6A833C97F8FC61F126022C9A3382329CFF2",
+      "Length": 4449
+    },
+    {
+      "Path": "Stage-Bug163Delivery.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Stage-Bug163Delivery.ps1",
+      "Sha256": "2E4D48D07E2ABDD3A1B2E23155E758F09E2C2440166E81786DB2C639E5296847",
+      "Length": 4582
+    },
+    {
+      "Path": "Archive-Bug163PostMerge.ps1",
+      "OriginalPath": "D:\\CP6\\tmp\\Archive-Bug163PostMerge.ps1",
+      "Sha256": "F41DB4C4DFE0F8317C51410598A1808002AB59676E819FD470C7E667551582D4",
+      "Length": 3830
+    },
+    {
+      "Path": "bug163-pg-postmerge-smoke/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-postmerge-smoke\\result.json",
+      "Sha256": "D5A65E5C1B9EB5F840DF8071ADC4FF34A19B72CFC6376C805C308673BFD22182",
+      "Length": 3687
+    },
+    {
+      "Path": "bug163-pg-postmerge-smoke/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-postmerge-smoke\\runtime-artifact-before.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-pg-postmerge-smoke/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-postmerge-smoke\\runtime-artifact-after.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-pg-postmerge-smoke/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-postmerge-smoke\\source-inputs.json",
+      "Sha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-pg-postmerge-smoke/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-postmerge-smoke\\private\\trx\\results.trx",
+      "Sha256": "FD6537A5C4C170E9262F970C93F6866719550329FEBF70CB11ABAD8C187B6FE5",
+      "Length": 7412
+    },
+    {
+      "Path": "bug163-pg-postmerge-smoke/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-postmerge-smoke\\private\\test\\stdout.log",
+      "Sha256": "A2EC243A15481BF8B920A73538A30A39F83CCE464942D234C0B4262FED17E593",
+      "Length": 379
+    },
+    {
+      "Path": "bug163-pg-postmerge-smoke/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-pg-postmerge-smoke\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    },
+    {
+      "Path": "bug163-sql-postmerge-smoke/result.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-postmerge-smoke\\result.json",
+      "Sha256": "4EF7F00EC1E9D2669A4B859FB16461636A4FDE67F0A4BB4CD0E1F2691196755D",
+      "Length": 4312
+    },
+    {
+      "Path": "bug163-sql-postmerge-smoke/runtime-artifact-before.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-postmerge-smoke\\runtime-artifact-before.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-postmerge-smoke/runtime-artifact-after.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-postmerge-smoke\\runtime-artifact-after.json",
+      "Sha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "Length": 66728
+    },
+    {
+      "Path": "bug163-sql-postmerge-smoke/source-inputs.json",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-postmerge-smoke\\source-inputs.json",
+      "Sha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "Length": 396648
+    },
+    {
+      "Path": "bug163-sql-postmerge-smoke/private/trx/results.trx",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-postmerge-smoke\\private\\trx\\results.trx",
+      "Sha256": "EEE99304C55FD90B4923118FC9346CBC6E62EB21C5C813F0955B9B1625A92F76",
+      "Length": 8038
+    },
+    {
+      "Path": "bug163-sql-postmerge-smoke/private/test/stdout.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-postmerge-smoke\\private\\test\\stdout.log",
+      "Sha256": "A2051344139FE33B1D2B6EC875EA4750903667FAB8F6FB1CE6BF2791A8C46F0B",
+      "Length": 383
+    },
+    {
+      "Path": "bug163-sql-postmerge-smoke/private/test/stderr.log",
+      "OriginalPath": "D:\\CP6\\tmp\\bug163-sql-postmerge-smoke\\private\\test\\stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Length": 0
+    }
+  ],
+  "Scope": "Normal PR/main inclusion, complete122-file paginated remote blob comparison, same-input fresh two-provider post-merge 3/3 smoke, exact two BUG163 database ordinary cleanup plus original failed WP6 SQL database cleanup with native bounded-wait controls and Issue closure. Original111-file archive remains unchanged; no rerun of full 25-case groups, Actions or production acceptance is claimed."
+}

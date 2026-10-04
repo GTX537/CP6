@@ -1,5 +1,13 @@
 # BUG163：WMS 本地事务回归
 
+## 2026-10-04：正常交付与清理完成
+
+Issue163 已 Closed；[PR164](https://github.com/GTX537/CP6/pull/164)正常合入远端 main `6322ac152cab7d462719169fb0301f49e9ee39ba`，核对候选包含性、完整树及122个远端文件 Git blob。合并后实际 SQL/PG 各3/3；两库此前25/25按真实执行来源保留。两个修复测试库及原 WP6 SQL 失败库均已普通DROP并确认不存在，持续/短暂 SQL 会话控制通过且自然结束，原失败记录未改写。
+
+[36份交付原件](native/post-merge/manifest.json) SHA256 `5309C7BDFB36DEED152CAB0C7B600420D9D768D1170B3E648CE112AABFD0F7FB`，包含工作流核对、完整PR文件、远端main、实际合并后冒烟、三库清理、会话控制、审查追加核对及Issue关闭读回；下方原111份归档不变。所有验证本地，Actions启动/取消均0，无工作流触发或分支保护变更；生产门禁保留。WP6已接入修复，父Issue134继续Open，当前版本全套Matrix/Application与恢复验收仍待完成。
+
+下文为BUG163合并前本地验证时点的记录；其中Open、远端待交付与待清理描述保留历史来源。
+
 [Issue163](https://github.com/GTX537/CP6/issues/163) 当前 Open；基线为远端 main `ce49012d37da4b1b01f074d5b5b7fd227780e656`。修复已完成双库本地验证及一次集中事务审查；正常远端交付、合并后冒烟、精确自有库清理仍待完成。父任务 [Issue134](https://github.com/GTX537/CP6/issues/134) 的 WP6 最终整体验收仍待完成。
 
 ## 根因与改动

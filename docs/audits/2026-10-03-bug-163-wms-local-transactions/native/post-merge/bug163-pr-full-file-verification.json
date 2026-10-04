@@ -1,0 +1,754 @@
+{
+  "Task": "BUG-163",
+  "PR": 164,
+  "Candidate": "1e726a9a3d58a68bd48b6123341d606de076f526",
+  "Base": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "PaginatedFileCount": 122,
+  "Files": [
+    {
+      "Path": ".gitattributes",
+      "GitBlob": "49c862d4ddd890f4f7d0e1f62d51b4877072a2b5",
+      "RemoteBlob": "49c862d4ddd890f4f7d0e1f62d51b4877072a2b5",
+      "Status": "modified"
+    },
+    {
+      "Path": "CP6.Core/Services/Wms/LabelJobService.cs",
+      "GitBlob": "dd52ef15bee47bcd03e269fae15004faa39bd4cf",
+      "RemoteBlob": "dd52ef15bee47bcd03e269fae15004faa39bd4cf",
+      "Status": "modified"
+    },
+    {
+      "Path": "CP6.Core/Services/Wms/LpnService.cs",
+      "GitBlob": "92dbd0b56c765457be335383e96c923440c27745",
+      "RemoteBlob": "92dbd0b56c765457be335383e96c923440c27745",
+      "Status": "modified"
+    },
+    {
+      "Path": "CP6.Tests/WmsProductionLocalTransactionTests.cs",
+      "GitBlob": "2c29459cfb7682c5b5479adb1b81e3971dfaa5be",
+      "RemoteBlob": "2c29459cfb7682c5b5479adb1b81e3971dfaa5be",
+      "Status": "added"
+    },
+    {
+      "Path": "CP6.Tests/WmsProductionSqlServerTests.cs",
+      "GitBlob": "58f4d102fcb44ad1563a3960ad049f4ff4e49f14",
+      "RemoteBlob": "58f4d102fcb44ad1563a3960ad049f4ff4e49f14",
+      "Status": "modified"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/README.md",
+      "GitBlob": "97442e0c50e6e650b09212cc064ddc9bba187a3f",
+      "RemoteBlob": "97442e0c50e6e650b09212cc064ddc9bba187a3f",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-native-red/private/test/stderr.log",
+      "GitBlob": "6121fb3138e82b81a4d3f02fbfa60e0db795fad2",
+      "RemoteBlob": "6121fb3138e82b81a4d3f02fbfa60e0db795fad2",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-native-red/private/test/stdout.log",
+      "GitBlob": "5bd3888b2290eb935a29bc5279d30c24eb71d669",
+      "RemoteBlob": "5bd3888b2290eb935a29bc5279d30c24eb71d669",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-native-red/private/trx/results.trx",
+      "GitBlob": "908214f1e47ed10d2a2b5c2093be268d9c9ecc07",
+      "RemoteBlob": "908214f1e47ed10d2a2b5c2093be268d9c9ecc07",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-native-red/result.json",
+      "GitBlob": "ba301454c17ac3af5e802f6b8693f4da6eea41fa",
+      "RemoteBlob": "ba301454c17ac3af5e802f6b8693f4da6eea41fa",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-native-red/runtime-artifact-after.json",
+      "GitBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "RemoteBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-native-red/runtime-artifact-before.json",
+      "GitBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "RemoteBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-native-red/source-inputs.json",
+      "GitBlob": "aa20279865b978db6d4a7a016e636be762017824",
+      "RemoteBlob": "aa20279865b978db6d4a7a016e636be762017824",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/exact-case-set-audit.json",
+      "GitBlob": "ceabddd75a6f918b5e964cfdd6786ed591a2679f",
+      "RemoteBlob": "ceabddd75a6f918b5e964cfdd6786ed591a2679f",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/private/test/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/private/test/stdout.log",
+      "GitBlob": "ae6032ce6637618f23b20281fc696dc8bcf18abf",
+      "RemoteBlob": "ae6032ce6637618f23b20281fc696dc8bcf18abf",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/private/trx/results.trx",
+      "GitBlob": "cf8dce8763d0869c407143ce9a4b09505b03b669",
+      "RemoteBlob": "cf8dce8763d0869c407143ce9a4b09505b03b669",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/result.json",
+      "GitBlob": "a187e6e4f25dab740800f2a6fe7716d60a6a35e4",
+      "RemoteBlob": "a187e6e4f25dab740800f2a6fe7716d60a6a35e4",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/runtime-artifact-after.json",
+      "GitBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "RemoteBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/runtime-artifact-before.json",
+      "GitBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "RemoteBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-pg-wms-green/source-inputs.json",
+      "GitBlob": "a85cf8e73f82a448dd476d14ce7b68dfffd90a8c",
+      "RemoteBlob": "a85cf8e73f82a448dd476d14ce7b68dfffd90a8c",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-corrected/private/test/stderr.log",
+      "GitBlob": "91bab26259aae1147b0389d35769b795725c112b",
+      "RemoteBlob": "91bab26259aae1147b0389d35769b795725c112b",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-corrected/private/test/stdout.log",
+      "GitBlob": "12280ae8ae7a3ecfc3047c1bc7612d578b1f54b9",
+      "RemoteBlob": "12280ae8ae7a3ecfc3047c1bc7612d578b1f54b9",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-corrected/private/trx/results.trx",
+      "GitBlob": "99e3e32742a3c5e61c930d04a8d71d893cb70156",
+      "RemoteBlob": "99e3e32742a3c5e61c930d04a8d71d893cb70156",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-corrected/result.json",
+      "GitBlob": "8091e288ec65e834b026f6f1573a583223c5fa03",
+      "RemoteBlob": "8091e288ec65e834b026f6f1573a583223c5fa03",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-corrected/runtime-artifact-after.json",
+      "GitBlob": "f5ea73ac894bdfb220e33aa74bbb9bd63d0d02e1",
+      "RemoteBlob": "f5ea73ac894bdfb220e33aa74bbb9bd63d0d02e1",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-corrected/runtime-artifact-before.json",
+      "GitBlob": "f5ea73ac894bdfb220e33aa74bbb9bd63d0d02e1",
+      "RemoteBlob": "f5ea73ac894bdfb220e33aa74bbb9bd63d0d02e1",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-corrected/source-inputs.json",
+      "GitBlob": "1d6150f56b604b968350f8c6898844d3ac823b27",
+      "RemoteBlob": "1d6150f56b604b968350f8c6898844d3ac823b27",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/build-result.json",
+      "GitBlob": "0815fecc3cb9fef486e07f73f440f0f8c87a19c4",
+      "RemoteBlob": "0815fecc3cb9fef486e07f73f440f0f8c87a19c4",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/private/01-build/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/private/01-build/stdout.log",
+      "GitBlob": "147d7b915aa5a8ac0193d9c9ff48172c478f12cd",
+      "RemoteBlob": "147d7b915aa5a8ac0193d9c9ff48172c478f12cd",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/private/01-restore/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/private/01-restore/stdout.log",
+      "GitBlob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+      "RemoteBlob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/private/sdk-version/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/private/sdk-version/stdout.log",
+      "GitBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "RemoteBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/build/project-01.json",
+      "GitBlob": "b6353a2f79b5a24243a33191b2f76d03ff7fd357",
+      "RemoteBlob": "b6353a2f79b5a24243a33191b2f76d03ff7fd357",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/private/test/stderr.log",
+      "GitBlob": "6ac7759dbc6e4f51587ee4c8e1de6080dff7da95",
+      "RemoteBlob": "6ac7759dbc6e4f51587ee4c8e1de6080dff7da95",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/private/test/stdout.log",
+      "GitBlob": "86da93602a793465c4e798a3a01876e690432b87",
+      "RemoteBlob": "86da93602a793465c4e798a3a01876e690432b87",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/private/trx/results.trx",
+      "GitBlob": "bf5cc4ec99556d1f922c86764b3d759d8a83bc65",
+      "RemoteBlob": "bf5cc4ec99556d1f922c86764b3d759d8a83bc65",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/result.json",
+      "GitBlob": "2ef2e53d162261180faab543ca118378d153b32f",
+      "RemoteBlob": "2ef2e53d162261180faab543ca118378d153b32f",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/runtime-artifact-after.json",
+      "GitBlob": "e3c4febe02e9078373c5a6c19d4d37c87149fbe1",
+      "RemoteBlob": "e3c4febe02e9078373c5a6c19d4d37c87149fbe1",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/runtime-artifact-before.json",
+      "GitBlob": "e3c4febe02e9078373c5a6c19d4d37c87149fbe1",
+      "RemoteBlob": "e3c4febe02e9078373c5a6c19d4d37c87149fbe1",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-isolated/source-inputs.json",
+      "GitBlob": "92160fca537865ccf1dcfb3abe98207e07824cff",
+      "RemoteBlob": "92160fca537865ccf1dcfb3abe98207e07824cff",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/build-result.json",
+      "GitBlob": "ef8599241d8c1be4283bb74b11ccedd4ba321349",
+      "RemoteBlob": "ef8599241d8c1be4283bb74b11ccedd4ba321349",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/private/01-build/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/private/01-build/stdout.log",
+      "GitBlob": "ddd38f14aadebe06ed3eb02e47564107e499bee7",
+      "RemoteBlob": "ddd38f14aadebe06ed3eb02e47564107e499bee7",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/private/01-restore/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/private/01-restore/stdout.log",
+      "GitBlob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+      "RemoteBlob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/private/sdk-version/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/private/sdk-version/stdout.log",
+      "GitBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "RemoteBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/build/project-01.json",
+      "GitBlob": "579547f110f3419ae9d75673f3d96803666a59ff",
+      "RemoteBlob": "579547f110f3419ae9d75673f3d96803666a59ff",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/private/test/stderr.log",
+      "GitBlob": "f798890a6d45b6048bd2c4c7217869b9ed1bb186",
+      "RemoteBlob": "f798890a6d45b6048bd2c4c7217869b9ed1bb186",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/private/test/stdout.log",
+      "GitBlob": "7e3b939ef48ded84893ccdc290030876f03c2d54",
+      "RemoteBlob": "7e3b939ef48ded84893ccdc290030876f03c2d54",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/private/trx/results.trx",
+      "GitBlob": "dcf642c6a10bee51d609bfa64cce164f581fe9dd",
+      "RemoteBlob": "dcf642c6a10bee51d609bfa64cce164f581fe9dd",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/result.json",
+      "GitBlob": "bcc9500fd46e095b543e53c994a9d61f6d08dcda",
+      "RemoteBlob": "bcc9500fd46e095b543e53c994a9d61f6d08dcda",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/runtime-artifact-after.json",
+      "GitBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "RemoteBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/runtime-artifact-before.json",
+      "GitBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "RemoteBlob": "64373f76f165f720270cf611ab8b6fc211dcb371",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red-valid-seed/source-inputs.json",
+      "GitBlob": "aa20279865b978db6d4a7a016e636be762017824",
+      "RemoteBlob": "aa20279865b978db6d4a7a016e636be762017824",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/build-result.json",
+      "GitBlob": "58eb8cbd2a365b872d615a6a77b014ead76521f2",
+      "RemoteBlob": "58eb8cbd2a365b872d615a6a77b014ead76521f2",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/private/01-build/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/private/01-build/stdout.log",
+      "GitBlob": "51d525a79156508a1092bbea90e3bdf3dc793142",
+      "RemoteBlob": "51d525a79156508a1092bbea90e3bdf3dc793142",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/private/01-restore/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/private/01-restore/stdout.log",
+      "GitBlob": "6e5386fca2ed5950abcfd343bfe3d5a5cfd916c3",
+      "RemoteBlob": "6e5386fca2ed5950abcfd343bfe3d5a5cfd916c3",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/private/sdk-version/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/private/sdk-version/stdout.log",
+      "GitBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "RemoteBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/build/project-01.json",
+      "GitBlob": "af5b55f53385d1d2aabd5b11926b88e6e24b6e94",
+      "RemoteBlob": "af5b55f53385d1d2aabd5b11926b88e6e24b6e94",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-native-red/source-inputs.json",
+      "GitBlob": "1d6150f56b604b968350f8c6898844d3ac823b27",
+      "RemoteBlob": "1d6150f56b604b968350f8c6898844d3ac823b27",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/build-result.json",
+      "GitBlob": "d96670e5e01b0ab5e1981499c0c7b88b7b3e6dde",
+      "RemoteBlob": "d96670e5e01b0ab5e1981499c0c7b88b7b3e6dde",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/private/01-build/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/private/01-build/stdout.log",
+      "GitBlob": "7f9ff653ca7409bfe20732321f9138a5fe10b87b",
+      "RemoteBlob": "7f9ff653ca7409bfe20732321f9138a5fe10b87b",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/private/01-restore/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/private/01-restore/stdout.log",
+      "GitBlob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+      "RemoteBlob": "890d14e743a80625d6a9bdd9ec21d1b430a6c469",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/private/sdk-version/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/private/sdk-version/stdout.log",
+      "GitBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "RemoteBlob": "6dc105c7c20e401c72458c47843b7286bc8ad703",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/build/project-01.json",
+      "GitBlob": "486fc7151e9c62d0a6787d4837f7ebd5d8ea1b57",
+      "RemoteBlob": "486fc7151e9c62d0a6787d4837f7ebd5d8ea1b57",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/exact-case-set-audit.json",
+      "GitBlob": "10043696dfa30069774ded71dcceed1b94a9eeb5",
+      "RemoteBlob": "10043696dfa30069774ded71dcceed1b94a9eeb5",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/private/test/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/private/test/stdout.log",
+      "GitBlob": "5430213bb7fcdc37e55d7ffaff7140df373af7b5",
+      "RemoteBlob": "5430213bb7fcdc37e55d7ffaff7140df373af7b5",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/private/trx/results.trx",
+      "GitBlob": "eaf2ad6338f07b4322caf5a4f4f4cb4074a92ff8",
+      "RemoteBlob": "eaf2ad6338f07b4322caf5a4f4f4cb4074a92ff8",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/result.json",
+      "GitBlob": "554b6c8f136754577e076faae84a8b99c35afc71",
+      "RemoteBlob": "554b6c8f136754577e076faae84a8b99c35afc71",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/runtime-artifact-after.json",
+      "GitBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "RemoteBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/runtime-artifact-before.json",
+      "GitBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "RemoteBlob": "96b7e9f2ff85004652c0256f00093c02ba6a8f0b",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/bug163-sql-wms-green/source-inputs.json",
+      "GitBlob": "a85cf8e73f82a448dd476d14ce7b68dfffd90a8c",
+      "RemoteBlob": "a85cf8e73f82a448dd476d14ce7b68dfffd90a8c",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/Archive-Bug163Evidence.ps1",
+      "GitBlob": "9727cc2fdd29680a18e03a10d95bc3f4164dee19",
+      "RemoteBlob": "9727cc2fdd29680a18e03a10d95bc3f4164dee19",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/Invoke-Bug163Tests.ps1",
+      "GitBlob": "560eeb115e1dbb956d79f17387d261e92bc8f7b8",
+      "RemoteBlob": "560eeb115e1dbb956d79f17387d261e92bc8f7b8",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/New-Bug163Databases.ps1",
+      "GitBlob": "ed5d5693cee4279816be259b8e4958f7c25d70a3",
+      "RemoteBlob": "ed5d5693cee4279816be259b8e4958f7c25d70a3",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/Test-Bug163LocalEvidence.ps1",
+      "GitBlob": "4f504d6a4f9a99838d39bd542f637895858f4375",
+      "RemoteBlob": "4f504d6a4f9a99838d39bd542f637895858f4375",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-databases-created.json",
+      "GitBlob": "ab4cdefddfd393db0aab6dd4fde3cc63b81d76ef",
+      "RemoteBlob": "ab4cdefddfd393db0aab6dd4fde3cc63b81d76ef",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-exact-local-verification.json",
+      "GitBlob": "a590c9ebd4ca7f8399b311d01891f3a20c8bb697",
+      "RemoteBlob": "a590c9ebd4ca7f8399b311d01891f3a20c8bb697",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-native-connection-preflight.json",
+      "GitBlob": "f4c84e1fcd91d8efe937b7d1a978aa569de45a56",
+      "RemoteBlob": "f4c84e1fcd91d8efe937b7d1a978aa569de45a56",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-native-red-proof.json",
+      "GitBlob": "b397cc9e0352ab5dc6bea3204225820a7254c7d2",
+      "RemoteBlob": "b397cc9e0352ab5dc6bea3204225820a7254c7d2",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-review.md",
+      "GitBlob": "abc3484849936324b25fe9830e4aebce942e8ba0",
+      "RemoteBlob": "abc3484849936324b25fe9830e4aebce942e8ba0",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-runner-module-snapshot.json",
+      "GitBlob": "3379f4de5aab20122a33e6e6e8305e4d19062cd0",
+      "RemoteBlob": "3379f4de5aab20122a33e6e6e8305e4d19062cd0",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-task-start-workflow-input-inspection.json",
+      "GitBlob": "9ae86c12711d2cc8857688518a48b5e9b2aa02f7",
+      "RemoteBlob": "9ae86c12711d2cc8857688518a48b5e9b2aa02f7",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-test-runner-preflight-rejection.json",
+      "GitBlob": "6807283429c16c037268e025483fe68348a542ff",
+      "RemoteBlob": "6807283429c16c037268e025483fe68348a542ff",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/bug163-unfixed-production-source-proof.json",
+      "GitBlob": "663664d9a9369d44d35dad58f59e9c7fabddbc7d",
+      "RemoteBlob": "663664d9a9369d44d35dad58f59e9c7fabddbc7d",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/modules/DatabaseCompatibilityApplication.psm1",
+      "GitBlob": "d5831786b47706b53379a436b5a9bc3308685a8e",
+      "RemoteBlob": "d5831786b47706b53379a436b5a9bc3308685a8e",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/modules/DatabaseCompatibilityBaseline.psm1",
+      "GitBlob": "fef71271cd99cf12bef64d2ba6d2a158b9756b36",
+      "RemoteBlob": "fef71271cd99cf12bef64d2ba6d2a158b9756b36",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/modules/DatabaseCompatibilityEntries.psm1",
+      "GitBlob": "4dea88c9d33b9fd74b8a400e17fbf6b85356b02f",
+      "RemoteBlob": "4dea88c9d33b9fd74b8a400e17fbf6b85356b02f",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/modules/DatabaseCompatibilityHttp.psm1",
+      "GitBlob": "76eefc795302ca028b595a91350b887ad50335da",
+      "RemoteBlob": "76eefc795302ca028b595a91350b887ad50335da",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/modules/DatabaseCompatibilityLifecycle.psm1",
+      "GitBlob": "c7d320a6f3b1b8ef57da13db0ed2c7756f855539",
+      "RemoteBlob": "c7d320a6f3b1b8ef57da13db0ed2c7756f855539",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/modules/DatabaseCompatibilityProcess.psm1",
+      "GitBlob": "f2044d91f6c11a873a4854e4fc7cc317a1644be3",
+      "RemoteBlob": "f2044d91f6c11a873a4854e4fc7cc317a1644be3",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/execution/modules/DatabaseCompatibilityResults.psm1",
+      "GitBlob": "01036f646f59eabe83e617c1cc7030577a198679",
+      "RemoteBlob": "01036f646f59eabe83e617c1cc7030577a198679",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/manifest.json",
+      "GitBlob": "cc4d98488d2ab73466ec74a9757e2b1d4e040262",
+      "RemoteBlob": "cc4d98488d2ab73466ec74a9757e2b1d4e040262",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/core-business/entry-result.json",
+      "GitBlob": "91f11f993355252dd84407c903dcf01ecf3c5c5a",
+      "RemoteBlob": "91f11f993355252dd84407c903dcf01ecf3c5c5a",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/core-business/private/process/stderr.log",
+      "GitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "RemoteBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/core-business/private/process/stdout.log",
+      "GitBlob": "c8a9a9eb4ccda097b81606081a9a7770068d7fed",
+      "RemoteBlob": "c8a9a9eb4ccda097b81606081a9a7770068d7fed",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/core-business/private/trx/results.trx",
+      "GitBlob": "e1d555bc6586b024326633563eec1eee4460074b",
+      "RemoteBlob": "e1d555bc6586b024326633563eec1eee4460074b",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/core-business/runtime-artifact-after.json",
+      "GitBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "RemoteBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/core-business/runtime-artifact-before.json",
+      "GitBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "RemoteBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/wms-business/entry-result.json",
+      "GitBlob": "d74454ea4f454fe8d95fe63ac1c9b00f2aab84b5",
+      "RemoteBlob": "d74454ea4f454fe8d95fe63ac1c9b00f2aab84b5",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/wms-business/private/process/stderr.log",
+      "GitBlob": "e5eb55d4b5252d931bc5297995d847cfc971544f",
+      "RemoteBlob": "e5eb55d4b5252d931bc5297995d847cfc971544f",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/wms-business/private/process/stdout.log",
+      "GitBlob": "82792fdc142119d4f7df5eb253d8e37d4ae53ea4",
+      "RemoteBlob": "82792fdc142119d4f7df5eb253d8e37d4ae53ea4",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/wms-business/private/trx/results.trx",
+      "GitBlob": "81049624abc9b0144d9c2ee1abbe963b7b2c9c8f",
+      "RemoteBlob": "81049624abc9b0144d9c2ee1abbe963b7b2c9c8f",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/wms-business/runtime-artifact-after.json",
+      "GitBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "RemoteBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/entries/wms-business/runtime-artifact-before.json",
+      "GitBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "RemoteBlob": "3ca763a44d4b4ff6db28a4b970e5b6f401f6b780",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/source-inputs.json",
+      "GitBlob": "f27c9d8eb36d92d7cc3c70dc598cb8e6f65bf3dc",
+      "RemoteBlob": "f27c9d8eb36d92d7cc3c70dc598cb8e6f65bf3dc",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/native/original-wp6-failure/summary.json",
+      "GitBlob": "a5941b1b47c559c659c8f4b542667c58c7135c08",
+      "RemoteBlob": "a5941b1b47c559c659c8f4b542667c58c7135c08",
+      "Status": "added"
+    },
+    {
+      "Path": "docs/project-memory/05-Completed.md",
+      "GitBlob": "516988ca791a27b708f4b37583ded007b77bfc5f",
+      "RemoteBlob": "516988ca791a27b708f4b37583ded007b77bfc5f",
+      "Status": "modified"
+    },
+    {
+      "Path": "docs/project-memory/06-Todo.md",
+      "GitBlob": "192a734ab102f735d33ea729a0da35e1abc47b9a",
+      "RemoteBlob": "192a734ab102f735d33ea729a0da35e1abc47b9a",
+      "Status": "modified"
+    },
+    {
+      "Path": "docs/project-memory/CHANGELOG-AI.md",
+      "GitBlob": "7635b538fe9dd43c985f56e4c39563bd51397822",
+      "RemoteBlob": "7635b538fe9dd43c985f56e4c39563bd51397822",
+      "Status": "modified"
+    },
+    {
+      "Path": "docs/project-memory/PROJECT_STATE.md",
+      "GitBlob": "a41bb5239978bbe7be63d4b301b5fb6ea144963f",
+      "RemoteBlob": "a41bb5239978bbe7be63d4b301b5fb6ea144963f",
+      "Status": "modified"
+    }
+  ],
+  "AllRemoteBlobsMatch": true,
+  "State": "OPEN",
+  "Mergeable": "MERGEABLE",
+  "MergeStateStatus": "CLEAN",
+  "StatusChecks": [],
+  "Protection": {
+    "EnforceAdmins": true,
+    "RequiredApprovals": 0,
+    "ConversationResolution": true,
+    "RequiredCheckContexts": null
+  },
+  "AdminBypassUsed": false,
+  "CheckedUtc": "2026-10-04T00:28:14.5889746Z"
+}
