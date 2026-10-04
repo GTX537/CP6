@@ -1,0 +1,366 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "FinalLocalDeliveryPreflightPassed",
+  "CheckedUtc": "2026-10-04T02:32:29.0506807Z",
+  "ExecutionSourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "ArchiveFiles": 2091,
+  "ArchiveManifestSha256": "8A7C8CE9A81AEF3C1369A521507C22E5347F054C68F59615A504BB0138A5BB27",
+  "OriginalAndCopyBytesVerified": true,
+  "SourceInputFiles": 2698,
+  "SourceInputsUnchanged": true,
+  "Documents": [
+    "docs/audits/database-compatibility/WP6-ACCEPTANCE.md",
+    "docs/audits/database-compatibility/WP6-IMPLEMENTATION.md",
+    "docs/devops/DATABASE-COMPATIBILITY.md",
+    "docs/superpowers/plans/2026-10-02-database-compatibility.md",
+    "docs/project-memory/PROJECT_STATE.md",
+    "docs/project-memory/05-Completed.md",
+    "docs/project-memory/06-Todo.md",
+    "docs/project-memory/CHANGELOG-AI.md"
+  ],
+  "LocalLinksChecked": 477,
+  "FinalChangedNonDocumentFiles": [
+    {
+      "Path": ".gitattributes",
+      "Sha256": "3604A0780D033D2F1D23320FD93039760244EFF0CD1E7A82E7BC31CF9CE7D47F",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+      "Sha256": "40D4764811E5C6FA99FDCD1A6971B3E4E777BAEB2CD860A0149873DB8E6ED7B5",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/GrantStoreSqlTests.cs",
+      "Sha256": "3C45E6CB98414A281C296B554A2B2B008A2728F9446343994994A7F3BDB34A00",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Oidc.IntegrationTests/OidcRelationalFixture.cs",
+      "Sha256": "D8142119F07D372B86F5A4ECA5B31E29C3675E878E27FF200CCA9D4CE2649280",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "Sha256": "5167FF6BF2335ED78106439808774136D5BF5E268C26333D3C3CBB699C92351B",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/OwnedFixtureSelectionTests.cs",
+      "Sha256": "9C25E87152CDAF4040EEA0C33CCD8D6A6F446A8539722B39366390DB6A5673DE",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMigrationTestDatabase.cs",
+      "Sha256": "1B83EE10E3A5D09E75AC7620A08CDB6A5D4F99DE8CF48850649A43282FB617A9",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceRelationalFixture.cs",
+      "Sha256": "C8E072645CB2244FD707D3E5D49241457ECC4BA2F90867326DD1C9741BAF7E46",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/CP6.Tests.csproj",
+      "Sha256": "A965279AFEB64C590EB571D7042A8197C83EE2394E26FB9A2DAF1449FE9944D8",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/CoreBusinessRelationalFixture.cs",
+      "Sha256": "F0E50F2E993803671329BF370139C6673D028030A8CA5627ABA3B80DCF0D34C8",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/Wp5ReportsRelationalFixture.cs",
+      "Sha256": "6C186E2FA577664A7C6324363164B416519073DFC7A5BE6CE6C3F4EDA4C536C9",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/Infra/WmsProductionFactAttribute.cs",
+      "Sha256": "F8EB2111639F00C526529C0F2D44A151C5AA32C2DB8E38BF82DD71C8AEABFF66",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseInitializationModeTests.cs",
+      "Sha256": "71C5680B87DE2CAC6EBE010B006431C4F05385973432A5F11A2BB3ED04C50B36",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseWiringTests.cs",
+      "Sha256": "75C380D633CC199ACBC89D26CD96F4BDB84AC48B37A51DCFE9B6D6E6411F2843",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedFixtureSelectionTests.cs",
+      "Sha256": "79BB612520DB97BAE5E701964C450A92A03B5DB749E67C984AF6EE7FC8FF6B2C",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedTestDatabaseTests.cs",
+      "Sha256": "A7A118DE730BC1C71E93C7123D76BE45693328231F5851187C5FC8E13EFDEB15",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.Tests/WmsProductionSqlServerTests.cs",
+      "Sha256": "39D64CAE58653A4C11780D5716FD01A3563205E379BAAED16E5955E433301F34",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs",
+      "Sha256": "EF982662792231D3A5C5B9D85A6AC8D138813EF76C491BAABC19B7054548BC64",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "deploy/production/compose/compose.yaml",
+      "Sha256": "0B1F7CE1A6CD65ADCFA23DE78A3306BEFE9DE44D83D0BF8D26533C0EA43BC3E4",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "deploy/production/kubernetes/api.yaml",
+      "Sha256": "3BF9783036465F552B2F264CFC8917FB4D8A68C7ABDBEF5BD15531A2A0A87477",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "deploy/production/kubernetes/db-init-job.yaml",
+      "Sha256": "4FD0E6EC8B246F08817B4DBC8AC818BC824DA60351DC6FF1473F491E5D379077",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+      "Sha256": "088EFA338BF5CD2B8D62CA256498893D4F7EDA8CC0D632901E11F1014D734420",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/ErpRelationalFixture.cs",
+      "Sha256": "20E680B29AFD4F7B7D247A873330E6803C18F7BDCFC9843D396A15D318312C3D",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/OwnedFixtureSelectionTests.cs",
+      "Sha256": "E7FB0FED2F21241A82A401AEF9118D6310349B49C107E0FD0A76519D6727F4D9",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/SqlDatabaseFixture.cs",
+      "Sha256": "8123077DE748A1AD84EFEB9910D3BE07C128596E8F5D662E785FCAEEADF8B81D",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj",
+      "Sha256": "313D924654EB25FD406BE5B1A7BFF08BF1E5289B5BF3DB9DEC441C909A6C000F",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/crm/identity-events-fixture/ProviderCases.cs",
+      "Sha256": "EDF3991B0C43D627346ED6CEE1220BCE6F8515316560B6C0341ACC37C3FB8534",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/database-compatibility/OwnedTestDatabase.cs",
+      "Sha256": "98625EA55407AA8168F008383F3EFC4010D29E79D6A1E00580F4908CA4AD23BA",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "eng/database-compatibility/required-cases.json",
+      "Sha256": "9E4BDCCCD79198FF199F39D14FAF8CCA140FBD120FCD98F254167730FB231FFE",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/Test-Cp6DatabaseCompatibility.ps1",
+      "Sha256": "690CE5F116E6678DC7B97AEA428C44F304CA89E79ACF7180FA405FDF0D3BDF09",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityApplication.psm1",
+      "Sha256": "EE12DD7410221E66A3FAE553631E8603A80323B43630D849384DCF6B51817350",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityBaseline.psm1",
+      "Sha256": "69D6033531FBF7E47E33789741128E37D3B7E90B2724E1380F1E2069800B8E8D",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityEntries.psm1",
+      "Sha256": "5CF53766FEAC54CEF69C6F1768C75D508EC99EA1DB34D80E85DF52647AF94299",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityHttp.psm1",
+      "Sha256": "FE9D5FD101ABC122F221C954B25A404392FE945DCE6D27FA009364F97E78FA7E",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityLifecycle.psm1",
+      "Sha256": "D96CC5903DABA60CB242D715E80173C955C0191E854044F5C1F412ED1977796C",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityProcess.psm1",
+      "Sha256": "B95CDE488E14B7D4AE986458FBAE589934912DBDDA1EC08413D945C6DAF56B25",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityResults.psm1",
+      "Sha256": "AD66A8EDA85E1283649AF010043D85B1D1744008837EB01E529FB7D79491D9C1",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityApplication.ps1",
+      "Sha256": "5A6E73416A5535DA6F143701E0B1E8BC70457F0F6A4BF00ABA48AECF46344A25",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityCleanup.ps1",
+      "Sha256": "4B7A76B3617121A82A9C917B758141E7B92FCBE0197C9F9F1A114F6911407966",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityEntries.ps1",
+      "Sha256": "1987DC5CAD3D5CADEC373677E81045734FBBDEE3FC0BABB314027AB83F13116C",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityHttp.ps1",
+      "Sha256": "36D57E99435A45C1A7E9905395CBE65E41F527AA0ACF72E99BA593DAB206C26F",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityLifecycle.ps1",
+      "Sha256": "E21E851B91DDFD3553A5096DCE6EFE6EFA11684E4868466E0A018C23537F4EA7",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityResults.ps1",
+      "Sha256": "875152820D5715FDAD57408B8D856261BAFDAC769715971721703324337E17EB",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityRunner.ps1",
+      "Sha256": "2EE138272FC2A97A787CDB8BDAC421271FF922FB1363C5151BFB06683450F83A",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+      "Sha256": "C79D1137C3F70932066DEE8C26B7DC4570AAADDE94845CBB93521D4B1323703D",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/NativeSnapshot.cs",
+      "Sha256": "C8C059358643918316D68F3D24DCCE4749F05FE00B9544D2752DF5A24939B8C5",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/NotificationCommands.cs",
+      "Sha256": "6BBE46AD88B7B596D97231BBEDF300F414C9E8EC18F86BC9E63C53E8E4FADAA6",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/NotificationReplay.cs",
+      "Sha256": "1D5A526E86A07438992AE40985165F42E2294BF47892341F89193EF6AFE9A1D6",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/ProbeArguments.cs",
+      "Sha256": "600E78E69231608DD42DCF6F502B7AAD0B61E772F35E12BD61EE93C6CC6593C2",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/ProbeContexts.cs",
+      "Sha256": "549B354499659238015C5C189896A67C56B6FEC9B86B4219083D50153944B18E",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/ProbeHost.cs",
+      "Sha256": "A6DC5224DF83C37EED419E534366820EECAD22F2416E578CDC894635AD7843C8",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/Program.cs",
+      "Sha256": "114AA7A3D8F939313B5AB6DAE6C0E67C0A69E0427B9AC3FBBA0F94AD7BD2CD37",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/README.md",
+      "Sha256": "ED8623A52D2DB047738AF830F9481C85C4A3059694B93A1B8BC691B45BACD279",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/SignalRVerification.cs",
+      "Sha256": "0E0A16B900C48CD751E0B368248ECD202648D48A8576C58D4E05FDCCFA2964B4",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/SnapshotCommands.cs",
+      "Sha256": "AFB9833EFEE780CEA6C99AC6DFD145F676B41963DD371F8FA53201DD1A51D52B",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/SnapshotState.cs",
+      "Sha256": "FA6E4DE0D8D1801D610644C8D6F6A4BCAA2D278098CF0CAA07B22A98308257C0",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/packages.lock.json",
+      "Sha256": "2D64365AFA0098C3AB9D8CDEEE4C75584D89708C85A1AAB5B07D99D1ED22F83B",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+      "Sha256": "D09A897F0B9E0201D96BD96EE4A95EABB28168F70C2503DD6DFE31DA50123DEC",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Program.cs",
+      "Sha256": "95A3B0558C6C0E4FD0980A819B1D3D26C480594BD8B9D2C050E5269420D6E6C0",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2CatalogNegativeControls.cs",
+      "Sha256": "45DBE4FFD3442541FE9A599101474AA68B3A47C0D1EF5AED993F655CCA0CEE1B",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2FinanceGates.cs",
+      "Sha256": "D2BF65C71302CF4F1EF7F57D5C13A6E6C0F1ACD5863C42AC7DDE24D81E7A4F5F",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2RawOrderGates.cs",
+      "Sha256": "CAC919B527AB097A0F285BCB37126034222D2B71683A3A81B29B03258C4433CB",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp2SqlUpgradeGates.cs",
+      "Sha256": "505AB389DBA9ED73B26C240C1382BB9F98DC7515EDA20CBCFF99E36C8B440599",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.MigrationProbe/Wp6MigrationOwnership.cs",
+      "Sha256": "B543AC82646929C3A5F40538A165608E93FAC13536B0278E75526BD6685B3D8C",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+      "Sha256": "DFD5B493DEBCF6F3450B3825F5E26DE918D80DC3FBC4A5981B22B72C08E890E6",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/Program.cs",
+      "Sha256": "FBFCEE96E301272598A58E6977973CDE4C351B26591D8BAC8B7EB424A1566876",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.RuntimeProbe/RuntimeFixture.cs",
+      "Sha256": "5F6D1BC56BE58BB7C79F40AB02C4C31B8C69356F2C952AF49FE0C508DB2B454D",
+      "Basis": "Original WP6 task-level partition review and documented focused follow-ups; verified final native/configuration gates"
+    }
+  ],
+  "Review": "One task-level concentrated review retained; later meaningful deltas covered by recorded scoped reviews. Final documentation/allowlisted archive checked now; no new full repository or native execution.",
+  "BlockingFindings": [],
+  "RawConfigurationTrxExcluded": "Original fixture-argument result/TRX preserved locally; public derived summary binds every original name SHA-256 and outcome",
+  "UserRootTrackedLockUnchanged": true,
+  "GitLongPaths": "Per-command core.longpaths=true used for this deep worktree archive; no repository/global configuration changed",
+  "NativeExecution": false,
+  "RemoteDelivery": "Pending normal protected PR/main, post-merge smoke, final containment and parent closure"
+}

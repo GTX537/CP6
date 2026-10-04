@@ -1,0 +1,1408 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Archived",
+  "ArchivedUtc": "2026-10-04T03:00:18.2724460Z",
+  "ScriptSha256": "F745C1177CD6BFF66D6A50A6BEC0CEC2572F355D95128001C3B75DF71CAEDBB4",
+  "Files": 155,
+  "Records": [
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-final-before-push-workflow-input-inspection.json",
+      "ArchivePath": "delivery/wp6-final-before-push-workflow-input-inspection.json",
+      "Bytes": 6748,
+      "Sha256": "D4087FE24A921FEF49BA3320484F5E4866B14A05422F9179F4E5577A969530EF",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-final-push-first-transport-failure.json",
+      "ArchivePath": "delivery/wp6-final-push-first-transport-failure.json",
+      "Bytes": 458,
+      "Sha256": "A42402C42B788CA5A332B7F6C3F68F4F7DA4B27B128B0FC44E4BBC59611E8376",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": "PushTransportFailedRemoteReceiptPending",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-final-before-push-retry-workflow-input-inspection.json",
+      "ArchivePath": "delivery/wp6-final-before-push-retry-workflow-input-inspection.json",
+      "Bytes": 6748,
+      "Sha256": "00F9DED9FFE94EC4CC618210919B508B9F027A7D6D36C8FCAF614A210279E3B4",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-final-before-pr-create-workflow-input-inspection.json",
+      "ArchivePath": "delivery/wp6-final-before-pr-create-workflow-input-inspection.json",
+      "Bytes": 6748,
+      "Sha256": "9CD5AB70A558E965845CE6BAB134B561216654E3763B021A780DCC2CBE7F4666",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-final-before-merge-workflow-input-inspection.json",
+      "ArchivePath": "delivery/wp6-final-before-merge-workflow-input-inspection.json",
+      "Bytes": 6748,
+      "Sha256": "6BE5DE670D137CB15EB0B2D5DA7AA2AA158BA8FE76FCACC21179F51D95CD7642",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pr165-final-file-verification.json",
+      "ArchivePath": "delivery/wp6-pr165-final-file-verification.json",
+      "Bytes": 807,
+      "Sha256": "D5E14674E38802073CB44673103D835D658D922EDCB41A6C8B421D702AAE0F8A",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": "CompletePrFileSetAndBlobsVerified",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pr165-immediate-premerge.json",
+      "ArchivePath": "delivery/wp6-pr165-immediate-premerge.json",
+      "Bytes": 231,
+      "Sha256": "2D03DE9E1BEBE100254B9F14972B2D82E8DDB767B9FE9CDB1AE68E97F0162DC8",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pr165-remote-main-verification.json",
+      "ArchivePath": "delivery/wp6-pr165-remote-main-verification.json",
+      "Bytes": 672,
+      "Sha256": "626F816EAFDFABBFE7A52569E5DD5EEDFBB99B40450B9554D2FBC6E23AD80A35",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": "RemoteMainContainsCompleteVerifiedCandidate",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-wms-final-evidence-checkpoint.json",
+      "ArchivePath": "delivery/wp6-wms-final-evidence-checkpoint.json",
+      "Bytes": 479,
+      "Sha256": "ED77758CF81BFA14069CC038A74915E7C0A3B43C056B8CAA7A63FF87E16EB2B6",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": "FinalEvidenceCommitted",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-wms-final-delivery-preflight.json",
+      "ArchivePath": "delivery/wp6-wms-final-delivery-preflight.json",
+      "Bytes": 22736,
+      "Sha256": "EB8B0EA216A0B33FAE7D1A0E5422BFB46BFBC621421E45FC8B49B6CDBFAA1D70",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": "FinalLocalDeliveryPreflightPassed",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-postmerge-ssl-builder-offline-reproduction.json",
+      "ArchivePath": "delivery/wp6-postmerge-ssl-builder-offline-reproduction.json",
+      "Bytes": 568,
+      "Sha256": "915BC1FD11E7B6B91E2A82C2C277C9A923B979523E181A008A8BD379CDD324F2",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": "RootCauseReproducedOffline",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-postmerge-initial-pg-failure-absence.json",
+      "ArchivePath": "delivery/wp6-postmerge-initial-pg-failure-absence.json",
+      "Bytes": 732,
+      "Sha256": "A51C4369BC49D577FF0E66C2244A7ECE0E0359A1FBC0DC45D3A1262F8277F644",
+      "Scope": "Actual WP6 normal delivery/readback or preserved transport/helper failure and exact correction evidence.",
+      "OriginalStatus": "InitialFailedSmokeDatabaseAbsentVerified",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke\\summary.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke/summary.json",
+      "Bytes": 821,
+      "Sha256": "54C6389DF892311CA6DA56D98E635517B00B0DA014F589E6FEBF6A428EC4FACD",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": "Failed",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke\\private\\76176524988b41caba661d4aee71a6f7-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke/native/76176524988b41caba661d4aee71a6f7-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "66C71FB9A3B0C0D372892B314650D47078AAC88B6A9124D1E49981EE15B97AF6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke\\private\\76176524988b41caba661d4aee71a6f7-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke/native/76176524988b41caba661d4aee71a6f7-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke\\private\\76176524988b41caba661d4aee71a6f7-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke/native/76176524988b41caba661d4aee71a6f7-psql.stdout.log",
+      "Bytes": 20,
+      "Sha256": "078F6D4267FC4C5B2E76C4DD2B6C252AF9B4CBC518ABB31672D57F75F5E19FF8",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke\\private\\a3cb490bcf714522b7a57cb57df3c6d8-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke/native/a3cb490bcf714522b7a57cb57df3c6d8-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "41BE9D6606EAB839221870E3F8AED1FB8F7DA34808A60032B65167376DF5B5A9",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke\\private\\a3cb490bcf714522b7a57cb57df3c6d8-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke/native/a3cb490bcf714522b7a57cb57df3c6d8-psql.stderr.log",
+      "Bytes": 119,
+      "Sha256": "7FEAE159E1F2C881A9741A83C025F6C32B9B067C517F23F38D299CA8133DAAFD",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke\\private\\a3cb490bcf714522b7a57cb57df3c6d8-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke/native/a3cb490bcf714522b7a57cb57df3c6d8-psql.stdout.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\summary.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/summary.json",
+      "Bytes": 7405,
+      "Sha256": "7E513637BE332428FE04CC88C3F8F63E6078B1CA474FB543AC53CF39D028E6F7",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": "Passed",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\application-artifact.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/application-artifact.json",
+      "Bytes": 48381,
+      "Sha256": "D92A9B5D1E1E2F3562267369BAC49A2B17C31908A5F78F1DA7539489FF9BF25D",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\database-init.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/database-init.json",
+      "Bytes": 741,
+      "Sha256": "D46C340E8A88415882694745EAAC99CE53FB55F56F8D74FA2C0E8864A83BEF74",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\api-ready.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/api-ready.json",
+      "Bytes": 909,
+      "Sha256": "CFD4A99224E1D104891FD464266912F556694D8A9F579FFDACFC6C70503A9BCE",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\api-stopped.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/api-stopped.json",
+      "Bytes": 370,
+      "Sha256": "9A249D471FEB183981A2CE1962CB093CC733916148422523A396D0B681F4D10F",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\admin-login.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/admin-login.json",
+      "Bytes": 248,
+      "Sha256": "304BCA8A9592493FA1AF344A8AF50FF8126F470800F4F571FE210B36B44B2AC6",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\http-authorization.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/http-authorization.json",
+      "Bytes": 1676,
+      "Sha256": "998DC7477FD86C30EA307A5C294D970DEF1FBAEEFAB50921EBED208B29A1B6C4",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\histories\\entry-result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/histories/entry-result.json",
+      "Bytes": 2396,
+      "Sha256": "F15C61AB56D950603E19D57DE4A18DFA3B33D0861118875D8688A6F185E8B554",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\histories\\runtime-artifact-before.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/histories/runtime-artifact-before.json",
+      "Bytes": 41553,
+      "Sha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\histories\\runtime-artifact-after.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/histories/runtime-artifact-after.json",
+      "Bytes": 41553,
+      "Sha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\histories\\reports\\report.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/histories/reports/report.json",
+      "Bytes": 2598,
+      "Sha256": "7B9123E03440522670AD1E6D57EB8DD1CF49616B70A9B30B0A43839E18E793F3",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": "Passed",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\279568df63e945eb8ad605d5f107fcfd-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/279568df63e945eb8ad605d5f107fcfd-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "1C5527494398F3ECFFEAF4524759BD1841A6AE54468C4559DE2020313172887A",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\279568df63e945eb8ad605d5f107fcfd-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/279568df63e945eb8ad605d5f107fcfd-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\279568df63e945eb8ad605d5f107fcfd-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/279568df63e945eb8ad605d5f107fcfd-psql.stdout.log",
+      "Bytes": 1028,
+      "Sha256": "CE8659F69485A79F2E5766DD29ED18855DBE1ECF611F9084D6BD09A5108B45D6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\2cf72787e5b9443eaaeb32666a1a7919-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/2cf72787e5b9443eaaeb32666a1a7919-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "C9066DE3B3FC8FB2E9DEFFEA4D1D23CDAA9B89D262229BF54BEB6C06B0F8D602",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\2cf72787e5b9443eaaeb32666a1a7919-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/2cf72787e5b9443eaaeb32666a1a7919-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\2cf72787e5b9443eaaeb32666a1a7919-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/2cf72787e5b9443eaaeb32666a1a7919-psql.stdout.log",
+      "Bytes": 20,
+      "Sha256": "078F6D4267FC4C5B2E76C4DD2B6C252AF9B4CBC518ABB31672D57F75F5E19FF8",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\315c56e2d0a24b9b88239392dd3e79c3-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/315c56e2d0a24b9b88239392dd3e79c3-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "ED463EB5D0F37F46AFC199842B955DC9C5B17CBE471D1BEF57D5DBA7F2889506",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\315c56e2d0a24b9b88239392dd3e79c3-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/315c56e2d0a24b9b88239392dd3e79c3-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\315c56e2d0a24b9b88239392dd3e79c3-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/315c56e2d0a24b9b88239392dd3e79c3-psql.stdout.log",
+      "Bytes": 19,
+      "Sha256": "6880E6A571B9F4BAC4B93EEDF524566ADCF9789529E594A090584643B6DFB002",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\324ffbf7a6cc4e5b9498af4b6485a4be-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/324ffbf7a6cc4e5b9498af4b6485a4be-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "D8E85E14DCD1D997E3156BD58675676F315A51AFC7DDF0B7A153E1D7C2C9A56D",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\324ffbf7a6cc4e5b9498af4b6485a4be-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/324ffbf7a6cc4e5b9498af4b6485a4be-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\324ffbf7a6cc4e5b9498af4b6485a4be-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/324ffbf7a6cc4e5b9498af4b6485a4be-psql.stdout.log",
+      "Bytes": 19,
+      "Sha256": "6880E6A571B9F4BAC4B93EEDF524566ADCF9789529E594A090584643B6DFB002",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\474b103c717048e5aea8636dd0405f60-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/474b103c717048e5aea8636dd0405f60-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "10D6B35F7BCB79E935D3B5B7C9849E9049DFC41CBA6B8AA5891288AB16C52FC1",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\474b103c717048e5aea8636dd0405f60-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/474b103c717048e5aea8636dd0405f60-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\474b103c717048e5aea8636dd0405f60-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/474b103c717048e5aea8636dd0405f60-psql.stdout.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\57b030a6510a4f189c1072ceaac68120-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/57b030a6510a4f189c1072ceaac68120-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "24429F1EA11FC2568B7328BEB42289F0B6F8612E6828B4B5B93DD382F25F5DAB",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\57b030a6510a4f189c1072ceaac68120-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/57b030a6510a4f189c1072ceaac68120-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\57b030a6510a4f189c1072ceaac68120-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/57b030a6510a4f189c1072ceaac68120-psql.stdout.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\678a6f78949f4735bc2bee3c23d5ab91-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/678a6f78949f4735bc2bee3c23d5ab91-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "02B780E7BC1137D69DD554653467D12F3A8A181195CAB3C878B3B43F88261E44",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\678a6f78949f4735bc2bee3c23d5ab91-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/678a6f78949f4735bc2bee3c23d5ab91-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\678a6f78949f4735bc2bee3c23d5ab91-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/678a6f78949f4735bc2bee3c23d5ab91-psql.stdout.log",
+      "Bytes": 19,
+      "Sha256": "6880E6A571B9F4BAC4B93EEDF524566ADCF9789529E594A090584643B6DFB002",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\70a4f2d776e94fc6a17b18961193ea6e-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/70a4f2d776e94fc6a17b18961193ea6e-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "F5066829E1B9F1948B0F5F75916AFF6299CD0CB3E2AF4A6496E51DF888373E80",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\70a4f2d776e94fc6a17b18961193ea6e-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/70a4f2d776e94fc6a17b18961193ea6e-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\70a4f2d776e94fc6a17b18961193ea6e-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/70a4f2d776e94fc6a17b18961193ea6e-psql.stdout.log",
+      "Bytes": 1028,
+      "Sha256": "CE8659F69485A79F2E5766DD29ED18855DBE1ECF611F9084D6BD09A5108B45D6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\77d10c2ee04f4811b803cfc5323d7085-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/77d10c2ee04f4811b803cfc5323d7085-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "7BABA06B2C84CFBBBC7CBE661E3B2C1B20910E8EB07766DF8E3C52F82476E387",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\77d10c2ee04f4811b803cfc5323d7085-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/77d10c2ee04f4811b803cfc5323d7085-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\77d10c2ee04f4811b803cfc5323d7085-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/77d10c2ee04f4811b803cfc5323d7085-psql.stdout.log",
+      "Bytes": 1025,
+      "Sha256": "C9AEEE6B248687A19E56B34398AAB7F85D8F0FE54C7B231159999474705E10D2",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\8d8219df8c744cd588edac1c48a09833-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/8d8219df8c744cd588edac1c48a09833-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "5EFDFC86072CD6BF80A7EAEC57935AB2D3B5DC37F396DD31654661A77950FC2B",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\8d8219df8c744cd588edac1c48a09833-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/8d8219df8c744cd588edac1c48a09833-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\8d8219df8c744cd588edac1c48a09833-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/8d8219df8c744cd588edac1c48a09833-psql.stdout.log",
+      "Bytes": 15,
+      "Sha256": "E12A860105454F1A8E226A3A85F7B7A3B535A42DE4959EACFA0F8B7A9443A0E9",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\9124ac01643947cc959af14f7394fa68-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/9124ac01643947cc959af14f7394fa68-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "D3AFA789B8FB5C648E1B803B48B76A94E4A27856E92DB62C0EB13826FDDF7AF1",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\9124ac01643947cc959af14f7394fa68-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/9124ac01643947cc959af14f7394fa68-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\9124ac01643947cc959af14f7394fa68-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/9124ac01643947cc959af14f7394fa68-psql.stdout.log",
+      "Bytes": 20,
+      "Sha256": "078F6D4267FC4C5B2E76C4DD2B6C252AF9B4CBC518ABB31672D57F75F5E19FF8",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\9337b44a17a34b8f98052a4714e89f75-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/9337b44a17a34b8f98052a4714e89f75-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "8CBCF67D20363AE7B9828AE5EF685565A2BC9FF203053185D6BF7A7099DE055F",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\9337b44a17a34b8f98052a4714e89f75-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/9337b44a17a34b8f98052a4714e89f75-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\9337b44a17a34b8f98052a4714e89f75-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/9337b44a17a34b8f98052a4714e89f75-psql.stdout.log",
+      "Bytes": 1028,
+      "Sha256": "CE8659F69485A79F2E5766DD29ED18855DBE1ECF611F9084D6BD09A5108B45D6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\974044009f8c4bf7a558cee203a5caaa-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/974044009f8c4bf7a558cee203a5caaa-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "0BB5088736CDD5E291C0812ABBC15826263428BA6CA7199573715B00B797981E",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\974044009f8c4bf7a558cee203a5caaa-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/974044009f8c4bf7a558cee203a5caaa-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\974044009f8c4bf7a558cee203a5caaa-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/974044009f8c4bf7a558cee203a5caaa-psql.stdout.log",
+      "Bytes": 19,
+      "Sha256": "6880E6A571B9F4BAC4B93EEDF524566ADCF9789529E594A090584643B6DFB002",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\aec60f8cfa3440dba6b6636e627ab937-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/aec60f8cfa3440dba6b6636e627ab937-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "3B2103C7E65BFA25C3A23156F26B600F823905DF2552F993F5F03C68B47C9B01",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\aec60f8cfa3440dba6b6636e627ab937-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/aec60f8cfa3440dba6b6636e627ab937-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\aec60f8cfa3440dba6b6636e627ab937-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/aec60f8cfa3440dba6b6636e627ab937-psql.stdout.log",
+      "Bytes": 1025,
+      "Sha256": "C9AEEE6B248687A19E56B34398AAB7F85D8F0FE54C7B231159999474705E10D2",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\c61614aa8bd74d9e804339439450e571-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/c61614aa8bd74d9e804339439450e571-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "595981EBF17E39A3E5535E480D81B8447A4D9DE3EA6C7A137D3F6B6CCE2480B4",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\c61614aa8bd74d9e804339439450e571-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/c61614aa8bd74d9e804339439450e571-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\c61614aa8bd74d9e804339439450e571-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/c61614aa8bd74d9e804339439450e571-psql.stdout.log",
+      "Bytes": 20,
+      "Sha256": "078F6D4267FC4C5B2E76C4DD2B6C252AF9B4CBC518ABB31672D57F75F5E19FF8",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\e6e322b92c9c43d5b9f7b966300a5b57-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/e6e322b92c9c43d5b9f7b966300a5b57-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "132BB4D9AC534116F34D88567F56AEE091A2F6F40407235498349B5D36475D9C",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\e6e322b92c9c43d5b9f7b966300a5b57-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/e6e322b92c9c43d5b9f7b966300a5b57-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\e6e322b92c9c43d5b9f7b966300a5b57-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/e6e322b92c9c43d5b9f7b966300a5b57-psql.stdout.log",
+      "Bytes": 19,
+      "Sha256": "6880E6A571B9F4BAC4B93EEDF524566ADCF9789529E594A090584643B6DFB002",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\e99a3c8aa0cc4e95bb6a8abdbb65ffc0-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/e99a3c8aa0cc4e95bb6a8abdbb65ffc0-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "991810637A93BF69613E465F0405595C286DD9BFF3E6903FF4CCCBD0C05291E3",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\e99a3c8aa0cc4e95bb6a8abdbb65ffc0-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/e99a3c8aa0cc4e95bb6a8abdbb65ffc0-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\e99a3c8aa0cc4e95bb6a8abdbb65ffc0-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/e99a3c8aa0cc4e95bb6a8abdbb65ffc0-psql.stdout.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\f2f44b4f4f694afdb3ea14fa6667ac23-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/f2f44b4f4f694afdb3ea14fa6667ac23-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "310DE0E1210438C442490546EF9A59F21656F250469DBB9E7039DA7067A3951F",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\f2f44b4f4f694afdb3ea14fa6667ac23-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/f2f44b4f4f694afdb3ea14fa6667ac23-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\f2f44b4f4f694afdb3ea14fa6667ac23-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/f2f44b4f4f694afdb3ea14fa6667ac23-psql.stdout.log",
+      "Bytes": 1028,
+      "Sha256": "CE8659F69485A79F2E5766DD29ED18855DBE1ECF611F9084D6BD09A5108B45D6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\ffa3853f1d704a2b97304ed80edd1f21-psql.result.json",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/ffa3853f1d704a2b97304ed80edd1f21-psql.result.json",
+      "Bytes": 112,
+      "Sha256": "A8E8467CF18AD6053C583E7674B2F54895E8E72FA722FF786DB371BE56EBC44A",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\ffa3853f1d704a2b97304ed80edd1f21-psql.stderr",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/ffa3853f1d704a2b97304ed80edd1f21-psql.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-pg-postmerge-application-smoke-ssl-fix\\private\\ffa3853f1d704a2b97304ed80edd1f21-psql.stdout",
+      "ArchivePath": "wp6-pg-postmerge-application-smoke-ssl-fix/native/ffa3853f1d704a2b97304ed80edd1f21-psql.stdout.log",
+      "Bytes": 19,
+      "Sha256": "6880E6A571B9F4BAC4B93EEDF524566ADCF9789529E594A090584643B6DFB002",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\summary.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/summary.json",
+      "Bytes": 7391,
+      "Sha256": "563546E2E93A2710F4D6B8B9265BE84EDEC7468AE8DE5F687AF8FCCE27356C1D",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": "Passed",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\application-artifact.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/application-artifact.json",
+      "Bytes": 48381,
+      "Sha256": "9CD81660F8F9291A0E38DDF0CEE219F51750A2093E0F049D949BC3657E0CB974",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\database-init.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/database-init.json",
+      "Bytes": 740,
+      "Sha256": "5559022DA2D070ACC3E0379B2C3AD3B01DFDDAF7F4ED65F116F1923F0F014CD5",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\api-ready.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/api-ready.json",
+      "Bytes": 920,
+      "Sha256": "408B384A105D70C0B80518DEA865A5515EBDC9CD5C94D4704511F7E714F30353",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\api-stopped.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/api-stopped.json",
+      "Bytes": 370,
+      "Sha256": "C7C8BC6B04E89CC6BD7DCF0F54C69EAA5BAC5E1DE6582BA3A00239D21871F12A",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\admin-login.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/admin-login.json",
+      "Bytes": 248,
+      "Sha256": "257D682AB872ADB48C3A1A1C1108573CCC8C40CFE3D12167C0D43B07D913E9FF",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\http-authorization.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/http-authorization.json",
+      "Bytes": 1676,
+      "Sha256": "2ECA6C944BAE7DF2E13E9BF6AF89BF777D5A593C97B89A7066E15284FD086706",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\histories\\entry-result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/histories/entry-result.json",
+      "Bytes": 2373,
+      "Sha256": "7665CA666BA01080A4FB9E7499A63B5828C1960A3E9A6DD84735546AB0C0B738",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\histories\\runtime-artifact-before.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/histories/runtime-artifact-before.json",
+      "Bytes": 41553,
+      "Sha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\histories\\runtime-artifact-after.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/histories/runtime-artifact-after.json",
+      "Bytes": 41553,
+      "Sha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\histories\\reports\\report.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/histories/reports/report.json",
+      "Bytes": 47131,
+      "Sha256": "1BCB46BF8E6D5D6552EC4F463065BC643ABAA2A6F65EB8C0E6CC437B4E97F157",
+      "Scope": "New post-merge smoke or original failed first smoke; original status/build source preserved, not a full native rerun or new build.",
+      "OriginalStatus": "Passed",
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\0114d7461da54e758ddd6817f07c35a2-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/0114d7461da54e758ddd6817f07c35a2-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "21191E0B40F95008CC90BF8E0658650ABEC6E9D3EAD3E52F7741086D38FE44E5",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\0114d7461da54e758ddd6817f07c35a2-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/0114d7461da54e758ddd6817f07c35a2-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\0114d7461da54e758ddd6817f07c35a2-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/0114d7461da54e758ddd6817f07c35a2-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "AA70739C330EC8B738C6158E4128418B44FE7CCBC101300D2FAC77ED19190869",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\0dd9dca5aeff4cdc9bed53261961575e-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/0dd9dca5aeff4cdc9bed53261961575e-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "97427D5A8F48712447E7F87B20AC6B2920182A38A8ECA28D73AE44E55C3741F7",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\0dd9dca5aeff4cdc9bed53261961575e-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/0dd9dca5aeff4cdc9bed53261961575e-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\0dd9dca5aeff4cdc9bed53261961575e-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/0dd9dca5aeff4cdc9bed53261961575e-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "2A0868C26B2771289BCA7B1213766C4C47960B675FD5B9FE27BF8E25AFED0A55",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\18bce5f0e3b44ef68a9d89d65ae3fc59-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/18bce5f0e3b44ef68a9d89d65ae3fc59-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "2972165427870C72117ADF4427DE55E12491DFB5A70B6C11A1DA4DBBD4A1AB45",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\18bce5f0e3b44ef68a9d89d65ae3fc59-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/18bce5f0e3b44ef68a9d89d65ae3fc59-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\18bce5f0e3b44ef68a9d89d65ae3fc59-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/18bce5f0e3b44ef68a9d89d65ae3fc59-sqlcmd.stdout.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\2d76c01d0855412eb7b5a414f4d092b7-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/2d76c01d0855412eb7b5a414f4d092b7-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "3643A76B1C8FC871660423D32A7E3E51F5E1651E42F25B24C0C3522F450C96D0",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\2d76c01d0855412eb7b5a414f4d092b7-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/2d76c01d0855412eb7b5a414f4d092b7-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\2d76c01d0855412eb7b5a414f4d092b7-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/2d76c01d0855412eb7b5a414f4d092b7-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "2A0868C26B2771289BCA7B1213766C4C47960B675FD5B9FE27BF8E25AFED0A55",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\344d8f5ead344119a65c5698f0b6bd0f-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/344d8f5ead344119a65c5698f0b6bd0f-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "43072A285F733947DFB25980DA8DA50603B43E22533D2A7BAA99F00592AC2E33",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\344d8f5ead344119a65c5698f0b6bd0f-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/344d8f5ead344119a65c5698f0b6bd0f-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\344d8f5ead344119a65c5698f0b6bd0f-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/344d8f5ead344119a65c5698f0b6bd0f-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "EE96F3D05F7A86EEB719F831D5CE6A94645A7B3F0C5D32A309302ABCC7CD31EA",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3a40e8e1ac9b44b2a1218de6d445d172-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3a40e8e1ac9b44b2a1218de6d445d172-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "5C79D59261B8D16C1CC4104B7761A9C7135B33DA51E993AA0A2D820A4CC78FCB",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3a40e8e1ac9b44b2a1218de6d445d172-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3a40e8e1ac9b44b2a1218de6d445d172-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3a40e8e1ac9b44b2a1218de6d445d172-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3a40e8e1ac9b44b2a1218de6d445d172-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "1B093332A3C83628E8D6AECC4206F3707EBB643EC9906372FC1131FEC97D78C6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3d0d1de6b23745979be512effc3e93fd-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3d0d1de6b23745979be512effc3e93fd-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "13C0D0999110FD9AB44557E347282CA9E47104A6ADA3C794D37797B1E5B94A2B",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3d0d1de6b23745979be512effc3e93fd-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3d0d1de6b23745979be512effc3e93fd-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3d0d1de6b23745979be512effc3e93fd-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3d0d1de6b23745979be512effc3e93fd-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "1B093332A3C83628E8D6AECC4206F3707EBB643EC9906372FC1131FEC97D78C6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3e71d5651bfe4496be4304605e8ef5ff-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3e71d5651bfe4496be4304605e8ef5ff-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "F86A1A0E4270BC6AB2D356F0CDCFD506A3D6A099058733F6E5E70A14C294D506",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3e71d5651bfe4496be4304605e8ef5ff-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3e71d5651bfe4496be4304605e8ef5ff-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\3e71d5651bfe4496be4304605e8ef5ff-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/3e71d5651bfe4496be4304605e8ef5ff-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "AA70739C330EC8B738C6158E4128418B44FE7CCBC101300D2FAC77ED19190869",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\60af530dcbfc4f6cb87081daf51b8246-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/60af530dcbfc4f6cb87081daf51b8246-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "BF74CEBE5D04B5B54531AE0B89BF6324CC246E0340D0170AC08DD21DB71ECD48",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\60af530dcbfc4f6cb87081daf51b8246-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/60af530dcbfc4f6cb87081daf51b8246-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\60af530dcbfc4f6cb87081daf51b8246-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/60af530dcbfc4f6cb87081daf51b8246-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "2A0868C26B2771289BCA7B1213766C4C47960B675FD5B9FE27BF8E25AFED0A55",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\6f431472fd0f420992afa933a128201a-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/6f431472fd0f420992afa933a128201a-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "23765EDAD985C349857C134D2323768BFE383F364EBD25C62E1174BFF0CFF2E7",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\6f431472fd0f420992afa933a128201a-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/6f431472fd0f420992afa933a128201a-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\6f431472fd0f420992afa933a128201a-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/6f431472fd0f420992afa933a128201a-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "AA70739C330EC8B738C6158E4128418B44FE7CCBC101300D2FAC77ED19190869",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\92baafb1df1e47b5af2c07d13f4ffe14-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/92baafb1df1e47b5af2c07d13f4ffe14-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "71F6A9279C45FDE51EC03A7C776E3F0051B7B7C0B5DB813C020D3B9CCA4A5231",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\92baafb1df1e47b5af2c07d13f4ffe14-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/92baafb1df1e47b5af2c07d13f4ffe14-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\92baafb1df1e47b5af2c07d13f4ffe14-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/92baafb1df1e47b5af2c07d13f4ffe14-sqlcmd.stdout.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\a8511e88abee4daa9abe569c281e9084-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/a8511e88abee4daa9abe569c281e9084-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "B65D598C25015D6C8FCB37D91BC4CBF1DB1127DA6E6834C2FD567845A9983213",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\a8511e88abee4daa9abe569c281e9084-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/a8511e88abee4daa9abe569c281e9084-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\a8511e88abee4daa9abe569c281e9084-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/a8511e88abee4daa9abe569c281e9084-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "2A0868C26B2771289BCA7B1213766C4C47960B675FD5B9FE27BF8E25AFED0A55",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\a89192e58b6441868645368dc1b67da5-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/a89192e58b6441868645368dc1b67da5-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "B99E22916EC81CFAA01FF7F68F85D3F965B4452753D0D479BEBD6B8496092BAE",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\a89192e58b6441868645368dc1b67da5-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/a89192e58b6441868645368dc1b67da5-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\a89192e58b6441868645368dc1b67da5-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/a89192e58b6441868645368dc1b67da5-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "EE96F3D05F7A86EEB719F831D5CE6A94645A7B3F0C5D32A309302ABCC7CD31EA",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\b60461c6df1f4d10b0c85c51c9649f4e-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/b60461c6df1f4d10b0c85c51c9649f4e-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "6D7406C77240C0DEC12695E5D324AB5B24EF67C70D9F3D47A8A1EA191EF4DDB2",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\b60461c6df1f4d10b0c85c51c9649f4e-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/b60461c6df1f4d10b0c85c51c9649f4e-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\b60461c6df1f4d10b0c85c51c9649f4e-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/b60461c6df1f4d10b0c85c51c9649f4e-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "2A0868C26B2771289BCA7B1213766C4C47960B675FD5B9FE27BF8E25AFED0A55",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\cd590b4cd13f49cb992b1fbd857098a1-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/cd590b4cd13f49cb992b1fbd857098a1-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "5796DA59F0D07C1BEC1FC6067E9A6C430BAC349301C96F958229822490FE9ED4",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\cd590b4cd13f49cb992b1fbd857098a1-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/cd590b4cd13f49cb992b1fbd857098a1-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\cd590b4cd13f49cb992b1fbd857098a1-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/cd590b4cd13f49cb992b1fbd857098a1-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "1B093332A3C83628E8D6AECC4206F3707EBB643EC9906372FC1131FEC97D78C6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\d552e7b1098a457a87d18d1ce1ac62b3-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/d552e7b1098a457a87d18d1ce1ac62b3-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "8FFEB3A28EC4986B038490EE70879FC81B22F74D5C04A7991D3FCEABCFFD0C04",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\d552e7b1098a457a87d18d1ce1ac62b3-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/d552e7b1098a457a87d18d1ce1ac62b3-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\d552e7b1098a457a87d18d1ce1ac62b3-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/d552e7b1098a457a87d18d1ce1ac62b3-sqlcmd.stdout.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\dc1020b7ea9a4afbb1518d77eb5c3c45-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/dc1020b7ea9a4afbb1518d77eb5c3c45-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "7745E726B8B00A7B94BE4E656A77835CDF252FB716C91DD4ECB2D84B1DFF67C9",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\dc1020b7ea9a4afbb1518d77eb5c3c45-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/dc1020b7ea9a4afbb1518d77eb5c3c45-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\dc1020b7ea9a4afbb1518d77eb5c3c45-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/dc1020b7ea9a4afbb1518d77eb5c3c45-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "1B093332A3C83628E8D6AECC4206F3707EBB643EC9906372FC1131FEC97D78C6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\e0925e52699e4e8ea17eedfa7e6be45a-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/e0925e52699e4e8ea17eedfa7e6be45a-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "ACE86D0A9F5625549489DF2CFF69DBCAEFE0A8F9A060C33BFB161D33F06EBBA0",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\e0925e52699e4e8ea17eedfa7e6be45a-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/e0925e52699e4e8ea17eedfa7e6be45a-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\e0925e52699e4e8ea17eedfa7e6be45a-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/e0925e52699e4e8ea17eedfa7e6be45a-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "3C1D9548CE8230F4DE9C9C3757970769A059F661F2888746BB9A4B1C61711DB6",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\fef744aa5fa4413bb65efa5ddf019add-sqlcmd.result.json",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/fef744aa5fa4413bb65efa5ddf019add-sqlcmd.result.json",
+      "Bytes": 114,
+      "Sha256": "5244DA3511D3ED3D25B1F81E2912393D9606BA26DFBB9274614C427628C0AF69",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\fef744aa5fa4413bb65efa5ddf019add-sqlcmd.stderr",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/fef744aa5fa4413bb65efa5ddf019add-sqlcmd.stderr.log",
+      "Bytes": 0,
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    },
+    {
+      "SourcePath": "D:\\CP6\\tmp\\wp6-sql-postmerge-application-smoke\\private\\fef744aa5fa4413bb65efa5ddf019add-sqlcmd.stdout",
+      "ArchivePath": "wp6-sql-postmerge-application-smoke/native/fef744aa5fa4413bb65efa5ddf019add-sqlcmd.stdout.log",
+      "Bytes": 8002,
+      "Sha256": "2A0868C26B2771289BCA7B1213766C4C47960B675FD5B9FE27BF8E25AFED0A55",
+      "Scope": "Exact native lifecycle command exit/stdout/stderr leaves after screening; no private configuration, receipt or application log.",
+      "OriginalStatus": null,
+      "Screening": "Passed"
+    }
+  ],
+  "ExecutionMergedMain": "8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3",
+  "OriginalBuildSource": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Excluded": "Raw complete PR patches, local connection files, receipts, API/init stdout and private HTTP credentials/state are not copied. Initial native SSL error/failed summary, offline root cause and read-only absence proof remain unchanged.",
+  "Scope": "Normal delivery and necessary post-merge smoke evidence; no production candidate, new compile or promotion of an original failure."
+}

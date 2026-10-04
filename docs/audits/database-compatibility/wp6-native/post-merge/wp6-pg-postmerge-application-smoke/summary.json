@@ -1,0 +1,15 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Failed",
+  "Provider": "PostgreSql",
+  "ExecutionMergedMain": "8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3",
+  "OriginalBuildSource": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "BuildExecuted": false,
+  "PublishExecuted": false,
+  "BoundOriginalSourceInputs": 2010,
+  "OriginalPublishedFiles": 261,
+  "OriginalApiSha256": "D226FA352B4E207574948FBA53EBCA7CBFE0A66541178F1ADB737380030DF9D1",
+  "Scope": "New necessary post-merge initialization/API/permission smoke on one new owned database, reusing the original verified artifact and unchanged source. This is not a rebuild, the full native matrix, restore repetition or production acceptance.",
+  "FailureType": "System.Management.Automation.RuntimeException",
+  "FinishedUtc": "2026-10-04T02:50:11.1013845Z"
+}

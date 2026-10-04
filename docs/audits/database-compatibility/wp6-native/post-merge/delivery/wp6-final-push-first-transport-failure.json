@@ -1,0 +1,11 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "PushTransportFailedRemoteReceiptPending",
+  "ObservedUtc": "2026-10-04T02:41:46.9773633Z",
+  "Candidate": "4243c67d7ac2e3cfafb809d2a4efba54f4ec927a",
+  "Command": "git push -u origin codex/db-compat-wp6-20261003",
+  "ExitCode": 1,
+  "Error": "RPC curl55 connection reset; sideband disconnect; Everything up-to-date is not proof of receipt",
+  "NativeResultsChanged": false,
+  "HistoryRewrite": false
+}

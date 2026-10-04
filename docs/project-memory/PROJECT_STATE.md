@@ -1,5 +1,15 @@
 # 项目当前状态
 
+## 2026-10-04：双库兼容版已交付并通过合并后冒烟
+
+[PR165](https://github.com/GTX537/CP6/pull/165)已正常保护合并到远端main 8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3；候选4243c67d7ac2e3cfafb809d2a4efba54f4ec927a是其ancestor，完整树68f7d4accfc58897a6bb430f5f90dded50c4ba94相同，2,389个PR文件均完成分页与Git blob核对。原洁净实现e940825fc7511b41a1a80b4b73897dcc69e51bbb的双库105个适用入口、当前配置/接线139项、56项HTTP与真实原生独立恢复均通过，所有31个正式库已清理。2,091份原始证据与Git index字节一致，失败及复用来源保持。
+
+合并后使用同一原261文件发布物，SQL/PG分别在新的独占库实际初始化、核对history、启动所属API及三个health端点、登录与12项权限/改密/401/403检查；HTTP新建用户均从确切owned库实际查得。两个新库普通DROP并核对不存在；这是新冒烟，不冒称重建、重跑完整矩阵或生产验收。初次PG冒烟脚本属性读取丢失SSL覆盖的失败保留，纯内存复现后改用正式runner的set/get方法；原Planned目标实际不存在、receipt与Failed summary保持，不改变CP6项目代码或TLS生产规则。155份交付/冒烟原件已逐份核对归档。
+
+六工作包的功能、适用验收和代码交付已闭环，结案证据与运行入口见[最终验收及交付](../audits/database-compatibility/WP6-ACCEPTANCE.md)；父任务活动状态以[Issue134](https://github.com/GTX537/CP6/issues/134)为准。父任务只在本次结案文档正常合入并核对远端完整包含性后关闭，下方历史“未完成/guard保留”等记录不代表当前运行能力。普通PG API/worker现可使用所选Provider；没有现有业务数据搬迁或生产部署。
+
+推送/PR/合并前分别核对17个工作流/依赖输入，队列均0，无远程Actions运行/取消、触发/保护变更或管理员绕过。根工作区用户既有改动保留；正式R2/GHCR候选、签名/扫描、审批与SQL生产基线不变。
+
 ## 2026-10-04：WP6 最新本地验收全部通过，远端交付待完成
 
 洁净源码 e940825fc7511b41a1a80b4b73897dcc69e51bbb 的最新 wms-local-transaction-fix 四次实际分项全部Passed：PG Matrix34/34、SQL Matrix37/37、两库Application各17/17，共105个适用入口、零失败/跳过；不是单次Full。当前程序集补充配置/四Context接线/生产校验139/139，零跳过。两库使用同一份当前实际发布API（261文件逐字节一致），真实独立恢复专项核对56项HTTP、8次API启动、所有表/行/序列/history/持久key与恢复后消息一次投递/幂等重放通过；本轮31个owned临时库全部普通DROP且AbsentVerified。

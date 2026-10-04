@@ -1,0 +1,17 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "RemoteMainContainsCompleteVerifiedCandidate",
+  "VerifiedUtc": "2026-10-04T02:49:56.5511706Z",
+  "PullRequest": 165,
+  "MergedMain": "8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3",
+  "Candidate": "4243c67d7ac2e3cfafb809d2a4efba54f4ec927a",
+  "CandidateTree": "68f7d4accfc58897a6bb430f5f90dded50c4ba94",
+  "RemoteMainTree": "68f7d4accfc58897a6bb430f5f90dded50c4ba94",
+  "FullTreeIdentical": true,
+  "CandidateIsAncestor": true,
+  "MergedAt": "2026-10-04T02:49:23Z",
+  "NormalProtectedMerge": true,
+  "AdminBypass": false,
+  "PostMergeSmoke": "Pending",
+  "ParentIssue": "Open pending smoke/closure documentation"
+}

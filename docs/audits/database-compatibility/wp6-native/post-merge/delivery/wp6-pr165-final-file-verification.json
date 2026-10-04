@@ -1,0 +1,16 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "CompletePrFileSetAndBlobsVerified",
+  "VerifiedUtc": "2026-10-04T02:48:16.9161758Z",
+  "PullRequest": 165,
+  "Candidate": "4243c67d7ac2e3cfafb809d2a4efba54f4ec927a",
+  "Base": "6322ac152cab7d462719169fb0301f49e9ee39ba",
+  "FileCount": 2389,
+  "Pages": 24,
+  "All2389CandidateGitBlobsMatch": true,
+  "NativeExecutionSource": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "NativeSourceInputsUnchanged": 2698,
+  "ReviewBasis": "Original task-level concentrated partition reviews plus documented scoped fixes/WMS/cleanup/lock review; no code change after frozen native source. Final docs and allowlisted archive verified independently; actual Git index originals preserved.",
+  "NativeExecution": false,
+  "Merge": "Pending normal protected merge"
+}

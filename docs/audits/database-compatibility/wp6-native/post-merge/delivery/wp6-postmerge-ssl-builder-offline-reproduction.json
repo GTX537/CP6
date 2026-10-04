@@ -1,0 +1,11 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "RootCauseReproducedOffline",
+  "CheckedUtc": "2026-10-04T02:52:55.7604399Z",
+  "PropertyReadLosesSslOverride": true,
+  "MethodReadPreservesSslOverride": true,
+  "OriginalNativeError": "server does not support SSL, but SSL was required",
+  "OriginalNativeExitCode": 2,
+  "OriginalDatabaseReceiptStatus": "Planned",
+  "Scope": "Pure in-memory DbConnectionStringBuilder dictionary/property adapter reproduction using fixture values; no database or application operation. Failed original post-merge run retained."
+}
