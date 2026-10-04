@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d739d04e-f86d-4e57-b3d3-b7dfedf66fea" name="tt@LAPTOP-3QQ44FJS 2026-10-03 18:40:08" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T18:40:08.7093901-04:00" queuing="2026-10-03T18:40:08.7093903-04:00" start="2026-10-03T18:40:04.0861481-04:00" finish="2026-10-03T18:40:08.7126708-04:00" />
+  <TestSettings name="default" id="21308e8a-65bd-426f-ae7f-8bb05d022ea3">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_18_40_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d1fe8320-f84d-4a73-b6b7-3b36278d4cbb" testId="9765bf8e-a788-5f8d-9c33-861643d153e0" testName="CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests.Generated_Space_script_runs_twice_without_Core" computerName="LAPTOP-3QQ44FJS" duration="00:00:04.0128310" startTime="2026-10-03T18:40:04.6140844-04:00" endTime="2026-10-03T18:40:08.6322703-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1fe8320-f84d-4a73-b6b7-3b36278d4cbb">
+      <Output>
+        <StdOut>Prerequisite case: verified WP5 owner; initially empty catalog; database creation/deletion remain runner-owned.&#xD;
+DesignTimeScriptSHA256=9FF705F84F0AE75E879D320B45B0E38CEC3E50D5FEC0C41F32A7DCA01A839781; NegativeScriptSHA256=A1B72DB733341CC1C4E2F7741FA876875CB107CE0072CB30371DD4C6FC60F3D6.&#xD;
+ScriptCollationGuardSQLSTATE=P0001; ExpectedRejection=true.&#xD;
+Stage=Space-script-first; ActualApplied=20261002161945_PostgreSqlSpaceBaselineV1; Pending=0.&#xD;
+PrerequisiteCatalogSHA256=A0668512695BD32F1FB1C21224832BC385050D415E9671D5B39CA59CD87B11CA; Objects=3.&#xD;
+Stage=Space-script-repeat; ActualApplied=20261002161945_PostgreSqlSpaceBaselineV1; Pending=0.&#xD;
+PrerequisiteCatalogSHA256=A0668512695BD32F1FB1C21224832BC385050D415E9671D5B39CA59CD87B11CA; Objects=3.&#xD;
+GeneratedSpaceScriptExecutions=2; CoreProfile=not-applied.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests.Generated_Space_script_runs_twice_without_Core" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="9765bf8e-a788-5f8d-9c33-861643d153e0">
+      <Execution id="d1fe8320-f84d-4a73-b6b7-3b36278d4cbb" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests" name="Generated_Space_script_runs_twice_without_Core" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9765bf8e-a788-5f8d-9c33-861643d153e0" executionId="d1fe8320-f84d-4a73-b6b7-3b36278d4cbb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.11]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:04.22]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

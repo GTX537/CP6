@@ -1,0 +1,51 @@
+{
+  "EntryId": "erp-handler",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261004_ef5fe0b2_erp",
+  "Role": "erp",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+  "BinarySha256": "680BEE70B87AE18723ED1A0391A354AA1073B5D0CAAB93666FDD011D72B17F3D",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\erp-handler\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "7E4BDEAA0D115F6F105CCC0BE80DE43F41CE3D75FF90AD87DF1FCD053C066E4F",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\erp-handler\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "7E4BDEAA0D115F6F105CCC0BE80DE43F41CE3D75FF90AD87DF1FCD053C066E4F",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 33828,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:18:43.9903389Z",
+    "FinishedUtc": "2026-10-04T01:18:53.5958427Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "3FAA5C767FAE032D6DA99224D75BBCEA12B5D1E7D172959D19D94AC926AD38DC",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "erp-handler",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox",
+      "CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation"
+    ],
+    "ReportSha256": "F3F4DA05D7C7B45E84F00AD8E983AAE01947B7D6605E0A46DD236CFE7AC66DFE",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\erp-handler\\private\\trx\\results.trx",
+  "ReportSha256": "F3F4DA05D7C7B45E84F00AD8E983AAE01947B7D6605E0A46DD236CFE7AC66DFE",
+  "FailureCode": null,
+  "Success": true
+}

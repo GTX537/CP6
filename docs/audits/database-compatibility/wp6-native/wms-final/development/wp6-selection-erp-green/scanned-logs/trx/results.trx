@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7062ee7b-4905-4dfc-bbb6-d7804b570c01" name="tt@LAPTOP-3QQ44FJS 2026-10-03 12:37:07" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T12:37:07.2281882-04:00" queuing="2026-10-03T12:37:07.2281886-04:00" start="2026-10-03T12:37:06.5055684-04:00" finish="2026-10-03T12:37:07.2331236-04:00" />
+  <TestSettings name="default" id="b9b860bb-7f8e-402c-9b25-2bfe759b888b">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_12_37_07" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="de49e7f1-9407-42c6-816d-48809d295d98" testId="9f1f8ce5-6eea-24fa-b31a-4f6cc79ec570" testName="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Selected_provider_without_connection_cannot_fall_back_to_legacy_sql" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0200049" startTime="2026-10-03T12:37:07.1117139-04:00" endTime="2026-10-03T12:37:07.1363239-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de49e7f1-9407-42c6-816d-48809d295d98" />
+    <UnitTestResult executionId="f631b1c9-c588-4311-a5ef-094ef06eda99" testId="63bd58e3-b367-c694-8e22-cbd835aee71f" testName="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture(role: null)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0034249" startTime="2026-10-03T12:37:07.1432382-04:00" endTime="2026-10-03T12:37:07.1432899-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f631b1c9-c588-4311-a5ef-094ef06eda99" />
+    <UnitTestResult executionId="48d673e0-d652-4840-b99c-afc20330d7e7" testId="909e4307-020e-e8e2-cef7-788d8efd3049" testName="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture(role: &quot;space&quot;)" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0003876" startTime="2026-10-03T12:37:07.1437239-04:00" endTime="2026-10-03T12:37:07.1437537-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48d673e0-d652-4840-b99c-afc20330d7e7" />
+    <UnitTestResult executionId="86d08a52-08a1-445b-9497-5271ed697a3d" testId="6e27af15-ab3b-12e5-487e-c2d627f50a8e" testName="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Erp_role_without_erp_aliases_rejects_constructor_before_legacy_database_creation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0002937" startTime="2026-10-03T12:37:07.1438367-04:00" endTime="2026-10-03T12:37:07.1438606-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86d08a52-08a1-445b-9497-5271ed697a3d" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture(role: null)" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="63bd58e3-b367-c694-8e22-cbd835aee71f">
+      <Execution id="f631b1c9-c588-4311-a5ef-094ef06eda99" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests" name="Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Selected_provider_without_connection_cannot_fall_back_to_legacy_sql" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="9f1f8ce5-6eea-24fa-b31a-4f6cc79ec570">
+      <Execution id="de49e7f1-9407-42c6-816d-48809d295d98" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests" name="Selected_provider_without_connection_cannot_fall_back_to_legacy_sql" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Erp_role_without_erp_aliases_rejects_constructor_before_legacy_database_creation" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="6e27af15-ab3b-12e5-487e-c2d627f50a8e">
+      <Execution id="86d08a52-08a1-445b-9497-5271ed697a3d" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests" name="Erp_role_without_erp_aliases_rejects_constructor_before_legacy_database_creation" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture(role: &quot;space&quot;)" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="909e4307-020e-e8e2-cef7-788d8efd3049">
+      <Execution id="48d673e0-d652-4840-b99c-afc20330d7e7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests" name="Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9f1f8ce5-6eea-24fa-b31a-4f6cc79ec570" executionId="de49e7f1-9407-42c6-816d-48809d295d98" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63bd58e3-b367-c694-8e22-cbd835aee71f" executionId="f631b1c9-c588-4311-a5ef-094ef06eda99" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="909e4307-020e-e8e2-cef7-788d8efd3049" executionId="48d673e0-d652-4840-b99c-afc20330d7e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e27af15-ab3b-12e5-487e-c2d627f50a8e" executionId="86d08a52-08a1-445b-9497-5271ed697a3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.11]   Discovering: CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.22]   Finished:    CP6.ErpIntegration.SqlTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

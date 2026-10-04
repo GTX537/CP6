@@ -1,0 +1,122 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "SourceScopedReuseVerified",
+  "CheckedUtc": "2026-10-03T23:12:59.8796055Z",
+  "Scope": "Offline reparse and relevant-input applicability of original non-native configuration and fixture-selection tests. No new .NET execution, no claim that the whole present project assembly is byte-identical, and no native acceptance. Native Matrix/API phases separately execute current binaries.",
+  "CorrectedDiagnostic": "An earlier comparison resolved relative paths in root D:/CP6 rather than the WP6 worktree; its proposed changed-source counts were incorrect. The corrected explicit-worktree comparison finds runtime-mode covered sources unchanged and all eleven latest selector inputs unchanged. Early 45-case Owned report is historical; the later selector Core58 plus Space4 and ERP4 supply current owned/selection coverage.",
+  "SelectorManifestSha256": "5F2931B3EB38FF8AEE6B6143CE7C132A3BD9E9FC5986D682EE780115A0596FFA",
+  "SelectorInputFiles": [
+    {
+      "Path": "CP6.Space.IntegrationTests/OwnedFixtureSelectionTests.cs",
+      "Sha256": "9C25E87152CDAF4040EEA0C33CCD8D6A6F446A8539722B39366390DB6A5673DE",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMigrationTestDatabase.cs",
+      "Sha256": "1B83EE10E3A5D09E75AC7620A08CDB6A5D4F99DE8CF48850649A43282FB617A9",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceRelationalFixture.cs",
+      "Sha256": "C8E072645CB2244FD707D3E5D49241457ECC4BA2F90867326DD1C9741BAF7E46",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/CoreBusinessRelationalFixture.cs",
+      "Sha256": "F0E50F2E993803671329BF370139C6673D028030A8CA5627ABA3B80DCF0D34C8",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/Wp5ReportsRelationalFixture.cs",
+      "Sha256": "6C186E2FA577664A7C6324363164B416519073DFC7A5BE6CE6C3F4EDA4C536C9",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/Infra/WmsProductionFactAttribute.cs",
+      "Sha256": "F8EB2111639F00C526529C0F2D44A151C5AA32C2DB8E38BF82DD71C8AEABFF66",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedFixtureSelectionTests.cs",
+      "Sha256": "79BB612520DB97BAE5E701964C450A92A03B5DB749E67C984AF6EE7FC8FF6B2C",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedTestDatabaseTests.cs",
+      "Sha256": "A7A118DE730BC1C71E93C7123D76BE45693328231F5851187C5FC8E13EFDEB15",
+      "Matches": true
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/OwnedFixtureSelectionTests.cs",
+      "Sha256": "E7FB0FED2F21241A82A401AEF9118D6310349B49C107E0FD0A76519D6727F4D9",
+      "Matches": true
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/SqlDatabaseFixture.cs",
+      "Sha256": "8123077DE748A1AD84EFEB9910D3BE07C128596E8F5D662E785FCAEEADF8B81D",
+      "Matches": true
+    },
+    {
+      "Path": "eng/database-compatibility/OwnedTestDatabase.cs",
+      "Sha256": "98625EA55407AA8168F008383F3EFC4010D29E79D6A1E00580F4908CA4AD23BA",
+      "Matches": true
+    }
+  ],
+  "OriginalSelectorSuites": [
+    {
+      "Suite": "core",
+      "Passed": 58,
+      "Skipped": 0,
+      "ProcessExitCode": 0,
+      "ResultSha256": "3817E8C1F2E5E8164DB82ACC0097F6E2BF48D3BB306B47D6D0D3C529DD71363C",
+      "TrxSha256": "3D4E8B52AABD88F7C1F64D3DCBDBD40B481D4112093D9C371553595D28BE426A",
+      "NativeExecution": false
+    },
+    {
+      "Suite": "space",
+      "Passed": 4,
+      "Skipped": 0,
+      "ProcessExitCode": 0,
+      "ResultSha256": "56DC89D988E0D45319ABF150A3339497E9FEE8AD5507656BA5B8C03586700847",
+      "TrxSha256": "5331D496C228C7DD4288D4D87611EE4689216F7B4B19FD81A821ABCA84D20738",
+      "NativeExecution": false
+    },
+    {
+      "Suite": "erp",
+      "Passed": 4,
+      "Skipped": 0,
+      "ProcessExitCode": 0,
+      "ResultSha256": "38B35A725DA0B46404C48C6CC655966A54D90BD17CA18ED31140C16448E501D0",
+      "TrxSha256": "E2A9A5C3ADC17B2422A62E74B75D8EBFE517EC79FC31B4C3C40285AC9CDE4AB7",
+      "NativeExecution": false
+    }
+  ],
+  "RuntimeModeOriginalPassed": 7,
+  "RuntimeModeTrxSha256": "663C823126EDD5C6AA84689E3CF360BCC7694AA956C83863919A05F92E78461F",
+  "RuntimeModeCoveredSourceFiles": [
+    {
+      "Path": "CP6.Tests/CP6.Tests.csproj",
+      "Sha256": "A965279AFEB64C590EB571D7042A8197C83EE2394E26FB9A2DAF1449FE9944D8"
+    },
+    {
+      "Path": "CP6.Tests/packages.lock.json",
+      "Sha256": "654973D7905B5E124BB2DC2C97D5A7ED1E334C175E02699C225B9B097313C6E5"
+    },
+    {
+      "Path": "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs",
+      "Sha256": "EF982662792231D3A5C5B9D85A6AC8D138813EF76C491BAABC19B7054548BC64"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseInitializationModeTests.cs",
+      "Sha256": "71C5680B87DE2CAC6EBE010B006431C4F05385973432A5F11A2BB3ED04C50B36"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseWiringTests.cs",
+      "Sha256": "75C380D633CC199ACBC89D26CD96F4BDB84AC48B37A51DCFE9B6D6E6411F2843"
+    }
+  ],
+  "ExcludedUnrelatedInputs": [
+    "The old runtime-mode wrapper also recorded OwnedTestDatabaseTests and OwnedTestDatabase inputs, which later changed. Those are not exercised by its 7-case filter and are covered by the later exact 66-case selector suites."
+  ],
+  "CurrentRuntimeAssemblyIdentity": "Later task business fixes changed compiled project assemblies; unchanged pure selector/runtime-mode inputs support source-scoped reuse only. Do not relabel these as executions of current whole binaries."
+}

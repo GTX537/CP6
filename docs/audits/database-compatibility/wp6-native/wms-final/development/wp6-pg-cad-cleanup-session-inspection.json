@@ -1,0 +1,182 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Inspected",
+  "CheckedUtc": "2026-10-03T22:45:13.1571983Z",
+  "ScriptSha256": "7F999BD43B7AE50D8FEA59E0F40215857AED97E9B70D12BA51FFE3DE8D436F77",
+  "Scope": "Read-only pg_stat_activity and owned receipt identity inspection after the native runner is terminal. No connection termination, database creation/drop, source modification or rewriting original results.",
+  "OriginalSummarySha256": "EEF84ED7808D7D83D7389708102C3989BA03DEEDD4EA17C367123D476AC4BCD1",
+  "OriginalSummaryUnchanged": true,
+  "OriginalCleanupQueries": [
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\810134b73ceb483cbc231d9a11429af2-psql.stdout",
+      "LogSha256": "F6B0E3E06BF70D8ECB48E69C7168F6257376AD3F5D415D7E77D65387275D8202",
+      "ObservedUtc": "2026-10-03T22:40:56.7750797Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_e4614987_spacehistory",
+      "DatabaseId": "619077",
+      "Sessions": 1,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "e461498732f24a63854e4f857b7e9dad"
+    },
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\da9263b8f83a4aa393734fda0780edc6-psql.stdout",
+      "LogSha256": "948DD5B1C3ACA19781FCFA56E5152544AB4FDF3CB63854553F487AB255BD4DF7",
+      "ObservedUtc": "2026-10-03T22:40:55.9224654Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_d3d055a7_space",
+      "DatabaseId": "607133",
+      "Sessions": 0,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "d3d055a7262640ac8b96f34983b2d267"
+    },
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\632cd8f0f329472bac11f1bc38a7b879-psql.stdout",
+      "LogSha256": "1FB9D93F7558E96D1FC47218884C9F88A82A9E458258F4D9D2F899BAD94E9187",
+      "ObservedUtc": "2026-10-03T22:40:55.1754398Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_c2dbffb7_schema",
+      "DatabaseId": "595841",
+      "Sessions": 0,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "c2dbffb7618a4083b4298e0902b8e5ae"
+    },
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\5b4dd9f2d49148d8ae72304c65ba94b4-psql.stdout",
+      "LogSha256": "8F7BF3676A53B6D2DB4FB3190F7337BF4017A2ED9EE4922C6BE9B35DA6F632E0",
+      "ObservedUtc": "2026-10-03T22:40:54.4708853Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_ef8ff3a1_runtime",
+      "DatabaseId": "584828",
+      "Sessions": 0,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "ef8ff3a1464a4d13ba13eb19a6753b4c"
+    },
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\5b7acb97600140d4a3b7285802838464-psql.stdout",
+      "LogSha256": "E095B0C35F848EA3482DF5FE5409CE269E6D238079D5008FB6E29D37B94FC7DB",
+      "ObservedUtc": "2026-10-03T22:40:53.8196309Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_95c28c4c_reports",
+      "DatabaseId": "577247",
+      "Sessions": 0,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "95c28c4c6d1f439eb8af641461c5fd38"
+    },
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\5eff87d3d93d43e280746eb7109ea938-psql.stdout",
+      "LogSha256": "25BE0BBE99BE59F95843F853CC24C4A0A10A1D16F3C98ACD1B5CC489963873C1",
+      "ObservedUtc": "2026-10-03T22:40:53.1859817Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_3eabc3f7_oidcidentity",
+      "DatabaseId": "569662",
+      "Sessions": 0,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "3eabc3f792144e48bc8bb22d5e4e8d96"
+    },
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\9952adced87a452fadfce4a7d41736cb-psql.stdout",
+      "LogSha256": "6D8D38960FDAD5470802C5157B8B539340CBC6477A7F57B79CC6B239738444D3",
+      "ObservedUtc": "2026-10-03T22:40:52.5314377Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_89efc21a_erp",
+      "DatabaseId": "561815",
+      "Sessions": 0,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "89efc21a2503456b867891ad8bacd119"
+    },
+    {
+      "LogPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\private\\1e29057e5de94b97bdd6e051639bc26d-psql.stdout",
+      "LogSha256": "762784B0FB7E36A57B08F28C89824C40C755240503BC1ECF3D49D4F2F941EB0B",
+      "ObservedUtc": "2026-10-03T22:40:37.8450476Z",
+      "DatabaseName": "CP6Compat_WP6_20261003_354b0229_corewms",
+      "DatabaseId": "554369",
+      "Sessions": 0,
+      "Task": "DB-COMPAT-01-WP6",
+      "Owner": "354b02295308449ea7eb0de0b57af13f"
+    }
+  ],
+  "CurrentSessions": [],
+  "CurrentOwnedDatabases": [
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_354b0229_corewms",
+      "Exists": false,
+      "Sessions": 0,
+      "DatabaseId": null,
+      "OwnerMatches": null,
+      "PhysicalIdentityMatches": null
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_89efc21a_erp",
+      "Exists": false,
+      "Sessions": 0,
+      "DatabaseId": null,
+      "OwnerMatches": null,
+      "PhysicalIdentityMatches": null
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_3eabc3f7_oidcidentity",
+      "Exists": false,
+      "Sessions": 0,
+      "DatabaseId": null,
+      "OwnerMatches": null,
+      "PhysicalIdentityMatches": null
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_95c28c4c_reports",
+      "Exists": false,
+      "Sessions": 0,
+      "DatabaseId": null,
+      "OwnerMatches": null,
+      "PhysicalIdentityMatches": null
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_ef8ff3a1_runtime",
+      "Exists": false,
+      "Sessions": 0,
+      "DatabaseId": null,
+      "OwnerMatches": null,
+      "PhysicalIdentityMatches": null
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_c2dbffb7_schema",
+      "Exists": false,
+      "Sessions": 0,
+      "DatabaseId": null,
+      "OwnerMatches": null,
+      "PhysicalIdentityMatches": null
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_d3d055a7_space",
+      "Exists": false,
+      "Sessions": 0,
+      "DatabaseId": null,
+      "OwnerMatches": null,
+      "PhysicalIdentityMatches": null
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_e4614987_spacehistory",
+      "Exists": true,
+      "Sessions": 0,
+      "DatabaseId": "619077",
+      "OwnerMatches": true,
+      "PhysicalIdentityMatches": true
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_235fe030_spacehistory",
+      "Exists": true,
+      "Sessions": 0,
+      "DatabaseId": "630025",
+      "OwnerMatches": true,
+      "PhysicalIdentityMatches": true
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_30937f08_spacehistory",
+      "Exists": true,
+      "Sessions": 0,
+      "DatabaseId": "633545",
+      "OwnerMatches": true,
+      "PhysicalIdentityMatches": true
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_1c1ffd5f_spacehistory",
+      "Exists": true,
+      "Sessions": 0,
+      "DatabaseId": "637057",
+      "OwnerMatches": true,
+      "PhysicalIdentityMatches": true
+    }
+  ]
+}

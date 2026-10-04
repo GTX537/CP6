@@ -1,0 +1,9 @@
+{
+  "Success": true,
+  "BaseUri": "http://127.0.0.1:53080/",
+  "UserName": "admin",
+  "TenantCode": "DEFAULT",
+  "UserId": "8234c2b2-b070-44e5-0107-08df216e8b28",
+  "TenantId": "00000000-0000-0000-0000-0000000000a1",
+  "Connected": true
+}

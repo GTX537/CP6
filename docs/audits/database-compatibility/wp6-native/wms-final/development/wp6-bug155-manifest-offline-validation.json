@@ -1,0 +1,29 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Scope": "Root observed local offline executions after target-entry delta; no .NET or native database execution. Prior unmodified reviews remain in their historical evidence.",
+  "RecordedUtc": "2026-10-03T18:32:22.4076190Z",
+  "Head": "8f2cc01ddcf43d6bcf0c236fed2ab038687fd1f4",
+  "WorkingTreeDirty": true,
+  "RequiredManifestSha256": "7CA38B226DB019D2C8A50F695640E6608D3B73888A4437BECF9B2F93956108ED",
+  "Results": {
+    "Assertions": 457,
+    "ArchivedReports": 57,
+    "ManifestEntries": 62,
+    "Status": "Passed",
+    "ActualExitCode": 0,
+    "Command": "pwsh -NoProfile -File scripts/database-compatibility/Test-DatabaseCompatibilityResults.ps1",
+    "SourceSha256": "875152820D5715FDAD57408B8D856261BAFDAC769715971721703324337E17EB"
+  },
+  "Entries": {
+    "SourceSha256": "1987DC5CAD3D5CADEC373677E81045734FBBDEE3FC0BABB314027AB83F13116C",
+    "NativeExecuted": false,
+    "Checks": 510,
+    "Status": "Passed",
+    "ActualExitCode": 0,
+    "Command": "pwsh -NoProfile -File scripts/database-compatibility/Test-DatabaseCompatibilityEntries.ps1",
+    "DotnetExecuted": false
+  },
+  "UnchangedManifestEntries": 61,
+  "ChangedEntry": "space-design-publish",
+  "ChangedRequiredCases": "35 -> 41"
+}

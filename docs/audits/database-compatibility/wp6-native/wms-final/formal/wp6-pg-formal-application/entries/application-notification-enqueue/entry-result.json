@@ -1,0 +1,51 @@
+{
+  "EntryId": "application-notification-enqueue",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+  "Role": "application",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-notification-enqueue\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-notification-enqueue\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 14348,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:46:19.4381413Z",
+    "FinishedUtc": "2026-10-03T16:46:22.2764741Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "1D71A285CD4335ECCC82BD3DCFCB9C805CE705E017E8DBCA64B8370DF2C5FB94",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-notification-enqueue",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "production-outbox-service-committed-one-row"
+    ],
+    "ReportSha256": "943C2D5BCCAF76584949BA638C15717441FD75AA66D965DF866EB6C0567F3340",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-notification-enqueue\\reports\\report.json",
+  "ReportSha256": "943C2D5BCCAF76584949BA638C15717441FD75AA66D965DF866EB6C0567F3340",
+  "FailureCode": null,
+  "Success": true
+}

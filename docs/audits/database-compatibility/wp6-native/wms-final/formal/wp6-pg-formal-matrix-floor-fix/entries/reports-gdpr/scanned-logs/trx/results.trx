@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d5f5de38-4d88-4e14-afc1-a18476217d64" name="tt@LAPTOP-3QQ44FJS 2026-10-03 16:04:35" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T16:04:35.3447721-04:00" queuing="2026-10-03T16:04:35.3447724-04:00" start="2026-10-03T16:04:22.2475056-04:00" finish="2026-10-03T16:04:38.5243534-04:00" />
+  <TestSettings name="default" id="eb210fd4-adb7-4a6f-b5ee-d1bf35501ce7">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_16_04_35" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f42f1cb5-94da-4a2d-8e6e-a14a77fb0bd5" testId="bd22d8aa-d8a6-badd-879f-83cd5de5916c" testName="CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant" computerName="LAPTOP-3QQ44FJS" duration="00:00:03.1274003" startTime="2026-10-03T16:04:35.3313688-04:00" endTime="2026-10-03T16:04:38.4490215-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f42f1cb5-94da-4a2d-8e6e-a14a77fb0bd5">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="634b4f6a-760f-41b0-b740-cd4236d9edbc" testId="2bb1a7d2-fca3-c37a-a741-dab135fd4dae" testName="CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Native_tombstone_failure_rolls_back_purge_and_allows_later_success" computerName="LAPTOP-3QQ44FJS" duration="00:00:08.4634506" startTime="2026-10-03T16:04:26.8651115-04:00" endTime="2026-10-03T16:04:35.3198366-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="634b4f6a-760f-41b0-b740-cd4236d9edbc">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.&#xD;
+Native GDPR failure: provider=PostgreSql; constraint=CK_wp5_gdpr_tombstone_0a6f348f39ae411c9072e32cb6b2203d; SQLSTATE=23514; code=.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bd22d8aa-d8a6-badd-879f-83cd5de5916c">
+      <Execution id="f42f1cb5-94da-4a2d-8e6e-a14a77fb0bd5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.GdprRelationalTests" name="Purge_preserves_identity_tombstones_and_other_tenant" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Native_tombstone_failure_rolls_back_purge_and_allows_later_success" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="2bb1a7d2-fca3-c37a-a741-dab135fd4dae">
+      <Execution id="634b4f6a-760f-41b0-b740-cd4236d9edbc" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.GdprRelationalTests" name="Native_tombstone_failure_rolls_back_purge_and_allows_later_success" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="bd22d8aa-d8a6-badd-879f-83cd5de5916c" executionId="f42f1cb5-94da-4a2d-8e6e-a14a77fb0bd5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2bb1a7d2-fca3-c37a-a741-dab135fd4dae" executionId="634b4f6a-760f-41b0-b740-cd4236d9edbc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="2" passed="2" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.51]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.53]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:15.86]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

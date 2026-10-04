@@ -1,0 +1,84 @@
+[
+  {
+    "RunId": "55f9f7ef360f406c942b53686df309db",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_9bd35dba_application",
+    "Owner": "9bd35dba13e54b30ad26db75e55f5bfe",
+    "Role": "application",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 68,
+      "CreatedAt": "2026-10-03T22:00:07.64",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_9bd35dba_application",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_9bd35dba_application.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_9bd35dba_application_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_9bd35dba_application_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T02:00:07.4572595Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_9bd35dba_application.json",
+    "Events": []
+  },
+  {
+    "RunId": "55f9f7ef360f406c942b53686df309db",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_94e5a8a6_restore",
+    "Owner": "94e5a8a6aa2440b8a5549b4c51c72f46",
+    "Role": "restore",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 69,
+      "CreatedAt": "2026-10-03T22:03:16.673",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_9bd35dba_application",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_94e5a8a6_restore.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_9bd35dba_application_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_94e5a8a6_restore_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T02:03:14.6737067Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_94e5a8a6_restore.json",
+    "Events": [
+      {
+        "Action": "RestoreStarted",
+        "SourceDatabaseName": "CP6Compat_WP6_20261004_9bd35dba_application",
+        "ArchiveSha256": "7E400A18BBF785CE7FEF89317256CF50CF301BF5481C3A50BA5EE9E54EB03DC7",
+        "Utc": "2026-10-04T02:03:16.5395605Z"
+      },
+      {
+        "Action": "RestoreVerifiedAndTargetMarkerReconciled",
+        "Provider": "SqlServer",
+        "SourceOwner": "9bd35dba13e54b30ad26db75e55f5bfe",
+        "TargetOwner": "94e5a8a6aa2440b8a5549b4c51c72f46",
+        "Utc": "2026-10-04T02:03:21.9775410Z"
+      }
+    ]
+  }
+]

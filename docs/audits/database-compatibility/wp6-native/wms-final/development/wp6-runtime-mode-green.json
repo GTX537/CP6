@@ -1,0 +1,140 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Label": "wp6-runtime-mode-green",
+  "Expectation": "Pass",
+  "StartedUtc": "2026-10-03T15:35:57.4529615Z",
+  "FinishedUtc": "2026-10-03T15:35:59.3379179Z",
+  "ProcessExitCode": 0,
+  "Counts": {
+    "Total": 7,
+    "Passed": 7,
+    "Failed": 0,
+    "Other": 0,
+    "Expected": 7
+  },
+  "ExpectationObserved": true,
+  "AcceptancePassed": true,
+  "Filter": "FullyQualifiedName~CP6.Tests.Persistence.DatabaseInitializationModeTests|FullyQualifiedName~CP6.Tests.Persistence.DatabaseWiringTests.Runtime_",
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Tests/CP6.Tests.csproj",
+      "Sha256": "A965279AFEB64C590EB571D7042A8197C83EE2394E26FB9A2DAF1449FE9944D8"
+    },
+    {
+      "Path": "CP6.Tests/packages.lock.json",
+      "Sha256": "654973D7905B5E124BB2DC2C97D5A7ED1E334C175E02699C225B9B097313C6E5"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedTestDatabaseTests.cs",
+      "Sha256": "CFA3FA9BB38FDBCB4A840FBF3CC6E0609B84AD0F6210E544A93449C575477DE5"
+    },
+    {
+      "Path": "eng/database-compatibility/OwnedTestDatabase.cs",
+      "Sha256": "637248865D9FBA1FEB63E011040B57817E78DE62AD3B4E03BDAEF6485FAED4A1"
+    },
+    {
+      "Path": "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs",
+      "Sha256": "EF982662792231D3A5C5B9D85A6AC8D138813EF76C491BAABC19B7054548BC64"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseInitializationModeTests.cs",
+      "Sha256": "71C5680B87DE2CAC6EBE010B006431C4F05385973432A5F11A2BB3ED04C50B36"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseWiringTests.cs",
+      "Sha256": "75C380D633CC199ACBC89D26CD96F4BDB84AC48B37A51DCFE9B6D6E6411F2843"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "D186E2DB20A9F772AAD537B30F7EC1A84114581362BC27621C384229A28692B8"
+    },
+    {
+      "Name": "CP6.Entity.dll",
+      "Sha256": "EA322D7C8D0FFE6A3162E5798FCF266843815C957613F0FEC0B2458D9E52FBAE"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "DCDA403B2DE1CE0E7D168EDE03DFB4CCFE03EC8A4B941297AF472C70D52737AF"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions.dll",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.AspNetCore.dll",
+      "Sha256": "B4D0FB90E153961A65AD65A8D096CEDEB76C61EAE488469B836064E70EF31DD8"
+    },
+    {
+      "Name": "CP6.Platform.Contracts.dll",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework.dll",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging.dll",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "CP6.Space.Application.dll",
+      "Sha256": "BBAF34B8F71321F5F486D0C083A12F53953A82C5A4D4D2BD6668C74D5BD04BB8"
+    },
+    {
+      "Name": "CP6.Space.Contracts.dll",
+      "Sha256": "D0B230BA698654BEF64E2A6FD6959A2F3094034586207B2C89D2448E898FC6C1"
+    },
+    {
+      "Name": "CP6.Space.Domain.dll",
+      "Sha256": "C0751635E801F6DE95872767978332F5375E49680796C4FEC5B85387B2F4ECBC"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure.dll",
+      "Sha256": "B33E7235E9FE476560491565B132CC79D221974B4301D7372EBC275A6E97FF34"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "4D9E163585E09AE6266277F31C201132726E908A2802D3BC25AB224EB26C9B10"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "445E9B73EB39277C8D395677DCDDE5E14B48AB834890ACB79C985A2AC4F6B9A5"
+    }
+  ],
+  "RunnerSha256": "F585020FB655C3475565725B8D8625AF707B5C5259849E8EE30B586899412072",
+  "ProcessLogSha256": "30E7FD00600B03812B499F30C4CE3CFE64C084D8161C34B8F244D39977E63E24",
+  "TrxSha256": "663C823126EDD5C6AA84689E3CF360BCC7694AA956C83863919A05F92E78461F",
+  "Cases": [
+    {
+      "Name": "CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlSupportsApplicationAndOneShotInitialization(initializeOnly: True)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization(initializeOnly: False)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.DatabaseWiringTests.Runtime_accepts_postgresql_deployment",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.DatabaseWiringTests.Runtime_accepts_existing_sql_server_deployment",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization(initializeOnly: True)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.DatabaseInitializationModeTests.NullProviderCannotBypassValidationInInitializationMode",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlSupportsApplicationAndOneShotInitialization(initializeOnly: False)",
+      "Outcome": "Passed"
+    }
+  ],
+  "Scope": "Pure selected input/configuration contract tests; no database or full application acceptance."
+}

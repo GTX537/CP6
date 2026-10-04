@@ -1,0 +1,40 @@
+Passed: Migration.Core.Forward: Applied=140, previouslyApplied=0, pending=0.
+Passed: Migration.Core.Repeat: Repeated real migration retained the same applied history.
+Passed: Catalog.Core.EveryTableAndColumn: Verified every column in 233 actual model tables.
+Passed: Catalog.Core.EveryDatabaseToken: Verified 157 native token generators; no application-only token substitute.
+Verified catalog model objects in 233 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.Core.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Write.Core.InstalledTokens: Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback.
+Passed: Migration.Space.Forward: Applied=47, previouslyApplied=0, pending=0.
+Passed: Migration.Space.Repeat: Repeated real migration retained the same applied history.
+Passed: Catalog.Space.EveryTableAndColumn: Verified every column in 83 actual model tables.
+Passed: Catalog.Space.EveryDatabaseToken: Verified 41 native token generators; no application-only token substitute.
+Verified catalog model objects in 83 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.Space.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Write.Space.InstalledTokens: Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback.
+Passed: Migration.IdentityPriority.CoreOwnership: SQL Core canonical history owns installed queue operations; standalone template identities are not falsely inserted as applied.
+Passed: Catalog.IdentityPriority.EveryTableAndColumn: Verified every column in 4 actual model tables.
+Passed: Catalog.IdentityPriority.EveryDatabaseToken: Verified 4 native token generators; no application-only token substitute.
+Verified catalog model objects in 4 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.IdentityPriority.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Write.IdentityPriority.InstalledTokens: Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback.
+Passed: Migration.ErpIntegration.CoreOwnership: SQL Core canonical history owns installed queue operations; standalone template identities are not falsely inserted as applied.
+Passed: Catalog.ErpIntegration.EveryTableAndColumn: Verified every column in 8 actual model tables.
+Passed: Catalog.ErpIntegration.EveryDatabaseToken: Verified 6 native token generators; no application-only token substitute.
+Verified catalog model objects in 8 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.ErpIntegration.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Write.ErpIntegration.InstalledTokens: Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback.
+Passed: Catalog.RawOrderDefaultsAndGlobalUniqueness: 65 original raw Order defaults on eight tables matched native catalog types and evaluated values; all eight CreateDate expressions advanced within one transaction as local wall clocks. Four exact global unique indexes are enabled, valid, unfiltered, and preserve ordered keys; PostgreSQL uses NULLS NOT DISTINCT. Read-only gate; no full Order business-graph acceptance implied.
+Passed: Catalog.ManagedOidcLedger: Both OIDC ledger tables are installed.
+Passed: Catalog.ManagedJournalGuard: Posted-journal mutation guard is present and enabled; write behavior is a separate gate.
+Passed: Write.IdentityGeneration: Installed INSERT/UPDATE/tenant move/physical DELETE advanced opaque generations; both tenant versions rolled back with the snapshot transaction.
+Passed: Write.LanguageNullAndTenantUniqueness: Actual NULL global/case/padding duplicate rejection and distinct tenant override coexistence; fixtures rolled back.
+Passed: Write.TimeDateAndNumericBoundaries: Actual microsecond UTC/wall-clock/offset and DateOnly leap-date round trips; numeric scale rounding and overflow; Min/Max sentinels; PG invalid-kind/offset rejection; full rollback. Extra SQL 100ns precision is not promised by PG.
+Passed: Write.FinancialMoneyAndForeignKey: Actual financial decimal(18,2) rounding, maximum value and overflow; native missing-parent FK rejection retained original link; fixtures rolled back. Domain posting rules are separate.
+Passed: Write.SpaceTenantForeignKeyAndUnicode: Actual Space composite FK rejected a tenant move despite the valid parent ID; 200 UTF-16 units retained, 201 ASCII/202 supplementary units rejected without truncation; complete rollback.
+Passed: Write.OrderForeignKeysAndCascades: Actual EF stored the valid six-row Order graph; each of four native FKs rejected its independently targeted orphan with the exact constraint identity; native detail/parent deletions exercised all four cascades. Entire transaction and all table counts restored; full order business validation remains separate.
+Passed: Write.QuotationAuditUnicodeCapacity: Actual EF stored the valid three-row quotation graph. All six Creator/Modifier columns retained 100 ASCII units, 50 supplementary characters and a 100-unit value with trailing spaces exactly; 101 ASCII and 50 supplementary characters plus x were rejected by the expected native storage errors and savepoints retained the previous value. The separate 101-unit input with only its final space beyond capacity was truncated to 100 units by native SQL Server with ANSI_WARNINGS ON. This excess-trailing-space behavior is outside the shared provider equivalence promise. Entire transaction and all table counts restored; full quotation business acceptance remains separate.
+Passed: Write.FinancePostingMutationRace: UPDATE and DELETE each waited on the actual posting session; after Status=2 committed, E-FIN-160 rejected both mutations and preserved both original lines. Exact fixtures removed and absence verified.
+Verified catalog model objects in 233 tables; check-expression behavior remains the separate invariant gate.
+Verified catalog model objects in 233 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.MissingIndexRollbackNegativeControl: Complete catalog passed; transaction-only missing index and wrong filter on its nullable department column were rejected by exact assertions; rollback restored the complete catalog. No business rows changed.

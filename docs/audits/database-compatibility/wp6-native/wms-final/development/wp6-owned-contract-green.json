@@ -1,0 +1,292 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Label": "wp6-owned-contract-green",
+  "Expectation": "Pass",
+  "StartedUtc": "2026-10-03T15:32:57.5150503Z",
+  "FinishedUtc": "2026-10-03T15:32:59.5363055Z",
+  "ProcessExitCode": 0,
+  "Counts": {
+    "Total": 45,
+    "Passed": 45,
+    "Failed": 0,
+    "Other": 0,
+    "Expected": 45
+  },
+  "ExpectationObserved": true,
+  "AcceptancePassed": true,
+  "Filter": "FullyQualifiedName~CP6.Tests.Persistence.OwnedTestDatabaseTests",
+  "SourcesBeforeRun": [
+    {
+      "Path": "CP6.Tests/CP6.Tests.csproj",
+      "Sha256": "A965279AFEB64C590EB571D7042A8197C83EE2394E26FB9A2DAF1449FE9944D8"
+    },
+    {
+      "Path": "CP6.Tests/packages.lock.json",
+      "Sha256": "654973D7905B5E124BB2DC2C97D5A7ED1E334C175E02699C225B9B097313C6E5"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedTestDatabaseTests.cs",
+      "Sha256": "CFA3FA9BB38FDBCB4A840FBF3CC6E0609B84AD0F6210E544A93449C575477DE5"
+    },
+    {
+      "Path": "eng/database-compatibility/OwnedTestDatabase.cs",
+      "Sha256": "637248865D9FBA1FEB63E011040B57817E78DE62AD3B4E03BDAEF6485FAED4A1"
+    },
+    {
+      "Path": "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs",
+      "Sha256": "D0C21C8A7F257E92AD1725D338677E77D1A5CFE4F61D5DE13FE8C64F6BF69B18"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseInitializationModeTests.cs",
+      "Sha256": "4F8E2D51D4C460CAA2E05408C5286F9BB6759D92C0CC15F9A00C65EE72239C3D"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/DatabaseWiringTests.cs",
+      "Sha256": "4B24DD7A0159F6DC1673536E421CCBDF1C7AFB0B6563A078ED6D13CDA4A11ABD"
+    }
+  ],
+  "BinariesBeforeRun": [
+    {
+      "Name": "CP6.Core.dll",
+      "Sha256": "D186E2DB20A9F772AAD537B30F7EC1A84114581362BC27621C384229A28692B8"
+    },
+    {
+      "Name": "CP6.Entity.dll",
+      "Sha256": "EA322D7C8D0FFE6A3162E5798FCF266843815C957613F0FEC0B2458D9E52FBAE"
+    },
+    {
+      "Name": "CP6.Persistence.PostgreSql.dll",
+      "Sha256": "DCDA403B2DE1CE0E7D168EDE03DFB4CCFE03EC8A4B941297AF472C70D52737AF"
+    },
+    {
+      "Name": "CP6.Platform.Abstractions.dll",
+      "Sha256": "E72BA501DBF4BAE31806D750199275DE23334D82F60DF9A7BF2A03F2DFDD58CD"
+    },
+    {
+      "Name": "CP6.Platform.AspNetCore.dll",
+      "Sha256": "B4D0FB90E153961A65AD65A8D096CEDEB76C61EAE488469B836064E70EF31DD8"
+    },
+    {
+      "Name": "CP6.Platform.Contracts.dll",
+      "Sha256": "24F6D4999ED9F77363C455F525626E5947470894B9334618CA18845F8FCFAA8A"
+    },
+    {
+      "Name": "CP6.Platform.EntityFramework.dll",
+      "Sha256": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC"
+    },
+    {
+      "Name": "CP6.Platform.Messaging.dll",
+      "Sha256": "F0C2467965FA5A2E2CA7A146C9D152ADEB9A00A6B1F9331596FAB6F540FFBBBB"
+    },
+    {
+      "Name": "CP6.Space.Application.dll",
+      "Sha256": "BBAF34B8F71321F5F486D0C083A12F53953A82C5A4D4D2BD6668C74D5BD04BB8"
+    },
+    {
+      "Name": "CP6.Space.Contracts.dll",
+      "Sha256": "D0B230BA698654BEF64E2A6FD6959A2F3094034586207B2C89D2448E898FC6C1"
+    },
+    {
+      "Name": "CP6.Space.Domain.dll",
+      "Sha256": "C0751635E801F6DE95872767978332F5375E49680796C4FEC5B85387B2F4ECBC"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure.dll",
+      "Sha256": "B33E7235E9FE476560491565B132CC79D221974B4301D7372EBC275A6E97FF34"
+    },
+    {
+      "Name": "CP6.Tests.dll",
+      "Sha256": "452DCD3AE7D5E4492BFC0284542544C6F36900048F9DB8710778482A0B9B4F87"
+    },
+    {
+      "Name": "CP6.WebApi.dll",
+      "Sha256": "5E777A44F47C7DCA832E44B2ADC3E4D0F52C953072186CA1FCBFA32F7530D533"
+    }
+  ],
+  "RunnerSha256": "F585020FB655C3475565725B8D8625AF707B5C5259849E8EE30B586899412072",
+  "ProcessLogSha256": "24AB899B02509FE320ECB195C03706393DC207DDED75CC33C64CCF9D387823A9",
+  "TrxSha256": "BB3152CFA48CC6DCE9C7E7989F602D86A299AE7A6066AEA7940165C41C4E46EA",
+  "Cases": [
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_nonliteral_or_ambiguous_endpoint_is_rejected(endpoint: \".\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Owner_requires_full_lowercase_receipt_and_exact_database_prefix(owner: \"\", expected: \"CP6_COMPAT_OWNER_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Either_wp6_field_selects_strict_validation_even_when_empty(key: \"CP6_COMPAT_DATABASE_NAME\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Database_name_requires_valid_date_and_one_known_role(name: \"CP6Compat_WP5_20261101_a1b2c3d4_corewms\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Database_name_requires_valid_date_and_one_known_role(name: \"CP6Compat_WP6_20261101_a1b2c3d4_corewms\\n\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Database_name_requires_valid_date_and_one_known_role(name: \"CP6Compat_WP6_20260230_a1b2c3d4_corewms\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Actual_connection_database_must_equal_the_receipt_name(provider: PostgreSql)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_requires_one_literal_loopback_host(host: \"database.example\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_custom_search_path_is_rejected_without_echoing_it",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_endpoint_is_portable_across_literal_loopback_ports_and_instances(endpoint: \"[::1],1433\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Owner_requires_full_lowercase_receipt_and_exact_database_prefix(owner: \"a1b2c3d4\", expected: \"CP6_COMPAT_OWNER_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Partial_or_noncanonical_protocol_never_falls_back_to_a_legacy_lane(scope: \"\", name: \"CP6Compat_WP6_20261101_a1b2c3d4_corewms\", owner: \"a1b2c3d4e5f60718293a4b5c6d7e8f90\", expected: \"CP6_COMPAT_SCOPE_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Owner_requires_full_lowercase_receipt_and_exact_database_prefix(owner: \"00112233445566778899aabbccddeeff\", expected: \"CP6_COMPAT_DATABASE_OWNER_MISMATCH\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_connection_pins_public_and_suppresses_server_error_details(host: \"::1\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_endpoint_is_portable_across_literal_loopback_ports_and_instances(endpoint: \"localhost\\\\NamedFixture\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Database_name_requires_valid_date_and_one_known_role(name: \"CP6Compat_WP6_2026111_a1b2c3d4_corewms\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_external_file_and_mars_cannot_enter_an_owned_test_lane(key: \"AttachDBFilename\", value: \"C:\\\\fixture-secret.mdf\", expected: \"CP6_COMPAT_SQL_ATTACH_FORBIDDEN\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_nonliteral_or_ambiguous_endpoint_is_rejected(endpoint: \"localhost.example\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_requires_one_literal_loopback_host(host: \"@abstractsocket\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Owner_requires_full_lowercase_receipt_and_exact_database_prefix(owner: \"A1B2C3D4E5F60718293A4B5C6D7E8F90\", expected: \"CP6_COMPAT_OWNER_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Partial_or_noncanonical_protocol_never_falls_back_to_a_legacy_lane(scope: \"wp6\", name: \"CP6Compat_WP6_20261101_a1b2c3d4_corewms\", owner: \"a1b2c3d4e5f60718293a4b5c6d7e8f90\", expected: \"CP6_COMPAT_SCOPE_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_nonliteral_or_ambiguous_endpoint_is_rejected(endpoint: \"database.example\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Malformed_or_missing_connections_only_emit_fixed_safe_codes(provider: SqlServer)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.A_valid_database_of_another_role_is_rejected_before_connection",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Partial_or_noncanonical_protocol_never_falls_back_to_a_legacy_lane(scope: null, name: \"CP6Compat_WP6_20261101_a1b2c3d4_corewms\", owner: \"a1b2c3d4e5f60718293a4b5c6d7e8f90\", expected: \"CP6_COMPAT_SCOPE_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Explicit_owned_input_accepts_a_dynamic_date_and_preserves_the_selected_provider(provider: PostgreSql)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_nonliteral_or_ambiguous_endpoint_is_rejected(endpoint: \"(local)\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_endpoint_is_portable_across_literal_loopback_ports_and_instances(endpoint: \"127.0.0.1,1433\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_multiplexing_is_not_a_shared_transaction_connection",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Actual_connection_database_must_equal_the_receipt_name(provider: SqlServer)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Partial_or_noncanonical_protocol_never_falls_back_to_a_legacy_lane(scope: \"WP6\", name: null, owner: \"a1b2c3d4e5f60718293a4b5c6d7e8f90\", expected: \"CP6_COMPAT_DATABASE_NAME_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_requires_one_literal_loopback_host(host: \"localhost,127.0.0.1\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_requires_one_literal_loopback_host(host: \"/var/run/postgresql\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Database_name_requires_valid_date_and_one_known_role(name: \"CP6Compat_WP6_20261101_a1b2c3d4_unknown\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_endpoint_is_portable_across_literal_loopback_ports_and_instances(endpoint: \"localhost\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Partial_or_noncanonical_protocol_never_falls_back_to_a_legacy_lane(scope: \"WP6\", name: \"CP6Compat_WP6_20261101_a1b2c3d4_corewms\", owner: null, expected: \"CP6_COMPAT_OWNER_INVALID\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Shared_owner_alone_does_not_select_wp6_or_parse_an_unselected_connection",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_endpoint_is_portable_across_literal_loopback_ports_and_instances(endpoint: \"tcp:localhost,1433\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Sql_external_file_and_mars_cannot_enter_an_owned_test_lane(key: \"MultipleActiveResultSets\", value: \"true\", expected: \"CP6_COMPAT_SQL_MARS_FORBIDDEN\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_connection_pins_public_and_suppresses_server_error_details(host: \"localhost\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Database_name_requires_valid_date_and_one_known_role(name: \"CP6Compat_WP6_20261101_a1b2c3d4_corewms_extra\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Malformed_or_missing_connections_only_emit_fixed_safe_codes(provider: PostgreSql)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Either_wp6_field_selects_strict_validation_even_when_empty(key: \"CP6_COMPAT_SCOPE\")",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.Explicit_owned_input_accepts_a_dynamic_date_and_preserves_the_selected_provider(provider: SqlServer)",
+      "Outcome": "Passed"
+    },
+    {
+      "Name": "CP6.Tests.Persistence.OwnedTestDatabaseTests.PostgreSql_connection_pins_public_and_suppresses_server_error_details(host: \"127.0.0.1\")",
+      "Outcome": "Passed"
+    }
+  ],
+  "Scope": "Pure selected input/configuration contract tests; no database or full application acceptance."
+}

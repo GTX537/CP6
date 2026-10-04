@@ -1,0 +1,54 @@
+{
+  "EntryId": "runtime-locks",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_2d7a6352_runtime",
+  "Role": "runtime",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "D2E3FC7650B99E747476F75FE01D701BAB11CC0314806652018B9515702D8C7A",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\runtime-locks\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "2D3B5B07BEEDC51DF767631966BD9CA8365A725B4597E7E0943ADE6FF00B6B12",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\runtime-locks\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "2D3B5B07BEEDC51DF767631966BD9CA8365A725B4597E7E0943ADE6FF00B6B12",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 8068,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:37:25.8298491Z",
+    "FinishedUtc": "2026-10-04T01:37:28.8320046Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "0C3296DA3F48887CD690CBD98E4ACA95797AD4AE36598093763EA6F4E0F35E41",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-locks",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.CoreExactHistory",
+      "Locks.TransactionLifecycle",
+      "Locks.SessionLifecycle",
+      "Clock.AdvancingDatabaseUtc"
+    ],
+    "ReportSha256": "12E14FFE693D12A608709F14EAE12FE5E259193E8D47B83E136971707FAFFC13",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\runtime-locks\\reports\\report.json",
+  "ReportSha256": "12E14FFE693D12A608709F14EAE12FE5E259193E8D47B83E136971707FAFFC13",
+  "FailureCode": null,
+  "Success": true
+}

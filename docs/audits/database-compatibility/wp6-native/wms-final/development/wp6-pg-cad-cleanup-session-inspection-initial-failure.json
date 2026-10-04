@@ -1,0 +1,8 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Failed",
+  "Scope": "Read-only cleanup diagnostic wrapper; the first owned receipt was already absent after partial original cleanup. Strict-mode accessing its missing Sessions field failed. The activity query actually executed and observed zero sessions. No DB mutation or source modification.",
+  "FailureCode": "DiagnosticAbsentDatabaseProperty",
+  "NativeExecution": "Read-only queries only",
+  "ScriptSha256": "32EA1D143E82EFF4762D8F5A87C49D03E93C074262D50E4C1056D2D4781ACDC3"
+}

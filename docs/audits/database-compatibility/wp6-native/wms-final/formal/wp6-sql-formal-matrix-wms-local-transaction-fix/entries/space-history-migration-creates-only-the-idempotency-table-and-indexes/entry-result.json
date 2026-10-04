@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-history-migration-creates-only-the-idempotency-table-and-indexes",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_988a9c0a_spacehistory",
+  "Role": "spacehistory",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A46BCA48803EF229E46F4CD1172BC2D8AE37BE8A2166AFE8D08ED78A099337EB",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-migration-creates-only-the-idempotency-table-and-indexes\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-migration-creates-only-the-idempotency-table-and-indexes\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 32788,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:44:10.2627493Z",
+    "FinishedUtc": "2026-10-04T01:44:20.4126982Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "199A928441CB182EF7B5E8A6FB98DCFF7A9E156F2044ED0A2F4B5949CFA9ADD0",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-history-migration-creates-only-the-idempotency-table-and-indexes",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceDesignV1SqlServerTests.Migration_creates_only_the_idempotency_table_and_indexes"
+    ],
+    "ReportSha256": "91AC9B07B0FF8EC149EA5B37393C16D69A3F32398DE3046B4FCFFCD9C2C28D12",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-migration-creates-only-the-idempotency-table-and-indexes\\private\\trx\\results.trx",
+  "ReportSha256": "91AC9B07B0FF8EC149EA5B37393C16D69A3F32398DE3046B4FCFFCD9C2C28D12",
+  "FailureCode": null,
+  "Success": true
+}

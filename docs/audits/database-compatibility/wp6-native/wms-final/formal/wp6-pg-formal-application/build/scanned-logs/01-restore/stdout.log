@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Application\CP6.Space.Application.csproj (in 100 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 321 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 13 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 2 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\CP6.Core.csproj (in 14 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Entity\CP6.Entity.csproj (in 16 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Domain\CP6.Space.Domain.csproj (in 1 ms).
+  1 of 8 projects are up-to-date for restore.

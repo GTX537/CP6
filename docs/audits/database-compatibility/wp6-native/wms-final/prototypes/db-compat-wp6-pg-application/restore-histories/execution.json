@@ -1,0 +1,39 @@
+{
+  "Id": "restore-histories",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b3a6fbee_restore",
+  "BinarySha256": "39B72830BCDD80A1109FFCE64EBD8086066FDD216C14D92699C72BFDB9B09CD7",
+  "Process": {
+    "ProcessId": 12264,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:59:54.7620177Z",
+    "FinishedUtc": "2026-10-03T15:59:58.9585953Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "4BBDCB7A641D665798DF4EC7F8327A70B605A56006683F242ADDBFFE5E9CF434",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "restore-histories",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "four-effective-history-profiles-complete"
+    ],
+    "ReportSha256": "A01AE59F4EC0D56D3D6D141F32F1F03A9FEE67F55D9AEF4A0869DA7737FE750B",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_b3a6fbee_restore",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  }
+}

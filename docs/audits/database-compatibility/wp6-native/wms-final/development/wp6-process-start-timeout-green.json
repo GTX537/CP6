@@ -1,0 +1,18 @@
+{
+  "Label": "process-start-and-timeout-green",
+  "NativeDatabaseExecuted": false,
+  "StartFailureExpected": "CP6_COMPAT_PROCESS_START_FAILED",
+  "StartFailureObserved": "CP6_COMPAT_PROCESS_START_FAILED",
+  "Timeout": {
+    "ProcessId": 20012,
+    "ExitCode": -1,
+    "StartedUtc": "2026-10-03T15:49:21.7827965Z",
+    "FinishedUtc": "2026-10-03T15:49:22.8666870Z",
+    "OwnedProcessTerminated": true,
+    "StandardOutputSha256": "D3F1971FF9C84FE2B76844C7164D80779A9089894A718DF771101DD1D953B63A",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": true
+  },
+  "ChildStillPresent": false,
+  "Passed": true
+}

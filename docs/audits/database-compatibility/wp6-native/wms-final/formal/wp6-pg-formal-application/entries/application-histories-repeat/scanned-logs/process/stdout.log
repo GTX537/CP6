@@ -1,0 +1,91 @@
+{
+  "SchemaVersion": 1,
+  "Task": "DB-COMPAT-01-WP6",
+  "Command": "histories",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+  "Role": "Application",
+  "Status": "Passed",
+  "StartedUtc": "2026-10-03T16:45:58.6190052+00:00",
+  "FinishedUtc": "2026-10-03T16:46:02.8533352+00:00",
+  "Assertions": [
+    {
+      "Name": "owner-and-physical-database-verified",
+      "Passed": true
+    },
+    {
+      "Name": "four-effective-history-profiles-complete",
+      "Passed": true
+    }
+  ],
+  "Counts": {
+    "EffectiveProfiles": 4
+  },
+  "Hashes": {},
+  "HistoryProfiles": [
+    {
+      "Context": "Core",
+      "MigrationOwner": "Core",
+      "Known": [
+        "20261002161715_PostgreSqlCoreBaselineV1"
+      ],
+      "Applied": [
+        "20261002161715_PostgreSqlCoreBaselineV1"
+      ],
+      "Pending": []
+    },
+    {
+      "Context": "Space",
+      "MigrationOwner": "Space",
+      "Known": [
+        "20261002161945_PostgreSqlSpaceBaselineV1"
+      ],
+      "Applied": [
+        "20261002161945_PostgreSqlSpaceBaselineV1"
+      ],
+      "Pending": []
+    },
+    {
+      "Context": "IdentityPriority",
+      "MigrationOwner": "IdentityPriority",
+      "Known": [
+        "20261002151342_PostgreSqlIdentityPriorityBaselineV1"
+      ],
+      "Applied": [
+        "20261002151342_PostgreSqlIdentityPriorityBaselineV1"
+      ],
+      "Pending": []
+    },
+    {
+      "Context": "ErpIntegration",
+      "MigrationOwner": "ErpIntegration",
+      "Known": [
+        "20261002151345_PostgreSqlErpIntegrationBaselineV1"
+      ],
+      "Applied": [
+        "20261002151345_PostgreSqlErpIntegrationBaselineV1"
+      ],
+      "Pending": []
+    }
+  ],
+  "TableSummaries": [],
+  "TableComparisons": [],
+  "Inputs": [
+    {
+      "Name": "CP6.DatabaseCompatibility.ApplicationProbe",
+      "Version": "1.0.0.0",
+      "Sha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E"
+    },
+    {
+      "Name": "CP6.Core",
+      "Version": "1.0.0.0",
+      "Sha256": "D186E2DB20A9F772AAD537B30F7EC1A84114581362BC27621C384229A28692B8"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "Version": "1.0.0.0",
+      "Sha256": "B33E7235E9FE476560491565B132CC79D221974B4301D7372EBC275A6E97FF34"
+    }
+  ],
+  "Scope": "WP6 owned application/restore fixture only; metadata, counts and hashes. No raw connection, password, token, DP XML or row values. Does not establish HTTP authentication, DP decryption, external delivery or complete application acceptance."
+}

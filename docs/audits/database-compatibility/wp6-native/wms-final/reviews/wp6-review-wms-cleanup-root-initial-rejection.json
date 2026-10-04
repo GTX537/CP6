@@ -1,0 +1,10 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "PathResolutionRejected",
+  "Cause": "Initial read-only row verifier incorrectly resolved reviewer tmp/ evidence rows inside WP6 worktree instead of D:/CP6. Corrected helper explicitly separates root evidence and worktree sources.",
+  "VerificationProofCreated": false,
+  "NativeExecution": false,
+  "BusinessTestExecution": false,
+  "ReviewedFilesMutated": false,
+  "CheckedUtc": "2026-10-04T01:28:34.5755248Z"
+}

@@ -1,0 +1,16 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Rejected",
+  "Scope": "First SQL Matrix invocation was rejected by runner configuration preflight before lifecycle context, native process, database creation or run directory. Original command exited 1; this is not a native business failure. Resolved by explicitly importing the previously verified local KOUSQLSERVER Windows integrated connection into only the wrapper process.",
+  "FailureCode": "CP6_COMPAT_SELECTED_PROVIDER_CONNECTION_REQUIRED",
+  "ProcessExitCode": 1,
+  "NativeExecution": false,
+  "DatabasesCreated": 0,
+  "RunDirectoryCreated": false,
+  "LocalConfigFieldsObserved": [
+    "PostgreSql"
+  ],
+  "ResolvedSource": "Same localhost KOUSQLSERVER integrated authentication used for actual BUG161 SQL gates",
+  "UserEnvironmentChanged": false,
+  "LocalConfigChanged": false
+}

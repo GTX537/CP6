@@ -1,0 +1,5 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6\tmp\wp6-sql-formal-matrix-wms-local-transaction-fix\entries\erp-business\private\trx\results.trx
+
+Passed!  - Failed:     0, Passed:    95, Skipped:     0, Total:    95, Duration: 1 m 14 s - CP6.ErpIntegration.SqlTests.dll (net8.0)

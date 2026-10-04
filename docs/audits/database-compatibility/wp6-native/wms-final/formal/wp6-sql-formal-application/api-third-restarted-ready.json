@@ -1,0 +1,27 @@
+{
+  "Success": true,
+  "ProcessId": 32564,
+  "Port": 53080,
+  "DatabaseName": "CP6Compat_WP6_20261003_cf7ab161_application",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "ArtifactManifestSha256": "1B44E974AFCB119F741403446E3025F866D5BC41C1AC3854C6288300F22D5D8F",
+  "LatestCoreMigration": "20261002193500_RestoreQuotationAuditColumnCapacity",
+  "Http": [
+    {
+      "Path": "/health/live",
+      "StatusCode": 200,
+      "BodySha256": "CF7B027A9A54CAADD16816AF5704E3A20D7469ED72FFFB64DB9A62B39E867E47"
+    },
+    {
+      "Path": "/health/ready",
+      "StatusCode": 200,
+      "BodySha256": "3A4E7C8545C0964EBC32A9103D9BF1BA801A6286BE2182A7650CF53B5C03A691"
+    },
+    {
+      "Path": "/health/release",
+      "StatusCode": 200,
+      "BodySha256": "20A7F47F6B6CA2DD6AE5369200067D6EDCBC94160AFCE6D02AB4F684C0CA3275"
+    }
+  ],
+  "CheckedUtc": "2026-10-03T16:53:04.4772041Z"
+}

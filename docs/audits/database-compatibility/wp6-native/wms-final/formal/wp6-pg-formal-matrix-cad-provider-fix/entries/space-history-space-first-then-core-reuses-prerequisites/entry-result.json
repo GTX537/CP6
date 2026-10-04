@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-history-space-first-then-core-reuses-prerequisites",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_1c1ffd5f_spacehistory",
+  "Role": "spacehistory",
+  "SourceSha": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "090BF997C5DFEFBDC5649C150A932B3B664B53BD679CEA2AEE04558BD4C40397",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-history-space-first-then-core-reuses-prerequisites\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-history-space-first-then-core-reuses-prerequisites\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 23788,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T22:40:17.7537248Z",
+    "FinishedUtc": "2026-10-03T22:40:30.6520472Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "8BE843B4F9887BB03784E65A30ED7B5E823AC01381A348456F5B721FE51FC1AB",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-history-space-first-then-core-reuses-prerequisites",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests.Space_first_then_Core_reuses_prerequisites"
+    ],
+    "ReportSha256": "C4D48012F483D6C2A2F9E17D9B632A5EC08BBD3D977D59EA4EE73D1984031031",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-history-space-first-then-core-reuses-prerequisites\\private\\trx\\results.trx",
+  "ReportSha256": "C4D48012F483D6C2A2F9E17D9B632A5EC08BBD3D977D59EA4EE73D1984031031",
+  "FailureCode": null,
+  "Success": true
+}

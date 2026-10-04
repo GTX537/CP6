@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="652c449a-9a0b-406f-84f7-8387831207ae" name="tt@LAPTOP-3QQ44FJS 2026-10-03 21:28:25" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T21:28:25.6381350-04:00" queuing="2026-10-03T21:28:25.6381352-04:00" start="2026-10-03T21:28:19.2402832-04:00" finish="2026-10-03T21:28:59.9328272-04:00" />
+  <TestSettings name="default" id="9241bd61-2d66-4434-a4d8-f07f1d49bb52">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_21_28_25" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="464f043f-5538-4de7-bebd-b472593fdb6e" testId="3ea57d1f-587a-cdcf-5ce1-250af8b0a3c6" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4372136" startTime="2026-10-03T21:28:24.7157235-04:00" endTime="2026-10-03T21:28:25.1487367-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="464f043f-5538-4de7-bebd-b472593fdb6e">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+BUG159 claim native failure: SQLSTATE=23505; Kind=UniqueConstraint; Constraint=UX_Space_JobAttempt_Tenant_Job_AttemptNo.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0cc26234-1f0a-406d-b351-31361a166549" testId="a27845ee-db08-be18-5836-d6ffdcbd1eac" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4974506" startTime="2026-10-03T21:28:25.6930062-04:00" endTime="2026-10-03T21:28:26.1906259-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0cc26234-1f0a-406d-b351-31361a166549">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2a446370-94f1-4ae9-8275-c419f2d392cf" testId="4d35cdfd-9031-3df0-caec-364d10fdf6a5" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_honors_cancellation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2093122" startTime="2026-10-03T21:28:28.0654401-04:00" endTime="2026-10-03T21:28:28.2748592-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a446370-94f1-4ae9-8275-c419f2d392cf">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="08e7de96-9717-4b00-b14f-d7f2a929e6b7" testId="018e3b7d-2c36-f955-328e-42c612e5e464" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_unknown_unique_constraint_is_not_retried" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2116428" startTime="2026-10-03T21:28:27.8535067-04:00" endTime="2026-10-03T21:28:28.0652554-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08e7de96-9717-4b00-b14f-d7f2a929e6b7">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="02c1d806-6612-4c40-94ce-61f543bf488a" testId="9c78e1cd-fc10-0d28-5f15-2f62214d3767" testName="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage" computerName="LAPTOP-3QQ44FJS" duration="00:00:07.0730121" startTime="2026-10-03T21:28:30.0719832-04:00" endTime="2026-10-03T21:28:37.1452559-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02c1d806-6612-4c40-94ce-61f543bf488a">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4d823345-03e9-48a0-8ac2-269e4b649951" testId="e6e6431b-71ad-5d35-99cc-695a319292fd" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_is_bounded_and_rolls_back" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3968339" startTime="2026-10-03T21:28:26.1908019-04:00" endTime="2026-10-03T21:28:26.5877641-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d823345-03e9-48a0-8ac2-269e4b649951">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="647f59f7-bbe0-4d66-8baa-e7078e8ef728" testId="d06bf10f-8ea9-9106-05b8-621d10457611" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6314255" startTime="2026-10-03T21:28:29.1738866-04:00" endTime="2026-10-03T21:28:29.8057887-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="647f59f7-bbe0-4d66-8baa-e7078e8ef728">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="215cbcf6-e0c2-48fa-b88f-56f6594444de" testId="057ae307-378a-353b-1d83-53d74d7a9ee5" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2591238" startTime="2026-10-03T21:28:26.5879731-04:00" endTime="2026-10-03T21:28:26.8474240-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="215cbcf6-e0c2-48fa-b88f-56f6594444de">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2705400e-b06f-4100-ad0f-4cd7fb506620" testId="f8cc74ee-be86-3c69-e00a-bb302a86fc5d" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_deadlock_retries_the_whole_transaction" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2639857" startTime="2026-10-03T21:28:29.8060842-04:00" endTime="2026-10-03T21:28:30.0702086-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2705400e-b06f-4100-ad0f-4cd7fb506620">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="db996cd3-d8de-4254-adca-5e7c6be914e3" testId="7baf32b7-cbcc-927b-efea-96796f757ae2" testName="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.8795515" startTime="2026-10-03T21:28:58.4658642-04:00" endTime="2026-10-03T21:28:59.3457084-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db996cd3-d8de-4254-adca-5e7c6be914e3">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7d772144-7631-4a1c-82de-f765dfca70ac" testId="6a48518e-b035-6775-dad7-2e723334f423" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.8984478" startTime="2026-10-03T21:28:28.2750541-04:00" endTime="2026-10-03T21:28:29.1736921-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d772144-7631-4a1c-82de-f765dfca70ac">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d7ee3ab6-7465-458b-b180-abd94e112f71" testId="374f481e-aed6-53cf-149c-cda787d8e185" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2426322" startTime="2026-10-03T21:28:27.6106415-04:00" endTime="2026-10-03T21:28:27.8533158-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7ee3ab6-7465-458b-b180-abd94e112f71">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=job-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="db0f4e5f-12b6-490a-b8c3-34ba2bc03756" testId="0a3a1046-1398-e228-a502-95b56c5c29d1" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_serialization_failure_retries_the_whole_transaction" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2546194" startTime="2026-10-03T21:28:25.4380896-04:00" endTime="2026-10-03T21:28:25.6928252-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db0f4e5f-12b6-490a-b8c3-34ba2bc03756">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="efd0c10c-5431-403e-bae5-84bcfdae7fdb" testId="3f093071-7419-0abb-e98a-9005b50b440e" testName="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3766672" startTime="2026-10-03T21:28:57.3666785-04:00" endTime="2026-10-03T21:28:57.7434432-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="efd0c10c-5431-403e-bae5-84bcfdae7fdb">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=generation-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7c0facc3-1fb0-4c2a-a52f-f7a26e4fbe3e" testId="0b3ddec2-1d70-35cc-e6d2-230161ae4481" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2888702" startTime="2026-10-03T21:28:25.1498292-04:00" endTime="2026-10-03T21:28:25.4379035-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c0facc3-1fb0-4c2a-a52f-f7a26e4fbe3e">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=job-business; SQLSTATE=23503; NativeCode=none; Kind=ForeignKey.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6aada5e3-64db-4da0-8e03-1bd23b2b82ba" testId="3d3c0c7a-ca5c-c511-4b40-d7def425a3cb" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3189015" startTime="2026-10-03T21:28:27.2913080-04:00" endTime="2026-10-03T21:28:27.6104189-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6aada5e3-64db-4da0-8e03-1bd23b2b82ba">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d083e11d-303e-4bae-82d6-66f8b9a48ecf" testId="cc46fb73-2922-45ed-c771-ee71b2ec8e82" testName="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps" computerName="LAPTOP-3QQ44FJS" duration="00:00:13.5412582" startTime="2026-10-03T21:28:43.8249793-04:00" endTime="2026-10-03T21:28:57.3661965-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d083e11d-303e-4bae-82d6-66f8b9a48ecf">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="935ea280-088a-41ed-a70b-c4be783885a1" testId="2143cc6c-12a8-ea95-fcbb-7d3f18ad2f00" testName="CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1047397" startTime="2026-10-03T21:28:59.3459032-04:00" endTime="2026-10-03T21:28:59.4508365-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="935ea280-088a-41ed-a70b-c4be783885a1">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9803b85e-d3da-447e-8904-aab234bef168" testId="c5ffbda7-b659-d50c-6458-eb060eb27d35" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6022253" startTime="2026-10-03T21:28:24.1165386-04:00" endTime="2026-10-03T21:28:24.7100223-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9803b85e-d3da-447e-8904-aab234bef168">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Provider=PostgreSql; Stage=job-business; SQLSTATE=23505; NativeCode=none; Kind=UniqueConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="82575cd9-8834-420b-863a-16b441501038" testId="fef0c0e9-10b4-b83a-88d8-b8b66d7458d9" testName="CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4149107" startTime="2026-10-03T21:28:59.4509598-04:00" endTime="2026-10-03T21:28:59.8660677-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82575cd9-8834-420b-863a-16b441501038">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0317c3e0-1198-4671-8b05-57e1523d9588" testId="ab59c170-55d3-590e-1ba7-de374539b2fe" testName="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints" computerName="LAPTOP-3QQ44FJS" duration="00:00:06.6788592" startTime="2026-10-03T21:28:37.1457739-04:00" endTime="2026-10-03T21:28:43.8245971-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0317c3e0-1198-4671-8b05-57e1523d9588">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f3019668-ce21-421f-bd8d-b433bd12bff3" testId="b57c0303-f03b-69ab-927c-5d137667f741" testName="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.7218786" startTime="2026-10-03T21:28:57.7436637-04:00" endTime="2026-10-03T21:28:58.4657181-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3019668-ce21-421f-bd8d-b433bd12bff3">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c06533a3-7c4f-40f2-9d92-4d3924f3cf3e" testId="31e6316b-6d26-62f9-c892-c8d4c28e9935" testName="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4433689" startTime="2026-10-03T21:28:26.8476846-04:00" endTime="2026-10-03T21:28:27.2911173-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c06533a3-7c4f-40f2-9d92-4d3924f3cf3e">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Migration_creates_tables_and_enforces_charge_and_run_deduplication" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="3f093071-7419-0abb-e98a-9005b50b440e">
+      <Execution id="efd0c10c-5431-403e-bae5-84bcfdae7fdb" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests" name="Migration_creates_tables_and_enforces_charge_and_run_deduplication" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Concurrent_duplicate_delivery_returns_one_active_job" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="374f481e-aed6-53cf-149c-cda787d8e185">
+      <Execution id="d7ee3ab6-7465-458b-b180-abd94e112f71" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Concurrent_duplicate_delivery_returns_one_active_job" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Successful_checkpoint_is_reused_only_for_matching_input_and_processor" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="6a48518e-b035-6775-dad7-2e723334f423">
+      <Execution id="7d772144-7631-4a1c-82de-f765dfca70ac" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Successful_checkpoint_is_reused_only_for_matching_input_and_processor" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Cancellation_is_observed_at_safe_checkpoint_without_losing_lease" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="a27845ee-db08-be18-5836-d6ffdcbd1eac">
+      <Execution id="0cc26234-1f0a-406d-b351-31361a166549" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Cancellation_is_observed_at_safe_checkpoint_without_losing_lease" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_migration_and_cleanup_are_retry_safe" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="fef0c0e9-10b4-b83a-88d8-b8b66d7458d9">
+      <Execution id="82575cd9-8834-420b-863a-16b441501038" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiRetentionTests" name="SqlServer_migration_and_cleanup_are_retry_safe" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_serialization_failure_retries_the_whole_transaction" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="0a3a1046-1398-e228-a502-95b56c5c29d1">
+      <Execution id="db0f4e5f-12b6-490a-b8c3-34ba2bc03756" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Claim_serialization_failure_retries_the_whole_transaction" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="3ea57d1f-587a-cdcf-5ce1-250af8b0a3c6">
+      <Execution id="464f043f-5538-4de7-bebd-b472593fdb6e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Claim_waiter_recovers_native_attempt_number_conflict" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Retry_reuses_only_matching_successful_checkpoints" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="ab59c170-55d3-590e-1ba7-de374539b2fe">
+      <Execution id="0317c3e0-1198-4671-8b05-57e1523d9588" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests" name="Retry_reuses_only_matching_successful_checkpoints" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Explicit_retry_reuses_matching_checkpoints_from_retry_lineage" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="9c78e1cd-fc10-0d28-5f15-2f62214d3767">
+      <Execution id="02c1d806-6612-4c40-94ce-61f543bf488a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests" name="Explicit_retry_reuses_matching_checkpoints_from_retry_lineage" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_deadlock_retries_the_whole_transaction" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="f8cc74ee-be86-3c69-e00a-bb302a86fc5d">
+      <Execution id="2705400e-b06f-4100-ad0f-4cd7fb506620" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Claim_deadlock_retries_the_whole_transaction" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_is_bounded_and_rolls_back" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="e6e6431b-71ad-5d35-99cc-695a319292fd">
+      <Execution id="4d823345-03e9-48a0-8ac2-269e4b649951" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Claim_attempt_number_recovery_is_bounded_and_rolls_back" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Progress_query_returns_attempts_and_open_issue_counts" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="d06bf10f-8ea9-9106-05b8-621d10457611">
+      <Execution id="647f59f7-bbe0-4d66-8baa-e7078e8ef728" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Progress_query_returns_attempts_and_open_issue_counts" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_unknown_unique_constraint_is_not_retried" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="018e3b7d-2c36-f955-328e-42c612e5e464">
+      <Execution id="08e7de96-9717-4b00-b14f-d7f2a929e6b7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Claim_unknown_unique_constraint_is_not_retried" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Final_expired_attempt_is_deadlettered_instead_of_claimed_again" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="3d3c0c7a-ca5c-c511-4b40-d7def425a3cb">
+      <Execution id="6aada5e3-64db-4da0-8e03-1bd23b2b82ba" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Final_expired_attempt_is_deadlettered_instead_of_claimed_again" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_tenant_lock_rejects_concurrent_cleanup" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="2143cc6c-12a8-ea95-fcbb-7d3f18ad2f00">
+      <Execution id="935ea280-088a-41ed-a70b-c4be783885a1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiRetentionTests" name="SqlServer_tenant_lock_rejects_concurrent_cleanup" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_honors_cancellation" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="4d35cdfd-9031-3df0-caec-364d10fdf6a5">
+      <Execution id="2a446370-94f1-4ae9-8275-c419f2d392cf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Claim_attempt_number_recovery_honors_cancellation" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="0b3ddec2-1d70-35cc-e6d2-230161ae4481">
+      <Execution id="7c0facc3-1fb0-4c2a-a52f-f7a26e4fbe3e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Attempt_foreign_key_and_query_filter_reject_cross_tenant_job_access" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Active_business_key_is_unique_and_tenant_scoped" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="c5ffbda7-b659-d50c-6458-eb060eb27d35">
+      <Execution id="9803b85e-d3da-447e-8904-aab234bef168" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Active_business_key_is_unique_and_tenant_scoped" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="31e6316b-6d26-62f9-c892-c8d4c28e9935">
+      <Execution id="c06533a3-7c4f-40f2-9d92-4d3924f3cf3e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Expired_lease_takeover_abandons_old_attempt_and_fences_old_worker" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Decision_service_accepts_once_completes_review_and_replays" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="b57c0303-f03b-69ab-927c-5d137667f741">
+      <Execution id="f3019668-ce21-421f-bd8d-b433bd12bff3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests" name="Decision_service_accepts_once_completes_review_and_replays" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests.Filtered_runner_persists_only_import_and_build_scene_steps" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="cc46fb73-2922-45ed-c771-ee71b2ec8e82">
+      <Execution id="d083e11d-303e-4bae-82d6-66f8b9a48ecf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobProcessorPersistenceTests" name="Filtered_runner_persists_only_import_and_build_scene_steps" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Two_workers_competing_for_one_job_create_one_attempt" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="057ae307-378a-353b-1d83-53d74d7a9ee5">
+      <Execution id="215cbcf6-e0c2-48fa-b88f-56f6594444de" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceJobSqlServerTests" name="Two_workers_competing_for_one_job_create_one_attempt" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests.Modified_values_materialize_once_for_a_same_source_rerun" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="7baf32b7-cbcc-927b-efea-96796f757ae2">
+      <Execution id="db996cd3-d8de-4254-adca-5e7c6be914e3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceGenerationPersistenceTests" name="Modified_values_materialize_once_for_a_same_source_rerun" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3ea57d1f-587a-cdcf-5ce1-250af8b0a3c6" executionId="464f043f-5538-4de7-bebd-b472593fdb6e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a27845ee-db08-be18-5836-d6ffdcbd1eac" executionId="0cc26234-1f0a-406d-b351-31361a166549" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d35cdfd-9031-3df0-caec-364d10fdf6a5" executionId="2a446370-94f1-4ae9-8275-c419f2d392cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="018e3b7d-2c36-f955-328e-42c612e5e464" executionId="08e7de96-9717-4b00-b14f-d7f2a929e6b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c78e1cd-fc10-0d28-5f15-2f62214d3767" executionId="02c1d806-6612-4c40-94ce-61f543bf488a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6e6431b-71ad-5d35-99cc-695a319292fd" executionId="4d823345-03e9-48a0-8ac2-269e4b649951" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d06bf10f-8ea9-9106-05b8-621d10457611" executionId="647f59f7-bbe0-4d66-8baa-e7078e8ef728" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="057ae307-378a-353b-1d83-53d74d7a9ee5" executionId="215cbcf6-e0c2-48fa-b88f-56f6594444de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8cc74ee-be86-3c69-e00a-bb302a86fc5d" executionId="2705400e-b06f-4100-ad0f-4cd7fb506620" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7baf32b7-cbcc-927b-efea-96796f757ae2" executionId="db996cd3-d8de-4254-adca-5e7c6be914e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a48518e-b035-6775-dad7-2e723334f423" executionId="7d772144-7631-4a1c-82de-f765dfca70ac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="374f481e-aed6-53cf-149c-cda787d8e185" executionId="d7ee3ab6-7465-458b-b180-abd94e112f71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a3a1046-1398-e228-a502-95b56c5c29d1" executionId="db0f4e5f-12b6-490a-b8c3-34ba2bc03756" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3f093071-7419-0abb-e98a-9005b50b440e" executionId="efd0c10c-5431-403e-bae5-84bcfdae7fdb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b3ddec2-1d70-35cc-e6d2-230161ae4481" executionId="7c0facc3-1fb0-4c2a-a52f-f7a26e4fbe3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3d3c0c7a-ca5c-c511-4b40-d7def425a3cb" executionId="6aada5e3-64db-4da0-8e03-1bd23b2b82ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc46fb73-2922-45ed-c771-ee71b2ec8e82" executionId="d083e11d-303e-4bae-82d6-66f8b9a48ecf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2143cc6c-12a8-ea95-fcbb-7d3f18ad2f00" executionId="935ea280-088a-41ed-a70b-c4be783885a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c5ffbda7-b659-d50c-6458-eb060eb27d35" executionId="9803b85e-d3da-447e-8904-aab234bef168" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fef0c0e9-10b4-b83a-88d8-b8b66d7458d9" executionId="82575cd9-8834-420b-863a-16b441501038" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab59c170-55d3-590e-1ba7-de374539b2fe" executionId="0317c3e0-1198-4671-8b05-57e1523d9588" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b57c0303-f03b-69ab-927c-5d137667f741" executionId="f3019668-ce21-421f-bd8d-b433bd12bff3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31e6316b-6d26-62f9-c892-c8d4c28e9935" executionId="c06533a3-7c4f-40f2-9d92-4d3924f3cf3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="23" executed="23" passed="23" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.11]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.16]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:40.29]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

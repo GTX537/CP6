@@ -1,0 +1,42 @@
+{
+  "Id": "application-state-capture",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+  "BinarySha256": "39B72830BCDD80A1109FFCE64EBD8086066FDD216C14D92699C72BFDB9B09CD7",
+  "Process": {
+    "ProcessId": 9280,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:59:35.9232484Z",
+    "FinishedUtc": "2026-10-03T15:59:40.8077666Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "B08A01F6DA4FE6279EAC931A7B03D704F4AE3D5BEF6511EF7BFF3553AEAE599B",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-state-capture",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "four-effective-history-profiles-complete",
+      "native-all-tables-captured",
+      "capture-single-consistent-transaction",
+      "private-state-created-exclusive"
+    ],
+    "ReportSha256": "40C6E0385EB9E5A110DF6EB491E041506EEF324987AF842B4708662CBE079125",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  }
+}

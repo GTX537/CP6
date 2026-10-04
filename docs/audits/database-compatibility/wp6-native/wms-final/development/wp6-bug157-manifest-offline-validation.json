@@ -1,0 +1,17 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Scope": "Actual offline manifest parser and entry contracts after clone16-to23 delta. No .NET or native database execution.",
+  "ManifestSha256": "1EA3B68A17F79DFACC3FF5A85D20D45DD7BDA4603A5566BD9BC9C76A1741307C",
+  "Results": {
+    "ManifestEntries": 62,
+    "Assertions": 461,
+    "ExitCode": 0,
+    "ArchivedReports": 59
+  },
+  "Entries": {
+    "Checks": 510,
+    "Passed": true,
+    "ExitCode": 0
+  },
+  "CheckedUtc": "2026-10-03T19:49:33.1533734Z"
+}

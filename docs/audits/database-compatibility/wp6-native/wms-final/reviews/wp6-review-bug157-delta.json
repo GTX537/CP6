@@ -1,0 +1,35 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Scope": "Incremental review of delivered BUG157 integration and exact clone-case delta only; prior task-level WP6 module reviews and unchanged execution logic are reused, not rerun. Git blob identity is source-semantic proof; Windows new-file line endings and exact run-input hashes are separately rebound in forthcoming final native executions.",
+  "IntegratedHead": "e9fed72ba46015ddcf2be14c3c804487bad65a72",
+  "RemoteMain": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "SourceFiles": [
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+      "MainBlob": "cc34c2ce068aba0c8f632ed9b59c7b6013795c55",
+      "WorkingFileBlob": "cc34c2ce068aba0c8f632ed9b59c7b6013795c55",
+      "WorkingByteSha256": "11696A35B0FAAD742EBBF06C40619AFBFB1F38DE82D0BB6280B4059A8CC3ECAB"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.cs",
+      "MainBlob": "f653445db9fc5e768c979619d016f0489058d07a",
+      "WorkingFileBlob": "f653445db9fc5e768c979619d016f0489058d07a",
+      "WorkingByteSha256": "FC65F18FDE602A34E2CE819CE26A2C538948472C24517A59EED1D02E56D80CF1"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceVersionCloneSqlServerTests.FloorRecoveryTests.cs",
+      "MainBlob": "4388d126b6f24ab1ab46dd1d95aa0f43a17edad9",
+      "WorkingFileBlob": "4388d126b6f24ab1ab46dd1d95aa0f43a17edad9",
+      "WorkingByteSha256": "4D10D37847E0218C3AB7C5DADFCB035D6CBE41A8BD077A8753DD328563ECC20C"
+    }
+  ],
+  "TargetEntryDeltaProofSha256": "5F7F40E2EA7A02AD48D479F0AE81AF6ADD6AF906E20FF05BF192A745FC9DA768",
+  "Other61EntriesUnchanged": true,
+  "OfflineEntriesChecks": 510,
+  "OfflineResultsAssertions": 461,
+  "ArchivedRawReportsChecked": 59,
+  "NativeExecutedByTheseChecks": false,
+  "SubstantiveBlockers": [],
+  "Remaining": "Current complete two-provider Matrix/Application native acceptance, archive and normal WP6 remote delivery",
+  "CheckedUtc": "2026-10-03T19:49:33.1200563Z"
+}

@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-history-migration-creates-only-design-tables-and-separate-history",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_30937f08_spacehistory",
+  "Role": "spacehistory",
+  "SourceSha": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "090BF997C5DFEFBDC5649C150A932B3B664B53BD679CEA2AEE04558BD4C40397",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-history-migration-creates-only-design-tables-and-separate-history\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-history-migration-creates-only-design-tables-and-separate-history\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 33220,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T22:40:10.6067032Z",
+    "FinishedUtc": "2026-10-03T22:40:16.1073242Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "93002575E1E4D113F484DC5D9E1385C6A91F884ED83C50DAF03F62748B09FB9B",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-history-migration-creates-only-design-tables-and-separate-history",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Migration_creates_only_design_tables_and_separate_history"
+    ],
+    "ReportSha256": "B98C05A55ABB7A827661DC39A4825C2BF79F1EC287F210F65E12EFCB19E54A09",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-history-migration-creates-only-design-tables-and-separate-history\\private\\trx\\results.trx",
+  "ReportSha256": "B98C05A55ABB7A827661DC39A4825C2BF79F1EC287F210F65E12EFCB19E54A09",
+  "FailureCode": null,
+  "Success": true
+}

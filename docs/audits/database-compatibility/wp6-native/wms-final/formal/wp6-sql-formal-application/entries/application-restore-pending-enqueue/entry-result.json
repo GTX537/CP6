@@ -1,0 +1,51 @@
+{
+  "EntryId": "application-restore-pending-enqueue",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_cf7ab161_application",
+  "Role": "application",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-restore-pending-enqueue\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-restore-pending-enqueue\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 34052,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:53:32.7202123Z",
+    "FinishedUtc": "2026-10-03T16:53:35.2703294Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "7A373DCD64A5082D87C3E1E832837FACB5B93316AC12C8F3C556C2CC3A26A2AD",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-restore-pending-enqueue",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "production-outbox-service-committed-one-row"
+    ],
+    "ReportSha256": "A98AC6E126F024F8CADA1E76218E924DF59D8AA62063914D4077BB1915FA08E3",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_cf7ab161_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-restore-pending-enqueue\\reports\\report.json",
+  "ReportSha256": "A98AC6E126F024F8CADA1E76218E924DF59D8AA62063914D4077BB1915FA08E3",
+  "FailureCode": null,
+  "Success": true
+}

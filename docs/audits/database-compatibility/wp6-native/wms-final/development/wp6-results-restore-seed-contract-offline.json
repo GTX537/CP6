@@ -1,0 +1,24 @@
+{
+  "Label": "wp6-results-restore-seed-contract-offline",
+  "Verification": {
+    "Status": "Passed",
+    "Scope": "Offline parser self-tests only; no .NET process or database execution",
+    "Assertions": 433,
+    "ArchivedReports": 57,
+    "ManifestEntries": 57
+  },
+  "Hashes": [
+    {
+      "Path": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\eng\\database-compatibility\\required-cases.json",
+      "Hash": "5CC3E1E17E783D3FEE4AB1D606B57D8FE4E31F02117D97830B1CA05E62B2AB01"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\DatabaseCompatibilityResults.psm1",
+      "Hash": "F11F2B002113ACD8130DC6D49F83A45412D5318820860A6046D56DC3DA311A5A"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\scripts\\database-compatibility\\Test-DatabaseCompatibilityResults.ps1",
+      "Hash": "F42683DE5EBBA6EBA1F0B3A057A21216B8007B892D0D1ECC38EE66EC0B7628A7"
+    }
+  ]
+}

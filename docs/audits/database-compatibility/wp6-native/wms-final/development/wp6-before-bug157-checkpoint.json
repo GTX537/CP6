@@ -1,0 +1,161 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Purpose": "Preserve five owned WP6 drafts and 31 BUG155 post-merge originals before integrating normally delivered BUG157. No final acceptance or remote WP6 delivery claim.",
+  "Base": "8f2cc01ddcf43d6bcf0c236fed2ab038687fd1f4",
+  "Checkpoint": "c057d2d7790b7813a36fa80a0e0fc798283ab254",
+  "Inputs": [
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-before-merge-final-workflow-input-inspection.json",
+      "Sha256": "24035E71B39DE371ABEF76E690065CDC4998FCA97AC9910084165CBEC84B86F1"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-before-merge-workflow-input-inspection.json",
+      "Sha256": "932C50CEFA02DB5178F6083869A68FFC1FAC1CB8123F9C00AC51AFB90A573A60"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-before-pr-create-workflow-input-inspection.json",
+      "Sha256": "1E948FF987EA65420E1F23797EA0216DE23973D98740761F5C52EFAECEBEC55B"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-before-push-workflow-input-inspection.json",
+      "Sha256": "93DAA8E082891F7612A2572F85D4C7E87BC4A545482A9429F33EC6D88675EB74"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-cleanup-owned-two.json",
+      "Sha256": "1998C3C2D93C6F6D701966F5D8C3DBA167A98BFDF3E776CD924E88EFB57CA471"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-closure-comment.md",
+      "Sha256": "47B6EBCC14D8E4392DBCCE792140EC128695722AEF7F66274EE73F7E9FCA0B73"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-closure.json",
+      "Sha256": "A38C694728D706E4280CF7380DCB13B3B5982CC54D9C1C3AB0A16D052EC33C23"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-final-staging-proof.json",
+      "Sha256": "6F77198D85430D461C20D3979FEC64A624A0D0C7DDADA1C53A187363AFA07A51"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-main-protection-observation.json",
+      "Sha256": "501F568B8E156061633D7D26DA61BF604008B2005CE4828566385967F032EE2E"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pg-postmerge-smoke/private/test/stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pg-postmerge-smoke/private/test/stdout.log",
+      "Sha256": "F92AF24445B1FC19B0BC96FB70930A843081E7382F8628C393E317DE60EF344A"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pg-postmerge-smoke/private/trx/results.trx",
+      "Sha256": "103D4FF9463295A3D1158930EF8376AF0117064825421AE06D4AF6943B1D6BB5"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pg-postmerge-smoke/result.json",
+      "Sha256": "219579144BB2030322BBC046BA90AD8858B391775C757FB3D04EC9B545A91B7E"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pg-postmerge-smoke/runtime-artifact-after.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pg-postmerge-smoke/runtime-artifact-before.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pg-postmerge-smoke/source-inputs.json",
+      "Sha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-postmerge-verification.json",
+      "Sha256": "FD9FAEA11C9E834280242BD2C9F5CB7C8BA8BB1BD87DD5B2BF4C1312AD944E29"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pr-body.md",
+      "Sha256": "F0000D87E23B87F6E218854E9362316C50ED92A850177BEAD4D093DE3C42CB5A"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pr-files-paginated.json",
+      "Sha256": "2DB7FECAE450416D1BD1170193B136039254E6C56FC091FD9C83DFD41A89195C"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pr-premerge-readback.json",
+      "Sha256": "DF0FA1CE2E437EC6A3B702B2C7428C1D6ADC332F1BA9ECA115E78817E517DB84"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-pr-review-threads.json",
+      "Sha256": "EE948D473F7A4956120EBD511C7A9E12FDEF87ED82ACD4B23DA2776B4527E379"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-remote-main-verification.json",
+      "Sha256": "ED16A59554C24A4DA95B2148544D1A265C30B78884541885A04D9CD93A6E097F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-sql-postmerge-smoke/private/test/stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-sql-postmerge-smoke/private/test/stdout.log",
+      "Sha256": "2347BC1E4B035AA6A63EEA6FFE118331409FCBAE10FF7751E2AF8EDADD26E846"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-sql-postmerge-smoke/private/trx/results.trx",
+      "Sha256": "53A9127A30E1E6103B14CC4623B4FB2241D4896292BFB767CF51A70CF532FCB1"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-sql-postmerge-smoke/result.json",
+      "Sha256": "1D893AC3225ABE75A7725A39420A431072C6D2E129B7858212DC4080334297C5"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-sql-postmerge-smoke/runtime-artifact-after.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-sql-postmerge-smoke/runtime-artifact-before.json",
+      "Sha256": "1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/bug155-sql-postmerge-smoke/source-inputs.json",
+      "Sha256": "A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/Invoke-Bug155Tests.ps1",
+      "Sha256": "984014A9F4925A5FC30BA4608EC6FFF154D1418A0C8533DE26E41E3D802FFE6C"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/manifest.json",
+      "Sha256": "7D961949B610929EB7DE93A16463AE2A262C1763129EBC3AC7F4451396D58AF0"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/native/post-merge/Remove-Bug155OwnedDatabases.ps1",
+      "Sha256": "C5AF89CC328D44F10E5FE25D65F2009FED80203D4FFA4EE12F16069FAA1B8C83"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-155-space-validation-retry/README.md",
+      "Sha256": "FE8E685A67CAE5FC48A78BA09E5214D4B700F9B9D020BB725F8C64E14D7EA415"
+    },
+    {
+      "Path": "docs/audits/database-compatibility/WP6-IMPLEMENTATION.md",
+      "Sha256": "525F070C220CB8DF1B7F472A2F501EEB56435098C505C30E6811AC78AD8C92C2"
+    },
+    {
+      "Path": "docs/devops/DATABASE-COMPATIBILITY.md",
+      "Sha256": "2D00503B4CB223592BB4047BF1270B46CFE10587196279EC122A43F18352E874"
+    },
+    {
+      "Path": "docs/superpowers/plans/2026-10-02-database-compatibility.md",
+      "Sha256": "68259C5A9476A5F4CFF3D33B1263C5C93BC196FEEDA51AF05D5D1DBAD0486C9A"
+    },
+    {
+      "Path": "eng/database-compatibility/required-cases.json",
+      "Sha256": "7CA38B226DB019D2C8A50F695640E6608D3B73888A4437BECF9B2F93956108ED"
+    }
+  ],
+  "Files": 37,
+  "ArchiveOriginalsPreserved": 31,
+  "RemotePushPerformed": false,
+  "UnrelatedRootWorkspaceUntouched": true,
+  "CreatedUtc": "2026-10-03T19:39:05.6426035Z"
+}

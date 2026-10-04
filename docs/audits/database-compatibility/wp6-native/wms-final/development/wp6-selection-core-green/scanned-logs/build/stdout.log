@@ -1,0 +1,9 @@
+D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\DatabaseCompatibility\PermissionsRelationalTests.cs(148,9): warning xUnit2017: Do not use Assert.False() to check if a value exists in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\CP6.Tests.csproj]
+
+Build succeeded.
+
+D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\DatabaseCompatibility\PermissionsRelationalTests.cs(148,9): warning xUnit2017: Do not use Assert.False() to check if a value exists in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\CP6.Tests.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.07

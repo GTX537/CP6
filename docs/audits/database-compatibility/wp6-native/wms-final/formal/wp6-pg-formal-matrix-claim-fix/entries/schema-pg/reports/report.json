@@ -1,0 +1,228 @@
+{
+  "Scope": "WP6 runner-owned database: WP2 real four-context migration/catalog installation and explicitly named representative write gates; full business and restoration gates separate",
+  "Provider": "PostgreSql",
+  "StartedUtc": "2026-10-03T21:22:36.3509143Z",
+  "FinishedUtc": "2026-10-03T21:23:01.1005644Z",
+  "SourceBase": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "SourceState": "WP6 runner task input; applicable build log, source-file and runtime-binary hashes required",
+  "DatabaseVersion": "18.6",
+  "RuntimeBinaries": {
+    "CP6.Core": "FFCFF11BA6F360F3DC66AFA056D99A2EDD083C771D73948FD6BBDD80593C1998",
+    "CP6.DatabaseCompatibility.MigrationProbe": "C420A4B17142507CC5BC2E34C0A279DD501D261D5A19D51FFB674EEFE6375E2F",
+    "CP6.Persistence.PostgreSql": "76F0A76BD47015C427D35A0F1DA14869C29A323C40122DEA2E1E93FE06D44CF7",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Space.Infrastructure": "1F854BACDDC1ED55C691C054450AA6BB8242E33DDF09D38FD20BB348D38BBC4D",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [
+    {
+      "Context": "Core",
+      "Tables": 233,
+      "TokenTables": 157
+    },
+    {
+      "Context": "Space",
+      "Tables": 83,
+      "TokenTables": 41
+    },
+    {
+      "Context": "IdentityPriority",
+      "Tables": 4,
+      "TokenTables": 4
+    },
+    {
+      "Context": "ErpIntegration",
+      "Tables": 8,
+      "TokenTables": 6
+    }
+  ],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded WP6 loopback, dedicated name, role and task ownership verified before migration."
+    },
+    {
+      "Name": "Migration.Core.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=1, previouslyApplied=0, pending=0."
+    },
+    {
+      "Name": "Migration.Core.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.Core.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 233 actual model tables."
+    },
+    {
+      "Name": "Catalog.Core.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 157 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.Core.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Write.Core.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Migration.Space.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=1, previouslyApplied=0, pending=0."
+    },
+    {
+      "Name": "Migration.Space.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.Space.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 83 actual model tables."
+    },
+    {
+      "Name": "Catalog.Space.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 41 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.Space.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Write.Space.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Migration.IdentityPriority.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=1, previouslyApplied=0, pending=0."
+    },
+    {
+      "Name": "Migration.IdentityPriority.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 4 actual model tables."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 4 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Write.IdentityPriority.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Migration.ErpIntegration.Forward",
+      "Status": "Passed",
+      "Detail": "Applied=1, previouslyApplied=0, pending=0."
+    },
+    {
+      "Name": "Migration.ErpIntegration.Repeat",
+      "Status": "Passed",
+      "Detail": "Repeated real migration retained the same applied history."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 8 actual model tables."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 6 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Write.ErpIntegration.InstalledTokens",
+      "Status": "Passed",
+      "Detail": "Installed actual context EF insert/update exact eight-byte readback, native and ExecuteUpdate token advance, both stale EF rejections and complete fixture rollback."
+    },
+    {
+      "Name": "Catalog.RawOrderDefaultsAndGlobalUniqueness",
+      "Status": "Passed",
+      "Detail": "65 original raw Order defaults on eight tables matched native catalog types and evaluated values; all eight CreateDate expressions advanced within one transaction as local wall clocks. Four exact global unique indexes are enabled, valid, unfiltered, and preserve ordered keys; PostgreSQL uses NULLS NOT DISTINCT. Read-only gate; no full Order business-graph acceptance implied."
+    },
+    {
+      "Name": "Catalog.ManagedOidcLedger",
+      "Status": "Passed",
+      "Detail": "Both OIDC ledger tables are installed."
+    },
+    {
+      "Name": "Catalog.ManagedJournalGuard",
+      "Status": "Passed",
+      "Detail": "Posted-journal mutation guard is present and enabled; write behavior is a separate gate."
+    },
+    {
+      "Name": "Write.IdentityGeneration",
+      "Status": "Passed",
+      "Detail": "Installed INSERT/UPDATE/tenant move/physical DELETE advanced opaque generations; both tenant versions rolled back with the snapshot transaction."
+    },
+    {
+      "Name": "Write.LanguageNullAndTenantUniqueness",
+      "Status": "Passed",
+      "Detail": "Actual NULL global/case/padding duplicate rejection and distinct tenant override coexistence; fixtures rolled back."
+    },
+    {
+      "Name": "Write.TimeDateAndNumericBoundaries",
+      "Status": "Passed",
+      "Detail": "Actual microsecond UTC/wall-clock/offset and DateOnly leap-date round trips; numeric scale rounding and overflow; Min/Max sentinels; PG invalid-kind/offset rejection; full rollback. Extra SQL 100ns precision is not promised by PG."
+    },
+    {
+      "Name": "Write.FinancialMoneyAndForeignKey",
+      "Status": "Passed",
+      "Detail": "Actual financial decimal(18,2) rounding, maximum value and overflow; native missing-parent FK rejection retained original link; fixtures rolled back. Domain posting rules are separate."
+    },
+    {
+      "Name": "Write.SpaceTenantForeignKeyAndUnicode",
+      "Status": "Passed",
+      "Detail": "Actual Space composite FK rejected a tenant move despite the valid parent ID; 200 UTF-16 units retained, 201 ASCII/202 supplementary units rejected without truncation; complete rollback."
+    },
+    {
+      "Name": "Write.OrderForeignKeysAndCascades",
+      "Status": "Passed",
+      "Detail": "Actual EF stored the valid six-row Order graph; each of four native FKs rejected its independently targeted orphan with the exact constraint identity; native detail/parent deletions exercised all four cascades. Entire transaction and all table counts restored; full order business validation remains separate."
+    },
+    {
+      "Name": "Write.QuotationAuditUnicodeCapacity",
+      "Status": "Passed",
+      "Detail": "Actual EF stored the valid three-row quotation graph. All six Creator/Modifier columns retained 100 ASCII units, 50 supplementary characters and a 100-unit value with trailing spaces exactly; 101 ASCII and 50 supplementary characters plus x were rejected by the expected native storage errors and savepoints retained the previous value. The separate 101-unit input with only its final space beyond capacity was rejected by each exact managed UTF-16 check. This excess-trailing-space behavior is outside the shared provider equivalence promise. Entire transaction and all table counts restored; full quotation business acceptance remains separate."
+    },
+    {
+      "Name": "Write.FinancePostingMutationRace",
+      "Status": "Passed",
+      "Detail": "UPDATE and DELETE each waited on the actual posting session; after Status=2 committed, E-FIN-160 rejected both mutations and preserved both original lines. Exact fixtures removed and absence verified."
+    },
+    {
+      "Name": "Catalog.MissingIndexRollbackNegativeControl",
+      "Status": "Passed",
+      "Detail": "Complete catalog passed; transaction-only missing index and wrong filter on its nullable department column were rejected by exact assertions; rollback restored the complete catalog. No business rows changed."
+    }
+  ]
+}

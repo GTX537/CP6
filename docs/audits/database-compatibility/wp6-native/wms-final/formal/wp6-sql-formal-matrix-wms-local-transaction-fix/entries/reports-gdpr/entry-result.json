@@ -1,0 +1,51 @@
+{
+  "EntryId": "reports-gdpr",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_5dfd408d_reports",
+  "Role": "reports",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "54DD5DE1BAC35EBDFC43DD0F306363D489E3984FD100F3042E158A6535EB8938",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-gdpr\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-gdpr\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 33432,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:36:33.1338076Z",
+    "FinishedUtc": "2026-10-04T01:36:43.3695869Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "8815C70984EF28A5DC731BFFE5CE819D98BED66825CC41ACC8EA08ADF49D4034",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-gdpr",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant",
+      "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Native_tombstone_failure_rolls_back_purge_and_allows_later_success"
+    ],
+    "ReportSha256": "1AE0C9657BCE0B74F53A2A83FA5755A670B5301B3802A8ACCFCD47877CC31023",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-gdpr\\private\\trx\\results.trx",
+  "ReportSha256": "1AE0C9657BCE0B74F53A2A83FA5755A670B5301B3802A8ACCFCD47877CC31023",
+  "FailureCode": null,
+  "Success": true
+}

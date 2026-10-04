@@ -1,0 +1,70 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Stage": "authorization",
+  "Success": true,
+  "Checks": [
+    {
+      "Name": "admin-profile-authenticated",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "admin-role-query-authorized",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "admin-id-matches-user-api",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "anonymous-role-rejected",
+      "Passed": true,
+      "StatusCode": 401
+    },
+    {
+      "Name": "anonymous-profile-rejected",
+      "Passed": true,
+      "StatusCode": 401
+    },
+    {
+      "Name": "unprivileged-user-created-through-api",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "new-user-requires-password-change",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "new-user-password-changed-through-api",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "unprivileged-profile-authenticated-after-relogin",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "unprivileged-role-denied-by-permission",
+      "Passed": true,
+      "StatusCode": 403
+    },
+    {
+      "Name": "unprivileged-own-inbox-readable",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "unprivileged-inbox-write-denied-by-permission",
+      "Passed": true,
+      "StatusCode": 403
+    }
+  ],
+  "ExpectedCases": 12,
+  "VerificationKind": "Actual loopback HTTP requests; application process ownership is checked by the caller.",
+  "UserId": "e0e05826-7eaa-442a-b5b0-5d81ea6662b8"
+}

@@ -1,0 +1,46 @@
+{
+  "EntryId": "application-seed-prepare",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_392fff71_application",
+  "Role": "application",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "4F5051A0BB4F331676C6976EDD7EC24C3E17B6AED1715E21A0D3B6015E2A7586",
+  "Process": {
+    "ProcessId": 29568,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:03:56.8894043Z",
+    "FinishedUtc": "2026-10-03T16:03:59.4117949Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "2E8524ED0458773BE3EAFBA418C068C3CC209FAA12659E01AC73E1CD24CCAEFB",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-seed-prepare",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Seed.prepare"
+    ],
+    "ReportSha256": "E7F567E82041B90D384934A24EA90BA19A0E81FD203385A8F57621C69B4173C0",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\db-compat-wp6-sql-application\\application-seed-prepare\\reports\\report.json",
+  "ReportSha256": "E7F567E82041B90D384934A24EA90BA19A0E81FD203385A8F57621C69B4173C0",
+  "FailureCode": null,
+  "Success": true
+}

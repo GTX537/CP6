@@ -1,0 +1,62 @@
+{
+  "EntryId": "space-capacity-file",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_c5c7dc85_space",
+  "Role": "space",
+  "SourceSha": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A4DF5749ED39510CEBB445C54F4F65F962ED2972A111EB1CDA116701D78722F6",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-capacity-file\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-capacity-file\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 2624,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T21:24:04.6340874Z",
+    "FinishedUtc": "2026-10-03T21:24:27.6769135Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "C54B5F2752A09B3880A766536BE4C703177FB67062F0A192D6F10EA0488CA819",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-capacity-file",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 13,
+      "Total": 13,
+      "Passed": 13,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Underlay_calibration_is_audited_revisioned_and_idempotent",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scan_and_retention_stores_do_not_cross_tenants",
+      "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Three_concurrent_slots_succeed_and_fourth_is_rejected",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Unused_source_is_logically_removed_idempotently_and_file_is_retained",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_job_blocks_source_removal_but_terminal_job_is_retained_as_audit",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Concurrent_source_reference_and_expiration_never_delete_a_referenced_file",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Tombstone_survives_object_failure_and_can_be_completed_later",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Ready_underlay_attachment_is_revisioned_and_idempotent",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Active_design_revision_blocks_source_removal",
+      "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Expired_unsent_budget_releases_but_monthly_charge_remains",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Clean_scan_commits_file_job_and_attempt_atomically",
+      "CP6.Space.IntegrationTests.SpaceAiCapacityPersistenceTests.Budget_is_atomic_idempotent_and_usage_charges_once",
+      "CP6.Space.IntegrationTests.SpaceFileSafetySqlServerTests.Scanner_outage_returns_file_to_quarantine_and_schedules_retry"
+    ],
+    "ReportSha256": "B75E5FA4DED58C88ED51510A2042B7D6B1A9140672FA0F0BE71E771CAF9F9BB2",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-capacity-file\\private\\trx\\results.trx",
+  "ReportSha256": "B75E5FA4DED58C88ED51510A2042B7D6B1A9140672FA0F0BE71E771CAF9F9BB2",
+  "FailureCode": null,
+  "Success": true
+}

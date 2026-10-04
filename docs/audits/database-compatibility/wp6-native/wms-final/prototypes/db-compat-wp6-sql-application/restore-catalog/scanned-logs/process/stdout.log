@@ -1,0 +1,19 @@
+Passed: Catalog.Core.EveryTableAndColumn: Verified every column in 233 actual model tables.
+Passed: Catalog.Core.EveryDatabaseToken: Verified 157 native token generators; no application-only token substitute.
+Verified catalog model objects in 233 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.Core.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Catalog.Space.EveryTableAndColumn: Verified every column in 83 actual model tables.
+Passed: Catalog.Space.EveryDatabaseToken: Verified 41 native token generators; no application-only token substitute.
+Verified catalog model objects in 83 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.Space.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Catalog.IdentityPriority.EveryTableAndColumn: Verified every column in 4 actual model tables.
+Passed: Catalog.IdentityPriority.EveryDatabaseToken: Verified 4 native token generators; no application-only token substitute.
+Verified catalog model objects in 4 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.IdentityPriority.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Catalog.ErpIntegration.EveryTableAndColumn: Verified every column in 8 actual model tables.
+Passed: Catalog.ErpIntegration.EveryDatabaseToken: Verified 6 native token generators; no application-only token substitute.
+Verified catalog model objects in 8 tables; check-expression behavior remains the separate invariant gate.
+Passed: Catalog.ErpIntegration.ModelConstraintsAndStorage: Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate.
+Passed: Catalog.RawOrderDefaultsAndGlobalUniqueness: 65 original raw Order defaults on eight tables matched native catalog types and evaluated values; all eight CreateDate expressions advanced within one transaction as local wall clocks. Four exact global unique indexes are enabled, valid, unfiltered, and preserve ordered keys; PostgreSQL uses NULLS NOT DISTINCT. Read-only gate; no full Order business-graph acceptance implied.
+Passed: Catalog.ManagedOidcLedger: Both OIDC ledger tables are installed.
+Passed: Catalog.ManagedJournalGuard: Posted-journal mutation guard is present and enabled; write behavior is a separate gate.

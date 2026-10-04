@@ -1,0 +1,137 @@
+{
+  "Status": "Passed",
+  "Scope": "Pure offline fake artifact files; zero real process, listener, database or native execution",
+  "ExpectedCases": 16,
+  "Passed": 16,
+  "Failed": 0,
+  "Checks": [
+    {
+      "Entry": "Initialization",
+      "Scenario": "Unchanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "AddedFile",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "MissingFile",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "SameLengthChangedFile",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "ArtifactDirectoryChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "ManifestChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "ManifestIdentityChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "PrivateArtifactChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "Unchanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "AddedFile",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "MissingFile",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "SameLengthChangedFile",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "ArtifactDirectoryChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "ManifestChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "ManifestIdentityChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "OwnerCalls": 0
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "PrivateArtifactChanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "OwnerCalls": 0
+    }
+  ]
+}

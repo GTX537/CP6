@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="19b92356-9eba-412a-8924-4d8da3288adf" name="tt@LAPTOP-3QQ44FJS 2026-10-03 14:46:33" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T14:46:33.2998815-04:00" queuing="2026-10-03T14:46:33.2998856-04:00" start="2026-10-03T14:46:26.4578296-04:00" finish="2026-10-03T14:46:33.3033387-04:00" />
+  <TestSettings name="default" id="bd241edb-1971-4dc1-8cf1-edd5d0c50520">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_14_46_33" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0457c561-ab61-4e56-a732-dda80ec4b558" testId="484b7f65-f7e3-7ace-06f8-088b5a5c2f13" testName="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.8614187" startTime="2026-10-03T14:46:31.3667767-04:00" endTime="2026-10-03T14:46:33.2181391-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0457c561-ab61-4e56-a732-dda80ec4b558">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.&#xD;
+CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1&#xD;
+SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1&#xD;
+Native Cancel contention: blocker=35216; waiter=22952; observer=9672; PostgreSQL blocking relationship confirmed.&#xD;
+Caller-pending outcome: native SQLSTATE=40001; propagated=True; pendingState=Added; replayReads=1; runLockReads=1.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="484b7f65-f7e3-7ace-06f8-088b5a5c2f13">
+      <Execution id="0457c561-ab61-4e56-a732-dda80ec4b558" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests" name="PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="484b7f65-f7e3-7ace-06f8-088b5a5c2f13" executionId="0457c561-ab61-4e56-a732-dda80ec4b558" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:06.44]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

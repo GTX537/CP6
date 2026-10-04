@@ -1,0 +1,49 @@
+{
+  "EntryId": "runtime-locks",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_52b6ecc3_runtime",
+  "Role": "runtime",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "40D653A08E18923D22E92CAF52EE8B14E637504DC7D0C314164B8FD8C6B13692",
+  "Process": {
+    "ProcessId": 23000,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:12:28.6483086Z",
+    "FinishedUtc": "2026-10-03T16:12:32.1778040Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "7693A8A10CAFF66D4EC8606C209E650EDB1EC06F188A353BC52A7177FB48263B",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-locks",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.CoreExactHistory",
+      "Locks.TransactionLifecycle",
+      "Locks.SessionLifecycle",
+      "Clock.AdvancingDatabaseUtc"
+    ],
+    "ReportSha256": "58072295F0A9FE0B11E9EF305A0B6AF7845C9F2F159DA4386ABB96D746D31748",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\db-compat-wp6-postgresql-matrix\\runtime-locks\\reports\\report.json",
+  "ReportSha256": "58072295F0A9FE0B11E9EF305A0B6AF7845C9F2F159DA4386ABB96D746D31748",
+  "FailureCode": null,
+  "Success": true
+}

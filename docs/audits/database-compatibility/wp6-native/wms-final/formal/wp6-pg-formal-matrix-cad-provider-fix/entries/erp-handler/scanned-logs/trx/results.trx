@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a3fc0ab4-2563-493e-9aa5-f22bece53d4d" name="tt@LAPTOP-3QQ44FJS 2026-10-03 18:28:54" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T18:28:54.4596773-04:00" queuing="2026-10-03T18:28:54.4596777-04:00" start="2026-10-03T18:28:47.3720562-04:00" finish="2026-10-03T18:28:55.5406400-04:00" />
+  <TestSettings name="default" id="32576f51-b94b-4717-a7d8-09089f878f2f">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_18_28_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5abb9e20-9f88-45d7-aae4-c676ae561d81" testId="d0cb3ed0-10f9-8ee4-63cb-05ce593ab4c9" testName="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.0731048" startTime="2026-10-03T18:28:52.3590498-04:00" endTime="2026-10-03T18:28:54.4244118-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5abb9e20-9f88-45d7-aae4-c676ae561d81">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Stage=real preregistration and ERP authority; failures here remain business prerequisite failures.&#xD;
+Stage=handler; prerequisite=real preregistration completed.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bc1e49e4-499d-434c-9588-4f8a2f9cf9d1" testId="33f2ca2e-b229-b7c2-9f16-55b0c5974c2f" testName="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.0545030" startTime="2026-10-03T18:28:54.4360392-04:00" endTime="2026-10-03T18:28:55.4806218-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc1e49e4-499d-434c-9588-4f8a2f9cf9d1">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Stage=handler; prerequisite=actual tenant save and valid contract envelope, no preregistration.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="33f2ca2e-b229-b7c2-9f16-55b0c5974c2f">
+      <Execution id="bc1e49e4-499d-434c-9588-4f8a2f9cf9d1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests" name="Missing_partner_has_stable_terminal_result_without_business_mutation" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="d0cb3ed0-10f9-8ee4-63cb-05ce593ab4c9">
+      <Execution id="5abb9e20-9f88-45d7-aae4-c676ae561d81" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests" name="Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d0cb3ed0-10f9-8ee4-63cb-05ce593ab4c9" executionId="5abb9e20-9f88-45d7-aae4-c676ae561d81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="33f2ca2e-b229-b7c2-9f16-55b0c5974c2f" executionId="bc1e49e4-499d-434c-9588-4f8a2f9cf9d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="2" passed="2" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.10]   Discovered:  CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.12]   Starting:    CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:07.77]   Finished:    CP6.ErpIntegration.SqlTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

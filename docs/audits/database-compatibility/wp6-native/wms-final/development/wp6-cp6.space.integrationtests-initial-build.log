@@ -1,0 +1,14 @@
+  CP6.Space.Contracts -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Contracts\bin\Debug\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Domain -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Domain\bin\Debug\net8.0\CP6.Space.Domain.dll
+  CP6.Entity -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.Core -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\bin\Debug\net8.0\CP6.Core.dll
+  CP6.Space.Application -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Application\bin\Debug\net8.0\CP6.Space.Application.dll
+  CP6.Space.Infrastructure -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\bin\Debug\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Persistence.PostgreSql\bin\Debug\net8.0\CP6.Persistence.PostgreSql.dll
+  CP6.Space.IntegrationTests -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.79

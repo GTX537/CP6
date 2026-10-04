@@ -1,0 +1,38 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Passed",
+  "CheckedUtc": "2026-10-03T22:51:14.7188974Z",
+  "ScriptSha256": "C68FE11851D9D84164BEBC58470E45731644586D98B79121F6A031B8665F6B50",
+  "LifecycleModuleSha256": "D96CC5903DABA60CB242D715E80173C955C0191E854044F5C1F412ED1977796C",
+  "Scope": "Actual native PostgreSQL controls of bounded cleanup, followed by completion of only the eleven exact receipts from the terminal failed Matrix. Seven already absent and four normally dropped. No force disconnects. Original failed summary and all 34 successful entry reports remain unchanged; this is not a new successful Matrix.",
+  "OriginalSummarySha256": "EEF84ED7808D7D83D7389708102C3989BA03DEEDD4EA17C367123D476AC4BCD1",
+  "OriginalSummaryAnd34EntriesUnchanged": true,
+  "ControlledPersistentSession": {
+    "ObservedSessions": 1,
+    "ExpectedRejection": "CP6_COMPAT_DATABASE_HAS_SESSIONS",
+    "ElapsedSeconds": 1.1151292,
+    "AllReceiptsUnchanged": true,
+    "Client": {
+      "ProcessId": 31172,
+      "ExitCode": 0,
+      "NaturallyExited": true,
+      "OutputSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+      "ErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  },
+  "ControlledTransientSession": {
+    "ObservedSessions": 1,
+    "CleanupElapsedSeconds": 8.8293107,
+    "DefaultSessionWaitSeconds": 15,
+    "Client": {
+      "ProcessId": 36512,
+      "ExitCode": 0,
+      "NaturallyExited": true,
+      "OutputSha256": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+      "ErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  },
+  "CleanedDatabaseCount": 11,
+  "AllElevenAbsent": true,
+  "FailureCode": null
+}

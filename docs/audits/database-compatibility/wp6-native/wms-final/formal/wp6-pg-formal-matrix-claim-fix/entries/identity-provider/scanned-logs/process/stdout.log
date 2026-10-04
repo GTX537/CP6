@@ -1,0 +1,40 @@
+PASS current-provider-core-and-identity-priority-installed
+PASS business-save-produces-valid-versioned-snapshots
+PASS unchanged-authorization-does-not-advance-version
+PASS envelope-failure-rolls-back-business-version-and-outbox
+PASS snapshot-failure-rolls-back-priority-enqueue
+PASS outbox-insert-failure-rolls-back-business-and-version
+PASS concurrent-commands-commit-a-dense-version-sequence
+PASS savechanges-false-preserves-caller-state-with-one-write
+PASS savechangesasync-false-preserves-caller-state-with-one-write
+PASS native-user-disable-revokes-actual-crm-grant-jti
+PASS direct-grant-revocation-is-atomic-and-idempotent
+PASS service-revocation-is-bound-to-issuer-client-and-tenant
+PASS bootstrap-is-idempotent-and-pagination-restarts-on-change
+PASS department-move-emits-updated-descendant-paths
+PASS role-membership-and-empty-permissions-are-full-snapshots
+PASS password-and-two-factor-changes-revoke-real-grants
+PASS refresh-rotation-preserves-grant-terminal-revoke-invalidates-family
+PASS direct-family-revocation-is-atomic-across-both-sessions
+PASS tenant-disable-revokes-browser-and-service-tokens
+PASS concurrent-bootstrap-and-business-write-preserve-latest-state
+PASS failed-command-restores-caller-owned-transaction-savepoint
+C02 dispatcher existing eligible ordinary=149, priority=13; budgets=32/16; recording publisher component only.
+PASS actual-platform-dual-dispatchers-preserve-bytes-and-priority-progress
+OBSERVE C02 HTTP PostgreSql ServiceToken INSERT rejected by C02_HttpInsertReject_163b716aa4314d2fb97a1e72e12f87ae; native=23514; HTTP=503; committedIndex=0.
+OBSERVE C02 HTTP exact native INSERT fault constraint removed; remaining=0.
+PASS actual-http-tls-service-token-reader-and-native-issuance-failure
+{"observation":"service-token-revoke-native-block","provider":"PostgreSql","blocker":5664,"waiter":28216,"blocked":true}
+PASS concurrent-service-revocations-commit-one-token-snapshot-and-priority-message
+PASS service-revocation-priority-failure-rolls-back-record-snapshot-and-outbox
+C02 failure gates normal backlog drain: context=CP6Context, published=20, batch=32.
+C02 failure gates normal backlog drain: context=IdentityMessagingContext, published=3, batch=16.
+PASS actual-platform-outbox-retry-recovers-original-bytes
+C02 failure gates normal backlog drain: context=CP6Context, published=0, batch=32.
+C02 failure gates normal backlog drain: context=IdentityMessagingContext, published=0, batch=16.
+C02 failure gates normal backlog drain: context=CP6Context, published=0, batch=32.
+C02 failure gates normal backlog drain: context=IdentityMessagingContext, published=0, batch=16.
+PASS actual-platform-outbox-owner-competition-and-expired-lease-fencing
+C02 failure gates normal backlog drain: context=CP6Context, published=0, batch=32.
+C02 failure gates normal backlog drain: context=IdentityMessagingContext, published=0, batch=16.
+PASS actual-platform-outbox-ten-failures-persist-deadletter

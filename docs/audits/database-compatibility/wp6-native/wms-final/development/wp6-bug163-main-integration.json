@@ -1,0 +1,31 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Integrated",
+  "RemoteMain": "6322ac152cab7d462719169fb0301f49e9ee39ba",
+  "Head": "a7d819c89a31ad8ecccfc14136f5878d905582d1",
+  "ResolvedFiles": [
+    {
+      "Path": "docs/project-memory/PROJECT_STATE.md",
+      "Sha256": "F4B223605A1A1D5AC993EED8737ED5A1143506784157E315C8ED5A02A1CFF974",
+      "HistoricalRecordsRetained": true
+    },
+    {
+      "Path": "docs/project-memory/05-Completed.md",
+      "Sha256": "4F4504C434041F9F39AA71D5A3E6B77A87E33D47E8949CC375832261EF5DE170",
+      "HistoricalRecordsRetained": true
+    },
+    {
+      "Path": "docs/project-memory/06-Todo.md",
+      "Sha256": "2D4E8D5D761ED92FBF5B05CC87AACCCA05C4D2101B215520A2AA75F3AFD42579",
+      "HistoricalRecordsRetained": true
+    },
+    {
+      "Path": "docs/project-memory/CHANGELOG-AI.md",
+      "Sha256": "A40E0B44F46FB5A737A6737E49FE1C22A53C2D3FB31C55B9C2DDF53CA4500D3F",
+      "HistoricalRecordsRetained": true
+    }
+  ],
+  "ProductionServicesAndNewTestSourceMatchDeliveredMain": true,
+  "UntrackedPostMergeArchiveRetained": true,
+  "NativeExecution": false
+}

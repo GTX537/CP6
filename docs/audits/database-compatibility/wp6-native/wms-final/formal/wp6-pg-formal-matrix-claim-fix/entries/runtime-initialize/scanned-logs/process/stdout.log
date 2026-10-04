@@ -1,0 +1,3 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP6 name, role, provider and owner verified.
+Passed: Installation.Core: Exact Core history=1, pending=0; no full catalog or business acceptance implied.
+Passed: Orders.ImmediateAllocation: Actual DocNumber reserved1 without SaveChanges; separate connection read1 and no pending manual counter changes.

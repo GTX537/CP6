@@ -1,0 +1,42 @@
+{
+  "Id": "application-notification-dispatched",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+  "BinarySha256": "39B72830BCDD80A1109FFCE64EBD8086066FDD216C14D92699C72BFDB9B09CD7",
+  "Process": {
+    "ProcessId": 22076,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:59:29.8508889Z",
+    "FinishedUtc": "2026-10-03T15:59:32.2686387Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "9443131D8AA648DB28F4D5B82B412C246B0E2690A32C3D96DDB32C08D820ACD3",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-notification-dispatched",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "notification-one-owned-row",
+      "notification-status-exact",
+      "notification-attempts-exact",
+      "notification-success-persisted"
+    ],
+    "ReportSha256": "81064AB2DC1AD48B6B8789125FB7B813F5967265A07A3316CF08EE8F3585FFDD",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  }
+}

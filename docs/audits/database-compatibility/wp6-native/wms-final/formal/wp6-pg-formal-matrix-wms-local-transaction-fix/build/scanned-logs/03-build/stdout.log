@@ -1,0 +1,18 @@
+  CP6.Entity -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.Core -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\bin\Debug\net8.0\CP6.Core.dll
+  CP6.Space.Contracts -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Contracts\bin\Debug\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Domain -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Domain\bin\Debug\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Application -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Application\bin\Debug\net8.0\CP6.Space.Application.dll
+  CP6.Space.Infrastructure -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\bin\Debug\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Persistence.PostgreSql\bin\Debug\net8.0\CP6.Persistence.PostgreSql.dll
+  CP6.WebApi -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.WebApi\bin\Debug\net8.0\CP6.WebApi.dll
+D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\DatabaseCompatibility\PermissionsRelationalTests.cs(148,9): warning xUnit2017: Do not use Assert.False() to check if a value exists in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\CP6.Tests.csproj]
+  CP6.Tests -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll
+
+Build succeeded.
+
+D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\DatabaseCompatibility\PermissionsRelationalTests.cs(148,9): warning xUnit2017: Do not use Assert.False() to check if a value exists in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\CP6.Tests.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.10

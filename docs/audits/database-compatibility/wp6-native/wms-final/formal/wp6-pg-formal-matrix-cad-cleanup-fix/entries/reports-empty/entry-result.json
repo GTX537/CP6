@@ -1,0 +1,53 @@
+{
+  "EntryId": "reports-empty",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_94b0e2b6_reports",
+  "Role": "reports",
+  "SourceSha": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "CEF15F290AC2412407FBD4A6E7E7CBFDB4F4B2F98D45DD8FEC31D4276F52FD97",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\entries\\reports-empty\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "194D2A9D7D236533FD225E9EBDA6D82F9DEE5A0CD34EF4F78C1EC1EB82892347",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\entries\\reports-empty\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "194D2A9D7D236533FD225E9EBDA6D82F9DEE5A0CD34EF4F78C1EC1EB82892347",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 22252,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T23:04:59.7795790Z",
+    "FinishedUtc": "2026-10-03T23:05:09.9428744Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "A3B6CC111C47A2D59E8AD140004EC873DC9345EFE046C779B17DA036EB38A634",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-empty",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 4,
+      "Total": 4,
+      "Passed": 4,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database",
+      "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days",
+      "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty",
+      "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero"
+    ],
+    "ReportSha256": "88BFED8E1076E6CE52173C39323C768159CF31F88D8087AD33D62EEE41321268",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\entries\\reports-empty\\private\\trx\\results.trx",
+  "ReportSha256": "88BFED8E1076E6CE52173C39323C768159CF31F88D8087AD33D62EEE41321268",
+  "FailureCode": null,
+  "Success": true
+}

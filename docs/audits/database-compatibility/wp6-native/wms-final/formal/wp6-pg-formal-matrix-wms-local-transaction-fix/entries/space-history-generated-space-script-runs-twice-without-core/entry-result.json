@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-history-generated-space-script-runs-twice-without-core",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261004_18ba52b8_spacehistory",
+  "Role": "spacehistory",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A46BCA48803EF229E46F4CD1172BC2D8AE37BE8A2166AFE8D08ED78A099337EB",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\space-history-generated-space-script-runs-twice-without-core\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\space-history-generated-space-script-runs-twice-without-core\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 10952,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:30:02.4719285Z",
+    "FinishedUtc": "2026-10-04T01:30:07.7387242Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "3947FA3EB235B1C93ADA1AD3C7B45FF0341BC560A4921BA4B2D25C1AAF7C250F",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-history-generated-space-script-runs-twice-without-core",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpacePostgreSqlPrerequisiteTests.Generated_Space_script_runs_twice_without_Core"
+    ],
+    "ReportSha256": "24F9DFB101C25BA83133B1F6584FE38A3885CA3733A72804107BF29234999216",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\space-history-generated-space-script-runs-twice-without-core\\private\\trx\\results.trx",
+  "ReportSha256": "24F9DFB101C25BA83133B1F6584FE38A3885CA3733A72804107BF29234999216",
+  "FailureCode": null,
+  "Success": true
+}

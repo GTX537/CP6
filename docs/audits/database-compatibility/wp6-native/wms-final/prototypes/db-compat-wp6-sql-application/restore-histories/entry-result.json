@@ -1,0 +1,46 @@
+{
+  "EntryId": "restore-histories",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_06e83c50_restore",
+  "Role": "restore",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "39B72830BCDD80A1109FFCE64EBD8086066FDD216C14D92699C72BFDB9B09CD7",
+  "Process": {
+    "ProcessId": 13600,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:05:40.0297348Z",
+    "FinishedUtc": "2026-10-03T16:05:43.2082528Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "7E1D57008839B5C92203F5BB02C56808DC13770D7AEF9D3E59AF82E75827CDED",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "restore-histories",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "four-effective-history-profiles-complete"
+    ],
+    "ReportSha256": "EB48F05BA60140C1A40E9471CD29351A38A622613E8F5CB13D3123EEBD5B5B30",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_06e83c50_restore",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\db-compat-wp6-sql-application\\restore-histories\\reports\\report.json",
+  "ReportSha256": "EB48F05BA60140C1A40E9471CD29351A38A622613E8F5CB13D3123EEBD5B5B30",
+  "FailureCode": null,
+  "Success": true
+}

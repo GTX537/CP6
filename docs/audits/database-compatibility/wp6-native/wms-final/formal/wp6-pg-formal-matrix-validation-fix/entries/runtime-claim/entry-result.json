@@ -1,0 +1,59 @@
+{
+  "EntryId": "runtime-claim",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_93aca1a4_runtime",
+  "Role": "runtime",
+  "SourceSha": "8f2cc01ddcf43d6bcf0c236fed2ab038687fd1f4",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "F4B5CA5C6AEB1C33B36324488A42C9351E20E2BFAD06DDD2928B6B8AB72B1101",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\runtime-claim\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "8F5F7B4E8A2E28F0B330449C8FB0AD4D7D317A0533DA2798239C1961C6737B11",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\runtime-claim\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "8F5F7B4E8A2E28F0B330449C8FB0AD4D7D317A0533DA2798239C1961C6737B11",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 6448,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T18:44:51.1380369Z",
+    "FinishedUtc": "2026-10-03T18:45:07.4036971Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "61BA0CCE0DE4F2CCA99658DC5399F9ADB2943CB3765AEAE5104DB9F0C4D73C9A",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-claim",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 10,
+      "Total": 10,
+      "Passed": 10,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.CoreExactHistory",
+      "Installation.SpaceExactHistory",
+      "Claims.WorkSlotFirstAcquire",
+      "Claims.ConcurrentCapacityOne",
+      "Claims.ConcurrentCapacityTwo",
+      "Claims.SameRunSingleton",
+      "Claims.LeaseFencesAndExpiry",
+      "Claims.TenantIndependence",
+      "Claims.SkipLockedCandidate"
+    ],
+    "ReportSha256": "D789DDF6DED5F91EB55179E57E393919B180E37A0676E4301D566DE7F717EF61",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\runtime-claim\\reports\\report.json",
+  "ReportSha256": "D789DDF6DED5F91EB55179E57E393919B180E37A0676E4301D566DE7F717EF61",
+  "FailureCode": null,
+  "Success": true
+}

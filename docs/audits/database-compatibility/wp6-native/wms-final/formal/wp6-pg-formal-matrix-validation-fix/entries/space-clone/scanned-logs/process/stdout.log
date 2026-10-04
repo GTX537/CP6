@@ -1,0 +1,53 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner [501 ms]
+  Error Message:
+   System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.
+---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+-------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Stack Trace:
+     at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateFloorAsync(Guid versionId, CreateSpaceFloorRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 333
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateFloorAsync(Guid versionId, CreateSpaceFloorRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 353
+   at CP6.Space.Infrastructure.SpaceDesignV1Service.CreateFloorAsync(Guid versionId, CreateSpaceFloorRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\SpaceDesignV1Service.cs:line 354
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.<Design_v1_concurrent_floor_initialization_allows_one_revision_winner>g__RunAsync|28_1(SpaceDesignV1Service service, Guid versionId, String floorCode, String key) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 840
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.<Design_v1_concurrent_floor_initialization_allows_one_revision_winner>b__28_0(SpaceContext context, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 858
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.<Design_v1_concurrent_floor_initialization_allows_one_revision_winner>b__28_0(SpaceContext context, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 867
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.<Design_v1_concurrent_floor_initialization_allows_one_revision_winner>b__28_0(SpaceContext context, TestExecutionContext execution, TestClock clock) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 867
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1453
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 1454
+   at CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceVersionCloneSqlServerTests.cs:line 789
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+----- Inner Stack Trace -----
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=clone-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.
+
+
+Results File: D:\CP6\tmp\wp6-pg-formal-matrix-validation-fix\entries\space-clone\private\trx\results.trx
+
+Failed!  - Failed:     1, Passed:    15, Skipped:     0, Total:    16, Duration: 30 s - CP6.Space.IntegrationTests.dll (net8.0)

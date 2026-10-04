@@ -1,0 +1,54 @@
+{
+  "EntryId": "reports-core-space",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_5dfd408d_reports",
+  "Role": "reports",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "54DD5DE1BAC35EBDFC43DD0F306363D489E3984FD100F3042E158A6535EB8938",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-core-space\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-core-space\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 16660,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:36:44.4257309Z",
+    "FinishedUtc": "2026-10-04T01:36:49.3573762Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "935DB92D61F577314B7A4F2BA0ACC542D1798FDBFDBD7DE6779A77F244D7A77C",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-core-space",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_SameNonNullCode_SecondInsertThrows",
+      "CP6.Tests.SpaceSqlIntegrationTests.RowVersion_ConcurrentUpdate_SecondThrows",
+      "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_TwoNullCodes_BothCoexist",
+      "CP6.Tests.SpaceSqlIntegrationTests.AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer",
+      "CP6.Tests.SpaceSqlIntegrationTests.TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds"
+    ],
+    "ReportSha256": "87054EE4C95BF01566439BC14A0E606BAAA779F59942D78CA4D1F774D39AD476",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-core-space\\private\\trx\\results.trx",
+  "ReportSha256": "87054EE4C95BF01566439BC14A0E606BAAA779F59942D78CA4D1F774D39AD476",
+  "FailureCode": null,
+  "Success": true
+}

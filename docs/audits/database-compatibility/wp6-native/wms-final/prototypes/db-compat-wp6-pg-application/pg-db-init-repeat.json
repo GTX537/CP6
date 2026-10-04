@@ -1,0 +1,19 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+  "Label": "pg-db-init-repeat",
+  "ArtifactManifestSha256": "0EF4D8C0481BCB8269BFA64C5F07F23949F15C15D7D3243F223626FA44BEDC80",
+  "Process": {
+    "ProcessId": 2272,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:57:32.2524501Z",
+    "FinishedUtc": "2026-10-03T15:58:39.2334982Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "90498B0866D4844D468E07AEDEAF13D1D87DC4E07A5BAC03E2BACC850FEDA01F",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "InitializerCompletionObserved": true,
+  "Success": true
+}

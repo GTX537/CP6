@@ -1,0 +1,51 @@
+{
+  "EntryId": "schema-history-negative-pg",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_4ce279d6_schema",
+  "Role": "schema",
+  "SourceSha": "8f2cc01ddcf43d6bcf0c236fed2ab038687fd1f4",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "8714F9D875A4B4845387E13E927C1198E43515763A1CCAA6D393BF68A8EDA1ED",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\schema-history-negative-pg\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "A4D9F6D8F362F90B3134E707BB27E4006435BA93684F83994FA0E84BC86CD5A3",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\schema-history-negative-pg\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "A4D9F6D8F362F90B3134E707BB27E4006435BA93684F83994FA0E84BC86CD5A3",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 34776,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T18:45:33.2202618Z",
+    "FinishedUtc": "2026-10-03T18:45:35.5170330Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "EFDD4664BAEEAE7E4816AA3275066081B10675E9BDA7421FC058DA544BA34D3B",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "schema-history-negative-pg",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "History.UnknownIdentityRollbackNegativeControl"
+    ],
+    "ReportSha256": "F7ECB44B35F78A8DF213CEE794351C6D203C29C3119D623D6C4F74D65C7F9C64",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\schema-history-negative-pg\\reports\\report.json",
+  "ReportSha256": "F7ECB44B35F78A8DF213CEE794351C6D203C29C3119D623D6C4F74D65C7F9C64",
+  "FailureCode": null,
+  "Success": true
+}

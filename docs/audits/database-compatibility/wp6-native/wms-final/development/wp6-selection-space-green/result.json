@@ -1,0 +1,44 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Suite": "Space",
+  "Scope": "Pure selector/partial-configuration contracts; no database acceptance",
+  "Success": true,
+  "InputManifestSha256": "5F2931B3EB38FF8AEE6B6143CE7C132A3BD9E9FC5986D682EE780115A0596FFA",
+  "Process": {
+    "ProcessId": 33212,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:36:15.5870299Z",
+    "FinishedUtc": "2026-10-03T16:36:21.7965877Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "18F0C65A2349871B2D5C402EFB99E9234C205221053924D2348853979B54B045",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Counts": {
+    "Expected": 4,
+    "Total": 4,
+    "Passed": 4,
+    "NonPassing": 0
+  },
+  "BinarySha256": "24C9CD2721AC766A39E968CDE0A7C2A0A76C27053AA9A1281B215A3BDD715049",
+  "Cases": [
+    {
+      "testName": "CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.No_wp6_scope_preserves_unselected_legacy_behavior",
+      "outcome": "Passed"
+    },
+    {
+      "testName": "CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.Space_role_without_business_aliases_rejects_before_connection_and_does_not_select_history",
+      "outcome": "Passed"
+    },
+    {
+      "testName": "CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.History_role_without_history_aliases_rejects_before_connection_and_does_not_select_business",
+      "outcome": "Passed"
+    },
+    {
+      "testName": "CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.Other_valid_role_does_not_activate_space_discovery_or_migration_validation",
+      "outcome": "Passed"
+    }
+  ],
+  "TrxSha256": "5331D496C228C7DD4288D4D87611EE4689216F7B4B19FD81A821ABCA84D20738",
+  "FinishedUtc": "2026-10-03T16:36:21.8313739Z"
+}

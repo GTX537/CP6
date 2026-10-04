@@ -1,0 +1,70 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Stage": "restored-api",
+  "Success": true,
+  "Checks": [
+    {
+      "Name": "restored-session-same-user-and-tenant",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-admin-profile-authenticated",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-admin-role-query-authorized",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-original-cursor-returns-exact-second-asset",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-unprivileged-user-same-identity",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-unprivileged-role-denied-by-permission",
+      "Passed": true,
+      "StatusCode": 403
+    },
+    {
+      "Name": "restored-admin-inbox-readable",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-unprivileged-own-inbox-readable",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-exact-notification-visible-to-owner",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-exact-notification-hidden-from-other-user",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "restored-unprivileged-inbox-write-denied-by-permission",
+      "Passed": true,
+      "StatusCode": 403
+    },
+    {
+      "Name": "restored-anonymous-inbox-rejected",
+      "Passed": true,
+      "StatusCode": 401
+    }
+  ],
+  "ExpectedCases": 12,
+  "VerificationKind": "Actual loopback HTTP requests; application process ownership is checked by the caller.",
+  "NotificationIdentityChecked": true
+}

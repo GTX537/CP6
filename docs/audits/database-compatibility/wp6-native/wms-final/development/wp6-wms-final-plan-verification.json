@@ -1,0 +1,46 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "OfflineFinalPlansPassed",
+  "Plans": [
+    {
+      "Provider": "PostgreSql",
+      "Phase": "Matrix",
+      "RequiredEntries": 34,
+      "NativeExecution": false,
+      "Status": "Planned",
+      "RunDirectory": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix"
+    },
+    {
+      "Provider": "PostgreSql",
+      "Phase": "Application",
+      "RequiredEntries": 17,
+      "NativeExecution": false,
+      "Status": "Planned",
+      "RunDirectory": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix"
+    },
+    {
+      "Provider": "SqlServer",
+      "Phase": "Matrix",
+      "RequiredEntries": 37,
+      "NativeExecution": false,
+      "Status": "Planned",
+      "RunDirectory": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix"
+    },
+    {
+      "Provider": "SqlServer",
+      "Phase": "Application",
+      "RequiredEntries": 17,
+      "NativeExecution": false,
+      "Status": "Planned",
+      "RunDirectory": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix"
+    }
+  ],
+  "ManifestSha256": "9E4BDCCCD79198FF199F39D14FAF8CCA140FBD120FCD98F254167730FB231FFE",
+  "ScriptSha256": "C40C8CACDFB0AF236EFF3631F50DD069CA32A3165D419F216FCAC744A124A379",
+  "EarlierWrapperFailures": [
+    "Child CLI returned formatted plan objects rather than JSON: two PostgreSql plan output parse attempts rejected.",
+    "Passing PostgreSQL-only SSL/bin options to SqlServer was rejected by CP6_COMPAT_POSTGRES_OPTIONS_WITH_SQLSERVER. No native process/database action was started."
+  ],
+  "Scope": "Offline plan objects only; preserve earlier wrapper failures as diagnostics, not native or business acceptance results",
+  "CheckedUtc": "2026-10-04T00:57:44.0887578Z"
+}

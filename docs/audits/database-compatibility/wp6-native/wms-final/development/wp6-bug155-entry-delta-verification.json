@@ -1,0 +1,14 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Scope": "Offline target-entry delta only: preserve all other 61 entries; extend required exact design/publish set from 35 to 41 using six delivered BUG155 regressions and two raw native GREEN reports. No current WP6 native acceptance claimed.",
+  "BeforeSha256": "706D889A29D3BDF02A43B2D9D5DD01115DEC66A9E0881A87DB4694FD4DF65330",
+  "AfterSha256": "7CA38B226DB019D2C8A50F695640E6608D3B73888A4437BECF9B2F93956108ED",
+  "Entries": 62,
+  "UnchangedEntries": 61,
+  "TargetEntry": "space-design-publish",
+  "BeforeCases": 35,
+  "AfterCases": 41,
+  "SqlServerEligibleEntries": 54,
+  "PostgreSqlEligibleEntries": 51,
+  "CheckedUtc": "2026-10-03T18:26:21.4868560Z"
+}

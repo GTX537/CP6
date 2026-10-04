@@ -1,0 +1,10 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "CheckpointPreflightRejected",
+  "Failure": "CP6_WP6_CHECKPOINT_UNEXPECTED_FILES",
+  "Cause": "git ls-files --others --exclude-standard omits six explicit public archived native logs in private/ paths; all 37 archive files are present and manifest-byte verified. Corrected helper compares actual on-disk allowlist, rejects outside untracked paths, and force-adds only explicit verified public archive files.",
+  "NativeExecution": false,
+  "StageMutationOccurred": false,
+  "BusinessTestExecution": false,
+  "CheckedUtc": "2026-10-04T01:06:44.6322738Z"
+}

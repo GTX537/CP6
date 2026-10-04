@@ -1,0 +1,44 @@
+{
+  "Id": "restore-state-verify",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b3a6fbee_restore",
+  "BinarySha256": "39B72830BCDD80A1109FFCE64EBD8086066FDD216C14D92699C72BFDB9B09CD7",
+  "Process": {
+    "ProcessId": 23836,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:59:49.9322668Z",
+    "FinishedUtc": "2026-10-03T15:59:54.5418168Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "6BD2579931D460458CC497C9245A1F4CC77BD7E0DADC2A8700459BA2CD30365F",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "restore-state-verify",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 7,
+      "Total": 7,
+      "Passed": 7,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "baseline-provider-matches",
+      "four-effective-history-profiles-complete",
+      "table-catalog-and-columns-match",
+      "all-table-counts-and-content-match",
+      "sequence-state-matches",
+      "history-state-matches"
+    ],
+    "ReportSha256": "203D0D284C21EAECAE8BF849CA4A5C433EA37D550C84185D3A7B13BFFB692EDD",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_b3a6fbee_restore",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Stage": "asset-cursor-capture",
+  "Success": true,
+  "Checks": [
+    {
+      "Name": "asset-a-created-through-api",
+      "Passed": true,
+      "StatusCode": 201
+    },
+    {
+      "Name": "asset-b-created-through-api",
+      "Passed": true,
+      "StatusCode": 201
+    },
+    {
+      "Name": "asset-first-page-exact-and-protected-cursor-issued",
+      "Passed": true,
+      "StatusCode": 200
+    },
+    {
+      "Name": "asset-second-page-exact-before-backup",
+      "Passed": true,
+      "StatusCode": 200
+    }
+  ],
+  "ExpectedCases": 4,
+  "VerificationKind": "Actual loopback HTTP requests; application process ownership is checked by the caller.",
+  "AssetIds": [
+    "948cc830-cda0-42c7-9b6a-c96b34ce39ce",
+    "17d3e437-39b2-457f-85fa-3e3b3a1ac861"
+  ],
+  "CursorIssuedUtc": "2026-10-04T02:02:58.3436954+00:00"
+}

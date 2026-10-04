@@ -1,0 +1,44 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Suite": "Erp",
+  "Scope": "Pure selector/partial-configuration contracts; no database acceptance",
+  "Success": true,
+  "InputManifestSha256": "5F2931B3EB38FF8AEE6B6143CE7C132A3BD9E9FC5986D682EE780115A0596FFA",
+  "Process": {
+    "ProcessId": 8376,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:37:05.5139843Z",
+    "FinishedUtc": "2026-10-03T16:37:07.3790719Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "FC0960A5190E6BC5CD31041B003E66E2F0336992E6BE8CA9A401F79F7875960E",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Counts": {
+    "Expected": 4,
+    "Total": 4,
+    "Passed": 4,
+    "NonPassing": 0
+  },
+  "BinarySha256": "AFB05094B530D8AC5ACE2BBDE702296FC75A4AE4F95BEC8C0217B600D55EC5AC",
+  "Cases": [
+    {
+      "testName": "CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Selected_provider_without_connection_cannot_fall_back_to_legacy_sql",
+      "outcome": "Passed"
+    },
+    {
+      "testName": "CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture(role: null)",
+      "outcome": "Passed"
+    },
+    {
+      "testName": "CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Unselected_or_other_valid_role_preserves_an_unused_legacy_fixture(role: \"space\")",
+      "outcome": "Passed"
+    },
+    {
+      "testName": "CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests.Erp_role_without_erp_aliases_rejects_constructor_before_legacy_database_creation",
+      "outcome": "Passed"
+    }
+  ],
+  "TrxSha256": "E2A9A5C3ADC17B2422A62E74B75D8EBFE517EC79FC31B4C3C40285AC9CDE4AB7",
+  "FinishedUtc": "2026-10-03T16:37:07.4134272Z"
+}

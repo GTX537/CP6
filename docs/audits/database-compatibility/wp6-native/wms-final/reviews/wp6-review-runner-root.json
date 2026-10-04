@@ -1,0 +1,26 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Reviewer": "root",
+  "Scope": "Formal main runner; dependent modules have independent partition reviews",
+  "SourcePath": "scripts/Test-Cp6DatabaseCompatibility.ps1",
+  "SourceSha256": "690CE5F116E6678DC7B97AEA428C44F304CA89E79ACF7180FA405FDF0D3BDF09",
+  "ReviewedUtc": "2026-10-03T16:31:29.0023063Z",
+  "Checks": [
+    "Full/Matrix/Application exact eligible entry selection; Application is never full acceptance",
+    "First seed and repeated initializer share one physical owned database",
+    "HTTP authorization after forced password change and real worker restart",
+    "SignalR after owned listener PID check and before cursor creation",
+    "API stopped before backup; full-state verify before restored application writes",
+    "New independent restore receipt; actual backup/restore native results",
+    "Pending notification dispatch/replay after restore",
+    "Failure preserves evidence and owned databases; owned API lifecycle is stopped",
+    "Final source check, exact executed entry set, receipt-only ordinary cleanup and absent checks precede success",
+    "No Actions/deploy/global configuration mutation"
+  ],
+  "BlockingFindings": [],
+  "Status": "Static scope reviewed; native formal runner execution pending",
+  "Excluded": [
+    "Does not replace independently reviewed module findings",
+    "Does not claim real Full run or current Application gates passed"
+  ]
+}

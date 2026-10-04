@@ -1,0 +1,50 @@
+{
+  "EntryId": "oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_e9412a33_sqlupgrade",
+  "Role": "sqlupgrade",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+  "BinarySha256": "C23D1EABA829327F6EDFBE72C49EFFB9CC094E10447C8E484E6E6A78E062C0B2",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "DE13386FAA8FE60B9508E4917F1F73EC3C59E4F2E9F8E644D049864CB6F5A66F",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "DE13386FAA8FE60B9508E4917F1F73EC3C59E4F2E9F8E644D049864CB6F5A66F",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 24708,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:49:29.6251765Z",
+    "FinishedUtc": "2026-10-04T01:49:34.7348278Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "57547256D2A6E04913F90E38027F1A8C2BBEFD56362B3CD8177792F627290E31",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Oidc.IntegrationTests.GrantStoreSqlTests.Forward_family_migration_preserves_legacy_credentials_without_upgrading_their_authentication"
+    ],
+    "ReportSha256": "07DEBC70DCB14CA7ACA5DD6433CEC48DBE6EA55A734ADD4906C2AEBD53161EA7",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\oidc-history-forward-family-migration-preserves-legacy-credentials-without-upgrading-their-authentication\\private\\trx\\results.trx",
+  "ReportSha256": "07DEBC70DCB14CA7ACA5DD6433CEC48DBE6EA55A734ADD4906C2AEBD53161EA7",
+  "FailureCode": null,
+  "Success": true
+}

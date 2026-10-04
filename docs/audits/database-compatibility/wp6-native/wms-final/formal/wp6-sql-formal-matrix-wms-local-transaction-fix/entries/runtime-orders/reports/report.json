@@ -1,0 +1,78 @@
+{
+  "Scope": "WP6 explicitly named real runtime gates on a runner-owned isolated database; required-case and application/recovery evidence are bound separately.",
+  "Suite": "orders",
+  "Case": "all",
+  "Provider": "SqlServer",
+  "StartedHostUtc": "2026-10-04T01:37:18.8123623Z",
+  "FinishedHostUtc": "2026-10-04T01:37:21.3845382Z",
+  "SourceBase": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "SourceState": "WP6 runner task source; applicable source-file and runtime-binary hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "88CB493C6DF91148D551A57B5B34BCBF85E11AE83A2E9C2EE38975ACCBD32E71"
+    },
+    "CP6.DatabaseCompatibility.RuntimeProbe": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.DatabaseCompatibility.RuntimeProbe.dll",
+      "Sha256": "D2E3FC7650B99E747476F75FE01D701BAB11CC0314806652018B9515702D8C7A"
+    },
+    "CP6.Persistence.PostgreSql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "31FD70DCA77B05975C3E7B5C2B8183ED7A7C93F12BAE074732DF969962368052"
+    },
+    "CP6.Space.Infrastructure": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "9612514A4DED797E172E59D1166EA19B19364123BC1B7A3206BB1FDC0E898224"
+    },
+    "Microsoft.Data.SqlClient": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+    },
+    "Microsoft.EntityFrameworkCore": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    "Npgsql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+    }
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.Wp3Owner",
+      "Status": "Passed",
+      "Detail": "Dedicated loopback WP6 name, role, provider and owner verified."
+    },
+    {
+      "Name": "Installation.CoreExactHistory",
+      "Status": "Passed",
+      "Detail": "Exact Core history=140, pending=0; no full catalog or business acceptance implied."
+    },
+    {
+      "Name": "Orders.ImmediateAllocation",
+      "Status": "Passed",
+      "Detail": "Actual DocNumber reserved1 without SaveChanges; separate connection read1 and no pending manual counter changes."
+    },
+    {
+      "Name": "Orders.FirstCreationConcurrency",
+      "Status": "Passed",
+      "Detail": "Two actual open sessions crossed a shared start barrier with ORD absent; distinct1/2 and committed2."
+    },
+    {
+      "Name": "Orders.CallerRollbackAndVisibility",
+      "Status": "Passed",
+      "Detail": "Caller-owned transaction reserved1/2 then rollback removed both; fresh allocation independently committed1."
+    },
+    {
+      "Name": "Orders.GlobalCrossTenantAndDatePrefix",
+      "Status": "Passed",
+      "Detail": "Different tenant contexts and months shared the original global1/2 stream; date formatting did not reset it. Business tenant isolation is separate."
+    },
+    {
+      "Name": "Orders.PendingManualChangeRejected",
+      "Status": "Passed",
+      "Detail": "Actual pending manual ORD row rejected with original error; no native counter created."
+    }
+  ]
+}

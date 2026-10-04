@@ -1,0 +1,32 @@
+{
+  "Scope": "WP6 runner-owned database: Actual application seed first/repeat native verification and retained custom fixtures",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-03T16:53:46.8097244Z",
+  "FinishedUtc": "2026-10-03T16:53:48.0533755Z",
+  "SourceBase": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "SourceState": "WP6 runner task input; applicable build log, source-file and runtime-binary hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "D186E2DB20A9F772AAD537B30F7EC1A84114581362BC27621C384229A28692B8",
+    "CP6.DatabaseCompatibility.MigrationProbe": "BC738C686370A4EEF2FA36B01250A3EC20E57A5F69991AFA31E2506ABBECB287",
+    "CP6.Persistence.PostgreSql": "DCDA403B2DE1CE0E7D168EDE03DFB4CCFE03EC8A4B941297AF472C70D52737AF",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Space.Infrastructure": "B33E7235E9FE476560491565B132CC79D221974B4301D7372EBC275A6E97FF34",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded WP6 loopback, dedicated name, role and task ownership verified before migration."
+    },
+    {
+      "Name": "Seed.capture",
+      "Status": "Passed",
+      "Detail": "Captured all 352 post-upgrade table counts and retained existing translation/admin fixtures without modifying business rows; first-initialization acceptance is separate."
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "Status": "Passed",
+  "Checks": 12,
+  "Scope": "In-memory screening controls only; no evidence read or archived"
+}

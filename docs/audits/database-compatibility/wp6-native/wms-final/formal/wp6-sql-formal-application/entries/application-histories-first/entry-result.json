@@ -1,0 +1,51 @@
+{
+  "EntryId": "application-histories-first",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_cf7ab161_application",
+  "Role": "application",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-histories-first\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-histories-first\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 22244,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:51:35.8137831Z",
+    "FinishedUtc": "2026-10-03T16:51:39.2254686Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "009C1163A4CD5A62412A621D8DD4C8D7C3BEA04DCBF662719C4F5D39CB135871",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-histories-first",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "four-effective-history-profiles-complete"
+    ],
+    "ReportSha256": "94BEE180C26C9C496D17F7085B7030F5B82ACB74491355AFC9E6D5794C55A537",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_cf7ab161_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-histories-first\\reports\\report.json",
+  "ReportSha256": "94BEE180C26C9C496D17F7085B7030F5B82ACB74491355AFC9E6D5794C55A537",
+  "FailureCode": null,
+  "Success": true
+}

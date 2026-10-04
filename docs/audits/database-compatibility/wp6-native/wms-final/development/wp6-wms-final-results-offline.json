@@ -1,0 +1,7 @@
+{
+  "Status": "Passed",
+  "Scope": "Offline parser self-tests only; no .NET process or database execution",
+  "Assertions": 469,
+  "ArchivedReports": 61,
+  "ManifestEntries": 62
+}

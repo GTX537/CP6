@@ -1,0 +1,7 @@
+{
+  "Label": "process-start-red",
+  "NativeDatabaseExecuted": false,
+  "Expected": "CP6_COMPAT_PROCESS_START_FAILED",
+  "Observed": "Exception calling \"Kill\" with \"1\" argument(s): \"No process is associated with this object.\"",
+  "Passed": false
+}

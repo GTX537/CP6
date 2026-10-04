@@ -1,0 +1,52 @@
+{
+  "EntryId": "runtime-initialize",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_1be75cdd_runtime",
+  "Role": "runtime",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "662BD00E7B4269175BD7646DC93A8090BEEC5C7B44B586F8F3225E08D26F6446",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\runtime-initialize\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "C335B14EE07C7850A83ED5B8CDA8DC07C7032D893F292630B8A9AD1F4B391C09",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\runtime-initialize\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "C335B14EE07C7850A83ED5B8CDA8DC07C7032D893F292630B8A9AD1F4B391C09",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 34608,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T17:09:50.7043738Z",
+    "FinishedUtc": "2026-10-03T17:09:56.9805494Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "17DD8435CBC1CBA93A18BB0098484DC5A116F7B88A57A1D2F0A3659B00DABAC8",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-initialize",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 3,
+      "Total": 3,
+      "Passed": 3,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.Core",
+      "Orders.ImmediateAllocation"
+    ],
+    "ReportSha256": "01DC7153D0BE56F9381B71BB4A789261D551090F12589ABD1A05575A0F0D4675",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\runtime-initialize\\reports\\report.json",
+  "ReportSha256": "01DC7153D0BE56F9381B71BB4A789261D551090F12589ABD1A05575A0F0D4675",
+  "FailureCode": null,
+  "Success": true
+}

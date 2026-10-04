@@ -1,0 +1,51 @@
+{
+  "EntryId": "sql-populated-upgrade",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_6f5c4d64_sqlupgrade",
+  "Role": "sqlupgrade",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "60F76964777E4C05A726944E7A3B1AF9C780BFECF785FF3FD8DE9B7555841F9F",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\sql-populated-upgrade\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "EB0B2DD51BAD211E7CA3BBB5C4642E492669AC346BFAA4D04956779CA59583D4",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\sql-populated-upgrade\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "EB0B2DD51BAD211E7CA3BBB5C4642E492669AC346BFAA4D04956779CA59583D4",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 6840,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:49:17.6408368Z",
+    "FinishedUtc": "2026-10-04T01:49:27.7192295Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "BC2A9217FC615EFB7DAC193796202BE5A57B38F0DEB889A809B28595D5CEFF85",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "sql-populated-upgrade",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Upgrade.SqlServer.Populated136To140"
+    ],
+    "ReportSha256": "C50A80A3B32A99CEE4D8B290228976497BEA3E66DA57350DBE7CAF4512BBB6EE",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\sql-populated-upgrade\\reports\\report.json",
+  "ReportSha256": "C50A80A3B32A99CEE4D8B290228976497BEA3E66DA57350DBE7CAF4512BBB6EE",
+  "FailureCode": null,
+  "Success": true
+}

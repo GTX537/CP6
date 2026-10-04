@@ -1,0 +1,50 @@
+{
+  "EntryId": "oidc-history-forward-migration-is-discoverable-and-generates-an-idempotent-script",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_1f91e781_sqlupgrade",
+  "Role": "sqlupgrade",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+  "BinarySha256": "C23D1EABA829327F6EDFBE72C49EFFB9CC094E10447C8E484E6E6A78E062C0B2",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\oidc-history-forward-migration-is-discoverable-and-generates-an-idempotent-script\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "DE13386FAA8FE60B9508E4917F1F73EC3C59E4F2E9F8E644D049864CB6F5A66F",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\oidc-history-forward-migration-is-discoverable-and-generates-an-idempotent-script\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "DE13386FAA8FE60B9508E4917F1F73EC3C59E4F2E9F8E644D049864CB6F5A66F",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 15816,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:49:36.8092818Z",
+    "FinishedUtc": "2026-10-04T01:49:42.1840541Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "4A4AC5F0478503E2603D80949745B95C56DB67C4AC38921BAE70BE1F281F67A7",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "oidc-history-forward-migration-is-discoverable-and-generates-an-idempotent-script",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Oidc.IntegrationTests.GrantStoreSqlTests.Forward_migration_is_discoverable_and_generates_an_idempotent_script"
+    ],
+    "ReportSha256": "AD1B8FA3668D0285C5FE581E13AC4BC86B3BFEB82548217238B231477774F9CE",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\oidc-history-forward-migration-is-discoverable-and-generates-an-idempotent-script\\private\\trx\\results.trx",
+  "ReportSha256": "AD1B8FA3668D0285C5FE581E13AC4BC86B3BFEB82548217238B231477774F9CE",
+  "FailureCode": null,
+  "Success": true
+}

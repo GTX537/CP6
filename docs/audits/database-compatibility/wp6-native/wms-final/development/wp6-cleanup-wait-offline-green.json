@@ -1,0 +1,177 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Passed",
+  "CheckedUtc": "2026-10-03T22:48:58.6284242Z",
+  "Scope": "Offline cleanup state-transition controls only. Module-local fake state; no native DB acceptance.",
+  "NativeExecuted": false,
+  "ScriptSha256": "4B7A76B3617121A82A9C917B758141E7B92FCBE0197C9F9F1A114F6911407966",
+  "LifecycleModuleSha256": "D96CC5903DABA60CB242D715E80173C955C0191E854044F5C1F412ED1977796C",
+  "Checks": 41,
+  "Assertions": [
+    {
+      "Case": "SqlServer:transient-preflight-session-finishes",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:preflight-normal-drop-only",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:new-session-between-preflight-and-drop-finishes",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:CP6_COMPAT_DATABASE_HAS_SESSIONS",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:persistent-session-has-real-bounded-timeout",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:persistent-session-was-polled",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:CP6_COMPAT_ACTUAL_OWNER_MISMATCH",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:owner-mismatch-stops-wait-immediately",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:CP6_COMPAT_PHYSICAL_IDENTITY_MISMATCH",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:physical-mismatch-stops-wait-immediately",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:CP6_COMPAT_ACTUAL_OWNER_MISMATCH",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:wrong-owner-is-never-retried",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:CP6_COMPAT_DATABASE_HAS_SESSIONS",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:zero-timeout-keeps-immediate-rejection",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:CP6_COMPAT_SESSION_VISIBILITY_REQUIRED",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "SqlServer:missing-session-visibility-is-never-retried",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:transient-preflight-session-finishes",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:preflight-normal-drop-only",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:new-session-between-preflight-and-drop-finishes",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:CP6_COMPAT_DATABASE_HAS_SESSIONS",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:persistent-session-has-real-bounded-timeout",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:persistent-session-was-polled",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:CP6_COMPAT_ACTUAL_OWNER_MISMATCH",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:owner-mismatch-stops-wait-immediately",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:CP6_COMPAT_PHYSICAL_IDENTITY_MISMATCH",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:physical-mismatch-stops-wait-immediately",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:CP6_COMPAT_ACTUAL_OWNER_MISMATCH",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:wrong-owner-is-never-retried",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:CP6_COMPAT_DATABASE_HAS_SESSIONS",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:failure-prevents-every-drop",
+      "Passed": true
+    },
+    {
+      "Case": "PostgreSql:zero-timeout-keeps-immediate-rejection",
+      "Passed": true
+    }
+  ],
+  "FailureCode": null
+}

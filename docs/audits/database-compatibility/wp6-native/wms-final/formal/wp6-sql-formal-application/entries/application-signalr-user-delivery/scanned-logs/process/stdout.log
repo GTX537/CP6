@@ -1,0 +1,114 @@
+{
+  "SchemaVersion": 1,
+  "Task": "DB-COMPAT-01-WP6",
+  "Command": "signalr-verification",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_cf7ab161_application",
+  "Role": "Application",
+  "Status": "Passed",
+  "StartedUtc": "2026-10-03T16:53:14.9575377+00:00",
+  "FinishedUtc": "2026-10-03T16:53:31.0462524+00:00",
+  "Assertions": [
+    {
+      "Name": "owner-and-physical-database-verified",
+      "Passed": true
+    },
+    {
+      "Name": "signalr-two-http-users-authenticated",
+      "Passed": true,
+      "ExpectedCount": 2,
+      "ActualCount": 2
+    },
+    {
+      "Name": "signalr-two-websocket-clients-connected",
+      "Passed": true,
+      "ExpectedCount": 2,
+      "ActualCount": 2
+    },
+    {
+      "Name": "signalr-target-delivery-exact",
+      "Passed": true,
+      "ExpectedCount": 1,
+      "ActualCount": 1
+    },
+    {
+      "Name": "signalr-other-user-excluded",
+      "Passed": true,
+      "ExpectedCount": 0,
+      "ActualCount": 0
+    },
+    {
+      "Name": "signalr-worker-two-subsequent-batches-completed",
+      "Passed": true,
+      "ExpectedCount": 2,
+      "ActualCount": 2
+    },
+    {
+      "Name": "signalr-target-not-repeated",
+      "Passed": true,
+      "ExpectedCount": 1,
+      "ActualCount": 1
+    },
+    {
+      "Name": "signalr-production-replay-kept-row-and-state",
+      "Passed": true,
+      "ExpectedSha256": "15FBE0215BC9A6FFB9864DDB798F34EFAD2C18607B83EE20BEBCAD5BC245F6B7",
+      "ActualSha256": "15FBE0215BC9A6FFB9864DDB798F34EFAD2C18607B83EE20BEBCAD5BC245F6B7"
+    },
+    {
+      "Name": "signalr-clients-stopped",
+      "Passed": true,
+      "ExpectedCount": 2,
+      "ActualCount": 2
+    }
+  ],
+  "Counts": {
+    "LoginProfiles": 2,
+    "SignalRClients": 2,
+    "NotificationRows": 1,
+    "DispatchStatus": 1,
+    "DispatchAttempts": 1,
+    "AdminTargetEvents": 1,
+    "OrdinaryTargetEvents": 0,
+    "SignalRMarkerRows": 2,
+    "AdminMarkerEvents": 2,
+    "OrdinaryMarkerEvents": 0,
+    "CompletedFollowupWorkerBatches": 2
+  },
+  "Hashes": {
+    "EventKeySha256": "BAD4AA6977D94CA2550B3397715D2F7A4DD253DE1D73AB14FDFEA76E29271D1D",
+    "TenantSha256": "868425ABA2AED381A87AA2863A1A873FA639D90C8E4BAB2AF2FCE29A1F92AAD3",
+    "UserSha256": "42B8AF5FFFE84D7F9A345D65399BAEF33C0B34D31356D6F2351D300ED5CE7A64",
+    "NotificationIdSha256": "36FA7AF26BFAB76F40C6E08E444E7F50F314BEB96F62638A4BB01B491C6A3B07",
+    "TargetPayloadSha256": "4C2D869162D5C5EA1DE295EA644C1D4A4A9D943D127122FAFC1ADF12701208F6",
+    "FollowupBatchEvidenceSha256": "6AA917B87ABAAEFF03211FEF5FCEE8D9415B304D50C638CF2D1E0C3168868C36",
+    "OriginalNotificationStateSha256": "15FBE0215BC9A6FFB9864DDB798F34EFAD2C18607B83EE20BEBCAD5BC245F6B7",
+    "ReplayedNotificationStateSha256": "15FBE0215BC9A6FFB9864DDB798F34EFAD2C18607B83EE20BEBCAD5BC245F6B7"
+  },
+  "HistoryProfiles": [],
+  "TableSummaries": [],
+  "TableComparisons": [],
+  "Inputs": [
+    {
+      "Name": "CP6.DatabaseCompatibility.ApplicationProbe",
+      "Version": "1.0.0.0",
+      "Sha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E"
+    },
+    {
+      "Name": "CP6.Core",
+      "Version": "1.0.0.0",
+      "Sha256": "D186E2DB20A9F772AAD537B30F7EC1A84114581362BC27621C384229A28692B8"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "Version": "1.0.0.0",
+      "Sha256": "B33E7235E9FE476560491565B132CC79D221974B4301D7372EBC275A6E97FF34"
+    },
+    {
+      "Name": "Microsoft.AspNetCore.SignalR.Client.Core",
+      "Version": "8.0.12.0",
+      "Sha256": "7D42214FF7145EF20C90CD6A7E18AD60787A08E221F8BAC42561666CC651E6DA"
+    }
+  ],
+  "Scope": "WP6 owned application/restore fixture and loopback API: actual HTTP login, two WebSocket SignalR clients, exact user delivery, two subsequent real worker batches and production event replay. One target plus two fixture marker rows. Public hashes/counts only; no cookies/passwords/tokens/raw payloads. Bounded observation, not external CRM/email delivery, DP decryption or complete application acceptance."
+}

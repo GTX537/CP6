@@ -1,0 +1,62 @@
+{
+  "EntryId": "space-base",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_37e91188_space",
+  "Role": "space",
+  "SourceSha": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "090BF997C5DFEFBDC5649C150A932B3B664B53BD679CEA2AEE04558BD4C40397",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\entries\\space-base\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\entries\\space-base\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 33112,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T23:12:46.8596657Z",
+    "FinishedUtc": "2026-10-03T23:12:57.6218574Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "0C258800485BAF3A8F875AC678CD61954F88733D5D087D70FB32571115A53FAB",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-base",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 13,
+      "Total": 13,
+      "Passed": 13,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Composite_foreign_keys_reject_cross_tenant_source_lineage",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.File_hash_deduplication_is_enforced_per_tenant",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.RowVersion_rejects_the_second_concurrent_model_update",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Device_mapping_and_event_ledger_persist_with_rowversion_and_identity",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Personnel_source_event_identity_is_unique_per_tenant_site_source",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Same_site_id_is_isolated_between_tenants",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Personnel_runtime_queries_translate_and_return_utc_timestamps",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Tenant_site_and_version_number_constraints_are_enforced",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Common_elements_and_attributes_persist_with_tenant_isolation",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Published_version_cannot_be_mutated_through_the_context",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Same_file_can_feed_multiple_versions_and_source_hash_lookup",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Rack_levels_persist_independent_specifications_with_tenant_isolation",
+      "CP6.Space.IntegrationTests.SpaceSqlServerTests.Database_restricts_physical_delete_of_a_referenced_file"
+    ],
+    "ReportSha256": "294CBEE9E49025C3F7B8809C9A3BF92621EAB1F509248B2773E805BEDB38F1AF",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\entries\\space-base\\private\\trx\\results.trx",
+  "ReportSha256": "294CBEE9E49025C3F7B8809C9A3BF92621EAB1F509248B2773E805BEDB38F1AF",
+  "FailureCode": null,
+  "Success": true
+}

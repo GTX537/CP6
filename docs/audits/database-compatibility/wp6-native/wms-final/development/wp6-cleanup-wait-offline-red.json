@@ -1,0 +1,12 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Failed",
+  "CheckedUtc": "2026-10-03T22:48:15.0281421Z",
+  "Scope": "Offline cleanup state-transition controls only. Module-local fake state; no native DB acceptance.",
+  "NativeExecuted": false,
+  "ScriptSha256": "4B7A76B3617121A82A9C917B758141E7B92FCBE0197C9F9F1A114F6911407966",
+  "LifecycleModuleSha256": "BF192F54A51140FB3162BDDD15553EA565972CA31A105B77C026A7EC4E972D39",
+  "Checks": 0,
+  "Assertions": [],
+  "FailureCode": "CP6_COMPAT_DATABASE_HAS_SESSIONS"
+}

@@ -1,0 +1,52 @@
+{
+  "EntryId": "runtime-initialize",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_ef8ff3a1_runtime",
+  "Role": "runtime",
+  "SourceSha": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "19B76FE023B645C8813A578ECFDF6047EFB16095D4150F96B1BF5F805978F90A",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\runtime-initialize\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "CB75FAF87584D269FE3895487A359C0CD728F597E375E3A7D29725A50C2E9F55",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\runtime-initialize\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "CB75FAF87584D269FE3895487A359C0CD728F597E375E3A7D29725A50C2E9F55",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 24024,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T22:32:04.3960888Z",
+    "FinishedUtc": "2026-10-03T22:32:10.4659129Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "17DD8435CBC1CBA93A18BB0098484DC5A116F7B88A57A1D2F0A3659B00DABAC8",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-initialize",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 3,
+      "Total": 3,
+      "Passed": 3,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.Core",
+      "Orders.ImmediateAllocation"
+    ],
+    "ReportSha256": "9030B1E7E689F517652A1B5FA65B908E326C4606AE5711DFADDE8925D802377B",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\runtime-initialize\\reports\\report.json",
+  "ReportSha256": "9030B1E7E689F517652A1B5FA65B908E326C4606AE5711DFADDE8925D802377B",
+  "FailureCode": null,
+  "Success": true
+}
