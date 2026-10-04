@@ -1,0 +1,70 @@
+{
+  "RunId": "15cb293cc85944f3a9e8aaa256a7d141",
+  "Provider": "PostgreSql",
+  "Task": "DB-COMPAT-01-WP6",
+  "SourceDatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+  "SourceOwner": "5df369210ff741dab86a779024e83f22",
+  "SourcePhysicalIdentity": {
+    "DatabaseId": "227547"
+  },
+  "SourceState": {
+    "Exists": true,
+    "DatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+    "DatabaseId": "227547",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "Task": "DB-COMPAT-01-WP6",
+    "Owner": "5df369210ff741dab86a779024e83f22",
+    "Marker": "DB-COMPAT-01-WP6:5df369210ff741dab86a779024e83f22",
+    "UserTables": 1669,
+    "Sessions": 0,
+    "DatabaseSettings": [],
+    "DatabaseAcl": [
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "PUBLIC",
+        "Privilege": "CONNECT",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "PUBLIC",
+        "Privilege": "TEMPORARY",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "cp6compat_wp1_0b54dc81",
+        "Privilege": "CONNECT",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "cp6compat_wp1_0b54dc81",
+        "Privilege": "CREATE",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "cp6compat_wp1_0b54dc81",
+        "Privilege": "TEMPORARY",
+        "Grantable": false
+      }
+    ]
+  },
+  "ArchivePath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\private\\cp6-wp6-15cb293cc85944f3a9e8aaa256a7d141-5df369210ff741dab86a779024e83f22.dump",
+  "Sha256": "EB4F77F2E1C5D92774BA81CA3A99AC31FBAA342778B7F4E5B4F9525A9F2FB8F6",
+  "SqlServerArchivePath": null,
+  "SqlSourceFiles": [],
+  "ToolIdentity": {
+    "Tool": "pg_dump",
+    "Path": "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_dump.exe",
+    "Sha256": "AE5C804C05B32760BF9066B1DF88838B7A29FA1387690B0054011CF53C19B6E7",
+    "NativeVersion": "pg_dump (PostgreSQL) 18.6"
+  },
+  "ServerVersion": "18.6",
+  "Status": "BackedUp",
+  "NativeExitCode": 0,
+  "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\private\\cp6-wp6-15cb293cc85944f3a9e8aaa256a7d141-5df369210ff741dab86a779024e83f22.dump.json"
+}

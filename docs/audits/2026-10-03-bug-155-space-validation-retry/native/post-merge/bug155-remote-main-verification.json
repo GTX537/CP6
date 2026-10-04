@@ -1,0 +1,24 @@
+{
+  "Task": "BUG-155",
+  "VerifiedUtc": "2026-10-03T18:12:05.2129295Z",
+  "PullRequest": {
+    "baseRefOid": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+    "headRefOid": "5a868092891d079f5234407f397f47a31cfc7f75",
+    "mergeCommit": {
+      "oid": "2e1f90c629340944d95fadd7aee428f639304ed6"
+    },
+    "mergedAt": "2026-10-03T18:11:15Z",
+    "number": 156,
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/156"
+  },
+  "Candidate": "5a868092891d079f5234407f397f47a31cfc7f75",
+  "RemoteMain": "2e1f90c629340944d95fadd7aee428f639304ed6",
+  "RemoteRefMatchesFetched": true,
+  "CandidateContained": true,
+  "CandidateAndMainTreesEqual": true,
+  "Tree": "b232eb52b1886cb50594069e7e6d4efcae9ef022",
+  "LocalTaskHead": "2e1f90c629340944d95fadd7aee428f639304ed6",
+  "ActionsTriggered": 0,
+  "Scope": "Exact candidate is normally merged into remote main and full tree matches. Prior tests retain their actual source inputs; post-merge native smoke and cleanup remain pending."
+}

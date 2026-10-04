@@ -1,0 +1,10 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Passed",
+  "ApplicationDatabase": "CP6Compat_WP6_20261003_b4c5944f_application",
+  "RestoredDatabase": "CP6Compat_WP6_20261003_b3a6fbee_restore",
+  "ArtifactManifestSha256": "0EF4D8C0481BCB8269BFA64C5F07F23949F15C15D7D3243F223626FA44BEDC80",
+  "FirstHost": 9956,
+  "Cleanup": "Pending task-level evidence review",
+  "FinishedUtc": "2026-10-03T16:00:18.8440112Z"
+}

@@ -1,0 +1,18 @@
+  CP6.Entity -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Entity\bin\Debug\net8.0\CP6.Entity.dll
+  CP6.Core -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\bin\Debug\net8.0\CP6.Core.dll
+  CP6.Space.Contracts -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Contracts\bin\Debug\net8.0\CP6.Space.Contracts.dll
+  CP6.Space.Domain -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Domain\bin\Debug\net8.0\CP6.Space.Domain.dll
+  CP6.Space.Application -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Application\bin\Debug\net8.0\CP6.Space.Application.dll
+  CP6.Space.Infrastructure -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\bin\Debug\net8.0\CP6.Space.Infrastructure.dll
+  CP6.Persistence.PostgreSql -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Persistence.PostgreSql\bin\Debug\net8.0\CP6.Persistence.PostgreSql.dll
+  CP6.WebApi -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.WebApi\bin\Debug\net8.0\CP6.WebApi.dll
+D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs(66,13): warning xUnit2029: Do not use Assert.Empty to check if a value does not exist in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2029) [D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+  CP6.ErpIntegration.SqlTests -> D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll
+
+Build succeeded.
+
+D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\BridgeWorkerSqlTests.cs(66,13): warning xUnit2029: Do not use Assert.Empty to check if a value does not exist in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2029) [D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\CP6.ErpIntegration.SqlTests.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.27

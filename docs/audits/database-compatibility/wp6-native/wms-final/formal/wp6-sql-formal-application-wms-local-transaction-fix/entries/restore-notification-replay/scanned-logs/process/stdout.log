@@ -1,0 +1,68 @@
+{
+  "SchemaVersion": 1,
+  "Task": "DB-COMPAT-01-WP6",
+  "Command": "replay-notification",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_94e5a8a6_restore",
+  "Role": "Restore",
+  "Status": "Passed",
+  "StartedUtc": "2026-10-04T02:03:52.4718061+00:00",
+  "FinishedUtc": "2026-10-04T02:03:54.6284038+00:00",
+  "Assertions": [
+    {
+      "Name": "owner-and-physical-database-verified",
+      "Passed": true
+    },
+    {
+      "Name": "replay-existing-dispatched-row",
+      "Passed": true
+    },
+    {
+      "Name": "replay-production-service-no-duplicate",
+      "Passed": true,
+      "ExpectedCount": 0,
+      "ActualCount": 0
+    },
+    {
+      "Name": "replay-kept-original-id-and-worker-state",
+      "Passed": true,
+      "ExpectedSha256": "BE7A90FE08246E74551D71C51CF71D2F089FFCCA11CBBF52FAD22AD28D9E2517",
+      "ActualSha256": "BE7A90FE08246E74551D71C51CF71D2F089FFCCA11CBBF52FAD22AD28D9E2517"
+    }
+  ],
+  "Counts": {
+    "NotificationRows": 1,
+    "DispatchStatus": 1,
+    "DispatchAttempts": 1,
+    "ReplaySaveChanges": 0
+  },
+  "Hashes": {
+    "EventKeySha256": "7F915FF9B59CCFEB92EC45EE70502D71CFBA35641C2C19502E4AF3E18C8F149B",
+    "TenantSha256": "868425ABA2AED381A87AA2863A1A873FA639D90C8E4BAB2AF2FCE29A1F92AAD3",
+    "UserSha256": "22A8984B3C788863653EB451F25C8E8F547A19FACA4EA39273386B6E923C0AE9",
+    "NotificationIdSha256": "11AD1D7CA9524BF8C2351C3F9D53FD9B319572D2FAC53414EB213AF0D4BB2F55",
+    "OriginalNotificationStateSha256": "BE7A90FE08246E74551D71C51CF71D2F089FFCCA11CBBF52FAD22AD28D9E2517",
+    "ReplayedNotificationStateSha256": "BE7A90FE08246E74551D71C51CF71D2F089FFCCA11CBBF52FAD22AD28D9E2517"
+  },
+  "HistoryProfiles": [],
+  "TableSummaries": [],
+  "TableComparisons": [],
+  "Inputs": [
+    {
+      "Name": "CP6.DatabaseCompatibility.ApplicationProbe",
+      "Version": "1.0.0.0",
+      "Sha256": "634D635269B0E3CFA294F217FF0B4DCBE261C8AEA9D9D40ACB1F94E8AC49078E"
+    },
+    {
+      "Name": "CP6.Core",
+      "Version": "1.0.0.0",
+      "Sha256": "88CB493C6DF91148D551A57B5B34BCBF85E11AE83A2E9C2EE38975ACCBD32E71"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "Version": "1.0.0.0",
+      "Sha256": "9612514A4DED797E172E59D1166EA19B19364123BC1B7A3206BB1FDC0E898224"
+    }
+  ],
+  "Scope": "WP6 owned application/restore fixture only; metadata, counts and hashes. No raw connection, password, token, DP XML or row values. Does not establish HTTP authentication, DP decryption, external delivery or complete application acceptance."
+}

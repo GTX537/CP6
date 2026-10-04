@@ -1,0 +1,401 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Provider": "PostgreSql",
+  "Phase": "Matrix",
+  "RunDirectory": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix",
+  "Status": "Planned",
+  "NativeExecution": false,
+  "Configuration": "Debug",
+  "SkipBuildRequested": false,
+  "ArtifactDirectory": "",
+  "Projects": [
+    "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+    "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+    "CP6.Tests/CP6.Tests.csproj",
+    "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+    "eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj",
+    "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+    "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj"
+  ],
+  "RequiredEntryIds": [
+    "core-business",
+    "wms-business",
+    "erp-business",
+    "erp-handler",
+    "erp-serialization-pg",
+    "oidc-provider",
+    "identity-provider",
+    "reports-empty",
+    "reports-parity",
+    "reports-gdpr",
+    "reports-core-space",
+    "runtime-initialize",
+    "runtime-orders",
+    "runtime-orders-extra",
+    "runtime-locks",
+    "runtime-failures",
+    "runtime-shared",
+    "runtime-cursor-pg",
+    "runtime-claim",
+    "schema-pg",
+    "schema-history-negative-pg",
+    "space-ai",
+    "space-ai-caller-pg",
+    "space-capacity-file",
+    "space-clone",
+    "space-design-publish",
+    "space-jobs-generation-retention",
+    "space-base",
+    "space-cad-assets-collaboration",
+    "space-mapping",
+    "space-history-core-first-then-space-reuses-prerequisites",
+    "space-history-generated-space-script-runs-twice-without-core",
+    "space-history-migration-creates-only-design-tables-and-separate-history",
+    "space-history-space-first-then-core-reuses-prerequisites"
+  ],
+  "MatrixEntries": [
+    {
+      "Id": "core-business",
+      "Role": "corewms",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 25,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "wms-business",
+      "Role": "corewms",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 8,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "erp-business",
+      "Role": "erp",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 95,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "erp-handler",
+      "Role": "erp",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 2,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "erp-serialization-pg",
+      "Role": "erp",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 2,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "oidc-provider",
+      "Role": "oidcidentity",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 27,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "identity-provider",
+      "Role": "oidcidentity",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 28,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "reports-empty",
+      "Role": "reports",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 4,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "reports-parity",
+      "Role": "reports",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 4,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "reports-gdpr",
+      "Role": "reports",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 2,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "reports-core-space",
+      "Role": "reports",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 5,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-initialize",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 3,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-orders",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 7,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-orders-extra",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 5,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-locks",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 5,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-failures",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 4,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-shared",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 3,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-cursor-pg",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 4,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "runtime-claim",
+      "Role": "runtime",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 10,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "schema-pg",
+      "Role": "schema",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 37,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "schema-history-negative-pg",
+      "Role": "schema",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 2,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-ai",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 13,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-ai-caller-pg",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 1,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-capacity-file",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 13,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-clone",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 16,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-design-publish",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 41,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-jobs-generation-retention",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 17,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-base",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 13,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-cad-assets-collaboration",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 15,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-mapping",
+      "Role": "space",
+      "DatabaseLifecycle": "RoleShared",
+      "ExpectedCases": 4,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-history-core-first-then-space-reuses-prerequisites",
+      "Role": "spacehistory",
+      "DatabaseLifecycle": "FreshPerEntry",
+      "ExpectedCases": 1,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-history-generated-space-script-runs-twice-without-core",
+      "Role": "spacehistory",
+      "DatabaseLifecycle": "FreshPerEntry",
+      "ExpectedCases": 1,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-history-migration-creates-only-design-tables-and-separate-history",
+      "Role": "spacehistory",
+      "DatabaseLifecycle": "FreshPerEntry",
+      "ExpectedCases": 1,
+      "ProviderEligibility": [
+        "SqlServer",
+        "PostgreSql"
+      ]
+    },
+    {
+      "Id": "space-history-space-first-then-core-reuses-prerequisites",
+      "Role": "spacehistory",
+      "DatabaseLifecycle": "FreshPerEntry",
+      "ExpectedCases": 1,
+      "ProviderEligibility": [
+        "PostgreSql"
+      ]
+    }
+  ],
+  "ApplicationFlow": null,
+  "Sql136BaselineRequired": false,
+  "FreshPerEntryIds": [
+    "space-history-core-first-then-space-reuses-prerequisites",
+    "space-history-generated-space-script-runs-twice-without-core",
+    "space-history-migration-creates-only-design-tables-and-separate-history",
+    "space-history-space-first-then-core-reuses-prerequisites"
+  ],
+  "Cleanup": "Only after every selected gate and unchanged-input check passes; normal DROP of the explicit owned receipt list, followed by absence checks.",
+  "FullAcceptance": false,
+  "Scope": "Offline plan only. Partial execution phases never claim Full or cross-provider acceptance."
+}

@@ -1,0 +1,27 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Scope": "Offline target-entry delta only; preserve other61 entries and exact design/publish41. Add ten normally delivered BUG161 regressions and two raw exact native25 reports. No current WP6 native acceptance claim.",
+  "BeforeSha256": "5B1898EC51E93C03AAC6B826DDBD9B574B0E28F33EFDCF470693B9B12379C4FD",
+  "AfterSha256": "7E10D8FB6F0EFB56DBC0ADF8AD086AC1D73C1AC8C1E6A24DAD21FD31867A72A6",
+  "Entries": 62,
+  "UnchangedEntries": 61,
+  "TargetEntry": "space-cad-assets-collaboration",
+  "BeforeCases": 15,
+  "AfterCases": 25,
+  "AdditionalNames": [
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_deadlock_retries_the_whole_transaction",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_ambient_transaction",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_pending_changes",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_preserves_caller_transaction",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_recovery_honors_cancellation",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_recovery_is_bounded_and_rolls_back",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_serialization_failure_retries_the_whole_transaction",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_unknown_unique_constraint_is_not_retried",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict"
+  ],
+  "AddedSourceDefinition": "CP6.Space.IntegrationTests/SpaceCadProviderSqlServerTests.RecoveryTests.cs",
+  "SqlServerEligibleEntries": 54,
+  "PostgreSqlEligibleEntries": 51,
+  "CheckedUtc": "2026-10-03T22:15:45.8221140Z"
+}

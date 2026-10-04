@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Space.Application;
 using CP6.Space.Infrastructure;
 using Dapper;
@@ -23,6 +24,7 @@ public sealed class SpaceMigrationTestDatabase
     private const string TaskName = "DB-COMPAT-01-WP5";
     private readonly string owner;
     private readonly ITestOutputHelper output;
+    private readonly OwnedTestDatabase? ownedDatabase;
 
     private SpaceMigrationTestDatabase(DatabaseOptions database, string connection, string owner, ITestOutputHelper output)
     {
@@ -30,10 +32,13 @@ public sealed class SpaceMigrationTestDatabase
         ConnectionString = connection;
         this.owner = owner;
         this.output = output;
+        ownedDatabase = OwnedTestDatabase.FromEnvironment(database, connection,
+            [DatabaseFixtureRole.SpaceHistory], "CP6Compat.WP6.SpaceMigrations");
     }
 
     public static bool IsSelected => Environment.GetEnvironmentVariable(ProviderVariable) is not null
-        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null;
+        || Environment.GetEnvironmentVariable(ConnectionVariable) is not null
+        || OwnedTestDatabase.IsRequestedForRole(DatabaseFixtureRole.SpaceHistory);
 
     public DatabaseOptions Database { get; }
     public string ConnectionString { get; }
@@ -88,7 +93,7 @@ public sealed class SpaceMigrationTestDatabase
                 "An unmigrated runner-owned database may contain only its empty Space history table.");
         }
 
-        output.WriteLine($"Provider={Database.Provider}; Task={TaskName}; Owner={owner}; Target={historicalStart ?? "latest"}; Lifecycle=runner-owned; CoreProfile=not-applied.");
+        output.WriteLine($"Provider={Database.Provider}; Task={(ownedDatabase is null ? TaskName : OwnedTestDatabase.TaskName)}; Owner={owner}; Target={historicalStart ?? "latest"}; Lifecycle=runner-owned; CoreProfile=not-applied.");
         await RecordMigrationSourcesAsync(available);
         await RecordStateAsync(context, "before-migration");
         await context.Database.GetService<IMigrator>().MigrateAsync(historicalStart);
@@ -129,8 +134,12 @@ public sealed class SpaceMigrationTestDatabase
             _ => throw new InvalidOperationException("CP6_SPACE_MIGRATION_TEST_PROVIDER must select SqlServer or PostgreSql.")
         });
         var owner = Environment.GetEnvironmentVariable(OwnerVariable) ?? "";
-        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "A WP5 ownership receipt is required.");
         var supplied = Environment.GetEnvironmentVariable(ConnectionVariable) ?? "";
+        var ownedDatabase = OwnedTestDatabase.FromEnvironment(database, supplied,
+            [DatabaseFixtureRole.SpaceHistory], "CP6Compat.WP6.SpaceMigrations");
+        if (ownedDatabase is not null)
+            return (database, ownedDatabase.ConnectionString, ownedDatabase.Owner);
+        Require(Regex.IsMatch(owner, "\\A[0-9a-f]{32}\\z"), "A WP5 ownership receipt is required.");
         Require(!string.IsNullOrWhiteSpace(supplied), "The selected migration lane requires its runner-owned connection.");
         var expectedName = "CP6Compat_WP5_20261003_" + owner[..8];
         if (database.Provider == DatabaseProvider.PostgreSql)
@@ -159,6 +168,11 @@ public sealed class SpaceMigrationTestDatabase
 
     private async Task VerifyOwnerAsync()
     {
+        if (ownedDatabase is not null)
+        {
+            await ownedDatabase.VerifyAsync();
+            return;
+        }
         await using var connection = new DatabaseConnectionFactory(Database).Create(ConnectionString);
         await connection.OpenAsync();
         var postgres = Database.Provider == DatabaseProvider.PostgreSql;

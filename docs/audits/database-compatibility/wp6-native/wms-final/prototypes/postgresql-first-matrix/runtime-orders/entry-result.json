@@ -1,0 +1,51 @@
+{
+  "EntryId": "runtime-orders",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_52b6ecc3_runtime",
+  "Role": "runtime",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "40D653A08E18923D22E92CAF52EE8B14E637504DC7D0C314164B8FD8C6B13692",
+  "Process": {
+    "ProcessId": 21936,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:12:17.3364251Z",
+    "FinishedUtc": "2026-10-03T16:12:21.5179125Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "6CE85DC5F074B0BEE1C4554361F114EBB71F0366487BDBE03BA93907045866E4",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-orders",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 7,
+      "Total": 7,
+      "Passed": 7,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.CoreExactHistory",
+      "Orders.ImmediateAllocation",
+      "Orders.FirstCreationConcurrency",
+      "Orders.CallerRollbackAndVisibility",
+      "Orders.GlobalCrossTenantAndDatePrefix",
+      "Orders.PendingManualChangeRejected"
+    ],
+    "ReportSha256": "7D03ACB3AA1EE614E4163551D714007066EE466AA0F00F5DD4A51D327696C150",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\db-compat-wp6-postgresql-matrix\\runtime-orders\\reports\\report.json",
+  "ReportSha256": "7D03ACB3AA1EE614E4163551D714007066EE466AA0F00F5DD4A51D327696C150",
+  "FailureCode": null,
+  "Success": true
+}

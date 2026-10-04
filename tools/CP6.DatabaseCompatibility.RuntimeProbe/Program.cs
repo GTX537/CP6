@@ -3,6 +3,7 @@ using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
 using CP6.DatabaseCompatibility.RuntimeProbe;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ try
     ProbeAssert.Require(Arg("--suite") is "orders" or "orders-extra" or "locks" or "failures" or "shared" or "cursor" or "claim", "An implemented suite must be selected before database access.");
     ProbeAssert.Require(Arg("--case") is null or "immediate" or "all", "Unknown order case rejected before database access.");
     var fixture = new RuntimeFixture(provider == "PostgreSql" ? DatabaseProvider.PostgreSql : DatabaseProvider.SqlServer);
-    await Check("Isolation.Wp3Owner", async () => { serverVersion = await fixture.VerifyOwnerAsync(); return "Dedicated loopback WP3 name, provider and owner verified."; });
+    await Check("Isolation.Wp3Owner", async () => { serverVersion = await fixture.VerifyOwnerAsync(); return OwnedTestDatabase.IsRequested() ? "Dedicated loopback WP6 name, role, provider and owner verified." : "Dedicated loopback WP3 name, provider and owner verified."; });
     if (checks.Any(x => x.Status == "Failed")) throw new ProbeAssertionException("Ownership is required before migration or fixture writes.");
     if (args.Contains("--initialize")) await Check("Installation.Core", fixture.InitializeCoreAsync);
     else await Check("Installation.CoreExactHistory", fixture.VerifyCoreHistoryAsync);
@@ -101,7 +102,7 @@ finally
     foreach (var type in new[] { typeof(RuntimeFixture), typeof(CP6Context), typeof(SpaceContext), typeof(CP6.Persistence.PostgreSql.PostgreSqlMigrationsAssembly), typeof(DbContext), typeof(NpgsqlConnection), typeof(SqlConnection) })
         binaries[type.Assembly.GetName().Name!] = new { LoadedPath = type.Assembly.Location, Sha256 = Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(type.Assembly.Location))) };
     Directory.CreateDirectory(Path.GetDirectoryName(output)!);
-    await File.WriteAllTextAsync(output, JsonSerializer.Serialize(new { Scope = "WP3 explicitly named real runtime gates on a newly owned isolated database. Complete business/API/worker and recovery acceptance remain separate.", Suite = Arg("--suite"), Case = Arg("--case"), Provider = provider, StartedHostUtc = started, FinishedHostUtc = DateTime.UtcNow, SourceBase = Arg("--source-sha"), SourceState = "WP3 uncommitted task source; per-file input binding required", DatabaseVersion = serverVersion, RuntimeBinaries = binaries, Checks = checks }, new JsonSerializerOptions { WriteIndented = true }));
+    await File.WriteAllTextAsync(output, JsonSerializer.Serialize(new { Scope = OwnedTestDatabase.IsRequested() ? "WP6 explicitly named real runtime gates on a runner-owned isolated database; required-case and application/recovery evidence are bound separately." : "WP3 explicitly named real runtime gates on a newly owned isolated database. Complete business/API/worker and recovery acceptance remain separate.", Suite = Arg("--suite"), Case = Arg("--case"), Provider = provider, StartedHostUtc = started, FinishedHostUtc = DateTime.UtcNow, SourceBase = Arg("--source-sha"), SourceState = OwnedTestDatabase.IsRequested() ? "WP6 runner task source; applicable source-file and runtime-binary hashes required" : "WP3 uncommitted task source; per-file input binding required", DatabaseVersion = serverVersion, RuntimeBinaries = binaries, Checks = checks }, new JsonSerializerOptions { WriteIndented = true }));
 }
 return checks.Any(x => x.Status == "Failed") ? 1 : 0;
 

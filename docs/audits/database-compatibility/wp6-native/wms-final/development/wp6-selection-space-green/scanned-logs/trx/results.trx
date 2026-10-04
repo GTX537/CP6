@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6c484ff9-3e78-4ef7-ada9-0ebe283c5b7a" name="tt@LAPTOP-3QQ44FJS 2026-10-03 12:36:21" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T12:36:21.6295783-04:00" queuing="2026-10-03T12:36:21.6295786-04:00" start="2026-10-03T12:36:16.5625025-04:00" finish="2026-10-03T12:36:21.6343212-04:00" />
+  <TestSettings name="default" id="ddf591be-8d0a-4465-a455-024f055b87ef">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_12_36_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c3afd464-f6c9-40f4-a31a-f198fc15666a" testId="923a7dae-6d6e-455e-3aaa-af13d9adf1ab" testName="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.No_wp6_scope_preserves_unselected_legacy_behavior" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0341583" startTime="2026-10-03T12:36:21.5350596-04:00" endTime="2026-10-03T12:36:21.5661473-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c3afd464-f6c9-40f4-a31a-f198fc15666a" />
+    <UnitTestResult executionId="c9d43022-8bf6-4e22-a531-e5d50a40a900" testId="54bda5c4-7200-8805-8146-0f0ed54ccfa4" testName="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.Space_role_without_business_aliases_rejects_before_connection_and_does_not_select_history" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0010123" startTime="2026-10-03T12:36:21.5344573-04:00" endTime="2026-10-03T12:36:21.5345172-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c9d43022-8bf6-4e22-a531-e5d50a40a900" />
+    <UnitTestResult executionId="fadce6dc-86e1-4925-81a0-64f8fd752fef" testId="45463e3a-c3d9-b11c-6d54-a38f20fa2775" testName="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.History_role_without_history_aliases_rejects_before_connection_and_does_not_select_business" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0031594" startTime="2026-10-03T12:36:21.5349392-04:00" endTime="2026-10-03T12:36:21.5349770-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fadce6dc-86e1-4925-81a0-64f8fd752fef" />
+    <UnitTestResult executionId="663e87ed-59dd-4dfc-92a0-fa895d15fe03" testId="42fb4e40-a6ce-81dc-e5f9-043f43a44f69" testName="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.Other_valid_role_does_not_activate_space_discovery_or_migration_validation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1515536" startTime="2026-10-03T12:36:21.3877211-04:00" endTime="2026-10-03T12:36:21.5276337-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="663e87ed-59dd-4dfc-92a0-fa895d15fe03" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.Space_role_without_business_aliases_rejects_before_connection_and_does_not_select_history" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="54bda5c4-7200-8805-8146-0f0ed54ccfa4">
+      <Execution id="c9d43022-8bf6-4e22-a531-e5d50a40a900" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests" name="Space_role_without_business_aliases_rejects_before_connection_and_does_not_select_history" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.No_wp6_scope_preserves_unselected_legacy_behavior" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="923a7dae-6d6e-455e-3aaa-af13d9adf1ab">
+      <Execution id="c3afd464-f6c9-40f4-a31a-f198fc15666a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests" name="No_wp6_scope_preserves_unselected_legacy_behavior" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.History_role_without_history_aliases_rejects_before_connection_and_does_not_select_business" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="45463e3a-c3d9-b11c-6d54-a38f20fa2775">
+      <Execution id="fadce6dc-86e1-4925-81a0-64f8fd752fef" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests" name="History_role_without_history_aliases_rejects_before_connection_and_does_not_select_business" />
+    </UnitTest>
+    <UnitTest name="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests.Other_valid_role_does_not_activate_space_discovery_or_migration_validation" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.space.integrationtests\bin\debug\net8.0\cp6.space.integrationtests.dll" id="42fb4e40-a6ce-81dc-e5f9-043f43a44f69">
+      <Execution id="663e87ed-59dd-4dfc-92a0-fa895d15fe03" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Space.IntegrationTests.OwnedFixtureSelectionTests" name="Other_valid_role_does_not_activate_space_discovery_or_migration_validation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="923a7dae-6d6e-455e-3aaa-af13d9adf1ab" executionId="c3afd464-f6c9-40f4-a31a-f198fc15666a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54bda5c4-7200-8805-8146-0f0ed54ccfa4" executionId="c9d43022-8bf6-4e22-a531-e5d50a40a900" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45463e3a-c3d9-b11c-6d54-a38f20fa2775" executionId="fadce6dc-86e1-4925-81a0-64f8fd752fef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42fb4e40-a6ce-81dc-e5f9-043f43a44f69" executionId="663e87ed-59dd-4dfc-92a0-fa895d15fe03" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:02.18]   Discovering: CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:02.24]   Discovered:  CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:02.25]   Starting:    CP6.Space.IntegrationTests&#xD;
+[xUnit.net 00:00:02.47]   Finished:    CP6.Space.IntegrationTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

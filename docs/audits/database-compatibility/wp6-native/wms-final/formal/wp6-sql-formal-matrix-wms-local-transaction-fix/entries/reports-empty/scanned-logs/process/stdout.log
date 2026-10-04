@@ -1,0 +1,5 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6\tmp\wp6-sql-formal-matrix-wms-local-transaction-fix\entries\reports-empty\private\trx\results.trx
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 590 ms - CP6.Tests.dll (net8.0)

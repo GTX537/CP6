@@ -17,6 +17,7 @@
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
+    <Compile Include="../eng/database-compatibility/OwnedTestDatabase.cs" Link="OwnedTestDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CP6.Space.Application\CP6.Space.Application.csproj" />

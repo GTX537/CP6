@@ -1,0 +1,1 @@
+{"closedAt":"2026-10-03T19:37:43Z","number":157,"state":"CLOSED","title":"[BUG] Space 并发创建楼层在 PostgreSQL 串行化冲突后未返回版本冲突","url":"https://github.com/GTX537/CP6/issues/157"}

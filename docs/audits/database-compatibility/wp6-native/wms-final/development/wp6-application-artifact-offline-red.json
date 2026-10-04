@@ -1,0 +1,137 @@
+{
+  "Status": "Failed",
+  "Scope": "Pure offline fake artifact files; zero real process, listener, database or native execution",
+  "ExpectedCases": 16,
+  "Passed": 2,
+  "Failed": 14,
+  "Checks": [
+    {
+      "Entry": "Initialization",
+      "Scenario": "Unchanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "AddedFile",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "MissingFile",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "SameLengthChangedFile",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "ArtifactDirectoryChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "ManifestChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "ManifestIdentityChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Initialization",
+      "Scenario": "PrivateArtifactChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "Unchanged",
+      "Passed": true,
+      "Expected": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "AddedFile",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "MissingFile",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "SameLengthChangedFile",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "ArtifactDirectoryChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "ManifestChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_API_ARTIFACT_CHANGED",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "ManifestIdentityChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    },
+    {
+      "Entry": "Host",
+      "Scenario": "PrivateArtifactChanged",
+      "Passed": false,
+      "Expected": "CP6_COMPAT_APPLICATION_SETTINGS_MISMATCH",
+      "Actual": "CP6_COMPAT_OFFLINE_AFTER_ARTIFACT",
+      "OwnerCalls": 1
+    }
+  ]
+}

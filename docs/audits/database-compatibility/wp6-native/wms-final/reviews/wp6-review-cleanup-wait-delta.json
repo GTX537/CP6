@@ -1,0 +1,55 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "NoSubstantiveBlockers",
+  "Scope": "Root focused incremental review of the bounded cleanup change within the already-reviewed WP6 task. No new full task review or new native execution. Final concentrated task diff review remains required.",
+  "ReviewedFiles": [
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityLifecycle.psm1",
+      "Sha256": "D96CC5903DABA60CB242D715E80173C955C0191E854044F5C1F412ED1977796C"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityLifecycle.ps1",
+      "Sha256": "E21E851B91DDFD3553A5096DCE6EFE6EFA11684E4868466E0A018C23537F4EA7"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityCleanup.ps1",
+      "Sha256": "4B7A76B3617121A82A9C917B758141E7B92FCBE0197C9F9F1A114F6911407966"
+    }
+  ],
+  "Findings": [],
+  "Checks": [
+    "Only exact DATABASE_HAS_SESSIONS is retried; all other ownership/physical/principal/visibility/native failures immediately propagate.",
+    "Every poll revalidates full ownership and physical identity; no disconnect or force drop is introduced.",
+    "All-target preflight still completes before first mutation, with a separate idle/identity check before each normal DROP.",
+    "Wait has a stopwatch deadline, defaults to 15 seconds and accepts explicit zero for immediate failure; sustained sessions remain failure.",
+    "Actual 41 offline state-transition controls cover transient preflight and pre-drop arrival, sustained real deadline, ownership/physical changes, missing SQL session visibility and zero timeout.",
+    "Actual native PostgreSQL sustained-session rejection left every receipt unchanged; transient client exited normally, four remaining databases normally dropped, all eleven absent.",
+    "Seven actual builds and 2059 actual runtime files were byte-verified unchanged; only PowerShell orchestration/control inputs changed. The original Failed Matrix is not promoted to Passed."
+  ],
+  "Limitations": [
+    "Original transient session type was not captured; only zero-to-one count transition and subsequent natural release are evidenced.",
+    "Controlled live-session cleanup regression used PostgreSQL; SQL branches have offline controls and will be exercised by the required native SQL Matrix."
+  ],
+  "Evidence": [
+    {
+      "Path": "wp6-cleanup-wait-offline-red.json",
+      "Sha256": "D37EBAE8DC7F55490F5E2749E92C10877075DBF7FDF6CFD5FDFACECBF67C5C59"
+    },
+    {
+      "Path": "wp6-cleanup-wait-offline-green.json",
+      "Sha256": "1477881C952B0E3D7DC082292B2D592627756A797E6DE0D1D20E0D61FAC202D4"
+    },
+    {
+      "Path": "wp6-cleanup-wait-regression-record.json",
+      "Sha256": "76B123EEF606506CF1C30894E5A9A0BEB2FAD3FC444D4E6148B367FFE509B720"
+    },
+    {
+      "Path": "wp6-pg-cad-matrix-cleanup-recovery.json",
+      "Sha256": "D9A4055B48D461743B4CEA31CCA57B3D874329CEA06EF158CF0CB01E79874C20"
+    },
+    {
+      "Path": "wp6-cleanup-matrix-build-reuse-preflight.json",
+      "Sha256": "E05E9A1F3179E14A08435837B8BAE6C4586438C93AEEFACBBF80E539F5B3147E"
+    }
+  ]
+}

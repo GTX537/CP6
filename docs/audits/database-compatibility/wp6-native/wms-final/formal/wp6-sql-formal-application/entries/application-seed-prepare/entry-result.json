@@ -1,0 +1,51 @@
+{
+  "EntryId": "application-seed-prepare",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_cf7ab161_application",
+  "Role": "application",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "BC738C686370A4EEF2FA36B01250A3EC20E57A5F69991AFA31E2506ABBECB287",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-seed-prepare\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "837D857C74DABECC6C2609E76B04B5DAC336EE555380AE8F49A0281C38BA8A52",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-seed-prepare\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "837D857C74DABECC6C2609E76B04B5DAC336EE555380AE8F49A0281C38BA8A52",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 36392,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:51:33.3675634Z",
+    "FinishedUtc": "2026-10-03T16:51:34.9316700Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "2E8524ED0458773BE3EAFBA418C068C3CC209FAA12659E01AC73E1CD24CCAEFB",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-seed-prepare",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Seed.prepare"
+    ],
+    "ReportSha256": "6E4B1959C010F04E8E0CC1F00FE0A49BA6394CBB5EF1FFFED087CF3567944B78",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\application-seed-prepare\\reports\\report.json",
+  "ReportSha256": "6E4B1959C010F04E8E0CC1F00FE0A49BA6394CBB5EF1FFFED087CF3567944B78",
+  "FailureCode": null,
+  "Success": true
+}

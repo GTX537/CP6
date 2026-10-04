@@ -1,0 +1,9 @@
+{
+  "Task": "BUG-153",
+  "CheckedUtc": "2026-10-03T16:37:34.3983924Z",
+  "Branch": "codex/bug-153-erp-concurrency-retry",
+  "Runs": [],
+  "StartedByTask": 0,
+  "CanceledByTask": 0,
+  "Scope": "Read-only task branch run inspection before delivery"
+}

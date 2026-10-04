@@ -1,0 +1,14 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "ComparedUtc": "2026-10-03T16:51:49.6116105Z",
+  "PostgreSqlSourceHead": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "SqlServerSourceHead": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "ApplicationSourceInputsSha256": "AFBE7776AB8E9A682142EDD74B316F76211CC502FE26762644E0539943357E83",
+  "ApplicationInputsEqual": true,
+  "SourceInputCount": 2009,
+  "PublishedFilesEqual": true,
+  "PublishedFileCount": 261,
+  "PostgreSqlManifestSha256": "3AE1B560829C733ED84D134EC1E752096376B2D5E201DF790E77CEB17DCAB1ED",
+  "SqlServerManifestSha256": "1B44E974AFCB119F741403446E3025F866D5BC41C1AC3854C6288300F22D5D8F",
+  "Scope": "Formal SQL Application reuses actual successful PostgreSQL phase build inputs and the same externally supplied API files. Source HEAD advanced only for unrelated ERP test/docs; this is not a new API publish or a claim that SQL runtime acceptance has finished."
+}

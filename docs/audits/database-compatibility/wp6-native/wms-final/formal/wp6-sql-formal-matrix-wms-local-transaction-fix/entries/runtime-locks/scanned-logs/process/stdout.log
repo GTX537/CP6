@@ -1,0 +1,5 @@
+Passed: Isolation.Wp3Owner: Dedicated loopback WP6 name, role, provider and owner verified.
+Passed: Installation.CoreExactHistory: Exact Core history=140, pending=0; no full catalog or business acceptance implied.
+Passed: Locks.TransactionLifecycle: Two native sessions: same-key zero/finite contention, usable transaction after busy timeout, distinct tenant key, commit/rollback/dispose release, cancellation then rollback and fresh transaction. Primitive resource namespaces only; full business isolation remains separate.
+Passed: Locks.SessionLifecycle: Two native sessions: contention and canceled wait, two actual committed batches retain the lock, explicit release/Dispose are idempotent, peer reacquires and releases, both non-owned connections remain open and usable.
+Passed: Clock.AdvancingDatabaseUtc: Two UTC Kind reads advanced in one native transaction and matched independent SYSUTCDATETIME bounds; caller connection remained open. No application-clock input or business-date conversion.

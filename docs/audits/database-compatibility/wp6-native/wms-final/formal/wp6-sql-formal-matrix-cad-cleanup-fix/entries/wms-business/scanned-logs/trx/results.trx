@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2917debc-06ae-4262-8eda-0bb3910a22bf" name="tt@LAPTOP-3QQ44FJS 2026-10-03 19:23:38" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T19:23:38.8122294-04:00" queuing="2026-10-03T19:23:38.8122295-04:00" start="2026-10-03T19:23:34.4023540-04:00" finish="2026-10-03T19:23:42.9898930-04:00" />
+  <TestSettings name="default" id="a7d38401-bbd5-4b91-a237-880dbe81f569">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_19_23_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="65d2d42d-4a2b-4812-a6f3-6d08b2dd45e7" testId="68bde242-2c3b-4f36-9a69-f06f7e4cc4aa" testName="CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.8680411" startTime="2026-10-03T19:23:39.7593683-04:00" endTime="2026-10-03T19:23:40.6230147-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="65d2d42d-4a2b-4812-a6f3-6d08b2dd45e7" />
+    <UnitTestResult executionId="1904b75f-9b4f-4b25-9b64-8cad83c7a2fb" testId="45eaa5ae-fc0d-82c8-12f8-a14230d8b221" testName="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5352304" startTime="2026-10-03T19:23:38.4433332-04:00" endTime="2026-10-03T19:23:38.9785736-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1904b75f-9b4f-4b25-9b64-8cad83c7a2fb" />
+    <UnitTestResult executionId="916fbcb7-205e-4b7c-852e-b778bc21186e" testId="8504481a-0bde-bffd-9335-e7dd9011c794" testName="CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2493445" startTime="2026-10-03T19:23:38.1979161-04:00" endTime="2026-10-03T19:23:38.4428289-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="916fbcb7-205e-4b7c-852e-b778bc21186e" />
+    <UnitTestResult executionId="6b5633b4-4930-455e-b3e3-23f0de8f1a12" testId="3af75342-4bd1-7e7e-f5f9-3bd3ee06b16c" testName="CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.9214447" startTime="2026-10-03T19:23:37.2783202-04:00" endTime="2026-10-03T19:23:38.1921937-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b5633b4-4930-455e-b3e3-23f0de8f1a12" />
+    <UnitTestResult executionId="d169e0c2-80e7-4d35-8b71-ad9033678eaf" testId="111fa063-3582-dd1f-639b-032d25ce407f" testName="CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.1302121" startTime="2026-10-03T19:23:40.6232411-04:00" endTime="2026-10-03T19:23:41.7535819-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d169e0c2-80e7-4d35-8b71-ad9033678eaf" />
+    <UnitTestResult executionId="a4683925-a251-4eb8-9ba2-f91274da0964" testId="25fba65d-bf42-d431-68ef-31ac3353f620" testName="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2794247" startTime="2026-10-03T19:23:42.6419774-04:00" endTime="2026-10-03T19:23:42.9212368-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4683925-a251-4eb8-9ba2-f91274da0964" />
+    <UnitTestResult executionId="5cb92880-df0f-470b-b515-94f5e601bd92" testId="341f1a51-b135-739a-7825-7ce0c13cb333" testName="CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.8872535" startTime="2026-10-03T19:23:41.7537445-04:00" endTime="2026-10-03T19:23:42.6415489-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5cb92880-df0f-470b-b515-94f5e601bd92" />
+    <UnitTestResult executionId="369054fd-8856-4232-bc5c-c7d64f203f16" testId="c8a66def-b069-c4de-829c-4b76d6320252" testName="CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.7636269" startTime="2026-10-03T19:23:38.9787505-04:00" endTime="2026-10-03T19:23:39.7547830-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="369054fd-8856-4232-bc5c-c7d64f203f16">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.</Message>
+          <StackTrace>   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean&amp; nodeNameMatches, Byte[]&amp; whereabouts, ResourceManagerShim&amp; resourceManagerShim)&#xD;
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()&#xD;
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()&#xD;
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)&#xD;
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)&#xD;
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)&#xD;
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)&#xD;
+   at System.Transactions.Transaction.Promote()&#xD;
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)&#xD;
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)&#xD;
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)&#xD;
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)&#xD;
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreateNonPooledConnection(DbConnection owningConnection, DbConnectionPoolGroup poolGroup, DbConnectionOptions userOptions)&#xD;
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.&lt;&gt;c__DisplayClass48_0.&lt;CreateReplaceConnectionContinuation&gt;b__0(Task`1 _)&#xD;
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()&#xD;
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()&#xD;
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\Services\Wms\LpnService.cs:line 77&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\WmsProductionSqlServerTests.cs:line 812&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\WmsProductionSqlServerTests.cs:line 934&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c8a66def-b069-c4de-829c-4b76d6320252">
+      <Execution id="369054fd-8856-4232-bc5c-c7d64f203f16" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="25fba65d-bf42-d431-68ef-31ac3353f620">
+      <Execution id="a4683925-a251-4eb8-9ba2-f91274da0964" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3af75342-4bd1-7e7e-f5f9-3bd3ee06b16c">
+      <Execution id="6b5633b4-4930-455e-b3e3-23f0de8f1a12" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="SourceDocumentScopes_TranslateAndFailClosedOnSqlServer" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="341f1a51-b135-739a-7825-7ce0c13cb333">
+      <Execution id="5cb92880-df0f-470b-b515-94f5e601bd92" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="68bde242-2c3b-4f36-9a69-f06f7e4cc4aa">
+      <Execution id="65d2d42d-4a2b-4812-a6f3-6d08b2dd45e7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8504481a-0bde-bffd-9335-e7dd9011c794">
+      <Execution id="916fbcb7-205e-4b7c-852e-b778bc21186e" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="45eaa5ae-fc0d-82c8-12f8-a14230d8b221">
+      <Execution id="1904b75f-9b4f-4b25-9b64-8cad83c7a2fb" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Serial_EnableTracking_RequiresFeatureAndExactControlledCount" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="111fa063-3582-dd1f-639b-032d25ce407f">
+      <Execution id="d169e0c2-80e7-4d35-8b71-ad9033678eaf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="68bde242-2c3b-4f36-9a69-f06f7e4cc4aa" executionId="65d2d42d-4a2b-4812-a6f3-6d08b2dd45e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45eaa5ae-fc0d-82c8-12f8-a14230d8b221" executionId="1904b75f-9b4f-4b25-9b64-8cad83c7a2fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8504481a-0bde-bffd-9335-e7dd9011c794" executionId="916fbcb7-205e-4b7c-852e-b778bc21186e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3af75342-4bd1-7e7e-f5f9-3bd3ee06b16c" executionId="6b5633b4-4930-455e-b3e3-23f0de8f1a12" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="111fa063-3582-dd1f-639b-032d25ce407f" executionId="d169e0c2-80e7-4d35-8b71-ad9033678eaf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25fba65d-bf42-d431-68ef-31ac3353f620" executionId="a4683925-a251-4eb8-9ba2-f91274da0964" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="341f1a51-b135-739a-7825-7ce0c13cb333" executionId="5cb92880-df0f-470b-b515-94f5e601bd92" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8a66def-b069-c4de-829c-4b76d6320252" executionId="369054fd-8856-4232-bc5c-c7d64f203f16" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="7" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.17]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.49]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.51]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:05.01]       System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.&#xD;
+[xUnit.net 00:00:05.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean&amp; nodeNameMatches, Byte[]&amp; whereabouts, ResourceManagerShim&amp; resourceManagerShim)&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.Oletx.DtcTransactionManager.Initialize()&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.Transaction.Promote()&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)&#xD;
+[xUnit.net 00:00:05.01]            at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.ProviderBase.DbConnectionFactory.CreateNonPooledConnection(DbConnection owningConnection, DbConnectionPoolGroup poolGroup, DbConnectionOptions userOptions)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.Data.ProviderBase.DbConnectionFactory.&lt;&gt;c__DisplayClass48_0.&lt;CreateReplaceConnectionContinuation&gt;b__0(Task`1 _)&#xD;
+[xUnit.net 00:00:05.01]            at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()&#xD;
+[xUnit.net 00:00:05.01]            at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:05.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.01]            at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:05.01]            at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+[xUnit.net 00:00:05.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.01]            at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.01]         D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\Services\Wms\LpnService.cs(77,0): at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.01]         D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\WmsProductionSqlServerTests.cs(812,0): at CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree()&#xD;
+[xUnit.net 00:00:05.01]         D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\WmsProductionSqlServerTests.cs(934,0): at CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree()&#xD;
+[xUnit.net 00:00:05.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.18]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T19:23:39.7566176-04:00">
+        <Text>[xUnit.net 00:00:05.01]     CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

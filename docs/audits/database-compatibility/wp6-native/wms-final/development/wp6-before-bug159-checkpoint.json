@@ -1,0 +1,157 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Purpose": "Preserve four owned WP6 drafts and 31 BUG157 post-merge originals before integrating normally delivered BUG159. No final acceptance or remote WP6 delivery claim.",
+  "Base": "e9fed72ba46015ddcf2be14c3c804487bad65a72",
+  "Checkpoint": "84931b4c45a20bc93d8930d39f223d23498d333b",
+  "Inputs": [
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-before-merge-workflow-input-inspection.json",
+      "Sha256": "4E2E0FC0A3D734B574973FF419DD8FB82CE7C11B85A5C881003C654F1C684074"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-before-pr-create-workflow-input-inspection.json",
+      "Sha256": "73FEE0D7121583EADB7E26C6FE96B5B8E148765FB7D6F3AC267A307C7F774F26"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-before-push-workflow-input-inspection.json",
+      "Sha256": "FF5F342099336A0C540BEC09CE9EAF646D40054BD97317024477F2D1AB5B8455"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-cleanup-owned-two.json",
+      "Sha256": "49665D9494A2B7CD7E9B00DBE30FC7C2D0A1A42810BFA9F28F8D17FD4C12B4EC"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-closure-comment.md",
+      "Sha256": "6772EDCD1489B2EF23A4F5D143E7C2A9C6B7EEA54F98ADADE8D3ADF13E659535"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-closure.json",
+      "Sha256": "A88CAB5E8900071E2EC2F6E51E2123FA36BF52E0C1866BD1B64198FF34276BC5"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-final-staging-proof.json",
+      "Sha256": "4A03341E39F0D954C6203E4D0A28DA680F3618C75704710273DAA6C105B6B494"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-main-protection-observation.json",
+      "Sha256": "501F568B8E156061633D7D26DA61BF604008B2005CE4828566385967F032EE2E"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pg-postmerge-smoke/private/test/stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pg-postmerge-smoke/private/test/stdout.log",
+      "Sha256": "5C8A6F0B2A6D36479200731075772476872C2FB8CF93914759BC094026F9C2AA"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pg-postmerge-smoke/private/trx/results.trx",
+      "Sha256": "AFA6A1B256E2C55F5E3146C4FB1B23B196EDF15E9DADB56352FCA5BEAEA4CED5"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pg-postmerge-smoke/result.json",
+      "Sha256": "EBE5E6D5E3EE2DAFBEF386BE890D6900B5A9A4B162301B7A7E14F17494DC2C44"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pg-postmerge-smoke/runtime-artifact-after.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pg-postmerge-smoke/runtime-artifact-before.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pg-postmerge-smoke/source-inputs.json",
+      "Sha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-postmerge-verification.json",
+      "Sha256": "9B7BB0A659BD9C407DF2C5E498BC730BC0CA93AB8F9B402DD51C5FD0650DA27F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pr-body.md",
+      "Sha256": "39F0C8ADE6BFC7EF955EFDD903D05EDB249D78C8F815521A18B9CE70083C4393"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pr-files-paginated.json",
+      "Sha256": "6E1C214924AA7D5AF1674CDF726B199780C6013AA164AF9BD16ADEF92617BF8B"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pr-full-scope-proof.json",
+      "Sha256": "A1987991B602DABB6E3DE9AF64F0D5139FBF20842CD017ACF9C3C4735B39E456"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pr-premerge-readback.json",
+      "Sha256": "FA461C3C326A03B7819398B5CC72B627868C73210824C06AC1D9EEF7486F204E"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-pr-review-threads.json",
+      "Sha256": "CFA99E63E5D5E169EBB931B4E2C477AC1458503170FA058DD8F8F912A338AF98"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-remote-main-verification.json",
+      "Sha256": "D01ED56B2F1BEB6901BC52791DDED438D7AE7F20BFEAE18FE6E75C8CE47FADAD"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-sql-postmerge-smoke/private/test/stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-sql-postmerge-smoke/private/test/stdout.log",
+      "Sha256": "674F19BA2A8CA1AB946337134802B6A6D7499C061A21490588C68FFD7C9267CD"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-sql-postmerge-smoke/private/trx/results.trx",
+      "Sha256": "C5EA16C5AF3B7302CF11503A37C493AB40EA426F9EF006F9EC91EC7A1A796DDA"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-sql-postmerge-smoke/result.json",
+      "Sha256": "C1E00AD749AFCCE2FF1960CC81037E1B8CBE3492EE3E77529AF190D6D8F71D5C"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-sql-postmerge-smoke/runtime-artifact-after.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-sql-postmerge-smoke/runtime-artifact-before.json",
+      "Sha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/bug157-sql-postmerge-smoke/source-inputs.json",
+      "Sha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/Invoke-Bug157Tests.ps1",
+      "Sha256": "CADC847E97C3AD3F6ADC70C2B404D18EBAFB89C35E9F09F8DD6C0012BF385EFE"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/manifest.json",
+      "Sha256": "E9F83341D0B6A3CC3E27A903944739FD80B82B83DC284E25E551132C98B76491"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/native/post-merge/Remove-Bug157OwnedDatabases.ps1",
+      "Sha256": "966FFBE8A003FDA11977AD31FFDAE6BCF4BCB08203CF2D0FF36DE5028BEDEFB0"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-157-floor-initialization-retry/README.md",
+      "Sha256": "E1923C2BAD0EB77B8394F7D52B40EF574F958C0FE55F2DA67013D69C4D8D931E"
+    },
+    {
+      "Path": "docs/audits/database-compatibility/WP6-IMPLEMENTATION.md",
+      "Sha256": "6F66AAC11AFC220CC713E9CBE23D5523BAFDE0EF9F4BE62611CB1EE6680B0786"
+    },
+    {
+      "Path": "docs/superpowers/plans/2026-10-02-database-compatibility.md",
+      "Sha256": "96E05E16A83A5D308B2295ABFA52EB45BAE9410314C8F3C2C292C5D2A43EF27D"
+    },
+    {
+      "Path": "eng/database-compatibility/required-cases.json",
+      "Sha256": "1EA3B68A17F79DFACC3FF5A85D20D45DD7BDA4603A5566BD9BC9C76A1741307C"
+    }
+  ],
+  "Files": 36,
+  "ArchiveOriginalsPreserved": 31,
+  "RemotePushPerformed": false,
+  "UnrelatedRootWorkspaceUntouched": true,
+  "CreatedUtc": "2026-10-03T20:40:11.4788036Z"
+}

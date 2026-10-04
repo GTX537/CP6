@@ -1,0 +1,48 @@
+{
+  "Task": "BUG-157",
+  "PR": 158,
+  "RemoteMain": "5587a2a67ae73715596ca1a135b5863005abac8d",
+  "Candidate": "5a339cbcf4f00740cad8672c75398bd879211b7e",
+  "Status": "RemoteMergedPostSmokePassedCleanupPending",
+  "Runs": [
+    {
+      "Label": "bug157-pg-postmerge-smoke",
+      "Provider": "PostgreSql",
+      "ExecutionHead": "5587a2a67ae73715596ca1a135b5863005abac8d",
+      "Passed": 3,
+      "Other": 0,
+      "ExitCode": 0,
+      "TrxSha256": "AFA6A1B256E2C55F5E3146C4FB1B23B196EDF15E9DADB56352FCA5BEAEA4CED5",
+      "ResultSha256": "EBE5E6D5E3EE2DAFBEF386BE890D6900B5A9A4B162301B7A7E14F17494DC2C44",
+      "SourceInputsSha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+      "RuntimeManifestSha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "ActualCoordinatedNative40001": 2,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict"
+      ]
+    },
+    {
+      "Label": "bug157-sql-postmerge-smoke",
+      "Provider": "SqlServer",
+      "ExecutionHead": "5587a2a67ae73715596ca1a135b5863005abac8d",
+      "Passed": 3,
+      "Other": 0,
+      "ExitCode": 0,
+      "TrxSha256": "C5EA16C5AF3B7302CF11503A37C493AB40EA426F9EF006F9EC91EC7A1A796DDA",
+      "ResultSha256": "C1E00AD749AFCCE2FF1960CC81037E1B8CBE3492EE3E77529AF190D6D8F71D5C",
+      "SourceInputsSha256": "91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8",
+      "RuntimeManifestSha256": "A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B",
+      "ActualCoordinatedNative40001": 0,
+      "CaseNames": [
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_and_replays_same_key",
+        "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_waiter_recovers_native_conflict_as_revision_conflict"
+      ]
+    }
+  ],
+  "PriorValidationReusedFrom": "bug157 exact clone23 and design/publish41 same source/runtime; no re-execution claimed",
+  "Scope": "Fresh native original concurrency and two coordinated cases after normal PR merge; complete WP6 acceptance pending",
+  "CheckedUtc": "2026-10-03T19:36:18.6060544Z"
+}

@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using CP6.DatabaseCompatibility.Testing;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Npgsql;
@@ -95,7 +96,10 @@ public static class Wp2RawOrderGates
     {
         Require(connection.State == ConnectionState.Open, "Raw Order gate requires the already verified open task connection.");
         Require(pg ? connection is NpgsqlConnection : connection is SqlConnection, "Raw Order provider must match the verified connection.");
-        Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Raw Order gate requires a dedicated WP2 database.");
+        if (Wp6MigrationOwnership.IsRequested)
+            await Wp6MigrationOwnership.VerifyAsync(connection, pg, DatabaseFixtureRole.Schema,
+                DatabaseFixtureRole.SqlUpgrade, DatabaseFixtureRole.Application, DatabaseFixtureRole.Restore);
+        else Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Raw Order gate requires a dedicated WP2 database.");
         Require(Defaults.Length == 65 && Defaults.Select(x => (x.Table, x.Column)).Distinct().Count() == 65,
             "Raw Order verifier must contain 65 distinct frozen defaults.");
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));

@@ -1,0 +1,14 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "ParentProgressUpdated",
+  "Issue": 134,
+  "State": "OPEN",
+  "Wp1To5Completed": true,
+  "Wp6Completed": false,
+  "BeforeBodySha256": "6FD0BC6361756E03650FEBB726F9160377AFFC759BF197DFBD5F9425E29472E0",
+  "BodyFileSha256": "0DAE6136484C8C1BC80E1F17101E7CF4E69C14AB1261CB4FB1A23F15BCD7E73C",
+  "ReadbackMatches": true,
+  "UpdatedUtc": "2026-10-04T01:25:06Z",
+  "NativeExecution": false,
+  "FinalAcceptance": false
+}

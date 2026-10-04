@@ -1,0 +1,70 @@
+{
+  "EntryId": "space-clone",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_60cd2fab_space",
+  "Role": "space",
+  "SourceSha": "8f2cc01ddcf43d6bcf0c236fed2ab038687fd1f4",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "B13426E9C6F7A5106231D2EC2A49D5249449F1A064D0ECF2D2382099852232FD",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "75C798CA64C14AF842F816D60BF0E0E502856C7BB7C1446EFC5067AF698F0524",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "75C798CA64C14AF842F816D60BF0E0E502856C7BB7C1446EFC5067AF698F0524",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 4768,
+    "ExitCode": 1,
+    "StartedUtc": "2026-10-03T18:46:58.6006502Z",
+    "FinishedUtc": "2026-10-03T18:47:34.8912895Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "85DFB362CD5D6B1F9D6743F32E52CF937368EF3022C0AD2C36504387C46C96CD",
+    "StandardErrorSha256": "488955F6CF18F11DD8BE30CB6E24F20668CD2D8DF372C835BAD16424172C8BAF",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-clone",
+    "Provider": "PostgreSql",
+    "Success": false,
+    "Status": "Failed",
+    "FailureCodes": [
+      "ProcessFailed",
+      "RunNotSuccessful",
+      "CounterMismatch",
+      "NonPassingCase"
+    ],
+    "Counts": {
+      "Expected": 16,
+      "Total": 16,
+      "Passed": 15,
+      "NonPassing": 1
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_is_explicit_idempotent_and_listed",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Draft_summary_reports_provenance_audit_times_and_open_blocking_count",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_concurrent_floor_initialization_allows_one_revision_winner",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Clone_remaps_row_ids_and_preserves_logical_identity",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Duplicate_operation_returns_the_same_reservation_and_job",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_blank_create_supports_replay_and_rejects_a_base_version",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Concurrent_same_operation_returns_one_reservation_and_job",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.System_template_mode_initializes_every_floor_and_persists_provenance",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Tenant_template_mode_uses_only_the_current_tenant_template_scope",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Native_last_table_failure_rolls_back_snapshot_and_scheduled_retry_succeeds",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Blank_mode_creates_an_idempotent_editable_draft_without_published_base",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Migration_creates_clone_snapshot_tables_and_column",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Empty_published_warehouse_clones_to_an_empty_draft",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Planning_scenario_clones_pinned_history_without_taking_production_pointers",
+      "CP6.Space.IntegrationTests.SpaceVersionCloneSqlServerTests.Design_v1_floor_endpoints_reject_external_principals"
+    ],
+    "ReportSha256": "829491EF1736CD49A56D69BEE2AE234F804212F59F114450D4A23DCBC0CD382C",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\space-clone\\private\\trx\\results.trx",
+  "ReportSha256": "829491EF1736CD49A56D69BEE2AE234F804212F59F114450D4A23DCBC0CD382C",
+  "FailureCode": null,
+  "Success": false
+}

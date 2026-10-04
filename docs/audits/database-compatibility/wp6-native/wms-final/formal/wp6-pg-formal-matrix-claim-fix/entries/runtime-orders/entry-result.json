@@ -1,0 +1,56 @@
+{
+  "EntryId": "runtime-orders",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_88d7af6e_runtime",
+  "Role": "runtime",
+  "SourceSha": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "9119955564207B74FED356A198B8C70B3CF69F05E7257175545208E256577F4E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\runtime-orders\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "4F953612BD09511AFF13258E5B1D2EFCA32174800F79D3A15FA2D339C3F4029D",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\runtime-orders\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "4F953612BD09511AFF13258E5B1D2EFCA32174800F79D3A15FA2D339C3F4029D",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 36784,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T21:21:43.1001192Z",
+    "FinishedUtc": "2026-10-03T21:21:47.3879824Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "6CE85DC5F074B0BEE1C4554361F114EBB71F0366487BDBE03BA93907045866E4",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-orders",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 7,
+      "Total": 7,
+      "Passed": 7,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.CoreExactHistory",
+      "Orders.ImmediateAllocation",
+      "Orders.FirstCreationConcurrency",
+      "Orders.CallerRollbackAndVisibility",
+      "Orders.GlobalCrossTenantAndDatePrefix",
+      "Orders.PendingManualChangeRejected"
+    ],
+    "ReportSha256": "1B5A26B8D4E0BB45280B2D4667508DDC208B34903F90BE68A49A61CD52F2FEC2",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\runtime-orders\\reports\\report.json",
+  "ReportSha256": "1B5A26B8D4E0BB45280B2D4667508DDC208B34903F90BE68A49A61CD52F2FEC2",
+  "FailureCode": null,
+  "Success": true
+}

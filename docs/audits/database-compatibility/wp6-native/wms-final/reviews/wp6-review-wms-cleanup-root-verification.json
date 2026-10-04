@@ -1,0 +1,284 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "ScopedReviewApplicable",
+  "ReviewSha256": "FA4ABDEB3D6A76574D39ABF2092F70E76A2574ECCDDEB64FC80893D26EBE5EF0",
+  "ScriptSha256": "C5B95A501E6E5555A9B50541491313E13210B6D5EA32CE710C3E858905398E7E",
+  "Head": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Files": [
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityLifecycle.psm1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "D96CC5903DABA60CB242D715E80173C955C0191E854044F5C1F412ED1977796C",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityLifecycle.ps1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "E21E851B91DDFD3553A5096DCE6EFE6EFA11684E4868466E0A018C23537F4EA7",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityCleanup.ps1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "4B7A76B3617121A82A9C917B758141E7B92FCBE0197C9F9F1A114F6911407966",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/WmsProductionSqlServerTests.cs",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "39D64CAE58653A4C11780D5716FD01A3563205E379BAAED16E5955E433301F34",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/WmsProductionLocalTransactionTests.cs",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "90B84E39F5857415CB859F27EFB0EF8C1A8048EEC80A1D86587811BFD6D1392F",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Core/Services/Wms/LpnService.cs",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "43C63948728DD9A833D4061E2E11A90E539AA32E5BCA143DFE54D4B1FD10B0F3",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Core/Services/Wms/LabelJobService.cs",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "AF769BC6F9B558FEB201EDA9CA925E815E23AD2D943406554BD2AC233857028E",
+      "Matches": true
+    },
+    {
+      "Path": "CP6.Tests/Infra/WmsProductionFactAttribute.cs",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "F8EB2111639F00C526529C0F2D44A151C5AA32C2DB8E38BF82DD71C8AEABFF66",
+      "Matches": true
+    },
+    {
+      "Path": "eng/database-compatibility/OwnedTestDatabase.cs",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "98625EA55407AA8168F008383F3EFC4010D29E79D6A1E00580F4908CA4AD23BA",
+      "Matches": true
+    },
+    {
+      "Path": "eng/database-compatibility/required-cases.json",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "9E4BDCCCD79198FF199F39D14FAF8CCA140FBD120FCD98F254167730FB231FFE",
+      "Matches": true
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/packages.lock.json",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "2D64365AFA0098C3AB9D8CDEEE4C75584D89708C85A1AAB5B07D99D1ED22F83B",
+      "Matches": true
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-163-wms-local-transactions/README.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "E40BB480466BDC5DCFA00B591BD354CD9926F3F5B25830010FD699311970ADF5",
+      "Matches": true
+    },
+    {
+      "Path": "docs/audits/database-compatibility/WP6-IMPLEMENTATION.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "2C998B98E0985FD0803A387945E7D327A3703948A2BFDA353487EAF942FA8C03",
+      "Matches": true
+    },
+    {
+      "Path": "docs/devops/DATABASE-COMPATIBILITY.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "E8491E1BB5E04592CC006864CCE92C6E10990307E0EF30AA8AF1645461E92A74",
+      "Matches": true
+    },
+    {
+      "Path": "docs/superpowers/plans/2026-10-02-database-compatibility.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "B35126812654904928FF8ACEA26B1BDE685069E47DC6250B7C8AA4EE6B30434B",
+      "Matches": true
+    },
+    {
+      "Path": "docs/project-memory/PROJECT_STATE.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "A52217592CDE8163762581788A135DD7154B35E4823D027A83A582449FCC1D3F",
+      "Matches": true
+    },
+    {
+      "Path": "docs/project-memory/05-Completed.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "2B159C90560BF8CD1EAD8EDE9DA7C32A5788613F225AE35D6116B3573CCA8502",
+      "Matches": true
+    },
+    {
+      "Path": "docs/project-memory/06-Todo.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "70BDBA1FDEDCA9E6F51D531B20F3F00207A1B09E5D6C06FCBC8F25646B6FE708",
+      "Matches": true
+    },
+    {
+      "Path": "docs/project-memory/CHANGELOG-AI.md",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "97E542012FC1E8A5DB0AFD0221DB15A09D8FEBD069D74728779118E5352BA3C5",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/Test-Cp6DatabaseCompatibility.ps1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "690CE5F116E6678DC7B97AEA428C44F304CA89E79ACF7180FA405FDF0D3BDF09",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityEntries.psm1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "5CF53766FEAC54CEF69C6F1768C75D508EC99EA1DB34D80E85DF52647AF94299",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityEntries.ps1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "1987DC5CAD3D5CADEC373677E81045734FBBDEE3FC0BABB314027AB83F13116C",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityResults.psm1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "AD66A8EDA85E1283649AF010043D85B1D1744008837EB01E529FB7D79491D9C1",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityResults.ps1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "875152820D5715FDAD57408B8D856261BAFDAC769715971721703324337E17EB",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityApplication.psm1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "EE12DD7410221E66A3FAE553631E8603A80323B43630D849384DCF6B51817350",
+      "Matches": true
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityApplication.ps1",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "5A6E73416A5535DA6F143701E0B1E8BC70457F0F6A4BF00ABA48AECF46344A25",
+      "Matches": true
+    },
+    {
+      "Path": "tools/CP6.DatabaseCompatibility.ApplicationProbe/SignalRVerification.cs",
+      "EvidenceRoot": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003",
+      "Sha256": "0E0A16B900C48CD751E0B368248ECD202648D48A8576C58D4E05FDCCFA2964B4",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-review-fixtures-results.md",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "C18EA7CD9B5F5FF1EB2C5221DF80E87A9CF8E41283640649B81058256B006836",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-review-fixtures-results-followup.md",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "8490CB285536CA031E7E1107C8940183A30123F1EB1AC5B49F21134CF1127ABB",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-review-application-process.md",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "A191AB6186F47C478A2A44F31AF4C94DED85A9257D526BD3F4FA7A1DC4B4BCDE",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-review-lifecycle-entries.md",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "2A34B8EFB9CFACF20A67F8159B6455214F304324D60AADD52A1A05F39BF03453",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-review-runner-root.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "33E501481D25132EE40288DDBE211DB6FC3D650DDE3F838F3A68E945756BBC88",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-cleanup-wait-offline-red.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "D37EBAE8DC7F55490F5E2749E92C10877075DBF7FDF6CFD5FDFACECBF67C5C59",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-cleanup-wait-offline-green.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "1477881C952B0E3D7DC082292B2D592627756A797E6DE0D1D20E0D61FAC202D4",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-cleanup-wait-regression-record.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "76B123EEF606506CF1C30894E5A9A0BEB2FAD3FC444D4E6148B367FFE509B720",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/Complete-Wp6CadMatrixCleanup.ps1",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "C68FE11851D9D84164BEBC58470E45731644586D98B79121F6A031B8665F6B50",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/Complete-Wp6WmsSqlCleanup.ps1",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "2788B1F69A396D2A36764B0CAEAE76A3C50F2625A74F781AB2B48E2AB93A1EB0",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-pg-cad-matrix-cleanup-recovery.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "D9A4055B48D461743B4CEA31CCA57B3D874329CEA06EF158CF0CB01E79874C20",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-sql-wms-cleanup-recovery.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "8D45DC7FF688703326CF58B57CDE6987096E27144FBE0CCE7EE26B0EAD781C30",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-bug163-main-integration.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "7326F29481379D905CE721D7D8BF93EB983C8E5EC1637B6E73897B18802D1B10",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-wms-final-preparation.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "3A95C4994A478B75106188886487483B407BBDDD8A62AD668BFB0512192D3C25",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-wms-final-entry-offline.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "B67231411F70DF0F8E8BAA03A2F7F2A156FA05D81FD7E66E96231153DDD0BF5A",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-wms-final-results-offline.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "CE74BC8772D53BFB3BF9DFCC3403920577368C9AD164E551DF28EEEB93F21FE9",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-wms-final-plan-verification.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "B356FCF187361917214580B5996A78826BA815D3E6F52995B929B83B8FCF19A1",
+      "Matches": true
+    },
+    {
+      "Path": "tmp/wp6-wms-final-checkpoint.json",
+      "EvidenceRoot": "D:\\CP6",
+      "Sha256": "5AE1BADD58491DC98FD5F5B0A4D297DB3113018F0E9142AF16483D17B7737D19",
+      "Matches": true
+    }
+  ],
+  "BlockingFindings": 0,
+  "NativeExecution": false,
+  "FinalAcceptance": false,
+  "Scope": "Root checked 45 actual file hashes and the limited review scope. tmp/ rows explicitly refer to the root evidence directory; all other rows refer to the WP6 worktree. Reuses the original concentrated review and documented follow-ups; does not certify final Matrix/Application, restoration audit, remote delivery or parent closure.",
+  "CheckedUtc": "2026-10-04T01:28:41.4769224Z"
+}

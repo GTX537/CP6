@@ -1,0 +1,80 @@
+{
+  "RunId": "c8a3c5dff4ce4036abdf0af9a0c09cc7",
+  "Provider": "SqlServer",
+  "Task": "DB-COMPAT-01-WP6",
+  "SourceDatabaseName": "CP6Compat_WP6_20261003_392fff71_application",
+  "SourceOwner": "392fff711648497cb09890427fb6ea2f",
+  "SourcePhysicalIdentity": {
+    "DatabaseId": 68,
+    "CreatedAt": "2026-10-03T12:02:51.357",
+    "Files": [
+      {
+        "FileId": 1,
+        "LogicalName": "CP6Compat_WP6_20261003_392fff71_application",
+        "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261003_392fff71_application.mdf",
+        "FileType": 0
+      },
+      {
+        "FileId": 2,
+        "LogicalName": "CP6Compat_WP6_20261003_392fff71_application_log",
+        "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261003_392fff71_application_log.ldf",
+        "FileType": 1
+      }
+    ]
+  },
+  "SourceState": {
+    "Exists": true,
+    "DatabaseName": "CP6Compat_WP6_20261003_392fff71_application",
+    "DatabaseId": 68,
+    "CreatedAt": "2026-10-03T12:02:51.357",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "Task": "DB-COMPAT-01-WP6",
+    "Owner": "392fff711648497cb09890427fb6ea2f",
+    "UserTables": 1453,
+    "SessionVisibility": true,
+    "Sessions": 0,
+    "Files": [
+      {
+        "FileId": 1,
+        "LogicalName": "CP6Compat_WP6_20261003_392fff71_application",
+        "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261003_392fff71_application.mdf",
+        "FileType": 0
+      },
+      {
+        "FileId": 2,
+        "LogicalName": "CP6Compat_WP6_20261003_392fff71_application_log",
+        "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261003_392fff71_application_log.ldf",
+        "FileType": 1
+      }
+    ]
+  },
+  "ArchivePath": "D:\\CP6\\tmp\\db-compat-wp6-sql-application\\private\\cp6-wp6-c8a3c5dff4ce4036abdf0af9a0c09cc7-392fff711648497cb09890427fb6ea2f.bak",
+  "Sha256": "43753640BFBA02BAFCD383EF7A20D4A84C038B160538A51B9C116D0E2F08CE61",
+  "SqlServerArchivePath": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\Backup\\cp6-wp6-c8a3c5dff4ce4036abdf0af9a0c09cc7-392fff711648497cb09890427fb6ea2f.bak",
+  "SqlSourceFiles": [
+    {
+      "FileId": 1,
+      "LogicalName": "CP6Compat_WP6_20261003_392fff71_application",
+      "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261003_392fff71_application.mdf",
+      "FileType": 0
+    },
+    {
+      "FileId": 2,
+      "LogicalName": "CP6Compat_WP6_20261003_392fff71_application_log",
+      "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261003_392fff71_application_log.ldf",
+      "FileType": 1
+    }
+  ],
+  "ToolIdentity": {
+    "Tool": "sqlcmd",
+    "Path": "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\SQLCMD.EXE",
+    "Sha256": "7220B526AB97B0A5B30ED7B09C497AB7FAD39141090F8801D68691C38FF248DA",
+    "NativeVersion": "Microsoft (R) SQL Server Command Line Tool\r\nVersion 16.0.1000.6 NT\r\nCopyright (C) 2022 Microsoft Corporation. All rights reserved.\r\n\r\nusage: Sqlcmd            [-U login id]          [-P password]\r\n  [-S server]            [-H hostname]          [-E trusted connection]\r\n  [-N Encrypt Connection][-C Trust Server Certificate]\r\n  [-d use database name] [-l login timeout]     [-t query timeout]\r\n  [-h headers]           [-s colseparator]      [-w screen width]\r\n  [-a packetsize]        [-e echo input]        [-I Enable Quoted Identifiers]\r\n  [-c cmdend]            [-L[c] list servers[clean output]]\r\n  [-q \"cmdline query\"]   [-Q \"cmdline query\" and exit]\r\n  [-m errorlevel]        [-V severitylevel]     [-W remove trailing spaces]\r\n  [-u unicode output]    [-r[0|1] msgs to stderr]\r\n  [-i inputfile]         [-o outputfile]        [-z new password]\r\n  [-f <codepage> | i:<codepage>[,o:<codepage>]] [-Z new password and exit]\r\n  [-k[1|2] remove[replace] control characters]\r\n  [-y variable length type display width]\r\n  [-Y fixed length type display width]\r\n  [-p[1] print statistics[colon format]]\r\n  [-R use client regional setting]\r\n  [-K application intent]\r\n  [-M multisubnet failover]\r\n  [-b On error batch abort]\r\n  [-v var = \"value\"...]  [-A dedicated admin connection]\r\n  [-X[1] disable commands, startup script, environment variables [and exit]]\r\n  [-x disable variable substitution]\r\n  [-j Print raw error messages]\r\n  [-g enable column encryption]\r\n  [-G use Azure Active Directory for authentication]\r\n  [-? show syntax summary]"
+  },
+  "ServerVersion": "16.0.1000.6",
+  "Status": "BackedUp",
+  "NativeExitCode": 0,
+  "ReceiptPath": "D:\\CP6\\tmp\\db-compat-wp6-sql-application\\private\\cp6-wp6-c8a3c5dff4ce4036abdf0af9a0c09cc7-392fff711648497cb09890427fb6ea2f.bak.json"
+}

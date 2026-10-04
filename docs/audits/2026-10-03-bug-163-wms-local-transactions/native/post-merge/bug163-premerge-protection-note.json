@@ -1,0 +1,6 @@
+{
+  "Task": "BUG-163",
+  "RequiredCheckContextCount": 0,
+  "OriginalProtectionContexts": null,
+  "Explanation": "The earlier terminal-only @($null).Count display yielded 1; authoritative protection JSON is null with zero contexts. Protection unchanged."
+}

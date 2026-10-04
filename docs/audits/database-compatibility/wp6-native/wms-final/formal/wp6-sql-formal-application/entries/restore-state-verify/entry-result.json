@@ -1,0 +1,56 @@
+{
+  "EntryId": "restore-state-verify",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_b612da67_restore",
+  "Role": "restore",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\restore-state-verify\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\restore-state-verify\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 35772,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:53:53.9419400Z",
+    "FinishedUtc": "2026-10-03T16:54:00.3670481Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "6088AA915354D73795DCB26CEB84DCBD05CF1C2879D78208B071E9F87DF50B69",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "restore-state-verify",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 7,
+      "Total": 7,
+      "Passed": 7,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "baseline-provider-matches",
+      "four-effective-history-profiles-complete",
+      "table-catalog-and-columns-match",
+      "all-table-counts-and-content-match",
+      "sequence-state-matches",
+      "history-state-matches"
+    ],
+    "ReportSha256": "D6D9990782A7DB4E1D6E55AE3C1CEBEBEE26674B2B092D166F16E4ADB6F20A26",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_b612da67_restore",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-application\\entries\\restore-state-verify\\reports\\report.json",
+  "ReportSha256": "D6D9990782A7DB4E1D6E55AE3C1CEBEBEE26674B2B092D166F16E4ADB6F20A26",
+  "FailureCode": null,
+  "Success": true
+}

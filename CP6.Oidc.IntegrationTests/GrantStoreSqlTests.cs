@@ -1,5 +1,7 @@
 using CP6.Core.Migrations;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
@@ -21,19 +23,36 @@ public sealed partial class GrantStoreSqlTests : IAsyncLifetime
     private readonly string _database = "CP6OidcTest_" + Guid.NewGuid().ToString("N");
     private string _master = "";
     private string _connection = "";
+    private OwnedTestDatabase? ownedDatabase;
     private readonly Guid _legacyTokenId = Guid.NewGuid();
     private readonly Guid _legacyUserId = Guid.NewGuid();
     public async Task InitializeAsync()
     {
-        var configured = Environment.GetEnvironmentVariable("CP6_OIDC_TEST_SQL");
-        if (string.IsNullOrWhiteSpace(configured))
-            throw new InvalidOperationException("CP6_OIDC_TEST_SQL must point to an isolated SQL Server test instance with CREATE DATABASE permission.");
-        var builder = new SqlConnectionStringBuilder(configured) { InitialCatalog = "master" };
-        _master = builder.ConnectionString;
-        await using var master = new SqlConnection(_master);
-        await master.ExecuteAsync($"CREATE DATABASE [{_database}]");
-        builder.InitialCatalog = _database;
-        _connection = builder.ConnectionString;
+        if (OwnedTestDatabase.IsRequested())
+        {
+            if (Environment.GetEnvironmentVariable("CP6_OIDC_TEST_PROVIDER") != "SqlServer")
+                throw new InvalidOperationException("CP6_COMPAT_OIDC_HISTORY_SQL_REQUIRED");
+            ownedDatabase = OwnedTestDatabase.FromEnvironment(new(DatabaseProvider.SqlServer),
+                Environment.GetEnvironmentVariable("CP6_OIDC_TEST_CONNECTION"),
+                [DatabaseFixtureRole.SqlUpgrade], "CP6Compat.WP6.OidcHistoryTests")!;
+            await ownedDatabase.VerifyAsync();
+            _connection = ownedDatabase.ConnectionString;
+            await using var empty = new SqlConnection(_connection);
+            if (await empty.QuerySingleAsync<int>("SELECT COUNT(*) FROM sys.tables WHERE is_ms_shipped=0") != 0)
+                throw new InvalidOperationException("CP6_COMPAT_OIDC_HISTORY_EMPTY_DATABASE_REQUIRED");
+        }
+        else
+        {
+            var configured = Environment.GetEnvironmentVariable("CP6_OIDC_TEST_SQL");
+            if (string.IsNullOrWhiteSpace(configured))
+                throw new InvalidOperationException("CP6_OIDC_TEST_SQL must point to an isolated SQL Server test instance with CREATE DATABASE permission.");
+            var builder = new SqlConnectionStringBuilder(configured) { InitialCatalog = "master" };
+            _master = builder.ConnectionString;
+            await using var master = new SqlConnection(_master);
+            await master.ExecuteAsync($"CREATE DATABASE [{_database}]");
+            builder.InitialCatalog = _database;
+            _connection = builder.ConnectionString;
+        }
         await using var db = new SqlConnection(_connection);
         await db.ExecuteAsync(CrmOidcGrantStore.CreateSql);
         await using var model = new CP6Context(new DbContextOptionsBuilder<CP6Context>().UseSqlServer(_connection).Options);
@@ -241,6 +260,7 @@ public sealed partial class GrantStoreSqlTests : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        if (ownedDatabase is not null) return;
         if (_master.Length == 0) return;
         // Only the generated test database is eligible for removal, even if configuration targets a real catalog.
         if (!System.Text.RegularExpressions.Regex.IsMatch(_database, "^CP6OidcTest_[0-9a-f]{32}$"))

@@ -1,0 +1,546 @@
+[
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_b1ab9390_corewms",
+    "Owner": "b1ab9390c80a490ea241c65bfab12d5e",
+    "Role": "corewms",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 68,
+      "CreatedAt": "2026-10-03T21:31:46.743",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_b1ab9390_corewms",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_b1ab9390_corewms.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_b1ab9390_corewms_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_b1ab9390_corewms_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:31:46.4810611Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_b1ab9390_corewms.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_fdd80d4f_erp",
+    "Owner": "fdd80d4f11674a90aaeb2514db57b8c3",
+    "Role": "erp",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 69,
+      "CreatedAt": "2026-10-03T21:32:57.587",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_fdd80d4f_erp",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_fdd80d4f_erp.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_fdd80d4f_erp_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_fdd80d4f_erp_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:32:57.4141555Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_fdd80d4f_erp.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_249571e6_oidcidentity",
+    "Owner": "249571e6b00c45c28e48d0fa14e92a94",
+    "Role": "oidcidentity",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 70,
+      "CreatedAt": "2026-10-03T21:34:48.37",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_249571e6_oidcidentity",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_249571e6_oidcidentity.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_249571e6_oidcidentity_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_249571e6_oidcidentity_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:34:48.1653817Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_249571e6_oidcidentity.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_5dfd408d_reports",
+    "Owner": "5dfd408d1a96437eb08a2198494d9c85",
+    "Role": "reports",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 71,
+      "CreatedAt": "2026-10-03T21:35:50.21",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_5dfd408d_reports",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_5dfd408d_reports.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_5dfd408d_reports_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_5dfd408d_reports_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:35:50.0316211Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_5dfd408d_reports.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_2d7a6352_runtime",
+    "Owner": "2d7a63522ed2473fa76957503729b533",
+    "Role": "runtime",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 72,
+      "CreatedAt": "2026-10-03T21:36:49.92",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_2d7a6352_runtime",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_2d7a6352_runtime.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_2d7a6352_runtime_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_2d7a6352_runtime_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:36:49.7391275Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_2d7a6352_runtime.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_e1bad011_schema",
+    "Owner": "e1bad011773248e3860525194878bd03",
+    "Role": "schema",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 73,
+      "CreatedAt": "2026-10-03T21:38:03.08",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_e1bad011_schema",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_e1bad011_schema.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_e1bad011_schema_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_e1bad011_schema_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:38:02.9000392Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_e1bad011_schema.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_845eeeb7_space",
+    "Owner": "845eeeb7298644fd82f9d062f4706a1e",
+    "Role": "space",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 74,
+      "CreatedAt": "2026-10-03T21:38:53.527",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_845eeeb7_space",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_845eeeb7_space.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_845eeeb7_space_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_845eeeb7_space_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:38:53.3264059Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_845eeeb7_space.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_00ae948e_spacehistory",
+    "Owner": "00ae948e1cab44bda28165194024eb64",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 75,
+      "CreatedAt": "2026-10-03T21:43:47.48",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_00ae948e_spacehistory",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_00ae948e_spacehistory.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_00ae948e_spacehistory_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_00ae948e_spacehistory_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:43:47.3079165Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_00ae948e_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_45ccbe63_spacehistory",
+    "Owner": "45ccbe638309419a82aa31748cc17b77",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 76,
+      "CreatedAt": "2026-10-03T21:43:57.493",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_45ccbe63_spacehistory",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_45ccbe63_spacehistory.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_45ccbe63_spacehistory_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_45ccbe63_spacehistory_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:43:57.3247933Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_45ccbe63_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_988a9c0a_spacehistory",
+    "Owner": "988a9c0a6534464b886ce840741f73fc",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 77,
+      "CreatedAt": "2026-10-03T21:44:08.843",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_988a9c0a_spacehistory",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_988a9c0a_spacehistory.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_988a9c0a_spacehistory_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_988a9c0a_spacehistory_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:44:08.6029238Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_988a9c0a_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_c9439922_spacehistory",
+    "Owner": "c9439922818f4c54a9fffb8eb3383540",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 78,
+      "CreatedAt": "2026-10-03T21:44:20.883",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_c9439922_spacehistory",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_c9439922_spacehistory.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_c9439922_spacehistory_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_c9439922_spacehistory_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:44:20.7080033Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_c9439922_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_07d64aee_spacehistory",
+    "Owner": "07d64aee9765425aac7444657b36a04e",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 79,
+      "CreatedAt": "2026-10-03T21:44:28.09",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_07d64aee_spacehistory",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_07d64aee_spacehistory.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_07d64aee_spacehistory_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_07d64aee_spacehistory_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:44:27.9127615Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_07d64aee_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_3ea1cf24_spacehistory",
+    "Owner": "3ea1cf24460e44528b32a2a6fb857309",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 80,
+      "CreatedAt": "2026-10-03T21:44:37.64",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_3ea1cf24_spacehistory",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_3ea1cf24_spacehistory.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_3ea1cf24_spacehistory_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_3ea1cf24_spacehistory_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:44:37.4636934Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_3ea1cf24_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_6f5c4d64_sqlupgrade",
+    "Owner": "6f5c4d64d55b4d0ea0bef0f7bfdd7c00",
+    "Role": "sqlupgrade",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 81,
+      "CreatedAt": "2026-10-03T21:44:47.107",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_6f5c4d64_sqlupgrade",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_6f5c4d64_sqlupgrade.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_6f5c4d64_sqlupgrade_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_6f5c4d64_sqlupgrade_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:44:46.9077411Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_6f5c4d64_sqlupgrade.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_e9412a33_sqlupgrade",
+    "Owner": "e9412a3344924a028870120db5fbedd4",
+    "Role": "sqlupgrade",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 82,
+      "CreatedAt": "2026-10-03T21:49:28.187",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_e9412a33_sqlupgrade",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_e9412a33_sqlupgrade.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_e9412a33_sqlupgrade_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_e9412a33_sqlupgrade_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:49:27.9834604Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_e9412a33_sqlupgrade.json",
+    "Events": []
+  },
+  {
+    "RunId": "16acd94f068c4f558f85dfee4c4c34b2",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "SqlServer",
+    "Endpoint": "tcp:localhost\\KOUSQLSERVER",
+    "DatabaseName": "CP6Compat_WP6_20261004_1f91e781_sqlupgrade",
+    "Owner": "1f91e781d41042f58ef2a1d414b3571a",
+    "Role": "sqlupgrade",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": 83,
+      "CreatedAt": "2026-10-03T21:49:35.267",
+      "Files": [
+        {
+          "FileId": 1,
+          "LogicalName": "CP6Compat_WP6_20261004_1f91e781_sqlupgrade",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_1f91e781_sqlupgrade.mdf",
+          "FileType": 0
+        },
+        {
+          "FileId": 2,
+          "LogicalName": "CP6Compat_WP6_20261004_1f91e781_sqlupgrade_log",
+          "PhysicalName": "C:\\Program Files\\Microsoft SQL Server\\MSSQL16.KOUSQLSERVER\\MSSQL\\DATA\\CP6Compat_WP6_20261004_1f91e781_sqlupgrade_log.ldf",
+          "FileType": 1
+        }
+      ]
+    },
+    "Principal": "LAPTOP-3QQ44FJS\\tt",
+    "DatabaseOwner": "LAPTOP-3QQ44FJS\\tt",
+    "ServerVersion": "16.0.1000.6",
+    "CreatedUtc": "2026-10-04T01:49:35.0290975Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_1f91e781_sqlupgrade.json",
+    "Events": []
+  }
+]

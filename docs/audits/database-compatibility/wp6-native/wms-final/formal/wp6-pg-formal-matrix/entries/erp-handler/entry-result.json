@@ -1,0 +1,51 @@
+{
+  "EntryId": "erp-handler",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_2c7cbf62_erp",
+  "Role": "erp",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Project": "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+  "BinarySha256": "35F9927D27061C297686DD51204660AEEDAE8E7BBC69529E0B744FE850E68D1A",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\erp-handler\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "CA5010E00E7EA371C81B1C33F6F97826019BFDA1A25AFF9E0AA311B31F173B43",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\erp-handler\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "CA5010E00E7EA371C81B1C33F6F97826019BFDA1A25AFF9E0AA311B31F173B43",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 34156,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T17:06:25.4069348Z",
+    "FinishedUtc": "2026-10-03T17:06:34.8409457Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "3FAE9753E2FC51C35188B4C4D6C0726FE5660504C4364250C9221BAD356CA32D",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "erp-handler",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Real_preregistration_promotes_partner_with_atomic_inbox_journal_and_outbox",
+      "CP6.ErpIntegration.SqlTests.ErpHandlerRelationalTests.Missing_partner_has_stable_terminal_result_without_business_mutation"
+    ],
+    "ReportSha256": "3BAD4B831678199D12555D0337DA12E255AB2E36E2F1196453088C69AF47515E",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\erp-handler\\private\\trx\\results.trx",
+  "ReportSha256": "3BAD4B831678199D12555D0337DA12E255AB2E36E2F1196453088C69AF47515E",
+  "FailureCode": null,
+  "Success": true
+}

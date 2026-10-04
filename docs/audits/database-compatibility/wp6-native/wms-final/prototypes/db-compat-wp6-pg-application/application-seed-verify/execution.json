@@ -1,0 +1,39 @@
+{
+  "Id": "application-seed-verify",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+  "BinarySha256": "4F5051A0BB4F331676C6976EDD7EC24C3E17B6AED1715E21A0D3B6015E2A7586",
+  "Process": {
+    "ProcessId": 31912,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:58:43.6808914Z",
+    "FinishedUtc": "2026-10-03T15:58:44.9065450Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "80478ADB3FCB81CB82A62CED9F6263A7F0A9145588D7A6DC5C3A96BC6ED46A19",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-seed-verify",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Seed.verify"
+    ],
+    "ReportSha256": "1E51D81C783FC1BE18645EA777CD162A2C1AD6F4F2DFCFF17B387A245E537210",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  }
+}

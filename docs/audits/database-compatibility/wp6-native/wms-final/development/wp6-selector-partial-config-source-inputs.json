@@ -1,0 +1,83 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "SourceFrozenNativeValidationPending",
+  "Scope": "Role-aware WP6 fixture selection; no database or .NET execution by preparing agent",
+  "SourceBase": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "CapturedUtc": "2026-10-03T16:34:38.6786780Z",
+  "Files": [
+    {
+      "Path": "CP6.Space.IntegrationTests/OwnedFixtureSelectionTests.cs",
+      "Bytes": 4021,
+      "Sha256": "9C25E87152CDAF4040EEA0C33CCD8D6A6F446A8539722B39366390DB6A5673DE"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceMigrationTestDatabase.cs",
+      "Bytes": 13193,
+      "Sha256": "1B83EE10E3A5D09E75AC7620A08CDB6A5D4F99DE8CF48850649A43282FB617A9"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceRelationalFixture.cs",
+      "Bytes": 11746,
+      "Sha256": "C8E072645CB2244FD707D3E5D49241457ECC4BA2F90867326DD1C9741BAF7E46"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/CoreBusinessRelationalFixture.cs",
+      "Bytes": 8581,
+      "Sha256": "F0E50F2E993803671329BF370139C6673D028030A8CA5627ABA3B80DCF0D34C8"
+    },
+    {
+      "Path": "CP6.Tests/DatabaseCompatibility/Wp5ReportsRelationalFixture.cs",
+      "Bytes": 10896,
+      "Sha256": "6C186E2FA577664A7C6324363164B416519073DFC7A5BE6CE6C3F4EDA4C536C9"
+    },
+    {
+      "Path": "CP6.Tests/Infra/WmsProductionFactAttribute.cs",
+      "Bytes": 933,
+      "Sha256": "F8EB2111639F00C526529C0F2D44A151C5AA32C2DB8E38BF82DD71C8AEABFF66"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedFixtureSelectionTests.cs",
+      "Bytes": 4079,
+      "Sha256": "79BB612520DB97BAE5E701964C450A92A03B5DB749E67C984AF6EE7FC8FF6B2C"
+    },
+    {
+      "Path": "CP6.Tests/Persistence/OwnedTestDatabaseTests.cs",
+      "Bytes": 10688,
+      "Sha256": "A7A118DE730BC1C71E93C7123D76BE45693328231F5851187C5FC8E13EFDEB15"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/OwnedFixtureSelectionTests.cs",
+      "Bytes": 2778,
+      "Sha256": "E7FB0FED2F21241A82A401AEF9118D6310349B49C107E0FD0A76519D6727F4D9"
+    },
+    {
+      "Path": "eng/crm/erp-integration-tests/SqlDatabaseFixture.cs",
+      "Bytes": 7096,
+      "Sha256": "8123077DE748A1AD84EFEB9910D3BE07C128596E8F5D662E785FCAEEADF8B81D"
+    },
+    {
+      "Path": "eng/database-compatibility/OwnedTestDatabase.cs",
+      "Bytes": 9898,
+      "Sha256": "98625EA55407AA8168F008383F3EFC4010D29E79D6A1E00580F4908CA4AD23BA"
+    }
+  ],
+  "PlannedTests": [
+    {
+      "Project": "CP6.Tests/CP6.Tests.csproj",
+      "Filter": "FullyQualifiedName~CP6.Tests.Persistence.OwnedTestDatabaseTests|FullyQualifiedName~CP6.Tests.Persistence.OwnedFixtureSelectionTests",
+      "ExpectedCases": 58
+    },
+    {
+      "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "Filter": "FullyQualifiedName~CP6.Space.IntegrationTests.OwnedFixtureSelectionTests",
+      "ExpectedCases": 4
+    },
+    {
+      "Project": "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+      "Filter": "FullyQualifiedName~CP6.ErpIntegration.SqlTests.OwnedFixtureSelectionTests",
+      "ExpectedCases": 4
+    }
+  ],
+  "OriginalReviewSha256": "C18EA7CD9B5F5FF1EB2C5221DF80E87A9CF8E41283640649B81058256B006836",
+  "StaticDiffCheckExitCode": 0
+}

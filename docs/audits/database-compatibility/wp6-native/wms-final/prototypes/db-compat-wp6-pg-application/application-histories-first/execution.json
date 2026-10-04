@@ -1,0 +1,39 @@
+{
+  "Id": "application-histories-first",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+  "BinarySha256": "39B72830BCDD80A1109FFCE64EBD8086066FDD216C14D92699C72BFDB9B09CD7",
+  "Process": {
+    "ProcessId": 33768,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:57:22.4630155Z",
+    "FinishedUtc": "2026-10-03T15:57:31.9862360Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "ABC2634B3AFC65D2071F977CA9D7C478B9929F5958019213E2665F484DAB9F75",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-histories-first",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "four-effective-history-profiles-complete"
+    ],
+    "ReportSha256": "FDFA5E92CF2C8BFE3762180BFD2F28A6604965F0C4181A61D876866534382E98",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  }
+}

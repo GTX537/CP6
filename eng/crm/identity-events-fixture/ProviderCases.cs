@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.CrmIdentity;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -89,39 +90,52 @@ sealed partial class IdentitySqlFixture
     public async Task InitializeCurrentProviderAsync()
     {
         var owner = Environment.GetEnvironmentVariable("CP6_TEST_DATABASE_OWNER") ?? "";
-        Require(Regex.IsMatch(owner, "\\A[a-f0-9]{32}\\z"), "C02_WP4_OWNER_REQUIRED");
-        var expectedName = "CP6Compat_WP4_20261003_" + owner[..8];
         var configured = Environment.GetEnvironmentVariable(database.Provider == DatabaseProvider.SqlServer
             ? "CP6_C02_TEST_SQL" : "CP6_C02_TEST_POSTGRES");
-        Require(!string.IsNullOrWhiteSpace(configured), "C02_SELECTED_PROVIDER_CONNECTION_REQUIRED");
-        if (database.Provider == DatabaseProvider.PostgreSql)
+        var ownedDatabase = OwnedTestDatabase.FromEnvironment(database, configured,
+            [DatabaseFixtureRole.OidcIdentity], "CP6Compat.WP6.IdentityTests");
+        if (ownedDatabase is not null)
         {
-            var settings = new NpgsqlConnectionStringBuilder(configured!);
-            Require(settings.Host is "localhost" or "127.0.0.1" or "::1"
-                && settings.Database == expectedName, "C02_WP4_LOOPBACK_DATABASE_REQUIRED");
-            settings.IncludeErrorDetail = false;
-            settings.Pooling = false;
-            connection = settings.ConnectionString;
+            // Keep this fixture's existing no-pool lifecycle without changing database identity.
+            connection = database.Provider == DatabaseProvider.PostgreSql
+                ? new NpgsqlConnectionStringBuilder(ownedDatabase.ConnectionString) { Pooling = false }.ConnectionString
+                : new SqlConnectionStringBuilder(ownedDatabase.ConnectionString) { Pooling = false }.ConnectionString;
+            await ownedDatabase.VerifyAsync();
         }
         else
         {
-            var settings = new SqlConnectionStringBuilder(configured!);
-            var source = settings.DataSource.StartsWith("tcp:", StringComparison.OrdinalIgnoreCase) ? settings.DataSource[4..] : settings.DataSource;
-            var host = source.Split('\\', ',')[0];
-            Require(host is "localhost" or "127.0.0.1" or "::1" or "[::1]" or "." or "(local)"
-                && settings.InitialCatalog == expectedName && !settings.MultipleActiveResultSets,
-                "C02_WP4_LOOPBACK_DATABASE_REQUIRED");
-            settings.Pooling = false;
-            connection = settings.ConnectionString;
-        }
-        await using (var native = new DatabaseConnectionFactory(database).Create(connection))
-        {
-            await native.OpenAsync();
-            var actual = await native.QuerySingleOrDefaultAsync<string>(database.Provider == DatabaseProvider.PostgreSql
-                ? "SELECT shobj_description(oid,'pg_database') FROM pg_database WHERE datname=current_database()"
-                : "SELECT CONVERT(nvarchar(200),value) FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatOwner' AND EXISTS(SELECT 1 FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatTask' AND CONVERT(nvarchar(200),value)=N'DB-COMPAT-01-WP4')");
-            Require(actual == (database.Provider == DatabaseProvider.PostgreSql ? "DB-COMPAT-01-WP4:" + owner : owner),
-                "C02_WP4_DATABASE_OWNER_MISMATCH");
+            Require(Regex.IsMatch(owner, "\\A[a-f0-9]{32}\\z"), "C02_WP4_OWNER_REQUIRED");
+            var expectedName = "CP6Compat_WP4_20261003_" + owner[..8];
+            Require(!string.IsNullOrWhiteSpace(configured), "C02_SELECTED_PROVIDER_CONNECTION_REQUIRED");
+            if (database.Provider == DatabaseProvider.PostgreSql)
+            {
+                var settings = new NpgsqlConnectionStringBuilder(configured!);
+                Require(settings.Host is "localhost" or "127.0.0.1" or "::1"
+                    && settings.Database == expectedName, "C02_WP4_LOOPBACK_DATABASE_REQUIRED");
+                settings.IncludeErrorDetail = false;
+                settings.Pooling = false;
+                connection = settings.ConnectionString;
+            }
+            else
+            {
+                var settings = new SqlConnectionStringBuilder(configured!);
+                var source = settings.DataSource.StartsWith("tcp:", StringComparison.OrdinalIgnoreCase) ? settings.DataSource[4..] : settings.DataSource;
+                var host = source.Split('\\', ',')[0];
+                Require(host is "localhost" or "127.0.0.1" or "::1" or "[::1]" or "." or "(local)"
+                    && settings.InitialCatalog == expectedName && !settings.MultipleActiveResultSets,
+                    "C02_WP4_LOOPBACK_DATABASE_REQUIRED");
+                settings.Pooling = false;
+                connection = settings.ConnectionString;
+            }
+            await using (var native = new DatabaseConnectionFactory(database).Create(connection))
+            {
+                await native.OpenAsync();
+                var actual = await native.QuerySingleOrDefaultAsync<string>(database.Provider == DatabaseProvider.PostgreSql
+                    ? "SELECT shobj_description(oid,'pg_database') FROM pg_database WHERE datname=current_database()"
+                    : "SELECT CONVERT(nvarchar(200),value) FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatOwner' AND EXISTS(SELECT 1 FROM sys.extended_properties WHERE class=0 AND name=N'CP6CompatTask' AND CONVERT(nvarchar(200),value)=N'DB-COMPAT-01-WP4')");
+                Require(actual == (database.Provider == DatabaseProvider.PostgreSql ? "DB-COMPAT-01-WP4:" + owner : owner),
+                    "C02_WP4_DATABASE_OWNER_MISMATCH");
+            }
         }
 
         await using var core = Create(Guid.NewGuid(), enabled: false);

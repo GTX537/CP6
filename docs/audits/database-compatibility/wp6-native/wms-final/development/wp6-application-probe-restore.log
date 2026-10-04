@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Application\CP6.Space.Application.csproj (in 119 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Domain\CP6.Space.Domain.csproj (in 114 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Contracts\CP6.Space.Contracts.csproj (in 114 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Entity\CP6.Entity.csproj (in 228 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\CP6.Core.csproj (in 295 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj (in 296 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Persistence.PostgreSql\CP6.Persistence.PostgreSql.csproj (in 296 ms).
+  Restored D:\CP6\tmp\worktrees\db-compat-wp6-20261003\tools\CP6.DatabaseCompatibility.ApplicationProbe\CP6.DatabaseCompatibility.ApplicationProbe.csproj (in 324 ms).

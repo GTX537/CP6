@@ -1,0 +1,36 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Review": "Targeted incremental root review after delivered BUG155 integration; prior one-task WP6 partition reviews remain in scope for unchanged source.",
+  "ReviewedUtc": "2026-10-03T18:44:22.1386535Z",
+  "Head": "8f2cc01ddcf43d6bcf0c236fed2ab038687fd1f4",
+  "SourceRecords": [
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceValidationInfrastructure.cs",
+      "DeliveredMainGitBlob": "69e3a1558869bb6ca51ddcbabc7d33e85b620401",
+      "CurrentWorkingGitBlob": "69e3a1558869bb6ca51ddcbabc7d33e85b620401",
+      "CurrentByteSha256": "F1D4B5DDD48F14719854A4FA28E053DA64A40794E070B5775E41B03AB49137B3"
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceValidationSqlServerTests.cs",
+      "DeliveredMainGitBlob": "1d6e85abc9bb915e2bf0e6093f24cf7669a85587",
+      "CurrentWorkingGitBlob": "1d6e85abc9bb915e2bf0e6093f24cf7669a85587",
+      "CurrentByteSha256": "06B25441F99FA612FDDF646284CED1EB9BDEC797613303ABCFAE5C904239B1C4"
+    }
+  ],
+  "ManifestSha256": "7CA38B226DB019D2C8A50F695640E6608D3B73888A4437BECF9B2F93956108ED",
+  "UnchangedEntries": 61,
+  "ChangedEntry": "space-design-publish",
+  "RequiredCases": 41,
+  "AdditionalCases": 6,
+  "SourceEvidence": "Both 41-case native reports were read and exact names/outcomes/hashes checked; provenance remains historical, never current WP6 acceptance.",
+  "ApplicableOfflineValidation": {
+    "ResultsAssertions": 457,
+    "ResultsArchivedReports": 57,
+    "EntriesChecks": 510,
+    "BothExitCode": 0
+  },
+  "LifecycleTestDelta": "Only one trailing blank line was removed to satisfy diff --check; existing 42-check offline lifecycle result is reused for unchanged executable behavior, no new execution claimed.",
+  "ProductionReview": "Delivered BUG155 source remains Git-blob-identical to normally merged main, with original review, both-provider 9/41 GREEN and post-merge 2/2 plus owned cleanup evidence preserved.",
+  "Findings": [],
+  "ScopeLimits": "No broad WP6 re-review or current native acceptance claimed. New final Matrix/Application executions, final full delivery diff, evidence applicability audit and normal remote delivery remain required."
+}

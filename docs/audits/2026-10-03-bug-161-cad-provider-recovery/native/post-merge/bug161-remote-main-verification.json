@@ -1,0 +1,14 @@
+{
+  "Task": "BUG-161",
+  "PR": 162,
+  "Url": "https://github.com/GTX537/CP6/pull/162",
+  "Candidate": "15ee2055e1f8930907eadcee6323ba3181f68033",
+  "RemoteMain": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "MergedUtc": "2026-10-03T22:07:07Z",
+  "CandidateAncestor": true,
+  "FullTreesEqual": true,
+  "Tree": "8bb79d1ba58ab7cc449ce52e5405b642c1b3073c",
+  "CheckedUtc": "2026-10-03T22:07:19.2603146Z",
+  "SourceBase": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "Scope": "Normal protected PR merge; post-merge native smoke and owned cleanup pending; root user workspace not updated"
+}

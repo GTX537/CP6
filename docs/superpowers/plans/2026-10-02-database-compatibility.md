@@ -1,5 +1,34 @@
 # CP6 双数据库兼容 Implementation Plan
 
+## 2026-10-04：WP6 最新本地验收全部通过，远端交付待完成
+
+洁净源码 e940825fc7511b41a1a80b4b73897dcc69e51bbb 的最新 wms-local-transaction-fix 四次实际分项全部Passed：PG Matrix34/34、SQL Matrix37/37、两库Application各17/17，共105个适用入口、零失败/跳过；不是单次Full。当前程序集补充配置/四Context接线/生产校验139/139，零跳过。两库使用同一份当前实际发布API（261文件逐字节一致），真实独立恢复专项核对56项HTTP、8次API启动、所有表/行/序列/history/持久key与恢复后消息一次投递/幂等重放通过；本轮31个owned临时库全部普通DROP且AbsentVerified。
+
+八项完成条件的本地范围已逐项绑定实际原件及断言源位置，旧失败/成功及原审查时点保留。一次集中审查与定向修复/清理/WMS整合复核无剩余实质阻断。WP6公共证据归档/index核对、正常PR/main交付、合并后冒烟与远端包含性仍待完成，父Issue134继续Open；不能因本地全部通过就宣布任务关闭。实际版本、源码/产物哈希、复用来源及范围见[最终本地验收](../../audits/database-compatibility/WP6-ACCEPTANCE.md)，下方旧状态均为历史时点。
+
+普通PG API/worker临时guard已移除，仅在同一部署使用所选Provider及连接；旧记录中“guard保留”是当时状态。R2/GHCR正式门禁和SQL生产基线不变，未启动/取消远程Actions、修改触发/保护、切换既有环境或部署生产。已有SQL数据搬迁、同实例混库及外部CRM全面改造不在此目标内。
+
+## 2026-10-04：BUG163 已交付，WP6 接入当前版本验收
+
+[BUG163](https://github.com/GTX537/CP6/issues/163) 已由 [PR164](https://github.com/GTX537/CP6/pull/164) 正常合入远端 main `6322ac152cab7d462719169fb0301f49e9ee39ba` 并关闭，WP6 已接入。WMS 原八项＋新增十七项两库各25/25、零失败/跳过；合并后两库各3/3。两个修复测试库及原 WP6 SQL 失败库均已普通 DROP 并确认不存在；SQL 实际持续会话超时拒绝、短暂会话自行结束后清理通过，原 Failed summary 与 core/WMS TRX 字节保持。[专项记录](../../audits/2026-10-03-bug-163-wms-local-transactions/README.md)保留111份原件及36份交付、冒烟、清理原件。
+
+当前必需清单只扩展 WMS 为25项，其他61入口不变。最终入口仍为 PG Matrix34、SQL Matrix37、两库 Application各17，共105个适用入口；使用新的 `wms-local-transaction-fix` 运行目录。编译输入已改变，需当前代码七项构建及新的完整双库验收；后续 SQL 可在源码与完整运行文件逐字节一致后复用 PG 的真实构建，两库应用使用同一新发布产物。此前 PG Matrix34/34、旧发布物应用17/17保留历史来源，不代称当前最终验收。WP6 与父任务#134仍未完成；最终恢复审计、集中审查、归档与正常远端交付待完成。没有启动远程 Actions、改变生产门禁或部署既有环境。下方记录保留历史时点。
+
+最新阻断（2026-10-03，BUG163 Open）：SqlServer cad-cleanup-fix Matrix在原核心25/25后，WMS8项为7P/1F，原Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree的CreateAsync第二查询触发Implicit distributed transactions have not been enabled；后35入口未执行。原summary SHA256 8259FAEA4EEEF0786705CB4501F1072F79D0CA7DC116606B9EEB5364A7205F50与WMS TRX 5AD8388203E589148B68795BFBC56C2478BC0D95EF9646C6A3A5D06C042A2870保留Failed，一个该次SQL owned库暂留。已登记[Issue163](https://github.com/GTX537/CP6/issues/163)，修复从最新已确认main ce49012d37da4b1b01f074d5b5b7fd227780e656创建独立codex/bug-163-wms-local-transactions分支。源码确认LPN四处自建ambient事务，runner明确Pooling=False；须原生确认与修复本地事务生命周期，Label相似路径尚待实际确认。PG Matrix34/34/11库Absent仍是修复前该次证据；修复影响编译输入后最新双库最终Matrix/Application需要重新适用验证，WP6与父Issue134未完成。首次SQL连接缺失为配置预检拒绝，未创建运行目录/DB；随后仅进程内使用既有本机KOUSQLSERVER Windows登录，未改用户PG配置/环境。
+
+
+最新验收进展（2026-10-03 23:17Z）：新cad-cleanup-fix PostgreSql Matrix已实际Passed，34/34必需入口、零失败/跳过，11个owned库AbsentVerified；summary SHA256 5AD4D28C008E705F9DF355572ED9B532B1D80723BE1FB4D18439FDA1321BB107。该轮明确SkipBuild，复用原实际7项成功构建：编译输入与2059运行文件逐字节一致，PowerShell限定清理变化另有RED/GREEN及native控制证据；不把上一轮清理Failed改成Passed。进入SqlServer Matrix37，SQL136旧基线仍单独构建/安装；两库最新发布物Application17各仍待执行，最终105入口/恢复核对、归档、正常远端WP6交付与父任务关闭尚未完成。
+
+
+最新本地进展（2026-10-03）：cad-provider-fix PG Matrix 的34/34入口全部通过，CAD25/25且零skip；收尾owned-database-cleanup遇到短暂会话，整轮仍为Failed，原summary SHA256 EEF84ED7808D7D83D7389708102C3989BA03DEEDD4EA17C367123D476AC4BCD1及34入口原件不变。七库原已Absent、余四库由实际限定等待控制后普通DROP，11库均Absent；原会话类型未记录，不推断其来源。WP6新清理模块默认逐库最多等待15秒，只对会话未结束重试，每次重核owner/principal/physical，超时或身份变化仍拒绝，保留全目标预检及逐库复检；新离线控制RED后41项GREEN，原42项契约通过，真PG持续会话1秒超时拒绝且receipt不变，短暂会话自行结束后清理通过。仅此PowerShell与控制变化，不改业务编译输入，7个既有真实成功构建/2059运行文件逐字节核对后复用；新完整Matrix和双库Application使用cad-cleanup-fix目录，最终验收/远端交付仍待完成，父Issue134保持Open。下文旧目录及状态保留历史时点。
+
+
+最新交付（2026-10-03，BUG161 Closed）：PR162 正常合并到远端 main ce49012d37da4b1b01f074d5b5b7fd227780e656，并已接入 WP6。两库 CAD/资产/协作原15＋新十项各25/25、零skip，补充 InMemory17/17；合并后两库各3/3，PG两项协调测试再次实际40001后恢复。两个 BUG 自有库已普通DROP并核对不存在，Issue161于22:11:25Z关闭。[源码/原始失败及双库回归](../../audits/2026-10-03-bug-161-cad-provider-recovery/README.md)与交付/冒烟/清理原件保留；原 claim-fix Matrix 28P后14P/1F及后五入口未执行仍为失败，七个该次PG库清理且原summary不变。最新清单仅把CAD组15扩为25，其他61入口不变；最终两库Matrix与最新产物Application采用新cad-provider-fix目录，仍待实际执行。WP6未完成，父Issue134仍Open。下文BUG161 Open及旧claim-fix计划保留历史时点。
+
+
+最新状态（2026-10-03，BUG161 Open）：claim-fix PostgreSQL 最终 Matrix 已终止为 Failed；7 个相关项目构建通过，28 个入口 Passed，第 29 个 CAD/资产/协作入口 15 项为 14P/1F，后五入口未执行。原 Concurrent_replace_preserves_one_current_revision_and_immutable_evidence 出现实际 PostgreSQL 40001，失败 summary SHA256 9A788F5E6450F4B4FE4258FEDA9FFC99B959EB7A7E997F2A8EB2BEAD49F6284C，TRX SHA256 32E0C9CD7990B0EE5ACD8B7F20C19EA351C3F9465D13FAEAABE711B7D275E364；原件保留。修复从已确认远端 main 4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0 建立独立 codex/bug-161-cad-provider-recovery 分支，活动缺陷以 [Issue #161](https://github.com/GTX537/CP6/issues/161) 为准。最新 SQL Matrix / 双库 Application 仍未开始；WP6 与父 Issue134 未完成。下文 claim-fix 计划及状态保留历史时点。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement the next work package. Follow CP6 AGENTS.md: related steps receive local verification; perform one complete review per delivery task/PR, not a complete review after every file or commit.
 
 **Goal:** 同一套 CP6 源码，每次部署选择 SQL Server 或 PostgreSQL，保持业务、权限、并发和消息一致性，并提供真实双库本地验收证据。
@@ -10,7 +39,9 @@
 
 ---
 
-用途：DB-COMPAT-01 的阶段工作包与验收计划。状态：WP1/2/3已分别由PR136/145/146交付；WP4已由PR149交付远端main `c6c662f5b744b44a51427e26fb2faff96472fcc2`，合并后两库冒烟及六库清理完成。WP5已完成相关本地验证、一次任务级集中审查和定向修复，为`LocalVerifiedRemotePending`；已纳入PR151交付的BUG150并完成映射双库整合复测。WP5远端交付待完成，WP6完整应用与原生备份恢复验收尚未执行。更新日期：2026-10-03。主任务：[Issue #134](https://github.com/GTX537/CP6/issues/134)仍Open，WP4已勾选、WP5/6远端阶段未勾选。来源见[WP4交付记录](../../audits/database-compatibility/WP4-IMPLEMENTATION.md)及[WP5实施记录](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)。下文早期Pending保留各历史时点，不提前声明整体兼容。
+最新整合（2026-10-03）：BUG159已由PR160正常交付远端main `4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0` 并关闭，已接入WP6；两库任务/处理/生成/保留原17＋新6各23/23、合并后各2/2、零skip，相关自有库清理完成。PG floor-fix最终矩阵26入口通过后第27入口16P/1F原生23505失败保留，后七入口未执行；当前任务组23/克隆23/设计发布41保持精确清单，其他61入口不变。最终claim-fix两库Matrix与最新发布物Application、归档和远端WP6交付继续，父Issue134仍Open。下文原floor-fix计划与状态保留历史时点，当前结果见WP6实施记录。
+
+用途：DB-COMPAT-01 的阶段工作包与验收计划。WP1–WP5 已分别由 PR136/145/146/149/152 交付；WP5 合并后两库各3/3冒烟及13库清理见[交付原件](../../audits/database-compatibility/wp5-native/post-merge/manifest.json)。BUG153/155/157已由PR154/156/158交付并关闭，最新已确认主线为 `5587a2a67ae73715596ca1a135b5863005abac8d`，WP6已接入。修复前正式Application两库各17个入口及清理通过，包含真实WebSocket、恢复后的worker/重放和旧游标；两个生产事务修复改变依赖后，最终Matrix与新发布物Application采用新floor-fix目录。设计/发布41项保持，克隆原16＋新七项为23；最新定向两库23/23、41/41与合并后3/3不代称完整WP6验收。最终验收、归档及远端交付仍待完成，见[WP6实施记录](../../audits/database-compatibility/WP6-IMPLEMENTATION.md)。[Issue#134](https://github.com/GTX537/CP6/issues/134)保持Open，WP6阶段交付未勾选。更新日期：2026-10-03；下文早期Pending保留各历史时点。
 
 设计规则由[设计规格](../specs/2026-10-02-database-compatibility-design.md)维护；源码事实与统计口径见[盘点](../../audits/2026-10-02-database-compatibility.md)。本文件规定执行顺序和交付证据，勾选框不能替代功能验证。
 
@@ -108,39 +139,39 @@ WP4上述五项已按实际双库/专有门禁分批通过，集中代码审查�
 
 **前置：** WP3；依赖 WP4 的 WMS/ERP 集成场景按其交付版本验证。**产出：** Space 与专有报表的双库实现。
 
-当前分支`codex/db-compat-wp5-20261003`从PR149远端main建立，状态为`LocalVerifiedRemotePending`。Space与报表各自owner-marked两库已完成适用业务、CAD/克隆并发、历史迁移与目录专项；下方勾选仅表示本地实施及相关验证完成，具体各次成功、失败和复用范围见[WP5实施记录](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)及[首轮原件](../../audits/database-compatibility/wp5-native/initial/manifest.json)。
+分支`codex/db-compat-wp5-20261003`从PR149远端main建立，现已由PR152交付远端main。Space与报表各自owner-marked两库已完成适用业务、CAD/克隆并发、历史迁移与目录专项；下方勾选仅表示本地实施及相关验证完成，具体各次成功、失败和复用范围见[WP5实施记录](../../audits/database-compatibility/WP5-IMPLEMENTATION.md)及[首轮原件](../../audits/database-compatibility/wp5-native/initial/manifest.json)。
 
 - [x] 适配 Space 编辑/Underlay/CAD/AI apply/retention/validation/publish 等资源锁、容量 ledger 与租约，消除 PostgreSQL 上跳过锁或执行 T-SQL 的路径。
 - [x] 为 EfSpaceVersionClone 的表变量/NEWID/批量复制提供 PostgreSQL 等价实现；验证 source map、名称/类型字段、版本 token、失败原子回滚与幂等，不以简化克隆替代完整行为。
 - [x] 验证 Space 发布/历史 republish/补偿恢复、CAD provider revision fence、外部授权、文件安全与 AI 容量。保持 CP6Context/SpaceContext 同连接事务及 published 版本/库存来源一致性。
 - [x] 为 MES 三个 usp 报表、Dashboard TOP 查询、GDPR joined DELETE 与标识符引号选择 EF 或 Provider 查询实现；明确每个 Dapper 查询的租户/全局作用域，不能依赖 EF query filter 自动覆盖 Dapper。
 - [x] 逐项复用 Space 真库场景，同时保留 Provider 专项 DDL/错误断言。SpaceSqlIntegrationTests 已接入全量迁移夹具，另用隔离的迁移场景证明安装/升级。
-- [ ] 完成WP5正常提交/PR合并、必要合并后冒烟及远端main包含性核对，再更新父Issue134的WP5阶段交付状态。
+- [x] 完成WP5正常提交/PR合并、必要合并后冒烟及远端main包含性核对，并更新父Issue134的WP5阶段交付状态。
 
 **必须通过：** 双库租约与容量竞争；完整克隆与回滚；发布/恢复/WMS 集成；CAD/外部授权 fence；报表结果、排序分页与权限一致；GDPR 作用域正确。
 
-一次集中审查的两项P2已修复并定向复核；实际PG AI原13＋caller-pending1＋CAD1为15/15，legacy恢复选择器2/2，均零skip。[BUG150](https://github.com/GTX537/CP6/issues/150)已由[PR151](https://github.com/GTX537/CP6/pull/151)交付远端main `522433a370c0c247a98b300c69e88e403217d53a`并关闭，合并后两库原并发各2/2及自有库清理完成，见[BUG150交付原件](../../audits/2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json)。WP5在`97e4a9f2e0881c4f423111848632bbc821cde11d`纳入修复后，整合构建0warning/0error、映射SQL/PG各4/4通过。[定向修复与整合原件](../../audits/database-compatibility/wp5-native/review-followup/manifest.json)保留原RED及首轮异常包装断言失败，不将后续成功改写为首次通过，也不将重复测试相加。普通PG API/worker guard继续保留；WP6完整应用启动、初始化与原生备份恢复仍未执行。
+一次集中审查的两项P2已修复并定向复核；实际PG AI原13＋caller-pending1＋CAD1为15/15，legacy恢复选择器2/2，均零skip。[BUG150](https://github.com/GTX537/CP6/issues/150)已由[PR151](https://github.com/GTX537/CP6/pull/151)交付远端main `522433a370c0c247a98b300c69e88e403217d53a`并关闭，合并后两库原并发各2/2及自有库清理完成，见[BUG150交付原件](../../audits/2026-10-03-bug-150-mapping-idempotency/native/post-merge/manifest.json)。WP5在`97e4a9f2e0881c4f423111848632bbc821cde11d`纳入修复后，整合构建0warning/0error、映射SQL/PG各4/4通过。[定向修复与整合原件](../../audits/database-compatibility/wp5-native/review-followup/manifest.json)保留原RED及首轮异常包装断言失败，不将后续成功改写为首次通过，也不将重复测试相加。WP5交付时普通PG API/worker guard仍保留；WP6的开放和整体验收按下节继续，不扩大WP5结论。
 
 ## WP6：本地验收、初始化、恢复与运行配置
 
 **前置：** WP4/WP5。**产出：** 两库验收证据、明确的支持版本与运维入口。此工作包不执行现有环境切换或生产部署。
 
-- [ ] 新增本地 runner `scripts/Test-Cp6DatabaseCompatibility.ps1`，契约为 `-Provider SqlServer|PostgreSql`，连接仅从明确的测试环境变量/本地安全配置读取，不打印凭据；数据库名称由 runner 独占创建并记录，cleanup 只操作该清单。
-- [ ] 共用真实数据库 fixture 参数化运行；所选数据库不可用立即失败。分别改造 SqlServerFact、OIDC 筛选 DDL 和 ERP fixture 的适用边界：共同行为两库执行，专有断言各自保留。必需两库场景零跳过。
-- [ ] runner 执行安装/重复初始化/适用升级、类型/索引/安全/并发/消息/Space/报表，以及隔离 API 启动与健康/身份核验；结果按 Provider、Context 和业务能力归档，不用总测试数替代逐项覆盖。
-- [ ] 保留 SQL Server .bak/CHECKSUM/VERIFYONLY 路径，增加 PostgreSQL pg_dump/pg_restore 路径；两种原生备份均恢复到新隔离库，验证 API 启动、数据/消息/权限/密钥可用及对账。本地恢复不代表跨数据库数据搬迁。
-- [ ] 更新 Provider 配置与生产校验、db-init、Compose/Kubernetes 输入、备份恢复 runbook、R2/DevOps 的数据库支持说明。保留正式候选、签名、漏洞扫描、环境审批与真实恢复/生产门禁；不得把本地结果写成 R2/GHCR 推广凭据。
+- [x] 新增本地 runner `scripts/Test-Cp6DatabaseCompatibility.ps1`，契约为 `-Provider SqlServer|PostgreSql`，连接仅从明确的测试环境变量/本地安全配置读取，不打印凭据；数据库名称由 runner 独占创建并记录，cleanup 只操作该清单。
+- [x] 共用真实数据库 fixture 参数化运行；所选数据库不可用立即失败。分别改造 SqlServerFact、OIDC 筛选 DDL 和 ERP fixture 的适用边界：共同行为两库执行，专有断言各自保留。必需两库场景零跳过。
+- [x] runner 执行安装/重复初始化/适用升级、类型/索引/安全/并发/消息/Space/报表，以及隔离 API 启动与健康/身份核验；结果按 Provider、Context 和业务能力归档，不用总测试数替代逐项覆盖。
+- [x] 保留 SQL Server .bak/CHECKSUM/VERIFYONLY 路径，增加 PostgreSQL pg_dump/pg_restore 路径；两种原生备份均恢复到新隔离库，验证 API 启动、数据/消息/权限/密钥可用及对账。本地恢复不代表跨数据库数据搬迁。
+- [x] 更新 Provider 配置与生产校验、db-init、Compose/Kubernetes 输入、备份恢复 runbook、R2/DevOps 的数据库支持说明。保留正式候选、签名、漏洞扫描、环境审批与真实恢复/生产门禁；不得把本地结果写成 R2/GHCR 推广凭据。
 - [ ] 完成一次任务级完整 diff 与专项审查，记录最终源码 SHA、真实版本/命令、结果、失败记录、证据/发布文件哈希及未验证范围；按仓库策略复用输入未变的成功结果，复用必须写明来源。
 - [ ] 各阶段代码、必要测试和文档进入远端 main；父任务全部完成条件满足后关闭 #134。父任务 Open 期间，只更新其阶段清单与真实证据，不建立额外状态看板。
 
-计划新增 runner 的使用契约（当前文件不存在，此命令不是本轮已执行验证）：
+已实现本地 runner 的调用示例。连接须通过受控进程环境变量或显式私有配置提供；每次采用全新绝对运行目录，两个 Provider 串行执行并分别归档。以下是使用示例，不改写已有分项的执行范围：
 
 ```powershell
-pwsh -File scripts/Test-Cp6DatabaseCompatibility.ps1 -Provider SqlServer
-pwsh -File scripts/Test-Cp6DatabaseCompatibility.ps1 -Provider PostgreSql
+pwsh -File scripts/Test-Cp6DatabaseCompatibility.ps1 -Provider SqlServer -RunDirectory (Join-Path ([IO.Path]::GetTempPath()) ('cp6-sql-' + [guid]::NewGuid().ToString('N'))) -Phase Full
+pwsh -File scripts/Test-Cp6DatabaseCompatibility.ps1 -Provider PostgreSql -RunDirectory (Join-Path ([IO.Path]::GetTempPath()) ('cp6-pg-' + [guid]::NewGuid().ToString('N'))) -Phase Full -PostgreSqlSslMode Disable
 ```
 
-验收输出必须报告必需场景零跳过、无 pending migration、隔离 API 实际启动/HTTP 结果和原生恢复对账；发生失败返回非零退出码。连接环境变量的准确名称、支持版本及分组命令随 WP1/WP6 实现记录到 runner help 和 runbook，不在此文档虚构现有工具能力。
+验收输出必须报告必需场景零跳过、无 pending migration、隔离 API 实际启动/HTTP 结果和原生恢复对账；失败返回非零退出码。准确参数、连接变量、实际观察版本和恢复边界见 [运行手册](../../devops/DATABASE-COMPATIBILITY.md)。可选择 Matrix/Application 分项，但不能把不同运行合称单次 Full；完整覆盖需要逐项核对所选 Provider 的全部必需入口。
 
 ## 父任务关闭清单
 

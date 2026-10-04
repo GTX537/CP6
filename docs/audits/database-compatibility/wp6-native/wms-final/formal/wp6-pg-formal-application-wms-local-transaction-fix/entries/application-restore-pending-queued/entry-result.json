@@ -1,0 +1,54 @@
+{
+  "EntryId": "application-restore-pending-queued",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261004_97682779_application",
+  "Role": "application",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "634D635269B0E3CFA294F217FF0B4DCBE261C8AEA9D9D40ACB1F94E8AC49078E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-queued\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-queued\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 36712,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:57:38.1184314Z",
+    "FinishedUtc": "2026-10-04T01:57:40.3127819Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "A4398D4E03882248C4A4C67E28B195F545B26FC6199CDD9DB7AE5C79C8F0C127",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-restore-pending-queued",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "notification-one-owned-row",
+      "notification-status-exact",
+      "notification-attempts-exact",
+      "notification-success-persisted"
+    ],
+    "ReportSha256": "4DEBEF6FD1E368A7543D7063A662204D15A80BA043DACC0D9D477E9BA1178D8A",
+    "ReportDatabaseName": "CP6Compat_WP6_20261004_97682779_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-queued\\reports\\report.json",
+  "ReportSha256": "4DEBEF6FD1E368A7543D7063A662204D15A80BA043DACC0D9D477E9BA1178D8A",
+  "FailureCode": null,
+  "Success": true
+}

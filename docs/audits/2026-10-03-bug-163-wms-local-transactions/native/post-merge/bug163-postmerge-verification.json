@@ -1,0 +1,47 @@
+{
+  "Task": "BUG-163",
+  "PR": 164,
+  "RemoteMain": "6322ac152cab7d462719169fb0301f49e9ee39ba",
+  "Candidate": "1e726a9a3d58a68bd48b6123341d606de076f526",
+  "Status": "RemoteMergedPostSmokePassedCleanupPending",
+  "Runs": [
+    {
+      "Provider": "SqlServer",
+      "Label": "bug163-sql-postmerge-smoke",
+      "Passed": 3,
+      "Other": 0,
+      "ExecutionHead": "6322ac152cab7d462719169fb0301f49e9ee39ba",
+      "TrxSha256": "EEE99304C55FD90B4923118FC9346CBC6E62EB21C5C813F0955B9B1625A92F76",
+      "SourceInputsSha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "RuntimeManifestSha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "ResultSha256": "4EF7F00EC1E9D2669A4B859FB16461636A4FDE67F0A4BB4CD0E1F2691196755D",
+      "SourceCount": 2492,
+      "RuntimeCount": 378,
+      "ExactNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce"
+      ]
+    },
+    {
+      "Provider": "PostgreSql",
+      "Label": "bug163-pg-postmerge-smoke",
+      "Passed": 3,
+      "Other": 0,
+      "ExecutionHead": "6322ac152cab7d462719169fb0301f49e9ee39ba",
+      "TrxSha256": "FD6537A5C4C170E9262F970C93F6866719550329FEBF70CB11ABAD8C187B6FE5",
+      "SourceInputsSha256": "59146ED86062FFF6F5A89A09D28EFB25C3B94BF1AA73F87478B034CA5ABA8867",
+      "RuntimeManifestSha256": "4987C66727F92BDA846B7089FD28F2AFE1A2ED830D5A1C23E57D983166FB9D2E",
+      "ResultSha256": "D5A65E5C1B9EB5F840DF8071ADC4FF34A19B72CFC6376C805C308673BFD22182",
+      "SourceCount": 2492,
+      "RuntimeCount": 378,
+      "ExactNames": [
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+        "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce"
+      ]
+    }
+  ],
+  "CheckedUtc": "2026-10-04T00:34:51.7793877Z",
+  "Scope": "Actual three-case native smoke per provider on merged main, reusing byte-verified unchanged real build. Earlier25/25 is retained as its historical run, not rerun. Owned cleanup, full WP6 and production remain pending."
+}

@@ -1,0 +1,23 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Scope": "Offline target-entry delta only; preserve other61 entries and exact design/publish41. Add six normally delivered BUG159 regressions and two raw exact native23 reports. No current WP6 native acceptance claim.",
+  "BeforeSha256": "1EA3B68A17F79DFACC3FF5A85D20D45DD7BDA4603A5566BD9BC9C76A1741307C",
+  "AfterSha256": "5B1898EC51E93C03AAC6B826DDBD9B574B0E28F33EFDCF470693B9B12379C4FD",
+  "Entries": 62,
+  "UnchangedEntries": 61,
+  "TargetEntry": "space-jobs-generation-retention",
+  "BeforeCases": 17,
+  "AfterCases": 23,
+  "AdditionalNames": [
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_honors_cancellation",
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_attempt_number_recovery_is_bounded_and_rolls_back",
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_deadlock_retries_the_whole_transaction",
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_serialization_failure_retries_the_whole_transaction",
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_unknown_unique_constraint_is_not_retried",
+    "CP6.Space.IntegrationTests.SpaceJobSqlServerTests.Claim_waiter_recovers_native_attempt_number_conflict"
+  ],
+  "AddedSourceDefinition": "CP6.Space.IntegrationTests/SpaceJobSqlServerTests.ClaimRecoveryTests.cs",
+  "SqlServerEligibleEntries": 54,
+  "PostgreSqlEligibleEntries": 51,
+  "CheckedUtc": "2026-10-03T21:06:03.1859954Z"
+}

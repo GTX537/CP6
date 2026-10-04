@@ -1,0 +1,19 @@
+{
+  "Task": "BUG-155",
+  "VerifiedUtc": "2026-10-03T18:16:07.6763978Z",
+  "Issue": {
+    "closedAt": "2026-10-03T18:16:14Z",
+    "number": 155,
+    "state": "CLOSED",
+    "url": "https://github.com/GTX537/CP6/issues/155"
+  },
+  "PullRequest": "https://github.com/GTX537/CP6/pull/156",
+  "RemoteMain": "2e1f90c629340944d95fadd7aee428f639304ed6",
+  "Candidate": "5a868092891d079f5234407f397f47a31cfc7f75",
+  "CandidateTreeMatchesMain": true,
+  "PostMergeBothProvidersPassed": 2,
+  "ExactOwnedDatabasesDroppedAndAbsent": 2,
+  "CleanupSha256": "1998C3C2D93C6F6D701966F5D8C3DBA167A98BFDF3E776CD924E88EFB57CA471",
+  "ParentTask134RemainsOpen": true,
+  "ActionsTriggered": 0
+}

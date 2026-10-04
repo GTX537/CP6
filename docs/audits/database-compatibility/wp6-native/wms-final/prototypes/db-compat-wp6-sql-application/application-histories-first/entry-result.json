@@ -1,0 +1,46 @@
+{
+  "EntryId": "application-histories-first",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_392fff71_application",
+  "Role": "application",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "39B72830BCDD80A1109FFCE64EBD8086066FDD216C14D92699C72BFDB9B09CD7",
+  "Process": {
+    "ProcessId": 20568,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:03:59.7539737Z",
+    "FinishedUtc": "2026-10-03T16:04:06.4411609Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "7D104B903A68DB421DE2897BF04F762F09D6470AA3717A9B2865D6E552E45767",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-histories-first",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "four-effective-history-profiles-complete"
+    ],
+    "ReportSha256": "DBFDA2DB35FF1C49F003C0A533DEFB30302244437F9A4BC07C7E2DE142388FEF",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_392fff71_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\db-compat-wp6-sql-application\\application-histories-first\\reports\\report.json",
+  "ReportSha256": "DBFDA2DB35FF1C49F003C0A533DEFB30302244437F9A4BC07C7E2DE142388FEF",
+  "FailureCode": null,
+  "Success": true
+}

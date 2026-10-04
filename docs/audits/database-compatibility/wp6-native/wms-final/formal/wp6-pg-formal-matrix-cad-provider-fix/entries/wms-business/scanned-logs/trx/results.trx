@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b3099e4e-0fa8-4dc1-a92e-f6eda0911a49" name="tt@LAPTOP-3QQ44FJS 2026-10-03 18:23:47" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T18:23:47.3363506-04:00" queuing="2026-10-03T18:23:47.3363509-04:00" start="2026-10-03T18:23:42.3267995-04:00" finish="2026-10-03T18:24:02.1309131-04:00" />
+  <TestSettings name="default" id="62149060-b841-47f2-ba4d-f6fc3957f2ff">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_18_23_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d1977cfa-c2da-47d6-9b45-190308093ea1" testId="45eaa5ae-fc0d-82c8-12f8-a14230d8b221" testName="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.1805402" startTime="2026-10-03T18:23:47.7342889-04:00" endTime="2026-10-03T18:23:48.9146672-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1977cfa-c2da-47d6-9b45-190308093ea1" />
+    <UnitTestResult executionId="b14e31c1-c89a-48b0-9e8f-4a125ed90173" testId="341f1a51-b135-739a-7825-7ce0c13cb333" testName="CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion" computerName="LAPTOP-3QQ44FJS" duration="00:00:03.1377194" startTime="2026-10-03T18:23:58.3624067-04:00" endTime="2026-10-03T18:24:01.5001127-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b14e31c1-c89a-48b0-9e8f-4a125ed90173" />
+    <UnitTestResult executionId="e08394c4-5603-4bd5-b177-f518fa93e347" testId="3af75342-4bd1-7e7e-f5f9-3bd3ee06b16c" testName="CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.3195892" startTime="2026-10-03T18:23:45.8135766-04:00" endTime="2026-10-03T18:23:47.1162499-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e08394c4-5603-4bd5-b177-f518fa93e347" />
+    <UnitTestResult executionId="4f9a005b-b414-4545-be17-7cf994b2a5a0" testId="111fa063-3582-dd1f-639b-032d25ce407f" testName="CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic" computerName="LAPTOP-3QQ44FJS" duration="00:00:03.2862562" startTime="2026-10-03T18:23:55.0757354-04:00" endTime="2026-10-03T18:23:58.3619489-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f9a005b-b414-4545-be17-7cf994b2a5a0" />
+    <UnitTestResult executionId="1515cb4c-ced0-49b4-a770-6af6110497bc" testId="25fba65d-bf42-d431-68ef-31ac3353f620" testName="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5637046" startTime="2026-10-03T18:24:01.5005906-04:00" endTime="2026-10-03T18:24:02.0641386-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1515cb4c-ced0-49b4-a770-6af6110497bc" />
+    <UnitTestResult executionId="c6fdc6f4-6d97-4e8c-b791-ffa25a67b8ef" testId="c8a66def-b069-c4de-829c-4b76d6320252" testName="CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree" computerName="LAPTOP-3QQ44FJS" duration="00:00:03.9608951" startTime="2026-10-03T18:23:48.9148597-04:00" endTime="2026-10-03T18:23:52.8759580-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c6fdc6f4-6d97-4e8c-b791-ffa25a67b8ef" />
+    <UnitTestResult executionId="b4361659-5755-4892-a963-b7e65960e1c6" testId="68bde242-2c3b-4f36-9a69-f06f7e4cc4aa" testName="CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.1989789" startTime="2026-10-03T18:23:52.8769297-04:00" endTime="2026-10-03T18:23:55.0753495-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b4361659-5755-4892-a963-b7e65960e1c6" />
+    <UnitTestResult executionId="d0aaba3d-8af0-4bd5-83a3-5b7a0b4407a3" testId="8504481a-0bde-bffd-9335-e7dd9011c794" testName="CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6165230" startTime="2026-10-03T18:23:47.1253083-04:00" endTime="2026-10-03T18:23:47.7337281-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d0aaba3d-8af0-4bd5-83a3-5b7a0b4407a3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c8a66def-b069-c4de-829c-4b76d6320252">
+      <Execution id="c6fdc6f4-6d97-4e8c-b791-ffa25a67b8ef" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="25fba65d-bf42-d431-68ef-31ac3353f620">
+      <Execution id="1515cb4c-ced0-49b4-a770-6af6110497bc" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3af75342-4bd1-7e7e-f5f9-3bd3ee06b16c">
+      <Execution id="e08394c4-5603-4bd5-b177-f518fa93e347" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="SourceDocumentScopes_TranslateAndFailClosedOnSqlServer" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="341f1a51-b135-739a-7825-7ce0c13cb333">
+      <Execution id="b14e31c1-c89a-48b0-9e8f-4a125ed90173" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="68bde242-2c3b-4f36-9a69-f06f7e4cc4aa">
+      <Execution id="b4361659-5755-4892-a963-b7e65960e1c6" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8504481a-0bde-bffd-9335-e7dd9011c794">
+      <Execution id="d0aaba3d-8af0-4bd5-83a3-5b7a0b4407a3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="45eaa5ae-fc0d-82c8-12f8-a14230d8b221">
+      <Execution id="d1977cfa-c2da-47d6-9b45-190308093ea1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Serial_EnableTracking_RequiresFeatureAndExactControlledCount" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="111fa063-3582-dd1f-639b-032d25ce407f">
+      <Execution id="4f9a005b-b414-4545-be17-7cf994b2a5a0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="45eaa5ae-fc0d-82c8-12f8-a14230d8b221" executionId="d1977cfa-c2da-47d6-9b45-190308093ea1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="341f1a51-b135-739a-7825-7ce0c13cb333" executionId="b14e31c1-c89a-48b0-9e8f-4a125ed90173" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3af75342-4bd1-7e7e-f5f9-3bd3ee06b16c" executionId="e08394c4-5603-4bd5-b177-f518fa93e347" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="111fa063-3582-dd1f-639b-032d25ce407f" executionId="4f9a005b-b414-4545-be17-7cf994b2a5a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25fba65d-bf42-d431-68ef-31ac3353f620" executionId="1515cb4c-ced0-49b4-a770-6af6110497bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8a66def-b069-c4de-829c-4b76d6320252" executionId="c6fdc6f4-6d97-4e8c-b791-ffa25a67b8ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="68bde242-2c3b-4f36-9a69-f06f7e4cc4aa" executionId="b4361659-5755-4892-a963-b7e65960e1c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8504481a-0bde-bffd-9335-e7dd9011c794" executionId="d0aaba3d-8af0-4bd5-83a3-5b7a0b4407a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.17]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.50]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.51]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:19.41]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

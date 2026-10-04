@@ -1,0 +1,211 @@
+[
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_b23c12ba_corewms",
+    "Owner": "b23c12bafc314661aadfc92074527db6",
+    "Role": "corewms",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "648023"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T22:56:41.1975798Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_b23c12ba_corewms.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_228f9f83_erp",
+    "Owner": "228f9f83184146a6ab1e9fa72479e346",
+    "Role": "erp",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "655469"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T22:57:52.5565685Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_228f9f83_erp.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_98b8b2a6_oidcidentity",
+    "Owner": "98b8b2a686e442c0916bb650de92e00b",
+    "Role": "oidcidentity",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "663315"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:02:56.1073537Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_98b8b2a6_oidcidentity.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_94b0e2b6_reports",
+    "Owner": "94b0e2b61c35489aa517761d70de03bf",
+    "Role": "reports",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "670900"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:04:58.3734030Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_94b0e2b6_reports.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_c007b724_runtime",
+    "Owner": "c007b724d6cc4624b6b35374ce939de7",
+    "Role": "runtime",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "678481"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:05:48.0470449Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_c007b724_runtime.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_ef94d4ba_schema",
+    "Owner": "ef94d4ba5c644866966c7bfec5cf55fd",
+    "Role": "schema",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "689494"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:06:47.1655584Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_ef94d4ba_schema.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_37e91188_space",
+    "Owner": "37e91188b3ac447b8b3f7d33b2a9568f",
+    "Role": "space",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "700786"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:07:17.5785162Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_37e91188_space.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_3c88d5e7_spacehistory",
+    "Owner": "3c88d5e72a594876847688563c36a593",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "712729"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:13:31.7091057Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_3c88d5e7_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_6a9dc478_spacehistory",
+    "Owner": "6a9dc478afba4c05b29eb3d31ba4f10f",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "723677"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:13:45.2394572Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_6a9dc478_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_ff94d61c_spacehistory",
+    "Owner": "ff94d61c51d0492d83de3ab6ca7dc2fc",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "727197"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:13:52.3217358Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_ff94d61c_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "8a836ce8ad984b0986b96e545c1db6f7",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261003_240e73ea_spacehistory",
+    "Owner": "240e73eaab594fd3b916e5b1833f9a95",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "730709"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-03T23:13:59.3331670Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-cleanup-fix\\receipts\\CP6Compat_WP6_20261003_240e73ea_spacehistory.json",
+    "Events": []
+  }
+]

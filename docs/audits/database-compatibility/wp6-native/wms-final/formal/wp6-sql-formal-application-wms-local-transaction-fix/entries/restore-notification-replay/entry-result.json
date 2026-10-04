@@ -1,0 +1,53 @@
+{
+  "EntryId": "restore-notification-replay",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_94e5a8a6_restore",
+  "Role": "restore",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "634D635269B0E3CFA294F217FF0B4DCBE261C8AEA9D9D40ACB1F94E8AC49078E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-notification-replay\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-notification-replay\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 8376,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T02:03:52.3837320Z",
+    "FinishedUtc": "2026-10-04T02:03:54.6957568Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "0C622569A1EA85F87791A7E851B52596D18D3804DBC5FA71DD183B82B6CC1105",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "restore-notification-replay",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 4,
+      "Total": 4,
+      "Passed": 4,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "replay-existing-dispatched-row",
+      "replay-production-service-no-duplicate",
+      "replay-kept-original-id-and-worker-state"
+    ],
+    "ReportSha256": "56BBA5368BBF9DD6883E561C10F1BEA2CBCA0675DECE23ECF73547217FAF5A19",
+    "ReportDatabaseName": "CP6Compat_WP6_20261004_94e5a8a6_restore",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-notification-replay\\reports\\report.json",
+  "ReportSha256": "56BBA5368BBF9DD6883E561C10F1BEA2CBCA0675DECE23ECF73547217FAF5A19",
+  "FailureCode": null,
+  "Success": true
+}

@@ -1,0 +1,54 @@
+{
+  "EntryId": "reports-core-space",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261004_6d379179_reports",
+  "Role": "reports",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "54DD5DE1BAC35EBDFC43DD0F306363D489E3984FD100F3042E158A6535EB8938",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\reports-core-space\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\reports-core-space\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 24848,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:21:53.2545479Z",
+    "FinishedUtc": "2026-10-04T01:22:00.3014459Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "8C2F59197B88FB4A9F5585A06488F4522F59B38BE7C8AD9E801A384DCF14BA3D",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-core-space",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_TwoNullCodes_BothCoexist",
+      "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_SameNonNullCode_SecondInsertThrows",
+      "CP6.Tests.SpaceSqlIntegrationTests.AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer",
+      "CP6.Tests.SpaceSqlIntegrationTests.RowVersion_ConcurrentUpdate_SecondThrows",
+      "CP6.Tests.SpaceSqlIntegrationTests.TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds"
+    ],
+    "ReportSha256": "AE5F526042811F4C7E703DA307738E3AB87CF2FABB778485D36F47BD9D06BEEB",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\entries\\reports-core-space\\private\\trx\\results.trx",
+  "ReportSha256": "AE5F526042811F4C7E703DA307738E3AB87CF2FABB778485D36F47BD9D06BEEB",
+  "FailureCode": null,
+  "Success": true
+}

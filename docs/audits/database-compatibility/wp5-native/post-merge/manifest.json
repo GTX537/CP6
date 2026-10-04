@@ -1,0 +1,144 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Stage": "PostMergeOriginalsArchivedDuringWP6",
+  "PullRequest": 152,
+  "RemoteMain": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Files": [
+    {
+      "Path": "wp5-root-final-review.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-root-final-review.json",
+      "Bytes": 1372,
+      "Sha256": "1A72985349FC3B24C89AB46A851DF4526AD7D316D460C0FA9B750D74F5B55ADC"
+    },
+    {
+      "Path": "wp5-final-staged-evidence-check.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-final-staged-evidence-check.json",
+      "Bytes": 978,
+      "Sha256": "77FBDD136CBA49139BC13BA92C7CAC5C2F3917C29B4135BA6DF90CE2682B05EA"
+    },
+    {
+      "Path": "wp5-before-push-first-attempt.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-before-push-first-attempt.json",
+      "Bytes": 317,
+      "Sha256": "D571B81A1A434396103E5092155BC45ACCBBCD2E988FD89C36B38FDFC3EF88B2"
+    },
+    {
+      "Path": "wp5-before-push-retry-workflow-input-inspection.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-before-push-retry-workflow-input-inspection.json",
+      "Bytes": 6748,
+      "Sha256": "27F4AEC6B8D03A4307D612BA45FE3CFB8DEDA75D1DDE3DC8B27D211D7E8BC1DF"
+    },
+    {
+      "Path": "wp5-before-pr-create-workflow-input-inspection.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-before-pr-create-workflow-input-inspection.json",
+      "Bytes": 6748,
+      "Sha256": "94B8BE62AC5D23C202BBC3E50333EA1850E6D07CFCD25ED1B257C8D0F9F6C27F"
+    },
+    {
+      "Path": "wp5-before-merge-workflow-input-inspection.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-before-merge-workflow-input-inspection.json",
+      "Bytes": 6748,
+      "Sha256": "C061E1209DBCE9C1DC51ACB25A77979D6F2AF2D1A66C7B8EE7FAD4D6A0AC85FE"
+    },
+    {
+      "Path": "wp5-pr-before-merge.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-pr-before-merge.json",
+      "Bytes": 300,
+      "Sha256": "E2BDE5E2172C52C66B79FAE075C4E457D818B894449F27CD772B19907E29C96E"
+    },
+    {
+      "Path": "wp5-pr-review-threads.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-pr-review-threads.json",
+      "Bytes": 120,
+      "Sha256": "908FCA2944A15DB0AD52D6A1AF53B75366F98EEF1010AD2E86CC9EA00BB798DE"
+    },
+    {
+      "Path": "wp5-main-protection-observed.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-main-protection-observed.json",
+      "Bytes": 881,
+      "Sha256": "4D81E74F3AD7B313FB02CDD43E4140F0C62B8B19785C6392C3E885A67BB3E477"
+    },
+    {
+      "Path": "wp5-remote-main-observation.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-remote-main-observation.json",
+      "Bytes": 699,
+      "Sha256": "685DEE8D760201E802829F2C29EF94F30D0CCB2D33C1E7684CB1EC5FF4613F1D"
+    },
+    {
+      "Path": "wp5-post-merge-fast-forward.log",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-post-merge-fast-forward.log",
+      "Bytes": 43,
+      "Sha256": "75307673C59B20E580E715DC03D380E03EC095D672DAB7120E8017DA7F2DA06B"
+    },
+    {
+      "Path": "wp5-post-merge-preflight.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-post-merge-preflight.json",
+      "Bytes": 544,
+      "Sha256": "FF85F472123D148D53768F27D1755291845812C44F39ADC8EE2FF2F28D132344"
+    },
+    {
+      "Path": "wp5-post-merge-space-pg-smoke.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-post-merge-space-pg-smoke.json",
+      "Bytes": 81689,
+      "Sha256": "C7F4E9C7C57E94AD8C0EB3836404F93F60F4893F64C07C0081AF6E57AFEC28F8"
+    },
+    {
+      "Path": "wp5-post-merge-space-sql-smoke.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-post-merge-space-sql-smoke.json",
+      "Bytes": 81690,
+      "Sha256": "7FF8201B50E17BAC48BEBAF23B0573471F364E24A9591898DE896D11D3495F88"
+    },
+    {
+      "Path": "db-compat-wp5-tests/wp5-post-merge-space-pg-smoke/process.log",
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-post-merge-space-pg-smoke\\process.log",
+      "Bytes": 434,
+      "Sha256": "DA9D042CE3873E03045EC9B97DDB4D05127F8D694F5FBA562480ED77488D1AAD"
+    },
+    {
+      "Path": "db-compat-wp5-tests/wp5-post-merge-space-pg-smoke/results.trx",
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-post-merge-space-pg-smoke\\results.trx",
+      "Bytes": 7533,
+      "Sha256": "947A9F324130BD873D5F18C9AA5B32B8EE988D0698C02B94D947C487DFDC5AF0"
+    },
+    {
+      "Path": "db-compat-wp5-tests/wp5-post-merge-space-sql-smoke/process.log",
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-post-merge-space-sql-smoke\\process.log",
+      "Bytes": 435,
+      "Sha256": "615A702EFCD24902D480A22A580EC74AFDB0EEC0BAB0CFFDE6B38143DF6C3CA8"
+    },
+    {
+      "Path": "db-compat-wp5-tests/wp5-post-merge-space-sql-smoke/results.trx",
+      "SourcePath": "D:\\CP6\\tmp\\db-compat-wp5-tests\\wp5-post-merge-space-sql-smoke\\results.trx",
+      "Bytes": 28113,
+      "Sha256": "40420C704FF040EC15F2E866C121BF14B0551DD35FBBDBD173A343E4EB468726"
+    },
+    {
+      "Path": "Remove-DbCompatWp5OwnedDatabases.ps1",
+      "SourcePath": "D:\\CP6\\tmp\\Remove-DbCompatWp5OwnedDatabases.ps1",
+      "Bytes": 21612,
+      "Sha256": "44D10130BB7D818EC6EEC5E70EF002E6E3D252E8BF201E6368C6A10AEEADCE52"
+    },
+    {
+      "Path": "wp5-cleanup-final-owned-thirteen.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-cleanup-final-owned-thirteen.json",
+      "Bytes": 9477,
+      "Sha256": "BB9728FE4B5538F761D272742BFDC8AAB8D9A1219AD3FB07C008B7426930D89C"
+    },
+    {
+      "Path": "wp5-delivery-closure.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-delivery-closure.json",
+      "Bytes": 1659,
+      "Sha256": "A63A146E0239BE31CA3E79AFBF2D66DC19FD8E908AE8F121E52C5AA1888EBBFE"
+    },
+    {
+      "Path": "wp5-parent-progress-updated.json",
+      "SourcePath": "D:\\CP6\\tmp\\wp5-parent-progress-updated.json",
+      "Bytes": 382,
+      "Sha256": "BE82FA6E013CE54C0536974571615EF5EE424DEDB51510CEE3C3F280A044E3D3"
+    }
+  ],
+  "FileCount": 22,
+  "AllOriginalBytesMatched": true,
+  "ArchivedUtc": "2026-10-03T16:05:05.8040012Z",
+  "Note": "Original successes and first push-preflight failure are preserved. No test was rerun to create this archive. No private ownership receipt, connection settings or backup file is included."
+}

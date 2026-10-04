@@ -1,0 +1,907 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Passed",
+  "ExecutedUtc": "2026-10-04T02:17:47.6442094Z",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "SourceInputManifestSha256": "8042FC25421B2F30ABAED7F70DA81B7CD36DDB23ADF379028717A6DD834F3D88",
+  "CheckedInputs": 2041,
+  "BinarySha256": "54DD5DE1BAC35EBDFC43DD0F306363D489E3984FD100F3042E158A6535EB8938",
+  "BinaryUnchanged": true,
+  "BuildExecuted": false,
+  "BuildSource": "Latest actual seven-project PostgreSql Matrix build at e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Command": [
+    "dotnet",
+    "test",
+    "CP6.Tests/CP6.Tests.csproj",
+    "--configuration",
+    "Debug",
+    "--no-build",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~CP6.Tests.Persistence.DatabaseProviderTests|FullyQualifiedName~CP6.Tests.Persistence.DatabaseWiringTests|FullyQualifiedName~CP6.Tests.Persistence.DatabaseMigrationOwnershipTests|FullyQualifiedName~CP6.Tests.Persistence.DatabaseInitializationModeTests|FullyQualifiedName~CP6.Tests.Sys.ProductionConfigurationValidatorTests",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "D:\\CP6\\tmp\\wp6-wms-final-configuration\\trx"
+  ],
+  "Process": {
+    "ProcessId": 36044,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T02:17:40.1101884Z",
+    "FinishedUtc": "2026-10-04T02:17:47.5103409Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "4B56D447EC6771AA702B98C758B37CA797DB5E931808978BE5E0FBA7A56451D4",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Passed": 139,
+  "Other": 0,
+  "Classes": [
+    {
+      "Class": "CP6.Tests.Persistence.DatabaseProviderTests",
+      "Cases": 38,
+      "Passed": 38
+    },
+    {
+      "Class": "CP6.Tests.Persistence.DatabaseWiringTests",
+      "Cases": 40,
+      "Passed": 40
+    },
+    {
+      "Class": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests",
+      "Cases": 8,
+      "Passed": 8
+    },
+    {
+      "Class": "CP6.Tests.Persistence.DatabaseInitializationModeTests",
+      "Cases": 5,
+      "Passed": 5
+    },
+    {
+      "Class": "CP6.Tests.Sys.ProductionConfigurationValidatorTests",
+      "Cases": 48,
+      "Passed": 48
+    }
+  ],
+  "RequiredMethodsMissing": [],
+  "Cases": [
+    {
+      "Ordinal": 1,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_PostgreSqlRequiresHostWithoutThrowingNullParserError",
+      "OriginalTestNameSha256": "FE37B9C94FAEB5177B931CFE262C862D14626EEAB48A47E78CD8DE5BE9BF3D22",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 2,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Existing_connection_is_shared_and_remains_owned_by_caller",
+      "OriginalTestNameSha256": "3D04DDA36FBF101CEF3BF04759DDA30543E30262D834C5D6F002246E47566D06",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 3,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_InvalidPostgreSqlConnectionDoesNotExposeParserErrorOrSecret",
+      "OriginalTestNameSha256": "F76E43B6E5C24A87ADEC2169AE4BE88FE787344D2C3F26993274EEE582711500",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 4,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Missing_provider_defaults_to_sql_server_without_guessing_from_connection_string",
+      "OriginalTestNameSha256": "4496F5ACDE5EC4F04C7A366BCA8F6AB1F2DFF8EEB37DBD2EF3988868E79CE687",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 5,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "091B6D72359B33FD2D703D479FF92D98988F8F113DCF914CDBB6311286AFDC2F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 6,
+      "Method": "CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlSupportsApplicationAndOneShotInitialization",
+      "OriginalTestNameSha256": "F26A2F16BFBA8649034E24E862797443771C8733C01E32E9FC68BDBBEF1C8113",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 7,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_InvalidProviderDoesNotFallBackOrExposeInput",
+      "OriginalTestNameSha256": "A8FDD24FDAB5DBC75982DE71004360DA17BBFAEFA4F9471AB7B2432359DB3BEE",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 8,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_migration_metadata_applies_to_selected_provider",
+      "OriginalTestNameSha256": "EBE5C081BF3D06DAA733F57E2275811B83F75B079CC89D1CCE1012AD24A078DB",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 9,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "D5A803A95E849A264B6B74A8A12404EA2E3DF729F9923EC8554845A427223D77",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 10,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Explicit_integration_provider_stays_fixed_when_configuration_provider_changes",
+      "OriginalTestNameSha256": "65C90C4FE79B4D593C1DBD2AD2E69B87AC7D76F46EF939379D548D76D203A410",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 11,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "5E4D31F607D3C4EAC898CD591BA7649F0B42B6F175544849949EEA73D061983F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 12,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Connection_factory_rejects_invalid_connection_strings_without_exposing_credentials",
+      "OriginalTestNameSha256": "EFCBDC1F9986B315BF355E0F41C4878F22691A70055E59A125875953582F791A",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 13,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Sql_server_existing_migration_selection_is_not_replaced_by_implicit_defaults",
+      "OriginalTestNameSha256": "C9F1BE06E2602C8B49151D8EC6D678129A5C4214BFFE440CBFF9E900FAC4E15D",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 14,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Provider_section_without_a_scalar_value_is_invalid",
+      "OriginalTestNameSha256": "52821B640736BB9F726E3BBA212D18DEB618239D9CB8F30DCD6F05C6D06C1DF8",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 15,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Existing_space_registration_retains_sql_server_and_history",
+      "OriginalTestNameSha256": "EB5486D74B4B892D00F206944D2FB5E1346F035FEA2CF854FDCC4F5365E29876",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 16,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Identity_dispatcher_factories_use_same_fixed_provider_and_context_metadata",
+      "OriginalTestNameSha256": "470473986981764545EB196A22104DF39591D70C4681E829B1E62E42CCA0D7AD",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 17,
+      "Method": "CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization",
+      "OriginalTestNameSha256": "F3AE89A33B6135D2935300A08F054A1A59989F3477C391B6285B50D8BE6C30C4",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 18,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Canonical_provider_value_selects_requested_provider",
+      "OriginalTestNameSha256": "CBEAEFD8C78214D7410C3626386D087D95A8027FBEAC7054840881A8D5E085E7",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 19,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Missing_design_provider_environment_keeps_sql_server_default",
+      "OriginalTestNameSha256": "C252883F0FD4402D696CE4BF5E7686B517786A859135539EAE4BE766A38E67EC",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 20,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factory_provider_environment_and_argument_precedence_are_shared",
+      "OriginalTestNameSha256": "0C56FCAF788431E1292E0EFBA91472758E5F17B6A3B8DB0B4F703C419DD7D8F0",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 21,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "64957D9120F4DF31E931D8308A9BEE20C213A111560A81E94D34F0B04BA59A9D",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 22,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_InvalidProviderDoesNotFallBackOrExposeInput",
+      "OriginalTestNameSha256": "84B472DF9FAA1237F870183FE02503B041ECB727C2B01F04C1F4B466932BB87B",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 23,
+      "Method": "CP6.Tests.Persistence.DatabaseInitializationModeTests.SqlServerSupportsApplicationAndOneShotInitialization",
+      "OriginalTestNameSha256": "FD0C0B4ABA10229964D4E9C7AD7720BBC3F45EB764E4C86C82FD4BE6BB7499FA",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 24,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.All_design_factories_select_postgresql_and_separate_history_without_connecting",
+      "OriginalTestNameSha256": "13E8D1C5AFBA3328C0F197E1B9D4F66727CC060A761D85918FB0389027C2452A",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 25,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "6E48DB461DC525CBE430B2C04593C822F34084A81650D80592D593998439219C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 26,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "6A6C60EC95C5CDC569B4D26F324930393B4E3A0B8B78C64514B5F605241C4BE8",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 27,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Existing_connection_of_wrong_provider_fails_before_configuring_builder",
+      "OriginalTestNameSha256": "F348FFE6ABA3F432E31E985A4317FA0E28B0C5457A6AD62BF6AA19086D34B685",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 28,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Sql_server_design_factories_preserve_existing_migration_metadata",
+      "OriginalTestNameSha256": "1A5D962BA463B432D43B71F13522E4AA18DD4E1B66C331ED81F461A244559C9C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 29,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Missing_history_table_with_explicit_schema_fails_instead_of_choosing_a_table",
+      "OriginalTestNameSha256": "8CE72A1A087EB32535DD6FF77C9ED56CD24AD4DEF6F12A5104AB5A8DC303C419",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 30,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Connection_factory_rejects_invalid_connection_strings_without_exposing_credentials",
+      "OriginalTestNameSha256": "9D058982688AA6C762FD6B478DBF31CF0D09A1ED656B6D568003CEF4C255CFB0",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 31,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "409A0130FCC02CC73779868E87F240F8BD3FFE991A02AF0800BD6FFB26938328",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 32,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "3040B3F99D0E1CA6343E4B7A8C066BCD2BAEDF30A887FD50811F64250FD3EF5B",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 33,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "ABEDEBD9DAFC5720D8757B546B9F42EE57F86BB54B7B5E5825F74129B884246C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 34,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "38C82A1790DA98054805520D1CF3D3581B38595B7F861FFE7B2306959BB8EA33",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 35,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "F1A6C76DEFBD3D10151A2FCAEB16E0AF68288707E5C591D29860EFE02F7C9E4A",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 36,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Selected_provider_does_not_change_when_configuration_changes",
+      "OriginalTestNameSha256": "BB70B0135EB89CFB04E6ED445485BC720AFB2BA64231F2C8443517FFE584521F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 37,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_AcceptsCompleteProductionConfiguration",
+      "OriginalTestNameSha256": "A1FE7AB58242CABAE8823C377E53AFD560BD136F00FFE0D23D1371600D13B10F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 38,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "5CB1E88D9DE37196DA7E505E74ABB5414D9417B07DFC870C928EC43D4D84F998",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 39,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factory_provider_environment_and_argument_precedence_are_shared",
+      "OriginalTestNameSha256": "73321182E459BE11834097ADBFA59775C946950B18ADE18F02D9C3CA0224A3AB",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 40,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "0BB21C2693F9E5F190AD759FFEDEA47C7BB09B899C5E159872CF8C4D232E5A7E",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 41,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Connection_factory_rejects_invalid_connection_strings_without_exposing_credentials",
+      "OriginalTestNameSha256": "1322F4D0E659D12D46A1B2942169F6FEBD746EFFEDC522E8EE9F5268369CEFBD",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 42,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Explicit_design_connection_arguments_are_used_without_connecting",
+      "OriginalTestNameSha256": "D0197CE0FDB1E28F171F46BEFE53ADEC711D09648F0527DA1564F10E7DF9D911",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 43,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RequiresPostgreSqlVerifyFull",
+      "OriginalTestNameSha256": "319F8E7DF6507DA44BB4DF44106E96F57A6CD5745A37495647F2AD1297D9B351",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 44,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "7C0AE0C9DECDB18D7E4EA80D3F810611C8957F63634B176192C79B9658A5BBE9",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 45,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "471EA3CE7D6407797AB1FDEAE1C8250AED9440896ADAEDCC4578FE4DDF580677",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 46,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Connection_factory_rejects_invalid_connection_strings_without_exposing_credentials",
+      "OriginalTestNameSha256": "FF2F8AC9B5C46FED73BEBF97D5CE01ABFECB196BB0EFE84DEA18827B5BB0D586",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 47,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.All_design_factories_select_postgresql_and_separate_history_without_connecting",
+      "OriginalTestNameSha256": "CFFFE62AD539253DBE857D34B5B39346B4920B3E4F5BB730D4A91764BCC488FF",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 48,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Existing_connection_of_wrong_provider_fails_before_configuring_builder",
+      "OriginalTestNameSha256": "B4762F7A858E283B3F41CF3CA363AEFC54284A387B4777FEDAA33FA10D174991",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 49,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "A0B9D2F0275F61FF4812A684D27D5BC75E67717C7B133DD6312716F3BD5A6BC9",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 50,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "766CBF5DAEE4C40EAEB2CD614FE2316E3FB85ADE8027F2F0ABFBD25551937AB2",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 51,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "3A2CE44A080E75AD8F2ACFB2DBAFDDD2B9E0069698BC0708CD0FEB6583B5958F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 52,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.All_design_factories_select_postgresql_and_separate_history_without_connecting",
+      "OriginalTestNameSha256": "698F4E5FA197D2AD0D08E340F70FBCC2475CF0FDCFC8CB703BFB9C2F6AA7023C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 53,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Missing_design_provider_environment_keeps_sql_server_default",
+      "OriginalTestNameSha256": "9C43C081B58EF8B542F85328A39D5B77E5F679BC70AD4AF8F3F5B063E91AEC06",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 54,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "93053FA15169A1776C89EF84F813F69639687A0F5F20815B421D842250D4CAEA",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 55,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "DA624442E934359340C9CE85CC2B8E08365A26399DFC4F8E46B9E6D8DF625A58",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 56,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "D2132606A548982105BF962B387B627149CC9BDD4B5AF98D09EC59812CCD1056",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 57,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_InvalidPostgreSqlConnectionDoesNotExposeParserErrorOrSecret",
+      "OriginalTestNameSha256": "9C9AA031E30D9C21F4D77537BBBA80AB4D295D5428331A28EBA76417B4D5DF77",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 58,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "58F0C20A391B8259C2106C354151545AE7CB0ECB6AB010BCF2D991D11BDA2662",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 59,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "56A8BA143A32496FE75F1E886CEF719D3BC2E7D39EC8DB11BB11203103817526",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 60,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Missing_design_provider_environment_keeps_sql_server_default",
+      "OriginalTestNameSha256": "A44FDBB4F5C1BB371F479C8D34F744D130838FC3BF4C8C8A0D3857FA580AB6DE",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 61,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Existing_connection_supports_explicit_migration_metadata",
+      "OriginalTestNameSha256": "7EF29FB1529A7F32997FD4F85F56FE4AAB95B3BB157DD5E2E666A1FBEBE4D42C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 62,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Untyped_builder_is_also_supported",
+      "OriginalTestNameSha256": "76E09E57DF8847377A7522CB985CA97F701460AB0A1BDB5ACF5486B45597EB2E",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 63,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "4E1E75092FF300710732ECCD1D860920172A74431F46CA04A29006700198E1D2",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 64,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "42A2A48CCB3B388219417786AF7CF9526AFA9F620149071C1230B981F3B21591",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 65,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Explicit_space_registration_uses_deployment_provider_and_postgresql_history",
+      "OriginalTestNameSha256": "C1FEB9382C0658B1ABD6C14702B659D589F0C8F1999279B211CC5180F8CE468D",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 66,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "DC6D31DFA96E2DBD65A2E6A0243B308E63C1DCB4CD8696742F024E01A31D2125",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 67,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Existing_connection_supports_explicit_migration_metadata",
+      "OriginalTestNameSha256": "1A2448B4DCC3267E9A0F68DD6EEC72A87D912CC3A672739BD9B04A9C3B520145",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 68,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Runtime_accepts_postgresql_deployment",
+      "OriginalTestNameSha256": "CC11ECDEF77A02C8A3D589DC3ECB7BA304574F66610C2C7600CAF15954FE6E4D",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 69,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_migration_metadata_applies_to_selected_provider",
+      "OriginalTestNameSha256": "B026DA2A934F7D274382F7B0DC2BF3326ABB40868935664A25FF935F6FDC208E",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 70,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Identity_registration_accepts_postgresql_without_sql_server_connection_parsing",
+      "OriginalTestNameSha256": "C3D8FBF6E2BC2F62319707ED3269DF1F391A4BA1A0CA79F18A38648FE610A479",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 71,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Core_design_factories_do_not_read_application_connection_credentials",
+      "OriginalTestNameSha256": "1D6650705579451E0E85ECFA1BDF205AE136DE5AC7D766D012C4D5C9391C9770",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 72,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "35A6E50171BC2BE6FC5F9E797850EEAB9AA6150C0394A0B8B74484AF15552459",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 73,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factory_provider_environment_and_argument_precedence_are_shared",
+      "OriginalTestNameSha256": "AEA37EE23AF74448E218E4DE02BF2C45A0B2AD13A5EED8B3A3AC8E8BEC23533B",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 74,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_DoesNotEchoSecretValues",
+      "OriginalTestNameSha256": "5F8EFB9ACBAC769D618E1D6F85486DA201B76F150D5BCC0D223D501C1D583D67",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 75,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RequiresPostgreSqlVerifyFull",
+      "OriginalTestNameSha256": "88BCD36177AF6381A586AD35C027847A584C0EB11A8FBBA7D8F95ABDC3A33E16",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 76,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "0909F56C2B5CAD0ECDCAACFF616282360C6045F31AFD91FB593488310638FB01",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 77,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "DCBC787C4B31ABD80302C2ED9CA1DE39C59EEC6A7FCE827E31A9B542F6DB7728",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 78,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "095958CD3BC726253EE9A952DEED313F3A7D23E59E2002D29F7B6ADD04A0A436",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 79,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RequiresPostgreSqlVerifyFull",
+      "OriginalTestNameSha256": "67D8F09FF9F2EC14AD5D7B6C905A475105373E952214241924847F65B34E23A7",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 80,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factory_provider_environment_and_argument_precedence_are_shared",
+      "OriginalTestNameSha256": "F11B825A049C2F8DA610C51B6F89C8460CAF73043C5788ACF2864E0475B4E673",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 81,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "285DF427C613A44096469825138B0A67A9FD158A290DACD643D0CC2BBD0E9354",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 82,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_InvalidProviderDoesNotFallBackOrExposeInput",
+      "OriginalTestNameSha256": "A3146F9C97F37F419BD5AE56524174594266966A90B5CDD95D8CD7EA14BA4AE4",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 83,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factories_reject_unknown_provider_without_echoing_input",
+      "OriginalTestNameSha256": "A869F5BCCE3160A7E8D635174310EB45470A681FB51AD2F802AFAB5E2E95C91B",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 84,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Existing_connection_is_shared_and_remains_owned_by_caller",
+      "OriginalTestNameSha256": "CD5B90192D401BB4A4490F38B648EB68275882F9A913C64583B20121281A41BE",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 85,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "974E45F0E4D1A6057729C6B90F5F5CC449C124978B4243388E200054CB187A41",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 86,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RequiresPostgreSqlVerifyFull",
+      "OriginalTestNameSha256": "7FAE19319B7392F064AC4F387EC793A6EC6ADDED0B5CD072C972888E17F7B70F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 87,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Builder_already_configured_for_other_provider_is_rejected",
+      "OriginalTestNameSha256": "E137640D16CD8523130C4CD610D9854EF22CB2179F8ACA6567A96F1446D35892",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 88,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Sql_server_design_factories_preserve_existing_migration_metadata",
+      "OriginalTestNameSha256": "9B6AAE715516805758923AD5D38631369FCD45FF7495D157150824ADBC50F515",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 89,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.All_design_factories_select_postgresql_and_separate_history_without_connecting",
+      "OriginalTestNameSha256": "0FA5D164808EFF49E70743005127EB1781DD34A0F0AA3857073B79FC4F33EBC1",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 90,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Core_design_factories_do_not_read_application_connection_credentials",
+      "OriginalTestNameSha256": "3FD4E6910B1053321DEB7159F954F0E030D929300BAD1F51E2DC648953292224",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 91,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Runtime_accepts_existing_sql_server_deployment",
+      "OriginalTestNameSha256": "9567E76D9C5BA595E8BBAF6BA9016140FA2A8E60AF81AD0E956ABB927EF513D7",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 92,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Missing_design_provider_environment_keeps_sql_server_default",
+      "OriginalTestNameSha256": "749C5FF92ED793EBDEE27719B7F9DB34BA859F50A336905F474C2300E4C1777D",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 93,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Explicit_design_connection_arguments_are_used_without_connecting",
+      "OriginalTestNameSha256": "1F3CD48D103C7D4827867890E175E3987C65BF864C039FD890E4D7E766A20ABB",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 94,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.String_configuration_selects_only_one_provider_and_preserves_the_typed_builder",
+      "OriginalTestNameSha256": "7625B11B4131F4FCD25CF507B0038DAD9B239926C33A678AB2C7E27449028E2B",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 95,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factories_reject_unknown_provider_without_echoing_input",
+      "OriginalTestNameSha256": "6EBB526AC9B52B92E89EEF831B8F3DFA0F4A6D8EC14B74451F2E7C0CC4A6239F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 96,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Connection_factory_rejects_invalid_connection_strings_without_exposing_credentials",
+      "OriginalTestNameSha256": "06D36ED42BB91B5B39E95926DA3C4999CBC243F409441B922A99F3B232D0E155",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 97,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "CA0DA70877D4677BF760A3C5866518083603A469C412A131DD498238AAC58016",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 98,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "C567865EA7D19A6D9706B03EDF100CD928E376A058F849EFD3C17E4425F7087E",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 99,
+      "Method": "CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlSupportsApplicationAndOneShotInitialization",
+      "OriginalTestNameSha256": "9FF0A4997B25FCA4267A3ADF3237AD2B9C1469DEE862C28B090D13799D0CA0AB",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 100,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Identity_dispatcher_factories_use_same_fixed_provider_and_context_metadata",
+      "OriginalTestNameSha256": "D1E25F11C4DE799DD19F5778ECCFB70A81C217F8F8066958C40E444BB3472E97",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 101,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Sql_server_integrations_still_reject_mars",
+      "OriginalTestNameSha256": "CD6AF7B00970CC680D505F4CE078F9179DEFACF00D81B6747474F723CB590C31",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 102,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "047799D30F11DE7F0AE578585429D6AF998B88A7CD096E382C7E002B4D7558FD",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 103,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Explicit_invalid_provider_fails_without_echoing_input",
+      "OriginalTestNameSha256": "AEC4A72C793DDEDB14320229816E8D04FA985CC0DCFFFB55544C2DC948CA6E08",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 104,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Standalone_identity_registration_constructs_dispatch_worker_with_selected_provider",
+      "OriginalTestNameSha256": "96D1173D8A5FA8A2B22A1518638247DB1670FE67C8B1911BC84EAD07BE1678F3",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 105,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Canonical_provider_value_selects_requested_provider",
+      "OriginalTestNameSha256": "2D9746C11124744959DD68374C6B05CFD95EC86F97CF32FAD50ABB1FFC96E3F1",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 106,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_AcceptsPostgreSqlWithVerifiedServerIdentity",
+      "OriginalTestNameSha256": "58B9EBBCEF8774A54BBDD127B1EB7F47F8CC01FA70C2B7BF95C984FC34096F2C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 107,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_AcceptsPostgreSqlWithVerifiedServerIdentity",
+      "OriginalTestNameSha256": "ACB29C393846C0A964AE98B168A80277F86FD42C079D864D797ADFB36E21FC0F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 108,
+      "Method": "CP6.Tests.Persistence.DatabaseInitializationModeTests.NullProviderCannotBypassValidationInInitializationMode",
+      "OriginalTestNameSha256": "0F96715A858F1A6736C0B8B51E5F8B125AC27067B25A6756A2141F4C4C5CD2F7",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 109,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "A963D5212D755B5DE8E06126B572E43104854829B2784AC63A641BDD2EA4FBCB",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 110,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "624B83E5AD7277CC8A530C3B58A7460F1B7ABC25723BA83E5177AEB2BF842317",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 111,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.Validate_InvalidPostgreSqlConnectionDoesNotExposeParserErrorOrSecret",
+      "OriginalTestNameSha256": "168C40BE9A7890D4EF12F60FA48508B724FA3F8B14A2D419ADCB25B91DFB8EA0",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 112,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "8BD321D8FC49A76738340B6827947C449A105EF53831FEC27311D3C99AF67C69",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 113,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Connection_factory_creates_a_new_unopened_connection_for_each_call",
+      "OriginalTestNameSha256": "423D643A00C716307650F9DC487AF00DC8007583008C73C70689C57236ADD247",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 114,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "78C861A8DC65618EA03ED405BC5C91CC0F14CC115B6A1C2F19687A6787AE5F4E",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 115,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factories_reject_unknown_provider_without_echoing_input",
+      "OriginalTestNameSha256": "A3908A23A6A48B64E4E041F3F10AF0D1C4F70DE4E89F81B367179981FF61499C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 116,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Unknown_enum_value_cannot_bypass_provider_validation",
+      "OriginalTestNameSha256": "F415DB7FCA609B863399BE931E036B6BD0CE5475801F654ED9BBD0B0689558A3",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 117,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.String_configuration_selects_only_one_provider_and_preserves_the_typed_builder",
+      "OriginalTestNameSha256": "239C6AAC59FDB5B00C3C36F23AFF775BF2C8627D83ED7D8DBD12A54AB7C25B9F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 118,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Sql_server_integrations_still_reject_mars",
+      "OriginalTestNameSha256": "42FF576943713F9D1E1C713A6F42F68E4755906EBC72110A28B0CF9D189B8E01",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 119,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "7365251DD3C62883288FF993EF3FF48B99699CF6005D8E9156AA206F1C259D15",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 120,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "0CE647294E465F1D53259C4297A20CB78FEAED3D370CA28604B7382815955467",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 121,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RequiresSmtpWhenEmailOtpFallbackIsEnabled",
+      "OriginalTestNameSha256": "71A566C3D76DDA63D81D78C33B129FA8689011450285A1A35044AC1934EEB52D",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 122,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Core_design_factories_do_not_read_application_connection_credentials",
+      "OriginalTestNameSha256": "F186CB942E5D84E796F5DB60E75107D97341D3D261A975E488436DEBEC566CED",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 123,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "6EE71F489A32B04F7022B2B3BF58A0BFE6B4E8736104369AB373B1E40F3DE1C9",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 124,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Erp_registration_uses_postgresql_queue_factory_without_sql_server_connection_parsing",
+      "OriginalTestNameSha256": "848AA7D28BE342833BE2697984AB690A636622C8568552B0E419A12C38AD32C4",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 125,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsUnsafeProductionValue",
+      "OriginalTestNameSha256": "E4F16CFF1BFC28253030AB39FD1FB95C0FD3E1E67A3D04A0CB216EA8345540C9",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 126,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Sql_server_design_factories_preserve_existing_migration_metadata",
+      "OriginalTestNameSha256": "A383828FF18077D3C66F4E7A66BE1BB00D19D5787C1D1FCD374C22482E6F84C4",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 127,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "B19F2B19F102650684BA7766309DC67D887E3BC459A9F91645ECC2506DC57F7C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 128,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Builder_already_configured_for_other_provider_is_rejected",
+      "OriginalTestNameSha256": "8CF8CD5D555D1C549113F0FB24891B44B90339118522FD3A266E478942D80B0F",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 129,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RejectsEveryLocalPostgreSqlHost",
+      "OriginalTestNameSha256": "391811ACA029D87CC1978764945329DB60F6CDDCB14C64495FB54D3F8F06CAC2",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 130,
+      "Method": "CP6.Tests.Persistence.DatabaseMigrationOwnershipTests.Installation_uses_the_actual_owner_without_replaying_sql_queue_templates",
+      "OriginalTestNameSha256": "AA641DF34AAF35038A2739E5678A8EBB3AF9301D0BFD8BE633BE1D486B91335C",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 131,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Explicit_design_connection_arguments_are_used_without_connecting",
+      "OriginalTestNameSha256": "6D0F7D3E65CABB196CB6E30BAEBAA3450251FBD171B888E04A593D7658CD3F32",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 132,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Sql_server_design_factories_preserve_existing_migration_metadata",
+      "OriginalTestNameSha256": "3D4F8EDE024FBD41334502A02302C0151DC09E028738379B60FBAE54247BB567",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 133,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Design_factories_reject_unknown_provider_without_echoing_input",
+      "OriginalTestNameSha256": "801DF65E092D0533B3D71942F159C425B834EFFCDF16C09C4498C0EF7E7714A1",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 134,
+      "Method": "CP6.Tests.Sys.ProductionConfigurationValidatorTests.GetErrors_RequiresPostgreSqlVerifyFull",
+      "OriginalTestNameSha256": "F44AC892962A843F3FDD6F8E326B34396769E55C0278F140DDF0B7367375577A",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 135,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Missing_history_table_with_explicit_schema_fails_instead_of_choosing_a_table",
+      "OriginalTestNameSha256": "94E091EE40BACAE0F0DBB996ACAECD7BA48F94DA9B6A540F13B4A98A91858431",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 136,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Connection_factory_creates_a_new_unopened_connection_for_each_call",
+      "OriginalTestNameSha256": "09F7BA2F892BCE3BBC7B28E7F950644C796D69D030A9A4E5FF2F9AB1623ED8FA",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 137,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Space_design_factory_keeps_explicit_environment_connection_and_safe_failure",
+      "OriginalTestNameSha256": "EAD3CE87D1AF92081EA9001148EBB87D070D4BD7D6487EEB02FFDFC5C2A30A75",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 138,
+      "Method": "CP6.Tests.Persistence.DatabaseWiringTests.Explicit_design_connection_arguments_are_used_without_connecting",
+      "OriginalTestNameSha256": "CC1914AAC07E0FEAF878B5A9F3D439FBBCA9F987ECB801FEEA9CE246C744F5CF",
+      "Outcome": "Passed"
+    },
+    {
+      "Ordinal": 139,
+      "Method": "CP6.Tests.Persistence.DatabaseProviderTests.Untyped_builder_is_also_supported",
+      "OriginalTestNameSha256": "88A450C887DC5F8F37E0126A2B7D03B27A8969CD91111423A014C6413C2BFDF1",
+      "Outcome": "Passed"
+    }
+  ],
+  "OriginalRawResultSha256": "D7044AADDDCA02E99910200C08B575E89BD4C0F7084565CD3AB2D23A11CA1DAB",
+  "OriginalRawTrxSha256": "0012EE37947278B3485CBD5EDA3115CF565A4CFC49DBE11402A0050EC7DA9FEE",
+  "PublicSummary": "Derived public summary of the actual run. Theory arguments omitted from every display name; each original full name remains bound by its SHA-256 and outcome. Original unmodified result/TRX containing fixture connection-string literals are retained locally and excluded from public copying. This is not an unmodified raw TRX or a new execution.",
+  "Scope": "New focused .NET configuration/wiring tests against the already built current test assembly. No build, database operation, API process or production execution."
+}

@@ -1,0 +1,143 @@
+{
+  "Scope": "WP6 runner-owned database: Read-only installed catalog validation; migration currency not claimed",
+  "Provider": "PostgreSql",
+  "StartedUtc": "2026-10-03T16:47:38.825776Z",
+  "FinishedUtc": "2026-10-03T16:47:45.8771613Z",
+  "SourceBase": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "SourceState": "WP6 runner task input; applicable build log, source-file and runtime-binary hashes required",
+  "DatabaseVersion": "18.6",
+  "RuntimeBinaries": {
+    "CP6.Core": "D186E2DB20A9F772AAD537B30F7EC1A84114581362BC27621C384229A28692B8",
+    "CP6.DatabaseCompatibility.MigrationProbe": "BC738C686370A4EEF2FA36B01250A3EC20E57A5F69991AFA31E2506ABBECB287",
+    "CP6.Persistence.PostgreSql": "DCDA403B2DE1CE0E7D168EDE03DFB4CCFE03EC8A4B941297AF472C70D52737AF",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Space.Infrastructure": "B33E7235E9FE476560491565B132CC79D221974B4301D7372EBC275A6E97FF34",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [
+    {
+      "Context": "Core",
+      "Tables": 233,
+      "TokenTables": 157
+    },
+    {
+      "Context": "Space",
+      "Tables": 83,
+      "TokenTables": 41
+    },
+    {
+      "Context": "IdentityPriority",
+      "Tables": 4,
+      "TokenTables": 4
+    },
+    {
+      "Context": "ErpIntegration",
+      "Tables": 8,
+      "TokenTables": 6
+    }
+  ],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded WP6 loopback, dedicated name, role and task ownership verified before migration."
+    },
+    {
+      "Name": "Catalog.Core.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.Core.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 233 actual model tables."
+    },
+    {
+      "Name": "Catalog.Core.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 157 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.Core.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Catalog.Space.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.Space.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 83 actual model tables."
+    },
+    {
+      "Name": "Catalog.Space.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 41 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.Space.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 4 actual model tables."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 4 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.IdentityPriority.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.Mode",
+      "Status": "Passed",
+      "Detail": "Read-only catalog mode; migration history was not changed or claimed current."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryTableAndColumn",
+      "Status": "Passed",
+      "Detail": "Verified every column in 8 actual model tables."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.EveryDatabaseToken",
+      "Status": "Passed",
+      "Detail": "Verified 6 native token generators; no application-only token substitute."
+    },
+    {
+      "Name": "Catalog.ErpIntegration.ModelConstraintsAndStorage",
+      "Status": "Passed",
+      "Detail": "Actual model column types/capacity/precision/nullability, ordered keys/FKs/indexes, filters and check names/validation/column references verified; arbitrary check expression behavior is separate."
+    },
+    {
+      "Name": "Catalog.RawOrderDefaultsAndGlobalUniqueness",
+      "Status": "Passed",
+      "Detail": "65 original raw Order defaults on eight tables matched native catalog types and evaluated values; all eight CreateDate expressions advanced within one transaction as local wall clocks. Four exact global unique indexes are enabled, valid, unfiltered, and preserve ordered keys; PostgreSQL uses NULLS NOT DISTINCT. Read-only gate; no full Order business-graph acceptance implied."
+    },
+    {
+      "Name": "Catalog.ManagedOidcLedger",
+      "Status": "Passed",
+      "Detail": "Both OIDC ledger tables are installed."
+    },
+    {
+      "Name": "Catalog.ManagedJournalGuard",
+      "Status": "Passed",
+      "Detail": "Posted-journal mutation guard is present and enabled; write behavior is a separate gate."
+    }
+  ]
+}

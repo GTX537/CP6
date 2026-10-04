@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="73521d49-55c3-4013-8124-07efc3423a8f" name="tt@LAPTOP-3QQ44FJS 2026-10-03 19:05:47" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T19:05:47.1247374-04:00" queuing="2026-10-03T19:05:47.1247376-04:00" start="2026-10-03T19:05:40.7113368-04:00" finish="2026-10-03T19:05:47.5693494-04:00" />
+  <TestSettings name="default" id="1577bc0b-9e53-4d91-b860-b6ed7961705f">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_19_05_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3c32cbfb-8ab4-4061-b97b-2b299ac7ed53" testId="b8823a88-e121-fddf-4187-ab02f61d4db4" testName="CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_SameNonNullCode_SecondInsertThrows" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1126455" startTime="2026-10-03T19:05:47.3918209-04:00" endTime="2026-10-03T19:05:47.5045963-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c32cbfb-8ab4-4061-b97b-2b299ac7ed53">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="991c45ae-1782-4c54-9718-04ed090533f0" testId="84210b12-f708-e644-06b3-5c929d56f26d" testName="CP6.Tests.SpaceSqlIntegrationTests.RowVersion_ConcurrentUpdate_SecondThrows" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2969161" startTime="2026-10-03T19:05:46.4502103-04:00" endTime="2026-10-03T19:05:46.7466965-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="991c45ae-1782-4c54-9718-04ed090533f0">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="019746b1-bc56-468b-beff-d5067821834c" testId="8baf28cf-862b-0b47-c50a-d0d4e08bd1e8" testName="CP6.Tests.SpaceSqlIntegrationTests.TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.7563676" startTime="2026-10-03T19:05:45.5928058-04:00" endTime="2026-10-03T19:05:46.3392918-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="019746b1-bc56-468b-beff-d5067821834c">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="382cb0de-c7e0-4e14-bd1d-89151c0f0c37" testId="627dc1c6-81e8-c309-f481-67c06f07ee9e" testName="CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_TwoNullCodes_BothCoexist" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1102537" startTime="2026-10-03T19:05:46.3463660-04:00" endTime="2026-10-03T19:05:46.4495757-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="382cb0de-c7e0-4e14-bd1d-89151c0f0c37">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c2558b09-9782-4cb7-b3b6-6b9a30eb590f" testId="0dbd2b9d-b262-f2cd-629a-11511665d084" testName="CP6.Tests.SpaceSqlIntegrationTests.AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6432354" startTime="2026-10-03T19:05:46.7469018-04:00" endTime="2026-10-03T19:05:47.3913160-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2558b09-9782-4cb7-b3b6-6b9a30eb590f">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.SpaceSqlIntegrationTests.RowVersion_ConcurrentUpdate_SecondThrows" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="84210b12-f708-e644-06b3-5c929d56f26d">
+      <Execution id="991c45ae-1782-4c54-9718-04ed090533f0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.SpaceSqlIntegrationTests" name="RowVersion_ConcurrentUpdate_SecondThrows" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_TwoNullCodes_BothCoexist" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="627dc1c6-81e8-c309-f481-67c06f07ee9e">
+      <Execution id="382cb0de-c7e0-4e14-bd1d-89151c0f0c37" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.SpaceSqlIntegrationTests" name="UniqueIndex_TwoNullCodes_BothCoexist" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_SameNonNullCode_SecondInsertThrows" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b8823a88-e121-fddf-4187-ab02f61d4db4">
+      <Execution id="3c32cbfb-8ab4-4061-b97b-2b299ac7ed53" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.SpaceSqlIntegrationTests" name="UniqueIndex_SameNonNullCode_SecondInsertThrows" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.SpaceSqlIntegrationTests.AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0dbd2b9d-b262-f2cd-629a-11511665d084">
+      <Execution id="c2558b09-9782-4cb7-b3b6-6b9a30eb590f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.SpaceSqlIntegrationTests" name="AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.SpaceSqlIntegrationTests.TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8baf28cf-862b-0b47-c50a-d0d4e08bd1e8">
+      <Execution id="019746b1-bc56-468b-beff-d5067821834c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.SpaceSqlIntegrationTests" name="TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b8823a88-e121-fddf-4187-ab02f61d4db4" executionId="3c32cbfb-8ab4-4061-b97b-2b299ac7ed53" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84210b12-f708-e644-06b3-5c929d56f26d" executionId="991c45ae-1782-4c54-9718-04ed090533f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8baf28cf-862b-0b47-c50a-d0d4e08bd1e8" executionId="019746b1-bc56-468b-beff-d5067821834c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="627dc1c6-81e8-c309-f481-67c06f07ee9e" executionId="382cb0de-c7e0-4e14-bd1d-89151c0f0c37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0dbd2b9d-b262-f2cd-629a-11511665d084" executionId="c2558b09-9782-4cb7-b3b6-6b9a30eb590f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.23]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.55]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.56]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:06.47]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

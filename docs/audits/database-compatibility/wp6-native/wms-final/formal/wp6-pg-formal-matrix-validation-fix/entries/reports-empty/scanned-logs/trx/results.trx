@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="39442049-05d9-4427-8f7a-a45bb81334ec" name="tt@LAPTOP-3QQ44FJS 2026-10-03 14:43:31" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T14:43:31.7748848-04:00" queuing="2026-10-03T14:43:31.7748853-04:00" start="2026-10-03T14:43:23.1822931-04:00" finish="2026-10-03T14:43:32.4093515-04:00" />
+  <TestSettings name="default" id="d5e2278d-43ed-4b93-a4ef-7866a5347842">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_14_43_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c6d8d7a2-1e61-46b3-bb80-dcdf4494cfed" testId="541f5b7f-957c-c555-06e3-79c2ec354dd0" testName="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4160050" startTime="2026-10-03T14:43:30.8279609-04:00" endTime="2026-10-03T14:43:31.2391408-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c6d8d7a2-1e61-46b3-bb80-dcdf4494cfed">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d652f6f6-8520-4929-870f-ec5b46339ac7" testId="f27a93dd-83f9-c964-bf00-bc5b7e34098f" testName="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5481703" startTime="2026-10-03T14:43:31.2397862-04:00" endTime="2026-10-03T14:43:31.7875844-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d652f6f6-8520-4929-870f-ec5b46339ac7">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="03ae50c7-12c6-416a-b619-a1f660c91588" testId="99a68eeb-c7e1-14bf-ea39-6b0bed63d0b3" testName="CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5574027" startTime="2026-10-03T14:43:31.7888926-04:00" endTime="2026-10-03T14:43:32.3463956-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="03ae50c7-12c6-416a-b619-a1f660c91588">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d83912d0-b244-4d35-860c-c11f5621681a" testId="511cc003-950e-f719-030b-af338fe288cc" testName="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5778922" startTime="2026-10-03T14:43:30.2526126-04:00" endTime="2026-10-03T14:43:30.8222616-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d83912d0-b244-4d35-860c-c11f5621681a">
+      <Output>
+        <StdOut>Provider=PostgreSql; Core migrations=1; IdentityPriority migration owner=IdentityPriority, migrations=1; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="541f5b7f-957c-c555-06e3-79c2ec354dd0">
+      <Execution id="c6d8d7a2-1e61-46b3-bb80-dcdf4494cfed" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests" name="Process_progress_empty_returns_empty" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f27a93dd-83f9-c964-bf00-bc5b7e34098f">
+      <Execution id="d652f6f6-8520-4929-870f-ec5b46339ac7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests" name="Daily_trend_fills_three_zero_days" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="99a68eeb-c7e1-14bf-ea39-6b0bed63d0b3">
+      <Execution id="03ae50c7-12c6-416a-b619-a1f660c91588" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.DashboardRelationalTests" name="Summary_reads_empty_native_database" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="511cc003-950e-f719-030b-af338fe288cc">
+      <Execution id="d83912d0-b244-4d35-860c-c11f5621681a" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests" name="Summary_empty_returns_zero" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="541f5b7f-957c-c555-06e3-79c2ec354dd0" executionId="c6d8d7a2-1e61-46b3-bb80-dcdf4494cfed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f27a93dd-83f9-c964-bf00-bc5b7e34098f" executionId="d652f6f6-8520-4929-870f-ec5b46339ac7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99a68eeb-c7e1-14bf-ea39-6b0bed63d0b3" executionId="03ae50c7-12c6-416a-b619-a1f660c91588" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="511cc003-950e-f719-030b-af338fe288cc" executionId="d83912d0-b244-4d35-860c-c11f5621681a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.17]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.47]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.48]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:08.85]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

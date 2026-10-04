@@ -1,0 +1,57 @@
+{
+  "Id": "restore-catalog",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b3a6fbee_restore",
+  "BinarySha256": "4F5051A0BB4F331676C6976EDD7EC24C3E17B6AED1715E21A0D3B6015E2A7586",
+  "Process": {
+    "ProcessId": 28808,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T15:59:59.1894477Z",
+    "FinishedUtc": "2026-10-03T16:00:07.6332211Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "8E4121FF8488866F95EC0DDDDA70CBE0B0D4594B4EA52C377A5A13C628B653F1",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "restore-catalog",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 20,
+      "Total": 20,
+      "Passed": 20,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Catalog.Core.Mode",
+      "Catalog.Core.EveryTableAndColumn",
+      "Catalog.Core.EveryDatabaseToken",
+      "Catalog.Core.ModelConstraintsAndStorage",
+      "Catalog.Space.Mode",
+      "Catalog.Space.EveryTableAndColumn",
+      "Catalog.Space.EveryDatabaseToken",
+      "Catalog.Space.ModelConstraintsAndStorage",
+      "Catalog.IdentityPriority.Mode",
+      "Catalog.IdentityPriority.EveryTableAndColumn",
+      "Catalog.IdentityPriority.EveryDatabaseToken",
+      "Catalog.IdentityPriority.ModelConstraintsAndStorage",
+      "Catalog.ErpIntegration.Mode",
+      "Catalog.ErpIntegration.EveryTableAndColumn",
+      "Catalog.ErpIntegration.EveryDatabaseToken",
+      "Catalog.ErpIntegration.ModelConstraintsAndStorage",
+      "Catalog.RawOrderDefaultsAndGlobalUniqueness",
+      "Catalog.ManagedOidcLedger",
+      "Catalog.ManagedJournalGuard"
+    ],
+    "ReportSha256": "6462E915022DC782428C19541FA3B09EFD5C7C4D71648D0E14EF4AA59C13385A",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "EntryId": "application-seed-verify",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+  "Role": "application",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "BC738C686370A4EEF2FA36B01250A3EC20E57A5F69991AFA31E2506ABBECB287",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-seed-verify\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "837D857C74DABECC6C2609E76B04B5DAC336EE555380AE8F49A0281C38BA8A52",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-seed-verify\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "837D857C74DABECC6C2609E76B04B5DAC336EE555380AE8F49A0281C38BA8A52",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 19248,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:46:03.7664344Z",
+    "FinishedUtc": "2026-10-03T16:46:04.9770299Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "80478ADB3FCB81CB82A62CED9F6263A7F0A9145588D7A6DC5C3A96BC6ED46A19",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-seed-verify",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Seed.verify"
+    ],
+    "ReportSha256": "27A7423358FC4723C74E8F5E93AE859273E23E8A4A0540CB5E1BAC020F3A7959",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-seed-verify\\reports\\report.json",
+  "ReportSha256": "27A7423358FC4723C74E8F5E93AE859273E23E8A4A0540CB5E1BAC020F3A7959",
+  "FailureCode": null,
+  "Success": true
+}

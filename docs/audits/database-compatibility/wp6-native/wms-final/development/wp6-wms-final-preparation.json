@@ -1,0 +1,45 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Prepared",
+  "Head": "a7d819c89a31ad8ecccfc14136f5878d905582d1",
+  "ManifestSha256": "9E4BDCCCD79198FF199F39D14FAF8CCA140FBD120FCD98F254167730FB231FFE",
+  "ManifestEntries": 62,
+  "ChangedEntry": "wms-business",
+  "RequiredWmsCases": 25,
+  "OtherEntriesUnchanged": 61,
+  "Bug163PostMergeOriginalsVerified": 36,
+  "Bug163PostMergeManifestSha256": "5309C7BDFB36DEED152CAB0C7B600420D9D768D1170B3E648CE112AABFD0F7FB",
+  "Helpers": [
+    {
+      "Path": "D:\\CP6\\tmp\\Test-Wp6WmsFinalPlans.ps1",
+      "Sha256": "C40C8CACDFB0AF236EFF3631F50DD069CA32A3165D419F216FCAC744A124A379",
+      "SourcePath": "D:\\CP6\\tmp\\Test-Wp6CleanupPlans.ps1",
+      "SourceSha256": "BB9323A73742DA9990ABE13AAF3177E7CC2454EB0AF93B340293FF041DF818CC",
+      "ParseErrors": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\Start-Wp6WmsApplication.ps1",
+      "Sha256": "BDC96E3BEB2B9142A71889EE1C198212B7C76E0E24E97C48CE4D80A7739ADDC6",
+      "SourcePath": "D:\\CP6\\tmp\\Start-Wp6Application.ps1",
+      "SourceSha256": "4DA692B9F00E9E459E243EB53D5377549A32658276EF64B29DB062896FC7E635",
+      "ParseErrors": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\Test-Wp6WmsFinalEvidence.ps1",
+      "Sha256": "1404EAAF98177C0EC02071DF4365CAE32E875A440CB89711B5383F4C14B4D4F0",
+      "SourcePath": "D:\\CP6\\tmp\\Test-Wp6FinalEvidence.ps1",
+      "SourceSha256": "2D34172686A8C27F32D454B0DC6133AB0928D4EA73BA2971C7DF3678EE46AEB6",
+      "ParseErrors": 0
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\Test-Wp6WmsApplicationRecovery.ps1",
+      "Sha256": "9D023D351213E52991F2CDC6F9A6B4FE94047E8DAE8667C4C67AA97981F3E327",
+      "SourcePath": "D:\\CP6\\tmp\\Test-Wp6FinalApplicationRecovery.ps1",
+      "SourceSha256": "760FD6EF32A6265ADAB189C6639CF0BE58F02A64669BDC1281C96313AF550D31",
+      "ParseErrors": 0
+    }
+  ],
+  "NativeExecution": false,
+  "FinalAcceptance": false,
+  "CheckedUtc": "2026-10-04T00:57:27.0010629Z"
+}

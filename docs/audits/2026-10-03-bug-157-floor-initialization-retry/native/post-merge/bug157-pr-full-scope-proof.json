@@ -1,0 +1,10 @@
+{
+  "Task": "BUG-157",
+  "PR": 158,
+  "Candidate": "5a339cbcf4f00740cad8672c75398bd879211b7e",
+  "Base": "2e1f90c629340944d95fadd7aee428f639304ed6",
+  "FullPaginatedFileCount": 101,
+  "AllCandidateBlobIdsMatch": true,
+  "CaseEvidence": "Two providers exact23/41, native RED, all source/runtime current",
+  "CheckedUtc": "2026-10-03T19:31:11.1851250Z"
+}

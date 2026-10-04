@@ -1,0 +1,57 @@
+{
+  "EntryId": "wms-business",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_75d5ae1b_corewms",
+  "Role": "corewms",
+  "SourceSha": "8f2cc01ddcf43d6bcf0c236fed2ab038687fd1f4",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "E2FD31D7DAEF79D6F2F2B314EEA080D9C6C92ABB701AFE63FA3DAC6B69A842BB",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\wms-business\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "A53B46DD7EE434B468136312A52E06195F618BF1226D93BE98A74C7FE06DCDE3",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\wms-business\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "A53B46DD7EE434B468136312A52E06195F618BF1226D93BE98A74C7FE06DCDE3",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 32180,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T18:36:06.7072839Z",
+    "FinishedUtc": "2026-10-03T18:36:26.3793549Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "BA81023EE3237FDA17F9C2B3C4478F048CCCAC6DF6C282A728E9AC1B4209C427",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "wms-business",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 8,
+      "Total": 8,
+      "Passed": 8,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresFeatureAndExactControlledCount",
+      "CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree",
+      "CP6.Tests.WmsProductionSqlServerTests.FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply",
+      "CP6.Tests.WmsProductionSqlServerTests.Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks",
+      "CP6.Tests.WmsProductionSqlServerTests.Move_ConcurrentClaim_PartialCompletion_AndReplay_AreAtomic",
+      "CP6.Tests.WmsProductionSqlServerTests.SourceDocumentScopes_TranslateAndFailClosedOnSqlServer",
+      "CP6.Tests.WmsProductionSqlServerTests.Replenish_SourceAndMoveTask_StayTransactionalThroughCompletion",
+      "CP6.Tests.WmsProductionSqlServerTests.Serial_Lifecycle_EnforcesUniqueLedgerAndAggregateReconciliation"
+    ],
+    "ReportSha256": "A102202509B4ECB0EF1325D9E7085BE38E05C4B86607742B6DAC0038F0F80836",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-validation-fix\\entries\\wms-business\\private\\trx\\results.trx",
+  "ReportSha256": "A102202509B4ECB0EF1325D9E7085BE38E05C4B86607742B6DAC0038F0F80836",
+  "FailureCode": null,
+  "Success": true
+}

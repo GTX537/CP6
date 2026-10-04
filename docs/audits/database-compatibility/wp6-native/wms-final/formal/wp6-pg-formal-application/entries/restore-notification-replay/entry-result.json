@@ -1,0 +1,53 @@
+{
+  "EntryId": "restore-notification-replay",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_7ba9af02_restore",
+  "Role": "restore",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\restore-notification-replay\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\restore-notification-replay\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 31508,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:48:02.6702463Z",
+    "FinishedUtc": "2026-10-03T16:48:05.6267674Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "6054F8E958A1FBA0924817948C829E3DA05DFF585E0B3AE23F98983E48907DA3",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "restore-notification-replay",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 4,
+      "Total": 4,
+      "Passed": 4,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "replay-existing-dispatched-row",
+      "replay-production-service-no-duplicate",
+      "replay-kept-original-id-and-worker-state"
+    ],
+    "ReportSha256": "C1F008A51F884FE4C30EDD9CDC2341A784EB78B22484DBF563E295EA576887EC",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_7ba9af02_restore",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\restore-notification-replay\\reports\\report.json",
+  "ReportSha256": "C1F008A51F884FE4C30EDD9CDC2341A784EB78B22484DBF563E295EA576887EC",
+  "FailureCode": null,
+  "Success": true
+}

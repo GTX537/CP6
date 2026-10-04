@@ -1,0 +1,53 @@
+{
+  "EntryId": "reports-parity",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_fb7d76a5_reports",
+  "Role": "reports",
+  "SourceSha": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "23C0E336AC87B90F1D719999EF5023026715C6244B6B5FF1D069C6113F8D1DF5",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-parity\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "202BC8BB64ECA413006CDFA5EE4E9C1C248CB683AF45A3B4DB08A05857CA302D",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-parity\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "202BC8BB64ECA413006CDFA5EE4E9C1C248CB683AF45A3B4DB08A05857CA302D",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 35764,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T21:20:58.1720305Z",
+    "FinishedUtc": "2026-10-03T21:21:08.8234104Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "52091D52615CEB691AB65676737B676F1489D84E9F69D1A26CAB21CC8E724F3C",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-parity",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 4,
+      "Total": 4,
+      "Passed": 4,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_summary_and_trend_preserve_global_dates_states_and_decimal_rounding",
+      "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_daily_trend_preserves_reachable_day_boundaries_and_failure_category",
+      "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Mes_process_progress_preserves_code_and_name_groups_and_code_order",
+      "CP6.Tests.DatabaseCompatibility.ReportParityRelationalTests.Dashboard_preserves_global_kpis_recent_top_eight_soft_deleted_rows_and_cache"
+    ],
+    "ReportSha256": "8140BBDD3147E10D0C2757CCB8A06009068B211DA9F980A9FC42E49148F6D4E5",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-parity\\private\\trx\\results.trx",
+  "ReportSha256": "8140BBDD3147E10D0C2757CCB8A06009068B211DA9F980A9FC42E49148F6D4E5",
+  "FailureCode": null,
+  "Success": true
+}

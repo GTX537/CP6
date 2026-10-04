@@ -1,6 +1,6 @@
 # BUG157：并发创建楼层的完整事务恢复
 
-活动状态以 [Issue #157](https://github.com/GTX537/CP6/issues/157) 为准；属于 [DB-COMPAT-01 / #134](https://github.com/GTX537/CP6/issues/134) 的 WP6 最终验收发现。修复分支从已确认远端 main `2e1f90c629340944d95fadd7aee428f639304ed6` 建立；这是 PR156 已交付 BUG155 后的主线。当前为 `LocalVerifiedRemotePending`：双库相关回归、本地构建和一次集中源码审查通过，尚未交付或关闭。
+活动状态以 [Issue #157](https://github.com/GTX537/CP6/issues/157) 为准；属于 [DB-COMPAT-01 / #134](https://github.com/GTX537/CP6/issues/134) 的 WP6 最终验收发现。修复分支从已确认远端 main `2e1f90c629340944d95fadd7aee428f639304ed6` 建立；这是 PR156 已交付 BUG155 后的主线。现已由 [PR158](https://github.com/GTX537/CP6/pull/158) 正常交付远端 main `5587a2a67ae73715596ca1a135b5863005abac8d`，合并后原步骤复测和两个自有库清理完成，Issue 已关闭。下文本地原件保持合并前适用范围，最新交付原件见[清单](native/post-merge/manifest.json)。
 
 ## 原始问题与根因
 
@@ -29,6 +29,12 @@ WP6 接入 BUG155 后的新 PostgreSQL Matrix 在 24 个入口通过后，于 `s
 
 候选使用锁定依赖本地恢复和构建，零 warning/error。后续组复用相同当前源码及运行物，四次进程 exit 0、零非通过/skip，TRX 精确名称和执行前后源文件/完整运行目录不变均由[最终原件核对](native/execution/bug157-exact-local-verification.json)确认。四次源输入 SHA-256 均为 `91F63672201055365B038346475C73FE993E0D92F44F5EA597A87C55596F86C8`，运行清单均为 `A3A775D9A459B6D813B33CA6C5D8A417C397C468E496BE61789FFEC9AC0FEF1B`。一次[集中源码审查](native/execution/bug157-review.md)无实质阻断；root 继续审查完整交付 diff。原始构建、失败、成功与审查按字节保留在[原件清单](native/manifest.json)，不会因提交 SHA 改变而重复同一业务验证。
 
-Ambient/enlisted guard 与 commit-time 冲突只属于源码审查范围，没有单独原生执行证明；协调回归证明 SaveChanges 的真实冲突恢复。完整 WP6 Matrix、最新发布物 Application、正常远端交付、合并后原步骤冒烟和本任务两个自有库清理仍待完成。
+Ambient/enlisted guard 与 commit-time 冲突只属于源码审查范围，没有单独原生执行证明；协调回归证明 SaveChanges 的真实冲突恢复。完整 WP6 Matrix、最新发布物 Application 和 WP6 正常远端交付仍待完成，本 BUG 的远端交付、合并后冒烟及清理已完成。
 
 本机 PostgreSQL `18.6` / SQL Server `16.0.1000.6`，两个新建 owner-marked 临时库沿用主线 `DB-COMPAT-01-WP5` 所有权协议，实际任务为 BUG157。公共证据不包含私有连接、凭据、JWT/Cookie、完整业务状态或备份；没有启动 Actions、改变工作流/保护或部署既有环境。父任务 #134 保持 Open。
+
+## 交付核对
+
+候选 `5a339cbcf4f00740cad8672c75398bd879211b7e` 以正常 PR158 合并；完整分页读取的 101 个远端文件逐一与候选 Git blob 相同，远端 main 包含候选且完整树一致。合并后原并发步骤与两个协调场景两库各 3/3、exit 0、零 Other，PG 两个协调场景实际观察40001后恢复；源码/运行物与原23/41成功结果相同，未冒称重新执行全组。
+
+两个自有库先核对 receipt/owner/task、物理身份（SQL database_id68、PG oid390489）和无活动会话，再普通DROP并确认不存在；私有receipt字节、PG角色和环境保持。Issue 于 `2026-10-03T19:37:43Z` Closed，31份合并后原件逐字节归档，清单SHA-256为 `E9F83341D0B6A3CC3E27A903944739FD80B82B83DC284E25E551132C98B76491`。原91份本地证据和历史失败未改写。

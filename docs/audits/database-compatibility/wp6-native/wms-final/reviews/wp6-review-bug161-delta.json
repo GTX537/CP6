@@ -1,0 +1,33 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "NoSubstantiveBlockers",
+  "Scope": "Incremental integration/case metadata only; reuse unchanged WP6 module reviews and BUG161 scoped source review; not full WP6 acceptance",
+  "SourceHead": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "DeliveredMain": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "DeliveredSourceBlobs": [
+    {
+      "Path": "CP6.Space.Infrastructure/SpaceCadProviderCapabilityService.cs",
+      "GitBlob": "83d1e61b7d89751cebc60702025c7712b6055677",
+      "DeliveredMainMatch": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadProviderSqlServerTests.cs",
+      "GitBlob": "37eafaaad1c533f4617835bc0f59ea6fc9a47312",
+      "DeliveredMainMatch": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceCadProviderSqlServerTests.RecoveryTests.cs",
+      "GitBlob": "532b625d7bd83bb114543b2fff84c0626a13cdc2",
+      "DeliveredMainMatch": true
+    }
+  ],
+  "Other61EntriesUnchanged": true,
+  "CadRequiredCases": 25,
+  "JobsRequiredCases": 23,
+  "CloneRequiredCases": 23,
+  "DesignPublishRequiredCases": 41,
+  "Bug161SourceReviewSha256": "0B459AE6994D6C6D61B16F3AA46BCB4C3DFD58EA472F306D536981B85BF85FD1",
+  "EntryDeltaSha256": "385126E58BFE6D155D268FA0E2424A97C3CE73B12BAEDC0CDF00EFFEB847712F",
+  "OfflineValidationSha256": "092F725E44704E3EE70CCFC9E01F5DFC4ED368534F241FBF49E75E1159A059E6",
+  "CheckedUtc": "2026-10-03T22:17:54.1440227Z"
+}

@@ -1,0 +1,5 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Oidc.IntegrationTests\bin\Debug\net8.0\CP6.Oidc.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\CP6\tmp\wp6-sql-formal-matrix-wms-local-transaction-fix\entries\oidc-history-forward-migration-is-discoverable-and-generates-an-idempotent-script\private\trx\results.trx
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 4 s - CP6.Oidc.IntegrationTests.dll (net8.0)

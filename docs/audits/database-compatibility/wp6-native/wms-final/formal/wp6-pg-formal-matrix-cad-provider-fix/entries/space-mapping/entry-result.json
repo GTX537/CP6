@@ -1,0 +1,53 @@
+{
+  "EntryId": "space-mapping",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_d3d055a7_space",
+  "Role": "space",
+  "SourceSha": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "090BF997C5DFEFBDC5649C150A932B3B664B53BD679CEA2AEE04558BD4C40397",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-mapping\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-mapping\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "DF480952D4E90BC9B494125FB8647F06DD4C608906C2E8E29AE5532A5718631B",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 36408,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T22:39:39.9291588Z",
+    "FinishedUtc": "2026-10-03T22:39:48.2958710Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "C9CD9BCD0E443D1CDCF043D15FE0FDB5E4D05CAE8CE82AA86FEC6441913A4407",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-mapping",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 4,
+      "Total": 4,
+      "Passed": 4,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope",
+      "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope",
+      "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay",
+      "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay"
+    ],
+    "ReportSha256": "63A38A590CA8D9016E8EBEFB0BE0520AE26AFABBF482C55DD5B76BE52950AD81",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-cad-provider-fix\\entries\\space-mapping\\private\\trx\\results.trx",
+  "ReportSha256": "63A38A590CA8D9016E8EBEFB0BE0520AE26AFABBF482C55DD5B76BE52950AD81",
+  "FailureCode": null,
+  "Success": true
+}

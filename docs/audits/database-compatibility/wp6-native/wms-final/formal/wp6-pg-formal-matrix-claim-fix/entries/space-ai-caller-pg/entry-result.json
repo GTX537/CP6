@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-ai-caller-pg",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_c5c7dc85_space",
+  "Role": "space",
+  "SourceSha": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A4DF5749ED39510CEBB445C54F4F65F962ED2972A111EB1CDA116701D78722F6",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-ai-caller-pg\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-ai-caller-pg\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "4A8CFD98BEA005FA8E45CDFB18570E621502EE620EFBCEE262770702D9498F07",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 35956,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T21:23:56.3535543Z",
+    "FinishedUtc": "2026-10-03T21:24:03.7902752Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "D170EA790ED851ABBDAC95D5A6CA1A899A8335D9A74EB3C90E3C280BA1F46D07",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-ai-caller-pg",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.PostgreSql_cancel_contention_preserves_pending_caller_changes_without_retry"
+    ],
+    "ReportSha256": "CA95AFD1ABD0DE163877C952B0F9116DAB2EFD5111101A471263CE8DDC183552",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\space-ai-caller-pg\\private\\trx\\results.trx",
+  "ReportSha256": "CA95AFD1ABD0DE163877C952B0F9116DAB2EFD5111101A471263CE8DDC183552",
+  "FailureCode": null,
+  "Success": true
+}

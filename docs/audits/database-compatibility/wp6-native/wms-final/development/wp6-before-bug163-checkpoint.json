@@ -1,0 +1,178 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Base": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "Checkpoint": "e53ec9f1f59b67f8e0c301a0a4b878e2851c8bf8",
+  "Inputs": [
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/Archive-Bug161PostMerge.ps1",
+      "Sha256": "4747D9BD1DFCC08E6D6D49F3C66D31FF2D9D39C47C0D1C42E269A7B32ADB146A"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-before-merge-workflow-input-inspection.json",
+      "Sha256": "B602FF9B27639F77549C5A80671736A48562463C2D98CB0B5386BD218B77AF12"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-before-pr-workflow-input-inspection.json",
+      "Sha256": "D93AA52688C13BE2AE8A106AE52E36AB91870826A4C0FD51B655008F5A58B2B9"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-before-push-workflow-input-inspection.json",
+      "Sha256": "B785B122F90B8ABFDA47C8F4FBEE4CFACA4975DB1115A2083B764E4AF85345A3"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-cleanup-owned-two.json",
+      "Sha256": "97E6FE14E78191FEA7DD9FE6E56C161D8B970D88A75C202D0451A28D14CA2EBF"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-closure-comment.md",
+      "Sha256": "FF0316AB030CF059E8922F0F46C80D1FF6C17AD0823BDD93BFB5F33027A88664"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-closure.json",
+      "Sha256": "9A1EED31841321DF48582353DD9C3D4901EF488C52D92CEA4E76A236A3330EA2"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-final-staging-proof.json",
+      "Sha256": "7A5F4B1C086B2D8A593478A35649324F1DD7A5CA74047C00F32E5E29520BC557"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-issue-before-closure.md",
+      "Sha256": "4933E1BA20A3F91BE1C7227A33B2A8512F2923F954A493D1ED51AA9310052D58"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-issue-completed-checklist.md",
+      "Sha256": "B5D2B9F89DD44ED725BD57E0639FB54A94E4EC0341BF804014A4E8B0C85DDBCC"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pg-postmerge-smoke/private/test/stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pg-postmerge-smoke/private/test/stdout.log",
+      "Sha256": "1B9244BB3EAEB6A16CFC3B3F83C52D4807D81145A62C5C30693446CACA09BD8C"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pg-postmerge-smoke/private/trx/results.trx",
+      "Sha256": "C8781DD4486BEA2BBD60C65AB19672908578CFEDA9242EE6F532089EA1F228AB"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pg-postmerge-smoke/result.json",
+      "Sha256": "5C8712FC6BB14C637E37DE2C2098A66F60F23CCB541A75E42D518F518F86620F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pg-postmerge-smoke/runtime-artifact-after.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pg-postmerge-smoke/runtime-artifact-before.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pg-postmerge-smoke/source-inputs.json",
+      "Sha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-postmerge-verification.json",
+      "Sha256": "88E05EEBEB531F4F49B1B418F12A18D5E377F305FC5E8DD7A084DC7DBF19DB19"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pr-body.md",
+      "Sha256": "F2C50173394DC860E56CE3BFFB2DAE4E08930F3BA5C25A468664AC51DCC64804"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-pr-full-diff-verification.json",
+      "Sha256": "2BB867B292F4F1ECAADC32D21F9C8B0EBBA9DDBCD017646D96C91452E07CF1C1"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-remote-main-verification.json",
+      "Sha256": "1DDEC2BF9A5A1F656C4EAAA1C25FCF37D428FC3144E459FEFF58293898647FAD"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-sql-postmerge-smoke/private/test/stderr.log",
+      "Sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-sql-postmerge-smoke/private/test/stdout.log",
+      "Sha256": "7F2D2AAD12A4687E47D7E9445A32EE467A6C10A7CB7462231734A26655743EBC"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-sql-postmerge-smoke/private/trx/results.trx",
+      "Sha256": "14EE08E53E1DC5B6F012C5BDF4DEE13C22D7A8B0693A51755B2DA81D2CE3F7ED"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-sql-postmerge-smoke/result.json",
+      "Sha256": "8D53861197D9E3BDD2F62CE9B4BFDEDD589C97C48CB330435F9343278BE69A88"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-sql-postmerge-smoke/runtime-artifact-after.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-sql-postmerge-smoke/runtime-artifact-before.json",
+      "Sha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/bug161-sql-postmerge-smoke/source-inputs.json",
+      "Sha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/Invoke-Bug161Tests.ps1",
+      "Sha256": "2F3D754565F04ECD932ABEA65A9B0D554375546C01C607D462D16C093C86070D"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/manifest.json",
+      "Sha256": "64D78AEAF4B5ACB3045E4A1250A0C4F196C915038ABED83014E4436E25B32A55"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/Remove-Bug161OwnedDatabases.ps1",
+      "Sha256": "C44C4B9EF47DA5A885F9D7AFAEAE49245452A7D1C3DC77A4A1BDF6DDF9A9E549"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/Stage-Bug161Delivery.ps1",
+      "Sha256": "C8D732FB42E29EF19A55AE49665108EA939BBF6817D48C3B66C5E2127FC33AAD"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/native/post-merge/Test-Bug161PostMerge.ps1",
+      "Sha256": "1EC6E3FB09EE2F74B7BE7268422C21314826CD4C98CBFD1E5C960F5655FFC06F"
+    },
+    {
+      "Path": "docs/audits/2026-10-03-bug-161-cad-provider-recovery/README.md",
+      "Sha256": "2D0765A287F8CA58D50827A437138374396D801ADB467E18C42F9933DBE64988"
+    },
+    {
+      "Path": "docs/audits/database-compatibility/WP6-IMPLEMENTATION.md",
+      "Sha256": "471E868E8EB432806FEBA77EFFCDDA597ACF2BED0531B2ADDAA80548C27B1F35"
+    },
+    {
+      "Path": "docs/devops/DATABASE-COMPATIBILITY.md",
+      "Sha256": "456888837B21A31E315B7CDDA98D9B09ECFE558ED95FD9612A0B6E323DA15B1C"
+    },
+    {
+      "Path": "docs/superpowers/plans/2026-10-02-database-compatibility.md",
+      "Sha256": "71CC6DC35904404A95E50B6B87E1072A7D5EB8B4CD922CE49BA2ED8E5BD9469B"
+    },
+    {
+      "Path": "eng/database-compatibility/required-cases.json",
+      "Sha256": "7E10D8FB6F0EFB56DBC0ADF8AD086AC1D73C1AC8C1E6A24DAD21FD31867A72A6"
+    },
+    {
+      "Path": "scripts/database-compatibility/DatabaseCompatibilityLifecycle.psm1",
+      "Sha256": "D96CC5903DABA60CB242D715E80173C955C0191E854044F5C1F412ED1977796C"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityCleanup.ps1",
+      "Sha256": "4B7A76B3617121A82A9C917B758141E7B92FCBE0197C9F9F1A114F6911407966"
+    },
+    {
+      "Path": "scripts/database-compatibility/Test-DatabaseCompatibilityLifecycle.ps1",
+      "Sha256": "E21E851B91DDFD3553A5096DCE6EFE6EFA11684E4868466E0A018C23537F4EA7"
+    }
+  ],
+  "Files": 41,
+  "ArchiveOriginalsPreserved": 32,
+  "DeferredBug163ArchiveOriginals": 36,
+  "DeferredArchiveReason": "Post-merge BUG163 originals stay untracked until integrating main native byte-preservation attribute; no path overlaps main",
+  "RemotePushPerformed": false,
+  "Scope": "Only seven owned WP6 drafts, new offline cleanup controls and32 original BUG161 post-merge records checkpointed; no final acceptance or delivery claim",
+  "CreatedUtc": "2026-10-04T00:46:12.9118523Z"
+}

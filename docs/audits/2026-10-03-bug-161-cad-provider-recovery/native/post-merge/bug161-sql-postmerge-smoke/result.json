@@ -1,0 +1,41 @@
+{
+  "Task": "BUG-161",
+  "Provider": "SqlServer",
+  "ExecutionHead": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "WorkingTreeDirty": false,
+  "DatabaseName": "CP6Compat_WP5_20261003_a2bef6ea",
+  "OwnershipProtocol": "DB-COMPAT-01-WP5",
+  "BuildExecuted": false,
+  "Filter": "FullyQualifiedName=CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence|FullyQualifiedName=CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict|FullyQualifiedName=CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict",
+  "Counts": {
+    "Expected": 3,
+    "Total": 3,
+    "Passed": 3,
+    "Failed": 0,
+    "Other": 0
+  },
+  "Process": {
+    "ProcessId": 20264,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T22:07:58.0156930Z",
+    "FinishedUtc": "2026-10-03T22:08:02.7906669Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "7F2D2AAD12A4687E47D7E9445A32EE467A6C10A7CB7462231734A26655743EBC",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Success": true,
+  "SourcesUnchanged": true,
+  "RuntimeUnchanged": true,
+  "SourceInputsSha256": "3D8A0E51E1C015F6F10830A9B75D68C34390876DAAD07965ADE160EE391BFE60",
+  "RuntimeManifestSha256": "455ACB762F61A88D7F7DA7ED17B7558FC3EA624BFE81B3D440DB290991AFDB18",
+  "TrxSha256": "14EE08E53E1DC5B6F012C5BDF4DEE13C22D7A8B0693A51755B2DA81D2CE3F7ED",
+  "CaseNames": [
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_recovers_native_serialization_conflict",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence",
+    "CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Replace_waiter_replays_same_key_after_native_serialization_conflict"
+  ],
+  "NativeEvidence": [],
+  "Scope": "Selected actual native database tests; controlled failure injections are distinguished in source from the coordinated native CAD configuration replacement regression",
+  "FinishedUtc": "2026-10-03T22:08:03.9495967Z"
+}

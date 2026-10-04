@@ -1,0 +1,68 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "CheckedUtc": "2026-10-04T01:31:24.9476040Z",
+  "Scope": "Offline SQL Matrix SkipBuild preflight against the current WMS-fix PG native Matrix and its seven actual successful builds. Current full bound input set and every runtime file match. SQL136 baseline build/installation remains separately required.",
+  "BuildSourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "BuildResultSha256": "2B2D7C7187D07E2C224C4BFDDCD1F59417509FDA1C6E65C2693B34A349A48F02",
+  "BuildExecutedInSourceRun": true,
+  "BoundSourceInputs": 2698,
+  "ProjectSetsEqual": true,
+  "Projects": [
+    "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+    "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+    "CP6.Tests/CP6.Tests.csproj",
+    "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+    "eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj",
+    "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+    "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj"
+  ],
+  "CurrentSourceFilesMatch": true,
+  "RuntimeFilesCompared": 2059,
+  "CurrentRuntimeFilesMatch": true,
+  "RuntimeProjects": [
+    {
+      "Project": "CP6.Oidc.IntegrationTests/CP6.Oidc.IntegrationTests.csproj",
+      "RepresentativeEntry": "oidc-provider",
+      "Files": 346,
+      "ManifestSha256": "DE13386FAA8FE60B9508E4917F1F73EC3C59E4F2E9F8E644D049864CB6F5A66F"
+    },
+    {
+      "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+      "RepresentativeEntry": "space-ai",
+      "Files": 296,
+      "ManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858"
+    },
+    {
+      "Project": "CP6.Tests/CP6.Tests.csproj",
+      "RepresentativeEntry": "core-business",
+      "Files": 378,
+      "ManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF"
+    },
+    {
+      "Project": "eng/crm/erp-integration-tests/CP6.ErpIntegration.SqlTests.csproj",
+      "RepresentativeEntry": "erp-business",
+      "Files": 346,
+      "ManifestSha256": "7E4BDEAA0D115F6F105CCC0BE80DE43F41CE3D75FF90AD87DF1FCD053C066E4F"
+    },
+    {
+      "Project": "eng/crm/identity-events-fixture/CP6.IdentityEvents.Fixture.csproj",
+      "RepresentativeEntry": "identity-provider",
+      "Files": 265,
+      "ManifestSha256": "E7C2780CB56BF6BFC5E5F2A0D359C4E6007B7CAAE159D2FBBB218D7EB4989C00"
+    },
+    {
+      "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+      "RepresentativeEntry": "schema-history-negative-pg",
+      "Files": 214,
+      "ManifestSha256": "EB0B2DD51BAD211E7CA3BBB5C4642E492669AC346BFAA4D04956779CA59583D4"
+    },
+    {
+      "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+      "RepresentativeEntry": "runtime-claim",
+      "Files": 214,
+      "ManifestSha256": "2D3B5B07BEEDC51DF767631966BD9CA8365A725B4597E7E0943ADE6FF00B6B12"
+    }
+  ],
+  "EligibleForSkipBuild": true,
+  "NativeExecution": false
+}

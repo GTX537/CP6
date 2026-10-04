@@ -1,0 +1,58 @@
+{
+  "EntryId": "application-signalr-user-delivery",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+  "Role": "application",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "97E39D25F52FD02118432CEBA04837F0754A71C434CA183AF17BC4B16B771F8E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-signalr-user-delivery\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-signalr-user-delivery\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "07410CD625C99C0B7EDB7D49C47BEEF441752AC403F4DB25313B4BB3E82E5585",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 35908,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:46:47.4966089Z",
+    "FinishedUtc": "2026-10-03T16:47:05.9580925Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "F85E0DABCB745254D4BD1BAAB73EB3926232FFCA3B2B166A1FAF0BF16DC42989",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-signalr-user-delivery",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 9,
+      "Total": 9,
+      "Passed": 9,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "signalr-two-http-users-authenticated",
+      "signalr-two-websocket-clients-connected",
+      "signalr-target-delivery-exact",
+      "signalr-other-user-excluded",
+      "signalr-worker-two-subsequent-batches-completed",
+      "signalr-target-not-repeated",
+      "signalr-production-replay-kept-row-and-state",
+      "signalr-clients-stopped"
+    ],
+    "ReportSha256": "6FFAAD2DBCE14F4A5FC22C51A6B96D0DED7394B83B9EE0D646B2CD8382F6E740",
+    "ReportDatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-application\\entries\\application-signalr-user-delivery\\reports\\report.json",
+  "ReportSha256": "6FFAAD2DBCE14F4A5FC22C51A6B96D0DED7394B83B9EE0D646B2CD8382F6E740",
+  "FailureCode": null,
+  "Success": true
+}

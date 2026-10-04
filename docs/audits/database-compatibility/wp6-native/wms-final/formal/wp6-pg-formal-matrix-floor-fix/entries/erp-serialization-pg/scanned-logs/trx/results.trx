@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3125d28d-1420-4c12-9f88-1bd8e77b7da7" name="tt@LAPTOP-3QQ44FJS 2026-10-03 16:01:43" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T16:01:43.4503110-04:00" queuing="2026-10-03T16:01:43.4503115-04:00" start="2026-10-03T16:01:33.2264769-04:00" finish="2026-10-03T16:01:45.9258032-04:00" />
+  <TestSettings name="default" id="81670a91-2536-4c7b-b1f4-30a388a73814">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_16_01_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6d0ca51d-d62e-49d8-9a91-d692c5dd0fe9" testId="c318e7f0-fd89-e0a8-38d4-555a96082d59" testName="CP6.ErpIntegration.SqlTests.ErpReplaySerializationRelationalTests.Inbox_replay_restarts_the_owned_transaction_after_native_40001" computerName="LAPTOP-3QQ44FJS" duration="00:00:04.8965785" startTime="2026-10-03T16:01:38.5372325-04:00" endTime="2026-10-03T16:01:43.4235838-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d0ca51d-d62e-49d8-9a91-d692c5dd0fe9">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Provider=PostgreSql; ownerPid=28308; originalSnapshotPids=34828,32484; nativeAdvisoryPollers=2.&#xD;
+Provider=PostgreSql; seq=1; event=created; context=d6f79260-afbc-44ce-ad8c-3deb221b2952; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=2; event=created; context=5217d5dc-e035-487b-afef-6092c7bc2ebd; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=3; event=started; context=d6f79260-afbc-44ce-ad8c-3deb221b2952; transaction=1623b373-29c6-416f-9ada-a83f8b11c378; pid=34828; isolation=Serializable; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=4; event=started; context=5217d5dc-e035-487b-afef-6092c7bc2ebd; transaction=01f15a93-8d82-4bc8-818e-346031c242b4; pid=32484; isolation=Serializable; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=5; event=committed; context=d6f79260-afbc-44ce-ad8c-3deb221b2952; transaction=1623b373-29c6-416f-9ada-a83f8b11c378; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=6; event=transaction-disposed; context=d6f79260-afbc-44ce-ad8c-3deb221b2952; transaction=1623b373-29c6-416f-9ada-a83f8b11c378; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=7; event=context-disposed; context=d6f79260-afbc-44ce-ad8c-3deb221b2952; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=8; event=native-error; context=5217d5dc-e035-487b-afef-6092c7bc2ebd; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=40001.&#xD;
+Provider=PostgreSql; seq=9; event=native-error; context=5217d5dc-e035-487b-afef-6092c7bc2ebd; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=40001.&#xD;
+Provider=PostgreSql; seq=10; event=transaction-disposed; context=5217d5dc-e035-487b-afef-6092c7bc2ebd; transaction=01f15a93-8d82-4bc8-818e-346031c242b4; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=11; event=context-disposed; context=5217d5dc-e035-487b-afef-6092c7bc2ebd; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=12; event=created; context=ab138cd1-0186-454d-a5bd-bea941ca6f0b; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=13; event=started; context=ab138cd1-0186-454d-a5bd-bea941ca6f0b; transaction=8131c6cc-170f-4506-b42d-c0dcd5acc225; pid=35912; isolation=Serializable; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=14; event=committed; context=ab138cd1-0186-454d-a5bd-bea941ca6f0b; transaction=8131c6cc-170f-4506-b42d-c0dcd5acc225; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=15; event=transaction-disposed; context=ab138cd1-0186-454d-a5bd-bea941ca6f0b; transaction=8131c6cc-170f-4506-b42d-c0dcd5acc225; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=16; event=context-disposed; context=ab138cd1-0186-454d-a5bd-bea941ca6f0b; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="19adfaca-1bdb-4397-b109-fabe1ac447d2" testId="be1d15bb-177b-2561-a68a-46d338274823" testName="CP6.ErpIntegration.SqlTests.ErpReplaySerializationRelationalTests.Delivery_replay_restarts_the_owned_transaction_after_native_40001" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.4342935" startTime="2026-10-03T16:01:43.4351498-04:00" endTime="2026-10-03T16:01:45.8589663-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19adfaca-1bdb-4397-b109-fabe1ac447d2">
+      <Output>
+        <StdOut>Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.&#xD;
+Provider=PostgreSql; ownerPid=33728; originalSnapshotPids=26856,35256; nativeAdvisoryPollers=2.&#xD;
+Provider=PostgreSql; seq=1; event=created; context=53ed2c21-4638-49b5-aa8e-066fe3299080; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=2; event=created; context=94164727-7706-4888-8ed2-88327de49928; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=3; event=started; context=53ed2c21-4638-49b5-aa8e-066fe3299080; transaction=3695d71a-9be6-43b4-ae6d-f07f259fa0d1; pid=26856; isolation=Serializable; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=4; event=started; context=94164727-7706-4888-8ed2-88327de49928; transaction=7727f5b8-2d8a-4f77-9dbc-a42440170c38; pid=35256; isolation=Serializable; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=5; event=committed; context=53ed2c21-4638-49b5-aa8e-066fe3299080; transaction=3695d71a-9be6-43b4-ae6d-f07f259fa0d1; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=6; event=transaction-disposed; context=53ed2c21-4638-49b5-aa8e-066fe3299080; transaction=3695d71a-9be6-43b4-ae6d-f07f259fa0d1; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=7; event=context-disposed; context=53ed2c21-4638-49b5-aa8e-066fe3299080; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=8; event=native-error; context=94164727-7706-4888-8ed2-88327de49928; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=40001.&#xD;
+Provider=PostgreSql; seq=9; event=transaction-disposed; context=94164727-7706-4888-8ed2-88327de49928; transaction=7727f5b8-2d8a-4f77-9dbc-a42440170c38; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=10; event=context-disposed; context=94164727-7706-4888-8ed2-88327de49928; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=11; event=created; context=bfb1c67b-9e9e-42c2-baf9-b7c43fd1cf18; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=12; event=started; context=bfb1c67b-9e9e-42c2-baf9-b7c43fd1cf18; transaction=9e82a4eb-1b21-4e72-9513-3826c04aacc7; pid=28348; isolation=Serializable; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=13; event=committed; context=bfb1c67b-9e9e-42c2-baf9-b7c43fd1cf18; transaction=9e82a4eb-1b21-4e72-9513-3826c04aacc7; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=14; event=transaction-disposed; context=bfb1c67b-9e9e-42c2-baf9-b7c43fd1cf18; transaction=9e82a4eb-1b21-4e72-9513-3826c04aacc7; pid=0; isolation=Unspecified; SQLSTATE=none.&#xD;
+Provider=PostgreSql; seq=15; event=context-disposed; context=bfb1c67b-9e9e-42c2-baf9-b7c43fd1cf18; transaction=00000000-0000-0000-0000-000000000000; pid=0; isolation=Unspecified; SQLSTATE=none.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.ErpReplaySerializationRelationalTests.Delivery_replay_restarts_the_owned_transaction_after_native_40001" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="be1d15bb-177b-2561-a68a-46d338274823">
+      <Execution id="19adfaca-1bdb-4397-b109-fabe1ac447d2" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.ErpReplaySerializationRelationalTests" name="Delivery_replay_restarts_the_owned_transaction_after_native_40001" />
+    </UnitTest>
+    <UnitTest name="CP6.ErpIntegration.SqlTests.ErpReplaySerializationRelationalTests.Inbox_replay_restarts_the_owned_transaction_after_native_40001" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\debug\net8.0\cp6.erpintegration.sqltests.dll" id="c318e7f0-fd89-e0a8-38d4-555a96082d59">
+      <Execution id="6d0ca51d-d62e-49d8-9a91-d692c5dd0fe9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.ErpIntegration.SqlTests.ErpReplaySerializationRelationalTests" name="Inbox_replay_restarts_the_owned_transaction_after_native_40001" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c318e7f0-fd89-e0a8-38d4-555a96082d59" executionId="6d0ca51d-d62e-49d8-9a91-d692c5dd0fe9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be1d15bb-177b-2561-a68a-46d338274823" executionId="19adfaca-1bdb-4397-b109-fabe1ac447d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="2" passed="2" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:00.13]   Starting:    CP6.ErpIntegration.SqlTests&#xD;
+[xUnit.net 00:00:12.27]   Finished:    CP6.ErpIntegration.SqlTests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

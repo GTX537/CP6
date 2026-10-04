@@ -1,0 +1,1 @@
+Passed: Seed.verify: All 352 actual table counts and migration histories unchanged; global/tenant translations, admin nickname and password retained. Forced canonical label policy is outside this assertion.

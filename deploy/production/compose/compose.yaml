@@ -3,6 +3,8 @@ name: cp6-r2
 services:
   db-init:
     image: ${CP6_API_IMAGE:?Set CP6_API_IMAGE to repository@sha256:digest}
+    # Supply Database__Provider and ConnectionStrings__DefaultConnection together
+    # in this same secret file for db-init and api; do not override them below.
     env_file:
       - ${CP6_ENV_FILE:?Set CP6_ENV_FILE to a runner-rendered secret file}
     environment:
@@ -18,6 +20,7 @@ services:
 
   api:
     image: ${CP6_API_IMAGE:?Set CP6_API_IMAGE to repository@sha256:digest}
+    # Keep both database settings identical to db-init in the shared secret file.
     env_file:
       - ${CP6_ENV_FILE:?Set CP6_ENV_FILE to a runner-rendered secret file}
     environment:

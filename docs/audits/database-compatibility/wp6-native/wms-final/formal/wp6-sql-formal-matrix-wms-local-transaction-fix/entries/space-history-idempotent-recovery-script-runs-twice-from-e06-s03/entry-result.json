@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-history-idempotent-recovery-script-runs-twice-from-e06-s03",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_00ae948e_spacehistory",
+  "Role": "spacehistory",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A46BCA48803EF229E46F4CD1172BC2D8AE37BE8A2166AFE8D08ED78A099337EB",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-idempotent-recovery-script-runs-twice-from-e06-s03\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-idempotent-recovery-script-runs-twice-from-e06-s03\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 32660,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:43:48.9751222Z",
+    "FinishedUtc": "2026-10-04T01:43:57.0182917Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "AFDDAC6B2C330E2D35B0CDD9612B4077A7BAE5AE76A48B784ABF557F949FB932",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-history-idempotent-recovery-script-runs-twice-from-e06-s03",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpacePublishRecoveryMigrationTests.Idempotent_recovery_script_runs_twice_from_E06_S03"
+    ],
+    "ReportSha256": "7E14B81B8C0F8A4575C96273425CAFF2D08CD06604173B5FC101669D18A17076",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-idempotent-recovery-script-runs-twice-from-e06-s03\\private\\trx\\results.trx",
+  "ReportSha256": "7E14B81B8C0F8A4575C96273425CAFF2D08CD06604173B5FC101669D18A17076",
+  "FailureCode": null,
+  "Success": true
+}

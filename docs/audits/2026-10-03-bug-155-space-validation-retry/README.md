@@ -1,6 +1,6 @@
 # BUG155：Space 并发校验申请的完整事务恢复
 
-活动状态以 [Issue #155](https://github.com/GTX537/CP6/issues/155) 为准；属于 [DB-COMPAT-01 / #134](https://github.com/GTX537/CP6/issues/134) 的 WP6 收尾发现。修复分支从已确认远端 main `59e09f6e68a36734c64144abfcefc81b7c9c8d9d` 建立。当前为 `LocalVerifiedRemotePending`：真实双库相关回归、构建和一次集中源码审查通过，尚未交付或关闭。
+活动状态以 [Issue #155](https://github.com/GTX537/CP6/issues/155) 为准；属于 [DB-COMPAT-01 / #134](https://github.com/GTX537/CP6/issues/134) 的 WP6 收尾发现。修复分支从已确认远端 main `59e09f6e68a36734c64144abfcefc81b7c9c8d9d` 建立。现已由 [PR156](https://github.com/GTX537/CP6/pull/156) 正常交付，并完成合并后原步骤复测、远端包含性和两个自有库清理，Issue 已关闭。
 
 ## 原始问题与根因
 
@@ -35,10 +35,14 @@ WP6 正式 PostgreSQL Matrix 的 25 个入口通过后，`space-design-publish` 
 
 [最终原件核对](native/execution/bug155-exact-local-verification.json)重新逐文件核对当前源码与运行物，四次均绑定源码输入 SHA-256 `A7E7C4F1E4C313A286923B4D26D6721AB817B58C55B1F84B5475682CAFA5852A`、运行清单 `1E38B3A295FDDF407FF4262D2372745DAE2C5A2B11B8C7436B8D883C0F3C555F`。两源码文件的准确哈希及调用方/事务边界审查见[集中审查](native/execution/bug155-review.md)，无实质阻断。Ambient/enlisted guard 和 commit-time 冲突属于源码审查范围，没有单独实际执行证明；已执行的 native 回归证明 SaveChanges 冲突恢复，不扩大为这些分支的原生复现。
 
-[原件清单](native/manifest.json)保留 105 份、7,983,250 字节的成功/失败/构建/审查及实际使用的未交付 WP6 模块原件，每份副本和源文件字节哈希一致。原正式 WP6 Matrix 失败未改写为通过。正常 PR、合并后原步骤冒烟、远端包含性和两库清理仍待完成。
+[原件清单](native/manifest.json)保留 105 份、7,983,250 字节的成功/失败/构建/审查及实际使用的当时未交付 WP6 模块原件，每份副本和源文件字节哈希一致。原正式 WP6 Matrix 失败未改写为通过，初版原件和审查中的 Pending 保留各历史时点。
 
 本机环境为 PostgreSQL `18.6` / SQL Server `16.0.1000.6`，使用两个新建 owner-marked 临时库。其 fixture 沿用 main 中的 `DB-COMPAT-01-WP5` 所有权协议，测试任务为 BUG155；不接管其他阶段库。凭据只在私有文件和子进程环境中，公共证据不包含连接、JWT、Cookie、完整业务状态或备份。未启动 Actions、修改保护、覆盖业务库或部署生产。
 
-## 交付条件
+## 交付确认
 
-相关本地验证和集中源码审查已经完成。继续审查最终完整交付 diff，提交本任务文件并正常合入远端 main，再执行必要原步骤冒烟、核对远端包含性及临时库清理，才可关闭 BUG155。WP6 接入后按受影响源码和发布物重新完成最终双库验收，父任务 #134 继续保持 Open。
+候选 `5a868092891d079f5234407f397f47a31cfc7f75` 经 PR156 正常合入远端 main `2e1f90c629340944d95fadd7aee428f639304ed6`，完整文件树相同；远端全部 114 个文件经分页取得并逐个 Git blob 核对。最初 CLI 的 100 文件读回作为不完整观察保留，不冒称完整列表。17 个工作流及依赖在推送、PR 和合并前逐次核对，Actions 排队/运行及启动/取消均 0。
+
+合并后原并发与协调并发两项在两库各 2/2、实际 exit 0、零 skip，绑定相同已验证源码与完整运行物；PG 再次实际观察 40001 后恢复。两个精确 receipt-owned 临时库经 owner/task、物理数据库身份和无会话核对，以普通 DROP 清理并确认不存在，无强制断开；原凭据 receipt 和 PG 角色保持。2026-10-03 18:16:14 UTC Issue 已 Closed，31 份交付后原件见[清单](native/post-merge/manifest.json)。
+
+WP6 已接入交付主线，将新六项纳入完整设计/发布必需清单。按受影响源码和新发布物继续完成最终双库验收，父任务 #134 保持 Open；BUG155 的完成不代称整体兼容或生产部署。

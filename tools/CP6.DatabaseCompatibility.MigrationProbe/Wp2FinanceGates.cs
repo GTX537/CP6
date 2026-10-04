@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using CP6.DatabaseCompatibility.Testing;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Npgsql;
@@ -16,7 +17,9 @@ public static class Wp2FinanceGates
     {
         Require(connection.State == ConnectionState.Open, "Finance race requires the already verified open task connection.");
         Require(pg ? connection is NpgsqlConnection : connection is SqlConnection, "Finance race provider must match the verified connection.");
-        Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Finance race requires a dedicated WP2 database.");
+        if (Wp6MigrationOwnership.IsRequested)
+            await Wp6MigrationOwnership.VerifyAsync(connection, pg, DatabaseFixtureRole.Schema, DatabaseFixtureRole.SqlUpgrade);
+        else Require(Regex.IsMatch(connection.Database, "\\ACP6Compat_WP2_[0-9]{8}_[a-f0-9]{8}\\z"), "Finance race requires a dedicated WP2 database.");
         var failures = new List<string>();
         foreach (var operation in new[] { "UPDATE", "DELETE" })
         {
@@ -93,6 +96,11 @@ public static class Wp2FinanceGates
         await using DbConnection mutator = pg ? new NpgsqlConnection(connectionString) : new SqlConnection(connectionString);
         await poster.OpenAsync();
         await mutator.OpenAsync();
+        if (Wp6MigrationOwnership.IsRequested)
+        {
+            await Wp6MigrationOwnership.VerifyAsync(poster, pg, DatabaseFixtureRole.Schema, DatabaseFixtureRole.SqlUpgrade);
+            await Wp6MigrationOwnership.VerifyAsync(mutator, pg, DatabaseFixtureRole.Schema, DatabaseFixtureRole.SqlUpgrade);
+        }
         Require(poster.Database == observer.Database && mutator.Database == observer.Database
             && poster.DataSource == observer.DataSource && mutator.DataSource == observer.DataSource,
             $"{operation}: both competing connections must target the verified database and server.");

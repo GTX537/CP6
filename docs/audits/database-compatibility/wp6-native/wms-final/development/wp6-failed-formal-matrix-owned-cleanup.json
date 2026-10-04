@@ -1,0 +1,85 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Passed",
+  "StartedUtc": "2026-10-03T18:31:16.0633605Z",
+  "FinishedUtc": "2026-10-03T18:31:24.7485978Z",
+  "ScriptSha256": "182E26A2D2B4BD3A98900369465DC140BE5B77315D857E0F98C5B5B178987618",
+  "LifecycleModuleSha256": "BF192F54A51140FB3162BDDD15553EA565972CA31A105B77C026A7EC4E972D39",
+  "Scope": "Only seven exact owned PostgreSQL databases from the terminal failed formal matrix. All-target and per-drop owner/physical/session checks, ordinary DROP and absence verification; no forced disconnects. Original failed summary/results remain unchanged.",
+  "OriginalFailureSummarySha256": "117F76B759AAB0DA7103B4960651BE6E8B8D8A8DA966DB93B22D0041B00DD0BE",
+  "OriginalFailureSummaryUnchanged": true,
+  "AllPreflightPassed": true,
+  "Targets": [
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_16243fd8_space",
+      "Owner": "16243fd835dc4208b039abde95b1bc3f",
+      "ReceiptSha256Before": "DF9D39E0562C9D96AFAD393C81AC3BF20D2AEB399DB3B1E4E66F11B90E671F97",
+      "ExistsBefore": true,
+      "Preflight": "Passed",
+      "Action": "NormalDrop",
+      "AbsentAfter": true,
+      "ReceiptSha256After": "B3F01F1F666C1546B618AD276085C030E85FA13E581A0F5064D568B997470FEF"
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_1be75cdd_runtime",
+      "Owner": "1be75cdd3f42431f88669f9b636a3edd",
+      "ReceiptSha256Before": "18FC067F18F2935AE16F01D7F1C1744A62352880870FB8480646F509B5096DAE",
+      "ExistsBefore": true,
+      "Preflight": "Passed",
+      "Action": "NormalDrop",
+      "AbsentAfter": true,
+      "ReceiptSha256After": "0F2151C40940114F6B662DE8F63CA3C7B384417535672B16A443001213B5B5A7"
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_290b0e3f_reports",
+      "Owner": "290b0e3fd2a34f849e36e7507675212e",
+      "ReceiptSha256Before": "1637E0363D23EC837DABE675D54EEB4595B11577DA9A590CD669B2C80CF4558F",
+      "ExistsBefore": true,
+      "Preflight": "Passed",
+      "Action": "NormalDrop",
+      "AbsentAfter": true,
+      "ReceiptSha256After": "A61B7028FF0F7E01C595666D0715DF9683EB2154D50CF4B1E654BC2960E0C19B"
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_2c7cbf62_erp",
+      "Owner": "2c7cbf62a49a4335b28ae3225d5382e1",
+      "ReceiptSha256Before": "5AF8D6A1AA1791294726543CA1B996F652D077AB41086AD9D9A72A1848DB3174",
+      "ExistsBefore": true,
+      "Preflight": "Passed",
+      "Action": "NormalDrop",
+      "AbsentAfter": true,
+      "ReceiptSha256After": "265A443BBA7ADE79471F6909C166AC4FD92162460D0BCBAC70312C0B62FF017A"
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_ceb2f723_oidcidentity",
+      "Owner": "ceb2f7236ff348b98791d919b9b725ce",
+      "ReceiptSha256Before": "64B4B5D8505834904DB23485B2619F793C7D9D0BFB448942BF65F0614885B845",
+      "ExistsBefore": true,
+      "Preflight": "Passed",
+      "Action": "NormalDrop",
+      "AbsentAfter": true,
+      "ReceiptSha256After": "54E2E7231441C4B72ABBB5531290FFA6DF6405CD00E4BABE1B5A539CCB63B851"
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_d4d43a94_corewms",
+      "Owner": "d4d43a9464aa4816930d2c1d0d5222f3",
+      "ReceiptSha256Before": "F64411F916681F5323A1271CA030C4AD800D6AD0F416F6FB223B380273CEA33F",
+      "ExistsBefore": true,
+      "Preflight": "Passed",
+      "Action": "NormalDrop",
+      "AbsentAfter": true,
+      "ReceiptSha256After": "0920BB59D6184B0709523B879D27C90228BBA4EDAA79B2459B375F0FB43E72ED"
+    },
+    {
+      "DatabaseName": "CP6Compat_WP6_20261003_d5d2467e_schema",
+      "Owner": "d5d2467e1f3e4ddfa03a4592c3f41217",
+      "ReceiptSha256Before": "E933589B2694A898F7E05FFD0F8A38BC79E5C7928858457FE450922327716AAC",
+      "ExistsBefore": true,
+      "Preflight": "Passed",
+      "Action": "NormalDrop",
+      "AbsentAfter": true,
+      "ReceiptSha256After": "4B1036795C225E92DB4F91F654532CC20C6AEDB858EFDD5DBDB061A04B628684"
+    }
+  ],
+  "FailureCode": null
+}

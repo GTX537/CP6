@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
+    <Compile Include="../../database-compatibility/OwnedTestDatabase.cs" Link="OwnedTestDatabase.cs" />
     <ProjectReference Include="../../../CP6.Core/CP6.Core.csproj" />
     <ProjectReference Include="../../../CP6.WebApi/CP6.WebApi.csproj" />
   </ItemGroup>

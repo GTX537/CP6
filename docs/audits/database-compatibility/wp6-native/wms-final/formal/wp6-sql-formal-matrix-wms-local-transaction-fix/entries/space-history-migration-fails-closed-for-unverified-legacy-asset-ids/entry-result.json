@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-history-migration-fails-closed-for-unverified-legacy-asset-ids",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_c9439922_spacehistory",
+  "Role": "spacehistory",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A46BCA48803EF229E46F4CD1172BC2D8AE37BE8A2166AFE8D08ED78A099337EB",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-migration-fails-closed-for-unverified-legacy-asset-ids\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-migration-fails-closed-for-unverified-legacy-asset-ids\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 28840,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:44:23.2699145Z",
+    "FinishedUtc": "2026-10-04T01:44:27.5985625Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "7D064FE45791DFE8E48EDE400D5DD40DA532C8F8760EAF9D7E16D3F5E23827BF",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-history-migration-fails-closed-for-unverified-legacy-asset-ids",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceAssetLibrarySqlServerTests.Migration_fails_closed_for_unverified_legacy_asset_ids"
+    ],
+    "ReportSha256": "E0E9B51B687B43A81699E5C5FAAA46502430F101C503085C97E516EDB9A072C0",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-migration-fails-closed-for-unverified-legacy-asset-ids\\private\\trx\\results.trx",
+  "ReportSha256": "E0E9B51B687B43A81699E5C5FAAA46502430F101C503085C97E516EDB9A072C0",
+  "FailureCode": null,
+  "Success": true
+}

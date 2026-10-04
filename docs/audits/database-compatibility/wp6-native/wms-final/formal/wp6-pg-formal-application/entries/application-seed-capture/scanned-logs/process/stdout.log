@@ -1,0 +1,1 @@
+Passed: Seed.capture: Captured all 334 post-upgrade table counts and retained existing translation/admin fixtures without modifying business rows; first-initialization acceptance is separate.

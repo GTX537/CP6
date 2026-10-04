@@ -1,0 +1,51 @@
+{
+  "EntryId": "reports-gdpr",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_fb7d76a5_reports",
+  "Role": "reports",
+  "SourceSha": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "23C0E336AC87B90F1D719999EF5023026715C6244B6B5FF1D069C6113F8D1DF5",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-gdpr\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "202BC8BB64ECA413006CDFA5EE4E9C1C248CB683AF45A3B4DB08A05857CA302D",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-gdpr\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "202BC8BB64ECA413006CDFA5EE4E9C1C248CB683AF45A3B4DB08A05857CA302D",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 7936,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T21:21:09.9845962Z",
+    "FinishedUtc": "2026-10-03T21:21:26.4646655Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "908D92C6E94CEF52469BE1E6F10234617747213EB3528CE5E49C35539DB6A6B0",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-gdpr",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Native_tombstone_failure_rolls_back_purge_and_allows_later_success",
+      "CP6.Tests.DatabaseCompatibility.GdprRelationalTests.Purge_preserves_identity_tombstones_and_other_tenant"
+    ],
+    "ReportSha256": "56971940B9896240683D6F37F5FBE54C6EACE024078DAF998155DD17807C8522",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-gdpr\\private\\trx\\results.trx",
+  "ReportSha256": "56971940B9896240683D6F37F5FBE54C6EACE024078DAF998155DD17807C8522",
+  "FailureCode": null,
+  "Success": true
+}

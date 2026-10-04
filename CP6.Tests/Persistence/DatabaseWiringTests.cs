@@ -103,13 +103,9 @@ public sealed class DatabaseWiringTests
     }
 
     [Fact]
-    public void Runtime_rejects_postgresql_until_full_business_compatibility_is_ready()
+    public void Runtime_accepts_postgresql_deployment()
     {
-        var exception = Assert.Throws<InvalidOperationException>(() => DatabaseRuntimeSupport.EnsureSupported(new(DatabaseProvider.PostgreSql)));
-
-        Assert.Contains("PostgreSql", exception.Message);
-        Assert.Contains("not yet supported", exception.Message, StringComparison.OrdinalIgnoreCase);
-        Assert.Null(exception.InnerException);
+        DatabaseRuntimeSupport.EnsureSupported(new(DatabaseProvider.PostgreSql));
     }
 
     [Fact]

@@ -1,0 +1,35 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "BaseCommit": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "UncommittedProductionDifference": [
+    "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs"
+  ],
+  "Inputs": [
+    {
+      "Path": "CP6.WebApi/Configuration/DatabaseRuntimeSupport.cs",
+      "Sha256": "EF982662792231D3A5C5B9D85A6AC8D138813EF76C491BAABC19B7054548BC64"
+    },
+    {
+      "Path": "CP6.WebApi/CP6.WebApi.csproj",
+      "Sha256": "4D6D011F12747C8D931DA4FFEB0526273CF32A7A862F8EEED1D7A0DCCAAC7913"
+    },
+    {
+      "Path": "CP6.WebApi/packages.lock.json",
+      "Sha256": "5CEEA1529F4C85C1129B59BC92D4481465ECF534C9537616FCF051AAFE7F7792"
+    },
+    {
+      "Path": "CP6.Core/packages.lock.json",
+      "Sha256": "D3317B7BF34F2A1C6219541E53F3064F842A4E03414A866AF7B6D4BC6A1BEDFC"
+    },
+    {
+      "Path": "CP6.Space.Infrastructure/packages.lock.json",
+      "Sha256": "393AF9E3E2C8C4F193A381A873AEAB0262226BADFFFC2F4B8963F2B94A6BD328"
+    },
+    {
+      "Path": "CP6.Persistence.PostgreSql/packages.lock.json",
+      "Sha256": "565334CC9393B7F9796A652007CBED6887AD67BA5F7C14052E2E32E8B383B7F8"
+    }
+  ],
+  "ApiSha256": "445E9B73EB39277C8D395677DCDDE5E14B48AB834890ACB79C985A2AC4F6B9A5",
+  "SourceDescription": "API production inputs are the base commit plus recorded DatabaseRuntimeSupport change; not a pristine build of the base SHA."
+}

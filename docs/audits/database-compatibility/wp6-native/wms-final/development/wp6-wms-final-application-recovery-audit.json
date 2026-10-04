@@ -1,0 +1,352 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "Passed",
+  "VerifiedUtc": "2026-10-04T02:06:07.4394816Z",
+  "ScriptSha256": "9D023D351213E52991F2CDC6F9A6B4FE94047E8DAE8667C4C67AA97981F3E327",
+  "Scope": "Offline requirement-specific audit of already executed latest formal phases and actual archive/tool bytes. Complements exact 105-entry verification with initialization, four owned API generations, 56 exact HTTP checks, physical/metadata restore, every table/sequence/history, persistent keys, SignalR user exclusion and restored pending-message replay. No new native execution and no production acceptance.",
+  "All105EntryAuditSha256": "92AAABA85F4BDEB96C26C33F039972E29745FF143C4126732C054031F119054B",
+  "Runs": [
+    {
+      "Provider": "PostgreSql",
+      "RunDirectory": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix",
+      "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+      "Status": "Passed",
+      "HttpChecks": 28,
+      "OwnedApiGenerations": 4,
+      "NativeServerVersion": "18.6",
+      "NativeBackupTool": "pg_dump",
+      "NativeRestoreTool": "pg_restore",
+      "BackupSha256": "C1F40086F8A6FADB47B87B59C0362F420C1B1E80FF380015729634C4A6970F40",
+      "IndependentRestorePhysicalIdentity": true,
+      "Tables": 334,
+      "Rows": 6349,
+      "Sequences": 10,
+      "AllTableComparisonsPassed": true,
+      "HistoryProfiles": 4,
+      "ProtectionKeyRows": 1,
+      "ProtectedCursorAndPermissionRestorePassed": true,
+      "SignalRTwoUsersAndTwoWebSocketsPassed": true,
+      "RestorePendingIdentityDispatchAndReplayPassed": true,
+      "CleanedDatabases": 2
+    },
+    {
+      "Provider": "SqlServer",
+      "RunDirectory": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix",
+      "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+      "Status": "Passed",
+      "HttpChecks": 28,
+      "OwnedApiGenerations": 4,
+      "NativeServerVersion": "16.0.1000.6",
+      "NativeBackupTool": "sqlcmd",
+      "NativeRestoreTool": "sqlcmd",
+      "BackupSha256": "7E400A18BBF785CE7FEF89317256CF50CF301BF5481C3A50BA5EE9E54EB03DC7",
+      "IndependentRestorePhysicalIdentity": true,
+      "Tables": 352,
+      "Rows": 6532,
+      "Sequences": 6,
+      "AllTableComparisonsPassed": true,
+      "HistoryProfiles": 4,
+      "ProtectionKeyRows": 1,
+      "ProtectedCursorAndPermissionRestorePassed": true,
+      "SignalRTwoUsersAndTwoWebSocketsPassed": true,
+      "RestorePendingIdentityDispatchAndReplayPassed": true,
+      "CleanedDatabases": 2
+    }
+  ],
+  "Evidence": [
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-wms-final-evidence-verification.json",
+      "Sha256": "92AAABA85F4BDEB96C26C33F039972E29745FF143C4126732C054031F119054B"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\summary.json",
+      "Sha256": "6176743970FE5D253CFD3D5CF8DB3CF9B7776FF7DEECAA18BF7C693D6DA8969D"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\source-inputs.json",
+      "Sha256": "D43EC6EC524692CF61AA5F32224BBF272E4C6918B578ACDCF0F0D4A9C2F4566D"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\application-artifact.json",
+      "Sha256": "2055DD61078760E8F7D0523FF7EEBD6121A21459D83652C85BD513F4CDFEAC1B"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\native-backup.json",
+      "Sha256": "B2A134D713C58709EB43E7AC4ECD5C600131C6E0B6EDD2CA414AAC788AF585B8"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\native-restore.json",
+      "Sha256": "2767DE214226DF28F75E7D7AA30E2BF2C1062837506F395621913BC0AB3F4B41"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\owned-database-cleanup.json",
+      "Sha256": "91CF236CA875B5BC1C622EBDBA6C8A0E66E09614AB2FC869C7074DF79EC4DF1A"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\database-init-first.json",
+      "Sha256": "F1E5F80D8C99609C6FCE6088CB7C1D3FD7B8519F3CBF17AC8EFF5CF00871814E"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\database-init-repeat.json",
+      "Sha256": "5617023272B874340B9D616309FB5C0EF8B18C8808E6B77C435660B345A403DC"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-first-ready.json",
+      "Sha256": "38D04045E5DC0ED91B677F7F6BC9FE1879154F35E7D20D50283294F1BF0AF874"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-first-stopped.json",
+      "Sha256": "B4F0C8CDC45F28FB38493C413971A0E92629EE802DD9A6EB237009648340C6FC"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-worker-restarted-ready.json",
+      "Sha256": "39F3564D5BC11C8A81E09D8E10B779AC4C5C51043F6FE14F29730E85FFC70C47"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-worker-restarted-stopped.json",
+      "Sha256": "664CEA64EC34CE8BD68176D05793E516FC93F8E15FFB18AA75B5C4552C28FDD8"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-third-restarted-ready.json",
+      "Sha256": "415B6988156975A0566BC43BCEB2174597CF820A150552A09A878C99B27E099D"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-before-backup-stopped.json",
+      "Sha256": "74044483C91C4DF2CF4F167798D252DA0C6DD07BEA37B71EE5C2EF5D5F2E7DE0"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-restored-ready.json",
+      "Sha256": "4C6305D416A7E927918EA966F551AFCB44EEF0217600560C64371B7EF9F74BC4"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\api-restored-stopped.json",
+      "Sha256": "2BA80243D7C312A960408FC6E864D591546D9384EC771C180388A2532F869C72"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\admin-first-login.json",
+      "Sha256": "27551EB91AC06CE621944F92CFAA62918B74564178A53D717F2AA2D384F2A825"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\admin-third-login.json",
+      "Sha256": "543E3BBC7D4A7B0F2255E1719392286A6CBFD85C3256BB83E92A6B147598C6DB"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\admin-restored-login.json",
+      "Sha256": "74A6256607B002A199B8E823936C566B9C90BF786FC2618E8D9ED99AEFDFA4E2"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\http-authorization.json",
+      "Sha256": "AD3AEBDC1788AF3D5961D2AFAC3CAE418F29E8EE9C6588E7F42E96749597BA3D"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\http-asset-cursor.json",
+      "Sha256": "AD4ABCCF1668A5AB5C5E1F921873CEE25ECF465AAEF2871C318C0FA80B43BF7F"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\http-after-restore.json",
+      "Sha256": "1CE4C62319D237EA1BC4B8369605BAA3FFD8893AF63741FA536164A355FB1C9A"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-state-capture\\entry-result.json",
+      "Sha256": "4D53DB968DE4208BAAEB8551186CB77AF4EF12277A0CF3DC997C853AAC2E9305"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-state-capture\\reports\\report.json",
+      "Sha256": "1B82A438ADDA448559A7BA680E17D25C4C207C414E5DE76E7419891B52EC58B2"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\restore-state-verify\\entry-result.json",
+      "Sha256": "BC307E8B094D00362F99892F996C5F8B821B41248A7173479375843F94652196"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\restore-state-verify\\reports\\report.json",
+      "Sha256": "1D8B95863849B3E240C58A46E6D8A88A2D78D55CB6478C7AE4D0020CAD14DD47"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-signalr-user-delivery\\entry-result.json",
+      "Sha256": "C8CC1DE350C0AD0B80ABCE8DDBB5B4CC196A52C4EDFDC07EA37CF59164C4AC9C"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-signalr-user-delivery\\reports\\report.json",
+      "Sha256": "13D4582E37960AFF99C9843FF35CBB1DFEF03E1E5390E368EEBD813F6179ABBB"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-enqueue\\entry-result.json",
+      "Sha256": "ABAB402A0C5174680DC28C9592F70B99A876244ADC6669D438C9560B9A72E4F2"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-enqueue\\reports\\report.json",
+      "Sha256": "4E3F77F62C05C1D6938DD68D81FDDAF3C74A03A578E6F4E8B19FF6200F0030BE"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-queued\\entry-result.json",
+      "Sha256": "5116C75845BB17DE2A70182A2A94EC7DFF05385287F3484170D2F90C9981E585"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-queued\\reports\\report.json",
+      "Sha256": "4DEBEF6FD1E368A7543D7063A662204D15A80BA043DACC0D9D477E9BA1178D8A"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\restore-notification-dispatched\\entry-result.json",
+      "Sha256": "55B1B0C70FBDB1F6CA2DF00C68FAF1A1FCE6CAAC9457B0E0FB3E6C27ED9964C0"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\restore-notification-dispatched\\reports\\report.json",
+      "Sha256": "20047E15CA12C1BB637FD975BBB880E0ACCE2976815430B2C99DF62FE52064F9"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\restore-notification-replay\\entry-result.json",
+      "Sha256": "608ED341770B4815B644E4204B6E622CF5D2F7BC62C0D012A087945A3DDD8537"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\restore-notification-replay\\reports\\report.json",
+      "Sha256": "6D16535E982AE422618D9F86FC10C83F26A9DCABFB4D611655D4758A33CCA172"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\summary.json",
+      "Sha256": "73B93C4341F2C3197CEF949032C683BD402F44F4055CEBB98D8BD33C58DCF38B"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\source-inputs.json",
+      "Sha256": "D43EC6EC524692CF61AA5F32224BBF272E4C6918B578ACDCF0F0D4A9C2F4566D"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\application-artifact.json",
+      "Sha256": "B6299B87839FED1BD8B8D8026F0FD1BF060B17B2B887040F54361A7B8F88B9D2"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\native-backup.json",
+      "Sha256": "9FF4599FC5E2ABB480AC61D5FF9B13D5E0D874BA6DBBE5FCA06668C9CFECBD1E"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\native-restore.json",
+      "Sha256": "94FB701BA632704700242D42F02E770F9B3A13F020C33126396BAD30272C0017"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\owned-database-cleanup.json",
+      "Sha256": "E17192BBC6053A4CFF8AB90B22A3DDE1BFE8680B94E5F5BB9B49CAFDC1397AAB"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\database-init-first.json",
+      "Sha256": "85F79F72D4AB2347ABE64D6A4A0D1E0108371A0C79BAA79F015426BBD4EA1A70"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\database-init-repeat.json",
+      "Sha256": "D765DC432A396A0DA4C6E319A5A475D582AC5E926BDF48B6D6E2D88CDFF86427"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-first-ready.json",
+      "Sha256": "C64085283A729956110171F086996B05AFC93FDDE1BAD000804253812FD1FF43"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-first-stopped.json",
+      "Sha256": "7B9F8EA6C22018865D34C629064F397222D6C0508A712DEBA9C0C75E9264F489"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-worker-restarted-ready.json",
+      "Sha256": "4C93916DE1429ECE928CE1E2CE28FA8FC0FF0664BCDE688994A79E0B3D2CABE7"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-worker-restarted-stopped.json",
+      "Sha256": "AA3DB6BB17E75FA77F40810F8F32B345442A0326E02047FEA3A97D2C5918EA46"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-third-restarted-ready.json",
+      "Sha256": "11E79A0EEFACC8BCEB45A04C7FB40EA6515E1E9D05816F8AA7765CE45AFDA9D0"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-before-backup-stopped.json",
+      "Sha256": "F841E9ADA441801F00492E5F03DAD55C023E7155DF8C8F2D0D946B8CDA728903"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-restored-ready.json",
+      "Sha256": "285853B07464924536EDE90B8E00F2B143C4DA025B7E980ED777A78112A08338"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\api-restored-stopped.json",
+      "Sha256": "C4C0C9BCA856165CB7285102E0F7F658BC16436D1D3CDC083E100509EBF90432"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\admin-first-login.json",
+      "Sha256": "B41B3C9A41A1E58405D316F558453AFC85B68717063C843E8E940475F70B3413"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\admin-third-login.json",
+      "Sha256": "0E8828638FC18CD6E24AF75761BC15DEA5B43519C8A550636CC84DD5F07714AF"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\admin-restored-login.json",
+      "Sha256": "252E861B2E8D4D50C27303DCFE47F07D1ECA9296E67A6F4B18D6DC34CC428942"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\http-authorization.json",
+      "Sha256": "198D444C1A74E1B71FB8597B1A616E5BF9B0CE0C532AA42135D441CE2471C485"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\http-asset-cursor.json",
+      "Sha256": "5D1A68D2CA5231FDDD838E5FFBA3CE8ED68CE503F627BDEADE48B02D26587CEE"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\http-after-restore.json",
+      "Sha256": "1CE4C62319D237EA1BC4B8369605BAA3FFD8893AF63741FA536164A355FB1C9A"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-state-capture\\entry-result.json",
+      "Sha256": "01DC1FDDB244B687B4C92D13A8B78D9E7A29CFB8CEC2453A3514F974E133910C"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-state-capture\\reports\\report.json",
+      "Sha256": "FC08DA1E862C681C5FAE2B15ADFC17D80488B334F53268645A16EFBA4B835249"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-state-verify\\entry-result.json",
+      "Sha256": "72FA442372EF0BD362AEC2174512A6D7636CC1E05D188FB6899DC6C7A1DE27CD"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-state-verify\\reports\\report.json",
+      "Sha256": "381815A01B31A5BD20FD3F94755AC0E4CE5550713D8F5B939E1315B5F57E64CE"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-signalr-user-delivery\\entry-result.json",
+      "Sha256": "A3D57155F54FE053C6317D6ACEFAA4D294D2E2624EA8CC1E4B2A72C96811D115"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-signalr-user-delivery\\reports\\report.json",
+      "Sha256": "EF0F5D27571DF22B51804EB14E4A409DF5656AED2F94EC7B0FBEF322C481FFD6"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-enqueue\\entry-result.json",
+      "Sha256": "861127DAC137B809418E5494161CF99F512E4D38A8586F2075D1751F100BD8C6"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-enqueue\\reports\\report.json",
+      "Sha256": "BF192F83590AE44BFE7E4B30F4D6E15B9DCEC51F422EE7D06120C3F0CED1584F"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-queued\\entry-result.json",
+      "Sha256": "3DF460063B9DC9F03879734A84AB73AAB5218D679F29AA2DA22E819274DF9F2F"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-restore-pending-queued\\reports\\report.json",
+      "Sha256": "323399088C800A4D19AF4DF5375402E913AF219ED246EC30D16301AB6787EE1B"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-notification-dispatched\\entry-result.json",
+      "Sha256": "B2ABA2E0E84EC2E4954D03792AA4E1B207854F479A6FEBF92F1228EDCDF3E993"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-notification-dispatched\\reports\\report.json",
+      "Sha256": "1EC76D7F14C05F0269F54C7551CFBCC029AE795821F6B35083B89662F0F98723"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-notification-replay\\entry-result.json",
+      "Sha256": "D4E922E38BC890EAA83D69810A052DCC4E0C94D287A6F1ABA56B95494FEBF25E"
+    },
+    {
+      "Path": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\restore-notification-replay\\reports\\report.json",
+      "Sha256": "56BBA5368BBF9DD6883E561C10F1BEA2CBCA0675DECE23ECF73547217FAF5A19"
+    }
+  ],
+  "ProductionCandidate": false,
+  "RemoteDelivery": "Normal WP6 delivery, post-merge smoke, remote containment and parent closure still required"
+}

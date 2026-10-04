@@ -1,0 +1,54 @@
+{
+  "EntryId": "application-notification-dispatched",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_9bd35dba_application",
+  "Role": "application",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "tools/CP6.DatabaseCompatibility.ApplicationProbe/CP6.DatabaseCompatibility.ApplicationProbe.csproj",
+  "BinarySha256": "634D635269B0E3CFA294F217FF0B4DCBE261C8AEA9D9D40ACB1F94E8AC49078E",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-notification-dispatched\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-notification-dispatched\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "294A9EF5BD297EF0B53E34C521DBD8CF68C108A969E9177E81A106A0F4D66586",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 2992,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T02:02:07.3795042Z",
+    "FinishedUtc": "2026-10-04T02:02:09.5905061Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "CE1272E79978AC0A9908E82C0941DB9B49C2092EA51A74D34020AF2B89C6E6CF",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-notification-dispatched",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "owner-and-physical-database-verified",
+      "notification-one-owned-row",
+      "notification-status-exact",
+      "notification-attempts-exact",
+      "notification-success-persisted"
+    ],
+    "ReportSha256": "259BF00BEF6502773BB186236F35281E89DFEA2BE4E8A4C681785ED98F329B5A",
+    "ReportDatabaseName": "CP6Compat_WP6_20261004_9bd35dba_application",
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-application-wms-local-transaction-fix\\entries\\application-notification-dispatched\\reports\\report.json",
+  "ReportSha256": "259BF00BEF6502773BB186236F35281E89DFEA2BE4E8A4C681785ED98F329B5A",
+  "FailureCode": null,
+  "Success": true
+}

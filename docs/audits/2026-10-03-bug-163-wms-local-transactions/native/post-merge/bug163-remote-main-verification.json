@@ -1,0 +1,12 @@
+{
+  "Task": "BUG-163",
+  "PR": 164,
+  "Candidate": "1e726a9a3d58a68bd48b6123341d606de076f526",
+  "RemoteMain": "6322ac152cab7d462719169fb0301f49e9ee39ba",
+  "MergeState": "MERGED",
+  "MergedAt": "2026-10-04T00:29:44Z",
+  "CandidateAncestor": true,
+  "FullTreesEqual": true,
+  "AdminBypassUsed": false,
+  "CheckedUtc": "2026-10-04T00:30:43.5798876Z"
+}

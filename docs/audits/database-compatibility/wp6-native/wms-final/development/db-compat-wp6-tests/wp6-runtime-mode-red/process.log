@@ -1,0 +1,23 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.82]     CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlSupportsApplicationAndOneShotInitialization(initializeOnly: False) [FAIL]
+[xUnit.net 00:00:00.82]     CP6.Tests.Persistence.DatabaseWiringTests.Runtime_accepts_postgresql_deployment [FAIL]
+  Failed CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlSupportsApplicationAndOneShotInitialization(initializeOnly: False) [< 1 ms]
+  Error Message:
+   System.InvalidOperationException : Database:Provider=PostgreSql is not yet supported by the application runtime. Database compatibility work must complete model, migrations, SQL and messaging validation before startup is enabled.
+  Stack Trace:
+     at CP6.WebApi.Configuration.DatabaseRuntimeSupport.EnsureSupported(DatabaseOptions database, Boolean databaseInitializationOnly) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.WebApi\Configuration\DatabaseRuntimeSupport.cs:line 11
+   at CP6.Tests.Persistence.DatabaseInitializationModeTests.PostgreSqlSupportsApplicationAndOneShotInitialization(Boolean initializeOnly) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\Persistence\DatabaseInitializationModeTests.cs:line 19
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed CP6.Tests.Persistence.DatabaseWiringTests.Runtime_accepts_postgresql_deployment [< 1 ms]
+  Error Message:
+   System.InvalidOperationException : Database:Provider=PostgreSql is not yet supported by the application runtime. Database compatibility work must complete model, migrations, SQL and messaging validation before startup is enabled.
+  Stack Trace:
+     at CP6.WebApi.Configuration.DatabaseRuntimeSupport.EnsureSupported(DatabaseOptions database, Boolean databaseInitializationOnly) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.WebApi\Configuration\DatabaseRuntimeSupport.cs:line 11
+   at CP6.Tests.Persistence.DatabaseWiringTests.Runtime_accepts_postgresql_deployment() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\Persistence\DatabaseWiringTests.cs:line 108
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: D:\CP6\tmp\db-compat-wp6-tests\wp6-runtime-mode-red\results.trx
+
+Failed!  - Failed:     2, Passed:     5, Skipped:     0, Total:     7, Duration: 289 ms - CP6.Tests.dll (net8.0)

@@ -1,0 +1,54 @@
+{
+  "EntryId": "reports-core-space",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_fb7d76a5_reports",
+  "Role": "reports",
+  "SourceSha": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "23C0E336AC87B90F1D719999EF5023026715C6244B6B5FF1D069C6113F8D1DF5",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-core-space\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "202BC8BB64ECA413006CDFA5EE4E9C1C248CB683AF45A3B4DB08A05857CA302D",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-core-space\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "202BC8BB64ECA413006CDFA5EE4E9C1C248CB683AF45A3B4DB08A05857CA302D",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 11288,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T21:21:27.4564226Z",
+    "FinishedUtc": "2026-10-03T21:21:34.3161068Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "03BBB947B262FC02A92B75ADD41DE44C919406CC6EB9FEF7F95FEC7B2DC678F5",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-core-space",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 5,
+      "Total": 5,
+      "Passed": 5,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_SameNonNullCode_SecondInsertThrows",
+      "CP6.Tests.SpaceSqlIntegrationTests.RowVersion_ConcurrentUpdate_SecondThrows",
+      "CP6.Tests.SpaceSqlIntegrationTests.UniqueIndex_TwoNullCodes_BothCoexist",
+      "CP6.Tests.SpaceSqlIntegrationTests.AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer",
+      "CP6.Tests.SpaceSqlIntegrationTests.TwoPhaseReorder_SwapCodes_NullIntermediate_Succeeds"
+    ],
+    "ReportSha256": "C02E065414C67E045D8E39915A33AF5DBC5E5A997311FAD49551B6706CFC15ED",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-claim-fix\\entries\\reports-core-space\\private\\trx\\results.trx",
+  "ReportSha256": "C02E065414C67E045D8E39915A33AF5DBC5E5A997311FAD49551B6706CFC15ED",
+  "FailureCode": null,
+  "Success": true
+}

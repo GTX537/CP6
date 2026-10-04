@@ -1,0 +1,52 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\bin\Debug\net8.0\CP6.Space.IntegrationTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence [230 ms]
+  Error Message:
+   System.InvalidOperationException : An exception has been raised that is likely due to a transient failure.
+---- Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+-------- Npgsql.PostgresException : 40001: トランザクション間で read/write の依存性があったため、アクセスの直列化ができませんでした
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Stack Trace:
+     at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs:line 121
+   at CP6.Space.Infrastructure.SpaceCadProviderCapabilityService.ReplaceAsync(Guid siteId, ReplaceSpaceCadProviderConfigurationRequest request, String idempotencyKey, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.Infrastructure\SpaceCadProviderCapabilityService.cs:line 145
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.<>c__DisplayClass6_1.<<Concurrent_replace_preserves_one_current_revision_and_immutable_evidence>g__ReplaceAsync|1>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs:line 40
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.<>c__DisplayClass6_1.<<Concurrent_replace_preserves_one_current_revision_and_immutable_evidence>g__ReplaceAsync|1>d.MoveNext() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs:line 49
+--- End of stack trace from previous location ---
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.<Concurrent_replace_preserves_one_current_revision_and_immutable_evidence>b__6_0(String connectionString, Guid tenantId, Guid siteId) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs:line 56
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.WithDatabaseAsync(Func`4 action) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs:line 321
+   at CP6.Space.IntegrationTests.SpaceCadProviderSqlServerTests.Concurrent_replace_preserves_one_current_revision_and_immutable_evidence() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Space.IntegrationTests\SpaceCadProviderSqlServerTests.cs:line 25
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+----- Inner Stack Trace -----
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Standard Output Messages:
+ Provider=PostgreSql; Core migrations=1; Space migrations=1; pending=0; WP6 owner verified; shared database.
+ CoreMigrationIds=20261002161715_PostgreSqlCoreBaselineV1
+ SpaceMigrationIds=20261002161945_PostgreSqlSpaceBaselineV1
+ Provider=PostgreSql; Stage=cad-provider-business; SQLSTATE=40001; NativeCode=none; Kind=SerializationFailure.
+
+
+Results File: D:\CP6\tmp\wp6-pg-formal-matrix-claim-fix\entries\space-cad-assets-collaboration\private\trx\results.trx
+
+Failed!  - Failed:     1, Passed:    14, Skipped:     0, Total:    15, Duration: 13 s - CP6.Space.IntegrationTests.dll (net8.0)

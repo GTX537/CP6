@@ -1,0 +1,63 @@
+{
+  "Scope": "WP6 explicitly named real runtime gates on a runner-owned isolated database; required-case and application/recovery evidence are bound separately.",
+  "Suite": "failures",
+  "Case": "all",
+  "Provider": "PostgreSql",
+  "StartedHostUtc": "2026-10-03T20:05:12.268573Z",
+  "FinishedHostUtc": "2026-10-03T20:05:15.3349321Z",
+  "SourceBase": "e9fed72ba46015ddcf2be14c3c804487bad65a72",
+  "SourceState": "WP6 runner task source; applicable source-file and runtime-binary hashes required",
+  "DatabaseVersion": "18.6",
+  "RuntimeBinaries": {
+    "CP6.Core": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "7F75BE215C94F811947DB3AC60E2ACCE76E31CFA86F30D3644C4C4A1A77568A9"
+    },
+    "CP6.DatabaseCompatibility.RuntimeProbe": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.DatabaseCompatibility.RuntimeProbe.dll",
+      "Sha256": "2DD22D31D9DEA92205C63F97A9A0D4C1A2EA107ECD78C8F6EA92A06C89FF4E4C"
+    },
+    "CP6.Persistence.PostgreSql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "1C1E0C37F6E29DEF2C7C7EE6BB770532A22AEA93118F6053BBFC4EA473506B05"
+    },
+    "CP6.Space.Infrastructure": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "6D7A5C0CD6E9EBE8FC1F0196649E000B1F818EB9F7F9CC5E72E76A86E52DAC56"
+    },
+    "Microsoft.Data.SqlClient": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+    },
+    "Microsoft.EntityFrameworkCore": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    "Npgsql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+    }
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.Wp3Owner",
+      "Status": "Passed",
+      "Detail": "Dedicated loopback WP6 name, role, provider and owner verified."
+    },
+    {
+      "Name": "Installation.CoreExactHistory",
+      "Status": "Passed",
+      "Detail": "Exact Core history=1, pending=0; no full catalog or business acceptance implied."
+    },
+    {
+      "Name": "Failures.NativeConstraintClassificationAndRollback",
+      "Status": "Passed",
+      "Detail": "Actual PK/explicit unique-index 23505, FK23503 and CHECK23514 matched classifier kind and exact generated constraint name; integrity failures were not retryable. Each failed transaction fully rolled back; same-connection fresh transaction SELECT1 passed four times; all five fixture tables absent."
+    },
+    {
+      "Name": "Failures.WholeTransactionRetry",
+      "Status": "Passed",
+      "Detail": "Two physical Serializable sessions established the same snapshot; a committed competing update caused native40001. The classifier selected retryable SerializationFailure. Entire failed transaction rollback removed its earlier marker-row write; failed Context was disposed before fresh Context reread and completed the whole operation. Both exact fixture tables removed; no statement retry or business-hook replay."
+    }
+  ]
+}

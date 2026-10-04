@@ -1,0 +1,32 @@
+{
+  "Scope": "WP6 runner-owned database: Real populated SQL Server supported Core136-to140 generation/index/FK/quotation-capacity forward upgrade and retained data/token/generation checks",
+  "Provider": "SqlServer",
+  "StartedUtc": "2026-10-04T01:49:17.7253614Z",
+  "FinishedUtc": "2026-10-04T01:49:27.7056316Z",
+  "SourceBase": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "SourceState": "WP6 runner task input; applicable build log, source-file and runtime-binary hashes required",
+  "DatabaseVersion": "16.00.1000",
+  "RuntimeBinaries": {
+    "CP6.Core": "88CB493C6DF91148D551A57B5B34BCBF85E11AE83A2E9C2EE38975ACCBD32E71",
+    "CP6.DatabaseCompatibility.MigrationProbe": "60F76964777E4C05A726944E7A3B1AF9C780BFECF785FF3FD8DE9B7555841F9F",
+    "CP6.Persistence.PostgreSql": "31FD70DCA77B05975C3E7B5C2B8183ED7A7C93F12BAE074732DF969962368052",
+    "CP6.Platform.EntityFramework": "A5E782142413F76266232234A0C1E6A6F1274F203FDD6195B7A337BE1597D7AC",
+    "CP6.Space.Infrastructure": "9612514A4DED797E172E59D1166EA19B19364123BC1B7A3206BB1FDC0E898224",
+    "Microsoft.Data.SqlClient": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58",
+    "Microsoft.EntityFrameworkCore": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24",
+    "Npgsql": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+  },
+  "ModelCounts": [],
+  "Checks": [
+    {
+      "Name": "Isolation.OwnerAndProvider",
+      "Status": "Passed",
+      "Detail": "Recorded WP6 loopback, dedicated name, role and task ownership verified before migration."
+    },
+    {
+      "Name": "Upgrade.SqlServer.Populated136To140",
+      "Status": "Passed",
+      "Detail": "SQL Core 136 -\u003E 140 appended only 20261002151353_CrmIdentityTenantGenerationV1, 20261002175000_RestoreMissingOrderModelIndexes, 20261002184500_RestoreMissingOrderModelForeignKeys, 20261002193500_RestoreQuotationAuditColumnCapacity; all 351 pre-existing table counts retained (history \u002B4; Snapshot fixture \u002B2). All 2 captured Snapshot rows retained exact fields and eight-byte tokens through migration. All 4121 language rows and the admin password/metadata digests retained. Tenant generations seeded once at 1; actual EF Snapshot save advanced 1 -\u003E 2 and returned a new token; a second EF save reached 3 inside its transaction, then rollback restored generation 2 and exact Snapshot bytes. Migration-input Snapshot SHA256=0b48e44dfa9b5f019c7ceff32ca44145b1385637260488781acead53eb62964d; language SHA256=217ab6f09ce8f9a8c2968a3948258147de37c8575325f981049b4387ab3bbbdb; admin SHA256=539e93bc566819fb23c9c342504e915e8919357c31dda0fdc8ac422c707e22ee. Exact temporary Snapshot and tenant-generation fixtures removed; final original data/counts rechecked. Checks cover this captured task database and these critical fields, not all business payloads or production upgrade acceptance."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "EntryId": "application-seed-verify",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261004_97682779_application",
+  "Role": "application",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "60F76964777E4C05A726944E7A3B1AF9C780BFECF785FF3FD8DE9B7555841F9F",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-seed-verify\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "EB0B2DD51BAD211E7CA3BBB5C4642E492669AC346BFAA4D04956779CA59583D4",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-seed-verify\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "EB0B2DD51BAD211E7CA3BBB5C4642E492669AC346BFAA4D04956779CA59583D4",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 11252,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:56:32.0259799Z",
+    "FinishedUtc": "2026-10-04T01:56:33.2337776Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "80478ADB3FCB81CB82A62CED9F6263A7F0A9145588D7A6DC5C3A96BC6ED46A19",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "application-seed-verify",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Seed.verify"
+    ],
+    "ReportSha256": "755D9B8790755A6B6FCF752F3A7B0ABAF0272905F5D331AC3FEE3579D2E3D88F",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\entries\\application-seed-verify\\reports\\report.json",
+  "ReportSha256": "755D9B8790755A6B6FCF752F3A7B0ABAF0272905F5D331AC3FEE3579D2E3D88F",
+  "FailureCode": null,
+  "Success": true
+}

@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.DatabaseCompatibility.Testing;
 using CP6.Core.Services.Common;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -12,12 +13,21 @@ namespace CP6.DatabaseCompatibility.RuntimeProbe;
 
 internal sealed class RuntimeFixture
 {
+    private readonly OwnedTestDatabase? ownedDatabase;
+
     public RuntimeFixture(DatabaseProvider provider)
     {
         Database = new(provider);
         Owner = Environment.GetEnvironmentVariable("CP6_TEST_DATABASE_OWNER") ?? "";
-        ProbeAssert.Require(Regex.IsMatch(Owner, "\\A[0-9a-f]{32}\\z"), "A task ownership receipt is required.");
         ConnectionString = Environment.GetEnvironmentVariable(IsPostgreSql ? "CP6_TEST_POSTGRES" : "CP6_TEST_SQLSERVER") ?? "";
+        ownedDatabase = OwnedTestDatabase.FromEnvironment(Database, ConnectionString,
+            [DatabaseFixtureRole.Runtime], "CP6Compat.WP6.RuntimeProbe");
+        if (ownedDatabase is not null)
+        {
+            ConnectionString = ownedDatabase.ConnectionString;
+            return;
+        }
+        ProbeAssert.Require(Regex.IsMatch(Owner, "\\A[0-9a-f]{32}\\z"), "A task ownership receipt is required.");
         ProbeAssert.Require(!string.IsNullOrWhiteSpace(ConnectionString), "A test connection is required.");
         if (IsPostgreSql)
         {
@@ -53,6 +63,8 @@ internal sealed class RuntimeFixture
     }
     public async Task<string> VerifyOwnerAsync()
     {
+        if (ownedDatabase is not null)
+            return (await ownedDatabase.VerifyAsync()).ServerVersion;
         await using var connection = Connection();
         await connection.OpenAsync();
         var actual = await connection.QuerySingleOrDefaultAsync<string>(IsPostgreSql

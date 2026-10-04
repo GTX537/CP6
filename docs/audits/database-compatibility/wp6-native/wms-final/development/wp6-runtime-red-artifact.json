@@ -1,0 +1,10 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Stage": "Pre-guard-change API publication for actual startup RED",
+  "Path": "D:\\CP6\\tmp\\db-compat-wp6-runtime-red-publish",
+  "Configuration": "Debug",
+  "GuardSourceSha256": "D0C21C8A7F257E92AD1725D338677E77D1A5CFE4F61D5DE13FE8C64F6BF69B18",
+  "ApiBinarySha256": "5E777A44F47C7DCA832E44B2ADC3E4D0F52C953072186CA1FCBFA32F7530D533",
+  "PublishedUtc": "2026-10-03T15:35:27.1938105Z",
+  "NewApiAcceptance": false
+}

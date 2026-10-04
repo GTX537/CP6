@@ -1,0 +1,35 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "ReviewKind": "Incremental delivered BUG159 integration, required-case delta and documentation only",
+  "Status": "NoSubstantiveBlockers",
+  "IntegratedHead": "ac5452557f6a9f0aa0606627f8a450f8eec58882",
+  "DeliveredMain": "4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0",
+  "Code": [
+    {
+      "Path": "CP6.Space.Infrastructure/EfSpaceJobLedger.cs",
+      "WorkingSha256": "CE5DF1E508348C339BCB701ACC7ABF40D1B096DDFF2E26790D4314B7E5026048",
+      "DeliveredGitBlob": "02e25abe15a466e2c9be4c1814dad58a9f12bdc4",
+      "MatchesDeliveredMain": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceJobSqlServerTests.cs",
+      "WorkingSha256": "F877C7E38EBA199409D28BAB52A34505793281F19A11CF8F5E603B9A98F7BFEF",
+      "DeliveredGitBlob": "2044f34c291197b46495504f441e802f73db8218",
+      "MatchesDeliveredMain": true
+    },
+    {
+      "Path": "CP6.Space.IntegrationTests/SpaceJobSqlServerTests.ClaimRecoveryTests.cs",
+      "WorkingSha256": "3DB2417C40EE2F5AD3721C568D4AAC3AEA20BCE50DB009793C561857A7DE99B5",
+      "DeliveredGitBlob": "8f4889e21b1709733aeed11b03d0ad2710912e92",
+      "MatchesDeliveredMain": true
+    }
+  ],
+  "OtherRequiredEntriesUnchanged": 61,
+  "JobsRequiredCases": 23,
+  "CloneRequiredCases": 23,
+  "DesignPublishRequiredCases": 41,
+  "ManifestSha256": "5B1898EC51E93C03AAC6B826DDBD9B574B0E28F33EFDCF470693B9B12379C4FD",
+  "ReusedReview": "Four unchanged WP6 module reviews plus BUG159 task-level source review, actual two-provider exact23 and fresh post-merge2 are their own historical executions.",
+  "ScopeLimits": "Does not prove final WP6 native matrix/application acceptance. New final current-source runs are pending; injected controls are not native deadlock reproductions.",
+  "CheckedUtc": "2026-10-03T21:09:48.1715847Z"
+}

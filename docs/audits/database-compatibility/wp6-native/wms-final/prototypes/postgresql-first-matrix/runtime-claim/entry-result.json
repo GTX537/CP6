@@ -1,0 +1,54 @@
+{
+  "EntryId": "runtime-claim",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_52b6ecc3_runtime",
+  "Role": "runtime",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj",
+  "BinarySha256": "40D653A08E18923D22E92CAF52EE8B14E637504DC7D0C314164B8FD8C6B13692",
+  "Process": {
+    "ProcessId": 33244,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:12:52.5987481Z",
+    "FinishedUtc": "2026-10-03T16:13:08.8179982Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "61BA0CCE0DE4F2CCA99658DC5399F9ADB2943CB3765AEAE5104DB9F0C4D73C9A",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "runtime-claim",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 10,
+      "Total": 10,
+      "Passed": 10,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.Wp3Owner",
+      "Installation.CoreExactHistory",
+      "Installation.SpaceExactHistory",
+      "Claims.WorkSlotFirstAcquire",
+      "Claims.ConcurrentCapacityOne",
+      "Claims.ConcurrentCapacityTwo",
+      "Claims.SameRunSingleton",
+      "Claims.LeaseFencesAndExpiry",
+      "Claims.TenantIndependence",
+      "Claims.SkipLockedCandidate"
+    ],
+    "ReportSha256": "D084B19C7BD2333F84250E10446C6E2DF19F158DDE9873C32D0420621D42F946",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\db-compat-wp6-postgresql-matrix\\runtime-claim\\reports\\report.json",
+  "ReportSha256": "D084B19C7BD2333F84250E10446C6E2DF19F158DDE9873C32D0420621D42F946",
+  "FailureCode": null,
+  "Success": true
+}

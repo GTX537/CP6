@@ -12,14 +12,11 @@ public sealed class DatabaseInitializationModeTests
     public void SqlServerSupportsApplicationAndOneShotInitialization(bool initializeOnly)
         => DatabaseRuntimeSupport.EnsureSupported(Options("SqlServer"), initializeOnly);
 
-    [Fact]
-    public void PostgreSqlApplicationRuntimeRemainsRejected()
-        => Assert.Throws<InvalidOperationException>(() =>
-            DatabaseRuntimeSupport.EnsureSupported(Options("PostgreSql")));
-
-    [Fact]
-    public void PostgreSqlOneShotInitializationCanRunWithoutEnablingApplicationRuntime()
-        => DatabaseRuntimeSupport.EnsureSupported(Options("PostgreSql"), databaseInitializationOnly: true);
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void PostgreSqlSupportsApplicationAndOneShotInitialization(bool initializeOnly)
+        => DatabaseRuntimeSupport.EnsureSupported(Options("PostgreSql"), initializeOnly);
 
     [Fact]
     public void NullProviderCannotBypassValidationInInitializationMode()

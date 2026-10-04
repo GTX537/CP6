@@ -1,0 +1,58 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "ScriptSha256": "4E56787313C28CA0D58EFFED6A6A46E02121CF72E827EDF04E0E5D0AD4EF0E88",
+  "Scope": "Only two exact BUG159 (WP5 fixture protocol) receipt-owned databases; all-target read-only preflight, per-target ownership/identity/activity recheck, ordinary DROP, no session termination.",
+  "StartedUtc": "2026-10-03T21:00:23.2210453Z",
+  "FinishedUtc": "2026-10-03T21:00:24.5243462Z",
+  "Status": "Completed",
+  "Phase": "Completed",
+  "FailureCode": null,
+  "ExpectedDatabaseCount": 2,
+  "AllTwoPreflightPassed": true,
+  "Dropped": 2,
+  "AllTwoAbsent": true,
+  "DroppedCountScope": "Confirmed native DROP successes; attempted-but-unconfirmed outcomes remain explicit on each target.",
+  "ReceiptBytesUnchanged": true,
+  "PostgreSqlRolesRetained": true,
+  "PostgreSqlEnvironmentRestored": true,
+  "Receipts": [
+    {
+      "File": "bug159-wp5-owned.private.json",
+      "Path": "D:\\CP6\\tmp\\bug159-wp5-owned.private.json",
+      "Sha256": "5ADB986633800247E0A4EF747D3AFA3BC6E78431DA1F6F164AEB2CFE85D170D8",
+      "BytesUnchanged": true
+    }
+  ],
+  "Targets": [
+    {
+      "Provider": "SqlServer",
+      "Database": "CP6Compat_WP5_20261003_37dc8a6c",
+      "OwnerSuffix": "37dc8a6c",
+      "Receipt": "bug159-wp5-owned.private.json",
+      "PreflightPassed": true,
+      "DatabaseId": 68,
+      "ActiveSessions": 0,
+      "ActiveRequests": 0,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    },
+    {
+      "Provider": "PostgreSql",
+      "Database": "CP6Compat_WP5_20261003_37dc8a6c",
+      "OwnerSuffix": "37dc8a6c",
+      "Receipt": "bug159-wp5-owned.private.json",
+      "PreflightPassed": true,
+      "DatabaseId": "467755",
+      "ActiveSessions": 0,
+      "ActiveRequests": null,
+      "DropAttempted": true,
+      "DropConfirmed": true,
+      "Absent": true,
+      "Outcome": "ConfirmedAbsent",
+      "FailureCode": null
+    }
+  ]
+}

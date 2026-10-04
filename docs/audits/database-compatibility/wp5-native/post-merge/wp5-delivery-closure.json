@@ -1,0 +1,38 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Stage": "Delivered",
+  "ClosedUtc": "2026-10-03T15:17:51.0054084Z",
+  "PullRequest": "https://github.com/GTX537/CP6/pull/152",
+  "Candidate": "c9141a558a46586d8343cd1e5b69ce710a468f31",
+  "RemoteMain": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "EqualCandidateAndMergeTree": "72115d15128e50cbf99dd7142ab4e50ab1abfbb5",
+  "PostMergeSmoke": [
+    "wp5-post-merge-space-pg-smoke:3/3",
+    "wp5-post-merge-space-sql-smoke:3/3"
+  ],
+  "SmokeScope": "Real full-row clone plus original CAD and Excel same-key contention with actual owner/migration fixture setup; existing final binaries matched, no rebuild or full matrix rerun.",
+  "Preflight": "wp5-post-merge-preflight.json",
+  "Cleanup": {
+    "Result": "Completed",
+    "SqlServerDatabases": 7,
+    "PostgreSqlDatabases": 6,
+    "AllThirteenAbsent": true,
+    "ReceiptBytesUnchanged": true,
+    "PostgreSqlRoleRetained": true,
+    "ForcedDisconnects": 0,
+    "ProofSha256": "BB9728FE4B5538F761D272742BFDC8AAB8D9A1219AD3FB07C008B7426930D89C"
+  },
+  "TaskReview": "wp5-root-final-review.json",
+  "PublicArchives": [
+    "wp5-native/initial/manifest.json",
+    "wp5-native/review-followup/manifest.json"
+  ],
+  "StagedPublicOriginalsVerified": 285,
+  "FinalResultAccounting": "Original recorded-case outcomes only; not a new full matrix run.",
+  "QueuedOrRunningActions": [],
+  "ActionsDispatched": 0,
+  "ActionsCancelled": 0,
+  "WorkflowOrProtectionChanges": 0,
+  "ProductionDeployment": false,
+  "Remaining": "WP6 full application/worker, formal compatibility runner and native backup/restore acceptance; parent Issue134 stays Open."
+}

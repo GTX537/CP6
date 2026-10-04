@@ -1,0 +1,54 @@
+[
+  {
+    "RunId": "c4531f2c1b79475a8b62c8feab42b733",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_97682779_application",
+    "Owner": "976827792ef34f92a9252f272d07a779",
+    "Role": "application",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "842745"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:53:50.9356767Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_97682779_application.json",
+    "Events": []
+  },
+  {
+    "RunId": "c4531f2c1b79475a8b62c8feab42b733",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_9ae4cce7_restore",
+    "Owner": "9ae4cce7e54049ee8c1cb404a1d04ec1",
+    "Role": "restore",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "854047"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:57:50.4220635Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-application-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_9ae4cce7_restore.json",
+    "Events": [
+      {
+        "Action": "RestoreStarted",
+        "SourceDatabaseName": "CP6Compat_WP6_20261004_97682779_application",
+        "ArchiveSha256": "C1F40086F8A6FADB47B87B59C0362F420C1B1E80FF380015729634C4A6970F40",
+        "Utc": "2026-10-04T01:57:51.9587605Z"
+      },
+      {
+        "Action": "RestoreVerifiedAndTargetMarkerReconciled",
+        "Provider": "PostgreSql",
+        "SourceOwner": "976827792ef34f92a9252f272d07a779",
+        "TargetOwner": "9ae4cce7e54049ee8c1cb404a1d04ec1",
+        "Utc": "2026-10-04T01:57:56.0372435Z"
+      }
+    ]
+  }
+]

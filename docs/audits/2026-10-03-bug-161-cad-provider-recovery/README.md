@@ -1,5 +1,7 @@
 # BUG161：CAD Provider 配置替换的完整事务恢复
 
+交付核对（2026-10-03）：PR162已正常合并到远端main ce49012d37da4b1b01f074d5b5b7fd227780e656；合并后两库各3/3、当前源码/产物匹配，两个自有库普通DROP/不存在核对完成，Issue161已Closed。32份交付/冒烟/清理/关闭原件见 [post-merge manifest](native/post-merge/manifest.json)，SHA256 64D78AEAF4B5ACB3045E4A1250A0C4F196C915038ABED83014E4436E25B32A55。原71份修复证据不变。下文LocalVerifiedRemotePending保留提交时历史；父WP6及Issue134未完成。
+
 活动状态以 [Issue #161](https://github.com/GTX537/CP6/issues/161) 为准。本任务由 [DB-COMPAT-01 / #134](https://github.com/GTX537/CP6/issues/134) 的 WP6 最终本地矩阵发现，从已确认远端 main `4a654320c7c41cbdf6ed5bf7bd4fcba459f720f0` 建立独立分支。当前为 LocalVerifiedRemotePending：双库本地回归、构建和一次专项审查通过；远端交付和父任务仍未完成。
 
 ## 根因与实现

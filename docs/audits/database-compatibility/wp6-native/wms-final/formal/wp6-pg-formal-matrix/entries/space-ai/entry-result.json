@@ -1,0 +1,62 @@
+{
+  "EntryId": "space-ai",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_16243fd8_space",
+  "Role": "space",
+  "SourceSha": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "5167B356B8CEBADECE9C6D477A9EF147E1B739EABAAC0A51E314B519929BF11F",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\space-ai\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "E7F6384CD6CD6E746D2035979D6D72D1973F3DF1537B71070DFCC792B9061226",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\space-ai\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "E7F6384CD6CD6E746D2035979D6D72D1973F3DF1537B71070DFCC792B9061226",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 36320,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T17:11:21.7521794Z",
+    "FinishedUtc": "2026-10-03T17:12:13.9177582Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "17954BCA0A09A7CE5744C7CC9335A36A7B7B946FA84BE6C973981154A6C96D5B",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-ai",
+    "Provider": "PostgreSql",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 13,
+      "Total": 13,
+      "Passed": 13,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Draft_change_marks_run_stale_without_apply_writes",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_is_idempotent_and_commits_one_atomic_revision",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_same_key_creates_one_apply_job_and_replays",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Failed_recovery_retires_current_run_before_replacement",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Running_apply_acknowledges_cancel_at_worker_safe_point",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_updates_existing_baseline_and_reconciles_rack_derivation",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Queued_apply_cancels_idempotently_without_draft_writes",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Reconcile_repairs_run_from_authoritative_committed_batch",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Apply_materializes_hierarchy_rack_derivation_and_element",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Resource_failure_retries_same_apply_job_and_frozen_run",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Stale_recovery_creates_new_run_and_obsoletes_old_proposals",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Concurrent_cancel_same_key_replays_after_row_version_changes",
+      "CP6.Space.IntegrationTests.SpaceAiAtomicApplySqlServerTests.Commit_fault_rolls_back_then_reuses_plan_on_retry"
+    ],
+    "ReportSha256": "F841715763604679102B41FF33CE3DF2059A955E3A2BB97B17D09B7681DA8D9D",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix\\entries\\space-ai\\private\\trx\\results.trx",
+  "ReportSha256": "F841715763604679102B41FF33CE3DF2059A955E3A2BB97B17D09B7681DA8D9D",
+  "FailureCode": null,
+  "Success": true
+}

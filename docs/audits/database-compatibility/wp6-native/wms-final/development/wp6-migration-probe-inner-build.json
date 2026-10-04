@@ -1,0 +1,10 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Id": "migration-probe-inner",
+  "SourceHead": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Configuration": "Debug",
+  "RestoreExitCode": 0,
+  "NewProjectLockGenerated": false,
+  "BuildExitCode": 0,
+  "Succeeded": true
+}

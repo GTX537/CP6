@@ -1,0 +1,27 @@
+{
+  "Success": true,
+  "ProcessId": 36656,
+  "Port": 58258,
+  "DatabaseName": "CP6Compat_WP6_20261003_7ba9af02_restore",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "ArtifactManifestSha256": "3AE1B560829C733ED84D134EC1E752096376B2D5E201DF790E77CEB17DCAB1ED",
+  "LatestCoreMigration": "20261002161715_PostgreSqlCoreBaselineV1",
+  "Http": [
+    {
+      "Path": "/health/live",
+      "StatusCode": 200,
+      "BodySha256": "CF7B027A9A54CAADD16816AF5704E3A20D7469ED72FFFB64DB9A62B39E867E47"
+    },
+    {
+      "Path": "/health/ready",
+      "StatusCode": 200,
+      "BodySha256": "3A4E7C8545C0964EBC32A9103D9BF1BA801A6286BE2182A7650CF53B5C03A691"
+    },
+    {
+      "Path": "/health/release",
+      "StatusCode": 200,
+      "BodySha256": "1E91F2556361D4B7CFFF084B025A668FA821CECA8A338F8CB3FB73DB19C0105E"
+    }
+  ],
+  "CheckedUtc": "2026-10-03T16:47:58.6537544Z"
+}

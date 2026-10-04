@@ -1,0 +1,53 @@
+{
+  "EntryId": "space-mapping",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_845eeeb7_space",
+  "Role": "space",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A46BCA48803EF229E46F4CD1172BC2D8AE37BE8A2166AFE8D08ED78A099337EB",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-mapping\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-mapping\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 34992,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:43:32.8189455Z",
+    "FinishedUtc": "2026-10-04T01:43:46.9985601Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "B7D9F084FCFBBD1529693C888E34CDB5837473533D0F29E842D67B1BB5795B9C",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-mapping",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 4,
+      "Total": 4,
+      "Passed": 4,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay",
+      "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Concurrent_same_key_create_returns_one_profile_and_replay",
+      "CP6.Space.IntegrationTests.SpaceCadMappingProfileSqlServerTests.Sql_migration_persists_rowversion_versions_and_tenant_scope",
+      "CP6.Space.IntegrationTests.SpaceExcelMappingSqlServerTests.Sql_migration_persists_rowversion_append_only_versions_and_tenant_scope"
+    ],
+    "ReportSha256": "F47A52CE03DBDEA498EF2FC1EFC1687B6101E798EE40DE6B6204DB8779953C96",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-mapping\\private\\trx\\results.trx",
+  "ReportSha256": "F47A52CE03DBDEA498EF2FC1EFC1687B6101E798EE40DE6B6204DB8779953C96",
+  "FailureCode": null,
+  "Success": true
+}

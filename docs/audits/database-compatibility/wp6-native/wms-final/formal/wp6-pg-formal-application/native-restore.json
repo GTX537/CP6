@@ -1,0 +1,67 @@
+{
+  "RunId": "15cb293cc85944f3a9e8aaa256a7d141",
+  "Provider": "PostgreSql",
+  "SourceDatabaseName": "CP6Compat_WP6_20261003_5df36921_application",
+  "TargetDatabaseName": "CP6Compat_WP6_20261003_7ba9af02_restore",
+  "ArchiveSha256": "EB4F77F2E1C5D92774BA81CA3A99AC31FBAA342778B7F4E5B4F9525A9F2FB8F6",
+  "ToolIdentity": {
+    "Tool": "pg_restore",
+    "Path": "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_restore.exe",
+    "Sha256": "2B549BA70EFF93BF976A1D774FE4837C10DBF63DB39CCD6D452F59CF03ACE2AF",
+    "NativeVersion": "pg_restore (PostgreSQL) 18.6"
+  },
+  "ServerVersion": "18.6",
+  "NativeExitCode": 0,
+  "Status": "Restored",
+  "TargetPhysicalIdentity": {
+    "DatabaseId": "238848"
+  },
+  "DatabaseMetadataReconciled": true,
+  "DataReconciliation": "Required separately through ApplicationProbe",
+  "ActualState": {
+    "Exists": true,
+    "DatabaseName": "CP6Compat_WP6_20261003_7ba9af02_restore",
+    "DatabaseId": "238848",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "Task": "DB-COMPAT-01-WP6",
+    "Owner": "7ba9af02dd134956ae5f075a67978060",
+    "Marker": "DB-COMPAT-01-WP6:7ba9af02dd134956ae5f075a67978060",
+    "UserTables": 1669,
+    "Sessions": 0,
+    "DatabaseSettings": [],
+    "DatabaseAcl": [
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "PUBLIC",
+        "Privilege": "CONNECT",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "PUBLIC",
+        "Privilege": "TEMPORARY",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "cp6compat_wp1_0b54dc81",
+        "Privilege": "CONNECT",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "cp6compat_wp1_0b54dc81",
+        "Privilege": "CREATE",
+        "Grantable": false
+      },
+      {
+        "Grantor": "cp6compat_wp1_0b54dc81",
+        "Grantee": "cp6compat_wp1_0b54dc81",
+        "Privilege": "TEMPORARY",
+        "Grantable": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\bin\Debug\net8.0\CP6.ErpIntegration.SqlTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order [1 s]
+  Error Message:
+   Assert.Contains() Failure: Item not found in collection
+Collection: [Applied, Duplicate]
+Not found:  RetryScheduled
+  Stack Trace:
+     at CP6.ErpIntegration.SqlTests.ErpScenario.ConsumeAsync(Cp6OutboxEnvelope envelope, ErpRequestHandler handler) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\ErpScenario.cs:line 72
+   at CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_different_versions_for_one_opportunity_create_one_order() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\OrderSqlTests.cs:line 110
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.
+
+
+  Failed CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order [1 s]
+  Error Message:
+   Assert.Contains() Failure: Item not found in collection
+Collection: [Applied, Duplicate]
+Not found:  RetryScheduled
+  Stack Trace:
+     at CP6.ErpIntegration.SqlTests.ErpScenario.ConsumeAsync(Cp6OutboxEnvelope envelope, ErpRequestHandler handler) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\ErpScenario.cs:line 72
+   at CP6.ErpIntegration.SqlTests.OrderSqlTests.Concurrent_duplicate_commands_create_exactly_one_order() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\eng\crm\erp-integration-tests\OrderSqlTests.cs:line 72
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ Provider=PostgreSql; migrations Core=1, IdentityPriority=1, ErpIntegration=1; pending=0; ERP Inbox readable; owner verified.
+
+
+Results File: D:\CP6\tmp\db-compat-wp6-postgresql-matrix\erp-business\private\trx\results.trx
+
+Failed!  - Failed:     2, Passed:    93, Skipped:     0, Total:    95, Duration: 4 m 30 s - CP6.ErpIntegration.SqlTests.dll (net8.0)

@@ -1,0 +1,14 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Status": "OfflinePassed",
+  "Scope": "Manifest and command/report parser contracts only; no native DB/.NET execution",
+  "SourceHead": "06eaa7110f3c2162ee44e32caf46d684ebd0fba5",
+  "ManifestSha256": "7E10D8FB6F0EFB56DBC0ADF8AD086AC1D73C1AC8C1E6A24DAD21FD31867A72A6",
+  "EntriesChecks": 510,
+  "ResultAssertions": 467,
+  "ArchivedReports": 61,
+  "Entries": 62,
+  "DotnetExecuted": false,
+  "NativeExecuted": false,
+  "CheckedUtc": "2026-10-03T22:17:53.7607682Z"
+}

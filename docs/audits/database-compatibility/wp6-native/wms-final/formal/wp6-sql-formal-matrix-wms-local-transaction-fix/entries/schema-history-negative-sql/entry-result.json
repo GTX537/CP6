@@ -1,0 +1,51 @@
+{
+  "EntryId": "schema-history-negative-sql",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_e1bad011_schema",
+  "Role": "schema",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "60F76964777E4C05A726944E7A3B1AF9C780BFECF785FF3FD8DE9B7555841F9F",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\schema-history-negative-sql\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "EB0B2DD51BAD211E7CA3BBB5C4642E492669AC346BFAA4D04956779CA59583D4",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\schema-history-negative-sql\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "EB0B2DD51BAD211E7CA3BBB5C4642E492669AC346BFAA4D04956779CA59583D4",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 19260,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:38:50.7466707Z",
+    "FinishedUtc": "2026-10-04T01:38:53.0856691Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "938B962E596B18E3F98F9B03769737E68BF90D8BBF51F874D3F712CB5D570984",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "schema-history-negative-sql",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "History.UnknownIdentityRollbackNegativeControl"
+    ],
+    "ReportSha256": "54D58CD1592DF0173E0327A0B4E9E859C0E644F57A052C282C434AA8C693761C",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\schema-history-negative-sql\\reports\\report.json",
+  "ReportSha256": "54D58CD1592DF0173E0327A0B4E9E859C0E644F57A052C282C434AA8C693761C",
+  "FailureCode": null,
+  "Success": true
+}

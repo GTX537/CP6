@@ -1,0 +1,53 @@
+{
+  "EntryId": "reports-empty",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_5dfd408d_reports",
+  "Role": "reports",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Tests/CP6.Tests.csproj",
+  "BinarySha256": "54DD5DE1BAC35EBDFC43DD0F306363D489E3984FD100F3042E158A6535EB8938",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-empty\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-empty\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "941535004F475F4D8F4F5BBCFB8042FA76F202C0500D1E4908478C761BDAB7AF",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 35612,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:35:51.8375146Z",
+    "FinishedUtc": "2026-10-04T01:36:20.4612711Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "B3F727E0DBAB8B57747FF1D2ED623833EA7BB77AD69C3ED7142556691508D4AE",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "reports-empty",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 4,
+      "Total": 4,
+      "Passed": 4,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Daily_trend_fills_three_zero_days",
+      "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Summary_empty_returns_zero",
+      "CP6.Tests.DatabaseCompatibility.MesReportsRelationalTests.Process_progress_empty_returns_empty",
+      "CP6.Tests.DatabaseCompatibility.DashboardRelationalTests.Summary_reads_empty_native_database"
+    ],
+    "ReportSha256": "024889D92A46DB7E36BE804DFC06C3790A5DE954D9CDAFD9FFFDE2134C3476A0",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\reports-empty\\private\\trx\\results.trx",
+  "ReportSha256": "024889D92A46DB7E36BE804DFC06C3790A5DE954D9CDAFD9FFFDE2134C3476A0",
+  "FailureCode": null,
+  "Success": true
+}

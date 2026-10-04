@@ -1,0 +1,68 @@
+{
+  "Scope": "WP6 explicitly named real runtime gates on a runner-owned isolated database; required-case and application/recovery evidence are bound separately.",
+  "Suite": "locks",
+  "Case": "all",
+  "Provider": "PostgreSql",
+  "StartedHostUtc": "2026-10-03T16:12:28.7205759Z",
+  "FinishedHostUtc": "2026-10-03T16:12:32.0418159Z",
+  "SourceBase": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "SourceState": "WP6 runner task source; applicable source-file and runtime-binary hashes required",
+  "DatabaseVersion": "18.6",
+  "RuntimeBinaries": {
+    "CP6.Core": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Core.dll",
+      "Sha256": "D186E2DB20A9F772AAD537B30F7EC1A84114581362BC27621C384229A28692B8"
+    },
+    "CP6.DatabaseCompatibility.RuntimeProbe": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.DatabaseCompatibility.RuntimeProbe.dll",
+      "Sha256": "40D653A08E18923D22E92CAF52EE8B14E637504DC7D0C314164B8FD8C6B13692"
+    },
+    "CP6.Persistence.PostgreSql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Persistence.PostgreSql.dll",
+      "Sha256": "DCDA403B2DE1CE0E7D168EDE03DFB4CCFE03EC8A4B941297AF472C70D52737AF"
+    },
+    "CP6.Space.Infrastructure": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\CP6.Space.Infrastructure.dll",
+      "Sha256": "B33E7235E9FE476560491565B132CC79D221974B4301D7372EBC275A6E97FF34"
+    },
+    "Microsoft.Data.SqlClient": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+      "Sha256": "DB6EBCCF33FDF12EDD30BCB2A211515D2EECA7EE69BBBD8C137E6C2BCFCABE58"
+    },
+    "Microsoft.EntityFrameworkCore": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+      "Sha256": "BA583AE8FD64C7680DA2D1E2886DCBA31D81CE60BBC9CD7A9701D0D74228FE24"
+    },
+    "Npgsql": {
+      "LoadedPath": "D:\\CP6\\tmp\\worktrees\\db-compat-wp6-20261003\\tools\\CP6.DatabaseCompatibility.RuntimeProbe\\bin\\Debug\\net8.0\\Npgsql.dll",
+      "Sha256": "2083DE510463C4F708FA433D68BF3DA149F10E25CD99A86F4519360E3F59B70D"
+    }
+  },
+  "Checks": [
+    {
+      "Name": "Isolation.Wp3Owner",
+      "Status": "Passed",
+      "Detail": "Dedicated loopback WP6 name, role, provider and owner verified."
+    },
+    {
+      "Name": "Installation.CoreExactHistory",
+      "Status": "Passed",
+      "Detail": "Exact Core history=1, pending=0; no full catalog or business acceptance implied."
+    },
+    {
+      "Name": "Locks.TransactionLifecycle",
+      "Status": "Passed",
+      "Detail": "Two native sessions: same-key zero/finite contention, usable transaction after busy timeout, distinct tenant key, commit/rollback/dispose release, cancellation then rollback and fresh transaction. Primitive resource namespaces only; full business isolation remains separate."
+    },
+    {
+      "Name": "Locks.SessionLifecycle",
+      "Status": "Passed",
+      "Detail": "Two native sessions: contention and canceled wait, two actual committed batches retain the lock, explicit release/Dispose are idempotent, peer reacquires and releases, both non-owned connections remain open and usable."
+    },
+    {
+      "Name": "Clock.AdvancingDatabaseUtc",
+      "Status": "Passed",
+      "Detail": "Two UTC Kind reads advanced in one native transaction and matched independent clock_timestamp bounds; transaction_timestamp stayed fixed. No application-clock input or business-date conversion."
+    }
+  ]
+}

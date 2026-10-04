@@ -21,6 +21,7 @@
 | [部署 Agent Readiness](./DEPLOY-AGENT-READINESS.md) | How-to / Gate | 验证专用部署身份、Docker Desktop 和本机 SQL TCP 能力 |
 | [DEV 双模式发布](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 配置手动/自动 `CP6 DEV CD`、部署前备份、独立 Tunnel 和安全数据旁路导入 |
 | [发布流程](./RELEASE-PROCESS.md) | How-to | 说明从代码到 DEV、审批和 PROD 的标准操作顺序 |
+| [数据库选择与恢复](./DATABASE-COMPATIBILITY.md) | How-to / Boundary | SQL Server / PostgreSQL 配置、同制品 db-init/API、本机 runner 与同引擎恢复；区分本地证据和 R2 生产门禁 |
 | [环境策略](./ENVIRONMENT-STRATEGY.md) | Explanation / Reference | 定义 DEV、UAT、PROD 的用途、权限、配置和证据边界 |
 | [DevOps ADR 索引](./adr/README.md) | Normative mirror / Index | CRM R00 发布权威、候选对象身份、Manifest 与回退工程合同 |
 | [WMS R2 生产就绪主规范](../client/r2/README.md) | Normative | 当前生产候选、部署和现场试点的唯一规范源 |
@@ -28,6 +29,8 @@
 | [P10 验证、发布与审计操作](./HOWTO-P10-PLATFORM-CANDIDATE.md) | How-to | 执行真实验证、条件发布、只读审计与 append-only 状态留存；不授权部署 |
 
 ## 当前事实
+
+数据库运行配置按 [数据库选择与恢复](./DATABASE-COMPATIBILITY.md) 在同一代码部署中选择 SQL Server 或 PostgreSQL。生产模板的外部数据库输入与 R2 候选授权是不同边界：当前 candidate/source/migration/manifest 门禁仍保持 SQL Server 基线，PostgreSQL 本地验证不授权改变 GHCR/R2、环境审批或生产部署流程。根 `docker-compose.yml` 仍是 SQL Server 开发编排。
 
 仓库内可直接验证的 Azure CI 配置位于根目录 [`azure-pipelines.yml`](../../azure-pipelines.yml)：
 

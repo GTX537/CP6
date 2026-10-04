@@ -1,0 +1,46 @@
+{
+  "EntryId": "sql-populated-upgrade",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_23e0e34d_sqlupgrade",
+  "Role": "sqlupgrade",
+  "SourceSha": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "Project": "tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj",
+  "BinarySha256": "4F5051A0BB4F331676C6976EDD7EC24C3E17B6AED1715E21A0D3B6015E2A7586",
+  "Process": {
+    "ProcessId": 33336,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:10:45.7003553Z",
+    "FinishedUtc": "2026-10-03T16:10:56.6604039Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "EDC101B87BDC3A880ADE10E381CC6699D8B12D61669F2DC4C68F36A8FAFB3D37",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "sql-populated-upgrade",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 2,
+      "Total": 2,
+      "Passed": 2,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "Isolation.OwnerAndProvider",
+      "Upgrade.SqlServer.Populated136To140"
+    ],
+    "ReportSha256": "AA29C24B3CE4AB08C8FE386C1EC27BADB8D00F608E9C4A07F67E30BE48D60955",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\db-compat-wp6-sql-application\\sql-populated-upgrade\\reports\\report.json",
+  "ReportSha256": "AA29C24B3CE4AB08C8FE386C1EC27BADB8D00F608E9C4A07F67E30BE48D60955",
+  "FailureCode": null,
+  "Success": true
+}

@@ -1,0 +1,20 @@
+{
+  "Task": "DB-COMPAT-01-WP5",
+  "Candidate": "c9141a558a46586d8343cd1e5b69ce710a468f31",
+  "RemoteMain": "cbbb7fc8e99290f6aba7589830a98a98726280e9",
+  "CandidateTree": "72115d15128e50cbf99dd7142ab4e50ab1abfbb5",
+  "RemoteTree": "72115d15128e50cbf99dd7142ab4e50ab1abfbb5",
+  "CandidateIncluded": true,
+  "EqualTrees": true,
+  "ObservedUtc": "2026-10-03T15:15:41.4602152Z",
+  "PullRequest": {
+    "headRefOid": "c9141a558a46586d8343cd1e5b69ce710a468f31",
+    "mergeCommit": {
+      "oid": "cbbb7fc8e99290f6aba7589830a98a98726280e9"
+    },
+    "mergedAt": "2026-10-03T15:15:51Z",
+    "number": 152,
+    "state": "MERGED",
+    "url": "https://github.com/GTX537/CP6/pull/152"
+  }
+}

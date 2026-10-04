@@ -1,0 +1,71 @@
+{
+  "SchemaVersion": 1,
+  "Task": "DB-COMPAT-01-WP6",
+  "Command": "notification-status",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261004_97682779_application",
+  "Role": "Application",
+  "Status": "Passed",
+  "StartedUtc": "2026-10-04T01:57:38.2199733+00:00",
+  "FinishedUtc": "2026-10-04T01:57:40.2436579+00:00",
+  "Assertions": [
+    {
+      "Name": "owner-and-physical-database-verified",
+      "Passed": true
+    },
+    {
+      "Name": "notification-one-owned-row",
+      "Passed": true,
+      "ExpectedCount": 1,
+      "ActualCount": 1
+    },
+    {
+      "Name": "notification-status-exact",
+      "Passed": true,
+      "ExpectedCount": 0,
+      "ActualCount": 0
+    },
+    {
+      "Name": "notification-attempts-exact",
+      "Passed": true,
+      "ExpectedCount": 0,
+      "ActualCount": 0
+    },
+    {
+      "Name": "notification-success-persisted",
+      "Passed": true
+    }
+  ],
+  "Counts": {
+    "NotificationRows": 1,
+    "DispatchStatus": 0,
+    "DispatchAttempts": 0
+  },
+  "Hashes": {
+    "EventKeySha256": "27E55BA309B994A1625CD0D9EAE246658279C1C25E2EA8595193622E320ABB0D",
+    "TenantSha256": "868425ABA2AED381A87AA2863A1A873FA639D90C8E4BAB2AF2FCE29A1F92AAD3",
+    "UserSha256": "36EBF09F1000B52A7DC66C4D5E322A2479B3EED2AAC86A1154908662A0D64F60",
+    "NotificationIdSha256": "D0B260CD49A9150FC533356E852BF67F6516036F5D7674C995FF3F0E96A9D3C8"
+  },
+  "HistoryProfiles": [],
+  "TableSummaries": [],
+  "TableComparisons": [],
+  "Inputs": [
+    {
+      "Name": "CP6.DatabaseCompatibility.ApplicationProbe",
+      "Version": "1.0.0.0",
+      "Sha256": "634D635269B0E3CFA294F217FF0B4DCBE261C8AEA9D9D40ACB1F94E8AC49078E"
+    },
+    {
+      "Name": "CP6.Core",
+      "Version": "1.0.0.0",
+      "Sha256": "88CB493C6DF91148D551A57B5B34BCBF85E11AE83A2E9C2EE38975ACCBD32E71"
+    },
+    {
+      "Name": "CP6.Space.Infrastructure",
+      "Version": "1.0.0.0",
+      "Sha256": "9612514A4DED797E172E59D1166EA19B19364123BC1B7A3206BB1FDC0E898224"
+    }
+  ],
+  "Scope": "WP6 owned application/restore fixture only; metadata, counts and hashes. No raw connection, password, token, DP XML or row values. Does not establish HTTP authentication, DP decryption, external delivery or complete application acceptance."
+}

@@ -1,0 +1,137 @@
+{
+  "schemaId": "cp6.c02.producer-provider-verification.v1",
+  "conclusion": "success",
+  "verificationKind": "selected production identity producer/component scenarios on an owned current-provider database; not whole-application or cross-repository transport acceptance",
+  "provider": "PostgreSql",
+  "assemblySha256": "a84ce1d42cff6ece16a8c2ebbe38d10d5ba174ad39ed77f0aa8e8df1e2a3431c",
+  "fixtureAssemblySha256": "1f9d3a7cebe671c44936ad4d397be960ba7918fcd90d5b13aae8865187315203",
+  "contractBundleSha256": "24df72e9446723fa4cf3ad12b7e273ff937ef9b0ed154b8c926b1bac6c7eab63",
+  "scope": "all-provider",
+  "expectedCases": 28,
+  "excludedScopes": [
+    "SQL historical upgrade",
+    "SQL MARS connection",
+    "GDPR purge",
+    "actual RefreshTokenService rotation/reuse",
+    "cross-repository transport acceptance"
+  ],
+  "total": 28,
+  "passed": 28,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "current-provider-core-and-identity-priority-installed",
+      "passed": true
+    },
+    {
+      "name": "business-save-produces-valid-versioned-snapshots",
+      "passed": true
+    },
+    {
+      "name": "unchanged-authorization-does-not-advance-version",
+      "passed": true
+    },
+    {
+      "name": "envelope-failure-rolls-back-business-version-and-outbox",
+      "passed": true
+    },
+    {
+      "name": "snapshot-failure-rolls-back-priority-enqueue",
+      "passed": true
+    },
+    {
+      "name": "outbox-insert-failure-rolls-back-business-and-version",
+      "passed": true
+    },
+    {
+      "name": "concurrent-commands-commit-a-dense-version-sequence",
+      "passed": true
+    },
+    {
+      "name": "savechanges-false-preserves-caller-state-with-one-write",
+      "passed": true
+    },
+    {
+      "name": "savechangesasync-false-preserves-caller-state-with-one-write",
+      "passed": true
+    },
+    {
+      "name": "native-user-disable-revokes-actual-crm-grant-jti",
+      "passed": true
+    },
+    {
+      "name": "direct-grant-revocation-is-atomic-and-idempotent",
+      "passed": true
+    },
+    {
+      "name": "service-revocation-is-bound-to-issuer-client-and-tenant",
+      "passed": true
+    },
+    {
+      "name": "bootstrap-is-idempotent-and-pagination-restarts-on-change",
+      "passed": true
+    },
+    {
+      "name": "department-move-emits-updated-descendant-paths",
+      "passed": true
+    },
+    {
+      "name": "role-membership-and-empty-permissions-are-full-snapshots",
+      "passed": true
+    },
+    {
+      "name": "password-and-two-factor-changes-revoke-real-grants",
+      "passed": true
+    },
+    {
+      "name": "refresh-rotation-preserves-grant-terminal-revoke-invalidates-family",
+      "passed": true
+    },
+    {
+      "name": "direct-family-revocation-is-atomic-across-both-sessions",
+      "passed": true
+    },
+    {
+      "name": "tenant-disable-revokes-browser-and-service-tokens",
+      "passed": true
+    },
+    {
+      "name": "concurrent-bootstrap-and-business-write-preserve-latest-state",
+      "passed": true
+    },
+    {
+      "name": "failed-command-restores-caller-owned-transaction-savepoint",
+      "passed": true
+    },
+    {
+      "name": "actual-platform-dual-dispatchers-preserve-bytes-and-priority-progress",
+      "passed": true
+    },
+    {
+      "name": "actual-http-tls-service-token-reader-and-native-issuance-failure",
+      "passed": true
+    },
+    {
+      "name": "concurrent-service-revocations-commit-one-token-snapshot-and-priority-message",
+      "passed": true
+    },
+    {
+      "name": "service-revocation-priority-failure-rolls-back-record-snapshot-and-outbox",
+      "passed": true
+    },
+    {
+      "name": "actual-platform-outbox-retry-recovers-original-bytes",
+      "passed": true
+    },
+    {
+      "name": "actual-platform-outbox-owner-competition-and-expired-lease-fencing",
+      "passed": true
+    },
+    {
+      "name": "actual-platform-outbox-ten-failures-persist-deadletter",
+      "passed": true
+    }
+  ],
+  "observedAtUtc": "2026-10-03T17:08:56.9018329+00:00"
+}

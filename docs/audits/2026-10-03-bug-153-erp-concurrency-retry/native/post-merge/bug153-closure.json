@@ -1,0 +1,20 @@
+{
+  "Task": "BUG-153",
+  "VerifiedUtc": "2026-10-03T16:55:48.9427511Z",
+  "Issue": {
+    "closedAt": "2026-10-03T16:55:55Z",
+    "number": 153,
+    "state": "CLOSED",
+    "url": "https://github.com/GTX537/CP6/issues/153"
+  },
+  "RemoteMain": "59e09f6e68a36734c64144abfcefc81b7c9c8d9d",
+  "PostmergeProvidersPassed": [
+    "SqlServer",
+    "PostgreSql"
+  ],
+  "EachPostmergeCases": 2,
+  "CleanupSha256": "D6BCF8B8B03959F30BFEFBE5C521776EEC3B50273A8E5F8F4424C54EB3C872BE",
+  "StartedActions": 0,
+  "CanceledActions": 0,
+  "ProductionDeployed": false
+}

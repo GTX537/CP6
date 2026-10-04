@@ -1,0 +1,7 @@
+{
+  "Scope": "Offline entry contracts only",
+  "Checks": 510,
+  "NativeExecuted": false,
+  "DotnetExecuted": false,
+  "Passed": true
+}

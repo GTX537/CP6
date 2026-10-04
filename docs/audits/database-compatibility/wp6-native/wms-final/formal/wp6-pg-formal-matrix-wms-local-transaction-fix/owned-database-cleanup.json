@@ -1,0 +1,211 @@
+[
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_d61f66c0_corewms",
+    "Owner": "d61f66c0fb9d42039902b613b19667ab",
+    "Role": "corewms",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "749102"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:12:31.5444207Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_d61f66c0_corewms.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_ef5fe0b2_erp",
+    "Owner": "ef5fe0b2619941e59d5a1bbf0a373171",
+    "Role": "erp",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "756548"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:13:56.6564145Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_ef5fe0b2_erp.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_a4d2f499_oidcidentity",
+    "Owner": "a4d2f4990f2d45b38ffd3dc79f538f68",
+    "Role": "oidcidentity",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "764395"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:19:07.9574194Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_a4d2f499_oidcidentity.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_6d379179_reports",
+    "Owner": "6d37917974fa409ab95576f4f756cbc2",
+    "Role": "reports",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "771989"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:21:10.6235199Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_6d379179_reports.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_b315d292_runtime",
+    "Owner": "b315d2925d644ed5a4c188089eea806c",
+    "Role": "runtime",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "779574"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:22:00.6718728Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_b315d292_runtime.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_e278c1a1_schema",
+    "Owner": "e278c1a1f3e64f5fb3edd0ae9de29c09",
+    "Role": "schema",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "790583"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:22:59.8289421Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_e278c1a1_schema.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_85aab4e3_space",
+    "Owner": "85aab4e313a7427a99dff12130ff5eab",
+    "Role": "space",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "801874"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:23:29.9583593Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_85aab4e3_space.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_bf5bb8aa_spacehistory",
+    "Owner": "bf5bb8aaed1049c89a4d0041d350c83d",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "813817"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:29:47.5972948Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_bf5bb8aa_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_18ba52b8_spacehistory",
+    "Owner": "18ba52b80b4841c98dea19558dff1747",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "824765"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:30:01.0753047Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_18ba52b8_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_f7c06bcb_spacehistory",
+    "Owner": "f7c06bcb47614cfa96818d9846f90040",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "828285"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:30:08.0282107Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_f7c06bcb_spacehistory.json",
+    "Events": []
+  },
+  {
+    "RunId": "3a866baa07fa4541b993f778b3fed3d3",
+    "Task": "DB-COMPAT-01-WP6",
+    "Provider": "PostgreSql",
+    "Endpoint": "127.0.0.1:5432",
+    "DatabaseName": "CP6Compat_WP6_20261004_08a38538_spacehistory",
+    "Owner": "08a3853879e1460ba81e56a4d846ab56",
+    "Role": "spacehistory",
+    "Status": "Absent",
+    "PhysicalIdentity": {
+      "DatabaseId": "831797"
+    },
+    "Principal": "cp6compat_wp1_0b54dc81",
+    "DatabaseOwner": "cp6compat_wp1_0b54dc81",
+    "ServerVersion": "18.6",
+    "CreatedUtc": "2026-10-04T01:30:15.4025624Z",
+    "ReceiptPath": "D:\\CP6\\tmp\\wp6-pg-formal-matrix-wms-local-transaction-fix\\receipts\\CP6Compat_WP6_20261004_08a38538_spacehistory.json",
+    "Events": []
+  }
+]

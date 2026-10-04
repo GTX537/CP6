@@ -1,0 +1,23 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Phase": "Pre-change full API PostgreSql startup",
+  "Provider": "PostgreSql",
+  "DatabaseName": "CP6Compat_WP6_20261003_b4c5944f_application",
+  "ApiSha256": "5E777A44F47C7DCA832E44B2ADC3E4D0F52C953072186CA1FCBFA32F7530D533",
+  "Process": {
+    "ProcessId": 19220,
+    "ExitCode": -532462766,
+    "StartedUtc": "2026-10-03T15:50:41.5248882Z",
+    "FinishedUtc": "2026-10-03T15:50:54.5555043Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "StandardErrorSha256": "6D066F18CF8C0E3CE8BA16520A82BD6400F7EA30EA45A9C6D65A7DD876C1EF1E",
+    "TimedOut": false
+  },
+  "ExpectedUnsupportedGuardObserved": true,
+  "ExceptionNames": [
+    "System.InvalidOperationException"
+  ],
+  "DatabaseRemainedEmpty": true,
+  "AcceptancePassed": false
+}

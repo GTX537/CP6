@@ -1,0 +1,50 @@
+{
+  "EntryId": "space-history-sqlserver-idempotent-deployment-script-runs-twice",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261004_3ea1cf24_spacehistory",
+  "Role": "spacehistory",
+  "SourceSha": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "Project": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+  "BinarySha256": "A46BCA48803EF229E46F4CD1172BC2D8AE37BE8A2166AFE8D08ED78A099337EB",
+  "RuntimeArtifactManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-sqlserver-idempotent-deployment-script-runs-twice\\runtime-artifact-before.json",
+  "RuntimeArtifactManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactAfterManifestPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-sqlserver-idempotent-deployment-script-runs-twice\\runtime-artifact-after.json",
+  "RuntimeArtifactAfterManifestSha256": "32C3D19BB16F23DFE22A68CA9B324169B01D59016B73EEC1F7D3B39AD141F858",
+  "RuntimeArtifactsUnchanged": true,
+  "Process": {
+    "ProcessId": 24980,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T01:44:39.1432249Z",
+    "FinishedUtc": "2026-10-04T01:44:46.6034176Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "F62DC3C7842760533DF1E9C152EFA2CBE7C6A91C83F1E23A1AEA6F79B7AE0514",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "Validation": {
+    "EntryId": "space-history-sqlserver-idempotent-deployment-script-runs-twice",
+    "Provider": "SqlServer",
+    "Success": true,
+    "Status": "Passed",
+    "FailureCodes": [],
+    "Counts": {
+      "Expected": 1,
+      "Total": 1,
+      "Passed": 1,
+      "NonPassing": 0
+    },
+    "MissingCaseNames": [],
+    "UnexpectedCaseNames": [],
+    "DuplicateCaseNames": [],
+    "ActualCaseNames": [
+      "CP6.Space.IntegrationTests.SpaceAiRetentionTests.SqlServer_idempotent_deployment_script_runs_twice"
+    ],
+    "ReportSha256": "1A9D7B1EEB4790CFF0B87925EF4CF77877C350866DC0764B6C415AF4E4CC3405",
+    "ReportDatabaseName": null,
+    "VerificationKind": "Offline report validation only; process exit code is supplied by the caller."
+  },
+  "ReportPath": "D:\\CP6\\tmp\\wp6-sql-formal-matrix-wms-local-transaction-fix\\entries\\space-history-sqlserver-idempotent-deployment-script-runs-twice\\private\\trx\\results.trx",
+  "ReportSha256": "1A9D7B1EEB4790CFF0B87925EF4CF77877C350866DC0764B6C415AF4E4CC3405",
+  "FailureCode": null,
+  "Success": true
+}

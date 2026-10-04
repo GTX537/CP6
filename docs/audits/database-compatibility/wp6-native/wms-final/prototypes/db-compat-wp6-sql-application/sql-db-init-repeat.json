@@ -1,0 +1,19 @@
+{
+  "Task": "DB-COMPAT-01-WP6",
+  "Provider": "SqlServer",
+  "DatabaseName": "CP6Compat_WP6_20261003_392fff71_application",
+  "Label": "sql-db-init-repeat",
+  "ArtifactManifestSha256": "F6F127C18CA6D4CAF73BD391068E3D4260EF6F446775E00631203DF7FF8CB24A",
+  "Process": {
+    "ProcessId": 27192,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-03T16:04:06.6593154Z",
+    "FinishedUtc": "2026-10-03T16:04:16.8485995Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "90498B0866D4844D468E07AEDEAF13D1D87DC4E07A5BAC03E2BACC850FEDA01F",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "InitializerCompletionObserved": true,
+  "Success": true
+}
