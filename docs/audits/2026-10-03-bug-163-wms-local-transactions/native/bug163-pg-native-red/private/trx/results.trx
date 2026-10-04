@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d10bca46-d270-443a-a49e-7f7a294b5770" name="tt@LAPTOP-3QQ44FJS 2026-10-03 20:06:13" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T20:06:13.7836666-04:00" queuing="2026-10-03T20:06:13.7836670-04:00" start="2026-10-03T20:06:05.7994672-04:00" finish="2026-10-03T20:06:23.9664839-04:00" />
+  <TestSettings name="default" id="f779b847-355c-4dea-b76f-b35782d29007">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_20_06_13" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a1918c02-1109-45e1-a08d-7b9d54dfc315" testId="070a56e1-0e9d-5027-8f20-bc5fc3fae1df" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2266454" startTime="2026-10-03T20:06:21.5710679-04:00" endTime="2026-10-03T20:06:21.7979040-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a1918c02-1109-45e1-a08d-7b9d54dfc315" />
+    <UnitTestResult executionId="c792b796-82f3-4c08-a0ab-a5bccf78aaa0" testId="171937a8-3e0c-fd62-0bdc-b0447852fc47" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.9021417" startTime="2026-10-03T20:06:15.1958314-04:00" endTime="2026-10-03T20:06:16.0965716-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c792b796-82f3-4c08-a0ab-a5bccf78aaa0" />
+    <UnitTestResult executionId="662bebac-d89b-4671-8ab0-569d9e339389" testId="a36f970a-a514-047d-9b9c-f62e6efbbaaa" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.9233046" startTime="2026-10-03T20:06:16.6423317-04:00" endTime="2026-10-03T20:06:17.5653133-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="662bebac-d89b-4671-8ab0-569d9e339389" />
+    <UnitTestResult executionId="e08b8e41-13e4-45dc-ac9b-6f8486e6afa5" testId="720f53a7-53dd-f8ef-e15c-98d5fe74d23b" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.9233516" startTime="2026-10-03T20:06:17.8226487-04:00" endTime="2026-10-03T20:06:18.7457637-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e08b8e41-13e4-45dc-ac9b-6f8486e6afa5" />
+    <UnitTestResult executionId="90babd5e-c436-4e76-825a-9da4086da691" testId="59b4405d-fa69-881e-5711-b2267040f3f9" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.2783513" startTime="2026-10-03T20:06:12.2573236-04:00" endTime="2026-10-03T20:06:13.5277898-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90babd5e-c436-4e76-825a-9da4086da691" />
+    <UnitTestResult executionId="04e75bfe-bb80-4761-8290-ce53407e076b" testId="073d5af9-5c5c-1c85-e382-dca5115426b2" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2808848" startTime="2026-10-03T20:06:20.4344643-04:00" endTime="2026-10-03T20:06:20.7159287-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="04e75bfe-bb80-4761-8290-ce53407e076b">
+      <Output>
+        <StdOut>BUG163 native command physical=33092 ambient=False local=False&#xD;
+BUG163 native command physical=15668 ambient=False local=False&#xD;
+BUG163 native command physical=22768 ambient=True local=False&#xD;
+BUG163 native command physical=22768 ambient=True local=False&#xD;
+BUG163 native command physical=22768 ambient=True local=False&#xD;
+BUG163 native command physical=22768 ambient=True local=False&#xD;
+BUG163 native command physical=13168 ambient=False local=False</StdOut>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 414&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 226&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 229&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f3ab6283-09b8-41bb-9fbd-02a06f16d39c" testId="2eab05c5-ec67-8c88-7331-95e6dec764ea" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.1406423" startTime="2026-10-03T20:06:21.7980415-04:00" endTime="2026-10-03T20:06:22.9388969-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3ab6283-09b8-41bb-9fbd-02a06f16d39c" />
+    <UnitTestResult executionId="f8aa16a6-086a-469e-aaa3-f5b559c874c1" testId="82ad53f2-b877-9d14-9ab8-03d6d043ee26" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2562128" startTime="2026-10-03T20:06:17.5655096-04:00" endTime="2026-10-03T20:06:17.8220647-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f8aa16a6-086a-469e-aaa3-f5b559c874c1">
+      <Output>
+        <StdOut>BUG163 native command physical=35856 ambient=False local=False&#xD;
+BUG163 native command physical=28900 ambient=True local=False&#xD;
+BUG163 native command physical=28900 ambient=True local=False&#xD;
+BUG163 native command physical=28900 ambient=True local=False&#xD;
+BUG163 native command physical=28900 ambient=True local=False&#xD;
+BUG163 native command physical=28900 ambient=True local=False&#xD;
+BUG163 native command physical=28900 ambient=True local=False&#xD;
+BUG163 native command physical=35072 ambient=False local=False</StdOut>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 414&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 30&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 35&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8cc73970-b553-424a-bbc0-ee41c5896318" testId="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2561376" startTime="2026-10-03T20:06:16.3868075-04:00" endTime="2026-10-03T20:06:16.6416637-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cc73970-b553-424a-bbc0-ee41c5896318">
+      <Output>
+        <StdOut>BUG163 native command physical=33484 ambient=False local=False&#xD;
+BUG163 native command physical=33236 ambient=False local=False&#xD;
+BUG163 native command physical=11680 ambient=True local=False&#xD;
+BUG163 native command physical=11680 ambient=True local=False&#xD;
+BUG163 native command physical=11680 ambient=True local=False&#xD;
+BUG163 native command physical=11680 ambient=True local=False&#xD;
+BUG163 native command physical=11680 ambient=True local=False&#xD;
+BUG163 native command physical=32180 ambient=False local=False</StdOut>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 414&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 226&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 229&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="faf317e4-ee28-4cf0-a4fa-ed0ea6060826" testId="3a00f598-3f80-40f5-7282-b250c613ebdb" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.0195557" startTime="2026-10-03T20:06:13.5374082-04:00" endTime="2026-10-03T20:06:14.5480731-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="faf317e4-ee28-4cf0-a4fa-ed0ea6060826" />
+    <UnitTestResult executionId="fff4347b-f908-430d-84a9-73c576c57447" testId="79db6d34-3978-e913-2e7c-5a5d0028b81a" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4278732" startTime="2026-10-03T20:06:18.7459313-04:00" endTime="2026-10-03T20:06:19.1746343-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fff4347b-f908-430d-84a9-73c576c57447">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.</Message>
+          <StackTrace>   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)&#xD;
+   at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)&#xD;
+   at System.Transactions.Transaction.Rollback()&#xD;
+   at System.Transactions.TransactionScope.InternalDispose()&#xD;
+   at System.Transactions.TransactionScope.Dispose()&#xD;
+   at CP6.Core.Services.Wms.LabelJobService.ClaimAsync(String jobNo, LabelJobCommand request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 174&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.ClaimAndCompleteBug163LabelAsync(CP6Context db) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 359&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 101&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 104&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 104&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b58b230a-a528-4709-9907-dc6b72344b85" testId="abdf6e01-5995-f9b8-4229-2e4cb502d6ec" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.8547730" startTime="2026-10-03T20:06:20.7169100-04:00" endTime="2026-10-03T20:06:21.5709466-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b58b230a-a528-4709-9907-dc6b72344b85" />
+    <UnitTestResult executionId="4f8a5ed7-00fe-45b2-87be-28e3184544c0" testId="b839b86b-daca-089c-cc84-0cfcb5677684" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5305054" startTime="2026-10-03T20:06:14.6654895-04:00" endTime="2026-10-03T20:06:15.1940108-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f8a5ed7-00fe-45b2-87be-28e3184544c0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)&#xD;
+Actual:   typeof(System.InvalidOperationException)&#xD;
+---- System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.</Message>
+          <StackTrace>   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 176&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 183&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 183&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)&#xD;
+   at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)&#xD;
+   at System.Transactions.Transaction.Rollback()&#xD;
+   at System.Transactions.TransactionScope.InternalDispose()&#xD;
+   at System.Transactions.TransactionScope.Dispose()&#xD;
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 103</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e032e88e-f867-47f9-80d5-4997c6fcacbd" testId="ef92c3c3-fe53-4cab-e93d-1c027e8f15fb" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1062025" startTime="2026-10-03T20:06:14.5487182-04:00" endTime="2026-10-03T20:06:14.6618182-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e032e88e-f867-47f9-80d5-4997c6fcacbd">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.</Message>
+          <StackTrace>   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)&#xD;
+   at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)&#xD;
+   at System.Transactions.Transaction.Rollback()&#xD;
+   at System.Transactions.TransactionScope.InternalDispose()&#xD;
+   at System.Transactions.TransactionScope.Dispose()&#xD;
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 103&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 81&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 85&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 85&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5f4dc7d9-0388-445a-b592-6dea3926637b" testId="b9cb4a1f-2837-5620-6f81-9112b78b2f6a" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.9558860" startTime="2026-10-03T20:06:22.9390378-04:00" endTime="2026-10-03T20:06:23.8951140-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5f4dc7d9-0388-445a-b592-6dea3926637b" />
+    <UnitTestResult executionId="2c774d55-9671-40f3-8ed4-221decdedbf7" testId="f98785e0-88b6-0164-ab46-de23bb1652a0" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent" computerName="LAPTOP-3QQ44FJS" duration="00:00:01.2593868" startTime="2026-10-03T20:06:19.1757832-04:00" endTime="2026-10-03T20:06:20.4343420-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c774d55-9671-40f3-8ed4-221decdedbf7" />
+    <UnitTestResult executionId="b87442dc-3453-4670-b8ad-aa2395f4e71f" testId="c9992fc7-c9f0-89f0-6de3-943ab45308af" testName="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2876619" startTime="2026-10-03T20:06:16.0967174-04:00" endTime="2026-10-03T20:06:16.3849484-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b87442dc-3453-4670-b8ad-aa2395f4e71f">
+      <Output>
+        <StdOut>BUG163 native command physical=9192 ambient=False local=False&#xD;
+BUG163 native command physical=35656 ambient=False local=False&#xD;
+BUG163 native command physical=23980 ambient=True local=False&#xD;
+BUG163 native command physical=23980 ambient=True local=False&#xD;
+BUG163 native command physical=23980 ambient=True local=False&#xD;
+BUG163 native command physical=23980 ambient=True local=False&#xD;
+BUG163 native command physical=29972 ambient=False local=False</StdOut>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 414&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 226&#xD;
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 229&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b9cb4a1f-2837-5620-6f81-9112b78b2f6a">
+      <Execution id="5f4dc7d9-0388-445a-b592-6dea3926637b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="59b4405d-fa69-881e-5711-b2267040f3f9">
+      <Execution id="90babd5e-c436-4e76-825a-9da4086da691" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="82ad53f2-b877-9d14-9ab8-03d6d043ee26">
+      <Execution id="f8aa16a6-086a-469e-aaa3-f5b559c874c1" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="3a00f598-3f80-40f5-7282-b250c613ebdb">
+      <Execution id="faf317e4-ee28-4cf0-a4fa-ed0ea6060826" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelComplete_RollsBackStatusResultAndReceipt" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="070a56e1-0e9d-5027-8f20-bc5fc3fae1df">
+      <Execution id="a1918c02-1109-45e1-a08d-7b9d54dfc315" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a36f970a-a514-047d-9b9c-f62e6efbbaaa">
+      <Execution id="662bebac-d89b-4671-8ab0-569d9e339389" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="073d5af9-5c5c-1c85-e382-dca5115426b2">
+      <Execution id="04e75bfe-bb80-4761-8290-ce53407e076b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b839b86b-daca-089c-cc84-0cfcb5677684">
+      <Execution id="4f8a5ed7-00fe-45b2-87be-28e3184544c0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="2eab05c5-ec67-8c88-7331-95e6dec764ea">
+      <Execution id="f3ab6283-09b8-41bb-9fbd-02a06f16d39c" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="abdf6e01-5995-f9b8-4229-2e4cb502d6ec">
+      <Execution id="b58b230a-a528-4709-9907-dc6b72344b85" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="c9992fc7-c9f0-89f0-6de3-943ab45308af">
+      <Execution id="b87442dc-3453-4670-b8ad-aa2395f4e71f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="ef92c3c3-fe53-4cab-e93d-1c027e8f15fb">
+      <Execution id="e032e88e-f867-47f9-80d5-4997c6fcacbd" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f98785e0-88b6-0164-ab46-de23bb1652a0">
+      <Execution id="2c774d55-9671-40f3-8ed4-221decdedbf7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="720f53a7-53dd-f8ef-e15c-98d5fe74d23b">
+      <Execution id="e08b8e41-13e4-45dc-ac9b-6f8486e6afa5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="79db6d34-3978-e913-2e7c-5a5d0028b81a">
+      <Execution id="fff4347b-f908-430d-84a9-73c576c57447" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af">
+      <Execution id="8cc73970-b553-424a-bbc0-ee41c5896318" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics" storage="d:\cp6\tmp\worktrees\bug-163-wms-local-transactions\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="171937a8-3e0c-fd62-0bdc-b0447852fc47">
+      <Execution id="c792b796-82f3-4c08-a0ab-a5bccf78aaa0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.WmsProductionSqlServerTests" name="Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="070a56e1-0e9d-5027-8f20-bc5fc3fae1df" executionId="a1918c02-1109-45e1-a08d-7b9d54dfc315" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="171937a8-3e0c-fd62-0bdc-b0447852fc47" executionId="c792b796-82f3-4c08-a0ab-a5bccf78aaa0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a36f970a-a514-047d-9b9c-f62e6efbbaaa" executionId="662bebac-d89b-4671-8ab0-569d9e339389" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="720f53a7-53dd-f8ef-e15c-98d5fe74d23b" executionId="e08b8e41-13e4-45dc-ac9b-6f8486e6afa5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59b4405d-fa69-881e-5711-b2267040f3f9" executionId="90babd5e-c436-4e76-825a-9da4086da691" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="073d5af9-5c5c-1c85-e382-dca5115426b2" executionId="04e75bfe-bb80-4761-8290-ce53407e076b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2eab05c5-ec67-8c88-7331-95e6dec764ea" executionId="f3ab6283-09b8-41bb-9fbd-02a06f16d39c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82ad53f2-b877-9d14-9ab8-03d6d043ee26" executionId="f8aa16a6-086a-469e-aaa3-f5b559c874c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ab8a6d4-31d1-fa66-b3e5-3daee7aa82af" executionId="8cc73970-b553-424a-bbc0-ee41c5896318" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a00f598-3f80-40f5-7282-b250c613ebdb" executionId="faf317e4-ee28-4cf0-a4fa-ed0ea6060826" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79db6d34-3978-e913-2e7c-5a5d0028b81a" executionId="fff4347b-f908-430d-84a9-73c576c57447" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="abdf6e01-5995-f9b8-4229-2e4cb502d6ec" executionId="b58b230a-a528-4709-9907-dc6b72344b85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b839b86b-daca-089c-cc84-0cfcb5677684" executionId="4f8a5ed7-00fe-45b2-87be-28e3184544c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ef92c3c3-fe53-4cab-e93d-1c027e8f15fb" executionId="e032e88e-f867-47f9-80d5-4997c6fcacbd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9cb4a1f-2837-5620-6f81-9112b78b2f6a" executionId="5f4dc7d9-0388-445a-b592-6dea3926637b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f98785e0-88b6-0164-ab46-de23bb1652a0" executionId="2c774d55-9671-40f3-8ed4-221decdedbf7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9992fc7-c9f0-89f0-6de3-943ab45308af" executionId="b87442dc-3453-4670-b8ad-aa2395f4e71f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="17" executed="17" passed="10" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.17]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.48]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.50]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:08.53]       System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.&#xD;
+[xUnit.net 00:00:08.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.53]            at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)&#xD;
+[xUnit.net 00:00:08.53]            at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)&#xD;
+[xUnit.net 00:00:08.53]            at System.Transactions.Transaction.Rollback()&#xD;
+[xUnit.net 00:00:08.53]            at System.Transactions.TransactionScope.InternalDispose()&#xD;
+[xUnit.net 00:00:08.53]            at System.Transactions.TransactionScope.Dispose()&#xD;
+[xUnit.net 00:00:08.53]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs(103,0): at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.53]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(81,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted()&#xD;
+[xUnit.net 00:00:08.53]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(85,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted()&#xD;
+[xUnit.net 00:00:08.53]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(85,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted()&#xD;
+[xUnit.net 00:00:08.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.06]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:09.06]       Expected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)&#xD;
+[xUnit.net 00:00:09.06]       Actual:   typeof(System.InvalidOperationException)&#xD;
+[xUnit.net 00:00:09.06]       ---- System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.&#xD;
+[xUnit.net 00:00:09.06]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.06]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(176,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback()&#xD;
+[xUnit.net 00:00:09.06]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(183,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback()&#xD;
+[xUnit.net 00:00:09.06]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(183,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback()&#xD;
+[xUnit.net 00:00:09.06]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.06]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:09.06]            at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)&#xD;
+[xUnit.net 00:00:09.06]            at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)&#xD;
+[xUnit.net 00:00:09.06]            at System.Transactions.Transaction.Rollback()&#xD;
+[xUnit.net 00:00:09.06]            at System.Transactions.TransactionScope.InternalDispose()&#xD;
+[xUnit.net 00:00:09.06]            at System.Transactions.TransactionScope.Dispose()&#xD;
+[xUnit.net 00:00:09.06]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs(103,0): at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct)&#xD;
+[xUnit.net 00:00:10.25]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:10.25]       Expected: False&#xD;
+[xUnit.net 00:00:10.25]       Actual:   True&#xD;
+[xUnit.net 00:00:10.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.25]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(414,0): at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction()&#xD;
+[xUnit.net 00:00:10.25]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(226,0): at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success)&#xD;
+[xUnit.net 00:00:10.25]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(229,0): at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success)&#xD;
+[xUnit.net 00:00:10.25]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.25]       Output:&#xD;
+[xUnit.net 00:00:10.25]         BUG163 native command physical=9192 ambient=False local=False&#xD;
+[xUnit.net 00:00:10.25]         BUG163 native command physical=35656 ambient=False local=False&#xD;
+[xUnit.net 00:00:10.25]         BUG163 native command physical=23980 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.25]         BUG163 native command physical=23980 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.25]         BUG163 native command physical=23980 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.25]         BUG163 native command physical=23980 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.25]         BUG163 native command physical=29972 ambient=False local=False&#xD;
+[xUnit.net 00:00:10.51]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:10.51]       Expected: False&#xD;
+[xUnit.net 00:00:10.51]       Actual:   True&#xD;
+[xUnit.net 00:00:10.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.51]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(414,0): at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction()&#xD;
+[xUnit.net 00:00:10.51]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(226,0): at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success)&#xD;
+[xUnit.net 00:00:10.51]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(229,0): at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success)&#xD;
+[xUnit.net 00:00:10.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.51]       Output:&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=33484 ambient=False local=False&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=33236 ambient=False local=False&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=11680 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=11680 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=11680 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=11680 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=11680 ambient=True local=False&#xD;
+[xUnit.net 00:00:10.51]         BUG163 native command physical=32180 ambient=False local=False&#xD;
+[xUnit.net 00:00:11.69]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:11.69]       Expected: False&#xD;
+[xUnit.net 00:00:11.69]       Actual:   True&#xD;
+[xUnit.net 00:00:11.69]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.69]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(414,0): at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction()&#xD;
+[xUnit.net 00:00:11.69]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(30,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce()&#xD;
+[xUnit.net 00:00:11.69]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(35,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce()&#xD;
+[xUnit.net 00:00:11.69]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.69]       Output:&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=35856 ambient=False local=False&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=28900 ambient=True local=False&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=28900 ambient=True local=False&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=28900 ambient=True local=False&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=28900 ambient=True local=False&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=28900 ambient=True local=False&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=28900 ambient=True local=False&#xD;
+[xUnit.net 00:00:11.69]         BUG163 native command physical=35072 ambient=False local=False&#xD;
+[xUnit.net 00:00:13.04]       System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.&#xD;
+[xUnit.net 00:00:13.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:13.04]            at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)&#xD;
+[xUnit.net 00:00:13.04]            at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)&#xD;
+[xUnit.net 00:00:13.04]            at System.Transactions.Transaction.Rollback()&#xD;
+[xUnit.net 00:00:13.04]            at System.Transactions.TransactionScope.InternalDispose()&#xD;
+[xUnit.net 00:00:13.04]            at System.Transactions.TransactionScope.Dispose()&#xD;
+[xUnit.net 00:00:13.04]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs(174,0): at CP6.Core.Services.Wms.LabelJobService.ClaimAsync(String jobNo, LabelJobCommand request, String userName, CancellationToken ct)&#xD;
+[xUnit.net 00:00:13.04]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(359,0): at CP6.Tests.WmsProductionSqlServerTests.ClaimAndCompleteBug163LabelAsync(CP6Context db)&#xD;
+[xUnit.net 00:00:13.04]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(101,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted()&#xD;
+[xUnit.net 00:00:13.04]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(104,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted()&#xD;
+[xUnit.net 00:00:13.04]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(104,0): at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted()&#xD;
+[xUnit.net 00:00:13.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:14.58]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:14.58]       Expected: False&#xD;
+[xUnit.net 00:00:14.58]       Actual:   True&#xD;
+[xUnit.net 00:00:14.58]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.58]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(414,0): at CP6.Tests.WmsProductionSqlServerTests.WmsTransactionTrace.AssertStandaloneLocalTransaction()&#xD;
+[xUnit.net 00:00:14.58]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(226,0): at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success)&#xD;
+[xUnit.net 00:00:14.58]         D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs(229,0): at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success)&#xD;
+[xUnit.net 00:00:14.58]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:14.58]       Output:&#xD;
+[xUnit.net 00:00:14.58]         BUG163 native command physical=33092 ambient=False local=False&#xD;
+[xUnit.net 00:00:14.58]         BUG163 native command physical=15668 ambient=False local=False&#xD;
+[xUnit.net 00:00:14.58]         BUG163 native command physical=22768 ambient=True local=False&#xD;
+[xUnit.net 00:00:14.58]         BUG163 native command physical=22768 ambient=True local=False&#xD;
+[xUnit.net 00:00:14.58]         BUG163 native command physical=22768 ambient=True local=False&#xD;
+[xUnit.net 00:00:14.58]         BUG163 native command physical=22768 ambient=True local=False&#xD;
+[xUnit.net 00:00:14.58]         BUG163 native command physical=13168 ambient=False local=False&#xD;
+[xUnit.net 00:00:17.77]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T20:06:14.6634574-04:00">
+        <Text>[xUnit.net 00:00:08.53]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T20:06:15.1949041-04:00">
+        <Text>[xUnit.net 00:00:09.06]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T20:06:16.3854187-04:00">
+        <Text>[xUnit.net 00:00:10.25]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T20:06:16.6419491-04:00">
+        <Text>[xUnit.net 00:00:10.51]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T20:06:17.8225075-04:00">
+        <Text>[xUnit.net 00:00:11.69]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T20:06:19.1750210-04:00">
+        <Text>[xUnit.net 00:00:13.04]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3QQ44FJS" outcome="Error" timestamp="2026-10-03T20:06:20.7162487-04:00">
+        <Text>[xUnit.net 00:00:14.58]     CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

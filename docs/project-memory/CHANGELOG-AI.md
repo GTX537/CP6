@@ -1,5 +1,8 @@
 # AI 可读变更日志
 
+最新进展（2026-10-03，BUG163 Open）：WMS LPN 四处和 Label 两处自建 ambient 事务已修复为独立调用时的 DbContext 本地 ReadCommitted 事务，保留调用方已有本地事务所有权及预打开连接的 ambient Required/abort 语义。有效种子 RED SQL17=3P/14F、PG17=10P/7F；修复后两库原8＋新17各25/25，零失败/跳过，2492源码输入与同一构建运行文件核对，一次事务专项审查无P0/P1/P2阻断；111份公共原件及原始/中间失败保留，见[BUG163本地证据](../audits/2026-10-03-bug-163-wms-local-transactions/README.md)。正常远端交付、合并后冒烟及三份自有库（修复两库与原WP6 SQL一库）清理尚待完成；父Issue134/WP6仍Open，最终双库Matrix/Application与恢复验收需要适用修复后的源码。未启动远程Actions，未变更生产门禁或部署环境。
+
+
 ## 2026-10-03：BUG161 CAD 配置替换本地回归通过，交付待完成
 
 [Issue #161](https://github.com/GTX537/CP6/issues/161) 由 DB-COMPAT-01 WP6 最终 PostgreSQL 矩阵发现：28 个入口通过后，CAD/资产/协作原 15 项为 14P/1F，实际 40001。独立分支从远端 main 4a654320 建立，补充完整事务的最多三次恢复、回滚/释放/重读及调用方事务/未保存更改保护。修复前协调回归 0P/2F（均实际 40001）；修复后两库原 15＋新十项各 25/25、零 skip，补充 InMemory 路由 17/17；0 warning/error，SQL 复用同一已绑定产物。一次专项源码审查无 P0/P1/P2 阻断，71 份公共原件按字节归档；正常远端交付、合并后冒烟、两库清理和 Issue 关闭仍待完成，详见 [BUG161 证据](../audits/2026-10-03-bug-161-cad-provider-recovery/README.md)。WP1–WP5 已交付；WP6 与父 Issue134 保持未完成。原失败及所有历史交付记录保留。没有远程 Actions 或生产部署。
