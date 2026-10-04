@@ -1,0 +1,14 @@
+[
+  {
+    "Path": "CP6.Core/Services/Wms/LpnService.cs",
+    "MainBlob": "7135a921bb99c77cf5883017020163d84c5977c7",
+    "WorkingBlob": "7135a921bb99c77cf5883017020163d84c5977c7",
+    "UnfixedMatchesMain": true
+  },
+  {
+    "Path": "CP6.Core/Services/Wms/LabelJobService.cs",
+    "MainBlob": "9903ecb5e9e3cfb9d77e07cf055d5883a13010a3",
+    "WorkingBlob": "9903ecb5e9e3cfb9d77e07cf055d5883a13010a3",
+    "UnfixedMatchesMain": true
+  }
+]

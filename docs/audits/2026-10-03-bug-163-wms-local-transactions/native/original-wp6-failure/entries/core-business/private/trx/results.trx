@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9a1f815a-1e7f-406f-a7a1-31059e6507b3" name="tt@LAPTOP-3QQ44FJS 2026-10-03 19:23:08" runUser="LAPTOP-3QQ44FJS\tt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T19:23:08.5237932-04:00" queuing="2026-10-03T19:23:08.5237935-04:00" start="2026-10-03T19:22:39.7930412-04:00" finish="2026-10-03T19:23:32.3785562-04:00" />
+  <TestSettings name="default" id="c0853e9d-8409-4209-98a3-1b886f40c661">
+    <Deployment runDeploymentRoot="tt_LAPTOP-3QQ44FJS_2026-10-03_19_23_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0b8f85f8-2177-4642-8882-223f0ef114c5" testId="bd5bdfb0-c50a-f9d4-1c44-1fe3133b9e32" testName="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Callback_target_read_holds_native_lock_until_owning_workflow_transaction_finishes" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2855932" startTime="2026-10-03T19:23:20.6033443-04:00" endTime="2026-10-03T19:23:20.8892066-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b8f85f8-2177-4642-8882-223f0ef114c5">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.&#xD;
+Actual callback overlap: provider=SqlServer; differentSessions=true; nativeWaiterBlockedByFirst=True; secondCompletedBeforeRelease=False.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="31653523-64a0-4f82-93f8-6bcabf9756d5" testId="9aefcaab-73ee-a78a-3da2-3a1911c79681" testName="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Withdrawn_instance_cancels_due_job_before_executor_call" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0736441" startTime="2026-10-03T19:23:08.1933233-04:00" endTime="2026-10-03T19:23:08.2674221-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="31653523-64a0-4f82-93f8-6bcabf9756d5" />
+    <UnitTestResult executionId="8612e860-df1b-450c-bf1c-b3b6cae0df36" testId="e7030ea4-9246-addb-49c8-edd8d2872d9a" testName="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Reaper_only_reclaims_expired_leases_without_burning_attempts" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1449785" startTime="2026-10-03T19:23:08.0485560-04:00" endTime="2026-10-03T19:23:08.1931487-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8612e860-df1b-450c-bf1c-b3b6cae0df36" />
+    <UnitTestResult executionId="ebd6ec5a-e37c-451b-a8e1-6f9b1bfa1ada" testId="d8708f1e-748b-98b0-20eb-819802a6159f" testName="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.Stale_version_token_rejects_second_writer_on_a_different_line" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.5082114" startTime="2026-10-03T19:23:31.7243206-04:00" endTime="2026-10-03T19:23:32.2328726-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebd6ec5a-e37c-451b-a8e1-6f9b1bfa1ada">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="78d3519d-cf3f-4162-aaf9-a826f8bddbf3" testId="6db46fd7-901c-d924-e313-c5eb12ff4c21" testName="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Two_contexts_claiming_same_pending_version_call_executor_once" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.8021113" startTime="2026-10-03T19:23:06.9928533-04:00" endTime="2026-10-03T19:23:07.7877190-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78d3519d-cf3f-4162-aaf9-a826f8bddbf3">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.; two native claims, one real optimistic conflict, one executor call; all workers joined.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="37054131-c753-4aca-a66e-dda1381b008b" testId="53a2b192-33e5-a386-ac91-72caf00152a5" testName="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Caller_transaction_rolls_back_native_business_change_and_outbox" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0790828" startTime="2026-10-03T19:23:19.1888930-04:00" endTime="2026-10-03T19:23:19.2681510-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37054131-c753-4aca-a66e-dda1381b008b">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="49be20c0-758e-475d-b9e2-cedf8b8b1360" testId="0d276781-cc2e-31f1-a831-11749e912b42" testName="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Concurrent_double_submit_returns_one_native_active_instance" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1285183" startTime="2026-10-03T19:23:20.4745462-04:00" endTime="2026-10-03T19:23:20.6032098-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="49be20c0-758e-475d-b9e2-cedf8b8b1360">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.&#xD;
+Both actual submit scopes loaded the same 8-byte native token before either persisted; one committed instance won.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="78189105-fb72-4967-8c4b-b6d0a09e1cbf" testId="0e2c2bba-cdd4-2c91-9870-8a78190c2a2d" testName="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Actual_flow_engine_dispatcher_callback_commits_purchase_and_workflow_together" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6871687" startTime="2026-10-03T19:23:19.2684832-04:00" endTime="2026-10-03T19:23:19.9563601-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78189105-fb72-4967-8c4b-b6d0a09e1cbf">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e57752a8-801f-4a47-9b4e-110161401b38" testId="eb37ae33-68d1-acb6-28b5-91b1528ec11a" testName="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.PostAsync_BlockExceeded_Rejected" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1842493" startTime="2026-10-03T19:23:31.5395467-04:00" endTime="2026-10-03T19:23:31.7242103-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e57752a8-801f-4a47-9b4e-110161401b38">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d2d79924-5834-4fd4-b0a5-d611648e4450" testId="8971e6e9-9777-c8b2-5d7c-b3e7d6b1af09" testName="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.Decimal_annual_amount_and_last_period_remainder_round_trip_through_native_storage" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.4119597" startTime="2026-10-03T19:23:29.5554057-04:00" endTime="2026-10-03T19:23:29.9674297-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2d79924-5834-4fd4-b0a5-d611648e4450">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="35cd6e1d-b47b-46e8-9c56-ec60c2c5e538" testId="192b65dc-ba5e-05c2-b2bd-c48157a96792" testName="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Due_job_success_persists_token_progress_and_succeeded_state" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2591583" startTime="2026-10-03T19:23:07.7935604-04:00" endTime="2026-10-03T19:23:08.0478748-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35cd6e1d-b47b-46e8-9c56-ec60c2c5e538">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.; production job success and token advancement persisted.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fb52282e-ca4a-47ed-a8ff-3f2c7c1e77c8" testId="b51b5f8b-75ea-32c0-c460-8c0b8e940a8b" testName="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Native_callback_write_failure_rolls_back_purchase_and_workflow_transaction" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2151425" startTime="2026-10-03T19:23:20.2590617-04:00" endTime="2026-10-03T19:23:20.4744126-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb52282e-ca4a-47ed-a8ff-3f2c7c1e77c8">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.&#xD;
+Actual native callback failure: provider=SqlServer; constraint=CK_wp4_pr_callback_6b5f4ab61a4347ee99140cfabfee4737; kind=CheckConstraint.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b38310c6-05cf-470a-84b9-00b08dcf56f8" testId="1e93b2c1-2567-6b9d-ed60-5c89eabe26c5" testName="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.PostAsync_WithinBudget_Posts" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.6044212" startTime="2026-10-03T19:23:30.9348488-04:00" endTime="2026-10-03T19:23:31.5394397-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b38310c6-05cf-470a-84b9-00b08dcf56f8">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cd592e2b-e6c7-44ad-a0e5-0006a6c3b186" testId="8f913b97-4fe4-348d-d553-ab9816ec3199" testName="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.SelfApproval_MakerEqualsChecker_RollsBack_workflow_task_and_voucher" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.9665930" startTime="2026-10-03T19:23:29.9675429-04:00" endTime="2026-10-03T19:23:30.9347303-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd592e2b-e6c7-44ad-a0e5-0006a6c3b186">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1eab9501-9ffd-41ab-9780-2ae7712bf245" testId="2bc85b7e-f19e-b2b3-3c17-20becfe44570" testName="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Two_actual_workers_selecting_same_due_row_publish_once" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1182940" startTime="2026-10-03T19:23:19.0703070-04:00" endTime="2026-10-03T19:23:19.1887521-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1eab9501-9ffd-41ab-9780-2ae7712bf245">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.&#xD;
+Two physical connections completed the actual candidate SELECT before either claimed the only due owned row; one delivery and one persisted attempt.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="94daef6d-4ef2-4fac-af6e-183b126e5405" testId="cfec08a3-25e8-9fa9-08a8-59d2299cea8c" testName="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Failed_actual_send_persists_backoff_and_retries_only_after_due_time" computerName="LAPTOP-3QQ44FJS" duration="00:00:10.4339329" startTime="2026-10-03T19:23:08.4358664-04:00" endTime="2026-10-03T19:23:18.8700249-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94daef6d-4ef2-4fac-af6e-183b126e5405">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.&#xD;
+Native failure/backoff persisted; an immediate real batch did not send; a real batch after the persisted due time succeeded. Hub remains a recording boundary.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b76b79d3-c7e2-4ba3-838f-3a9bb37d9ede" testId="e82c57d3-2254-475a-ad6d-69787095c86c" testName="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_backoff_exhaustion_persists_dead_letter_and_actual_alert_log" computerName="LAPTOP-3QQ44FJS" duration="00:00:05.4588516" startTime="2026-10-03T19:23:21.8135801-04:00" endTime="2026-10-03T19:23:27.2727613-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b76b79d3-c7e2-4ba3-838f-3a9bb37d9ede">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.; three real polls separated by stored 2s/3s backoff; actual DeadLetterNotifier persisted one alert. No SignalR acceptance or non-Space claim guarantee is asserted.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="33e2b8d6-d678-4ed8-91e2-47338e713317" testId="f886c845-526a-b75e-c31f-b4cb9aa47c34" testName="CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests.Production_data_scope_filters_real_purchase_requests_and_preserves_tenant_boundary" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.2197608" startTime="2026-10-03T19:23:20.8895113-04:00" endTime="2026-10-03T19:23:21.1095138-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33e2b8d6-d678-4ed8-91e2-47338e713317">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7a548b43-38b0-4310-999e-ee3f357cdd5f" testId="cbe227d9-4c28-8406-70fe-1d45659ae251" testName="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Actual_dispatch_targets_only_recipient_and_persists_delivery_without_repeat" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1189030" startTime="2026-10-03T19:23:18.9510565-04:00" endTime="2026-10-03T19:23:19.0701726-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7a548b43-38b0-4310-999e-ee3f357cdd5f">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.&#xD;
+Actual migrated notification worker persisted delivery; recording hub/email targeted only the recipient; no external transport acceptance.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="84ad37be-f314-438d-9909-78d4c31a08e7" testId="4a203aff-5413-d113-0461-f902b61492a5" testName="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_persisted_backoff_recovers_without_rewriting_due_time_or_alert" computerName="LAPTOP-3QQ44FJS" duration="00:00:02.2816519" startTime="2026-10-03T19:23:27.2731416-04:00" endTime="2026-10-03T19:23:29.5549456-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84ad37be-f314-438d-9909-78d4c31a08e7">
+      <Output>
+        <StdOut>Actual DateTime.UtcNow worker; configured backoff [2,3,4] seconds; awaited the stored UTC due time without editing NextRetryAt. Hook is a recording boundary.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="25bf5d5f-df69-47d8-ab8f-7a6b919a9645" testId="0a471a76-1969-f664-ca78-b4511606093d" testName="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Failed_job_preserves_backoff_then_exhaustion_and_suspension" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.1665264" startTime="2026-10-03T19:23:08.2675939-04:00" endTime="2026-10-03T19:23:08.4343526-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25bf5d5f-df69-47d8-ab8f-7a6b919a9645" />
+    <UnitTestResult executionId="d226a3b1-ac5f-43b3-bc87-cb4616e6d802" testId="33e2dcb0-f93f-096d-c14c-b01c4a8a37ea" testName="CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests.Production_permission_aggregator_reads_role_unions_scopes_and_fields_from_native_tables" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3222404" startTime="2026-10-03T19:23:21.1096518-04:00" endTime="2026-10-03T19:23:21.4321289-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d226a3b1-ac5f-43b3-bc87-cb4616e6d802">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="36891eb9-359f-44c1-b7bf-e404b8fb6cc0" testId="7f24a4bf-dc6d-d8e0-ef20-2e4ec9feddca" testName="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Duplicate_event_key_creates_one_native_outbox_row_across_contexts" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.0805671" startTime="2026-10-03T19:23:18.8707948-04:00" endTime="2026-10-03T19:23:18.9509161-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36891eb9-359f-44c1-b7bf-e404b8fb6cc0">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3f328f91-7a98-45c8-b912-e55205b045ce" testId="a1304b6d-caf8-ebc9-d0eb-25451b36fe82" testName="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Old_callback_cannot_overwrite_actual_rejected_then_resubmitted_correlation" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3022823" startTime="2026-10-03T19:23:19.9566428-04:00" endTime="2026-10-03T19:23:20.2589212-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f328f91-7a98-45c8-b912-e55205b045ce">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cf8e8a05-f290-4f2b-b693-f0b68daafcf9" testId="180e38a0-44d4-a9a8-b8e4-2e6a2344276f" testName="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Due_non_space_event_uses_actual_dispatcher_and_persists_success" computerName="LAPTOP-3QQ44FJS" duration="00:00:00.3809087" startTime="2026-10-03T19:23:21.4322883-04:00" endTime="2026-10-03T19:23:21.8134357-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf8e8a05-f290-4f2b-b693-f0b68daafcf9">
+      <Output>
+        <StdOut>Provider=SqlServer; Core migrations=140; pending=0; WP6 owner verified.; actual ERP-&gt;MES route persisted success; future event and successful event were not dispatched again.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests.Production_data_scope_filters_real_purchase_requests_and_preserves_tenant_boundary" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="f886c845-526a-b75e-c31f-b4cb9aa47c34">
+      <Execution id="33e2b8d6-d678-4ed8-91e2-47338e713317" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests" name="Production_data_scope_filters_real_purchase_requests_and_preserves_tenant_boundary" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Caller_transaction_rolls_back_native_business_change_and_outbox" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="53a2b192-33e5-a386-ac91-72caf00152a5">
+      <Execution id="37054131-c753-4aca-a66e-dda1381b008b" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests" name="Caller_transaction_rolls_back_native_business_change_and_outbox" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Withdrawn_instance_cancels_due_job_before_executor_call" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="9aefcaab-73ee-a78a-3da2-3a1911c79681">
+      <Execution id="31653523-64a0-4f82-93f8-6bcabf9756d5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests" name="Withdrawn_instance_cancels_due_job_before_executor_call" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Failed_job_preserves_backoff_then_exhaustion_and_suspension" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0a471a76-1969-f664-ca78-b4511606093d">
+      <Execution id="25bf5d5f-df69-47d8-ab8f-7a6b919a9645" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests" name="Failed_job_preserves_backoff_then_exhaustion_and_suspension" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests.Production_permission_aggregator_reads_role_unions_scopes_and_fields_from_native_tables" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="33e2dcb0-f93f-096d-c14c-b01c4a8a37ea">
+      <Execution id="d226a3b1-ac5f-43b3-bc87-cb4616e6d802" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.PermissionsRelationalTests" name="Production_permission_aggregator_reads_role_unions_scopes_and_fields_from_native_tables" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.Decimal_annual_amount_and_last_period_remainder_round_trip_through_native_storage" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8971e6e9-9777-c8b2-5d7c-b3e7d6b1af09">
+      <Execution id="d2d79924-5834-4fd4-b0a5-d611648e4450" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests" name="Decimal_annual_amount_and_last_period_remainder_round_trip_through_native_storage" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Reaper_only_reclaims_expired_leases_without_burning_attempts" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e7030ea4-9246-addb-49c8-edd8d2872d9a">
+      <Execution id="8612e860-df1b-450c-bf1c-b3b6cae0df36" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests" name="Reaper_only_reclaims_expired_leases_without_burning_attempts" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Actual_flow_engine_dispatcher_callback_commits_purchase_and_workflow_together" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0e2c2bba-cdd4-2c91-9870-8a78190c2a2d">
+      <Execution id="78189105-fb72-4967-8c4b-b6d0a09e1cbf" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests" name="Actual_flow_engine_dispatcher_callback_commits_purchase_and_workflow_together" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Two_actual_workers_selecting_same_due_row_publish_once" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="2bc85b7e-f19e-b2b3-3c17-20becfe44570">
+      <Execution id="1eab9501-9ffd-41ab-9780-2ae7712bf245" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests" name="Two_actual_workers_selecting_same_due_row_publish_once" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Actual_dispatch_targets_only_recipient_and_persists_delivery_without_repeat" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cbe227d9-4c28-8406-70fe-1d45659ae251">
+      <Execution id="7a548b43-38b0-4310-999e-ee3f357cdd5f" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests" name="Actual_dispatch_targets_only_recipient_and_persists_delivery_without_repeat" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Due_non_space_event_uses_actual_dispatcher_and_persists_success" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="180e38a0-44d4-a9a8-b8e4-2e6a2344276f">
+      <Execution id="cf8e8a05-f290-4f2b-b693-f0b68daafcf9" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests" name="Due_non_space_event_uses_actual_dispatcher_and_persists_success" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Failed_actual_send_persists_backoff_and_retries_only_after_due_time" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="cfec08a3-25e8-9fa9-08a8-59d2299cea8c">
+      <Execution id="94daef6d-4ef2-4fac-af6e-183b126e5405" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests" name="Failed_actual_send_persists_backoff_and_retries_only_after_due_time" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.PostAsync_BlockExceeded_Rejected" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="eb37ae33-68d1-acb6-28b5-91b1528ec11a">
+      <Execution id="e57752a8-801f-4a47-9b4e-110161401b38" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests" name="PostAsync_BlockExceeded_Rejected" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_backoff_exhaustion_persists_dead_letter_and_actual_alert_log" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="e82c57d3-2254-475a-ad6d-69787095c86c">
+      <Execution id="b76b79d3-c7e2-4ba3-838f-3a9bb37d9ede" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests" name="Real_backoff_exhaustion_persists_dead_letter_and_actual_alert_log" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests.Duplicate_event_key_creates_one_native_outbox_row_across_contexts" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="7f24a4bf-dc6d-d8e0-ef20-2e4ec9feddca">
+      <Execution id="36891eb9-359f-44c1-b7bf-e404b8fb6cc0" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowNotificationRelationalTests" name="Duplicate_event_key_creates_one_native_outbox_row_across_contexts" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests.Real_persisted_backoff_recovers_without_rewriting_due_time_or_alert" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="4a203aff-5413-d113-0461-f902b61492a5">
+      <Execution id="84ad37be-f314-438d-9909-78d4c31a08e7" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.IntegrationEventRetryRelationalTests" name="Real_persisted_backoff_recovers_without_rewriting_due_time_or_alert" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Concurrent_double_submit_returns_one_native_active_instance" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="0d276781-cc2e-31f1-a831-11749e912b42">
+      <Execution id="49be20c0-758e-475d-b9e2-cedf8b8b1360" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests" name="Concurrent_double_submit_returns_one_native_active_instance" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.Stale_version_token_rejects_second_writer_on_a_different_line" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="d8708f1e-748b-98b0-20eb-819802a6159f">
+      <Execution id="ebd6ec5a-e37c-451b-a8e1-6f9b1bfa1ada" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests" name="Stale_version_token_rejects_second_writer_on_a_different_line" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.SelfApproval_MakerEqualsChecker_RollsBack_workflow_task_and_voucher" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="8f913b97-4fe4-348d-d553-ab9816ec3199">
+      <Execution id="cd592e2b-e6c7-44ad-a0e5-0006a6c3b186" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests" name="SelfApproval_MakerEqualsChecker_RollsBack_workflow_task_and_voucher" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Native_callback_write_failure_rolls_back_purchase_and_workflow_transaction" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="b51b5f8b-75ea-32c0-c460-8c0b8e940a8b">
+      <Execution id="fb52282e-ca4a-47ed-a8ff-3f2c7c1e77c8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests" name="Native_callback_write_failure_rolls_back_purchase_and_workflow_transaction" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests.PostAsync_WithinBudget_Posts" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="1e93b2c1-2567-6b9d-ed60-5c89eabe26c5">
+      <Execution id="b38310c6-05cf-470a-84b9-00b08dcf56f8" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.FinanceRelationalTests" name="PostAsync_WithinBudget_Posts" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Two_contexts_claiming_same_pending_version_call_executor_once" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="6db46fd7-901c-d924-e313-c5eb12ff4c21">
+      <Execution id="78d3519d-cf3f-4162-aaf9-a826f8bddbf3" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests" name="Two_contexts_claiming_same_pending_version_call_executor_once" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests.Due_job_success_persists_token_progress_and_succeeded_state" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="192b65dc-ba5e-05c2-b2bd-c48157a96792">
+      <Execution id="35cd6e1d-b47b-46e8-9c56-ec60c2c5e538" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.WorkflowServiceJobRelationalTests" name="Due_job_success_persists_token_progress_and_succeeded_state" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Callback_target_read_holds_native_lock_until_owning_workflow_transaction_finishes" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="bd5bdfb0-c50a-f9d4-1c44-1fe3133b9e32">
+      <Execution id="0b8f85f8-2177-4642-8882-223f0ef114c5" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests" name="Callback_target_read_holds_native_lock_until_owning_workflow_transaction_finishes" />
+    </UnitTest>
+    <UnitTest name="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests.Old_callback_cannot_overwrite_actual_rejected_then_resubmitted_correlation" storage="d:\cp6\tmp\worktrees\db-compat-wp6-20261003\cp6.tests\bin\debug\net8.0\cp6.tests.dll" id="a1304b6d-caf8-ebc9-d0eb-25451b36fe82">
+      <Execution id="3f328f91-7a98-45c8-b912-e55205b045ce" />
+      <TestMethod codeBase="D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CP6.Tests.DatabaseCompatibility.PurchaseRequestRelationalTests" name="Old_callback_cannot_overwrite_actual_rejected_then_resubmitted_correlation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="bd5bdfb0-c50a-f9d4-1c44-1fe3133b9e32" executionId="0b8f85f8-2177-4642-8882-223f0ef114c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9aefcaab-73ee-a78a-3da2-3a1911c79681" executionId="31653523-64a0-4f82-93f8-6bcabf9756d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7030ea4-9246-addb-49c8-edd8d2872d9a" executionId="8612e860-df1b-450c-bf1c-b3b6cae0df36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8708f1e-748b-98b0-20eb-819802a6159f" executionId="ebd6ec5a-e37c-451b-a8e1-6f9b1bfa1ada" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6db46fd7-901c-d924-e313-c5eb12ff4c21" executionId="78d3519d-cf3f-4162-aaf9-a826f8bddbf3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="53a2b192-33e5-a386-ac91-72caf00152a5" executionId="37054131-c753-4aca-a66e-dda1381b008b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d276781-cc2e-31f1-a831-11749e912b42" executionId="49be20c0-758e-475d-b9e2-cedf8b8b1360" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0e2c2bba-cdd4-2c91-9870-8a78190c2a2d" executionId="78189105-fb72-4967-8c4b-b6d0a09e1cbf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb37ae33-68d1-acb6-28b5-91b1528ec11a" executionId="e57752a8-801f-4a47-9b4e-110161401b38" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8971e6e9-9777-c8b2-5d7c-b3e7d6b1af09" executionId="d2d79924-5834-4fd4-b0a5-d611648e4450" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="192b65dc-ba5e-05c2-b2bd-c48157a96792" executionId="35cd6e1d-b47b-46e8-9c56-ec60c2c5e538" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b51b5f8b-75ea-32c0-c460-8c0b8e940a8b" executionId="fb52282e-ca4a-47ed-a8ff-3f2c7c1e77c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e93b2c1-2567-6b9d-ed60-5c89eabe26c5" executionId="b38310c6-05cf-470a-84b9-00b08dcf56f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8f913b97-4fe4-348d-d553-ab9816ec3199" executionId="cd592e2b-e6c7-44ad-a0e5-0006a6c3b186" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2bc85b7e-f19e-b2b3-3c17-20becfe44570" executionId="1eab9501-9ffd-41ab-9780-2ae7712bf245" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cfec08a3-25e8-9fa9-08a8-59d2299cea8c" executionId="94daef6d-4ef2-4fac-af6e-183b126e5405" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e82c57d3-2254-475a-ad6d-69787095c86c" executionId="b76b79d3-c7e2-4ba3-838f-3a9bb37d9ede" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f886c845-526a-b75e-c31f-b4cb9aa47c34" executionId="33e2b8d6-d678-4ed8-91e2-47338e713317" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cbe227d9-4c28-8406-70fe-1d45659ae251" executionId="7a548b43-38b0-4310-999e-ee3f357cdd5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4a203aff-5413-d113-0461-f902b61492a5" executionId="84ad37be-f314-438d-9909-78d4c31a08e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a471a76-1969-f664-ca78-b4511606093d" executionId="25bf5d5f-df69-47d8-ab8f-7a6b919a9645" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="33e2dcb0-f93f-096d-c14c-b01c4a8a37ea" executionId="d226a3b1-ac5f-43b3-bc87-cb4616e6d802" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f24a4bf-dc6d-d8e0-ef20-2e4ec9feddca" executionId="36891eb9-359f-44c1-b7bf-e404b8fb6cc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a1304b6d-caf8-ebc9-d0eb-25451b36fe82" executionId="3f328f91-7a98-45c8-b912-e55205b045ce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="180e38a0-44d4-a9a8-b8e4-2e6a2344276f" executionId="cf8e8a05-f290-4f2b-b693-f0b68daafcf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="25" executed="25" passed="25" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: CP6.Tests&#xD;
+[xUnit.net 00:00:00.50]   Discovered:  CP6.Tests&#xD;
+[xUnit.net 00:00:00.51]   Starting:    CP6.Tests&#xD;
+[xUnit.net 00:00:52.09]   Finished:    CP6.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

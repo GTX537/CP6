@@ -1,0 +1,49 @@
+Test run for D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree [763 ms]
+  Error Message:
+   System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreateNonPooledConnection(DbConnection owningConnection, DbConnectionPoolGroup poolGroup, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Core\Services\Wms\LpnService.cs:line 77
+   at CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\WmsProductionSqlServerTests.cs:line 812
+   at CP6.Tests.WmsProductionSqlServerTests.Lpn_UsesCompositeSerialIdentity_AndMovesSplitsMergesWholeTree() in D:\CP6\tmp\worktrees\db-compat-wp6-20261003\CP6.Tests\WmsProductionSqlServerTests.cs:line 934
+--- End of stack trace from previous location ---
+Results File: D:\CP6\tmp\wp6-sql-formal-matrix-cad-cleanup-fix\entries\wms-business\private\trx\results.trx
+
+Failed!  - Failed:     1, Passed:     7, Skipped:     0, Total:     8, Duration: 5 s - CP6.Tests.dll (net8.0)

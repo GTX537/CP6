@@ -1,0 +1,10 @@
+{
+  "Task": "BUG-163",
+  "Run": "bug163-sql-native-red",
+  "Status": "PreflightRejected",
+  "BuildExecuted": true,
+  "BuildSuccess": true,
+  "NativeTestsExecuted": false,
+  "Reason": "Generic PowerShell dictionary adapter did not invoke DbConnectionStringBuilder.ConnectionString setter; corrected to set_ConnectionString and get_Item",
+  "OriginalRunPreserved": true
+}

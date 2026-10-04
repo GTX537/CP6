@@ -3,6 +3,7 @@ using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Transactions;
 
 namespace CP6.Core.Services.Wms;
@@ -145,6 +146,7 @@ public sealed class LabelJobService : ILabelJobService
         var replay = await ReplayAsync(jobNo, request.OperationId, "label-claim", ct);
         if (replay is not null) return replay;
         using var scope = BeginAmbientTransaction();
+        await using var transaction = await BeginOwnedTransactionAsync(ct);
         var job = await LoadAsync(jobNo, ct);
         ApplyRowVersion(job, request.RowVersion);
         if (job.Status != LabelJobStatus.Pending)
@@ -170,6 +172,7 @@ public sealed class LabelJobService : ILabelJobService
         var result = MapJob(job, template);
         AddReceipt(jobNo, request.OperationId, "label-claim", result);
         await _db.SaveChangesAsync(ct);
+        if (transaction is not null) await transaction.CommitAsync(ct);
         scope?.Complete();
         return result;
     }
@@ -186,6 +189,7 @@ public sealed class LabelJobService : ILabelJobService
         var replay = await ReplayAsync(jobNo, request.OperationId, command, ct);
         if (replay is not null) return replay;
         using var scope = BeginAmbientTransaction();
+        await using var transaction = await BeginOwnedTransactionAsync(ct);
         var job = await LoadAsync(jobNo, ct);
         ApplyRowVersion(job, request.RowVersion);
         if (job.Status != LabelJobStatus.Printing
@@ -201,6 +205,7 @@ public sealed class LabelJobService : ILabelJobService
         var result = MapJob(job, template);
         AddReceipt(jobNo, request.OperationId, command, result);
         await _db.SaveChangesAsync(ct);
+        if (transaction is not null) await transaction.CommitAsync(ct);
         scope?.Complete();
         return result;
     }
@@ -320,8 +325,19 @@ public sealed class LabelJobService : ILabelJobService
     private static string? NullIfWhiteSpace(string? value)
         => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
+    // Standalone commands own one local transaction. Caller transactions retain ownership.
+    private async Task<IDbContextTransaction?> BeginOwnedTransactionAsync(CancellationToken ct)
+        => _db.Database.IsRelational()
+            && _db.Database.CurrentTransaction is null
+            && _db.Database.GetEnlistedTransaction() is null
+            && Transaction.Current is null
+                ? await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted, ct)
+                : null;
+
     private TransactionScope? BeginAmbientTransaction()
         => _db.Database.IsRelational()
+            && _db.Database.CurrentTransaction is null
+            && Transaction.Current is not null
             ? new TransactionScope(
                 TransactionScopeOption.Required,
                 new TransactionOptions

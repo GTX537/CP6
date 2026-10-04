@@ -1,0 +1,533 @@
+Test run for D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\bin\Debug\net8.0\CP6.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt [544 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)
+Actual:   typeof(System.NotSupportedException)
+---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LpnRollbackAsync(String command) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 201
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LpnRollbackAsync(String command) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 218
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 77
+   at CP6.Tests.WmsProductionSqlServerTests.<>c__DisplayClass16_1.<<VerifyBug163LpnRollbackAsync>b__1>d.MoveNext() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 203
+--- End of stack trace from previous location ---
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt [235 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)
+Actual:   typeof(System.NotSupportedException)
+---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelRollbackAsync(Boolean claim) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 232
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelRollbackAsync(Boolean claim) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 237
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2833
+   at CP6.Core.Services.Wms.LabelJobService.SaveWithConflictAsync(CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 246
+   at CP6.Core.Services.Wms.LabelJobService.CompleteAsync(String jobNo, LabelJobCommand request, Boolean success, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 199
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted [34 ms]
+  Error Message:
+   System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)
+   at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)
+   at System.Transactions.Transaction.Rollback()
+   at System.Transactions.TransactionScope.InternalDispose()
+   at System.Transactions.TransactionScope.Dispose()
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 103
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 81
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 85
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 85
+--- End of stack trace from previous location ---
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce [53 ms]
+  Error Message:
+   System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2833
+   at CP6.Core.Services.Wms.LabelJobService.SaveWithConflictAsync(CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 246
+   at CP6.Core.Services.Wms.LabelJobService.CompleteAsync(String jobNo, LabelJobCommand request, Boolean success, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 199
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 178
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 188
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ BUG163 native command physical=db4ab5a06eb749d8a9204594e20dd12e ambient=False local=False
+ BUG163 native command physical=e3063fb0100e4796acc95afaa54ed3a8 ambient=False local=False
+ BUG163 native command physical=f3392156b1fb4a62a5b4de7ed520b317 ambient=True local=False
+
+
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce [68 ms]
+  Error Message:
+   System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Core.Services.Wms.LabelJobService.ClaimAsync(String jobNo, LabelJobCommand request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 155
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 178
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 188
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ BUG163 native command physical=6c953e69484e4a9582e1627c1a642a77 ambient=False local=False
+ BUG163 native command physical=b7caa92b37eb409ab0e61143004372ba ambient=False local=False
+ BUG163 native command physical=65148b796eff4ed9bc1826bb649c20a5 ambient=True local=False
+
+
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack [66 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: Exception type was not compatible
+Expected: typeof(System.OperationCanceledException)
+Actual:   typeof(System.NotSupportedException)
+---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 159
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 163
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 77
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce [27 ms]
+  Error Message:
+   System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Core.Services.Wms.LpnService.CreateAsync(CreateLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 77
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 26
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 35
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ BUG163 native command physical=4eed584099034313b088398456694acf ambient=False local=False
+ BUG163 native command physical=02332606a0554f43a13f2e145eaa4c9c ambient=True local=False
+
+
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted [105 ms]
+  Error Message:
+   System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.HandleTransactionCompleted(Object sender, TransactionEventArgs e)
+   at System.Transactions.TransactionStateAborted.EnterState(InternalTransaction tx)
+   at System.Transactions.Transaction.Rollback()
+   at System.Transactions.TransactionScope.InternalDispose()
+   at System.Transactions.TransactionScope.Dispose()
+   at CP6.Core.Services.Wms.LabelJobService.ClaimAsync(String jobNo, LabelJobCommand request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 174
+   at CP6.Tests.WmsProductionSqlServerTests.ClaimAndCompleteBug163LabelAsync(CP6Context db) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 309
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 101
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 104
+   at CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 104
+--- End of stack trace from previous location ---
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent [617 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)
+Actual:   typeof(System.NotSupportedException)
+---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LpnRollbackAsync(String command) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 201
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LpnRollbackAsync(String command) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 218
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Core.Services.Wms.LpnService.LoadAsync(String lpnNo, Boolean tracking, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 769
+   at CP6.Core.Services.Wms.LpnService.MergeAsync(String lpnNo, MergeLpnRequest request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LpnService.cs:line 414
+   at CP6.Tests.WmsProductionSqlServerTests.<>c__DisplayClass16_1.<<VerifyBug163LpnRollbackAsync>b__1>d.MoveNext() in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 208
+--- End of stack trace from previous location ---
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce [47 ms]
+  Error Message:
+   System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2833
+   at CP6.Core.Services.Wms.LabelJobService.SaveWithConflictAsync(CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 246
+   at CP6.Core.Services.Wms.LabelJobService.CompleteAsync(String jobNo, LabelJobCommand request, Boolean success, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 199
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 178
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelAsync(Boolean claim, Boolean success) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 188
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ BUG163 native command physical=05ebe876a9cf46ccb20459afb3d322ce ambient=False local=False
+ BUG163 native command physical=ebcb9468f5c64182a1440b6b5936d63e ambient=False local=False
+ BUG163 native command physical=c1551f3479244d18b1914a83dbd312c1 ambient=True local=False
+
+
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt [137 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)
+Actual:   typeof(System.NotSupportedException)
+---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+  Stack Trace:
+     at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelRollbackAsync(Boolean claim) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 232
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LabelRollbackAsync(Boolean claim) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 237
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.<>c__DisplayClass48_0.<CreateReplaceConnectionContinuation>b__0(Task`1 _)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at CP6.Core.Services.Wms.LabelJobService.ClaimAsync(String jobNo, LabelJobCommand request, String userName, CancellationToken ct) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\Services\Wms\LabelJobService.cs:line 155
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents [32 ms]
+  Error Message:
+   Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+---- Microsoft.Data.SqlClient.SqlException : 违反了 UNIQUE KEY 约束“AK_T_ProductMaster_ProductCd”。不能在对象“dbo.T_ProductMaster”中插入重复键。重复键值为 (SER-163)。
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2847
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2860
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2862
+   at CP6.Tests.WmsProductionSqlServerTests.SeedBug163Async(Boolean tree, String labelStatus) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 274
+   at CP6.Tests.WmsProductionSqlServerTests.SeedBug163Async(Boolean tree, String labelStatus) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 275
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LpnRollbackAsync(String command) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 193
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+  Failed CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent [30 ms]
+  Error Message:
+   Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+---- Microsoft.Data.SqlClient.SqlException : 违反了 UNIQUE KEY 约束“AK_T_ProductMaster_ProductCd”。不能在对象“dbo.T_ProductMaster”中插入重复键。重复键值为 (SER-163)。
+  Stack Trace:
+     at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2847
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2860
+   at CP6.Core.EFDbContext.CP6Context.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Core\EFDbContext\CP6Context.cs:line 2862
+   at CP6.Tests.WmsProductionSqlServerTests.SeedBug163Async(Boolean tree, String labelStatus) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 274
+   at CP6.Tests.WmsProductionSqlServerTests.SeedBug163Async(Boolean tree, String labelStatus) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 275
+   at CP6.Tests.WmsProductionSqlServerTests.VerifyBug163LpnRollbackAsync(String command) in D:\CP6\tmp\worktrees\bug-163-wms-local-transactions\CP6.Tests\WmsProductionLocalTransactionTests.cs:line 193
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetAsync(Int32 startCommandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+Results File: D:\CP6\tmp\bug163-sql-native-red-corrected\private\trx\results.trx
+
+Failed!  - Failed:    13, Passed:     2, Skipped:     0, Total:    15, Duration: 2 s - CP6.Tests.dll (net8.0)

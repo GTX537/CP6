@@ -1,0 +1,262 @@
+{
+  "Task": "BUG-163",
+  "SourceBase": "ce49012d37da4b1b01f074d5b5b7fd227780e656",
+  "UnfixedProductionSources": [
+    {
+      "Path": "CP6.Core/Services/Wms/LpnService.cs",
+      "MainBlob": "7135a921bb99c77cf5883017020163d84c5977c7",
+      "WorkingBlob": "7135a921bb99c77cf5883017020163d84c5977c7",
+      "UnfixedMatchesMain": true
+    },
+    {
+      "Path": "CP6.Core/Services/Wms/LabelJobService.cs",
+      "MainBlob": "9903ecb5e9e3cfb9d77e07cf055d5883a13010a3",
+      "WorkingBlob": "9903ecb5e9e3cfb9d77e07cf055d5883a13010a3",
+      "UnfixedMatchesMain": true
+    }
+  ],
+  "OriginalWp6SummarySha256": "8259FAEA4EEEF0786705CB4501F1072F79D0CA7DC116606B9EEB5364A7205F50",
+  "SqlFixtureErrorsInValidSeedRun": 0,
+  "Runs": [
+    {
+      "Label": "bug163-sql-native-red-valid-seed",
+      "Counts": {
+        "Expected": 17,
+        "Total": 17,
+        "Passed": 3,
+        "Failed": 14,
+        "Other": 0
+      },
+      "SourcesUnchanged": true,
+      "RuntimeUnchanged": true,
+      "SourceManifestSha256": "AFCC398A5A6ECC15409EB8DC250142FBEB4868B548FE0FEE0CFA642F4D596324",
+      "RuntimeManifestSha256": "519B369F9A4543AE34BDAA12632A02F057EBC09592F0BD92405261224FEEA429",
+      "TrxSha256": "7D87DA4B6077CBE14CF4D34DEF4935D22C90DA1F0A60445D02C167F7BB3907B0",
+      "Cases": [
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+          "Outcome": "Failed",
+          "Error": "Assert.ThrowsAny() Failure: Exception type was not compatible\r\nExpected: typeof(System.OperationCanceledException)\r\nActual:   typeof(System.NotSupportedException)\r\n---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.NotSupportedException)\r\n---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": "BUG163 native command physical=7f125a43243644febd85257504beb6bd ambient=False local=False\r\nBUG163 native command physical=80cda3eba5314d85b6cd65f52a0bc65f ambient=False local=False\r\nBUG163 native command physical=eedca3a1865a4658a3d42e780b2f0bfb ambient=True local=False"
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+          "Outcome": "Failed",
+          "Error": "System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.NotSupportedException)\r\n---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.NotSupportedException)\r\n---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.NotSupportedException)\r\n---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": "BUG163 native command physical=ba2ecc1b97804b3fb7fd59c75b42711f ambient=False local=False\r\nBUG163 native command physical=ab3db8c1d962461fadd9630a388a394a ambient=False local=False\r\nBUG163 native command physical=90e3c831624a45d5aea43ab837e722e4 ambient=True local=False"
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": "BUG163 native command physical=50807aefcb634f50bed935418d1cd1ab ambient=False local=False\r\nBUG163 native command physical=a291a32761d248ccbcac984e6d4a2d9e ambient=False local=False\r\nBUG163 native command physical=a3498da6a7f2420ea8296183963770b9 ambient=True local=False"
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.NotSupportedException)\r\n---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.InvalidOperationException)\r\n---- System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+          "Outcome": "Failed",
+          "Error": "System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.NotSupportedException)\r\n---- System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "System.NotSupportedException : Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.",
+          "NativeTrace": "BUG163 native command physical=ec934c1d603342e087f94cd26e2d9c86 ambient=False local=False\r\nBUG163 native command physical=761dc9116c824e559cd7b1ce00ef28c8 ambient=True local=False"
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        }
+      ]
+    },
+    {
+      "Label": "bug163-pg-native-red",
+      "Counts": {
+        "Expected": 17,
+        "Total": 17,
+        "Passed": 10,
+        "Failed": 7,
+        "Other": 0
+      },
+      "SourcesUnchanged": true,
+      "RuntimeUnchanged": true,
+      "SourceManifestSha256": "AFCC398A5A6ECC15409EB8DC250142FBEB4868B548FE0FEE0CFA642F4D596324",
+      "RuntimeManifestSha256": "519B369F9A4543AE34BDAA12632A02F057EBC09592F0BD92405261224FEEA429",
+      "TrxSha256": "09AEB51A4286CE9E52874D053D7DA51F9268DE63F3B18185AD887A5A2E116E98",
+      "Cases": [
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_JoinsPreopenedCallerAmbientTransaction",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureRetainsCallerAmbientAbortSemantics",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_CancellationAfterBusinessSaveRollsBack",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_JoinPreopenedCallerAmbientTransaction",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_RollsBackBusinessSaveBeforeReceipt",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelFail_UsesLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+          "NativeTrace": "BUG163 native command physical=33092 ambient=False local=False\r\nBUG163 native command physical=15668 ambient=False local=False\r\nBUG163 native command physical=22768 ambient=True local=False\r\nBUG163 native command physical=22768 ambient=True local=False\r\nBUG163 native command physical=22768 ambient=True local=False\r\nBUG163 native command physical=22768 ambient=True local=False\r\nBUG163 native command physical=13168 ambient=False local=False"
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnSplit_RollsBackNewUnitTreeContentSerialAndEvents",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_UsesOneLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+          "NativeTrace": "BUG163 native command physical=35856 ambient=False local=False\r\nBUG163 native command physical=28900 ambient=True local=False\r\nBUG163 native command physical=28900 ambient=True local=False\r\nBUG163 native command physical=28900 ambient=True local=False\r\nBUG163 native command physical=28900 ambient=True local=False\r\nBUG163 native command physical=28900 ambient=True local=False\r\nBUG163 native command physical=28900 ambient=True local=False\r\nBUG163 native command physical=35072 ambient=False local=False"
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_UsesLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+          "NativeTrace": "BUG163 native command physical=33484 ambient=False local=False\r\nBUG163 native command physical=33236 ambient=False local=False\r\nBUG163 native command physical=11680 ambient=True local=False\r\nBUG163 native command physical=11680 ambient=True local=False\r\nBUG163 native command physical=11680 ambient=True local=False\r\nBUG163 native command physical=11680 ambient=True local=False\r\nBUG163 native command physical=11680 ambient=True local=False\r\nBUG163 native command physical=32180 ambient=False local=False"
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_RollsBackStatusResultAndReceipt",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelCommands_LeaveCallerLocalTransactionUncommitted",
+          "Outcome": "Failed",
+          "Error": "System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelClaim_RollsBackStatusAttemptAndReceipt",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_FailureLeavesCallerLocalTransactionForCallerRollback",
+          "Outcome": "Failed",
+          "Error": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(CP6.Tests.WmsProductionSqlServerTests+WmsBusinessSaveFailure)\r\nActual:   typeof(System.InvalidOperationException)\r\n---- System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnCreate_LeavesCallerLocalTransactionUncommitted",
+          "Outcome": "Failed",
+          "Error": "System.InvalidOperationException : A root ambient transaction was completed before the nested transaction. The nested transactions should be completed first.",
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnUnpack_RollsBackTreeContentSerialAndEvent",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LpnMerge_RollsBackSourceDeletionTreeContentSerialAndEvent",
+          "Outcome": "Passed",
+          "Error": null,
+          "NativeTrace": null
+        },
+        {
+          "Name": "CP6.Tests.WmsProductionSqlServerTests.Bug163_LabelComplete_UsesLocalTransactionAndReplaysOnce",
+          "Outcome": "Failed",
+          "Error": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+          "NativeTrace": "BUG163 native command physical=9192 ambient=False local=False\r\nBUG163 native command physical=35656 ambient=False local=False\r\nBUG163 native command physical=23980 ambient=True local=False\r\nBUG163 native command physical=23980 ambient=True local=False\r\nBUG163 native command physical=23980 ambient=True local=False\r\nBUG163 native command physical=23980 ambient=True local=False\r\nBUG163 native command physical=29972 ambient=False local=False"
+        }
+      ]
+    }
+  ],
+  "EarlierPreflightAndFixtureFailuresPreserved": true,
+  "Scope": "Actual native unfixed two-provider regressions; post-save fault controls are separate from real SQL DTC failures. Not final acceptance."
+}

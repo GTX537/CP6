@@ -73,6 +73,7 @@ public sealed class LpnService : ILpnService
         var replay = await ReplayAsync(key, request.OperationId, "create", ct);
         if (replay is not null) return replay;
         using var scope = BeginAmbientTransaction();
+        await using var transaction = await BeginOwnedTransactionAsync(ct);
         await EnsureFeatureAsync(request.WarehouseCd, ct);
         if (!await _db.Locations.AnyAsync(x => !x.IsDeleted
                                               && x.WarehouseCd == request.WarehouseCd
@@ -99,6 +100,7 @@ public sealed class LpnService : ILpnService
         var result = await MapAsync(unit, ct);
         AddReceipt(key, request.OperationId, "create", result);
         await _db.SaveChangesAsync(ct);
+        if (transaction is not null) await transaction.CommitAsync(ct);
         scope?.Complete();
         return result;
     }
@@ -204,6 +206,7 @@ public sealed class LpnService : ILpnService
         var replay = await ReplayAsync(key, request.OperationId, "unpack", ct);
         if (replay is not null) return replay;
         using var scope = BeginAmbientTransaction();
+        await using var transaction = await BeginOwnedTransactionAsync(ct);
         var parent = await LoadAsync(lpnNo, true, ct);
         ApplyRowVersion(parent, request.RowVersion);
         var children = await _db.LogisticsUnits
@@ -234,6 +237,7 @@ public sealed class LpnService : ILpnService
         var result = await MapAsync(parent, ct);
         AddReceipt(key, request.OperationId, "unpack", result);
         await _db.SaveChangesAsync(ct);
+        if (transaction is not null) await transaction.CommitAsync(ct);
         scope?.Complete();
         return result;
     }
@@ -343,6 +347,7 @@ public sealed class LpnService : ILpnService
         var replay = await ReplayAsync(key, request.OperationId, "split", ct);
         if (replay is not null) return replay;
         using var scope = BeginAmbientTransaction();
+        await using var transaction = await BeginOwnedTransactionAsync(ct);
         var source = await LoadAsync(lpnNo, true, ct);
         ApplyRowVersion(source, request.RowVersion);
         if (await _db.LogisticsUnits.AnyAsync(
@@ -394,6 +399,7 @@ public sealed class LpnService : ILpnService
         var result = await MapAsync(source, ct);
         AddReceipt(key, request.OperationId, "split", result);
         await _db.SaveChangesAsync(ct);
+        if (transaction is not null) await transaction.CommitAsync(ct);
         scope?.Complete();
         return result;
     }
@@ -409,6 +415,7 @@ public sealed class LpnService : ILpnService
         var replay = await ReplayAsync(key, request.OperationId, "merge", ct);
         if (replay is not null) return replay;
         using var scope = BeginAmbientTransaction();
+        await using var transaction = await BeginOwnedTransactionAsync(ct);
         var target = await LoadAsync(lpnNo, true, ct);
         ApplyRowVersion(target, request.RowVersion);
         var source = await LoadAsync(request.SourceLpnNo, true, ct);
@@ -448,6 +455,7 @@ public sealed class LpnService : ILpnService
         var result = await MapAsync(target, ct);
         AddReceipt(key, request.OperationId, "merge", result);
         await _db.SaveChangesAsync(ct);
+        if (transaction is not null) await transaction.CommitAsync(ct);
         scope?.Complete();
         return result;
     }
@@ -847,8 +855,19 @@ public sealed class LpnService : ILpnService
             ? await _db.Database.BeginTransactionAsync(ct)
             : null;
 
+    // Standalone commands own one local transaction. Caller transactions retain ownership.
+    private async Task<IDbContextTransaction?> BeginOwnedTransactionAsync(CancellationToken ct)
+        => _db.Database.IsRelational()
+            && _db.Database.CurrentTransaction is null
+            && _db.Database.GetEnlistedTransaction() is null
+            && Transaction.Current is null
+                ? await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted, ct)
+                : null;
+
     private TransactionScope? BeginAmbientTransaction()
         => _db.Database.IsRelational()
+            && _db.Database.CurrentTransaction is null
+            && Transaction.Current is not null
             ? new TransactionScope(
                 TransactionScopeOption.Required,
                 new TransactionOptions
