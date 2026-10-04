@@ -1,0 +1,18 @@
+{
+  "Provider": "SqlServer",
+  "Process": {
+    "ProcessId": 22456,
+    "ExitCode": 0,
+    "StartedUtc": "2026-10-04T10:12:40.9205335Z",
+    "FinishedUtc": "2026-10-04T10:13:04.2797170Z",
+    "OwnedProcessTerminated": false,
+    "StandardOutputSha256": "50DF0E03B70100761DD21994741F3C2D8069B284C9705B23AA4EBFEE8BB6D687",
+    "StandardErrorSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "TimedOut": false
+  },
+  "InitializerCompletionObserved": true,
+  "Success": true,
+  "SourceIsNewOwnedDatabase": true,
+  "OriginalSourceChanged": false,
+  "BuildReused": true
+}

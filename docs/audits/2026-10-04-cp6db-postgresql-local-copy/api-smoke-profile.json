@@ -1,0 +1,45 @@
+{
+  "Status": "Passed",
+  "Database": "cp6db_pg_test_20261004_acc202d6",
+  "Provider": "PostgreSql",
+  "ApiProcessId": 28228,
+  "Port": 5188,
+  "ListenerOwnedByActualApi": true,
+  "OriginalBuildSource": "e940825fc7511b41a1a80b4b73897dcc69e51bbb",
+  "UnchangedSourceMain": "272e92cfc1c6c177d0227aa19815d603eef1a99e",
+  "BuildExecuted": false,
+  "BackgroundServicesDisabled": true,
+  "Http": [
+    {
+      "Path": "/health/live",
+      "StatusCode": 200,
+      "BodySha256": "CF7B027A9A54CAADD16816AF5704E3A20D7469ED72FFFB64DB9A62B39E867E47"
+    },
+    {
+      "Path": "/health/ready",
+      "StatusCode": 200,
+      "BodySha256": "3A4E7C8545C0964EBC32A9103D9BF1BA801A6286BE2182A7650CF53B5C03A691"
+    },
+    {
+      "Path": "/health/release",
+      "StatusCode": 200,
+      "BodySha256": "781D881139D209537E2CDD42E0470216DF0900D857EEB58C5C5AAE6DA2F2A731"
+    },
+    {
+      "Path": "/swagger/index.html",
+      "StatusCode": 200,
+      "BodySha256": "2519B16E214035F736DEE28FEFEFA0648F1E19324D2E5AE5178CCBAAEBC436F2"
+    },
+    {
+      "Path": "/swagger/v1/swagger.json",
+      "StatusCode": 200,
+      "BodySha256": "C87FC5ED000C45D4A3454D4889F4E773ADCB1AF1A1775A83D74FDBFE639DE7B0"
+    },
+    {
+      "Path": "/api/auth/profile",
+      "StatusCode": 401,
+      "BodySha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  ],
+  "Scope": "Real API startup, database readiness, release, Swagger and unauthenticated authorization. Existing-user password login and all business workflows are not repeated by this smoke."
+}

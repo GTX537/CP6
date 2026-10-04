@@ -1,0 +1,31 @@
+{
+  "Status": "Failed",
+  "Checks": [
+    {
+      "Path": "/health/live",
+      "StatusCode": 200,
+      "BodySha256": "CF7B027A9A54CAADD16816AF5704E3A20D7469ED72FFFB64DB9A62B39E867E47"
+    },
+    {
+      "Path": "/health/ready",
+      "StatusCode": 200,
+      "BodySha256": "3A4E7C8545C0964EBC32A9103D9BF1BA801A6286BE2182A7650CF53B5C03A691"
+    },
+    {
+      "Path": "/health/release",
+      "StatusCode": 200,
+      "BodySha256": "781D881139D209537E2CDD42E0470216DF0900D857EEB58C5C5AAE6DA2F2A731"
+    },
+    {
+      "Path": "/swagger/index.html",
+      "StatusCode": 200,
+      "BodySha256": "2519B16E214035F736DEE28FEFEFA0648F1E19324D2E5AE5178CCBAAEBC436F2"
+    },
+    {
+      "Path": "/swagger/v1/swagger.json",
+      "StatusCode": 200,
+      "BodySha256": "C87FC5ED000C45D4A3454D4889F4E773ADCB1AF1A1775A83D74FDBFE639DE7B0"
+    }
+  ],
+  "Failure": "System.Management.Automation.RuntimeException"
+}

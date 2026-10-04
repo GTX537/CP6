@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-04：CP6DB 真实数据的 PostgreSQL 本机测试副本
+
+接续已完成的双库兼容改造，用户单独授权了真实数据本机迁移。原 SQL CP6DB 331 表、67,774 行，COPY_ONLY/CHECKSUM/VERIFYONLY 后独立 SQL 副本前向初始化为354表、67,810行；原库仍保留旧129/47迁移历史，schema/业务数据和既有连接均未修改。PostgreSQL新库330张应用表、67,620行，354张完整源归档表；684项映射逐行摘要多重集与行数全部匹配，181个外键及6个identity序列已校验，0禁用触发器/未验证约束。
+
+运行配置、原始备份、失败日志和业务字段只在本机忽略目录；复用原e940825 API的261文件，2,010相关Gitblob未变，另已保留独立本地发布物。PostgreSQL目标长期保留，API只使用独立端口并禁用hosted services/外联。[本地运行手册](../devops/CP6DB-POSTGRESQL-LOCAL-COPY.md)说明入口、归档和范围。两条历史事件的原时区尚待用户确认，当前副本UTC派生字段仅按UTC暂定解读，原CreateDate完整保留。未执行远程Actions、修改生产门禁或生产部署。
+
 ## 2026-10-04：双库兼容版已交付并通过合并后冒烟
 
 [PR165](https://github.com/GTX537/CP6/pull/165)已正常保护合并到远端main 8b64bc8a510e9ad4a82c21c8c6ac13c138e332c3；候选4243c67d7ac2e3cfafb809d2a4efba54f4ec927a是其ancestor，完整树68f7d4accfc58897a6bb430f5f90dded50c4ba94相同，2,389个PR文件均完成分页与Git blob核对。原洁净实现e940825fc7511b41a1a80b4b73897dcc69e51bbb的双库105个适用入口、当前配置/接线139项、56项HTTP与真实原生独立恢复均通过，所有31个正式库已清理。2,091份原始证据与Git index字节一致，失败及复用来源保持。

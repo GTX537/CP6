@@ -1,0 +1,35 @@
+{
+  "Status": "Passed",
+  "Database": "cp6db_pg_test_20261004_acc202d6",
+  "Changes": "Only four provider token sequences advanced; imported data and original tokens unchanged.",
+  "Checks": [
+    {
+      "Namespace": "cp6_storage_core",
+      "ImportedTokenRows": 11758,
+      "MaximumImportedToken": 806172,
+      "ObservedNext": 806173,
+      "Passed": true
+    },
+    {
+      "Namespace": "cp6_storage_space",
+      "ImportedTokenRows": 13043,
+      "MaximumImportedToken": 805707,
+      "ObservedNext": 805708,
+      "Passed": true
+    },
+    {
+      "Namespace": "cp6_storage_identity",
+      "ImportedTokenRows": 0,
+      "MaximumImportedToken": 0,
+      "ObservedNext": 2,
+      "Passed": true
+    },
+    {
+      "Namespace": "cp6_storage_erp",
+      "ImportedTokenRows": 0,
+      "MaximumImportedToken": 0,
+      "ObservedNext": 2,
+      "Passed": true
+    }
+  ]
+}
