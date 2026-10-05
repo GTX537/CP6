@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "03 · Space 从设计到运行",
+    "locale": "zh-CN",
+    "output": ".archify/architecture-space-20261004-142500/space.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/GTX537/CP6.git",
+      "revision": "ebcbc4998faa7fee8e38db861753c6e90bdc100a",
+      "provider": "github",
+      "link_mode": "web"
+    }
+  },
+  "components": [
+    {
+      "id": "studio",
+      "type": "frontend",
+      "label": "空间设计界面",
+      "sublabel": "Vue / 2D 与 3D 预览",
+      "pos": [
+        30,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "cp6.web/src/views/space/editor/DesignUnderlayView.vue",
+          "line": 97,
+          "end_line": 98
+        },
+        {
+          "path": "cp6.web/src/views/space/SpaceHomeView.vue",
+          "line": 70,
+          "end_line": 80
+        }
+      ]
+    },
+    {
+      "id": "contract",
+      "type": "backend",
+      "label": "Space API 与契约",
+      "sublabel": "design/v1 + Contracts",
+      "pos": [
+        350,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "line": 23,
+          "end_line": 26
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "line": 55,
+          "end_line": 59
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "type": "backend",
+      "label": "设计与版本服务",
+      "sublabel": "Application / Domain 接口",
+      "pos": [
+        350,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Space.Infrastructure/SpaceDesignV1Service.cs",
+          "line": 1,
+          "end_line": 55
+        },
+        {
+          "path": "CP6.Space.Application/CP6.Space.Application.csproj",
+          "line": 1,
+          "end_line": 9
+        }
+      ]
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "SpaceContext",
+      "sublabel": "设计版本和状态记录",
+      "pos": [
+        670,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Space.Infrastructure/SpaceInfrastructureRegistration.cs",
+          "line": 54,
+          "end_line": 57
+        }
+      ]
+    },
+    {
+      "id": "uploads",
+      "type": "database",
+      "label": "导入与隔离文件",
+      "sublabel": "Excel / CAD / 底图",
+      "pos": [
+        30,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Space.Infrastructure/SpaceCadParseService.cs",
+          "line": 15,
+          "end_line": 52
+        },
+        {
+          "path": "CP6.Space.Application/SpaceFileUploadService.cs",
+          "line": 9,
+          "end_line": 36
+        }
+      ]
+    },
+    {
+      "id": "publish",
+      "type": "backend",
+      "label": "发布协调与预检",
+      "sublabel": "校验、并发与权限条件",
+      "pos": [
+        350,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.cs",
+          "line": 23,
+          "end_line": 51
+        },
+        {
+          "path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs",
+          "line": 235,
+          "end_line": 257
+        }
+      ]
+    },
+    {
+      "id": "wms",
+      "type": "backend",
+      "label": "WMS 发布适配",
+      "sublabel": "通过预检后应用批次",
+      "pos": [
+        670,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs",
+          "line": 393,
+          "end_line": 422
+        }
+      ]
+    },
+    {
+      "id": "runtime",
+      "type": "backend",
+      "label": "发布后的运行版本",
+      "sublabel": "运行物化与视图",
+      "pos": [
+        350,
+        670
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Space.Infrastructure/Cp6SpaceRuntimeMaterializer.cs",
+          "line": 16,
+          "end_line": 43
+        },
+        {
+          "path": "CP6.Space.Infrastructure/SpacePublishOrchestrator.Execution.cs",
+          "line": 1,
+          "end_line": 40
+        }
+      ]
+    },
+    {
+      "id": "cad",
+      "type": "external",
+      "label": "可选远程 CAD",
+      "sublabel": "Enabled + 批准清单",
+      "pos": [
+        30,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 183,
+          "end_line": 195
+        },
+        {
+          "path": "CP6.Space.Infrastructure/SpaceCadRemoteWorkerClient.cs",
+          "line": 90,
+          "end_line": 108
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "studio-to-contract",
+      "from": "studio",
+      "to": "contract",
+      "label": "HTTP"
+    },
+    {
+      "id": "contract-to-design",
+      "from": "contract",
+      "to": "design",
+      "label": "权限检查后"
+    },
+    {
+      "id": "design-to-storage",
+      "from": "design",
+      "to": "storage",
+      "label": "读写版本"
+    },
+    {
+      "id": "design-to-uploads",
+      "from": "design",
+      "to": "uploads",
+      "label": "导入服务"
+    },
+    {
+      "id": "design-to-publish",
+      "from": "design",
+      "to": "publish",
+      "label": "发起发布"
+    },
+    {
+      "id": "publish-to-wms",
+      "from": "publish",
+      "to": "wms",
+      "label": "预检后写入"
+    },
+    {
+      "id": "publish-to-runtime",
+      "from": "publish",
+      "to": "runtime",
+      "label": "激活运行"
+    },
+    {
+      "id": "uploads-to-cad",
+      "from": "uploads",
+      "to": "cad",
+      "label": "启用时转换",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Space 的五层项目",
+      "items": [
+        "Contracts：请求响应约定；Domain：模型、版本与领域规则。",
+        "Application：服务接口与应用逻辑；Infrastructure：EF、文件与外部适配。",
+        "WebApi 暴露端点；CP6.Space.Client 和 TypeScript SDK 为调用端提供契约。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "能力按阶段使用",
+      "items": [
+        "先上传和校验素材，再编辑版本、检查发布计划、应用 WMS 批次并激活运行版本。",
+        "运行视图另通过 SpaceWmsRuntimeService 查询库存等仓库数据。",
+        "规划仿真、AI 提案、人员/设备事件与控制塔是各自的服务入口。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "运行条件",
+      "items": [
+        "远程 CAD 只有启用且满足批准配置才注册；AutoCAD/Aspose 候选工具需要各自运行环境。",
+        "文件扫描、任务队列和发布恢复具有独立状态；不能把上传完成当成已发布。",
+        "仿真结果不等于真实设备或现场仓库验收。"
+      ]
+    }
+  ]
+}

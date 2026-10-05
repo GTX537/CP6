@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "01 · CP6 整体运行结构",
+    "locale": "zh-CN",
+    "output": ".archify/architecture-overview-20261004-142500/overview.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/GTX537/CP6.git",
+      "revision": "ebcbc4998faa7fee8e38db861753c6e90bdc100a",
+      "provider": "github",
+      "link_mode": "web"
+    }
+  },
+  "components": [
+    {
+      "id": "native",
+      "type": "frontend",
+      "label": "Windows / Android",
+      "sublabel": "WPF / MAUI 客户端",
+      "pos": [
+        30,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Desktop/CP6.Desktop.csproj",
+          "line": 3,
+          "end_line": 12
+        },
+        {
+          "path": "CP6.Mobile/CP6.Mobile.csproj",
+          "line": 3,
+          "end_line": 23
+        }
+      ]
+    },
+    {
+      "id": "client",
+      "type": "frontend",
+      "label": "共用客户端库",
+      "sublabel": "Client.Core → Client.Api",
+      "pos": [
+        350,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Client.Core/ClientServiceCollectionExtensions.cs",
+          "line": 40,
+          "end_line": 53
+        },
+        {
+          "path": "CP6.Client.Core/WmsRealtimeService.cs",
+          "line": 1,
+          "end_line": 30
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "浏览器里的 CP6",
+      "sublabel": "Vue 页面与 API 调用",
+      "pos": [
+        30,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "cp6.web/src/api/http.ts",
+          "line": 23,
+          "end_line": 44
+        },
+        {
+          "path": "cp6.web/package.json",
+          "line": 26,
+          "end_line": 43
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "统一后端入口",
+      "sublabel": "CP6.WebApi / .NET 8",
+      "pos": [
+        350,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 3078,
+          "end_line": 3089
+        },
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 3123,
+          "end_line": 3126
+        },
+        {
+          "path": "CP6.WebApi/CP6.WebApi.csproj",
+          "line": 1,
+          "end_line": 31
+        }
+      ]
+    },
+    {
+      "id": "core",
+      "type": "backend",
+      "label": "ERP 等业务处理",
+      "sublabel": "CP6.Core + CP6.Entity",
+      "pos": [
+        670,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Services/Erp/OrderService.cs",
+          "line": 20,
+          "end_line": 46
+        },
+        {
+          "path": "CP6.Core/CP6.Core.csproj",
+          "line": 1,
+          "end_line": 15
+        }
+      ]
+    },
+    {
+      "id": "space",
+      "type": "backend",
+      "label": "空间设计与仓储",
+      "sublabel": "Space 各层在同一后端",
+      "pos": [
+        350,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 181,
+          "end_line": 182
+        },
+        {
+          "path": "CP6.Space.Infrastructure/SpaceInfrastructureRegistration.cs",
+          "line": 124,
+          "end_line": 149
+        }
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "本次部署选定的库",
+      "sublabel": "SQL Server 或 PostgreSQL",
+      "pos": [
+        670,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Persistence/DatabaseOptions.cs",
+          "line": 5,
+          "end_line": 16
+        },
+        {
+          "path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+          "line": 13,
+          "end_line": 26
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "type": "database",
+      "label": "Space 文件目录",
+      "sublabel": "隔离上传与文件内容",
+      "pos": [
+        350,
+        670
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 198,
+          "end_line": 207
+        },
+        {
+          "path": "CP6.Space.Infrastructure/SpaceInfrastructureRegistration.cs",
+          "line": 13,
+          "end_line": 35
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "native-to-client",
+      "from": "native",
+      "to": "client",
+      "label": "共用"
+    },
+    {
+      "id": "client-to-api",
+      "from": "client",
+      "to": "api",
+      "label": "HTTP / SignalR"
+    },
+    {
+      "id": "web-to-api",
+      "from": "web",
+      "to": "api",
+      "label": "HTTP /api"
+    },
+    {
+      "id": "api-to-core",
+      "from": "api",
+      "to": "core",
+      "label": "调用服务"
+    },
+    {
+      "id": "api-to-space",
+      "from": "api",
+      "to": "space",
+      "label": "调用服务"
+    },
+    {
+      "id": "core-to-db",
+      "from": "core",
+      "to": "db",
+      "label": "EF / SQL"
+    },
+    {
+      "id": "space-to-db",
+      "from": "space",
+      "to": "db",
+      "label": "EF"
+    },
+    {
+      "id": "space-to-files",
+      "from": "space",
+      "to": "files",
+      "label": "文件读写"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "从入口理解",
+      "items": [
+        "三个客户端通过 HTTP 访问同一个 CP6.WebApi；数据库连接由后端持有。",
+        "浏览器使用 Cookie 与 CSRF；原生客户端调用链使用 BearerTokenHandler。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "理解项目边界",
+      "items": [
+        "ERP、MES、WMS、FIN 等是统一后端内的业务模块。",
+        "CP6.Client.Api 是 HTTP 调用库；Space 分层项目也是同一 API 宿主的依赖。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "配置决定启用范围",
+      "items": [
+        "Redis 缓存、消息服务、CRM 对接和远程 CAD 按配置及启用条件接入。",
+        "数据库迁移记录与附件文件分开保存；更换数据库不会自动搬迁文件。"
+      ]
+    }
+  ]
+}

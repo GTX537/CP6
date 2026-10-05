@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "04 · 一个请求如何访问双数据库",
+    "locale": "zh-CN",
+    "output": ".archify/architecture-database-20261004-142500/database.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/GTX537/CP6.git",
+      "revision": "ebcbc4998faa7fee8e38db861753c6e90bdc100a",
+      "provider": "github",
+      "link_mode": "web"
+    }
+  },
+  "components": [
+    {
+      "id": "request",
+      "type": "frontend",
+      "label": "页面发出业务请求",
+      "sublabel": "Axios /api；携带 Cookie",
+      "pos": [
+        30,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "cp6.web/src/api/http.ts",
+          "line": 23,
+          "end_line": 44
+        }
+      ]
+    },
+    {
+      "id": "controller",
+      "type": "backend",
+      "label": "后端 Controller",
+      "sublabel": "认证、权限、参数处理",
+      "pos": [
+        350,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Controllers/Erp/OrderController.cs",
+          "line": 1,
+          "end_line": 55
+        }
+      ]
+    },
+    {
+      "id": "service",
+      "type": "backend",
+      "label": "Core / Space 服务",
+      "sublabel": "业务规则与事务",
+      "pos": [
+        670,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Services/Erp/OrderService.cs",
+          "line": 20,
+          "end_line": 72
+        },
+        {
+          "path": "CP6.Space.Infrastructure/SpaceInfrastructureRegistration.cs",
+          "line": 54,
+          "end_line": 57
+        }
+      ]
+    },
+    {
+      "id": "contexts",
+      "type": "backend",
+      "label": "四类持久化上下文",
+      "sublabel": "Core / Space / 身份 / ERP",
+      "pos": [
+        670,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+          "line": 3,
+          "end_line": 9
+        },
+        {
+          "path": "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+          "line": 36,
+          "end_line": 58
+        },
+        {
+          "path": "CP6.WebApi/Configuration/ErpIntegrationConfiguration.cs",
+          "line": 24,
+          "end_line": 43
+        }
+      ]
+    },
+    {
+      "id": "settings",
+      "type": "security",
+      "label": "部署配置",
+      "sublabel": "Provider + DefaultConnection",
+      "pos": [
+        30,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Persistence/DatabaseOptions.cs",
+          "line": 14,
+          "end_line": 43
+        },
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 25,
+          "end_line": 36
+        }
+      ]
+    },
+    {
+      "id": "adapter",
+      "type": "backend",
+      "label": "数据库兼容层",
+      "sublabel": "EF 配置 / SQL 方言 / 连接",
+      "pos": [
+        350,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+          "line": 13,
+          "end_line": 26
+        },
+        {
+          "path": "CP6.Core/Persistence/DatabaseConnectionFactory.cs",
+          "line": 1,
+          "end_line": 47
+        },
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 209,
+          "end_line": 211
+        }
+      ]
+    },
+    {
+      "id": "sql",
+      "type": "database",
+      "label": "SQL Server",
+      "sublabel": "Provider = SqlServer",
+      "pos": [
+        30,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+          "line": 19,
+          "end_line": 25
+        }
+      ]
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "Provider = PostgreSql",
+      "pos": [
+        350,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Persistence/DatabaseContextOptions.cs",
+          "line": 19,
+          "end_line": 25
+        }
+      ]
+    },
+    {
+      "id": "migrations",
+      "type": "backend",
+      "label": "各引擎迁移记录",
+      "sublabel": "PG 独立迁移程序集",
+      "pos": [
+        670,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Persistence/DatabaseMigrationProfile.cs",
+          "line": 27,
+          "end_line": 42
+        },
+        {
+          "path": "CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj",
+          "line": 1,
+          "end_line": 15
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "request-to-controller",
+      "from": "request",
+      "to": "controller",
+      "label": "HTTP"
+    },
+    {
+      "id": "controller-to-service",
+      "from": "controller",
+      "to": "service",
+      "label": "调用"
+    },
+    {
+      "id": "service-to-contexts",
+      "from": "service",
+      "to": "contexts",
+      "label": "EF"
+    },
+    {
+      "id": "contexts-to-adapter",
+      "from": "contexts",
+      "to": "adapter",
+      "label": "统一配置"
+    },
+    {
+      "id": "settings-to-adapter",
+      "from": "settings",
+      "to": "adapter",
+      "label": "选择引擎"
+    },
+    {
+      "id": "adapter-to-sql",
+      "from": "adapter",
+      "to": "sql",
+      "label": "SqlServer 时"
+    },
+    {
+      "id": "adapter-to-pg",
+      "from": "adapter",
+      "to": "pg",
+      "label": "PostgreSql 时"
+    },
+    {
+      "id": "contexts-to-migrations",
+      "from": "contexts",
+      "to": "migrations",
+      "label": "匹配历史"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "怎样切换本地连接",
+      "items": [
+        "设置 Database:Provider 为 SqlServer 或 PostgreSql，再填写对应的 ConnectionStrings:DefaultConnection。",
+        "环境变量对应 Database__Provider 与 ConnectionStrings__DefaultConnection；更改后重启后端。",
+        "前端继续请求同一个 API，不需要直接连接 PostgreSQL。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "现有数据如何迁移",
+      "items": [
+        "已有 SQL Server 数据需要独立的搬迁工具与核验；改连接不会复制旧数据。",
+        "本次会话已留存的 PostgreSQL 测试副本运行手册见 CP6DB-POSTGRESQL-LOCAL-COPY.md。",
+        "Space 文件与 PUB 附件内容需按存储目录或对象存储单独处理。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "兼容版的范围",
+      "items": [
+        "一次部署固定一种 Provider；不会把同一次业务操作同时写入两种数据库。",
+        "SQL 方言、字符串语义、并发令牌、序列与迁移历史均属于适配范围。",
+        "图解释主线实现；当前本机 API 的端口、发布物版本见运行手册及私有启动记录。"
+      ]
+    }
+  ]
+}
