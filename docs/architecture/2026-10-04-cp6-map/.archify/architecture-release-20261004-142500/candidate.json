@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "06 · 从代码到可发布版本",
+    "locale": "zh-CN",
+    "output": ".archify/architecture-release-20261004-142500/release.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/GTX537/CP6.git",
+      "revision": "ebcbc4998faa7fee8e38db861753c6e90bdc100a",
+      "provider": "github",
+      "link_mode": "web"
+    }
+  },
+  "components": [
+    {
+      "id": "source",
+      "type": "external",
+      "label": "固定代码版本",
+      "sublabel": "Git SHA 与任务分支",
+      "pos": [
+        30,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "AGENTS.md",
+          "line": 1,
+          "end_line": 30
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "type": "backend",
+      "label": "相称的本地验证",
+      "sublabel": "测试 / 编译 / 契约检查",
+      "pos": [
+        350,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "docs/devops/LOCAL-VALIDATION-POLICY.md",
+          "line": 1,
+          "end_line": 43
+        }
+      ]
+    },
+    {
+      "id": "candidate",
+      "type": "security",
+      "label": "GitHub R2 候选",
+      "sublabel": "受保护版本 Tag 与门禁",
+      "pos": [
+        670,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": ".github/workflows/r2-candidate.yml",
+          "line": 1,
+          "end_line": 18
+        },
+        {
+          "path": "docs/client/r2/README.md",
+          "line": 18,
+          "end_line": 30
+        }
+      ]
+    },
+    {
+      "id": "registry",
+      "type": "cloud",
+      "label": "GHCR / 候选清单",
+      "sublabel": "镜像 digest / 签名 / SBOM",
+      "pos": [
+        670,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "docs/devops/README.md",
+          "line": 30,
+          "end_line": 53
+        },
+        {
+          "path": "docs/client/r2/02-signing-candidate-artifacts.md",
+          "line": 1,
+          "end_line": 64
+        }
+      ]
+    },
+    {
+      "id": "promote",
+      "type": "security",
+      "label": "审批后环境推广",
+      "sublabel": "同一 digest / db-init 先行",
+      "pos": [
+        350,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "docs/client/r2/03-compose-kubernetes-deployment.md",
+          "line": 1,
+          "end_line": 62
+        },
+        {
+          "path": "docs/devops/README.md",
+          "line": 75,
+          "end_line": 80
+        }
+      ]
+    },
+    {
+      "id": "verify",
+      "type": "backend",
+      "label": "部署后的身份与健康",
+      "sublabel": "核对版本、迁移、运行身份",
+      "pos": [
+        30,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "docs/client/r2/README.md",
+          "line": 51,
+          "end_line": 56
+        },
+        {
+          "path": "docs/client/r2/03-compose-kubernetes-deployment.md",
+          "line": 1,
+          "end_line": 62
+        }
+      ]
+    },
+    {
+      "id": "azure",
+      "type": "cloud",
+      "label": "Azure Artifact 桥",
+      "sublabel": "显式手动获取成功制品",
+      "pos": [
+        350,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "azure-pipelines.yml",
+          "line": 1,
+          "end_line": 65
+        },
+        {
+          "path": "docs/devops/README.md",
+          "line": 32,
+          "end_line": 44
+        }
+      ]
+    },
+    {
+      "id": "lab",
+      "type": "external",
+      "label": "Azure DEV / Shadow",
+      "sublabel": "学习环境与非权威验证",
+      "pos": [
+        670,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "docs/devops/README.md",
+          "line": 40,
+          "end_line": 44
+        },
+        {
+          "path": "docs/devops/RELEASE-CD-ENGINEERING-CLOSEOUT.md",
+          "line": 1,
+          "end_line": 45
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "source-to-local",
+      "from": "source",
+      "to": "local",
+      "label": "先验证"
+    },
+    {
+      "id": "local-to-candidate",
+      "from": "local",
+      "to": "candidate",
+      "label": "冻结版本后"
+    },
+    {
+      "id": "candidate-to-registry",
+      "from": "candidate",
+      "to": "registry",
+      "label": "门禁通过后"
+    },
+    {
+      "id": "registry-to-promote",
+      "from": "registry",
+      "to": "promote",
+      "label": "按 digest"
+    },
+    {
+      "id": "promote-to-verify",
+      "from": "promote",
+      "to": "verify",
+      "label": "实际启动"
+    },
+    {
+      "id": "azure-to-lab",
+      "from": "azure",
+      "to": "lab",
+      "label": "验证后使用"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "正式发布的身份",
+      "items": [
+        "GitHub R2 + GHCR 是当前唯一生产候选与部署权威。",
+        "API/Web 镜像构建一次，环境推广使用同一 repository@sha256:digest。",
+        "本地发布文件与普通 DEV 镜像不能代替生产候选证据。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "两条链如何区分",
+      "items": [
+        "普通 GitHub 编译/测试保留手动入口，不能把推送分支理解为自动执行测试。",
+        "Azure 桥下载并核验成功的 GitHub Artifact；不承担 .NET/Node 编译或生产镜像构建。",
+        "Azure DEV 运行封装与 Shadow 为独立范围；不会产生第二套权威 R2 候选。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "当前不能由图证明的事",
+      "items": [
+        "R2 当前保持 SQL Server 候选基线；PostgreSQL 本地通过不等于获得生产发布资格。",
+        "工程实现完成与真实候选、UAT/PROD、现场连续验收是分开的状态。",
+        "本任务生成说明图，没有触发 Actions、发布候选或部署环境。"
+      ]
+    }
+  ]
+}

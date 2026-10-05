@@ -1,0 +1,9 @@
+*.delivery.json
+*.browser-check.json
+*.finalize.json
+*.finalize-summary.json
+*.visual-check.json
+*.light-*.png
+*.dark-*.png
+*.contact-sheet.html
+review-*/

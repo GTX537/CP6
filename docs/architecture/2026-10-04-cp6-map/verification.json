@@ -1,0 +1,181 @@
+{
+  "sourceRevision": "ebcbc4998faa7fee8e38db861753c6e90bdc100a",
+  "archifyRevision": "594f6087358610bd16e64e5602976020871b6bff",
+  "checkedAtUtc": "2026-10-04T17:29:57.986Z",
+  "diagrams": [
+    {
+      "slug": "overview",
+      "type": "architecture",
+      "quality": "showcase",
+      "candidateSha256": "aa8ed2c2f25a0dc9b1036a72b41fd4523c69d817597b8344c66197567fd3186a",
+      "htmlSha256": "bd7a6b6815441b0f5b96a0608d0ef66012190e3b2ffd43a7be73f1cf6f402210",
+      "htmlBytes": 762043,
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "visualReview": "passed-sampled",
+      "visualReviewScope": "Inspected 1440x900 light and 2048x1320 dark captures; no clipped nodes, overlapping labels or crossed main routes observed."
+    },
+    {
+      "slug": "business",
+      "type": "architecture",
+      "quality": "showcase",
+      "candidateSha256": "6a397239c3570b570e1f18ad1555e6366856d82cdcebd6ee4502896a9bd77383",
+      "htmlSha256": "a22df4db0b7e7888a070a310a8e0e4f44700523839b415d6660847506b7a06f8",
+      "htmlBytes": 758990,
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "visualReview": "not-requested",
+      "visualReviewScope": "No image inspection; required real-browser containment/readability/theme gates passed."
+    },
+    {
+      "slug": "space",
+      "type": "architecture",
+      "quality": "showcase",
+      "candidateSha256": "c76c00b60977b1c5560dbf0a49eaccc9aeb3f547b70eda9eced0d337abc7f751",
+      "htmlSha256": "3e22dc79d4e342837cd6396e6acb20ad570dac7ac5ddd0e43cded283c2ef564b",
+      "htmlBytes": 764203,
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "visualReview": "not-requested",
+      "visualReviewScope": "No image inspection; required real-browser containment/readability/theme gates passed."
+    },
+    {
+      "slug": "database",
+      "type": "architecture",
+      "quality": "showcase",
+      "candidateSha256": "677705073f28adaf2a8b61c41573b99eb92a35455a5db3cd9fa837888f1c2087",
+      "htmlSha256": "8eade7074d276f956450fd8aaf57e52918e145b709774f9ea01d5fcddf921a18",
+      "htmlBytes": 764187,
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "visualReview": "passed-sampled",
+      "visualReviewScope": "Inspected 1440x900 light and 2048x1320 dark captures; no clipped nodes, overlapping labels or crossed main routes observed."
+    },
+    {
+      "slug": "packaging",
+      "type": "architecture",
+      "quality": "showcase",
+      "candidateSha256": "0ba98f8e73a7806529efbd99af32e20aa988b62aa1ceaa2e65aa6a38b27b92cf",
+      "htmlSha256": "0874a2ce6823366f19b50f2aba814a48ce47915efc769448144419cf216cc50e",
+      "htmlBytes": 762931,
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "visualReview": "not-requested",
+      "visualReviewScope": "No image inspection; required real-browser containment/readability/theme gates passed."
+    },
+    {
+      "slug": "release",
+      "type": "architecture",
+      "quality": "showcase",
+      "candidateSha256": "a0eac611142ec1c19fd3f00fa7cbfde21f650dcd6e8bc412f92dd1deb14b9c78",
+      "htmlSha256": "c1b0c4797fdca2826ea5ced58a685c6f4a4ca852c95e37ba812722ce71f2bd1e",
+      "htmlBytes": 760179,
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "visualReview": "not-requested",
+      "visualReviewScope": "No image inspection; required real-browser containment/readability/theme gates passed."
+    }
+  ],
+  "indexBrowser": [
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "width": 1440,
+      "scrollWidth": 1440,
+      "title": "CP6 项目地图",
+      "tiles": 6,
+      "projectRows": 48,
+      "status": "pass"
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "width": 390,
+      "scrollWidth": 390,
+      "title": "CP6 项目地图",
+      "tiles": 6,
+      "projectRows": 48,
+      "status": "pass"
+    }
+  ],
+  "localHttp": [
+    {
+      "path": "/architecture/2026-10-04-cp6-map/.archify/architecture-overview-20261004-142500/overview.html",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/.archify/architecture-business-20261004-142500/business.html",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/.archify/architecture-space-20261004-142500/space.html",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/.archify/architecture-database-20261004-142500/database.html",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/.archify/architecture-packaging-20261004-142500/packaging.html",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/.archify/architecture-release-20261004-142500/release.html",
+      "status": 200
+    },
+    {
+      "path": "/devops/CP6DB-POSTGRESQL-LOCAL-COPY.md",
+      "status": 200
+    },
+    {
+      "path": "/devops/README.md",
+      "status": 200
+    },
+    {
+      "path": "/client/r2/README.md",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/manifest.json",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/ARCHIFY-LICENSE.txt",
+      "status": 200
+    },
+    {
+      "path": "/architecture/2026-10-04-cp6-map/ARCHIFY-THIRD-PARTY-NOTICES.md",
+      "status": 200
+    }
+  ],
+  "scope": "Static project maps and local browser rendering. No business regression, Docker build, Kubernetes, database mutation, or remote pipeline execution.",
+  "status": "pass"
+}

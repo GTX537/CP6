@@ -4,6 +4,7 @@
 
 | 文档 | 用途 |
 | --- | --- |
+| [中文交互项目地图](2026-10-04-cp6-map/README.md) · [打开六图入口](2026-10-04-cp6-map/index.html) | 固定版本的运行、业务、Space、双库及打包发布图；附完整项目清单与本地浏览器验证 |
 | [CODEMAP 总地图](CODEMAP.md) | 请求链路、分层和模块位置 |
 | [项目结构参考](PROJECT_STRUCTURE.md) | 代码架构、业务流程与数据模型；[Word 快照](PROJECT_STRUCTURE.docx) |
 | [横切接线规范](00-横切接线规范.md) | 跨模块集成约定 |

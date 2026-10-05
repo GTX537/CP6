@@ -1,0 +1,287 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "02 · 业务模块职责地图",
+    "locale": "zh-CN",
+    "output": ".archify/architecture-business-20261004-142500/business.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/GTX537/CP6.git",
+      "revision": "ebcbc4998faa7fee8e38db861753c6e90bdc100a",
+      "provider": "github",
+      "link_mode": "web"
+    }
+  },
+  "components": [
+    {
+      "id": "entry",
+      "type": "backend",
+      "label": "同一个 WebApi",
+      "sublabel": "登录后按权限进入模块",
+      "pos": [
+        350,
+        260
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 44,
+          "end_line": 48
+        },
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 3078,
+          "end_line": 3079
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "type": "backend",
+      "label": "接单与采购计划",
+      "sublabel": "ERP / PUR / PLAN",
+      "pos": [
+        30,
+        50
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Controllers/Erp/BackorderController.cs",
+          "line": 9,
+          "end_line": 27
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Pur/GoodsReceiptController.cs",
+          "line": 8,
+          "end_line": 23
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Plan/ItemPlanningPolicyController.cs",
+          "line": 9,
+          "end_line": 24
+        }
+      ]
+    },
+    {
+      "id": "production",
+      "type": "backend",
+      "label": "生产、仓库与财务",
+      "sublabel": "MES / WMS / FIN",
+      "pos": [
+        350,
+        50
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Controllers/Mes/DefectRecordController.cs",
+          "line": 9,
+          "end_line": 28
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Wms/BarcodeAliasesController.cs",
+          "line": 8,
+          "end_line": 24
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Fin/ApInvoiceController.cs",
+          "line": 9,
+          "end_line": 26
+        }
+      ]
+    },
+    {
+      "id": "workflow",
+      "type": "backend",
+      "label": "申请、待办与审批",
+      "sublabel": "OA / WF",
+      "pos": [
+        670,
+        50
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Controllers/Oa/ApprovalController.cs",
+          "line": 8,
+          "end_line": 22
+        },
+        {
+          "path": "CP6.WebApi/Program.cs",
+          "line": 295,
+          "end_line": 307
+        }
+      ]
+    },
+    {
+      "id": "foundation",
+      "type": "backend",
+      "label": "系统与公共能力",
+      "sublabel": "SYS / PUB / Platform",
+      "pos": [
+        30,
+        470
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Controllers/Sys/AuthController.cs",
+          "line": 19,
+          "end_line": 31
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Pub/AttachmentController.cs",
+          "line": 9,
+          "end_line": 30
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Platform/CrossTenantAuditController.cs",
+          "line": 18,
+          "end_line": 25
+        }
+      ]
+    },
+    {
+      "id": "integration",
+      "type": "backend",
+      "label": "跨模块与外部对接",
+      "sublabel": "Integration / CRM 接口",
+      "pos": [
+        350,
+        470
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.Core/Services/Erp/OrderService.cs",
+          "line": 20,
+          "end_line": 46
+        },
+        {
+          "path": "CP6.WebApi/Configuration/ErpIntegrationConfiguration.cs",
+          "line": 24,
+          "end_line": 43
+        },
+        {
+          "path": "CP6.WebApi/Controllers/Integration/BridgeHealthController.cs",
+          "line": 8,
+          "end_line": 26
+        }
+      ]
+    },
+    {
+      "id": "space",
+      "type": "backend",
+      "label": "空间设计与运行视图",
+      "sublabel": "Space / 另见第 03 张",
+      "pos": [
+        670,
+        470
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "line": 23,
+          "end_line": 26
+        },
+        {
+          "path": "CP6.Space.Infrastructure/SpaceWmsRuntimeService.cs",
+          "line": 24,
+          "end_line": 44
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "entry-to-sales",
+      "from": "entry",
+      "to": "sales",
+      "label": "模块"
+    },
+    {
+      "id": "entry-to-production",
+      "from": "entry",
+      "to": "production",
+      "label": "模块"
+    },
+    {
+      "id": "entry-to-workflow",
+      "from": "entry",
+      "to": "workflow",
+      "label": "模块"
+    },
+    {
+      "id": "entry-to-foundation",
+      "from": "entry",
+      "to": "foundation",
+      "label": "模块"
+    },
+    {
+      "id": "entry-to-integration",
+      "from": "entry",
+      "to": "integration",
+      "label": "模块"
+    },
+    {
+      "id": "entry-to-space",
+      "from": "entry",
+      "to": "space",
+      "label": "模块"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "制造业务怎么分工",
+      "items": [
+        "ERP：客户订单、产品、交付；PUR：请购、采购单、收货。",
+        "PLAN：品目策略与 MRP；MES：生产指令、实绩、质量、OEE。",
+        "WMS：收发货、库位、库存、扫码；FIN：应收应付、凭证、成本。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "共用能力怎么配合",
+      "items": [
+        "OA 提供申请和待办界面，WF 提供流程状态机与审批回调。",
+        "SYS 管理认证与角色权限；PUB 提供附件等公共业务；Platform 提供平台级能力。",
+        "连线不代表每个业务自动串联，也不表示模块各自启动一个进程。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "明确当前能力边界",
+      "items": [
+        "ERP 订单服务具有 MES/WMS bridge 接口；采购和财务的审批回调在宿主注册。",
+        "CRM 对接有启用开关、租户映射和服务身份条件；CRM 应用属于独立项目。",
+        "MRP、IoT/WCS 与第三方连接器的现场能力须按实际实现和验收判断。"
+      ]
+    }
+  ]
+}

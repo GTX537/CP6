@@ -1,0 +1,311 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "05 · 前后端怎样打包运行",
+    "locale": "zh-CN",
+    "output": ".archify/architecture-packaging-20261004-142500/packaging.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/GTX537/CP6.git",
+      "revision": "ebcbc4998faa7fee8e38db861753c6e90bdc100a",
+      "provider": "github",
+      "link_mode": "web"
+    }
+  },
+  "components": [
+    {
+      "id": "websrc",
+      "type": "frontend",
+      "label": "前端源代码",
+      "sublabel": "cp6.web / Vue + TypeScript",
+      "pos": [
+        30,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "cp6.web/package.json",
+          "line": 6,
+          "end_line": 12
+        }
+      ]
+    },
+    {
+      "id": "webbuild",
+      "type": "frontend",
+      "label": "前端编译",
+      "sublabel": "npm run build → dist",
+      "pos": [
+        350,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "cp6.web/package.json",
+          "line": 8,
+          "end_line": 12
+        }
+      ]
+    },
+    {
+      "id": "webimage",
+      "type": "cloud",
+      "label": "Web 运行镜像",
+      "sublabel": "Nginx 提供静态页面",
+      "pos": [
+        670,
+        40
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "cp6.web/Dockerfile",
+          "line": 9,
+          "end_line": 21
+        },
+        {
+          "path": "cp6.web/nginx.conf",
+          "line": 11,
+          "end_line": 39
+        }
+      ]
+    },
+    {
+      "id": "apisrc",
+      "type": "backend",
+      "label": "后端源代码",
+      "sublabel": "WebApi 及项目依赖",
+      "pos": [
+        30,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/CP6.WebApi.csproj",
+          "line": 1,
+          "end_line": 31
+        }
+      ]
+    },
+    {
+      "id": "apibuild",
+      "type": "backend",
+      "label": "后端发布",
+      "sublabel": "dotnet publish -c Release",
+      "pos": [
+        350,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Dockerfile",
+          "line": 34,
+          "end_line": 42
+        }
+      ]
+    },
+    {
+      "id": "apiimage",
+      "type": "cloud",
+      "label": "API 运行镜像",
+      "sublabel": "ASP.NET 8 / :5000",
+      "pos": [
+        670,
+        250
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "CP6.WebApi/Dockerfile",
+          "line": 43,
+          "end_line": 58
+        }
+      ]
+    },
+    {
+      "id": "compose",
+      "type": "cloud",
+      "label": "Docker Compose",
+      "sublabel": "容器、网络、外部配置",
+      "pos": [
+        350,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "deploy/production/compose/compose.yaml",
+          "line": 4,
+          "end_line": 30
+        },
+        {
+          "path": "deploy/production/compose/compose.yaml",
+          "line": 55,
+          "end_line": 64
+        }
+      ]
+    },
+    {
+      "id": "k8s",
+      "type": "cloud",
+      "label": "Kubernetes",
+      "sublabel": "Deployment / Service",
+      "pos": [
+        670,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "deploy/production/kubernetes/api.yaml",
+          "line": 1,
+          "end_line": 43
+        },
+        {
+          "path": "deploy/production/kubernetes/web.yaml",
+          "line": 1,
+          "end_line": 36
+        },
+        {
+          "path": "deploy/production/kubernetes/ingress.yaml",
+          "line": 30,
+          "end_line": 61
+        }
+      ]
+    },
+    {
+      "id": "dbinit",
+      "type": "backend",
+      "label": "启动前 db-init",
+      "sublabel": "同一 API 镜像先迁移",
+      "pos": [
+        30,
+        460
+      ],
+      "size": [
+        204,
+        76
+      ],
+      "sources": [
+        {
+          "path": "deploy/production/compose/compose.yaml",
+          "line": 4,
+          "end_line": 17
+        },
+        {
+          "path": "deploy/production/kubernetes/db-init-job.yaml",
+          "line": 19,
+          "end_line": 34
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "websrc-to-webbuild",
+      "from": "websrc",
+      "to": "webbuild",
+      "label": "编译"
+    },
+    {
+      "id": "webbuild-to-webimage",
+      "from": "webbuild",
+      "to": "webimage",
+      "label": "封装 dist"
+    },
+    {
+      "id": "apisrc-to-apibuild",
+      "from": "apisrc",
+      "to": "apibuild",
+      "label": "编译"
+    },
+    {
+      "id": "apibuild-to-apiimage",
+      "from": "apibuild",
+      "to": "apiimage",
+      "label": "封装发布物"
+    },
+    {
+      "id": "webimage-to-apiimage",
+      "from": "webimage",
+      "to": "apiimage",
+      "label": "/api 代理"
+    },
+    {
+      "id": "apiimage-to-k8s",
+      "from": "apiimage",
+      "to": "k8s",
+      "label": "同一 digest"
+    },
+    {
+      "id": "apiimage-to-compose",
+      "from": "apiimage",
+      "to": "compose",
+      "label": "同一 digest"
+    },
+    {
+      "id": "dbinit-to-compose",
+      "from": "dbinit",
+      "to": "compose",
+      "label": "成功后启动"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "本地调试和文件发布",
+      "items": [
+        "Visual Studio / dotnet run 启动开发后端；npm run dev 启动 Vite，代理默认指向 :5177。",
+        "dotnet publish 生成 DLL、依赖和配置；dotnet CP6.WebApi.dll 运行发布文件。",
+        "前端 dist 交给 Web 服务器；桌面端与 Android 端另行生成客户端制品。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Docker 与 Kubernetes",
+      "items": [
+        "Dockerfile 负责生成镜像；Compose 负责一组容器的连接与启动。",
+        "Kubernetes 通过 Deployment / Service / Ingress 管理副本和路由；Job 先完成 db-init。",
+        "生产目录为 deploy/production；根 Compose 和 k8s 是开发配置。数据库和文件存储独立于镜像。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "图中的验证边界",
+      "items": [
+        "这里只核对仓库构建与部署定义，本任务没有执行 Docker 构建或 K8s 部署。",
+        "静态检查发现 API Dockerfile 的 restore 前 COPY 清单缺少 PostgreSQL 项目；需专项修复和容器验证。",
+        "前端 Dockerfile 使用 build-only；类型检查由 npm run build / 对应门禁完成。"
+      ]
+    }
+  ]
+}
