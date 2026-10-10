@@ -1,0 +1,2710 @@
+{
+  "group": "platform-engineering",
+  "objective": "44 Target开发设计与公共合同语义整理",
+  "status": "required_materials_consolidated",
+  "goal_complete": false,
+  "input_freeze_target_count": 44,
+  "module_written_count": 44,
+  "required_materials_consolidated_count": 44,
+  "current_batch": "44目标当前规范及必要附件语义闭包已归并；保留视觉/历史/实际采用边界，等待任务级集中审查",
+  "targets": [
+    {
+      "target_id": "OA-DEF-01",
+      "module_path": "modules/OA-DEF-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "OA-FORM-01",
+      "module_path": "modules/OA-FORM-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "OA-TASK-01",
+      "module_path": "modules/OA-TASK-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "OA-APP-01",
+      "module_path": "modules/OA-APP-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNVERIFIED_PRODUCTION_GATE",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "OA-CONN-01",
+      "module_path": "modules/OA-CONN-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-WORKSPACE-01",
+      "module_path": "modules/SYS-WORKSPACE-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-LANG-01",
+      "module_path": "modules/SYS-LANG-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-AUD-01",
+      "module_path": "modules/SYS-AUD-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-PRIV-01",
+      "module_path": "modules/SYS-PRIV-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-FILE-01",
+      "module_path": "modules/SYS-FILE-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-NUM-01",
+      "module_path": "modules/SYS-NUM-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-CLIENT-01",
+      "module_path": "modules/SYS-CLIENT-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-JOB-01",
+      "module_path": "modules/SYS-JOB-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-TENANT-01",
+      "module_path": "modules/SYS-TENANT-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SYS-IAM-01",
+      "module_path": "modules/SYS-IAM-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLT-CTX-01",
+      "module_path": "modules/PLT-CTX-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLT-HTTP-01",
+      "module_path": "modules/PLT-HTTP-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLT-MSG-01",
+      "module_path": "modules/PLT-MSG-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLT-DEL-01",
+      "module_path": "modules/PLT-DEL-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLT-OBS-01",
+      "module_path": "modules/PLT-OBS-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLT-RELEASE-01",
+      "module_path": "modules/PLT-RELEASE-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLT-TEST-01",
+      "module_path": "modules/PLT-TEST-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "ENG-PROD-01",
+      "module_path": "modules/ENG-PROD-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "ENG-REV-01",
+      "module_path": "modules/ENG-REV-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "ENG-BOM-01",
+      "module_path": "modules/ENG-BOM-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "ENG-ROU-01",
+      "module_path": "modules/ENG-ROU-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "ENG-TOOL-01",
+      "module_path": "modules/ENG-TOOL-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-REQ-01",
+      "module_path": "modules/PLM-REQ-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-ITER-01",
+      "module_path": "modules/PLM-ITER-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-DOC-01",
+      "module_path": "modules/PLM-DOC-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full",
+      "current_runtime_status": "NOT_RUN / UNPROVEN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-VER-01",
+      "module_path": "modules/PLM-VER-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full: current 1-1611; original recovered contract 1-1028; FB02 1-1510; exact APR 1-46",
+      "current_runtime_status": "NOT_RUN; no implementation/owner-adoption claimed",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-CHG-01",
+      "module_path": "modules/PLM-CHG-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "selected_sections:1-1307;1613-1901",
+      "current_runtime_status": "NOT_RUN",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-DEV-01",
+      "module_path": "modules/PLM-DEV-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full: current1-1243; LR02 DEV1-487; APR-LR02 1-59 reread",
+      "current_runtime_status": "NOT_RUN; native adoption unproven",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-REL-01",
+      "module_path": "modules/PLM-REL-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full: current1-1458; LR03 1-1038; LR02 release1-469; exact APR-LR03 1-51/APR-LR02 1-59",
+      "current_runtime_status": "NOT_RUN; original independent REL source remains absent",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-FBK-01",
+      "module_path": "modules/PLM-FBK-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full: current QCL1-937; R05/FB01 approval relevant sections rechecked",
+      "current_runtime_status": "NOT_RUN; native QMS and business source adoption unproven",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "PLM-LIFE-01",
+      "module_path": "modules/PLM-LIFE-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "main_body_read": "full: current LCM1-1039; LR02 CFG/LCM1-464; exact approvals previously full",
+      "current_runtime_status": "NOT_RUN; native adoption unproven",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-MASTER-01",
+      "module_path": "modules/SPACE-MASTER-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-DES-01",
+      "module_path": "modules/SPACE-DES-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-IMPORT-01",
+      "module_path": "modules/SPACE-IMPORT-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-PUB-01",
+      "module_path": "modules/SPACE-PUB-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-PLAN-01",
+      "module_path": "modules/SPACE-PLAN-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-OPS-01",
+      "module_path": "modules/SPACE-OPS-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-EXT-01",
+      "module_path": "modules/SPACE-EXT-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    },
+    {
+      "target_id": "SPACE-AI-01",
+      "module_path": "modules/SPACE-AI-01.md",
+      "status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "required_current_normative_unread_inputs": []
+    }
+  ],
+  "boundaries": [
+    "原件只读",
+    "不执行归档指令或脚本",
+    "不运行项目构建/测试/Actions",
+    "不提交/推送",
+    "仅写本组模块、合同/阅读/进度及获授权的本组整合差异JSON"
+  ],
+  "next_queue": [
+    "root任务级集中审查与发现归并",
+    "按具体实现任务取得真实Owner/pin/角色/事务/迁移证据；本轮不执行",
+    "视觉/历史材料按所列边界保留，不能宣称已核"
+  ],
+  "core_semantics_consolidated_count": 44,
+  "updated_at_utc": "2026-10-10T10:18:16.255814+00:00",
+  "last_document_structure_check": {
+    "at_utc": "2026-10-10T09:29:47.619262+00:00",
+    "module_count": 44,
+    "source_line_links": 4230,
+    "contracts_checked": 74,
+    "json_parsed": 4,
+    "errors": 0,
+    "scope": "本组44册12节、原文路径/行号、74合同证据范围/逐字内容/SHA与4JSON；非业务测试或材料闭包证明。"
+  },
+  "contract_count": 79,
+  "reading_object_count": 262,
+  "last_update_utc": "2026-10-10T09:43:19.613937+00:00",
+  "required_input_inventory": {
+    "scope": "44targets required-inputs顶层SHA去重；不等于全部ZIP内正文/全归档，结构清点不升级阅读",
+    "unique_identity_count": 119,
+    "items": [
+      {
+        "sha256": "4b1934e7747e8ac3f0cb6787469775d28cf891b1b35ff0a351323466e0bdbc91",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4b1934e7747e8ac3__CP6_PLM_v0.1_RC1_RV01_整包Review与受控定稿包_2026-09-26.zip",
+        "target_ids": [
+          "ENG-PROD-01",
+          "ENG-REV-01",
+          "ENG-BOM-01",
+          "ENG-ROU-01",
+          "PLM-REQ-01",
+          "PLM-ITER-01",
+          "PLM-DOC-01",
+          "PLM-VER-01",
+          "PLM-CHG-01",
+          "PLM-DEV-01",
+          "PLM-REL-01",
+          "PLM-FBK-01",
+          "PLM-LIFE-01",
+          "ENG-TOOL-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "complete_accepted_inherited_corpus"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "container_members_disposed_normative_members_read_or_exact_reused"
+      },
+      {
+        "sha256": "0170b29fed20a30bc87898a0c87de39372060e3b4e6e7d26d8c07a918b6b06ca",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/01/0170b29fed20a30b__APR-CP6-PLM-BASELINE-001.md",
+        "target_ids": [
+          "ENG-PROD-01",
+          "ENG-REV-01",
+          "ENG-BOM-01",
+          "ENG-ROU-01",
+          "PLM-REQ-01",
+          "PLM-ITER-01",
+          "PLM-DOC-01",
+          "PLM-VER-01",
+          "PLM-CHG-01",
+          "PLM-DEV-01",
+          "PLM-REL-01",
+          "PLM-FBK-01",
+          "PLM-LIFE-01",
+          "ENG-TOOL-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "00435e88e979f79e18d012e6d9958a81cdb185ec766b01a2ede83bafc7f12c9c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/00/00435e88e979f79e__OA-DEF-01-DEVELOPER-SPEC-R1.md",
+        "target_ids": [
+          "OA-DEF-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "85ba15dfd2b018758634cf66554db446670b4b4297b054c21a7fb80daa52ac65",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/85ba15dfd2b01875__S3-COMMON-CONTRACT-R1.md",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "88850c954e5a8915369e77c8f88d953b45f2f2afe564d31bd92081aec523dcbd",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/88/88850c954e5a8915__S3-CURRENT-R2.json",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "bd3b9c6f0d6fee8b6ee376979d8981d325bd797da57f3c82cfda52156090b3f0",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bd3b9c6f0d6fee8b__OA-APP-REUSE-INDEX-R1.md",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "029ea07fa48ed227d7e018c2a907044bf3db28c201240cbe8c96c26ef0b20e66",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/02/029ea07fa48ed227__SPEC-REUSE-GAP-MATRIX-R1.json",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "0fffe364c3ac76a978e5a606f37f9b6dc7a9961b214d25f1aedb0c9811304546",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0f/0fffe364c3ac76a9__AC-TRACE-R1.json",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "ecf17865cff57970bd96d276290a13692ed4c5a86dce9ac8d457c372febcc04b",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ecf17865cff57970__UA-20261008-S3-OA-DEF-01-R1-MD02.json",
+        "target_ids": [
+          "OA-DEF-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "f47806d8b42afa5786808f99ae3d73dfeb3f0141cd4ec361bf25190982251965",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f4/f47806d8b42afa57__S3-FINAL-CUMULATIVE-REVIEW-R2-20261007.md",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_review_and_evidence"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "2fd25d769118c72bfec0fe90db253055052b0d07aad6a9bf8184648cd0f6c2f6",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fd25d769118c72b__SOURCE-MANIFEST.json",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L3_PROVENANCE_NAVIGATION_AND_RECOVERY"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "metadata_only",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "historical_provenance_located_not_current_new_rule"
+      },
+      {
+        "sha256": "2055a485d12766955fe1b9dc4686d6383f90aada632cd4150db272593e7cafef",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/2055a485d1276695__SOURCE-QUALIFICATIONS.json",
+        "target_ids": [
+          "OA-DEF-01",
+          "OA-FORM-01",
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "selected_sections",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled",
+        "scope_limit": "S3完整对象已读；S2财务源列表属其他Owner，不扩本组阅读"
+      },
+      {
+        "sha256": "7a8131d7723a38e69f1b65c0bd97ecf40012357c7a51e1fd2420dd3f17d194c3",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a8131d7723a38e6__CURRENT.json",
+        "target_ids": [
+          "OA-DEF-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "1099d259ef39a8e983c17a7c95259c50cb1c57e76b92aa76fac9a3f932cd31d3",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/10/1099d259ef39a8e9__OA-FORM-01-DEVELOPER-SPEC-R1.md",
+        "target_ids": [
+          "OA-FORM-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "7802303ae8a128401738e70f14aea7c1e597141fdd257419fb735313db233a47",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/78/7802303ae8a12840__UA-20261008-S3-OA-FORM-01-R1-MD02.json",
+        "target_ids": [
+          "OA-FORM-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "1173251abf8d62bf4faeb2fbfd4bf18366392f9f89a044c2551d5951b1a32017",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/1173251abf8d62bf__CURRENT.json",
+        "target_ids": [
+          "OA-FORM-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "9f9920ffe400ba982834f2d02276535e5a5654ae6b64236fd366247418084b8d",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f9920ffe400ba98__OA-TASK-01-DEVELOPER-SPEC-R2.md",
+        "target_ids": [
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "645861500941cfcba724a4f5f47132d7a9f7b0d2a5050d3212bebda127e949fa",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/645861500941cfcb__UA-20261008-S3-OA-TASK-01-R2-MD02.json",
+        "target_ids": [
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "fd33408c2ff85a6487eadbf15e835ca1707c9867cf704ef0ebcc3736c1df740c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fd/fd33408c2ff85a64__CURRENT.json",
+        "target_ids": [
+          "OA-TASK-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "0cc2a482fd1dc8790f19239f5965e437948c6c9c92929f94b4e32fdd6319891c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0cc2a482fd1dc879__OA-APP-01_业务审批绑定与回调_前后端开发Spec_v1.1.2_R2_REVIEW.md",
+        "target_ids": [
+          "OA-APP-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "427c23b04df309006666c838460a94ec6bf2c4f7f8b54aef731617fcf5f5bb9d",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/427c23b04df30900__OA-APP-acceptance.md",
+        "target_ids": [
+          "OA-APP-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "0ed511f2a4dbaab0ac9a94dfdaed55486d5d1c00f8ccb10743603cca72707e4d",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0e/0ed511f2a4dbaab0__B-OA-APP-MD-SPEC-01_INDEX.md",
+        "target_ids": [
+          "OA-APP-01"
+        ],
+        "requirement_layers": [
+          "L3_PROVENANCE_NAVIGATION_AND_RECOVERY"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "historical_provenance_located_not_current_new_rule"
+      },
+      {
+        "sha256": "8932af0e894c2986b43720eb7cb2dd6bf45d253ad4430accdc9a5ee21f8c167a",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8932af0e894c2986__OA-APP-01_R2_B1-O1_逐字原文阅读包.md",
+        "target_ids": [
+          "OA-APP-01"
+        ],
+        "requirement_layers": [
+          "L3_PROVENANCE_NAVIGATION_AND_RECOVERY"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "historical_provenance_located_not_current_new_rule"
+      },
+      {
+        "sha256": "92992fe0aef53c682583ebc6cb0d66ea830bd2c3bc130853430e4c80a236cad5",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92992fe0aef53c68__SR-20261001-B-OA-APP-MD01-FINAL.md",
+        "target_ids": [
+          "OA-APP-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_review_and_evidence"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "c0adc460e5d54fca4cdf76770f8fe7cd5fff6ca1f6419b5c6d9d63f6a0bd2048",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c0/c0adc460e5d54fca__CURRENT.json",
+        "target_ids": [
+          "OA-APP-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "fc9da230a15d2a778d410d750c8aa63a1aa056ef8451c07d35a9802cb9c165a9",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fc9da230a15d2a77__S5_SYS-WORKSPACE-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-WORKSPACE-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "f26d44198c63995c725f5ce703b00749cdc600ff63b4dffcd685e589398ee891",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f2/f26d44198c63995c__COMPOSITION-INDEX-v0.2.json",
+        "target_ids": [
+          "SYS-WORKSPACE-01",
+          "SYS-LANG-01",
+          "SYS-AUD-01",
+          "SYS-PRIV-01",
+          "SYS-FILE-01",
+          "SYS-NUM-01",
+          "SYS-CLIENT-01",
+          "SYS-JOB-01",
+          "SYS-TENANT-01",
+          "SYS-IAM-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "69f54296df1b30a878cadca64c8c46733a4258d85acea31c4c74b0e62252ee3c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/69/69f54296df1b30a8__UA-20261008-S5-SYS-WORKSPACE-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-WORKSPACE-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "e3522cf5a9c30a6a6909c548c8c77c4537de289bb5023f0838ec5c5f6e856412",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e3/e3522cf5a9c30a6a__S5_v0.2_认证双根独立复审与最小问题报告_20261008.txt",
+        "target_ids": [
+          "SYS-WORKSPACE-01",
+          "SYS-LANG-01",
+          "SYS-AUD-01",
+          "SYS-PRIV-01",
+          "SYS-FILE-01",
+          "SYS-NUM-01",
+          "SYS-CLIENT-01",
+          "SYS-JOB-01",
+          "SYS-TENANT-01",
+          "SYS-IAM-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_review_and_evidence"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "62e029b0ec552e23782891b3b20dbe6e8fbb685f66feba21fd686a403affad34",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/62e029b0ec552e23__SOURCE-MANIFEST.json",
+        "target_ids": [
+          "SYS-WORKSPACE-01",
+          "SYS-LANG-01",
+          "SYS-AUD-01",
+          "SYS-PRIV-01",
+          "SYS-FILE-01",
+          "SYS-NUM-01",
+          "SYS-CLIENT-01",
+          "SYS-JOB-01",
+          "SYS-TENANT-01",
+          "SYS-IAM-01",
+          "PLT-CTX-01",
+          "PLT-HTTP-01",
+          "PLT-MSG-01",
+          "PLT-DEL-01",
+          "PLT-OBS-01",
+          "PLT-RELEASE-01",
+          "PLT-TEST-01",
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L3_PROVENANCE_NAVIGATION_AND_RECOVERY"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "metadata_only",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "historical_provenance_located_not_current_new_rule"
+      },
+      {
+        "sha256": "875bbd4b5e0ea711d8f68bc1686e5c483ba95d856f5b2c0377943b89572d63df",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/87/875bbd4b5e0ea711__SOURCE-QUALIFICATIONS.json",
+        "target_ids": [
+          "SYS-WORKSPACE-01",
+          "SYS-LANG-01",
+          "SYS-AUD-01",
+          "SYS-PRIV-01",
+          "SYS-FILE-01",
+          "SYS-NUM-01",
+          "SYS-CLIENT-01",
+          "SYS-JOB-01",
+          "SYS-TENANT-01",
+          "SYS-IAM-01",
+          "PLT-CTX-01",
+          "PLT-HTTP-01",
+          "PLT-MSG-01",
+          "PLT-DEL-01",
+          "PLT-OBS-01",
+          "PLT-RELEASE-01",
+          "PLT-TEST-01",
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "32c91ae59e48c2297c7007a990cba2623cde462a155f655add86e88ffcafb96c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/32/32c91ae59e48c229__ORIGINAL-SCOPE-21TARGETS-101SPEC.json",
+        "target_ids": [
+          "SYS-WORKSPACE-01",
+          "SYS-LANG-01",
+          "SYS-AUD-01",
+          "SYS-PRIV-01",
+          "SYS-FILE-01",
+          "SYS-NUM-01",
+          "SYS-CLIENT-01",
+          "SYS-JOB-01",
+          "SYS-TENANT-01",
+          "SYS-IAM-01",
+          "PLT-CTX-01",
+          "PLT-HTTP-01",
+          "PLT-MSG-01",
+          "PLT-DEL-01",
+          "PLT-OBS-01",
+          "PLT-RELEASE-01",
+          "PLT-TEST-01",
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "662c764668523b5197bc8f72ac2b60f850f1aba4b750db123712f0d691103511",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/66/662c764668523b51__CP6_S5_S7_X5_21项已接受静态设计_精确原件checkpoint_20261008.zip",
+        "target_ids": [
+          "SYS-WORKSPACE-01",
+          "SYS-LANG-01",
+          "SYS-AUD-01",
+          "SYS-PRIV-01",
+          "SYS-FILE-01",
+          "SYS-NUM-01",
+          "SYS-CLIENT-01",
+          "SYS-JOB-01",
+          "SYS-TENANT-01",
+          "SYS-IAM-01",
+          "PLT-CTX-01",
+          "PLT-HTTP-01",
+          "PLT-MSG-01",
+          "PLT-DEL-01",
+          "PLT-OBS-01",
+          "PLT-RELEASE-01",
+          "PLT-TEST-01",
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L3_PROVENANCE_NAVIGATION_AND_RECOVERY"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "container_members_disposed_normative_members_read_or_exact_reused"
+      },
+      {
+        "sha256": "e240a115853f9c6ddb342d510d06e3104dcd6aec3d8008fa617b9b04a21ac8a7",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e240a115853f9c6d__CURRENT.json",
+        "target_ids": [
+          "SYS-WORKSPACE-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "4638ed3c19d5f24a2935edf39e9c7c518725e92b1c96259d282ebf14e6c94580",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/46/4638ed3c19d5f24a__S5_SYS-LANG-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-LANG-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "e9cccdb17e70bdd891095eb221c5b13a05254f879b98721b3c9ae502d3b8a938",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e9/e9cccdb17e70bdd8__UA-20261008-S5-SYS-LANG-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-LANG-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "594f47f0f583d5a454efd1b354bcd401c569574d7d8575d9a9eb4dc18315cedc",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/59/594f47f0f583d5a4__CURRENT.json",
+        "target_ids": [
+          "SYS-LANG-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "c9943c2bdead200996e9ce7cf4e9d6de67c62ab28f435086d8d7fd303f72f623",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c9/c9943c2bdead2009__S5_SYS-AUD-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-AUD-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "a0bc63cf4f218d81227fc5404db92ef4bf4e292108403b01166c5a2bcee87caa",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a0bc63cf4f218d81__UA-20261008-S5-SYS-AUD-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-AUD-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "7e3a127ba3a28e89518c5638c9f3b015bdc82251b3c3260d58201182e473c6a8",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7e/7e3a127ba3a28e89__CURRENT.json",
+        "target_ids": [
+          "SYS-AUD-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "77aae5c558d86a2a6b4ab384f0f87386a48dc3021a213adce16ac503c183aa63",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77aae5c558d86a2a__S5_SYS-PRIV-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-PRIV-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "b522b3da592b9d9c495c26e0a95286c40ef4de87e931f064af8b53924ea9fea9",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b5/b522b3da592b9d9c__UA-20261008-S5-SYS-PRIV-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-PRIV-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "a08652170bb317afabeee2b407fe40168ab7b3d05d8ad26d87dfb0f7ed03cf1c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a08652170bb317af__CURRENT.json",
+        "target_ids": [
+          "SYS-PRIV-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "15d5aa240b03f6ab711a1e1bedabee76e11d81e2325247ed55826b34f8c9a22b",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15d5aa240b03f6ab__S5_SYS-FILE-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-FILE-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "8bf0ee339ba1031dd2cdba8d9181782f027c084362f847858d486398bd267b3f",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8b/8bf0ee339ba1031d__UA-20261008-S5-SYS-FILE-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-FILE-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "25cfab1d9b0d611f24a44742195b7fafe095ea58f6a2386dfd6da2d84cc6ef7f",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/25cfab1d9b0d611f__CURRENT.json",
+        "target_ids": [
+          "SYS-FILE-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "bf7ac9ccfb3a59bb6050aa9cc6fd5f8e531e77977e51df6255bccb6ee98eac13",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bf7ac9ccfb3a59bb__S5_SYS-NUM-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-NUM-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "a7c83b1f0e790f6c25ede14832c54562b4151c9e0a3f220444ca9a5ce729f5c3",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a7/a7c83b1f0e790f6c__UA-20261008-S5-SYS-NUM-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-NUM-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "f9ef0cc4e6e9f224df61b65f531c0231d8093ec1ba0167a9f883cdce4f8c5e3c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f9/f9ef0cc4e6e9f224__CURRENT.json",
+        "target_ids": [
+          "SYS-NUM-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "e86bc515d64622afed314aa67776fa5b26e3c35e234ad1c0ffaa4d067da1f26d",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e86bc515d64622af__S5_SYS-CLIENT-01_完整设计候选_v0.2.md",
+        "target_ids": [
+          "SYS-CLIENT-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "922445a61163701d3313256588af2e4dced47cf85b3d0008934d68213e285359",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/922445a61163701d__UA-20261008-S5-SYS-CLIENT-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-CLIENT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "bc9ff32ddf2f7b6e43518cf5586bfd743f795ace99ff89929db7e0810d2f5b8e",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bc/bc9ff32ddf2f7b6e__CURRENT.json",
+        "target_ids": [
+          "SYS-CLIENT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "4950396682dc9120f89b79da2c463c7bb4f5cc5225b4bc91628fdcc26c7aa6f8",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/49/4950396682dc9120__S5_SYS-JOB-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-JOB-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "ea6c45073f0e8db0350f9965098f09e3dc3c2c053c475581bf4b51ec27c4265b",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ea/ea6c45073f0e8db0__UA-20261008-S5-SYS-JOB-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-JOB-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "4b5836ed96fc7b34aa24bcc8f837a3802635d2f6d1e7c255e92141fec8013338",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4b5836ed96fc7b34__CURRENT.json",
+        "target_ids": [
+          "SYS-JOB-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "4b2226985953845f50345374e36af1a2a91319d1ae8cef388db18bdbdf79b1a7",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4b2226985953845f__S5_SYS-TENANT-01_完整设计候选_v0.1.md",
+        "target_ids": [
+          "SYS-TENANT-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "f5dd2c4328512cdc0f6038fbf6101ad3306bf2163e7dfbcb7f9b90d74b81a36f",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f5/f5dd2c4328512cdc__UA-20261008-S5-SYS-TENANT-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-TENANT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "f2baaaeccce92c6258eb9b39934acf33226e8da5d4162fe3abf8644b28518bdd",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f2/f2baaaeccce92c62__CURRENT.json",
+        "target_ids": [
+          "SYS-TENANT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "d84f5873e46c4c98185677b9e8695b48bea4fed0a20b811c8433fa0fbbb90840",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d8/d84f5873e46c4c98__S5_SYS-IAM-01_完整设计候选_v0.2.md",
+        "target_ids": [
+          "SYS-IAM-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "4c4103c34f2f17e807f6a2d1ea583347d2d09d379ad5215c24aedf106d4d0eb9",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4c/4c4103c34f2f17e8__UA-20261008-S5-SYS-IAM-01-STATIC-MD02.json",
+        "target_ids": [
+          "SYS-IAM-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "35229e3d9b39e4fcc26a344bcdf1ea7c33550c36cd216b9ed55b02b94bf111d3",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/35/35229e3d9b39e4fc__CURRENT.json",
+        "target_ids": [
+          "SYS-IAM-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "265aecc406e50ca8117d1823d09fac61fa5694894baecdaff31df87013f8eb6f",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/265aecc406e50ca8__PLT-CTX-01_完整静态设计_v0.1.md",
+        "target_ids": [
+          "PLT-CTX-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "3ec93373fda65d46d0389a1c5e65d5779d99911bfd4a86b53388fe0e9581f47c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3e/3ec93373fda65d46__S7_PLATFORM_COMBINED_FREEZE_v0.2.1.json",
+        "target_ids": [
+          "PLT-CTX-01",
+          "PLT-HTTP-01",
+          "PLT-MSG-01",
+          "PLT-DEL-01",
+          "PLT-OBS-01",
+          "PLT-RELEASE-01",
+          "PLT-TEST-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "bef16a902d6fb3649653066c37721533d7ebc03a8bb332b5127d3554ee493585",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/bef16a902d6fb364__UA-20261008-S7-PLT-CTX-01-STATIC-MD02.json",
+        "target_ids": [
+          "PLT-CTX-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "397b935b08bca80e2c731c3984a111f12ec8877aad7582ae1f19d1b914db0fe3",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/39/397b935b08bca80e__S7_Platform_v0.2.1_七稿组合完整静态接受_独立复审结论.txt",
+        "target_ids": [
+          "PLT-CTX-01",
+          "PLT-HTTP-01",
+          "PLT-MSG-01",
+          "PLT-DEL-01",
+          "PLT-OBS-01",
+          "PLT-RELEASE-01",
+          "PLT-TEST-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_review_and_evidence"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "65f9c24ae2b5d936c9f26fb62dbf482376e60b3ae86dc111942dd6e44f30c9ac",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65f9c24ae2b5d936__CURRENT.json",
+        "target_ids": [
+          "PLT-CTX-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "9d1416cbd7d0ea6e58a0da79de80dcb2a4e675890345dfb4558194c61048eb3f",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d1416cbd7d0ea6e__PLT-HTTP-01_完整静态设计_v0.2.md",
+        "target_ids": [
+          "PLT-HTTP-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "51efd28fa1ddfe3f5b5d8b8d35112dda8204fe7c59cb99fe3a1e7fbffd077f44",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/51/51efd28fa1ddfe3f__UA-20261008-S7-PLT-HTTP-01-STATIC-MD02.json",
+        "target_ids": [
+          "PLT-HTTP-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "27243bb3e041afeb2eb7aae77ae152073d70fcbf3ec12b3036282790844d0a87",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/27/27243bb3e041afeb__CURRENT.json",
+        "target_ids": [
+          "PLT-HTTP-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "7b59ff237b27e8efc452ae1ecf776ac77002382466a9e7d9744a3bf924e505e2",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7b/7b59ff237b27e8ef__PLT-MSG-01_完整静态设计_v0.2.md",
+        "target_ids": [
+          "PLT-MSG-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "d23ce6f35e044b2dae20c13053a29ed88935a1041ff7bac00c47a5cc8f0e4b85",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d2/d23ce6f35e044b2d__UA-20261008-S7-PLT-MSG-01-STATIC-MD02.json",
+        "target_ids": [
+          "PLT-MSG-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "5f03c9e1e8ca80228896897e432b8a0e84f89076665ac708366e1d2c1ebf4930",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5f03c9e1e8ca8022__CURRENT.json",
+        "target_ids": [
+          "PLT-MSG-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "642a2fbc35d17fbfaa0bcc51617e24654cbe193e0f907674a3e6f4c41c47eb84",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/64/642a2fbc35d17fbf__PLT-DEL-01_完整静态设计_v0.2.1.md",
+        "target_ids": [
+          "PLT-DEL-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "1f932c5ce46ae9e0d30feab8f26f68e2b446b5524213861676479da40c1ee107",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f932c5ce46ae9e0__UA-20261008-S7-PLT-DEL-01-STATIC-MD02.json",
+        "target_ids": [
+          "PLT-DEL-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "d57fba2314869b02e1e50bdb6f353faf05a5504b56c392d81306d6298b87a05d",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d5/d57fba2314869b02__CURRENT.json",
+        "target_ids": [
+          "PLT-DEL-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "20c9a128b3f2bab0621459cc6c6494b16fb21cd8340792738ba89e90efa3bc99",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/20/20c9a128b3f2bab0__PLT-OBS-01_完整静态设计_v0.1.md",
+        "target_ids": [
+          "PLT-OBS-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "37bd4fe95ee0451f4193fe0d777027af81deb31087d40d4fb9ff73523bdd3365",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/37/37bd4fe95ee0451f__UA-20261008-S7-PLT-OBS-01-STATIC-MD02.json",
+        "target_ids": [
+          "PLT-OBS-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "9b57504815aeba449774b056c7f8c47d5b14e5ba849a10c3988fb032cc429c46",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9b/9b57504815aeba44__CURRENT.json",
+        "target_ids": [
+          "PLT-OBS-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "9246ef6b40f500da22c570bf3c31a51701442bbbed50250d9f259d12cb1bbdbf",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/9246ef6b40f500da__PLT-RELEASE-01_完整静态设计_v0.1.md",
+        "target_ids": [
+          "PLT-RELEASE-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "beae7ea24d922f82854bcf366ea0374b49ba8c49ac7c7e721665f65d2b99b162",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/beae7ea24d922f82__UA-20261008-S7-PLT-RELEASE-01-STATIC-MD02.json",
+        "target_ids": [
+          "PLT-RELEASE-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "eda5a37a148f1189a971e2d82cd56546f90f34d43a1bea31969e67140adedbfa",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ed/eda5a37a148f1189__CURRENT.json",
+        "target_ids": [
+          "PLT-RELEASE-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "d8b4ef19a1b3a0a528ddd7831f5159295d75b7eecadfa787e36ad028d362c5aa",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d8/d8b4ef19a1b3a0a5__PLT-TEST-01_完整静态设计_v0.1.md",
+        "target_ids": [
+          "PLT-TEST-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "06825b36804acf38f17ac12a7908d7a9265eef52ab8127aa7fd73c46bc26b96c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/06/06825b36804acf38__UA-20261008-S7-PLT-TEST-01-STATIC-MD02.json",
+        "target_ids": [
+          "PLT-TEST-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "d44c966869435592b55c61e8426e9a520a158a684c70a68562216fb0592b040a",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d44c966869435592__CURRENT.json",
+        "target_ids": [
+          "PLT-TEST-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "918bbd4508551b64470398bf65697954bff495fd37d1ef8cb5efa66e56bd0462",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/91/918bbd4508551b64__00_X1_R2_独立回归与完整范围静态审阅报告.md",
+        "target_ids": [
+          "ENG-TOOL-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_review_and_evidence"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "386d6787b61a21b0c1df6be81bb9b089977232aa76687b7b2bce34a82e11c49c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/38/386d6787b61a21b0__SOURCE-MANIFEST.json",
+        "target_ids": [
+          "ENG-TOOL-01"
+        ],
+        "requirement_layers": [
+          "L3_PROVENANCE_NAVIGATION_AND_RECOVERY"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "metadata_only",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "historical_provenance_located_not_current_new_rule"
+      },
+      {
+        "sha256": "04f7fe716dfe5d69b4ebf7d3b11d4a3d8d0d9184bd931832ccbc2533f77c153c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/04/04f7fe716dfe5d69__OA-CONN-01.md",
+        "target_ids": [
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "e5934d9a539b1c780843d9d94e671b51b2cb17c85ed2ba220a9594fed2326449",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e5/e5934d9a539b1c78__COMPOSITION-IDENTITIES.json",
+        "target_ids": [
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "8a3ff63d20cff44eafca8e5ca59103dee125648443d5a0e9002580990f1a9b96",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8a/8a3ff63d20cff44e__CP6_X5_FINANCE_SPECIALS_R2_COMBINATION_FULL_20261008.zip",
+        "target_ids": [
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "container_members_disposed_normative_members_read_or_exact_reused"
+      },
+      {
+        "sha256": "6271f981bb9187c12b578ca6ef7259c5b37ebe09d71e0cfa3cd7554f14e1b7ce",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/62/6271f981bb9187c1__COMMON.md",
+        "target_ids": [
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "ddb35e86a0458a61f48b522dcef0c28e2bf53bcdccad170b0d55cbdb5e58b902",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/dd/ddb35e86a0458a61__UA-20261008-X5-OA-CONN-01-STATIC-MD02.json",
+        "target_ids": [
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "096df8bb50ccf094d3d6f7cae97a325fff30b8b6917abfea0980775a82055549",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/09/096df8bb50ccf094__CP6_X5_R2_定点独立复核与四专项累计结论_20261008.md",
+        "target_ids": [
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_review_and_evidence"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "ed06428259a1f0f6e19cdd25f4b773d7a8dbfa5163410b86e50403f90530e058",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ed/ed06428259a1f0f6__CURRENT.json",
+        "target_ids": [
+          "OA-CONN-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "6f8585ca3b85c6aaafb2a8eaf2dfda7ce8a3b1ae590987b3bcf19b1e3d5f4290",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6f/6f8585ca3b85c6aa__SPACE_七专项兼容完整设计_R2_CANDIDATE.md",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "accepted_primary_body_or_exact_carrier",
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "15f966e5afe3dc71a41b3c7722e6c0813bf1e630e9516e266558a779442aa8fd",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15f966e5afe3dc71__SPACE-PUB-01_完整详细设计_R2_CANDIDATE.md",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment",
+          "accepted_primary_body_or_exact_carrier"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "c86b748fb5611e3da8fd5030883216c2c147e0e5d73d4b6b59d4137b0c89193a",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c86b748fb5611e3d__INDEX.json",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "4737996dfbba1e6c6857c7b382fac281a5f3316d79b65a44b5d1890656d62073",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/4737996dfbba1e6c__INDEX.json",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "737f1b071f47a4e85664d1ec0d619b0a336801c20b0f938289ebba08cae812bd",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/737f1b071f47a4e8__ORIGINAL-SCOPE-8TARGET-41SPEC.json",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "2cba0684fb7cbf7eea4ace64aa5b0b67fe51f948318ae5cbf43f30b37fc63c5c",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2c/2cba0684fb7cbf7e__MATRIX-8TARGET-41SPEC.json",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "c46bf5d8d9ed7e2cadfe3c0aaf6a03992d177029b4d92ac730994cdbf4bba21a",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c46bf5d8d9ed7e2c__CP6_S4_X6_R2_独立定点复核与累计范围.md",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "full",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "fff3a9611b515c001a8794476e3f8a0f71a92150471632af49feda75848fad46",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/fff3a9611b515c00__CP6_S4_X6_R2_独立复核证据与41SPEC范围.json",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L1_CURRENT_BODY_AND_REQUIRED_COMBINATION"
+        ],
+        "roles": [
+          "mandatory_current_combination_or_attachment"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "current_normative_semantics_read_or_exact_reuse"
+      },
+      {
+        "sha256": "2171264c2f2689a6628d63d5b442d618bf70185fecaa036ab88f35376bc6d214",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/2171264c2f2689a6__UA-20261008-X6-SPACE-MASTER-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-MASTER-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "24f73b2fe3756fea154a78fbf02d5c3c2ac73bfcd963fed37cfe3360dc4cc7c8",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24f73b2fe3756fea__SOURCE-MANIFEST.json",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L3_PROVENANCE_NAVIGATION_AND_RECOVERY"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "metadata_only",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "historical_provenance_located_not_current_new_rule"
+      },
+      {
+        "sha256": "fed1fafddca4ed9976e7e6726ca793efba87adf5278e7b8ba6a70cb71d3909dc",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fe/fed1fafddca4ed99__SOURCE-QUALIFICATIONS.json",
+        "target_ids": [
+          "SPACE-MASTER-01",
+          "SPACE-DES-01",
+          "SPACE-IMPORT-01",
+          "SPACE-PUB-01",
+          "SPACE-PLAN-01",
+          "SPACE-OPS-01",
+          "SPACE-EXT-01",
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_provenance_and_selection"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "9a6e5070b5eb3c92b4b1b9cd99314da035b40d65f47c2443f00bd30882478428",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9a/9a6e5070b5eb3c92__CURRENT.json",
+        "target_ids": [
+          "SPACE-MASTER-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "93ffe88e908d9c4092ce90be93a90848850815628091f04291cf4612226295a6",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/93/93ffe88e908d9c40__UA-20261008-X6-SPACE-DES-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-DES-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "a045730dd08d6153feae62fc0990b56ecbd6a56398a31f2d52093aadbcc10a56",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a045730dd08d6153__CURRENT.json",
+        "target_ids": [
+          "SPACE-DES-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "78c631d107ade9ca170364ab81d9ef69c5fd1ae9782e6c0c3b42c2bbe64db211",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/78/78c631d107ade9ca__UA-20261008-X6-SPACE-IMPORT-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-IMPORT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "ab12aac729315623f70dc5063d9a7603f3eaf824abc158a64947bef5697f2c70",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ab/ab12aac729315623__CURRENT.json",
+        "target_ids": [
+          "SPACE-IMPORT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "9782d6d7ebdf7b496b305e63ebcdb37a2fb7e6dbaba34cf1a2882ce6c9752a7d",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/97/9782d6d7ebdf7b49__UA-20261008-S4-SPACE-PUB-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-PUB-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "c10153dc71a6ba83665365c76bad2689d62a7b9f997eac334e89af428646cdca",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c1/c10153dc71a6ba83__CURRENT.json",
+        "target_ids": [
+          "SPACE-PUB-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "90a587d8cd0947a2c5eb70386bbbb4ef94127faaa10ba7e3c13fed9ff27471a4",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/90/90a587d8cd0947a2__UA-20261008-X6-SPACE-PLAN-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-PLAN-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "11c5967f9919738349ab471715cc32f3e9279d5f3b7adb4835b2407d767e5798",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11c5967f99197383__CURRENT.json",
+        "target_ids": [
+          "SPACE-PLAN-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "c41f80b01c76123c26a481089e2ef533cc281d46de5093b3805da9b26869d200",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c41f80b01c76123c__UA-20261008-X6-SPACE-OPS-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-OPS-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "bbd8c5da0209b300d54d52332baaf7fcdcffe01b0c99b046eab5b048cc13c1e5",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bb/bbd8c5da0209b300__CURRENT.json",
+        "target_ids": [
+          "SPACE-OPS-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "21839cb639f6b42070888f0b2d24e32311c5dbb92f58dadfbce024c7e13b8942",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/21/21839cb639f6b420__UA-20261008-X6-SPACE-EXT-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-EXT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "1f83e8096c238004ea737ebd3a3f57fa3dbd8fc13a61e979d62391fd0e3ba5a4",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f83e8096c238004__CURRENT.json",
+        "target_ids": [
+          "SPACE-EXT-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "075a86bdb9055eaaf5bf7b217aa420dce3715b06b726d8d995fd4a5fe399b582",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/07/075a86bdb9055eaa__UA-20261008-X6-SPACE-AI-01-R2-MD02.json",
+        "target_ids": [
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "required_acceptance_and_decision"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      },
+      {
+        "sha256": "26b3caf51bc68b883502ef50d4af6c087db7dc7c40c95651fc7f3fb8da8371a8",
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/26b3caf51bc68b88__CURRENT.json",
+        "target_ids": [
+          "SPACE-AI-01"
+        ],
+        "requirement_layers": [
+          "L2_ACCEPTANCE_REVIEW_AND_CRITERIA"
+        ],
+        "roles": [
+          "acceptance_entry_provenance_not_body"
+        ],
+        "actual_semantic_reading": "structured",
+        "triage_basis": "required-inputs registry roles + materialized identity; does not mark semantic reading",
+        "current_required_disposition": "acceptance_review_or_identity_structurally_reconciled"
+      }
+    ]
+  },
+  "remaining_material_groups": [
+    {
+      "group": "visual_parity",
+      "priority": "nonblocking_for_selected_current_normative_consolidation",
+      "remaining": [
+        "37Sheet文字/公式已结构化实读；13无文字箭头已查OpenXML；页面视觉/打印及MSBBPA010最终正式母版逐单元格一致性未验证"
+      ],
+      "rule": "当前Markdown接受不以NativeWorkbookCompletion为条件；不是声称Office视觉通过",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx"
+    },
+    {
+      "group": "historical_master_reference",
+      "priority": "nonblocking_for_selected_current_normative_consolidation",
+      "remaining": [
+        "MASTER02全文7871行未在本组独立审读；本组仅H号命名空间/当前Target范围定位"
+      ],
+      "rule": "历史总蓝图由本轮选定各Target正文/准确后继合同约束；全局整理由root负责",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/afa3c98b659bf428__afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992.html"
+    },
+    {
+      "group": "underlying_fixed_source_audit",
+      "priority": "nonblocking_for_selected_current_normative_consolidation",
+      "remaining": [
+        "97源码身份全部SHA/bytes/gitblob一致；不声称97源码全文业务审计；S3原306归档源正文未因索引恢复"
+      ],
+      "rule": "当前静态设计已明确源码审读资格和实际采用UNPROVEN；不重开源码全量实现审查",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fe/fed1fafddca4ed99__SOURCE-QUALIFICATIONS.json"
+    },
+    {
+      "group": "historical_versions_and_unrecovered_numbers",
+      "priority": "nonblocking_for_selected_current_normative_consolidation",
+      "remaining": [
+        "VER12历史编号/REL旧48AC逐项身份与正式母版一致性保留原限制；R01/R0旧版非当前独立规范，按RC1/后继准确APR/S5/S7/Space UA归并"
+      ],
+      "rule": "已有当前显式条文不伪装历史原件恢复；旧来源账不反向撤销后继接受",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d7/d77904a65b95e369__RC1_历史来源与当前条文分账.md"
+    },
+    {
+      "group": "historical_trace_locator_metadata",
+      "priority": "nonblocking_for_selected_current_normative_consolidation",
+      "remaining": [
+        "跨源TRACE/字段/批准ID未重新做全历史命名空间一致性审计；PG04本地200case/action/AC/TC链已核0错，当前业务规则已实读"
+      ],
+      "rule": "保留原定位身份和历史未知，不以重名ID推导新规则；精确原文可回查",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a463ffc9adf8ba4__CP6_PLM_v0.1_RC1_汇编来源与当前阅读索引.json"
+    },
+    {
+      "group": "rendering_and_candidate_implementation",
+      "priority": "nonblocking_for_selected_current_normative_consolidation",
+      "remaining": [
+        "HTML静态数据归并，未运行JS或视觉检查；候选SQL/C#/TS、fixtures/checker未执行"
+      ],
+      "rule": "这些是派生载体/实现证据，不能据其存在提升NOT_RUN或Owner采用",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/47ab27a7d9925459__CP6_PLM_v0.1_RC1_连续阅读主册.html"
+    }
+  ],
+  "reading_file_count": 262,
+  "latest_annex_batch": {
+    "all_new_PG04_direct_assertions_semantically_read": 200,
+    "original_actions_covered": 100,
+    "REQ_DEV_LCM": "所有非重复业务语义结构化实读；TRACE编号链未逐项核",
+    "CFG_QCL_SUP": "非重复业务语义已补齐：新增断言实读+已读主册精确片段复用+全部未匹配语义实读；TRACE/字段/来源ID等元数据未逐项重审",
+    "RV01": "12结论/限制全部；38摘录30精确复用/8直接",
+    "runtime": "NOT_RUN",
+    "remaining": [],
+    "trace_structure_check": {
+      "cases": 200,
+      "trace_rows": 200,
+      "errors": 0,
+      "scope": "local case/action/AC/TC same-record relation only",
+      "business_tests": "NOT_RUN"
+    },
+    "PG03_direct_cases": 32,
+    "PG05_cross_page_cases": 12
+  },
+  "latest_space_annex_batch": {
+    "matrix_specs": 41,
+    "hit": 27,
+    "no_hit_preserve": 14,
+    "independent_review_roots": 4,
+    "source_qualification_read_ranges": [
+      [
+        1,
+        3
+      ],
+      [
+        3110,
+        3440
+      ]
+    ],
+    "source_97_full_audit": false,
+    "new_business_ac_executed": 0,
+    "findings_count": 7
+  },
+  "latest_document_validation": {
+    "at_utc": "2026-10-10T10:21:21.176060+00:00",
+    "performed": "local document structure, source line links, exact evidence and source SHA; current closure wording scan",
+    "modules": 44,
+    "contracts": 79,
+    "findings": 7,
+    "source_line_links": 4486,
+    "exact_evidence_entries": 269,
+    "errors": 0,
+    "stale_closure_statements": 0,
+    "scope": "含PG03/PG05案例补写、当前材料分层归并与44模块闭包状态；不运行项目代码/业务测试/构建/Actions",
+    "business_tests": "NOT_RUN",
+    "verbatim_evidence_entries": 222,
+    "source_claim_locator_entries": 47
+  },
+  "latest_public_annex_batch": {
+    "S7_v02_author_response": "50 lines full; historical DEL superseded only byv0.2.1",
+    "S5_R0": "1–67 and147–183; current auth roots already closed byv0.2",
+    "S7_R0": "N01–N04 only",
+    "S7_R1": "96–124 DEL residual Unknown semantics only",
+    "current_missing_design_roots_reopened": 0,
+    "business_tests": "NOT_RUN"
+  },
+  "required_current_normative_unread_inputs": [],
+  "nonblocking_unread_or_unverified_materials": [
+    {
+      "kind": "visual_parity",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+      "scope": "37Sheet文字/公式已结构化实读；13无文字箭头已查OpenXML；页面视觉/打印及MSBBPA010最终正式母版逐单元格一致性未验证",
+      "why_not_current_semantic_gap": "当前Markdown接受不以NativeWorkbookCompletion为条件；不是声称Office视觉通过"
+    },
+    {
+      "kind": "historical_master_reference",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/afa3c98b659bf428__afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992.html",
+      "scope": "MASTER02全文7871行未在本组独立审读；本组仅H号命名空间/当前Target范围定位",
+      "why_not_current_semantic_gap": "历史总蓝图由本轮选定各Target正文/准确后继合同约束；全局整理由root负责"
+    },
+    {
+      "kind": "underlying_fixed_source_audit",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fe/fed1fafddca4ed99__SOURCE-QUALIFICATIONS.json",
+      "scope": "97源码身份全部SHA/bytes/gitblob一致；不声称97源码全文业务审计；S3原306归档源正文未因索引恢复",
+      "why_not_current_semantic_gap": "当前静态设计已明确源码审读资格和实际采用UNPROVEN；不重开源码全量实现审查"
+    },
+    {
+      "kind": "historical_versions_and_unrecovered_numbers",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d7/d77904a65b95e369__RC1_历史来源与当前条文分账.md",
+      "scope": "VER12历史编号/REL旧48AC逐项身份与正式母版一致性保留原限制；R01/R0旧版非当前独立规范，按RC1/后继准确APR/S5/S7/Space UA归并",
+      "why_not_current_semantic_gap": "已有当前显式条文不伪装历史原件恢复；旧来源账不反向撤销后继接受"
+    },
+    {
+      "kind": "historical_trace_locator_metadata",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a463ffc9adf8ba4__CP6_PLM_v0.1_RC1_汇编来源与当前阅读索引.json",
+      "scope": "跨源TRACE/字段/批准ID未重新做全历史命名空间一致性审计；PG04本地200case/action/AC/TC链已核0错，当前业务规则已实读",
+      "why_not_current_semantic_gap": "保留原定位身份和历史未知，不以重名ID推导新规则；精确原文可回查"
+    },
+    {
+      "kind": "rendering_and_candidate_implementation",
+      "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/47/47ab27a7d9925459__CP6_PLM_v0.1_RC1_连续阅读主册.html",
+      "scope": "HTML静态数据归并，未运行JS或视觉检查；候选SQL/C#/TS、fixtures/checker未执行",
+      "why_not_current_semantic_gap": "这些是派生载体/实现证据，不能据其存在提升NOT_RUN或Owner采用"
+    }
+  ],
+  "material_closure_basis": "119顶层当前/接受/历史输入逐件分层，3容器356成员逐件处置；11当前主册内嵌原件逐字节复用，PG03/04/05及RV01必要非重复语义已实读；历史/源码/视觉无虚增。",
+  "latest_identity_reconciliation": {
+    "CURRENT_UA_pairs": 29,
+    "unexpected_shared_design_field_differences": 0,
+    "scope_UA_targets": 26,
+    "scope_mismatches": 0,
+    "S5_body_hash_checks": 10,
+    "S5_body_errors": 0,
+    "Space_fixed_source_identity_checks": 97,
+    "Space_source_identity_errors": 0,
+    "exact_embedded_current_primary_bodies": 11,
+    "business_tests": "NOT_RUN"
+  }
+}

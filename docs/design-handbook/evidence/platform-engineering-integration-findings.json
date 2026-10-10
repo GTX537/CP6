@@ -1,0 +1,198 @@
+{
+  "schema_version": "CP6-INTEGRATION-FINDINGS-1",
+  "group": "platform-engineering",
+  "updated_at_utc": "2026-10-10T09:58:38.490089+00:00",
+  "scope_note": "版本/命名空间限制和未证明的采用门槛；不将风险推断称为已证跨域矛盾。仅已读准确来源。",
+  "findings": [
+    {
+      "finding_id": "PE-ACT-FILE-COMMIT-MODE",
+      "kind": "explicit_consumer_version_constraint",
+      "status": "constraint_to_preserve_not_confirmed_contradiction",
+      "claim": "ACT v1.1.1附件唯一启用LOCAL_AUTHORITATIVE_GUARD；通用租约/远端reserve-confirm不可被默认为ACT已采用。",
+      "impact": "相关File动作在仅提供remote GET/TTL/reserve-confirm时须NO_COMMIT_GUARANTEE/COMMIT_WINDOW_UNPROVEN并禁用。",
+      "exit_condition": "证明File Owner认可本地Gate为生效裁决点且所有相关writer共同保护；变更模式须明确共同接受新版本。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md",
+          "sha256": "67dc3667fb852c5672f73710b80a4af17810cd09fe03ed69cbb2c82dff8dfa91",
+          "line": 525,
+          "end_line": 541,
+          "verbatim": "| 差分动作 | 必需证据 | 不需要／不能推断 |\n|---|---|---|\n| Add=S1−S0 | 当前新增关联范围/用途、精确版本、安全检查通过/明确等价可引用状态、最终Add守卫 | UploadSucceeded或DownloadPermit不能代替Add |\n| Retain=S1∩S0 | 证明原属S0，当前可维护集合，Owner明确历史保留规则/无冲突hold | 无内容读权不要求解密或重新Clean；保留≠可下载/可供新工程使用 |\n| Remove=S0−S1 | 精确ReferenceId/版本、解除范围、原因及Owner Unlink决定或明确无附加约束依据 | 不要求先下载/重新Clean；无下载权也不自动授解绑/物理删除 |\n\n本稿选择**无远端副作用预检＋本地权威授权守卫**作为唯一启用的提交模式：文件Owner授权/保留/扫描决定的相关变更必须通过一个明确委托的本地Gate生效，Activity事务持有同Gate共享保护，撤权写者取得排他保护。该Gate必须是Owner认可的生效裁决点，不是异步缓存或“最近同步到”的表。已决定在本次提交前生效的撤权在Gate中先可见，旧Add/Unlink被拒；事务先合法提交则后撤权限制后续读取，不抹历史。\n\nFileReferenceDecision预检**不占用文件、不建立临时Hold、不要求第二次remote commit、没有异步“待完成Activity”**。事务rollback释放本地Gate锁，不存在需远端确认/取消的引用残留。若实际Owner只提供远端GET、普通TTL票据或需要remote reserve/confirm，本版本返回NO_COMMIT_GUARANTEE / COMMIT_WINDOW_UNPROVEN，相关动作不启用。不能拿未经共同接受的租约把“撤权先于本地提交”改成仍允许。本稿未选择远端预占协议，故不虚构Hold已取消、超时自动释放或无晚执行证明；那是精确列明的跨部署能力边界，不妨碍明确无附件文本。\n\n### 7.4 T10完整附件集合应用\n\n输入AttachmentPlan、If-Match和Key；读取完整S0及EDIT_ATTACHMENTS窗口V，验证keep/remove完备和adds不重复。对同attachmentId/version已经在S0的ADD拒重复，不生成第二关联；相同文件不同版本显式remove/add，不自动latest。形成完整S1后重新分类所有增/保留/移除，不能只验证新增项。\n\n按上表取得每个必要决定。任一F2扫描PENDING、FX范围外、新增无许可、保留义务冲突或解绑未证，整意图业务写0。保留隐藏成员时由服务器按准确Owner规则验证，不泄露其姓名/路径/数量。读取时页面标记可用不等提交时准入，最终Gate/Activity锁中重验精确决定和Set版本。\n\n成功：REFERENCE修订subkind=ATTACHMENTS、一个新ReferenceSet、CurrentRevision/SourceVersion、一次Audit/Outbox/命令回执；原来源引用及原工程附件版本不改。空最终集合只表示已授权的当前关联都被显式移除，物理文件删除数始终0。S0={Fkeep,Fold}、S1={Fkeep,Fnew}中Fnew不能Add时，不能先移除Fold；确定拒绝后用户另选“仅移除”才是新意图。UNKNOWN不准更改S1/Key。"
+        }
+      ]
+    },
+    {
+      "finding_id": "PE-HANDOFF-NAMESPACE",
+      "kind": "namespace_guard",
+      "status": "preserve_source_namespace_no_global_number_join",
+      "claim": "MASTER02 HTML的H31明确采购退货与供应商结算调整；ENG freeze主册H41为独立具名合同。不能按孤立H号在不同来源拼合同。",
+      "impact": "全局索引需源版本/Owner/准确合同名+H号联合定位。",
+      "exit_condition": "每条映射具明确源合同与方向/语义；没有共认映射就保留分域。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/afa3c98b659bf428__afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992.html",
+          "sha256": "afa3c98b659bf4288870340f9e322afa6ea703b1cc50dff223bb38c85e4d1992",
+          "line": 3752,
+          "end_line": 3752,
+          "verbatim": "</section><section class=\"record\"><h3 id=\"h31\">H31 · 采购退货与供应商结算调整</h3>"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1799cd319ae35310__03_ENG_当前阅读主册.md",
+          "sha256": "1799cd319ae35310f55906982709a48c70fe2704561dc9860174b485b1822046",
+          "line": 1213,
+          "end_line": 1222,
+          "verbatim": "## 7. H41与跨册共同合同\n\n### IF-ENG-REV-01-001 H41 FreezeRequest v1：ITER → ENG\n\nOwner：ENG接收，ITER持有候选/评审来源。\n\n| 字段 | 必填 | 语义 |\n|---|---|---|\n| contractVersion | 必填 | 候选eng-freeze/1；缺失版本不推断泛化digest语义 |\n| requestKey | 必填 | 原业务键；作用域Tenant+Caller+freeze |"
+        }
+      ],
+      "read_limit": "H31只核该准确标题行及邻近记录，未宣称全文阅读7871行HTML。"
+    },
+    {
+      "finding_id": "PE-ENG-MULTI-OUTPUT-MANIFEST",
+      "kind": "consumer_adoption_gate",
+      "status": "unproven_not_established_incompatibility",
+      "claim": "PG03要求逐输出精确身份/生成步骤/配置可由Baseline解析；现有Manifest若不能承载则技术固定条件不足，PG03未授权自行改原ENG摘要算法/WP0。",
+      "impact": "BOM/ROU多产出启用前需实际ENG模型和CD固定内容能力对照；只改显示名不足。",
+      "exit_condition": "准确逐输出内容及关系进入经有权确认的成员/摘要合同并可回溯，真实实现另行验证。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/08/089216a4b4fea2d5__089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397.md",
+          "sha256": "089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397",
+          "line": 44,
+          "end_line": 48,
+          "verbatim": "### 3.2 Baseline怎样证明B是什么\n\n一个共同运行可以引用完整技术组合，但下游查询B时必须能回到：**原运行/制造Baseline＋产出位置＋B自身Item/Revision/Spec＋生成工序＋适用配置**。不能只得到A的Baseline后就把B当A。\n\n是否另需B作为独立使用对象的Baseline，按该后续活动的原技术与用途规则核对；本稿不预先强制每一副产物都造一套无依据独立主账，也不允许有要求时省略。现有ENG成员合同不能承载必需关系时，应明确技术固定缺项；不能宣称改一下显示名就已支持。本轮不修改原ENG册、摘要算法或WP0实现。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/08/089216a4b4fea2d5__089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397.md",
+          "sha256": "089216a4b4fea2d5ea66548ec2fb22f85a69a46b72b810a6affd7c9bc9132397",
+          "line": 249,
+          "end_line": 260,
+          "verbatim": "| PG03-FLD-002-01 | 映射两端版本 | EBOM输入位置、MBOM产出集合与Routing准确版本组合。 | ENG-BOM/ENG-ROU/CFG | 评审前 |\n| PG03-FLD-002-02 | 输入到输出关系 | 使用有方向的过程关系/技术依据，不能以产物作为负BOM投入抵消缺项。 | 工程/CFG | 关系批准前 |\n| PG03-FLD-002-03 | 本运行技术基线 | 固定完整成员/定义集的ENG Baseline；名称是上下文，不取代既有ENG模型或算法。 | ENG-REV | 受控活动前 |\n| PG03-FLD-002-04 | 逐产出内容引用 | Baseline+OutputOccurrence+Item/Revision+Spec+生成工序及必要配置，不能只用根ProductId。 | ENG-REV读取源Owner | 形成制造上下文前 |\n| PG03-FLD-002-05 | 组合兼容依据 | 各单独有效成员在本工厂/运行组合中仍能同时适用的依据和缺项。 | 工程/CFG | 准入前 |\n| PG03-FLD-002-06 | 变更与历史范围 | 新的技术成员、已建执行、历史产出和后继关系清单。 | ECM/ENG及原Owner | 修订采用前 |\n\n**PG03-BR-004：**一次冻结固定各成员准确版本及组成关系；分别有效的A规格/B规格不能自动拼成一个有效制造组合。\n\n**PG03-BR-005：**有共同运行Baseline不代表B继承根产品A的全部规范与验证；B对外使用必须能解析自身准确产出身份及适用依据。\n\n**PG03-BR-006：**现有Manifest不能表达必要产出关系时，只能认定相应技术固定条件不足；本设计不授权修改ENG原件、WP0代码或引入新摘要算法。"
+        }
+      ]
+    },
+    {
+      "finding_id": "PE-ENG-TOOL-OWNER-PARTICIPANT",
+      "kind": "cross_owner_commit_gate",
+      "status": "required_owner_inputs_unproven",
+      "claim": "X1-R2当前正面关联/影响状态要求真实Owner native schema及HoldExact提交保护；静态通过不证明Owner协议已采用。",
+      "impact": "绑定或保护缺失仅可本地准备，不能CONFIRMED/EFFECTIVE/COMPLETE；未来Owner不满足则继续fail-closed。",
+      "exit_condition": "完成准确Owner binding/current query/真实提交参与者证明并按新当前轮次应用。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/76/760c35b523260b23__ENG-TOOL-COMPATIBILITY.md",
+          "sha256": "760c35b523260b23a59b22f6fe74838f4a207422c82ce8b7b575fbfcf127bfc2",
+          "line": 144,
+          "end_line": 180,
+          "verbatim": "真正Producer的Ref/body必须先按其正式schema绑定后解析。局部NativeEvidenceEnvelope只承载contractBindingRef（真实owner、contractId、schemaRevision、schemaDigest、ownerAdoptionRef）、nativeEnvelopeRef及原bytesDigest；不替换原Ref字段，也不接受任意自由JSON声称已批准。未取得正式schema/受信读取/事件和最终保护能力时，binding状态UNPROVEN，关联准备可保存，但以下ApplyCurrent不能CONFIRMED/EFFECTIVE/RETIRED。\n\n内部E-I01 ReceiveOwnerEvidence的封闭输入为deliveryId、deliveryBodyDigest、NativeEvidenceEnvelope、proposalId/proposalRevision、subjectKind、subjectDigest、evidenceRole、decisionKind CONFIRM/REJECT/WITHDRAW/CHANGE/UNKNOWN、nativeOwnerHeadRef、occurredAt、correlationIntentDigest。evidenceRole按下表固定。请求须来自已绑定的Owner服务，不从用户浏览器“approved=true”受理。服务在本域事务中保存原body/ref、Inbox身份和本域receipt；接收本身只表示RECORDED/DUPLICATE/CONFLICT，不代表Owner当前结论已应用。\n\nInbox唯一(Tenant,Owner,deliveryId)。同id同body回同接收receipt，不重复递增generation；同id异body保双方原文、隔离CONFLICT，对命中主体置currentKnowledge=CONFLICT/generation+1，不能最后到者覆盖。不同deliveryId但同原Owner receiptRef/body仍幂等归同证据；同原receiptRef异body同样隔离。原OwnerHead仅按正式合同的比较规则比较，不用时间/字符串版本大小猜新旧；已证老于当前头的事件只留历史。其他命中CHANGE/WITHDRAW/UNKNOWN或无可靠头排序的事件，立即递增generation、清当前成功badge并使知识UNKNOWN，保lastKnown历史但不当当前许可，再启动准确重核。通知不会单凭kind把旧历史改写成已撤销。\n\n内部E-I02 StartCurrentRound的输入封闭为proposalId、proposalRevision、expectedProposalControlRevision、reason EVENT_RECHECK/USER_REFRESH/DEPENDENCY_RESTORED、原commandKey（用户请求时）或triggerDeliveryRef（受信通知时），两种触发引用恰有其一。它在本域锁下固定subjectDigest、当前必要Owner角色、Actor/字段权限策略、已知Owner头、scope及requiredTargetSet，observationGeneration+1、生成roundId，当前置UNKNOWN。每Owner QueryRequest保roundId/generation/proposalControlRevision/完整subject、所需role、businessIntentDigest及原queryDigest。没有schema绑定的role记录OWNER_SCHEMA_UNBOUND，不伪发请求，等真实绑定后用新round重核原主体。\n\nOwnerReadResult封闭映射字段为role、原决定/应用receiptRef及NativeEvidenceEnvelope、requestedSubjectEcho、currentOwnerHeadRef、result CONFIRMED/REJECTED/WITHDRAWN/UNKNOWN、currentPolicyRef、scopeEvidence、requestDigest、observedAt、transactionGuardRef或null。每个结果必须证明本次queryDigest和相同完整subject，不能将为旧revision/pair/范围签发的receipt移到新round。单方CONFIRMED只填该round该role的证据槽，不立即把整体变CONFIRMED。\n\n内部E-I03 ApplyCurrentRound输入仅roundId、expectedProposalControlRevision、expectedObservationGeneration、完整OwnerReadResults[]及bindingRefs；结果为ApplicationReceipt={applicationId,roundId,subjectDigest,applied:boolean,outcome,projectionRevision,sourceReceiptRefs[],unresolvedRoleOrTargets[],asOf,notExecutionPermit:true}。应用时锁本域ProjectionHead，核准确提案/意图/control/generation、每一必需role恰一结果、当前Actor与字段/范围资格、原决定的当前性/适用性和完整证据。当前状态的正面采用必须由这些Owner真实CurrentEvidenceParticipant.HoldExact在同一实际事务或已证一致性协议中保护相同主体/头至本域提交；只有签名/TTL/旧回执而无真实当前保护，结果UNKNOWN/OWNER_PARTICIPANT_UNPROVEN，不写正面状态。这是实际Required接点，不宣称旧服务已实现跨Owner原子协议。\n\n如果关系提案已是REJECTED/REVOKED，E-I03只允许返回TERMINAL_PROPOSAL及原历史，不应用后来的正面结果；重新采用须新superseding提案。满足前述非终态条件后一次事务写本域current projection、history、ApplicationReceipt及round applied结果，不写DOC/WMS/ECM/LCM/MES主账。receipt包含准确原OwnerRef、原rawBodyDigest以及本域applicationDigest，三个域不互称。重复同round同完整输入返回原本域应用receipt；同round异body隔离CONFLICT。round/generation/control任一已变化时applied=false、outcome=STALE_OBSERVATION，结果仅存历史，不能覆盖较新的UNKNOWN/撤回/新主体；更旧worker即使两个结果全成功也不例外。\n\n### 10.3 三类投影的唯一转换规则\n\n|主体/必需Owner角色|触发和完整条件|本域唯一转换及原子结果|恢复|\n|---|---|---|---|\n|INSTANCE：ENG_SPEC_CONFIRMATION与PHYSICAL_INSTANCE_ASSOCIATION|两Owner当前结果CONFIRMED，完整technical/physical pair/用途/范围/原意图一致且E-I03当前保护成立|PROPOSED/UNKNOWN→CONFIRMED；只存关系及双方原receipt，不改WMS状态|一方待证维持UNKNOWN；不复用另一实例结果|\n|INSTANCE确定拒绝/撤回|E-I03证明本次精确关系被任一有权Owner当前REJECTED；或原确认现已WITHDRAWN|everConfirmed=false的提案→REJECTED；everConfirmed=true的关系→REVOKED；本域历史/原receipt保留|REJECTED/REVOKED不原地复活；有新准确决定时新superseding提案；仅查询失败不是确定撤回|\n|DOCUMENT：ENG_DOCUMENT_RELATION与DOC_REFERENCE_AUTHORITY|工程确认该准确资料角色/用途，DOC当前核原件/派生/版本/控制与当前披露，两方同主体且真实保护成立|PROPOSED/UNKNOWN→CONFIRMED，写固定关系与独立当前知识；不修改DOC原件|DOC更改/失证先UNKNOWN；新DOC版本只能新提案，不换旧ref|\n|DOCUMENT确定拒绝/撤回|同INSTANCE精确主体与实际当前Owner证据要求|REJECTED/REVOKED，历史文件引用保留，当前不可采用|新意图新提案；无证不能用旧badge恢复|\n|INSTANCE/DOCUMENT相关通知、合同/权限/当前读失证|E-I01新有效影响或E-I02/03任何必需role UNKNOWN|仅非终态PROPOSED/CONFIRMED/UNKNOWN的当前投影转state=UNKNOWN、knowledge=UNKNOWN/CONFLICT并保generation；REJECTED/REVOKED保持原终态，仅增加后续观察历史，不复活；界面不绿|在同一未终态主体上新round完整重核；当REF/意图变更必须新proposalRevision|\n|IMPACT新准备请求|changeKind合法，from/to规则符合；原决定/覆盖可尚未产生|PROPOSED；impactCompletion=OPEN；缺后续Owner决定不阻草稿|获来源后进入UNDER_OWNER_REVIEW，只是受理观察|\n|IMPACT技术变化真实应用|UPDATE：当前ENG新技术版本应用+准确ECO决定；SUBSTITUTE：准确from/to范围的原CFG/LCM替代决定及ENG对应技术控制；RETIRE：from的原LCM停用决定与ENG当前停新采用控制，to=null；均须实际Owner合同同主体/范围当前证据及E-I03保护|UPDATE/SUBSTITUTE技术控制投影→EFFECTIVE，RETIRE→RETIRED；只投影真实Owner已应用事实，不替它执行技术停用/替代。impactCompletion仍OPEN直到下一行|未证任一实际决定/应用就UNDER_OWNER_REVIEW或UNKNOWN，不用ECO批准工作代“已应用”|\n|IMPACT后果关闭|完整where-used CoverageRead（scope、水位、Owner覆盖集合、targetSetDigest）可证无缺项；每个requiredTarget有原Owner当前APPLIED或有证NOT_APPLICABLE，准确target/version/范围/原意图匹配；无未决拒绝/UNKNOWN且最终current保护成立|impactCompletion OPEN→COMPLETE，并存覆盖与每Target原receipt；technicalControlProjection独立保持其实际值|覆盖后来失证/新增义务/receipt撤回即generation+1、impactCompletion→OPEN；不恢复技术许可，不抹已发生现场事实|\n|IMPACT确定拒绝/技术决定撤回或来源未知|原Owner当前拒绝请求/撤回应用，或当前性未证|保决定历史，technicalControlProjection=UNKNOWN，impactCompletion=OPEN；另存decisionDisposition REJECTED/WITHDRAWN/UNKNOWN，不能用原EFFECTIVE作新准入|更换业务意图需新请求；相同主体且仅暂态未知可新round核原Owner，不由FSC/ENG编造恢复决定|\n\nIMPACT CoverageRead的requiredTarget记录封闭为targetOwner、原targetRef/version、affectedPurpose/scope、expectedOwnerHeadRef、requiredOutcomeKind、obligationRef。TargetReadResult与此精确匹配，result仅APPLIED/NOT_APPLICABLE/REJECTED/UNKNOWN，NOT_APPLICABLE必须原Owner明确决定及证据，不以“查不到”当无需处理。missingOwner、partialPage、权限裁剪、超时或未能固定完整目标集合均coverageComplete=false，保持OPEN。某技术Owner可以已经真实停用from而现场义务仍未完，因此RETIRED与OPEN可合法并存；这不会宣称全部切换/实物报废。\n\n### 10.4 无后继停用与失败恢复传播\n\nE05的RETIRE不要求toRef、替代产品或虚拟新工具。草稿只需fromRef、停用范围/reason，原ECO/LCMRef允许尚空；请求结果PROPOSED/OPEN。相应LCM/工程实际Owner后来给准确停用决定/应用事实，才允许E-I03投影RETIRED，仍保旧WO/资料/订单及实物义务；未收全现场回执始终OPEN。UPDATE/SUBSTITUTE的toRef必须非null、准确且不同于from，不接受只填显示名称。新请求类型和nullable规则同时进入E05 DTO、subjectDigest、History、Owner Query与AC-E13，不存在后端默补toRef。\n\nOWNER_SCHEMA_UNBOUND明确阻断E-I01的可信决定解析及E-I03正面/终态应用，不阻本域准备提案；Required绑定落实后以DEPENDENCY_RESTORED启动新的完整round。参与者失联/当前保护未证阻断CONFIRMED/EFFECTIVE/RETIRED/COMPLETE，保持UNKNOWN或OPEN。确定拒绝/撤回必须来自原Owner的准确当前结论，不能把超时当拒绝。接口/合同升级若改变Ref形状或语义，原body不重写，旧proposal留UNPROVEN，另按迁移映射和明确新意图处理。\n\n异步一方已确认后另一方发生变更，通知提升整个subject的generation，先前一方slot也不作新round完成凭据，两个role须在同一新round重新读。DOC旧成功迟到、旧影响覆盖页后到、旧Owner回执重发均按round/generation/subject检查保历史而不变绿。前端E03及文档/影响读返回ProjectionHead、原Owner回执历史和ApplicationReceipt、asOf、currentKnowledge、unresolvedRoles/Targets，不只一个CONFIRMED布尔；本次作业许可仍由MES/REL/WMS真实Owner最终核。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/91/918bbd4508551b64__00_X1_R2_独立回归与完整范围静态审阅报告.md",
+          "sha256": "918bbd4508551b64470398bf65697954bff495fd37d1ef8cb5efa66e56bd0462",
+          "line": 142,
+          "end_line": 153,
+          "verbatim": "|ENG真实Owner schema/当前证据与HoldExact协议|未知准备内容不具备确认资格；可信证据解析及正面/终态应用依准确绑定而定，不能CONFIRMED/EFFECTIVE/RETIRED/COMPLETE|绑定后新round重核准确主体，不能凭旧通知或布尔approved恢复|\n|ENG ERP-ORD原合同、真实订单受理与PE外部连携|不宣称OWNER_APPLIED或真实PE执行；需要原子联动的动作未证不能完成|原Owner采用/原回执确认后按分层结果恢复；不另造订单/CREDIT效果|\n|正式Excel历史差异、实际迁移、组织/实例、全部旧客户端和内部writer|不宣称逐格等价/已部署；NEW_WRITER/NEW_ISSUE按完整入口门控制|后续在既定原Owner范围补材料与授权实施，不自动重写历史|\n\n其中政策的实际值和Owner合同正式绑定不由审阅者补造。未来若Owner提供的合同无法满足本文消费条件，必须继续失败关闭，并对真实差异做有界兼容修订；不能凭本次静态PASS压过原Owner事实。\n\n## 直接传播与非阻塞实施提醒\n\n1. R2_LOCAL_DIGEST_RULES补齐本域摘要域、完整payload、集合排序、nullable和原body保全；没有重写EST-SELECTOR-1或Producer原digest。摘要只是完整性/意图关联，不证明真实性或真实事务保护\n2. PRICE Profile的本域quantityScale范围0..18不能扩张EST原UnitValue的0..12合同。对EST消费继续以accepted L482的精确类型及合法依赖为准，不进行截断/默认。这是现有“原EST type不改”的必守边界，不要求本轮把所有本域单位能力改成EST能力\n3. FSC两个FactGuard必须满足正文规定的完整subject、字段覆盖、原expected和真实保护；不能由实现自行把完整请求缩成“某一字段存在”。具体Producer绑定不支持这些条件时继续UNPROVEN，不能只凭HELD字样接收\n4. ENG保存准备提案与正式解析/应用准确关联须分开；没有Owner schema不能让任意JSON成为准确Ref。§10的新准备/应用分层不覆盖§10原来对准确关联提交的引用检查"
+        }
+      ]
+    },
+    {
+      "finding_id": "PE-ITER-OA-PERSISTENT-APPLICATION-MAPPING",
+      "kind": "versioned_protocol_adoption_mapping",
+      "status": "requires_adapter_proof_not_business_owner_reassignment",
+      "claim": "RC1 ITER同库派发/回调为旧候选处理建议；当前OA v1.1.2同进程也要求持久Submission/DecisionOutbox/OwnerInbox/ApplicationReceipt。旧术语不构成绕过当前OA协议的例外。",
+      "impact": "保留ITER轮次/摘要/权限/Blocking检查及Approved与Applied分轴，将决定收件与实际应用嵌入当前Owner Tx I/Tx A；同步跨Save直调不能作为新接入完成证明。",
+      "exit_condition": "冻结ITER实际Owner提交/决定/应用/撤回字段映射、事务/原键恢复与当前OA合同联合采用证据，相关AC另实测。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line": 1326,
+          "end_line": 1344,
+          "verbatim": "### PROC-PLM-ITER-01-009 提交新评审轮次\n\n`POST /api/plm/iterations/{id}/reviews`（候选端点，非现有实现证明）\n\n授权：review.submit；前置：InDesign且无阻塞漂移；未暂停\n\n输入：candidateVersionIds,inputVersion,reviewerIds,verificationPolicyRefs,expectedVersion\n\n1. 重新核验要求、候选、文件摘要及父基线适用性；不能只信前端允许按钮。\n\n2. 校验评审人、审批配置和自批规则；没有配置明确拒绝。\n\n3. 原子冻结输入、候选清单、问题快照和摘要；创建新轮次。\n\n4. 同库派发适配或持久Outbox；若OA延迟界面显示待分派。\n\n事务：ReviewPackage+Round+Stage=InReview+OA请求+Audit+Receipt\n\n响应：201 roundId,packageDigest,dispatchStatus；错误：409漂移/开放冲突；422缺配置"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/eb/eb94f563f6f5ff08__02_ITER_当前阅读主册.md",
+          "sha256": "eb94f563f6f5ff08a710881deb07a1815c537a0c09115253d9b62da578405eae",
+          "line": 1368,
+          "end_line": 1407,
+          "verbatim": "### PROC-PLM-ITER-01-011 应用评审决定\n\n`POST /api/plm/reviews/{roundId}/decisions`（候选端点，非现有实现证明）\n\n授权：review.decide / trusted.callback；前置：当前InReview且摘要一致\n\n输入：decisionId,outcome,reason,packageDigest,reviewer/OARef,expectedVersion\n\n1. 验证服务身份/人权限、审批范围、当前Round及Digest。\n\n2. APPROVE要求无未关闭Blocking；RETURN回InDesign；REJECT进入待评价而非自动Closed。\n\n3. 旧轮次回调保存隔离回执，不推动当前状态；重复返回原应用结果。\n\n4. 原子保存决定与阶段；OA Approved与PLM Applied两个状态分别保留。\n\n事务：Decision+Stage/IssueDisposition+Receipt+Audit同事务\n\n响应：200 APPLIED或STALE_RECEIPT；错误：409旧轮次/异载荷；403无权\n\n\n### PROC-PLM-ITER-01-012 退回修改/撤回评审\n\n`POST /api/plm/reviews/{roundId}/withdraw`（候选端点，非现有实现证明）\n\n授权：review.withdraw；前置：InReview；决定应用前；有权限\n\n输入：reason,expectedVersion\n\n1. 与决定应用竞争时依条件更新裁决，只允许一个状态动作成功。\n\n2. 保存原送审包和审阅痕迹，不删除OA实例。\n\n3. 创建撤回通知或查询原OA结果；迟到决定由旧轮次规则隔离。\n\n4. 用户修改形成新候选/新轮次，不复用原Digest。\n\n事务：Round=Withdrawn+Stage=InDesign+通知请求+Receipt\n\n响应：200 stage,roundState；错误：409回调竞争；412并发"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0cc2a482fd1dc879__OA-APP-01_业务审批绑定与回调_前后端开发Spec_v1.1.2_R2_REVIEW.md",
+          "sha256": "0cc2a482fd1dc8790f19239f5965e437948c6c9c92929f94b4e32fdd6319891c",
+          "line": 14,
+          "end_line": 18,
+          "verbatim": "本正文接续B1 v1.0 DRAFT，不是第二Target。其6913 bytes/417行主文与992 bytes/33行INDEX原件保存在predecessor/CP6，原官方全文响应、恢复方法、SHA另见PREDECESSOR-IDENTITY.json。Library全文read has_more=false；返回版本null，未提供上游SHA。正文内容加文件终止LF匹配官方size，SHA为本地重算，不伪称服务端hash核验。原件不改；本正文替代其未完成的字段与处理规则。尤其纠正原§5泛用客户端POST /api/oa/applications、混合状态轴及原§8“恢复必须新ApplicationId/newDigest”：可信业务后端负责发起；运输恢复保持旧键；真实内容修改才产生新业务修订/轮次。\n\n唯一推荐：Workflow同库事务保存终态决定和不可变Decision Outbox；独立可靠投递给业务Owner的Inbox；业务接收事实与实际应用分离，由Owner本地事务产生独立ApplicationReceipt，再持久回报Workflow只读投影。不使用同步跨业务Save的假原子，也不要求把现有应用拆成微服务。同进程部署仍执行同一持久协议，不旁路Inbox。消息仅是事实，不授予用户新业务动作权限。\n\n本稿全部标注Required的表、DTO、API、页面及适配均是拟设计。旧代码存在情况以§1逐条为准。现有Pinned定义/Ownership复用；不重做引擎、会签算法、IAM、待办、PLM、GL/AP。暂缺事实只阻塞相关新生产接入；本域完整算法在本文确定，不能以“Owner采用门”代替它。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/0c/0cc2a482fd1dc879__OA-APP-01_业务审批绑定与回调_前后端开发Spec_v1.1.2_R2_REVIEW.md",
+          "sha256": "0cc2a482fd1dc8790f19239f5965e437948c6c9c92929f94b4e32fdd6319891c",
+          "line": 218,
+          "end_line": 230,
+          "verbatim": "### 6.1 全动作写集与提交边界\n\nTx B治理：Command+BindingHead CAS+新BindingRevision（发布时）+不可变BindingTimelineRevision（发布/停用）+Audit一起commit；旧Revision/旧Timeline不改，无FlowInstance写。生效切换§16.1。\n\nTx S接收发起：验证服务与Owner冻结证据后，Command+Submission（保存完整snapshot、binding、pinned）+StartOutbox+Audit同commit；不直接写业务表。Owner发起前其本地Tx已经写ApprovalSubmission+冻结Subject+Owner OA Outbox+Audit+Command，OA暂离线不丢意图。\n\nTx E起实例：幂等engineStartId，在同库事务内创建Wf_FlowInstance及必要任务/token/history，写Submission.InstanceId/Running、StartOutbox完成、Audit。现引擎Submit如内部Save，须加入显式外层事务，不以Save次数代表提交；若无法参与，必须提供按engineStartId幂等create/query适配，跨步状态START_UNKNOWN待查，不创建第二实例。缺此适配不能上线v2起实例。\n\nTx D决定：引擎现有票决算法结果+task/history/token/instance CAS+AppDecision+完整DecisionEvidence+DecisionOutbox+Command结果+Audit在显式同事务commit；本域Dispatcher改成追加outbox。Notifier只能commit后可重试发送，不能在决定事务中调用Journal.Post。本稿不改会签算法，只要求它输出可验证证据集合；终态证据不齐则不提交业务型成功终态，回滚此操作并422，保留已有票/任务一致状态。\n\nTx W撤回：Owner先持当前授权fence并锁本轮防与应用竞争，写§17完整OwnerWithdrawalRecord+Owner Command结果+不可变OwnerWithdrawCommand Outbox+业务轮次撤回/CAS+Audit同commit；OA以完整可信服务DTO摄取，在当前fence内按§17复核后锁Submission+Instance。若已Approved/Rejected返回409既有决定；若未终态，用引擎既有允许撤回规则写Withdrawn+真实SUBMITTER_WITHDRAWAL Actor+不可变决定+DecisionOutbox+原命令结果+Audit同commit；不删除业务历史。Owner已撤回后迟到Approved只存STALE_RECEIPT，不会回改新轮。\n\nTx I收取事实：接包校验Producer/Scope/schema/hash，追加Inbox（不触业务状态），commit后返回202 PendingReceipt；处理Tx按Owner锁序核完整身份与当前适用，写ApprovalFact/Submission.decision/Inbox最终状态/Audit；不执行PO release等隐式动作。"
+        }
+      ]
+    },
+    {
+      "finding_id": "PE-CP22-EXACT-PROFESSIONAL-ADOPTION-NOT-RUNTIME",
+      "kind": "scoped_later_consumer_design_adoption",
+      "status": "design_adopted_provider_runtime_required_fenced",
+      "claim": "CP22对role15内PLM/CFG/ENG/DEV/REL新增精确设计ADOPT；不能记成完全无设计，亦不能扩大RC1原批准、实际注册或运行采用。",
+      "impact": "实现CP22普通制造消费须保四/十一capture、原issuer/pin、DEV仅证明不适用路径、REL前置授权/后置reservation分离；通用PLM能力不等于该consumer已支持所有路径。",
+      "exit_condition": "准确provider/pin/合同版本/body/admission与同preparation链实证齐全，并按原37AC实际验证；当前17 actualAdopted=0、providerGrant=0、NOT_RUN保留。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line": 113,
+          "end_line": 165,
+          "verbatim": "- 采用MES实际Owner出具完整MesSourceRegistryCutCp18/OwnerNamespaceObservationCp18与准确PLAN_MAKE registry cut；原native SourceDescriptor全文/digest/current sourceBodyDigest与实际Owner namespace保完整\n- accepted native五步保持Source search → Preparation完整CommandResult → EngineeringCheck → Snapshot完整CommandResult → CREATE_ROOT_WORK_ORDER完整CommandResult；未来preparation/check/candidate/root IDs只来自原真实前驱\n- PREPARE恰四capture：PLANNING_SOURCE_COVERAGE、PLANNING_MAKE_SOURCE、PLM_PURPOSE_POLICY、REL_PURPOSE_AUTHORIZATION，所有preparationRef=null\n- CHECK/SNAPSHOT/CREATE各恰十一capture：上述四加CFG_REQUEST、CFG_RESOLVED、ENG_BASELINE、ENG_UOM_USAGE、ENG_PRECONDITION、DEV_APPLICABILITY、ENG_MANIFEST；builder逐capture比真实已建preparationId/revision，不允许合并不同cut或旧preparation\n- MES仅transport；issuerOwner与documentRef.owner须原PLM/CFG/ENG/DEV/REL。每项authenticated SDK sidecar绑定E/T、executionKey、actual preparationRef、sourceDescriptorDigest、documentRef/version/bodyDigest、captureId/version/time、providerId及真实providerContractId/version/digest\n- SDK pin核Owner/provider/contractId/version/digest、AdoptedByOwner、生产capture有效期与未撤销；body完整canonical/digest关系独立核。没有accepted supporting HTTP endpoint，不造一个；actual provider values当前未证并保持fence\n- current capture head资源为SHA JCS{documentKind,executionKey,preparationRef,sourceDescriptorDigest}；保旧immutable captures但不回退或跨cut混用。缺issuer/provider/body或未知applicability报WO_SUPPORTING_OWNER_REQUIRED_FENCED，零后继native派发\n- PLAN-PO只生产两个本地allocation/source projections，不签PLM/CFG/ENG/DEV/REL上游truth。REL_RESERVATION由真root后Owner原结果产生，不能计入PREPARE/CHECK/SNAPSHOT/CREATE前置十一capture\n- 五nested责任的本次设计采用按各独立实际技术职责记录于本role15内部；不造第18顶层合同。原真实历史receipt消费其记录native前驱链，不要求今日supporting源重造\n- 设计采用OWNER_RECEIPT_DELIVERY/OWNER_RECEIPT_STREAM行动权限归属于现有OWNER_CURRENT_WIRE合同；不新增顶层producer role\n- 完整OwnerReceiptInputCp18保原native ordinal/status/body；eventId/streamId/sequence/previousDigest/conversionLegId/stepOrdinal/ownerCommandKey/ownerQueryKey/requestDigest/ownerResultDigest/observedAt不可变\n- E/T、authenticatedProducerOwner、principalId、admissionId、validTo由独立authenticated metadata提供；canIngest与canReadOwnEvents分离，app不能自己生成Owner/admission\n- gap持久WAITING_PREDECESSOR；仅原bytes在APPLIED前驱后续办；同event同bytes重放、异文冲突，intermediate APPLIED仅观测已存不授权后继派发\n- 原observedAt不换今时；consumer Now是当前可信本地时点。noncommanded registered read/evaluation才允许且要求null OwnerCommandKey。WO/WMS负native结果单独不能当永久noeffect\n#### PLM/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId 412b81e2-fc64-4292-a2ab-2d4be6ae6b7e；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest b6109a0c93ba485edb24f723eaf1bdee036b37d614c79bf25fbdd968a55e323f；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- PLM独立truth负责plm.wo-purpose-policy/1.0-proposed全body：itemRef/siteRef、PRODUCTION/NEW_MANUFACTURE、APPLICABLE/NOT_APPLICABLE/UNKNOWN、requiredAuthorizationOwner=REL、validFrom/validTo、sourceTechnicalBasisRef\n- 采用实际PLM purpose policy与source descriptor原purposePolicyRef，并保独立technical basis引用；普通policyRef不能充PLM purposePolicyRef\n- 准行仅当前APPLICABLE、准确Site/用途及有效窗口，与REL用途授权同cut；NOT_APPLICABLE/UNKNOWN不凭Main/MES布尔放行\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。\n#### CFG/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId f659eafa-38cb-4c08-bdfd-2c2241abd6f5；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest 41ad174da5e88a5ae150e34091ee42fee7c32907f8bfc29df2c9d79296902293；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- CFG独立truth负责配置request完整baselineRef/purposePolicyRef/itemRef/siteRef/variables/requestedAt/state/resolvedRef，以及resolved requestRef/baselineRef/variables/resolutionCount/state/effectiveOperations/materials/outputs\n- 实际consumer准行request.state=RESOLVED、resolved.state=UNIQUE、resolutionCount=1；baseline/request/source candidate refs精确匹配\n- 完整配置结果与ENG technicalContent三全数组canonical相等，变量来源保真；PENDING/AMBIGUOUS/REJECTED/UNKNOWN继续fence，不让MES resolve或丢问题行凑唯一\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。\n#### ENG/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId a4fba3b7-b4b3-4a38-ae56-b27f2bd01506；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest cb9c52c920a2b444982f3ceeeccb5d5462fdff4b69638b0d7ff3f4872f4630ea；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- ENG独立truth负责当前RELEASED baseline/item/site/purpose及完整technicalContent、technicalDigest、有效窗口。完整operation occurrence/DAG/材料EBOM-MBOM映射/输出TechnicalSpec、指令/参数/资源/质量关系保原身份\n- 实际consumer逐operation id、依赖与consumptionPoint/material关联，全DAG无环；effectiveOperations/materials/outputs等于CFG完整解析，普通路径PRIMARY count恰1；不宣称任意工程方案均可放行\n- ENG_UOM_USAGE完整target/material usages/output targets，versioned units、正rational numerator/denominator、EXACT整数比例及loss逐项守恒；数量相同不能替代量义映射\n- ENG_PRECONDITION完整操作/指令/QC来源，missingInstructions/missingQualityRequirements空且complete经独立auth/bodies后才有意义，manifest技术hash不能代正文\n- ENG_MANIFEST完整五member：CFG_RESOLVED、ENG_BASELINE、ENG_UOM_USAGE、ENG_PRECONDITION、DEV_APPLICABILITY，ref/kind/bodyDigest逐一对独立capture，coverage=COMPLETE、missingRefs为空\n- native EngineeringCheck的七CREATE_WO gates、source version、baseline/resolved refs、manifestDigest/technicalDigest、validUntil与capture源逐一绑定；Snapshot/CREATE保原candidate/preparation/check，不改accepted native wire\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。\n#### DEV/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId 9a6ec6f3-d236-47fb-ad12-0804fdd1c181；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest 45e1890bc5f3dbd3e9ccd0ddab5210c2521d8ec8e8775a6ec15af27e9576004c；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- DEV独立truth负责dev.wo-applicability/1.0-proposed全body：executionKey、scopeRef、PRODUCTION、siteRef、technicalDigest、state、完整applicableDeviationRefs、checkedAt\n- 本candidate实际consumer仅采用有原DEV依据的NOT_APPLICABLE_PROVEN且applicableDeviationRefs=[]的正常路径，并与REL scope/execution及ENG technicalDigest一致\n- APPLICABLE或UNKNOWN仍RequiredFenced；此采用不授权偏差Claim/余额/适用性替代流程，不用MES或本地complete:true签不适用\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。\n#### REL/ROLE15_NESTED_TECHNICAL_TRUTH_NEW_DESIGN_OWNER\nADOPT；recordId 8a2721f4-cd83-431c-aa8c-b84bfa4949a8；Run CP22-OWNER-TECH-DESIGN-DELTA-20261004-64aa4b2c-8580-4e83-8ed3-c2c32b88d8b2；UTC 2026-10-04T15:15:17.327079Z\n完整nested body digest febcc2a5d4ce1138abed6c47052c3aec6ca84fe2c0f0d5fe778d6f7e8583bbd1；capture digest 7c346121b1351c39f3cbdbea32a85b0bf34e17a7140491c8c140a65c45ed708c\n- REL独立truth负责rel.wo-purpose-authorization/1.0-proposed全body：PRODUCTION、purposePolicyRef/siteRef/executionKey/scopeRef、完整authorizedRanges/authorizedQuantity、GRANTED/REVOKED/UNKNOWN及validFrom/validTo\n- PREPARE/CHECK/SNAPSHOT/CREATE前置采用精确GRANTED/current有效用途授权及范围量义；candidate executionScope等于其准确scope/version/ranges/quantity，不扩大授权\n- REL_RESERVATION采用post-root独立观测schema，authorizationRef/executionKey/scopeRef/reservedRanges/quantity/state/workOrderId/reservationVersion全量保留；真root原result.relReservationRefs只作为原Owner关联，不能假造reservation\n- REL原余额/预约/释放truth不由MES或PLAN-PO自产，提前授予R/P或把Root准备当reserve均不在采用scope内\n- issuer-specific authenticated SDK完整tuple与真实pin义务原样采用；qualifiedActualProviderPin=null，仍是runtime未证，不写实际部署ADOPTED。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "sha256": "cbd38c11127b763e0fff1d982a34f64103179a15a5b136cc393797d029eeea34",
+          "line": 173,
+          "end_line": 176,
+          "verbatim": "## 实际运行与接受边界\n- enabled=false；17 actualAdopted=0；Core providerGrant=0；runtimeUNPROVEN；37AC NOT_RUN；正式58/61、formalIncrement0，EXC未开始。\n- 专业设计ADOPT与当前实际注册/认证/部署分开；无候选SQL/code/fixture/checker/编译/DB/CI/业务/安全复现，无真实授权/注册/部署/GitHub写。\n- 原六SPEC37AC的整册后继独审与根接受不由本组六合同意见代替；没有自动采用新freeze。"
+        }
+      ]
+    },
+    {
+      "finding_id": "PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING",
+      "kind": "version_composition_unproven_not_semantic_conflict",
+      "status": "preserve_each_accepted_scope_mapping_required",
+      "claim": "X6 R2保留外部组织/成员的SecurityStamp、GrantVersion与字段策略，并明确当时未取得S5新身份合同；当前S5 v0.2已提供身份/字段/权限门设计，但该答复针对Main/CRM，不构成Space已采用的证据。",
+      "impact": "不能把历史未收到S5写成全局SYS仍缺设计，也不能直接把AuthSessionVersion当业务permission epoch或Space GrantVersion/SecurityStamp；新Space接入、缓存撤权和字段DTO映射仍需准确Owner边界。",
+      "exit_condition": "固定Space consumer版本，明确Main身份来源、ExternalMembership/Grant字段及当前权限/撤权writer、SecurityStamp/GrantVersion/权限epoch语义与缓存/分页/导出失效；取得相应Owner设计映射和实际采用证据。期间保留R2既有规则，不自行扩大跨租户、导出或新写权限。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6f/6f8585ca3b85c6aa__SPACE_七专项兼容完整设计_R2_CANDIDATE.md",
+          "sha256": "6f8585ca3b85c6aaafb2a8eaf2dfda7ce8a3b1ae590987b3bcf19b1e3d5f4290",
+          "line": 271,
+          "end_line": 283,
+          "verbatim": "current CUR-MAIN-SPACE-014；原直接接口SYS-IAM。仅已识别的外部组织、授权和只读访问能力，不宣称独立CP6.Portal或完整官网，不自动建站。源码/api/space/portal/v1只是Main上的已存在API边界。\n\n### SPEC-SPACE-EXT-01-01 外部组织（NO_HIT_PRESERVE）\n\nSRC-050及SpaceExternalOrganizationController：Type/Code/Name/BusinessPartnerType/Id/Status、SecurityStamp；组织管理者在Main当前授权范围维护。关联BusinessPartner是身份引用，不允许因同显示名自动认定同合作方。\n\n当前S4/WMS变更不改外部组织本身，保留/api/space/external-organization管理入口和既有audit/安全stamp。S5新身份合同未取得，列Required而不自行新增组织种类、账号或跨租户权。组织停用只按原规则影响访问，不撤销历史source/WMS结果。AC-XE01：组织资料保持原字段/Owner，未知身份不以fallback关联，NOT_RUN。\n\n### SPEC-SPACE-EXT-01-02 成员授权（NO_HIT_PRESERVE）\n\nSRC-050/051/071：Membership UserId/Role/ValidFrom/To/Status/InvitedBy/AcceptedAt/SecurityStamp；Grant Site/Floor/Zone/Owner/Object/FieldPolicy/CanExport/有效期/Status/GrantVersion。管理者明确选择成员、角色、范围与期限，更新安全stamp/版本；外部用户不能自授scope。\n\n没有已交付IAM公共变更直接触及这些字段，保留现状且等待明确版本影响再审。S4 source发布不会自动激活Invited成员、扩大Grant或给export。授权到期/撤销后当前读取重新检验，历史已生成报告的访问按文件Owner政策处理，不能擅改原历史事实。AC-XE02：新publication不扩大成员scope/导出权，NOT_RUN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6f/6f8585ca3b85c6aa__SPACE_七专项兼容完整设计_R2_CANDIDATE.md",
+          "sha256": "6f8585ca3b85c6aaafb2a8eaf2dfda7ce8a3b1ae590987b3bcf19b1e3d5f4290",
+          "line": 293,
+          "end_line": 299,
+          "verbatim": "### SPEC-SPACE-EXT-01-04 范围控制\n\n权限交集为Tenant/组织/Active membership/有效Grant/FieldPolicy/本资源Site与location、owner/object范围，不能把多个grant无条件并成全量访问。Source target partition是业务原子单位，不是安全grant，二者不得互换。S4扩大TargetDefinition不会扩大原Grant。\n\n同一个已核published场景先按场地/楼层/区域/对象规则筛选几何，再按有权mapping连接库存/任务，逐字段应用policy。查询、分页、缓存和导出均绑定GrantVersion/SecurityStamp/fieldPolicy与scope；撤销后缓存不得继续泄露。返回总数/hasMore也要考虑受限覆盖，不暴露隐含未授权库位数。未知mapping不成为全仓查询条件。\n\nAC-XE05：更宽新target不扩大旧grant；AC-XE06：撤销授权/版本变化后的分页缓存不泄露旧受限数据，NOT_RUN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9e/9e3be10c13d1599c__S5_TO_S6_TENANT_IAM_CONSUMPTION_RESPONSE_v0.2.md",
+          "sha256": "9e3be10c13d1599c154020005020f85ea67271d43a9044cd2c43d00c5ce880a7",
+          "line": 9,
+          "end_line": 17,
+          "verbatim": "1. Main是tenant/user/role/org/permission权威；CRM保持本地会话/投影/业务Owner，Platform提供原语。新跨仓接入必须显式有效tenant/issuer/region/client对应，不能继承旧TenantMiddleware缺claim默认tenant作为授权。\n2. Main字段1读写、2只读、3隐藏。先仅聚合真实已存行MIN，再在完整注册resource字段域补缺项默认1。RolePermService省略Access1行；绝不在角色聚合前补1。A缺行+B3→3；A缺行+B2→2；A2+B3→2；全缺行且注册完备才物化1。存量真1行仍按原MIN，不擅自删除。\n3. 新消费依赖未知registry、field、Access、源role版本或CRM字段mapping时fail-closed。完整物化只说明字段默认，不补action、行范围、PII或用途许可。对象/动作/字段/online∩healthy projection/用途取更严格交集。\n4. 旧Main FieldPermService无resource配置no-op，MaskHidden引用/nullable为null、非nullable为default，StripReadOnly对2/3恢复original值，均原样保留legacy adapter。新CRM DTO隐藏字段不发送，禁写变更整体拒绝，不能把两种合同混称一致。\n5. 原ScopeType对存行MAX、custom4部门并集保留，不把数值宽序改任意集合并集。新CRM online启用角色过滤与旧Main Build缓存路径区别明确，不能声称全Main已同样过滤。\n6. 30分钟是滑动缓存命中可刷新，不是撤权硬上限；Invalidate能力及少数调用点不等于全部writer失效。认证AuthSessionVersion/AuthenticationEpoch不代替业务权限epoch。\n7. 消费OA-APP§15.1/S6§3.6已选共同门，全部对应撤权writer与业务效果writer共fence至commit。部分EF IdentityChangeCapture只覆盖已注册tenant与switch列出的实体/属性，不等于all-writer fence。\n8. Main/CRM分库无已采用等价共同门时，新业务效果/新下游效果关闭AUTHORITY_FENCE_UNAVAILABLE。历史只读、可信事实接收、原已提交结果技术投递依各自当前门处理，不错误附加原人类新写资格。\n9. tenant暂停保历史结果与原证据；恢复生成新权威版本，不恢复旧会话/旧eligibility。映射或字段依赖未健康仍RequiredFenced。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9e/9e3be10c13d1599c__S5_TO_S6_TENANT_IAM_CONSUMPTION_RESPONSE_v0.2.md",
+          "sha256": "9e3be10c13d1599c154020005020f85ea67271d43a9044cd2c43d00c5ce880a7",
+          "line": 21,
+          "end_line": 29,
+          "verbatim": "Required-IAM-01：S5原政策及已读writer矩阵已有正文；矩阵列用户/角色/关系/菜单/字段/数据范围/组织/租户/密码/2FA/SSO/平台管理员/模拟/PRIV/批量与非EF缺口。真实完整入口清单、共同锁序、失效与持久epoch、Owner签认/运行证据仍UNPROVEN。\n\nRequired-IAM-02：字段默认和合并政策在设计上闭合。每个Main字段→CRM route/DTO/嵌套/集合/导出/搜索/派生依赖的精确映射仍须各资源Owner提供与采纳；未填真实字段的资源保持RequiredFenced，不伪造已接入mapping。\n\nRequired-ID-04/OPS-02：S5承接授权writer责任，不声称现有Main EF捕获即提供OwnerFinalAuthorizationGate。保持S6四类动作对应不同门及原operation先查规则。\n\nRequired-AUD-01：现已有S5_SYS-AUD-01_完整设计候选_v0.1.md§7与S5_SYS-PRIV-01_完整设计候选_v0.1.md§6政策答复，两册在完整独审中静态可接受且本次字节不变。原结果/重放/技术内容分保留类；UNKNOWN、争议及必要引用不通用清理，原证据与当前安全投影分开。具体Owner期限/法定依据/hold竞争与运行采用仍Required/UNPROVEN，不修改S6 accepted。\n\n认证有界补充：IAM v0.2§7.1明确原SSO初次same-tenant email联接及JIT旧新分支，保精确联邦身份权威、禁止静默改绑；新增身份写须当前明确准入政策与同tenant有效且批准的默认角色，缺政策/角色关闭。§6.1–6.5统一Web/native密码、SSO、pending完成、refresh与quick-switch最终session决策，SSO不替CP6本地2FA，旧无认证证据refresh要求重新完整登录；CLIENT v0.2§5消费同合同，FullAuth只在完整新交互commit开启，refresh/quick-switch不延长。这不把AuthenticationVersion当业务permission epoch，不改S6三门或原operation优先。"
+        }
+      ]
+    }
+  ]
+}

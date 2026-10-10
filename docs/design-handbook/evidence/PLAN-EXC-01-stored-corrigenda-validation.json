@@ -1,0 +1,2533 @@
+{
+  "kind": "static_196_declaration_comparison_not_schema_or_business_execution",
+  "checked_at_utc": "2026-10-10T11:16:58.213152+00:00",
+  "comparisons": [
+    {
+      "root": "StoredKeyIdentityRecord",
+      "column": "Namespace",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredKeyIdentityRecord",
+      "column": "ByteLength",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredKeyIdentityRecord",
+      "column": "CollisionOrdinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceArtifactRecord",
+      "column": "IssuerOwner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceArtifactRecord",
+      "column": "SchemaId",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceArtifactRecord",
+      "column": "MediaType",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceArtifactRecord",
+      "column": "RawByteLength",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceArtifactRecord",
+      "column": "Canonicalization",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProducerQualificationRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProducerQualificationRecord",
+      "column": "Role",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProducerQualificationRecord",
+      "column": "ContractId",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProducerQualificationRecord",
+      "column": "AuthenticatedChannelId",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProducerQualificationRecord",
+      "column": "ActualIssuer",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProducerQualificationRecord",
+      "column": "QualificationState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceProvenanceRecord",
+      "column": "ActualIssuerOwner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceFactRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceFactRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceFactRecord",
+      "column": "StateForm",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredFactDependencyRecord",
+      "column": "Relation",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceHeadRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceHeadRecord",
+      "column": "ResourceKind",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceHeadRecord",
+      "column": "HeadRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceStreamRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceStreamRecord",
+      "column": "AppliedSequence",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceStreamRecord",
+      "column": "ObservedHighSequence",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredInboxRecord",
+      "column": "ProducerOwner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredInboxRecord",
+      "column": "Sequence",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredInboxRecord",
+      "column": "ProcessingState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": false,
+      "compatible_narrower_enum": true,
+      "status": "current_enum_within_historical_storage_bound"
+    },
+    {
+      "root": "StoredInboxRecord",
+      "column": "ProcessingRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredInboxRecord",
+      "column": "ClaimEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredInboxRecord",
+      "column": "HolderKey",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredInboxAliasRecord",
+      "column": "ProducerOwner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWaitingDependencyRecord",
+      "column": "DependencyKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWaitingDependencyRecord",
+      "column": "RequiredSequence",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProcessingAttemptRecord",
+      "column": "AttemptOrdinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProcessingAttemptRecord",
+      "column": "ClaimEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProcessingAttemptRecord",
+      "column": "WriterEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProcessingAttemptRecord",
+      "column": "Outcome",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProcessingAttemptRecord",
+      "column": "ErrorCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseOriginRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredEpisodeRecord",
+      "column": "EpisodeOrdinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredEpisodeRecord",
+      "column": "ReasonCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceGraphRecord",
+      "column": "GraphVersion",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceGraphRecord",
+      "column": "OriginKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceGraphRecord",
+      "column": "Knowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceGraphMemberRecord",
+      "column": "MemberOrdinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceGraphMemberRecord",
+      "column": "UseKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadCoverageRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadCoverageRecord",
+      "column": "Requiredness",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadCoverageRecord",
+      "column": "Knowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadCoverageRecord",
+      "column": "ExpectedPages",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadCoverageRecord",
+      "column": "ActualPages",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadPageRecord",
+      "column": "Ordinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDemandSliceRecord",
+      "column": "OutstandingKnowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredMaterialObligationRecord",
+      "column": "BasisKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredMaterialObligationRecord",
+      "column": "RemainingKnowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredMaterialObligationRecord",
+      "column": "SourceKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSupplySpanRecord",
+      "column": "Stage",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSupplySpanRecord",
+      "column": "ViewKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSupplySpanRecord",
+      "column": "QuantityKnowledge",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSupplyTransitionRecord",
+      "column": "TransitionState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredBeneficiaryShareRecord",
+      "column": "BeneficiaryKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredEligibilityConditionRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredEligibilityConditionRecord",
+      "column": "Requiredness",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredEligibilityConditionRecord",
+      "column": "EvidenceState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredEligibilityConditionRecord",
+      "column": "ReasonCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProtectionRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProtectionRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProtectionRecord",
+      "column": "QuantityKnowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCurrentManifestRecord",
+      "column": "ManifestVersion",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCurrentManifestRecord",
+      "column": "Knowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCurrentManifestRecord",
+      "column": "Effectivity",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCurrentManifestMemberRecord",
+      "column": "ResourceKind",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCurrentManifestMemberRecord",
+      "column": "Action",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAssessmentRecord",
+      "column": "Version",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAssessmentRecord",
+      "column": "Knowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAssessmentRecord",
+      "column": "BusinessOutcome",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAssessmentRecord",
+      "column": "RequiredKnowledge",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAssessmentRecord",
+      "column": "OnTimeKnowledge",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAssessmentRecord",
+      "column": "ShortageKnowledge",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAssessmentRecord",
+      "column": "LateKnowledge",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredHeadObservationRecord",
+      "column": "Effectivity",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredImpactManifestRecord",
+      "column": "Version",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredImpactManifestRecord",
+      "column": "GraphCompleteness",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredImpactManifestRecord",
+      "column": "ExecutionCertainty",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredImpactNodeRecord",
+      "column": "NodeKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredImpactNodeRecord",
+      "column": "Classification",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredImpactNodeRecord",
+      "column": "ResponsibleOwner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredImpactEdgeRecord",
+      "column": "Relation",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExecutionObligationRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExecutionObligationRecord",
+      "column": "InitialState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExecutionObligationRecord",
+      "column": "PotentialKnowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExecutionPathCoverageRecord",
+      "column": "PathKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExecutionPathCoverageRecord",
+      "column": "Knowledge",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredObligationSettlementRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDispositionWorkRecord",
+      "column": "Owner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDispositionWorkRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDispositionWorkRecord",
+      "column": "ProcessingRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDispositionReceiptRecord",
+      "column": "Outcome",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDispositionReceiptObligationRecord",
+      "column": "Relation",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecalcWorkRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecalcWorkRecord",
+      "column": "CurrentStage",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": false,
+      "compatible_narrower_enum": true,
+      "status": "current_enum_within_historical_storage_bound"
+    },
+    {
+      "root": "StoredRecalcWorkRecord",
+      "column": "ProcessingRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecalcStepRecord",
+      "column": "Ordinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecalcStepRecord",
+      "column": "Stage",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredMrpReceiptRecord",
+      "column": "Stage",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredMrpResultMemberRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredMrpResultMemberRecord",
+      "column": "Ordinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredResultConsumptionRecord",
+      "column": "ConsumerState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredResolutionRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredResolutionRecord",
+      "column": "Reason",
+      "declaration": [
+        "text-bound",
+        1000,
+        "nvarchar(2000)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredResolutionEvidenceRecord",
+      "column": "EvidenceRole",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDismissalRecord",
+      "column": "ReasonCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredDismissalRecord",
+      "column": "Note",
+      "declaration": [
+        "text-bound",
+        1000,
+        "nvarchar(2000)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAlertDecisionRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAlertDecisionRecord",
+      "column": "ReasonCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAlertHeadRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseRevisionRecord",
+      "column": "BusinessRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseRevisionRecord",
+      "column": "Lifecycle",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseRevisionRecord",
+      "column": "WriterName",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseRevisionRecord",
+      "column": "WriterEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseRevisionRecord",
+      "column": "LocalCommitSeq",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseHeadRecord",
+      "column": "BusinessRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseHeadRecord",
+      "column": "WriterName",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseHeadRecord",
+      "column": "WriterEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCaseHeadRecord",
+      "column": "LocalCommitSeq",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOperationRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": true,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOperationRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": true,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOperationRecord",
+      "column": "ProcessingRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCommandSlotRecord",
+      "column": "Kind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": true,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCommandReceiptRecord",
+      "column": "Outcome",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCommandReceiptRecord",
+      "column": "HttpStatus",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCommandReceiptRecord",
+      "column": "OriginalAppliedRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecoveryCheckpointRecord",
+      "column": "ProcessingRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecoveryCheckpointRecord",
+      "column": "LastObservationOrdinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecoveryCheckpointRecord",
+      "column": "NextActionOrdinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecoveryCheckpointRecord",
+      "column": "DispatchState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecoveryCheckpointRecord",
+      "column": "WriterEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRecoveryCheckpointRecord",
+      "column": "NextActionKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProjectionRevisionRecord",
+      "column": "ProjectionKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProjectionRevisionRecord",
+      "column": "ProjectionVersion",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProjectionHeadRecord",
+      "column": "ProjectionKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredProjectionHeadRecord",
+      "column": "ProjectionVersion",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRepairPlanRecord",
+      "column": "ExpectedVersion",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredRepairPlanRecord",
+      "column": "Reason",
+      "declaration": [
+        "text-bound",
+        1000,
+        "nvarchar(2000)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "OldCommit",
+      "declaration": [
+        "text-bound",
+        40,
+        "char(40)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "WorkOrderNo",
+      "declaration": [
+        "text-bound",
+        20,
+        "nvarchar(20)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "RelatedOutboundNo",
+      "declaration": [
+        "text-bound",
+        20,
+        "nvarchar(20)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "ProductCd",
+      "declaration": [
+        "text-bound",
+        20,
+        "nvarchar(20)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "LotNo",
+      "declaration": [
+        "text-bound",
+        30,
+        "nvarchar(30)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "OriginalStatus",
+      "declaration": [
+        "text-bound",
+        20,
+        "nvarchar(20)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "OriginalRemark",
+      "declaration": [
+        "text-bound",
+        500,
+        "nvarchar(500)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyMappingDecisionRecord",
+      "column": "Classification",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredLegacyMappingDecisionRecord",
+      "column": "AllowedContinuation",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCutoverScopeRecord",
+      "column": "OldWriterKey",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCutoverScopeRecord",
+      "column": "NewWriterKey",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredCutoverScopeRecord",
+      "column": "Classification",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWriterLeaseHistoryRecord",
+      "column": "WriterName",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWriterLeaseHistoryRecord",
+      "column": "Epoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWriterLeaseHistoryRecord",
+      "column": "HolderKey",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWriterHeadRecord",
+      "column": "WriterName",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWriterHeadRecord",
+      "column": "Epoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWriterHeadRecord",
+      "column": "HolderKey",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredWriterHeadRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredPermissionObservationRecord",
+      "column": "Action",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOutboxRecord",
+      "column": "TargetOwner",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOutboxRecord",
+      "column": "EventKind",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOutboxDeliveryRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOutboxDeliveryRecord",
+      "column": "ClaimEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOutboxDeliveryRecord",
+      "column": "HolderKey",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOutboxDeliveryRecord",
+      "column": "AttemptCount",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredOutboxDeliveryRecord",
+      "column": "TransportCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAuditRecord",
+      "column": "Action",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAuditRecord",
+      "column": "ResultKind",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAuditRecord",
+      "column": "BeforeRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAuditRecord",
+      "column": "AfterRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredAuditRecord",
+      "column": "LocalCommitSeq",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportRecord",
+      "column": "ReadCutSeq",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportRecord",
+      "column": "VisibleRowCount",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportRecord",
+      "column": "ByteLength",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportRowRefRecord",
+      "column": "Ordinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadPlanRecord",
+      "column": "Version",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredSourceReadPlanRecord",
+      "column": "Readiness",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredStoreCommitRecordRecord",
+      "column": "CommitSequence",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredStoreCommitRecordRecord",
+      "column": "WriterName",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredStoreCommitRecordRecord",
+      "column": "WriterEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredStoreCommitHeadRecord",
+      "column": "CommitSequence",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportPreparationRecord",
+      "column": "ReadCutSeq",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportPreparationMemberRecord",
+      "column": "Ordinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportOperationRecord",
+      "column": "State",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportOperationRecord",
+      "column": "ProcessingRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportCommandReceiptRecord",
+      "column": "HttpStatus",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportCheckpointRecord",
+      "column": "ProcessingRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportCheckpointRecord",
+      "column": "GenerationDispatch",
+      "declaration": [
+        "text-bound",
+        32,
+        "nvarchar(32)"
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    },
+    {
+      "root": "StoredExportCheckpointRecord",
+      "column": "WriterEpoch",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": true,
+      "compatible_narrower_enum": false,
+      "status": "exact_current_bound"
+    }
+  ],
+  "errors": [],
+  "initial_shallow_comparison_unresolved": [
+    {
+      "root": "StoredInboxRecord",
+      "column": "ProcessingState",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredInboxRecord",
+      "column": "HolderKey",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredWaitingDependencyRecord",
+      "column": "RequiredSequence",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredProcessingAttemptRecord",
+      "column": "ErrorCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredSourceReadCoverageRecord",
+      "column": "ExpectedPages",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredRecalcWorkRecord",
+      "column": "CurrentStage",
+      "declaration": [
+        "text-bound",
+        64,
+        "nvarchar(64)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredCommandReceiptRecord",
+      "column": "OriginalAppliedRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredRecoveryCheckpointRecord",
+      "column": "NextActionOrdinal",
+      "declaration": [
+        "integer-bound",
+        -2147483648,
+        2147483647
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "RelatedOutboundNo",
+      "declaration": [
+        "text-bound",
+        20,
+        "nvarchar(20)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "LotNo",
+      "declaration": [
+        "text-bound",
+        30,
+        "nvarchar(30)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredLegacyAnchorRecord",
+      "column": "OriginalRemark",
+      "declaration": [
+        "text-bound",
+        500,
+        "nvarchar(500)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredOutboxDeliveryRecord",
+      "column": "HolderKey",
+      "declaration": [
+        "text-bound",
+        256,
+        "nvarchar(256)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredOutboxDeliveryRecord",
+      "column": "TransportCode",
+      "declaration": [
+        "text-bound",
+        128,
+        "nvarchar(128)"
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredAuditRecord",
+      "column": "BeforeRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredAuditRecord",
+      "column": "AfterRevision",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredExportRecord",
+      "column": "VisibleRowCount",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": false
+    },
+    {
+      "root": "StoredExportRecord",
+      "column": "ByteLength",
+      "declaration": [
+        "integer-bound",
+        -9007199254740991,
+        9007199254740991
+      ],
+      "matches_current_master": false
+    }
+  ],
+  "reviewed_at_utc": "2026-10-10T11:17:27.660493+00:00",
+  "interpretation": "Initial 17 unresolved entries were shallow-parser limits. Recursive oneOf/$ref resolution finds 194 exact bounds and 2 current closed enums within earlier width; these two are not falsely marked identical schemas."
+}

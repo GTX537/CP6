@@ -1,0 +1,45 @@
+{
+  "at": "2026-10-10T16:05:55.454080+00:00",
+  "target_id": "QA-NCR-01",
+  "evidence": [
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-supplement-reading.json",
+      "sha256": "aef03b94597ef0d1678b27817c59e9c8cf32985df3266416e8a4ec41f45d291f"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-member-disposition.json",
+      "sha256": "80bc7aa44ac11b371d0fc6ccf4d8ace1e3559020afa34cd5be7467189a1ac6fc"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-document-checks.json",
+      "sha256": "4e535ff9de512d64ed126fe23d6322b34ed953e79650c1f06bf205b140a37c96"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-adoption-reading.json",
+      "sha256": "f2d2eae06c0e64df8dcfd609be491f5193afad0063b7c19c16d423a4f66332a6"
+    }
+  ],
+  "counts": {
+    "required_materials_consolidated": 36,
+    "core_semantics_consolidated": 1
+  },
+  "unique_source_records": 175,
+  "current_scopes": 26,
+  "member_count": 273,
+  "member_disposition": {
+    "current_or_support_semantics_read_or_exact_reused": 156,
+    "identity_provenance_or_author_results": 54,
+    "historical_predecessor_or_candidate_implementation": 50,
+    "authoring_tool_text_not_executed": 13
+  },
+  "original_reading_files_semantics_unchanged": true,
+  "reading_sha256": {
+    "before": "921f702881f09c8b7e6eddb9f306a31bdacac6932db75fa7c5df499eeac9ac74",
+    "after": "81182c348b88c1c58d94cd14b8bfc56d2187012501b74c24f8ef659df89af05b"
+  },
+  "reading_and_progress_json_roundtrip": true,
+  "NCR_module_and_collaborator_evidence_bytes_unchanged": true,
+  "original_source_reread": false,
+  "business_tests": "NOT_RUN",
+  "writing_stopped_for_root": true
+}

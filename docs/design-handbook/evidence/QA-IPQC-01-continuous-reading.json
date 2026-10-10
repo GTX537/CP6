@@ -1,0 +1,4583 @@
+{
+  "target_id": "QA-IPQC-01",
+  "component": "CONTINUOUS_FIXTURES_RECOVERY_R4.json",
+  "status": "component_semantics_consolidated_with_static_adoption_questions",
+  "component_semantics_consolidated": true,
+  "target_required_materials_consolidated": "ROOT_OWNS_DECISION",
+  "source": {
+    "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+    "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+    "bytes": 12699093,
+    "total_lines": 198217,
+    "coverage": "structured",
+    "read_ranges": [
+      {
+        "pointer": "/fixtures/0/fixedOwnerReads",
+        "start_line": 22,
+        "end_line": 5630,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/0/steps",
+        "start_line": 5631,
+        "end_line": 73700,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/0/finalRows",
+        "start_line": 73702,
+        "end_line": 90964,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/1/fixedOwnerReads",
+        "start_line": 90974,
+        "end_line": 93185,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/1/steps",
+        "start_line": 93186,
+        "end_line": 110522,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/1/finalRows",
+        "start_line": 110524,
+        "end_line": 113532,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/2/fixedOwnerReads",
+        "start_line": 113542,
+        "end_line": 118581,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/2/steps",
+        "start_line": 118582,
+        "end_line": 120595,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/2/finalRows",
+        "start_line": 120597,
+        "end_line": 121326,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/3/fixedOwnerReads",
+        "start_line": 121336,
+        "end_line": 128118,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/3/steps",
+        "start_line": 128119,
+        "end_line": 138986,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/3/finalRows",
+        "start_line": 138988,
+        "end_line": 140378,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/4/fixedOwnerReads",
+        "start_line": 140388,
+        "end_line": 146222,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/4/steps",
+        "start_line": 146223,
+        "end_line": 149169,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/4/finalRows",
+        "start_line": 149171,
+        "end_line": 149724,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/5/fixedOwnerReads",
+        "start_line": 149734,
+        "end_line": 155568,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/5/steps",
+        "start_line": 155569,
+        "end_line": 160290,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/5/finalRows",
+        "start_line": 160292,
+        "end_line": 160994,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/6/fixedOwnerReads",
+        "start_line": 161004,
+        "end_line": 165876,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/6/steps",
+        "start_line": 165877,
+        "end_line": 168089,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/6/finalRows",
+        "start_line": 168091,
+        "end_line": 168790,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/7/fixedOwnerReads",
+        "start_line": 168800,
+        "end_line": 170440,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/7/steps",
+        "start_line": 170441,
+        "end_line": 173397,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/7/finalRows",
+        "start_line": 173399,
+        "end_line": 173828,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/8/fixedOwnerReads",
+        "start_line": 173838,
+        "end_line": 179218,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/8/steps",
+        "start_line": 179219,
+        "end_line": 181225,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/8/finalRows",
+        "start_line": 181227,
+        "end_line": 181503,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      },
+      {
+        "pointer": "/fixtures/9/fixedOwnerReads",
+        "start_line": 181513,
+        "end_line": 189241,
+        "notes": "Exact same-source root reuse: 427 complete Owner bodies across all fixtures; see continuous_progress snapshot."
+      },
+      {
+        "pointer": "/fixtures/9/steps",
+        "start_line": 189242,
+        "end_line": 197846,
+        "notes": "New complete business values for requests/results, all stateCut row fields, all transaction resource types/bindings and expected/write branches; exact repeated row and nested-body reuse. UUID/hash literals represented by type plus bounded original-value checks."
+      },
+      {
+        "pointer": "/fixtures/9/finalRows",
+        "start_line": 197848,
+        "end_line": 198213,
+        "notes": "All final row business fields and body JSON via table groups and exact raw row reuse."
+      }
+    ],
+    "unread_ranges": [],
+    "what_was_read": "Entire component semantically covered by root exact reuse + new request/response/stateCut/transaction/finalRows reading. Original random UUID/hash literals not manually read one by one. JCS strings are exact decoded reuse under root checks, not separately counted as novel reading."
+  },
+  "counts": {
+    "fixtures": 10,
+    "steps": 62,
+    "fixed_owner_bodies_reused": 427,
+    "request_response_business_bodies": 124,
+    "final_row_occurrences": 1419,
+    "unique_complete_row_versions": 1439,
+    "fixture_table_names": 65,
+    "relational_schema_tables": 68,
+    "state_writes": 1300
+  },
+  "reading_method": {
+    "scope": "Every business field and normative relationship in requests/results, local state rows, JSON bodies, transaction resources/current comparisons and branch write sets. Body summaries alone were not used to close these details.",
+    "exact_reuse": "427 same-file Owner bodies read by root; original raw row dictionaries repeated across before/after/write/final are deduplicated exactly; exact request/response subtrees reused inside Command/BodyJson.",
+    "semantic_projection": "All numeric/text/null/boolean business values retained in columnar displays. UUID and 64hex opaque literals normalized; fixture names parameterized only when reading shared resource shapes. These projections are not raw-byte lossless.",
+    "original_identity_checks": "See static_checks; original raw dictionaries used for transition/read/hash/lock/observation/QAP FK comparisons. Not a universal FK/type/SQL verification.",
+    "novel_transaction_bodies": "9 parameterized shapes: full-count Method v4, bounded Specification v12 [0,10], QualityRequirementHead v12, and six action/stage/actor variants of ActorAuthority including withdrawal {allowed:true}.",
+    "hash_literal_manual_reading": "NOT_EVERY_LITERAL; no claim of literal rereading of all hashes/UUIDs."
+  },
+  "reuse": [
+    {
+      "evidence_path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-supplement-reading.json",
+      "source_sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+      "component_path": "continuous_progress",
+      "snapshot_at_reuse": {
+        "source_sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+        "62_step_summaries_and_write_field_groups_read": true,
+        "427_owner_bodies_business_fields_read": true,
+        "owner_reading_method": "Full F02/F03 and F04 OWNER0-3; explicit deep deltas and fixture-id parameters for remaining records; 31 member arrays / 2470 values verified against exact id/range formula; raw opaque bindings retained separately. This is structured reading, not literal rereading of every UUID/hash.",
+        "427_owner_body_hash_checks": true,
+        "427_owner_projection_roundtrip": true,
+        "request_response_JCS_checks": 124,
+        "input_and_response_hash_checks": 124,
+        "required_semantic_detail_remaining": [
+          "request/response individual business value detail beyond step summaries",
+          "row images/transaction lock-read/write bindings",
+          "reference catalogue",
+          "governance/version boundary documents"
+        ]
+      }
+    },
+    {
+      "evidence_path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-supplement-reading.json",
+      "component_paths": [
+        "relational_model",
+        "schema_fields_all_read",
+        "payload_publications",
+        "frontend_fields"
+      ],
+      "role": "Current type/relational/payload/FE normative context; not evidence of this component request/row reading."
+    }
+  ],
+  "step_records": [
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-01",
+      "api_code": "I03",
+      "actor": "planner-F02",
+      "request_type": "PolicyResolveCommand",
+      "response_type": "PolicyResolveOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/0/request",
+          "start_line": 5637,
+          "end_line": 5664,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/0/response",
+          "start_line": 5669,
+          "end_line": 5958,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/0/stateCut",
+          "start_line": 5971,
+          "end_line": 6292,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/0/transactionContract",
+          "start_line": 6293,
+          "end_line": 6525,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 6,
+      "terminal_writes": 2,
+      "write_tables": {
+        "FamilyDirectoryVersion:INSERT": 1,
+        "FamilyDirectoryHead:INSERT": 1,
+        "FamilyDirectoryMember:INSERT": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:INSERT": 1,
+        "FamilyCutEvidence:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-02",
+      "api_code": "I05",
+      "actor": "planner-F02",
+      "request_type": "CreateTaskCommand",
+      "response_type": "CreateTaskOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/1/request",
+          "start_line": 6533,
+          "end_line": 6573,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/1/response",
+          "start_line": 6578,
+          "end_line": 6616,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/1/stateCut",
+          "start_line": 6629,
+          "end_line": 17127,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/1/transactionContract",
+          "start_line": 17128,
+          "end_line": 17388,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 303,
+      "terminal_writes": 2,
+      "write_tables": {
+        "InspectionTask:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:INSERT": 1,
+        "PopulationMember:INSERT": 100,
+        "MeasurementSlot:INSERT": 100,
+        "SampleSelectionRoster:INSERT": 100,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-03",
+      "api_code": "I09",
+      "actor": "inspector-F02",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/2/request",
+          "start_line": 17396,
+          "end_line": 19506,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/2/response",
+          "start_line": 19511,
+          "end_line": 20137,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/2/stateCut",
+          "start_line": 20151,
+          "end_line": 28994,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/2/transactionContract",
+          "start_line": 28995,
+          "end_line": 30391,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 209,
+      "terminal_writes": 2,
+      "write_tables": {
+        "EligibilityCut:INSERT": 1,
+        "EligibilityCutFact:INSERT": 6,
+        "Observation:INSERT": 100,
+        "ObservationHead:INSERT": 100,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-04",
+      "api_code": "I11",
+      "actor": "reviewer-F02",
+      "request_type": "ReviewCommand",
+      "response_type": "ReviewOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/3/request",
+          "start_line": 30399,
+          "end_line": 31427,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/3/response",
+          "start_line": 31432,
+          "end_line": 32058,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/3/stateCut",
+          "start_line": 32070,
+          "end_line": 36628,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/3/transactionContract",
+          "start_line": 36629,
+          "end_line": 38403,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 104,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ObservationReview:INSERT": 1,
+        "ObservationReviewItem:INSERT": 100,
+        "ReviewHead:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-05",
+      "api_code": "I15",
+      "actor": "reviewer-F02",
+      "request_type": "FreezeResultSetCommand",
+      "response_type": "FreezeResultSetOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/4/request",
+          "start_line": 38411,
+          "end_line": 40668,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/4/response",
+          "start_line": 40673,
+          "end_line": 42809,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/4/stateCut",
+          "start_line": 42823,
+          "end_line": 50312,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/4/transactionContract",
+          "start_line": 50313,
+          "end_line": 52101,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 205,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ResultSet:INSERT": 1,
+        "ResultSetSlot:INSERT": 100,
+        "RequirementOutcome:INSERT": 1,
+        "EvaluatedRangeOutcome:INSERT": 100,
+        "ResultSetHead:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-06",
+      "api_code": "I16",
+      "actor": "planner-F02",
+      "request_type": "DraftCommand",
+      "response_type": "DraftOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/5/request",
+          "start_line": 52109,
+          "end_line": 53637,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/5/response",
+          "start_line": 53642,
+          "end_line": 53672,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/5/stateCut",
+          "start_line": 53680,
+          "end_line": 53814,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/5/transactionContract",
+          "start_line": 53815,
+          "end_line": 55617,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "DispositionDraft:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-07",
+      "api_code": "I17",
+      "actor": "planner-F02",
+      "request_type": "FreezePacketCommand",
+      "response_type": "PacketOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/6/request",
+          "start_line": 55625,
+          "end_line": 55657,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/6/response",
+          "start_line": 55662,
+          "end_line": 55693,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/6/stateCut",
+          "start_line": 55701,
+          "end_line": 55839,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/6/transactionContract",
+          "start_line": 55840,
+          "end_line": 57642,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ApprovalPacket:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-08",
+      "api_code": "I18",
+      "actor": "approver-F02",
+      "request_type": "ApprovalCommand",
+      "response_type": "ApprovalOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/7/request",
+          "start_line": 57650,
+          "end_line": 59272,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/7/response",
+          "start_line": 59277,
+          "end_line": 60882,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/7/stateCut",
+          "start_line": 60904,
+          "end_line": 66184,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/7/transactionContract",
+          "start_line": 66185,
+          "end_line": 69055,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 114,
+      "terminal_writes": 2,
+      "write_tables": {
+        "DecisionStream:INSERT": 1,
+        "Decision:INSERT": 1,
+        "DecisionPartitionRange:INSERT": 100,
+        "DecisionHead:INSERT": 1,
+        "AuthorityEvidence:INSERT": 1,
+        "ApprovalEvidence:INSERT": 1,
+        "Approval:INSERT": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:UPDATE": 1,
+        "DeliveryPayload:INSERT": 1,
+        "Delivery:INSERT": 1,
+        "Outbox:INSERT": 1,
+        "QapGuardEvidence:INSERT": 1,
+        "QapConsumerResult:INSERT": 1,
+        "QapUseFact:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F02",
+      "step_id": "F02-09",
+      "api_code": "I18",
+      "actor": "approver-F02-stale",
+      "request_type": "ApprovalCommand",
+      "response_type": "ApprovalOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/0/steps/8/request",
+          "start_line": 69063,
+          "end_line": 70685,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/8/response",
+          "start_line": 70690,
+          "end_line": 70715,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/8/stateCut",
+          "start_line": 70722,
+          "end_line": 70819,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/0/steps/8/transactionContract",
+          "start_line": 70820,
+          "end_line": 73697,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-01",
+      "api_code": "I03",
+      "actor": "planner-F03",
+      "request_type": "PolicyResolveCommand",
+      "response_type": "PolicyResolveOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/0/request",
+          "start_line": 93192,
+          "end_line": 93219,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/0/response",
+          "start_line": 93224,
+          "end_line": 93513,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/0/stateCut",
+          "start_line": 93526,
+          "end_line": 93847,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/0/transactionContract",
+          "start_line": 93848,
+          "end_line": 94080,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 6,
+      "terminal_writes": 2,
+      "write_tables": {
+        "FamilyDirectoryVersion:INSERT": 1,
+        "FamilyDirectoryHead:INSERT": 1,
+        "FamilyDirectoryMember:INSERT": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:INSERT": 1,
+        "FamilyCutEvidence:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-02",
+      "api_code": "I05",
+      "actor": "planner-F03",
+      "request_type": "CreateTaskCommand",
+      "response_type": "CreateTaskOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/1/request",
+          "start_line": 94088,
+          "end_line": 94128,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/1/response",
+          "start_line": 94133,
+          "end_line": 94171,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/1/stateCut",
+          "start_line": 94184,
+          "end_line": 95412,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/1/transactionContract",
+          "start_line": 95413,
+          "end_line": 95673,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 33,
+      "terminal_writes": 2,
+      "write_tables": {
+        "InspectionTask:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:INSERT": 1,
+        "PopulationMember:INSERT": 10,
+        "SampleSelectionRoster:INSERT": 10,
+        "MeasurementSlot:INSERT": 10,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-03",
+      "api_code": "I09",
+      "actor": "inspector-F03",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/2/request",
+          "start_line": 95681,
+          "end_line": 96081,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/2/response",
+          "start_line": 96086,
+          "end_line": 96172,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/2/stateCut",
+          "start_line": 96186,
+          "end_line": 97779,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/2/transactionContract",
+          "start_line": 97780,
+          "end_line": 99176,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 39,
+      "terminal_writes": 2,
+      "write_tables": {
+        "EligibilityCut:INSERT": 1,
+        "EligibilityCutFact:INSERT": 6,
+        "Observation:INSERT": 10,
+        "ObservationHead:INSERT": 10,
+        "InitialClaim:INSERT": 10,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-04",
+      "api_code": "I11",
+      "actor": "reviewer-F03",
+      "request_type": "ReviewCommand",
+      "response_type": "ReviewOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/3/request",
+          "start_line": 99184,
+          "end_line": 99312,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/3/response",
+          "start_line": 99317,
+          "end_line": 99403,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/3/stateCut",
+          "start_line": 99415,
+          "end_line": 100103,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/3/transactionContract",
+          "start_line": 100104,
+          "end_line": 100528,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 14,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ObservationReview:INSERT": 1,
+        "ObservationReviewItem:INSERT": 10,
+        "ReviewHead:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-05",
+      "api_code": "I15",
+      "actor": "reviewer-F03",
+      "request_type": "FreezeResultSetCommand",
+      "response_type": "FreezeResultSetOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/4/request",
+          "start_line": 100536,
+          "end_line": 100813,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/4/response",
+          "start_line": 100818,
+          "end_line": 101064,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/4/stateCut",
+          "start_line": 101078,
+          "end_line": 102087,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/4/transactionContract",
+          "start_line": 102088,
+          "end_line": 102526,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 25,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ResultSet:INSERT": 1,
+        "ResultSetSlot:INSERT": 10,
+        "RequirementOutcome:INSERT": 1,
+        "EvaluatedRangeOutcome:INSERT": 10,
+        "ResultSetHead:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-06",
+      "api_code": "I16",
+      "actor": "planner-F03",
+      "request_type": "DraftCommand",
+      "response_type": "DraftOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/5/request",
+          "start_line": 102534,
+          "end_line": 102712,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/5/response",
+          "start_line": 102717,
+          "end_line": 102747,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/5/stateCut",
+          "start_line": 102755,
+          "end_line": 102889,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/5/transactionContract",
+          "start_line": 102890,
+          "end_line": 103342,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "DispositionDraft:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-07",
+      "api_code": "I17",
+      "actor": "planner-F03",
+      "request_type": "FreezePacketCommand",
+      "response_type": "PacketOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/6/request",
+          "start_line": 103350,
+          "end_line": 103382,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/6/response",
+          "start_line": 103387,
+          "end_line": 103418,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/6/stateCut",
+          "start_line": 103426,
+          "end_line": 103564,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/6/transactionContract",
+          "start_line": 103565,
+          "end_line": 104017,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ApprovalPacket:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-08",
+      "api_code": "I18",
+      "actor": "approver-F03",
+      "request_type": "ApprovalCommand",
+      "response_type": "ApprovalOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/7/request",
+          "start_line": 104025,
+          "end_line": 104297,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/7/response",
+          "start_line": 104302,
+          "end_line": 104557,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/7/stateCut",
+          "start_line": 104579,
+          "end_line": 105523,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/7/transactionContract",
+          "start_line": 105524,
+          "end_line": 107036,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 18,
+      "terminal_writes": 2,
+      "write_tables": {
+        "DecisionStream:INSERT": 1,
+        "Decision:INSERT": 1,
+        "DecisionPartitionRange:INSERT": 10,
+        "DecisionHead:INSERT": 1,
+        "AuthorityEvidence:INSERT": 1,
+        "ApprovalEvidence:INSERT": 1,
+        "Approval:INSERT": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-09",
+      "api_code": "I29",
+      "actor": "reviewer-F03",
+      "request_type": "HandoffCommand",
+      "response_type": "HandoffOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/8/request",
+          "start_line": 107044,
+          "end_line": 107258,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/8/response",
+          "start_line": 107263,
+          "end_line": 107303,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/8/stateCut",
+          "start_line": 107314,
+          "end_line": 107589,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/8/transactionContract",
+          "start_line": 107590,
+          "end_line": 108065,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 4,
+      "terminal_writes": 2,
+      "write_tables": {
+        "PlmEvidenceHandoff:INSERT": 1,
+        "DeliveryPayload:INSERT": 1,
+        "Delivery:INSERT": 1,
+        "Outbox:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-10",
+      "api_code": "I29",
+      "actor": "reviewer-F03-expired",
+      "request_type": "HandoffCommand",
+      "response_type": "HandoffOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/9/request",
+          "start_line": 108073,
+          "end_line": 108287,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/9/response",
+          "start_line": 108292,
+          "end_line": 108311,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/9/stateCut",
+          "start_line": 108318,
+          "end_line": 108415,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/9/transactionContract",
+          "start_line": 108416,
+          "end_line": 108883,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-11",
+      "api_code": "I29",
+      "actor": "reviewer-F03-baseline",
+      "request_type": "HandoffCommand",
+      "response_type": "HandoffOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/10/request",
+          "start_line": 108891,
+          "end_line": 109105,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/10/response",
+          "start_line": 109110,
+          "end_line": 109129,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/10/stateCut",
+          "start_line": 109136,
+          "end_line": 109233,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/10/transactionContract",
+          "start_line": 109234,
+          "end_line": 109701,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F03",
+      "step_id": "F03-12",
+      "api_code": "I29",
+      "actor": "reviewer-F03-purpose",
+      "request_type": "HandoffCommand",
+      "response_type": "HandoffOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/1/steps/11/request",
+          "start_line": 109709,
+          "end_line": 109923,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/11/response",
+          "start_line": 109928,
+          "end_line": 109947,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/11/stateCut",
+          "start_line": 109954,
+          "end_line": 110051,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/1/steps/11/transactionContract",
+          "start_line": 110052,
+          "end_line": 110519,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F04",
+      "step_id": "F04-01",
+      "api_code": "I23",
+      "actor": "reviewer-F04",
+      "request_type": "SourceReassessmentCommand",
+      "response_type": "ImpactOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/2/steps/0/request",
+          "start_line": 118588,
+          "end_line": 118620,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/2/steps/0/response",
+          "start_line": 118625,
+          "end_line": 118663,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/2/steps/0/stateCut",
+          "start_line": 118680,
+          "end_line": 119206,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/2/steps/0/transactionContract",
+          "start_line": 119207,
+          "end_line": 119510,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 10,
+      "terminal_writes": 2,
+      "write_tables": {
+        "SourceOriginalVersion:INSERT": 1,
+        "SourceMappingVersion:INSERT": 1,
+        "SourceHead:UPDATE": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:UPDATE": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "ResultInvalidation:INSERT": 1,
+        "ImpactCase:INSERT": 1,
+        "DependencyWake:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F04",
+      "step_id": "F04-02",
+      "api_code": "I19",
+      "actor": "approver-F04",
+      "request_type": "SuccessorCommand",
+      "response_type": "SuccessorOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/2/steps/1/request",
+          "start_line": 119518,
+          "end_line": 119669,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/2/steps/1/response",
+          "start_line": 119674,
+          "end_line": 119699,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/2/steps/1/stateCut",
+          "start_line": 119706,
+          "end_line": 119803,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/2/steps/1/transactionContract",
+          "start_line": 119804,
+          "end_line": 120592,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-01",
+      "api_code": "I09",
+      "actor": "inspector-F05-A",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/0/request",
+          "start_line": 128125,
+          "end_line": 128354,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/0/response",
+          "start_line": 128359,
+          "end_line": 128391,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/0/stateCut",
+          "start_line": 128405,
+          "end_line": 128963,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/0/transactionContract",
+          "start_line": 128964,
+          "end_line": 130341,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 12,
+      "terminal_writes": 2,
+      "write_tables": {
+        "EligibilityCut:INSERT": 1,
+        "EligibilityCutFact:INSERT": 6,
+        "Observation:INSERT": 1,
+        "ObservationHead:INSERT": 1,
+        "InitialClaim:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-02",
+      "api_code": "I09",
+      "actor": "inspector-F05-B",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/1/request",
+          "start_line": 130349,
+          "end_line": 130578,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/1/response",
+          "start_line": 130583,
+          "end_line": 130608,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/1/stateCut",
+          "start_line": 130615,
+          "end_line": 130712,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/1/transactionContract",
+          "start_line": 130713,
+          "end_line": 132105,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-03",
+      "api_code": "I11",
+      "actor": "reviewer-F05",
+      "request_type": "ReviewCommand",
+      "response_type": "ReviewOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/2/request",
+          "start_line": 132113,
+          "end_line": 132151,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/2/response",
+          "start_line": 132156,
+          "end_line": 132188,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/2/stateCut",
+          "start_line": 132200,
+          "end_line": 132501,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/2/transactionContract",
+          "start_line": 132502,
+          "end_line": 132772,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 5,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ObservationReview:INSERT": 1,
+        "ObservationReviewItem:INSERT": 1,
+        "ReviewHead:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-04",
+      "api_code": "I15",
+      "actor": "reviewer-F05",
+      "request_type": "FreezeResultSetCommand",
+      "response_type": "FreezeResultSetOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/3/request",
+          "start_line": 132780,
+          "end_line": 132859,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/3/response",
+          "start_line": 132864,
+          "end_line": 132921,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/3/stateCut",
+          "start_line": 132935,
+          "end_line": 133296,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/3/transactionContract",
+          "start_line": 133297,
+          "end_line": 133581,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 7,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ResultSet:INSERT": 1,
+        "ResultSetSlot:INSERT": 1,
+        "RequirementOutcome:INSERT": 1,
+        "EvaluatedRangeOutcome:INSERT": 1,
+        "ResultSetHead:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-05",
+      "api_code": "I10",
+      "actor": "inspector-F05-A",
+      "request_type": "CorrectionCommand",
+      "response_type": "CorrectionOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/4/request",
+          "start_line": 133589,
+          "end_line": 133634,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/4/response",
+          "start_line": 133639,
+          "end_line": 133669,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/4/stateCut",
+          "start_line": 133683,
+          "end_line": 134114,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/4/transactionContract",
+          "start_line": 134115,
+          "end_line": 134413,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 7,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Observation:INSERT": 1,
+        "ObservationHead:UPDATE": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:UPDATE": 1,
+        "ImpactCase:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-06",
+      "api_code": "I12",
+      "actor": "planner-F05",
+      "request_type": "RetestProposalCommand",
+      "response_type": "RetestProposalOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/5/request",
+          "start_line": 134421,
+          "end_line": 134455,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/5/response",
+          "start_line": 134460,
+          "end_line": 134492,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/5/stateCut",
+          "start_line": 134500,
+          "end_line": 134638,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/5/transactionContract",
+          "start_line": 134639,
+          "end_line": 134937,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ApprovalPacket:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-07",
+      "api_code": "I13",
+      "actor": "approver-F05",
+      "request_type": "ActivateRetestCommand",
+      "response_type": "RetestActivationOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/6/request",
+          "start_line": 134945,
+          "end_line": 134972,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/6/response",
+          "start_line": 134977,
+          "end_line": 135010,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/6/stateCut",
+          "start_line": 135021,
+          "end_line": 135277,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/6/transactionContract",
+          "start_line": 135278,
+          "end_line": 135576,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 4,
+      "terminal_writes": 2,
+      "write_tables": {
+        "RetestEpisode:INSERT": 1,
+        "MeasurementSlot:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-08",
+      "api_code": "I14",
+      "actor": "approver-F05",
+      "request_type": "RulingCommand",
+      "response_type": "RulingOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/7/request",
+          "start_line": 135584,
+          "end_line": 135616,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/7/response",
+          "start_line": 135621,
+          "end_line": 135651,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/7/stateCut",
+          "start_line": 135661,
+          "end_line": 135882,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/7/transactionContract",
+          "start_line": 135883,
+          "end_line": 136181,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 3,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ObservationRuling:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-09",
+      "api_code": "I09",
+      "actor": "inspector-F05-C",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/8/request",
+          "start_line": 136189,
+          "end_line": 136418,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/8/response",
+          "start_line": 136423,
+          "end_line": 136455,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/8/stateCut",
+          "start_line": 136469,
+          "end_line": 137027,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/8/transactionContract",
+          "start_line": 137028,
+          "end_line": 138448,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 12,
+      "terminal_writes": 2,
+      "write_tables": {
+        "EligibilityCut:INSERT": 1,
+        "EligibilityCutFact:INSERT": 6,
+        "Observation:INSERT": 1,
+        "ObservationHead:INSERT": 1,
+        "InitialClaim:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F05",
+      "step_id": "F05-10",
+      "api_code": "I15",
+      "actor": "reviewer-F05",
+      "request_type": "FreezeResultSetCommand",
+      "response_type": "FreezeResultSetOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/3/steps/9/request",
+          "start_line": 138456,
+          "end_line": 138535,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/9/response",
+          "start_line": 138540,
+          "end_line": 138565,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/9/stateCut",
+          "start_line": 138572,
+          "end_line": 138669,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/3/steps/9/transactionContract",
+          "start_line": 138670,
+          "end_line": 138983,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F06A",
+      "step_id": "F06A-01",
+      "api_code": "I20",
+      "actor": "approver-F06A",
+      "request_type": "WithdrawCommand",
+      "response_type": "WithdrawOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/4/steps/0/request",
+          "start_line": 146229,
+          "end_line": 146261,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/4/steps/0/response",
+          "start_line": 146266,
+          "end_line": 146391,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/4/steps/0/stateCut",
+          "start_line": 146406,
+          "end_line": 146892,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/4/steps/0/transactionContract",
+          "start_line": 146893,
+          "end_line": 147645,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 8,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Decision:INSERT": 1,
+        "DecisionHead:UPDATE": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:UPDATE": 1,
+        "ImpactCase:INSERT": 1,
+        "DeliveryPayload:INSERT": 1,
+        "Delivery:INSERT": 1,
+        "Outbox:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F06A",
+      "step_id": "F06A-02",
+      "api_code": "F15-PROPOSED-STOCK-QAP-ADAPTER",
+      "actor": "stock-worker-F06A",
+      "request_type": "StockOrdinaryUseCommand",
+      "response_type": "StockConsumerOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/4/steps/1/request",
+          "start_line": 147653,
+          "end_line": 147682,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/4/steps/1/response",
+          "start_line": 147687,
+          "end_line": 147706,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/4/steps/1/stateCut",
+          "start_line": 147713,
+          "end_line": 147810,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/4/steps/1/transactionContract",
+          "start_line": 147811,
+          "end_line": 149166,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F06B",
+      "step_id": "F06B-01",
+      "api_code": "F15-PROPOSED-STOCK-QAP-ADAPTER",
+      "actor": "stock-worker-F06B",
+      "request_type": "StockOrdinaryUseCommand",
+      "response_type": "StockConsumerOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/5/steps/0/request",
+          "start_line": 155575,
+          "end_line": 155604,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/0/response",
+          "start_line": 155609,
+          "end_line": 155646,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/0/stateCut",
+          "start_line": 155658,
+          "end_line": 155986,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/0/transactionContract",
+          "start_line": 155987,
+          "end_line": 157342,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 5,
+      "terminal_writes": 2,
+      "write_tables": {
+        "QapGuardEvidence:INSERT": 1,
+        "QapConsumerResult:INSERT": 1,
+        "QapUseFact:INSERT": 1,
+        "StockConsumerResult:INSERT": 1,
+        "StockEffect:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F06B",
+      "step_id": "F06B-02",
+      "api_code": "I20",
+      "actor": "approver-F06B",
+      "request_type": "WithdrawCommand",
+      "response_type": "WithdrawOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/5/steps/1/request",
+          "start_line": 157350,
+          "end_line": 157382,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/1/response",
+          "start_line": 157387,
+          "end_line": 157512,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/1/stateCut",
+          "start_line": 157527,
+          "end_line": 158013,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/1/transactionContract",
+          "start_line": 158014,
+          "end_line": 158766,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 8,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Decision:INSERT": 1,
+        "DecisionHead:UPDATE": 1,
+        "FamilyControlVersion:INSERT": 1,
+        "FamilyControlHead:UPDATE": 1,
+        "ImpactCase:INSERT": 1,
+        "DeliveryPayload:INSERT": 1,
+        "Delivery:INSERT": 1,
+        "Outbox:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F06B",
+      "step_id": "F06B-03",
+      "api_code": "F15-PROPOSED-STOCK-QAP-ADAPTER",
+      "actor": "stock-worker-F06B-after-withdraw",
+      "request_type": "StockOrdinaryUseCommand",
+      "response_type": "StockConsumerOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/5/steps/2/request",
+          "start_line": 158774,
+          "end_line": 158803,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/2/response",
+          "start_line": 158808,
+          "end_line": 158827,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/2/stateCut",
+          "start_line": 158834,
+          "end_line": 158931,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/5/steps/2/transactionContract",
+          "start_line": 158932,
+          "end_line": 160287,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F07",
+      "step_id": "F07-01",
+      "api_code": "I26",
+      "actor": "recovery-F07-unknown",
+      "request_type": "DeliveryResumeCommand",
+      "response_type": "DeliveryOutcome",
+      "response_state": "UNKNOWN",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/6/steps/0/request",
+          "start_line": 165883,
+          "end_line": 165899,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/0/response",
+          "start_line": 165904,
+          "end_line": 165923,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/0/stateCut",
+          "start_line": 165930,
+          "end_line": 166027,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/0/transactionContract",
+          "start_line": 166028,
+          "end_line": 166303,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F07",
+      "step_id": "F07-02",
+      "api_code": "C01",
+      "actor": "viewer-F07",
+      "request_type": "CommandResultLookupRequest",
+      "response_type": "CommandResultLookupResult",
+      "response_state": null,
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/6/steps/1/request",
+          "start_line": 166311,
+          "end_line": 166314,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/1/response",
+          "start_line": 166318,
+          "end_line": 166328,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/1/stateCut",
+          "start_line": 166331,
+          "end_line": 166337,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/1/transactionContract",
+          "start_line": 166338,
+          "end_line": 166341,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F07",
+      "step_id": "F07-03",
+      "api_code": "I24",
+      "actor": "owner-ingress-F07",
+      "request_type": "OwnerResultCommand",
+      "response_type": "IngressOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/6/steps/2/request",
+          "start_line": 166349,
+          "end_line": 166368,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/2/response",
+          "start_line": 166373,
+          "end_line": 166395,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/2/stateCut",
+          "start_line": 166407,
+          "end_line": 166687,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/2/transactionContract",
+          "start_line": 166688,
+          "end_line": 166971,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 5,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Inbox:INSERT": 1,
+        "OwnerResultOriginal:INSERT": 1,
+        "OwnerObservationRevision:INSERT": 1,
+        "OwnerObservationHead:INSERT": 1,
+        "DependencyWake:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F07",
+      "step_id": "F07-04",
+      "api_code": "I26",
+      "actor": "recovery-F07",
+      "request_type": "DeliveryResumeCommand",
+      "response_type": "DeliveryOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/6/steps/3/request",
+          "start_line": 166979,
+          "end_line": 166995,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/3/response",
+          "start_line": 167000,
+          "end_line": 167045,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/3/stateCut",
+          "start_line": 167056,
+          "end_line": 167314,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/3/transactionContract",
+          "start_line": 167315,
+          "end_line": 167590,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 4,
+      "terminal_writes": 2,
+      "write_tables": {
+        "DeliveryLease:UPDATE": 1,
+        "DeliveryAttempt:INSERT": 1,
+        "DeliveryObservationRevision:INSERT": 1,
+        "DeliveryObservationHead:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F07",
+      "step_id": "F07-05",
+      "api_code": "I26",
+      "actor": "stale-worker-F07",
+      "request_type": "DeliveryResumeCommand",
+      "response_type": "DeliveryOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/6/steps/4/request",
+          "start_line": 167598,
+          "end_line": 167614,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/4/response",
+          "start_line": 167619,
+          "end_line": 167644,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/4/stateCut",
+          "start_line": 167651,
+          "end_line": 167748,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/4/transactionContract",
+          "start_line": 167749,
+          "end_line": 168024,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F07",
+      "step_id": "F07-06",
+      "api_code": "I25",
+      "actor": "viewer-F07",
+      "request_type": "DeliveryRead",
+      "response_type": "FrozenDelivery",
+      "response_state": "PENDING",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/6/steps/5/request",
+          "start_line": 168032,
+          "end_line": 168034,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/5/response",
+          "start_line": 168038,
+          "end_line": 168073,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/5/stateCut",
+          "start_line": 168076,
+          "end_line": 168082,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/6/steps/5/transactionContract",
+          "start_line": 168083,
+          "end_line": 168086,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F08",
+      "step_id": "F08-01",
+      "api_code": "I09",
+      "actor": "inspector-F08",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/7/steps/0/request",
+          "start_line": 170447,
+          "end_line": 170676,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/0/response",
+          "start_line": 170681,
+          "end_line": 170713,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/0/stateCut",
+          "start_line": 170727,
+          "end_line": 171285,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/0/transactionContract",
+          "start_line": 171286,
+          "end_line": 172635,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 12,
+      "terminal_writes": 2,
+      "write_tables": {
+        "EligibilityCut:INSERT": 1,
+        "EligibilityCutFact:INSERT": 6,
+        "Observation:INSERT": 1,
+        "ObservationHead:INSERT": 1,
+        "InitialClaim:INSERT": 1,
+        "TaskRevision:INSERT": 1,
+        "TaskHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F08",
+      "step_id": "F08-02",
+      "api_code": "I27",
+      "actor": "viewer-F08",
+      "request_type": "PlmVerificationReadRequest",
+      "response_type": "PlmVerificationRead",
+      "response_state": "FOUND",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/7/steps/1/request",
+          "start_line": 172643,
+          "end_line": 172650,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/1/response",
+          "start_line": 172654,
+          "end_line": 172719,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/1/stateCut",
+          "start_line": 172722,
+          "end_line": 172728,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/1/transactionContract",
+          "start_line": 172729,
+          "end_line": 172732,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F08",
+      "step_id": "F08-03",
+      "api_code": "I28",
+      "actor": "viewer-F08",
+      "request_type": "PlmTrialReadRequest",
+      "response_type": "PlmTrialRead",
+      "response_state": "UNKNOWN",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/7/steps/2/request",
+          "start_line": 172740,
+          "end_line": 172747,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/2/response",
+          "start_line": 172751,
+          "end_line": 172777,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/2/stateCut",
+          "start_line": 172780,
+          "end_line": 172786,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/2/transactionContract",
+          "start_line": 172787,
+          "end_line": 172790,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F08",
+      "step_id": "F08-04",
+      "api_code": "I30",
+      "actor": "viewer-F08",
+      "request_type": "PlmEvaluationReadRequest",
+      "response_type": "PlmEvaluationRead",
+      "response_state": "UNAVAILABLE",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/7/steps/3/request",
+          "start_line": 172798,
+          "end_line": 172805,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/3/response",
+          "start_line": 172809,
+          "end_line": 172830,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/3/stateCut",
+          "start_line": 172833,
+          "end_line": 172839,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/3/transactionContract",
+          "start_line": 172840,
+          "end_line": 172843,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F08",
+      "step_id": "F08-05",
+      "api_code": "I31",
+      "actor": "viewer-F08",
+      "request_type": "PlmDocumentReadRequest",
+      "response_type": "PlmDocumentRead",
+      "response_state": "NOT_AUTHORIZED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/7/steps/4/request",
+          "start_line": 172851,
+          "end_line": 172858,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/4/response",
+          "start_line": 172862,
+          "end_line": 172883,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/4/stateCut",
+          "start_line": 172886,
+          "end_line": 172892,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/4/transactionContract",
+          "start_line": 172893,
+          "end_line": 172896,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F08",
+      "step_id": "F08-06",
+      "api_code": "I29",
+      "actor": "reviewer-F08",
+      "request_type": "HandoffCommand",
+      "response_type": "HandoffOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/7/steps/5/request",
+          "start_line": 172904,
+          "end_line": 173010,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/5/response",
+          "start_line": 173015,
+          "end_line": 173034,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/5/stateCut",
+          "start_line": 173041,
+          "end_line": 173138,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/7/steps/5/transactionContract",
+          "start_line": 173139,
+          "end_line": 173381,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F09",
+      "step_id": "F09-01",
+      "api_code": "F14-WRITER-EPOCH",
+      "actor": "migration-F09",
+      "request_type": "WriterEpochTransitionCommand",
+      "response_type": "WriterEpochTransitionOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/8/steps/0/request",
+          "start_line": 179225,
+          "end_line": 179239,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/0/response",
+          "start_line": 179244,
+          "end_line": 179264,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/0/stateCut",
+          "start_line": 179273,
+          "end_line": 179411,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/0/transactionContract",
+          "start_line": 179412,
+          "end_line": 179567,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "WriterEpochHistory:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F09",
+      "step_id": "F09-02",
+      "api_code": "F14-WRITER-EPOCH",
+      "actor": "migration-F09",
+      "request_type": "WriterEpochTransitionCommand",
+      "response_type": "WriterEpochTransitionOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/8/steps/1/request",
+          "start_line": 179575,
+          "end_line": 179589,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/1/response",
+          "start_line": 179594,
+          "end_line": 179614,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/1/stateCut",
+          "start_line": 179623,
+          "end_line": 179843,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/1/transactionContract",
+          "start_line": 179844,
+          "end_line": 179999,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 2,
+      "terminal_writes": 2,
+      "write_tables": {
+        "WriterEpochHistory:UPDATE": 1,
+        "WriterEpochHead:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F09",
+      "step_id": "F09-03",
+      "api_code": "F14-WRITER-EPOCH",
+      "actor": "migration-F09",
+      "request_type": "WriterEpochTransitionCommand",
+      "response_type": "WriterEpochTransitionOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/8/steps/2/request",
+          "start_line": 180007,
+          "end_line": 180021,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/2/response",
+          "start_line": 180026,
+          "end_line": 180046,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/2/stateCut",
+          "start_line": 180055,
+          "end_line": 180226,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/2/transactionContract",
+          "start_line": 180227,
+          "end_line": 180382,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "WriterEpochHistory:UPDATE": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F09",
+      "step_id": "F09-04",
+      "api_code": "I34",
+      "actor": "viewer-F09",
+      "request_type": "LegacySearch",
+      "response_type": "LegacyPage",
+      "response_state": null,
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/8/steps/3/request",
+          "start_line": 180390,
+          "end_line": 180393,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/3/response",
+          "start_line": 180397,
+          "end_line": 180408,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/3/stateCut",
+          "start_line": 180411,
+          "end_line": 180417,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/3/transactionContract",
+          "start_line": 180418,
+          "end_line": 180421,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F09",
+      "step_id": "F09-05",
+      "api_code": "I35",
+      "actor": "legacy-writer-F09-epoch8",
+      "request_type": "LegacyMapCommand",
+      "response_type": "LegacyMapOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/8/steps/4/request",
+          "start_line": 180429,
+          "end_line": 180455,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/4/response",
+          "start_line": 180460,
+          "end_line": 180485,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/4/stateCut",
+          "start_line": 180492,
+          "end_line": 180589,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/4/transactionContract",
+          "start_line": 180590,
+          "end_line": 180787,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F09",
+      "step_id": "F09-06",
+      "api_code": "C01",
+      "actor": "viewer-F09",
+      "request_type": "CommandResultLookupRequest",
+      "response_type": "CommandResultLookupResult",
+      "response_state": null,
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/8/steps/5/request",
+          "start_line": 180795,
+          "end_line": 180798,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/5/response",
+          "start_line": 180802,
+          "end_line": 180812,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/5/stateCut",
+          "start_line": 180815,
+          "end_line": 180821,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/5/transactionContract",
+          "start_line": 180822,
+          "end_line": 180825,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 0,
+      "write_tables": {},
+      "read_only": true
+    },
+    {
+      "fixture_id": "F09",
+      "step_id": "F09-07",
+      "api_code": "I33",
+      "actor": "auditor-F09",
+      "request_type": "ExportCommand",
+      "response_type": "ExportOutcome",
+      "response_state": "COMMITTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/8/steps/6/request",
+          "start_line": 180833,
+          "end_line": 180854,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/6/response",
+          "start_line": 180859,
+          "end_line": 180878,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/6/stateCut",
+          "start_line": 180886,
+          "end_line": 181024,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/8/steps/6/transactionContract",
+          "start_line": 181025,
+          "end_line": 181222,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 1,
+      "terminal_writes": 2,
+      "write_tables": {
+        "ExportReceipt:INSERT": 1,
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F10",
+      "step_id": "F10-01",
+      "api_code": "I09",
+      "actor": "inspector-F10-EXPIRED",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/9/steps/0/request",
+          "start_line": 189248,
+          "end_line": 189477,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/0/response",
+          "start_line": 189482,
+          "end_line": 189507,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/0/stateCut",
+          "start_line": 189514,
+          "end_line": 189611,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/0/transactionContract",
+          "start_line": 189612,
+          "end_line": 190961,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F10",
+      "step_id": "F10-02",
+      "api_code": "I09",
+      "actor": "inspector-F10-REVOKED",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/9/steps/1/request",
+          "start_line": 190969,
+          "end_line": 191198,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/1/response",
+          "start_line": 191203,
+          "end_line": 191228,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/1/stateCut",
+          "start_line": 191235,
+          "end_line": 191332,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/1/transactionContract",
+          "start_line": 191333,
+          "end_line": 192682,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F10",
+      "step_id": "F10-03",
+      "api_code": "I09",
+      "actor": "inspector-F10-MISSING_AUTHORITY",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/9/steps/2/request",
+          "start_line": 192690,
+          "end_line": 192919,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/2/response",
+          "start_line": 192924,
+          "end_line": 192949,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/2/stateCut",
+          "start_line": 192956,
+          "end_line": 193053,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/2/transactionContract",
+          "start_line": 193054,
+          "end_line": 194401,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F10",
+      "step_id": "F10-04",
+      "api_code": "I09",
+      "actor": "inspector-F10-COVERAGE_GAP",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/9/steps/3/request",
+          "start_line": 194409,
+          "end_line": 194638,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/3/response",
+          "start_line": 194643,
+          "end_line": 194668,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/3/stateCut",
+          "start_line": 194675,
+          "end_line": 194772,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/3/transactionContract",
+          "start_line": 194773,
+          "end_line": 196122,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    },
+    {
+      "fixture_id": "F10",
+      "step_id": "F10-05",
+      "api_code": "I09",
+      "actor": "inspector-F10-HEAD_CHANGED",
+      "request_type": "ObservationBatchCommand",
+      "response_type": "ObservationOutcome",
+      "response_state": "REJECTED",
+      "source_ranges": [
+        {
+          "pointer": "/fixtures/9/steps/4/request",
+          "start_line": 196130,
+          "end_line": 196359,
+          "notes": "request: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/4/response",
+          "start_line": 196364,
+          "end_line": 196389,
+          "notes": "response: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/4/stateCut",
+          "start_line": 196396,
+          "end_line": 196493,
+          "notes": "stateCut: business fields fully read; exact original key values retained in source"
+        },
+        {
+          "pointer": "/fixtures/9/steps/4/transactionContract",
+          "start_line": 196494,
+          "end_line": 197843,
+          "notes": "transactionContract: business fields fully read; exact original key values retained in source"
+        }
+      ],
+      "domain_writes": 0,
+      "terminal_writes": 2,
+      "write_tables": {
+        "Command:INSERT": 1,
+        "AuditEvent:INSERT": 1
+      },
+      "read_only": false
+    }
+  ],
+  "row_table_reading": [
+    {
+      "table": "AdapterRegistration",
+      "unique_full_rows": 6,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "Destination",
+        "EnvironmentId",
+        "Mode",
+        "Owner",
+        "Protocol",
+        "RecordedAt",
+        "RegistrationId",
+        "Revision",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "Approval",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "ApprovalCommandId",
+        "ApprovalCommandKind",
+        "ApprovalRefDigest",
+        "ApprovalRefId",
+        "ApprovalRefOwner",
+        "ApprovalRefVersion",
+        "ApprovedAt",
+        "ApproverId",
+        "AuthorityDigest",
+        "AuthorityId",
+        "AuthorityOwner",
+        "AuthorityRefDigest",
+        "AuthorityVersion",
+        "DecisionId",
+        "DecisionVersion",
+        "EnvironmentId",
+        "Mode",
+        "PacketId",
+        "PacketVersion",
+        "StreamId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ApprovalEvidence",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "Action",
+        "ApprovalDigest",
+        "ApprovalId",
+        "ApprovalOwner",
+        "ApprovalVersion",
+        "ApproverId",
+        "AuthorityDigest",
+        "AuthorityId",
+        "AuthorityOwner",
+        "AuthorityVersion",
+        "BodyJson",
+        "DecisionId",
+        "DecisionVersion",
+        "EnvironmentId",
+        "Mode",
+        "PacketId",
+        "PacketVersion",
+        "RecordedAt",
+        "Stage",
+        "StreamId",
+        "SubjectDigest",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ApprovalPacket",
+      "unique_full_rows": 7,
+      "row_fields": [
+        "ContentDigest",
+        "EnvironmentId",
+        "Mode",
+        "PacketId",
+        "PreparedAt",
+        "ResultSetId",
+        "ResultSetRevision",
+        "State",
+        "TaskId",
+        "TaskRevision",
+        "TenantId",
+        "Version"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "AuditEvent",
+      "unique_full_rows": 54,
+      "row_fields": [
+        "Action",
+        "ActorId",
+        "AfterDigest",
+        "AuditId",
+        "BeforeDigest",
+        "CommandId",
+        "EnvironmentId",
+        "Mode",
+        "OccurredAt",
+        "Sequence",
+        "SubjectDigest",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "AuthorityEvidence",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "Action",
+        "ActorId",
+        "AuthorityDigest",
+        "AuthorityId",
+        "AuthorityOwner",
+        "AuthorityVersion",
+        "BodyJson",
+        "ControlDigest",
+        "ControlId",
+        "ControlOwner",
+        "ControlVersion",
+        "EnvironmentId",
+        "Mode",
+        "RecordedAt",
+        "ScopeDigest",
+        "Stage",
+        "State",
+        "TenantId",
+        "ValidFrom",
+        "ValidTo"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "Command",
+      "unique_full_rows": 54,
+      "row_fields": [
+        "ActorId",
+        "CommandId",
+        "EnvironmentId",
+        "InputDigest",
+        "Kind",
+        "Mode",
+        "RecordedAt",
+        "RequestCanonicalUtf8",
+        "RequestKey",
+        "RequestType",
+        "TenantId",
+        "TerminalBody",
+        "TerminalBodyDigest",
+        "TerminalState",
+        "TerminalType"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "Decision",
+      "unique_full_rows": 8,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "DecisionId",
+        "EnvironmentId",
+        "Mode",
+        "PacketId",
+        "PacketVersion",
+        "RecordedAt",
+        "ResultSetId",
+        "ResultSetRevision",
+        "Sequence",
+        "SourceOwnerRevision",
+        "StreamId",
+        "TaskId",
+        "TaskRevision",
+        "TenantId",
+        "Version"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DecisionHead",
+      "unique_full_rows": 8,
+      "row_fields": [
+        "DecisionId",
+        "DecisionVersion",
+        "EnvironmentId",
+        "Mode",
+        "RowVersion",
+        "Sequence",
+        "StreamId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DecisionPartitionRange",
+      "unique_full_rows": 112,
+      "row_fields": [
+        "DecisionId",
+        "DecisionVersion",
+        "EnvironmentId",
+        "FromQty",
+        "Mode",
+        "OutcomeId",
+        "ProjectionKind",
+        "Quality",
+        "ResultSetId",
+        "ResultSetRevision",
+        "SegmentId",
+        "StreamId",
+        "TenantId",
+        "ToQty"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DecisionStream",
+      "unique_full_rows": 6,
+      "row_fields": [
+        "EnvironmentId",
+        "FamilyId",
+        "Mode",
+        "ScopeVersion",
+        "Stage",
+        "StreamId",
+        "StreamKeyDigest",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "Delivery",
+      "unique_full_rows": 5,
+      "row_fields": [
+        "CanonicalKey",
+        "CreatedAt",
+        "DecisionId",
+        "DecisionRefDigest",
+        "DecisionStreamId",
+        "DecisionVersion",
+        "DeliveryId",
+        "Destination",
+        "EnvironmentId",
+        "FrozenState",
+        "MessageId",
+        "Mode",
+        "PayloadDigest",
+        "PayloadId",
+        "PayloadType",
+        "PreviousDeliveryId",
+        "Protocol",
+        "RegistrationId",
+        "RegistrationRefDigest",
+        "RegistrationRevision",
+        "Sequence",
+        "SourceInternalId",
+        "SourceOwnerRevision",
+        "SourceRefDigest",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DeliveryAttempt",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "AttemptId",
+        "AttemptedAt",
+        "DeliveryId",
+        "EnvironmentId",
+        "LeaseEpoch",
+        "Mode",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DeliveryLease",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "DeliveryId",
+        "EnvironmentId",
+        "LeaseEpoch",
+        "LeaseUntil",
+        "Mode",
+        "RowVersion",
+        "TenantId",
+        "WorkerId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DeliveryObservationHead",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "DeliveryId",
+        "EnvironmentId",
+        "Mode",
+        "ObservationRevision",
+        "RowVersion",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DeliveryObservationRevision",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "DeliveryId",
+        "EnvironmentId",
+        "Mode",
+        "ObservationRevision",
+        "ObservedAt",
+        "OwnerResultDigest",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DeliveryPayload",
+      "unique_full_rows": 5,
+      "row_fields": [
+        "CreatedAt",
+        "EnvironmentId",
+        "Mode",
+        "PayloadBody",
+        "PayloadDigest",
+        "PayloadId",
+        "PayloadType",
+        "RegistrationId",
+        "RegistrationRevision",
+        "SchemaType",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DependencyWake",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "CreatedAt",
+        "EnvironmentId",
+        "Mode",
+        "Reason",
+        "State",
+        "SubjectDigest",
+        "TenantId",
+        "WakeId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "DispositionDraft",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "BodyDigest",
+        "DraftId",
+        "EnvironmentId",
+        "Mode",
+        "RecordedAt",
+        "ResultSetId",
+        "ResultSetRevision",
+        "Revision",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "EligibilityCut",
+      "unique_full_rows": 5,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "CutId",
+        "CutVersion",
+        "EnvironmentId",
+        "Mode",
+        "ObservedAt",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "EligibilityCutFact",
+      "unique_full_rows": 30,
+      "row_fields": [
+        "AuthorityDigest",
+        "ControlHeadDigest",
+        "CutId",
+        "CutVersion",
+        "EnvironmentId",
+        "FactDigest",
+        "FactOrdinal",
+        "Kind",
+        "Mode",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "EvaluatedRangeOutcome",
+      "unique_full_rows": 113,
+      "row_fields": [
+        "BodyDigest",
+        "EnvironmentId",
+        "FromQty",
+        "Mode",
+        "OutcomeId",
+        "Quality",
+        "ResultSetId",
+        "ResultSetRevision",
+        "TenantId",
+        "ToQty"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ExportReceipt",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "BodyDigest",
+        "CreatedAt",
+        "EnvironmentId",
+        "ExportId",
+        "Format",
+        "Mode",
+        "State",
+        "SubjectDigest",
+        "SubjectId",
+        "SubjectOwner",
+        "SubjectVersion",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "FamilyControlHead",
+      "unique_full_rows": 13,
+      "row_fields": [
+        "ControlRevision",
+        "EnvironmentId",
+        "FamilyId",
+        "Mode",
+        "RowVersion",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "FamilyControlVersion",
+      "unique_full_rows": 13,
+      "row_fields": [
+        "AuthorityDigest",
+        "AuthorityId",
+        "AuthorityOwner",
+        "AuthorityVersion",
+        "BodyDigest",
+        "BodyJson",
+        "ControlRevision",
+        "DomainKeyDigest",
+        "EnvironmentId",
+        "FamilyId",
+        "Mode",
+        "PreviousControlRevision",
+        "RecordedAt",
+        "Stage",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "FamilyCutEvidence",
+      "unique_full_rows": 6,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "Coverage",
+        "CutId",
+        "CutVersion",
+        "DirectoryRevision",
+        "DomainKeyDigest",
+        "EnvironmentId",
+        "Mode",
+        "ObservedAt",
+        "Stage",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "FamilyDirectoryHead",
+      "unique_full_rows": 7,
+      "row_fields": [
+        "DirectoryRevision",
+        "DomainKeyDigest",
+        "EnvironmentId",
+        "Mode",
+        "RowVersion",
+        "Stage",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "FamilyDirectoryMember",
+      "unique_full_rows": 7,
+      "row_fields": [
+        "AddedRevision",
+        "DirectoryRevision",
+        "DomainKeyDigest",
+        "EnvironmentId",
+        "FamilyId",
+        "Mode",
+        "Stage",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "FamilyDirectoryVersion",
+      "unique_full_rows": 7,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "Coverage",
+        "DirectoryRevision",
+        "DomainKeyDigest",
+        "EnvironmentId",
+        "MembershipDigest",
+        "Mode",
+        "RecordedAt",
+        "Stage",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ImpactCase",
+      "unique_full_rows": 4,
+      "row_fields": [
+        "CreatedAt",
+        "EnvironmentId",
+        "ImpactId",
+        "Mode",
+        "Revision",
+        "ScopeDigest",
+        "State",
+        "TenantId",
+        "TriggerDigest"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "Inbox",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "CanonicalKey",
+        "EnvironmentId",
+        "MessageId",
+        "Mode",
+        "OriginalDigest",
+        "Owner",
+        "ReceivedAt",
+        "Sequence",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "InitialClaim",
+      "unique_full_rows": 13,
+      "row_fields": [
+        "ClaimedAt",
+        "EnvironmentId",
+        "Mode",
+        "ObservationId",
+        "SlotId",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "InspectionTask",
+      "unique_full_rows": 9,
+      "row_fields": [
+        "CreatedAt",
+        "EnvironmentId",
+        "Mode",
+        "PolicyVersionDigest",
+        "SourceInternalId",
+        "Stage",
+        "TaskId",
+        "TaskKeyDigest",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "MeasurementSlot",
+      "unique_full_rows": 116,
+      "row_fields": [
+        "EnvironmentId",
+        "EpisodeId",
+        "MemberId",
+        "MethodDigest",
+        "Mode",
+        "ReplicateOrdinal",
+        "RequirementId",
+        "SlotId",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "Observation",
+      "unique_full_rows": 114,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "Code",
+        "EligibilityCutId",
+        "EligibilityCutVersion",
+        "EnvironmentId",
+        "InspectorId",
+        "Kind",
+        "Mode",
+        "ObservationId",
+        "ObservedAt",
+        "Revision",
+        "SlotId",
+        "SourceCommandId",
+        "TaskId",
+        "TenantId",
+        "ValueText"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ObservationHead",
+      "unique_full_rows": 114,
+      "row_fields": [
+        "EnvironmentId",
+        "Mode",
+        "ObservationId",
+        "Revision",
+        "RowVersion",
+        "SlotId",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ObservationReview",
+      "unique_full_rows": 3,
+      "row_fields": [
+        "AuthorityDigest",
+        "BodyDigest",
+        "EnvironmentId",
+        "Mode",
+        "ReviewCommandId",
+        "ReviewId",
+        "ReviewedAt",
+        "ReviewerId",
+        "Revision",
+        "TaskId",
+        "TaskRevision",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ObservationReviewItem",
+      "unique_full_rows": 111,
+      "row_fields": [
+        "Action",
+        "EnvironmentId",
+        "InspectorId",
+        "Mode",
+        "ObservationCommandId",
+        "ObservationId",
+        "ObservationRevision",
+        "ReviewCommandId",
+        "ReviewId",
+        "ReviewerId",
+        "Revision",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ObservationRuling",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "AuthorityDigest",
+        "EnvironmentId",
+        "Mode",
+        "ObservationId",
+        "ObservationRevision",
+        "RecordedAt",
+        "RulingId",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "Outbox",
+      "unique_full_rows": 5,
+      "row_fields": [
+        "DeliveryId",
+        "EnvironmentId",
+        "LeaseEpoch",
+        "MessageId",
+        "Mode",
+        "NextAttemptAt",
+        "PayloadDigest",
+        "PayloadId",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "OwnerObservationHead",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "CanonicalKey",
+        "EnvironmentId",
+        "Mode",
+        "ObservationRevision",
+        "Owner",
+        "RowVersion",
+        "Sequence",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "OwnerObservationRevision",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "CanonicalKey",
+        "EnvironmentId",
+        "MessageId",
+        "Mode",
+        "ObservationRevision",
+        "ObservedAt",
+        "OriginalDigest",
+        "Owner",
+        "Sequence",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "OwnerResultOriginal",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "CanonicalKey",
+        "EnvironmentId",
+        "Mode",
+        "OriginalBody",
+        "OriginalDigest",
+        "Owner",
+        "RecordedAt",
+        "Sequence",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "PlmEvidenceHandoff",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "CreatedAt",
+        "EnvironmentId",
+        "HandoffId",
+        "Mode",
+        "Revision",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "PopulationMember",
+      "unique_full_rows": 115,
+      "row_fields": [
+        "EnvironmentId",
+        "EvidenceDigest",
+        "FromQty",
+        "MemberId",
+        "Mode",
+        "TaskId",
+        "TenantId",
+        "ToQty"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "QapConsumerResult",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "ConsumerOwner",
+        "ConsumerResultId",
+        "ConsumerResultVersion",
+        "EnvironmentId",
+        "Mode",
+        "RecordedAt",
+        "ResultBodyDigest",
+        "ResultBodyJson",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "QapGuardEvidence",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "CheckedAt",
+        "Decision",
+        "EnvironmentId",
+        "FamilyCutId",
+        "FamilyCutVersion",
+        "GuardId",
+        "Mode",
+        "RegistrationId",
+        "RegistrationRevision",
+        "RequestKey",
+        "ResolutionDigest",
+        "ResolutionId",
+        "ResolutionOwner",
+        "ResolutionVersion",
+        "Revision",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "QapUseFact",
+      "unique_full_rows": 2,
+      "row_fields": [
+        "CommittedAt",
+        "ConsumerReceiptId",
+        "ConsumerReceiptOwner",
+        "ConsumerReceiptVersion",
+        "ConsumerResultDigest",
+        "EffectBodyDigest",
+        "EffectBodyJson",
+        "EnvironmentId",
+        "FamilyCutId",
+        "FamilyCutVersion",
+        "GuardId",
+        "GuardRevision",
+        "Mode",
+        "ResolutionDigest",
+        "ResolutionId",
+        "ResolutionOwner",
+        "ResolutionVersion",
+        "TenantId",
+        "UseKey"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "RequirementOutcome",
+      "unique_full_rows": 3,
+      "row_fields": [
+        "CoverageDigest",
+        "EnvironmentId",
+        "Mode",
+        "RequirementId",
+        "ResultSetId",
+        "Revision",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ResultInvalidation",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "CauseRefDigest",
+        "EnvironmentId",
+        "InvalidatedAt",
+        "InvalidationId",
+        "Mode",
+        "ResultSetId",
+        "ResultSetRevision",
+        "State",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ResultSet",
+      "unique_full_rows": 7,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "EnvironmentId",
+        "FrozenAt",
+        "Mode",
+        "ObservationSetRevision",
+        "ResultSetId",
+        "Revision",
+        "TaskId",
+        "TaskRevision",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ResultSetHead",
+      "unique_full_rows": 4,
+      "row_fields": [
+        "EnvironmentId",
+        "Mode",
+        "ResultSetId",
+        "ResultSetRevision",
+        "RowVersion",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ResultSetSlot",
+      "unique_full_rows": 113,
+      "row_fields": [
+        "EnvironmentId",
+        "Mode",
+        "OutcomeDigest",
+        "OutcomeId",
+        "ResultSetId",
+        "Revision",
+        "SlotId",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "RetestEpisode",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "ActivatedAt",
+        "EnvironmentId",
+        "EpisodeId",
+        "Mode",
+        "PacketDigest",
+        "State",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "ReviewHead",
+      "unique_full_rows": 3,
+      "row_fields": [
+        "EnvironmentId",
+        "Mode",
+        "ReviewId",
+        "ReviewRevision",
+        "RowVersion",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "SampleSelectionRoster",
+      "unique_full_rows": 110,
+      "row_fields": [
+        "EnvironmentId",
+        "MemberId",
+        "Mode",
+        "RankHash",
+        "RequirementId",
+        "SelectionDigest",
+        "TaskId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "SourceHead",
+      "unique_full_rows": 10,
+      "row_fields": [
+        "EnvironmentId",
+        "MappingRevision",
+        "Mode",
+        "OwnerRevision",
+        "RowVersion",
+        "SourceDigest",
+        "SourceInternalId",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "SourceMappingVersion",
+      "unique_full_rows": 12,
+      "row_fields": [
+        "CanonicalSourceDigest",
+        "EnvironmentId",
+        "MappingRevision",
+        "Mode",
+        "OwnerRevision",
+        "RecordedAt",
+        "ScopeDigest",
+        "SourceInternalId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "SourceOriginalVersion",
+      "unique_full_rows": 12,
+      "row_fields": [
+        "EnvironmentId",
+        "Mode",
+        "OriginalBody",
+        "OriginalDigest",
+        "Owner",
+        "OwnerId",
+        "OwnerRevision",
+        "RecordedAt",
+        "SourceInternalId",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "StockConsumerResult",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "ConsumerResultId",
+        "ConsumerResultVersion",
+        "DecisionDigest",
+        "DecisionId",
+        "DecisionStreamId",
+        "DecisionVersion",
+        "EnvironmentId",
+        "GuardId",
+        "GuardRevision",
+        "Mode",
+        "RecordedAt",
+        "ResultBodyDigest",
+        "ResultBodyJson",
+        "State",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "StockEffect",
+      "unique_full_rows": 1,
+      "row_fields": [
+        "ConsumerResultDigest",
+        "ConsumerResultId",
+        "ConsumerResultVersion",
+        "EffectBodyDigest",
+        "EffectBodyJson",
+        "EffectId",
+        "EnvironmentId",
+        "FromQty",
+        "Mode",
+        "RecordedAt",
+        "TenantId",
+        "ToQty"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "TaskHead",
+      "unique_full_rows": 23,
+      "row_fields": [
+        "EnvironmentId",
+        "Mode",
+        "RowVersion",
+        "State",
+        "TaskId",
+        "TaskRevision",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "TaskRevision",
+      "unique_full_rows": 24,
+      "row_fields": [
+        "BodyDigest",
+        "BodyJson",
+        "EnvironmentId",
+        "Mode",
+        "RecordedAt",
+        "State",
+        "TaskId",
+        "TaskRevision",
+        "TenantId"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "WriterEpochHead",
+      "unique_full_rows": 11,
+      "row_fields": [
+        "EnvironmentId",
+        "Epoch",
+        "Mode",
+        "RowVersion",
+        "TenantId",
+        "WriterName"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    },
+    {
+      "table": "WriterEpochHistory",
+      "unique_full_rows": 4,
+      "row_fields": [
+        "ActivatedAt",
+        "AuthorityDigest",
+        "AuthorityId",
+        "AuthorityOwner",
+        "AuthorityVersion",
+        "EnvironmentId",
+        "Epoch",
+        "Mode",
+        "PreviousEpoch",
+        "State",
+        "TenantId",
+        "WriterName"
+      ],
+      "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+      "reading_method": "Full business column values including decoded JSON; every distinct raw dictionary retained and repeated dictionaries reused exactly, opaque UUID/hash manually reviewed by role rather than every literal."
+    }
+  ],
+  "static_checks": {
+    "own_comparison": {
+      "counts": {
+        "final_row_occurrences": 1419,
+        "reverse_transition_writes": 1300,
+        "writes": 1300,
+        "step_transitions": 62,
+        "row_digest_occurrences": 2748,
+        "local_read_occurrences": 1012,
+        "expected_current_predicates": 402,
+        "lock_occurrences": 1249,
+        "owner_read_body_occurrences": 533,
+        "qap_named_fk": 2
+      },
+      "errors": [],
+      "missing_readset_rows": [],
+      "row_tables": 65,
+      "unique_rows": 1439,
+      "table_names_outside_relational_schema": [],
+      "scope": "Own stdlib static comparisons only; no author programs, SQL, application, AC or runtime execution."
+    },
+    "display_and_observation": {
+      "counts": {
+        "request_response_display_roundtrip": 124,
+        "observation_request_response_row_binding": 113,
+        "row_display_roundtrip": 1439
+      },
+      "errors": [],
+      "scope": "Normalized display inverse equality, plus named observation IDs/versions/body digests only; not universal FK verification."
+    },
+    "root_reused_artifact": {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/qa-ipqc-normal/continuous-fe-owner-static-checks.json",
+      "sha256": "6f0e53baa6b9556ff6204c6acf21afa60d292f9f5c85bee9159ff34c445e86bd",
+      "bytes": 128799,
+      "total_lines": 5929
+    },
+    "root_checks_are_not_new_execution": true
+  },
+  "findings": [
+    {
+      "id": "IPQC-CONT-01",
+      "classification": "STATIC_FIXTURE_ADOPTION_CLARIFICATION",
+      "title": "F02-03 INITIAL declared write set has no InitialClaim rows",
+      "facts": {
+        "initial_observations": 100,
+        "declared_has_InitialClaim": true,
+        "written_InitialClaim": 0,
+        "final_InitialClaim": 0,
+        "comparison_F03_initial_and_claim": 10
+      },
+      "impact": "Current F02 fixture cannot demonstrate per-slot permanent INITIAL claim although API I09 lists it as committed evidence. Static branch list acceptance must not be treated as proof of those rows.",
+      "exit_condition": "Author reconciles F02 claims/write images/final rows/digests, or supplies an explicit current normative exemption with exact scope.",
+      "runtime_failure_proven": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/0/steps/2/request/observations",
+          "line": 17601,
+          "end_line": 19502,
+          "claim": "100 INITIAL requests"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/0/steps/2/declaredBranchTables",
+          "line": 20140,
+          "end_line": 20150,
+          "claim": "InitialClaim declared"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/0/steps/2/stateCut/writes",
+          "line": 20170,
+          "end_line": 24901,
+          "claim": "211 writes, no InitialClaim"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/0/finalRows",
+          "line": 73702,
+          "end_line": 90964,
+          "claim": "967 final rows, no InitialClaim"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/1/steps/2/stateCut/writes",
+          "line": 96205,
+          "end_line": 97056,
+          "claim": "F03 writes ten matching claims"
+        }
+      ]
+    },
+    {
+      "id": "IPQC-CONT-02",
+      "classification": "STATIC_FIXTURE_IDENTITY_ALIGNMENT",
+      "title": "F03 OUT-TRIAL-F03 request source differs from persisted OUT-QA-F03 for the same digest",
+      "impact": "Source IDs remain part of owner identity; equal body digest does not establish an alias. I05 and I29 examples need a source mapping before fixture adoption.",
+      "exit_condition": "Align source identities or add an authoritative explicit alias and update dependent bodies and hashes.",
+      "runtime_failure_proven": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/1/steps/1/request/sourceEnvelopeRef",
+          "line": 94099,
+          "end_line": 94104,
+          "claim": "OUT-TRIAL-F03 v1"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/1/fixedOwnerReads/1/body/originalSourceAliases",
+          "line": 91313,
+          "end_line": 91313,
+          "claim": "Empty alias list"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/1/steps/8/request/handoff/sourceRef",
+          "line": 107060,
+          "end_line": 107065,
+          "claim": "OUT-TRIAL-F03 v1"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/1/steps/7/request/decision/sourceEnvelopeRef",
+          "line": 104069,
+          "end_line": 104074,
+          "claim": "OUT-QA-F03 v1 with the same 8aacdd7c... digest"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/1/finalRows/159/row",
+          "line": 113408,
+          "end_line": 113419,
+          "claim": "SourceOriginal ownerId/body identity OUT-QA-F03"
+        }
+      ]
+    },
+    {
+      "id": "IPQC-CONT-03",
+      "classification": "STATIC_RECOVERY_PROJECTION_ALIGNMENT",
+      "title": "F07 FrozenDelivery I26 response changes canonicalKey/sequence without a Delivery write",
+      "impact": "For the same deliveryId/messageId/payload bytes, I26 returns F07:I26 / 4, while persisted Delivery and I25 return F07:OWNER-SEQUENCE / 3. Recovery consumers must not infer a new immutable delivery identity from this example. State UNKNOWN/PENDING/APPLIED belongs to different projections and is not alone called a failure.",
+      "exit_condition": "Specify and align the FrozenDelivery projection and canonical identity; repair fixture response/digests or document a distinct, typed attempt identity.",
+      "runtime_failure_proven": false,
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/6/steps/3/response/result",
+          "line": 167002,
+          "end_line": 167037,
+          "claim": "I26 canonicalKey F07:I26 and sequence4"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/6/steps/3/stateCut/writes",
+          "line": 167076,
+          "end_line": 167210,
+          "claim": "Updates lease plus inserts attempt/observation/terminal; no Delivery write"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/6/finalRows/13/row",
+          "line": 168351,
+          "end_line": 168377,
+          "claim": "Immutable Delivery F07:OWNER-SEQUENCE sequence3"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "sha256": "76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f",
+          "pointer": "/fixtures/6/steps/5/response",
+          "line": 168038,
+          "end_line": 168073,
+          "claim": "I25 same deliveryId/messageId but canonicalKey F07:OWNER-SEQUENCE sequence3"
+        }
+      ]
+    }
+  ],
+  "identity_notes": [
+    {
+      "subject": "QapUseFact ConsumerReceipt FK",
+      "conclusion": "F02/F06B two seven-column FK identities exactly equal QapConsumerResult; naming alone is not a conflict. Preserve separate wire/QA projection/Stock internal IDs.",
+      "schema_source": {
+        "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/41/41a16ac59112f143__RELATIONAL_SCHEMA_RECOVERY_R4_SYSTEMIC.json",
+        "sha256": "41a16ac59112f143be3b7b97513e7306c30e7ef167421b94e0e143776fefc7c5",
+        "bytes": 151301,
+        "total_lines": 5821
+      },
+      "schema_lines": [
+        4150,
+        4299
+      ],
+      "fixture_pointers": [
+        "/fixtures/0/finalRows/748/row",
+        "/fixtures/5/finalRows/26/row",
+        "/fixtures/5/finalRows/24/row"
+      ]
+    },
+    {
+      "subject": "F05 ResultSet task revision",
+      "classification": "FIELD_SEMANTICS_TO_CONFIRM_NOT_RUNTIME_FAILURE",
+      "values": {
+        "stored_TaskRevision": 4,
+        "body_taskRevision": "3",
+        "request_resultset_taskRevision": "3",
+        "response_resultset_taskRevision": "3"
+      },
+      "evidence": [
+        {
+          "pointer": "/fixtures/3/finalRows/59/row",
+          "start_line": 140081,
+          "end_line": 140093,
+          "notes": "Stored/body difference"
+        },
+        {
+          "pointer": "/fixtures/3/steps/3/request/resultSet/taskRevision",
+          "start_line": 132818,
+          "end_line": 132818,
+          "notes": "Frozen input version"
+        },
+        {
+          "pointer": "/fixtures/3/steps/3/response/result/taskRevision",
+          "start_line": 132876,
+          "end_line": 132876,
+          "notes": "Frozen result version"
+        }
+      ],
+      "boundary": "No claim that before-evaluation vs after-commit versions must be equal without author interpretation."
+    }
+  ],
+  "additional_targeted_reading": [
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4).md",
+      "sha256": "c82ef3d5833b823cc562606af1a8bd8a68653416790bfc09c895df3a9a8c511b",
+      "coverage": "selected_sections",
+      "read_ranges": [
+        {
+          "start_line": 1,
+          "end_line": 42,
+          "notes": "Current scope/runtime status, source identity, INITIAL uniqueness and recovery requirements"
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c6e3e6f4c8d0e25c__API_REGISTRY_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "c6e3e6f4c8d0e25cdc42d849867bab8e27837f55cefcd537e8582762640d99c5",
+      "coverage": "selected_sections",
+      "read_ranges": [
+        {
+          "start_line": 150,
+          "end_line": 202,
+          "notes": "I09 committed/rejected/unknown write branches and fixture evidence list"
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/41/41a16ac59112f143__RELATIONAL_SCHEMA_RECOVERY_R4_SYSTEMIC.json",
+      "sha256": "41a16ac59112f143be3b7b97513e7306c30e7ef167421b94e0e143776fefc7c5",
+      "coverage": "selected_sections",
+      "read_ranges": [
+        {
+          "start_line": 2690,
+          "end_line": 2776,
+          "notes": "InitialClaim PK and FK"
+        },
+        {
+          "start_line": 3991,
+          "end_line": 4027,
+          "notes": "QapConsumerResult exact identity"
+        },
+        {
+          "start_line": 4150,
+          "end_line": 4299,
+          "notes": "QapUseFact exact FK mapping"
+        }
+      ]
+    }
+  ],
+  "remaining_current_component_business_reading": [],
+  "excluded_or_not_run": [
+    "Original author scripts/checkers",
+    "SQL execution and all-database FK/CHECK/type validation",
+    "Application build/tests/AC/runtime/concurrency",
+    "Actual same-UoW cross-owner deployment/adoption",
+    "Other F01 external variant bodies and global reference/governance catalogue owned by root"
+  ],
+  "businessAC": "NOT_RUN",
+  "runtimeAcceptance": "UNPROVEN",
+  "actual_owner_adoption": "NOT_ESTABLISHED_BY_THIS_READING",
+  "cache_artifacts": {
+    "directory": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading",
+    "source_locations": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/source-locations.json",
+    "raw_row_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/raw-row-registry.json",
+    "columnar_pages_read": [
+      "row-semantic-00.txt",
+      "row-semantic-01.txt",
+      "row-remaining-00.txt",
+      "row-remaining-01.txt",
+      "row-remaining-02.txt",
+      "row-remaining-03.txt",
+      "row-remaining-04.txt",
+      "row-remaining-05.txt"
+    ],
+    "request_pages_read": [
+      "F02-requests.txt",
+      "F03-requests.txt",
+      "F04-requests.txt",
+      "F05-requests.txt",
+      "F06A-requests.txt",
+      "F06B-requests.txt",
+      "F07-requests.txt",
+      "F08-requests.txt",
+      "F09-requests.txt"
+    ],
+    "F10_reading": "Full first request/result plus recursive business delta of other four, printed without truncation; F03-08 truncated first print was reread complete.",
+    "transaction_binding_registry": "D:/CP6-archives/consolidation-20261010/platform-ipqc-continuous-reading/tx-bindings.json",
+    "old_tx_pages": "Generated tx-00..07 and original row-semantic-02..10 not claimed read; superseded by full novel-field row-remaining and lock-shape/62-step binding projections."
+  },
+  "output_contract": "contracts/QA-IPQC-01-连续案例附册.md"
+}

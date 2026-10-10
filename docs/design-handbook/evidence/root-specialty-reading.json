@@ -1,0 +1,1573 @@
+{
+  "group": "root-specialty",
+  "target_ids": [
+    "WMS-KIT-01",
+    "WMS-SLOT-01",
+    "WMS-REP-01",
+    "WMS-XDOCK-01",
+    "WMS-ROLL-01",
+    "WMS-REM-01",
+    "WMS-TOOL-01",
+    "WMS-INK-01",
+    "WMS-VMI-01",
+    "WMS-SAMPLE-01",
+    "WMS-AUTO-01",
+    "WMS-ANALYTICS-01"
+  ],
+  "files": [
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "7a882fade5d085d5d26e61c074304c7e3befb16e58d00768e978960437c367ed",
+      "targets": [
+        "WMS-KIT-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          415
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full KIT body incl common appendix, all JSON fixtures and all15AC, or full target acceptance read this session.",
+      "total_lines": 415,
+      "read_session": "2026-10-10 root X3 first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3c/3c01439ddc8f03d5__UA-20261008-X3-WMS-KIT-01-R2-STATIC-MD02.json",
+      "sha256": "3c01439ddc8f03d5c9210ee67c6c76be46814851bce659b6ed2db47881c5cd67",
+      "targets": [
+        "WMS-KIT-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          305
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full KIT body incl common appendix, all JSON fixtures and all15AC, or full target acceptance read this session.",
+      "total_lines": 305,
+      "read_session": "2026-10-10 root X3 first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/db/db514ac752eafa0c__ROOT-DECISION-EVIDENCE.json",
+      "sha256": "db514ac752eafa0c8359a39a3f213e2c431a1c37489b2103410376f879ef3b7b",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          23
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 23,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fa/fab930772155a060__SIX-TARGET-ACCEPTANCE-INDEX.json",
+      "sha256": "fab930772155a0604521dece69087bd44769abfe82f4d841831d67b55d9073c8",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          127
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 127,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/1130c4e9610a821a__SIX-TARGET-ACCEPTANCE.md",
+      "sha256": "1130c4e9610a821ab18ccfd140da3fe04133748dfd5b627d302d1c783376fcbe",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          63
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 63,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/51/515f437c17b4cba1__FINAL-R2-CUMULATIVE-INDEPENDENT-REVIEW.md",
+      "sha256": "515f437c17b4cba18bb334028664585aada1114081a7f98f561d2e3445b24df7",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_review_and_evidence"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          80
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 80,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a4/a47016f05267160b__X3_六册27SPEC_独立完整静态审阅_集中根表_20261008.md",
+      "sha256": "a47016f05267160b6ee192089f1c30a53f90529d52b20f85731419b0332f5550",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_review_and_evidence"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          104
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 104,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5c/5c6f67dd284cd74b__ORIGINAL-112-AC-CURRENT-TEXT.json",
+      "sha256": "5c6f67dd284cd74bfd3f4286b17929ba587feba4f20d01e6d3f164a49c1c0555",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_source_and_scope_dependency"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All112AC row meanings already read in full bodies; every ExactMarkdownRow and parsed fields/SPEC ownership/status matched exact source line; all metadata keys/invariants checked. No business execution.",
+      "total_lines": 1618,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7c/7ce1a9acfd4a7f3b__ORIGINAL-31-DEVELOPMENT-TASKS-CURRENT-TEXT.json",
+      "sha256": "7ce1a9acfd4a7f3b00bb87ccab46367eeafbd028fd064c4b66f49fa9b83e7212",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_source_and_scope_dependency"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All31tasks already semantically read in current bodies; every exact task text verified against declared line and all IDs/counts/status checked; original shortened IDs preserved.",
+      "total_lines": 324,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bc/bccbdd0cd659e37b__EXACT-ACCEPTED-COMPOSITION.json",
+      "sha256": "bccbdd0cd659e37ba3467c6fe6a9713eac20da894a0ee6f82e360d1c7c4a6bf4",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          295
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 295,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/59/59aa083c74b340d9__STATIC-ACCEPTANCE-QUALIFICATIONS.json",
+      "sha256": "59aa083c74b340d9f18cac1771c08bbaf1ab85ecfd57f526cae64464cca82120",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          99
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 99,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/74/7430ceee7e595541__X3_R2_跨行业边界与来源资格_20261008.md",
+      "sha256": "7430ceee7e595541143e9239b62817c07e5eba2dd74a7679c9a0ec2d501a9eb9",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          41
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 41,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/89edcf7fa734103c__SOURCE-MANIFEST.json",
+      "sha256": "89edcf7fa734103c064efec4e83559f1071c22375c69303770e296dab6b94910",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          71
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 71,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7f/7fd745833884d6fd__ALL-ORIGINAL-PACKAGE-MEMBER-IDENTITIES.json",
+      "sha256": "7fd745833884d6fd0a983a975005b1fac8df0f0195aa90491b14c1eb4ef3f6de",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Complete R2/R1 manifest metadata and109 member names/roles reviewed. R2 originalZIP+61members hashed; R1 originalZIP NOT LOCATED, all48 declared member bytes independently matched. Hashing is not semantic reading of all historical code.",
+      "total_lines": 799,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/69/6977ea8641339169__CURRENT.json",
+      "sha256": "6977ea86413391695cd8c935f0306dfa1c5968fdf73e31f884ed6ad4dcfa1bd6",
+      "targets": [
+        "WMS-KIT-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          456
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full exact acceptance/review/qualification/composition/index/CURRENT content; large KIT CURRENT printed in two complete chunks with truncated ending explicitly reread.",
+      "total_lines": 456,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "ec7dcc5179f0e5844e778102c18e66e840246b68ac7dec34aaa94c505aa1ed13",
+      "targets": [
+        "WMS-SLOT-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "structured",
+      "read_ranges": [
+        [
+          1,
+          114
+        ],
+        [
+          198,
+          410
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "All unique text including exact JSON/AC fully read. Shared appendix115-197 exactly equals already fully-read KIT134-216 and is explicitly reused.",
+      "total_lines": 410,
+      "inherited_exact_ranges": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a882fade5d085d5__WMS-KIT-01_仓储套件作业_完整设计_RECOVERY_v1.1_R2.md",
+          "sha256": "7a882fade5d085d5d26e61c074304c7e3befb16e58d00768e978960437c367ed",
+          "source_range": [
+            134,
+            216
+          ],
+          "target_range": [
+            115,
+            197
+          ],
+          "comparison": "exact line sequence equality"
+        }
+      ],
+      "read_session": "2026-10-10 root X3 first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3f/3fe131bfdf5f6adb__UA-20261008-X3-WMS-SLOT-01-R2-STATIC-MD02.json",
+      "sha256": "3fe131bfdf5f6adb015938d3c9641a9813ade1ef5f83066fdcbc061fc2fa79b1",
+      "targets": [
+        "WMS-SLOT-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 306,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f0/f0119812e0d7a42c__CURRENT.json",
+      "sha256": "f0119812e0d7a42ca6106cbba85d675823173a743d5aad8ff47b82f680c7dffa",
+      "targets": [
+        "WMS-SLOT-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 457,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d108fba82cd4683__WMS-REP-01_库内补货_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "9d108fba82cd4683ccc0075f0239f7f3e6ac60cc090672adf8080438bfca83d9",
+      "targets": [
+        "WMS-REP-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "structured",
+      "read_ranges": [
+        [
+          1,
+          147
+        ],
+        [
+          218,
+          409
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "All REP unique normative text,18AC and JSON; common148–217 exact line equality to already full-read KIT134–203 verified and reused; A7 source qualification differences fully read.",
+      "total_lines": 409,
+      "reused_exact_range": {
+        "source_sha256_prefix": "7a882fade5d085d5",
+        "source_lines": [
+          134,
+          203
+        ],
+        "target_lines": [
+          148,
+          217
+        ]
+      }
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/57/57a177883c6fdd14__UA-20261008-X3-WMS-REP-01-R2-STATIC-MD02.json",
+      "sha256": "57a177883c6fdd147370ce3f811a532534998316678452eaf29b56940a1cd22e",
+      "targets": [
+        "WMS-REP-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 299,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24c40d35c5c1a3e6__CURRENT.json",
+      "sha256": "24c40d35c5c1a3e6b83ac39b0d2b49545babe48d2c7af7ae885cac3a043bf170",
+      "targets": [
+        "WMS-REP-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 450,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/433993a9448ae3c0__WMS-XDOCK-01_越库作业_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "433993a9448ae3c025ee13654184846e303e83a33072a487a8b8d07bd9acada4",
+      "targets": [
+        "WMS-XDOCK-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "structured",
+      "read_ranges": [
+        [
+          1,
+          172
+        ],
+        [
+          261,
+          608
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "All unique normative text/18AC and all JSON objects complete with whitespace-only compact rendering; common173–260 exact equality REP148–235 reused.",
+      "total_lines": 608,
+      "reused_exact_range": {
+        "source_sha256_prefix": "9d108fba82cd4683",
+        "source_lines": [
+          148,
+          235
+        ],
+        "target_lines": [
+          173,
+          260
+        ]
+      }
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3d/3dd1f588cb765e00__UA-20261008-X3-WMS-XDOCK-01-R2-STATIC-MD02.json",
+      "sha256": "3dd1f588cb765e001300d41e74bf929d4ae0a3accb9f9b69a97376809eb95362",
+      "targets": [
+        "WMS-XDOCK-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 301,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/de/deff04e0ba89c974__CURRENT.json",
+      "sha256": "deff04e0ba89c974b2ed97d61c016d07b187eb39b0e7932d6726e6795122a478",
+      "targets": [
+        "WMS-XDOCK-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 452,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fc/fcfddec26e2fa8fd__WMS-ROLL-01_原纸卷作业_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "fcfddec26e2fa8fdd0d5375f029364f82cbb717ec4c4646be4acabd59cafb394",
+      "targets": [
+        "WMS-ROLL-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "structured",
+      "read_ranges": [
+        [
+          1,
+          212
+        ],
+        [
+          301,
+          767
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "All unique normative text/22AC and complete JSON; truncated50–107 re-read in full; common213–300 byte-line-equal REP148–235 reused.",
+      "total_lines": 767,
+      "reused_exact_range": {
+        "source_sha256_prefix": "9d108fba82cd4683",
+        "source_lines": [
+          148,
+          235
+        ],
+        "target_lines": [
+          213,
+          300
+        ]
+      }
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a0/a0d19f2a176ea3d6__UA-20261008-X3-WMS-ROLL-01-R2-STATIC-MD02.json",
+      "sha256": "a0d19f2a176ea3d61219b63c7b942a5d82a8d6f641315ef584298ab686f1b4e8",
+      "targets": [
+        "WMS-ROLL-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 313,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a5/a5c11f655294e8dc__CURRENT.json",
+      "sha256": "a5c11f655294e8dc8f1ef88225cfedeb7d163ab5d81936479c6ffd0f37404520",
+      "targets": [
+        "WMS-ROLL-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 495,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/3192726a41ddd3cf__WMS-REM-01_余料管理_完整设计_RECOVERY_v1.1_R2.md",
+      "sha256": "3192726a41ddd3cfc63f9e7c9e47392a5eb10f67e29b1f49f6f3a7a65e81126c",
+      "targets": [
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "structured",
+      "read_ranges": [
+        [
+          1,
+          225
+        ],
+        [
+          314,
+          604
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "All unique normative text/24AC and complete JSON objects; common226–313 exact-equal REP148–235 reused.",
+      "total_lines": 604,
+      "reused_exact_range": {
+        "source_sha256_prefix": "9d108fba82cd4683",
+        "source_lines": [
+          148,
+          235
+        ],
+        "target_lines": [
+          226,
+          313
+        ]
+      }
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d49e98cc73c115f3__UA-20261008-X3-WMS-REM-01-R2-STATIC-MD02.json",
+      "sha256": "d49e98cc73c115f3146c4dadab1a646b26fce63d3ebbb033da8b3a5bda3f8a62",
+      "targets": [
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 306,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/87/870403b38366ee84__CURRENT.json",
+      "sha256": "870403b38366ee84ddb6f41967de7293e7dc4212357f8a91f3db4a83d45cb23a",
+      "targets": [
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All distinct metadata leaf changes/removals reviewed against full KIT UA/CURRENT baseline; identical typed common values reused; OriginalScope equals own UA; normative and acceptance selectors/hash/counts machine checked. XDOCK/ROLL/REM duplicated selector fields checked structurally and profile boundary differences read.",
+      "total_lines": 488,
+      "read_session": "2026-10-10 root X3 metadata batch",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a74c705ef05ece0__WMS-TOOL-01_版模实物管理_完整详设_R2_CANDIDATE.md",
+      "sha256": "3a74c705ef05ece0f5e5aa175a49dc818732b9f25765046236ae2f246177ee6e",
+      "targets": [
+        "WMS-TOOL-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          124
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full literal current body or shared review/acceptance/qualification text read this turn; embedded historical work instructions treated as evidence only.",
+      "total_lines": 124,
+      "read_session": "2026-10-10 root specialty first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8c/8c0905759be6e9fc__UA-20261008-X4-WMS-TOOL-01-R2-STATIC-MD02.json",
+      "sha256": "8c0905759be6e9fc9cad9d62f069ca16ee00ada691f783c4d4a10fc02cfa8bf1",
+      "targets": [
+        "WMS-TOOL-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          151
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 151,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/40/40d8bfbadbc9ea9e__ROOT-DECISION-EVIDENCE.json",
+      "sha256": "40d8bfbadbc9ea9e8529b80a6b9e50d509d7e5263f668d9c5e1db0301be34e80",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          13
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full literal current body or shared review/acceptance/qualification text read this turn; embedded historical work instructions treated as evidence only.",
+      "total_lines": 13,
+      "read_session": "2026-10-10 root specialty first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/be2f000f8dcd5066__SIX-TARGET-ACCEPTANCE-INDEX.json",
+      "sha256": "be2f000f8dcd5066cbacbca9a188efec3a0297833e254f46f8b04581d45f0057",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          126
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 126,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/59/59dff54660e0a2fe__X4-SIX-TARGET-ACCEPTANCE.md",
+      "sha256": "59dff54660e0a2fe1ebc53411fcd6f0786283c95cce575074ae01dce992d6f50",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          55
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full literal current body or shared review/acceptance/qualification text read this turn; embedded historical work instructions treated as evidence only.",
+      "total_lines": 55,
+      "read_session": "2026-10-10 root specialty first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/58/5847ad3a0d225be4__FINAL-R2.1-INDEPENDENT-REVIEW.md",
+      "sha256": "5847ad3a0d225be44cf8c3de1f0fd2483aab2323c78cf8ba8c7114dadd3e1c24",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_review_and_evidence"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          81
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full literal current body or shared review/acceptance/qualification text read this turn; embedded historical work instructions treated as evidence only.",
+      "total_lines": 81,
+      "read_session": "2026-10-10 root specialty first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/afe3bc53867d38df__CP6_X4_R1_六册27SPEC_独立完整静态审阅报告.md",
+      "sha256": "afe3bc53867d38dff843f9733c6ccb601ce983b1be0d352e8f7e1190d6f33a39",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_review_and_evidence"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          238
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 238,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3b6a49b59ccf5a0__CP6_X4_R2_八根定点回归与27SPEC累计结论.md",
+      "sha256": "a3b6a49b59ccf5a0d7fc302bcf62706ed39ddfeab673c16d49dca4e48b5431df",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_review_and_evidence"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          80
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 80,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/99/996ff8c6ae7d5368__CURRENT-ORIGINAL-SCOPE-AND-AC-IDENTITIES.json",
+      "sha256": "996ff8c6ae7d5368991a6561eeb579f8b1f15f0767593c6da6df3e47c730e11c",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_source_and_scope_dependency"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All six scope objects exactly equal fully reviewed CURRENT OriginalScope values.",
+      "total_lines": 715,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e6/e694f81b414a785d__ORIGINAL-95-AC-AND-46-TASK-TEXT.json",
+      "sha256": "e694f81b414a785d06d007607265b7ae69cb9ffb80e7f3bb240c439b155db2e8",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_source_and_scope_dependency"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "All AC/task section strings and each task row exactly equal the fully-read current main body ranges; all metadata/IDs/status/propagation clauses checked.",
+      "total_lines": 461,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7f/7f768146b436c262__SOURCE-REUSE-AND-ACCEPTANCE-QUALIFICATIONS.json",
+      "sha256": "7f768146b436c262e9c5311a5eb3ebd84f17b5dc0237809761429f77c7f9d1a9",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          102
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full literal current body or shared review/acceptance/qualification text read this turn; embedded historical work instructions treated as evidence only.",
+      "total_lines": 102,
+      "read_session": "2026-10-10 root specialty first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ac/acb8466aaf90decb__SOURCE-READ-QUALIFICATION.md",
+      "sha256": "acb8466aaf90decb4eeb848075bffb4a4e643a31e5939d7ec006afa33fb8c331",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          17
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full literal current body or shared review/acceptance/qualification text read this turn; embedded historical work instructions treated as evidence only.",
+      "total_lines": 17,
+      "read_session": "2026-10-10 root specialty first batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/42/4294becf9c268061__SOURCE-MANIFEST.json",
+      "sha256": "4294becf9c2680617868d65eb1a5507a74d33e59b550d923f7ad2bb6f809ba61",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          58
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 58,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/72/72a6dbfa3dbd9433__ALL-142-ORIGINAL-R2.1-MEMBERS.json",
+      "sha256": "72a6dbfa3dbd9433727c11c48d6edb05ae645e4cec4ab3d848b5d6281fa2eb56",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Full metadata and every member name/role reviewed; all142 member bytes and hashes verified against original ZIP; not semantic code/dependency review.",
+      "total_lines": 730,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/41/41b3ee927586fac5__X4-APPLICABILITY-AND-HOLD-RELEASE.json",
+      "sha256": "41b3ee927586fac512bf0666d3c5fcbee2c45517c6eacc57d60a9e79f4324db4",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_provenance_and_selection"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          142
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 142,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b8/b82a6be625334b5b__CP6_通用制造业设计边界_有界审阅_20261008.txt",
+      "sha256": "b82a6be625334b5ba360a673bf6cd4d8ca0f7f1eb2345e610abe71fa4c064e64",
+      "targets": [
+        "WMS-TOOL-01",
+        "WMS-INK-01",
+        "WMS-VMI-01",
+        "WMS-SAMPLE-01",
+        "WMS-AUTO-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_review_and_evidence"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          189
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 189,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9d/9d0e4b4072d4c04a__CURRENT.json",
+      "sha256": "9d0e4b4072d4c04a4cff16cba20cca8894a8a5f6285430fbc37a13161a82c81a",
+      "targets": [
+        "WMS-TOOL-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          437
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full original review/acceptance/provenance text read, including historical publication instructions as data only.",
+      "total_lines": 437,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/5f/5fbc434a55d2a031__WMS-INK-01_油墨批次管理_完整详设_R2.1_CANDIDATE.md",
+      "sha256": "5fbc434a55d2a031418411b1dbfac5838e8673c464ae198fd51f817bdd4f6836",
+      "targets": [
+        "WMS-INK-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          173
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full current main design, exact candidate contracts, all prose and AC read this session; original work instructions treated as historical evidence.",
+      "total_lines": 173,
+      "read_session": "2026-10-10 root specialty second batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8d/8d83cd454d575fd7__UA-20261008-X4-WMS-INK-01-R2.1-STATIC-MD02.json",
+      "sha256": "8d83cd454d575fd73ec89cdae9c37a26daaa147fcdc33b0c151d8b53634e3cf4",
+      "targets": [
+        "WMS-INK-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 154,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "8c0905759be6e9fc9cad9d62f069ca16ee00ada691f783c4d4a10fc02cfa8bf1",
+      "leaf_count": 118,
+      "shared_equal_leaf_count": 88,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f5/f58fb2932ab1424b__CURRENT.json",
+      "sha256": "f58fb2932ab1424b5644087f3a660f6456025f74f1d9daeee4678fa056922d00",
+      "targets": [
+        "WMS-INK-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 443,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "9d0e4b4072d4c04a4cff16cba20cca8894a8a5f6285430fbc37a13161a82c81a",
+      "leaf_count": 339,
+      "shared_equal_leaf_count": 264,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b6/b6a79341caa5168a__WMS-VMI-01_VMI作业与结算依据_完整详设_R2_CANDIDATE.md",
+      "sha256": "b6a79341caa5168a5c910eeb5ce104a6274c95442ee16b1b364b4848dfdead0f",
+      "targets": [
+        "WMS-VMI-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          141
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full current main design, exact candidate contracts, all prose and AC read this session; original work instructions treated as historical evidence.",
+      "total_lines": 141,
+      "read_session": "2026-10-10 root specialty second batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ea/ea3553e716601d89__UA-20261008-X4-WMS-VMI-01-R2-STATIC-MD02.json",
+      "sha256": "ea3553e716601d89566708505e6a704992954e967fc367fb7e619f4ba6ee14ae",
+      "targets": [
+        "WMS-VMI-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 157,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "8c0905759be6e9fc9cad9d62f069ca16ee00ada691f783c4d4a10fc02cfa8bf1",
+      "leaf_count": 121,
+      "shared_equal_leaf_count": 88,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7a/7a96cca90046b3dd__CURRENT.json",
+      "sha256": "7a96cca90046b3dd0128a4bb64834d20f15bae389ab607a00004f6d0c7e1c3f2",
+      "targets": [
+        "WMS-VMI-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 455,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "9d0e4b4072d4c04a4cff16cba20cca8894a8a5f6285430fbc37a13161a82c81a",
+      "leaf_count": 349,
+      "shared_equal_leaf_count": 263,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/4b/4bc78efb8ce7d865__WMS-SAMPLE-01_样品借还_完整详设_R2_CANDIDATE.md",
+      "sha256": "4bc78efb8ce7d8653cc6e482f7b314a1843672370831cfff770931c709678a58",
+      "targets": [
+        "WMS-SAMPLE-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          148
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full current design including all candidate contracts, algorithms, screens, tasks and AC read this session.",
+      "total_lines": 148,
+      "read_session": "2026-10-10 root specialty second batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f3/f38fe7160c2ee3e8__UA-20261008-X4-WMS-SAMPLE-01-R2-STATIC-MD02.json",
+      "sha256": "f38fe7160c2ee3e8ffb010bf0c8f7614cb2f5ee2f7fa64b77e43817ce7fd9952",
+      "targets": [
+        "WMS-SAMPLE-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 157,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "8c0905759be6e9fc9cad9d62f069ca16ee00ada691f783c4d4a10fc02cfa8bf1",
+      "leaf_count": 121,
+      "shared_equal_leaf_count": 89,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/82/82add913a85b4dfb__CURRENT.json",
+      "sha256": "82add913a85b4dfb568e8567e20bf8311f07924795a1a0a40c8749be28de7e10",
+      "targets": [
+        "WMS-SAMPLE-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 454,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "9d0e4b4072d4c04a4cff16cba20cca8894a8a5f6285430fbc37a13161a82c81a",
+      "leaf_count": 348,
+      "shared_equal_leaf_count": 265,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/65c512abcd614f27__WMS-AUTO-01_仓储设备任务与遥测_完整详设_R2_CANDIDATE.md",
+      "sha256": "65c512abcd614f27267119b199b33355bcbb7207e6ebf7515e7eb2a3d501023a",
+      "targets": [
+        "WMS-AUTO-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          147
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full current design including all candidate contracts, algorithms, screens, tasks and AC read this session.",
+      "total_lines": 147,
+      "read_session": "2026-10-10 root specialty second batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/39/394bc16520f4b020__UA-20261008-X4-WMS-AUTO-01-R2-STATIC-MD02.json",
+      "sha256": "394bc16520f4b020db95ab15c95a484f09672b7539c12d714d954766a918827b",
+      "targets": [
+        "WMS-AUTO-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 158,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "8c0905759be6e9fc9cad9d62f069ca16ee00ada691f783c4d4a10fc02cfa8bf1",
+      "leaf_count": 122,
+      "shared_equal_leaf_count": 89,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/af09b783bb67e3ad__CURRENT.json",
+      "sha256": "af09b783bb67e3ad1e54a4286aeae2df65ce79315da0c91ed8838a40c7ef3fd6",
+      "targets": [
+        "WMS-AUTO-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 451,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "9d0e4b4072d4c04a4cff16cba20cca8894a8a5f6285430fbc37a13161a82c81a",
+      "leaf_count": 347,
+      "shared_equal_leaf_count": 264,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+      "sha256": "2f90c5537845e5cb22f87039021535a4872ad2ff36bb89cc83ffbe1733e221b4",
+      "targets": [
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "accepted_primary_body_or_exact_carrier"
+      ],
+      "coverage": "full",
+      "read_ranges": [
+        [
+          1,
+          172
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full current design including all candidate contracts, algorithms, screens, tasks and AC read this session.",
+      "total_lines": 172,
+      "read_session": "2026-10-10 root specialty second batch"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e8/e8bae33007866589__UA-20261008-X4-WMS-ANALYTICS-01-R2-STATIC-MD02.json",
+      "sha256": "e8bae330078665892af3f0ec73afc830363dca73113de7f6e7f60cb55a499721",
+      "targets": [
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "required_acceptance_and_decision"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 159,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "8c0905759be6e9fc9cad9d62f069ca16ee00ada691f783c4d4a10fc02cfa8bf1",
+      "leaf_count": 123,
+      "shared_equal_leaf_count": 88,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45fdfa658b1c10ef__CURRENT.json",
+      "sha256": "45fdfa658b1c10ef20accc954fa2a0afa42221f125560ad9e515676c5721c1ca",
+      "targets": [
+        "WMS-ANALYTICS-01"
+      ],
+      "roles": [
+        "acceptance_entry_provenance_not_body"
+      ],
+      "coverage": "structured",
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "Every changed/added/removed JSON leaf read against fully-read TOOL UA/CURRENT baseline; all other leaves structurally equal and reused, not claimed as literal re-read.",
+      "total_lines": 459,
+      "structured_evidence": "evidence/x4-metadata-reconciliation.json",
+      "baseline_sha256": "9d0e4b4072d4c04a4cff16cba20cca8894a8a5f6285430fbc37a13161a82c81a",
+      "leaf_count": 353,
+      "shared_equal_leaf_count": 263,
+      "read_session": "2026-10-10 root X4 evidence closure"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/git-objects/41/41f499dd9748db3d__ORIGINAL-SOURCE-AND-REUSE-BOUNDARIES.json",
+      "sha256": "b062866c1c6d881f2133fca10d0eca2e5321d43a445009b307748700e1fcb402",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "discovered_current_provenance_dependency"
+      ],
+      "coverage": "structured",
+      "total_lines": 179,
+      "read_ranges": [],
+      "unread_ranges": [],
+      "what_was_read": "18 exact source-reuse/compatibility/qualification windows equal already-read current bodies; complete remaining metadata read. Historical code qualification not fresh code audit.",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    },
+    {
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/git-objects/ce/ce823722f9f0967a__GENERAL-MANUFACTURING-PROFILE-ACCEPTANCE-AND-REGISTRY-DIRECTION-REQUIREMENTS.json",
+      "sha256": "e4f048e7f8eba5e9da1c1dc782b8303cfc39617885343a499571e893e4f717cc",
+      "targets": [
+        "WMS-KIT-01",
+        "WMS-SLOT-01",
+        "WMS-REP-01",
+        "WMS-XDOCK-01",
+        "WMS-ROLL-01",
+        "WMS-REM-01"
+      ],
+      "roles": [
+        "discovered_current_provenance_dependency"
+      ],
+      "coverage": "full",
+      "total_lines": 69,
+      "read_ranges": [
+        [
+          1,
+          69
+        ]
+      ],
+      "unread_ranges": [],
+      "what_was_read": "Full profile bounded adoption and registry-direction handling content read; historical publication instructions treated as data.",
+      "structured_evidence": "evidence/x3-metadata-reconciliation.json"
+    }
+  ],
+  "meaning": "Metadata registration and byte checks do not imply semantic reading. Only explicit full/range records claim reading in this session. Shared readings are reused by exact SHA.",
+  "updated_at_utc": "2026-10-10T12:11:16.117688+00:00",
+  "target_closure": {
+    "WMS-KIT-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 15,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-SLOT-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 15,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-REP-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 15,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-XDOCK-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 15,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-ROLL-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 15,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-REM-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 15,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-TOOL-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 17,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-INK-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 17,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-VMI-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 17,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-SAMPLE-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 17,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-AUTO-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 17,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    },
+    "WMS-ANALYTICS-01": {
+      "status": "required_materials_consolidated",
+      "required_source_count": 17,
+      "boundary": "Current normative semantics and exact prose/metadata reuse complete. Historical program/source bodies are identity/provenance only, not full code audit. Real Owner adoption/runtime unproven; task-level cross-module review pending."
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "status": "targeted_static_alignment_recorded",
+  "observations": [
+    {
+      "source": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\plan-po-cp22\\members\\PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "receipt_pointer": "/completePreRows/62/row",
+      "revision_pointer": "/completePreRows/65/row",
+      "head_pointer": "/completePreRows/66/row",
+      "same_event": true,
+      "same_leg": true,
+      "same_command": true,
+      "receipt_request_digest": "eff57d82d721b954519949b2b242c09c563e25127b0147e06433c3531d7ae279",
+      "revision_request_digest": "b1250b1323eddeb03c052ae25edbcd59d02a97d2125af8a446a67784e30312b8",
+      "receipt_result_digest": "e93e444a53554f06c00e38aa196130742f0a1fb70d965e5d44ffe1e6104b4e5c",
+      "revision_result_digest": "1fe7b6969706d9a768eb16b69ab0bdd2cd83988813cee1203ebcc3e87d05a6f3",
+      "receipt_snapshot_digest": "46d9088dd0532f6eeabdb169e156004f2641b054b5f08a4b66bec87932f2031a",
+      "revision_snapshot_digest": "5d0e31764397e6cbfb62b1fbb2df1184825da911df2a9aacd9f76998c3eb5bf2",
+      "head_revision": 4,
+      "revision_version": 4,
+      "head_body_equals_revision": true,
+      "lines": {
+        "revision_BodyJson": 3916,
+        "actual_nativeRootRequestDigest": 2289,
+        "actual_nativeRootResultDigest": 2340
+      },
+      "business": "NOT_RUN",
+      "conclusion": "same stored event/leg/command but revision body carries a different request/result/snapshot digest from actual modeled receipt; no runtime bug asserted",
+      "id": "PLAN-IF-014"
+    },
+    {
+      "label": "EPOCH_DISPATCH_AUTHORITY_PRE_POST",
+      "status": "static_example_write_graph_mismatch",
+      "scope": "Current CP18 normal example, not runtime execution",
+      "heads": [
+        {
+          "pointer": "/takeover/postRows",
+          "authority_rows": [
+            {
+              "ResourceKind": "ACTOR_AUTHORITY",
+              "ResourceKey": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031",
+              "Owner": "IAM",
+              "FactId": "e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+              "FactVersion": "2",
+              "BodyDigest": "76d7856dcd4dee061693ef83c326cce87907c8d08fd9ce1b48e975185d34af49",
+              "HeadRevision": 2,
+              "RowVersion": "AAAAAAAAPrI="
+            }
+          ]
+        },
+        {
+          "pointer": "/dispatchClaim/preRows",
+          "authority_rows": [
+            {
+              "ResourceKind": "ACTOR_AUTHORITY",
+              "ResourceKey": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031",
+              "Owner": "IAM",
+              "FactId": "e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+              "FactVersion": "1",
+              "BodyDigest": "32b4265d3dd44c20cdd8b06c288c42a1acd34444a4cef3b50d000b1f2b4cb0aa",
+              "HeadRevision": 1,
+              "RowVersion": "AAAAAAAADAw="
+            }
+          ]
+        },
+        {
+          "pointer": "/dispatchClaim/postRows",
+          "authority_rows": [
+            {
+              "ResourceKind": "ACTOR_AUTHORITY",
+              "ResourceKey": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031",
+              "Owner": "IAM",
+              "FactId": "e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+              "FactVersion": "2",
+              "BodyDigest": "76d7856dcd4dee061693ef83c326cce87907c8d08fd9ce1b48e975185d34af49",
+              "HeadRevision": 2,
+              "RowVersion": "AAAAAAAAPrI="
+            }
+          ]
+        }
+      ],
+      "write_tables": [
+        "OwnerCommand",
+        "OutboxEvent"
+      ],
+      "reconstruction_before_errors": [],
+      "unexpected_post_rows": [
+        {
+          "row": {
+            "BodyDigest": "76d7856dcd4dee061693ef83c326cce87907c8d08fd9ce1b48e975185d34af49",
+            "EnvironmentId": "00000000-0000-4000-8000-000000000001",
+            "FactId": "e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+            "FactVersion": "2",
+            "HeadRevision": 2,
+            "Owner": "IAM",
+            "ResourceKey": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031",
+            "ResourceKind": "ACTOR_AUTHORITY",
+            "RowVersion": "AAAAAAAAPrI=",
+            "TenantId": "00000000-0000-4000-8000-000000000002"
+          },
+          "table": "PlanningFactHead"
+        },
+        {
+          "row": {
+            "BodyDigest": "76d7856dcd4dee061693ef83c326cce87907c8d08fd9ce1b48e975185d34af49",
+            "BodyJson": "{\"actions\":[\"plan-po.firm\",\"plan-po.convert.preview\",\"plan-po.convert.start\",\"plan-po.convert.recover\",\"plan-po.cutover\"],\"actorId\":\"planner-001\",\"environmentId\":\"00000000-0000-4000-8000-000000000001\",\"fieldMask\":[\"plan-po.quantity.read\",\"plan-po.pegging.read\",\"plan-po.technical.read\",\"plan-po.commercial.read\",\"plan-po.owner-wire.read\"],\"issuer\":\"CORE\",\"permissionDigest\":\"5d0e58e9cd124de33140e0a06e32da675f7169a607253fd8a90d177ae74b5930\",\"plannedOrderId\":\"65b5bc66-7c23-58a1-9ef7-b66d7f00479e\",\"schema\":\"plan.po.object-authority/1.0-proposed\",\"siteRef\":{\"digest\":\"940a2b565a062a73a0dc62ae1e72e2776105ba64f95973c1b85df87192fdff24\",\"id\":\"7124d4f9-0596-596b-ab4f-f04001809f7f\",\"owner\":\"SITE\",\"version\":\"1\"},\"state\":\"GRANTED\",\"tenantId\":\"00000000-0000-4000-8000-000000000002\",\"validFrom\":\"2026-10-03T10:04:10Z\",\"validTo\":\"2026-10-03T11:00:00Z\"}",
+            "EnvironmentId": "00000000-0000-4000-8000-000000000001",
+            "FactId": "e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+            "FactKind": "ACTOR_AUTHORITY",
+            "FactVersion": "2",
+            "Owner": "IAM",
+            "RecordedAt": "2026-10-03T10:04:10Z",
+            "TenantId": "00000000-0000-4000-8000-000000000002"
+          },
+          "table": "PlanningFactCatalog"
+        }
+      ],
+      "missing_post_rows": [
+        {
+          "row": {
+            "BodyDigest": "32b4265d3dd44c20cdd8b06c288c42a1acd34444a4cef3b50d000b1f2b4cb0aa",
+            "EnvironmentId": "00000000-0000-4000-8000-000000000001",
+            "FactId": "e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+            "FactVersion": "1",
+            "HeadRevision": 1,
+            "Owner": "IAM",
+            "ResourceKey": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031",
+            "ResourceKind": "ACTOR_AUTHORITY",
+            "RowVersion": "AAAAAAAADAw=",
+            "TenantId": "00000000-0000-4000-8000-000000000002"
+          },
+          "table": "PlanningFactHead"
+        },
+        {
+          "row": {
+            "BodyDigest": "af56425d65356a9e984f554f7d1eb111e60b4f48f0fa6ddf4a1b4d903e3d7fd3",
+            "BodyJson": "{\"actions\":[\"plan-po.convert.recover\"],\"actorId\":\"planner-001\",\"environmentId\":\"00000000-0000-4000-8000-000000000001\",\"plannedOrderId\":\"65b5bc66-7c23-58a1-9ef7-b66d7f00479e\",\"schema\":\"iam.plan-po-object-authority/1.0\",\"state\":\"GRANTED\",\"tenantId\":\"00000000-0000-4000-8000-000000000002\",\"validFrom\":\"2026-10-03T10:00:00Z\",\"validTo\":\"2026-10-03T12:00:00Z\"}",
+            "EnvironmentId": "00000000-0000-4000-8000-000000000001",
+            "FactId": "CP18-RECOVERY-AUTHORITY",
+            "FactKind": "AUTHORITY",
+            "FactVersion": "1",
+            "Owner": "IAM",
+            "RecordedAt": "2026-10-03T10:00:00Z",
+            "TenantId": "00000000-0000-4000-8000-000000000002"
+          },
+          "table": "PlanningFactCatalog"
+        }
+      ],
+      "source": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\plan-po-cp22\\members\\PLAN_PO_R3_CP18_EPOCH_NORMAL_DATA.json",
+      "sha256": "ba98958a33ddb8a74e30fa8cae59c0ec441d41c6e313822e1f3b963de9e2a202"
+    },
+    {
+      "label": "SCENARIO_IMMUTABLE_REVISION_UPDATE",
+      "status": "retained_historical_example_not_current_mutator",
+      "pointer": "/SC18_cancelFirst/steps/1/writes/10",
+      "operation": "UPDATE",
+      "key_business_revision": 5,
+      "before_business_revision": 4,
+      "after_business_revision": 5,
+      "post_revision_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "conclusion": "Source labels immutable revision creation as UPDATE from revision4 to5 while post retains revision4. Current contract requires append new revision; do not use this write operation as implementation.",
+      "source": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\plan-po-cp22\\members\\PLAN_PO_R3_CP18_SCENARIO_ROW_IMAGES.json",
+      "sha256": "783fb667fb58246e9747e1008bb4e008b92b4b25f92d5e54e29010fc64413f26"
+    },
+    {
+      "label": "THREE_OWNER_WMS_REVISION_BODY_AXES",
+      "status": "static_example_aggregate_body_alignment",
+      "pointer": "/worlds/0/steps/3/writes/15/after",
+      "row": {
+        "BusinessRevision": 7,
+        "SuggestionState": "WITHDRAWN",
+        "DecisionState": "FIRM",
+        "ConversionState": "SUCCEEDED"
+      },
+      "body": {
+        "businessRevision": "4",
+        "suggestionState": "ACTIVE",
+        "decisionState": "FIRM",
+        "conversionState": "PENDING"
+      },
+      "note": "creation.originalRequestView remains immutable original native201 by design; mismatch concerns outer aggregate business fields, not replacing native historical bytes.",
+      "source": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\plan-po-cp22\\members\\PLAN_PO_R3_CP18_SC18_THREE_OWNER_NORMAL_DATA.json",
+      "sha256": "64ffd1358897a05772579a37928b4c210761ec9d20edabd325acff0189f35778"
+    }
+  ],
+  "updated_at_utc": "2026-10-10T12:57:31.984804+00:00",
+  "business": "NOT_RUN",
+  "no_archived_code_executed": true
+}

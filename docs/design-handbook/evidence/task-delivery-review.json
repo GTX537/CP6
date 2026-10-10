@@ -1,0 +1,88 @@
+{
+  "at_utc": "2026-10-10T16:13:21.312448+00:00",
+  "type": "single_task_document_review_and_targeted_corrections",
+  "local_available_content_scope_complete": true,
+  "required_materials_complete_targets": 124,
+  "available_but_review_missing_targets": [
+    "WMS-DEL-01"
+  ],
+  "repo_delivery": "local_private_branch_only_not_pushed_or_merged",
+  "base_and_remote_main": "90c871fe571fd6b390f53e8678376d7ce60bcb60",
+  "remote_visibility": "PUBLIC",
+  "original_archive_snapshot_unchanged": true,
+  "review_scope": "Group full-task content review plus common navigation, contract status, Owner/quantity/UNKNOWN/current/acceptance boundaries; exact historical review snapshots are reused with their stated scopes and times. Final path and JSON-only corrections preserve other semantic values.",
+  "corrections": [
+    "Three stale operations coverage statements",
+    "X3/X4 completed-source wording",
+    "platform pending_contracts stale scopes",
+    "IPQC continuous semantic pending flag",
+    "NCR sourceUseKeyDigest excludes version/digest; source version stored separately",
+    "164 internal JSON references and two persistent alias maps",
+    "Final navigation explicitly separates 124 required closure from DEL missing review"
+  ],
+  "verification_reuse": [
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-task-public-handbook-review-20261010.json",
+      "sha256": "889f4dd59d1edbf99bc1a7c5acab4519dd2790972a9417b635705fe8c6f2c1da"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/worklogs/commercial-progress.json",
+      "sha256": "bf4cf15e675eed0efd4b0d4e8547dfc4a342370a6139d0f8c06a264c58475ad2"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/worklogs/operations-progress.json",
+      "sha256": "54dc667f6abb3dca2f433fae84b930dfef0a49921f4730c5235e1b9abda4a44d"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/worklogs/platform-engineering-progress.json",
+      "sha256": "b27bf589d8cc94646f41b1c125953060cf36794d449807f55a67d087899c7d06"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/worklogs/root-planning-progress.json",
+      "sha256": "7b380cf307aa5e64ef00c005a486844cef572d7ef2f60cca83827f7c1f37701d"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/worklogs/root-quality-progress.json",
+      "sha256": "325e4d76a7eb6d56d9b47267484f52f7066d3446bd3b0f2601e41238d0fdc8b5"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/worklogs/root-specialty-progress.json",
+      "sha256": "35db21383d9d4b0d1b9d883c71ac8fab51571cae79627ca19b22fba6066c3004"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-document-checks.json",
+      "sha256": "4e535ff9de512d64ed126fe23d6322b34ed953e79650c1f06bf205b140a37c96"
+    },
+    {
+      "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/pre-delivery-document-validation.json",
+      "sha256": "0f99f0ad4f605816dc39fe3200a49e29c6e9134721cb9b3615a46bf58daed974"
+    }
+  ],
+  "validation_snapshot": {
+    "as_of_utc": "2026-10-10T16:12:34.254699+00:00",
+    "scope": "JSON/CSV parse, written module IDs/section presence, local Markdown file and line links. Link existence and heading count do not establish correct semantics or full source reading.",
+    "json_files_parsed": 105,
+    "csv_files_parsed": 4,
+    "local_links_checked": 19774,
+    "written_modules": 125,
+    "expected_targets": 125,
+    "modules_not_yet_written": [],
+    "errors": [],
+    "warnings": [],
+    "business_tests_executed": false,
+    "semantic_completion_assessed_by_this_check": false
+  },
+  "own_document_tool_syntax_files": 13,
+  "unverified": [
+    "No compilation/serialization/business/database/integration/production acceptance",
+    "No full semantic re-review of every historical implementation or obsolete fixture",
+    "No visual layout approval for historical Office masters",
+    "No public remote publication, PR, merge or main inclusion"
+  ],
+  "actions": {
+    "launched": 0,
+    "cancelled": 0,
+    "workflow_triggers_changed": 0
+  },
+  "archive_scripts_executed": false
+}

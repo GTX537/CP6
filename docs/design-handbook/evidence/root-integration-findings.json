@@ -1,0 +1,126 @@
+{
+  "group": "root",
+  "findings": [
+    {
+      "id": "ROOT-X3-X4-ABC-01",
+      "kind": "different_explicit_algorithms_not_runtime_bug",
+      "targets": [
+        "WMS-SLOT-01",
+        "WMS-ANALYTICS-01"
+      ],
+      "finding": "两者都称ABC，但SLOT按当前行加入前前缀<80/95，首行A；ANALYTICS按末项累计<=80/95，单产品100%为C。各自排序和分组维度亦有精确定义。",
+      "impact": "不可按名称共享无版本分类器或从一个模块复制等级；跨模块建议消费应保ruleRef/definition版本及算法身份。",
+      "exit_condition": "实现明确两个版本化策略/各自验收；若业务要求统一须另有准确后继决策，本整理不擅改已选正文。",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ec/ec7dcc5179f0e584__WMS-SLOT-01_库位优化_完整设计_RECOVERY_v1.1_R2.md",
+          "line": 59
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 66
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2f90c5537845e5cb__WMS-ANALYTICS-01_仓储报表与运行分析_完整详设_R2_CANDIDATE.md",
+          "line": 143
+        }
+      ]
+    },
+    {
+      "id": "IPQC-CONT-01",
+      "kind": "STATIC_FIXTURE_ADOPTION_CLARIFICATION",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "finding": "F02-03 INITIAL declared write set has no InitialClaim rows",
+      "impact": "Current F02 fixture cannot demonstrate per-slot permanent INITIAL claim although API I09 lists it as committed evidence. Static branch list acceptance must not be treated as proof of those rows.",
+      "exit_condition": "Author reconciles F02 claims/write images/final rows/digests, or supplies an explicit current normative exemption with exact scope.",
+      "evidence": [
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 17601
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 20140
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 20170
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 73702
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 96205
+        }
+      ],
+      "runtime_failure_proven": false
+    },
+    {
+      "id": "IPQC-CONT-02",
+      "kind": "STATIC_FIXTURE_IDENTITY_ALIGNMENT",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "finding": "F03 OUT-TRIAL-F03 request source differs from persisted OUT-QA-F03 for the same digest",
+      "impact": "Source IDs remain part of owner identity; equal body digest does not establish an alias. I05 and I29 examples need a source mapping before fixture adoption.",
+      "exit_condition": "Align source identities or add an authoritative explicit alias and update dependent bodies and hashes.",
+      "evidence": [
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 94099
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 91313
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 107060
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 104069
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 113408
+        }
+      ],
+      "runtime_failure_proven": false
+    },
+    {
+      "id": "IPQC-CONT-03",
+      "kind": "STATIC_RECOVERY_PROJECTION_ALIGNMENT",
+      "targets": [
+        "QA-IPQC-01"
+      ],
+      "finding": "F07 FrozenDelivery I26 response changes canonicalKey/sequence without a Delivery write",
+      "impact": "For the same deliveryId/messageId/payload bytes, I26 returns F07:I26 / 4, while persisted Delivery and I25 return F07:OWNER-SEQUENCE / 3. Recovery consumers must not infer a new immutable delivery identity from this example. State UNKNOWN/PENDING/APPLIED belongs to different projections and is not alone called a failure.",
+      "exit_condition": "Specify and align the FrozenDelivery projection and canonical identity; repair fixture response/digests or document a distinct, typed attempt identity.",
+      "evidence": [
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 167002
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 167076
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 168351
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/76161b6b2ef5944c2d7a445edbe33546c056364f804f1fd10b851ad30ef6a79f.json",
+          "line": 168038
+        }
+      ],
+      "runtime_failure_proven": false
+    }
+  ],
+  "updated_at_utc": "2026-10-10T15:08:29.295013+00:00"
+}

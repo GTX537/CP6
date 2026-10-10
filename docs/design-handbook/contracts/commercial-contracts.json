@@ -1,0 +1,4341 @@
+{
+  "group": "commercial",
+  "status": "in_progress",
+  "contracts": [
+    {
+      "contract_id": "H01",
+      "name": "Inquiry conversion into Lead",
+      "producer_owner": "CRM-INQ-01",
+      "consumer_owner": "CRM-LEAD-01",
+      "purpose": "将持久化赢家Submission转为唯一Lead，同一CRM事务完成。",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fa/fa7d0f3388911b30__B-CRM-INQ-R3-V15-FINAL-MAIN.md",
+      "source_lines": [
+        217,
+        218,
+        219,
+        323,
+        325,
+        327,
+        329,
+        501
+      ],
+      "request_type": "H01ConvertInquiryCommand",
+      "response_type": "LeadCreationReceipt",
+      "wire_source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ce/ce845bdee6789102__canonical-contract.json",
+      "wire_json_pointers": [
+        "/definitions/H01ConvertInquiryCommand",
+        "/definitions/LeadCreationReceipt"
+      ],
+      "key_rules": [
+        "原ReceivedAt、签名授权投影与digest、bundle/calendar/consent/commandSlot必须绑定赢家",
+        "原子写Lead+history+Submission转换+replay+audit+outbox",
+        "current枚举Website10/Manual20/New0覆盖INQ旧20/10示例",
+        "H01成功不代表商机/报价/订单/Won"
+      ],
+      "authority_overlay": {
+        "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e9/e97177633a150540__ERRATA.json",
+        "line": 8,
+        "qualification": "当前限定替代证据；不证明丢失R2/H01原历史字节恢复"
+      },
+      "runtime_status": "UNPROVEN_REQUIRED_FENCED"
+    },
+    {
+      "contract_id": "CRM-INQ-PUBLIC-RECEIPT",
+      "producer_owner": "CRM-INQ-01",
+      "consumer_owner": "anonymous browser",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fa/fa7d0f3388911b30__B-CRM-INQ-R3-V15-FINAL-MAIN.md",
+      "source_lines": [
+        15,
+        17,
+        19,
+        251,
+        253,
+        505
+      ],
+      "fields": [
+        "receiptId",
+        "displayReference",
+        "receivedAtUtc",
+        "message",
+        "expiresAtUtc"
+      ],
+      "authentication": "separate 256-bit proof cookie+browser binding+row expiry/tombstone/PII state",
+      "key_rules": [
+        "receiptId仅非秘密定位符",
+        "不可当内部Submission/Lead访问授权",
+        "未知/错浏览器/跨租户/过期/撤销/匿名化统一404",
+        "no-store和安全响应头"
+      ],
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "contract_id": "H02",
+      "name": "Lead atomic conversion",
+      "producer_owner": "CRM-LEAD-01",
+      "consumer_owners": [
+        "CRM-ACC-01",
+        "CRM-CON-01",
+        "CRM-OPP-01"
+      ],
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/23/23151de8bc435698__CRM-LEAD-01_CP22_FULL-FIVE-SPEC-REVIEW-CANDIDATE.md",
+      "source_lines": [
+        238,
+        242,
+        251,
+        261,
+        280,
+        284,
+        288,
+        290,
+        303,
+        311,
+        430,
+        438,
+        475
+      ],
+      "wire_source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/2428190864cfd501__CP20-qualification-h02.schema.json",
+      "wire_json_pointers": [
+        "/$defs/ConversionPreviewRequest",
+        "/$defs/ConversionCommitRequest",
+        "/$defs/ConversionManifest",
+        "/$defs/ParticipantEffectReceipt"
+      ],
+      "request_rule": "preview完整Account选择+1–20Contact+可选NONE/CREATE_PRIMARY；commit只有previewToken",
+      "transaction": "same database/DbConnection/DbTransaction；唯一coordinator commit；Owner不得selfcommit/HTTP另建/第二创建消息",
+      "business_identity": [
+        "TenantId",
+        "LeadAuthority",
+        "LeadId",
+        "LEAD_CONVERSION"
+      ],
+      "selection_rule": "同选择换运输key回原Manifest；异选择冲突；local摘要不代替OPP H02-OPP-SELECTION-CANON-1",
+      "recovery": "commit-unknown查原operation/key和业务槽；NOT_OBSERVED仅知识未知；不能补建Owner资源",
+      "guards": [
+        "真实Enlist descriptor不齐503 COMMIT_GUARD_UNPROVEN且零业务写",
+        "当前Lead/qualification/evidence与所有Owner权限版本锁内重验",
+        "实际Owner结果→Audit/Outbox父→Manifest/effect尾→actual-final audit确认→唯一commit"
+      ],
+      "runtime_status": "UNPROVEN_REQUIRED_FENCED",
+      "supersedes": "R3泛化Saga作为历史；AC048–052原条件规则保留NOT_APPLICABLE_TO_ATOMIC_MODE"
+    },
+    {
+      "contract_id": "C03/H04-ACCOUNT-MAPPING",
+      "producer_owner": "Main",
+      "consumer_owner": "CRM-ACC-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c2/c20ce5cbfb05b5a1__CLARIFICATIONS.md",
+      "source_lines": [
+        27,
+        29
+      ],
+      "fields": [
+        "BusinessPartnerKey(string)"
+      ],
+      "exact_wire_boundary": "BPKey仅逻辑简称；原v1不包含Scope/Fence/MappingEvidence。当前字段原件按CR09 §2完整列表合读。",
+      "current_request_owner": "Main H04；DEC04不启用CRM主动请求；CRM仅批准导航+回查+A12结果投影",
+      "current_mapping_contract": "A.R03-CT02独立新协议需求：ScopeDecisionProof/完整授权快照，Owner选择非到达或版本大小；A13最终同事务比较槽版本与本地资格",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a3/a3e4af65be952562__ACCEPTANCE.md",
+          "line": 24
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/bed32d5ca99a24a2__RECEIPT-MAPPING.md",
+          "line": 36
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/bed32d5ca99a24a2__RECEIPT-MAPPING.md",
+          "line": 48
+        }
+      ],
+      "runtime_status": "UNPROVEN_REQUIRED_FENCED"
+    },
+    {
+      "contract_id": "A.R03-CT01",
+      "name": "Account原操作结果与有界Fence恢复",
+      "producer_owner": "原命令实际执行Owner",
+      "consumer_owner": "CRM-ACC-01 A11",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/be/bed32d5ca99a24a2__RECEIPT-MAPPING.md",
+      "source_lines": [
+        7,
+        18,
+        23,
+        30
+      ],
+      "operation_identity": [
+        "Owner",
+        "Organization",
+        "OperationKey",
+        "FrozenIntentDigest"
+      ],
+      "result_axes": [
+        "ENTITY_APPLY",
+        "LOCAL_REQUEST",
+        "REMOTE_BUSINESS",
+        "PROJECTION"
+      ],
+      "read_rule": "当前RQ/字段/身份先授权；旧成功不重核Active/edit新业务守卫",
+      "fence_rule": "原执行Owner同裁决持久绑定操作/摘要/执行域与迟到阻断；部分域证明非全局未应用",
+      "unknown_rule": "NotFound/expired/409/412/input reject不自动形成NOT_APPLIED_FINAL或授权换键",
+      "public_receipt_boundary": "本组合跨刷新公共receipt未冻结，仅原tab内存；无PII/token URL/localStorage",
+      "runtime_status": "UNPROVEN_REQUIRED_FENCED"
+    },
+    {
+      "contract_id": "CONTACT-PURPOSE-EVIDENCE/1.1",
+      "producer_owner": "PurposeEvidence Owner",
+      "consumer_owner": "CRM-CON-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6a/6a000d26d7a638a4__CRM-CON-01_联系人与账户关系_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        1662,
+        1667,
+        1670,
+        1676,
+        1684,
+        1698,
+        1704,
+        1706
+      ],
+      "request_fields": [
+        "binding(Tenant/Contact/Channel/ValueRevision/Kind/Platform/NormalizationVersion/Fingerprint/Purpose/From/To)",
+        "applicantSubjectId",
+        "EvidenceRef",
+        "bindingDigest",
+        "valueAttestation",
+        "requestedAt"
+      ],
+      "response_rules": [
+        "逐字段完整绑定且decision VALID",
+        "permittedInterval全覆盖/subjectRule匹配",
+        "LOCAL_REVOCATION_GUARD或OWNER_COMMIT_PERMIT实际提交窗口；null有效期非无限",
+        "候选每个Allowed段重验，非扩张也不豁免"
+      ],
+      "runtime_status": "UNPROVEN_G03_G06"
+    },
+    {
+      "contract_id": "CONTACT-HISTORY-EXPORT/1.1",
+      "producer_owner": "ExportOwner",
+      "consumer_owner": "CRM-CON-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6a/6a000d26d7a638a4__CRM-CON-01_联系人与账户关系_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        1247,
+        1303,
+        1307,
+        1333,
+        1987,
+        2018,
+        2022,
+        2031,
+        2037
+      ],
+      "canonicalization": "CONTACT-EXPORT-CANON-1；NFC/UTC毫秒/对象键Ordinal/紧凑JSON/null保留/字段数组保序；SHA256域前缀+LF+CanonicalJSON",
+      "intent_fields": [
+        "schemaVersion",
+        "datasetSchemaVersion",
+        "tenantId",
+        "contactId",
+        "requestedBy",
+        "readerSubjectId",
+        "dataset",
+        "view",
+        "fieldIds",
+        "readPurpose",
+        "recordedThrough",
+        "occurrenceFromUtc",
+        "occurrenceToUtc",
+        "format"
+      ],
+      "identity_chain": "Request/Tenant/Intent→唯一Producer/Job→ArtifactId/opaqueVersion/hash/bytes/format/intent",
+      "receipt_recovery": "同Request根锁；Artifact先到只WAITING；加密原始UTF8载荷和接收认证持久化；内部续办不被运输去重提前退出；同精确旧业务版异语义仍冲突",
+      "download": "当前DL/180/字段/用途/隐私/真实Owner读取窗口，READY不是永久许可",
+      "runtime_status": "UNPROVEN_G05_G06"
+    },
+    {
+      "contract_id": "CONTACT-ACCOUNT-ACTIVITY-ADMISSION",
+      "producer_owner": "CRM-CON-01 / CRM-ACC-01资格Owner",
+      "consumer_owner": "CRM-ACT-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/6a/6a000d26d7a638a4__CRM-CON-01_联系人与账户关系_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        1537,
+        1802,
+        1819,
+        1825,
+        1850,
+        1852
+      ],
+      "identity_vector": [
+        "ContactRevision",
+        "SetVersion",
+        "ChannelId",
+        "ValueRevision",
+        "PurposeCode",
+        "PolicyVersion",
+        "OccurredRestriction",
+        "CurrentRestriction",
+        "RelationEvidence",
+        "AccessStamp"
+      ],
+      "transaction": "Contact通用资格协议需同库Account→Contact→Activity最终保护；ACT v1.1.1进一步限定当前可启用方式为Owner批准LOCAL_AUTHORITATIVE_GUARD。跨部署未定义原子协议不等已启用。",
+      "rules": [
+        "准备仅PREPARED_NOT_APPLIED",
+        "过去时点新补录仍当前新写",
+        "值/策略/关系/身份先变则旧准备拒绝",
+        "已合法提交事实不因后续限制自动Voided"
+      ],
+      "runtime_status": "UNPROVEN_G02_G03_G08"
+    },
+    {
+      "contract_id": "ACT-CONTACT-ADMISSION/1",
+      "producer_owner": "CRM-CON-01 / Account资格与IAM Owner",
+      "consumer_owner": "CRM-ACT-01",
+      "source_lines": [
+        1016,
+        1035,
+        1043
+      ],
+      "identity_vector": [
+        "Tenant",
+        "Actor",
+        "operation=RECORD|REFERENCE_ADD",
+        "O",
+        "primary",
+        "activityContext",
+        "Contact/Set/Relation/Channel/Value/Purpose",
+        "OccurredAt",
+        "currentAdmissionStamp",
+        "GuardSet"
+      ],
+      "rules": [
+        "PREPARED_NOT_APPLIED不是事实",
+        "本版本实际Owner批准LOCAL_AUTHORITATIVE_GUARD参与最终裁决，普通GET/TTL只是提示",
+        "缺实际撤权提交窗口则拒绝新写，不靠隐含reserve-confirm"
+      ],
+      "runtime_status": "UNPROVEN_G02",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md"
+    },
+    {
+      "contract_id": "ACT-EXISTING-PARTICIPANT/1",
+      "producer_owner": "CRM-CON-01",
+      "consumer_owner": "CRM-ACT-01 FACT",
+      "source_lines": [
+        1050,
+        1091,
+        1102,
+        1104
+      ],
+      "identity_vector": [
+        "Tenant",
+        "Actor",
+        "Activity/Revision/Set",
+        "ReferenceId/CreatedInRevision",
+        "historicalContact/Relation/Channel/Value/Purpose",
+        "originalAdmissionEvidence",
+        "proposedFacts/PlanDigest",
+        "currentDecision/DependencyVector/guards"
+      ],
+      "rules": [
+        "历史绑定固定，PrepareExisting取新当前证明",
+        "current13可以覆盖historical12，但不能自动换Value或Relation",
+        "封闭preview含完整Request/Decision且重启可用",
+        "成功新增FACT_EXISTING Evidence与FactAdmissionLink，旧Member证据不变"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_RUNTIME_UNPROVEN",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md"
+    },
+    {
+      "contract_id": "ACT-FILE-REFERENCE/1",
+      "producer_owner": "File/Security Owner",
+      "consumer_owner": "CRM-ACT-01",
+      "source_lines": [
+        509,
+        527,
+        531,
+        537,
+        548,
+        566
+      ],
+      "identity_vector": [
+        "Tenant/Actor/O/intentDigest",
+        "primary/Activity/Revision/Set",
+        "ReferenceId",
+        "AttachmentId/Version",
+        "Purpose",
+        "Decision/scan/policy/retention",
+        "local authoritative guard attestation"
+      ],
+      "rules": [
+        "Add Clean且当前用途允许，Retain/Unlink/Download各自判定",
+        "唯一当前启用方式LOCAL_AUTHORITATIVE_GUARD作为Owner实际撤权裁决点",
+        "普通远端GET/TTL/reserve-hold-confirm不构成当前受支持协议",
+        "全部Add/Retain/Remove一项失败整意图零写",
+        "下载精确版本当前DL/scan/guard，流中撤权停止后续字节"
+      ],
+      "runtime_status": "UNPROVEN_G03",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md"
+    },
+    {
+      "contract_id": "ACT-CONTACT-READ/1.1",
+      "producer_owner": "CRM-ACT-01",
+      "consumer_owner": "CRM-CON-01",
+      "source_lines": [
+        666,
+        683,
+        707,
+        3329
+      ],
+      "acceptance_source": {
+        "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/19/192cc33a7bda8b5c__HISTORY__handoffs__PLAN-REUSE-01B__documentation__MD02__acceptances__A-CRM__CRM-ACT-01__UA-20260930-A-CRM-ACT-MD01.md.txt",
+        "lines": [
+          19,
+          21,
+          25,
+          49
+        ]
+      },
+      "identity_vector": [
+        "ActivityId/Revision",
+        "S0 original association",
+        "Sc current association",
+        "nullable asRecorded",
+        "association",
+        "relationExplanations",
+        "response read time/access stamp"
+      ],
+      "rules": [
+        "UA已接受最小读取扩展设计，旧Contact原件不覆盖",
+        "原Contact主锚Note不是实际参与，不造Participant",
+        "后继才加入Contact可以asRecorded=null",
+        "尚用旧DTO无法无损表达则Partial且nextCursor=null"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_RUNTIME_UNPROVEN_G08",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md"
+    },
+    {
+      "contract_id": "ACT-ENGINEERING/1",
+      "producer_owner": "CRM-HO/PLM原Request Owner",
+      "consumer_owner": "CRM-ACT-01工程投影",
+      "source_lines": [
+        780,
+        812,
+        826,
+        838,
+        860,
+        3427,
+        3428
+      ],
+      "identity_vector": [
+        "B=Tenant+RequestOwner+RequestKey",
+        "exact SourceIdentity",
+        "CanonicalStream=Producer+ContractVersion+Epoch",
+        "ordinal/previous/checkpoint",
+        "TerminalIdentity six fields",
+        "TransportKey Tenant+Producer+ContractVersion+Epoch+EventId",
+        "ConflictKeyHash excludes transport identity"
+      ],
+      "rules": [
+        "原Request Owner明确批准一条规范流，不自动换epoch",
+        "第一次终态业务身份永久固定，更大ordinal不能改工程身份",
+        "Binding/Stream/Result/Inbox/slot同事务",
+        "同业务冲突换EventId只运输别名，不重复SlotVersion",
+        "全加密原body+信任持久恢复，等待分支不当运输重复结束",
+        "旧源成功不确认当前源，汇总仅OBSERVED_AUTHORIZED_REQUESTS"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_RUNTIME_UNPROVEN_G04_G05",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/67/67dc3667fb852c56__CRM-ACT-01_互动记录与修订追踪_前后端开发Spec_v1.1.1_REVIEW.md"
+    },
+    {
+      "contract_id": "H02-OPP-TRANSACTION-PARTICIPANT",
+      "producer_owner": "CRM-LEAD-01转换协调器",
+      "consumer_owner": "CRM-OPP-01",
+      "source_lines": [
+        699,
+        730,
+        739,
+        741,
+        1570
+      ],
+      "identity_vector": [
+        "Tenant",
+        "LeadAuthority/LeadId/PRIMARY_OPPORTUNITY",
+        "ConversionId",
+        "exact frozen selection",
+        "Manifest",
+        "sourceSelectionDigest"
+      ],
+      "rules": [
+        "Lead与OPP同DbConnection/DbTransaction共同提交，参与者不得独立commit",
+        "同转换业务槽不同运输/人工Key不能第二Opp，同槽异选择冲突",
+        "旧ExecuteLeadAsync内部事务须真实Enlist适配",
+        "本稿H02-OPP-SELECTION-CANON-1与当前Lead CP22完整wire仍需逐字段合读，不按名称视作已一致"
+      ],
+      "runtime_status": "CURRENT_CP22_ALIGNMENT_AND_REAL_ENLIST_UNPROVEN",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdc91e2093023cf7__CRM-OPP-01_商机与销售管道_前后端开发Spec_v1.1.2_RECOVERY_REVIEW_CANDIDATE.md"
+    },
+    {
+      "contract_id": "CRM-HO-OPP/1",
+      "producer_owner": "CRM-HO-01唯一Request Owner",
+      "consumer_owner": "Main商业受理 / CRM-OPP-01",
+      "source_lines": [
+        793,
+        860,
+        866,
+        868,
+        919,
+        924,
+        1075,
+        1254
+      ],
+      "identity_vector": [
+        "Tenant/HandoffId/RequestVersion",
+        "immutable IntentId/IntentDigest",
+        "Source Opportunity/Account/Need/Forecast/Stakeholder",
+        "prior MainReceiptId/intakeOrdinal/intakeBusinessDigest/handoffSlotVersion",
+        "HO Supersession/authorization",
+        "targetOwner/legalEntity/processingType"
+      ],
+      "rules": [
+        "完整CommercialIntent由服务从已保存版本重建，摘要不授权",
+        "INITIAL prior=null；SUPPLEMENT取完整7项prior，同Handoff连续版本且原当前NEEDS_INFO、无矛盾/Group/Quote",
+        "原HO StageWithinTransaction必须参加真实同CRM DbTx，否则所有写0",
+        "补件原子切唯一current pending，历史原拒绝/NEEDS_INFO及原O回执不改",
+        "HO唯一完整Envelope Outbox，202仅LOCAL_REQUEST/UNKNOWN，旧版晚回不清新pending",
+        "首次冻结TargetBaseline，补件/预测不追改分母"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_REAL_HO_ADOPTION_UNPROVEN",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdc91e2093023cf7__CRM-OPP-01_商机与销售管道_前后端开发Spec_v1.1.2_RECOVERY_REVIEW_CANDIDATE.md"
+    },
+    {
+      "contract_id": "OPP-INTAKE/1",
+      "producer_owner": "Main Intake Owner",
+      "consumer_owner": "CRM-OPP-01",
+      "source_lines": [
+        872,
+        886,
+        907,
+        909,
+        911,
+        915,
+        1143,
+        1154
+      ],
+      "identity_vector": [
+        "Tenant/targetMainAuthority/HandoffId/RequestVersion",
+        "complete SourceHandoffRef",
+        "Producer/Contract/Epoch",
+        "ordinal/previousOrdinal/previousBusinessDigest",
+        "MainReceiptId=result identity",
+        "CorrectionRevision0to1",
+        "exact MainConfirmationEvidenceRef/OwnerDecision/resolvedConflicts"
+      ],
+      "rules": [
+        "普通ACCEPTED/NEEDS_INFO/REJECTED_FINAL结果冻结，NEEDS_INFO补件是同Handoff新版",
+        "唯一错误拒绝纠正分支IntakeCorrectionSuccessor，同流连续前驱、本版首次revision1、原Owner特殊授权",
+        "真实Main Confirm原消息必须完整可定位，不接受Quote/Draft/ACK代证据",
+        "纠错、精确Group首次应用或复用、Claim/贡献/pending/历史/两Inbox同事务，原拒绝字节保留",
+        "旧版纠错不清当前新版pending，未列冲突不关闭"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_O03_O04_O07_O08_UNVERIFIED",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdc91e2093023cf7__CRM-OPP-01_商机与销售管道_前后端开发Spec_v1.1.2_RECOVERY_REVIEW_CANDIDATE.md"
+    },
+    {
+      "contract_id": "OPP-QUOTE/1",
+      "producer_owner": "Main Quote Owner",
+      "consumer_owner": "CRM-OPP-01",
+      "source_lines": [
+        934,
+        954,
+        956,
+        960,
+        965
+      ],
+      "identity_vector": [
+        "Tenant/MainQuoteAuthority/LegalEntity/QuoteKey",
+        "QuoteVersion/supersedesVersion",
+        "SourceHandoffRef",
+        "canonical stream/ordinal/previousBusinessDigest",
+        "net Money/MainReceiptId/OwnerEvidence"
+      ],
+      "rules": [
+        "当前wire只净额，tax/gross必须null",
+        "同QuoteVersion净额/币种/口径/source不可变，status可同流后继",
+        "缺前驱等待，不字符串排序外部版本",
+        "QuoteAccepted不Won、版本不相加、不回写Forecast/Target",
+        "Main动作仅安全导航并由Main再授权"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_O06_UNVERIFIED",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdc91e2093023cf7__CRM-OPP-01_商机与销售管道_前后端开发Spec_v1.1.2_RECOVERY_REVIEW_CANDIDATE.md"
+    },
+    {
+      "contract_id": "OPP-COMMERCIAL/1",
+      "producer_owner": "Main Sales商业责任Owner",
+      "consumer_owner": "CRM-OPP-01",
+      "source_lines": [
+        977,
+        1026,
+        1032,
+        1041,
+        1045,
+        1046,
+        1051,
+        1502,
+        1504
+      ],
+      "identity_vector": [
+        "GroupNaturalKey=Tenant/authority/legalEntity/groupKey",
+        "customerIntentKey/economicScopeDigest",
+        "originalSource exact Handoff/Intent",
+        "BusinessPartnerKey opaque string",
+        "currency/basis/CurrencyPolicy",
+        "canonical stream/ordinal/predecessor",
+        "full orders/members/retirements/coverage/ChangeProof",
+        "economicSlice Claim unique identity"
+      ],
+      "rules": [
+        "COMPLETE_CURRENT_GROUP替换该组当前贡献后重算，不+=消息金额",
+        "每币C-X=E，正有效确认才Won；零价单独显示，无FX/收入推断",
+        "同经济份额跨组唯一；REPLACE每旧/新成员C/X份额守恒，旧键退休",
+        "CANCELLED不自动清零；Verifier三组live/extinguished/neverConfirmed互斥穷尽完整OrderVersion声明范围",
+        "订单confirmationCoverage与CRM TargetCoverage分开，40/100首次确认PARTIAL无需虚构取消",
+        "后台HO→Intake→Group/Claim→Opp根，摘要全组重算不逆锁其它Group",
+        "OBSERVE/CONFIRM/CANCEL/AMEND/CORRECT/REPLACE各自差分/证据，不把ACT工程终态冻结套成订单不可变"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_O04_UNVERIFIED",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdc91e2093023cf7__CRM-OPP-01_商机与销售管道_前后端开发Spec_v1.1.2_RECOVERY_REVIEW_CANDIDATE.md"
+    },
+    {
+      "contract_id": "OPP-RESOLUTION/1",
+      "producer_owner": "准确Intake/Quote/Commercial原Owner处置服务",
+      "consumer_owner": "CRM-OPP-01",
+      "source_lines": [
+        1106,
+        1134,
+        1136,
+        1141,
+        1157,
+        1161,
+        1163,
+        1167,
+        1169
+      ],
+      "identity_vector": [
+        "source natural identity",
+        "resolutionId/businessDigest",
+        "expectedSlotVersion/canonicalStream",
+        "exact conflictId/conflictKeyHash/incomingDigest",
+        "retainedResultKey/digest",
+        "canonicalCorrectionResultKey",
+        "intakeCandidates exact original Main message identities",
+        "OwnerDecision complete scope"
+      ],
+      "rules": [
+        "普通可信服务身份不等精确纠错授权，未列问题保持OPEN",
+        "REJECT_CANDIDATE只否定候选，ACK_CANONICAL_CORRECTION只核已应用CORRECT",
+        "ACK_INTAKE_CORRECTION必须1–20准确候选，原完整Main payload/Trust可恢复",
+        "第二Group尚不存在时必须真实首次应用、Claim/贡献/历史/Inbox/Ledger同事务，不先清冲突",
+        "缺源/前驱持久Resolution WAITING，原CONFLICT不清；内部专门派发不duplicate早退",
+        "同Resolution/新EventId原结果幂等，不重复加金额；旧槽不同意图不能自动改body重试"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_O07_O08_O11_UNVERIFIED",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bdc91e2093023cf7__CRM-OPP-01_商机与销售管道_前后端开发Spec_v1.1.2_RECOVERY_REVIEW_CANDIDATE.md"
+    },
+    {
+      "contract_id": "HO-COMMERCIAL-ENLIST/1",
+      "producer_owner": "CRM-OPP-01",
+      "consumer_owner": "CRM-HO-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        313,
+        329,
+        339
+      ],
+      "identity_vector": [
+        "TenantId/HandoffId/HandoffVersion",
+        "OriginOperationKey",
+        "actual same CRM DbTransaction",
+        "Opportunity/Account/Target/LegalEntity immutable identity"
+      ],
+      "rules": [
+        "HO Request/Outbox与OPP当前pending、IntakeQuoteGroup、Won同一实际事务提交；HO不能自己提交。",
+        "Main接收按(T,CRM_HO,H,V)完整意图幂等；不同Body冲突；旧版本晚到受Main版本槽阻断。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "HO-ORIGINAL-QUERY/1",
+      "producer_owner": "Main/PLM original-message authority",
+      "consumer_owner": "CRM-HO-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        361,
+        367,
+        384
+      ],
+      "identity_vector": [
+        "existing source locator",
+        "contract business identity/ordinal",
+        "originalBodyBase64/bodySha256/ReceivedTrust",
+        "stable original catalogue cursor"
+      ],
+      "rules": [
+        "NOT_OBSERVED不证明业务未执行，不清UNKNOWN、不重发新业务。",
+        "必须完整Owner原文回放；禁止latest GET合成历史消息链；查询任务自身完成不等业务完成。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "HO-ENG-REQUEST/1",
+      "producer_owner": "CRM-HO-01",
+      "consumer_owner": "PLM engineering authority",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        428,
+        518,
+        524,
+        528,
+        536
+      ],
+      "identity_vector": [
+        "Case=(Tenant,Opportunity,PLM authority,LegalEntity,ENGINEERING_INTAKE)",
+        "SubmissionVersion",
+        "immutable RequestKey/EventId/Source",
+        "Owner NextContext/CaseRevision/priorExecutionFence"
+      ],
+      "rules": [
+        "所有H15/H16/H17检查当前Case适用冲突、等待前驱与待工程纠错；Main允许Next不能覆盖CRM CaseGuard。",
+        "新ES必须Owner证明旧执行已关闭并可CREATE/REVISE；CRM与PLM独立事务各自真实落库。",
+        "PLM在相同Case槽下串行化别名、Worker和Fence，真实工程实体、来源关联、终态原件与Intake Outbox同事务。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "HO-ENG-INTAKE/1",
+      "producer_owner": "PLM engineering authority",
+      "consumer_owner": "CRM-HO-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        478,
+        546,
+        556
+      ],
+      "identity_vector": [
+        "Case/SubmissionVersion/RequestKey",
+        "canonical stream/ordinal/result digest",
+        "CorrectionRevision/predecessor",
+        "exact resolvedConflictIds"
+      ],
+      "rules": [
+        "PENDING可到NEEDS_INFO/ACCEPTED/REJECTED；普通消息不改终态，纠错必须精确前驱及Owner授权。",
+        "直接纠错可关闭0或1–20个精确本Intake同源冲突，任一不合法全部回滚；不能关闭Progress或别Case冲突。",
+        "新ES后旧ES纠错造成LATE_PREDECESSOR_CORRECTION，不静默并入当前。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "HO-ENG-PROGRESS/1",
+      "producer_owner": "PLM engineering authority",
+      "consumer_owner": "CRM-HO-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        487,
+        564
+      ],
+      "identity_vector": [
+        "accepted current source",
+        "EngineeringRequestId",
+        "frozen stream/epoch",
+        "complete iterations/baselines"
+      ],
+      "rules": [
+        "先精确已接受Intake才能推进；未到前驱持久WAITING，不虚构接受。",
+        "STOP关闭READY使用资格；恢复需精确STOP前驱的Owner CORRECT；不能借普通消息恢复。",
+        "与Intake失效共用Case/ES锁，历史普通进度只进历史。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "HO-ENG-RESOLUTION/1",
+      "producer_owner": "exact original Owner decision service",
+      "consumer_owner": "CRM-HO-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        665,
+        685,
+        753
+      ],
+      "identity_vector": [
+        "natural source identity",
+        "expectedSlotVersion/canonical stream",
+        "1–20 exact conflicts/digests",
+        "OwnerDecision scope/retained result/correction"
+      ],
+      "rules": [
+        "REJECT_CANDIDATE与ACK_CANONICAL_CORRECTION须准确范围；后者只承认已应用纠错，不凭Resolution应用无序候选。",
+        "相同结果/冲突/Resolution重送无槽增量；缺前驱保留WAITING；两真实工程实体必须Main治理，HO不得合并。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "HO-ACT-SOURCE-ASSOCIATION",
+      "producer_owner": "PLM source-association authority",
+      "consumer_owner": "CRM-HO-01/CRM-ACT-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        87,
+        574
+      ],
+      "identity_vector": [
+        "independent exact ACT SourceIdentity",
+        "exact HO Case/ES RequestKey",
+        "Owner association proof"
+      ],
+      "rules": [
+        "ACT与HO是独立来源，不能重绑同RequestKey；HO只呈现Owner证明的实际来源关联，不写ACT。",
+        "ACT继续采用自己的已接受固定流和终态合同；HO新进度结构不能替代。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "MAIN-COMMERCIAL-CONFIRMATION-EVIDENCE-M07",
+      "producer_owner": "Main commercial confirmation authority",
+      "consumer_owner": "CRM-HO-01/CRM-OPP-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        219,
+        226,
+        238
+      ],
+      "identity_vector": [
+        "Tenant/Handoff/Version",
+        "original Main confirmation base64/hash/trust",
+        "Group/stream/ordinal/result digest"
+      ],
+      "rules": [
+        "首次IntakeCorrection的Main完整确认原件须从M07获取并准确绑定；普通OPP Context intakeCandidates=[]。",
+        "之后ACK_INTAKE_CORRECTION仍用既有OPP上下文与真实首次应用事务，不以M07空替代原链。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "BP-CURRENT-USE/1",
+      "producer_owner": "ERP-BP-01",
+      "consumer_owner": "Main Sales/Pur",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        78,
+        84,
+        874,
+        878
+      ],
+      "identity_vector": [
+        "Tenant/LegalEntity/BpId/BpRevision",
+        "accountId/expectedMappingRevision or null",
+        "consumer Owner/id/version/digest/purpose",
+        "UseKey"
+      ],
+      "rules": [
+        "I02只为同实际DB/连接事务参与函数；UseReceipt与真实下游业务/审计/Outbox同commit，HTTP/TTL不能替代。",
+        "当前ACTIVE/REGISTERED/CLEAR及完整角色闭包、字典、币种与依赖均核；Sales需Customer，Purchase需Supplier且Account=null。",
+        "双唯一域限制同UseKey异义与同真实consumer意图换UseKey；历史成功重放不授权下一动作。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_10_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "BP-ACCOUNT-IDENTITY/1",
+      "producer_owner": "CRM Account authority",
+      "consumer_owner": "ERP-BP-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        707,
+        716,
+        785
+      ],
+      "identity_vector": [
+        "AccountId/AccountCode/Tenant immutable identity",
+        "IdentityVersion/SourceAsOf",
+        "OriginalBody/ReceivedTrust",
+        "MainActor/LegalEntity/purpose/10-minute context"
+      ],
+      "rules": [
+        "INACTIVE不撤销不可变身份，可维护真实Main关系但不授予新CRM业务。",
+        "真实原件桥缺失、身份可复用或源信任撤销则UNPROVEN，不靠TTL填补竞争。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_10_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "BP-ACC-MAPPING-SEVEN-FIELDS",
+      "producer_owner": "ERP-BP-01",
+      "consumer_owner": "CRM-ACC-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        651,
+        846,
+        848,
+        850
+      ],
+      "identity_vector": [
+        "eventId/accountId/legalEntityKey/mappingRevision/state/businessPartnerKey/sourceAsOf",
+        "Tenant only trusted context",
+        "BodyHash and five-field semantic tuple"
+      ],
+      "rules": [
+        "businessPartnerKey=实际BpCd字符串，UNLINKED=null；不得加Tenant/BpId/Hash/Producer到body。",
+        "每真实Revision唯一初始Event；重试同原Event/Body，CONFIRM另观察/新Event但不增MappingRevision。",
+        "C03 ResultVersion不得改名为MappingRevision。",
+        "BP指定83331B独立ACC DRAFT的七字段提案与当前ACC R03的Scope/Owner决策/coverage/currentEligibility不是同一物理wire；需双边版本合同与采用证据，不能把七字段直接当当前R03唯一DTO。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_10_OWNER_GATES_UNPROVEN",
+      "adoption_finding_id": "COM-ACC-PHYSICAL-WIRE"
+    },
+    {
+      "contract_id": "BP-PROJECTION-QUERY/1",
+      "producer_owner": "CRM-ACC-01 actual projection authority",
+      "consumer_owner": "ERP-BP-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        711,
+        718,
+        858,
+        860,
+        862,
+        864
+      ],
+      "identity_vector": [
+        "Tenant/Account/LegalEntity",
+        "ExpectedMainRevision/SemanticHash",
+        "ProjectionGeneration",
+        "JobClaim/lease",
+        "five-field source tuple/Trust"
+      ],
+      "rules": [
+        "2xx只ACKED_PROCESSING；真实受信当前五元组无冲突匹配才能MATCHES_CURRENT。",
+        "入队先generation+1置UNKNOWN，安装同时核Head/generation/Claim；旧查询成功不覆盖新失败。",
+        "OwnerConflict普通成功读不能清，需准确更正与新代次后继读证。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_10_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "BP-MAPPING-CORRECTION/1",
+      "producer_owner": "Main mapping authority with CRM original conflict evidence",
+      "consumer_owner": "CRM-ACC-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        816,
+        826,
+        832,
+        834,
+        836
+      ],
+      "identity_vector": [
+        "exact T/A/L/r canonical original",
+        "all applicable conflict refs/versions/bodies/Trust/coverage",
+        "ProjectionGeneration",
+        "DecisionSubject/Binding/Owner journal"
+      ],
+      "rules": [
+        "只对Main已解释的同版本异义保持原真实关系发r+1；原体/Trust/发行审计缺失失败关闭。",
+        "全部适用冲突覆盖必须完整，新增冲突使上下文失效；不能MAX+1/假UNLINK清冲突。",
+        "Claim修订推进，原BP/Profile/UseReceipt/订单不改；远端匹配仍另证。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_10_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "BP-COMMAND-REPLAY-R3",
+      "producer_owner": "ERP-BP-01 command authority",
+      "consumer_owner": "Main authenticated original actor",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        733,
+        886,
+        890,
+        891,
+        892,
+        894
+      ],
+      "identity_vector": [
+        "Tenant/CommandId/Actor",
+        "operation/path/LegalEntity/IfMatch/body fingerprint",
+        "original APPLIED/NO_CHANGE/REJECTED receipt"
+      ],
+      "rules": [
+        "先当前身份和历史查询分流；快读未见后仍按IAM→Scope→Command重查，再授权确实新写。",
+        "原终态只核当前read/disclosure，不要求今天create/register/mapping或未过期旧Preview。",
+        "披露不足拒403且不改原ReceiptHash，不将不可读旧命令当空位；审计读不授代POST。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_10_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "BP-CREATE-AND-LINK/1",
+      "producer_owner": "Main authorized operator",
+      "consumer_owner": "ERP-BP-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        724,
+        727,
+        729,
+        787,
+        795,
+        803,
+        806
+      ],
+      "identity_vector": [
+        "persistent exact candidate criteria/ContextRef",
+        "complete empty CandidateSet",
+        "newPartner/SELF roles",
+        "PreviewRef/ETag/CommandId"
+      ],
+      "rules": [
+        "mapping∩create∩Base管理∩全部字段写权，REGISTERED另需register；null/false不绕字段权。",
+        "实际同txn首次分配BpId，BP/Profile/九关系/索引/Mapping/Claim/Outbox/Command整体提交，Scope只增一次。",
+        "不得HTTP单独提交B06后再关联；任一错误无孤立BP。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_10_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "EST-OWNER-SOURCE-I01-I02",
+      "producer_owner": "Exact source Owners",
+      "consumer_owner": "ERP-EST-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "source_lines": [
+        418,
+        441,
+        443,
+        543
+      ],
+      "identity_vector": [
+        "T/L/Actor/Root/DraftRevision",
+        "full selector/BindingRef/SourceRef/original evidence",
+        "actual DbTransaction"
+      ],
+      "rules": [
+        "实际完整读形成准确Context，不以INCOMPLETE推断空候选。",
+        "外域ContractRev保持int64字符串；EST本域EstRev number独立。",
+        "来源当前保护至同一实际事务提交；无实证不能用TTL/HTTP/Saga替代。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_BUSINESS_NOT_RUN_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "EST-GENERAL-BINDING/2",
+      "producer_owner": "Material/Engineering/UOM/Price Owners",
+      "consumer_owner": "ERP-EST-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+      "source_lines": [
+        177,
+        186,
+        244,
+        295,
+        303,
+        516
+      ],
+      "identity_vector": [
+        "EST-BINDING/2",
+        "NativeIdentity2 full body/digest",
+        "DependencyRoles2 exact deduplicated refs",
+        "sourceMembers SourceRef + evidence + per-member generation"
+      ],
+      "rules": [
+        "人工材料规格不伪Owner；双工程/ERP身份须真实映射。",
+        "每成员当前保护与回执，不由PRIMARY成功覆盖BOM/映射失证。",
+        "Notice命中任意成员即提升代次，完整闭包刷新才能恢复。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_BUSINESS_NOT_RUN_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "EST-PRICE-COVERAGE/2",
+      "producer_owner": "ERP-PRICE-01 real adapter",
+      "consumer_owner": "ERP-EST-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+      "source_lines": [
+        326,
+        333,
+        335,
+        339,
+        516,
+        520
+      ],
+      "identity_vector": [
+        "profile/primaryModel/paperRole/coverage",
+        "full EST-SELECTOR/2/dependencyRoles",
+        "versioned coveragePolicy original/control",
+        "PaperPriceCoverageEvidence2 + PRICE_COVERAGE_POLICY member"
+      ],
+      "rules": [
+        "PRICEv2仅整张tuple，拒分层或辅料；旧13列/签名不证明新覆盖。",
+        "保存/计算/封存/采用独立重建coverage并以明文进Guard。",
+        "复制新Root不复用旧签署覆盖；需新Lookup/Bind证据。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_BUSINESS_NOT_RUN_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "EST-CONSUMER-I03-I05-V2",
+      "producer_owner": "ERP-EST-01",
+      "consumer_owner": "ERP-QTN-01 / Product",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+      "source_lines": [
+        459,
+        568,
+        584
+      ],
+      "identity_vector": [
+        "exact VersionRef/model/SourceSetDigest2",
+        "UseKey + actual consumer Owner/id/version/purpose",
+        "DisclosureDigest + actual consumer decision",
+        "original ReceiptDigest for I05"
+      ],
+      "rules": [
+        "真实v2decoder和完整材料披露；Quote EstimateBasis wire不扩材料数组。",
+        "消费者实际target+Usage/Receipt同txn，失败零孤立事实。",
+        "换版新I03+旧I05共同事务；历史纠正不要求撤回旧源前向USABLE。",
+        "EST材料不直接写OrderMaterial/BOM；SUBMIT_ESTIMATE模板未支持只阻对应文档。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_BUSINESS_NOT_RUN_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "EST-QUOTE-READINESS-I06",
+      "producer_owner": "ERP-QTN-01",
+      "consumer_owner": "ERP-EST-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "source_lines": [
+        448,
+        458,
+        464,
+        470
+      ],
+      "identity_vector": [
+        "Actor/T/L/exact Quote target",
+        "EST Version/Control/SourceSetDigest",
+        "policy/headWatermark/unmetConditions/observedAt/full proof",
+        "checkGeneration/pageGeneration/source generations"
+      ],
+      "rules": [
+        "QTN同一致性读当前真实Quote和技术/价格/商业轴；OWNER_PROVEN不是发出或客户接受许可。",
+        "每次先+1代次置UNKNOWN；迟到结果不覆盖新观察；历史lastProven.current=false。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_BUSINESS_NOT_RUN_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "EST-VERSION-REF/1",
+      "producer_owner": "ERP-EST-01",
+      "consumer_owner": "Exact consumers",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "source_lines": [
+        627,
+        749,
+        755
+      ],
+      "identity_vector": [
+        "Tenant/EventId/EstimateId/VersionNo/VersionDigest",
+        "AggregateKind/AggregateVersion/EventKind/control"
+      ],
+      "rules": [
+        "Outbox和消费业务唯一域含VersionNo，两个版本Control2共存。",
+        "只失效/查询不自动采用；历史正文和金额不随通知修改。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_BUSINESS_NOT_RUN_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "EST-MODEL-ADOPTION/2",
+      "producer_owner": "ERP-EST-01 legacy/model source",
+      "consumer_owner": "New EST-GENERAL/2 Root",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+      "source_lines": [
+        632,
+        638
+      ],
+      "identity_vector": [
+        "exact sourceEstimate/sourceVersion/targetSchema/optionKey",
+        "new Root/ParentVersion/AdoptionLink/Claim/Command"
+      ],
+      "rules": [
+        "不是原地改模型flag；同实际txn唯一链接，旧版本原件不动。",
+        "GENERAL不得把PaperCd改名普通物料；调查草稿UNKNOWN、零Run。",
+        "旧writer未收敛前保持切换门未证；回退停新写保历史。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_BUSINESS_NOT_RUN_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-OWNER-GUARDS",
+      "producer_owner": "Source/Review/Engineering/BP/EST Owners",
+      "consumer_owner": "ERP-QTN-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        250,
+        254,
+        471,
+        491,
+        603,
+        609
+      ],
+      "identity_vector": [
+        "full exact source payload/selector/watermark",
+        "current reviewer policy/heads/capabilities",
+        "same intent/actual DbTransaction"
+      ],
+      "rules": [
+        "I02逐源完整集合和当前批准者资格，持保护至提交。",
+        "Q13 EST采用、Q17 BP SALES_NEW_SOURCE、Q20 ACCEPT SALES_CONFIRM、H07 Sales独立SALES_NEW_SOURCE，不能复用receipt。",
+        "草稿/评审只读不产生BP Use/EST Usage；正式和条件性Quote均不签制造许可。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-READ-CUT/1",
+      "producer_owner": "Main actual shared-read coordinator",
+      "consumer_owner": "QTN Q28/EST I06/plan preparation",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        535,
+        736,
+        738,
+        752,
+        830,
+        913
+      ],
+      "identity_vector": [
+        "QuoteReadCutQuery T/L/Actor exact subject",
+        "all current source/IAM/review/root/control/fact vector",
+        "capturedAt/cutId/vectorDigest/real coordinator proof"
+      ],
+      "rules": [
+        "同一实际txn全部共享门共同时间点签署，禁止不同HTTP绿色拼接。",
+        "BP来源先于EST的无环注册锁计划，不能以CAS补共同cut。",
+        "UNPROVEN证明字段null/Held=false，未知Coordinator可null；无成功Plan，原失败可存。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-SEAL-BUSINESS-1",
+      "producer_owner": "ERP-QTN-01",
+      "consumer_owner": "ERP-QTN-01 + EST",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        615,
+        619,
+        621,
+        623,
+        829
+      ],
+      "identity_vector": [
+        "full SealBusinessSubject",
+        "accurate Draft/Case/Policy/reviewHeads/supersedes/EST/assumptions",
+        "unique(T,QuoteId,SealBusinessDigest) with full canonical body"
+      ],
+      "rules": [
+        "原Command恢复后在source锁前取稳定业务范围锁查跨Key已提交封存。",
+        "已提交同业务按当前完整读返回NO_CHANGE原版本，过期Plan/旧CAS不阻历史；零新Usage/H06。",
+        "真正新业务才全部当前门；digest碰撞/原体缺失失败关闭。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-CUSTOMER-CONTENT-1",
+      "producer_owner": "QTN/Document Owner",
+      "consumer_owner": "Actual authorized customer evidence Owner",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        627,
+        631,
+        633,
+        493
+      ],
+      "identity_vector": [
+        "PublicQuoteIdentity/CommercialContentDigest",
+        "immutable registered documentId/contentHash",
+        "WHOLE_VERSION BP/customerActor/action/time proof"
+      ],
+      "rules": [
+        "私有VersionDigest/成本/memo不得向对客内容泄漏。",
+        "真实PDF暂存字节与Manifest/ISSUED同txn；文件名/上传不等发布接受。",
+        "客户WHOLE_VERSION覆盖全部商业行条件和数量坐标舍入，部分接受要后继。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-ACCEPTANCE-FACT-CORRECTION",
+      "producer_owner": "Main professional acceptance fact Owner",
+      "consumer_owner": "ERP-QTN-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        537,
+        541,
+        552,
+        653,
+        665,
+        915
+      ],
+      "identity_vector": [
+        "original Decision/digest",
+        "FactRevision/correction chain/actual assessment",
+        "Control and Fact strong ETags",
+        "full root commitment/successor/ancestor/activeAcceptance matrix"
+      ],
+      "rules": [
+        "客户未撤销的历史补证不伪REVOKE，不新CustomerDecision/BPUse/ESTUsage。",
+        "已有后继/真实停止优先，历史补证不回退当前指针/H06；FACT_UNPROVEN不是替代Seal终结证据。",
+        "FullRequest真实三header HMAC，原终态先于新写门；每更正RootRevision+1，Control仅真实变化时进位。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-ACCEPTANCE-FACT-IMPACT/1",
+      "producer_owner": "ERP-QTN-01",
+      "consumer_owner": "Main Sales/ERP-ORD-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        539,
+        659,
+        661,
+        826,
+        917,
+        919
+      ],
+      "identity_vector": [
+        "OriginalDecisionId/FactRevision/eventId",
+        "exact Correction/full affectedOrder original source/receipt/allocation refs",
+        "full current Fact chain/proof"
+      ],
+      "rules": [
+        "通知仅来源知识/影响，不取消订单或释放配额。",
+        "Fact影响独立于Control revision去重，历史A订单不更新为B。",
+        "Sales新效果必须同步保护QTN当前Fact，不等待通知到达；恢复PROVEN仍需自身复核。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-H07-ORDER-SOURCE-R2",
+      "producer_owner": "ERP-QTN-01",
+      "consumer_owner": "Main Sales/ERP-ORD-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        362,
+        366,
+        694,
+        696,
+        698,
+        700,
+        702,
+        704,
+        917
+      ],
+      "identity_vector": [
+        "server OrderIntentId + explicit clientIntentRef",
+        "current full AcceptanceFactHead/effectiveEvidence/Correction chain",
+        "original quote line quantity ranges/unitPrice/net/tax/gross/roundingAdjustment",
+        "sourceDigest/acceptanceFactDigest + exact BP use"
+      ],
+      "rules": [
+        "source.customerEvidence逐字段等当前effectiveEvidence；仅重算摘要不能让旧证据通过。",
+        "原坐标F/G差分分摊，满覆盖恰等原行金额；Sales存范围尾差不改单价。",
+        "OrderDraft/Lines/来源/BPUse及QTNReceipt/Allocation/Intent同txn，零Confirm/供给/库存/Won。",
+        "已提交A恢复仍A；新B/Fact3为新Intent，旧Key换源冲突。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-H07-ALLOCATION-CORRECTION",
+      "producer_owner": "Main Sales",
+      "consumer_owner": "ERP-QTN-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        462,
+        706,
+        708
+      ],
+      "identity_vector": [
+        "exact allocation/revision/original receipt",
+        "actual Order successor/cancel facts",
+        "everCommercialConfirmed=false/no unknown/no demand inventory proof"
+      ],
+      "rules": [
+        "仅真实从未Confirm订单的准确取消同txn全量释放原allocation。",
+        "QTN UI无单方释放；未找到/未知提交不是无效果证明。",
+        "历史更正不要求旧BP/EST前向USABLE；曾Confirm不适用该有界分支。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-H06-OPP-QUOTE/1",
+      "producer_owner": "ERP-QTN-01",
+      "consumer_owner": "CRM-OPP-01 unique consumer / CRM-HO-01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        247,
+        867,
+        869,
+        871,
+        873
+      ],
+      "identity_vector": [
+        "T/Authority/L/QuoteKey",
+        "Producer/Contract/Epoch/ordinal and exact previous BusinessDigest",
+        "full OPP-QUOTE/1 event/trust/UTF8 BodyHash"
+      ],
+      "rules": [
+        "只有真实CRM源发H06；net四位NET，tax/gross严格null。",
+        "不可变业务版本与Control事实同txn原Outbox；重投不换event/body/ordinal。",
+        "ACK/投影回执不等商业成功/Won；I13只准确原链对账，不造CRM查询wire。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_218_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-HANDOFF-IDENTITY",
+      "producer_owner": "CRM-HO-01",
+      "consumer_owner": "MainIntake",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        164,
+        695,
+        697,
+        701,
+        703
+      ],
+      "identity_vector": [
+        "T/SourceSystem=CRM_HO/H",
+        "V continuous Int64 string",
+        "immutable authority/L/account/opportunity/processingType"
+      ],
+      "rules": [
+        "全T根键/缺行锁不含L，跨L不能另建；首次V>1保WAITING不抢绑定。",
+        "同H/V普通Decision最多1，补件须原前驱NEEDS_INFO及全Supersession。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-CRM-MAIN-LOCAL-TX",
+      "producer_owner": "CRM OPP+HO / Main Owner",
+      "consumer_owner": "MainIntake / CRM original OPP and ACC",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        160,
+        173,
+        308,
+        309,
+        311
+      ],
+      "identity_vector": [
+        "Original operation full request/headers",
+        "H/V intent/event/rawBodyHash",
+        "exact owner result / Inbox / application receipt"
+      ],
+      "rules": [
+        "CRM OPP+HO同真实DbTransaction；Main本地业务/原结果/Outbox同txn；CRM原消费者投影/历史/Inbox/回执同txn。",
+        "无跨仓原子事务、无第二消费者、ACK不等业务成功。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-SOURCE-PROTECTION/1",
+      "producer_owner": "Actual source-purpose/control Owner",
+      "consumer_owner": "MainIntake or CRM result application",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        586,
+        590,
+        613,
+        623,
+        625,
+        629,
+        632,
+        634,
+        637,
+        643
+      ],
+      "identity_vector": [
+        "full IcExecutionRef/executionFingerprint/generation/participantSet",
+        "full HANDOFF or OWNER_RESULT natural identity + original bytes",
+        "each actual protectedControl watermarks / immutable Grant / actual Terminal"
+      ],
+      "rules": [
+        "限MAIN_INTAKE_NEW_EFFECT和CRM_RESULT_PROJECTION，持久automaticExpiry=false。",
+        "撤销立即阻新grant；已有grant的COMMITTED/ABORTED由同消费方Execution根互斥，commit事务同存Terminal事实，commit后权威查询证明。",
+        "全部源控制写者和政策/流闭包参与；敏感读取下载立即撤销，政策不相容保持Disabled。",
+        "失联/超deadline不释放，旧Execution墓碑永不重开，事故不得force释放。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-INTAKE-READ-DETAIL",
+      "producer_owner": "Main original Handoff Inbox / IAM",
+      "consumer_owner": "Main authorized intake operator",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        558,
+        567,
+        570,
+        572,
+        574,
+        576,
+        578,
+        580
+      ],
+      "identity_vector": [
+        "candidate exact locator/bodyHash/queryGeneration/scopeStamp",
+        "DetailReadId/digest/bodyHash/requestGeneration/fieldPolicy/expiry",
+        "Context full immutable detail ref + original strong If-Match"
+      ],
+      "rules": [
+        "查询空L=受权范围全部，显式越权403；候选不含原PII。",
+        "requirement/forecast/stakeholders/evidenceRefs整块可见才普通受理；缺字段权不能伪缺件/拒绝。",
+        "详情/Context各真实持久5分钟且最终本地当前门；历史终态独立RQ。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-BOUND-ORIGINAL-TRANSPORT",
+      "producer_owner": "CRM/Main original business Owner",
+      "consumer_owner": "Registered unique closed-contract consumer",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        243,
+        252,
+        355,
+        359,
+        361,
+        363,
+        369,
+        371
+      ],
+      "identity_vector": [
+        "RouteBinding T/authority/L/producer/contract/epoch",
+        "Original UTF8 BodyHash + actual ReceivedTrust",
+        "MessageId / stream identity / Int64 ordinal string"
+      ],
+      "rules": [
+        "原业务body不扩wrapper/七字段不加T；字节roundtrip实际证明。",
+        "新流不穿旧C03 validator/int checkpoint；null topic/appId等不得Enabled。",
+        "旧新积压分类、单writer、回退留事实/永久幂等。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-REBUILD-DIRECTORY-CUT",
+      "producer_owner": "Main actual original result directory Owners",
+      "consumer_owner": "CRM authorized projection rebuilder",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        660,
+        671,
+        673,
+        675,
+        679,
+        681,
+        683,
+        685,
+        686,
+        687
+      ],
+      "identity_vector": [
+        "server discovered all HandoffLinks/attribution/current groups/conflicts",
+        "full source/query + exact immutable directory cut/manifest/pages",
+        "SourceSet/Ingress/unassigned/history generations + active projection CAS",
+        "per-owner vector / actual cut recheck"
+      ],
+      "rules": [
+        "R01客户端只目标不声明全集；转入来源用原H/V，多H漏通知也必须发现。",
+        "Main业务提交同txn登记所有结果目录；跨DB是向量非全球事务。",
+        "影子同OPP内核，最终重新枚举全文源集/全部本域历史与入站水位；ADVANCED/新源重准备。",
+        "只能PROVEN_AT_VECTOR_CUT，recheck后Main仍可新增，不承诺实时全球完整。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-LEGACY-ERP-READ-BOUNDARY",
+      "producer_owner": "Main C03.Services / original authorized key Owner",
+      "consumer_owner": "CRM fixed cp6-core read client",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        206,
+        208,
+        210,
+        214,
+        216,
+        219,
+        221
+      ],
+      "identity_vector": [
+        "T/token/header exact scope and per-client allowlist",
+        "original key + proved key-to-L mapping",
+        "8byte rowversion vs new opaque business version"
+      ],
+      "rules": [
+        "AllowAnonymous仍须实际C03.Services认证；sidecar token不是业务授权。",
+        "404不证明Main未执行；200仅旧观察不能转客户接受/订单确认；无L映射不展示。",
+        "旧合并错误不能反推originHttpStatus，保null。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "IC-THREE-AXIS-RECEIPTS",
+      "producer_owner": "CRM/Main transport and authoritative Owners",
+      "consumer_owner": "CRM user view / recovery coordinator",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        56,
+        184,
+        296,
+        332,
+        340,
+        468
+      ],
+      "identity_vector": [
+        "transport receipt / exact Main business result / original CRM application receipt",
+        "business original natural key + history ordinal/digest",
+        "current read generation/asOf"
+      ],
+      "rules": [
+        "SUCCESS/202/ACK只是相应本地/运输事实，查询COMPLETE/FOUND不等应用成功。",
+        "NOT_OBSERVED始终noEffectProven=false；唯一例外是有限保护准确Execution已有ABORTED墓碑。",
+        "WAITING可持久续办，历史alias不重复金额，当前失败立即UNKNOWN不复绿。"
+      ],
+      "runtime_status": "DESIGN_ACCEPTED_106_AC_NOT_RUN_12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "ORD-QUOTE-SOURCE-ADAPTATION",
+      "producer_owner": "Quote",
+      "consumer_owner": "Sales",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        101,
+        127,
+        141
+      ],
+      "identity_vector": [
+        "QuoteScope/SourceIntent",
+        "ClaimIntent/ExpectedClaimVersion/OperationKey",
+        "actual conversion result"
+      ],
+      "rules": [
+        "旧功能H/C含未知占用；原Owner持全部商业转用权威。",
+        "实际实施必须映射后继QTN R2 OrderIntent/quantity coordinates/同事务OrderDraft，不造第二套Claim账；取消不自动返转用额。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-PARTY-CREDIT-PREPAYMENT",
+      "producer_owner": "BP/Finance",
+      "consumer_owner": "Sales",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        152,
+        174,
+        184,
+        1459,
+        1499
+      ],
+      "identity_vector": [
+        "Tenant/party role/action scope",
+        "ExposureLineageStage/amount basis/currency",
+        "CreditDecision/Commitment/PrepaymentAllocation"
+      ],
+      "rules": [
+        "CHECK_ONLY不等COMMITMENT_REQUIRED真实占用；订单到应收同谱系阶段替代不重复。",
+        "本订单真实付款分配不足不能用整笔到账额替代；实际模型与实例由Finance提供。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-APPLY-INTENT",
+      "producer_owner": "OA/Quote/Finance and Sales",
+      "consumer_owner": "Sales/CRM",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        204,
+        230,
+        244,
+        1599
+      ],
+      "identity_vector": [
+        "ApplyIntent/OperationKey/object version/action/content",
+        "ApprovalDecisionBinding/ParticipantGuarantee",
+        "ApplicationOutcome/AbortFinality"
+      ],
+      "rules": [
+        "Sales确认与H08持久事实仅一次；OA批准、参与者保证、Sales应用分账。",
+        "未知不得返承诺；NOT_APPLIED_FINAL必须原Owner核全部在途且以后不可能应用。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-ATP-ADVISORY",
+      "producer_owner": "Planning ATP",
+      "consumer_owner": "Sales",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        255,
+        274,
+        286
+      ],
+      "identity_vector": [
+        "Item/technical/Site/qty/UOM/date node",
+        "SelfDemandExclusionProof",
+        "AtpEvaluation/segments/watermarks/limitations"
+      ],
+      "rules": [
+        "只排除准确本次自身Demand，不排同客户全部。",
+        "TTL内事实变化也失效；采纳只是候选承诺，不锁库不Release；真实ATP wire以其后继Owner专册为准。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-H10-H32-SOURCE-OPERATIONS",
+      "producer_owner": "Sales",
+      "consumer_owner": "Planning",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        305,
+        335,
+        349,
+        351
+      ],
+      "identity_vector": [
+        "ReleaseLineageId/SourceVersion/ExpectedAcceptedSourceVersion",
+        "SourceOperation type/desired target total/technical scope",
+        "SourceControl/OperationResult/current effectivity"
+      ],
+      "rules": [
+        "目标替代不累加；v2拒绝可据真实v1接v3，v2未知不能跳过。",
+        "无Demand也可持久源控制，不能造零需求；Planning本地Demand+来源+结果一致。",
+        "功能合同不等HTTP/Topic/DDL已冻结；Sales不能直接写Planning表。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-EXECUTION-CONTROL-DISPOSITION",
+      "producer_owner": "WMS/MES/PUR/PLM respective Owner",
+      "consumer_owner": "Sales/Planning coordinator",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        357,
+        384,
+        397,
+        399
+      ],
+      "identity_vector": [
+        "ImpactScopeManifest/object/share/UOM/current watermark",
+        "ControlReason/Version/actions/effective time/all entry coverage",
+        "inflight proof/disposition/successor acceptance"
+      ],
+      "rules": [
+        "控制收到、阻止新执行、在途核清、处置或明确承接分层。",
+        "共享WO/PO只处理准确份额，不删除其他需求；未知不能由待办迁移抹除。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-SUPPLY-STAGE-PROJECTION",
+      "producer_owner": "Planning/WMS/supply Owners",
+      "consumer_owner": "Sales/Planning views",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        410,
+        437,
+        439,
+        452
+      ],
+      "identity_vector": [
+        "RunResultScope/Demand version/policy/watermarks",
+        "SupplyOccurrence lineage/current phase",
+        "Pegging/Reservation/Allocation"
+      ],
+      "rules": [
+        "同源计划→PO→合格收货阶段替代不叠加；Reservation已包含Allocation。",
+        "旧Run晚到留历史不覆盖新当前；投影缺失只补事实，不重新建PO/WO；覆盖不等发运。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-FULFILLMENT-FACTS",
+      "producer_owner": "WMS/Shipping/authorized correction Owner",
+      "consumer_owner": "Sales/Planning",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        460,
+        481,
+        489,
+        499
+      ],
+      "identity_vector": [
+        "FactOwner/FactId/Version/original event/time",
+        "SnapshotOrDelta/CorrectionRef",
+        "ResponsibilityMap/source share/UOM"
+      ],
+      "rules": [
+        "Snapshot80→100取100，Delta40+60才求和；映射不按SKU猜，未映射/未知不当0。",
+        "正常退货不减历史发运；关闭后误记更正建立复核，不能自动Demand补差。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-PRICE-BILLING-SETTLEMENT",
+      "producer_owner": "Sales price and Finance facts",
+      "consumer_owner": "Sales/CRM views",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        511,
+        531,
+        545
+      ],
+      "identity_vector": [
+        "PriceBasis/UOM/currency/tax/rounding",
+        "PriceChangeScope/BillingSource/InvoiceRef",
+        "SettlementAllocation/CreditOrRefundDecision"
+      ],
+      "rules": [
+        "已开票40×10保持400，未票60×12=720；不追改原票据。",
+        "开票申请不当正式票据、退货不当退款、整笔收款不全归本订单；财务余额不由Sales修改。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-H08-CURRENT-CONTRIBUTION",
+      "producer_owner": "Sales",
+      "consumer_owner": "CRM OPP/INT-COM",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        562,
+        580,
+        597
+      ],
+      "identity_vector": [
+        "original economic responsibility/line share/version",
+        "history confirmation/current monetary contribution/currency",
+        "transfer/successor relations"
+      ],
+      "rules": [
+        "Created不制造Won；同商机A取消保留B贡献；拆分不是第二笔销售。",
+        "具体实现采用当前OPP/INT-COM责任组全量替换与行唯一认领，不能沿历史未冻结DP08重新决定折算规则。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-TECHNICAL-ACTIVITY-GATE",
+      "producer_owner": "PLM individual Owner",
+      "consumer_owner": "Sales/Planning",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        613,
+        635,
+        647
+      ],
+      "identity_vector": [
+        "ProductType/Activity/policy",
+        "Requiredness/EvidenceState/exact professional refs",
+        "ImpactItem/scope/actual adoption result"
+      ],
+      "rules": [
+        "现货不重占制造预约；TRIAL不升PRODUCTION；不能新造SALE Purpose。",
+        "读到ECN不等实际采用；评估60期间新增20需要补评；历史已知FAIL不降成UNKNOWN放行。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "ORD-SUCCESSOR-GROUP-ACTIVATION",
+      "producer_owner": "Sales/Planning and actual consumers",
+      "consumer_owner": "Planning/MRP/execution/CRM",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+      "source_lines": [
+        664,
+        690,
+        693,
+        696
+      ],
+      "identity_vector": [
+        "ActivationGroupId/immutable GroupManifest",
+        "old/new shares/UOM/technical/price responsibility/predecessors",
+        "PreparedResult/EffectiveMembershipDecision/ExecutionGate/AbortSuccessor"
+      ],
+      "rules": [
+        "准备不入计划；全成员成功且旧退出/新启用唯一有效才生效。",
+        "一成员UNKNOWN或准备后新增实际发运使旧清单不可用；缺真实共同保证禁用该模式。",
+        "原组同键异清单冲突；实际成功只回原结果，不重建组。"
+      ],
+      "runtime_status": "CURRENT_FUNCTIONAL_BASELINE_ACCEPTED_WITH_RETAINED_ITEMS; PHYSICAL_ADAPTATION_UNFROZEN; ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-H25-EFFECT-NORMALIZATION",
+      "producer_owner": "WMS OUT",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        47,
+        196,
+        270,
+        272,
+        7456
+      ],
+      "identity_vector": [
+        "Tenant/Mode + complete ShipmentEffectIdentity",
+        "original ConsumerEvent and snapshot v1 share effect",
+        "source revision/previousRef/semanticDigest"
+      ],
+      "rules": [
+        "原Shipment和v1不双计；后继完整替换、缺前驱等待。",
+        "OCX03补已形成流，漏源需OCX02→OCX05；旧cut补齐不等fresh current。",
+        "原OUT三字段Receipt仅可信本域类型槽解析，不加digest或通用解析外部opaque。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-H26-PROOF-APPLICATION",
+      "producer_owner": "WMS DEL",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        255,
+        276,
+        278,
+        280
+      ],
+      "identity_vector": [
+        "ApplicationKey(owner=ERP_FUL,shipmentRef,proofRef,DELIVERY_PROOF,mode)",
+        "event.semanticDigest/exact historical Binding/Fact/Proof"
+      ],
+      "rules": [
+        "每Shipment累计Proof完整替换，20→30为30；D/E冲突保原D且当前UNKNOWN。",
+        "RECORDED/RECEIVED不等APPLIED；Query原key三态，未见不证明未来无效应。",
+        "同txn投影/head/receipt/outbox；Stock/Claim/Proof/Demand新效果为0。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-COMMERCIAL-PORTION-2",
+      "producer_owner": "Sales ORD",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        7271,
+        7275,
+        7293,
+        7295,
+        7297,
+        7299
+      ],
+      "identity_vector": [
+        "Portion root/current ranges + immutable decisions/assignment",
+        "businessAsOf/knowledgeAsOf/commitSeq",
+        "exact ClosureEvidence/Promise/Calendar refs"
+      ],
+      "rules": [
+        "APPLIED且effective/recorded双截点可见的连续决定才生效；更正不改旧事实。",
+        "取消和减少域不交叠；绩效排除须严格due前、精确未执行闭合和future fence。",
+        "转移完整组共同生效、逐片守恒、DAG归根，不新造分母。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-SCHEDULE-CATALOGUE-1",
+      "producer_owner": "Sales ORD",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        7307,
+        7320,
+        7322,
+        7324
+      ],
+      "identity_vector": [
+        "immutable catalogue snapshot/filter/two as-of/sourceCommitSeq/memberCount/setDigest",
+        "signed cursor binds actor/scopeEpoch/filter/limit/ordinal"
+      ],
+      "rules": [
+        "先Sales权威目录，含未通知/未发/关闭/转移根，不依赖FUL已知scope。",
+        "完整全部页核计数与摘要才全集；部分权限返回不可推空且不泄漏隐藏数量。",
+        "currentOnly只展示，不缩绩效母集。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-READ-FENCE-1",
+      "producer_owner": "Sales/Stock/OUT/DEL/platform all participating writers",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        288,
+        7328,
+        7330,
+        7332,
+        7334
+      ],
+      "identity_vector": [
+        "same actual DbConnection/DbTransaction SERIALIZABLE",
+        "F−1(Tenant,Mode,LegalEntity,Site)→F0 Movement prefix",
+        "registered complete writer paths + epochs"
+      ],
+      "rules": [
+        "空站点预建目录门；目录读S、所有成员/筛选/权限/到期/管理员writer X持到commit。",
+        "发现新增scope/Movement释放并全序重来；RowVersion非phantom锁。",
+        "跨库/漏writer/隔离不符不能strict CURRENT_COMPLETE，独立as-of可读。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-HISTORICAL-COORDINATE-BRIDGE",
+      "producer_owner": "Sales/OUT/DEL authorized mapping readers",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        7338,
+        7346,
+        7356,
+        7358,
+        7360,
+        7364
+      ],
+      "identity_vector": [
+        "historical proof.sourceBindingRef",
+        "Receipt line/sourcePartKey/native root+source/portion/UOM versions",
+        "MappingBridge/EvidenceResolution reader adoption"
+      ],
+      "rules": [
+        "历史DEL local坐标为唯一解释，不能按Receipt数组排序重新定义。",
+        "按root身份和区间交集切片，正有理仿射映射端点精确可逆；serial整件。",
+        "缺一影响完整应用的桥片整事件WAITING_SOURCE，未读Ref不能造新同identity core。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-PERFORMANCE-FACTS-AND-POLICY",
+      "producer_owner": "Sales/OUT/DEL/calendar policy owners",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        296,
+        300,
+        304,
+        308,
+        7285,
+        7412,
+        7424,
+        7448
+      ],
+      "identity_vector": [
+        "FULL catalogue + TemporalSelection + PerformanceFacts + policy/calendar cores",
+        "metric SHIPMENT/DELIVERY × basis ORIGINAL/RECOMMITTED",
+        "businessAsOf/knowledgeAsOf/supersedesReportRef"
+      ],
+      "rules": [
+        "四格独立按真实时刻分类；未知量使rate null，零分母null，超交单列。",
+        "真实policy未采用官方WAITING_POLICY；取消严格截止前且完整未执行闭合才排除。",
+        "工作迟交平均按实际完成量×UTC工作区间积分，最后half-even8。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-RECOVERY-LOCATOR",
+      "producer_owner": "ERP FUL",
+      "consumer_owner": "authorized operations UI",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        266,
+        7374,
+        7384,
+        7386,
+        7390,
+        7392
+      ],
+      "identity_vector": [
+        "persisted locatorRef/workRef/revision/scopeEpoch",
+        "exact original local key OR DEL key/hash",
+        "SOURCE_DISCOVERY nullable keys only before real key available"
+      ],
+      "rules": [
+        "F08查询→F09原body续办→F08原receipt→F05新readKey。",
+        "无持久work不返回202/伪locator；NOT_OBSERVED不推无效应。",
+        "worker epoch CAS与当前权限防迟到/撤权；没有手工数量更改。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "FUL-RETURN-FINANCE-OBSERVATIONS",
+      "producer_owner": "RMA/Finance each axis Owner",
+      "consumer_owner": "ERP FUL",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+      "source_lines": [
+        208,
+        218,
+        286,
+        459
+      ],
+      "identity_vector": [
+        "Return stream/revision/previousRef + exact original shipment ranges",
+        "Finance axis independent stream/snapshot + Owner read cut"
+      ],
+      "rules": [
+        "累计退回替换，真实往返实例由RMA区分；正常退回不减原发运/签收/OTD。",
+        "Finance POSTED→REVERSED按真实后继；物流/账单/收入/成本/现金独立。",
+        "scope全集只读采用不转移原Owner写权。"
+      ],
+      "runtime_status": "USER_ACCEPTED_DESIGN; O-FUL01..08 UNPROVEN; 68 BUSINESS AC NOT_RUN"
+    },
+    {
+      "contract_id": "CREDIT-WMS-EXACT-COMMERCIAL",
+      "producer_owner": "WMS-RMA R3",
+      "consumer_owner": "ERP-CREDIT",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        75,
+        77,
+        137,
+        187
+      ],
+      "identity_vector": [
+        "trusted5S+contract+requestKey+originalUTF8",
+        "full original lineage+stable half-open ranges"
+      ],
+      "rules": [
+        "同key同bytes重放异body409，external root exact。",
+        "QA carrier缺采用RequiredFenced零FIN新效果；历史100/20/15/5与原Demand分开。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_STAGE100; ORIGINAL46_NOT_RUN; ACTUAL_UNPROVEN_FENCED"
+    },
+    {
+      "contract_id": "CREDIT-FIN-AR-EXACT-DISPATCH",
+      "producer_owner": "ERP-CREDIT/FIN-AR R2",
+      "consumer_owner": "FIN-AR/ERP-CREDIT",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        145,
+        147,
+        149,
+        151,
+        155,
+        157,
+        161
+      ],
+      "identity_vector": [
+        "A25snapshot+coherentbundle+originalInvoiceLine",
+        "A26/A27 commandId+POST+canonicalRoute+bytes"
+      ],
+      "rules": [
+        "先本域durable后egress，prepare/post分权；A34与period/professional真实当前门。",
+        "原A10先query，NOT_OBSERVED不是noeffect，UNKNOWN保hold。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_STAGE100; ORIGINAL46_NOT_RUN; ACTUAL_UNPROVEN_FENCED"
+    },
+    {
+      "contract_id": "CREDIT-FIVE-AXIS-ENTITLEMENT",
+      "producer_owner": "FIN-AR original posted InvoiceLine",
+      "consumer_owner": "ERP-CREDIT",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        103,
+        105,
+        109,
+        115,
+        129
+      ],
+      "identity_vector": [
+        "full5S+stableInvoiceRight+currency",
+        "quantity/net/tax/gross/carry+allclaims/correctionholds"
+      ],
+      "rules": [
+        "版本/别名不刷新cap；所有applied+unknown+hold五维不超原票。",
+        "原税价/UOM/carry，CNYUSD不合计；只真实正差新dispatch。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_STAGE100; ORIGINAL46_NOT_RUN; ACTUAL_UNPROVEN_FENCED"
+    },
+    {
+      "contract_id": "CREDIT-CASH-REFUND-CURRENT",
+      "producer_owner": "Cash Owner NEW_REQUIRED proposal",
+      "consumer_owner": "ERP-CREDIT",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        540,
+        546,
+        548,
+        568,
+        570,
+        598,
+        600,
+        646,
+        741
+      ],
+      "identity_vector": [
+        "full5S+stableRefundRight+currency+allorigins/aliases",
+        "EC48fullPK/oldRV+EC47pairedcapture+current"
+      ],
+      "rules": [
+        "商业授权非付款，ERP无Cash mutation。",
+        "origin唯一计数；非空used8.8只真实继承一次。",
+        "第五态要求zero used/unknown/reserved+permanent nofutureuse；当前100全27列pairedFK。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_STAGE100; ORIGINAL46_NOT_RUN; ACTUAL_UNPROVEN_FENCED"
+    },
+    {
+      "contract_id": "CREDIT-NEW-DEMAND-LINEAGE",
+      "producer_owner": "authorized Demand source/executor",
+      "consumer_owner": "ERP-CREDIT",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        89,
+        139,
+        727,
+        734
+      ],
+      "identity_vector": [
+        "originalDemandhistory+genuineNewDemand+originalqueries",
+        "creationapproval/current/wholeapproval/oldplanlawfulend"
+      ],
+      "rules": [
+        "原Demand不重开；已有created复用、unknown保holds，不造PLAN direct API。",
+        "独立creationapproval→createdsource→whole批准，避免future因果环。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_STAGE100; ORIGINAL46_NOT_RUN; ACTUAL_UNPROVEN_FENCED"
+    },
+    {
+      "contract_id": "CREDIT-DP11-LEGACY-DB",
+      "producer_owner": "actual DB/enforcement Source Owner",
+      "consumer_owner": "ERP-CREDIT",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+      "source_lines": [
+        169,
+        171,
+        657,
+        664,
+        666,
+        668
+      ],
+      "identity_vector": [
+        "server/database/schema+actualcatalog/model",
+        "alloldwriter/aliases/module/IAM/inflight/epoch+originalintent"
+      ],
+      "rules": [
+        "一个实际DB单位封ReturnedQty/REFUNDCreditNote双目标，PREPARED→OLD_FENCED→ACTIVE。",
+        "Skip/Closed非永久证明；Sourceclosure与observer独立Uow，unknown三分支不自动回旧。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_STAGE100; ORIGINAL46_NOT_RUN; ACTUAL_UNPROVEN_FENCED"
+    },
+    {
+      "contract_id": "S6-TENANT-IDENTITY",
+      "producer_owner": "Main IAM",
+      "consumer_owner": "CRM identity/session",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        99,
+        279,
+        283,
+        284,
+        286
+      ],
+      "identity_vector": [
+        "TenantId=organizationId GUID",
+        "explicit issuer/region/slug/client/mappingRevision"
+      ],
+      "rules": [
+        "四处配置一致后才可启用；未知不默认tenant，不跨region回退。",
+        "改slug保持ID；重启用新版本重新认证。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "S6-PRECHECKPOINT",
+      "producer_owner": "CRM transaction + Platform primitive",
+      "consumer_owner": "CRM published authorization",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        220,
+        222,
+        224,
+        227,
+        229,
+        234,
+        237,
+        239,
+        241
+      ],
+      "identity_vector": [
+        "tenant/consumer/aggregate/version/eventType",
+        "raw/data digest + lineage + actual transaction"
+      ],
+      "rules": [
+        "所有重复/过时早退前同事务内容门；Platform不独立commit。",
+        "State→Published→Projection→Inbox→checkpoint，冲突/DRIFT/撤allow/调和同commit。",
+        "缺能力关闭新授权及依赖新写；可信事实PendingInspection。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "S6-FINAL-AUTH-GATE",
+      "producer_owner": "actual IAM/Owner authorization writers",
+      "consumer_owner": "CRM/Main new effect/OPS worker",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        245,
+        247,
+        249,
+        251,
+        256,
+        257,
+        258,
+        259
+      ],
+      "identity_vector": [
+        "OwnerFinalAuthorizationGateV1.EvaluateAndHold",
+        "tenant/subject/action/targetVersion/operation/epoch/fieldPolicy/actualTransaction"
+      ],
+      "rules": [
+        "采用既有共同fence并全writer参与；ALLOWED_HELD持到commit。",
+        "分库无等价门关闭新效果；业务用途grant不可替安全门。",
+        "历史读/事实接收/技术投递/新业务效果分门。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "S6-IDENTITY-RECONCILIATION",
+      "producer_owner": "Main snapshot/generation",
+      "consumer_owner": "CRM baseline coordinator",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        400,
+        401,
+        402,
+        403,
+        404,
+        405,
+        407
+      ],
+      "identity_vector": [
+        "tenant opaque boundary + full unique aggregate directory",
+        "lease + source selection/conflict refs"
+      ],
+      "rules": [
+        "首尾两个完整目录boundary与集合相同才Complete。",
+        "快照来源不冒接收事件，失败不推进LastSuccess；sourceCAS保护新冲突。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "S6-REPLAY-THREE-DOMAINS",
+      "producer_owner": "ERP original inbox/result/bridge",
+      "consumer_owner": "OPS typed replay adapter",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        186,
+        190,
+        191,
+        192,
+        194,
+        196
+      ],
+      "identity_vector": [
+        "allowedAction/nativeType/nativeQueueRef",
+        "expectedDigest(domain,codecVersion,value)",
+        "originalRequest/message + nativeVersion"
+      ],
+      "rules": [
+        "请求/结果用真实raw-utf8-v1 CloudEvent hash；bridge无envelope且使用c03-bridge-key-v1身份hash。",
+        "域/动作/原身份错配零调度；旧PayloadSha256按三路径真实域兼容。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "S6-ORIGINAL-OPERATION-FIRST",
+      "producer_owner": "Owner replay journal",
+      "consumer_owner": "OPS API/worker",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        207,
+        208,
+        209,
+        210,
+        211,
+        212
+      ],
+      "identity_vector": [
+        "tenant+Owner+replayOperationId",
+        "immutable admitted actor/action/native/version/digest/reason/contract/eligibility tuple"
+      ],
+      "rules": [
+        "当前历史读鉴权后先查原operation；同义只返回原Receipt，旧eligibility/RV不拦回查。",
+        "新申请先Owner最终门再Operation重查后新资格；未知保持同ID。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "S6-OWNER-RESULT-CONSUMERS",
+      "producer_owner": "business Owner journal + registered consumers",
+      "consumer_owner": "OPS result reconciliation",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        182,
+        568,
+        571,
+        576,
+        580,
+        584,
+        587,
+        589
+      ],
+      "identity_vector": [
+        "original business key/requestVersion/inputDigest/domain/codec",
+        "fixed RequiredConsumerSet/registryVersion/routeEpoch/nativeCompletionPredicate/resultVersion"
+      ],
+      "rules": [
+        "APPLIED要真实原提交；查不到不是NOT_APPLIED_PROVEN。",
+        "证据齐与业务独立义务完成分开；离线消费者不能删除，集合变化CaseRevision。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "S6-REPLAY-AUDIT",
+      "producer_owner": "receiving Owner",
+      "consumer_owner": "audit/OPS UI",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+      "source_lines": [
+        533,
+        537,
+        539,
+        542,
+        544
+      ],
+      "identity_vector": [
+        "originalActor/replayOperator/worker",
+        "replayOperationId + typed digest + before/after receipt versions"
+      ],
+      "rules": [
+        "队列/audit同事务，Owner业务/receipt同事务；追加不覆盖或伪回填。",
+        "技术7/30/90日不是业务/PII政策，UNKNOWN/争议/被引用不先删。"
+      ],
+      "runtime_status": "STATIC_DESIGN_ACCEPTED_MD02; AC_NOT_RUN; ACTUAL_OWNER_ADOPTION_UNPROVEN"
+    },
+    {
+      "contract_id": "PRICE-PROFILE-PREVIEW",
+      "producer_owner": "Main ERP PRICE + master/policy Owners",
+      "consumer_owner": "PRICE import/manual/commit",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a1/a18753ac35341b9b__ERP-PRICE-R2.original.md",
+      "source_lines": [
+        67,
+        69,
+        71,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        85,
+        89,
+        91
+      ],
+      "identity_vector": [
+        "contextId/digest + exact profileRef/control",
+        "all owner policy body/Refs + dependencyHeadVector",
+        "L:physical row or M:UUID rowSupplements"
+      ],
+      "rules": [
+        "原13列不变；唯一Profile选择与产品/零价理由补充路径。",
+        "所有元数据固定同supplementSnapshot；任一依赖头变即STALE全批零写。"
+      ],
+      "runtime_status": "X1_R2_STATIC_ACCEPTED; ACTUAL_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PRICE-EST-EXACT-READ",
+      "producer_owner": "PRICE",
+      "consumer_owner": "EST I01",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a1/a18753ac35341b9b__ERP-PRICE-R2.original.md",
+      "source_lines": [
+        144,
+        146,
+        148,
+        154,
+        156,
+        158
+      ],
+      "identity_vector": [
+        "original OwnerQuery/LookupCriteria",
+        "SourceRef five fields + EvidenceRef three fields",
+        "EST-SELECTOR-1 exact criteria"
+      ],
+      "rules": [
+        "全T/L/Base/BP/构成/产品/数量/单位币种；Standard不fallback、legacy未证不MATCH。",
+        "read completeness/applicability/currentState分轴；sourceEvidence不得伪造。"
+      ],
+      "runtime_status": "X1_R2_STATIC_ACCEPTED; ACTUAL_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PRICE-EST-FINAL-NOTICE",
+      "producer_owner": "PRICE actual transaction",
+      "consumer_owner": "EST I02/I04",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a1/a18753ac35341b9b__ERP-PRICE-R2.original.md",
+      "source_lines": [
+        150,
+        160,
+        162
+      ],
+      "identity_vector": [
+        "Binding/source/operation/intent/current control",
+        "stable eventId + exact original SourceNotice"
+      ],
+      "rules": [
+        "Guard同实际Main事务持保护至commit，跨库未证关闭新采用。",
+        "Version/Control/outbox同commit，notice只是知识影响不等采用；旧Run/Version不重算。"
+      ],
+      "runtime_status": "X1_R2_STATIC_ACCEPTED; ACTUAL_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "FSC-DUAL-FACT-GUARD",
+      "producer_owner": "EST exact-fact extension + QTN relation Owner",
+      "consumer_owner": "FSC F-I02",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+      "source_lines": [
+        77,
+        79,
+        81,
+        83,
+        85,
+        87,
+        89
+      ],
+      "identity_vector": [
+        "ERPFSC-X1-R2-FG1",
+        "EST_FACT_READ + QTN_RELATION_FACT",
+        "exact subject/intent/selection/fields/heads + actual transaction"
+      ],
+      "rules": [
+        "新Required事实用途，不借EST I02/I03、ReferencePurpose或Usage。",
+        "两真实HELD原证据保全，缺绑定非终态等待零ISSUED；原Ref变动须新selection。"
+      ],
+      "runtime_status": "X1_R2_STATIC_ACCEPTED; ACTUAL_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "FSC-ISSUE-ARTIFACT",
+      "producer_owner": "FSC + SYS-NUM/FILE",
+      "consumer_owner": "document download + legacy projection",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+      "source_lines": [
+        115,
+        116,
+        118,
+        119,
+        124,
+        144,
+        150
+      ],
+      "identity_vector": [
+        "stable batch/item/numberReservationKey/artifactOperationKey",
+        "documentRoot/issueRevision/artifactRef"
+      ],
+      "rules": [
+        "先固定真实文件，再双守卫与签发终态同commit。",
+        "旧号投影独立PENDING/ACKED，不替来源守卫；下载固定原bytes不重渲染冒原件。"
+      ],
+      "runtime_status": "X1_R2_STATIC_ACCEPTED; ACTUAL_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "FSC-ITEM-RECOVERY",
+      "producer_owner": "FSC durable intent",
+      "consumer_owner": "trusted ResumeItem",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+      "source_lines": [
+        128,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        142,
+        144,
+        146
+      ],
+      "identity_vector": [
+        "batchId/itemId/requestDigest",
+        "attemptGeneration + lastConfirmedCheckpoint"
+      ],
+      "rules": [
+        "终态只有ISSUED/REJECTED，拒绝不复活；等待原item续办。",
+        "资源未知查原资源键；commit未知原唯一效果，只有权威rollback才能回checkpoint。",
+        "批成功+等待/UNKNOWN为PROCESSING，四计数合总数。"
+      ],
+      "runtime_status": "X1_R2_STATIC_ACCEPTED; ACTUAL_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PR-PLAN-INTAKE",
+      "producer_owner": "Planning Firm/allocation Owner",
+      "consumer_owner": "PUR-PR",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+      "source_lines": [
+        132,
+        134,
+        136,
+        138,
+        140,
+        144
+      ],
+      "identity_vector": [
+        "convertRequestId",
+        "source root+generation",
+        "exact PrPlanIntakeCommand/Result + Digest object"
+      ],
+      "rules": [
+        "真实同库participant与PR/peg/result同commit；未知保原键/份额。",
+        "CP22新增独立Owner观测不改原DTO、不当部署证明。"
+      ],
+      "runtime_status": "R3_STATIC_ACCEPTED; RUNTIME_GATES_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PR-ROOT-SHARE-BUDGET",
+      "producer_owner": "PUR-PR source Owner",
+      "consumer_owner": "PUR-PO/PUR-RFQ",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+      "source_lines": [
+        57,
+        59,
+        63,
+        65,
+        67,
+        69,
+        71,
+        209,
+        210,
+        223
+      ],
+      "identity_vector": [
+        "Scope+Owner+Root+generation",
+        "immutable GrantRef active frontier",
+        "canonicalGroupKey=creationKey"
+      ],
+      "rules": [
+        "A=F+P+E+U+R+B；不按新命令前缀重开预算。",
+        "整叶Claim与PO真实同事务消费；E仅正式disposition。"
+      ],
+      "runtime_status": "R3_STATIC_ACCEPTED; RUNTIME_GATES_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PR-OA-APPLICATION",
+      "producer_owner": "OA decision + PUR-PR application",
+      "consumer_owner": "PR approval/PO preparation",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+      "source_lines": [
+        162,
+        164,
+        166,
+        168,
+        170,
+        172,
+        174
+      ],
+      "identity_vector": [
+        "subject PR+revision+digest",
+        "applicationUnitId",
+        "receiptStream+continuous revision+previous hash"
+      ],
+      "rules": [
+        "接收Inbox不等应用；原OA wire不改；APPROVED不创建PO。",
+        "STALE不改当前头；完整revision快照与原receipt连续链。"
+      ],
+      "runtime_status": "R3_STATIC_ACCEPTED; RUNTIME_GATES_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PR-RESTRUCTURE-RESULT",
+      "producer_owner": "PUR-PR",
+      "consumer_owner": "PR UI/original command recovery",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+      "source_lines": [
+        180,
+        184,
+        188,
+        190,
+        192,
+        472
+      ],
+      "identity_vector": [
+        "persistent preview token+digest+scope/principal/expiry",
+        "full targetHead key set",
+        "immutable lineage roots/grants"
+      ],
+      "rules": [
+        "整次原子拆合，原根保留；完整headResults同Command一次commit。",
+        "Pending不返未来IDs；token不是新授权。"
+      ],
+      "runtime_status": "R3_STATIC_ACCEPTED; RUNTIME_GATES_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PR-PO-GROUP-BINDING",
+      "producer_owner": "PUR-PR provisional manifest + PUR-PO preparation",
+      "consumer_owner": "PO Source/Claim/create",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+      "source_lines": [
+        198,
+        200,
+        202,
+        208,
+        209,
+        210,
+        213,
+        217,
+        219,
+        521
+      ],
+      "identity_vector": [
+        "GroupId/provisionalDigest",
+        "actual preparationId/version/draftLineId",
+        "BOUND creationKey=canonicalGroupKey"
+      ],
+      "rules": [
+        "UNBOUND先存完整意图，无未来Bundle/Claim/PO。",
+        "真实validate全量匹配后CAS绑定一次；原三步稳定键恢复。"
+      ],
+      "runtime_status": "R3_STATIC_ACCEPTED; RUNTIME_GATES_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PR-CANCEL-RECOVER",
+      "producer_owner": "PUR-PO original effects + PR source",
+      "consumer_owner": "PR cancel/recover UI",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+      "source_lines": [
+        211,
+        221,
+        523,
+        546,
+        552
+      ],
+      "identity_vector": [
+        "original command/group/creation/query keys",
+        "complete fence",
+        "current object read+field projection+recover write"
+      ],
+      "rules": [
+        "NOT_OBSERVED非无效果；E不release；P/U/B取消202零revision。",
+        "recover不授GET，敏感字段掩码不返原摘要。"
+      ],
+      "runtime_status": "R3_STATIC_ACCEPTED; RUNTIME_GATES_UNPROVEN; AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RFQ-QUOTE-FAMILY",
+      "producer_owner": "RFQ recording",
+      "consumer_owner": "quote versions/comparison",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        552,
+        554,
+        556,
+        557,
+        560,
+        562,
+        564,
+        572
+      ],
+      "identity_vector": [
+        "stable internal FamilyId",
+        "typed external Tenant/RFQ/Supplier identity",
+        "BusinessVersion vs evidence version"
+      ],
+      "rules": [
+        "UNBOUND initial draft独立；首次record原子绑定，一外部身份一族。",
+        "绑定后不改号/并族；凭证version不入族键，历史内容不覆盖。"
+      ],
+      "runtime_status": "V1.1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "RFQ-APPROVAL-CONTENT",
+      "producer_owner": "OA fact + RFQ application",
+      "consumer_owner": "RFQ issue/decision/price/selection",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        710,
+        711,
+        713,
+        714,
+        715,
+        716,
+        717,
+        725,
+        728,
+        732,
+        734
+      ],
+      "identity_vector": [
+        "subject businessVersion/contentHash/submission rowVersion",
+        "stable policyDecisionHash",
+        "exact scope predecessor hash"
+      ],
+      "rules": [
+        "SUBMITTED token变化不否定同内容；同意图不重复OA。",
+        "scope应用CAS全体原子；发行/价发布回调不自动执行按钮。"
+      ],
+      "runtime_status": "V1.1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "RFQ-PRICE-RESOLUTION",
+      "producer_owner": "RFQ exact price versions",
+      "consumer_owner": "explicit PriceSelection/PO basis",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        835,
+        837,
+        841,
+        843,
+        848,
+        860,
+        862,
+        864,
+        868
+      ],
+      "identity_vector": [
+        "full two-currency ResolvePrice",
+        "RFQ-RESOLVE-2 canonicalRequest claims",
+        "request/candidate/selectedTerms hashes"
+      ],
+      "rules": [
+        "唯一或明确选择，无自动优先；隐藏候选影响唯一性则BLOCKED。",
+        "完整claims受签恢复请求；10min初次门，长期审批用准确已存内容。"
+      ],
+      "runtime_status": "V1.1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "RFQ-PO-COMMERCIAL-DELIVERY",
+      "producer_owner": "RFQ frozen basis",
+      "consumer_owner": "PUR-PO commercial adapter",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        982,
+        984,
+        1288,
+        1290,
+        1304,
+        1308,
+        1309,
+        1311,
+        1313,
+        1315,
+        1317
+      ],
+      "identity_vector": [
+        "original terms+TargetCommercialPayload+MappingManifest",
+        "required/supplier/resolved delivery triple",
+        "exact calendar snapshot and deliverySnapshotHash"
+      ],
+      "rules": [
+        "评价币不替结算币，不支持累进/多币费用直接阻断。",
+        "PO创建保相对未定锚点，真实确认后独立Assessment，原快照不改。"
+      ],
+      "runtime_status": "V1.1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "RFQ-OWNER-FINAL-EFFECT",
+      "producer_owner": "Source/Decision/PO actual participants",
+      "consumer_owner": "RFQ execution",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        1413,
+        1415,
+        1417,
+        1419,
+        1559
+      ],
+      "identity_vector": [
+        "CanonicalGroup+manifest+generation",
+        "Source Claim and scope/current binding guards",
+        "actual shared Main transaction"
+      ],
+      "rules": [
+        "组原子最终效果保护，Source锁定Effect防TTL再用；随后观察可异步。",
+        "停止争同域，跨库默认fenced；完整Owner采用而非布尔token。"
+      ],
+      "runtime_status": "V1.1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "RFQ-THREE-EVIDENCE-STREAMS",
+      "producer_owner": "Source/PO/Projection separate producers",
+      "consumer_owner": "RFQ observations",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        1323,
+        1327,
+        1328,
+        1329,
+        1393,
+        1395,
+        1397,
+        1409
+      ],
+      "identity_vector": [
+        "type/producer/contract/scope",
+        "stream+epoch+version",
+        "exact effect/grant coverage and checkpoint"
+      ],
+      "rules": [
+        "各Producer只写自己的观察，PO不提供PR总余额。",
+        "C50覆盖E1/E2后不再加PO50；gap/unknown不得推精确可用量。"
+      ],
+      "runtime_status": "V1.1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "RFQ-ORIGINAL-GROUP-RECOVERY",
+      "producer_owner": "PO original terminal + Source fence",
+      "consumer_owner": "RFQ recovery/relation",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+      "source_lines": [
+        1014,
+        1016,
+        1020,
+        1022,
+        1030,
+        1648,
+        1650,
+        1652
+      ],
+      "identity_vector": [
+        "stable group aliases/manifest",
+        "full-path fence + exact reauthorization generation",
+        "current relation version+authority evidence"
+      ],
+      "rules": [
+        "原拒绝不复活；未知不换键；repair只映射不建单。",
+        "有限本地command墓碑不替Owner cancel，租约/TTL不证noeffect。"
+      ],
+      "runtime_status": "V1.1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-ATOMIC-CREATION",
+      "producer_owner": "PO+Source+RFQ participants",
+      "consumer_owner": "RFQ/PR/PO",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        661,
+        689,
+        692,
+        693,
+        694,
+        695,
+        750,
+        752
+      ],
+      "identity_vector": [
+        "CanonicalGroup/creationKey+manifest+generation",
+        "exact source Grant/line mappings",
+        "actual same DbConnection/DbTransaction"
+      ],
+      "rules": [
+        "全组一PO所有行与SourceUse一次commit；原ClaimRecord保持原wire。",
+        "无保护不得先建单；unknown原键查；非RFQ不得伪RFQ身份。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-SUPPLIER-CURRENT-HEAD",
+      "producer_owner": "Supplier response Owner",
+      "consumer_owner": "PO confirmation",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        821,
+        823,
+        825,
+        827,
+        838,
+        839,
+        841,
+        843
+      ],
+      "identity_vector": [
+        "Tenant/Supplier/Revision/Schedule",
+        "responseRef/hash/epoch/sequence/predecessor",
+        "expectedHeadRevision+current declaration"
+      ],
+      "rules": [
+        "缺口/分叉阻新确认；Ack必须等当前头和Owner声明。",
+        "真实接受时间为锚点；历史确认不因后继擦除。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-CHANGE-WORK",
+      "producer_owner": "PO persistent ChangeWork",
+      "consumer_owner": "revision/Source/Planning",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        900,
+        904,
+        924,
+        928,
+        931,
+        935,
+        939
+      ],
+      "identity_vector": [
+        "unique Work per Change",
+        "leaseId/epoch + exact immutable apply hash",
+        "unique ChangeApplication and exact EvidenceSet"
+      ],
+      "rules": [
+        "首次202无新Revision；最终全序当前门一次Application/Transfer/SourceUse。",
+        "abandon永久fence后清理，未知不TTL解量。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-CANCELLATION-APPLICATION",
+      "producer_owner": "PO final transaction",
+      "consumer_owner": "Source/Planning/GR",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        982,
+        996,
+        1010,
+        1012,
+        1015,
+        1020,
+        1032,
+        1036,
+        1048
+      ],
+      "identity_vector": [
+        "immutable proposal vs Work vs Application",
+        "P/I/H disjoint budget segments",
+        "Application/SourceUse/Grant/slices disposition key"
+      ],
+      "rules": [
+        "商业APPLIED与SourcePending分开；PO不直接返额。",
+        "晚事实保真且引用原Application，不能改取消量或钳实收。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-RECEIVING-PERMIT",
+      "producer_owner": "PO+GR actual participants",
+      "consumer_owner": "GR/WMS final receive",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        1197,
+        1207,
+        1214,
+        1216,
+        1228,
+        1239,
+        1243,
+        1245,
+        1246,
+        1249
+      ],
+      "identity_vector": [
+        "receiptOperationKey/scope/segments",
+        "Permit version+guard total/vector+start/OwnerIntent",
+        "actual ReceiptIdentity/ReceiptSlice and same commit"
+      ],
+      "rules": [
+        "HELD/start不是实收权，最后硬停优先；软排空仅原drain清单。",
+        "原USED回历史；unknown保护；NO_EFFECT须所有路径fence证明。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-FULFILLMENT-VERSIONED-FACTS",
+      "producer_owner": "GR/QA-adapter/AP/return designated Owners",
+      "consumer_owner": "PO projections",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        1088,
+        1092,
+        1094,
+        1096,
+        1098,
+        1112,
+        1114,
+        1116,
+        1120
+      ],
+      "identity_vector": [
+        "Tenant/kind/producer/ledger/document/line/allocation",
+        "factVersion/predecessor/supersedes",
+        "complete document allocation manifest/receiptSlice"
+      ],
+      "rules": [
+        "最新有效版本替换不叠加；GR/WMS同次不双计。",
+        "五量分开，未知不0，真实超额/晚到不删。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-DEPENDENCY-CURRENT-EVIDENCE",
+      "producer_owner": "Supplier/Fee/GR/Source/QA/AP",
+      "consumer_owner": "PO Work final decision",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        1311,
+        1313,
+        1315,
+        1317,
+        1319,
+        1323
+      ],
+      "identity_vector": [
+        "immutable PODEP request identity",
+        "kind-specific payload+Owner version chain",
+        "DependencyHead vector+EvidenceSet exact scope"
+      ],
+      "rules": [
+        "多载荷或错kind拒绝；N/A也须证明；同版异义分叉不末到获胜。",
+        "最后门核当前头和声明；cutoff起点固定并复核当前事实。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "PO-COMPLETE-SUPPLY-ENGINEERING",
+      "producer_owner": "PO own final effects",
+      "consumer_owner": "Planning/PLM",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        947,
+        949,
+        951,
+        954,
+        1253,
+        1255,
+        1274,
+        1279,
+        1281
+      ],
+      "identity_vector": [
+        "PO complete SupplyRevision including retired keys",
+        "real Application/Confirmation/Fact causation",
+        "release/target/scope and impact registry watermark"
+      ],
+      "rules": [
+        "仅已发已确认有当前资格进入合格供给；谱系不双计。",
+        "收到发布非采用；ECO真实Change/Cancel完成才相应回执。"
+      ],
+      "runtime_status": "V1.1_USER_ACCEPTED_DEVELOPER_SPEC; ACTUAL_OWNER_UNPROVEN; NOT_RUN"
+    },
+    {
+      "contract_id": "GR-ARRIVAL-RANGE-IDENTITY",
+      "producer_owner": "trusted Arrival Owner+GR",
+      "consumer_owner": "GR freeze/Stock leaf",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        280,
+        282,
+        284,
+        333,
+        335,
+        337
+      ],
+      "identity_vector": [
+        "Tenant/Producer/stableArrivalEventId",
+        "ArrivalLine original-unit intervals",
+        "immutable ArrivalSliceId occurrence/effect"
+      ],
+      "rules": [
+        "扫描/HTTP/Source版本不新增真实到货叶；重叠锁不只相同区间唯一。",
+        "完整Manifest按原source/part双向映射，未知不复用到货片。"
+      ],
+      "runtime_status": "V1.1_REV1_USER_ACCEPTED; O-GR-01..12_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "GR-MAIN-ATOMIC-RECEIVE",
+      "producer_owner": "PO+GR+WMS participants",
+      "consumer_owner": "physical/commercial/permit",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        352,
+        358,
+        364,
+        365,
+        366,
+        367,
+        370,
+        629,
+        631,
+        633
+      ],
+      "identity_vector": [
+        "frozen intent/work epoch+start",
+        "actual shared connection+transaction+resource plan",
+        "Stock canonical/leaf+PO scope/permit+GR origin"
+      ],
+      "rules": [
+        "start零数量，最终一次Stock/Permit/Commercial共commit。",
+        "所有writer按组合锁序；部分真实事实不重补原子组。"
+      ],
+      "runtime_status": "V1.1_REV1_USER_ACCEPTED; O-GR-01..12_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "GR-SC11-ORIGINAL-RECOVERY",
+      "producer_owner": "WMS original Canonical",
+      "consumer_owner": "GR same Work",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        391,
+        393,
+        395,
+        397,
+        418,
+        420,
+        424
+      ],
+      "identity_vector": [
+        "original locator/businessDigest and exact result",
+        "one Commercial/domain/scope per original operation/line",
+        "all-path closure/adoption evidence"
+      ],
+      "rules": [
+        "MAIN_ATOMIC未commit全回滚；跨库等价未证阻新效果。",
+        "既成Stock100只补GR商业，不再Posting；NOT_OBSERVED无无效果含义。"
+      ],
+      "runtime_status": "V1.1_REV1_USER_ACCEPTED; O-GR-01..12_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "GR-QUALITY-DUAL-CONSUMERS",
+      "producer_owner": "Quality authoritative Canonical",
+      "consumer_owner": "GR acceptance and Stock application separately",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        444,
+        448,
+        450,
+        456,
+        458,
+        460,
+        464,
+        466,
+        468
+      ],
+      "identity_vector": [
+        "InspectionSource/IQC/policy alias",
+        "family/stream/epoch/sequence and predecessor",
+        "exact scopeBindings/QualityScopeProof"
+      ],
+      "rules": [
+        "策略不明不是免检；任务失败仍待检。",
+        "同决定两Consumer独立，采购验收权不授库存写权。"
+      ],
+      "runtime_status": "V1.1_REV1_USER_ACCEPTED; O-GR-01..12_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "GR-ORIGINAL-COORDINATE-SCOPE",
+      "producer_owner": "WMS correction evidence + GR mapping",
+      "consumer_owner": "Quality/Acceptance/PO/MATCH",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        491,
+        493,
+        494,
+        495,
+        498,
+        500,
+        519,
+        521,
+        523,
+        527,
+        529,
+        531
+      ],
+      "identity_vector": [
+        "immutable domain original source/part/root/movement/UOM",
+        "Commercial→complete ScopeSet→line EffectiveScope",
+        "OwnerCorrectionIdentity and current Quality binding/HeadSet"
+      ],
+      "rules": [
+        "非前缀VOID保带洞原坐标；scalar新量不能猜[0,newQty)。",
+        "更正与scope/receipt原子，新scope须Quality FULL_SNAPSHOT；旧验收保历史但当前匹配409。"
+      ],
+      "runtime_status": "V1.1_REV1_USER_ACCEPTED; O-GR-01..12_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "GR-PO-FACT-AND-PRECISION",
+      "producer_owner": "GR complete fact/manifest",
+      "consumer_owner": "PO fulfillment",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        122,
+        252,
+        497,
+        538,
+        540,
+        542,
+        544,
+        546,
+        548
+      ],
+      "identity_vector": [
+        "PO6 vs Stock8 exact conversion",
+        "operation-level fact identity, full line allocations",
+        "same Commercial ScopeSet and exact effectiveScope slices"
+      ],
+      "rules": [
+        "8位真事实保原值，PO不可表达则阻投影不舍入。",
+        "新版本替贡献，Rejected不造PO kind；技术ACK非应用。"
+      ],
+      "runtime_status": "V1.1_REV1_USER_ACCEPTED; O-GR-01..12_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "GR-NONADDITIVE-HANDOFF",
+      "producer_owner": "GR reference/version basis",
+      "consumer_owner": "Planning/MATCH/RETURN",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        552,
+        554,
+        556,
+        560,
+        562,
+        566,
+        568
+      ],
+      "identity_vector": [
+        "actual PO fact+Stock receipts+SourcePortion lineage",
+        "basisRevision/current ScopeSet/Acceptance head",
+        "immutable original slices and real return movement"
+      ],
+      "rules": [
+        "createsAdditionalSupply=false；组成缺项等待不再加GR供给。",
+        "createsMatchOrReturnPermission=false，最终条件验证归Owner；退货不改毛实收或再开PO量。"
+      ],
+      "runtime_status": "V1.1_REV1_USER_ACCEPTED; O-GR-01..12_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "MATCH-ORIGINAL-DOMAIN-GUARD",
+      "producer_owner": "MATCH/GR/Finance/RETURN按准确原文分权",
+      "consumer_owner": "采购匹配/财务效果/退运组合参与者",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        113,
+        117,
+        123,
+        125,
+        127,
+        139,
+        148,
+        150,
+        152,
+        154
+      ],
+      "identity_vector": [
+        "Environment/Tenant/LegalEntity/originalDomain Owner+Id",
+        "locked complete protectedDomain generation+current GR heads"
+      ],
+      "rules": [
+        "原坐标E∩Accepted∩slice∩portion，换scope/book不新额度。",
+        "全域旧未决影响挡新freeze/AP，即使新选择不交集；quarantine只写Hold不写新占用。"
+      ],
+      "runtime_status": "R2_AND_BOUNDED_MRX_v0.2_DESIGN_ACCEPTED; ACTUAL_ADOPTION_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "MATCH-PRICE-BOTH-LIMITS",
+      "producer_owner": "MATCH/GR/Finance/RETURN按准确原文分权",
+      "consumer_owner": "采购匹配/财务效果/退运组合参与者",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        353,
+        359,
+        361,
+        363,
+        365,
+        367,
+        371
+      ],
+      "identity_vector": [
+        "InvoiceLine+PO commercial basis/version+priceUom",
+        "raw16decimal cross-multiplication and exact policy authority"
+      ],
+      "rules": [
+        "同组分片合算，两来源正负差不净额，金额与率都过。",
+        "0基值、税费舍入与金额分配依Owner原件；审批不越数量硬门。"
+      ],
+      "runtime_status": "R2_AND_BOUNDED_MRX_v0.2_DESIGN_ACCEPTED; ACTUAL_ADOPTION_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "MATCH-FINANCE-PLAN-ADMISSION",
+      "producer_owner": "MATCH/GR/Finance/RETURN按准确原文分权",
+      "consumer_owner": "采购匹配/财务效果/退运组合参与者",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        264,
+        266,
+        268,
+        397,
+        399,
+        405,
+        409,
+        419
+      ],
+      "identity_vector": [
+        "stable requestKey/inputDigest+exactPlan fullrequiredlegs",
+        "Admission epoch/control and true common transaction"
+      ],
+      "rules": [
+        "prepare零AP；202非Created，逐腿最终source/OA守卫。",
+        "多账套不多占商业范围，未知查原键不换请求。"
+      ],
+      "runtime_status": "R2_AND_BOUNDED_MRX_v0.2_DESIGN_ACCEPTED; ACTUAL_ADOPTION_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "MATCH-FINANCE-CURRENT-KNOWLEDGE",
+      "producer_owner": "MATCH/GR/Finance/RETURN按准确原文分权",
+      "consumer_owner": "采购匹配/财务效果/退运组合参与者",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        415,
+        417,
+        446,
+        448,
+        450,
+        452,
+        502
+      ],
+      "identity_vector": [
+        "ObservedHigh/AppliedSequence+gap",
+        "CURRENT_AT_AS_OF head input/manifest/seq"
+      ],
+      "rules": [
+        "高序入Inbox立即清当前complete；旧Posted历史不删。",
+        "补连续链仍需真实当前头，调整结果不能代原AP新头。"
+      ],
+      "runtime_status": "R2_AND_BOUNDED_MRX_v0.2_DESIGN_ACCEPTED; ACTUAL_ADOPTION_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "MATCH-CORRECTIVE-ADMISSION",
+      "producer_owner": "MATCH/GR/Finance/RETURN按准确原文分权",
+      "consumer_owner": "采购匹配/财务效果/退运组合参与者",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        468,
+        498,
+        503,
+        505,
+        507,
+        515,
+        519,
+        521,
+        523,
+        525,
+        527,
+        529
+      ],
+      "identity_vector": [
+        "originalPosting exactranges/amount/Finance adjustment budget",
+        "CorrectionKey+purpose FINANCE_ADJUSTMENT_ONLY+plan/epoch/scope"
+      ],
+      "rules": [
+        "原forward FENCED，专用纠正不要求旧VOID重新Eligible。",
+        "默认RETIRE；全路径精确closure方可释放/同票替换，未知不更换键。"
+      ],
+      "runtime_status": "R2_AND_BOUNDED_MRX_v0.2_DESIGN_ACCEPTED; ACTUAL_ADOPTION_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "MRX-RETURN-SCOPE-OVERLAY",
+      "producer_owner": "MATCH/GR/Finance/RETURN按准确原文分权",
+      "consumer_owner": "采购匹配/财务效果/退运组合参与者",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        384,
+        386,
+        388,
+        411,
+        417,
+        419,
+        421,
+        423,
+        425,
+        427,
+        441,
+        443
+      ],
+      "identity_vector": [
+        "RET-IMPACT/ReturnId/ReturnVersion",
+        "originalDomain ranges+ReverseGeneration+allactivecontrols"
+      ],
+      "rules": [
+        "普通Return不改GR E/Accepted，MATCH独立overlay挡新的freeze/正向AP。",
+        "安装不自动FENCE原Admission；旧Posted保全，所有writer实际共同最终门。"
+      ],
+      "runtime_status": "R2_AND_BOUNDED_MRX_v0.2_DESIGN_ACCEPTED; ACTUAL_ADOPTION_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "MRX-PHYSICAL-CLOSURE-TRANSFER",
+      "producer_owner": "MATCH/GR/Finance/RETURN按准确原文分权",
+      "consumer_owner": "采购匹配/财务效果/退运组合参与者",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        291,
+        293,
+        295,
+        310,
+        319,
+        355,
+        359,
+        361,
+        363,
+        365,
+        413,
+        431,
+        433,
+        435,
+        437
+      ],
+      "identity_vector": [
+        "true sourceSlotGeneration/fullclosure+permanentfence",
+        "originalphysicalFact/Stockreceipt mapping+oneUow",
+        "transferKey/precise predecessor/successor controls and terminal lineage"
+      ],
+      "rules": [
+        "Stock→physicalfact→MRX→SourceReceipt→result同commit；查既成事实不重OUT。",
+        "转交无保护窗口；未用准确关闭才释放，缺后继保祖先，credit不能解retired。"
+      ],
+      "runtime_status": "R2_AND_BOUNDED_MRX_v0.2_DESIGN_ACCEPTED; ACTUAL_ADOPTION_UNVERIFIED; NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-IDENTITY-ORIGINAL-SCOPE",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        42,
+        170,
+        197,
+        199,
+        224,
+        226,
+        245,
+        258
+      ],
+      "identity_vector": [
+        "Case realOrigin/buyer/supplier identity",
+        "immutable original domain+Root and exactPOportion/uom",
+        "businessRevision vs Parent/Part/control/domain axes"
+      ],
+      "rules": [
+        "正常Return不改GR E，不拿当前Stock余额当范围预算。",
+        "未接受但有专门用途可以退，仍保Quality未知不假PASS。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-PROJECTION-DESTINATION",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        230,
+        233,
+        237,
+        239,
+        323,
+        330,
+        332,
+        453,
+        54326,
+        54328
+      ],
+      "identity_vector": [
+        "one projectionRef→one completeProof binding",
+        "exact logisticsTarget/consignee/addressVersion/approvedPart range",
+        "acyclic target→approval→authorizedDestination→Seed→Authorization"
+      ],
+      "rules": [
+        "compact正确hash不等完整批准，所有原件双向绑定真实Owner头。",
+        "结算账户不替物流目标，换地址需后继准确批准。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-H31-PART-ATOMIC",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        461,
+        463,
+        465,
+        467,
+        469,
+        471,
+        473,
+        506,
+        508,
+        510,
+        512,
+        514,
+        54334,
+        54341
+      ],
+      "identity_vector": [
+        "true Part/child occurrence and immutable original source",
+        "actual StockCanonical+allRootRange/Allowance+MRX",
+        "same MainUow actual connection/transaction"
+      ],
+      "rules": [
+        "一真实Part同Root多位置全原子；unknown10不能改4/6。",
+        "Stock→physicalFact→MRX→SourceReceipt→Result一次commit，不提前外发候选。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-H31-SOURCE-CAPACITIES",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        596,
+        54363,
+        54365,
+        54369,
+        54371,
+        54377,
+        54379,
+        54381,
+        54383
+      ],
+      "identity_vector": [
+        "complete all LOCATION sourceLine/rootspans grouping",
+        "each current MetricSet including authorized N/A",
+        "CapacityDomain/Head/Occupancy/Mapping/Rule actual shared keys"
+      ],
+      "rules": [
+        "物理减少也同容量门，不凭capacityBindings空跳过。",
+        "多地点同Part全部核，N/A仍MetricSet锁，量变同StockReceipt不另扣。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-LEAF-LINEAGE-CLOSURE",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        291,
+        293,
+        295,
+        319,
+        355,
+        357,
+        358,
+        359,
+        361,
+        363,
+        365,
+        367,
+        518,
+        524
+      ],
+      "identity_vector": [
+        "whole Case root/SourceSlot predicate and generation",
+        "exact TRANSFER/PARTITION complete terminal lineage",
+        "actual/unused/unresolved closed partition and permanentFence"
+      ],
+      "rules": [
+        "Part unused返父不返全局；Case精确全槽关闭才释放unused。",
+        "缺后继保祖先，旧4＋新6关6只剩4，已退叶不因信用释放。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-FINANCE-SHARED-OBLIGATION",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        638,
+        675,
+        681,
+        683,
+        685,
+        687,
+        689,
+        695,
+        697,
+        699,
+        701,
+        703,
+        711,
+        715,
+        752,
+        758
+      ],
+      "identity_vector": [
+        "Finance OriginalObligation byentity/book/originalPosting allocation/range/currency/role",
+        "all MATCH/RETURN/manual adjusted+inflight shared budget",
+        "settlementKey/input/plan fixed executionEpoch; fence controlRevision distinct"
+      ],
+      "rules": [
+        "不同业务key不新额度，准确CREATE/REUSE/WAIT/NO_EFFECT专业计划。",
+        "退款到账不等APcredit；fence不改原execute epoch，成功腿历史保留。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-CANONICAL-GR-OBSERVER",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        530,
+        532,
+        542,
+        550,
+        552,
+        554,
+        556,
+        558,
+        574,
+        576,
+        578
+      ],
+      "identity_vector": [
+        "PUR_RETURN_OBSERVER perparent/line/Part/SourcePart/originalMovement",
+        "observation revision/previous and fullsnapshot",
+        "PO physicalRETURN Producer distinctFinanceCREDIT"
+      ],
+      "rules": [
+        "两批4/6各流v1不碰父商业版；10→8是替代当前快照非新增量。",
+        "GR原wire准确Resolver采用，不改E/Received也不重复扣Stock。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-PHYSICAL-CURRENT-QUERY",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        600,
+        616,
+        618,
+        620,
+        622,
+        624,
+        626,
+        628,
+        630,
+        632
+      ],
+      "identity_vector": [
+        "fullEffectIdentity/generation/attempt/workerEpoch activeToken",
+        "CurrentHead+CaseProjection CAS and complete headVector",
+        "ObservedEffectiveRevision and maximal comparable sourceFrontier"
+      ],
+      "rules": [
+        "刷新开始先清当前；旧成功不能覆盖新UNKNOWN/8。",
+        "旧响应首次揭示更高事实仍推进下界；补旧cut后须全新current读。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-STOCK-DISCOVERY-READ",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        90454,
+        90458,
+        90462,
+        90464,
+        90466,
+        90468,
+        90472,
+        90474,
+        90476,
+        90482,
+        90484
+      ],
+      "identity_vector": [
+        "originalMovement/Receipt+complete committedCorrection canonical set",
+        "CAPTURE_CURRENT fresh readKey vsEXACT_SNAPSHOT originalcut",
+        "full SNAPSHOT pools+interpretation closure+scope"
+      ],
+      "rules": [
+        "无通知或本地无gap不证明无更正；空集合也需完整Owner证据。",
+        "只读补关联0Stock效果，APPLIED_AS_OF不是新的当前FOUND。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-FINANCE-HISTORY",
+      "producer_owner": "RETURN/Stock/OUT/MRX/Finance按准确契约",
+      "consumer_owner": "采购退运、供应商结算与商业观察",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        707,
+        709,
+        735,
+        744,
+        746,
+        748
+      ],
+      "identity_vector": [
+        "settlement/input/plan/executionEpoch fixedrange (Applied,Observed]",
+        "immutable fullHistoryManifest+snapshot/cursor",
+        "currentHead≥Observed aftercontinuous apply"
+      ],
+      "rules": [
+        "query最新一份不等补历史；缺页NOT_RETAINED留gap。",
+        "历史补链不执行腿，过程中新高序必须继续补且核当前头。"
+      ],
+      "runtime_status": "R3_AND_FOUR_SHARED_SUPPLEMENTS_DESIGN_ACCEPTED; REAL_ADOPTION_UNVERIFIED; 168AC_NOT_RUN"
+    },
+    {
+      "contract_id": "SUB-PO-LINK-GUARD-1",
+      "producer_owner": "SUB与PO/WMS/GR/Finance真实Owner按契约",
+      "consumer_owner": "委外采购、仓储、财务与调查页面",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "source_lines": [
+        109,
+        124,
+        130,
+        132,
+        134,
+        136
+      ],
+      "identity_vector": [
+        "Tenant+POline activeLink",
+        "exactPOscope/version/guard current same transaction",
+        "immutable wholeConsignPlan+fixedConsumptionBasis"
+      ],
+      "rules": [
+        "旧upsert遗漏保留与新整集合移除不同；已发/未知料不删。",
+        "缺同事务Owner门阻正式采用，不改PO公共DTO。"
+      ],
+      "runtime_status": "R2_STATIC_DESIGN_ACCEPTED; OWNER_ADOPTION_UNPROVEN; 48AC_NOT_RUN"
+    },
+    {
+      "contract_id": "SUB-PUBLIC-ISSUE-WORK",
+      "producer_owner": "SUB与PO/WMS/GR/Finance真实Owner按契约",
+      "consumer_owner": "委外采购、仓储、财务与调查页面",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "source_lines": [
+        148,
+        164,
+        166,
+        168,
+        170,
+        172,
+        174,
+        176,
+        178
+      ],
+      "identity_vector": [
+        "UQ(Tenant,PlanId) acceptedWorkId",
+        "eachLeg originalKey/digest/revision/dispatchState",
+        "MaterialIssueProtection pending+committed budget"
+      ],
+      "rules": [
+        "公共apply受理所有腿+保护+Ledger同Tx；双Plan争余量。",
+        "送前意图与cancelCAS竞争，已发continue只原键查询；PER_LEG明确部分成功。"
+      ],
+      "runtime_status": "R2_STATIC_DESIGN_ACCEPTED; OWNER_ADOPTION_UNPROVEN; 48AC_NOT_RUN"
+    },
+    {
+      "contract_id": "SUB-WMS-ISSUE-1",
+      "producer_owner": "SUB与PO/WMS/GR/Finance真实Owner按契约",
+      "consumer_owner": "委外采购、仓储、财务与调查页面",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "source_lines": [
+        146,
+        184,
+        186,
+        188,
+        190,
+        194,
+        196,
+        198
+      ],
+      "identity_vector": [
+        "one actual chosenStock source leg",
+        "Owner operationKey+intentRef+approvedDigest",
+        "original movement/slices/custody proof+OwnerVersion"
+      ],
+      "rules": [
+        "单库存行整量策略不暗拼、不冒FIFO；缺custody独立阻门。",
+        "timeout/NOT_OBSERVED不放保护，NO_EFFECT_FINAL才释放；实退不扣issuedGross。"
+      ],
+      "runtime_status": "R2_STATIC_DESIGN_ACCEPTED; OWNER_ADOPTION_UNPROVEN; 48AC_NOT_RUN"
+    },
+    {
+      "contract_id": "SUB-GR-OBSERVATION-1",
+      "producer_owner": "SUB与PO/WMS/GR/Finance真实Owner按契约",
+      "consumer_owner": "委外采购、仓储、财务与调查页面",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "source_lines": [
+        204,
+        206,
+        208,
+        212,
+        214,
+        220,
+        222
+      ],
+      "identity_vector": [
+        "PoFactIdentity+ReceiptSlice latest allocation version",
+        "complete POSTED/VOID_EVIDENCE chain and original mappings",
+        "ReceiptGross/Acceptance/Quality separate cuts"
+      ],
+      "rules": [
+        "只导航GR不创入库许可，无QA未知不默认PASS。",
+        "同GR/WMS事实不双计；真实退货不伪VOID原Receipt。"
+      ],
+      "runtime_status": "R2_STATIC_DESIGN_ACCEPTED; OWNER_ADOPTION_UNPROVEN; 48AC_NOT_RUN"
+    },
+    {
+      "contract_id": "SUB-FIN-CUMULATIVE-1",
+      "producer_owner": "SUB与PO/WMS/GR/Finance真实Owner按契约",
+      "consumer_owner": "委外采购、仓储、财务与调查页面",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "source_lines": [
+        228,
+        230,
+        232,
+        234,
+        236,
+        238,
+        254,
+        256,
+        258
+      ],
+      "identity_vector": [
+        "immutableCostBasis/Finance adoptedprofile",
+        "completeeffectiveRECEIPT set + rounded cumulative target",
+        "settlementRevision/predecessor+legacy SC key exactmapping"
+      ],
+      "rules": [
+        "首正收回仅一次全材料M；40→100例720→900 delta180。",
+        "未知阻后继；Finance真实前驱锁；新key不能再记旧材料。"
+      ],
+      "runtime_status": "R2_STATIC_DESIGN_ACCEPTED; OWNER_ADOPTION_UNPROVEN; 48AC_NOT_RUN"
+    },
+    {
+      "contract_id": "SUB-ACCEPTANCE-RECONCILIATION",
+      "producer_owner": "SUB与PO/WMS/GR/Finance真实Owner按契约",
+      "consumer_owner": "委外采购、仓储、财务与调查页面",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+      "source_lines": [
+        262,
+        264,
+        266,
+        268,
+        270,
+        272,
+        276,
+        278,
+        280
+      ],
+      "identity_vector": [
+        "fixedQplan/POscope/version/material rationalusage",
+        "COMMERCIAL_ACCEPTANCE_GROSS completecut",
+        "Snapshot+explicitInvestigation and successor invalidation"
+      ],
+      "rules": [
+        "成本RECEIPT与对账ACCEPTANCE有意不同，不统一finishedQty。",
+        "100实收60验收700发料：期望600差100允30暂时超发；unknown全null不猜。"
+      ],
+      "runtime_status": "R2_STATIC_DESIGN_ACCEPTED; OWNER_ADOPTION_UNPROVEN; 48AC_NOT_RUN"
+    },
+    {
+      "contract_id": "PR-NORMATIVE-CONTINUITY",
+      "producer_owner": "Main Procurement; OA and PUR-PO preserve their exact contracts",
+      "consumer_owner": "PR UI/worker/Source-Claim adapter and implementation fixtures",
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+      "source_lines": [
+        9,
+        4518,
+        4872,
+        4985,
+        5182,
+        5766,
+        5836,
+        8942,
+        9567,
+        9738,
+        9873,
+        13302,
+        15046
+      ],
+      "identity_vector": [
+        "rootOwner/rootKey/allocationGeneration",
+        "native sourceBusinessVersion / PR businessRevision / authorizationScopeId independently preserved",
+        "groupId/provisionalDigest -> one bound creationKey; three stable transport commands",
+        "previewToken + canonical input/output + actor/scope/authorizationRevision + consumedCommandId"
+      ],
+      "rules": [
+        "10连续场景、53本地DTO、30外域例、27hash规则须按主文closed decoder落地；不能从fixture的成功字面豁免资格。",
+        "N07原时序与账本F100→E100；WO100不重复，PR/未收PO不算实收供给。",
+        "N01 bundle/Claim版本差异及N08 preview首次结果时序有界待核，不继承作者静态PASS。"
+      ],
+      "adoption_findings": [
+        "COM-PR-N01-AUTHORITY-VERSION",
+        "COM-PR-N08-PREVIEW-TIMELINE"
+      ],
+      "runtime_status": "DESIGN_SEMANTICS_CONSOLIDATED; 57AC_NOT_RUN; OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "PO-RECIPE-CROSSSTEP-BOUNDARY",
+      "producer_owner": "RFQ/Source/PO/GR/Supplier/QA/FIN_AP each owns its original facts",
+      "consumer_owner": "PO projection, receiving guard, Change/Cancel work and Planning",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+      "source_lines": [
+        1755,
+        3743,
+        4513,
+        5002,
+        5393,
+        6930,
+        7333,
+        8706,
+        8810,
+        8941,
+        10161,
+        10463,
+        10554
+      ],
+      "identity_vector": [
+        "stable group/Grant/Effect/PO line/Schedule/Portion",
+        "Permit operation + guards + version + ownerStartIntent + startRef",
+        "Work/subject/scope + Owner dependency key/current head + fixed EvidenceSet",
+        "one immutable Application and source-disposition original key"
+      ],
+      "rules": [
+        "113示例是独立DEMO配方而非运行接受；82绑定需由真实前响应生成。",
+        "收/验/票同40切片的保护量40，后继Correction替换原值；退回不默认补供。",
+        "Cancel商业APPLIED与Source CONFIRMED分轴；晚事实如实保留，不倒改过去。",
+        "供应商后继反报价/撤回改变当前门，已成立确认/Application保留；旧worker不得提交。"
+      ],
+      "runtime_status": "124AC_NOT_RUN; OWNERS_SHARED_TRANSACTION_UNPROVEN"
+    },
+    {
+      "contract_id": "GR-NONPREFIX-SCOPE-CONTINUITY",
+      "producer_owner": "GR owns commercial scope; WMS/Stock correction and Quality disposition remain original Owners",
+      "consumer_owner": "PO allocation manifest, MATCH and RETURN basis consumers",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+      "source_lines": [
+        5055,
+        5057,
+        5059,
+        5079,
+        5198,
+        5368,
+        5547,
+        5596,
+        5759,
+        5853,
+        5938,
+        6034,
+        6125,
+        6221
+      ],
+      "identity_vector": [
+        "immutable ReceiptCoordinateDomain+Source/part/root/movement",
+        "OwnerRangeResolution+previousScope+ScopeSet revision",
+        "Quality FULL_SCOPE proof+family/stream+replacement decision",
+        "PO original application Ref+fact identity/version+complete allocation manifest"
+      ],
+      "rules": [
+        "VOID[20,40)原100后保持[0,20)∪[40,100)，不得压缩为[0,80)。",
+        "新商业ScopeSet先于Quality后继时旧90/10只是历史CONFLICT，不直接裁剪或继续当前投影。",
+        "有权scope2完整后继70/10后，POReceipt=80、Accepted=70；真实Stock可用另读，不推定。",
+        "HandoffBasis附原坐标/全部scope/version，不授予MATCH或RETURN许可。"
+      ],
+      "runtime_status": "82DESIGN_OBJECTS_READ; 111AC_NOT_RUN; ORIGINAL_OWNERS_UNPROVEN"
+    },
+    {
+      "contract_id": "MATCH-CORRECTION-FORWARD-SEPARATION",
+      "producer_owner": "PUR_MATCH correction control and FIN_AP exact adjustment plan/receipt",
+      "consumer_owner": "MATCH range protection, Finance executors, PO reconciliation",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11fae598ec00ef49__PUR-MATCH-01_供应商发票匹配与采购对账_前后端开发Spec_v1.1.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        4602,
+        4681,
+        4744,
+        4879,
+        5266,
+        5457,
+        5790,
+        5859,
+        5928,
+        6069,
+        6390,
+        6407
+      ],
+      "identity_vector": [
+        "original InvoiceId/IdentityKey/LineId and MatchDigest",
+        "domain generation + original ranges",
+        "correctionKey/inputDigest/plan/epoch/scope/authority",
+        "original Finance Posted refs and latest head"
+      ],
+      "rules": [
+        "同域旧影响未关闭，非重叠新范围仍阻新效果。",
+        "无效果证明才允许同票revision更替；保留lineage并重新解析当前basis。",
+        "已Posted更正保持原forward FENCED；专用纠正不要求失效原段重新Eligible，也不授予新AP权限。",
+        "Finance GAP或query不可用清当前完成，保留历史Posted。"
+      ],
+      "runtime_status": "51_DESIGN_OBJECTS_READ;139_AC_NOT_RUN;REAL_OWNERS_UNPROVEN"
+    },
+    {
+      "contract_id": "RETURN-PROTECTION-CURRENT-LEAVES",
+      "producer_owner": "PUR_RETURN protection lineage + PUR_MATCH MRX + WMS_OUT exact closure",
+      "consumer_owner": "RETURN close/revise and all same-domain new-effect writers",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        24371,
+        25256,
+        30885,
+        32015,
+        33049,
+        34818,
+        35146
+      ],
+      "identity_vector": [
+        "same Case/ReturnLine/originalDomain",
+        "protection node/edge/rootset and current domain generation",
+        "all Source slots + permanent case fence + exact Stock closure",
+        "MRX control revision/epoch + transfer receipt"
+      ],
+      "rules": [
+        "完整后继谱系按当前有效叶及真实已退量计保护，历史SUPERSEDED节点不重复计量。",
+        "无效果叶6可释放6；真实新2只能释放余4；真实已退4/2不撤销。",
+        "缺后继原件时保原未解保护；旧代关闭拒绝，不让失联降低保护。",
+        "全Case门和MRX/Lineage/Domain改变同Uow；Finance待定不自动重新占用已释放未执行范围。"
+      ],
+      "runtime_status": "DESIGN_SEMANTICS_READ_NOT_RUN"
+    },
+    {
+      "contract_id": "RETURN-EFFECT-QUERY-GENERATION-FRONTIER",
+      "producer_owner": "WMS_STOCK current correction discovery + WMS_OUT effective snapshot; PUR_RETURN persistent query/head",
+      "consumer_owner": "RETURN current completion and GR/PO observations",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+      "source_lines": [
+        23414,
+        23848,
+        35710,
+        36706,
+        37128,
+        37713,
+        39150,
+        40013,
+        40155
+      ],
+      "identity_vector": [
+        "per original movement + parent/line/executionPart/sourcePart/E/T",
+        "queryKey/query generation/attempt/lease epoch",
+        "effective version + maximal source frontier vector + current cut",
+        "applyReceipt identity distinct from current HEAD"
+      ],
+      "rules": [
+        "发当前查询前持久token与PENDING，同事务清Case当前完成；不可拿历史查询缓存作当前。",
+        "迟到generation或旧attempt只历史，不覆盖新Head；活动代收到低于已见frontier cut也失效。",
+        "补链APPLIED_AS_OF后另取新cut；来源不可用current=null保lastConfirmed。",
+        "幂等apply回当时receipt不变当前状态；完整观察快照替换且前驱缺失GAP。"
+      ],
+      "runtime_status": "DESIGN_SEMANTICS_READ_NOT_RUN"
+    },
+    {
+      "contract_id": "EST-CONTINUOUS-BASIS-AND-CURRENT-READINESS",
+      "producer_owner": "EST immutable Run/Version and real source/QTN current-read Owner",
+      "consumer_owner": "QTN reference/adoption, estimate UI, copy/recovery adapters",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+      "source_lines": [
+        443,
+        464,
+        468,
+        470,
+        5673,
+        6007,
+        6364,
+        13749,
+        14034,
+        14288,
+        14687
+      ],
+      "identity_vector": [
+        "exact RATE dependencies + currency/UOM revision",
+        "immutable Version and separate Control",
+        "sourceRoot+optionKey Claim",
+        "quoteTarget + subject/source/control vector + page/check generation"
+      ],
+      "rules": [
+        "同币种代码改policy版本需新准确RATE依赖；历史计算与Version不改。",
+        "Main来源复制Root/Claim同事务且最终Calculate/Seal不可跳过Claim。",
+        "Owner current readiness不等新报价动作许可；失联立刻撤当前绿灯，旧proof仅有权历史。",
+        "Outbox控制身份含versionNo，同ControlRevision不同Version可并存。",
+        "GENERAL R2保留上述门；新写Schema/ModelIdentity和Disclosure按R2，不能旧纸模型兜底。"
+      ],
+      "runtime_status": "165_DESIGN_OBJECTS_READ;ALL_BUSINESS_AC_NOT_RUN"
+    },
+    {
+      "contract_id": "INT-COM-ORIGINAL-DIRECTORY-AND-EXECUTION-PROTECTION",
+      "producer_owner": "original CRM HO/source/result control Owners + Main result directory Owners",
+      "consumer_owner": "Main Intake or CRM projection Execution; full opportunity rebuild",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        582,
+        613,
+        629,
+        649,
+        671,
+        675,
+        693,
+        5298,
+        5922,
+        7357,
+        7778,
+        8199,
+        8323
+      ],
+      "identity_vector": [
+        "Execution + operation kind/id/fingerprint/generation + participantSetDigest",
+        "subject + purpose + original body + protection generation",
+        "all authoritative original sources + local generation vector + per-source cut/manifest/recheck"
+      ],
+      "rules": [
+        "有限用途撤权挡新grant；旧grant由Execution COMMITTED/ABORTED互斥终态解决，不按deadline释放。",
+        "结果投影独立于原销售用户的新请求权限，当前敏感读立即撤权。",
+        "重建用服务端全历史来源及转入原源，不用已知当前本地Group宣称全集；四源七结果示例恢复180。",
+        "来源集合增长或任一目录推进时旧plan不切换，准确原体/Trust/多cut/本地CAS全证才发布投影。",
+        "同T/H全局身份根绑定唯一法人；换Event不能在另一L建新身份。"
+      ],
+      "runtime_status": "DESIGN_SEMANTICS_READ;106_AC_NOT_RUN;12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "QTN-ACCEPTANCE-FACT-AND-EXACT-ORDER-SOURCE",
+      "producer_owner": "Main.QTN + professional AcceptanceFact/CustomerEvidence Owners",
+      "consumer_owner": "Main Sales source participant and CRM H06 projection",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+      "source_lines": [
+        649,
+        665,
+        694,
+        698,
+        552,
+        909,
+        31282,
+        46836,
+        50131,
+        51758,
+        52008,
+        55958
+      ],
+      "identity_vector": [
+        "QuoteVersion/Control + original Decision + current FactRevision/effectiveEvidence/Correction chain",
+        "Root current commitment + independent termination + ancestor dispute + allocation set",
+        "full command request including Fact strong ETag + original source ranges/rounding"
+      ],
+      "rules": [
+        "事实UNPROVEN不是客户撤回；补证不新建客户决定或交易用途。",
+        "有后继只能历史纠错，不能复活旧版或自动解锁Sales。",
+        "新H07必须用完整当前Fact及effectiveEvidence，旧订单/回执保原历史。",
+        "同Key恢复比较完整收到Fact header；新意图才重新执行当前写门。",
+        "所有来源共同readCut和最终同txn保护，多个时点绿或摘要相等不足。"
+      ],
+      "runtime_status": "445_JSON_SEMANTICS_READ;218_AC_NOT_RUN;12_OWNER_GATES_UNPROVEN"
+    },
+    {
+      "contract_id": "FUL-TYPED-RECEIPT-AND-PERFORMANCE-FACTS",
+      "producer_owner": "ERP_ORD/WMS_OUT/WMS_DEL",
+      "consumer_owners": [
+        "ERP_FUL"
+      ],
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3a5901f56fcf109d__R1-WIRE.json",
+      "source_lines": [
+        1032,
+        1786,
+        5182,
+        6420,
+        8144,
+        9316,
+        9438
+      ],
+      "wire_source": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7c/7c054dfba0d71b73__CORE-REGISTRY.json",
+      "wire_source_lines": [
+        6948,
+        10004,
+        14004,
+        15977,
+        19735,
+        21380,
+        25506,
+        27908
+      ],
+      "rules": [
+        "H25三字段只在受信响应类型槽按认证Tenant/mode唯一解析FUL.LocalReceipt，不能要求上游加digest或普遍重解释opaque Ref",
+        "398 core和59 wire传递闭包；原事件与Effect v1同一物理来源不重复加量；投影失败恢复原key/body不重Stock",
+        "DEL全版本Proof替代活跃claim；缺前驱不跳链；正常Return只独立R轴不改H/S/D或自动Demand",
+        "权威Catalogue全页且成员防phantom；本地Inbox不是母集；同cut准确历史不等严格当前",
+        "绩效四格按原/重承诺×发运/交付；取消严格due前且准确unused closed才排除；unknown→null+bounds、zero→null、超交单列",
+        "重述保businessAsOf/母集/承诺/政策，只移动knowledgeAsOf、纳晚记录事实，新report supersedes旧ref不覆盖"
+      ],
+      "example_count": {
+        "core": 398,
+        "wire": 59,
+        "performance": 10,
+        "all_structured_records": 546
+      },
+      "runtime_status": "NOT_RUN; eight actual adoption gates UNPROVEN; policy WAITING_POLICY"
+    },
+    {
+      "contract_id": "CREDIT-WMS-AR-EXACT-WIRE-AND-CURRENT-PROJECTION",
+      "producer_owner": "WMS-RMA-01 / FIN-AR-01 / ERP-CREDIT-01",
+      "consumer_owners": [
+        "ERP-CREDIT-01",
+        "WMS-RMA-01"
+      ],
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+      "wire_sources": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b324a9b62d888f26__ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+          "sha256": "b324a9b62d888f268a514de4266ecff70783e80d30c39eb5b82e7fffaf62af3a",
+          "definitions": 19
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8a/8a7864b91e2bd19f__ERP-CREDIT-01_FIN-AR-R2-EXACT.schema.json",
+          "sha256": "8a7864b91e2bd19f9102abcb9eea756d7f6df33ad84e7b852f24a9bd669c56ca",
+          "definitions": 34
+        }
+      ],
+      "rules": [
+        "WMS Ref4/Qty对象与FIN Ref5 purpose/精确十进制字符串独立；不得删除purpose或互换scalar。",
+        "WMS14字段request无批准金额/税/币/approval；结果才提供独立Owner授权；REJECTED是结果而非requestedComponents输入枚举。",
+        "FIN A25同一bundle中authority/return/disposition/valuation selector保存为原A26请求；A34完整授权成员页及current approval/action/head/RV后才A27。",
+        "A26 pending28参数与A27 26参数的原字节、digest、完整scope、mutation package同一次存储门；OwnedBytes复制不能代替真正Uow和Owner采用。",
+        "Q05不可变原202/200与Q07/Q14当前九轴视图区分；未知提交不造新命令/回滚事实；NO_CHANGE无来源仍UNKNOWN。",
+        "physical统一Stage100；economic仍真74/78/82/86/89/91/94/96/99选择，不按最大阶段路由。",
+        "R8生成codec保旧schema/hash/语义，当前采用需要新准确codec/源门；旧code NOT_RUN。"
+      ],
+      "runtime_status": "NOT_RUN; RequiredFenced / actual source, schema, codec, IAM, Store and all-writer adoption unproven"
+    },
+    {
+      "contract_id": "CREDIT-CURRENT-PRODUCER-AND-RECOVERY-COMPOSITION",
+      "producer_owner": "ERP-CREDIT-01 local coordinator; native facts remain genuine Owner-owned",
+      "consumer_owners": [
+        "ERP-CREDIT-01",
+        "FIN-AR-01",
+        "WMS-RMA-01",
+        "PLAN-DEM-01"
+      ],
+      "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/ERP-CREDIT-01_WHOLE-MODULE-BINDINGS.json",
+      "source_lines": [
+        134,
+        2439,
+        2480,
+        16523,
+        16543,
+        17011
+      ],
+      "identity_vector": [
+        "trusted 5S",
+        "original command/principal/route/raw digest",
+        "stable invoice entitlement",
+        "exact economic branch selector",
+        "current100 physical composition",
+        "same actual UoW/source participant"
+      ],
+      "rules": [
+        "52 internal modules/428 new-column producers/29 source relations are complete design bindings, not registered runtime modules.",
+        "Group roots by correction + original invoice entitlement before positive per-axis capacity; EC52 independent vector does not require net+tax=gross.",
+        "WN11-04 adopts original applied target: retained13.2/dispatch0, no new Finance work/slot/capacity; projection Store operation31 precedes reader operation23.",
+        "MULTI-02 only adopts original B APPLIED: 67 INSERT/4 CAS and63 Store receipts; late three receipts use actualOUTPUT, no redispatch.",
+        "F09 selected Base9 successor adds exact read context/dispatch control/authority timestamps; never-sent unchanged-money branch remains bounded.",
+        "Current physical selection is Stage100; original74/78/82/86/89/91/94/96/99 economic source predicates remain distinct.",
+        "Seven documented wire/producer/phase mapping differences require bounded Owner reconciliation before implementation adoption; accepted static conclusion is not replaced by this handbook."
+      ],
+      "f09_local_schema": {
+        "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43d3b664af16f8e0__F09-LOCAL-TYPES.schema.json",
+        "sha256": "43d3b664af16f8e0c5bb4d9d95ab22176f95990d0bdd862b61eab394dafaea1c"
+      },
+      "recovery_sources": [
+        "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+        "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json"
+      ],
+      "runtime_status": "NOT_RUN; actual Owner/schema/codec/reader/callback/IAM/Store/allwriter adoption UNPROVEN_FENCED",
+      "reading_status": "effective required semantic closure; historical full fixtures excluded"
+    }
+  ],
+  "updated_at_utc": "2026-10-10T16:01:49.779985+00:00"
+}

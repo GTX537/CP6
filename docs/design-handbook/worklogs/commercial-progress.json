@@ -1,0 +1,301 @@
+{
+  "group": "commercial",
+  "updated_at_utc": "2026-10-10T16:01:49.779985+00:00",
+  "source_snapshot": "当前冻结32Target组合；S001–S052后继筛查由根协调，不能默认当前输入已覆盖所有增补",
+  "status": "commercial_25_required_materials_consolidated_local_documentation_only",
+  "first_batch": [
+    "CRM-INQ-01",
+    "CRM-LEAD-01",
+    "CRM-ACC-01",
+    "CRM-CON-01",
+    "CRM-ACT-01",
+    "CRM-OPP-01",
+    "CRM-HO-01"
+  ],
+  "targets": [
+    {
+      "target_id": "CRM-INQ-01",
+      "name": "公开询盘与受理",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/CRM-INQ-01.md",
+      "next_action": "5登记必要输入规则/136步骤语义闭合；保留27类图的逐值未读范围、历史CP1/旧源码身份和生成契约采用风险，业务60AC仍NOT_RUN。"
+    },
+    {
+      "target_id": "CRM-LEAD-01",
+      "name": "线索管理与资格确认",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/CRM-LEAD-01.md",
+      "next_action": "当前规则及必要附件语义闭合，31正常关系/19 mutation差分/136 safe graph结构及916包角色保存；保留重复实例值、历史CP1/源码、DTO string??和实际采用未证边界。商业14/25必要闭合，继续ERP BP/EST/QTN等。"
+    },
+    {
+      "target_id": "CRM-ACT-01",
+      "name": "客户互动与销售活动",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/CRM-ACT-01.md",
+      "next_action": "3434行主文含56JSON与当前接受复审全文完成；实际Gate/78AC及历史代码仍未证。"
+    },
+    {
+      "target_id": "CRM-ACC-01",
+      "name": "客户关系账户",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/CRM-ACC-01.md",
+      "next_action": "当前必要材料语义归并完成；实际跨域Owner/物理wire/运行及引用历史代码保持独立未证范围。"
+    },
+    {
+      "target_id": "CRM-CON-01",
+      "name": "独立联系人",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/CRM-CON-01.md",
+      "next_action": "当前必要材料语义归并完成；实际跨域Owner/物理wire/运行及引用历史代码保持独立未证范围。"
+    },
+    {
+      "target_id": "CRM-OPP-01",
+      "name": "商机与销售管道",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/CRM-OPP-01.md",
+      "next_action": "3845行当前必要语义含80JSON结构补读完成；真实H02/HO/Main与54AC仍未证。"
+    },
+    {
+      "target_id": "CRM-HO-01",
+      "name": "商业交接与结果跟踪",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/CRM-HO-01.md",
+      "next_action": "7204行当前语义含112JSON和附录精确复用闭合；Main/PLM实际Gate与64AC未证。"
+    },
+    {
+      "target_id": "ERP-BP-01",
+      "name": "交易伙伴主数据",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-BP-01.md",
+      "next_action": "必要规范语义已闭合；真实Owner采用、ACC双边版本化合同、124AC保持未证/未运行。"
+    },
+    {
+      "target_id": "ERP-EST-01",
+      "name": "商业估算与报价计算",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-EST-01.md",
+      "next_action": "14必要输入、165JSON及GENERAL R2全部有效语义闭合；policy/TTL样例差异与真实Owner采用未证保留。"
+    },
+    {
+      "target_id": "ERP-QTN-01",
+      "name": "正式报价与客户接受",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-QTN-01.md",
+      "next_action": "6必要输入+两个补核包有效语义闭合；445 JSON/470嵌套原文/38准确窗口已读或同字节复用；218AC未运行。"
+    },
+    {
+      "target_id": "INT-COM-01",
+      "name": "CRM与Main商业交接合同",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/INT-COM-01.md",
+      "next_action": "6必要输入及准确窗口包闭合；159JSON/184重复子树/8解码原体；实际12 Owner门UNPROVEN。"
+    },
+    {
+      "target_id": "ERP-ORD-01",
+      "name": "销售订单全生命周期",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-ORD-01.md",
+      "next_action": "19当前登记必要材料语义闭合；保留R03/R04 REVIEW、14未配置实例、物理Owner采用与完整视觉边界。"
+    },
+    {
+      "target_id": "ERP-FUL-01",
+      "name": "订单履约投影与交付绩效",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-FUL-01.md",
+      "next_action": "当前必要语义闭合；真实Owner联合采用、68AC执行及历史源码/图形边界不升级。"
+    },
+    {
+      "target_id": "PLAN-DEM-01",
+      "name": "独立需求与版本变更",
+      "status": "transferred_to_root_planning",
+      "module_path": "modules/PLAN-DEM-01.md",
+      "next_action": "根代理独占模块；详见root-planning reading/contracts/progress。"
+    },
+    {
+      "target_id": "PLAN-ATP-01",
+      "name": "交期承诺查询",
+      "status": "transferred_to_root_planning",
+      "module_path": "modules/PLAN-ATP-01.md",
+      "next_action": "根代理独占模块；详见root-planning reading/contracts/progress。"
+    },
+    {
+      "target_id": "PLAN-POL-01",
+      "name": "计划与供给策略",
+      "status": "transferred_to_root_planning",
+      "module_path": "modules/PLAN-POL-01.md",
+      "next_action": "根代理独占模块；详见root-planning reading/contracts/progress。"
+    },
+    {
+      "target_id": "PLAN-SUP-01",
+      "name": "供给投影与Pegging",
+      "status": "transferred_to_root_planning",
+      "module_path": "modules/PLAN-SUP-01.md",
+      "next_action": "根代理独占模块；详见root-planning reading/contracts/progress。"
+    },
+    {
+      "target_id": "PLAN-MRP-01",
+      "name": "MRP运算与重算",
+      "status": "transferred_to_root_planning",
+      "module_path": "modules/PLAN-MRP-01.md",
+      "next_action": "根代理独占模块；详见root-planning reading/contracts/progress。"
+    },
+    {
+      "target_id": "PLAN-PO-01",
+      "name": "计划订单与真实转单",
+      "status": "transferred_to_root_planning",
+      "module_path": "modules/PLAN-PO-01.md",
+      "next_action": "根代理独占模块；详见root-planning reading/contracts/progress。"
+    },
+    {
+      "target_id": "PLAN-EXC-01",
+      "name": "缺料与供给异常处置",
+      "status": "transferred_to_root_planning",
+      "module_path": "modules/PLAN-EXC-01.md",
+      "next_action": "根代理独占模块；详见root-planning reading/contracts/progress。"
+    },
+    {
+      "target_id": "PUR-PR-01",
+      "name": "采购申请与审批",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PUR-PR-01.md",
+      "next_action": "12 distinct当前必要材料语义闭合；两处fixture采用差异、历史源码非全文及真实12门/57AC未执行明确保留。继续PUR-PO。"
+    },
+    {
+      "target_id": "PUR-RFQ-01",
+      "name": "采购询比价与供应价格",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PUR-RFQ-01.md",
+      "next_action": "3256行当前主文语义完整（106JSON结构复用）；旧Excel/历史代码与真实Owner/运行独立未证。"
+    },
+    {
+      "target_id": "PUR-PO-01",
+      "name": "采购订单与履约",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PUR-PO-01.md",
+      "next_action": "113JSON/82绑定及全部有效规范语义闭合；五旧码非全文与真实Owner/124AC保留，继续GR。"
+    },
+    {
+      "target_id": "PUR-GR-01",
+      "name": "采购收货商业单据",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PUR-GR-01.md",
+      "next_action": "82JSON/68绑定/原坐标VOID全链闭合；七旧源码非全文与12Owner门/111AC未证，继续MATCH。"
+    },
+    {
+      "target_id": "PUR-MATCH-01",
+      "name": "供应商发票匹配与采购对账",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PUR-MATCH-01.md",
+      "next_action": "51JSON/9必要输入及限定MRX规则闭合；原forward与纠正分离/当前知识边界明确，继续RETURN必要附件。"
+    },
+    {
+      "target_id": "PUR-RETURN-01",
+      "name": "采购退货与供应商结算调整",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PUR-RETURN-01.md",
+      "next_action": "9必要输入、251JSON/E189/EP100及三共同H31语义闭合；四处child Grant量矛盾与未执行边界保留。"
+    },
+    {
+      "target_id": "ERP-CREDIT-01",
+      "name": "销售贷项与售后商业处理",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-CREDIT-01.md",
+      "next_action": "有效规范及必要附件语义已整理；真实Owner/运行采用与有界映射待核见模块§11，历史全fixture不作本轮全面审计。"
+    },
+    {
+      "target_id": "INT-ID-01",
+      "name": "Main与CRM身份投影合同",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/INT-ID-01.md",
+      "next_action": "当前必要规范及原包角色闭合；99历史源码仅字节/范围分类不冒全文，真实Owner和运行待实施。"
+    },
+    {
+      "target_id": "INT-OPS-01",
+      "name": "集成异常与受控重放",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/INT-OPS-01.md",
+      "next_action": "当前必要规范及原包角色闭合；99历史源码仅字节/范围分类不冒全文，真实Owner和运行待实施。"
+    },
+    {
+      "target_id": "ERP-FSC-01",
+      "name": "FSC清单与行业证明",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-FSC-01.md",
+      "next_action": "当前必要语义已归并；47历史源代码身份已核但非全文审计；原母版/实际Owner仍未证。"
+    },
+    {
+      "target_id": "ERP-PRICE-01",
+      "name": "板纸单价与行业价格参数",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/ERP-PRICE-01.md",
+      "next_action": "当前必要语义已归并；47历史源代码身份已核但非全文审计；原母版/实际Owner仍未证。"
+    },
+    {
+      "target_id": "PUR-SUB-01",
+      "name": "委外加工",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PUR-SUB-01.md",
+      "next_action": "16当前必要输入、132AC/36任务结构复用及63文件身份分类闭合；历史源码/真实Owner未证。"
+    }
+  ],
+  "executions": "源脚本/业务代码/SQL/构建/测试/Actions/远端写入均未执行",
+  "inherited_reports": [
+    "D:/CP6/docs/CP6_编码前整合_20261009/agents/commercial-targets.json"
+  ],
+  "completed_core_modules": [
+    "CRM-INQ-01",
+    "CRM-LEAD-01",
+    "CRM-ACT-01",
+    "CRM-ACC-01",
+    "CRM-CON-01",
+    "CRM-OPP-01",
+    "CRM-HO-01",
+    "ERP-BP-01",
+    "ERP-EST-01",
+    "ERP-QTN-01",
+    "INT-COM-01",
+    "ERP-ORD-01",
+    "ERP-FUL-01",
+    "PUR-PR-01",
+    "PUR-RFQ-01",
+    "PUR-PO-01",
+    "PUR-GR-01",
+    "PUR-MATCH-01",
+    "PUR-RETURN-01",
+    "ERP-CREDIT-01",
+    "INT-ID-01",
+    "INT-OPS-01",
+    "ERP-FSC-01",
+    "ERP-PRICE-01",
+    "PUR-SUB-01"
+  ],
+  "required_materials_consolidated": 25,
+  "next_target": null,
+  "delegated_targets": [
+    "PLAN-DEM-01",
+    "PLAN-ATP-01",
+    "PLAN-POL-01",
+    "PLAN-SUP-01",
+    "PLAN-MRP-01",
+    "PLAN-PO-01",
+    "PLAN-EXC-01"
+  ],
+  "active_scope_count": 25,
+  "completion_boundary": "商业组25册当前有效规则与必要附件语义闭合；PLAN7由root独立负责。历史全量fixture/源代码非全读、运行与业务验收均未执行，载体字节身份和设计接受不等同实际采用。",
+  "final_commercial_document_check": {
+    "checked_at_utc": "2026-10-10T16:02:47.243809+00:00",
+    "scope": "final CREDIT update and four commercial JSON files",
+    "json_parse": "4/4 valid",
+    "credit_local_links": "504/504 checked, 0 missing or out-of-range before replacing one link with three same-file in-range anchors",
+    "new_source_line_anchors": "WN11-04 31908/32150/32167 and MULTI-02 40394/40474/40525/45195/46933 verified against exact original files",
+    "not_executed": [
+      "original code",
+      "SQL",
+      "schema validators",
+      "build",
+      "business tests",
+      "Actions"
+    ],
+    "note": "The temporary reader initially treated columnBindings list as dict; corrected metadata reader returned all14 table ranges. No source/data changes."
+  }
+}

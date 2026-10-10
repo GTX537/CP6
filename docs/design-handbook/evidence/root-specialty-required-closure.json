@@ -1,0 +1,1243 @@
+{
+  "prepared_at_utc": "2026-10-10T12:11:16.117688+00:00",
+  "targets": [
+    {
+      "target_id": "WMS-KIT-01",
+      "required_count": 15,
+      "artifacts": [
+        {
+          "component_id": "R02113",
+          "sha256": "7a882fade5d085d5d26e61c074304c7e3befb16e58d00768e978960437c367ed",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02116",
+          "sha256": "3c01439ddc8f03d5c9210ee67c6c76be46814851bce659b6ed2db47881c5cd67",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02117",
+          "sha256": "db514ac752eafa0c8359a39a3f213e2c431a1c37489b2103410376f879ef3b7b",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02118",
+          "sha256": "fab930772155a0604521dece69087bd44769abfe82f4d841831d67b55d9073c8",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02119",
+          "sha256": "1130c4e9610a821ab18ccfd140da3fe04133748dfd5b627d302d1c783376fcbe",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02120",
+          "sha256": "515f437c17b4cba18bb334028664585aada1114081a7f98f561d2e3445b24df7",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02122",
+          "sha256": "a47016f05267160b6ee192089f1c30a53f90529d52b20f85731419b0332f5550",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02123",
+          "sha256": "5c6f67dd284cd74bfd3f4286b17929ba587feba4f20d01e6d3f164a49c1c0555",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02124",
+          "sha256": "7ce1a9acfd4a7f3b00bb87ccab46367eeafbd028fd064c4b66f49fa9b83e7212",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02125",
+          "sha256": "bccbdd0cd659e37ba3467c6fe6a9713eac20da894a0ee6f82e360d1c7c4a6bf4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02126",
+          "sha256": "59aa083c74b340d9f18cac1771c08bbaf1ab85ecfd57f526cae64464cca82120",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02128",
+          "sha256": "7430ceee7e595541143e9239b62817c07e5eba2dd74a7679c9a0ec2d501a9eb9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02129",
+          "sha256": "89edcf7fa734103c064efec4e83559f1071c22375c69303770e296dab6b94910",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02130",
+          "sha256": "7fd745833884d6fd0a983a975005b1fac8df0f0195aa90491b14c1eb4ef3f6de",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:709f8c1066bf639c72830fca9e43651a8ac21333",
+          "sha256": "6977ea86413391695cd8c935f0306dfa1c5968fdf73e31f884ed6ad4dcfa1bd6",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-SLOT-01",
+      "required_count": 15,
+      "artifacts": [
+        {
+          "component_id": "R02138",
+          "sha256": "ec7dcc5179f0e5844e778102c18e66e840246b68ac7dec34aaa94c505aa1ed13",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02141",
+          "sha256": "3fe131bfdf5f6adb015938d3c9641a9813ade1ef5f83066fdcbc061fc2fa79b1",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02142",
+          "sha256": "db514ac752eafa0c8359a39a3f213e2c431a1c37489b2103410376f879ef3b7b",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02143",
+          "sha256": "fab930772155a0604521dece69087bd44769abfe82f4d841831d67b55d9073c8",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02144",
+          "sha256": "1130c4e9610a821ab18ccfd140da3fe04133748dfd5b627d302d1c783376fcbe",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02145",
+          "sha256": "515f437c17b4cba18bb334028664585aada1114081a7f98f561d2e3445b24df7",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02147",
+          "sha256": "a47016f05267160b6ee192089f1c30a53f90529d52b20f85731419b0332f5550",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02148",
+          "sha256": "5c6f67dd284cd74bfd3f4286b17929ba587feba4f20d01e6d3f164a49c1c0555",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02149",
+          "sha256": "7ce1a9acfd4a7f3b00bb87ccab46367eeafbd028fd064c4b66f49fa9b83e7212",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02150",
+          "sha256": "bccbdd0cd659e37ba3467c6fe6a9713eac20da894a0ee6f82e360d1c7c4a6bf4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02151",
+          "sha256": "59aa083c74b340d9f18cac1771c08bbaf1ab85ecfd57f526cae64464cca82120",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02153",
+          "sha256": "7430ceee7e595541143e9239b62817c07e5eba2dd74a7679c9a0ec2d501a9eb9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02154",
+          "sha256": "89edcf7fa734103c064efec4e83559f1071c22375c69303770e296dab6b94910",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02155",
+          "sha256": "7fd745833884d6fd0a983a975005b1fac8df0f0195aa90491b14c1eb4ef3f6de",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:937e796b403f0fdc29b1a37ddf07976067624922",
+          "sha256": "f0119812e0d7a42ca6106cbba85d675823173a743d5aad8ff47b82f680c7dffa",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-REP-01",
+      "required_count": 15,
+      "artifacts": [
+        {
+          "component_id": "R02163",
+          "sha256": "9d108fba82cd4683ccc0075f0239f7f3e6ac60cc090672adf8080438bfca83d9",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02166",
+          "sha256": "57a177883c6fdd147370ce3f811a532534998316678452eaf29b56940a1cd22e",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02167",
+          "sha256": "db514ac752eafa0c8359a39a3f213e2c431a1c37489b2103410376f879ef3b7b",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02168",
+          "sha256": "fab930772155a0604521dece69087bd44769abfe82f4d841831d67b55d9073c8",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02169",
+          "sha256": "1130c4e9610a821ab18ccfd140da3fe04133748dfd5b627d302d1c783376fcbe",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02170",
+          "sha256": "515f437c17b4cba18bb334028664585aada1114081a7f98f561d2e3445b24df7",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02172",
+          "sha256": "a47016f05267160b6ee192089f1c30a53f90529d52b20f85731419b0332f5550",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02173",
+          "sha256": "5c6f67dd284cd74bfd3f4286b17929ba587feba4f20d01e6d3f164a49c1c0555",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02174",
+          "sha256": "7ce1a9acfd4a7f3b00bb87ccab46367eeafbd028fd064c4b66f49fa9b83e7212",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02175",
+          "sha256": "bccbdd0cd659e37ba3467c6fe6a9713eac20da894a0ee6f82e360d1c7c4a6bf4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02176",
+          "sha256": "59aa083c74b340d9f18cac1771c08bbaf1ab85ecfd57f526cae64464cca82120",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02178",
+          "sha256": "7430ceee7e595541143e9239b62817c07e5eba2dd74a7679c9a0ec2d501a9eb9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02179",
+          "sha256": "89edcf7fa734103c064efec4e83559f1071c22375c69303770e296dab6b94910",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02180",
+          "sha256": "7fd745833884d6fd0a983a975005b1fac8df0f0195aa90491b14c1eb4ef3f6de",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:1fed3571c38c2b729ce2376830d28b272693499f",
+          "sha256": "24c40d35c5c1a3e6b83ac39b0d2b49545babe48d2c7af7ae885cac3a043bf170",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-XDOCK-01",
+      "required_count": 15,
+      "artifacts": [
+        {
+          "component_id": "R02188",
+          "sha256": "433993a9448ae3c025ee13654184846e303e83a33072a487a8b8d07bd9acada4",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02191",
+          "sha256": "3dd1f588cb765e001300d41e74bf929d4ae0a3accb9f9b69a97376809eb95362",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02192",
+          "sha256": "db514ac752eafa0c8359a39a3f213e2c431a1c37489b2103410376f879ef3b7b",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02193",
+          "sha256": "fab930772155a0604521dece69087bd44769abfe82f4d841831d67b55d9073c8",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02194",
+          "sha256": "1130c4e9610a821ab18ccfd140da3fe04133748dfd5b627d302d1c783376fcbe",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02195",
+          "sha256": "515f437c17b4cba18bb334028664585aada1114081a7f98f561d2e3445b24df7",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02197",
+          "sha256": "a47016f05267160b6ee192089f1c30a53f90529d52b20f85731419b0332f5550",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02198",
+          "sha256": "5c6f67dd284cd74bfd3f4286b17929ba587feba4f20d01e6d3f164a49c1c0555",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02199",
+          "sha256": "7ce1a9acfd4a7f3b00bb87ccab46367eeafbd028fd064c4b66f49fa9b83e7212",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02200",
+          "sha256": "bccbdd0cd659e37ba3467c6fe6a9713eac20da894a0ee6f82e360d1c7c4a6bf4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02201",
+          "sha256": "59aa083c74b340d9f18cac1771c08bbaf1ab85ecfd57f526cae64464cca82120",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02203",
+          "sha256": "7430ceee7e595541143e9239b62817c07e5eba2dd74a7679c9a0ec2d501a9eb9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02204",
+          "sha256": "89edcf7fa734103c064efec4e83559f1071c22375c69303770e296dab6b94910",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02205",
+          "sha256": "7fd745833884d6fd0a983a975005b1fac8df0f0195aa90491b14c1eb4ef3f6de",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:9633692a24b6eaf6043934934771896e72e8b9d2",
+          "sha256": "deff04e0ba89c974b2ed97d61c016d07b187eb39b0e7932d6726e6795122a478",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-ROLL-01",
+      "required_count": 15,
+      "artifacts": [
+        {
+          "component_id": "R02213",
+          "sha256": "fcfddec26e2fa8fdd0d5375f029364f82cbb717ec4c4646be4acabd59cafb394",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02216",
+          "sha256": "a0d19f2a176ea3d61219b63c7b942a5d82a8d6f641315ef584298ab686f1b4e8",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02217",
+          "sha256": "db514ac752eafa0c8359a39a3f213e2c431a1c37489b2103410376f879ef3b7b",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02218",
+          "sha256": "fab930772155a0604521dece69087bd44769abfe82f4d841831d67b55d9073c8",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02219",
+          "sha256": "1130c4e9610a821ab18ccfd140da3fe04133748dfd5b627d302d1c783376fcbe",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02220",
+          "sha256": "515f437c17b4cba18bb334028664585aada1114081a7f98f561d2e3445b24df7",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02222",
+          "sha256": "a47016f05267160b6ee192089f1c30a53f90529d52b20f85731419b0332f5550",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02223",
+          "sha256": "5c6f67dd284cd74bfd3f4286b17929ba587feba4f20d01e6d3f164a49c1c0555",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02224",
+          "sha256": "7ce1a9acfd4a7f3b00bb87ccab46367eeafbd028fd064c4b66f49fa9b83e7212",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02225",
+          "sha256": "bccbdd0cd659e37ba3467c6fe6a9713eac20da894a0ee6f82e360d1c7c4a6bf4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02226",
+          "sha256": "59aa083c74b340d9f18cac1771c08bbaf1ab85ecfd57f526cae64464cca82120",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02228",
+          "sha256": "7430ceee7e595541143e9239b62817c07e5eba2dd74a7679c9a0ec2d501a9eb9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02229",
+          "sha256": "89edcf7fa734103c064efec4e83559f1071c22375c69303770e296dab6b94910",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02230",
+          "sha256": "7fd745833884d6fd0a983a975005b1fac8df0f0195aa90491b14c1eb4ef3f6de",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:eb639ce66ea014a614dc87cf8e47e57afe2920a8",
+          "sha256": "a5c11f655294e8dc8f1ef88225cfedeb7d163ab5d81936479c6ffd0f37404520",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-REM-01",
+      "required_count": 15,
+      "artifacts": [
+        {
+          "component_id": "R02241",
+          "sha256": "3192726a41ddd3cfc63f9e7c9e47392a5eb10f67e29b1f49f6f3a7a65e81126c",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02244",
+          "sha256": "d49e98cc73c115f3146c4dadab1a646b26fce63d3ebbb033da8b3a5bda3f8a62",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02245",
+          "sha256": "db514ac752eafa0c8359a39a3f213e2c431a1c37489b2103410376f879ef3b7b",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02246",
+          "sha256": "fab930772155a0604521dece69087bd44769abfe82f4d841831d67b55d9073c8",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02247",
+          "sha256": "1130c4e9610a821ab18ccfd140da3fe04133748dfd5b627d302d1c783376fcbe",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02248",
+          "sha256": "515f437c17b4cba18bb334028664585aada1114081a7f98f561d2e3445b24df7",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02250",
+          "sha256": "a47016f05267160b6ee192089f1c30a53f90529d52b20f85731419b0332f5550",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02251",
+          "sha256": "5c6f67dd284cd74bfd3f4286b17929ba587feba4f20d01e6d3f164a49c1c0555",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02252",
+          "sha256": "7ce1a9acfd4a7f3b00bb87ccab46367eeafbd028fd064c4b66f49fa9b83e7212",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02253",
+          "sha256": "bccbdd0cd659e37ba3467c6fe6a9713eac20da894a0ee6f82e360d1c7c4a6bf4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02254",
+          "sha256": "59aa083c74b340d9f18cac1771c08bbaf1ab85ecfd57f526cae64464cca82120",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02256",
+          "sha256": "7430ceee7e595541143e9239b62817c07e5eba2dd74a7679c9a0ec2d501a9eb9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02257",
+          "sha256": "89edcf7fa734103c064efec4e83559f1071c22375c69303770e296dab6b94910",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02258",
+          "sha256": "7fd745833884d6fd0a983a975005b1fac8df0f0195aa90491b14c1eb4ef3f6de",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:90f9b2f1bbf06ad69139b2a25f7ca526ea262f8c",
+          "sha256": "870403b38366ee84ddb6f41967de7293e7dc4212357f8a91f3db4a83d45cb23a",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-TOOL-01",
+      "required_count": 17,
+      "artifacts": [
+        {
+          "component_id": "R02269",
+          "sha256": "3a74c705ef05ece0f5e5aa175a49dc818732b9f25765046236ae2f246177ee6e",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02272",
+          "sha256": "8c0905759be6e9fc9cad9d62f069ca16ee00ada691f783c4d4a10fc02cfa8bf1",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02273",
+          "sha256": "40d8bfbadbc9ea9e8529b80a6b9e50d509d7e5263f668d9c5e1db0301be34e80",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02274",
+          "sha256": "be2f000f8dcd5066cbacbca9a188efec3a0297833e254f46f8b04581d45f0057",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02275",
+          "sha256": "59dff54660e0a2fe1ebc53411fcd6f0786283c95cce575074ae01dce992d6f50",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02276",
+          "sha256": "5847ad3a0d225be44cf8c3de1f0fd2483aab2323c78cf8ba8c7114dadd3e1c24",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02278",
+          "sha256": "afe3bc53867d38dff843f9733c6ccb601ce983b1be0d352e8f7e1190d6f33a39",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02279",
+          "sha256": "a3b6a49b59ccf5a0d7fc302bcf62706ed39ddfeab673c16d49dca4e48b5431df",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02280",
+          "sha256": "996ff8c6ae7d5368991a6561eeb579f8b1f15f0767593c6da6df3e47c730e11c",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02281",
+          "sha256": "e694f81b414a785d06d007607265b7ae69cb9ffb80e7f3bb240c439b155db2e8",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02282",
+          "sha256": "7f768146b436c262e9c5311a5eb3ebd84f17b5dc0237809761429f77c7f9d1a9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02283",
+          "sha256": "acb8466aaf90decb4eeb848075bffb4a4e643a31e5939d7ec006afa33fb8c331",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02286",
+          "sha256": "4294becf9c2680617868d65eb1a5507a74d33e59b550d923f7ad2bb6f809ba61",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02287",
+          "sha256": "72a6dbfa3dbd9433727c11c48d6edb05ae645e4cec4ab3d848b5d6281fa2eb56",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02290",
+          "sha256": "41b3ee927586fac512bf0666d3c5fcbee2c45517c6eacc57d60a9e79f4324db4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02291",
+          "sha256": "b82a6be625334b5ba360a673bf6cd4d8ca0f7f1eb2345e610abe71fa4c064e64",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:3dc2a1ae6aecc2206f7b23f8890d98fc9f9f56fb",
+          "sha256": "9d0e4b4072d4c04a4cff16cba20cca8894a8a5f6285430fbc37a13161a82c81a",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-INK-01",
+      "required_count": 17,
+      "artifacts": [
+        {
+          "component_id": "R02296",
+          "sha256": "5fbc434a55d2a031418411b1dbfac5838e8673c464ae198fd51f817bdd4f6836",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02299",
+          "sha256": "8d83cd454d575fd73ec89cdae9c37a26daaa147fcdc33b0c151d8b53634e3cf4",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02300",
+          "sha256": "40d8bfbadbc9ea9e8529b80a6b9e50d509d7e5263f668d9c5e1db0301be34e80",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02301",
+          "sha256": "be2f000f8dcd5066cbacbca9a188efec3a0297833e254f46f8b04581d45f0057",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02302",
+          "sha256": "59dff54660e0a2fe1ebc53411fcd6f0786283c95cce575074ae01dce992d6f50",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02303",
+          "sha256": "5847ad3a0d225be44cf8c3de1f0fd2483aab2323c78cf8ba8c7114dadd3e1c24",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02305",
+          "sha256": "afe3bc53867d38dff843f9733c6ccb601ce983b1be0d352e8f7e1190d6f33a39",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02306",
+          "sha256": "a3b6a49b59ccf5a0d7fc302bcf62706ed39ddfeab673c16d49dca4e48b5431df",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02307",
+          "sha256": "996ff8c6ae7d5368991a6561eeb579f8b1f15f0767593c6da6df3e47c730e11c",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02308",
+          "sha256": "e694f81b414a785d06d007607265b7ae69cb9ffb80e7f3bb240c439b155db2e8",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02309",
+          "sha256": "7f768146b436c262e9c5311a5eb3ebd84f17b5dc0237809761429f77c7f9d1a9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02310",
+          "sha256": "acb8466aaf90decb4eeb848075bffb4a4e643a31e5939d7ec006afa33fb8c331",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02313",
+          "sha256": "4294becf9c2680617868d65eb1a5507a74d33e59b550d923f7ad2bb6f809ba61",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02314",
+          "sha256": "72a6dbfa3dbd9433727c11c48d6edb05ae645e4cec4ab3d848b5d6281fa2eb56",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02317",
+          "sha256": "41b3ee927586fac512bf0666d3c5fcbee2c45517c6eacc57d60a9e79f4324db4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02318",
+          "sha256": "b82a6be625334b5ba360a673bf6cd4d8ca0f7f1eb2345e610abe71fa4c064e64",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:bc917e9110d519e57ce358fced8e695ea54dd0cd",
+          "sha256": "f58fb2932ab1424b5644087f3a660f6456025f74f1d9daeee4678fa056922d00",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-VMI-01",
+      "required_count": 17,
+      "artifacts": [
+        {
+          "component_id": "R02323",
+          "sha256": "b6a79341caa5168a5c910eeb5ce104a6274c95442ee16b1b364b4848dfdead0f",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02326",
+          "sha256": "ea3553e716601d89566708505e6a704992954e967fc367fb7e619f4ba6ee14ae",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02327",
+          "sha256": "40d8bfbadbc9ea9e8529b80a6b9e50d509d7e5263f668d9c5e1db0301be34e80",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02328",
+          "sha256": "be2f000f8dcd5066cbacbca9a188efec3a0297833e254f46f8b04581d45f0057",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02329",
+          "sha256": "59dff54660e0a2fe1ebc53411fcd6f0786283c95cce575074ae01dce992d6f50",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02330",
+          "sha256": "5847ad3a0d225be44cf8c3de1f0fd2483aab2323c78cf8ba8c7114dadd3e1c24",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02332",
+          "sha256": "afe3bc53867d38dff843f9733c6ccb601ce983b1be0d352e8f7e1190d6f33a39",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02333",
+          "sha256": "a3b6a49b59ccf5a0d7fc302bcf62706ed39ddfeab673c16d49dca4e48b5431df",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02334",
+          "sha256": "996ff8c6ae7d5368991a6561eeb579f8b1f15f0767593c6da6df3e47c730e11c",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02335",
+          "sha256": "e694f81b414a785d06d007607265b7ae69cb9ffb80e7f3bb240c439b155db2e8",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02336",
+          "sha256": "7f768146b436c262e9c5311a5eb3ebd84f17b5dc0237809761429f77c7f9d1a9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02337",
+          "sha256": "acb8466aaf90decb4eeb848075bffb4a4e643a31e5939d7ec006afa33fb8c331",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02340",
+          "sha256": "4294becf9c2680617868d65eb1a5507a74d33e59b550d923f7ad2bb6f809ba61",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02341",
+          "sha256": "72a6dbfa3dbd9433727c11c48d6edb05ae645e4cec4ab3d848b5d6281fa2eb56",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02344",
+          "sha256": "41b3ee927586fac512bf0666d3c5fcbee2c45517c6eacc57d60a9e79f4324db4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02345",
+          "sha256": "b82a6be625334b5ba360a673bf6cd4d8ca0f7f1eb2345e610abe71fa4c064e64",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:f04ddf6627f23d2b8baacc27684ff9e3b64920c6",
+          "sha256": "7a96cca90046b3dd0128a4bb64834d20f15bae389ab607a00004f6d0c7e1c3f2",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-SAMPLE-01",
+      "required_count": 17,
+      "artifacts": [
+        {
+          "component_id": "R02350",
+          "sha256": "4bc78efb8ce7d8653cc6e482f7b314a1843672370831cfff770931c709678a58",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02353",
+          "sha256": "f38fe7160c2ee3e8ffb010bf0c8f7614cb2f5ee2f7fa64b77e43817ce7fd9952",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02354",
+          "sha256": "40d8bfbadbc9ea9e8529b80a6b9e50d509d7e5263f668d9c5e1db0301be34e80",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02355",
+          "sha256": "be2f000f8dcd5066cbacbca9a188efec3a0297833e254f46f8b04581d45f0057",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02356",
+          "sha256": "59dff54660e0a2fe1ebc53411fcd6f0786283c95cce575074ae01dce992d6f50",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02357",
+          "sha256": "5847ad3a0d225be44cf8c3de1f0fd2483aab2323c78cf8ba8c7114dadd3e1c24",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02359",
+          "sha256": "afe3bc53867d38dff843f9733c6ccb601ce983b1be0d352e8f7e1190d6f33a39",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02360",
+          "sha256": "a3b6a49b59ccf5a0d7fc302bcf62706ed39ddfeab673c16d49dca4e48b5431df",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02361",
+          "sha256": "996ff8c6ae7d5368991a6561eeb579f8b1f15f0767593c6da6df3e47c730e11c",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02362",
+          "sha256": "e694f81b414a785d06d007607265b7ae69cb9ffb80e7f3bb240c439b155db2e8",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02363",
+          "sha256": "7f768146b436c262e9c5311a5eb3ebd84f17b5dc0237809761429f77c7f9d1a9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02364",
+          "sha256": "acb8466aaf90decb4eeb848075bffb4a4e643a31e5939d7ec006afa33fb8c331",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02367",
+          "sha256": "4294becf9c2680617868d65eb1a5507a74d33e59b550d923f7ad2bb6f809ba61",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02368",
+          "sha256": "72a6dbfa3dbd9433727c11c48d6edb05ae645e4cec4ab3d848b5d6281fa2eb56",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02371",
+          "sha256": "41b3ee927586fac512bf0666d3c5fcbee2c45517c6eacc57d60a9e79f4324db4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02372",
+          "sha256": "b82a6be625334b5ba360a673bf6cd4d8ca0f7f1eb2345e610abe71fa4c064e64",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:b16499f043032fc4c92e299d54a5fe2b83612847",
+          "sha256": "82add913a85b4dfb568e8567e20bf8311f07924795a1a0a40c8749be28de7e10",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-AUTO-01",
+      "required_count": 17,
+      "artifacts": [
+        {
+          "component_id": "R02377",
+          "sha256": "65c512abcd614f27267119b199b33355bcbb7207e6ebf7515e7eb2a3d501023a",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02380",
+          "sha256": "394bc16520f4b020db95ab15c95a484f09672b7539c12d714d954766a918827b",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02381",
+          "sha256": "40d8bfbadbc9ea9e8529b80a6b9e50d509d7e5263f668d9c5e1db0301be34e80",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02382",
+          "sha256": "be2f000f8dcd5066cbacbca9a188efec3a0297833e254f46f8b04581d45f0057",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02383",
+          "sha256": "59dff54660e0a2fe1ebc53411fcd6f0786283c95cce575074ae01dce992d6f50",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02384",
+          "sha256": "5847ad3a0d225be44cf8c3de1f0fd2483aab2323c78cf8ba8c7114dadd3e1c24",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02386",
+          "sha256": "afe3bc53867d38dff843f9733c6ccb601ce983b1be0d352e8f7e1190d6f33a39",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02387",
+          "sha256": "a3b6a49b59ccf5a0d7fc302bcf62706ed39ddfeab673c16d49dca4e48b5431df",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02388",
+          "sha256": "996ff8c6ae7d5368991a6561eeb579f8b1f15f0767593c6da6df3e47c730e11c",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02389",
+          "sha256": "e694f81b414a785d06d007607265b7ae69cb9ffb80e7f3bb240c439b155db2e8",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02390",
+          "sha256": "7f768146b436c262e9c5311a5eb3ebd84f17b5dc0237809761429f77c7f9d1a9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02391",
+          "sha256": "acb8466aaf90decb4eeb848075bffb4a4e643a31e5939d7ec006afa33fb8c331",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02394",
+          "sha256": "4294becf9c2680617868d65eb1a5507a74d33e59b550d923f7ad2bb6f809ba61",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02395",
+          "sha256": "72a6dbfa3dbd9433727c11c48d6edb05ae645e4cec4ab3d848b5d6281fa2eb56",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02398",
+          "sha256": "41b3ee927586fac512bf0666d3c5fcbee2c45517c6eacc57d60a9e79f4324db4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02399",
+          "sha256": "b82a6be625334b5ba360a673bf6cd4d8ca0f7f1eb2345e610abe71fa4c064e64",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:0beb2441ac255015f2c26b86ce50c7096229b1cd",
+          "sha256": "af09b783bb67e3ad1e54a4286aeae2df65ce79315da0c91ed8838a40c7ef3fd6",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    },
+    {
+      "target_id": "WMS-ANALYTICS-01",
+      "required_count": 17,
+      "artifacts": [
+        {
+          "component_id": "R02404",
+          "sha256": "2f90c5537845e5cb22f87039021535a4872ad2ff36bb89cc83ffbe1733e221b4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02407",
+          "sha256": "e8bae330078665892af3f0ec73afc830363dca73113de7f6e7f60cb55a499721",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02408",
+          "sha256": "40d8bfbadbc9ea9e8529b80a6b9e50d509d7e5263f668d9c5e1db0301be34e80",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02409",
+          "sha256": "be2f000f8dcd5066cbacbca9a188efec3a0297833e254f46f8b04581d45f0057",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02410",
+          "sha256": "59dff54660e0a2fe1ebc53411fcd6f0786283c95cce575074ae01dce992d6f50",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02411",
+          "sha256": "5847ad3a0d225be44cf8c3de1f0fd2483aab2323c78cf8ba8c7114dadd3e1c24",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02413",
+          "sha256": "afe3bc53867d38dff843f9733c6ccb601ce983b1be0d352e8f7e1190d6f33a39",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02414",
+          "sha256": "a3b6a49b59ccf5a0d7fc302bcf62706ed39ddfeab673c16d49dca4e48b5431df",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02415",
+          "sha256": "996ff8c6ae7d5368991a6561eeb579f8b1f15f0767593c6da6df3e47c730e11c",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02416",
+          "sha256": "e694f81b414a785d06d007607265b7ae69cb9ffb80e7f3bb240c439b155db2e8",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02417",
+          "sha256": "7f768146b436c262e9c5311a5eb3ebd84f17b5dc0237809761429f77c7f9d1a9",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02418",
+          "sha256": "acb8466aaf90decb4eeb848075bffb4a4e643a31e5939d7ec006afa33fb8c331",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02421",
+          "sha256": "4294becf9c2680617868d65eb1a5507a74d33e59b550d923f7ad2bb6f809ba61",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02422",
+          "sha256": "72a6dbfa3dbd9433727c11c48d6edb05ae645e4cec4ab3d848b5d6281fa2eb56",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02425",
+          "sha256": "41b3ee927586fac512bf0666d3c5fcbee2c45517c6eacc57d60a9e79f4324db4",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "R02426",
+          "sha256": "b82a6be625334b5ba360a673bf6cd4d8ca0f7f1eb2345e610abe71fa4c064e64",
+          "coverage": "full",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        },
+        {
+          "component_id": "acceptance-entry:54920548e65fab96230027a11b3eced2bc492c03",
+          "sha256": "45fdfa658b1c10ef20accc954fa2a0afa42221f125560ad9e515676c5721c1ca",
+          "coverage": "structured",
+          "reading_ledger": "evidence/root-specialty-reading.json"
+        }
+      ],
+      "required_current_normative_semantics_consolidated": true
+    }
+  ],
+  "errors": [],
+  "claim": "Required input references map to actual complete own semantic or exact reuse evidence; not runtime/source-code audit or general goal completion."
+}

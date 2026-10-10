@@ -1,0 +1,18 @@
+{
+  "schema": "CP6-DISCOVERED-ARCHIVE-GAPS-1",
+  "interpretation": "Additional historical container discovered after the prior21 exact-source gap register; current normative content is available.",
+  "gaps": [
+    {
+      "id": "ADG-X3-R1-ZIP",
+      "file_name": "X3_六册27SPEC_完整静态设计_STOPPED_20261008.zip",
+      "bytes": 839773,
+      "sha256": "a1539c42f0e73a634bee52b090c9e6f41258d09056debdf6d47fb7640855a6c4",
+      "library_file_id": "libfile_5243c6b04e488191825981bc9832ec65",
+      "version": 0,
+      "status": "ORIGINAL_CONTAINER_NOT_LOCATED_ALL_48_DECLARED_MEMBER_BYTES_VERIFIED",
+      "priority": "historical_container_nonblocking",
+      "impact": "CurrentR2sixbodies/reviews are present; do not claim historical originalZIP recovered or rebuild an equivalentZIP as original.",
+      "evidence": "evidence/x3-metadata-reconciliation.json"
+    }
+  ]
+}

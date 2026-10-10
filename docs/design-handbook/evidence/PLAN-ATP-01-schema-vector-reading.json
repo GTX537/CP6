@@ -1,0 +1,4011 @@
+[
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationRequest",
+    "vectorId": "AtpEvaluationRequest:VALID_MINIMAL",
+    "raw_sha256": "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+    "read_value": {
+      "exact_read_reuse": "CALC01/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/request"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationRequest",
+    "vectorId": "AtpEvaluationRequest:BOUNDARY",
+    "raw_sha256": "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationRequest",
+    "vectorId": "AtpEvaluationRequest:MISSING_REQUIRED",
+    "raw_sha256": "3080d4b3661d7a737f79d7804e83d66e996c19f9466c348f3403b1e0575d6457",
+    "delta_from_minimal": [
+      [
+        "/commercialContextRef",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationRequest",
+    "vectorId": "AtpEvaluationRequest:UNKNOWN_FIELD",
+    "raw_sha256": "4114d1c96793f404b28b65504b8a95f84fa8460c9f97e33ec5864e6bb756635e",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationRequest",
+    "vectorId": "AtpEvaluationRequest:WRONG_TYPE",
+    "raw_sha256": "33d67fa6740e2420b5a2ae7c69cd60ef251c177b5a2f69de3762cb5099954d1e",
+    "delta_from_minimal": [
+      [
+        "/commercialContextRef",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationStatus",
+    "vectorId": "AtpEvaluationRequest:INVALID_ENUM",
+    "raw_sha256": "cf35e1bbadd0c3c0a5f3957e830c4c6eea01fe0438ef7eadb759d14409122013",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpEvaluationRequest:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpEvaluationRequest:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationRequest",
+    "vectorId": "AtpEvaluationRequest:DUPLICATE_KEY",
+    "raw_sha256": "3fcd63f1b86ca04016723e942e73957a150beb948268b9a3d51feb67529cbcd0",
+    "raw_text_delta": [
+      [
+        "",
+        "\"commercialContextRef\":{\"id\":\"QTN-1\",\"lineId\":\"10\",\"owner\":\"ERP-QTN\",\"scheduleId\":\"1\",\"version\":\"2\"},"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluationRequest",
+    "targetDefinition": "AtpEvaluationRequest",
+    "vectorId": "AtpEvaluationRequest:FORWARD_VERSION",
+    "raw_sha256": "2c328446f168bb678e764aedcce4645c63045613897063e30cb232400b85d03c",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:VALID_MINIMAL",
+    "raw_sha256": "617c5e96d2bbee9177c41cc0eeff0d0ff6d800abf73ef1fe3ddab19347bd87d3",
+    "read_value": {
+      "exact_read_reuse": "CALC01/carriers/REQUEST"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:BOUNDARY",
+    "raw_sha256": "5b735c0c835836568b0fab2d88caa7e2cc87daa132999e1aea6cc2e6ee2d4dec",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:MISSING_REQUIRED",
+    "raw_sha256": "a5d31b8a9d4c8d3ff4af0b44d72a2cba54b4489b18ee94cba5503995bbb3aab2",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:UNKNOWN_FIELD",
+    "raw_sha256": "ca64e81c4148af9621bd0e23f05f35009166463dfe5d024a1803901fd2b7d4c6",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:WRONG_TYPE",
+    "raw_sha256": "3bdf4f9e4cfe81d5ce9897b88d9c7c1428b5696210d17c94d3795edff1fb28fc",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:INVALID_ENUM",
+    "raw_sha256": "9f2bc9290349bd3544b41ef3e155d000b0203309fd6d99ff8cc29042a72d65d8",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpRequestCarrier:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpRequestCarrier:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:DUPLICATE_KEY",
+    "raw_sha256": "a9dba9ac891ba6ae20e5013ce436700fcd3d412aa94d1f20da57293d9a1922d5",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRequestCarrier",
+    "targetDefinition": "AtpRequestCarrier",
+    "vectorId": "AtpRequestCarrier:FORWARD_VERSION",
+    "raw_sha256": "148a57655a54164403f3037e23e358c31270a368b4127c69a38e7d10be668fdb",
+    "delta_from_minimal": [
+      [
+        "/schemaVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:VALID_MINIMAL",
+    "raw_sha256": "b5d7dff409f6aeca266491909b4df457482fc173d195f3ea3cd94b56be29e565",
+    "read_value": {
+      "exact_read_reuse": "CALC01/carriers/AUTHORIZATION"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:BOUNDARY",
+    "raw_sha256": "62e61edd35a040e78d06ffda7da10dfbb72fbcbe4ef77ef2b7b32768a956c8da",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:MISSING_REQUIRED",
+    "raw_sha256": "020d39e13c9e8df2730b66bc58c6d247cfca3d997ebca44d70ae48d7099a03fe",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:UNKNOWN_FIELD",
+    "raw_sha256": "fb8f906c5d0d954f4e1e3aaa2dc02c97c83d3ed5c1e49d1b8a00be5eba4811f5",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:WRONG_TYPE",
+    "raw_sha256": "4cb70006574946bf39e74f9dde737cf360ceb1d34dfea2e5e3e14a504af6e376",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:INVALID_ENUM",
+    "raw_sha256": "71419d2839ef4f3fe0224553dd5695ff8679af223c36c7c56d8690ff6ff334a2",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpAuthorizationCarrier:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpAuthorizationCarrier:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:DUPLICATE_KEY",
+    "raw_sha256": "954bfbb10f9bedc6948a5a79bbe3fab8cc2c2a7920b68961a3dddde4036b7edb",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpAuthorizationCarrier",
+    "targetDefinition": "AtpAuthorizationCarrier",
+    "vectorId": "AtpAuthorizationCarrier:FORWARD_VERSION",
+    "raw_sha256": "3d52057a2ede0070817ed49d13fb3a970323663ba015c8c28c8086439ccb92f2",
+    "delta_from_minimal": [
+      [
+        "/schemaVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:VALID_MINIMAL",
+    "raw_sha256": "f53aecdaaef211384f44752c4d98ead5da5997377dc39af2e53cc4d4a141e573",
+    "read_value": {
+      "exact_read_reuse": "CALC01/carriers/POLICY"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:BOUNDARY",
+    "raw_sha256": "ccc861eb27958d0a1f572222826c0fe8e82333640a4518e315e64def299cc954",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:MISSING_REQUIRED",
+    "raw_sha256": "228464c673cd01105bf585bc2467ee0fb33f975b2a678d76c3922d7736354263",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:UNKNOWN_FIELD",
+    "raw_sha256": "0e3b9a6078633c322050149b1d62bac9c8877014e3962189c2141b940e85c139",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:WRONG_TYPE",
+    "raw_sha256": "235c1de625ea8fe38e376374ef32bee02262f32fd7b5c899e01926b45b5dbf10",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:INVALID_ENUM",
+    "raw_sha256": "2c2535649e949a6a444ae02d350193b618607993e6bacd7650daa580de141e34",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpPolicyCarrier:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpPolicyCarrier:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:DUPLICATE_KEY",
+    "raw_sha256": "3954fa0966b983928d2cfc8233f4d54c78fb7c29478c0b0e6cedb5a115957963",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPolicyCarrier",
+    "targetDefinition": "AtpPolicyCarrier",
+    "vectorId": "AtpPolicyCarrier:FORWARD_VERSION",
+    "raw_sha256": "3a1914e34afaa591104aa3f68c260303adef02e838a8eb3ff45f0ff1aff36cbe",
+    "delta_from_minimal": [
+      [
+        "/schemaVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:VALID_MINIMAL",
+    "raw_sha256": "c916115bd8512d8a0c47be1ae155fcafb78c133c96df66f6830fc8864b6bdf55",
+    "read_value": {
+      "exact_read_reuse": "CALC01/carriers/SUPPLY"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:BOUNDARY",
+    "raw_sha256": "16686387f36caf915fbfbbf80210459d92975ab0f1ec04b4f93d32fe7aaeb938",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:MISSING_REQUIRED",
+    "raw_sha256": "7baba3b3adc6586763c7a8991db8547459851d008ee41a195f2d07b37b584930",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:UNKNOWN_FIELD",
+    "raw_sha256": "0b54abd0197ad59ab5ba34eb0e33a2e7fcf0a70d4302a9a74755048005e768ba",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:WRONG_TYPE",
+    "raw_sha256": "efa271973e290ed5699749b4253a61e0a4e5d4d01529e8e24ef3febc2d9d92f5",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:INVALID_ENUM",
+    "raw_sha256": "dd2b620ea27e2438f5beaf231341ed4bd351b6c9f5da9775f893dc5b75195a67",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpSupplyCarrier:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpSupplyCarrier:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:DUPLICATE_KEY",
+    "raw_sha256": "929d094067d273eb8d660ce6ece0670d0098eb7e6f8fd6d00634a27ecdb296c3",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpSupplyCarrier",
+    "targetDefinition": "AtpSupplyCarrier",
+    "vectorId": "AtpSupplyCarrier:FORWARD_VERSION",
+    "raw_sha256": "5f2e2215d9c7a0b85c063bbaf35073a6d22625dc61c198213db3472311dade80",
+    "delta_from_minimal": [
+      [
+        "/schemaVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:VALID_MINIMAL",
+    "raw_sha256": "e5a02b5cd0498789702d5797fd372d8e998fa08e77aaaaf9fd71b30baab2f2ad",
+    "read_value": {
+      "exact_read_reuse": "CALC01/carriers/CALCULATION"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:BOUNDARY",
+    "raw_sha256": "9d5f21f0d9693247edb4cf3e43b61beba99979753d80b171d53289efb92a4337",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:MISSING_REQUIRED",
+    "raw_sha256": "3764f69cca958fac7ed32666de23e7e41fdbabfa13fe19d13b9d13363fc5488e",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:UNKNOWN_FIELD",
+    "raw_sha256": "e04af34f7ca22e584b2e7d0a1d957d703cf06db9aae6ee9b0986d9fe7d43a6ae",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:WRONG_TYPE",
+    "raw_sha256": "cf2a0a000522394058f99f2809cb1bcbad30f5c0a903e5352bad3f1c8509419a",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:INVALID_ENUM",
+    "raw_sha256": "21796d4176338b8263d75d37319614863f8146ae798f8a5fc065c81252e41583",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpCalculationCarrier:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpCalculationCarrier:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:DUPLICATE_KEY",
+    "raw_sha256": "6fa865ffb55a035b818f5f9c597be0cd4b66c4d327aa365bea2674efa556d2c8",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpCalculationCarrier",
+    "targetDefinition": "AtpCalculationCarrier",
+    "vectorId": "AtpCalculationCarrier:FORWARD_VERSION",
+    "raw_sha256": "1852894b2e98c4f1d4de11b7de03af87421d91fc978e7c1eaa9c421700d80338",
+    "delta_from_minimal": [
+      [
+        "/schemaVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:VALID_MINIMAL",
+    "raw_sha256": "54691221dd5693fe521c7cbb8bbb69f144499ecbb15bd6abe3037fb328624c10",
+    "read_value": {
+      "exact_read_reuse": "CALC01/publicProjection"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:BOUNDARY",
+    "raw_sha256": "e33f6b8869992000572a92ce1699bd41089cdb92b0c6e0844e8a9487bd3aed37",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:MISSING_REQUIRED",
+    "raw_sha256": "c42e3b3230bd65d9b7b8e02d0ead155ff6c390187dafe180d3a15d2e1a75e23d",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:UNKNOWN_FIELD",
+    "raw_sha256": "2cd7b0a878487a0adac9ab5da5235dcc98b8d04ff795ec644da3bc20ac760ad1",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:WRONG_TYPE",
+    "raw_sha256": "1f2293496f363aeaef912fd73d13017f219356dcd0e9debb337de18e2c74ab87",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:INVALID_ENUM",
+    "raw_sha256": "9c062eedd64d4b74d9f2aa47992b0037c495ac5507704d82a70acf0f288b56f2",
+    "delta_from_minimal": [
+      [
+        "/status",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpPublicResult:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpPublicResult:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:DUPLICATE_KEY",
+    "raw_sha256": "27d7de5328890410fdcd2e63c4c44ad00fdc91446566fb5b964dd5a3bac6cadc",
+    "raw_text_delta": [
+      [
+        "",
+        "\"allocatedToRequest\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpPublicResult",
+    "targetDefinition": "AtpPublicResult",
+    "vectorId": "AtpPublicResult:FORWARD_VERSION",
+    "raw_sha256": "9ac1600fdffdb0dbc5c38b8ba5971bc8960ed4d04e8379e658f95315228d1258",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:VALID_MINIMAL",
+    "raw_sha256": "febd4889e910ba5a54717590e7ed1541f17a055f8c1352f99fad4be52c1eca14",
+    "read_value": {
+      "exact_read_reuse": "CALC01/protectedProjection"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:BOUNDARY",
+    "raw_sha256": "ebff5119d391156d72991136c74e44f91a6bc74446b9d44e6896677f847bd8b5",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:MISSING_REQUIRED",
+    "raw_sha256": "a9f60ff9ce74b743eb69096d068e1c64dadd1ae95e348969e34c8e1108ea3f81",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:UNKNOWN_FIELD",
+    "raw_sha256": "a5803ade805b00eaa324ba7dc3f3b53ee9bb16e4c95ae8fba869e859754b3b00",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:WRONG_TYPE",
+    "raw_sha256": "c6412bfcf6074b82104f179fec424489fb9e3fdf958e6061d489e647f85f4856",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:INVALID_ENUM",
+    "raw_sha256": "f9a6797c5d03b433f486476f4249b2e588e214d1800592240f2758ae29178137",
+    "delta_from_minimal": [
+      [
+        "/status",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpProtectedResult:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpProtectedResult:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:DUPLICATE_KEY",
+    "raw_sha256": "f27c3c2bad4fbbc2b2cfb7cbb003ae34d623504a68384323fdeff1038fe60c0e",
+    "raw_text_delta": [
+      [
+        "",
+        "\"allocatedToRequest\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProtectedResult",
+    "targetDefinition": "AtpProtectedResult",
+    "vectorId": "AtpProtectedResult:FORWARD_VERSION",
+    "raw_sha256": "c8079763f78a9fdfd76f65d335769d3cef561a6b84f4ac71fd33180a88fec859",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:VALID_MINIMAL",
+    "raw_sha256": "6d622f10b39d2947fc9324c98f4d8b96365715f7818b611f2a3eca1bcd737353",
+    "read_value": {
+      "evaluationId": "11111111-1111-4111-8111-111111111111",
+      "freshnessSelfDigest": "9fed45b1c8bd374be0ceed7480c980f5b4011c65e2bf606b0e405ba1f0543aa8",
+      "fullPayloadDigest": "17c0728f299fad299e0eba62869b4cdac3ea62c34f352ed9ca5b98f7376c08d0",
+      "observationSequence": 1,
+      "observedAt": "2026-10-01T12:01:00.000Z",
+      "observerRef": {
+        "digest": "e41f1d834710df8c7bc2befedb7b92339973a92288d8581b3696604c0d04c5f7",
+        "id": "SUP-HEAD",
+        "owner": "Main Planning",
+        "version": "45"
+      },
+      "publicPayloadDigest": "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+      "representationDigest": "2891e0a7ce96e062de1a74299ce5a9a073812909702037b959f5582051803237",
+      "state": "CURRENT",
+      "visibility": "PUBLIC_REDACTED",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:BOUNDARY",
+    "raw_sha256": "b99df3cd32f8250d6cf3760b5b191b5d9143e7532a79fe9d112d175e8234cdd8",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:MISSING_REQUIRED",
+    "raw_sha256": "165e8d69d6fd901bc4d43a1e043c03d07a63419ffba169a87e3f96f66f097f6e",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:UNKNOWN_FIELD",
+    "raw_sha256": "a46cc244633c71b919f1bf397d3e589a2a73cfe703ea562710234998e8374f66",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:WRONG_TYPE",
+    "raw_sha256": "c97c2312e6c1448f20be0ca574e7e55c3ddb84ce0f015409ac55957c5c1c184c",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:INVALID_ENUM",
+    "raw_sha256": "6eb296db6c1ab3123afbf1b7b6f63aef49dc5579941d72b7f332a9521adb8779",
+    "delta_from_minimal": [
+      [
+        "/state",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpFreshnessObservation:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpFreshnessObservation:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:DUPLICATE_KEY",
+    "raw_sha256": "a915f05bde88f2ddbd158310146a9ea407f40c259dd63159a6bb273e3e6ece08",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessObservation",
+    "targetDefinition": "AtpFreshnessObservation",
+    "vectorId": "AtpFreshnessObservation:FORWARD_VERSION",
+    "raw_sha256": "221a139e76801791e3425d95634c74b208480e1cb86153bf0c2d47c74c4a2d80",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:VALID_MINIMAL",
+    "raw_sha256": "cb0cb7e74f528cdaffed101fe49821f536216027ed2233d06e9ba026fff3a453",
+    "read_value": {
+      "evaluationId": "11111111-1111-4111-8111-111111111111",
+      "observationSequence": 1,
+      "observedAt": "2026-10-01T12:01:00.000Z",
+      "publicPayloadDigest": "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+      "state": "CURRENT",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:BOUNDARY",
+    "raw_sha256": "093b3b9b453afe6a6ec5b95bd0e9cbdd3d9c818762b17999b56f5bebef2b998f",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:MISSING_REQUIRED",
+    "raw_sha256": "90e9790d2fba21a3092331da1825e184b5657268548a967446bae9cb4e3e4da5",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:UNKNOWN_FIELD",
+    "raw_sha256": "db9f8647d19edd1b9d62727fc018cf74945eba7f054f6b7d6279c7677588a506",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:WRONG_TYPE",
+    "raw_sha256": "41187434ce8ed274e0f4654635f3f023aa39334cc5a2f364d57da097d1629836",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:INVALID_ENUM",
+    "raw_sha256": "19a4e9665f378b127363875b53ca8913a7bb1f83e60738e60b0e2c1c15bc116d",
+    "delta_from_minimal": [
+      [
+        "/state",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpFreshnessAppendRequest:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpFreshnessAppendRequest:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:DUPLICATE_KEY",
+    "raw_sha256": "f39a64aae7dcd3f25cd5808bdf1733b52a93cacb748dd42f76a3899f92a34cdb",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendRequest",
+    "targetDefinition": "AtpFreshnessAppendRequest",
+    "vectorId": "AtpFreshnessAppendRequest:FORWARD_VERSION",
+    "raw_sha256": "e140a508564d565a9ad1fb32c9d8ac7323d15ef1814336a72756b18df2f8f026",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "AtpFreshnessAppendTransport",
+    "vectorId": "AtpFreshnessAppendTransport:VALID_MINIMAL",
+    "raw_sha256": "7ea60d684e3b8a8e2fe2cc272caf55f9d11a2f0d6e5de9307265d1e4980654f7",
+    "read_value": {
+      "evaluationId": "11111111-1111-4111-8111-111111111111",
+      "kind": "FRESHNESS_ACCEPTED",
+      "observationSequence": 1
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "AtpFreshnessAppendTransport",
+    "vectorId": "AtpFreshnessAppendTransport:BOUNDARY",
+    "raw_sha256": "4b1ea0d78ca09e549e63857e0fe851bdf2f658c42c465edddbbffc24e4a6d707",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "AtpFreshnessAppendTransport",
+    "vectorId": "AtpFreshnessAppendTransport:MISSING_REQUIRED",
+    "raw_sha256": "5c49b39d57339835e46591f79f3fb0d2d7d44539f6f052ae4cc6d9883799b08b",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "AtpFreshnessAppendTransport",
+    "vectorId": "AtpFreshnessAppendTransport:UNKNOWN_FIELD",
+    "raw_sha256": "bffc6f80ca3a27109f2b4ca48d7b6aa91419d786c5ef08eb30d5c18196b2ff1d",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "AtpFreshnessAppendTransport",
+    "vectorId": "AtpFreshnessAppendTransport:WRONG_TYPE",
+    "raw_sha256": "466a6b5efb4aef18b37ffd1d694af9248cad496ac202387af4d079101abf7b3f",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "AtpFreshnessAppendTransport",
+    "vectorId": "AtpFreshnessAppendTransport:INVALID_ENUM",
+    "raw_sha256": "3137c7d8ca80ebc827f5d53ef3f65b09ba2083d71fbacc47d869f822fcc0d45d",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpFreshnessAppendTransport:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpFreshnessAppendTransport:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "AtpFreshnessAppendTransport",
+    "vectorId": "AtpFreshnessAppendTransport:DUPLICATE_KEY",
+    "raw_sha256": "d9af2191ad23eb8dc32cb39ef010866043f9dd91390d23c094db01bbde1d23f8",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpFreshnessAppendTransport",
+    "targetDefinition": "NormalizedRequest",
+    "vectorId": "AtpFreshnessAppendTransport:FORWARD_VERSION",
+    "raw_sha256": "2c328446f168bb678e764aedcce4645c63045613897063e30cb232400b85d03c",
+    "delta_from_minimal": [
+      [
+        "/commercialContextRef",
+        "ADD",
+        {
+          "id": "QTN-1",
+          "lineId": "10",
+          "owner": "ERP-QTN",
+          "scheduleId": "1",
+          "version": "2"
+        }
+      ],
+      [
+        "/evaluationAsOf",
+        "ADD",
+        "2026-10-01T12:00:00.000Z"
+      ],
+      [
+        "/evaluationId",
+        "REMOVE"
+      ],
+      [
+        "/excludeDemandRef",
+        "ADD",
+        null
+      ],
+      [
+        "/itemRef",
+        "ADD",
+        {
+          "itemId": "ITEM-1",
+          "revisionId": "REV-A",
+          "usage": "SELLABLE"
+        }
+      ],
+      [
+        "/kind",
+        "REMOVE"
+      ],
+      [
+        "/locale",
+        "ADD",
+        "zh-CN"
+      ],
+      [
+        "/observationSequence",
+        "REMOVE"
+      ],
+      [
+        "/quantity",
+        "ADD",
+        {
+          "scale": 2,
+          "uom": "EA",
+          "value": "10.00"
+        }
+      ],
+      [
+        "/requestedDate",
+        "ADD",
+        {
+          "exact_read_reuse": "AtpPublicResult/VALID_MINIMAL/normalizedRequest/requestedDate"
+        }
+      ],
+      [
+        "/siteId",
+        "ADD",
+        "SITE-1"
+      ],
+      [
+        "/wireVersion",
+        "ADD",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "AtpEvaluateTransport",
+    "vectorId": "AtpEvaluateTransport:VALID_MINIMAL",
+    "raw_sha256": "4ec0a8678eb62afa42ad32caed86cddf27ccd2a8188de3d74394e7e7900414b9",
+    "read_value": {
+      "completed": {
+        "exact_read_reuse": "AtpPublicResult/VALID_MINIMAL"
+      },
+      "kind": "COMPLETED"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "AtpEvaluateTransport",
+    "vectorId": "AtpEvaluateTransport:BOUNDARY",
+    "raw_sha256": "4ec0a8678eb62afa42ad32caed86cddf27ccd2a8188de3d74394e7e7900414b9",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "AtpEvaluateTransport",
+    "vectorId": "AtpEvaluateTransport:MISSING_REQUIRED",
+    "raw_sha256": "9ccad007be2f0b92d01fd123e7cc71f59dd0cbdcdfb9f79749db58f972a820aa",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "AtpEvaluateTransport",
+    "vectorId": "AtpEvaluateTransport:UNKNOWN_FIELD",
+    "raw_sha256": "0f5afec620e18c03939951ea8181b1b39737b506b511dc5b83db0301f4d35507",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "AtpEvaluateTransport",
+    "vectorId": "AtpEvaluateTransport:WRONG_TYPE",
+    "raw_sha256": "30e10899eb70cc0ae6e9b1345627c86f70007833f40431413345a1f0182b1786",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "AtpEvaluateTransport",
+    "vectorId": "AtpEvaluateTransport:INVALID_ENUM",
+    "raw_sha256": "5646aed96cc780bf5ea5db1defa0f3b69ce2b3c62dadd69886bfebed03186f3f",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpEvaluateTransport:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpEvaluateTransport:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "AtpEvaluateTransport",
+    "vectorId": "AtpEvaluateTransport:DUPLICATE_KEY",
+    "raw_sha256": "e565903aa90e2e79161eb0c20fc3e0cd04494e4ceaf900ff69902c5d10b502d7",
+    "raw_text_delta": [
+      [
+        "",
+        "\"completed\":{\"allocatedToRequest\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"commitmentLevel\":\"ADVISORY_ATP_ONLY\",\"constraints\":[],\"earliestPartialDate\":\"2026-10-02\",\"earliestSuggestedDate\":\"2026-10-05\",\"evaluatedAt\":\"2026-10-01T12:00:00.000Z\",\"evaluationId\":\"11111111-1111-4111-8111-111111111111\",\"explanations\":[{\"code\":\"COMPLETED\",\"messageKey\":\"plan.atp.completed\",\"safeParameters\":{\"allocated\":\"10.00\",\"unavailable\":\"0.00\"}}],\"fullPayloadDigest\":\"4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0\",\"normalizedRequest\":{\"evaluationAsOf\":\"2026-10-01T12:00:00.000Z\",\"itemRef\":{\"itemId\":\"ITEM-1\",\"revisionId\":\"REV-A\",\"usage\":\"SELLABLE\"},\"locale\":\"zh-CN\",\"quantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"requestedDate\":{\"calendarRef\":{\"digest\":\"eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011\",\"id\":\"CAL-SITE-1\",\"owner\":\"Main Calendar\",\"version\":\"7\"},\"date\":\"2026-10-02\",\"timeZone\":\"Asia/Shanghai\"},\"siteId\":\"SITE-1\",\"wireVersion\":\"1.0\"},\"ownerCommittedDate\":null,\"policyRef\":{\"digest\":\"e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15\",\"id\":\"ATP-POL-SITE-1\",\"owner\":\"Main Planning\",\"version\":\"12\"},\"publicSelfDigest\":\"6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07\",\"representationDigest\":\"014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167\",\"requestedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"segments\":[{\"allocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"7.00\"},\"businessAvailableDate\":\"2026-10-02\",\"calendarRef\":{\"digest\":\"eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011\",\"id\":\"CAL-SITE-1\",\"owner\":\"Main Calendar\",\"version\":\"7\"},\"cumulativeAllocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"7.00\"},\"eligibilityClass\":\"ELIGIBLE\",\"eligibleCapacityQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"7.00\"},\"firmRank\":0,\"limitationClass\":\"NONE\",\"ordinal\":1,\"ownerTypeRank\":0,\"priorityRank\":1,\"publicSegmentDigest\":\"111800459ee57e957bfdb714d60e6f3e12e35b16f9617c6b0adbe617ae438af5\",\"supplyClassRank\":0},{\"allocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"3.00\"},\"businessAvailableDate\":\"2026-10-05\",\"calendarRef\":{\"digest\":\"eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011\",\"id\":\"CAL-SITE-1\",\"owner\":\"Main Calendar\",\"version\":\"7\"},\"cumulativeAllocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"eligibilityClass\":\"ELIGIBLE\",\"eligibleCapacityQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"5.00\"},\"firmRank\":1,\"limitationClass\":\"NONE\",\"ordinal\":2,\"ownerTypeRank\":1,\"priorityRank\":1,\"publicSegmentDigest\":\"a76598f7819f5062b502cc06415e73b345a3be893726767aabf712397e88f73a\",\"supplyClassRank\":1}],\"sideEffects\":{\"demandCreated\":false,\"economicWriteCount\":0,\"orderModified\":false,\"plannedOrderChanged\":false,\"reservationCreated\":false,\"supplyConsumed\":false},\"sourceLimitations\":[{\"code\":\"PLAN_SUP_RUNTIME_UNPROVEN\",\"messageKey\":\"plan.atp.source.runtime_unproven\",\"owner\":\"Main Planning\",\"safeParameters\":{\"adapter\":\"PLAN-SUP-01\"}}],\"status\":\"COMPLETED\",\"supplyBasisRedacted\":true,\"supplySnapshotRef\":{\"capturedAt\":\"2026-10-01T11:59:00.000Z\",\"completeThrough\":\"2026-11-30T23:59:59.999Z\",\"digest\":\"788657a4365a280330c9e5b8eface4d683c93471a78fc58a8abf0729d74f063b\",\"expiresAt\":\"2026-10-01T13:30:00.000Z\",\"id\":\"SUP-SNAPSHOT-1\",\"owner\":\"Main Planning\",\"version\":\"44\"},\"totalAvailable\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"unavailableQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"0.00\"},\"validUntil\":\"2026-10-01T13:00:00.000Z\",\"visibility\":\"PUBLIC_REDACTED\",\"wireVersion\":\"1.0\"},"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpEvaluateTransport",
+    "targetDefinition": "NormalizedRequest",
+    "vectorId": "AtpEvaluateTransport:FORWARD_VERSION",
+    "raw_sha256": "2c328446f168bb678e764aedcce4645c63045613897063e30cb232400b85d03c",
+    "delta_from_minimal": [
+      [
+        "/commercialContextRef",
+        "ADD",
+        {
+          "id": "QTN-1",
+          "lineId": "10",
+          "owner": "ERP-QTN",
+          "scheduleId": "1",
+          "version": "2"
+        }
+      ],
+      [
+        "/completed",
+        "REMOVE"
+      ],
+      [
+        "/evaluationAsOf",
+        "ADD",
+        "2026-10-01T12:00:00.000Z"
+      ],
+      [
+        "/excludeDemandRef",
+        "ADD",
+        null
+      ],
+      [
+        "/itemRef",
+        "ADD",
+        {
+          "itemId": "ITEM-1",
+          "revisionId": "REV-A",
+          "usage": "SELLABLE"
+        }
+      ],
+      [
+        "/kind",
+        "REMOVE"
+      ],
+      [
+        "/locale",
+        "ADD",
+        "zh-CN"
+      ],
+      [
+        "/quantity",
+        "ADD",
+        {
+          "scale": 2,
+          "uom": "EA",
+          "value": "10.00"
+        }
+      ],
+      [
+        "/requestedDate",
+        "ADD",
+        {
+          "exact_read_reuse": "AtpEvaluateTransport/VALID_MINIMAL/completed/normalizedRequest/requestedDate"
+        }
+      ],
+      [
+        "/siteId",
+        "ADD",
+        "SITE-1"
+      ],
+      [
+        "/wireVersion",
+        "ADD",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpGetTransport",
+    "targetDefinition": "AtpGetTransport",
+    "vectorId": "AtpGetTransport:VALID_MINIMAL",
+    "raw_sha256": "14d7dd4b2bda96bfe112d753da017c74e95272665069ab7fd6e2df9bc64c39c7",
+    "read_value": {
+      "contentLength": 4179,
+      "entity": {
+        "latestFreshness": {
+          "exact_read_reuse": "AtpFreshnessObservation/VALID_MINIMAL"
+        },
+        "result": {
+          "exact_read_reuse": "AtpEvaluateTransport/VALID_MINIMAL/completed"
+        }
+      },
+      "entityBytesBase64__decoded": {
+        "latestFreshness": {
+          "exact_read_reuse": "AtpFreshnessObservation/VALID_MINIMAL"
+        },
+        "result": {
+          "exact_read_reuse": "AtpEvaluateTransport/VALID_MINIMAL/completed"
+        }
+      },
+      "entityDigest": "f9defaadf2d06712c4bd7ef05c10f0c1bf08623ca02054b7f974a7cec6df91db",
+      "etag": "W/\"sha256:35451bd4ea8e2d49368b9617ef62005b45400c91476c8c2a7461399b66cc8549\"",
+      "kind": "HTTP_200",
+      "status": 200
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpGetTransport",
+    "targetDefinition": "AtpGetTransport",
+    "vectorId": "AtpGetTransport:BOUNDARY",
+    "raw_sha256": "14d7dd4b2bda96bfe112d753da017c74e95272665069ab7fd6e2df9bc64c39c7",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "AtpGetTransport",
+    "vectorId": "AtpGetTransport:MISSING_REQUIRED",
+    "raw_sha256": "b725e79630a9cd9b4a1f8b3de185848271c59e20703c4d90aba8739e85a73acd",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "AtpGetTransport",
+    "vectorId": "AtpGetTransport:UNKNOWN_FIELD",
+    "raw_sha256": "520d8b04aa561adac7508a671772128eb7f44b0df7e15ff76d1e3f3a21732e2d",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "AtpGetTransport",
+    "vectorId": "AtpGetTransport:WRONG_TYPE",
+    "raw_sha256": "ca4819920ad8ed1fee5ff814e9815a606a91d17799c75989060ee245b1d95cea",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "AtpGetTransport",
+    "vectorId": "AtpGetTransport:INVALID_ENUM",
+    "raw_sha256": "d5b4d519ed9caaa678ee48f6bb7795fcdd253181862425530c64089516a7e445",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpGetTransport:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpGetTransport:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "AtpGetTransport",
+    "vectorId": "AtpGetTransport:DUPLICATE_KEY",
+    "raw_sha256": "3d1f829ff47311a68c3a96a93821b2b2caeacf3b9d84f0ffb91fcc6eee14941b",
+    "raw_text_delta": [
+      [
+        "",
+        "\"contentLength\":4179,"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpGetTransport",
+    "targetDefinition": "NormalizedRequest",
+    "vectorId": "AtpGetTransport:FORWARD_VERSION",
+    "raw_sha256": "2c328446f168bb678e764aedcce4645c63045613897063e30cb232400b85d03c",
+    "delta_from_minimal": [
+      [
+        "/commercialContextRef",
+        "ADD",
+        {
+          "id": "QTN-1",
+          "lineId": "10",
+          "owner": "ERP-QTN",
+          "scheduleId": "1",
+          "version": "2"
+        }
+      ],
+      [
+        "/contentLength",
+        "REMOVE"
+      ],
+      [
+        "/entity",
+        "REMOVE"
+      ],
+      [
+        "/entityBytesBase64__decoded",
+        "REMOVE"
+      ],
+      [
+        "/entityDigest",
+        "REMOVE"
+      ],
+      [
+        "/etag",
+        "REMOVE"
+      ],
+      [
+        "/evaluationAsOf",
+        "ADD",
+        "2026-10-01T12:00:00.000Z"
+      ],
+      [
+        "/excludeDemandRef",
+        "ADD",
+        null
+      ],
+      [
+        "/itemRef",
+        "ADD",
+        {
+          "itemId": "ITEM-1",
+          "revisionId": "REV-A",
+          "usage": "SELLABLE"
+        }
+      ],
+      [
+        "/kind",
+        "REMOVE"
+      ],
+      [
+        "/locale",
+        "ADD",
+        "zh-CN"
+      ],
+      [
+        "/quantity",
+        "ADD",
+        {
+          "scale": 2,
+          "uom": "EA",
+          "value": "10.00"
+        }
+      ],
+      [
+        "/requestedDate",
+        "ADD",
+        {
+          "exact_read_reuse": "AtpGetTransport/VALID_MINIMAL/entityBytesBase64__decoded/result/normalizedRequest/requestedDate"
+        }
+      ],
+      [
+        "/siteId",
+        "ADD",
+        "SITE-1"
+      ],
+      [
+        "/status",
+        "REMOVE"
+      ],
+      [
+        "/wireVersion",
+        "ADD",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpBasisQuery",
+    "vectorId": "AtpBasisQuery:VALID_MINIMAL",
+    "raw_sha256": "89370010118211294b22df7987908b48c014946fcbfc01953e3b6211a8f7f04d",
+    "read_value": {
+      "asOf": "2026-10-01T12:00:00.000Z",
+      "cursor": null,
+      "evaluationId": "11111111-1111-4111-8111-111111111111",
+      "itemRef": {
+        "itemId": "ITEM-1",
+        "revisionId": "REV-A",
+        "usage": "SELLABLE"
+      },
+      "pageSize": 100,
+      "purpose": "ATP_READ_BASIS",
+      "siteId": "SITE-1",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpBasisQuery",
+    "vectorId": "AtpBasisQuery:BOUNDARY",
+    "raw_sha256": "f488481fce1c0e7693c24d9276d6206d0c593de7306d734dfcc5031fada7a07f",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpBasisQuery",
+    "vectorId": "AtpBasisQuery:MISSING_REQUIRED",
+    "raw_sha256": "4c6c7b459e465acd360cf84136872c628bf8b87fe1e512509c649d9700f6fc5e",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpBasisQuery",
+    "vectorId": "AtpBasisQuery:UNKNOWN_FIELD",
+    "raw_sha256": "f67bd6ddaee7239b4529833464cdcb0c4209a098de4ec05ffb670c6e071e6bd0",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpBasisQuery",
+    "vectorId": "AtpBasisQuery:WRONG_TYPE",
+    "raw_sha256": "0980e320aa330db2a4f8e074e1a27363d097fb3e0c54cea92946206f22763022",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpEvaluationStatus",
+    "vectorId": "AtpBasisQuery:INVALID_ENUM",
+    "raw_sha256": "cf35e1bbadd0c3c0a5f3957e830c4c6eea01fe0438ef7eadb759d14409122013",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpBasisQuery:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpBasisQuery:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpBasisQuery",
+    "vectorId": "AtpBasisQuery:DUPLICATE_KEY",
+    "raw_sha256": "b47b805ef83e5060d1e4ebed317bdb01040aa22811ab700f6b95ac1bbf70393b",
+    "raw_text_delta": [
+      [
+        "",
+        "\"asOf\":\"2026-10-01T12:00:00.000Z\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisQuery",
+    "targetDefinition": "AtpBasisQuery",
+    "vectorId": "AtpBasisQuery:FORWARD_VERSION",
+    "raw_sha256": "2c17b874730cbdcb928fbfd19f20051d2f319a2a6060ab1a09a135f33f3ae9db",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpBasisPage",
+    "vectorId": "AtpBasisPage:VALID_MINIMAL",
+    "raw_sha256": "2d1605c189c65320fe78b3f7fededeb33bd2335d8be406fedf02ff00feddcde5",
+    "read_value": {
+      "evaluationId": "11111111-1111-4111-8111-111111111111",
+      "items": [
+        {
+          "exact_read_reuse": "AtpProtectedResult/VALID_MINIMAL/basisLedger/0"
+        }
+      ],
+      "nextCursor": null,
+      "pageOrdinalEnd": 1,
+      "pageOrdinalStart": 1,
+      "queryDigest": "54e2f7a38d9639786d8da89e9cbcd66778b52488f5a449cbaec26ab7006c6566",
+      "representationDigest": "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+      "visibility": "A05_BASIS_DETAIL",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpBasisPage",
+    "vectorId": "AtpBasisPage:BOUNDARY",
+    "raw_sha256": "ab7d19287aa0d374907d3b92f5fe9081d4c5b49ce5953b2f6cf45689814bf08c",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpBasisPage",
+    "vectorId": "AtpBasisPage:MISSING_REQUIRED",
+    "raw_sha256": "64d9957eefdb32e93bd85f9b692b9cd0fb0b885f4b9e6232805976d474f1e557",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpBasisPage",
+    "vectorId": "AtpBasisPage:UNKNOWN_FIELD",
+    "raw_sha256": "0e35d79442d2b6bcf81f8fd25d77fc646153ded6bc47e0a026d24ef4d148d6f1",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpBasisPage",
+    "vectorId": "AtpBasisPage:WRONG_TYPE",
+    "raw_sha256": "d044c49455e5d6b3525ccf8ead41b4fe57e248166b785507d7011931e76409b2",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpEvaluationStatus",
+    "vectorId": "AtpBasisPage:INVALID_ENUM",
+    "raw_sha256": "cf35e1bbadd0c3c0a5f3957e830c4c6eea01fe0438ef7eadb759d14409122013",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpBasisPage:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpBasisPage:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpBasisPage",
+    "vectorId": "AtpBasisPage:DUPLICATE_KEY",
+    "raw_sha256": "c72b2039b13236e662d7fb4f8db33bcdb4c6000a367cc57d894a285a0e222be6",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisPage",
+    "targetDefinition": "AtpBasisPage",
+    "vectorId": "AtpBasisPage:FORWARD_VERSION",
+    "raw_sha256": "1fbafcd43390f176c7d2ca4095fbc4969d117cf3bda251ff44795b5a8a0e9115",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "AtpBasisTransport",
+    "vectorId": "AtpBasisTransport:VALID_MINIMAL",
+    "raw_sha256": "da72e28d43473c1c3318c70725aeacd1ab709a68c850991991508f024866e3c3",
+    "read_value": {
+      "kind": "BASIS",
+      "page": {
+        "exact_read_reuse": "AtpBasisPage/VALID_MINIMAL"
+      }
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "AtpBasisTransport",
+    "vectorId": "AtpBasisTransport:BOUNDARY",
+    "raw_sha256": "da72e28d43473c1c3318c70725aeacd1ab709a68c850991991508f024866e3c3",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "AtpBasisTransport",
+    "vectorId": "AtpBasisTransport:MISSING_REQUIRED",
+    "raw_sha256": "97da27f130e8ffc1d71ab2065dd7c9e742af8f64cd943cf3f53c22d73d7961ef",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "AtpBasisTransport",
+    "vectorId": "AtpBasisTransport:UNKNOWN_FIELD",
+    "raw_sha256": "04e43cc7c7b44b2de6621c3e118498fce2edca65bf916b49b3eeb9e27745ee7b",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "AtpBasisTransport",
+    "vectorId": "AtpBasisTransport:WRONG_TYPE",
+    "raw_sha256": "f652842908cbf6d8685ded9d727d29b61af6e0d21bab006923feb00700e31c43",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "AtpBasisTransport",
+    "vectorId": "AtpBasisTransport:INVALID_ENUM",
+    "raw_sha256": "087709d66279a6b44ee9b20dae3f564ce449173b3c7731fae3bfde2d200f483f",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpBasisTransport:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpBasisTransport:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "AtpBasisTransport",
+    "vectorId": "AtpBasisTransport:DUPLICATE_KEY",
+    "raw_sha256": "2c357237a05069fbdb90cec3d4e8d3282bf788eaa40d453b74b06df9d2349161",
+    "raw_text_delta": [
+      [
+        "",
+        "\"kind\":\"BASIS\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpBasisTransport",
+    "targetDefinition": "NormalizedRequest",
+    "vectorId": "AtpBasisTransport:FORWARD_VERSION",
+    "raw_sha256": "2c328446f168bb678e764aedcce4645c63045613897063e30cb232400b85d03c",
+    "delta_from_minimal": [
+      [
+        "/commercialContextRef",
+        "ADD",
+        {
+          "id": "QTN-1",
+          "lineId": "10",
+          "owner": "ERP-QTN",
+          "scheduleId": "1",
+          "version": "2"
+        }
+      ],
+      [
+        "/evaluationAsOf",
+        "ADD",
+        "2026-10-01T12:00:00.000Z"
+      ],
+      [
+        "/excludeDemandRef",
+        "ADD",
+        null
+      ],
+      [
+        "/itemRef",
+        "ADD",
+        {
+          "itemId": "ITEM-1",
+          "revisionId": "REV-A",
+          "usage": "SELLABLE"
+        }
+      ],
+      [
+        "/kind",
+        "REMOVE"
+      ],
+      [
+        "/locale",
+        "ADD",
+        "zh-CN"
+      ],
+      [
+        "/page",
+        "REMOVE"
+      ],
+      [
+        "/quantity",
+        "ADD",
+        {
+          "scale": 2,
+          "uom": "EA",
+          "value": "10.00"
+        }
+      ],
+      [
+        "/requestedDate",
+        "ADD",
+        {
+          "exact_read_reuse": "AtpGetTransport/VALID_MINIMAL/entityBytesBase64__decoded/result/normalizedRequest/requestedDate"
+        }
+      ],
+      [
+        "/siteId",
+        "ADD",
+        "SITE-1"
+      ],
+      [
+        "/wireVersion",
+        "ADD",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "EffectivePolicyQuery",
+    "vectorId": "EffectivePolicyQuery:VALID_MINIMAL",
+    "raw_sha256": "953364fedbba19fe5de435461cc9d1c686a6c9f6ee15066bb24b28616df35d6f",
+    "read_value": {
+      "asOf": "2026-10-01T12:00:00.000Z",
+      "itemRef": {
+        "itemId": "ITEM-1",
+        "revisionId": "REV-A",
+        "usage": "SELLABLE"
+      },
+      "purpose": "ATP_READ_POLICY",
+      "siteId": "SITE-1",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "EffectivePolicyQuery",
+    "vectorId": "EffectivePolicyQuery:BOUNDARY",
+    "raw_sha256": "953364fedbba19fe5de435461cc9d1c686a6c9f6ee15066bb24b28616df35d6f",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "EffectivePolicyQuery",
+    "vectorId": "EffectivePolicyQuery:MISSING_REQUIRED",
+    "raw_sha256": "608a7859d1bc0065338fe2346409bcdb4cc533a8c88a0b3323c87466b04bcc13",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "EffectivePolicyQuery",
+    "vectorId": "EffectivePolicyQuery:UNKNOWN_FIELD",
+    "raw_sha256": "c93768c7587dc2069bc4acae3646400e8602847a1ad66bc2223f9bd9928f4f35",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "EffectivePolicyQuery",
+    "vectorId": "EffectivePolicyQuery:WRONG_TYPE",
+    "raw_sha256": "0e8265a8fd2d486478ae75acbf99f6e8f30bfab48ec99069fc8432cd800df0c5",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "AtpEvaluationStatus",
+    "vectorId": "EffectivePolicyQuery:INVALID_ENUM",
+    "raw_sha256": "cf35e1bbadd0c3c0a5f3957e830c4c6eea01fe0438ef7eadb759d14409122013",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "EffectivePolicyQuery:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "Timestamp",
+    "vectorId": "EffectivePolicyQuery:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "EffectivePolicyQuery",
+    "vectorId": "EffectivePolicyQuery:DUPLICATE_KEY",
+    "raw_sha256": "2a94e1c3e761ddf504335ff0bbcdacf1ee51f6551eeefac3da4a497307afc24e",
+    "raw_text_delta": [
+      [
+        "",
+        "\"asOf\":\"2026-10-01T12:00:00.000Z\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyQuery",
+    "targetDefinition": "EffectivePolicyQuery",
+    "vectorId": "EffectivePolicyQuery:FORWARD_VERSION",
+    "raw_sha256": "86f51201978110da7971b1f7fa28886311a2c6c00b0ee8522599902191368d48",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:VALID_MINIMAL",
+    "raw_sha256": "b6d8b27c4546be868894591fc681761c30a895d24a0190df5af1907fbaf0f52c",
+    "read_value": {
+      "currentness": {
+        "observationId": "72a48a3610b7fcd93f20cf35d994c4dd46d0f2fca76405f8ffdfe6165c9bad8c",
+        "observationSequence": 1,
+        "ownerEventVersion": "1",
+        "proofDigest": "b5317c5895966dd532dad6e1695a5b03b7d8465df2cf80a72c7ebf3b906555eb",
+        "readAt": "2026-10-01T12:00:00.000Z",
+        "resultValidityThrough": "2026-10-01T13:00:00.000Z",
+        "status": "CURRENT",
+        "validThrough": "2026-10-01T13:00:00.000Z"
+      },
+      "kind": "POLICY",
+      "policyIdentity": {
+        "exact_read_reuse": "AtpBasisTransport/VALID_MINIMAL/page/items/0/sourceConversionProof/policyRef"
+      },
+      "policySet": {
+        "exact_read_reuse": "AtpPolicyCarrier/VALID_MINIMAL/payloadCanonicalBytesBase64__decoded/result/policySet"
+      },
+      "purpose": "ATP_READ_POLICY",
+      "representationDigest": "c02f7ad8930a56ddf5d2f0aa1fcf029fab8290a2e5b557920e5638156cc19132",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:BOUNDARY",
+    "raw_sha256": "b6d8b27c4546be868894591fc681761c30a895d24a0190df5af1907fbaf0f52c",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:MISSING_REQUIRED",
+    "raw_sha256": "d4777d737d5197cf90740330ed2f7f94286e5c6bc3c151620750bc7bfa0e908f",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:UNKNOWN_FIELD",
+    "raw_sha256": "58dde09d3750b41c2c8b87cf84bbb1a26ea2bef5b51c74ecc9d966f1ef2f580a",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:WRONG_TYPE",
+    "raw_sha256": "ed2bf4026b342b3e081b2ebaaff64c4595f4a191ce4d0d7504162115aa9bbcda",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:INVALID_ENUM",
+    "raw_sha256": "beab04a71f7da9dbda5b81bea5bc502f9af8fec0046994b4a984781b26e1af17",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "EffectivePolicyResponse:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "Timestamp",
+    "vectorId": "EffectivePolicyResponse:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:DUPLICATE_KEY",
+    "raw_sha256": "8de95dfe4bc7cf203e6ab98129dedd3b7399b068264be80f87f50686bb8201ae",
+    "raw_text_delta": [
+      [
+        "",
+        "\"currentness\":{\"observationId\":\"72a48a3610b7fcd93f20cf35d994c4dd46d0f2fca76405f8ffdfe6165c9bad8c\",\"observationSequence\":1,\"ownerEventVersion\":\"1\",\"proofDigest\":\"b5317c5895966dd532dad6e1695a5b03b7d8465df2cf80a72c7ebf3b906555eb\",\"readAt\":\"2026-10-01T12:00:00.000Z\",\"resultValidityThrough\":\"2026-10-01T13:00:00.000Z\",\"status\":\"CURRENT\",\"validThrough\":\"2026-10-01T13:00:00.000Z\"},"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyResponse",
+    "targetDefinition": "EffectivePolicyResponse",
+    "vectorId": "EffectivePolicyResponse:FORWARD_VERSION",
+    "raw_sha256": "4ca3867be627c38487a5d3c44392be0bdc90a0a696618f3720e9baa12c34c3ac",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:VALID_MINIMAL",
+    "raw_sha256": "b6d8b27c4546be868894591fc681761c30a895d24a0190df5af1907fbaf0f52c",
+    "read_value": {
+      "exact_read_reuse": "EffectivePolicyResponse/VALID_MINIMAL"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:BOUNDARY",
+    "raw_sha256": "b6d8b27c4546be868894591fc681761c30a895d24a0190df5af1907fbaf0f52c",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:MISSING_REQUIRED",
+    "raw_sha256": "d4777d737d5197cf90740330ed2f7f94286e5c6bc3c151620750bc7bfa0e908f",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:UNKNOWN_FIELD",
+    "raw_sha256": "58dde09d3750b41c2c8b87cf84bbb1a26ea2bef5b51c74ecc9d966f1ef2f580a",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:WRONG_TYPE",
+    "raw_sha256": "ed2bf4026b342b3e081b2ebaaff64c4595f4a191ce4d0d7504162115aa9bbcda",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:INVALID_ENUM",
+    "raw_sha256": "beab04a71f7da9dbda5b81bea5bc502f9af8fec0046994b4a984781b26e1af17",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "EffectivePolicyTransport:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "Timestamp",
+    "vectorId": "EffectivePolicyTransport:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:DUPLICATE_KEY",
+    "raw_sha256": "8de95dfe4bc7cf203e6ab98129dedd3b7399b068264be80f87f50686bb8201ae",
+    "raw_text_delta": [
+      [
+        "",
+        "\"currentness\":{\"observationId\":\"72a48a3610b7fcd93f20cf35d994c4dd46d0f2fca76405f8ffdfe6165c9bad8c\",\"observationSequence\":1,\"ownerEventVersion\":\"1\",\"proofDigest\":\"b5317c5895966dd532dad6e1695a5b03b7d8465df2cf80a72c7ebf3b906555eb\",\"readAt\":\"2026-10-01T12:00:00.000Z\",\"resultValidityThrough\":\"2026-10-01T13:00:00.000Z\",\"status\":\"CURRENT\",\"validThrough\":\"2026-10-01T13:00:00.000Z\"},"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "EffectivePolicyTransport",
+    "targetDefinition": "EffectivePolicyTransport",
+    "vectorId": "EffectivePolicyTransport:FORWARD_VERSION",
+    "raw_sha256": "4ca3867be627c38487a5d3c44392be0bdc90a0a696618f3720e9baa12c34c3ac",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpProblem",
+    "vectorId": "AtpProblem:VALID_MINIMAL",
+    "raw_sha256": "9156cfdc354162ffe64423b3e01557f66ec8cd07c9436f1fa2bd5b92dba6a818",
+    "read_value": {
+      "code": "SNAPSHOT_EXPIRED",
+      "correlationId": "CORR-1",
+      "pointer": "/supplySnapshotRef",
+      "retryable": true,
+      "safeParameters": {
+        "siteId": "SITE-1"
+      },
+      "status": 409,
+      "titleKey": "plan.atp.snapshot_expired",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpProblem",
+    "vectorId": "AtpProblem:BOUNDARY",
+    "raw_sha256": "9156cfdc354162ffe64423b3e01557f66ec8cd07c9436f1fa2bd5b92dba6a818",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpProblem",
+    "vectorId": "AtpProblem:MISSING_REQUIRED",
+    "raw_sha256": "db3ed26fb5f06b338feae755afe97de5f0fb03a2aa7ef72c4e7f27914660d62c",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpProblem",
+    "vectorId": "AtpProblem:UNKNOWN_FIELD",
+    "raw_sha256": "18b931a52ed7d3d6c362d2914e058aef4c67b850360d8830e74d40f652d29cfd",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpProblem",
+    "vectorId": "AtpProblem:WRONG_TYPE",
+    "raw_sha256": "90bf10a67adaa2bf36cc455b0f3ebf56092b35dc0e137a95c1b356a7e3e57bf3",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpEvaluationStatus",
+    "vectorId": "AtpProblem:INVALID_ENUM",
+    "raw_sha256": "cf35e1bbadd0c3c0a5f3957e830c4c6eea01fe0438ef7eadb759d14409122013",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpProblem:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpProblem:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpProblem",
+    "vectorId": "AtpProblem:DUPLICATE_KEY",
+    "raw_sha256": "0b3a14b54c6227a24506efecfda42d834b9a107c7332706975a41e261b7dac22",
+    "raw_text_delta": [
+      [
+        "",
+        "\"code\":\"SNAPSHOT_EXPIRED\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpProblem",
+    "targetDefinition": "AtpProblem",
+    "vectorId": "AtpProblem:FORWARD_VERSION",
+    "raw_sha256": "bfe37c38f80bd735ebe5c6bcf44211118d584f3350d4169527d40484a9b0d4eb",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpRecoveryRequest",
+    "vectorId": "AtpRecoveryRequest:VALID_MINIMAL",
+    "raw_sha256": "a5be8a4d6b279dc1ef0960e632b88caa0c1303370ecf7cbbb2c64d74ce20f5cc",
+    "read_value": {
+      "evaluationId": "11111111-1111-4111-8111-111111111111",
+      "expectedEtagVersion": 3,
+      "originalReplayEnvelopeDigest": "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+      "originalRequestBodyDigest": "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+      "wireVersion": "1.0"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpRecoveryRequest",
+    "vectorId": "AtpRecoveryRequest:BOUNDARY",
+    "raw_sha256": "1088a7a1277eef360c002af441d9aea21e756716ed2d43f4e904cf68854c72c6",
+    "delta_from_minimal": [
+      [
+        "/evaluationId",
+        "REPLACE",
+        "ffffffff-ffff-4fff-bfff-ffffffffffff"
+      ]
+    ]
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpRecoveryRequest",
+    "vectorId": "AtpRecoveryRequest:MISSING_REQUIRED",
+    "raw_sha256": "d352b5669d8d636a2c883f4c4d106fde7a8df4a757a11cbc0719751747e78187",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpRecoveryRequest",
+    "vectorId": "AtpRecoveryRequest:UNKNOWN_FIELD",
+    "raw_sha256": "b749b75de7ee09728792d814d894005d91fce6d307f38f76368ac0edc702c650",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpRecoveryRequest",
+    "vectorId": "AtpRecoveryRequest:WRONG_TYPE",
+    "raw_sha256": "42e1b1f1f07067dc9d93b49f8971aa9cd3c789ec2184b65544a8818970a8143c",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpEvaluationStatus",
+    "vectorId": "AtpRecoveryRequest:INVALID_ENUM",
+    "raw_sha256": "cf35e1bbadd0c3c0a5f3957e830c4c6eea01fe0438ef7eadb759d14409122013",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpRecoveryRequest:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpRecoveryRequest:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpRecoveryRequest",
+    "vectorId": "AtpRecoveryRequest:DUPLICATE_KEY",
+    "raw_sha256": "451edd06adaa77637df3e45e68799d95af586714b246ca20e3135f64fb2d6459",
+    "raw_text_delta": [
+      [
+        "",
+        "\"evaluationId\":\"11111111-1111-4111-8111-111111111111\","
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryRequest",
+    "targetDefinition": "AtpRecoveryRequest",
+    "vectorId": "AtpRecoveryRequest:FORWARD_VERSION",
+    "raw_sha256": "673fbe754a5bca53e72a40306dc64dca6b6b8243044ba4e922935a2228ad7f15",
+    "delta_from_minimal": [
+      [
+        "/wireVersion",
+        "REPLACE",
+        "2.0"
+      ]
+    ]
+  },
+  {
+    "category": "VALID_MINIMAL",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "AtpRecoveryTransport",
+    "vectorId": "AtpRecoveryTransport:VALID_MINIMAL",
+    "raw_sha256": "4ec0a8678eb62afa42ad32caed86cddf27ccd2a8188de3d74394e7e7900414b9",
+    "read_value": {
+      "exact_read_reuse": "AtpEvaluateTransport/VALID_MINIMAL"
+    }
+  },
+  {
+    "category": "BOUNDARY",
+    "expectedCode": null,
+    "expectedPointer": "/",
+    "expectedValid": true,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "AtpRecoveryTransport",
+    "vectorId": "AtpRecoveryTransport:BOUNDARY",
+    "raw_sha256": "4ec0a8678eb62afa42ad32caed86cddf27ccd2a8188de3d74394e7e7900414b9",
+    "delta_from_minimal": []
+  },
+  {
+    "category": "MISSING_REQUIRED",
+    "expectedCode": "required",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "AtpRecoveryTransport",
+    "vectorId": "AtpRecoveryTransport:MISSING_REQUIRED",
+    "raw_sha256": "9ccad007be2f0b92d01fd123e7cc71f59dd0cbdcdfb9f79749db58f972a820aa",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REMOVE"
+      ]
+    ]
+  },
+  {
+    "category": "UNKNOWN_FIELD",
+    "expectedCode": "additionalProperties",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "AtpRecoveryTransport",
+    "vectorId": "AtpRecoveryTransport:UNKNOWN_FIELD",
+    "raw_sha256": "0f5afec620e18c03939951ea8181b1b39737b506b511dc5b83db0301f4d35507",
+    "delta_from_minimal": [
+      [
+        "/futureUnknown",
+        "ADD",
+        true
+      ]
+    ]
+  },
+  {
+    "category": "WRONG_TYPE",
+    "expectedCode": "type",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "AtpRecoveryTransport",
+    "vectorId": "AtpRecoveryTransport:WRONG_TYPE",
+    "raw_sha256": "30e10899eb70cc0ae6e9b1345627c86f70007833f40431413345a1f0182b1786",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        []
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_ENUM",
+    "expectedCode": "const-or-enum",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "AtpRecoveryTransport",
+    "vectorId": "AtpRecoveryTransport:INVALID_ENUM",
+    "raw_sha256": "5646aed96cc780bf5ea5db1defa0f3b69ce2b3c62dadd69886bfebed03186f3f",
+    "delta_from_minimal": [
+      [
+        "/kind",
+        "REPLACE",
+        "INVALID"
+      ]
+    ]
+  },
+  {
+    "category": "INVALID_DECIMAL",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "PositiveDecimal30_8",
+    "vectorId": "AtpRecoveryTransport:INVALID_DECIMAL",
+    "raw_sha256": "be8956b1a56b24ae0059f96e4f767afd9c22b4fb699c3bed6682613e3b5f656d",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "0.00"
+      ]
+    ]
+  },
+  {
+    "category": "TIMESTAMP_TZ",
+    "expectedCode": "pattern",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "Timestamp",
+    "vectorId": "AtpRecoveryTransport:TIMESTAMP_TZ",
+    "raw_sha256": "ef81fa901b3c9ab141622258cb67e8227ad381e2af8332fdf9be7881a4c896c5",
+    "delta_from_minimal": [
+      [
+        "",
+        "REPLACE",
+        "2026-10-01T12:00:00"
+      ]
+    ]
+  },
+  {
+    "category": "DUPLICATE_KEY",
+    "expectedCode": "DUPLICATE_KEY",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "AtpRecoveryTransport",
+    "vectorId": "AtpRecoveryTransport:DUPLICATE_KEY",
+    "raw_sha256": "e565903aa90e2e79161eb0c20fc3e0cd04494e4ceaf900ff69902c5d10b502d7",
+    "raw_text_delta": [
+      [
+        "",
+        "\"completed\":{\"allocatedToRequest\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"commitmentLevel\":\"ADVISORY_ATP_ONLY\",\"constraints\":[],\"earliestPartialDate\":\"2026-10-02\",\"earliestSuggestedDate\":\"2026-10-05\",\"evaluatedAt\":\"2026-10-01T12:00:00.000Z\",\"evaluationId\":\"11111111-1111-4111-8111-111111111111\",\"explanations\":[{\"code\":\"COMPLETED\",\"messageKey\":\"plan.atp.completed\",\"safeParameters\":{\"allocated\":\"10.00\",\"unavailable\":\"0.00\"}}],\"fullPayloadDigest\":\"4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0\",\"normalizedRequest\":{\"evaluationAsOf\":\"2026-10-01T12:00:00.000Z\",\"itemRef\":{\"itemId\":\"ITEM-1\",\"revisionId\":\"REV-A\",\"usage\":\"SELLABLE\"},\"locale\":\"zh-CN\",\"quantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"requestedDate\":{\"calendarRef\":{\"digest\":\"eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011\",\"id\":\"CAL-SITE-1\",\"owner\":\"Main Calendar\",\"version\":\"7\"},\"date\":\"2026-10-02\",\"timeZone\":\"Asia/Shanghai\"},\"siteId\":\"SITE-1\",\"wireVersion\":\"1.0\"},\"ownerCommittedDate\":null,\"policyRef\":{\"digest\":\"e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15\",\"id\":\"ATP-POL-SITE-1\",\"owner\":\"Main Planning\",\"version\":\"12\"},\"publicSelfDigest\":\"6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07\",\"representationDigest\":\"014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167\",\"requestedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"segments\":[{\"allocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"7.00\"},\"businessAvailableDate\":\"2026-10-02\",\"calendarRef\":{\"digest\":\"eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011\",\"id\":\"CAL-SITE-1\",\"owner\":\"Main Calendar\",\"version\":\"7\"},\"cumulativeAllocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"7.00\"},\"eligibilityClass\":\"ELIGIBLE\",\"eligibleCapacityQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"7.00\"},\"firmRank\":0,\"limitationClass\":\"NONE\",\"ordinal\":1,\"ownerTypeRank\":0,\"priorityRank\":1,\"publicSegmentDigest\":\"111800459ee57e957bfdb714d60e6f3e12e35b16f9617c6b0adbe617ae438af5\",\"supplyClassRank\":0},{\"allocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"3.00\"},\"businessAvailableDate\":\"2026-10-05\",\"calendarRef\":{\"digest\":\"eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011\",\"id\":\"CAL-SITE-1\",\"owner\":\"Main Calendar\",\"version\":\"7\"},\"cumulativeAllocatedQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"eligibilityClass\":\"ELIGIBLE\",\"eligibleCapacityQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"5.00\"},\"firmRank\":1,\"limitationClass\":\"NONE\",\"ordinal\":2,\"ownerTypeRank\":1,\"priorityRank\":1,\"publicSegmentDigest\":\"a76598f7819f5062b502cc06415e73b345a3be893726767aabf712397e88f73a\",\"supplyClassRank\":1}],\"sideEffects\":{\"demandCreated\":false,\"economicWriteCount\":0,\"orderModified\":false,\"plannedOrderChanged\":false,\"reservationCreated\":false,\"supplyConsumed\":false},\"sourceLimitations\":[{\"code\":\"PLAN_SUP_RUNTIME_UNPROVEN\",\"messageKey\":\"plan.atp.source.runtime_unproven\",\"owner\":\"Main Planning\",\"safeParameters\":{\"adapter\":\"PLAN-SUP-01\"}}],\"status\":\"COMPLETED\",\"supplyBasisRedacted\":true,\"supplySnapshotRef\":{\"capturedAt\":\"2026-10-01T11:59:00.000Z\",\"completeThrough\":\"2026-11-30T23:59:59.999Z\",\"digest\":\"788657a4365a280330c9e5b8eface4d683c93471a78fc58a8abf0729d74f063b\",\"expiresAt\":\"2026-10-01T13:30:00.000Z\",\"id\":\"SUP-SNAPSHOT-1\",\"owner\":\"Main Planning\",\"version\":\"44\"},\"totalAvailable\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"10.00\"},\"unavailableQuantity\":{\"scale\":2,\"uom\":\"EA\",\"value\":\"0.00\"},\"validUntil\":\"2026-10-01T13:00:00.000Z\",\"visibility\":\"PUBLIC_REDACTED\",\"wireVersion\":\"1.0\"},"
+      ]
+    ]
+  },
+  {
+    "category": "FORWARD_VERSION",
+    "expectedCode": "const",
+    "expectedPointer": "/",
+    "expectedValid": false,
+    "root": "AtpRecoveryTransport",
+    "targetDefinition": "NormalizedRequest",
+    "vectorId": "AtpRecoveryTransport:FORWARD_VERSION",
+    "raw_sha256": "2c328446f168bb678e764aedcce4645c63045613897063e30cb232400b85d03c",
+    "delta_from_minimal": [
+      [
+        "/commercialContextRef",
+        "ADD",
+        {
+          "id": "QTN-1",
+          "lineId": "10",
+          "owner": "ERP-QTN",
+          "scheduleId": "1",
+          "version": "2"
+        }
+      ],
+      [
+        "/completed",
+        "REMOVE"
+      ],
+      [
+        "/evaluationAsOf",
+        "ADD",
+        "2026-10-01T12:00:00.000Z"
+      ],
+      [
+        "/excludeDemandRef",
+        "ADD",
+        null
+      ],
+      [
+        "/itemRef",
+        "ADD",
+        {
+          "itemId": "ITEM-1",
+          "revisionId": "REV-A",
+          "usage": "SELLABLE"
+        }
+      ],
+      [
+        "/kind",
+        "REMOVE"
+      ],
+      [
+        "/locale",
+        "ADD",
+        "zh-CN"
+      ],
+      [
+        "/quantity",
+        "ADD",
+        {
+          "scale": 2,
+          "uom": "EA",
+          "value": "10.00"
+        }
+      ],
+      [
+        "/requestedDate",
+        "ADD",
+        {
+          "exact_read_reuse": "AtpRecoveryTransport/VALID_MINIMAL/completed/normalizedRequest/requestedDate"
+        }
+      ],
+      [
+        "/siteId",
+        "ADD",
+        "SITE-1"
+      ],
+      [
+        "/wireVersion",
+        "ADD",
+        "2.0"
+      ]
+    ]
+  }
+]

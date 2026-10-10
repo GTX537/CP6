@@ -1,0 +1,1141 @@
+{
+  "summary": {
+    "as_of_utc": "2026-10-10T16:11:39.052826+00:00",
+    "target_count": 125,
+    "written_modules": 125,
+    "status_counts": {
+      "required_materials_consolidated": 124,
+      "core_semantics_consolidated": 1
+    },
+    "available_current_materials_consolidated": true,
+    "all_required_materials_present": false,
+    "interpretation": "Located current design consolidation, missing original evidence, implementation and runtime acceptance are separate states."
+  },
+  "targets": [
+    {
+      "target_id": "CRM-INQ-01",
+      "name": "公开询盘与受理",
+      "version": "R3-V15 正文+完整冻结包；接受UA-20261002-B-CRM-INQ-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "5登记必要输入规则/136步骤语义闭合；保留27类图的逐值未读范围、历史CP1/旧源码身份和生成契约采用风险，业务60AC仍NOT_RUN。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/CRM-INQ-01.md"
+    },
+    {
+      "target_id": "CRM-LEAD-01",
+      "name": "线索管理与资格确认",
+      "version": "CP22五SPEC完整正文+冻结包+60AC映射+ERRATA；CP22根接受",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前规则及必要附件语义闭合，31正常关系/19 mutation差分/136 safe graph结构及916包角色保存；保留重复实例值、历史CP1/源码、DTO string??和实际采用未证边界。商业14/25必要闭合，继续ERP BP/EST/QTN等。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/CRM-LEAD-01.md"
+    },
+    {
+      "target_id": "CRM-ACT-01",
+      "name": "客户互动与销售活动",
+      "version": "v1.1.1；CURRENT UA-20260930-A-CRM-ACT-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "3434行主文含56JSON与当前接受复审全文完成；实际Gate/78AC及历史代码仍未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/CRM-ACT-01.md"
+    },
+    {
+      "target_id": "CRM-ACC-01",
+      "name": "客户关系账户",
+      "version": "继承R01+R02+R03+CR09功能基线，不是独立MD02",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义归并完成；实际跨域Owner/物理wire/运行及引用历史代码保持独立未证范围。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/CRM-ACC-01.md"
+    },
+    {
+      "target_id": "CRM-CON-01",
+      "name": "独立联系人",
+      "version": "v1.1.1；UA-20260929-A-CRM-CON-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义归并完成；实际跨域Owner/物理wire/运行及引用历史代码保持独立未证范围。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/CRM-CON-01.md"
+    },
+    {
+      "target_id": "CRM-OPP-01",
+      "name": "商机与销售管道",
+      "version": "v1.1.2 RECOVERY；UA-20260930-A-CRM-OPP-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "3845行当前必要语义含80JSON结构补读完成；真实H02/HO/Main与54AC仍未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/CRM-OPP-01.md"
+    },
+    {
+      "target_id": "CRM-HO-01",
+      "name": "商业交接与结果跟踪",
+      "version": "v1.0 frozen DRAFT字节已接受；UA-20260930-A-CRM-HO-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "7204行当前语义含112JSON和附录精确复用闭合；Main/PLM实际Gate与64AC未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/CRM-HO-01.md"
+    },
+    {
+      "target_id": "ERP-BP-01",
+      "name": "交易伙伴主数据",
+      "version": "v1.0.3 R3；UA-20260930-A-ERP-BP-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "必要规范语义已闭合；真实Owner采用、ACC双边版本化合同、124AC保持未证/未运行。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-BP-01.md"
+    },
+    {
+      "target_id": "ERP-EST-01",
+      "name": "商业估算与报价计算",
+      "version": "唯一规范组合：v1.0.1 base + GENERAL_MATERIAL_SUCCESSOR_R2；R1 successor仅历史",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "14必要输入、165JSON及GENERAL R2全部有效语义闭合；policy/TTL样例差异与真实Owner采用未证保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-EST-01.md"
+    },
+    {
+      "target_id": "ERP-QTN-01",
+      "name": "正式报价与客户接受",
+      "version": "v1.0.3 R2；UA-20261001-A-ERP-QTN-MD01含D-QTN01–14",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "6必要输入+两个补核包有效语义闭合；445 JSON/470嵌套原文/38准确窗口已读或同字节复用；218AC未运行。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-QTN-01.md"
+    },
+    {
+      "target_id": "INT-COM-01",
+      "name": "CRM与Main商业交接合同",
+      "version": "v1.0.2 R2；INT-COM acceptance；精确bounded review已于2026-10-10补齐",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "6必要输入及准确窗口包闭合；159JSON/184重复子树/8解码原体；实际12 Owner门UNPROVEN。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/INT-COM-01.md"
+    },
+    {
+      "target_id": "ENG-PROD-01",
+      "name": "产品身份与基础属性",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ENG-PROD-01.md"
+    },
+    {
+      "target_id": "ENG-REV-01",
+      "name": "工程版本与发布",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ENG-REV-01.md"
+    },
+    {
+      "target_id": "ENG-BOM-01",
+      "name": "材料配方与BOM",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ENG-BOM-01.md"
+    },
+    {
+      "target_id": "ENG-ROU-01",
+      "name": "工艺路线",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ENG-ROU-01.md"
+    },
+    {
+      "target_id": "PLM-REQ-01",
+      "name": "工程需求与新品改型受理",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-REQ-01.md"
+    },
+    {
+      "target_id": "PLM-ITER-01",
+      "name": "工程项目、迭代与方案评审",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-ITER-01.md"
+    },
+    {
+      "target_id": "PLM-DOC-01",
+      "name": "图纸、规格与受控技术文档",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-DOC-01.md"
+    },
+    {
+      "target_id": "PLM-VER-01",
+      "name": "方案验证、试制与设计确认",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-VER-01.md"
+    },
+    {
+      "target_id": "PLM-CHG-01",
+      "name": "工程变更与跨域影响处置",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-CHG-01.md"
+    },
+    {
+      "target_id": "PLM-DEV-01",
+      "name": "临时技术偏离与适用控制",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-DEV-01.md"
+    },
+    {
+      "target_id": "PLM-REL-01",
+      "name": "技术发布、下游接收与采用",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-REL-01.md"
+    },
+    {
+      "target_id": "PLM-FBK-01",
+      "name": "量产反馈与持续工程改进",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-FBK-01.md"
+    },
+    {
+      "target_id": "PLM-LIFE-01",
+      "name": "技术替代、停用与工程知识追溯",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLM-LIFE-01.md"
+    },
+    {
+      "target_id": "ERP-ORD-01",
+      "name": "销售订单全生命周期",
+      "version": "继承订单/独立需求R01–R04+原XLSX；PB01接受，不是MD02 API/物理实现",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "19当前登记必要材料语义闭合；保留R03/R04 REVIEW、14未配置实例、物理Owner采用与完整视觉边界。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-ORD-01.md"
+    },
+    {
+      "target_id": "ERP-FUL-01",
+      "name": "订单履约投影与交付绩效",
+      "version": "v1.4 R3正文+124冻结附件；UA-20261001-D-ERP-FUL-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义闭合；真实Owner联合采用、68AC执行及历史源码/图形边界不升级。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-FUL-01.md"
+    },
+    {
+      "target_id": "PLAN-DEM-01",
+      "name": "独立需求与版本变更",
+      "version": "继承ORD/DEM R01–R04；PLAN-DEM原XLSX+PB01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前规范/Office结构/辅助文本已归并；R03/R04评审、14真实实例、物理合同和完整视觉独立保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLAN-DEM-01.md"
+    },
+    {
+      "target_id": "PLAN-ATP-01",
+      "name": "交期承诺查询",
+      "version": "RECOVERY-R11；正文617行通读+冻结包选择，包内实现样本未运行",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前规范与全部案例已整理；保存9程序未全文审计/旧DDL段边界。单位、终结锁序、SQL候选和真实采用保留编码前门。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLAN-ATP-01.md"
+    },
+    {
+      "target_id": "FIN-CREDIT-01",
+      "name": "交易信用检查",
+      "version": "# FIN-CREDIT-01 交易信用检查 前后端开发 Spec v1.0 R4 DRAFT",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前21项L1/L2必要组合及内部R4 Schema/vector/fixture/AC已语义闭合；OPS-IF-001/002/042待Owner对齐，旧候选/代码及跨Owner采用另保队列；继续FIN-GL附件",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-CREDIT-01.md"
+    },
+    {
+      "target_id": "PLAN-POL-01",
+      "name": "计划与供给策略",
+      "version": "PS-R01+R02+R03及C01–C05接受；继承功能基线",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需业务内容/接受与追踪闭合；全原生视觉、7真实Owner门和运行独立保留，最后集中跨域复核。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLAN-POL-01.md"
+    },
+    {
+      "target_id": "PLAN-SUP-01",
+      "name": "供给投影与Pegging",
+      "version": "PS-R01+R02+R03及C01–C05；继承功能基线",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需业务内容/接受与追踪闭合；全原生视觉、7真实Owner门和运行独立保留，最后集中跨域复核。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLAN-SUP-01.md"
+    },
+    {
+      "target_id": "PLAN-MRP-01",
+      "name": "MRP运算与重算",
+      "version": "MRP-R01+R02+R03+澄清；继承功能设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前22份必读全读；最终跨域集中复核，7Q/6OPEN及未实现/原生画布边界保留，非业务完成。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLAN-MRP-01.md"
+    },
+    {
+      "target_id": "PLAN-PO-01",
+      "name": "计划订单与真实转单",
+      "version": "CP22六SPEC完整设计+原37AC映射+冻结包+CP18 producer ports继承",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "有效合同/必要附件/32正常场景均已整理，573成员用途分层；静态差异及旧R2缺包、实际采用0/业务未执行独立保留，最终集中跨域复核。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLAN-PO-01.md"
+    },
+    {
+      "target_id": "PLAN-EXC-01",
+      "name": "缺料与供给异常处置",
+      "version": "CP12 current composite：CP12优先，否则CP11/10/09/08逐完整成员解析；不得拼diff",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "有效当前规则和必要附件已整理，351成员逐项用途/阅读边界明确；集中跨域复核，保留4项静态差异及实际采用/运行未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLAN-EXC-01.md"
+    },
+    {
+      "target_id": "PUR-PR-01",
+      "name": "采购申请与审批",
+      "version": "R3正文+完整规范ZIP+N07 A–D/N08多head附录",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "12 distinct当前必要材料语义闭合；两处fixture采用差异、历史源码非全文及真实12门/57AC未执行明确保留。继续PUR-PO。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PUR-PR-01.md"
+    },
+    {
+      "target_id": "PUR-RFQ-01",
+      "name": "采购询比价与供应价格",
+      "version": "v1.1.1；UA-20260929-B-RFQ-MD01及D01–D07",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "3256行当前主文语义完整（106JSON结构复用）；旧Excel/历史代码与真实Owner/运行独立未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PUR-RFQ-01.md"
+    },
+    {
+      "target_id": "PUR-PO-01",
+      "name": "采购订单与履约",
+      "version": "v1.1 frozen DRAFT已接受；CURRENT UA-20260930-B-PUR-PO-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "113JSON/82绑定及全部有效规范语义闭合；五旧码非全文与真实Owner/124AC保留，继续GR。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PUR-PO-01.md"
+    },
+    {
+      "target_id": "PUR-GR-01",
+      "name": "采购收货商业单据",
+      "version": "v1.1 REV1；UA-20260930-B-PUR-GR-MD01",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "82JSON/68绑定/原坐标VOID全链闭合；七旧源码非全文与12Owner门/111AC未证，继续MATCH。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PUR-GR-01.md"
+    },
+    {
+      "target_id": "PUR-MATCH-01",
+      "name": "供应商发票匹配与采购对账",
+      "version": "v1.1.2 R2 + H31-RETURN-OUT-R3-BOUNDED-01中的MRX v0.2扩展",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "51JSON/9必要输入及限定MRX规则闭合；原forward与纠正分离/当前知识边界明确，继续RETURN必要附件。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PUR-MATCH-01.md"
+    },
+    {
+      "target_id": "PUR-RETURN-01",
+      "name": "采购退货与供应商结算调整",
+      "version": "v1.0.3 R3 + H31 v0.7/MRX v0.2/OUT-EFFECTIVE v3/Stock discovery v1共享接受",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "9必要输入、251JSON/E189/EP100及三共同H31语义闭合；四处child Grant量矛盾与未执行边界保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PUR-RETURN-01.md"
+    },
+    {
+      "target_id": "MES-RES-01",
+      "name": "工作中心与设备资源",
+      "version": "# MES-RES-01｜制造资源与运行事实",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义完整；历史独立队列、跨Owner实际采用/专业政策/业务验证另保留",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/MES-RES-01.md"
+    },
+    {
+      "target_id": "MES-WO-01",
+      "name": "生产工单与制造快照",
+      "version": "# MES-WO-01｜生产工单与制造快照",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义完整；历史独立队列、跨Owner实际采用/专业政策/业务验证另保留",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/MES-WO-01.md"
+    },
+    {
+      "target_id": "MES-MAT-01",
+      "name": "生产领退料与消耗",
+      "version": "# MES MAT 生产领退料与消耗开发设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前7项必要规范/接受/评审已闭合；OPS-IF-044例身份待Owner对齐，实际106AC和Owner采用未运行",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/MES-MAT-01.md"
+    },
+    {
+      "target_id": "MES-EXEC-01",
+      "name": "工序执行与报工",
+      "version": "# MES-EXEC-01 工序执行与报工",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义已闭合；真实Owner采用/环境/并发/业务AC另证；历史底层原件独立队列",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/MES-EXEC-01.md"
+    },
+    {
+      "target_id": "MES-OUTPUT-01",
+      "name": "生产产出与关闭",
+      "version": "# MES OUTPUT 生产产出与关闭前后端开发设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前5项必要组合语义闭合；真实Owner采用/环境/并发/109AC另证",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/MES-OUTPUT-01.md"
+    },
+    {
+      "target_id": "FIN-COST-01",
+      "name": "制造成本归集与结转",
+      "version": "# FIN-COST-01 制造成本归集与结转：前后端开发 Spec v1.0 R2 DRAFT",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-COST-01.md"
+    },
+    {
+      "target_id": "QA-POL-01",
+      "name": "检验策略与检验计划",
+      "version": "# QA-POL-01 检验策略与检验计划 · 前后端开发 Spec v1.0 R1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前5项必要组合全语义已读；六真实采用门及116AC另证",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/QA-POL-01.md"
+    },
+    {
+      "target_id": "QA-IQC-01",
+      "name": "来料检验与验收处置",
+      "version": "# QA IQC 01 来料检验与验收处置前后端开发 Spec",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要组合全语义闭合；OPS-IF-045–047待Owner对齐，真实6采用门/107AC另证",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/QA-IQC-01.md"
+    },
+    {
+      "target_id": "QA-IPQC-01",
+      "name": "过程与最终检验",
+      "version": "# QA-IPQC-01 过程与最终检验前后端开发 Spec v1.0 — Recovery-R4 Systemic-R4",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "本任务跨域集中核对；实际编码前解决已列静态采用澄清和真实Owner门",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/QA-IPQC-01.md"
+    },
+    {
+      "target_id": "QA-NCR-01",
+      "name": "不合格、返工与报废处置",
+      "version": "# QA-NCR-01 不合格、返工、报废与质量工程闭环",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合并精确复用平台175源/root26scope；静态TYPE/FIELD、Q1–Q4历史缺件、真实Owner采用/同UoW/all-writers/迁移及AC继续按独立轴保留",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/QA-NCR-01.md"
+    },
+    {
+      "target_id": "WMS-MASTER-01",
+      "name": "仓库与作业库位",
+      "version": "# WMS-MASTER-01｜仓库库位与 Space 采纳｜前后端开发 Spec",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前L1/L2四原件全文完成；真实Owner/初始化Fence/兼容/207 NOT_RUN不属于阅读完成证据，按具体动作取证",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-MASTER-01.md"
+    },
+    {
+      "target_id": "WMS-STOCK-01",
+      "name": "库存数量账与移动",
+      "version": "# WMS-STOCK-01｜库存数量账与移动",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-STOCK-01.md"
+    },
+    {
+      "target_id": "WMS-TRANSFER-01",
+      "name": "移库与调拨执行",
+      "version": "# WMS-TRANSFER-01 移库与调拨执行",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "本任务跨域集中核对；运行采用12门及静态fixture澄清保留",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-TRANSFER-01.md"
+    },
+    {
+      "target_id": "WMS-RSV-01",
+      "name": "库存预留与批次分配",
+      "version": "# WMS-RSV-01｜库存预留与批次分配",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-RSV-01.md"
+    },
+    {
+      "target_id": "WMS-IN-01",
+      "name": "入库计划与物理收货",
+      "version": "# WMS-IN-01 入库计划与物理收货",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义已闭合；真实Owner采用/环境/并发/业务AC另证；历史底层原件独立队列",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-IN-01.md"
+    },
+    {
+      "target_id": "WMS-COUNT-01",
+      "name": "库存盘点与调整",
+      "version": "# WMS-COUNT-01 库存盘点与调整 — 前后端详细设计候选 R3",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11必需原件与6个进一步场景/任务/决定全文；后续Owner双侧准确环境采用核对，不重述为正文缺失",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-COUNT-01.md"
+    },
+    {
+      "target_id": "WMS-TRACE-01",
+      "name": "批次、序列与物流单元",
+      "version": "# WMS-TRACE-01 批次、序列与物流单元 — 前后端完整详细设计后继候选 R3-GM1.1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11件、13完整JSON及所有嵌入样本已读；B02当前静态已闭，Owner/profile运行采用单独未证",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-TRACE-01.md"
+    },
+    {
+      "target_id": "WMS-DISP-01",
+      "name": "过期、损坏与库存处置",
+      "version": "# WMS-DISP-01 过期、损坏与库存处置 — 前后端详细设计候选 R3",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11原件、3JSON/4嵌入样本与共享AC/任务全文；下一步具名NCR/Stock/Finance wire双侧映射与真实采用证据",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-DISP-01.md"
+    },
+    {
+      "target_id": "WMS-MOBILE-01",
+      "name": "仓库任务、扫码与标签",
+      "version": "# WMS-MOBILE-01 仓库任务、扫码与标签 — 前后端详细设计候选 R3",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11必需原件、3JSON/2嵌入样本与共享AC/任务全文；真实Owner/设备/UOM采用独立待证",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-MOBILE-01.md"
+    },
+    {
+      "target_id": "WMS-CTRL-01",
+      "name": "仓库权限与功能变更控制",
+      "version": "# WMS-CTRL-01 仓库权限与功能变更控制 — 前后端详细设计候选 R3",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11必需原件及两JSON/一嵌入样本全部阅读；准确OA/IAM/MASTER/全writer DRAIN实际采用待证",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-CTRL-01.md"
+    },
+    {
+      "target_id": "ERP-CREDIT-01",
+      "name": "销售贷项与售后商业处理",
+      "version": "Stage100：Ec48Original77ComposedCurrent；精确EFFECTIVE-CURRENT-SELECTION优先，旧经济分支仍按真实权利/来源选择",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "有效规范及必要附件语义已整理；真实Owner/运行采用与有界映射待核见模块§11，历史全fixture不作本轮全面审计。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-CREDIT-01.md"
+    },
+    {
+      "target_id": "WMS-OUT-01",
+      "name": "出库、拣配、包装与发运",
+      "version": "# WMS-OUT-01 出库、拣配、包装与发运",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "必要材料语义齐；13实际采用门未证、136 AC NOT_RUN；次级独审bf65原件未定位保历史边界",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-OUT-01.md"
+    },
+    {
+      "target_id": "WMS-DEL-01",
+      "name": "承运与交付证明",
+      "version": "# WMS-DEL-01 承运与交付证明",
+      "module_written": true,
+      "document_status": "core_semantics_consolidated",
+      "next_action": "全部已定位必要材料语义已读；独审R01071 SHA4a30103ef981273e仍未定位，保留有界缺件继续其余整理",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-DEL-01.md"
+    },
+    {
+      "target_id": "WMS-RMA-01",
+      "name": "客户退货实物处理",
+      "version": "# WMS-RMA-01 客户退货实物处理｜前后端开发 Spec v1.0 R3 DRAFT",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要规范已闭合；OPS-IF-048/049/050、DC-001/002、五终端Owner采用、真实52AC及历史12代码另保队列",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-RMA-01.md"
+    },
+    {
+      "target_id": "FIN-MASTER-01",
+      "name": "财务基础资料",
+      "version": "# FIN-MASTER-01 财务基础资料：前后端开发 Spec v1.3 REVIEW_R3_CANDIDATE",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前6项必需材料语义已闭合；集中跨Owner准确采用复核与全归档历史资料继续",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-MASTER-01.md"
+    },
+    {
+      "target_id": "FIN-GL-01",
+      "name": "会计事件与凭证过账",
+      "version": "# FIN GL 01 会计事件与凭证过账前后端开发 Spec",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要组合闭合；跨Owner真实接线、专业参数/迁移、79AC及G01–G12运行门保未证；继续FIN-COST/AP必要附件",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-GL-01.md"
+    },
+    {
+      "target_id": "FIN-CLOSE-01",
+      "name": "财务期间与关闭",
+      "version": "# CP6 S2 财务共享完整候选 R1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11项L1/L2必要组合已闭合；54历史源码/306规范化历史来源另列，不升运行；继续FIN-AR目录分类与H31共同fixture",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-CLOSE-01.md"
+    },
+    {
+      "target_id": "FIN-REPORT-01",
+      "name": "试算与财务报表",
+      "version": "# CP6 S2 财务共享完整候选 R1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11项L1/L2必要组合已闭合；54历史源码/306规范化历史来源另列，不升运行；继续FIN-AR目录分类与H31共同fixture",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-REPORT-01.md"
+    },
+    {
+      "target_id": "FIN-AP-01",
+      "name": "应付、付款与核销",
+      "version": "# FIN AP 01 应付付款与核销前后端开发规范",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-AP-01.md"
+    },
+    {
+      "target_id": "FIN-AR-01",
+      "name": "应收、收款与核销",
+      "version": "# FIN-AR-01 应收、收款与核销：前后端开发Spec v1.0 R2 DRAFT",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-AR-01.md"
+    },
+    {
+      "target_id": "FIN-INV-01",
+      "name": "库存计价与业务对账",
+      "version": "# FIN-INV-01 库存计价与业务对账：前后端开发 Spec v1.0 R10 DRAFT",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前27项必要组合语义/角色已整理；OPS-IF-038..041需Owner对齐，9早期RETURN缺件及R9历史程序仍全归档待整理；继续其他模块附件",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-INV-01.md"
+    },
+    {
+      "target_id": "FIN-FX-01",
+      "name": "汇率与外币重估",
+      "version": "# CP6 S2 财务共享完整候选 R1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11项L1/L2必要组合已闭合；54历史源码/306规范化历史来源另列，不升运行；继续FIN-AR目录分类与H31共同fixture",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-FX-01.md"
+    },
+    {
+      "target_id": "OA-DEF-01",
+      "name": "流程和表单定义",
+      "version": "S3 COMMON/DEF R1 + TASK R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/OA-DEF-01.md"
+    },
+    {
+      "target_id": "OA-FORM-01",
+      "name": "表单发起与查询",
+      "version": "S3 COMMON/FORM R1 + TASK R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/OA-FORM-01.md"
+    },
+    {
+      "target_id": "OA-TASK-01",
+      "name": "待办、代理与时限",
+      "version": "S3 TASK R2 + COMMON/DEF/FORM R1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/OA-TASK-01.md"
+    },
+    {
+      "target_id": "OA-APP-01",
+      "name": "业务审批绑定与回调",
+      "version": "v1.1.2_R2_REVIEW",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/OA-APP-01.md"
+    },
+    {
+      "target_id": "SYS-WORKSPACE-01",
+      "name": "菜单与业务工作台",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-WORKSPACE-01.md"
+    },
+    {
+      "target_id": "SYS-LANG-01",
+      "name": "字典与多语言",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-LANG-01.md"
+    },
+    {
+      "target_id": "SYS-AUD-01",
+      "name": "操作、安全与字段审计",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-AUD-01.md"
+    },
+    {
+      "target_id": "SYS-PRIV-01",
+      "name": "隐私导出、保留与擦除",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-PRIV-01.md"
+    },
+    {
+      "target_id": "SYS-FILE-01",
+      "name": "附件与文件管理",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-FILE-01.md"
+    },
+    {
+      "target_id": "SYS-NUM-01",
+      "name": "编号与开发辅助生成",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-NUM-01.md"
+    },
+    {
+      "target_id": "SYS-CLIENT-01",
+      "name": "客户端设备与升级",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-CLIENT-01.md"
+    },
+    {
+      "target_id": "SYS-JOB-01",
+      "name": "应用后台作业",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-JOB-01.md"
+    },
+    {
+      "target_id": "SYS-TENANT-01",
+      "name": "租户管理",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-TENANT-01.md"
+    },
+    {
+      "target_id": "SYS-IAM-01",
+      "name": "用户、组织与授权",
+      "version": "S5 v0.2准确十稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SYS-IAM-01.md"
+    },
+    {
+      "target_id": "INT-ID-01",
+      "name": "Main与CRM身份投影合同",
+      "version": "S6完整v0.2；UA-20261008-S6-INT-ID-MD02，文书v0.2不是软件V2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要规范及原包角色闭合；99历史源码仅字节/范围分类不冒全文，真实Owner和运行待实施。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/INT-ID-01.md"
+    },
+    {
+      "target_id": "INT-OPS-01",
+      "name": "集成异常与受控重放",
+      "version": "S6完整v0.2；UA-20261008-S6-INT-OPS-MD02",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要规范及原包角色闭合；99历史源码仅字节/范围分类不冒全文，真实Owner和运行待实施。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/INT-OPS-01.md"
+    },
+    {
+      "target_id": "PLT-CTX-01",
+      "name": "请求、租户与服务身份原语",
+      "version": "S7 v0.2.1准确七稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLT-CTX-01.md"
+    },
+    {
+      "target_id": "PLT-HTTP-01",
+      "name": "HTTP错误与弹性契约",
+      "version": "S7 v0.2.1准确七稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLT-HTTP-01.md"
+    },
+    {
+      "target_id": "PLT-MSG-01",
+      "name": "消息封装与Kafka传输",
+      "version": "S7 v0.2.1准确七稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLT-MSG-01.md"
+    },
+    {
+      "target_id": "PLT-DEL-01",
+      "name": "可靠收发与消息存储",
+      "version": "S7 v0.2.1准确七稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLT-DEL-01.md"
+    },
+    {
+      "target_id": "PLT-OBS-01",
+      "name": "可观测性与运行身份",
+      "version": "S7 v0.2.1准确七稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLT-OBS-01.md"
+    },
+    {
+      "target_id": "PLT-RELEASE-01",
+      "name": "包信任与部署验证",
+      "version": "S7 v0.2.1准确七稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLT-RELEASE-01.md"
+    },
+    {
+      "target_id": "PLT-TEST-01",
+      "name": "故障注入与测试辅助",
+      "version": "S7 v0.2.1准确七稿组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PLT-TEST-01.md"
+    },
+    {
+      "target_id": "ENG-TOOL-01",
+      "name": "版模工程主数据",
+      "version": "RC1+RV01（ENG-TOOL另合读X1-R2兼容附录）",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ENG-TOOL-01.md"
+    },
+    {
+      "target_id": "ERP-FSC-01",
+      "name": "FSC清单与行业证明",
+      "version": "X1 R2四SPEC完整静态设计；UA-20261008-X1-ERP-FSC-R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已归并；47历史源代码身份已核但非全文审计；原母版/实际Owner仍未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-FSC-01.md"
+    },
+    {
+      "target_id": "ERP-PRICE-01",
+      "name": "板纸单价与行业价格参数",
+      "version": "X1 R2；UA-20261008-X1-ERP-PRICE-R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已归并；47历史源代码身份已核但非全文审计；原母版/实际Owner仍未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/ERP-PRICE-01.md"
+    },
+    {
+      "target_id": "PUR-SUB-01",
+      "name": "委外加工",
+      "version": "RECOVERY-R2；X2组合为PUR-SUB R2+MES-SCHED R2+MES-PERF R2.1，PUR-SUB字节不升R2.1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "16当前必要输入、132AC/36任务结构复用及63文件身份分类闭合；历史源码/真实Owner未证。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/PUR-SUB-01.md"
+    },
+    {
+      "target_id": "MES-SCHED-01",
+      "name": "车间排程",
+      "version": "# MES-SCHED-01 车间排程｜完整静态详细设计 RECOVERY-R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/MES-SCHED-01.md"
+    },
+    {
+      "target_id": "MES-PERF-01",
+      "name": "制造绩效与OEE",
+      "version": "# MES-PERF-01 制造绩效与OEE完整静态详细设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/MES-PERF-01.md"
+    },
+    {
+      "target_id": "WMS-KIT-01",
+      "name": "仓储套件作业",
+      "version": "# WMS-KIT-01 仓储套件作业：完整前后端开发设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-KIT-01.md"
+    },
+    {
+      "target_id": "WMS-SLOT-01",
+      "name": "库位优化",
+      "version": "# WMS-SLOT-01 库位优化：完整前后端开发设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-SLOT-01.md"
+    },
+    {
+      "target_id": "WMS-REP-01",
+      "name": "库内补货",
+      "version": "# WMS REP 01 库内补货完整前后端开发设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-REP-01.md"
+    },
+    {
+      "target_id": "WMS-XDOCK-01",
+      "name": "越库作业",
+      "version": "# WMS XDOCK 01 越库作业完整前后端开发设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-XDOCK-01.md"
+    },
+    {
+      "target_id": "WMS-ROLL-01",
+      "name": "原纸卷作业",
+      "version": "# WMS ROLL 01 通用卷材作业及原纸卷扩展完整设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-ROLL-01.md"
+    },
+    {
+      "target_id": "WMS-REM-01",
+      "name": "余料管理",
+      "version": "# WMS REM 01 通用制造余料管理及几何扩展完整设计",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前15必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-REM-01.md"
+    },
+    {
+      "target_id": "WMS-TOOL-01",
+      "name": "版模实物管理",
+      "version": "# WMS-TOOL-01 版模实物管理：完整前后端开发设计 R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-TOOL-01.md"
+    },
+    {
+      "target_id": "WMS-INK-01",
+      "name": "油墨批次管理",
+      "version": "# WMS-INK-01 油墨批次管理：完整前后端开发设计 R2.1",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-INK-01.md"
+    },
+    {
+      "target_id": "WMS-VMI-01",
+      "name": "VMI作业与结算依据",
+      "version": "# WMS-VMI-01 VMI作业与结算依据完整详细设计 R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-VMI-01.md"
+    },
+    {
+      "target_id": "WMS-SAMPLE-01",
+      "name": "样品借还",
+      "version": "# WMS-SAMPLE-01 样品借还完整详细设计 R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-SAMPLE-01.md"
+    },
+    {
+      "target_id": "WMS-AUTO-01",
+      "name": "仓储设备任务与遥测",
+      "version": "# WMS-AUTO-01 仓储设备任务与遥测完整详细设计 R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-AUTO-01.md"
+    },
+    {
+      "target_id": "WMS-ANALYTICS-01",
+      "name": "仓储报表与运行分析",
+      "version": "# WMS-ANALYTICS-01 仓储报表与运行分析完整详细设计 R2",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前17必需引用全读/精确复用闭合，另读适用性补充；集中跨域复核与真实采用/运行门禁保留。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-ANALYTICS-01.md"
+    },
+    {
+      "target_id": "FIN-BUD-01",
+      "name": "预算管理",
+      "version": "# FIN-BUD-01 预算管理 R1 完整兼容详设",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-BUD-01.md"
+    },
+    {
+      "target_id": "FIN-BANK-01",
+      "name": "银行流水与对账",
+      "version": "# FIN-BANK-01 银行流水与对账 R2 完整兼容详设",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-BANK-01.md"
+    },
+    {
+      "target_id": "FIN-ASSET-01",
+      "name": "固定资产全生命周期",
+      "version": "# FIN-ASSET-01 固定资产全生命周期 R1 完整兼容详设",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-ASSET-01.md"
+    },
+    {
+      "target_id": "OA-CONN-01",
+      "name": "流程触发、连接器与预演",
+      "version": "X5 COMMON/CONN R1 + BANK R2组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/OA-CONN-01.md"
+    },
+    {
+      "target_id": "SPACE-MASTER-01",
+      "name": "空间主数据与编码",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-MASTER-01.md"
+    },
+    {
+      "target_id": "SPACE-DES-01",
+      "name": "空间场景与设计版本",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-DES-01.md"
+    },
+    {
+      "target_id": "SPACE-IMPORT-01",
+      "name": "CAD/Excel空间导入",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-IMPORT-01.md"
+    },
+    {
+      "target_id": "SPACE-PUB-01",
+      "name": "空间发布与WMS采纳",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-PUB-01.md"
+    },
+    {
+      "target_id": "SPACE-PLAN-01",
+      "name": "布局情景、仿真与比较",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-PLAN-01.md"
+    },
+    {
+      "target_id": "SPACE-OPS-01",
+      "name": "空间运营视图与建议",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-OPS-01.md"
+    },
+    {
+      "target_id": "SPACE-EXT-01",
+      "name": "外部空间访问",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-EXT-01.md"
+    },
+    {
+      "target_id": "SPACE-AI-01",
+      "name": "空间AI提案审核",
+      "version": "S4+X6 R2准确八Target组合",
+      "module_written": true,
+      "document_status": "required_materials_consolidated",
+      "next_action": "保留本册明确的实现/Owner采用/历史与视觉边界；由root进行手册任务级集中审查，不把当前材料闭包当实现或运行通过。",
+      "module_path": "D:/CP6/docs/CP6_开发设计文档_20261010/modules/SPACE-AI-01.md"
+    }
+  ]
+}

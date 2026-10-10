@@ -1,0 +1,1441 @@
+{
+  "group": "commercial",
+  "updated_at_utc": "2026-10-10T16:01:49.779985+00:00",
+  "status": "in_progress",
+  "scope": "只登记已读当前组合的跨域条件/有意版本差异；历史已关闭问题不当新缺口。",
+  "findings": [
+    {
+      "finding_id": "COM-ACC-PHYSICAL-WIRE",
+      "classification": "explicit_unfrozen_boundary",
+      "targets": [
+        "CRM-ACC-01",
+        "CRM-LEAD-01",
+        "ERP-BP-01"
+      ],
+      "claim": "Account当前R01/R02/R03功能组合物理wire未冻结；BP明确引用另一份83331B独立ACC DRAFT七字段投影合同，不能据此自动满足当前R03 Scope/唯一决定/绑定资料版/当前资格证据。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/80/8029ab7aa847c9d1__PAGES-DELTA.md",
+          "line": 51,
+          "claim": "物理API边界"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bd97dd191196cc6a__CONTRACT-CARDS.md",
+          "line": 16,
+          "claim": "有限合同卡"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5f63cf5d7f27627__RULES-RECOVERY.md",
+          "line": 113,
+          "claim": "逻辑字段不是生产SQL批准列"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/11/11aeb11f6a3b717b__CRM-ACC-01_客户关系账户_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 927,
+          "claim": "独立DRAFT建议新七字段适配合同；非原Main既有接口"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bd/bd97dd191196cc6a__CONTRACT-CARDS.md",
+          "line": 32,
+          "claim": "当前ACC效力另需Owner完整Scope/选择/绑定资料业务版等证据"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 1014,
+          "claim": "BP D-BP06严格七字段出站，不改原ACC DTO；ACK只证明处理"
+        }
+      ],
+      "impact": "可实现BP指定七字段投影设计，但不能据其较高mappingRevision/完整快照宣称当前ACC功能组合全部准入已具备；两个版本身份和真实采用门必须分别登记。",
+      "exit_condition": "由真实Main/CRM Owner明确选用的版本化映射/原件读合同及Scope、唯一选择/覆盖、资料版本与当前资格绑定；保留原C03与七字段合同准确身份，补相应并发/撤权AC，不由整理者添加wire字段。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-HO-OLD-FACTORY",
+      "classification": "fixed_source_implementation_design_difference",
+      "targets": [
+        "CRM-OPP-01",
+        "CRM-HO-01",
+        "INT-COM-01",
+        "ERP-ORD-01"
+      ],
+      "claim": "归档固定源码旧Main工厂按同Opportunity已有任意订单拒绝，与已接受多订单责任组不兼容。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 408,
+          "claim": "旧C03_ORDER_ALREADY_EXISTS作用域"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/af/affc1caf67bbf423__CRM-HO-01_商业交接与结果跟踪_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 711,
+          "claim": "准确旧源码身份"
+        }
+      ],
+      "impact": "直接复用旧工厂不能实现当前多责任组；不是本轮今日源码全审。",
+      "exit_condition": "核实际目标源码SHA并按接受责任组/来源槽实现准确唯一效果及同事务恢复，保存真实回归证据。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-OWNER-LOCK-ORDER",
+      "classification": "explicit_composed_order_actual_adoption_unproven",
+      "targets": [
+        "ERP-BP-01",
+        "ERP-EST-01",
+        "ERP-QTN-01"
+      ],
+      "claim": "BP/EST局部锁序不同；QTN已明确全局注册表强制BP来源先于EST、依赖闭包预规划和无反向回调，实际采用仍未证，不是缺组合文字。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 76,
+          "claim": "IAM→BpScope→Command…"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/92/92c20d1ee1dc090f__ERP-BP-01_交易伙伴主数据_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 886,
+          "claim": "终态重放锁内顺序"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "line": 543,
+          "claim": "IAM→ESTCommand→externalSourceScopes→EstScope→Root"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "line": 752,
+          "claim": "QTN完整注册锁序、BP先于EST、Enlist仅已持有门；缺项/环关闭。"
+        }
+      ],
+      "impact": "保留各Owner内部顺序并采用QTN注册依赖计划，不能泛化改序或串HTTP充同事务。",
+      "exit_condition": "实际共同DbTransaction、所有writer参与顺序与权限重放入口证明，定向并发/回滚/未知恢复证据。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-EST-PRICE-COVERAGE-V2",
+      "classification": "required_owner_capability_unproven",
+      "targets": [
+        "ERP-EST-01",
+        "ERP-PRICE-01",
+        "ERP-QTN-01"
+      ],
+      "claim": "R2 v2 PRICE只整张coverage，需真实版本化coveragePolicy及最终保护；旧PRICE列/签名不具备该证明。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "line": 326,
+          "claim": "coverage四元组"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "line": 335,
+          "claim": "每动作重建并明文Guard"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "line": 339,
+          "claim": "coveragePolicy原件和PRICEv2边界"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/33/33bce26e8b054d3b__ROOT-ACCEPTANCE.md",
+          "line": 22,
+          "claim": "B01已静态关闭，实际门未证"
+        }
+      ],
+      "impact": "PRICE旧wire有意保留，不能包装旧结果成为新v2 OWNER MATCH；不是重开旧B01。",
+      "exit_condition": "真实policy原件/完整criteria+roles签署/SourceMember与同txn保护；分层和辅料负向AC、copy新证据AC。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-EST-QTN-V2-DECODER",
+      "classification": "required_consumer_capability_unproven",
+      "targets": [
+        "ERP-EST-01",
+        "ERP-QTN-01",
+        "ERP-ORD-01"
+      ],
+      "claim": "QTN原EstimateBasis wire保留，但真实v2decoder/完整DisclosureDigest决定/模板必须成立。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "line": 459,
+          "claim": "完整结构披露准确确认"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "line": 568,
+          "claim": "QTN wire/decoder/I03/I05/renderer/ORD边界"
+        }
+      ],
+      "impact": "新材料语义不能仅沿旧空假设数组消费或直写OrderMaterial；无decoder零新QuoteVersion/Usage。",
+      "exit_condition": "真实消费者读取完整版本、接受准确披露、SourceSetDigest2不透明传递、同txn采用更正及模板能力验证。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-QTN-FACT-H07-R2",
+      "classification": "accepted_required_contract_downstream_adoption_unproven",
+      "targets": [
+        "ERP-QTN-01",
+        "ERP-ORD-01",
+        "INT-COM-01"
+      ],
+      "claim": "QTN R2明确新H07必须当前完整Fact/Correction/有效证据，历史订单原A保留；Fact纠错独立于客户撤销与Control。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "line": 694,
+          "claim": "Q24/I10新来源完整Fact/effectiveEvidence再核"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "line": 696,
+          "claim": "旧订单原键恢复仍A，新B只新Intent"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "line": 539,
+          "claim": "Sales新增效果同步核当前Fact，不等异步影响"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "line": 919,
+          "claim": "Fact影响Outbox独立FactRevision唯一域"
+        }
+      ],
+      "impact": "ORD/INT接缝不得仅消费原Decision.evidence或把影消息当订单取消/自动配额释放；事实未证WITHDRAWN不等客户真终结。",
+      "exit_condition": "对应下游RequiredFenced/来源协议审读并保存完整Fact snapshot/digest及真实同步参与、异步影响、原订单恢复验证；不修改已接受上游wire。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-IC-PROTECTION-ADOPTION",
+      "classification": "accepted_design_actual_adoption_unproven",
+      "targets": [
+        "INT-COM-01",
+        "CRM-HO-01",
+        "CRM-OPP-01",
+        "ERP-ORD-01"
+      ],
+      "claim": "IC有限用途保护已设计接受，但撤销排序/全部实际写者及安全政策共同采用未证明；撤销请求先于commit不保证已有grant零效果。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 586,
+          "claim": "IC有限用途保护已设计接受，但撤销排序/全部实际写者及安全政策共同采用未证明；撤销请求先于commit不保证已有grant零效果。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 590,
+          "claim": "IC有限用途保护已设计接受，但撤销排序/全部实际写者及安全政策共同采用未证明；撤销请求先于commit不保证已有grant零效果。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 625,
+          "claim": "IC有限用途保护已设计接受，但撤销排序/全部实际写者及安全政策共同采用未证明；撤销请求先于commit不保证已有grant零效果。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 633,
+          "claim": "IC有限用途保护已设计接受，但撤销排序/全部实际写者及安全政策共同采用未证明；撤销请求先于commit不保证已有grant零效果。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 634,
+          "claim": "IC有限用途保护已设计接受，但撤销排序/全部实际写者及安全政策共同采用未证明；撤销请求先于commit不保证已有grant零效果。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 637,
+          "claim": "IC有限用途保护已设计接受，但撤销排序/全部实际写者及安全政策共同采用未证明；撤销请求先于commit不保证已有grant零效果。"
+        }
+      ],
+      "impact": "把原Owner撤权统一解释为立即杀死所有业务grant会实现错误；反向拿grant保敏感读取亦错误。",
+      "exit_condition": "核两种用途、原Owner安全政策、所有源控制根/宽策略反向索引、消费Execution事务/真实终态/恢复单代次；不相容Disabled。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-IC-ORIGINAL-TRANSPORT",
+      "classification": "accepted_design_actual_adoption_unproven",
+      "targets": [
+        "INT-COM-01",
+        "CRM-HO-01",
+        "CRM-OPP-01",
+        "ERP-ORD-01"
+      ],
+      "claim": "新HO/OPP封闭原体与旧C03 SensitiveNames/int AggregateVersion/Platformcheckpoint有意不兼容，Required新路由未实际采用。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 252,
+          "claim": "新HO/OPP封闭原体与旧C03 SensitiveNames/int AggregateVersion/Platformcheckpoint有意不兼容，Required新路由未实际采用。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 355,
+          "claim": "新HO/OPP封闭原体与旧C03 SensitiveNames/int AggregateVersion/Platformcheckpoint有意不兼容，Required新路由未实际采用。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 359,
+          "claim": "新HO/OPP封闭原体与旧C03 SensitiveNames/int AggregateVersion/Platformcheckpoint有意不兼容，Required新路由未实际采用。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 363,
+          "claim": "新HO/OPP封闭原体与旧C03 SensitiveNames/int AggregateVersion/Platformcheckpoint有意不兼容，Required新路由未实际采用。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 369,
+          "claim": "新HO/OPP封闭原体与旧C03 SensitiveNames/int AggregateVersion/Platformcheckpoint有意不兼容，Required新路由未实际采用。"
+        }
+      ],
+      "impact": "把新body直接交旧validator可能拒绝，或最高int checkpoint丢掉必须审查的商业历史。",
+      "exit_condition": "真实原字节roundtrip/ReceivedTrust/validator/生产route/单writer/积压分类及双边Host采用证据。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-IC-BOUNDED-REBUILD",
+      "classification": "accepted_design_actual_adoption_unproven",
+      "targets": [
+        "INT-COM-01",
+        "CRM-HO-01",
+        "CRM-OPP-01",
+        "ERP-ORD-01"
+      ],
+      "claim": "重建只能保证完整有界Owner cut向量，不能证明CRM切换时Main全球无新更新。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 673,
+          "claim": "重建只能保证完整有界Owner cut向量，不能证明CRM切换时Main全球无新更新。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 679,
+          "claim": "重建只能保证完整有界Owner cut向量，不能证明CRM切换时Main全球无新更新。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 681,
+          "claim": "重建只能保证完整有界Owner cut向量，不能证明CRM切换时Main全球无新更新。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 685,
+          "claim": "重建只能保证完整有界Owner cut向量，不能证明CRM切换时Main全球无新更新。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 686,
+          "claim": "重建只能保证完整有界Owner cut向量，不能证明CRM切换时Main全球无新更新。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/52/5282d5545f8c9b1d__INT-COM-01_CRM与Main商业交接合同_前后端开发Spec_v1.0.2_REVIEW_R2_CANDIDATE.md",
+          "line": 687,
+          "claim": "重建只能保证完整有界Owner cut向量，不能证明CRM切换时Main全球无新更新。"
+        }
+      ],
+      "impact": "只扫已收到Group会漏全部通知丢失的H2；仅check时间戳不能给实时全局一致承诺。",
+      "exit_condition": "Owner全部结果同txn登记目录、CRM全部源/历史/入站writer共同fence、准确manifest/vector/recheck与最终全文枚举；UI声明有界cut。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-ORD-FUNCTIONAL-PHYSICAL-BOUNDARY",
+      "classification": "explicit_unfrozen_boundary",
+      "targets": [
+        "ERP-ORD-01",
+        "PLAN-DEM-01"
+      ],
+      "claim": "PB01接受当前功能文本，不代表已冻结HTTP/Topic/物理表、ID长度/Decimal精度或同DbTransaction；R03历史参数提案不因R04认可全部自动批准。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "line": 17,
+          "claim": "逻辑页面/140字段不是物理接口。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "line": 284,
+          "claim": "ID为原Owner opaque，不假定UUID；物理参数未冻结。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "line": 351,
+          "claim": "H10/H32物理API/Topic/长度/幂等/迁移仍未冻。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/61/6174494a5420f95a__CP6_PROGRESS_PB01.json",
+          "line": 66,
+          "claim": "R04认可不扩大独立R03历史候选参数/物理批准。"
+        }
+      ],
+      "impact": "不能照140逻辑字段和ACT名称自造批准的DTO/表/路由或将SourceVersion假定UUID/int。",
+      "exit_condition": "整理以逻辑可编码责任为基线，未来实施绑定各现Owner准确输入输出/本地事务/幂等/控制/旧数据后形成明确物理合同；不要由整理替业务决定参数。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-ORD-QTN-H07-SUCCESSOR",
+      "classification": "functional_to_exact_owner_contract_alignment_required",
+      "targets": [
+        "ERP-ORD-01",
+        "ERP-QTN-01"
+      ],
+      "claim": "ORD功能R02/R03的Quote H草稿占用→C确认转用，与后继已接受QTN H07真实OrderDraft同txn坐标Allocation不是同一物理协议；ONE_SHOT/LIMITED_QUANTITY等功能候选不能直接当QTN已有枚举。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "line": 88,
+          "claim": "功能候选两种转用模式由Quote真实政策决定。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/50/5096115db2722db7__ORD_R02.md",
+          "line": 90,
+          "claim": "H/C逻辑额度，草稿转确认不双占。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/24d39db15ecc6288__ORD_R03.md",
+          "line": 127,
+          "claim": "R03逻辑Claim流程，真实物理能力未证。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "line": 694,
+          "claim": "后继H07真实Intent/源/坐标与Allocation。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/45/45ac9a34dec6e8e4__ERP-QTN-01_正式报价与客户接受_前后端开发Spec_v1.0.3_REVIEW_R2_CANDIDATE.md",
+          "line": 704,
+          "claim": "OrderDraft及QTNReceipt/Allocation/Intent同txn，无Confirm。"
+        }
+      ],
+      "impact": "Sales不能再建第二Quote额度账或给QTN杜撰Claim转用接口；原功能信用/客户/Confirm边界继续独立。",
+      "exit_condition": "按QTN准确H07/Fact/全量坐标及历史恢复合同映射ORD草稿、编辑、确认与取消；精确列仍未覆盖的功能政策/能力，取得Owner有界采用决定后实现。",
+      "runtime_status": "NOT_VERIFIED"
+    },
+    {
+      "finding_id": "COM-FUL-CATALOGUE-AND-CURRENT-FENCE",
+      "classification": "required_joint_owner_adoption_not_current_conflict",
+      "targets": [
+        "ERP-FUL-01",
+        "ERP-ORD-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01"
+      ],
+      "claim": "FUL接受的首目录/双时间/严格当前读是新Required联合适配；ORD历史R03与OUT/DEL各自接受不自动证明所有writer已纳入F−1→F0共同锁。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "line": 7307,
+          "claim": "新Sales权威Schedule目录Required。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "line": 7328,
+          "claim": "空站点预建F−1，目录读S/成员writer X。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "line": 7330,
+          "claim": "包含ORD商业、Schedule、筛选、到期、权限、直接导入/管理员及历史补录全部路径。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/73/735749099f867bc9__ERP-FUL-01_订单履约投影与交付绩效_前后端开发Spec_v1.4_R3_REVIEW.md",
+          "line": 7332,
+          "claim": "实际同连接事务SERIALIZABLE，F−1先于DEL F0；不符则UNKNOWN。"
+        }
+      ],
+      "impact": "漏通知Schedule不能从绩效分母消失；未登记全部写路径不得启用严格CURRENT_COMPLETE。历史exact和独立已证as-of读仍按权限可用。",
+      "exit_condition": "Sales/平台及每参与Owner提交准确reader/全writer清单、实际同UoW/fence/隔离/撤权采用证据，并覆盖空站点新增成员、跨站点、到期激活、管理员与旧写竞争。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-CREDIT-INDEPENDENT-CASH-AND-DEMAND-SOURCE",
+      "classification": "required_owner_adoption_not_new_static_conflict",
+      "targets": [
+        "ERP-CREDIT-01",
+        "WMS-RMA-01",
+        "FIN-AR-01",
+        "PLAN-DEM-01"
+      ],
+      "claim": "Stage100全册静态接受保当前QA carrier fence及独立Cash/newDemand Required源；其他Owner自身接受不代表此组合已采用。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 69,
+          "claim": "直接依赖/QA carrier/不转移Owner写权。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ff/ff64b2393cf2c752__ERP-CREDIT-01_销售贷项与售后商业处理_前后端开发Spec_v1.0_DRAFT.md",
+          "line": 546,
+          "claim": "Cash current是内部Required proposal。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/9418bec946ecd225__01_UNIFIED_BUSINESS_DETAILED_DESIGN.md",
+          "line": 59,
+          "claim": "newDemand无新增PLAN direct API。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14fa47244e2e57d4__UA-20261008-D-ERP-CREDIT-STAGE100.md",
+          "line": 68,
+          "claim": "46NOT_RUN/actualUNPROVEN/ImplementationAuthorizedfalse。"
+        }
+      ],
+      "impact": "不能把商业授权/模型normal当付款、QA资格、已createdDemand或schema安装，防重复效果/释放未知。",
+      "exit_condition": "各真Owner准确schema/producer/query/current/allwriter/字段权限与完整原件采用；按原经济分支验证后启用。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-S6-PRECHECKPOINT-FINALAUTH",
+      "classification": "accepted_design_joint_writer_adoption_unproven",
+      "targets": [
+        "INT-ID-01",
+        "INT-OPS-01",
+        "INT-COM-01",
+        "OA-APP-01",
+        "PLT-DEL-01"
+      ],
+      "claim": "S6 v0.2已静态关闭B03/B04：CRM实际事务的pre-checkpoint seam封闭所有重复/过时早退，Owner最终安全门全writer参与；分库无等价门明确关闭新效果，四类操作分门。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 220,
+          "claim": "CRM持事务PreCheckpointV1"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 227,
+          "claim": "共同锁序"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 234,
+          "claim": "冲突与撤allow同commit"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 245,
+          "claim": "消费既有OA-APP/INT-COM"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 249,
+          "claim": "所有writer共同门"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 251,
+          "claim": "分库缺门关闭"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 256,
+          "claim": "历史读独立"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d9/d9b57a039e18a689__S6_INT-ID_INT-OPS_完整设计候选_v0.2.md",
+          "line": 258,
+          "claim": "技术投递独立"
+        }
+      ],
+      "impact": "不能用Platform运输去重遗漏内容冲突，也不能将TTL/第二GET/用途grant冒最终安全许可；不得将静态关闭旧阻塞再记成未决设计选择。",
+      "exit_condition": "准确Host/route/版本采用；所有实际writer参与同fence和同事务；撤权竞争、冲突/重复/未知提交、四分支恢复真实证据。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-FSC-FACT-GUARD-EXTENSION",
+      "classification": "accepted_required_owner_binding_or_intentional_type_boundary",
+      "targets": [
+        "ERP-FSC-01",
+        "ERP-EST-01",
+        "ERP-QTN-01"
+      ],
+      "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "line": 77,
+          "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "line": 79,
+          "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "line": 81,
+          "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "line": 83,
+          "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "line": 87,
+          "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "line": 89,
+          "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e2/e2674e740f069490__ERP-FSC-01_完整四SPEC兼容开发设计_R2.md",
+          "line": 135,
+          "claim": "FSC R2明确新的EST事实读与QTN关系双守卫；原EST I03用途/Usage保持，实际绑定UNPROVEN。"
+        }
+      ],
+      "impact": "不能以QUOTE_BASIS/PRODUCT_REFERENCE、旧QTN采用回执或字符串HELD签发；缺门等待不冒ISSUED。",
+      "exit_condition": "原Owner正式schema/资格政策/完整subject-field-intent-expected绑定与实际共同保护；两HELD及原item恢复真实证据。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-PRICE-EST-UNIT-SCALE",
+      "classification": "accepted_required_owner_binding_or_intentional_type_boundary",
+      "targets": [
+        "ERP-PRICE-01",
+        "ERP-EST-01"
+      ],
+      "claim": "PRICE本域quantityScale0..18与EST UnitValue0..12为有意能力边界，原类型不改。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/91/918bbd4508551b64__00_X1_R2_独立回归与完整范围静态审阅报告.md",
+          "line": 151,
+          "claim": "PRICE本域quantityScale0..18与EST UnitValue0..12为有意能力边界，原类型不改。"
+        }
+      ],
+      "impact": "不能把13..18精度直接喂EST或截断/默认；不需把本域所有UOM能力改为EST范围。",
+      "exit_condition": "真实适配明确按准确外Owner类型拒绝/限制不支持值并留边界AC；未授权新类型扩展。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-PR-CP22-NATIVE-OWNER-ADOPTION",
+      "classification": "successor_design_adoption_with_runtime_fence",
+      "targets": [
+        "PUR-PR-01",
+        "PLAN-PO-01"
+      ],
+      "claim": "CP22 port14保留PR R3完整native intake；新增registry/namespace专业设计采用不等真实部署，旧字段误判撤回不是当前缺陷。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 89,
+          "claim": "PR专业新采用与原wire限定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 96,
+          "claim": "PR专业新采用与原wire限定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 97,
+          "claim": "PR专业新采用与原wire限定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 98,
+          "claim": "PR专业新采用与原wire限定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 99,
+          "claim": "PR专业新采用与原wire限定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cb/cbd38c11127b763e__OWNER_TECH_CP22_PROFESSIONAL_DELTA_ADOPTION_20261004.md",
+          "line": 100,
+          "claim": "PR专业新采用与原wire限定"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "line": 138,
+          "claim": "PR原计划同库participant仍是实际门"
+        }
+      ],
+      "impact": "不能将原Digest对象裸化、误读NOT_OBSERVED或把设计ADOPT当实际权威；也不能重复报告已撤回CP18/19-R04。",
+      "exit_condition": "真实PUR独立registry/current/auth绑定、Planning Firm allocation同事务participant、原wire及NOT_RUN AC实际证据。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-RFQ-PR-SOURCE-STATE-ADAPTER",
+      "classification": "intentional_state_layer_difference_explained_by_accepted_po",
+      "targets": [
+        "PUR-RFQ-01",
+        "PUR-PR-01",
+        "PUR-PO-01"
+      ],
+      "claim": "PO v1.1 L693明确Source内部EXECUTED_PENDING_LEDGER不改变原ClaimRecord wire的CONSUMED等枚举；PR内部P→E与RFQ异步P→C属于不同责任层，非已证设计冲突。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+          "line": 1415,
+          "claim": "Source最终Effect绑定与随后异步观察"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/1787bb4e78ef2587__PUR-RFQ-01_采购询比价与供应价格_前后端开发Spec_v1.1.1_REVIEW.md",
+          "line": 1409,
+          "claim": "RFQ观察方程与Owner责任"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "line": 210,
+          "claim": "PR实际PO事务P→E与SourceUse"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 693,
+          "claim": "明确内部状态与原ClaimRecord线枚举边界"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 692,
+          "claim": "真实同连接事务前提"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/15/15edbc1dfe25be7f__PUR-PO-01_采购订单与履约_前后端开发Spec_v1.1_DRAFT.md",
+          "line": 695,
+          "claim": "最终Effect保护同commit，后续源账观察异步"
+        }
+      ],
+      "impact": "保原wire与真实同事务Effect保护；不能先无保护建PO、不能直接统一状态枚举。",
+      "exit_condition": "设计语义层已合读闭合；实际PR/Source/PO/RFQ adapter、共享资源锁/全writer/未知恢复待证明。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-GR-ORIGINAL-SCOPE-AND-COMPOSITE-ADOPTION",
+      "classification": "accepted_scope_repair_closed_actual_cross_owner_adoption_unproven",
+      "targets": [
+        "PUR-GR-01",
+        "PUR-PO-01",
+        "WMS-STOCK-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "PUR-MATCH-01"
+      ],
+      "claim": "当前GR已修复非前缀VOID，逐叶原域+有权有效RangeSet+当前ScopeSet/Quality绑定控制商业验收与MATCH；准确Stock v1.1.1/PO v1.1组合仍须与后继QA专业映射及真实共同ResourcePlan采用对齐。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "line": 491,
+          "claim": "原收货叶域与带洞有效集合"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "line": 456,
+          "claim": "scopeBindings是GR信封，Quality有权Proof不能自贴"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "line": 523,
+          "claim": "Correction同事务切requiredScope并保旧投影冲突"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cc/cc20531bdcc61959__PUR-GR-01_采购收货商业单据_前后端开发Spec_v1.1_REV1_REPAIR_CANDIDATE.md",
+          "line": 629,
+          "claim": "组合锁序准确资源计划"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/git-objects/ce/cef7ca5bfb22497a__SR-20260930-B-PUR-GR-MD01-FINAL.md",
+          "line": 20,
+          "claim": "历史非前缀VOID缺陷已关闭，不作为新缺口"
+        }
+      ],
+      "impact": "不能将所有采购总体强定100、压缩带洞坐标、拿旧basis开票或仅同DbTx宣称全writer互斥；不据此判已证版本冲突。",
+      "exit_condition": "保当前原wire/范围版本；真实QA原叶总体/映射/Proof、PO+Stock+GR组合锁和旧writer隔离采用及并发恢复证据齐。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-MATCH-MRX-AND-ORIGINAL-OBLIGATION",
+      "classification": "intentional_accepted_append_only_extension_actual_adoption_unproven",
+      "targets": [
+        "PUR-MATCH-01",
+        "PUR-RETURN-01",
+        "PUR-GR-01",
+        "WMS-OUT-01",
+        "FIN-AP-01"
+      ],
+      "claim": "MATCH R2字节保持，已接受MRX v0.2补充独立ReverseGeneration/overlay及共同退运控制，正常退货不改GR E；共享义务预算不能分模块重复信用。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 384,
+          "claim": "原GR资格不变仍须独立防新开票"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 443,
+          "claim": "sourceDigest不变也需MRX最终控制；全正向入口升级"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 435,
+          "claim": "完整原授权槽及永久fence才解除unused"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d6/d69d65cde52092ea__SHARED_ACCEPTANCE.md",
+          "line": 21,
+          "claim": "FinanceOriginalObligation跨MATCH/RETURN/手工共享预算"
+        }
+      ],
+      "impact": "仅实现旧R2会遗漏已退未匹配段、跨control及双重信用控制；不可据此说旧设计未接受或擅改原GR。",
+      "exit_condition": "真实所有正向writer/MRX/RETURN/Stock同Uow与共享Finance专业义务预算采用、完整范围继承/关闭及并发恢复证据齐。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-RETURN-CURRENT-KNOWLEDGE-CUT",
+      "classification": "accepted_repair_closed_actual_adoption_unproven",
+      "targets": [
+        "PUR-RETURN-01",
+        "PUR-MATCH-01",
+        "WMS-OUT-01",
+        "WMS-STOCK-01"
+      ],
+      "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 358,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 365,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 618,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 620,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 622,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 624,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 626,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 632,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 90422,
+          "claim": "R3闭合当前查询代次与来源完整cut，OUT本地无gap不足以代表Stock无漏通知；后继保护按终态叶。"
+        }
+      ],
+      "impact": "复用旧成功GET、旧cut或按最后到达结果会把历史10冒当前；物理8不等Finance12已调整。",
+      "exit_condition": "所有查询/事件/rebuild共享Head/Case门，真实Stock完整snapshot/OUT新current读采用与竞争证据齐。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-RETURN-H31-COMPOSITE-RESOURCES",
+      "classification": "accepted_repair_closed_actual_adoption_unproven",
+      "targets": [
+        "PUR-RETURN-01",
+        "PUR-MATCH-01",
+        "WMS-OUT-01",
+        "WMS-STOCK-01"
+      ],
+      "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 512,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 54347,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 54358,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 54369,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 54377,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 54379,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 54381,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 54383,
+          "claim": "H31 v0.7在同真实Part内收齐全部源Location/metric集合，N/A也锁当前MetricSet；Source/MRX/Stock/OUT只有一个commit。"
+        }
+      ],
+      "impact": "不能固定49/60锁模板、拆Part逃多位置门或独立Stock提交后假原子补MRX。",
+      "exit_condition": "真实所有容量规则/位置/Scope/Owner写路径注册同资源与顶层Uow，完整多地点/关闭/旧writer采用证明。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-SUB-COST-RECEIPT-VS-ACCEPTANCE",
+      "classification": "intentional_accepted_business_basis_difference",
+      "targets": [
+        "PUR-SUB-01",
+        "PUR-GR-01",
+        "PUR-PO-01",
+        "FIN-COST-01"
+      ],
+      "claim": "成本具名profile取Finance批准RECEIPT集合；耗用对账固定Qplan与COMMERCIAL_ACCEPTANCE_GROSS完整cut，两个finishedQty不得合并。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 232,
+          "claim": "计价与对账各自完整集合与固定政策。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 238,
+          "claim": "计价与对账各自完整集合与固定政策。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 262,
+          "claim": "计价与对账各自完整集合与固定政策。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 264,
+          "claim": "计价与对账各自完整集合与固定政策。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 270,
+          "claim": "计价与对账各自完整集合与固定政策。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 276,
+          "claim": "计价与对账各自完整集合与固定政策。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/95/951bf766a6f96118__PUR-SUB-01_完整静态详细设计_RECOVERY-R2_20261008.md",
+          "line": 278,
+          "claim": "计价与对账各自完整集合与固定政策。"
+        }
+      ],
+      "impact": "以实收100代验收60会把100暂时超发吞掉；变PO100→80会把旧单耗10错误改12.5；重复带全材料会成本900误1500。",
+      "exit_condition": "真实GR/PO独立集合、Finance profile/legacy前驱、ConsumptionBasis及IAM政策采用，48AC相关场景实际验证。",
+      "runtime_status": "UNPROVEN"
+    },
+    {
+      "finding_id": "COM-INQ-GENERATED-CONTRACT-ADOPTION",
+      "classification": "static_source_fact_with_unexecuted_implementation_inference",
+      "targets": [
+        "CRM-INQ-01"
+      ],
+      "claim": "V15设计正文接受不能直接证明生成OpenAPI/TS/C#文件可执行采用：OpenAPI定义内55个#/$defs本地引用无根$defs；TS SourceExact事件的字符串固定属性同时受boolean字符串索引签名约束；C# uniqueItems使用GetRawText相等而TS使用规范对象键序相等。 同一expired99样例export对象在页面与PrivacyExportView入口的附加语义可能不同（样例expiry非null，wire要求null）。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/85/8538042210844249__crm-inq.openapi.json",
+          "line": 4748,
+          "claim": "components.schemas内首个#/$defs/FieldError；根无$defs，55处相同根定位问题。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+          "line": 38,
+          "claim": "SourceExactPublicSubmissionReceivedEvent根/data布尔additional字符串索引，同时含string固定字段；L39/42同类。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/253daab4784b29ba__B-CRM-INQ-R3-V15-CSHARP-CONTRACTS.cs",
+          "line": 255,
+          "claim": "uniqueItems以GetRawText().Distinct比较，字段顺序不同的同值对象可能被视不同；仅静态代码事实。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ef/ef9b6e0bc3ac1b3f__B-CRM-INQ-R3-V15-TYPESCRIPT-CONTRACTS.ts",
+          "line": 100,
+          "claim": "TS canonical对对象键排序，数组uniqueItems L112调用canonical。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/a6/a6c1b08abce800dd__CURRENT.json",
+          "line": 1,
+          "claim": "CURRENT明确V15 TypeScript/C#/runtime NOT_RUN、Owner UNPROVEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/22/229813cf102aad92__ui-positive-cases.json",
+          "line": 1642,
+          "claim": "/46/value/export：statusCode99且L1645 expiresAtUtc非null；TS L135、C# L285以PrivacyExportView为入口要求90/99 expiresAtUtc=null。Surface入口未递归调用此附加语义，不能据此声称已运行的页面decoder失败。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+          "line": 113200,
+          "claim": "FX25-S06旧transport注释把proof写为Authorization bearer，实际request headers及当前规范是CRM session与X-Download-Proof分离；按当前规范实施。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+          "line": 149244,
+          "claim": "FX26-S02 uiExpectation.configuration.etag保留旧值，而同一步expectedHttp L148974已返回新值；UI必须使用服务端新版本。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/89/8907803dd2e284d0__B-CRM-INQ-R3-V15-FIXTURES-FULL.json",
+          "line": 178594,
+          "claim": "FX27-S03/S04长度标题对应的HTTP预期实际为crm.idempotency_key_invalid；不能据此视作长度负例已验证。"
+        }
+      ],
+      "impact": "开发者须以规范语义为基准校准生成入口；当前不能把附件直接当已验证客户端/运行解码器。TS不兼容和C#相等差异的运行表现均为待验证推断，无编译/测试失败新执行记录。",
+      "exit_condition": "后续获得业务编码授权后，针对OpenAPI独立ref解析、三SourceExact类型编译、同值对象字段顺序变换的uniqueItems及跨语言一致性做必要验证；在本次整理中保留原文件和准确风险，不修改原件或撤销静态接受。 由契约Owner确认到期export是否保留历史expiresAt并统一wire/页面定义和样例；后续只做获得授权的定向实现验证。 在生成fixture采用前对齐下载proof注释、页面ETag和长度负例前置请求键；无需推翻已接受历史，实际执行另留证据。",
+      "runtime_status": "NOT_RUN"
+    },
+    {
+      "finding_id": "COM-LEAD-AC-ATOMIC-SUPERSESSION",
+      "classification": "intentional_accepted_successor_version_difference",
+      "targets": [
+        "CRM-LEAD-01",
+        "CRM-ACC-01",
+        "CRM-CON-01",
+        "CRM-OPP-01"
+      ],
+      "claim": "CP22保留R3原60AC身份，但AC042/048–052明确改为同事务原子H02和Manifest；旧Saga/部分成功/202 Map预期不能带入当前实现。旧AC035 hiddenCount期待也不是当前闭合wire字段。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ae/aeda22b512c5c620__CP20-60-AC-MAPPING.json",
+          "line": 2174,
+          "claim": "原Saga批次规则及当前同事务后继同记录保留，applicability区分。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/9f/9f8fd4357559f8d2__AC-CATALOGUE.json",
+          "line": 668,
+          "claim": "返回版原AC预期含hiddenCount，当前读面按准确schema/主体可见投影。"
+        }
+      ],
+      "impact": "若把原catalogue expected直接生成测试或DTO，会重引入已被替代的Saga/隐藏计数语义。此项是已决定版本差异，不是未修设计缺口。",
+      "exit_condition": "编码和验收采用CP22 currentRule、正文与准确schema；原AC-ID保留追踪但替换过时expected。实际Owner同事务采用/测试另证。",
+      "runtime_status": "UNPROVEN",
+      "design_status": "SUCCESSOR_RULE_ALREADY_DEFINED"
+    },
+    {
+      "finding_id": "COM-LEAD-GENERATED-CS-NULLABLE",
+      "classification": "generated_contract_adoption_issue",
+      "targets": [
+        "CRM-LEAD-01"
+      ],
+      "claim": "CP22 C# DTO附件 LeadQueryFilters.OwnerId 声明string??，准确schema/TS是(UUID|unassigned)|null。685字段比较仅此一处类型不一致。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/lead/CONTRACTS/CrmLeadCp20Contracts.cs",
+          "line": 519,
+          "claim": "public required string?? OwnerId { get; init; }"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/24/2428190864cfd501__CP20-qualification-h02.schema.json",
+          "line": 3251,
+          "claim": "ownerId闭合定义为UUID或unassigned，另允许null。"
+        }
+      ],
+      "impact": "该静态DTO类型文本不能直接采用；schema仍为wire权威。未执行编译，未改变历史设计接受。",
+      "exit_condition": "实施时修正为单层nullable string并实现UUID/unassigned/null的严格decoder；再按实际代码做本地编译/契约验证，不能以本次文档核对代替。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "EXACT_SCHEMA_UNCHANGED_ADAPTER_CORRECTION_REQUIRED"
+    },
+    {
+      "finding_id": "COM-PR-N01-AUTHORITY-VERSION",
+      "classification": "normative_fixture_inconsistency_adoption_requires_resolution",
+      "targets": [
+        "PUR-PR-01",
+        "PUR-PO-01"
+      ],
+      "claim": "R3 N01 同一 grant-root-a-1 在 PoPreparationResolution 授权scope/:sourceBusinessVersion为2，而后续 ClaimPrepareRequest变为3；完整冻结授权应精确一致。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "line": 1923,
+          "claim": "bundle sourceShares同grant的authorizationScopeId为PR:…0010:2；L1929 sourceBusinessVersion=2。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "line": 2366,
+          "claim": "ClaimPrepareRequest同grant的authorizationScopeId为PR:…0010:3；L2368 sourceBusinessVersion=3。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "line": 209,
+          "claim": "Source prepare必须按已冻结bundle/原Grant精确匹配，不能改来源授权。"
+        }
+      ],
+      "impact": "这是规范正向样例内部身份差异；不据此推断代码缺陷或推翻已接受主文。实施应依正文拒绝不相等Claim，不能直接把N01原字面当已通过有效fixture。",
+      "exit_condition": "由契约Owner明确此处应承接的原PR授权版本，给有界修正与相关canonical摘要/完整bundle-Claim一致性证据；不得默改源归档。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "ACCEPTED_CORE_RULE_UNCHANGED_FIXTURE_ADOPTION_PENDING"
+    },
+    {
+      "finding_id": "COM-PR-N08-PREVIEW-TIMELINE",
+      "classification": "normative_fixture_inconsistency_adoption_requires_resolution",
+      "targets": [
+        "PUR-PR-01"
+      ],
+      "claim": "N08同预览已CONSUMED及同command的首次成功recordedAt为12:08，晚于expiresAt11:30；正文要求过期preview零写，样例未交代有效期内提交证据。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "line": 9462,
+          "claim": "expiresAt 11:30，state CONSUMED，consumedCommandId …8003。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/pr/R3/NORMATIVE-EXAMPLES.json",
+          "line": 9470,
+          "claim": "相同command …8003 SUCCEEDED、replayed=false，L9481 recordedAt12:08。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "line": 184,
+          "claim": "preview需未过期；原已消费同命令按原结果恢复，其他命令不得重用。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c3/c3cf448a16a4a8fe__PUR-PR-01_采购申请与审批_前后端开发Spec_v1.0_R3_DRAFT.md",
+          "line": 539,
+          "claim": "过期preview错误410，零业务写。"
+        }
+      ],
+      "impact": "保留原审R3对N08份额传播/完整结果的有界PASS，不能把该PASS扩成所有时序字面均一致。生产实现仍执行过期保护。",
+      "exit_condition": "给出有效期内完成Tx R的准确时间证据或有界校正样例；区分提交记录时刻与读取时刻，重放不得伪装首次成功。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "ACCEPTED_CORE_RULE_UNCHANGED_FIXTURE_ADOPTION_PENDING"
+    },
+    {
+      "finding_id": "COM-RETURN-CHILD-ALLOWANCE-QUANTITY",
+      "classification": "normative_fixture_inconsistency_adoption_requires_resolution",
+      "targets": [
+        "PUR-RETURN-01",
+        "WMS-STOCK-01",
+        "WMS-OUT-01"
+      ],
+      "claim": "当前RETURN四处小Part Grant样例仍写quantity10：G6实际6、L2实际2、EP11实际4及EP25实际6；与每child只授自身基本量冲突。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 469,
+          "claim": "每child quantity只该child基本量，不给每child父Part总量。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 18751,
+          "claim": "G6R07 RET-SRC-6-AFTER4 quantity10；L18825/L18830同child Manifest input/baseQuantity6，原scope[14,20)。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 25790,
+          "claim": "L2R07 RET-V2-SRC-2 quantity10；L25777分支明确只退[14,16)2。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 46960,
+          "claim": "12.EP/11给RET-PART-4/RET-SRC-4的Grant.quantity10；同分支Manifest/原范围[10,14)为4。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+          "line": 47398,
+          "claim": "12.EP/25给RET-PART-6/RET-SRC-6的Grant.quantity10；原范围[14,20)为6。"
+        }
+      ],
+      "impact": "正文准确child授权量规则不变；四处Grant及引用这些原件的摘要/绑定不能直接作为准确编码fixture。不是实际系统超发证明；父/domain保护不能豁免child量矛盾。",
+      "exit_condition": "提供同一分支每child Grant与Manifest/Posting/原范围一致的有界修订及受影响摘要/原件绑定，或由接受方明确独立政策及版本化差异；未获决定前按正文准确child量实现并保留原件差异。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "ACCEPTED_CORE_RULE_UNCHANGED_FIXTURE_ADOPTION_PENDING"
+    },
+    {
+      "finding_id": "COM-EST-FIXTURE-POLICY-AND-TTL",
+      "classification": "normative_fixture_inconsistency_adoption_requires_resolution",
+      "targets": [
+        "ERP-EST-01",
+        "ERP-QTN-01"
+      ],
+      "claim": "基础连续样例的当前政策和准备到期时间与其原Owner输入/规范不一致；GENERAL R2保留准确Owner证明与10分钟门，未覆盖为30分钟。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "line": 464,
+          "claim": "Owner Proof覆盖完整policyRevision/head/observedAt等本次查询结果。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "line": 14620,
+          "claim": "R1Q09当前撤销OwnerRead policyRevision=DEMO-QTN-POL-2。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "line": 14687,
+          "claim": "同proof/head/asOf的R1Q10当前Readiness却写POL-1；lastProven另列才是历史。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "line": 412,
+          "claim": "Lookup context 10分钟过期。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f7/f7d7141b4ceffa15__ERP-EST-01_商业估算与报价计算_前后端开发Spec_v1.0.1_REVIEW_R1_CANDIDATE.md",
+          "line": 2218,
+          "claim": "E05候选context expiresAt20:30；L2278 asOf20:00:04、E71 L12301完整当次OwnerRead20:00:03。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c48a0460236a9a6e__ERP-EST-01_GENERAL_MATERIAL_SUCCESSOR_R2.md",
+          "line": 512,
+          "claim": "后继明确Lookup/Seal仍10分钟准备时限。"
+        }
+      ],
+      "impact": "开发采用真实Owner同一完整policy及准确10分钟窗口；不要从合成例复制旧POL或30分钟过期。例内动作仍在短时间内完成，本项不是断言已执行超期或实际越权。",
+      "exit_condition": "提供有界准确样例修订/完整摘要重绑或正式版本澄清；不得原地篡改冻结原件。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "CURRENT_NORMATIVE_RULES_UNCHANGED_FIXTURE_ADOPTION_PENDING"
+    },
+    {
+      "finding_id": "COM-CREDIT-PROBLEM-CODE-ALIASES",
+      "classification": "current_wire_field_variation_requires_owner_clarification",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "claim": "当前9个Problem的顶层code不同，但嵌套issues[].code及type仍为HEAD_CHANGED/head-changed；FE按各顶层code区分恢复。不得自行改写冻结wire。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "line": 10283,
+          "claim": "Problem_UOM_NOT_EXACT顶层UOM_NOT_EXACT、内层HEAD_CHANGED、type head-changed、HTTP422；另8个同型见structured defs目录。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "line": 5603,
+          "claim": "Problem_BLOCKED_DEPENDENCY同样保内层/type head-changed，HTTP409。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3f/3fb49d0e2b6cfbdd__ERP-CREDIT-01_FRONTEND-CONTRACT.json",
+          "line": 1043,
+          "claim": "FE UOM错误为独立恢复，展示准确原换算版本缺口，禁止截量。"
+        }
+      ],
+      "impact": "代码生成、客户端错误分派和本地化须冻结准确三元组；业务fence规则已有依据，此处不据名称推新业务决定。",
+      "exit_condition": "设计Owner明确9组三元组是否有意，并给准确serializer/API/UI一致映射或有界新版本；不修改原件。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "CURRENT_WIRE_CLARIFICATION_PENDING"
+    },
+    {
+      "finding_id": "COM-CREDIT-FROZEN-R8-CODEC-CURRENT-ADAPTATION",
+      "classification": "intentional_frozen_source_vs_current_design_version_boundary",
+      "targets": [
+        "ERP-CREDIT-01",
+        "FIN-AR-01"
+      ],
+      "claim": "冻结R8生成codec锁TYPE 62effa1e，当前TYPE c6976286。R8 NO_CHANGE非空结果被拒；后继当前允许完整来源证实的NO_CHANGE关联原APPLIED结果。旧codec不是Stage100可直接采用实现。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+          "line": 90,
+          "claim": "冻结三schema字节绑定，local TYPE为旧62effa1e。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319e5002c3312b27__ERP-CREDIT-01_WIRE-CODECS.generated.cs",
+          "line": 122,
+          "claim": "R8非APPLIED且resultRef非空拒OWNER_RESULT_FORBIDDEN。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/53/533967724512459f__ERP-CREDIT-01_WIRE-CODECS.generated.ts",
+          "line": 174,
+          "claim": "TS同一旧NO_CHANGE判定。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "line": 3164,
+          "claim": "当前FinArObservation FOUND可接受APPLIED或NO_CHANGE，但须真native业务/current来源；UNKNOWN可保COMPLETED原字节。"
+        }
+      ],
+      "impact": "当前codec须按准确接受的Owner wire、本地后继projection和实际来源门形成新版本，保旧原响应回放；不能只改冻结SHA或将NO_CHANGE普遍当FOUND。",
+      "exit_condition": "实现时登记当前schema/codec身份，覆盖APPLIED、带原result的有据NO_CHANGE、无来源COMPLETED保持UNKNOWN、原raw回放及缺源零派发；运行验证另做。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "REQUIRED_CURRENT_CODEC_ADOPTION_NOT_PROVEN"
+    },
+    {
+      "finding_id": "COM-CREDIT-CURRENT-BODY-MONEY-FIELD",
+      "classification": "current_synthetic_body_and_exact_schema_static_inconsistency",
+      "targets": [
+        "ERP-CREDIT-01",
+        "WMS-RMA-01"
+      ],
+      "claim": "当前MULTI Q14 WMS_RMA invoiceAllocations的net/tax/gross为{amount,currency}；准确引用schema要求closed {value,currency}。WN11 PRICE_ALLOWANCE allocations（保存200/Q14及existing-target模板）也引用同一Money，却用amount。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7b/7bc5b79a7dbc21f0__multi_mixed_complete_public_q14.json",
+          "line": 1,
+          "json_pointer": "/data/outcome/value/components/0/invoiceAllocations/0/gross",
+          "claim": "当前完整body用amount，无value。",
+          "sha256": "7bc5b79a7dbc21f05b3d6ba33deb942226170113eb07ca3e1f711f2620830f28"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "line": 762,
+          "claim": "CommercialOutcome WMS_RMA直接引准确外部CommercialOutcomeRef。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c6/c69762861155ed95__ERP-CREDIT-01_TYPE-REGISTRY.json",
+          "line": 4613,
+          "claim": "PRICE_ALLOWANCE的net/tax/gross也引同一外部Money。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b3/b324a9b62d888f26__ERP-CREDIT-01_WMS-RMA-R3-EXACT.schema.json",
+          "line": 831,
+          "claim": "Money additionalProperties=false，required value/currency。"
+        }
+      ],
+      "impact": "不可直接复制当前合成响应为准确运行DTO；不可默默修改冻结样例及其digest/Store关系。当前接受结论保原样，独立记录这次只读发现。",
+      "exit_condition": "Owner明确规范与样例的有界修订/准确serializer映射，更新受影响body及所有hash/receipt/consumer关系并取得相应接受；实现时另做真实契约验证。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "CURRENT_WIRE_CLARIFICATION_PENDING"
+    },
+    {
+      "finding_id": "COM-CREDIT-OPENAPI-FROZEN-REPLAY-MAPPING",
+      "classification": "explicit_current_rule_vs_older_generated_mapping",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "claim": "OpenAPI EC-C01/C02 HTTP200仍指REPLAY/COMMITTED_REPLAY；当前API明确HTTP200返回首次201原COMMITTED字节，不重命名或重建。载体又由闭合JSON与后加YAML/注释构成，不能据文件扩展名当已验证的单一生成输入。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+          "line": 1813,
+          "claim": "旧HTTP200响应类型。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b2afa82fe46698c__ERP-CREDIT-01_API-REGISTRY.json",
+          "line": 303,
+          "claim": "当前显式原COMMITTED字节回放规则。"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c5/c5a95450610038cf__ERP-CREDIT-01_OPENAPI.yaml",
+          "line": 2584,
+          "claim": "完整JSON结束后追加YAML式来源块；两x-stage93键保93/94历史身份。"
+        }
+      ],
+      "impact": "开发以显式当前API不可变回放语义为准；重新生成准确OpenAPI，不复制旧schema映射或反过来改业务回执。",
+      "exit_condition": "准确当前生成契约统一29route/类型/权限及后继选择，C01/C02回放保原字节；取得有界生成/契约验证。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "CURRENT_RULE_CLEAR_GENERATED_ENTRY_REQUIRES_ADAPTATION"
+    },
+    {
+      "finding_id": "COM-CREDIT-NORMAL-PHASE-AND-OLD-PARENT-MAPPING",
+      "classification": "current_design_carrier_internal_mapping_difference",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "claim": "CURRENT03/10 的三个NEW_READY root CAS仍标COMMERCIAL_TERMINAL来源阶段；两个旧plan root关闭操作却把非空父键映射到随后新建的43 OUTPUT。CURRENT11执行顺序与准确fullInput已区分旧/新及READY/terminal，不能统一照抄这些映射。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+          "line": 105758,
+          "claim": "op72 sourcePhase=COMMERCIAL_TERMINAL；73/74同类在107894/110030。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/10_COMPLETE_TYPED_PRODUCER_FIELD_AND_PHASE_INPUT_BINDINGS.json",
+          "line": 69296,
+          "claim": "typed phase同样COMMERCIAL_TERMINAL；73/74位70387/71478。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/11_COMPLETE_PHASE_CUTS_AND_INTENT_RESULT_RECONCILIATION.json",
+          "line": 17144,
+          "claim": "WN14_NEW_READY执行72/73/74后51。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+          "line": 116506,
+          "claim": "op78 fk_ec40_plan compositeColumnMap指新43 OUTPUT；op79同类118661。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/CURRENT/03_COMPLETE_NORMAL_ROWS_OUTPUT_AND_CURRENT_BINDINGS.json",
+          "line": 117993,
+          "claim": "op78 correction_id准确输入来自旧priorPlanRoots.RETURN_RANGE；op79 L120148来自旧DEMAND_LINEAGE；两者在OLD_END而43在随后NEW_ADMIT。"
+        }
+      ],
+      "impact": "阶段来源保护需一致；旧计划解除须绑定原计划实际PK，不能借新计划未来OUTPUT。此差异不撤销原限定静态接受，也不能据现有载体宣称可直接生成运行DML。",
+      "exit_condition": "Owner有界统一03/10/11及相关恢复包映射，保留先旧plan合法结束→独立新plan建立；校对真实源保护和同PK/RV，禁止通过重命名或合并旧新ID消除差异。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "NEEDS_BOUNDED_MAPPING_RECONCILIATION"
+    },
+    {
+      "finding_id": "COM-CREDIT-WN11-04-PROJECTION-PRODUCER-METADATA",
+      "classification": "current_design_carrier_internal_mapping_difference",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "claim": "WN11-04操作31的fullInput/sourceBodyKeys准确对应partition_projection，但mutationTarget及branchSavedReplyProducer仍沿用c06_saved_200元数据；不得按旧目标标签把projection写成公共响应。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "line": 31908,
+          "claim": "操作31 content_digest来自ActualQualifiedStore.wn11_existing_target_partition_projection。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "line": 32150,
+          "claim": "mutationTarget仍为StoreActualPutIfAbsent.wn11_existing_target_c06_saved_200。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/WN11-04_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "line": 32167,
+          "claim": "sourceBodyKeys为partition_projection；操作31须先于23使用其实际receipt。"
+        }
+      ],
+      "impact": "自动生成producer或按标签分派Store时会有两种互斥映射；实际typed输入和公共saved reply必须分开。",
+      "exit_condition": "Owner有界对齐31的producer/target/sourceBody元数据和实际projection receipt FK；保留原202/200字节及无新Finance效果。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "NEEDS_BOUNDED_MAPPING_RECONCILIATION"
+    },
+    {
+      "finding_id": "COM-CREDIT-MULTI-02-BEFORE-AFTER-VERSION-MAPPING",
+      "classification": "current_design_carrier_internal_mapping_difference",
+      "targets": [
+        "ERP-CREDIT-01"
+      ],
+      "claim": "MULTI-02三个CAS的fullInput版本来自ProtectedBefore字段，而准确conditionalAfter分别要求work.revision、budget.head_version、entitlement.projection_revision加1；updated_at也须按实际更新语义对齐。",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "line": 40394,
+          "claim": "op68 fullInput.revision直接采用ProtectedBefore.revision；before/conditionalAfter L40474/L40525为3/4。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "line": 45195,
+          "claim": "op70 head_version直接来自原保护行；conditionalAfter为2→3。"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/commercial-cache/credit-stage100/members/candidate/RECOVERY/MULTI-02_COMPLETE_SOURCE_LEDGER_AND_CUT.json",
+          "line": 46933,
+          "claim": "op71 projection_revision直接来自原保护行；conditionalAfter为2→3。"
+        }
+      ],
+      "impact": "不能同时把typed fullInput当最终DML RHS、又声称实现不同的after-image。需要有界明确版本/更新时间producer，opaque rowversion仍必须取真实OUTPUT。",
+      "exit_condition": "Owner对齐typed fullInput、conditionalAfter、reader与callback所需字段；保留同一B原APPLIED观察及四CAS原子性，不重派。",
+      "runtime_status": "NOT_RUN",
+      "design_status": "NEEDS_BOUNDED_MAPPING_RECONCILIATION"
+    }
+  ]
+}

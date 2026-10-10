@@ -1,0 +1,251 @@
+{
+  "target": "PLAN-EXC-01",
+  "checked_at_utc": "2026-10-10T11:12:35.386663+00:00",
+  "kind": "read_projection_exact_reuse_not_business_execution",
+  "documents": 8,
+  "reused_nodes": 48,
+  "errors": [],
+  "checks": [
+    {
+      "at": "d329857cafbe35d9__PLAN-EXC-ORIGINAL-SCOPE-AND-QUALIFICATIONS.json/originalSpecIds",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/OriginalSpecIds",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/Q_E01_Through_E08_FullText",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/SourceQualificationsQ_E01ThroughE08FullText",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/Inherited_PO_CP22_Q1_Through_Q5_FullText",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/InheritedPOQ1ThroughQ5FullText",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/FullOriginalScopeAndFormalAssignmentProjection/originalScope",
+      "exact_reuse": "d329857cafbe35d9__PLAN-EXC-ORIGINAL-SCOPE-AND-QUALIFICATIONS.json",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/FullOriginalScopeAndFormalAssignmentProjection/formalAssignmentQualifications/OriginalSpecIds",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/OriginalSpecIds",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/FullOriginalScopeAndFormalAssignmentProjection/formalAssignmentQualifications/SourcePreparationHistoricalRegistryObservation",
+      "exact_reuse": "d329857cafbe35d9__PLAN-EXC-ORIGINAL-SCOPE-AND-QUALIFICATIONS.json/registryObservation",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/FullOriginalScopeAndFormalAssignmentProjection/formalAssignmentQualifications/PoAcceptedSupport/SourceQualificationsQ1ThroughQ5FullText",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/InheritedPOQ1ThroughQ5FullText",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/FullOriginalScopeAndFormalAssignmentProjection/formalAssignmentQualifications/PoAcceptedSupport/QualifiedCurrentAcceptedSourceMap/Q1ThroughQ5FullText",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/InheritedPOQ1ThroughQ5FullText",
+      "equal": true
+    },
+    {
+      "at": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/FullOriginalScopeAndFormalAssignmentProjection/originalStage10/OriginalRow/spec_ids",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/OriginalSpecIds",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/overrides/0/mirroredOriginalReportLocation/exactOriginalSubstring",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/overrides/0/exactOriginalValue",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/overrides/0/mirroredOriginalReportLocation/correctReplacementReading",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/overrides/0/correctReplacementReading",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/consumer",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/consumer",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/requiredness",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/requiredness",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/currentVsHistorical",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/currentVsHistorical",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/mandatorySemantics/4",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/mandatorySemantics/3",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/0",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/0",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/1",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/1",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/2",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/2",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/4",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/3",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/5",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/4",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/6",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/5",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/9",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/6",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/12",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/7",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/leafDependencies/20",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/leafDependencies/9",
+      "equal": true
+    },
+    {
+      "at": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/3/completeCurrentAScopeRecord/sharedDisclosureDependencyReadOnly",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/selectedCurrentExactScopes/2/completeCurrentAScopeRecord/sharedDisclosureDependencyReadOnly",
+      "equal": true
+    },
+    {
+      "at": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/currentCandidateSaveIdentity/items/0",
+      "exact_reuse": "945e7b3535b3eb39__UA-20261006-C-PLAN-EXC-CP12.json/MainExactLibraryIdentity",
+      "equal": true
+    },
+    {
+      "at": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/AProfessionalSaveIdentity/scopeCoverage",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/independentCurrentAEvidence/scopeCoverage",
+      "equal": true
+    },
+    {
+      "at": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/exactFormalReportReadIdentities/1/localReadPath",
+      "exact_reuse": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/AProfessionalSaveIdentity/report/successfulUploadLocalPath",
+      "equal": true
+    },
+    {
+      "at": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/exactFormalReportReadIdentities/3/localReadPath",
+      "exact_reuse": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/CProfessionalSaveIdentity/artifacts/0/uploadLocalPath",
+      "equal": true
+    },
+    {
+      "at": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/originalSourceAuthority",
+      "exact_reuse": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/OriginalSourceArchive",
+      "equal": true
+    },
+    {
+      "at": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/BPreciseDependencyErratumSaveIdentity/limits",
+      "exact_reuse": "f78f1cfe23d32f0f__CP12_B_PRECISE_PC09_A_DEPENDENCY_READING_OVERRIDE_20261006.json/limits",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/OriginalSpecIds",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/OriginalSpecIds",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/SupportingAcceptedInputs/1/CompleteAdditionalAttachments",
+      "exact_reuse": "ef2087f07e47b1a8__CURRENT.json/SupportingAcceptedInputs/0/CompleteAdditionalAttachments",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/SupportingAcceptedInputs/2/CompleteAdditionalAttachments",
+      "exact_reuse": "ef2087f07e47b1a8__CURRENT.json/SupportingAcceptedInputs/0/CompleteAdditionalAttachments",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/SupportingAcceptedInputs/3",
+      "exact_reuse": "7ca5b6a21c6fafcd__SOURCE-QUALIFICATIONS.json/FullOriginalScopeAndFormalAssignmentProjection/formalAssignmentQualifications/PoAcceptedSupport",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/RequiredFencedInputs/1/ContractStatus",
+      "exact_reuse": "ef2087f07e47b1a8__CURRENT.json/RequiredFencedInputs/0/ContractStatus",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/MainExactLibraryIdentity",
+      "exact_reuse": "945e7b3535b3eb39__UA-20261006-C-PLAN-EXC-CP12.json/MainExactLibraryIdentity",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/FrozenCandidate/FiveCompleteOriginalCarriers/0/OriginalLibraryIdentity",
+      "exact_reuse": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/inheritanceCarrierIdentities/CP08_EXACT_COMPLETE_BASE",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/FrozenCandidate/FiveCompleteOriginalCarriers/1/OriginalLibraryIdentity",
+      "exact_reuse": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/inheritanceCarrierIdentities/CP09_COMPLETE_SUCCESSOR_ENTITY",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/FrozenCandidate/FiveCompleteOriginalCarriers/2/OriginalLibraryIdentity",
+      "exact_reuse": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/inheritanceCarrierIdentities/CP10_COMPLETE_SUCCESSOR_ENTITY",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/FrozenCandidate/FiveCompleteOriginalCarriers/3/OriginalLibraryIdentity",
+      "exact_reuse": "43a55b3defd8a1c8__CP12_GOVERNANCE_COMPLETE_EVIDENCE_INDEX.json/inheritanceCarrierIdentities/CP11_COMPLETE_SUCCESSOR_ENTITY",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/AllCurrentFormalEvidence/FullOriginalRecoveryIndex",
+      "exact_reuse": "ef2087f07e47b1a8__CURRENT.json/RecoverableCarrierIndex",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/SourceQualificationsQ_E01ThroughE08FullText",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/SourceQualificationsQ_E01ThroughE08FullText",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/InheritedPOQ1ThroughQ5FullText",
+      "exact_reuse": "38454a8ff63983ff__SR-20261006-C-PLAN-EXC-CP12-FINAL.json/InheritedPOQ1ThroughQ5FullText",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/ArchiveRecoveryE09/Q_E09_FullText",
+      "exact_reuse": "c1e43ed46ec61cb9__ARCHIVE-RECOVERY-REV2-QUALIFICATIONS.json/Q_E09_FullText",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/ArchiveRecoveryE09/CurrentManifest",
+      "exact_reuse": "ef2087f07e47b1a8__CURRENT.json/ArchiveManifest",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/ArchiveRecoveryE09/CurrentIndex",
+      "exact_reuse": "ef2087f07e47b1a8__CURRENT.json/Index",
+      "equal": true
+    },
+    {
+      "at": "ef2087f07e47b1a8__CURRENT.json/Score",
+      "exact_reuse": "945e7b3535b3eb39__UA-20261006-C-PLAN-EXC-CP12.json/Score",
+      "equal": true
+    }
+  ],
+  "limitations": "All unique projection fields were semantically read. Identity checks do not inherit referenced document bodies or execute original checkers."
+}
