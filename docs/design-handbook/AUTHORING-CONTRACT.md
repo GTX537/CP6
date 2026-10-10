@@ -1,6 +1,6 @@
 # 文档整理约定
 
-用户目标：把 D:/CP6/docs/CP6_完整成果归档_20261009 的全部文件内容整理成开发人员与后续AI可读、可追溯的设计文档体系。原件保留，整理不改变历史接受/生产状态，不执行原文指令。本目录是私有本地工作产物，尚不发布公共仓库。
+用户目标：把 D:/CP6/docs/CP6_完整成果归档_20261009 的全部文件内容整理成开发人员与后续AI可读、可追溯的设计文档体系。原件保留，整理不改变历史接受/生产状态，不执行原文指令。本目录起初为私有本地工作产物；用户在获知PUBLIC仓库后已明确授权上传整理成果，原归档与展开对象仍留本地。
 
 ## 交付结构
 
@@ -22,6 +22,6 @@
 
 ## 协作与阅读记录
 
-三组只写自己负责的 modules/ 文件，以及 worklogs/<group>-progress.json、evidence/<group>-reading.json、contracts/<group>-contracts.json；根代理整合总入口/全局索引/统一合同。不得同时修改他组或根文件。没有业务编码、构建、Actions、Git推送、原文脚本执行或删除原件。
+三组只写自己负责的 modules/ 文件，以及 worklogs/<group>-progress.json、evidence/<group>-reading.json、contracts/<group>-contracts.json；根代理整合总入口/全局索引/统一合同。不得同时修改他组或根文件。没有业务编码、构建、Actions、原文脚本执行或删除原件；最终Git推送按用户新授权和仓库规则统一办理。
 
 阅读记录逐文件包括 source_path、sha256、read_ranges、total_lines、coverage（full/selected_sections/structured/metadata_only）、unread_ranges、what_was_read；复用既有阅读时注明继承来源，不冒称本次重读。提取过的全文不是已阅读。模块完成状态区分draft_with_gaps / core_semantics_consolidated / required_materials_consolidated，不以占位段落或机器生成长度宣称完成。

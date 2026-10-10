@@ -98,7 +98,7 @@ readme = f'''# CP6开发设计文档
 | 仍需找回的准确原件 | [缺件清单]({root}/evidence/missing-source-register.csv) |
 | 商业 / 执行 / 公共平台合同 | [商业]({root}/contracts/commercial-contracts.json) / [执行]({root}/contracts/operations-contracts.json) / [平台工程]({root}/contracts/platform-engineering-contracts.json) |
 
-原件保存在`D:/CP6/docs/CP6_完整成果归档_20261009`，展开阅读对象保存在`D:/CP6-archives/consolidation-20261010`。本目录是本地私有设计整理，原归档与上一轮整合报告保持原身份；没有业务编码、业务测试、Actions、数据库迁移、发布或部署。
+原件保存在`D:/CP6/docs/CP6_完整成果归档_20261009`，展开阅读对象保存在`D:/CP6-archives/consolidation-20261010`。本目录是可追溯的设计整理成果，用户已明确授权上传 CP6 公开仓库。原归档与展开阅读对象仍保留本地，引用这些材料须使用本地资料；没有业务编码、业务测试、Actions、数据库迁移、发布或部署。
 
 整理目标、验收与实际完成条件见[整理计划]({root}/整理计划.md)。源文档中的历史工作指令不构成当前授权。开发任务仍遵守D:/CP6的AGENTS.md规则。
 '''

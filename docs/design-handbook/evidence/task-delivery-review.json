@@ -6,7 +6,7 @@
   "available_but_review_missing_targets": [
     "WMS-DEL-01"
   ],
-  "repo_delivery": "local_private_branch_only_not_pushed_or_merged",
+  "repo_delivery": "user_authorized_public_upload_normal_pr_and_main_verification_pending",
   "base_and_remote_main": "90c871fe571fd6b390f53e8678376d7ce60bcb60",
   "remote_visibility": "PUBLIC",
   "original_archive_snapshot_unchanged": true,
@@ -84,5 +84,28 @@
     "cancelled": 0,
     "workflow_triggers_changed": 0
   },
-  "archive_scripts_executed": false
+  "archive_scripts_executed": false,
+  "public_upload_authorization": {
+    "at_date": "2026-10-10",
+    "user_text": "可以上传",
+    "context": "User replied after assistant explicitly stated files had not been uploaded to the PUBLIC CP6 repository. Scope is the prepared handbook and required project-memory updates; original archive and expanded objects remain local."
+  },
+  "public_upload_preflight": {
+    "checked_at_utc": "2026-10-10T16:35:14.414701+00:00",
+    "remote_main": "90c871fe571fd6b390f53e8678376d7ce60bcb60",
+    "workflow_files_unchanged": 13,
+    "workflow_dispatch_only": 12,
+    "tag_only_workflows": {
+      "r2-candidate.yml": "push.tags v*.*.*"
+    },
+    "branch_push_pr_merge_automatic_github_actions": false,
+    "queued_or_running_github_runs": 0,
+    "required_status_checks": null,
+    "other_branch_protections_preserved": true,
+    "azure_repository_definitions": "4 YAML files unchanged; direct trigger/pr none. DEV subscribes to upstream main CI completion; no bridge run or artifact is produced by this documentation push. Azure UI overrides not verified.",
+    "release_tags_pushed": false,
+    "workflow_configuration_changes": 0,
+    "actions_started": 0,
+    "actions_cancelled": 0
+  }
 }

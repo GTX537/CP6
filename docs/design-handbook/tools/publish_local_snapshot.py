@@ -1,4 +1,4 @@
-"""Copy a private local handbook snapshot; never overwrite unknown or user-modified files."""
+"""Copy a local handbook snapshot; never overwrite unknown or user-modified files."""
 import argparse
 import hashlib
 import json
@@ -45,7 +45,7 @@ for r in files:
     assert hashlib.sha256(dst.read_bytes()).hexdigest() == r['sha256']
 navigation = json.loads((source / 'indexes/module-navigation.json').read_text(encoding='utf-8'))['summary']
 available_complete = navigation.get('available_current_materials_consolidated', False)
-manifest = {'kind': 'private_local_design_delivery_with_declared_gaps' if available_complete else 'private_local_in_progress_snapshot', 'created_at_utc': datetime.now(timezone.utc).isoformat(), 'source': source.as_posix(), 'destination': dest.as_posix(), 'available_current_materials_consolidated': available_complete, 'all_required_materials_present': False, 'files': files, 'retained_previous_files_not_in_current_source': sorted(set(owned) - {r['path'] for r in files}), 'verification': 'Each copied file SHA-256 checked against prepared source. Semantic scope comes from the separate reading ledgers; missing originals and runtime acceptance remain separate.'}
+manifest = {'kind': 'local_design_delivery_with_declared_gaps' if available_complete else 'local_in_progress_snapshot', 'created_at_utc': datetime.now(timezone.utc).isoformat(), 'source': source.as_posix(), 'destination': dest.as_posix(), 'available_current_materials_consolidated': available_complete, 'all_required_materials_present': False, 'files': files, 'retained_previous_files_not_in_current_source': sorted(set(owned) - {r['path'] for r in files}), 'verification': 'Each copied file SHA-256 checked against prepared source. Semantic scope comes from the separate reading ledgers; missing originals and runtime acceptance remain separate.'}
 manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 (dest / 'DELIVERY-SHA256SUMS.txt').write_text(''.join(f'{r["sha256"]}  {r["path"]}\n' for r in files), encoding='utf-8')
 print(json.dumps({'copied_or_confirmed': len(files), 'bytes': sum(r['bytes'] for r in files), 'destination': dest.as_posix(), 'kind': manifest['kind']}, ensure_ascii=False))
