@@ -1,0 +1,5181 @@
+{
+  "target_id": "PLAN-PO-01",
+  "scope": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA and two CP21 current normal inputs; independent supplement to nine CP19 files and root twenty files",
+  "status": "REQUIRED_SUBSET_SEMANTICS_CONSOLIDATED",
+  "required_subset_consolidated": true,
+  "source_files": [
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "sha256": "f41b075008395c8612a6c2e08d8ef4b709fc6427fa9a3e75038597c1f5c16b8e",
+      "bytes": 32570574,
+      "total_lines": 386393,
+      "coverage": "structured",
+      "semantic_status": "CURRENT_CASES_AND_ALL_NOVEL_NODE_FIELDS_READ_WITH_TEAM_EXACT_BASE_REUSE",
+      "unread_current_semantic_sections": [],
+      "read_ranges": [
+        {
+          "json_pointer": "/status",
+          "line": 2,
+          "end_line": 2,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/worlds",
+          "line": 3,
+          "end_line": 386386,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/originalThreeCorrectedWindows",
+          "line": 386387,
+          "end_line": 386387,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/exactInvariant",
+          "line": 386388,
+          "end_line": 386388,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/business",
+          "line": 386389,
+          "end_line": 386389,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/runtime",
+          "line": 386390,
+          "end_line": 386390,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/authorChecker",
+          "line": 386391,
+          "end_line": 386391,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/formalIncrement",
+          "line": 386392,
+          "end_line": 386392,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "sha256": "d611b467823424d2eff18d72fd4af5793f423f72425faae7a501706194fac2ce",
+      "bytes": 4159712,
+      "total_lines": 49847,
+      "coverage": "structured",
+      "semantic_status": "CURRENT_CASES_AND_ALL_NOVEL_NODE_FIELDS_READ_WITH_TEAM_EXACT_BASE_REUSE",
+      "unread_current_semantic_sections": [],
+      "read_ranges": [
+        {
+          "json_pointer": "/status",
+          "line": 2,
+          "end_line": 2,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/worlds",
+          "line": 3,
+          "end_line": 49841,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/originalReadScope",
+          "line": 49842,
+          "end_line": 49842,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/business",
+          "line": 49843,
+          "end_line": 49843,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/runtime",
+          "line": 49844,
+          "end_line": 49844,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/authorChecker",
+          "line": 49845,
+          "end_line": 49845,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/formalIncrement",
+          "line": 49846,
+          "end_line": 49846,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        }
+      ]
+    },
+    {
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "sha256": "2ce3d53b3bafc329fe2bc386005ee94f714cd8a3a18df45e276fe964e5d7cbce",
+      "bytes": 1626512,
+      "total_lines": 20747,
+      "coverage": "structured",
+      "semantic_status": "CURRENT_CASES_AND_ALL_NOVEL_NODE_FIELDS_READ_WITH_TEAM_EXACT_BASE_REUSE",
+      "unread_current_semantic_sections": [],
+      "read_ranges": [
+        {
+          "json_pointer": "/status",
+          "line": 2,
+          "end_line": 2,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/case",
+          "line": 3,
+          "end_line": 20740,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/logicalBridgeContract",
+          "line": 20741,
+          "end_line": 20741,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/noRawSourceClipOrRefAlias",
+          "line": 20742,
+          "end_line": 20742,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/business",
+          "line": 20743,
+          "end_line": 20743,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/runtime",
+          "line": 20744,
+          "end_line": 20744,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/authorChecker",
+          "line": 20745,
+          "end_line": 20745,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        },
+        {
+          "json_pointer": "/formalIncrement",
+          "line": 20746,
+          "end_line": 20746,
+          "notes": "All current case semantics and original new fields/deltas read; repeated base objects reused from root normal N0–3106 and CP19 evidence by exact equality."
+        }
+      ]
+    }
+  ],
+  "node_read_ranges": [
+    {
+      "node": "N3107",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues/@RequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues/@RequestCanonical",
+      "line": 6187,
+      "end_line": 6187,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3108",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues/@TerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues/@TerminalCanonical",
+      "line": 6189,
+      "end_line": 6189,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3109",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues/@OutboxPayload",
+      "line": 6194,
+      "end_line": 6194,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3110",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/actual23ParameterValues",
+      "line": 6171,
+      "end_line": 6195,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3111",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/preRows",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/preRows",
+      "line": 6320,
+      "end_line": 12373,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3112",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/0/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/0/after",
+      "line": 12385,
+      "end_line": 12395,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3113",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/0",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/0",
+      "line": 12375,
+      "end_line": 12396,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3114",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/1/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/1/after",
+      "line": 12415,
+      "end_line": 12424,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3115",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/1",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/1",
+      "line": 12397,
+      "end_line": 12425,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3116",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/2/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/2/after",
+      "line": 12435,
+      "end_line": 12451,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3117",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/2",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/2",
+      "line": 12426,
+      "end_line": 12452,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3118",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/3/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/3/after",
+      "line": 12462,
+      "end_line": 12474,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3119",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/3",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/3",
+      "line": 12453,
+      "end_line": 12475,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3120",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/4/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/4/after",
+      "line": 12485,
+      "end_line": 12501,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3121",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/writes/4",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/writes/4",
+      "line": 12476,
+      "end_line": 12502,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3122",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover/postRows",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover/postRows",
+      "line": 12504,
+      "end_line": 18627,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3123",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/cutover",
+      "source_container_pointer": "/worlds/0/fullPrefix/cutover",
+      "line": 6169,
+      "end_line": 18629,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3124",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues/@RequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues/@RequestCanonical",
+      "line": 18649,
+      "end_line": 18649,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3125",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues/@TerminalCanonical/$decoded/result",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues/@TerminalCanonical",
+      "line": 18651,
+      "end_line": 18651,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3126",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues/@TerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues/@TerminalCanonical",
+      "line": 18651,
+      "end_line": 18651,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3127",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/actual24ParameterValues",
+      "line": 18632,
+      "end_line": 18657,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3128",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/writes/0/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/writes/0/after",
+      "line": 24824,
+      "end_line": 24840,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3129",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/writes/0",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/writes/0",
+      "line": 24815,
+      "end_line": 24841,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3130",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/writes/1/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/writes/1/after",
+      "line": 24851,
+      "end_line": 24878,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3131",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/writes/1",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/writes/1",
+      "line": 24842,
+      "end_line": 24879,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3132",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/writes/2/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/writes/2/after",
+      "line": 24889,
+      "end_line": 24901,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3133",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/writes/2",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/writes/2",
+      "line": 24880,
+      "end_line": 24902,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3134",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover/postRows",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover/postRows",
+      "line": 24904,
+      "end_line": 31094,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3135",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/takeover",
+      "source_container_pointer": "/worlds/0/fullPrefix/takeover",
+      "line": 18630,
+      "end_line": 31095,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3136",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/actual22ParameterValues",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/actual22ParameterValues",
+      "line": 31098,
+      "end_line": 31121,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3137",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/0/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/0/after",
+      "line": 37343,
+      "end_line": 37362,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3138",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/0",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/0",
+      "line": 37314,
+      "end_line": 37363,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3139",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/1/after",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/1/after",
+      "line": 37389,
+      "end_line": 37405,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3140",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/1",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/writes/1",
+      "line": 37364,
+      "end_line": 37406,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3141",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/postRows",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/postRows",
+      "line": 37408,
+      "end_line": 43598,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3142",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/tuple",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim/tuple",
+      "line": 43599,
+      "end_line": 43607,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3143",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim",
+      "source_container_pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim",
+      "line": 31096,
+      "end_line": 43611,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3144",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/fullPrefix",
+      "source_container_pointer": "/worlds/0/fullPrefix",
+      "line": 8,
+      "end_line": 49804,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3145",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/originalNativeFrame",
+      "source_container_pointer": "/worlds/0/originalNativeFrame",
+      "line": 49805,
+      "end_line": 49814,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3146",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/capturedNativeResult",
+      "source_container_pointer": "/worlds/0/capturedNativeResult",
+      "line": 49815,
+      "end_line": 49841,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3147",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded/expectedHeads",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 49856,
+      "end_line": 49856,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3148",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 49856,
+      "end_line": 49856,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3149",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 49858,
+      "end_line": 49858,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3150",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 49858,
+      "end_line": 49858,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3151",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 49859,
+      "end_line": 49859,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3152",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 49884,
+      "end_line": 49884,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3153",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical",
+      "line": 49897,
+      "end_line": 49897,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3154",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 49906,
+      "end_line": 49906,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3155",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/0/actual62Consumption/actual62ParameterValues",
+      "line": 49845,
+      "end_line": 49914,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3156",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/0/after",
+      "line": 56265,
+      "end_line": 56281,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3157",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/0",
+      "line": 56256,
+      "end_line": 56282,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3158",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/1/after",
+      "line": 56294,
+      "end_line": 56307,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3159",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/1",
+      "line": 56283,
+      "end_line": 56308,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3160",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/2/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/2/after",
+      "line": 56320,
+      "end_line": 56338,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3161",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/2",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/2",
+      "line": 56309,
+      "end_line": 56339,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3162",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/3/after",
+      "line": 56369,
+      "end_line": 56388,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3163",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/3",
+      "line": 56340,
+      "end_line": 56389,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3164",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/4/after",
+      "line": 56419,
+      "end_line": 56438,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3165",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/4",
+      "line": 56390,
+      "end_line": 56439,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3166",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/5/after",
+      "line": 56462,
+      "end_line": 56475,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3167",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/5",
+      "line": 56440,
+      "end_line": 56476,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3168",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/6/after",
+      "line": 56501,
+      "end_line": 56516,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3169",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/6",
+      "line": 56477,
+      "end_line": 56517,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3170",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/7/after",
+      "line": 56541,
+      "end_line": 56553,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3171",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/7",
+      "line": 56518,
+      "end_line": 56554,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3172",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/8/after",
+      "line": 56576,
+      "end_line": 56588,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3173",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/8",
+      "line": 56555,
+      "end_line": 56589,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3174",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/9/after",
+      "line": 56600,
+      "end_line": 56615,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3175",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/9",
+      "line": 56590,
+      "end_line": 56616,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3176",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/10/after",
+      "line": 56639,
+      "end_line": 56652,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3177",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/10",
+      "line": 56617,
+      "end_line": 56653,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3178",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/11/after",
+      "line": 56663,
+      "end_line": 56690,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3179",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/11",
+      "line": 56654,
+      "end_line": 56691,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3180",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/12/after",
+      "line": 56701,
+      "end_line": 56713,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3181",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/12",
+      "line": 56692,
+      "end_line": 56714,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3182",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/13/after",
+      "line": 56724,
+      "end_line": 56740,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3183",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes/13",
+      "line": 56715,
+      "end_line": 56741,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3184",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/0/actual62Consumption/writes",
+      "line": 56255,
+      "end_line": 56742,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3185",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/0/actual62Consumption/postRows",
+      "line": 56743,
+      "end_line": 63078,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3186",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual62Consumption",
+      "source_container_pointer": "/worlds/0/actual62Consumption",
+      "line": 49843,
+      "end_line": 63110,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3187",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/newHeadExactTuple",
+      "source_container_pointer": "/worlds/0/newHeadExactTuple",
+      "line": 63111,
+      "end_line": 63123,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3188",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0",
+      "source_container_pointer": "/worlds/0",
+      "line": 4,
+      "end_line": 69480,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3189",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/capturedNativeResult",
+      "source_container_pointer": "/worlds/1/capturedNativeResult",
+      "line": 119292,
+      "end_line": 119318,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3190",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 119333,
+      "end_line": 119333,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3191",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 119335,
+      "end_line": 119335,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3192",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 119335,
+      "end_line": 119335,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3193",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 119336,
+      "end_line": 119336,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3194",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 119361,
+      "end_line": 119361,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3195",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical/$decoded",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical",
+      "line": 119374,
+      "end_line": 119374,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3196",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 119383,
+      "end_line": 119383,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3197",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/1/actual62Consumption/actual62ParameterValues",
+      "line": 119322,
+      "end_line": 119391,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3198",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/0/after",
+      "line": 125740,
+      "end_line": 125756,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3199",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/0",
+      "line": 125731,
+      "end_line": 125757,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3200",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/1/after",
+      "line": 125769,
+      "end_line": 125782,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3201",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/1",
+      "line": 125758,
+      "end_line": 125783,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3202",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/2/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/2/after",
+      "line": 125795,
+      "end_line": 125813,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3203",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/2",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/2",
+      "line": 125784,
+      "end_line": 125814,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3204",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/3/after",
+      "line": 125844,
+      "end_line": 125863,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3205",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/3",
+      "line": 125815,
+      "end_line": 125864,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3206",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/4/after",
+      "line": 125894,
+      "end_line": 125913,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3207",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/4",
+      "line": 125865,
+      "end_line": 125914,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3208",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/5/after",
+      "line": 125937,
+      "end_line": 125950,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3209",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/5",
+      "line": 125915,
+      "end_line": 125951,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3210",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/6/after",
+      "line": 125976,
+      "end_line": 125991,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3211",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/6",
+      "line": 125952,
+      "end_line": 125992,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3212",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/7/after",
+      "line": 126016,
+      "end_line": 126028,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3213",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/7",
+      "line": 125993,
+      "end_line": 126029,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3214",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/8/after",
+      "line": 126051,
+      "end_line": 126063,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3215",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/8",
+      "line": 126030,
+      "end_line": 126064,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3216",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/9/after",
+      "line": 126075,
+      "end_line": 126090,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3217",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/9",
+      "line": 126065,
+      "end_line": 126091,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3218",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/10/after",
+      "line": 126114,
+      "end_line": 126127,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3219",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/10",
+      "line": 126092,
+      "end_line": 126128,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3220",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/11/after",
+      "line": 126138,
+      "end_line": 126165,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3221",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/11",
+      "line": 126129,
+      "end_line": 126166,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3222",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/12/after",
+      "line": 126176,
+      "end_line": 126188,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3223",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/12",
+      "line": 126167,
+      "end_line": 126189,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3224",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/13/after",
+      "line": 126199,
+      "end_line": 126215,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3225",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes/13",
+      "line": 126190,
+      "end_line": 126216,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3226",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/1/actual62Consumption/writes",
+      "line": 125730,
+      "end_line": 126217,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3227",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/1/actual62Consumption/postRows",
+      "line": 126218,
+      "end_line": 132553,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3228",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/actual62Consumption",
+      "source_container_pointer": "/worlds/1/actual62Consumption",
+      "line": 119320,
+      "end_line": 132585,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3229",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/newHeadExactTuple",
+      "source_container_pointer": "/worlds/1/newHeadExactTuple",
+      "line": 132586,
+      "end_line": 132598,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3230",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1",
+      "source_container_pointer": "/worlds/1",
+      "line": 69481,
+      "end_line": 138955,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3231",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/capturedNativeResult",
+      "source_container_pointer": "/worlds/2/capturedNativeResult",
+      "line": 188767,
+      "end_line": 188774,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3232",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 188789,
+      "end_line": 188789,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3233",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 188791,
+      "end_line": 188791,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3234",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 188791,
+      "end_line": 188791,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3235",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 188792,
+      "end_line": 188792,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3236",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 188817,
+      "end_line": 188817,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3237",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical/$decoded",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical",
+      "line": 188830,
+      "end_line": 188830,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3238",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 188839,
+      "end_line": 188839,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3239",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/2/actual62Consumption/actual62ParameterValues",
+      "line": 188778,
+      "end_line": 188847,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3240",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/0/after",
+      "line": 195177,
+      "end_line": 195193,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3241",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/0",
+      "line": 195168,
+      "end_line": 195194,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3242",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/1/after",
+      "line": 195206,
+      "end_line": 195219,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3243",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/1",
+      "line": 195195,
+      "end_line": 195220,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3244",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/2/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/2/after",
+      "line": 195232,
+      "end_line": 195250,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3245",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/2",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/2",
+      "line": 195221,
+      "end_line": 195251,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3246",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/3/after",
+      "line": 195281,
+      "end_line": 195300,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3247",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/3",
+      "line": 195252,
+      "end_line": 195301,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3248",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/4/after",
+      "line": 195331,
+      "end_line": 195350,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3249",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/4",
+      "line": 195302,
+      "end_line": 195351,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3250",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/5/after",
+      "line": 195374,
+      "end_line": 195387,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3251",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/5",
+      "line": 195352,
+      "end_line": 195388,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3252",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/6/after",
+      "line": 195413,
+      "end_line": 195428,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3253",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/6",
+      "line": 195389,
+      "end_line": 195429,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3254",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/7/after",
+      "line": 195453,
+      "end_line": 195465,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3255",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/7",
+      "line": 195430,
+      "end_line": 195466,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3256",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/8/after",
+      "line": 195488,
+      "end_line": 195500,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3257",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/8",
+      "line": 195467,
+      "end_line": 195501,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3258",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/9/after",
+      "line": 195512,
+      "end_line": 195527,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3259",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/9",
+      "line": 195502,
+      "end_line": 195528,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3260",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/10/after",
+      "line": 195551,
+      "end_line": 195564,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3261",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/10",
+      "line": 195529,
+      "end_line": 195565,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3262",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/11/after",
+      "line": 195575,
+      "end_line": 195602,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3263",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/11",
+      "line": 195566,
+      "end_line": 195603,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3264",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/12/after",
+      "line": 195613,
+      "end_line": 195625,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3265",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/12",
+      "line": 195604,
+      "end_line": 195626,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3266",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/13/after",
+      "line": 195636,
+      "end_line": 195652,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3267",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes/13",
+      "line": 195627,
+      "end_line": 195653,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3268",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/2/actual62Consumption/writes",
+      "line": 195167,
+      "end_line": 195654,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3269",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/2/actual62Consumption/postRows",
+      "line": 195655,
+      "end_line": 201990,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3270",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual62Consumption",
+      "source_container_pointer": "/worlds/2/actual62Consumption",
+      "line": 188776,
+      "end_line": 202022,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3271",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/newHeadExactTuple",
+      "source_container_pointer": "/worlds/2/newHeadExactTuple",
+      "line": 202023,
+      "end_line": 202035,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3272",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/nextFirstOriginalClaim22/actual22ParameterValues",
+      "source_container_pointer": "/worlds/2/nextFirstOriginalClaim22/actual22ParameterValues",
+      "line": 202052,
+      "end_line": 202075,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3273",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/0/after",
+      "source_container_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/0/after",
+      "line": 208442,
+      "end_line": 208461,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3274",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/0",
+      "source_container_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/0",
+      "line": 208413,
+      "end_line": 208462,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3275",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/1/after",
+      "source_container_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/1/after",
+      "line": 208488,
+      "end_line": 208504,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3276",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/1",
+      "source_container_pointer": "/worlds/2/nextFirstOriginalClaim22/writes/1",
+      "line": 208463,
+      "end_line": 208505,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3277",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/nextFirstOriginalClaim22/postRows",
+      "source_container_pointer": "/worlds/2/nextFirstOriginalClaim22/postRows",
+      "line": 208507,
+      "end_line": 214842,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3278",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/nextFirstOriginalClaim22",
+      "source_container_pointer": "/worlds/2/nextFirstOriginalClaim22",
+      "line": 202050,
+      "end_line": 214855,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3279",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2",
+      "source_container_pointer": "/worlds/2",
+      "line": 138956,
+      "end_line": 221197,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3280",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 271024,
+      "end_line": 271024,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3281",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 271026,
+      "end_line": 271026,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3282",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 271026,
+      "end_line": 271026,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3283",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 271027,
+      "end_line": 271027,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3284",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 271052,
+      "end_line": 271052,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3285",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical/$decoded",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical",
+      "line": 271065,
+      "end_line": 271065,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3286",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 271074,
+      "end_line": 271074,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3287",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/3/actual62Consumption/actual62ParameterValues",
+      "line": 271013,
+      "end_line": 271082,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3288",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/0/after",
+      "line": 277411,
+      "end_line": 277427,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3289",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/0",
+      "line": 277402,
+      "end_line": 277428,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3290",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/1/after",
+      "line": 277440,
+      "end_line": 277453,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3291",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/1",
+      "line": 277429,
+      "end_line": 277454,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3292",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/3/after",
+      "line": 277515,
+      "end_line": 277534,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3293",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/3",
+      "line": 277486,
+      "end_line": 277535,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3294",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/4/after",
+      "line": 277565,
+      "end_line": 277584,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3295",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/4",
+      "line": 277536,
+      "end_line": 277585,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3296",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/5/after",
+      "line": 277608,
+      "end_line": 277621,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3297",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/5",
+      "line": 277586,
+      "end_line": 277622,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3298",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/6/after",
+      "line": 277647,
+      "end_line": 277662,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3299",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/6",
+      "line": 277623,
+      "end_line": 277663,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3300",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/7/after",
+      "line": 277687,
+      "end_line": 277699,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3301",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/7",
+      "line": 277664,
+      "end_line": 277700,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3302",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/8/after",
+      "line": 277722,
+      "end_line": 277734,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3303",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/8",
+      "line": 277701,
+      "end_line": 277735,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3304",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/9/after",
+      "line": 277746,
+      "end_line": 277761,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3305",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/9",
+      "line": 277736,
+      "end_line": 277762,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3306",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/10/after",
+      "line": 277785,
+      "end_line": 277798,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3307",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/10",
+      "line": 277763,
+      "end_line": 277799,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3308",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/11/after",
+      "line": 277809,
+      "end_line": 277836,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3309",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/11",
+      "line": 277800,
+      "end_line": 277837,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3310",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/12/after",
+      "line": 277847,
+      "end_line": 277859,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3311",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/12",
+      "line": 277838,
+      "end_line": 277860,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3312",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/13/after",
+      "line": 277870,
+      "end_line": 277886,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3313",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes/13",
+      "line": 277861,
+      "end_line": 277887,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3314",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/3/actual62Consumption/writes",
+      "line": 277401,
+      "end_line": 277888,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3315",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/3/actual62Consumption/postRows",
+      "line": 277889,
+      "end_line": 284224,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3316",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/actual62Consumption",
+      "source_container_pointer": "/worlds/3/actual62Consumption",
+      "line": 271011,
+      "end_line": 284256,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3317",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/newHeadExactTuple",
+      "source_container_pointer": "/worlds/3/newHeadExactTuple",
+      "line": 284257,
+      "end_line": 284269,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3318",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3",
+      "source_container_pointer": "/worlds/3",
+      "line": 221198,
+      "end_line": 290626,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3319",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/originalNativeFrame",
+      "source_container_pointer": "/worlds/4/originalNativeFrame",
+      "line": 290632,
+      "end_line": 290641,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3320",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/capturedNativeResult/processing",
+      "source_container_pointer": "/worlds/4/capturedNativeResult/processing",
+      "line": 290645,
+      "end_line": 290655,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3321",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 290671,
+      "end_line": 290671,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3322",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 290673,
+      "end_line": 290673,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3323",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 290673,
+      "end_line": 290673,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3324",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 290674,
+      "end_line": 290674,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3325",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 290699,
+      "end_line": 290699,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3326",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 290721,
+      "end_line": 290721,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3327",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/4/actual62Consumption/actual62ParameterValues",
+      "line": 290660,
+      "end_line": 290729,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3328",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/344/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/344/row",
+      "line": 296263,
+      "end_line": 296278,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3329",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/350/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/350/row",
+      "line": 296378,
+      "end_line": 296391,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3330",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/352/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/352/row",
+      "line": 296412,
+      "end_line": 296431,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3331",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/353/row/RequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/353/row/RequestCanonical",
+      "line": 296449,
+      "end_line": 296449,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3332",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/353/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/353/row",
+      "line": 296435,
+      "end_line": 296454,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3333",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/364/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/364/row",
+      "line": 296681,
+      "end_line": 296693,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3334",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/374/row/BodyJson/$decoded/bodyCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/374/row/BodyJson",
+      "line": 296906,
+      "end_line": 296906,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3335",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/374/row/BodyJson/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/374/row/BodyJson",
+      "line": 296906,
+      "end_line": 296906,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3336",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/374/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/374/row",
+      "line": 296898,
+      "end_line": 296908,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3337",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/375/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/375/row",
+      "line": 296912,
+      "end_line": 296923,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3338",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/376/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/376/row",
+      "line": 296927,
+      "end_line": 296940,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3339",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/377/row/BodyJson/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/377/row/BodyJson",
+      "line": 296952,
+      "end_line": 296952,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3340",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/377/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/377/row",
+      "line": 296944,
+      "end_line": 296954,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3341",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/378/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/378/row",
+      "line": 296958,
+      "end_line": 296969,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3342",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/379/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/379/row",
+      "line": 296973,
+      "end_line": 296986,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3343",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/380/row/BodyJson/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/380/row/BodyJson",
+      "line": 296998,
+      "end_line": 296998,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3344",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/380/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/380/row",
+      "line": 296990,
+      "end_line": 297000,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3345",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/381/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/381/row",
+      "line": 297004,
+      "end_line": 297015,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3346",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/382/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/382/row",
+      "line": 297019,
+      "end_line": 297032,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3347",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/383/row/BodyJson/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/383/row/BodyJson",
+      "line": 297044,
+      "end_line": 297044,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3348",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/383/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/383/row",
+      "line": 297036,
+      "end_line": 297046,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3349",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/384/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/384/row",
+      "line": 297050,
+      "end_line": 297061,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3350",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/385/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/385/row",
+      "line": 297065,
+      "end_line": 297078,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3351",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/386/row/RequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/386/row/RequestCanonical",
+      "line": 297091,
+      "end_line": 297091,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3352",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/386/row/TerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/386/row/TerminalCanonical",
+      "line": 297094,
+      "end_line": 297094,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3353",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/386/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/386/row",
+      "line": 297082,
+      "end_line": 297098,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3354",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/387/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/387/row",
+      "line": 297102,
+      "end_line": 297120,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3355",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/388/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/388/row",
+      "line": 297124,
+      "end_line": 297143,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3356",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/389/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/389/row",
+      "line": 297147,
+      "end_line": 297174,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3357",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/390/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/390/row",
+      "line": 297178,
+      "end_line": 297190,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3358",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/391/row/PayloadCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/391/row/PayloadCanonical",
+      "line": 297203,
+      "end_line": 297203,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3359",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/391/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/391/row",
+      "line": 297194,
+      "end_line": 297210,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3360",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/394/row/RequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/394/row/RequestCanonical",
+      "line": 297251,
+      "end_line": 297251,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3361",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/394/row/TerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/394/row/TerminalCanonical",
+      "line": 297254,
+      "end_line": 297254,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3362",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/394/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/394/row",
+      "line": 297242,
+      "end_line": 297258,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3363",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/395/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/395/row",
+      "line": 297262,
+      "end_line": 297274,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3364",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/396/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/396/row",
+      "line": 297278,
+      "end_line": 297294,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3365",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/397/row/RequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/397/row/RequestCanonical",
+      "line": 297307,
+      "end_line": 297307,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3366",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/397/row/TerminalCanonical/$decoded/result",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/397/row/TerminalCanonical",
+      "line": 297310,
+      "end_line": 297310,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3367",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/397/row/TerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/397/row/TerminalCanonical",
+      "line": 297310,
+      "end_line": 297310,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3368",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/397/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/397/row",
+      "line": 297298,
+      "end_line": 297314,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3369",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/398/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/398/row",
+      "line": 297318,
+      "end_line": 297345,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3370",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows/399/row",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows/399/row",
+      "line": 297349,
+      "end_line": 297361,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3371",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/preRows",
+      "source_container_pointer": "/worlds/4/actual62Consumption/preRows",
+      "line": 290857,
+      "end_line": 297363,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3372",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/0/after",
+      "line": 297374,
+      "end_line": 297390,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3373",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/0",
+      "line": 297365,
+      "end_line": 297391,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3374",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/1/after",
+      "line": 297403,
+      "end_line": 297416,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3375",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/1",
+      "line": 297392,
+      "end_line": 297417,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3376",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/2/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/2/after",
+      "line": 297429,
+      "end_line": 297447,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3377",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/2",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/2",
+      "line": 297418,
+      "end_line": 297448,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3378",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/3/after",
+      "line": 297478,
+      "end_line": 297497,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3379",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/3",
+      "line": 297449,
+      "end_line": 297498,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3380",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/4/after",
+      "line": 297528,
+      "end_line": 297547,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3381",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/4",
+      "line": 297499,
+      "end_line": 297548,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3382",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/5/after",
+      "line": 297571,
+      "end_line": 297584,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3383",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/5",
+      "line": 297549,
+      "end_line": 297585,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3384",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/6/after",
+      "line": 297610,
+      "end_line": 297625,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3385",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/6",
+      "line": 297586,
+      "end_line": 297626,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3386",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/7/after",
+      "line": 297650,
+      "end_line": 297662,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3387",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/7",
+      "line": 297627,
+      "end_line": 297663,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3388",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/8/after",
+      "line": 297685,
+      "end_line": 297697,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3389",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/8",
+      "line": 297664,
+      "end_line": 297698,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3390",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/9/after",
+      "line": 297709,
+      "end_line": 297724,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3391",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/9",
+      "line": 297699,
+      "end_line": 297725,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3392",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/10/after",
+      "line": 297748,
+      "end_line": 297761,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3393",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/10",
+      "line": 297726,
+      "end_line": 297762,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3394",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/11/after",
+      "line": 297772,
+      "end_line": 297799,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3395",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/11",
+      "line": 297763,
+      "end_line": 297800,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3396",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/12/after",
+      "line": 297810,
+      "end_line": 297822,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3397",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/12",
+      "line": 297801,
+      "end_line": 297823,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3398",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/13/after",
+      "line": 297833,
+      "end_line": 297849,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3399",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes/13",
+      "line": 297824,
+      "end_line": 297850,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3400",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/4/actual62Consumption/writes",
+      "line": 297364,
+      "end_line": 297851,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3401",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/4/actual62Consumption/postRows",
+      "line": 297852,
+      "end_line": 304503,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3402",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/actual62Consumption",
+      "source_container_pointer": "/worlds/4/actual62Consumption",
+      "line": 290658,
+      "end_line": 304535,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3403",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4/newHeadExactTuple",
+      "source_container_pointer": "/worlds/4/newHeadExactTuple",
+      "line": 304536,
+      "end_line": 304548,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3404",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/4",
+      "source_container_pointer": "/worlds/4",
+      "line": 290627,
+      "end_line": 311221,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3405",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 311255,
+      "end_line": 311255,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3406",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 311257,
+      "end_line": 311257,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3407",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 311257,
+      "end_line": 311257,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3408",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 311258,
+      "end_line": 311258,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3409",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 311283,
+      "end_line": 311283,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3410",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 311305,
+      "end_line": 311305,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3411",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/5/actual62Consumption/actual62ParameterValues",
+      "line": 311244,
+      "end_line": 311313,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3412",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/0/after",
+      "line": 317947,
+      "end_line": 317963,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3413",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/0",
+      "line": 317938,
+      "end_line": 317964,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3414",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/1/after",
+      "line": 317976,
+      "end_line": 317989,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3415",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/1",
+      "line": 317965,
+      "end_line": 317990,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3416",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/2/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/2/after",
+      "line": 318002,
+      "end_line": 318020,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3417",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/2",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/2",
+      "line": 317991,
+      "end_line": 318021,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3418",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/3/after",
+      "line": 318051,
+      "end_line": 318070,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3419",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/3",
+      "line": 318022,
+      "end_line": 318071,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3420",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/4/after",
+      "line": 318101,
+      "end_line": 318120,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3421",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/4",
+      "line": 318072,
+      "end_line": 318121,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3422",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/5/after",
+      "line": 318144,
+      "end_line": 318157,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3423",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/5",
+      "line": 318122,
+      "end_line": 318158,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3424",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/6/after",
+      "line": 318183,
+      "end_line": 318198,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3425",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/6",
+      "line": 318159,
+      "end_line": 318199,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3426",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/7/after",
+      "line": 318223,
+      "end_line": 318235,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3427",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/7",
+      "line": 318200,
+      "end_line": 318236,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3428",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/8/after",
+      "line": 318258,
+      "end_line": 318270,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3429",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/8",
+      "line": 318237,
+      "end_line": 318271,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3430",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/9/after",
+      "line": 318282,
+      "end_line": 318297,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3431",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/9",
+      "line": 318272,
+      "end_line": 318298,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3432",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/10/after",
+      "line": 318321,
+      "end_line": 318334,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3433",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/10",
+      "line": 318299,
+      "end_line": 318335,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3434",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/11/after",
+      "line": 318345,
+      "end_line": 318372,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3435",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/11",
+      "line": 318336,
+      "end_line": 318373,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3436",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/12/after",
+      "line": 318383,
+      "end_line": 318395,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3437",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/12",
+      "line": 318374,
+      "end_line": 318396,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3438",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/13/after",
+      "line": 318406,
+      "end_line": 318422,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3439",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes/13",
+      "line": 318397,
+      "end_line": 318423,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3440",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/5/actual62Consumption/writes",
+      "line": 317937,
+      "end_line": 318424,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3441",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/5/actual62Consumption/postRows",
+      "line": 318425,
+      "end_line": 325076,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3442",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/actual62Consumption",
+      "source_container_pointer": "/worlds/5/actual62Consumption",
+      "line": 311242,
+      "end_line": 325108,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3443",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5/newHeadExactTuple",
+      "source_container_pointer": "/worlds/5/newHeadExactTuple",
+      "line": 325109,
+      "end_line": 325121,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3444",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/5",
+      "source_container_pointer": "/worlds/5",
+      "line": 311222,
+      "end_line": 331794,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3445",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 331828,
+      "end_line": 331828,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3446",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 331830,
+      "end_line": 331830,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3447",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 331830,
+      "end_line": 331830,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3448",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 331831,
+      "end_line": 331831,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3449",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 331856,
+      "end_line": 331856,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3450",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 331878,
+      "end_line": 331878,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3451",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/6/actual62Consumption/actual62ParameterValues",
+      "line": 331817,
+      "end_line": 331886,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3452",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/0/after",
+      "line": 338520,
+      "end_line": 338536,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3453",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/0",
+      "line": 338511,
+      "end_line": 338537,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3454",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/1/after",
+      "line": 338549,
+      "end_line": 338562,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3455",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/1",
+      "line": 338538,
+      "end_line": 338563,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3456",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/2/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/2/after",
+      "line": 338575,
+      "end_line": 338593,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3457",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/2",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/2",
+      "line": 338564,
+      "end_line": 338594,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3458",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/3/after",
+      "line": 338624,
+      "end_line": 338643,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3459",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/3",
+      "line": 338595,
+      "end_line": 338644,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3460",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/4/after",
+      "line": 338674,
+      "end_line": 338693,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3461",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/4",
+      "line": 338645,
+      "end_line": 338694,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3462",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/5/after",
+      "line": 338717,
+      "end_line": 338730,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3463",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/5",
+      "line": 338695,
+      "end_line": 338731,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3464",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/6/after",
+      "line": 338756,
+      "end_line": 338771,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3465",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/6",
+      "line": 338732,
+      "end_line": 338772,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3466",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/7/after",
+      "line": 338796,
+      "end_line": 338808,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3467",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/7",
+      "line": 338773,
+      "end_line": 338809,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3468",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/8/after",
+      "line": 338831,
+      "end_line": 338843,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3469",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/8",
+      "line": 338810,
+      "end_line": 338844,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3470",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/9/after",
+      "line": 338855,
+      "end_line": 338870,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3471",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/9",
+      "line": 338845,
+      "end_line": 338871,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3472",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/10/after",
+      "line": 338894,
+      "end_line": 338907,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3473",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/10",
+      "line": 338872,
+      "end_line": 338908,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3474",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/11/after",
+      "line": 338918,
+      "end_line": 338945,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3475",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/11",
+      "line": 338909,
+      "end_line": 338946,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3476",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/12/after",
+      "line": 338956,
+      "end_line": 338968,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3477",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/12",
+      "line": 338947,
+      "end_line": 338969,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3478",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/13/after",
+      "line": 338979,
+      "end_line": 338995,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3479",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes/13",
+      "line": 338970,
+      "end_line": 338996,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3480",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/6/actual62Consumption/writes",
+      "line": 338510,
+      "end_line": 338997,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3481",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/6/actual62Consumption/postRows",
+      "line": 338998,
+      "end_line": 345649,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3482",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/actual62Consumption",
+      "source_container_pointer": "/worlds/6/actual62Consumption",
+      "line": 331815,
+      "end_line": 345681,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3483",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/newHeadExactTuple",
+      "source_container_pointer": "/worlds/6/newHeadExactTuple",
+      "line": 345682,
+      "end_line": 345694,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3484",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22/actual22ParameterValues",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22/actual22ParameterValues",
+      "line": 345711,
+      "end_line": 345734,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3485",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/0/after",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/0/after",
+      "line": 352417,
+      "end_line": 352436,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3486",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/0",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/0",
+      "line": 352388,
+      "end_line": 352437,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3487",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/1/after",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/1/after",
+      "line": 352463,
+      "end_line": 352479,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3488",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/1",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22/writes/1",
+      "line": 352438,
+      "end_line": 352480,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3489",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22/postRows",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22/postRows",
+      "line": 352482,
+      "end_line": 359133,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3490",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22/tuple",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22/tuple",
+      "line": 359134,
+      "end_line": 359142,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3491",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6/nextFirstOriginalClaim22",
+      "source_container_pointer": "/worlds/6/nextFirstOriginalClaim22",
+      "line": 345709,
+      "end_line": 359146,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3492",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/6",
+      "source_container_pointer": "/worlds/6",
+      "line": 331795,
+      "end_line": 365804,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3493",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical/$decoded",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalRequestCanonical",
+      "line": 365835,
+      "end_line": 365835,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3494",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded/problem",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 365837,
+      "end_line": 365837,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3495",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical/$decoded",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalTerminalPreimageCanonical",
+      "line": 365837,
+      "end_line": 365837,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3496",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical/$decoded",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@LocalTerminalCanonical",
+      "line": 365838,
+      "end_line": 365838,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3497",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson/$decoded",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@NewOrderBodyJson",
+      "line": 365863,
+      "end_line": 365863,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3498",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical/$decoded",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@OwnerLookupCanonical",
+      "line": 365876,
+      "end_line": 365876,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3499",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@OutboxPayload/$decoded",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues/@OutboxPayload",
+      "line": 365885,
+      "end_line": 365885,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3500",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues",
+      "source_container_pointer": "/worlds/7/actual62Consumption/actual62ParameterValues",
+      "line": 365824,
+      "end_line": 365893,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3501",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/0/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/0/after",
+      "line": 372538,
+      "end_line": 372554,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3502",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/0",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/0",
+      "line": 372529,
+      "end_line": 372555,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3503",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/1/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/1/after",
+      "line": 372567,
+      "end_line": 372580,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3504",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/1",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/1",
+      "line": 372556,
+      "end_line": 372581,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3505",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/3/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/3/after",
+      "line": 372642,
+      "end_line": 372661,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3506",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/3",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/3",
+      "line": 372613,
+      "end_line": 372662,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3507",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/4/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/4/after",
+      "line": 372692,
+      "end_line": 372711,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3508",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/4",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/4",
+      "line": 372663,
+      "end_line": 372712,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3509",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/5/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/5/after",
+      "line": 372735,
+      "end_line": 372748,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3510",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/5",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/5",
+      "line": 372713,
+      "end_line": 372749,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3511",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/6/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/6/after",
+      "line": 372774,
+      "end_line": 372789,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3512",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/6",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/6",
+      "line": 372750,
+      "end_line": 372790,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3513",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/7/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/7/after",
+      "line": 372814,
+      "end_line": 372826,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3514",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/7",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/7",
+      "line": 372791,
+      "end_line": 372827,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3515",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/8/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/8/after",
+      "line": 372849,
+      "end_line": 372861,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3516",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/8",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/8",
+      "line": 372828,
+      "end_line": 372862,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3517",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/9/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/9/after",
+      "line": 372873,
+      "end_line": 372888,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3518",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/9",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/9",
+      "line": 372863,
+      "end_line": 372889,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3519",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/10/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/10/after",
+      "line": 372912,
+      "end_line": 372925,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3520",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/10",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/10",
+      "line": 372890,
+      "end_line": 372926,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3521",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/11/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/11/after",
+      "line": 372936,
+      "end_line": 372963,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3522",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/11",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/11",
+      "line": 372927,
+      "end_line": 372964,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3523",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/12/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/12/after",
+      "line": 372974,
+      "end_line": 372986,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3524",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/12",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/12",
+      "line": 372965,
+      "end_line": 372987,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3525",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/13/after",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/13/after",
+      "line": 372997,
+      "end_line": 373013,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3526",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes/13",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes/13",
+      "line": 372988,
+      "end_line": 373014,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3527",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/writes",
+      "source_container_pointer": "/worlds/7/actual62Consumption/writes",
+      "line": 372528,
+      "end_line": 373015,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3528",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption/postRows",
+      "source_container_pointer": "/worlds/7/actual62Consumption/postRows",
+      "line": 373016,
+      "end_line": 379667,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3529",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/actual62Consumption",
+      "source_container_pointer": "/worlds/7/actual62Consumption",
+      "line": 365822,
+      "end_line": 379699,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3530",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7/newHeadExactTuple",
+      "source_container_pointer": "/worlds/7/newHeadExactTuple",
+      "line": 379700,
+      "end_line": 379712,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3531",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "/worlds/7",
+      "source_container_pointer": "/worlds/7",
+      "line": 365805,
+      "end_line": 386385,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3532",
+      "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+      "json_pointer": "",
+      "source_container_pointer": "",
+      "line": 1,
+      "end_line": 386393,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3533",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/conditionalCurrentCoreSdkSnapshot/authorityCanonical/$decoded",
+      "source_container_pointer": "/worlds/0/conditionalCurrentCoreSdkSnapshot/authorityCanonical",
+      "line": 40,
+      "end_line": 40,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3534",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/conditionalCurrentCoreSdkSnapshot",
+      "source_container_pointer": "/worlds/0/conditionalCurrentCoreSdkSnapshot",
+      "line": 12,
+      "end_line": 44,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3535",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/conditionalCorePermissionProjectionPreimage",
+      "source_container_pointer": "/worlds/0/conditionalCorePermissionProjectionPreimage",
+      "line": 45,
+      "end_line": 62,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3536",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/actual9ParameterValues",
+      "source_container_pointer": "/worlds/0/actual9ParameterValues",
+      "line": 65,
+      "end_line": 75,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3537",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/response/capturedFactRefs",
+      "source_container_pointer": "/worlds/0/response/capturedFactRefs",
+      "line": 12293,
+      "end_line": 12534,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3538",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/response",
+      "source_container_pointer": "/worlds/0/response",
+      "line": 12159,
+      "end_line": 12538,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3539",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0/conditionalMatchingCompositionRootPin",
+      "source_container_pointer": "/worlds/0/conditionalMatchingCompositionRootPin",
+      "line": 12544,
+      "end_line": 12550,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3540",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/0",
+      "source_container_pointer": "/worlds/0",
+      "line": 4,
+      "end_line": 12552,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3541",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/conditionalCurrentCoreSdkSnapshot/authorityCanonical/$decoded",
+      "source_container_pointer": "/worlds/1/conditionalCurrentCoreSdkSnapshot/authorityCanonical",
+      "line": 12585,
+      "end_line": 12585,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3542",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/conditionalCurrentCoreSdkSnapshot",
+      "source_container_pointer": "/worlds/1/conditionalCurrentCoreSdkSnapshot",
+      "line": 12561,
+      "end_line": 12589,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3543",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/conditionalCorePermissionProjectionPreimage",
+      "source_container_pointer": "/worlds/1/conditionalCorePermissionProjectionPreimage",
+      "line": 12590,
+      "end_line": 12603,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3544",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1/response",
+      "source_container_pointer": "/worlds/1/response",
+      "line": 24700,
+      "end_line": 24962,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3545",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/1",
+      "source_container_pointer": "/worlds/1",
+      "line": 12553,
+      "end_line": 24976,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3546",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/conditionalCurrentCoreSdkSnapshot/authorityCanonical/$decoded",
+      "source_container_pointer": "/worlds/2/conditionalCurrentCoreSdkSnapshot/authorityCanonical",
+      "line": 25013,
+      "end_line": 25013,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3547",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/conditionalCurrentCoreSdkSnapshot",
+      "source_container_pointer": "/worlds/2/conditionalCurrentCoreSdkSnapshot",
+      "line": 24985,
+      "end_line": 25017,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3548",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/conditionalCorePermissionProjectionPreimage",
+      "source_container_pointer": "/worlds/2/conditionalCorePermissionProjectionPreimage",
+      "line": 25018,
+      "end_line": 25035,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3549",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/actual9ParameterValues",
+      "source_container_pointer": "/worlds/2/actual9ParameterValues",
+      "line": 25038,
+      "end_line": 25048,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3550",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/response/currentHeadRefs",
+      "source_container_pointer": "/worlds/2/response/currentHeadRefs",
+      "line": 37153,
+      "end_line": 37394,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3551",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2/response",
+      "source_container_pointer": "/worlds/2/response",
+      "line": 37132,
+      "end_line": 37398,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3552",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/2",
+      "source_container_pointer": "/worlds/2",
+      "line": 24977,
+      "end_line": 37412,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3553",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/conditionalCurrentCoreSdkSnapshot/authorityCanonical/$decoded",
+      "source_container_pointer": "/worlds/3/conditionalCurrentCoreSdkSnapshot/authorityCanonical",
+      "line": 37445,
+      "end_line": 37445,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3554",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/conditionalCurrentCoreSdkSnapshot",
+      "source_container_pointer": "/worlds/3/conditionalCurrentCoreSdkSnapshot",
+      "line": 37421,
+      "end_line": 37449,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3555",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/conditionalCorePermissionProjectionPreimage",
+      "source_container_pointer": "/worlds/3/conditionalCorePermissionProjectionPreimage",
+      "line": 37450,
+      "end_line": 37463,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3556",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3/response",
+      "source_container_pointer": "/worlds/3/response",
+      "line": 49560,
+      "end_line": 49826,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3557",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "/worlds/3",
+      "source_container_pointer": "/worlds/3",
+      "line": 37413,
+      "end_line": 49840,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3558",
+      "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+      "json_pointer": "",
+      "source_container_pointer": "",
+      "line": 1,
+      "end_line": 49847,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3559",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/actual27ParameterValues",
+      "source_container_pointer": "/case/actual27ParameterValues",
+      "line": 5,
+      "end_line": 223,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3560",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/preRows",
+      "source_container_pointer": "/case/preRows",
+      "line": 224,
+      "end_line": 5172,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3561",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/0/after",
+      "source_container_pointer": "/case/writes/0/after",
+      "line": 5184,
+      "end_line": 5204,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3562",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/0",
+      "source_container_pointer": "/case/writes/0",
+      "line": 5174,
+      "end_line": 5205,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3563",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/1/after",
+      "source_container_pointer": "/case/writes/1/after",
+      "line": 5216,
+      "end_line": 5228,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3564",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/1",
+      "source_container_pointer": "/case/writes/1",
+      "line": 5206,
+      "end_line": 5229,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3565",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/23/after",
+      "source_container_pointer": "/case/writes/23/after",
+      "line": 5828,
+      "end_line": 5842,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3566",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/23",
+      "source_container_pointer": "/case/writes/23",
+      "line": 5818,
+      "end_line": 5843,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3567",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/24",
+      "source_container_pointer": "/case/writes/24",
+      "line": 5844,
+      "end_line": 5867,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3568",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes/25",
+      "source_container_pointer": "/case/writes/25",
+      "line": 5868,
+      "end_line": 5890,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3569",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/writes",
+      "source_container_pointer": "/case/writes",
+      "line": 5173,
+      "end_line": 5891,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3570",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/postRows",
+      "source_container_pointer": "/case/postRows",
+      "line": 5892,
+      "end_line": 11306,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3571",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/commonPolicyAndSupplyRefs",
+      "source_container_pointer": "/case/commonPolicyAndSupplyRefs",
+      "line": 12789,
+      "end_line": 12802,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3572",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case/subsequentCurrentChain",
+      "source_container_pointer": "/case/subsequentCurrentChain",
+      "line": 12837,
+      "end_line": 20542,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3573",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "/case",
+      "source_container_pointer": "/case",
+      "line": 3,
+      "end_line": 20740,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    },
+    {
+      "node": "N3574",
+      "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+      "json_pointer": "",
+      "source_container_pointer": "",
+      "line": 1,
+      "end_line": 20747,
+      "coverage": "full_new_fields_or_exact_base_delta"
+    }
+  ],
+  "team_exact_reuse": {
+    "parent_reading_record": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/PLAN-PO-01-root-normal-reading.json",
+    "parent_completion_confirmation": "Root explicitly reported N0–3106 novel field/delta semantic reading complete before this record was authored. This reader does not claim to have reread those complete repeated bases.",
+    "parent_read_range": "N0–N3106",
+    "direct_external_base_or_node_references": [
+      "N0",
+      "N1",
+      "N2",
+      "N3",
+      "N8",
+      "N9",
+      "N87",
+      "N129",
+      "N133",
+      "N204",
+      "N574",
+      "N575",
+      "N576",
+      "N577",
+      "N578",
+      "N579",
+      "N580",
+      "N581",
+      "N582",
+      "N583",
+      "N584",
+      "N585",
+      "N586",
+      "N587",
+      "N588",
+      "N589",
+      "N590",
+      "N591",
+      "N592",
+      "N593",
+      "N594",
+      "N595",
+      "N596",
+      "N597",
+      "N598",
+      "N599",
+      "N600",
+      "N601",
+      "N602",
+      "N603",
+      "N604",
+      "N605",
+      "N606",
+      "N607",
+      "N608",
+      "N609",
+      "N610",
+      "N611",
+      "N612",
+      "N613",
+      "N614",
+      "N615",
+      "N616",
+      "N617",
+      "N618",
+      "N619",
+      "N620",
+      "N621",
+      "N622",
+      "N623",
+      "N624",
+      "N625",
+      "N626",
+      "N627",
+      "N628",
+      "N629",
+      "N630",
+      "N631",
+      "N632",
+      "N633",
+      "N634",
+      "N635",
+      "N636",
+      "N637",
+      "N638",
+      "N639",
+      "N640",
+      "N641",
+      "N642",
+      "N643",
+      "N644",
+      "N645",
+      "N646",
+      "N647",
+      "N648",
+      "N649",
+      "N650",
+      "N651",
+      "N652",
+      "N653",
+      "N654",
+      "N655",
+      "N656",
+      "N657",
+      "N658",
+      "N659",
+      "N660",
+      "N661",
+      "N662",
+      "N663",
+      "N664",
+      "N665",
+      "N666",
+      "N667",
+      "N668",
+      "N669",
+      "N670",
+      "N671",
+      "N672",
+      "N673",
+      "N674",
+      "N675",
+      "N676",
+      "N677",
+      "N678",
+      "N679",
+      "N680",
+      "N681",
+      "N682",
+      "N683",
+      "N684",
+      "N685",
+      "N686",
+      "N687",
+      "N688",
+      "N689",
+      "N690",
+      "N691",
+      "N692",
+      "N693",
+      "N694",
+      "N695",
+      "N696",
+      "N697",
+      "N698",
+      "N699",
+      "N700",
+      "N701",
+      "N702",
+      "N703",
+      "N704",
+      "N705",
+      "N706",
+      "N707",
+      "N708",
+      "N709",
+      "N710",
+      "N711",
+      "N712",
+      "N713",
+      "N714",
+      "N715",
+      "N716",
+      "N717",
+      "N718",
+      "N719",
+      "N720",
+      "N721",
+      "N722",
+      "N723",
+      "N724",
+      "N725",
+      "N726",
+      "N727",
+      "N728",
+      "N729",
+      "N730",
+      "N731",
+      "N732",
+      "N733",
+      "N734",
+      "N735",
+      "N736",
+      "N737",
+      "N738",
+      "N739",
+      "N740",
+      "N741",
+      "N742",
+      "N743",
+      "N744",
+      "N745",
+      "N746",
+      "N747",
+      "N748",
+      "N749",
+      "N750",
+      "N751",
+      "N752",
+      "N753",
+      "N754",
+      "N755",
+      "N756",
+      "N757",
+      "N758",
+      "N759",
+      "N760",
+      "N761",
+      "N762",
+      "N763",
+      "N764",
+      "N765",
+      "N766",
+      "N767",
+      "N768",
+      "N769",
+      "N770",
+      "N771",
+      "N772",
+      "N773",
+      "N774",
+      "N775",
+      "N776",
+      "N777",
+      "N778",
+      "N779",
+      "N780",
+      "N781",
+      "N782",
+      "N783",
+      "N784",
+      "N785",
+      "N786",
+      "N787",
+      "N788",
+      "N789",
+      "N790",
+      "N791",
+      "N792",
+      "N793",
+      "N794",
+      "N795",
+      "N796",
+      "N797",
+      "N798",
+      "N799",
+      "N800",
+      "N801",
+      "N802",
+      "N803",
+      "N804",
+      "N805",
+      "N806",
+      "N807",
+      "N808",
+      "N809",
+      "N810",
+      "N811",
+      "N812",
+      "N813",
+      "N814",
+      "N815",
+      "N816",
+      "N817",
+      "N818",
+      "N819",
+      "N820",
+      "N821",
+      "N822",
+      "N823",
+      "N824",
+      "N825",
+      "N826",
+      "N827",
+      "N828",
+      "N829",
+      "N830",
+      "N831",
+      "N832",
+      "N833",
+      "N834",
+      "N835",
+      "N836",
+      "N837",
+      "N838",
+      "N839",
+      "N840",
+      "N841",
+      "N842",
+      "N843",
+      "N844",
+      "N845",
+      "N846",
+      "N847",
+      "N848",
+      "N849",
+      "N850",
+      "N851",
+      "N852",
+      "N853",
+      "N854",
+      "N855",
+      "N856",
+      "N857",
+      "N858",
+      "N859",
+      "N860",
+      "N861",
+      "N862",
+      "N863",
+      "N864",
+      "N865",
+      "N866",
+      "N867",
+      "N868",
+      "N869",
+      "N870",
+      "N871",
+      "N872",
+      "N873",
+      "N874",
+      "N875",
+      "N876",
+      "N877",
+      "N878",
+      "N879",
+      "N880",
+      "N881",
+      "N882",
+      "N883",
+      "N884",
+      "N885",
+      "N889",
+      "N890",
+      "N891",
+      "N892",
+      "N893",
+      "N894",
+      "N896",
+      "N923",
+      "N924",
+      "N925",
+      "N926",
+      "N927",
+      "N928",
+      "N929",
+      "N930",
+      "N931",
+      "N932",
+      "N933",
+      "N934",
+      "N935",
+      "N936",
+      "N937",
+      "N938",
+      "N939",
+      "N940",
+      "N941",
+      "N942",
+      "N943",
+      "N944",
+      "N945",
+      "N946",
+      "N947",
+      "N948",
+      "N949",
+      "N950",
+      "N951",
+      "N976",
+      "N998",
+      "N999",
+      "N1000",
+      "N1001",
+      "N1002",
+      "N1003",
+      "N1004",
+      "N1005",
+      "N1006",
+      "N1007",
+      "N1008",
+      "N1009",
+      "N1010",
+      "N1011",
+      "N1012",
+      "N1013",
+      "N1014",
+      "N1015",
+      "N1016",
+      "N1017",
+      "N1018",
+      "N1019",
+      "N1020",
+      "N1021",
+      "N1022",
+      "N1023",
+      "N1024",
+      "N1025",
+      "N1026",
+      "N1027",
+      "N1028",
+      "N1029",
+      "N1030",
+      "N1031",
+      "N1032",
+      "N1034",
+      "N1035",
+      "N1381",
+      "N1382",
+      "N1385",
+      "N1423",
+      "N1426",
+      "N1427",
+      "N1432",
+      "N1433",
+      "N1435",
+      "N1437",
+      "N1440",
+      "N1441",
+      "N1444",
+      "N1453",
+      "N1748",
+      "N1767",
+      "N1778",
+      "N1792",
+      "N1980",
+      "N1981",
+      "N1982",
+      "N1983",
+      "N1984",
+      "N1985",
+      "N1986",
+      "N1987",
+      "N1988",
+      "N1989",
+      "N1990",
+      "N1991",
+      "N1992",
+      "N1993",
+      "N1994",
+      "N1995",
+      "N1996",
+      "N1997",
+      "N1998",
+      "N1999",
+      "N2000",
+      "N2086",
+      "N2090",
+      "N2153",
+      "N2157",
+      "N2161",
+      "N2165",
+      "N2235",
+      "N2369",
+      "N2441",
+      "N2524",
+      "N2634",
+      "N2644",
+      "N2651",
+      "N2653",
+      "N2655",
+      "N2665",
+      "N2683",
+      "N2689",
+      "N2760",
+      "N2818",
+      "N2828",
+      "N2830",
+      "N3008",
+      "N3026"
+    ],
+    "cp19_reuse_record": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/PLAN-PO-01-cp19-normal-reading.json",
+    "projection_directory": "D:/CP6-archives/consolidation-20261010/root-planning-cache/po-root-normal-v2",
+    "whole_file_and_node_equality": "Own stdlib reconstruction: every N3107–N3574 node equals its original JSON pointer; all three whole objects equal original source."
+  },
+  "case_semantics": {
+    "CP20": [
+      "Eight worlds = PR and WO each PENDING, native UNKNOWN, NOT_OBSERVED, transport UNAVAILABLE/TIMEOUT. Native UNKNOWN has response; transport case responseCaptured=false and capturedNativeResult=null.",
+      "Explicit writer cutover8to9 then takeover and original query; current revision and Head exact eleven-field tuple both use writer9; old immutable revision remains8. Raw/native/request/lookup/terminal bytes not rewritten just to synchronize writer columns.",
+      "ApplyOwnerNonTerminalCp18 retains all62 parameters and14 writes; current observation does not imply no effect, release or acceptance; work/order stayPENDING. PENDING leaves owner/protection pending; other unknown states mark owner/protection unknown.",
+      "NOT_OBSERVED with previously NOT_SENT permits first SAME original body/key only after durable absence plus fresh source/native authority; pending/nativeunknown/timeout only QUERY_SAME_OWNER_KEY. Claim22 marks MAY_HAVE_BEEN_SENT before external network.",
+      "CP19 worlds1,3,4 explicitly called out as corrected writer tuple windows. SQL/FK shape remains11 fields, no weakened relation."
+    ],
+    "CP21_PURPOSE": [
+      "PO04=plan-po.history.read; PO05=plan-po.source.read; both requested beforeSQL and checked again before output; PO03/06 keep plan-po.read without invented alias.",
+      "Four worlds full/limited for two actions. ReadOrderSnapshotCp18 has9 trusted parameters; CanRead comes from authentic allowed exact-purposeSDK, never client body. Zero persistent writes.",
+      "Core exact composition-root provider pin required; placeholder acceptedByCore=true is conditional fiction, actualgrant0 and missing actualproviderRequiredFenced beforeSQL. Both checks bindE/T/principal/object/site/time/mask.",
+      "Full mask shows original revision/source canonical; limitedquantity-only mask redacts whole revisionBody/pegging or sourceBundleCanonical. Historical currentActions=[], sourcecoverageUNKNOWN, runtimeUNPROVEN; actionpermissiondoesnotproveproducertruth."
+    ],
+    "CP21_TRANSFER": [
+      "Complete100EA common source with3supply and4pegging, selected transfer20EA original80to100, independent transfer roots/source/policy/supply via proofsubjectRefs, not reference alias or rawsource clipping.",
+      "PublishPlanningTransferSourceDemandCp18 uses27 params and26 row insertions: authorityrevision,scopebinding,21dependencies,sourcedemandrevision,twoheads. Common40manifest and transfer21manifest are deliberately distinct (sameManifestRequired=false).",
+      "Publication before store mutation; PublicationCurrent then Preview36/Start44/Claim22/Context41/Catalog42 use same complete cut. Source-cut assertion itself writes0. Publisher role is PLANPO transport, originalissueradoptionrelations remain independent.",
+      "No native/stock effects; actualadoption0, businessNOTRUN/runtimeUNPROVEN retained."
+    ]
+  },
+  "static_verification": {
+    "method": "Own stdlib exact reconstruction of parent reversible projection; no source checker/SQL execution",
+    "node_errors": [],
+    "roots": [
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "equal": true
+      },
+      {
+        "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+        "equal": true
+      },
+      {
+        "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+        "equal": true
+      }
+    ],
+    "transitions": [
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/0/fullPrefix/cutover",
+        "pre": 375,
+        "writes": 5,
+        "post": 379,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/0/fullPrefix/takeover",
+        "pre": 379,
+        "writes": 3,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/0/fullPrefix/firstSameOriginalQueryClaim",
+        "pre": 382,
+        "writes": 2,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/0/actual62Consumption",
+        "pre": 382,
+        "writes": 14,
+        "post": 389,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/1/fullPrefix/cutover",
+        "pre": 375,
+        "writes": 5,
+        "post": 379,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/1/fullPrefix/takeover",
+        "pre": 379,
+        "writes": 3,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/1/fullPrefix/firstSameOriginalQueryClaim",
+        "pre": 382,
+        "writes": 2,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/1/actual62Consumption",
+        "pre": 382,
+        "writes": 14,
+        "post": 389,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/2/fullPrefix/cutover",
+        "pre": 375,
+        "writes": 5,
+        "post": 379,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/2/fullPrefix/takeover",
+        "pre": 379,
+        "writes": 3,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/2/fullPrefix/firstSameOriginalQueryClaim",
+        "pre": 382,
+        "writes": 2,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/2/actual62Consumption",
+        "pre": 382,
+        "writes": 14,
+        "post": 389,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/2/nextFirstOriginalClaim22",
+        "pre": 389,
+        "writes": 2,
+        "post": 389,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/3/fullPrefix/cutover",
+        "pre": 375,
+        "writes": 5,
+        "post": 379,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/3/fullPrefix/takeover",
+        "pre": 379,
+        "writes": 3,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/3/fullPrefix/firstSameOriginalQueryClaim",
+        "pre": 382,
+        "writes": 2,
+        "post": 382,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/3/actual62Consumption",
+        "pre": 382,
+        "writes": 14,
+        "post": 389,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/4/actual62Consumption",
+        "pre": 400,
+        "writes": 14,
+        "post": 407,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/5/actual62Consumption",
+        "pre": 400,
+        "writes": 14,
+        "post": 407,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/6/actual62Consumption",
+        "pre": 400,
+        "writes": 14,
+        "post": 407,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/6/nextFirstOriginalClaim22",
+        "pre": 407,
+        "writes": 2,
+        "post": 407,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP20_NONTERMINAL_EPOCH_FULL_NORMAL_DATA.json",
+        "pointer": "/worlds/7/actual62Consumption",
+        "pre": 400,
+        "writes": 14,
+        "post": 407,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+        "pointer": "/worlds/0",
+        "pre": 374,
+        "writes": 0,
+        "post": 374,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+        "pointer": "/worlds/1",
+        "pre": 374,
+        "writes": 0,
+        "post": 374,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+        "pointer": "/worlds/2",
+        "pre": 374,
+        "writes": 0,
+        "post": 374,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP21_PO04_PO05_PURPOSE_READ_NORMAL_DATA.json",
+        "pointer": "/worlds/3",
+        "pre": 374,
+        "writes": 0,
+        "post": 374,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      },
+      {
+        "file": "CP21_TRANSFER_COMMON_FULL_CHAIN_NORMAL_DATA.json",
+        "pointer": "/case",
+        "pre": 319,
+        "writes": 26,
+        "post": 345,
+        "before_missing": [],
+        "extra": 0,
+        "missing": 0
+      }
+    ],
+    "shape_differences": []
+  },
+  "reading_limitations": [
+    "No source checker/SQL/native/build/test executed.",
+    "Opaque UUID/hash/rowversion literals preserved and compared, not individually interpreted as business text.",
+    "Exact reuse of base semantics is team reading with explicit parent evidence; source hash or parsing alone is not counted as semantic reading.",
+    "No recalculation of every synthetic digest preimage, no production adoption or runtime acceptance inferred."
+  ],
+  "remaining_queue": []
+}

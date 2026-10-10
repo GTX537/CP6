@@ -1,0 +1,3206 @@
+[
+  {
+    "id": "CALC-01",
+    "name": "full canonical lineage reservation safety",
+    "expected": [
+      "COMPLETED",
+      null
+    ],
+    "semantic_changes": [],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-02",
+    "name": "partial request 20",
+    "expected": [
+      "PARTIAL",
+      null
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "8.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/earliestSuggestedDate",
+        "2026-10-05",
+        null
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/code",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/messageKey",
+        "plan.atp.completed",
+        "plan.atp.partial"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/safeParameters/unavailable",
+        "0.00",
+        "8.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/normalizedRequest/quantity/value",
+        "10.00",
+        "20.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/requestedQuantity/value",
+        "10.00",
+        "20.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/totalAvailable/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/unavailableQuantity/value",
+        "0.00",
+        "8.00"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/request/quantity/value",
+        "10.00",
+        "20.00"
+      ],
+      [
+        "/protectedProjection/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/protectedProjection/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "8.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/protectedProjection/requestedQuantity/value",
+        "10.00",
+        "20.00"
+      ],
+      [
+        "/protectedProjection/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/protectedProjection/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/protectedProjection/unavailableQuantity/value",
+        "0.00",
+        "8.00"
+      ],
+      [
+        "/publicProjection/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "8.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/publicProjection/earliestSuggestedDate",
+        "2026-10-05",
+        null
+      ],
+      [
+        "/publicProjection/explanations/0/code",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/publicProjection/explanations/0/messageKey",
+        "plan.atp.completed",
+        "plan.atp.partial"
+      ],
+      [
+        "/publicProjection/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/explanations/0/safeParameters/unavailable",
+        "0.00",
+        "8.00"
+      ],
+      [
+        "/publicProjection/normalizedRequest/quantity/value",
+        "10.00",
+        "20.00"
+      ],
+      [
+        "/publicProjection/requestedQuantity/value",
+        "10.00",
+        "20.00"
+      ],
+      [
+        "/publicProjection/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/publicProjection/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/publicProjection/totalAvailable/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/unavailableQuantity/value",
+        "0.00",
+        "8.00"
+      ],
+      [
+        "/typedRows/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "8.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/typedRows/explanations/0/code",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/typedRows/explanations/0/messageKey",
+        "plan.atp.completed",
+        "plan.atp.partial"
+      ],
+      [
+        "/typedRows/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/explanations/0/safeParameters/unavailable",
+        "0.00",
+        "8.00"
+      ],
+      [
+        "/typedRows/head/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/head/requestedQuantity/value",
+        "10.00",
+        "20.00"
+      ],
+      [
+        "/typedRows/head/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/typedRows/head/unavailableQuantity/value",
+        "0.00",
+        "8.00"
+      ],
+      [
+        "/typedRows/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/AUTHORIZATION/fullPayloadDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "246072da9a01dc127c8954ad136f5279f3e6a01af8a7de4d4876ec23c713b1eb"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "a5cd7ae01303d64c266c351bc87ac3aaffe97b7efcb38b3304b32aca8cd58ade"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/requestPayloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "4361cc750c9a8340d674cdaa6cc3ec9640c1a507e8c7ce6419a9af0f53f09a33"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadDigest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "80b92a04bc7d250fbc8e538fad90dc13e80a96b4b18559db758d9d350e0fa52b"
+      ],
+      [
+        "/carriers/AUTHORIZATION/reference/digest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "80b92a04bc7d250fbc8e538fad90dc13e80a96b4b18559db758d9d350e0fa52b"
+      ],
+      [
+        "/carriers/AUTHORIZATION/selfDigest",
+        "f607c6206580ebb1dff4b67e0f44e0350921e10f395564a23df5c73afa120fbe",
+        "3d9f308efc8141891fd64a50cc004e438b4d848e3509b872514e337e5d47bdd9"
+      ],
+      [
+        "/carriers/CALCULATION/fullPayloadDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "0b347539759eefe163425a170d21dd0664449946defd0275fb43d55db919289e"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/AUTHORIZATION",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "246072da9a01dc127c8954ad136f5279f3e6a01af8a7de4d4876ec23c713b1eb"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/REQUEST",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "ed56a0bf2607dceb1380138e2448cdc3e51b97d354afd30598b14d02805c902b"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ],
+      [
+        "/carriers/CALCULATION/payloadDigest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "bbe4f41785860a46cf0461a11f700c72150d731d90b206de38665f9b97bdc646"
+      ],
+      [
+        "/carriers/CALCULATION/reference/digest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "bbe4f41785860a46cf0461a11f700c72150d731d90b206de38665f9b97bdc646"
+      ],
+      [
+        "/carriers/CALCULATION/selfDigest",
+        "271e7b751993d796d6fe37673b95dd96b8a0b9c80a1d947e5b7ffd7f8381f42c",
+        "738a42441128bd068b7425b5e7a0c892e854d6b0748c9f8d2e1468b19086c75b"
+      ],
+      [
+        "/carriers/REQUEST/fullPayloadDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "ed56a0bf2607dceb1380138e2448cdc3e51b97d354afd30598b14d02805c902b"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "a5cd7ae01303d64c266c351bc87ac3aaffe97b7efcb38b3304b32aca8cd58ade"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "d67d218a03a42bb2f822ec204ccf4215624225f915d5034aa3d69996f745da7b"
+      ],
+      [
+        "/carriers/REQUEST/payloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "4361cc750c9a8340d674cdaa6cc3ec9640c1a507e8c7ce6419a9af0f53f09a33"
+      ],
+      [
+        "/carriers/REQUEST/reference/digest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "4361cc750c9a8340d674cdaa6cc3ec9640c1a507e8c7ce6419a9af0f53f09a33"
+      ],
+      [
+        "/carriers/REQUEST/selfDigest",
+        "8a0d4656bdf0a65b3c267a300821af80619c97774380a1508ba103ba10c6546a",
+        "4ae7f8980ece8162c10fe4ca74a5773e4b11c259fbabbf80c39b3ad736d975b5"
+      ],
+      [
+        "/protectedProjection/boundPublicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "a6545fce378a3a055631be1e377dcdcf0fa8bfc8f88c2470c6b52a5bc4bdbf6c"
+      ],
+      [
+        "/protectedProjection/fullPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "aa143734afa51e258893bde44d1cd4007b0fd0ecc9eedb01cca042eca27c4489"
+      ],
+      [
+        "/protectedProjection/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "b9cd16a1ec65b830db6956338ca8681384e351380730dee7e33939bfbfacd053"
+      ],
+      [
+        "/protectedProjection/representationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "0d12da2edb6c00a1c77836f5b6f6791c401b19e840e73fb82a0c8304084fceca"
+      ],
+      [
+        "/protectedProjection/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ],
+      [
+        "/publicProjection/fullPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "103397363324dc836e8469df14ddb64082ad61b9dd93c6f8414f1ba60917de82"
+      ],
+      [
+        "/publicProjection/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "a6545fce378a3a055631be1e377dcdcf0fa8bfc8f88c2470c6b52a5bc4bdbf6c"
+      ],
+      [
+        "/publicProjection/representationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "0131fa9b6c7ad95e6a00b3b9886bf47d8b5d4bd1160c482a88bd1125203cb20b"
+      ],
+      [
+        "/publicProjection/segments/1/publicSegmentDigest",
+        "a76598f7819f5062b502cc06415e73b345a3be893726767aabf712397e88f73a",
+        "fb2722c8028e0779e8a0aa645a29fcec7fedd238d4721b09336fb4416069a9cf"
+      ],
+      [
+        "/receipts/0/inputDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "4361cc750c9a8340d674cdaa6cc3ec9640c1a507e8c7ce6419a9af0f53f09a33"
+      ],
+      [
+        "/receipts/0/outputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "ed56a0bf2607dceb1380138e2448cdc3e51b97d354afd30598b14d02805c902b"
+      ],
+      [
+        "/receipts/1/inputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "ed56a0bf2607dceb1380138e2448cdc3e51b97d354afd30598b14d02805c902b"
+      ],
+      [
+        "/receipts/1/outputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "246072da9a01dc127c8954ad136f5279f3e6a01af8a7de4d4876ec23c713b1eb"
+      ],
+      [
+        "/receipts/1/predecessorOutputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "ed56a0bf2607dceb1380138e2448cdc3e51b97d354afd30598b14d02805c902b"
+      ],
+      [
+        "/receipts/2/inputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "246072da9a01dc127c8954ad136f5279f3e6a01af8a7de4d4876ec23c713b1eb"
+      ],
+      [
+        "/receipts/2/predecessorOutputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "246072da9a01dc127c8954ad136f5279f3e6a01af8a7de4d4876ec23c713b1eb"
+      ],
+      [
+        "/receipts/4/outputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "0b347539759eefe163425a170d21dd0664449946defd0275fb43d55db919289e"
+      ],
+      [
+        "/receipts/5/inputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "0b347539759eefe163425a170d21dd0664449946defd0275fb43d55db919289e"
+      ],
+      [
+        "/receipts/5/outputDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "aa143734afa51e258893bde44d1cd4007b0fd0ecc9eedb01cca042eca27c4489"
+      ],
+      [
+        "/receipts/5/predecessorOutputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "0b347539759eefe163425a170d21dd0664449946defd0275fb43d55db919289e"
+      ],
+      [
+        "/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "a5cd7ae01303d64c266c351bc87ac3aaffe97b7efcb38b3304b32aca8cd58ade"
+      ],
+      [
+        "/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "d67d218a03a42bb2f822ec204ccf4215624225f915d5034aa3d69996f745da7b"
+      ],
+      [
+        "/typedRows/head/protectedPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "aa143734afa51e258893bde44d1cd4007b0fd0ecc9eedb01cca042eca27c4489"
+      ],
+      [
+        "/typedRows/head/protectedRepresentationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "0d12da2edb6c00a1c77836f5b6f6791c401b19e840e73fb82a0c8304084fceca"
+      ],
+      [
+        "/typedRows/head/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "b9cd16a1ec65b830db6956338ca8681384e351380730dee7e33939bfbfacd053"
+      ],
+      [
+        "/typedRows/head/publicPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "103397363324dc836e8469df14ddb64082ad61b9dd93c6f8414f1ba60917de82"
+      ],
+      [
+        "/typedRows/head/publicRepresentationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "0131fa9b6c7ad95e6a00b3b9886bf47d8b5d4bd1160c482a88bd1125203cb20b"
+      ],
+      [
+        "/typedRows/head/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "a6545fce378a3a055631be1e377dcdcf0fa8bfc8f88c2470c6b52a5bc4bdbf6c"
+      ],
+      [
+        "/typedRows/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-03",
+    "name": "partial request 30",
+    "expected": [
+      "PARTIAL",
+      null
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "18.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/earliestSuggestedDate",
+        "2026-10-05",
+        null
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/code",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/messageKey",
+        "plan.atp.completed",
+        "plan.atp.partial"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/safeParameters/unavailable",
+        "0.00",
+        "18.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/normalizedRequest/quantity/value",
+        "10.00",
+        "30.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/requestedQuantity/value",
+        "10.00",
+        "30.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/totalAvailable/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/unavailableQuantity/value",
+        "0.00",
+        "18.00"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/request/quantity/value",
+        "10.00",
+        "30.00"
+      ],
+      [
+        "/protectedProjection/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/protectedProjection/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "18.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/protectedProjection/requestedQuantity/value",
+        "10.00",
+        "30.00"
+      ],
+      [
+        "/protectedProjection/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/protectedProjection/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/protectedProjection/unavailableQuantity/value",
+        "0.00",
+        "18.00"
+      ],
+      [
+        "/publicProjection/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "18.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/publicProjection/earliestSuggestedDate",
+        "2026-10-05",
+        null
+      ],
+      [
+        "/publicProjection/explanations/0/code",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/publicProjection/explanations/0/messageKey",
+        "plan.atp.completed",
+        "plan.atp.partial"
+      ],
+      [
+        "/publicProjection/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/explanations/0/safeParameters/unavailable",
+        "0.00",
+        "18.00"
+      ],
+      [
+        "/publicProjection/normalizedRequest/quantity/value",
+        "10.00",
+        "30.00"
+      ],
+      [
+        "/publicProjection/requestedQuantity/value",
+        "10.00",
+        "30.00"
+      ],
+      [
+        "/publicProjection/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/publicProjection/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/publicProjection/totalAvailable/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/unavailableQuantity/value",
+        "0.00",
+        "18.00"
+      ],
+      [
+        "/typedRows/constraints",
+        [],
+        [
+          {
+            "affectedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "18.00"
+            },
+            "code": "SUPPLY_SHORTFALL",
+            "messageKey": "plan.atp.supply_shortfall",
+            "owner": "Main Planning",
+            "safeParameters": {
+              "requestedDate": "2026-10-02"
+            },
+            "severity": "WARNING",
+            "sourceRef": {
+              "digest": "e5869ba4229366461d55298363e6c3656da1f6d0f41afd6106714b8287e74a15",
+              "id": "ATP-POL-SITE-1",
+              "owner": "Main Planning",
+              "version": "12"
+            }
+          }
+        ]
+      ],
+      [
+        "/typedRows/explanations/0/code",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/typedRows/explanations/0/messageKey",
+        "plan.atp.completed",
+        "plan.atp.partial"
+      ],
+      [
+        "/typedRows/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/explanations/0/safeParameters/unavailable",
+        "0.00",
+        "18.00"
+      ],
+      [
+        "/typedRows/head/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/head/requestedQuantity/value",
+        "10.00",
+        "30.00"
+      ],
+      [
+        "/typedRows/head/status",
+        "COMPLETED",
+        "PARTIAL"
+      ],
+      [
+        "/typedRows/head/unavailableQuantity/value",
+        "0.00",
+        "18.00"
+      ],
+      [
+        "/typedRows/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/AUTHORIZATION/fullPayloadDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "50d4c85fbba8be003ae47dea8ea1af00acbf67fe017bef27dae6a5af714b4d8d"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "14252184a539fe175c9a749b8b27ef07a866a867552e9bb0369e10c73475d057"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/requestPayloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "9e67f79c20f30a476701e8f04f004ce6a4598a4c5be84214a924603054b16b40"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadDigest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "98ed1ec255c37a6237f25bd8e0d5b9cec14c94a29afc486836ae798afebd2a7e"
+      ],
+      [
+        "/carriers/AUTHORIZATION/reference/digest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "98ed1ec255c37a6237f25bd8e0d5b9cec14c94a29afc486836ae798afebd2a7e"
+      ],
+      [
+        "/carriers/AUTHORIZATION/selfDigest",
+        "f607c6206580ebb1dff4b67e0f44e0350921e10f395564a23df5c73afa120fbe",
+        "00cffbdab16ac7764d222335041b503d8faa0ac5dcd07afe41ba75be896fd1da"
+      ],
+      [
+        "/carriers/CALCULATION/fullPayloadDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "c116194fa231b9a5181487d069d5ca24b5f8f4f4ec51ade46658cdb7ff551965"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/AUTHORIZATION",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "50d4c85fbba8be003ae47dea8ea1af00acbf67fe017bef27dae6a5af714b4d8d"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/REQUEST",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "646bff11dc435ec7668a85f1571500df62dc9957bc0fe7bce14460c7df767173"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ],
+      [
+        "/carriers/CALCULATION/payloadDigest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "4871207bc37ac912d3b397e6d5c79d13585ef7b8848eaeaffe1f999bb6678031"
+      ],
+      [
+        "/carriers/CALCULATION/reference/digest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "4871207bc37ac912d3b397e6d5c79d13585ef7b8848eaeaffe1f999bb6678031"
+      ],
+      [
+        "/carriers/CALCULATION/selfDigest",
+        "271e7b751993d796d6fe37673b95dd96b8a0b9c80a1d947e5b7ffd7f8381f42c",
+        "1f4853cb334355726d42b91e6b342dc15a63edcd6356935fd3e3deeee941730f"
+      ],
+      [
+        "/carriers/REQUEST/fullPayloadDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "646bff11dc435ec7668a85f1571500df62dc9957bc0fe7bce14460c7df767173"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "14252184a539fe175c9a749b8b27ef07a866a867552e9bb0369e10c73475d057"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "887b8fdd9e7111d7c9fa31c65466c78fe8a3395a90cac26390c1730a05cd12a7"
+      ],
+      [
+        "/carriers/REQUEST/payloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "9e67f79c20f30a476701e8f04f004ce6a4598a4c5be84214a924603054b16b40"
+      ],
+      [
+        "/carriers/REQUEST/reference/digest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "9e67f79c20f30a476701e8f04f004ce6a4598a4c5be84214a924603054b16b40"
+      ],
+      [
+        "/carriers/REQUEST/selfDigest",
+        "8a0d4656bdf0a65b3c267a300821af80619c97774380a1508ba103ba10c6546a",
+        "9640c811d597b85fc6586765897b56e4857529dfdb85f3c582e1d5f7db2723d8"
+      ],
+      [
+        "/protectedProjection/boundPublicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "65652517033f769965d8bcbc0095ca11f93e5359424a13b8f210f8e6054eac3b"
+      ],
+      [
+        "/protectedProjection/fullPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "9a163c2f71675354db21d3faf4f1cae2aa7b392b8553467f75962a595fad708b"
+      ],
+      [
+        "/protectedProjection/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "5223eff15b408933d7d8189283a1e40cfe7825149b06607c1edc3701a25bc58f"
+      ],
+      [
+        "/protectedProjection/representationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "1776eba6f2a831eb4995718f9f4317f68f2b5663f672df13d82a26e70fba2439"
+      ],
+      [
+        "/protectedProjection/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ],
+      [
+        "/publicProjection/fullPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "7aec95df7afec662a102d2ac9a50a28c3c5ecf321b98522e91a1fb754152f401"
+      ],
+      [
+        "/publicProjection/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "65652517033f769965d8bcbc0095ca11f93e5359424a13b8f210f8e6054eac3b"
+      ],
+      [
+        "/publicProjection/representationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "f12dc11ab9f0e2a1a40849aa2d18bc39521e9c8b4ca8125abb6a7313bb4f9e0f"
+      ],
+      [
+        "/publicProjection/segments/1/publicSegmentDigest",
+        "a76598f7819f5062b502cc06415e73b345a3be893726767aabf712397e88f73a",
+        "fb2722c8028e0779e8a0aa645a29fcec7fedd238d4721b09336fb4416069a9cf"
+      ],
+      [
+        "/receipts/0/inputDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "9e67f79c20f30a476701e8f04f004ce6a4598a4c5be84214a924603054b16b40"
+      ],
+      [
+        "/receipts/0/outputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "646bff11dc435ec7668a85f1571500df62dc9957bc0fe7bce14460c7df767173"
+      ],
+      [
+        "/receipts/1/inputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "646bff11dc435ec7668a85f1571500df62dc9957bc0fe7bce14460c7df767173"
+      ],
+      [
+        "/receipts/1/outputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "50d4c85fbba8be003ae47dea8ea1af00acbf67fe017bef27dae6a5af714b4d8d"
+      ],
+      [
+        "/receipts/1/predecessorOutputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "646bff11dc435ec7668a85f1571500df62dc9957bc0fe7bce14460c7df767173"
+      ],
+      [
+        "/receipts/2/inputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "50d4c85fbba8be003ae47dea8ea1af00acbf67fe017bef27dae6a5af714b4d8d"
+      ],
+      [
+        "/receipts/2/predecessorOutputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "50d4c85fbba8be003ae47dea8ea1af00acbf67fe017bef27dae6a5af714b4d8d"
+      ],
+      [
+        "/receipts/4/outputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "c116194fa231b9a5181487d069d5ca24b5f8f4f4ec51ade46658cdb7ff551965"
+      ],
+      [
+        "/receipts/5/inputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "c116194fa231b9a5181487d069d5ca24b5f8f4f4ec51ade46658cdb7ff551965"
+      ],
+      [
+        "/receipts/5/outputDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "9a163c2f71675354db21d3faf4f1cae2aa7b392b8553467f75962a595fad708b"
+      ],
+      [
+        "/receipts/5/predecessorOutputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "c116194fa231b9a5181487d069d5ca24b5f8f4f4ec51ade46658cdb7ff551965"
+      ],
+      [
+        "/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "14252184a539fe175c9a749b8b27ef07a866a867552e9bb0369e10c73475d057"
+      ],
+      [
+        "/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "887b8fdd9e7111d7c9fa31c65466c78fe8a3395a90cac26390c1730a05cd12a7"
+      ],
+      [
+        "/typedRows/head/protectedPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "9a163c2f71675354db21d3faf4f1cae2aa7b392b8553467f75962a595fad708b"
+      ],
+      [
+        "/typedRows/head/protectedRepresentationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "1776eba6f2a831eb4995718f9f4317f68f2b5663f672df13d82a26e70fba2439"
+      ],
+      [
+        "/typedRows/head/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "5223eff15b408933d7d8189283a1e40cfe7825149b06607c1edc3701a25bc58f"
+      ],
+      [
+        "/typedRows/head/publicPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "7aec95df7afec662a102d2ac9a50a28c3c5ecf321b98522e91a1fb754152f401"
+      ],
+      [
+        "/typedRows/head/publicRepresentationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "f12dc11ab9f0e2a1a40849aa2d18bc39521e9c8b4ca8125abb6a7313bb4f9e0f"
+      ],
+      [
+        "/typedRows/head/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "65652517033f769965d8bcbc0095ca11f93e5359424a13b8f210f8e6054eac3b"
+      ],
+      [
+        "/typedRows/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-04",
+    "name": "smaller request 5",
+    "expected": [
+      "COMPLETED",
+      null
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/allocatedToRequest/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/earliestSuggestedDate",
+        "2026-10-05",
+        "2026-10-02"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/safeParameters/allocated",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/normalizedRequest/quantity/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/requestedQuantity/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments",
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PARENT",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-1"
+              },
+              {
+                "basisId": "C-SUCCESSOR",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "4.00"
+                },
+                "representationId": "REP-2"
+              }
+            ],
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "segmentDigest": "8ea5386c2947a3b7b27001aa71892b67bc4829f2493f6589bedd8739ed70df22",
+            "supplyClassRank": 0
+          },
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "3.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PO-2",
+                "physicalLineageId": "LINEAGE-2",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-PO-1"
+              }
+            ],
+            "businessAvailableDate": "2026-10-05",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "10.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "firmRank": 1,
+            "limitationClass": "NONE",
+            "ordinal": 2,
+            "ownerTypeRank": 1,
+            "priorityRank": 1,
+            "segmentDigest": "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+            "supplyClassRank": 1
+          }
+        ],
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PARENT",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-1"
+              },
+              {
+                "basisId": "C-SUCCESSOR",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "2.00"
+                },
+                "representationId": "REP-2"
+              }
+            ],
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "segmentDigest": "57476505e1988b7395756e4c41881a48fcb1c87bcab930f5d2c1320ed54cdb7d",
+            "supplyClassRank": 0
+          }
+        ]
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/totalAvailable/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/request/quantity/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/allocatedToRequest/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/requestedQuantity/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/segments",
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PARENT",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-1"
+              },
+              {
+                "basisId": "C-SUCCESSOR",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "4.00"
+                },
+                "representationId": "REP-2"
+              }
+            ],
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "segmentDigest": "8ea5386c2947a3b7b27001aa71892b67bc4829f2493f6589bedd8739ed70df22",
+            "supplyClassRank": 0
+          },
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "3.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PO-2",
+                "physicalLineageId": "LINEAGE-2",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-PO-1"
+              }
+            ],
+            "businessAvailableDate": "2026-10-05",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "10.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "firmRank": 1,
+            "limitationClass": "NONE",
+            "ordinal": 2,
+            "ownerTypeRank": 1,
+            "priorityRank": 1,
+            "segmentDigest": "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+            "supplyClassRank": 1
+          }
+        ],
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PARENT",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-1"
+              },
+              {
+                "basisId": "C-SUCCESSOR",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "2.00"
+                },
+                "representationId": "REP-2"
+              }
+            ],
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "segmentDigest": "57476505e1988b7395756e4c41881a48fcb1c87bcab930f5d2c1320ed54cdb7d",
+            "supplyClassRank": 0
+          }
+        ]
+      ],
+      [
+        "/publicProjection/allocatedToRequest/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/publicProjection/earliestSuggestedDate",
+        "2026-10-05",
+        "2026-10-02"
+      ],
+      [
+        "/publicProjection/explanations/0/safeParameters/allocated",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/publicProjection/normalizedRequest/quantity/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/publicProjection/requestedQuantity/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/publicProjection/segments",
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "publicSegmentDigest": "111800459ee57e957bfdb714d60e6f3e12e35b16f9617c6b0adbe617ae438af5",
+            "supplyClassRank": 0
+          },
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "3.00"
+            },
+            "businessAvailableDate": "2026-10-05",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "10.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "firmRank": 1,
+            "limitationClass": "NONE",
+            "ordinal": 2,
+            "ownerTypeRank": 1,
+            "priorityRank": 1,
+            "publicSegmentDigest": "a76598f7819f5062b502cc06415e73b345a3be893726767aabf712397e88f73a",
+            "supplyClassRank": 1
+          }
+        ],
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "publicSegmentDigest": "2022cd398f4ee2cc30873941bb22294e5a0497588a6d4e00729fd3bed33d89cf",
+            "supplyClassRank": 0
+          }
+        ]
+      ],
+      [
+        "/publicProjection/totalAvailable/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/explanations/0/safeParameters/allocated",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/head/allocatedToRequest/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/head/requestedQuantity/value",
+        "10.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/segments",
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PARENT",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-1"
+              },
+              {
+                "basisId": "C-SUCCESSOR",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "4.00"
+                },
+                "representationId": "REP-2"
+              }
+            ],
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "segmentDigest": "8ea5386c2947a3b7b27001aa71892b67bc4829f2493f6589bedd8739ed70df22",
+            "supplyClassRank": 0
+          },
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "3.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PO-2",
+                "physicalLineageId": "LINEAGE-2",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-PO-1"
+              }
+            ],
+            "businessAvailableDate": "2026-10-05",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "10.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "firmRank": 1,
+            "limitationClass": "NONE",
+            "ordinal": 2,
+            "ownerTypeRank": 1,
+            "priorityRank": 1,
+            "segmentDigest": "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+            "supplyClassRank": 1
+          }
+        ],
+        [
+          {
+            "allocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "basisRefs": [
+              {
+                "basisId": "C-PARENT",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "3.00"
+                },
+                "representationId": "REP-1"
+              },
+              {
+                "basisId": "C-SUCCESSOR",
+                "physicalLineageId": "LINEAGE-1",
+                "quantity": {
+                  "scale": 2,
+                  "uom": "EA",
+                  "value": "2.00"
+                },
+                "representationId": "REP-2"
+              }
+            ],
+            "businessAvailableDate": "2026-10-02",
+            "calendarRef": {
+              "digest": "eb0a68fb71da8b7624e2557f428001d875e821c1bc6f75ab16fdf5728b14b011",
+              "id": "CAL-SITE-1",
+              "owner": "Main Calendar",
+              "version": "7"
+            },
+            "cumulativeAllocatedQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "5.00"
+            },
+            "eligibilityClass": "ELIGIBLE",
+            "eligibleCapacityQuantity": {
+              "scale": 2,
+              "uom": "EA",
+              "value": "7.00"
+            },
+            "firmRank": 0,
+            "limitationClass": "NONE",
+            "ordinal": 1,
+            "ownerTypeRank": 0,
+            "priorityRank": 1,
+            "segmentDigest": "57476505e1988b7395756e4c41881a48fcb1c87bcab930f5d2c1320ed54cdb7d",
+            "supplyClassRank": 0
+          }
+        ]
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/AUTHORIZATION/fullPayloadDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "7c818a6127873544d3dcea0c3dd0a85c55e57d4963a4565df198ae211e5dc730"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "054d78e1712df8ad0bda3b961bdc706d7d79c0eb2fa82f2a174222eaf51b8841"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/requestPayloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "bac43c69b36f4c9fd4e8d051b5e93f42de7677cee1bd8f8a000565ef1a0d532b"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadDigest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "4add4fa121f22f3f03ee0f798bf92fda7bc5cc80676de71c5e55c2b02b94be70"
+      ],
+      [
+        "/carriers/AUTHORIZATION/reference/digest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "4add4fa121f22f3f03ee0f798bf92fda7bc5cc80676de71c5e55c2b02b94be70"
+      ],
+      [
+        "/carriers/AUTHORIZATION/selfDigest",
+        "f607c6206580ebb1dff4b67e0f44e0350921e10f395564a23df5c73afa120fbe",
+        "172decb61e13e5c58b6fdbd0f3576442b956d7cb28807511f409cb3d79d4fa02"
+      ],
+      [
+        "/carriers/CALCULATION/fullPayloadDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "f9e596a735d3fb7066460e81f407dc2c374b5fb5d5742fd3af6aed7a30dcb903"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/AUTHORIZATION",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "7c818a6127873544d3dcea0c3dd0a85c55e57d4963a4565df198ae211e5dc730"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/REQUEST",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "865869c8228d6e72025c08771f8f555c3298ef15ee1638100ffc05367530de97"
+      ],
+      [
+        "/carriers/CALCULATION/payloadDigest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "52227a6764a02c664ac08f89b02a5dbeba2c8c9a4208be13e05891a3b74a51db"
+      ],
+      [
+        "/carriers/CALCULATION/reference/digest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "52227a6764a02c664ac08f89b02a5dbeba2c8c9a4208be13e05891a3b74a51db"
+      ],
+      [
+        "/carriers/CALCULATION/selfDigest",
+        "271e7b751993d796d6fe37673b95dd96b8a0b9c80a1d947e5b7ffd7f8381f42c",
+        "4e96ce1e990a6be1620116ac1c240a5fa009f015ee6749781b04c621bda44f93"
+      ],
+      [
+        "/carriers/REQUEST/fullPayloadDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "865869c8228d6e72025c08771f8f555c3298ef15ee1638100ffc05367530de97"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "054d78e1712df8ad0bda3b961bdc706d7d79c0eb2fa82f2a174222eaf51b8841"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "45431c4bf69d595459eec9038711dcb7fbe6ee0f72a9abe037320fe4af8ff624"
+      ],
+      [
+        "/carriers/REQUEST/payloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "bac43c69b36f4c9fd4e8d051b5e93f42de7677cee1bd8f8a000565ef1a0d532b"
+      ],
+      [
+        "/carriers/REQUEST/reference/digest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "bac43c69b36f4c9fd4e8d051b5e93f42de7677cee1bd8f8a000565ef1a0d532b"
+      ],
+      [
+        "/carriers/REQUEST/selfDigest",
+        "8a0d4656bdf0a65b3c267a300821af80619c97774380a1508ba103ba10c6546a",
+        "3dfc8e7cc95888e56b9e6808907d1c955dc0cc4ec06c0470e7bdb3eec3c1fdd7"
+      ],
+      [
+        "/protectedProjection/boundPublicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "76ffde9d180fd9fde1dd2c13744c9c912e71f52605a694103f389e377c6355ec"
+      ],
+      [
+        "/protectedProjection/fullPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "3ad9aa7a7b5f02695e1a438078612dc7f70d969f69c35d4acf5b68d799c7cff7"
+      ],
+      [
+        "/protectedProjection/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "94679553cbf19f9e0884e12896a5767f6805af00535296861327f02ec5cd9759"
+      ],
+      [
+        "/protectedProjection/representationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "8b1190aa4159f46bbbba5d8b26ce93abfe26b2b2b27acd67da04de85c79f26c3"
+      ],
+      [
+        "/publicProjection/fullPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "2aba27eb5b0e3ca63f91249747fc1d401674389a1397b4089cbaf78caf597c9b"
+      ],
+      [
+        "/publicProjection/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "76ffde9d180fd9fde1dd2c13744c9c912e71f52605a694103f389e377c6355ec"
+      ],
+      [
+        "/publicProjection/representationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "5b4995e21952b932cac056857f07dcd5b94147ab6af49039722807fe64e1f86c"
+      ],
+      [
+        "/receipts/0/inputDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "bac43c69b36f4c9fd4e8d051b5e93f42de7677cee1bd8f8a000565ef1a0d532b"
+      ],
+      [
+        "/receipts/0/outputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "865869c8228d6e72025c08771f8f555c3298ef15ee1638100ffc05367530de97"
+      ],
+      [
+        "/receipts/1/inputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "865869c8228d6e72025c08771f8f555c3298ef15ee1638100ffc05367530de97"
+      ],
+      [
+        "/receipts/1/outputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "7c818a6127873544d3dcea0c3dd0a85c55e57d4963a4565df198ae211e5dc730"
+      ],
+      [
+        "/receipts/1/predecessorOutputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "865869c8228d6e72025c08771f8f555c3298ef15ee1638100ffc05367530de97"
+      ],
+      [
+        "/receipts/2/inputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "7c818a6127873544d3dcea0c3dd0a85c55e57d4963a4565df198ae211e5dc730"
+      ],
+      [
+        "/receipts/2/predecessorOutputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "7c818a6127873544d3dcea0c3dd0a85c55e57d4963a4565df198ae211e5dc730"
+      ],
+      [
+        "/receipts/4/outputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "f9e596a735d3fb7066460e81f407dc2c374b5fb5d5742fd3af6aed7a30dcb903"
+      ],
+      [
+        "/receipts/5/inputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "f9e596a735d3fb7066460e81f407dc2c374b5fb5d5742fd3af6aed7a30dcb903"
+      ],
+      [
+        "/receipts/5/outputDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "3ad9aa7a7b5f02695e1a438078612dc7f70d969f69c35d4acf5b68d799c7cff7"
+      ],
+      [
+        "/receipts/5/predecessorOutputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "f9e596a735d3fb7066460e81f407dc2c374b5fb5d5742fd3af6aed7a30dcb903"
+      ],
+      [
+        "/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "054d78e1712df8ad0bda3b961bdc706d7d79c0eb2fa82f2a174222eaf51b8841"
+      ],
+      [
+        "/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "45431c4bf69d595459eec9038711dcb7fbe6ee0f72a9abe037320fe4af8ff624"
+      ],
+      [
+        "/typedRows/head/protectedPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "3ad9aa7a7b5f02695e1a438078612dc7f70d969f69c35d4acf5b68d799c7cff7"
+      ],
+      [
+        "/typedRows/head/protectedRepresentationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "8b1190aa4159f46bbbba5d8b26ce93abfe26b2b2b27acd67da04de85c79f26c3"
+      ],
+      [
+        "/typedRows/head/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "94679553cbf19f9e0884e12896a5767f6805af00535296861327f02ec5cd9759"
+      ],
+      [
+        "/typedRows/head/publicPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "2aba27eb5b0e3ca63f91249747fc1d401674389a1397b4089cbaf78caf597c9b"
+      ],
+      [
+        "/typedRows/head/publicRepresentationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "5b4995e21952b932cac056857f07dcd5b94147ab6af49039722807fe64e1f86c"
+      ],
+      [
+        "/typedRows/head/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "76ffde9d180fd9fde1dd2c13744c9c912e71f52605a694103f389e377c6355ec"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-05",
+    "name": "request exact eligible capacity 12",
+    "expected": [
+      "COMPLETED",
+      null
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/normalizedRequest/quantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/requestedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/totalAvailable/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/request/quantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/protectedProjection/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/protectedProjection/requestedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/protectedProjection/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/protectedProjection/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/normalizedRequest/quantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/requestedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/publicProjection/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/publicProjection/totalAvailable/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/explanations/0/safeParameters/allocated",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/head/allocatedToRequest/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/head/requestedQuantity/value",
+        "10.00",
+        "12.00"
+      ],
+      [
+        "/typedRows/segments/1/allocatedQuantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/segments/1/basisRefs/0/quantity/value",
+        "3.00",
+        "5.00"
+      ],
+      [
+        "/typedRows/segments/1/cumulativeAllocatedQuantity/value",
+        "10.00",
+        "12.00"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/AUTHORIZATION/fullPayloadDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "070f41bacdb20402719091b735077d5dbaee772f61f632d103fe8b62f4a2a770"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "7f9548b71eeae284637f83c0ac0533012dc6d136abe43bac26088cf514bf1587"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/requestBinding/requestPayloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "e1055e1d345b7058bb70914524a999e3fa81d162f8497b7df9a66ca3f8a23117"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadDigest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "4d86da146dabf888096cb598d3de10a361561caf4cd43877d097e80b8224e79e"
+      ],
+      [
+        "/carriers/AUTHORIZATION/reference/digest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "4d86da146dabf888096cb598d3de10a361561caf4cd43877d097e80b8224e79e"
+      ],
+      [
+        "/carriers/AUTHORIZATION/selfDigest",
+        "f607c6206580ebb1dff4b67e0f44e0350921e10f395564a23df5c73afa120fbe",
+        "eb6ee4757764bbe795db1fa1a7ea130fcd46cf72e2c9ee94172d576db94b3b12"
+      ],
+      [
+        "/carriers/CALCULATION/fullPayloadDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "119c8760bc43a4b362ede72cc089592dd91f7dab1a6991bfdb6e7ab9e18a9841"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/AUTHORIZATION",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "070f41bacdb20402719091b735077d5dbaee772f61f632d103fe8b62f4a2a770"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/inputCarrierDigests/REQUEST",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "f76a1dfa53cfd7b9e59ad52fdb3e47aff641bead96a420b693ce888f3c3b5bf1"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ],
+      [
+        "/carriers/CALCULATION/payloadDigest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "87f004c22e010f093c34cc04ec22515782e68368cad15aa3ba183a5085c0b46e"
+      ],
+      [
+        "/carriers/CALCULATION/reference/digest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "87f004c22e010f093c34cc04ec22515782e68368cad15aa3ba183a5085c0b46e"
+      ],
+      [
+        "/carriers/CALCULATION/selfDigest",
+        "271e7b751993d796d6fe37673b95dd96b8a0b9c80a1d947e5b7ffd7f8381f42c",
+        "b85d7281bd51487c66f161573f1ca0f47c50b65174b4691f82f5baf47a32f86e"
+      ],
+      [
+        "/carriers/REQUEST/fullPayloadDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "f76a1dfa53cfd7b9e59ad52fdb3e47aff641bead96a420b693ce888f3c3b5bf1"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "7f9548b71eeae284637f83c0ac0533012dc6d136abe43bac26088cf514bf1587"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "d97a757b984ba3f7bd1428c8319546d5e85a594211967a9ad2e83148bb54a96b"
+      ],
+      [
+        "/carriers/REQUEST/payloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "e1055e1d345b7058bb70914524a999e3fa81d162f8497b7df9a66ca3f8a23117"
+      ],
+      [
+        "/carriers/REQUEST/reference/digest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "e1055e1d345b7058bb70914524a999e3fa81d162f8497b7df9a66ca3f8a23117"
+      ],
+      [
+        "/carriers/REQUEST/selfDigest",
+        "8a0d4656bdf0a65b3c267a300821af80619c97774380a1508ba103ba10c6546a",
+        "5efbe447a4b5a3533e0c0de78e2271d8eb8cd187b1394ba9b1e770aab343bf5a"
+      ],
+      [
+        "/protectedProjection/boundPublicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "0539b4090663487e1dcab0975945cf76d85411ef57352fc2563acfd12d7d8833"
+      ],
+      [
+        "/protectedProjection/fullPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "ed19929529c86f36647e3688a034022960d57d8eb14454cc96bc11e1fca4d6b9"
+      ],
+      [
+        "/protectedProjection/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "fce2160b7b767e78a8fcfb7d198dde5fc6b2a974cd5c7235641ce0b6d8cb1b34"
+      ],
+      [
+        "/protectedProjection/representationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "f9037553b9f67034eecc653bd59671e6adfda1c4ec0162b46cdf3d98704d7669"
+      ],
+      [
+        "/protectedProjection/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ],
+      [
+        "/publicProjection/fullPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "0164f6c764392b9d31453af2d06660ad1899b9504e4f7ce94b90d35a4ca94bf0"
+      ],
+      [
+        "/publicProjection/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "0539b4090663487e1dcab0975945cf76d85411ef57352fc2563acfd12d7d8833"
+      ],
+      [
+        "/publicProjection/representationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "d881fe24e73237a8a3a2d1990a2f735247412acd45522c459c9a95b45602d0cb"
+      ],
+      [
+        "/publicProjection/segments/1/publicSegmentDigest",
+        "a76598f7819f5062b502cc06415e73b345a3be893726767aabf712397e88f73a",
+        "fb2722c8028e0779e8a0aa645a29fcec7fedd238d4721b09336fb4416069a9cf"
+      ],
+      [
+        "/receipts/0/inputDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "e1055e1d345b7058bb70914524a999e3fa81d162f8497b7df9a66ca3f8a23117"
+      ],
+      [
+        "/receipts/0/outputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "f76a1dfa53cfd7b9e59ad52fdb3e47aff641bead96a420b693ce888f3c3b5bf1"
+      ],
+      [
+        "/receipts/1/inputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "f76a1dfa53cfd7b9e59ad52fdb3e47aff641bead96a420b693ce888f3c3b5bf1"
+      ],
+      [
+        "/receipts/1/outputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "070f41bacdb20402719091b735077d5dbaee772f61f632d103fe8b62f4a2a770"
+      ],
+      [
+        "/receipts/1/predecessorOutputDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "f76a1dfa53cfd7b9e59ad52fdb3e47aff641bead96a420b693ce888f3c3b5bf1"
+      ],
+      [
+        "/receipts/2/inputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "070f41bacdb20402719091b735077d5dbaee772f61f632d103fe8b62f4a2a770"
+      ],
+      [
+        "/receipts/2/predecessorOutputDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "070f41bacdb20402719091b735077d5dbaee772f61f632d103fe8b62f4a2a770"
+      ],
+      [
+        "/receipts/4/outputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "119c8760bc43a4b362ede72cc089592dd91f7dab1a6991bfdb6e7ab9e18a9841"
+      ],
+      [
+        "/receipts/5/inputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "119c8760bc43a4b362ede72cc089592dd91f7dab1a6991bfdb6e7ab9e18a9841"
+      ],
+      [
+        "/receipts/5/outputDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "ed19929529c86f36647e3688a034022960d57d8eb14454cc96bc11e1fca4d6b9"
+      ],
+      [
+        "/receipts/5/predecessorOutputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "119c8760bc43a4b362ede72cc089592dd91f7dab1a6991bfdb6e7ab9e18a9841"
+      ],
+      [
+        "/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "7f9548b71eeae284637f83c0ac0533012dc6d136abe43bac26088cf514bf1587"
+      ],
+      [
+        "/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "d97a757b984ba3f7bd1428c8319546d5e85a594211967a9ad2e83148bb54a96b"
+      ],
+      [
+        "/typedRows/head/protectedPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "ed19929529c86f36647e3688a034022960d57d8eb14454cc96bc11e1fca4d6b9"
+      ],
+      [
+        "/typedRows/head/protectedRepresentationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "f9037553b9f67034eecc653bd59671e6adfda1c4ec0162b46cdf3d98704d7669"
+      ],
+      [
+        "/typedRows/head/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "fce2160b7b767e78a8fcfb7d198dde5fc6b2a974cd5c7235641ce0b6d8cb1b34"
+      ],
+      [
+        "/typedRows/head/publicPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "0164f6c764392b9d31453af2d06660ad1899b9504e4f7ce94b90d35a4ca94bf0"
+      ],
+      [
+        "/typedRows/head/publicRepresentationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "d881fe24e73237a8a3a2d1990a2f735247412acd45522c459c9a95b45602d0cb"
+      ],
+      [
+        "/typedRows/head/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "0539b4090663487e1dcab0975945cf76d85411ef57352fc2563acfd12d7d8833"
+      ],
+      [
+        "/typedRows/segments/1/segmentDigest",
+        "dea0c2574ac99d00afd45fe20aa078e6ab50f60873fb71830bcdef470edb2cee",
+        "46719ce1f57a833b39423f0f4ad54c3e9f360464e710b11d90a0d23b2534cbc7"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-06",
+    "name": "forged 999 allocation",
+    "expected": [
+      "REJECTED",
+      "ALLOCATION_INVARIANT_INVALID"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/allocatedToRequest/value",
+        "10.00",
+        "999.00"
+      ],
+      [
+        "/carriers/CALCULATION/payloadCanonicalBytesBase64__decoded/totalAvailable/value",
+        "10.00",
+        "999.00"
+      ],
+      [
+        "/protectedProjection/allocatedToRequest/value",
+        "10.00",
+        "999.00"
+      ],
+      [
+        "/publicProjection/allocatedToRequest/value",
+        "10.00",
+        "999.00"
+      ],
+      [
+        "/publicProjection/totalAvailable/value",
+        "10.00",
+        "999.00"
+      ],
+      [
+        "/typedRows/head/allocatedToRequest/value",
+        "10.00",
+        "999.00"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/CALCULATION/fullPayloadDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "310428910f267878c1c8115b491238febf2e9ea9107e5e94d7a31047513ed476"
+      ],
+      [
+        "/carriers/CALCULATION/payloadDigest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "196d9bd8efb61a7181fe22908a007a3bb0d09ba80a53b0eb4396771af0bd4906"
+      ],
+      [
+        "/carriers/CALCULATION/reference/digest",
+        "5bb3d100b3f91418c777b79d514fe9dd488979ee2412c049fbf575d97ce9f5a2",
+        "196d9bd8efb61a7181fe22908a007a3bb0d09ba80a53b0eb4396771af0bd4906"
+      ],
+      [
+        "/carriers/CALCULATION/selfDigest",
+        "271e7b751993d796d6fe37673b95dd96b8a0b9c80a1d947e5b7ffd7f8381f42c",
+        "d991a6ebfcc2dca45e6b65357e8616b9af0e4639ae4f6b77b66d2db98226b226"
+      ],
+      [
+        "/protectedProjection/boundPublicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "fb6eecc33caebeefd2176b7e3115f7c5d46343d74839e188646d5f8c39c1e9ea"
+      ],
+      [
+        "/protectedProjection/fullPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "cc3a20581aecfa537de3ded91ffe848819bb93917aa250fdc53ad89478589d48"
+      ],
+      [
+        "/protectedProjection/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "1bac9852960639922f4fd9eb3fcceb62da2b66f79ebe83d5089d6342291f212b"
+      ],
+      [
+        "/protectedProjection/representationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "82ac2af7eea54703f68c7340788bfcd7c0eba932962e8d96d1f57fcee8dc3726"
+      ],
+      [
+        "/publicProjection/fullPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "d7018c0f61e3cf61390c1ec1dc45c3ff02ccb1f36d1c858398c99531903a1f41"
+      ],
+      [
+        "/publicProjection/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "fb6eecc33caebeefd2176b7e3115f7c5d46343d74839e188646d5f8c39c1e9ea"
+      ],
+      [
+        "/publicProjection/representationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "4461d9234c1b7d7c067cf1ef68a3d1924943d66983c68257eb10827708c89cf5"
+      ],
+      [
+        "/receipts/4/outputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "310428910f267878c1c8115b491238febf2e9ea9107e5e94d7a31047513ed476"
+      ],
+      [
+        "/receipts/5/inputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "310428910f267878c1c8115b491238febf2e9ea9107e5e94d7a31047513ed476"
+      ],
+      [
+        "/receipts/5/outputDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "cc3a20581aecfa537de3ded91ffe848819bb93917aa250fdc53ad89478589d48"
+      ],
+      [
+        "/receipts/5/predecessorOutputDigest",
+        "30090366e05702e5014a4ab820d4db4dc5aaddf597ec8b392f22465d102d886b",
+        "310428910f267878c1c8115b491238febf2e9ea9107e5e94d7a31047513ed476"
+      ],
+      [
+        "/typedRows/head/protectedPayloadDigest",
+        "45cbd91c67cf16ede43f0cad2047fbd76ef582e561c1e3f0c8e1745efaa2ec29",
+        "cc3a20581aecfa537de3ded91ffe848819bb93917aa250fdc53ad89478589d48"
+      ],
+      [
+        "/typedRows/head/protectedRepresentationDigest",
+        "becb421ee3dd43cfd61f7a1c9d5d9754b0da26450cb5ff38ec5dbcc5799b3b9b",
+        "82ac2af7eea54703f68c7340788bfcd7c0eba932962e8d96d1f57fcee8dc3726"
+      ],
+      [
+        "/typedRows/head/protectedSelfDigest",
+        "f8b26b42c46a86b17ec06094f265d5e1fd63dc4a5bd03ab94e6e9eb4567496d2",
+        "1bac9852960639922f4fd9eb3fcceb62da2b66f79ebe83d5089d6342291f212b"
+      ],
+      [
+        "/typedRows/head/publicPayloadDigest",
+        "4cbd91b00f81dd5ec343a758e00c4606f6146e51bc494b5856cd475cfa2572e0",
+        "d7018c0f61e3cf61390c1ec1dc45c3ff02ccb1f36d1c858398c99531903a1f41"
+      ],
+      [
+        "/typedRows/head/publicRepresentationDigest",
+        "014362729a4a9cf1e524a1401bd6b9f7c47dabfe9488a180f8b3bd2f55102167",
+        "4461d9234c1b7d7c067cf1ef68a3d1924943d66983c68257eb10827708c89cf5"
+      ],
+      [
+        "/typedRows/head/publicSelfDigest",
+        "6b752aa8169467b9441d673ae683f66ff523f30047764b2fc96185eaaf243c07",
+        "fb6eecc33caebeefd2176b7e3115f7c5d46343d74839e188646d5f8c39c1e9ea"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-07",
+    "name": "replay digest collapse",
+    "expected": [
+      "REJECTED",
+      "REPLAY_STORE_BINDING_INVALID"
+    ],
+    "semantic_changes": [],
+    "digest_changes": [
+      [
+        "/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-08",
+    "name": "stored schema version forged",
+    "expected": [
+      "REJECTED",
+      "CARRIER_SCHEMA_REGISTRY_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/SUPPLY/schemaVersion",
+        "1.0",
+        "999.999"
+      ]
+    ],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-09",
+    "name": "receipt step forged",
+    "expected": [
+      "REJECTED",
+      "RECEIPT_CHAIN_INVALID"
+    ],
+    "semantic_changes": [
+      [
+        "/receipts/2/step",
+        "POLICY",
+        "REQUEST"
+      ]
+    ],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-10",
+    "name": "page count forged",
+    "expected": [
+      "REJECTED",
+      "PAGE_PROOF_INVALID"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pageProof/candidateCount",
+        3,
+        999
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/SUPPLY/fullPayloadDigest",
+        "fe065faf96025488715c30fb0a248984ef2583faa95bd4884f380aaae12713e6",
+        "406423e97e2a7ac60db70a47412c646551aab8da5e1e8eab9dc42aa813e588aa"
+      ],
+      [
+        "/carriers/SUPPLY/payloadDigest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "e2cb1fa58c53a1bd2703324c15fa24a9bb201a92eb38c91988f2df54a3fe19be"
+      ],
+      [
+        "/carriers/SUPPLY/reference/digest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "e2cb1fa58c53a1bd2703324c15fa24a9bb201a92eb38c91988f2df54a3fe19be"
+      ],
+      [
+        "/carriers/SUPPLY/selfDigest",
+        "7b0b0b8ada3dd08c92fde4aa6a5fcde65781e9b8ba923132f575c6577e73713d",
+        "0092b9f77347046a6170b85725a0c5ff4f22c2159de26392665aa719f48d907c"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-11",
+    "name": "snapshot expired",
+    "expected": [
+      "REJECTED",
+      "SNAPSHOT_CURRENTNESS_INVALID"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/snapshotRef/expiresAt",
+        "2026-10-01T13:30:00.000Z",
+        "2026-10-01T11:59:59.000Z"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/SUPPLY/fullPayloadDigest",
+        "fe065faf96025488715c30fb0a248984ef2583faa95bd4884f380aaae12713e6",
+        "2abf50158df6acfab05b99bf4d17696c8b7a0678dfd36a457648d58d10fa99f0"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/snapshotRef/digest",
+        "788657a4365a280330c9e5b8eface4d683c93471a78fc58a8abf0729d74f063b",
+        "567e8c634821f25bf52dd312deb2760ede1a214e777732b093ffe2775e3c020c"
+      ],
+      [
+        "/carriers/SUPPLY/payloadDigest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "6479970fa5fdc7dde58d698596a8070050f935745ed46c09089d60444025f101"
+      ],
+      [
+        "/carriers/SUPPLY/reference/digest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "6479970fa5fdc7dde58d698596a8070050f935745ed46c09089d60444025f101"
+      ],
+      [
+        "/carriers/SUPPLY/selfDigest",
+        "7b0b0b8ada3dd08c92fde4aa6a5fcde65781e9b8ba923132f575c6577e73713d",
+        "c33f8cccad9575acbe9137ea4c1ae2cb645192371008d4f09cbf6618d82ed7be"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-12",
+    "name": "policy foreign scope",
+    "expected": [
+      "REJECTED",
+      "POLICY_SCOPE_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/POLICY/payloadCanonicalBytesBase64__decoded/result/policySet/siteId",
+        "SITE-1",
+        "SITE-FOREIGN"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/POLICY/fullPayloadDigest",
+        "3dc3c63f84cba1b7af202b438eb33a5ddbb9de8b41fe76f17807e82ab0fe2e26",
+        "4947ca3d9cd11ac4dfcc334bd43d93d7622a4968783d42561085ccc45a9f4a80"
+      ],
+      [
+        "/carriers/POLICY/payloadDigest",
+        "33c17420226d4a2ca66e8e90813f3f218d03590157ae2b7aef443a0cdbc0407e",
+        "29e74daa3994ca8d2089430c2e7e9f706cb72d5f6fcb6085b85445d58fe71fbf"
+      ],
+      [
+        "/carriers/POLICY/reference/digest",
+        "33c17420226d4a2ca66e8e90813f3f218d03590157ae2b7aef443a0cdbc0407e",
+        "29e74daa3994ca8d2089430c2e7e9f706cb72d5f6fcb6085b85445d58fe71fbf"
+      ],
+      [
+        "/carriers/POLICY/selfDigest",
+        "c129276cccdb44672ba532bd038865e5fe2537c2831ef60eb89cad300af90a5f",
+        "613fc7fb52f07d7252e78869f3927b39c01139ac3dda0637410f8e395de9cbcc"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-13",
+    "name": "permission projection forged",
+    "expected": [
+      "REJECTED",
+      "PERMISSION_CURRENT_ROW_NOT_UNIQUE"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/decision/permissionProjection/version",
+        "9",
+        "FORGED"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/AUTHORIZATION/fullPayloadDigest",
+        "8fb75ba1f8c14e21a39864f1d44b1604cf59d1c8a4288138b6f0117655e87215",
+        "b66314afe3f844f9b6233a87d63d6946c5c96e1348f4fa181490d297a0a0331b"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadCanonicalBytesBase64__decoded/decision/decisionDigest",
+        "8b2a0d8c0665f00e4e51ab06e8f94ec478ffe13d5ce1730cd38d54a4294cfe24",
+        "544911b3bf315a7748bf1b0127a928742ba0ab3728ffbf14d29ccb8600016b9e"
+      ],
+      [
+        "/carriers/AUTHORIZATION/payloadDigest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "10c2f57849116f97faf3b62642f01d6218e8bf22e2bd4c1a86c142dc32c8371f"
+      ],
+      [
+        "/carriers/AUTHORIZATION/reference/digest",
+        "759c688e1002dab70c55ab48d8f5026251adeed1b98e406f72052b06648b6585",
+        "10c2f57849116f97faf3b62642f01d6218e8bf22e2bd4c1a86c142dc32c8371f"
+      ],
+      [
+        "/carriers/AUTHORIZATION/selfDigest",
+        "f607c6206580ebb1dff4b67e0f44e0350921e10f395564a23df5c73afa120fbe",
+        "08947f597b56f93c931326dba42bb369e629f9849d156b87f56bdb3a5137f935"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-14",
+    "name": "typed capacity forged",
+    "expected": [
+      "REJECTED",
+      "TYPED_ROW_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/typedRows/basis/0/eligibleCapacityQuantity/value",
+        "3.00",
+        "999.00"
+      ]
+    ],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-15",
+    "name": "protected lineage forged",
+    "expected": [
+      "REJECTED",
+      "PROTECTED_PROJECTION_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/protectedProjection/lineageLedger/0/winnerRepresentationSequence",
+        2,
+        999
+      ]
+    ],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-16",
+    "name": "request zero",
+    "expected": [
+      "REJECTED",
+      "QUANTITY_OUT_OF_RANGE"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/request/quantity/value",
+        "10.00",
+        "0.00"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/REQUEST/fullPayloadDigest",
+        "53665198fa8043b4db0a8eded7a7b1e17311ab2b8883fb681b14403ac03ab041",
+        "2eb352872f6d7759e2ff3a14ff12c57bb77ad6e7364f827df45f2b8dc8822e2f"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/replayEnvelopeDigest",
+        "1616b4d179785fcd92e35feb9f6cc7231d8ceae4a5052ebd9deb738c950e8176",
+        "46d582539cb99922b309e86feac24392259b5f197f4a3a36352fcf5a5a8ab06b"
+      ],
+      [
+        "/carriers/REQUEST/payloadCanonicalBytesBase64__decoded/replay/requestBodyDigest",
+        "b5c9a39bbf192ae159c8a2936ec15120440085a37a4296720bc9fa56501c6ddf",
+        "064ffa38205150dfddfd7a6339b7919de4b8df39e342e0679940be04fcc06d7e"
+      ],
+      [
+        "/carriers/REQUEST/payloadDigest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "ee0def46aab0f15c304c42b25f2d832f8d42ccd971c9e1e7a97d4d74c844c54e"
+      ],
+      [
+        "/carriers/REQUEST/reference/digest",
+        "11400f209a9ebd35150443a19f54b73df81936246347ad4cf62eb46a202ff53a",
+        "ee0def46aab0f15c304c42b25f2d832f8d42ccd971c9e1e7a97d4d74c844c54e"
+      ],
+      [
+        "/carriers/REQUEST/selfDigest",
+        "8a0d4656bdf0a65b3c267a300821af80619c97774380a1508ba103ba10c6546a",
+        "db2b4edc4a5fee9196c59cad59c610ebfa1c8c457c7740a1393ddb283d441ecb"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-17",
+    "name": "endpoint actor substitution",
+    "expected": [
+      "REJECTED",
+      "ENDPOINT_PRINCIPAL_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/endpointTicket/actorId",
+        "ACTOR-1",
+        "ACTOR-FORGED"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/endpointTicket/projectionRef/digest",
+        "e93444a9fd98e0ab85e84950fc5144baee3cd05e793ea52422e1b584d5d1abc6",
+        "bda7797fb89e78df5a7ff3da28d0d246f375852149ab84bf5fd880c2c56bbdd3"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-18",
+    "name": "expected CAS mismatch",
+    "expected": [
+      "REJECTED",
+      "EXPECTED_CAS_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/expectedEtagVersion",
+        3,
+        9
+      ]
+    ],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-19",
+    "name": "public evaluation identity foreign",
+    "expected": [
+      "REJECTED",
+      "PUBLIC_PROJECTION_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/publicProjection/evaluationId",
+        "11111111-1111-4111-8111-111111111111",
+        "22222222-2222-4222-8222-222222222222"
+      ]
+    ],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-20",
+    "name": "economic write attempted",
+    "expected": [
+      "REJECTED",
+      "ECONOMIC_SIDE_EFFECT_FORBIDDEN"
+    ],
+    "semantic_changes": [
+      [
+        "/audit/economicWrites",
+        [],
+        [
+          "Demand"
+        ]
+      ]
+    ],
+    "digest_changes": []
+  },
+  {
+    "id": "CALC-21",
+    "name": "safety stock duplicate marker",
+    "expected": [
+      "REJECTED",
+      "SAFETY_STOCK_MARKER_INVALID"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/safetyStockApplication/applicationCount",
+        1,
+        2
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/SUPPLY/fullPayloadDigest",
+        "fe065faf96025488715c30fb0a248984ef2583faa95bd4884f380aaae12713e6",
+        "9ff41f569b574520f3e86b7f7feb3080c0c2dcb943eee52fccbd6d455ceef967"
+      ],
+      [
+        "/carriers/SUPPLY/payloadDigest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "1c12e35d556c359ea478bd443023070456001a950bf06fe9f8de47b2c55a6839"
+      ],
+      [
+        "/carriers/SUPPLY/reference/digest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "1c12e35d556c359ea478bd443023070456001a950bf06fe9f8de47b2c55a6839"
+      ],
+      [
+        "/carriers/SUPPLY/selfDigest",
+        "7b0b0b8ada3dd08c92fde4aa6a5fcde65781e9b8ba923132f575c6577e73713d",
+        "257e0921c6a3653699fbe301e64793518b7d4712501aaa5075a49b3e2bf94889"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-22",
+    "name": "reservation identity mismatch",
+    "expected": [
+      "REJECTED",
+      "RESERVATION_IDENTITY_MISMATCH"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pages/0/reservations/0/demandRef/reservationId",
+        "RES-1",
+        "RES-OTHER"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/SUPPLY/fullPayloadDigest",
+        "fe065faf96025488715c30fb0a248984ef2583faa95bd4884f380aaae12713e6",
+        "13783af2611d5ad642b157d161268fe27d2440c2ec74a00633a4c2477524222c"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pageProof/pageSequenceDigest",
+        "075e7b6d655649aafa12fc4ec828f1146a407634d6468dea6912e9d73b1030bd",
+        "ad30d0004b0a901bba1f2b085dee6a64587282db9aaef740802f6fbc24104a4e"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pages/0/pageDigest",
+        "d3b4856cb4875057b4aae9c2d62436f950f0b1150ff264d7a4b4d810412e8dda",
+        "129e29b6e877b436faa6afa598ae071d505eba7f6f746e47e496c3cdbb85be3e"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/snapshotRef/digest",
+        "788657a4365a280330c9e5b8eface4d683c93471a78fc58a8abf0729d74f063b",
+        "d33ac5172b3ea46f942e95d2b0b78e1669021ae63b0caf0a826ba855563bab33"
+      ],
+      [
+        "/carriers/SUPPLY/payloadDigest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "2a924bac6c61252f3b63d1deb41e047c0182cd6814d8efd6c3dd41e1196ff88a"
+      ],
+      [
+        "/carriers/SUPPLY/reference/digest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "2a924bac6c61252f3b63d1deb41e047c0182cd6814d8efd6c3dd41e1196ff88a"
+      ],
+      [
+        "/carriers/SUPPLY/selfDigest",
+        "7b0b0b8ada3dd08c92fde4aa6a5fcde65781e9b8ba923132f575c6577e73713d",
+        "e0a665345fd516b0ca5b90144cadb767e9ef47d800b2695754eac5749adadbf3"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-23",
+    "name": "lineage replacement proof forged",
+    "expected": [
+      "REJECTED",
+      "LINEAGE_REPLACEMENT_PROOF_INVALID"
+    ],
+    "semantic_changes": [],
+    "digest_changes": [
+      [
+        "/carriers/SUPPLY/fullPayloadDigest",
+        "fe065faf96025488715c30fb0a248984ef2583faa95bd4884f380aaae12713e6",
+        "38a5ec7bf63d31814a3e5f291e53ea618f638b117465095bb6f3680e81e3b111"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pageProof/pageSequenceDigest",
+        "075e7b6d655649aafa12fc4ec828f1146a407634d6468dea6912e9d73b1030bd",
+        "94e22f2f09781f998e0814e01df4507e55d8986b9284ee3ced39da9329c06f48"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pages/0/candidates/1/replacementProofDigest",
+        "2642657d00f51115df3bb9100e2345dd3a7babb01cf802a429708b93c4765ebb",
+        "ccdd35168ab474fa5764a526cfb83621351e23682c5075b2e18d56bddf96aa30"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pages/0/pageDigest",
+        "d3b4856cb4875057b4aae9c2d62436f950f0b1150ff264d7a4b4d810412e8dda",
+        "751b524d7390e9d186bc9ff02ee188137f509b97be61c070d808f9fb8c2747c3"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/snapshotRef/digest",
+        "788657a4365a280330c9e5b8eface4d683c93471a78fc58a8abf0729d74f063b",
+        "c7940b63ef8ff4a06533af80e00bc1167e3f117885daef24825fc4c6642db57c"
+      ],
+      [
+        "/carriers/SUPPLY/payloadDigest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "d93ff46b9782b3a0ddf8a9165fa59a863a3dd1bcabd4c39d6dcc65fa3278dc24"
+      ],
+      [
+        "/carriers/SUPPLY/reference/digest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "d93ff46b9782b3a0ddf8a9165fa59a863a3dd1bcabd4c39d6dcc65fa3278dc24"
+      ],
+      [
+        "/carriers/SUPPLY/selfDigest",
+        "7b0b0b8ada3dd08c92fde4aa6a5fcde65781e9b8ba923132f575c6577e73713d",
+        "b2d72bea9db8f800fd6108652949ed9aa71beb61ba1e3cd638f7f72480cf1f9b"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-24",
+    "name": "calendar derivation forged",
+    "expected": [
+      "REJECTED",
+      "CALENDAR_DERIVATION_INVALID"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pages/0/candidates/0/businessAvailableDate",
+        "2026-10-02",
+        "2026-10-03"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/SUPPLY/fullPayloadDigest",
+        "fe065faf96025488715c30fb0a248984ef2583faa95bd4884f380aaae12713e6",
+        "2aac7116ed98584eaa0d098e85b25b7a17b743fcc10aa06c3c336b009b5c2752"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pageProof/pageSequenceDigest",
+        "075e7b6d655649aafa12fc4ec828f1146a407634d6468dea6912e9d73b1030bd",
+        "69226dde9c48f7a9b1b17524ed766b086e025d8a25d8352079384bb76eb2dae4"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/pages/0/pageDigest",
+        "d3b4856cb4875057b4aae9c2d62436f950f0b1150ff264d7a4b4d810412e8dda",
+        "aabd4aac631be8ddf611c225d075677558ec1a8846186f6c7004410dbd4756ab"
+      ],
+      [
+        "/carriers/SUPPLY/payloadCanonicalBytesBase64__decoded/result/snapshotRef/digest",
+        "788657a4365a280330c9e5b8eface4d683c93471a78fc58a8abf0729d74f063b",
+        "abf5334e4bcc552d3b01d1768d1bf3bfaecf3710e1dbd66d2843d52177216684"
+      ],
+      [
+        "/carriers/SUPPLY/payloadDigest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "1e76673cc5c8e2e2df21e2c2f1c9e8a14a323af5b0161d38ff858dec52402904"
+      ],
+      [
+        "/carriers/SUPPLY/reference/digest",
+        "eca3137d635c3cad6cc07cf6e85a28277c15a19102076aed81aae0a187655b0b",
+        "1e76673cc5c8e2e2df21e2c2f1c9e8a14a323af5b0161d38ff858dec52402904"
+      ],
+      [
+        "/carriers/SUPPLY/selfDigest",
+        "7b0b0b8ada3dd08c92fde4aa6a5fcde65781e9b8ba923132f575c6577e73713d",
+        "67a724a70f3b29dc61a6641d308efdedce7111b6335f969e7c34f5ffb41b2ded"
+      ]
+    ]
+  },
+  {
+    "id": "CALC-25",
+    "name": "CTP expansion forbidden",
+    "expected": [
+      "REJECTED",
+      "CTP_UNSUPPORTED"
+    ],
+    "semantic_changes": [
+      [
+        "/carriers/POLICY/payloadCanonicalBytesBase64__decoded/result/policySet/ctpMode",
+        "DISABLED",
+        "ENABLED"
+      ]
+    ],
+    "digest_changes": [
+      [
+        "/carriers/POLICY/fullPayloadDigest",
+        "3dc3c63f84cba1b7af202b438eb33a5ddbb9de8b41fe76f17807e82ab0fe2e26",
+        "a590f83035ad0910d7b385ac30932cc893075f63e64f88184bd49fd56658176d"
+      ],
+      [
+        "/carriers/POLICY/payloadDigest",
+        "33c17420226d4a2ca66e8e90813f3f218d03590157ae2b7aef443a0cdbc0407e",
+        "2d891de1580eee7adfad1c7728035c545dedc662baa4a391c600d9a7023eec38"
+      ],
+      [
+        "/carriers/POLICY/reference/digest",
+        "33c17420226d4a2ca66e8e90813f3f218d03590157ae2b7aef443a0cdbc0407e",
+        "2d891de1580eee7adfad1c7728035c545dedc662baa4a391c600d9a7023eec38"
+      ],
+      [
+        "/carriers/POLICY/selfDigest",
+        "c129276cccdb44672ba532bd038865e5fe2537c2831ef60eb89cad300af90a5f",
+        "4f02ad4ea05925583f883f0fc6d136f850960293455e794d4dd1cb0e4c90c72c"
+      ]
+    ]
+  }
+]

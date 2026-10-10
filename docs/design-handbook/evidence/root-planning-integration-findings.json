@@ -1,0 +1,913 @@
+{
+  "group": "root-planning",
+  "findings": [
+    {
+      "id": "PLAN-IF-001",
+      "targets": [
+        "PLAN-MRP-01",
+        "MES-MAT-01"
+      ],
+      "classification": "bilateral_native_semantics_mapping_required_not_runtime_bug",
+      "summary": "MRP两材料基数模式与MAT原生RemainingBasis接口有相近字段，尚不能据名称认定等价采用。",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/14/14e648e1342492b0__MRP-R03.md",
+          "line": 75
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/94/94de90613be08775__MES-MAT-01_生产领退料与消耗_前后端开发Spec_v1.1_WORKING.md",
+          "line": 335
+        }
+      ],
+      "detail": "MAT M22内部 WO/Planning只读端口含planned、confirmedConsumedNet、unconsumedLineSpans、reservationProtectionRefs、unresolvedActions、offsetManifest、protectionBindings、ownerVector、coverage、canClose；MAT L347禁止planned-issued推MRP并有80→50+30例。operations agent全文词检未见NET_RESIDUAL/GROSS_WITH_EXPLICIT_OFFSETS/RemainingMaterialObligation。MRP OPEN001保留实际Owner量义/discriminator及已抵集合排除、仍占用保护的双边适配；MAT O-MAT08 L485也要求消费者版本/Scope/应用合同及真实实例。"
+    },
+    {
+      "id": "PLAN-IF-002",
+      "targets": [
+        "PLAN-ATP-01",
+        "PLAN-POL-01",
+        "PLAN-SUP-01"
+      ],
+      "classification": "accepted_versions_require_explicit_adoption",
+      "summary": "POL/SUP功能文本认可不自动关闭ATP R11 RequiredFenced精确端口。",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d4/d4e2a2805932996e__A-PLAN-ATP-R11-MAIN-SPEC.md",
+          "line": 54
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/e1/e1aed8dc46c13a8d__PS-R03.md",
+          "line": 18
+        }
+      ],
+      "detail": "ATP精确政策事件identity gate/时点绑定、连续供给页与digest/lineage/reservation/safety tuple等与PS功能级合同必须有实际被采用映射。不是报告业务运行失败。"
+    },
+    {
+      "id": "PLAN-IF-003",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "classification": "bounded_editorial_residue_current_precise_input_takes_precedence_not_runtime_bug",
+      "summary": "AC087步骤readcut22陈旧措辞与当前精确输入fixedReadCut113不一致。",
+      "detail": "CP12组合选择的AC /criteria/86/steps/0写readcut22，/criteria/86/inputAndPreconditions/specificConditions/fixedReadCut为113；CP12主文§20.5和§26及独审总论L95共同保当前cut113。开发阅读版采用精确输入及packet的113，并原样保留旧步骤，建议源作者勘误；未改原件或推翻完整静态接受，未执行业务。",
+      "evidence": [
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+          "json_pointer": "/criteria/86/steps/0"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-exc-cp12/EXC_NEW_AC_CATALOGUE.json",
+          "json_pointer": "/criteria/86/inputAndPreconditions/specificConditions/fixedReadCut"
+        }
+      ]
+    },
+    {
+      "id": "PLAN-IF-004",
+      "targets": [
+        "PLAN-ATP-01"
+      ],
+      "classification": "cross_representation_constraint_inconsistency_not_runtime_reproduction",
+      "summary": "ATP单位标识在Schema/TypeScript为StableId最长128字符，C#数量验证及DDL五列仍为16。",
+      "detail": "WIRE Quantity.uom和转换/原生单位引用StableId（1..128）；TypeScriptQuantityWire.uom是StableId；C# L194 QuantityWire.Validate限制1..16；DDL L132/291/325/327/382为varchar(16)。采用前需Owner选择一致字符集合/长度并同时修规范/类型/存储及长单位反例，禁止静默截断。本轮未编译/运行数据库，属静态设计不一致。",
+      "evidence": [
+        {
+          "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-WIRE.schema.json",
+          "json_pointer": "/$defs/Quantity/properties/uom"
+        },
+        {
+          "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-WIRE.types.cs",
+          "line": 194
+        },
+        {
+          "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-POSTGRESQL-DDL.sql",
+          "line": 132
+        },
+        {
+          "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-POSTGRESQL-DDL.sql",
+          "line": 291
+        }
+      ]
+    },
+    {
+      "id": "PLAN-IF-005",
+      "targets": [
+        "PLAN-ATP-01"
+      ],
+      "classification": "declared_vs_terminal_procedure_lock_order_requires_resolution",
+      "summary": "ATP声明Replay→Evaluation锁序，终结入口SQL先Evaluation后Replay。",
+      "detail": "DATA-CONSTRAINTS声明全局顺序AtpReplayRecord→AtpEvaluation→AtpPolicyIdentity…；DDL _complete_evaluation_internal L2215–2217先evaluation FOR UPDATE后replay_record FOR UPDATE。R11当前静态接受修复聚焦bind_snapshot_stage早取PolicyIdentity，不覆盖此终结路径差异。先做共同锁计划/调用栈论证再采用SQL；未证明实际死锁或运行故障。",
+      "evidence": [
+        {
+          "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-DATA-CONSTRAINTS.json",
+          "line": 1
+        },
+        {
+          "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\PLAN-ATP-POSTGRESQL-DDL.sql",
+          "line": 2215
+        },
+        {
+          "path": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\atp-r11\\RECOVERY-R11-DIRECT-REPAIR-EVIDENCE.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "PLAN-IF-006",
+      "kind": "static_type_domain_narrowing",
+      "status": "OWNER_DECISION_REQUIRED",
+      "title": "Legacy signed wire quantity vs nonnegative Stored codec",
+      "fact": "LegacyAnchor reportedRequiredQty/reportedAvailableQty reference SignedDecimal; corresponding StoredLegacyAnchorRecord fields reference DecimalQty -> nonnegative Decimal. Relational decimal(21,8) columns do not themselves establish a signed legacy codec exception.",
+      "impact": "A negative historical original can be represented by the wire type but is outside the declared Stored type; original-value preservation therefore needs a precise mapping decision.",
+      "not_proven": [
+        "Any actual historical negative value",
+        "Executed runtime or migration failure",
+        "Production bug"
+      ],
+      "exit_condition": "Owner chooses and aligns original-preserving signed legacy storage/rejection/rendering semantics across typed wire, Stored root and relation mapping, with boundary examples and separate future implementation validation. Do not clamp/abs/zero-fill.",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/SignedDecimal",
+          "line": 44,
+          "end_line": 47,
+          "claim": "allows negative sign"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/LegacyAnchor/properties/reportedRequiredQty",
+          "line": 3642,
+          "end_line": 3644,
+          "claim": "wire required"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/LegacyAnchor/properties/reportedAvailableQty",
+          "line": 3645,
+          "end_line": 3647,
+          "claim": "wire available"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/LegacyAnchor/description",
+          "line": 3737,
+          "end_line": 3737,
+          "claim": "original values preserved"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/StoredLegacyAnchorRecord/properties/ReportedRequiredQty",
+          "line": 22313,
+          "end_line": 22315,
+          "claim": "Stored required DecimalQty"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/StoredLegacyAnchorRecord/properties/ReportedAvailableQty",
+          "line": 22316,
+          "end_line": 22318,
+          "claim": "Stored available DecimalQty"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/DecimalQty",
+          "line": 23080,
+          "end_line": 23083,
+          "claim": "nonnegative Decimal alias"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/43/43376e6abeb9fa95__EXC_TYPED_SCHEMA.json",
+          "sha256": "43376e6abeb9fa95f7bf0f5eeb8b469cc3a970236818e8dabf35643249d484b8",
+          "json_pointer": "/$defs/Decimal",
+          "line": 36,
+          "end_line": 39,
+          "claim": "no negative sign"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0.json",
+          "sha256": "8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0",
+          "json_pointer": "/tables/66/columns/15",
+          "line": 22411,
+          "end_line": 22420,
+          "claim": "required decimal21,8"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0.json",
+          "sha256": "8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0",
+          "json_pointer": "/tables/66/columns/16",
+          "line": 22421,
+          "end_line": 22430,
+          "claim": "available decimal21,8"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0.json",
+          "sha256": "8127f36528aa69e0c67b104e6cef109de007a4163ce5085769ff58cf88fa58c0",
+          "json_pointer": "/tables/66/checks",
+          "line": 22516,
+          "end_line": 22520,
+          "claim": "no separate signed legacy exception listed"
+        }
+      ],
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "classification": "static_type_domain_narrowing",
+      "summary": "Legacy 原值接口允许负数，Stored codec 却限定非负。",
+      "detail": "LegacyAnchor reportedRequiredQty/reportedAvailableQty reference SignedDecimal; corresponding StoredLegacyAnchorRecord fields reference DecimalQty -> nonnegative Decimal. Relational decimal(21,8) columns do not themselves establish a signed legacy codec exception. A negative historical original can be represented by the wire type but is outside the declared Stored type; original-value preservation therefore needs a precise mapping decision. Owner chooses and aligns original-preserving signed legacy storage/rejection/rendering semantics across typed wire, Stored root and relation mapping, with boundary examples and separate future implementation validation. Do not clamp/abs/zero-fill."
+    },
+    {
+      "id": "PLAN-IF-007",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "classification": "STATIC_CROSS_ARTIFACT_INCONSISTENCY",
+      "status": "OPEN_OWNER_CLARIFICATION_REQUIRED",
+      "summary": "Receipt20 ACTUAL_AVAILABLE原事实与SUP投影/私有图时间不同",
+      "detail": "同一精确Receipt20原事实到投影到私有图的实际可用时间provenance不一致。已核不是发布时间/质量有效时间/预期时间；未见投影算法重定义同一actual时钟的许可。 required-use在次日；未证明本例缺口数值改变、运行错误或生产故障。",
+      "facts": {
+        "original_wms_f014_available": "2026-10-04T18:10:02Z",
+        "original_movement_f016_actual": "2026-10-04T18:10:02Z",
+        "projection_and_private_graph_available": "2026-10-04T18:00:00Z",
+        "same_root": "ROOT/RECEIPT20",
+        "same_node_kind": "ACTUAL_AVAILABLE",
+        "is_actual": true,
+        "same_exact_native_source": "F014"
+      },
+      "exit_condition": "原Owner明确权威actual时钟或另义字段；维护者给出一致不可变后继、bodyDigest及所有受影响引用，不由consumer静默取早/取晚，不改原归档。",
+      "evidence": [
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/F014/body/availableNode",
+          "line": 44128,
+          "end_line": 44152,
+          "claim": "原实际可用时钟"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/F016/body/actualNode",
+          "line": 43436,
+          "end_line": 43460,
+          "claim": "原movement实际时钟"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/SUPPLY_PROJECTION_PREPARED_1/body/availableNode",
+          "line": 348068,
+          "end_line": 348092,
+          "claim": "PREPARED投影"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/SUPPLY_PROJECTION_PUBLISHED_1/body/availableNode",
+          "line": 364060,
+          "end_line": 364084,
+          "claim": "PUBLISHED投影"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "json_pointer": "/objects/graph~1PREPARED/body/supplies/1/availableNode",
+          "line": 11126,
+          "end_line": 11150,
+          "claim": "PREPARED私有图"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "json_pointer": "/objects/graph~1PUBLISHED/body/supplies/1/availableNode",
+          "line": 16739,
+          "end_line": 16763,
+          "claim": "PUBLISHED私有图"
+        }
+      ]
+    },
+    {
+      "id": "PLAN-IF-008",
+      "targets": [
+        "PLAN-EXC-01"
+      ],
+      "classification": "STATIC_CROSS_ARTIFACT_INCONSISTENCY",
+      "status": "OPEN_OWNER_CLARIFICATION_REQUIRED",
+      "summary": "材料图algorithmRef仍F025而材料Input/Run/Attempt为v2",
+      "detail": "同一材料谱系的精确算法引用跨工件不一致。 没有执行算法、SQL或应用，不证明运行选错算法、库存计算错误或生产故障。",
+      "facts": {
+        "private_material_graphs": [
+          "MATERIAL_OLD",
+          "MATERIAL_NEW"
+        ],
+        "graph_algorithm": "F025/ALG1/version1.0",
+        "material_input_run_attempt_algorithm": "MAT_ALGORITHM_V2/2.0-proposed",
+        "main_rule": "材料链所有consumer绑定v2；F025/I1原历史不变"
+      },
+      "exit_condition": "维护者确定材料图精确algorithm lineage，发布不可变后继及关联digest/引用；不得改写原F025/I1或只改显示字段。",
+      "evidence": [
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "json_pointer": "/objects/graph~1MATERIAL_OLD/body/mrpLineage/algorithmRef",
+          "line": 22239,
+          "end_line": 22253,
+          "claim": "旧材料图引用F025"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925.json",
+          "sha256": "9c6591119c1ec64decc1fc2ec6a341b6e68a595a6619eab106ebbe65d0b73925",
+          "json_pointer": "/objects/graph~1MATERIAL_NEW/body/mrpLineage/algorithmRef",
+          "line": 32801,
+          "end_line": 32815,
+          "claim": "新材料图引用F025"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/F025/body/algorithmVersion",
+          "line": 29476,
+          "end_line": 29476,
+          "claim": "原ALG1版本1.0"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/MAT_INPUT/body/algorithmRef",
+          "line": 217707,
+          "end_line": 217721,
+          "claim": "材料输入v2"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/MAT_RUN/body/algorithmRef",
+          "line": 218246,
+          "end_line": 218260,
+          "claim": "材料Run v2"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/MAT_ATTEMPT/body/algorithmRef",
+          "line": 218756,
+          "end_line": 218770,
+          "claim": "材料Attempt v2"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/objects/7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec.json",
+          "sha256": "7fe69593d7ac15cf1892417fd4f0b6688d1422ff243b6140a4717d30167dc3ec",
+          "json_pointer": "/documentsBySemanticId/MAT_ALGORITHM_V2/body/algorithmVersion",
+          "line": 164914,
+          "end_line": 164914,
+          "claim": "材料v2原对象"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/17/172ccf551439b8dc__CP04_MATERIAL_METHOD_AND_ALGORITHM_SPEC.json",
+          "sha256": "172ccf551439b8dccf13912689c13b5bb1ed31d9eea75fcc4b2ca666ea4f7139",
+          "json_pointer": "/algorithmDesign/algorithmVersion",
+          "line": 6,
+          "end_line": 6,
+          "claim": "材料方法v2"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/77/77b33224eaeb51c0__PLAN-EXC-01_缺料与供给异常处置_前后端开发Spec_v1.11_CP12_REVIEW_COPY.md",
+          "sha256": "77b33224eaeb51c0b4cd1fc5b8ccb601fb33eec69ce9f421393f1206ce199b7d",
+          "line": 259,
+          "end_line": 259,
+          "claim": "主文要求v2消费与原I1不变"
+        }
+      ]
+    },
+    {
+      "id": "PLAN-IF-009",
+      "classification": "STATIC_CONTRACT_CONSTRAINT_DIFFERENCE",
+      "title": "OwnerProfile branches inline schema bounds array to 3; closed producer and full consumer schemas have no maxItems",
+      "facts": [
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+          "sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+          "bytes": 888998,
+          "total_lines": 27715,
+          "json_pointer": "/ports/3/contractBody/profileSchema/properties/branches/maxItems",
+          "line": 1953,
+          "claim": "maxItems=3"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cd/cdc7a7be21c83238__PLAN_PO_R3_CP18_PRODUCER_PORTS.json",
+          "sha256": "cdc7a7be21c832388f33f71c53b537f57ac9254da64716825f4b182bc7d4b00c",
+          "bytes": 888998,
+          "total_lines": 27715,
+          "json_pointer": "/ports/3/closedSchemaSet/$defs/d_25c340d5a1bc_OwnerProfileCp18/properties/branches",
+          "line": 2958,
+          "end_line": 3020,
+          "claim": "branches array has minItems=1 and no maxItems"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_FULL_SCHEMA_REGISTRY.json",
+          "sha256": "25edebfff5ac3452bd98686c5ea611ba1c35c58a31ca5d7b8f29a02cb06acbd3",
+          "bytes": 330792,
+          "total_lines": 13121,
+          "json_pointer": "/$defs/OwnerProfileCp18/properties/branches",
+          "line": 6714,
+          "end_line": 6776,
+          "claim": "same branch-per-portion item shape; array has no maxItems"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+          "sha256": "2fc131613a8433d347ca869999a5f8550daaefa0768b487f4610c67f75b4526d",
+          "bytes": 87627,
+          "total_lines": 596,
+          "line": 101,
+          "claim": "same Owner branch may recur across multiple portions; selection must not take first branch entry"
+        },
+        {
+          "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2f/2fc131613a8433d3__PLAN-PO-01_CP22_FULL_SCOPE_DESIGN.md",
+          "sha256": "2fc131613a8433d347ca869999a5f8550daaefa0768b487f4610c67f75b4526d",
+          "bytes": 87627,
+          "total_lines": 596,
+          "line": 337,
+          "claim": "each allocation uses its exact branch/portion profile"
+        }
+      ],
+      "impact": "Four or more allocation/profile entries could be accepted by one listed schema and rejected by another. This is distinct from three possible Owner branch kinds; no globally adopted maximum of three portions was established.",
+      "boundary": "Static documents only. No candidate execution or production failure demonstrated. Do not silently relax the producer contract or treat review PASS as resolving the difference.",
+      "exit_condition": "PLAN-POL/profile and consumer design authority must state intended maximum and repeated-branch semantics; reconcile inline/closed/consumer schemas and exact contract/schema pins before implementation acceptance.",
+      "finding_id": "PLAN-IF-009",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "summary": "OwnerProfile branches inline schema bounds array to 3; closed producer and full consumer schemas have no maxItems",
+      "status": "OPEN_DESIGN_RECONCILIATION",
+      "source_reading_evidence": "evidence/PLAN-PO-01-supplement-reading.json"
+    },
+    {
+      "finding_id": "PLAN-IF-010",
+      "kind": "static_contract_vs_candidate_control_flow",
+      "status": "OPEN_DESIGN_RECONCILIATION",
+      "scope": "PO11/PO12/PO13/PO14 original replay only",
+      "claim": "Permission catalogue requires fresh authorization on replay and validity check before output; shown C# and TS old-result branches perform initial authorization then capture/replay/confirmed commit return without the final Authorized check present in their ordinary write branches. If the already-acquired authority expires during capture/wait, that branch lacks the shown final validity recheck. Static inference only; no executed or production access failure demonstrated.",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_ACTION_HTTP_DESIGN.cs",
+          "sha256": "8a18318ce7b15f76c8d7c98ea42464ba3c66d6daafb6a56aff2aa04eff786369",
+          "bytes": 16882,
+          "total_lines": 23,
+          "line": 22,
+          "claim": "old replay branch directly commits and returns; ordinary branch calls Authorized before commit"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+          "sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+          "bytes": 224765,
+          "total_lines": 401,
+          "line": 106,
+          "claim": "equivalent old replay branch lacks final authorized check"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PERMISSION_CATALOGUE.json",
+          "sha256": "315bf5b73660de0972939289eb296e475f6b7ad861acfa2aa1cd3c0d3b880e19",
+          "bytes": 9312,
+          "total_lines": 188,
+          "line": 128,
+          "claim": "read/write/replay current authorization"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PERMISSION_CATALOGUE.json",
+          "sha256": "315bf5b73660de0972939289eb296e475f6b7ad861acfa2aa1cd3c0d3b880e19",
+          "bytes": 9312,
+          "total_lines": 188,
+          "line": 138,
+          "claim": "output validity requirement"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PERMISSION_CATALOGUE.json",
+          "sha256": "315bf5b73660de0972939289eb296e475f6b7ad861acfa2aa1cd3c0d3b880e19",
+          "bytes": 9312,
+          "total_lines": 188,
+          "line": 167,
+          "claim": "replay current masks/action requirement"
+        }
+      ],
+      "exit_condition": "Design Owner reconcile old replay and ordinary path validity checks, preserve fresh actor/E/T/object/action/masks and original stored response, then verify expiry-during-capture behavior in authorized implementation; do not infer remote atomic revocation.",
+      "id": "PLAN-IF-010",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "summary": "Permission catalogue requires fresh authorization on replay and validity check before output; shown C# and TS old-result branches perform initial authorization then capture/replay/confirmed commit return without the final Authorized check present in their ordinary write branches. If the already-acquired authority expires during capture/wait, that branch lacks the shown final validity recheck. Static inference only; no executed or production access failure demonstrated.",
+      "classification": "static_contract_vs_candidate_control_flow",
+      "source_reading_evidence": "evidence/PLAN-PO-01-supplement-reading.json"
+    },
+    {
+      "id": "PLAN-IF-011",
+      "finding_id": "PLAN-IF-011",
+      "classification": "static_cross_artifact_result_shape_mismatch",
+      "status": "requires_design_alignment_not_runtime_failure",
+      "summary": "ApplyOwnerIntermediateCp18 new success branch commits without returning the TerminalCanonical result set required by PrWoRecovery; replay branch returns it.",
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+          "sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+          "bytes": 95673,
+          "total_lines": 461,
+          "line": 35,
+          "claim": "Replay returns stored TerminalCanonical."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+          "sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+          "bytes": 95673,
+          "total_lines": 461,
+          "line": 130,
+          "end_line": 148,
+          "claim": "New-success writes through checkpoint/audit/outbox then COMMIT, no terminal result SELECT."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_PR_WO_RECOVERY_HTTP_DESIGN.cs",
+          "sha256": "25b07ef8df1d3d7dd7f961abc6afee94a385423b155282318dc88acef968d993",
+          "bytes": 13134,
+          "total_lines": 18,
+          "line": 16,
+          "end_line": 17,
+          "claim": "WO intermediate path chooses WoIntermediatePlan then requires one result set/one row/TerminalCanonical from Execute."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.cs",
+          "sha256": "781441c2bb3ff35617bcdd0ba7ef77b12e8d4e8522f26f30dc4bc9de39efb30a",
+          "bytes": 18192,
+          "total_lines": 53,
+          "line": 10,
+          "end_line": 13,
+          "claim": "Execute contract returns raw result-set collections; no automatic terminal reconstruction contract."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+          "sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+          "bytes": 224765,
+          "total_lines": 401,
+          "line": 268,
+          "claim": "WO intermediate plan uses ApplyOwnerIntermediateCp18."
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_HTTP_HANDLERS_DESIGN.ts",
+          "sha256": "9aa425567e42bff7132bc42eb5ce1a60f261ea4dcfaa320c944dee6698d9408a",
+          "bytes": 224765,
+          "total_lines": 401,
+          "line": 333,
+          "end_line": 335,
+          "claim": "TS selects intermediate plan then requires one result set/one TerminalCanonical row."
+        }
+      ],
+      "impact": "Literal new-success WO intermediate path cannot satisfy declared caller result shape, while stored replay can. Runtime adapter behavior and transaction effects were not executed or established.",
+      "exit_condition": "Owner design must align SQL new-success output with caller or explicitly specify a typed adapter recovery/output contract and its commit boundary; then verify new execution and replay with actual implementation.",
+      "validation": "NOT_COMPILED / NOT_RUN; source text only.",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "source_reading_evidence": "evidence/PLAN-PO-01-supplement-reading.json"
+    },
+    {
+      "id": "PLAN-IF-012",
+      "classification": "static_api_openapi_error_projection_difference",
+      "status": "OPEN_DESIGN_RECONCILIATION",
+      "summary": "PO15 OpenAPI 503 code enum omits three codes present in current API_REGISTRY.",
+      "codes": [
+        "CREATION_CLOSURE_REQUIRED_FENCED",
+        "CREATION_CLOSURE_TRANSPORT_INVALID",
+        "OWNER_RESPONSE_STATUS_INVALID"
+      ],
+      "evidence": [
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_API_REGISTRY.json",
+          "sha256": "6b2b0bea00641fb8d86d87f5c540fc0ae6e425541fa3e529c734cfe30af3ef64",
+          "bytes": 270588,
+          "total_lines": 7008,
+          "line": 4118,
+          "end_line": 4130,
+          "json_pointer": "/apis/13/problems/503"
+        },
+        {
+          "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_OPENAPI.json",
+          "sha256": "63ebd079202536dd53ea07eb524fa32f089326c18d9229dbfc50cf4487cf7011",
+          "bytes": 1150629,
+          "total_lines": 33569,
+          "line": 6747,
+          "end_line": 6780,
+          "json_pointer": "/paths/~1conversions~1{conversionLegId}~1owner-steps/post/responses/503"
+        }
+      ],
+      "comparison_scope": {
+        "error_maps": 222,
+        "exact": 220,
+        "same_set_different_order": 1,
+        "content_difference": 1,
+        "exact_schema_components": 523
+      },
+      "impact": "Clients generated from the declared OpenAPI error enum may not recognize three API-registry outcomes; actual consumer execution was not examined.",
+      "exit_condition": "Align both exact selected error projections before implementation adoption without changing underlying Owner closure behavior.",
+      "validation": "Static source comparison; NOT_RUN, no demonstrated runtime failure.",
+      "finding_id": "PLAN-IF-012",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "source_reading_evidence": "evidence/PLAN-PO-01-supplement-reading.json"
+    },
+    {
+      "finding_id": "PLAN-IF-013",
+      "classification": "STATIC_FIXTURE_WRAPPER_IDENTITY_MISMATCH",
+      "source_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+      "sha256": "e66df2924c53ee9843920ff4e11313367077ff933a2508ca9f2472b4082282fc",
+      "claim": "18 retained PlanningFactHead row wrappers name IAM/<old uuid> while their actual row.ResourceKey is the current hashed resource key. The full actual table+row transition comparison has zero differences; this is stale wrapper metadata, not proof of a runtime defect.",
+      "impact": "Do not use wrapper.key as authoritative row identity when replaying/importing these example rowsets before alignment.",
+      "exit_condition": "Owner aligns wrappers with actual complete primary-key fields or documents an explicit separate wrapper-key meaning, then reruns static fixture identity comparison.",
+      "occurrences": [
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/0/priorNativeFactsOrClosures/0/preRows/226/key/ResourceKey",
+          "line": 5292,
+          "end_line": 5292,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/0/priorNativeFactsOrClosures/0/preRows/226/row/ResourceKey",
+          "row_line": 5300,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/0/priorNativeFactsOrClosures/0/postRows/226/key/ResourceKey",
+          "line": 15917,
+          "end_line": 15917,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/0/priorNativeFactsOrClosures/0/postRows/226/row/ResourceKey",
+          "row_line": 15925,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/0/public65/preRows/226/key/ResourceKey",
+          "line": 27213,
+          "end_line": 27213,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/0/public65/preRows/226/row/ResourceKey",
+          "row_line": 27221,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/0/public65/postRows/226/key/ResourceKey",
+          "line": 38227,
+          "end_line": 38227,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/0/public65/postRows/226/row/ResourceKey",
+          "row_line": 38235,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/0/machine68/preRows/226/key/ResourceKey",
+          "line": 50047,
+          "end_line": 50047,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/0/machine68/preRows/226/row/ResourceKey",
+          "row_line": 50055,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/0/machine68/postRows/226/key/ResourceKey",
+          "line": 61145,
+          "end_line": 61145,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/0/machine68/postRows/226/row/ResourceKey",
+          "row_line": 61153,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/priorNativeFactsOrClosures/0/preRows/219/key/ResourceKey",
+          "line": 71968,
+          "end_line": 71968,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/priorNativeFactsOrClosures/0/preRows/219/row/ResourceKey",
+          "row_line": 71976,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/priorNativeFactsOrClosures/0/postRows/219/key/ResourceKey",
+          "line": 82431,
+          "end_line": 82431,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/priorNativeFactsOrClosures/0/postRows/219/row/ResourceKey",
+          "row_line": 82439,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/priorNativeFactsOrClosures/1/preRows/219/key/ResourceKey",
+          "line": 93188,
+          "end_line": 93188,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/priorNativeFactsOrClosures/1/preRows/219/row/ResourceKey",
+          "row_line": 93196,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/priorNativeFactsOrClosures/1/postRows/219/key/ResourceKey",
+          "line": 103922,
+          "end_line": 103922,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/priorNativeFactsOrClosures/1/postRows/219/row/ResourceKey",
+          "row_line": 103930,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/public65/preRows/219/key/ResourceKey",
+          "line": 115315,
+          "end_line": 115315,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/public65/preRows/219/row/ResourceKey",
+          "row_line": 115323,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/public65/postRows/219/key/ResourceKey",
+          "line": 126433,
+          "end_line": 126433,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/public65/postRows/219/row/ResourceKey",
+          "row_line": 126441,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/machine68/preRows/219/key/ResourceKey",
+          "line": 138357,
+          "end_line": 138357,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/machine68/preRows/219/row/ResourceKey",
+          "row_line": 138365,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/1/machine68/postRows/219/key/ResourceKey",
+          "line": 149559,
+          "end_line": 149559,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/1/machine68/postRows/219/row/ResourceKey",
+          "row_line": 149567,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/2/public65/preRows/233/key/ResourceKey",
+          "line": 161804,
+          "end_line": 161804,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/2/public65/preRows/233/row/ResourceKey",
+          "row_line": 161812,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/2/public65/postRows/233/key/ResourceKey",
+          "line": 172896,
+          "end_line": 172896,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/2/public65/postRows/233/row/ResourceKey",
+          "row_line": 172904,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/2/machine68/preRows/233/key/ResourceKey",
+          "line": 184794,
+          "end_line": 184794,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/2/machine68/preRows/233/row/ResourceKey",
+          "row_line": 184802,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        },
+        {
+          "file": "CP19_R06_WMS_ALL_AGGREGATE_NORMAL_DATA.json",
+          "wrapper_pointer": "/worlds/2/machine68/postRows/233/key/ResourceKey",
+          "line": 195970,
+          "end_line": 195970,
+          "wrapper_value": "IAM/e6b9d128-b53c-5a2f-b75c-49752a3ab26b",
+          "row_pointer": "/worlds/2/machine68/postRows/233/row/ResourceKey",
+          "row_line": 195978,
+          "row_value": "617fe597eab43b95db20978b43b94cd4bae0c52a8bea64ab929140c60647b031"
+        }
+      ],
+      "runtime_tested": false,
+      "id": "PLAN-IF-013",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "summary": "18 retained PlanningFactHead row wrappers name IAM/<old uuid> while their actual row.ResourceKey is the current hashed resource key. The full actual table+row transition comparison has zero differences; this is stale wrapper metadata, not proof of a runtime defect.",
+      "status": "OPEN_DESIGN_RECONCILIATION",
+      "source_reading_evidence": "evidence/PLAN-PO-01-supplement-reading.json"
+    },
+    {
+      "source": "D:\\CP6-archives\\consolidation-20261010\\root-planning-cache\\plan-po-cp22\\members\\PLAN_PO_R3_CP18_SC06_100_NORMAL_DATA.json",
+      "sha256": "255e32f617794ffd760a8d05c698a7ffe147b5552a00ce8ddadbcb4b6e431f43",
+      "receipt_pointer": "/completePreRows/62/row",
+      "revision_pointer": "/completePreRows/65/row",
+      "head_pointer": "/completePreRows/66/row",
+      "same_event": true,
+      "same_leg": true,
+      "same_command": true,
+      "receipt_request_digest": "eff57d82d721b954519949b2b242c09c563e25127b0147e06433c3531d7ae279",
+      "revision_request_digest": "b1250b1323eddeb03c052ae25edbcd59d02a97d2125af8a446a67784e30312b8",
+      "receipt_result_digest": "e93e444a53554f06c00e38aa196130742f0a1fb70d965e5d44ffe1e6104b4e5c",
+      "revision_result_digest": "1fe7b6969706d9a768eb16b69ab0bdd2cd83988813cee1203ebcc3e87d05a6f3",
+      "receipt_snapshot_digest": "46d9088dd0532f6eeabdb169e156004f2641b054b5f08a4b66bec87932f2031a",
+      "revision_snapshot_digest": "5d0e31764397e6cbfb62b1fbb2df1184825da911df2a9aacd9f76998c3eb5bf2",
+      "head_revision": 4,
+      "revision_version": 4,
+      "head_body_equals_revision": true,
+      "lines": {
+        "revision_BodyJson": 3916,
+        "actual_nativeRootRequestDigest": 2289,
+        "actual_nativeRootResultDigest": 2340
+      },
+      "business": "NOT_RUN",
+      "conclusion": "same stored event/leg/command but revision body carries a different request/result/snapshot digest from actual modeled receipt; no runtime bug asserted",
+      "id": "PLAN-IF-014",
+      "finding_id": "PLAN-IF-014",
+      "original_observation_evidence": "evidence/PLAN-PO-01-normal-alignment-observations.json",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "summary": "same stored event/leg/command but revision body carries a different request/result/snapshot digest from actual modeled receipt; no runtime bug asserted",
+      "status": "OPEN_DESIGN_RECONCILIATION",
+      "classification": "STATIC_SOURCE_ALIGNMENT",
+      "source_reading_evidence": "evidence/PLAN-PO-01-supplement-reading.json"
+    },
+    {
+      "finding_id": "PLAN-IF-015",
+      "classification": "STATIC_FIXTURE_NATIVE_EXECUTION_KEY_VS_CURRENT_BINDING_PREDICATE",
+      "claim": "The CP19 WO step1 CreatePreparation response uses executionRequestKey MAKE-CONVERT-20261002-001 while frozen request uses CP18-MAKE-579b4a48-c253-5aa9-834d-1847c3733973. Current native kernel step1 explicitly requires equality among prior source item, frozen current request and result executionKey; direct use of this example does not satisfy that textual predicate.",
+      "evidence": [
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "json_pointer": "/steps/1/nativeCurrentResult/request/executionKey/executionRequestKey",
+          "line": 20081,
+          "end_line": 20081,
+          "value": "CP18-MAKE-579b4a48-c253-5aa9-834d-1847c3733973"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "json_pointer": "/steps/1/nativeCurrentResult/result/result/executionKey/executionRequestKey",
+          "line": 20131,
+          "end_line": 20131,
+          "value": "MAKE-CONVERT-20261002-001"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "json_pointer": "/steps/1/actual62ParameterValues/@ResultCanonical",
+          "line": 34358,
+          "end_line": 34358,
+          "value": "The exact mismatching native result is supplied as @ResultCanonical."
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/CP19_R05_WO_CONTINUOUS_NORMAL_DATA.json",
+          "sha256": "46156a22d2dbb86ad58116ddd266e0c5921c105eb7fb1270e8cd42c9cab3fa5e",
+          "json_pointer": "/steps/0/nativeCurrentResult/result/items/0/executionKey/executionRequestKey",
+          "line": 6377,
+          "end_line": 6377,
+          "value": "CP18-MAKE-579b4a48-c253-5aa9-834d-1847c3733973"
+        },
+        {
+          "path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/plan-po-cp22/members/PLAN_PO_R3_CP18_NATIVE_KERNEL_SQL_DESIGN.sql",
+          "sha256": "0427c4253ebfd6d5ee72e61d595da83b9de23d2a7f2ebb00bb60aff621f58415",
+          "line": 114,
+          "end_line": 120,
+          "claim": "StepOrdinal1 requires prior item.executionKey = CurrentRequest.executionKey = Result.result.executionKey or WO_PREDECESSOR_BINDING_MISMATCH."
+        }
+      ],
+      "impact": "Align the native example and all dependent captured/derived preimages with one intended execution identity before adopting fixture as implementation acceptance data. Do not bypass the source/predecessor binding predicate.",
+      "exit_condition": "Owner confirms intended execution identity and corrects/versions example plus dependent digest/capture graph, or records an explicit supported identity transform with matching contract changes.",
+      "runtime_tested": false,
+      "boundary": "Static cross-artifact identity mismatch; no SQL execution or production failure proven. Related root deferred/SC18 exact reused response occurrences are located by root separately.",
+      "id": "PLAN-IF-015",
+      "targets": [
+        "PLAN-PO-01"
+      ],
+      "summary": "The CP19 WO step1 CreatePreparation response uses executionRequestKey MAKE-CONVERT-20261002-001 while frozen request uses CP18-MAKE-579b4a48-c253-5aa9-834d-1847c3733973. Current native kernel step1 explicitly requires equality among prior source item, frozen current request and result executionKey; direct use of this example does not satisfy that textual predicate.",
+      "status": "OPEN_DESIGN_RECONCILIATION",
+      "source_reading_evidence": "evidence/PLAN-PO-01-supplement-reading.json"
+    }
+  ]
+}

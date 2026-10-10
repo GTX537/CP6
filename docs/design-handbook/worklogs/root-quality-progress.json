@@ -1,0 +1,19 @@
+{
+  "group": "root-quality",
+  "updated_at_utc": "2026-10-10T15:28:40.303772+00:00",
+  "status": "in_progress",
+  "targets": [
+    {
+      "target_id": "QA-IPQC-01",
+      "document_status": "required_materials_consolidated",
+      "required_materials_consolidated": true,
+      "next_action": "本任务跨域集中核对；实际编码前解决已列静态采用澄清和真实Owner门"
+    },
+    {
+      "target_id": "WMS-TRANSFER-01",
+      "document_status": "required_materials_consolidated",
+      "next_action": "本任务跨域集中核对；运行采用12门及静态fixture澄清保留",
+      "required_materials_consolidated": true
+    }
+  ]
+}

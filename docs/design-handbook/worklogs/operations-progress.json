@@ -1,0 +1,1750 @@
+{
+  "group": "operations",
+  "scope_count": 49,
+  "task_state": "in_progress",
+  "source_policy": "当前接受冻结正文与强制组合；S052版本关系由根代理统合；原文不执行",
+  "queue": [
+    "WMS-STOCK-01",
+    "WMS-RSV-01",
+    "WMS-OUT-01",
+    "WMS-DEL-01",
+    "WMS-RMA-01",
+    "FIN-GL-01",
+    "FIN-CREDIT-01",
+    "MES-RES-01",
+    "MES-WO-01",
+    "MES-MAT-01",
+    "MES-EXEC-01",
+    "MES-OUTPUT-01",
+    "FIN-COST-01",
+    "QA-POL-01",
+    "QA-IQC-01",
+    "QA-IPQC-01",
+    "QA-NCR-01",
+    "WMS-MASTER-01",
+    "WMS-TRANSFER-01",
+    "WMS-IN-01",
+    "WMS-COUNT-01",
+    "WMS-TRACE-01",
+    "WMS-DISP-01",
+    "WMS-MOBILE-01",
+    "WMS-CTRL-01",
+    "FIN-MASTER-01",
+    "FIN-CLOSE-01",
+    "FIN-REPORT-01",
+    "FIN-AP-01",
+    "FIN-AR-01",
+    "FIN-INV-01",
+    "FIN-FX-01",
+    "MES-SCHED-01",
+    "MES-PERF-01",
+    "FIN-BUD-01",
+    "FIN-BANK-01",
+    "FIN-ASSET-01"
+  ],
+  "targets": {
+    "FIN-CREDIT-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前21项L1/L2必要组合及内部R4 Schema/vector/fixture/AC已语义闭合；OPS-IF-001/002/042待Owner对齐，旧候选/代码及跨Owner采用另保队列；继续FIN-GL附件",
+      "required_input_closure": {
+        "artifact_count": 21,
+        "basis": "full body semantics +149defs/63vectors/45cases/104AC all field semantics +12 exact packets18 byte windows +306ZIP metadata role distinction",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "104 AC NOT_RUN; Owner/IAM/currentMainUow/cutover UNPROVEN"
+      }
+    },
+    "MES-RES-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义完整；历史独立队列、跨Owner实际采用/专业政策/业务验证另保留",
+      "required_input_closure": {
+        "artifact_count": 3,
+        "basis": "all current L1/L2 source lines full semantic read",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "NOT_RUN/Owner adoption UNPROVEN"
+      }
+    },
+    "MES-WO-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义完整；历史独立队列、跨Owner实际采用/专业政策/业务验证另保留",
+      "required_input_closure": {
+        "artifact_count": 2,
+        "basis": "all current L1/L2 source lines full semantic read",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "NOT_RUN/Owner adoption UNPROVEN"
+      }
+    },
+    "MES-MAT-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前7项必要规范/接受/评审已闭合；OPS-IF-044例身份待Owner对齐，实际106AC和Owner采用未运行",
+      "required_input_closure": {
+        "artifact_count": 7,
+        "main_json_blocks": 133,
+        "roundtrip_errors": 0,
+        "current_necessary_semantics": true,
+        "historical_archive_full_read": false,
+        "business_execution": "NOT_RUN"
+      }
+    },
+    "MES-EXEC-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义已闭合；真实Owner采用/环境/并发/业务AC另证；历史底层原件独立队列",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "artifact_count": 5,
+        "business_execution": "NOT_RUN",
+        "collaborator_evidence": null
+      }
+    },
+    "MES-OUTPUT-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前5项必要组合语义闭合；真实Owner采用/环境/并发/109AC另证",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "artifact_count": 5,
+        "business_execution": "NOT_RUN"
+      }
+    },
+    "FIN-COST-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "SC15_attachment_semantics_closed": true,
+      "C65_attachment_semantics_closed": true,
+      "exact_scenario6_review12_prep33_closed": true,
+      "package329_identity_role_classified": {
+        "preparation_report_or_identity": 11,
+        "authoring_script_or_exact_container": 16,
+        "accepted_owner_input": 38,
+        "shared_current_contract": 11,
+        "frozen_historical_code_not_current_implementation": 153,
+        "historical_scope_or_plm_context": 32,
+        "historical_fetch_transport": 20,
+        "frozen_predecessor_and_review": 23,
+        "current_cost_package": 24
+      },
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "joint_evidence": [
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json"
+        ],
+        "historical_archive_full_read": false,
+        "runtime_evidence": "NOT_RUN / Owner adoption UNPROVEN"
+      }
+    },
+    "QA-POL-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前5项必要组合全语义已读；六真实采用门及116AC另证",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "artifact_count": 5,
+        "business_execution": "NOT_RUN"
+      }
+    },
+    "QA-IQC-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要组合全语义闭合；OPS-IF-045–047待Owner对齐，真实6采用门/107AC另证",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "artifact_count": 7,
+        "main_json_blocks": 21,
+        "attachment_nodes": 1799,
+        "evidence_records": 1549,
+        "roundtrip_errors": 0,
+        "typed_digest_errors": 0,
+        "review_windows_exact": 16,
+        "container_members_verified": 57,
+        "business_execution": "NOT_RUN",
+        "historical_body_full_read": false
+      }
+    },
+    "QA-IPQC-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "精确复用root及其协作补读证据：当前必要规范已闭合；原文案例澄清、Owner实际采用、业务AC与历史代码全读仍另列，不据文档闭合宣称运行通过",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "collaborator_evidence": [
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-supplement-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-governance-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-continuous-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-IPQC-01-F01-reading.json"
+        ],
+        "collaborator": "root; IPQC F01 component by platform_engineering_design",
+        "reuse_method": "核主册状态与独立reading结论并精确引用；本组未重复逐字阅读全部补读材料",
+        "business_execution": "NOT_RUN",
+        "runtime_adoption": "UNPROVEN",
+        "historical_archive_full_read": false
+      }
+    },
+    "QA-NCR-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合并精确复用平台175源/root26scope；静态TYPE/FIELD、Q1–Q4历史缺件、真实Owner采用/同UoW/all-writers/迁移及AC继续按独立轴保留",
+      "required_input_closure": {
+        "status": "required_materials_consolidated",
+        "as_of_utc": "2026-10-10T16:05:55.454080+00:00",
+        "current_necessary_semantics": true,
+        "collaborator": "platform_engineering_design; exact 26-scope adoption by root",
+        "reuse_method": "精确引用最终独立阅读账及SHA；本组仅核完成结论、175唯一来源/26scope/273分层/文档检查，不重新逐字阅读原件或复制他组阅读归属",
+        "evidence": [
+          {
+            "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-supplement-reading.json",
+            "sha256": "aef03b94597ef0d1678b27817c59e9c8cf32985df3266416e8a4ec41f45d291f"
+          },
+          {
+            "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-member-disposition.json",
+            "sha256": "80bc7aa44ac11b371d0fc6ccf4d8ace1e3559020afa34cd5be7467189a1ac6fc"
+          },
+          {
+            "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-document-checks.json",
+            "sha256": "4e535ff9de512d64ed126fe23d6322b34ed953e79650c1f06bf205b140a37c96"
+          },
+          {
+            "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-adoption-reading.json",
+            "sha256": "f2d2eae06c0e64df8dcfd609be491f5193afad0063b7c19c16d423a4f66332a6"
+          }
+        ],
+        "unique_source_records": 175,
+        "required_registered_inputs": 17,
+        "current_design_adoption_sources": 10,
+        "current_design_adoption_scopes": 26,
+        "member_count": 273,
+        "member_disposition": {
+          "current_or_support_semantics_read_or_exact_reused": 156,
+          "identity_provenance_or_author_results": 54,
+          "historical_predecessor_or_candidate_implementation": 50,
+          "authoring_tool_text_not_executed": 13
+        },
+        "remaining_current_semantic_queue": [],
+        "retained_boundaries": [
+          "NCR-TYPE-01与NCR-FIELD-01静态对齐问题",
+          "Q1–Q4历史原件缺口",
+          "真实授权/provider、native codec、同UoW、全部writer、迁移与运行UNPROVEN",
+          "AC/业务测试NOT_RUN；历史实现和作者工具不称全文业务已读/已执行"
+        ],
+        "business_execution": "NOT_RUN",
+        "runtime_adoption": "UNPROVEN",
+        "source_scripts": "NOT_RUN",
+        "historical_archive_full_read": false,
+        "independent_document_checks": {
+          "documents": 5,
+          "links": 378,
+          "source_identities": 175,
+          "errors": 0
+        }
+      },
+      "completed_by": "platform_engineering_design with root adoption supplement"
+    },
+    "WMS-MASTER-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前L1/L2四原件全文完成；真实Owner/初始化Fence/兼容/207 NOT_RUN不属于阅读完成证据，按具体动作取证"
+    },
+    "WMS-STOCK-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "joint_evidence": [
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json"
+        ],
+        "historical_archive_full_read": false,
+        "runtime_evidence": "NOT_RUN / Owner adoption UNPROVEN"
+      }
+    },
+    "WMS-TRANSFER-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "精确复用root及其协作补读证据：当前必要规范已闭合；原文案例澄清、Owner实际采用、业务AC与历史代码全读仍另列，不据文档闭合宣称运行通过",
+      "delegated_to": "root",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "collaborator_evidence": [
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-TRANSFER-01-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-TRANSFER-01-static-checks.json"
+        ],
+        "collaborator": "root; IPQC F01 component by platform_engineering_design",
+        "reuse_method": "核主册状态与独立reading结论并精确引用；本组未重复逐字阅读全部补读材料",
+        "business_execution": "NOT_RUN",
+        "runtime_adoption": "UNPROVEN",
+        "historical_archive_full_read": false,
+        "json_business_objects": 1529,
+        "business_projection_nodes": 2388,
+        "opaque_literals_manually_read_all": false
+      }
+    },
+    "WMS-RSV-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "joint_evidence": [
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json"
+        ],
+        "historical_archive_full_read": false,
+        "runtime_evidence": "NOT_RUN / Owner adoption UNPROVEN"
+      }
+    },
+    "WMS-IN-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必需语义已闭合；真实Owner采用/环境/并发/业务AC另证；历史底层原件独立队列",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "artifact_count": 4,
+        "business_execution": "NOT_RUN",
+        "collaborator_evidence": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-IN-01-supplement-reading.json"
+      }
+    },
+    "WMS-COUNT-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11必需原件与6个进一步场景/任务/决定全文；后续Owner双侧准确环境采用核对，不重述为正文缺失"
+    },
+    "WMS-TRACE-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11件、13完整JSON及所有嵌入样本已读；B02当前静态已闭，Owner/profile运行采用单独未证"
+    },
+    "WMS-DISP-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11原件、3JSON/4嵌入样本与共享AC/任务全文；下一步具名NCR/Stock/Finance wire双侧映射与真实采用证据"
+    },
+    "WMS-MOBILE-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11必需原件、3JSON/2嵌入样本与共享AC/任务全文；真实Owner/设备/UOM采用独立待证"
+    },
+    "WMS-CTRL-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11必需原件及两JSON/一嵌入样本全部阅读；准确OA/IAM/MASTER/全writer DRAIN实际采用待证"
+    },
+    "WMS-OUT-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "必要材料语义齐；13实际采用门未证、136 AC NOT_RUN；次级独审bf65原件未定位保历史边界",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "artifact_count": 7,
+        "main_json_blocks": 476,
+        "semantic_nodes": 900,
+        "owner_payloads": 411,
+        "canonical": 15,
+        "roundtrip_errors": 0,
+        "digest_errors": 0,
+        "review_windows": 46,
+        "missing_secondary_review_sha256": "bf65c3c085959cc8596d8010a0884c3172e9f2b9b354c0cc85a637aabdc8130c",
+        "business_execution": "NOT_RUN"
+      }
+    },
+    "WMS-DEL-01": {
+      "state": "core_semantics_consolidated",
+      "document_status": "core_semantics_consolidated",
+      "next_action": "全部已定位必要材料语义已读；独审R01071 SHA4a30103ef981273e仍未定位，保留有界缺件继续其余整理",
+      "required_input_closure": {
+        "current_necessary_semantics": false,
+        "all_located_current_necessary_semantics": true,
+        "missing_component": "R01071",
+        "collaborator_evidence": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-DEL-01-supplement-reading.json",
+        "business_execution": "NOT_RUN"
+      }
+    },
+    "WMS-RMA-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要规范已闭合；OPS-IF-048/049/050、DC-001/002、五终端Owner采用、真实52AC及历史12代码另保队列",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "artifact_count": 7,
+        "canonical_definitions": 195,
+        "api_operations": 52,
+        "data_records": 43,
+        "continuous_nodes": 51,
+        "acceptance_criteria": 52,
+        "review_pack_members": 15,
+        "source_pack_members": 48,
+        "exact_upstream_windows": 31,
+        "roundtrip_errors": 0,
+        "historical_archive_full_read": false,
+        "business_execution": "NOT_RUN",
+        "runtime_adoption": "UNPROVEN"
+      }
+    },
+    "FIN-MASTER-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前6项必需材料语义已闭合；集中跨Owner准确采用复核与全归档历史资料继续",
+      "required_input_closure": {
+        "artifact_count": 6,
+        "basis": "direct reading + root exactSHA full schema/records/cases reuse +190 supplement exact windows",
+        "runtime_evidence": "12 adoption gates UNVERIFIED; NOT_RUN"
+      }
+    },
+    "FIN-GL-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要组合闭合；跨Owner真实接线、专业参数/迁移、79AC及G01–G12运行门保未证；继续FIN-COST/AP必要附件",
+      "required_input_closure": {
+        "artifact_count": 5,
+        "provenance_navigation_count": 1,
+        "basis": "32339行全部当前正文实质语义：14JSON族/89额外原件/165定位；接受330+独审40+评审319+CURRENT272；37+11准确窗口；身份/字节校验不是业务测试",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "79 AC NOT_RUN; G01-G12 UNPROVEN"
+      }
+    },
+    "FIN-CLOSE-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11项L1/L2必要组合已闭合；54历史源码/306规范化历史来源另列，不升运行；继续FIN-AR目录分类与H31共同fixture",
+      "required_input_closure": {
+        "artifact_count": 11,
+        "historical_metadata_artifact_count": 1,
+        "basis": "1050行共享正文+8精确分册、各UA/CURRENT+328行独审、57资格记录全部字段+S3/最终评审边界；L3 manifest全部字段",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "82 AC design catalogue; bilateral Provider adoption and actual execution unproven"
+      }
+    },
+    "FIN-REPORT-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11项L1/L2必要组合已闭合；54历史源码/306规范化历史来源另列，不升运行；继续FIN-AR目录分类与H31共同fixture",
+      "required_input_closure": {
+        "artifact_count": 11,
+        "historical_metadata_artifact_count": 1,
+        "basis": "1050行共享正文+8精确分册、各UA/CURRENT+328行独审、57资格记录全部字段+S3/最终评审边界；L3 manifest全部字段",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "82 AC design catalogue; bilateral Provider adoption and actual execution unproven"
+      }
+    },
+    "FIN-AP-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "joint_evidence": [
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json"
+        ],
+        "historical_archive_full_read": false,
+        "runtime_evidence": "NOT_RUN / Owner adoption UNPROVEN"
+      }
+    },
+    "FIN-AR-01": {
+      "state": "required_materials_consolidated",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要语义已闭合；历史原代码/上游超出消费窗口的章节独立队列；真实Owner采用、并发与业务验收NOT_RUN",
+      "required_input_closure": {
+        "current_necessary_semantics": true,
+        "joint_evidence": [
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/WMS-STOCK-RSV-supplement-reading.json",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/operations-reading.json"
+        ],
+        "historical_archive_full_read": false,
+        "runtime_evidence": "NOT_RUN / Owner adoption UNPROVEN"
+      }
+    },
+    "FIN-INV-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前27项必要组合语义/角色已整理；OPS-IF-038..041需Owner对齐，9早期RETURN缺件及R9历史程序仍全归档待整理；继续其他模块附件",
+      "required_input_closure": {
+        "artifact_count": 27,
+        "basis": "full/direct + all structured rule families and exact duplicate reuse; ZIP20/28 role-classified; upstream829 and148970 navigation metadata not source semantic read",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "102 AC NOT_RUN / real adoption UNPROVEN"
+      }
+    },
+    "FIN-FX-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前11项L1/L2必要组合已闭合；54历史源码/306规范化历史来源另列，不升运行；继续FIN-AR目录分类与H31共同fixture",
+      "required_input_closure": {
+        "artifact_count": 11,
+        "historical_metadata_artifact_count": 1,
+        "basis": "1050行共享正文+8精确分册、各UA/CURRENT+328行独审、57资格记录全部字段+S3/最终评审边界；L3 manifest全部字段",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "82 AC design catalogue; bilateral Provider adoption and actual execution unproven"
+      }
+    },
+    "MES-SCHED-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "required_input_closure": {
+        "artifact_count": 16,
+        "basis": "direct full semantic read / complete relevant structured records / exact SHA collaborator reuse; containers classified by role",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "NOT_RUN / UNPROVEN"
+      }
+    },
+    "MES-PERF-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "required_input_closure": {
+        "artifact_count": 16,
+        "basis": "direct full semantic read / complete relevant structured records / exact SHA collaborator reuse; containers classified by role",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "NOT_RUN / UNPROVEN"
+      }
+    },
+    "WMS-KIT-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-SLOT-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-REP-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-XDOCK-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-ROLL-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-REM-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-TOOL-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-INK-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-VMI-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-SAMPLE-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-AUTO-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "WMS-ANALYTICS-01": {
+      "state": "reassigned_to_root",
+      "document_status": null,
+      "next_action": "根代理root-specialty账维护，不再由operations编辑"
+    },
+    "FIN-BUD-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "required_input_closure": {
+        "artifact_count": 11,
+        "basis": "direct full semantic read / complete relevant structured records / exact SHA collaborator reuse; containers classified by role",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "NOT_RUN / UNPROVEN"
+      }
+    },
+    "FIN-BANK-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "required_input_closure": {
+        "artifact_count": 11,
+        "basis": "direct full semantic read / complete relevant structured records / exact SHA collaborator reuse; containers classified by role",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "NOT_RUN / UNPROVEN"
+      }
+    },
+    "FIN-ASSET-01": {
+      "state": "in_progress",
+      "document_status": "required_materials_consolidated",
+      "next_action": "当前必要材料语义已闭合；继续全归档历史/别域交叉内容整理及集中跨Owner复核，不把运行未证改为通过",
+      "required_input_closure": {
+        "artifact_count": 11,
+        "basis": "direct full semantic read / complete relevant structured records / exact SHA collaborator reuse; containers classified by role",
+        "historical_and_cross_domain_materials_remaining": true,
+        "runtime_evidence": "NOT_RUN / UNPROVEN"
+      }
+    }
+  },
+  "constraints": [
+    "只写37个本组模块及operations专属contracts/reading/progress/integration-findings；另12由根代理负责",
+    "不编译/业务测试/Actions/提交/推送",
+    "缺件有界登记，不编造规则"
+  ],
+  "updated_at": "2026-10-10T16:05:55.454080+00:00",
+  "documents_saved": 37,
+  "saved_module_count": 37,
+  "delegated_to_root": [
+    "WMS-KIT-01",
+    "WMS-SLOT-01",
+    "WMS-REP-01",
+    "WMS-XDOCK-01",
+    "WMS-ROLL-01",
+    "WMS-REM-01",
+    "WMS-TOOL-01",
+    "WMS-INK-01",
+    "WMS-VMI-01",
+    "WMS-SAMPLE-01",
+    "WMS-AUTO-01",
+    "WMS-ANALYTICS-01"
+  ],
+  "active_scope_count": 37,
+  "document_checks": [
+    {
+      "at": "2026-10-10T09:20:56.302630+00:00",
+      "targets": [
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-TRANSFER-01"
+      ],
+      "kind": "static_document_links_sections_json_only",
+      "source_links_checked": 520,
+      "issues": [],
+      "not_run": [
+        "compile",
+        "business tests",
+        "DB",
+        "Actions"
+      ]
+    },
+    {
+      "at": "2026-10-10T09:32:35.080321+00:00",
+      "targets": [
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "MES-WO-01"
+      ],
+      "kind": "static_document_links_sections_json_only",
+      "source_links_checked": 593,
+      "issues": [],
+      "not_run": [
+        "compile",
+        "business tests",
+        "DB",
+        "Actions"
+      ]
+    },
+    {
+      "at": "2026-10-10T10:00:04.457334+00:00",
+      "modules": [
+        "WMS-IN-01",
+        "MES-MAT-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01"
+      ],
+      "sections": 12,
+      "source_links_checked": 501,
+      "json_parse_count": 4,
+      "issues": [],
+      "scope": "documentation paths/line bounds/section structure/JSON only; no business tests/builds"
+    },
+    {
+      "at": "2026-10-10T10:26:56.017739+00:00",
+      "targets": [
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01"
+      ],
+      "source_links_checked": 470,
+      "checks": [
+        "12节顺序",
+        "来源路径存在及行号有效",
+        "四JSON解析"
+      ],
+      "issues": [],
+      "business_tests": "NOT_RUN"
+    },
+    {
+      "at": "2026-10-10T11:06:44.622098+00:00",
+      "targets": [
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-FX-01"
+      ],
+      "source_line_links": 628,
+      "section_sequence": "1–12 all",
+      "json_parse": "four own outputs",
+      "issues": [],
+      "scope": "static documentation only; no business build/test executed"
+    },
+    {
+      "at": "2026-10-10T11:29:22.286813+00:00",
+      "targets": [
+        "FIN-AP-01",
+        "FIN-AR-01"
+      ],
+      "check": "12 ordered sections; all absolute source links exist and line in range; four own JSON parse; contract IDs unique",
+      "source_links": 473,
+      "issues": [
+        [
+          "FIN-AP-01",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-GL-01.md)、[FIN-MASTER](D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-MASTER-01.md)、[FIN-CLOSE](D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-CLOSE-01.md)、[FIN-REPORT](D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-REPORT-01.md)逐项核对准确采用版本：AP的历史fact/cut和桥接设计与S2关账/报表意图相容，但本册并不自动证明S2新provider合同已被AP/GL双侧采用。该判断是整合分析，不是新增业务规则。[S L171](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/f8/f8bfbd77ef015500__FIN-AP-01_应付付款与核销_前后端开发Spec_v1.0_R1_REVIEW_CANDIDATE.md",
+          "missing"
+        ],
+        [
+          "FIN-AR-01",
+          "D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-GL-01.md)、[FIN-MASTER](D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-MASTER-01.md)、[FIN-INV](D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-INV-01.md)、[FIN-CLOSE](D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-CLOSE-01.md)、[FIN-REPORT](D:/CP6/docs/CP6_开发设计文档_20261010/modules/FIN-REPORT-01.md)、[WMS-DEL](D:/CP6/docs/CP6_开发设计文档_20261010/modules/WMS-DEL-01.md)双侧核准确版本。AR原完整ledger cut合同和S2历史provider目标相容是整合分析，不自动证明S2新采用；AR/INV分工已有明确设计，仍需真实两侧注册与完整效果链。[S L598](D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/3a/3ada4bf654528c62__FIN-AR-01_应收收款与核销_前后端开发Spec_v1.0_R2_DRAFT.md",
+          "missing"
+        ]
+      ],
+      "not_run": "No business/build/test/Actions; future module delivery links not asserted present before batch sync"
+    },
+    {
+      "at": "2026-10-10T11:29:28.249127+00:00",
+      "targets": [
+        "FIN-AP-01",
+        "FIN-AR-01"
+      ],
+      "check": "12 ordered sections; all absolute source links exist and line in range; four own JSON parse; contract IDs unique",
+      "source_links": 473,
+      "issues": [],
+      "not_run": "No business/build/test/Actions; future module delivery links not asserted present before batch sync"
+    }
+  ],
+  "next_target": "root_final_internal_link_normalization_and_publication_validation",
+  "static_checks": [
+    {
+      "at": "2026-10-10T11:57:19.104705+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 4271,
+      "issues": [
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ],
+        [
+          "QA-IPQC-01",
+          "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c8/c82ef3d5833b823c__QA-IPQC-01_过程与最终检验_前后端开发Spec_v1.0_RECOVERY_R4_SYSTEMIC(4",
+          "missing"
+        ]
+      ],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T11:57:28.810693+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 4306,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T12:36:52.728006+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 4394,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions",
+      "limitation": "This earlier local regex covered plain-parenthesis links only; angle-enclosed links covered by subsequent corrected check/root checker. No business verification."
+    },
+    {
+      "at": "2026-10-10T12:49:31.241720+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 4394,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions",
+      "limitation": "This earlier local regex covered plain-parenthesis links only; angle-enclosed links covered by subsequent corrected check/root checker. No business verification."
+    },
+    {
+      "at": "2026-10-10T12:50:00.817373+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 5986,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T13:01:41.448015+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6001,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T13:31:07.125824+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6025,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T13:46:25.642226+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6062,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T13:56:41.072763+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6094,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T14:16:45.735046+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6222,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T14:23:40.503806+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6280,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T14:47:34.965564+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6297,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T15:09:46.227508+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6341,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    },
+    {
+      "at": "2026-10-10T15:25:27.636631+00:00",
+      "targets": [
+        "WMS-STOCK-01",
+        "WMS-RSV-01",
+        "WMS-OUT-01",
+        "WMS-DEL-01",
+        "WMS-RMA-01",
+        "FIN-GL-01",
+        "FIN-CREDIT-01",
+        "MES-RES-01",
+        "MES-WO-01",
+        "MES-MAT-01",
+        "MES-EXEC-01",
+        "MES-OUTPUT-01",
+        "FIN-COST-01",
+        "QA-POL-01",
+        "QA-IQC-01",
+        "QA-IPQC-01",
+        "QA-NCR-01",
+        "WMS-MASTER-01",
+        "WMS-TRANSFER-01",
+        "WMS-IN-01",
+        "WMS-COUNT-01",
+        "WMS-TRACE-01",
+        "WMS-DISP-01",
+        "WMS-MOBILE-01",
+        "WMS-CTRL-01",
+        "FIN-MASTER-01",
+        "FIN-CLOSE-01",
+        "FIN-REPORT-01",
+        "FIN-AP-01",
+        "FIN-AR-01",
+        "FIN-INV-01",
+        "FIN-FX-01",
+        "MES-SCHED-01",
+        "MES-PERF-01",
+        "FIN-BUD-01",
+        "FIN-BANK-01",
+        "FIN-ASSET-01"
+      ],
+      "check": "static module sections, all local link paths and source line bounds; four own JSON parse; contract IDs unique",
+      "links": 6378,
+      "issues": [],
+      "scope": "documentation only; no business/build/test/Actions"
+    }
+  ],
+  "current_shared_reading": {
+    "topic": "H31 bounded shared contract fixtures",
+    "completed": [
+      "4508fb47cead6f2654dcc9f7ef7de9ac7ba5d7a7a19bdd091ee6ba2be293b993: 153 nodes complete all business fields",
+      "73bf775cc3d6d728995d221bed587d4f21e2110a1e155d2fb761143b9f1cc615: 193 nodes complete all business fields",
+      "57f3a7ec38d3c587db59c1419b3cd47e79085f28f724cd736a06f92af67e02eb: 145 nodes complete all business fields"
+    ],
+    "pending": [],
+    "next_compact_record": null,
+    "cache_directory": "D:/Temp/cp6-handbook-operations",
+    "runtime": "NOT_RUN",
+    "scope": "H31全部11项共享成员的必要语义已闭合；其他目标主文仍按各自队列"
+  },
+  "task_level_content_review": {
+    "at": "2026-10-10T15:39:32.977807+00:00",
+    "status": "completed_with_known_material_boundaries",
+    "targets": [
+      "WMS-STOCK-01",
+      "WMS-RSV-01",
+      "WMS-OUT-01",
+      "WMS-DEL-01",
+      "WMS-RMA-01",
+      "FIN-GL-01",
+      "FIN-CREDIT-01",
+      "MES-RES-01",
+      "MES-WO-01",
+      "MES-MAT-01",
+      "MES-EXEC-01",
+      "MES-OUTPUT-01",
+      "FIN-COST-01",
+      "QA-POL-01",
+      "QA-IQC-01",
+      "QA-IPQC-01",
+      "QA-NCR-01",
+      "WMS-MASTER-01",
+      "WMS-TRANSFER-01",
+      "WMS-IN-01",
+      "WMS-COUNT-01",
+      "WMS-TRACE-01",
+      "WMS-DISP-01",
+      "WMS-MOBILE-01",
+      "WMS-CTRL-01",
+      "FIN-MASTER-01",
+      "FIN-CLOSE-01",
+      "FIN-REPORT-01",
+      "FIN-AP-01",
+      "FIN-AR-01",
+      "FIN-INV-01",
+      "FIN-FX-01",
+      "MES-SCHED-01",
+      "MES-PERF-01",
+      "FIN-BUD-01",
+      "FIN-BANK-01",
+      "FIN-ASSET-01"
+    ],
+    "module_count": 37,
+    "scope": "逐目标核模块整理状态/第12节阅读声明与reading/progress；定向阅读第3/4/6/11节和必要关联段，集中核量纲、事实Owner、写集、事务/幂等/恢复、Ref/Scope适配与待确认边界。不是重新全文审阅全部模块或全部原件。",
+    "verified_boundaries": [
+      "Stock是库存数量唯一写入Owner；预留/拣选/包装/交付各自事实不自动等于数量移动",
+      "DEL F0先于Canonical、同SERIALIZABLE事务限定准确相关路由，未推广至所有业务",
+      "制造消耗/产出/QA决定/库存应用分别保留Owner、数量轴和实际采用门",
+      "财务GL每leg、AP整组READY、AR独立事件READY及FIN-INV跨域非同UoW边界按各自合同保留",
+      "UNKNOWN/NOT_OBSERVED与永久无效果证据分开；Receipt、SourceRef、Scope和版本不强制跨Owner同形",
+      "需要具名专业policy、真实provider/all-writer采用或运行证据的项目不因静态接受和材料阅读闭合而放开"
+    ],
+    "new_material_contract_findings": [],
+    "existing_findings_count": 50,
+    "contracts_count": 300,
+    "corrections": [
+      {
+        "target_id": "FIN-BUD-01",
+        "section": 12,
+        "correction": "移除已被同节完整必要附件阅读记录取代的陈旧未闭合措辞；保留历史源码/R0/其他Owner正文未全文阅读边界",
+        "links_unchanged": true
+      },
+      {
+        "target_id": "FIN-BANK-01",
+        "section": 12,
+        "correction": "移除已被同节完整必要附件阅读记录取代的陈旧未闭合措辞；保留历史源码/R0/其他Owner正文未全文阅读边界",
+        "links_unchanged": true
+      },
+      {
+        "target_id": "FIN-ASSET-01",
+        "section": 12,
+        "correction": "移除已被同节完整必要附件阅读记录取代的陈旧未闭合措辞；保留历史源码/R0/其他Owner正文未全文阅读边界",
+        "links_unchanged": true
+      }
+    ],
+    "collaborator_status_synchronization": {
+      "QA-IPQC-01": [
+        "QA-IPQC-01-supplement-reading.json",
+        "QA-IPQC-01-governance-reading.json",
+        "QA-IPQC-01-continuous-reading.json",
+        "QA-IPQC-01-F01-reading.json"
+      ],
+      "WMS-TRANSFER-01": [
+        "WMS-TRANSFER-01-reading.json",
+        "WMS-TRANSFER-01-static-checks.json"
+      ],
+      "QA-NCR-01": [
+        "QA-NCR-01-supplement-reading.json",
+        "QA-NCR-01-member-disposition.json",
+        "QA-NCR-01-document-checks.json",
+        "QA-NCR-01-adoption-reading.json"
+      ]
+    },
+    "remaining_module_boundaries": {
+      "WMS-DEL-01": "已定位必要材料完整语义整理；R01071准确独审原件缺失，保持core_semantics_consolidated"
+    },
+    "not_performed": [
+      "未重跑旧归档/作者脚本",
+      "未执行编译、业务测试、数据库、Actions、提交或推送",
+      "未以1106来源引用的目录/metadata记录替代语义阅读",
+      "未把运行未证/历史源码未全文读改称闭合"
+    ],
+    "verification": {
+      "three_module_link_targets_unchanged": true,
+      "root_and_platform_held_module_bytes_unchanged": true,
+      "status_counts": {
+        "required_materials_consolidated": 36,
+        "core_semantics_consolidated": 1
+      },
+      "json_parse": true,
+      "business_validation": "NOT_RUN"
+    },
+    "subsequent_exact_reuse": {
+      "at": "2026-10-10T16:05:55.454080+00:00",
+      "target": "QA-NCR-01",
+      "evidence": [
+        {
+          "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-supplement-reading.json",
+          "sha256": "aef03b94597ef0d1678b27817c59e9c8cf32985df3266416e8a4ec41f45d291f"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-member-disposition.json",
+          "sha256": "80bc7aa44ac11b371d0fc6ccf4d8ace1e3559020afa34cd5be7467189a1ac6fc"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-document-checks.json",
+          "sha256": "4e535ff9de512d64ed126fe23d6322b34ed953e79650c1f06bf205b140a37c96"
+        },
+        {
+          "path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/QA-NCR-01-adoption-reading.json",
+          "sha256": "f2d2eae06c0e64df8dcfd609be491f5193afad0063b7c19c16d423a4f66332a6"
+        }
+      ],
+      "scope": "补入平台最终独立集中复核及root26scope结果，不声称本组重新运行该378链接/175来源检查"
+    }
+  },
+  "support_evidence_persistence": {
+    "at": "2026-10-10T15:48:05.697411+00:00",
+    "support_files": [
+      "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-s2-source-qual-identities.json",
+      "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-rma-example-aliases.json",
+      "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-task-public-handbook-review-20261010.json"
+    ],
+    "validation_evidence": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-support-persistence-validation.json",
+    "current_review_snapshot": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-task-public-handbook-review-20261010.json",
+    "note": "审查快照内工作树路径是当时已审对象身份，保原值；实际阅读账别名映射入口已持久化；10份内部引用路径修正脚本待root在各agent完成后运行"
+  },
+  "internal_link_finalization_preparation": {
+    "script_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/finalize_internal_links.py",
+    "script_sha256": "d21ef61d858e3fd50f4495811f49f45a8eecab37802004b9e2f9173b0ee94aaf",
+    "dry_run_report": "D:/CP6-archives/consolidation-20261010/root-planning-cache/internal-link-finalization-plan.json",
+    "mode_executed": "dry_run_only",
+    "apply_executed": false,
+    "exact_whitelisted_files": 10,
+    "planned_internal_reference_changes": 164,
+    "matched_targets_exist": true,
+    "json_inverse_replacement_semantics_equal": true,
+    "json_roundtrip_equal": true,
+    "handbook_json_files_byte_unchanged_during_dry_run": 82,
+    "apply_owner": "root after all agents finish writing",
+    "count_correction": "前次公共审查文字称11份是计数口误；原文件字典及本次逐项核对为10份，不扩入第11份未知文件"
+  },
+  "writing_handoff": {
+    "at": "2026-10-10T16:05:55.454080+00:00",
+    "agent": "operations_design",
+    "state": "stopped_writing_for_root_finalization",
+    "active_scope": 37,
+    "status_counts": {
+      "required_materials_consolidated": 36,
+      "core_semantics_consolidated": 1
+    },
+    "remaining_exact_current_gap": "WMS-DEL-01/R01071; all located material semantics consolidated",
+    "business_tests": "NOT_RUN",
+    "apply_internal_link_script": "root only after peer writers stop"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "at": "2026-10-10T15:48:05.697411+00:00",
+  "scope": "仅持久化三份operations支撑JSON；两处阅读账别名指针改交付根；不修改原件或外组账",
+  "copies": [
+    {
+      "source_path": "D:/Temp/cp6-handbook-operations/s2-source-qual-identities.json",
+      "persisted_path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-s2-source-qual-identities.json",
+      "bytes": 7927,
+      "sha256": "ecec50166625a5c450c80acb31af491da9ee661c663ac6490853251dbc55f8b2",
+      "byte_identical": true,
+      "json_parse": true
+    },
+    {
+      "source_path": "D:/Temp/cp6-handbook-operations/rma-example-aliases.json",
+      "persisted_path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-rma-example-aliases.json",
+      "bytes": 1830,
+      "sha256": "ab05c6bb8c82d6c29923ec46b29b9fd7bceea5ea70d9d3fafbb68f80b5591301",
+      "byte_identical": true,
+      "json_parse": true
+    },
+    {
+      "source_path": "D:/Temp/cp6-handbook-operations/task-public-handbook-review-20261010.json",
+      "persisted_path": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-task-public-handbook-review-20261010.json",
+      "bytes": 15498,
+      "sha256": "889f4dd59d1edbf99bc1a7c5acab4519dd2790972a9417b635705fe8c6f2c1da",
+      "byte_identical": true,
+      "json_parse": true
+    }
+  ],
+  "reading_pointer_edits": [
+    {
+      "pointer": "/files/499/semantic_closure/original_identity_aliases",
+      "before": "D:/Temp/cp6-handbook-operations/s2-source-qual-identities.json",
+      "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-s2-source-qual-identities.json"
+    },
+    {
+      "pointer": "/files/1231/semantic_closure/identity_alias_mapping",
+      "before": "D:\\Temp\\cp6-handbook-operations\\rma-example-aliases.json",
+      "after": "D:/CP6/docs/CP6_开发设计文档_20261010/evidence/support/operations-rma-example-aliases.json"
+    }
+  ],
+  "reading_before_sha256": "22baeb85a46ad3c1901ace55f8626ca925df6552db1a10ca04e71c48fa54d663",
+  "reading_after_sha256": "921f702881f09c8b7e6eddb9f306a31bdacac6932db75fa7c5df499eeac9ac74",
+  "all_other_reading_semantics_equal": true,
+  "json_roundtrip": true,
+  "source_alias_bytes_unchanged": true,
+  "business_tests": "NOT_RUN",
+  "internal_link_finalization_preparation": {
+    "script_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/finalize_internal_links.py",
+    "script_sha256": "d21ef61d858e3fd50f4495811f49f45a8eecab37802004b9e2f9173b0ee94aaf",
+    "dry_run_report": "D:/CP6-archives/consolidation-20261010/root-planning-cache/internal-link-finalization-plan.json",
+    "mode_executed": "dry_run_only",
+    "apply_executed": false,
+    "exact_whitelisted_files": 10,
+    "planned_internal_reference_changes": 164,
+    "matched_targets_exist": true,
+    "json_inverse_replacement_semantics_equal": true,
+    "json_roundtrip_equal": true,
+    "handbook_json_files_byte_unchanged_during_dry_run": 82,
+    "apply_owner": "root after all agents finish writing",
+    "count_correction": "前次公共审查文字称11份是计数口误；原文件字典及本次逐项核对为10份，不扩入第11份未知文件"
+  }
+}

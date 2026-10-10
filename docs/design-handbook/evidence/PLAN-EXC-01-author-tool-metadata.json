@@ -1,0 +1,2484 @@
+{
+  "target_id": "PLAN-EXC-01",
+  "prepared_at_utc": "2026-10-10T12:01:56.262447+00:00",
+  "method": "stdlib AST parse only; no import/execute; not complete semantic script reading",
+  "files": [
+    {
+      "name": "CP04_AUTHOR_MAPS/reference_complete_public_authority_serializer.py",
+      "sha256": "00615c3c83f1fb0ec555c896e81fb3e974d09ab04a20e8e7c0abb4e55709dbb4",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "jcs",
+        "digest",
+        "opaque",
+        "proposed_id",
+        "instant",
+        "earlier",
+        "native_head",
+        "sdk_tuple",
+        "source_page",
+        "proposed_public_package",
+        "proposed_reduced_successor",
+        "proposed_ac084_authority_and_binding"
+      ],
+      "imports": [
+        "import copy, datetime, hashlib, json, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_ac_isolated_source_differences.py",
+      "sha256": "060904048b85c836fcd534e67080b07fda20ae41dd9d4535ff13649b8e8e6d4d",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneFact",
+        "cloneCut"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_align_master_roots.py",
+      "sha256": "b5d80d7bcc7732baeda9641f1d57af54bb755224fb21cecf86ea2b78ee006766",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "stamp",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_align_operation_progress_and_source_clocks.py",
+      "sha256": "6e0e6ca9308723d61d52bf2f59b2c17c6674c480f685d67dd1b2a3324b9e7f78",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy"
+      ]
+    },
+    {
+      "name": "author_cp03_canonical_native_ledger.py",
+      "sha256": "3e6f50b0291bffe5682bcf67051947093cdd5fed0be17def394587b32cf63a46",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ident",
+        "symbolic",
+        "B",
+        "fixnode"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_cold_same_export_source_extension.py",
+      "sha256": "746b9759c32b90f53dba9d15e0bec7595a1378d480dedfaa0848c564171086b5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneFact",
+        "cloneCut"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_complete_cold_same_export_ledger.py",
+      "sha256": "50a766dcf19229f7ddc619408d76a92ce9ada4be7033e5d84038b24012d0bcc4",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sourceSubset",
+        "checkpoint"
+      ],
+      "imports": [
+        "from author_cp03_m04_ledger_extension import *"
+      ]
+    },
+    {
+      "name": "author_cp03_complete_current_subject_scope.py",
+      "sha256": "c55b44fb8fd30bd2b180e5a6327c0ffaf319eea3d552f8d9579346ee5202e97b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_complete_epoch_and_required_local_wait.py",
+      "sha256": "8afa1685522780b4cf9be1ffe5098b9f8c043e119b945f8eed7b546cce103ce4",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "registerWait"
+      ],
+      "imports": [
+        "from author_cp03_complete_material_and_stream_ledger import *"
+      ]
+    },
+    {
+      "name": "author_cp03_complete_local_ledger.py",
+      "sha256": "dc3d204f44496a46293ec68bf47f5d01d5ea15762694081c6d60dfc0dcd3e417",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "applyLocalProgress",
+        "projection",
+        "createCase",
+        "eventPayload",
+        "localWireRef",
+        "resolve",
+        "rotate",
+        "captureSharedReceipt"
+      ],
+      "imports": [
+        "from cp03_document_record_authoring import *"
+      ]
+    },
+    {
+      "name": "author_cp03_complete_material_and_stream_ledger.py",
+      "sha256": "acc4ae61fb32afb0b6cef9c1d6ac333ed282a4ab6288984b208ec265023c84b5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "wireReceipt"
+      ],
+      "imports": [
+        "from author_cp03_complete_cold_same_export_ledger import *"
+      ]
+    },
+    {
+      "name": "author_cp03_complete_material_and_stream_sources.py",
+      "sha256": "d20406d5e5f1306031f902852a0030c4f8e3816f579e295d965224761ebf5332",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_complete_source_pipeline.py",
+      "sha256": "6d68787e917f902e21d8935a69ed438909f3fa465197a89e6922bb70fde49330",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "header",
+        "add",
+        "replace",
+        "cut",
+        "query",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_exact_alert_policy_source_binding.py",
+      "sha256": "4241285eb67699bf6e307dc2e6d913122d7e713c7240e53198a82f26b4be9f74",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_exact_capture_graphs.py",
+      "sha256": "323447640e4751229a5c3830cf79dbde9296edbe0ad12e6475c4754633f19a7f",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "header",
+        "head",
+        "cut",
+        "query"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_exact_coordination_and_ingress.py",
+      "sha256": "fb8017516523cdb6bd1d1500d1b5cf08efb1d19abd9a8bb99576f8b6bc144482",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cutClone"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_exact_material_late_binding.py",
+      "sha256": "b083b2a78460c3452bc56f5af05bbba72669cf1ad0ff114a135c4411036078df",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ran",
+        "symbols",
+        "closure"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_exact_public_kpi_correction.py",
+      "sha256": "3fac51842d76ad5fb15ad0ac8ba26085449443acfae2b08143689a649e6c61a1",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_exact_recalc_stage_sources.py",
+      "sha256": "12d1b40a4456263321692ebea70446c12104df7dcbd43f615006a5468d78f6de",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_extend_material_storage_roots.py",
+      "sha256": "b5d1e499701a69c03c1ddad4ce47a7b359ccbc4eeb56a1ea872906d8d962aa61",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "author_cp03_final_bounded_corrigenda.py",
+      "sha256": "2dff335f09426386c9387d753972f57312d42dde4a7fffde3600431de9650307",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "write",
+        "ref",
+        "packet",
+        "assign"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib"
+      ]
+    },
+    {
+      "name": "author_cp03_graph_normalized_rows.py",
+      "sha256": "f760f797efc0bce7085786596e7bf7aa85284de72a5955af2b31b779185e0638",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "fact",
+        "opt",
+        "saveIndex"
+      ],
+      "imports": [
+        "import runpy, json, copy, pathlib"
+      ]
+    },
+    {
+      "name": "author_cp03_local_action_source_roots.py",
+      "sha256": "94b1df4cd480cf68f06a8759a28e4ce257a8db8789efd73790869115deeaa39c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneCut",
+        "add"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_m04_ledger_extension.py",
+      "sha256": "89e0a2052a85bc87cc8a4828bc97b9df4869cdbf16a89ece33b4f6750d362a5b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "opaque",
+        "localNativeApply",
+        "receiptInner",
+        "wrapper"
+      ],
+      "imports": [
+        "from author_cp03_complete_local_ledger import *"
+      ]
+    },
+    {
+      "name": "author_cp03_main_source_storage_chapter.py",
+      "sha256": "096adff4d008f0d1c37392a126fe4a4fb2990a943390306939f75a5f3b5d326b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib"
+      ]
+    },
+    {
+      "name": "author_cp03_material_capture_and_planning_authority.py",
+      "sha256": "2ecb0e01aa059ba9180ee8ef5545b8230e7b71c55d802be5597995de07bf98b2",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_material_exception_graphs.py",
+      "sha256": "240bc609a9da36a9c4ded99905392df138b99e2b77b827add677e51ddd8c305a",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "qty",
+        "ran",
+        "symbols",
+        "closure",
+        "span"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_material_parent_demand_and_scope.py",
+      "sha256": "592cf90be24e7b87c6b85d828167fd02dc9ef92fd5cb37c8f69c5c9d4dec1c28",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "remap",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_material_run_chain.py",
+      "sha256": "8f099816242f3c530dea067b02a650b14503d2a596904d2716fd29a68d092cbd",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "q",
+        "h",
+        "add",
+        "remap",
+        "out"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_material_semantic_corpus.py",
+      "sha256": "d5e8bdac8a144626d4b520cdf08018e31baaf0b00c47e67de78709ff1ffa0031",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj",
+        "nr",
+        "op",
+        "q",
+        "ra",
+        "node",
+        "identity",
+        "header",
+        "add"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_materialize_registry.py",
+      "sha256": "f968649ad33407d72beb23dd79af10650fa4b7fec7f04a131ad104d9b79134d5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "opaque",
+        "schemaBundle",
+        "contract",
+        "begin",
+        "finish",
+        "symbols",
+        "nativeClosure",
+        "ownerReads",
+        "current",
+        "private",
+        "resultMembers",
+        "resolve",
+        "native"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib, re"
+      ]
+    },
+    {
+      "name": "author_cp03_physical_record_registry.py",
+      "sha256": "dda5f2061d8e6b73eb221362b49c47123c121330752736a5ceeb6dd7ef8aced4",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "utcInstant",
+        "row",
+        "bind",
+        "key",
+        "artifact",
+        "refs"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib, base64, datetime"
+      ]
+    },
+    {
+      "name": "author_cp03_private_current_and_material_netting.py",
+      "sha256": "11bd5e3480629edc14122943332589433f06202aac9b79ee88d8340df0b2662d",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cutClone"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_private_graph_registry.py",
+      "sha256": "cbe28f3f8b2b4ef91e41cabfdacf5940ed595e6fa3129c66b2fc371a7ac80d3a",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sym"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_propagate_103_ac_from_exact_sources.py",
+      "sha256": "0b9a713a533746078876c5fe9c7bc3ca74dd5355a24ce9787c1f0b4c54c8672a",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ref",
+        "native",
+        "private",
+        "packet",
+        "current",
+        "public",
+        "rule"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, uuid, re, shutil"
+      ]
+    },
+    {
+      "name": "author_cp03_propagate_full_main_and_chapters.py",
+      "sha256": "89e8bd8daec4e8847c2a985e4127f61a5299ecea3d4571b4d41c32323e343ab5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, hashlib, re, shutil"
+      ]
+    },
+    {
+      "name": "author_cp03_propagate_leaf_contracts_and_proposals.py",
+      "sha256": "3fe0af9881adc8c1494c143e9c51c4f2883f4f3d6e4faffad85057e9ffa5eb3b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "codec"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, re"
+      ]
+    },
+    {
+      "name": "author_cp03_public_aggregate_and_material_head_kinds.py",
+      "sha256": "453b3f5e23de368350f1c26705c033d8081ffbf656578b0bfe661b074d29ccaa",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_query_and_normal_contracts.py",
+      "sha256": "00f9bd82360c5c7c02e8c0699f72990f25a8e4833c30e20ac47d1de5caec985f",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "author_cp03_rebuild_normals_api_trace_and_public_binding.py",
+      "sha256": "835536b1abc9dd5037d56ceeacf9d3018acdd5e3a5417c551679829d059af779",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ref",
+        "packet",
+        "source",
+        "row"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, shutil"
+      ]
+    },
+    {
+      "name": "author_cp03_required_epoch_nonterminal_source.py",
+      "sha256": "4ccf6ce64468ccc64f06d50fab07cdd88bbfd19cd8108a884223849d755f9496",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_shared_disposition_original_request.py",
+      "sha256": "9a145fadef30d80d3ce74f6ffb789a7559f4f4be362fc87919bc49a798f968ba",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_shared_settlement_successor.py",
+      "sha256": "1ada537a38bc85b92135d70eeb79cfb9019937c8bb2dd9110337c37470763179",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sy",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "author_cp03_source_read_and_public_views.py",
+      "sha256": "0ddfabffeb5f3f0590e9e78d96f1521ea6a9f146ff18de743f8bc98c40aeb6cd",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "coreVariant",
+        "visibility",
+        "displayDims",
+        "publicQty",
+        "publicAssessment"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib"
+      ]
+    },
+    {
+      "name": "author_cp03_storage_profiles.py",
+      "sha256": "ddc9db24957707a59e60b8834db9ed278cd41fa3d62a019f9230ce80b7f6eb89",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "privateRoot"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "author_cp03_typed_foundations.py",
+      "sha256": "7b73e9b9405b8e4545de2393a2b03054c472e5ac6026da0aba7997d70c3cfaa8",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj"
+      ],
+      "imports": [
+        "import pathlib, json, copy"
+      ]
+    },
+    {
+      "name": "author_cp03_wo_original_material_origin.py",
+      "sha256": "8c2da6a3c29ad76b0657e100a3e15dc43379bc1a7e8d4b7bb56a866dd1d554cf",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_ac_isolated_source_differences.py",
+      "sha256": "6a9401c88aaca63cb32eac3a38956d2954b134a023e7da851e000c4e40845dba",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneFact",
+        "cloneCut"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_align_master_roots.py",
+      "sha256": "b00748d6fc37003a4022db7b59d0b8ac244d10a882fb4677f6bc2cd1b8f257db",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "stamp",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_align_operation_progress_and_source_clocks.py",
+      "sha256": "b381c7023d82557e665ae840ea53fb1915e163e78cdc09e4f8f160c3cb898361",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_canonical_native_ledger.py",
+      "sha256": "8751b98bdbe7c7c3dbf54666b383cffc28b512ca6a06e7f14f065d2ca4abca8a",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ident",
+        "symbolic",
+        "B",
+        "fixnode"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_cold_same_export_source_extension.py",
+      "sha256": "1922d435524c96fbe07ef6b789165f6973c9a9fe7a3504d6f9255d9d3fcdc388",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneFact",
+        "cloneCut"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_complete_cold_same_export_ledger.py",
+      "sha256": "cd7c780203f3be65a5b09551e2d28b13cdbf5fc15e5f2c15108fe78ae4bd9b0c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sourceSubset",
+        "checkpoint"
+      ],
+      "imports": [
+        "from author_cp03_m04_ledger_extension import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_complete_current_subject_scope.py",
+      "sha256": "56245818064b740f4084fd977035c6b681a35cce6412dda29cba662edb8086ee",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_complete_epoch_and_required_local_wait.py",
+      "sha256": "8afa1685522780b4cf9be1ffe5098b9f8c043e119b945f8eed7b546cce103ce4",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "registerWait"
+      ],
+      "imports": [
+        "from author_cp03_complete_material_and_stream_ledger import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_complete_local_ledger.py",
+      "sha256": "dc3d204f44496a46293ec68bf47f5d01d5ea15762694081c6d60dfc0dcd3e417",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "applyLocalProgress",
+        "projection",
+        "createCase",
+        "eventPayload",
+        "localWireRef",
+        "resolve",
+        "rotate",
+        "captureSharedReceipt"
+      ],
+      "imports": [
+        "from cp03_document_record_authoring import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_complete_material_and_stream_ledger.py",
+      "sha256": "acc4ae61fb32afb0b6cef9c1d6ac333ed282a4ab6288984b208ec265023c84b5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "wireReceipt"
+      ],
+      "imports": [
+        "from author_cp03_complete_cold_same_export_ledger import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_complete_material_and_stream_sources.py",
+      "sha256": "fbb2d55eea7e3203afc6c44d432b61dc5274c3177566403704b424f78dcbea90",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_complete_source_pipeline.py",
+      "sha256": "c17cecf1cf2fac2b63f6e60df4e647008714f970f7a8c2df1ff46b3e0c099d89",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "header",
+        "add",
+        "replace",
+        "cut",
+        "query",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_exact_alert_policy_source_binding.py",
+      "sha256": "79e1f93a6a7665e70a8a551ecf7f893c7520068a76c36d4d2e3a570beb8ca67c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_exact_capture_graphs.py",
+      "sha256": "3ecdf0d489665814a8315dbb88438ead0640ccf3a860ff331842af93d6b0d3ee",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "header",
+        "head",
+        "cut",
+        "query"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_exact_coordination_and_ingress.py",
+      "sha256": "07453c150c369580bab8c11c80e928d58c2b6b633d0b160c40e0e4004b21cac3",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cutClone"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_exact_material_late_binding.py",
+      "sha256": "0e4db3b0d93c0527c185967019fd505ba9ff529ae439769a6d37d85cdd709335",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ran",
+        "symbols",
+        "closure"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_exact_public_kpi_correction.py",
+      "sha256": "6674c6772c6dfe9c0aebc9147297b7d1506a2055f985055cd87afd51c22b5896",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_exact_recalc_stage_sources.py",
+      "sha256": "53e7c6ea65ed43ebb2f919bf94235ced26f92265099db02fd0ae3f4e1c819765",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_extend_material_storage_roots.py",
+      "sha256": "6abe3d677db68d628ed043fb34d6a78c81e768794fe231a138680733e35bd45c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_final_bounded_corrigenda.py",
+      "sha256": "28748ff4c99bda4798750ad5c094dd3060f54f96672321000d8107bc91e12555",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "write",
+        "ref",
+        "packet",
+        "assign"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_graph_normalized_rows.py",
+      "sha256": "a1de17f97bffd64092c8aff707fe10cfcde68176d7fa5560f08f554e7313456e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "fact",
+        "opt",
+        "saveIndex"
+      ],
+      "imports": [
+        "import runpy, json, copy, pathlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_local_action_source_roots.py",
+      "sha256": "eaca65db6d43b84e71c144ae80e2e52840bbbccfaec96a15a72cfe29c0fd4318",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneCut",
+        "add"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_m04_ledger_extension.py",
+      "sha256": "89e0a2052a85bc87cc8a4828bc97b9df4869cdbf16a89ece33b4f6750d362a5b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "opaque",
+        "localNativeApply",
+        "receiptInner",
+        "wrapper"
+      ],
+      "imports": [
+        "from author_cp03_complete_local_ledger import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_main_source_storage_chapter.py",
+      "sha256": "ca193860c4ca85acdd7b594f9ace404a9435514a4fbead63dc361592c3e30da8",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_material_capture_and_planning_authority.py",
+      "sha256": "89c965a3a3bad4dd69dbc735a7e4be6c6602d677d69b388d8e4bdba4a74383c5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_material_exception_graphs.py",
+      "sha256": "180418d2db1cf34c6e4192d9e856ac2fd8a71dafb620707a7880966c2fd7b85e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "qty",
+        "ran",
+        "symbols",
+        "closure",
+        "span"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_material_parent_demand_and_scope.py",
+      "sha256": "99356b752598d14ccc2d02d8afdcefd717b45dadbbaae5cc113206436fda9da0",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "remap",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_material_run_chain.py",
+      "sha256": "0ce2a086f3260b1fcb0c8c13e95b6c2cc7e0e436ef7e5f9d0beee826b73140aa",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "q",
+        "h",
+        "add",
+        "remap",
+        "out"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_material_semantic_corpus.py",
+      "sha256": "4294a34ac7c646e28d411ec863fee06f3e91f4584d2ad2c38f0857ef27b39bc0",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj",
+        "nr",
+        "op",
+        "q",
+        "ra",
+        "node",
+        "identity",
+        "header",
+        "add"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_materialize_registry.py",
+      "sha256": "c669f54ca3182e2ab21e0d3005a019ba721e84a4e5010c8d0bff13b4a29b43be",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "opaque",
+        "schemaBundle",
+        "contract",
+        "begin",
+        "finish",
+        "symbols",
+        "nativeClosure",
+        "ownerReads",
+        "current",
+        "private",
+        "resultMembers",
+        "resolve",
+        "native"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_physical_record_registry.py",
+      "sha256": "7a8c680f29d9b4dab47170e1d2f6e829fda24ebae3a1d69e57bcc605ac7883f9",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "utcInstant",
+        "row",
+        "bind",
+        "key",
+        "artifact",
+        "refs"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib, base64, datetime"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_private_current_and_material_netting.py",
+      "sha256": "cb7688549d082a4e6184c8d447fd64c5d901446c2fb34839db7e76c109299f16",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cutClone"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_private_graph_registry.py",
+      "sha256": "b7e8bd5ec392d1355ad622cec05135aa698f17bed495c87adfaee4ff2f47cf6e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sym"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_propagate_103_ac_from_exact_sources.py",
+      "sha256": "23e5c2e24e5b83b9fbb908c46ba114c9069a2ceebd5c48d1604d101eb4952371",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ref",
+        "native",
+        "private",
+        "packet",
+        "current",
+        "public",
+        "rule"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, uuid, re, shutil"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_propagate_full_main_and_chapters.py",
+      "sha256": "c5e5ab364b9a7c2a55dd271191dbed27507b383abd2dcb236d2e70d60c0ae2e7",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, hashlib, re, shutil"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_propagate_leaf_contracts_and_proposals.py",
+      "sha256": "860ca9f3e35139ff6878ea27833636c0322d0bbab6719298a2da4dddd9275ca2",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "codec"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_public_aggregate_and_material_head_kinds.py",
+      "sha256": "70d411d97be79e440b566a01ac97dceffdbbbf2563519e01cf7a98381e661999",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_query_and_normal_contracts.py",
+      "sha256": "5c87fdef9f140c679d81d3caaf49cfef49652d2fcc38793563568cf999588231",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_rebuild_normals_api_trace_and_public_binding.py",
+      "sha256": "79abe9e61fd92b6fe6fb682cd5ea26e8c2fec2347fb350adb592a675629da4da",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ref",
+        "packet",
+        "source",
+        "row"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, shutil"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_required_epoch_nonterminal_source.py",
+      "sha256": "a6158e024cee19b083cdd5708872f1e3dcd9d1f91706875faf3aeb7383811556",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_shared_disposition_original_request.py",
+      "sha256": "6497397b93612477b410e9248770d328db7e2f702e7c4f064057ff41be526b99",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_shared_settlement_successor.py",
+      "sha256": "60bd6d60382cb245fe6c03006ccd361a1abded223c59424728f6292781c65393",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sy",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_source_read_and_public_views.py",
+      "sha256": "cabc2e79585a878b441d28822f5039c0b50e2f69c3f8bdd534041c7a629ee5ab",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "coreVariant",
+        "visibility",
+        "displayDims",
+        "publicQty",
+        "publicAssessment"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_storage_profiles.py",
+      "sha256": "729bc6bf244defdfd58e9e0427be4f34a00c00ec73e2ac8d9ec91fc528ec11de",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "privateRoot"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_typed_foundations.py",
+      "sha256": "e44ea7a9d60d317623bb43dbb9cd0e8e2f069f5109af0354f66e42c61e4e9e5c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj"
+      ],
+      "imports": [
+        "import pathlib, json, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp03_wo_original_material_origin.py",
+      "sha256": "c36e18899ca6baab7d44dd52aedd556c34c67031925a75ae7fecf605fc659ccf",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp04_ac_and_readback_sync.py",
+      "sha256": "7ead8672210d169aed09c876cbeee56d4d4085650109c062858973c643ba6d08",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp04_complete_public_packets.py",
+      "sha256": "b63d76bd65fe3b9646dd8f76bcc7e9e63fa34913be0485c5f43f381dded930eb",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save"
+      ],
+      "imports": [
+        "import pathlib, json, copy",
+        "from cp04_public_authority_document_serializer import proposed_public_package"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp04_cursor_protocol_document.py",
+      "sha256": "4117fec1fe1c5f79e33a5d0a9c73e54664439aa68074316a8f4377cfe67a77c8",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "raw",
+        "sha",
+        "H",
+        "b64",
+        "ID",
+        "rec",
+        "page"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, base64, uuid, importlib.util, sys",
+        "from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp04_final_review_index.py",
+      "sha256": "7a9e008002785951e48b4538679000c1551234fc3c451ef38100026f1c510668",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "loc"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, datetime, sys"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp04_impact_and_collection_decisions.py",
+      "sha256": "1ad72b10c031b25e6d6ee27eb3aeb2c5c4ec4ba8d6aaf57c382541cb3c622b3f",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp04_outer_proposals_and_main.py",
+      "sha256": "db2ad75dc1f0e0af15b811c865e5fafae05393fca8f136cd81b1bd2f1a35c54d",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "raw",
+        "H",
+        "insert_before"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/author_cp04_source_decisions.py",
+      "sha256": "1e09b1c864b033f49083ad3d31df4bd1e8a07bfa7c63a010ad32b13e6881694b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "obj",
+        "q",
+        "add",
+        "swap",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/cp03_document_record_authoring.py",
+      "sha256": "ea8a7afbced7ff41501f8cbb071c4cc9dd6509129a6d9abf2c8718a485af3615",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "providerReadback",
+        "raw",
+        "H",
+        "utcInstant",
+        "rv",
+        "rec",
+        "bind",
+        "key",
+        "fact",
+        "private",
+        "blob",
+        "mutate",
+        "empty",
+        "loc",
+        "snap",
+        "beforeRows",
+        "ordered",
+        "cp04MandatoryRelations",
+        "transaction",
+        "bootstrap",
+        "rotateExpired",
+        "admit",
+        "auth",
+        "seq",
+        "coreTuple",
+        "audit",
+        "caseRevision",
+        "expected",
+        "command",
+        "save"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid, hashlib, base64, datetime"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/cp04_public_authority_document_serializer.py",
+      "sha256": "80d4259a84c6a8374860fad8106533310fbfacf7cb7e0ec4dd13490bf0a66b30",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "jcs",
+        "digest",
+        "opaque",
+        "proposed_id",
+        "instant",
+        "earlier",
+        "native_head",
+        "sdk_tuple",
+        "source_page",
+        "proposed_public_package",
+        "proposed_reduced_successor",
+        "proposed_ac084_authority_and_binding"
+      ],
+      "imports": [
+        "import copy, datetime, hashlib, json, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/patch_cp04_document_relationship_serializers.py",
+      "sha256": "60a08db5e4924bdefdebb7e4845982be8aecca7fb7f8d0f6a8fa4a432866f60f",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/read_cp04_plain_document_relationships.py",
+      "sha256": "d33bf3d6b3df73336ab1270921118b0e6e5388566522c6ec713c3cf6645c72e5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "load",
+        "raw",
+        "H",
+        "ptr",
+        "walk",
+        "differences",
+        "loc",
+        "roster",
+        "snapshot",
+        "mutable_tokens"
+      ],
+      "imports": [
+        "import pathlib, json, hashlib, copy, collections, base64, datetime, re, gc"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp04/read_cp04_source_time_and_boundary_fields.py",
+      "sha256": "8b7794bdebf6936dc9aa438a206e8b8e34b1b30b4770551833856d0f0ac7a570",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "load",
+        "raw",
+        "H",
+        "instant",
+        "walk"
+      ],
+      "imports": [
+        "import pathlib, json, hashlib, datetime, zipfile, base64, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_ac_isolated_source_differences.py",
+      "sha256": "5b242e9129e4ae1fe58571de1d4e9521628b2299ac0c21862d68366108003aa8",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneFact",
+        "cloneCut"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_align_master_roots.py",
+      "sha256": "b259109f7c4bf229efcaa5c161f6e366758be134c9b6ebeb31e616878db142cb",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "stamp",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_align_operation_progress_and_source_clocks.py",
+      "sha256": "37d5361141b63b41531a68b7be91885fc955ece8e4e176ff8209f206be1830f8",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_canonical_native_ledger.py",
+      "sha256": "4160b8c0bdb2b30871adf83e045a6b26a08acec7f3f0d40b776ac6841cf2f020",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ident",
+        "symbolic",
+        "B",
+        "fixnode"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_cold_same_export_source_extension.py",
+      "sha256": "b0a28b63c9ff554826653e698a9757244b9925f6b1af87f8eba9996fd5c0b8dd",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneFact",
+        "cloneCut"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_complete_cold_same_export_ledger.py",
+      "sha256": "cd7c780203f3be65a5b09551e2d28b13cdbf5fc15e5f2c15108fe78ae4bd9b0c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sourceSubset",
+        "checkpoint"
+      ],
+      "imports": [
+        "from author_cp03_m04_ledger_extension import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_complete_current_subject_scope.py",
+      "sha256": "db360817b9a9a0f3d7b4799a68028fe1a3b91ecfabd079502b7e48c691883233",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_complete_epoch_and_required_local_wait.py",
+      "sha256": "8afa1685522780b4cf9be1ffe5098b9f8c043e119b945f8eed7b546cce103ce4",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "registerWait"
+      ],
+      "imports": [
+        "from author_cp03_complete_material_and_stream_ledger import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_complete_local_ledger.py",
+      "sha256": "dc3d204f44496a46293ec68bf47f5d01d5ea15762694081c6d60dfc0dcd3e417",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "applyLocalProgress",
+        "projection",
+        "createCase",
+        "eventPayload",
+        "localWireRef",
+        "resolve",
+        "rotate",
+        "captureSharedReceipt"
+      ],
+      "imports": [
+        "from cp03_document_record_authoring import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_complete_material_and_stream_ledger.py",
+      "sha256": "acc4ae61fb32afb0b6cef9c1d6ac333ed282a4ab6288984b208ec265023c84b5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "wireReceipt"
+      ],
+      "imports": [
+        "from author_cp03_complete_cold_same_export_ledger import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_complete_material_and_stream_sources.py",
+      "sha256": "00739a0dbcf90cbd3cf4209200bc59986a0a4ca80e1e6a6e059ea1a68feae3b9",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_complete_source_pipeline.py",
+      "sha256": "591b7e5adfdaf597af1524cfe048358f24642b2f2cb98933f937b1a69337f668",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "header",
+        "add",
+        "replace",
+        "cut",
+        "query",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_exact_alert_policy_source_binding.py",
+      "sha256": "f6d3702da8d5f6912d0d6a83d5bf61c8c40ad122e51c30c47e2900847e7be56c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_exact_capture_graphs.py",
+      "sha256": "a0dc649d63ec2557aeec08e8f6fd92c5a957897086b120f0bcf4bdb9b52b2012",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "header",
+        "head",
+        "cut",
+        "query"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_exact_coordination_and_ingress.py",
+      "sha256": "d0a4f54966078d34b4ee565901b871d234842dff9212921bf41321bf6d670dd0",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cutClone"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_exact_material_late_binding.py",
+      "sha256": "3adf4266b605d34bac981203d84bc62e503f1f2297b19dd43ae861881a823e67",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ran",
+        "symbols",
+        "closure"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_exact_public_kpi_correction.py",
+      "sha256": "0ada185bf8c8f346643caca51b4a91a8deb49306c52715ed141946984cb9712c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_exact_recalc_stage_sources.py",
+      "sha256": "3beb9971138880a394796d765550874a94e2bcb0d525244a2fb1eb353e266184",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_extend_material_storage_roots.py",
+      "sha256": "148d39b4f6472aeeb658e835becedb5c8f61ad9283b7266bf79051ef0e832115",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_final_bounded_corrigenda.py",
+      "sha256": "dd0f06273c573c1f728fa20c5c622b26754758248548fa6cb46ac40e985b798b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "write",
+        "ref",
+        "packet",
+        "assign"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_graph_normalized_rows.py",
+      "sha256": "a0bc6fc05fd153ee4f0af498a3b6f4841883af86c669a51b47b9ff418c08b107",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "fact",
+        "opt",
+        "saveIndex"
+      ],
+      "imports": [
+        "import runpy, json, copy, pathlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_local_action_source_roots.py",
+      "sha256": "85570f4671851ec628649ff5b2b7dfd521563efabf8e1081fd32b9e088c585b1",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cloneCut",
+        "add"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_m04_ledger_extension.py",
+      "sha256": "89e0a2052a85bc87cc8a4828bc97b9df4869cdbf16a89ece33b4f6750d362a5b",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "opaque",
+        "localNativeApply",
+        "receiptInner",
+        "wrapper"
+      ],
+      "imports": [
+        "from author_cp03_complete_local_ledger import *"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_main_source_storage_chapter.py",
+      "sha256": "0e7193a2b0ab3afab26ae265de075ee0a586810bd5ea0fd491ee97dfc304db21",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_material_capture_and_planning_authority.py",
+      "sha256": "d065a6807aa6114333024cca67bca718ccfe35ff1511e4861b966cda7ee8955e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_material_exception_graphs.py",
+      "sha256": "4414b02497b9b21bbdc812d35aee188da5a09304f729381393ba9d5acf16a77e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "add",
+        "qty",
+        "ran",
+        "symbols",
+        "closure",
+        "span"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_material_parent_demand_and_scope.py",
+      "sha256": "349e1f3d3093ac6c234c2706d158a0e5a34f4263b62ed6faed91807170c507b8",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "remap",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_material_run_chain.py",
+      "sha256": "c0375599f19c0cc529a660cb57e5dd24d9820a96495bc5f6e7210b8a0b8b0519",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "q",
+        "h",
+        "add",
+        "remap",
+        "out"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_material_semantic_corpus.py",
+      "sha256": "e537daa44a183f8dbe475557d631ca264b0f0b0bc615313091d8cf4046fad9bc",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj",
+        "nr",
+        "op",
+        "q",
+        "ra",
+        "node",
+        "identity",
+        "header",
+        "add"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_materialize_registry.py",
+      "sha256": "5fd5bfecd1562df08f319c318180946b119b41f86b7aa5335031eda9a048ec7f",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "opaque",
+        "schemaBundle",
+        "contract",
+        "begin",
+        "finish",
+        "symbols",
+        "nativeClosure",
+        "ownerReads",
+        "current",
+        "private",
+        "resultMembers",
+        "resolve",
+        "native"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_physical_record_registry.py",
+      "sha256": "e57779519774f5e4001dd3d57db2a18153e2563e79726d90ed0dc3dbcef77ef5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "utcInstant",
+        "row",
+        "bind",
+        "key",
+        "artifact",
+        "refs"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib, base64, datetime"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_private_current_and_material_netting.py",
+      "sha256": "2375db0b4b57d359d2d6d51b69e4ea6b7bd3f029e3716285d09b28b5db4f3cc3",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "cutClone"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_private_graph_registry.py",
+      "sha256": "3286319228089f53fc676b9ddac5c343c7047c5aa3b7ea53042400bdcc0f5839",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sym"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_propagate_103_ac_from_exact_sources.py",
+      "sha256": "c15197297bc37e4dc16ecf0e3a9e197409550ab2423012f601f599aee6702828",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ref",
+        "native",
+        "private",
+        "packet",
+        "current",
+        "public",
+        "rule"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, uuid, re, shutil"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_propagate_full_main_and_chapters.py",
+      "sha256": "7c7b559b349167c45426d1de597f87679428a9bce798786190678d6faf2b89f6",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib, json, copy, hashlib, re, shutil"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_propagate_leaf_contracts_and_proposals.py",
+      "sha256": "e23c4d38f5500c0e5453b6cd5da4cdd68a0a4cb2ae1f56a678a81801411120b1",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "codec"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_public_aggregate_and_material_head_kinds.py",
+      "sha256": "bdc427ca83441b5124b1396e419811fef6a4ed70836472d2e7b5e56c6623724a",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_query_and_normal_contracts.py",
+      "sha256": "ec8ae7f376bf9a92b788d11029bd5b7c8770e59f47cf8be82dacdc5ec5f9e234",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_rebuild_normals_api_trace_and_public_binding.py",
+      "sha256": "fcfd37003e7c15356e55b196809104ca91fc78e9b6ad3d9fcd6d9da12526b03e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "ref",
+        "packet",
+        "source",
+        "row"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, shutil"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_required_epoch_nonterminal_source.py",
+      "sha256": "69ef2b9593a9cea13f42dea8f03e7834c67b98cbf0a999339a6023c3300a174e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_shared_disposition_original_request.py",
+      "sha256": "a48c6e6b870066e49fb50d9558b92fd4fa8aacc92c271e4e31a3446ecf925dbc",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_shared_settlement_successor.py",
+      "sha256": "5c08f2f3154874c663a2e455c11029d2104d4f6faedfdb293aa67f037022b821",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "sy",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_source_read_and_public_views.py",
+      "sha256": "a5a67fc781b812909782e5a090d550b37ca3c03aa970fa03352fa2325612110a",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "raw",
+        "H",
+        "coreVariant",
+        "visibility",
+        "displayDims",
+        "publicQty",
+        "publicAssessment"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid, hashlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_storage_profiles.py",
+      "sha256": "1da14e801e571f2ba24fb79c39da83a0697c8ba8e75166ebb495b51aac1cec0c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "privateRoot"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_typed_foundations.py",
+      "sha256": "c49e48af27b9bc53b607eeaba670a07988814fb00b09ad46b2218d0fff3706c9",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "obj"
+      ],
+      "imports": [
+        "import pathlib, json, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp03_wo_original_material_origin.py",
+      "sha256": "8bdd2a14e6e1f5d3a1431a3994cf4dc5de50ae3a54bcff87f540f6a582c8ad99",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp04_ac_and_readback_sync.py",
+      "sha256": "148830d27e00adb5a75d4f8c72d2a4da3d12fe15eece74be974d34a7f82156d5",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save"
+      ],
+      "imports": [
+        "import json, pathlib, copy"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp04_complete_public_packets.py",
+      "sha256": "21585e3a1d4ce679284d372d35125a3326045f5d520e6b58382fe44539b0f393",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save"
+      ],
+      "imports": [
+        "import pathlib, json, copy",
+        "from cp04_public_authority_document_serializer import proposed_public_package"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp04_cursor_protocol_document.py",
+      "sha256": "fcffd248b54a63ccefe1081baf664b824eff4c83a3edf62723b62d73e7b1780e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "raw",
+        "sha",
+        "H",
+        "b64",
+        "ID",
+        "rec",
+        "page"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, base64, uuid, importlib.util, sys",
+        "from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp04_final_review_index.py",
+      "sha256": "ec45cbe82c5ed8ad569a0c9a5f7a6c17cc890f26f778219225fc892a854f661c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "loc"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, datetime, sys"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp04_impact_and_collection_decisions.py",
+      "sha256": "40de50929f773abd8352034dfe857e7c13a2b104cb9449dfd33b3d9a62da6dc4",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save"
+      ],
+      "imports": [
+        "import json, pathlib, copy, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp04_outer_proposals_and_main.py",
+      "sha256": "7e92d58dab363b2349db30d1cab3f9f693223e690c37cc3be0b135e7f533814f",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "raw",
+        "H",
+        "insert_before"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp04_source_decisions.py",
+      "sha256": "a58762857fab5158e77b84e4d0a1186bafec39cc9b59f44f6fbe6a5caab84ba0",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "obj",
+        "q",
+        "add",
+        "swap",
+        "refs",
+        "closure"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/author_cp05_cursor_public_binding.py",
+      "sha256": "b8a69f7698cf0aae49fe69eda64302ac556ae0a788b6e4f3210ba3130737fb87",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "raw",
+        "H",
+        "id",
+        "enc",
+        "emission",
+        "replace_token"
+      ],
+      "imports": [
+        "import json, pathlib, copy, hashlib, uuid, base64, importlib.util, re, sys",
+        "from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/cp03_document_record_authoring.py",
+      "sha256": "a7b312ab7802c1c0ea7e48dd694a6573262a3d2c4d53db32d8e289dbbf28bd7e",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "providerReadback",
+        "raw",
+        "H",
+        "utcInstant",
+        "rv",
+        "rec",
+        "bind",
+        "key",
+        "fact",
+        "private",
+        "blob",
+        "mutate",
+        "empty",
+        "loc",
+        "snap",
+        "beforeRows",
+        "ordered",
+        "cp04MandatoryRelations",
+        "transaction",
+        "bootstrap",
+        "rotateExpired",
+        "admit",
+        "auth",
+        "seq",
+        "coreTuple",
+        "audit",
+        "caseRevision",
+        "expected",
+        "command",
+        "save"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid, hashlib, base64, datetime"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/cp04_public_authority_document_serializer.py",
+      "sha256": "80d4259a84c6a8374860fad8106533310fbfacf7cb7e0ec4dd13490bf0a66b30",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "jcs",
+        "digest",
+        "opaque",
+        "proposed_id",
+        "instant",
+        "earlier",
+        "native_head",
+        "sdk_tuple",
+        "source_page",
+        "proposed_public_package",
+        "proposed_reduced_successor",
+        "proposed_ac084_authority_and_binding"
+      ],
+      "imports": [
+        "import copy, datetime, hashlib, json, uuid"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/patch_cp04_document_relationship_serializers.py",
+      "sha256": "5221d499f57aa5ba44a2d5fd42458bc4ab85f156bf39814a510ead1547d747a0",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [],
+      "imports": [
+        "import pathlib"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/read_cp04_plain_document_relationships.py",
+      "sha256": "e06d3daab2cc169fb0437abf2839ab5cd79399d9a349d9b9669796a12adb6bac",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "load",
+        "raw",
+        "H",
+        "ptr",
+        "walk",
+        "differences",
+        "loc",
+        "roster",
+        "snapshot",
+        "mutable_tokens"
+      ],
+      "imports": [
+        "import pathlib, json, hashlib, copy, collections, base64, datetime, re, gc"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp05/read_cp04_source_time_and_boundary_fields.py",
+      "sha256": "7ffa28a9370646596bae3e0da09d0d1d739a71ed6e2b44cd9029dbdb2c19ad2c",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "load",
+        "raw",
+        "H",
+        "instant",
+        "walk"
+      ],
+      "imports": [
+        "import pathlib, json, hashlib, datetime, zipfile, base64, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp06/author_cp06_bounded_cursor_document.py",
+      "sha256": "64ec9979406d82af0f05ba0d35bffb398444b2207ac85219f1f95207da4c3d76",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "save",
+        "raw",
+        "H",
+        "ID",
+        "R",
+        "obj",
+        "nullable",
+        "enc",
+        "codec",
+        "artifact",
+        "emission",
+        "make_example",
+        "replace_token",
+        "problem"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, uuid, re, base64, sys",
+        "from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp06/author_cp06_full_propagation.py",
+      "sha256": "2998dac08cbdc7b584631f8423d74a3cb22a90b71c91ff547eb8d1637a7765b1",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "read",
+        "baseRead",
+        "save",
+        "raw",
+        "H",
+        "remap"
+      ],
+      "imports": [
+        "import pathlib, json, copy, hashlib, re"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp07/author_cp07_expired_document_revision.py",
+      "sha256": "a4ffb5e572e354a777b2c4633105bdccfc6f9e55ac99d17950ff58a520c89d2d",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "digest",
+        "identity",
+        "write",
+        "put",
+        "ref"
+      ],
+      "imports": [
+        "import copy",
+        "import hashlib",
+        "import json",
+        "import os",
+        "import re",
+        "from pathlib import Path"
+      ]
+    },
+    {
+      "name": "authoring_tools_cp07/read_cp07_document_fields_and_freeze.py",
+      "sha256": "618d0b5d9667dede9fdb18edfea4c320f92868b2a139b6d2a01c14e653782a95",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "bytes_id",
+        "write",
+        "point",
+        "delta",
+        "relation",
+        "collect"
+      ],
+      "imports": [
+        "import copy",
+        "import difflib",
+        "import hashlib",
+        "import json",
+        "import os",
+        "from collections import defaultdict",
+        "from datetime import datetime, timezone",
+        "from pathlib import Path"
+      ]
+    },
+    {
+      "name": "cp03_document_record_authoring.py",
+      "sha256": "620bd3a077d3655a3dee2e9d1f058635e8c507a844726cbf1e5265fc89772ee7",
+      "executed": false,
+      "parse": "ok",
+      "top_level_functions": [
+        "providerReadback",
+        "raw",
+        "H",
+        "utcInstant",
+        "rv",
+        "rec",
+        "bind",
+        "key",
+        "fact",
+        "private",
+        "blob",
+        "mutate",
+        "empty",
+        "loc",
+        "snap",
+        "beforeRows",
+        "ordered",
+        "transaction",
+        "bootstrap",
+        "rotateExpired",
+        "admit",
+        "auth",
+        "seq",
+        "coreTuple",
+        "audit",
+        "caseRevision",
+        "expected",
+        "command",
+        "save"
+      ],
+      "imports": [
+        "import pathlib, json, copy, uuid, hashlib, base64, datetime"
+      ]
+    }
+  ]
+}

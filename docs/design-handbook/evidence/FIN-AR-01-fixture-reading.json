@@ -1,0 +1,1388 @@
+{
+  "target_id": "FIN-AR-01",
+  "source": "D:\\CP6\\docs\\CP6_完整成果归档_20261009\\完整成果\\docs\\originals\\35\\35c1942aff79e181__R2-CONTINUOUS-FIXTURES.json",
+  "sha256": "35c1942aff79e1815c4b564b04c33bfdda8944896173297072f8b544030be62a",
+  "bytes": 2149323,
+  "updated_at_utc": "2026-10-10T13:07:42.258614+00:00",
+  "status": "fixture_semantics_consolidated",
+  "required_subset_consolidated": true,
+  "method": "All novel fields/cases/records read in dependency order N0–N369, exact prior subobjects and full field deltas reused; UUID/hash reversible aliases. Includes independently previously read tail; Base64 body decoded and checked, not counted as literal semantic prose.",
+  "read_pages": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "read_nodes": [
+    0,
+    369
+  ],
+  "projection_validation": {
+    "files": 1,
+    "bytes": 2149323,
+    "nodes": 370,
+    "json_strings": 0,
+    "opaque_identities": 278,
+    "pages": 14,
+    "compact_characters": 148396,
+    "errors": [],
+    "semantic_read_complete": true,
+    "business": "NOT_RUN"
+  },
+  "record_digest_checks": [
+    {
+      "pointer": "/records/0",
+      "type": "QualificationsBody",
+      "reference": {
+        "owner": "FINANCE-QUALIFICATIONS",
+        "id": "ae30f8c2-0520-5d65-88c3-1e9581f20894",
+        "version": "1",
+        "digest": "40c4a5ee05cf1271c9a06968cadd356f0858243ebf6b5d80375638dd9acac21d",
+        "purpose": "QualificationsBody"
+      },
+      "computed_sha256": "40c4a5ee05cf1271c9a06968cadd356f0858243ebf6b5d80375638dd9acac21d",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "8f3ae2ee51be7f8cce416e82ff7dc955e81aa8e646fa93f6d2463b761cd538be",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/1",
+      "type": "ProfessionalPolicyBody",
+      "reference": {
+        "owner": "FINANCE-POLICY",
+        "id": "2db5705d-cadc-5c96-944e-81aeff842b0a",
+        "version": "1",
+        "digest": "138ca212052e5823970a30dc3f226d186396b535c429848558120cdd6707b7bc",
+        "purpose": "ProfessionalPolicyBody"
+      },
+      "computed_sha256": "138ca212052e5823970a30dc3f226d186396b535c429848558120cdd6707b7bc",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "013758851e5db809af1d781347a9911516535daa12c0f4d3001e44125592c90a",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/2",
+      "type": "IamPolicyBody",
+      "reference": {
+        "owner": "SYS-IAM",
+        "id": "51f53923-d0cb-59ca-85aa-fb882d52c99a",
+        "version": "1",
+        "digest": "c99eb003626d3fd34d804ffcb280d74b70ac9bdd8e94a148c1589227504e501a",
+        "purpose": "IamPolicyBody"
+      },
+      "computed_sha256": "c99eb003626d3fd34d804ffcb280d74b70ac9bdd8e94a148c1589227504e501a",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "4d3003ebd981930c32df389554d5d5168e7a01ac097695cfcdc4d4da8afee507",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/3",
+      "type": "ConsumerRegistrationBody",
+      "reference": {
+        "owner": "FINANCE-CONSUMER-REGISTRATION",
+        "id": "0d16e1f4-93f9-5d1d-92cf-885a4d5f8213",
+        "version": "1",
+        "digest": "b73b7faeafe218cbcc93e30ba63e51bfa77e5e5bb8521d713c66726a564b79fa",
+        "purpose": "ConsumerRegistrationBody"
+      },
+      "computed_sha256": "b73b7faeafe218cbcc93e30ba63e51bfa77e5e5bb8521d713c66726a564b79fa",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "a7aa757307fd52bc684e7ba2e0c993d708cbb70eb1a811c6906a8cd8ebcccf6d",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/4",
+      "type": "SourceCurrentReadInput",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "368820be-57b4-593c-8d56-217f52eece49",
+        "version": "1",
+        "digest": "c7e4f4f0b6a0ced617d54da19654620dd4bab2b89c0dbf094844580fbed80727",
+        "purpose": "SourceCurrentReadInput"
+      },
+      "computed_sha256": "c7e4f4f0b6a0ced617d54da19654620dd4bab2b89c0dbf094844580fbed80727",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "ca3c3f5a577677afe8f25d792dcea1b1ca81ed94b8155ce8018c6b9c6bbdc366",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/5",
+      "type": "ExternalEvidenceBody",
+      "reference": {
+        "owner": "FINANCE-CALENDAR",
+        "id": "a844320b-f1ec-59b8-b7f2-a9c04fb25847",
+        "version": "1",
+        "digest": "cec69d3ed7d647612a1a84b00d472f31e66ee12430f902fc64ccfbe934705123",
+        "purpose": "ExternalEvidenceBody"
+      },
+      "computed_sha256": "cec69d3ed7d647612a1a84b00d472f31e66ee12430f902fc64ccfbe934705123",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "383b388ac0b1eff12fc6f2bf9d1915b27cd2ee9642ea159ddebd0b42c66f3119",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/6",
+      "type": "FinanceContextBody",
+      "reference": {
+        "owner": "FINANCE-CONTEXT",
+        "id": "4b8a20b1-d645-5b41-b157-66bd0123bb70",
+        "version": "1",
+        "digest": "1916fb24fdd906de2ec76fa2089802ef2fa4448d398b02498948e320fb600845",
+        "purpose": "FinanceContextBody"
+      },
+      "computed_sha256": "1916fb24fdd906de2ec76fa2089802ef2fa4448d398b02498948e320fb600845",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "0fce3117392ae5e027d7097fac1772e1cc4004eaab6ee230273c8555bd2a9636",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/7",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "d7acc29a-ce6b-5b83-9ad3-5cbf8ab9bfce",
+        "version": "f96d15c0-0ee7-5055-8aae-42389cd76667",
+        "digest": "903f1e3887fee6b2a0663fb8297bcba050020dae8074efb751408d03cbc57be5",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed_sha256": "903f1e3887fee6b2a0663fb8297bcba050020dae8074efb751408d03cbc57be5",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "6ca7b9ab2d52711237b6ed5dbb98108fd033631d86d5b358bbeff594287b3f87",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/8",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "98ee98d9-a028-5ac8-9971-7ac6994667d0",
+        "version": "1",
+        "digest": "b658a9213843ee4beb2c76520e07f34cc03758beba4a2473ff82840fb0e99f94",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed_sha256": "b658a9213843ee4beb2c76520e07f34cc03758beba4a2473ff82840fb0e99f94",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "429c4bcff8c4c6ac23879bbfaaba287a44d2e1cd41ae13c4f718b65d332b8c92",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/9",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "d8aa315e-fded-5600-ab4e-6728fc413621",
+        "version": "1",
+        "digest": "0284568c01d1846e2aa625908dc8b27c20cce22b400651f9bea57003d74dfd84",
+        "purpose": "ProposalBody"
+      },
+      "computed_sha256": "0284568c01d1846e2aa625908dc8b27c20cce22b400651f9bea57003d74dfd84",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "61a664f90dd1c8846fb99308794a5f10641b5131df58c30e0eed0e87c5b506a7",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/10",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "7c34e253-79a3-5225-9938-7e98c7796a94",
+        "version": "1",
+        "digest": "6d355cd2011c9908608fa949357d2d05811ccd380f0c067583d3e985426fa1e3",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed_sha256": "6d355cd2011c9908608fa949357d2d05811ccd380f0c067583d3e985426fa1e3",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "492c46bfe62945840f45f529b3b59c958ff8c395d4238f0f0789f9c79782b65b",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/11",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "4be9b10a-22d2-5e2e-bc72-da9d61a97645",
+        "version": "1",
+        "digest": "7df87f5547748498f4be6c3025545e964f60a83ebb340965d4adb74bbfecab7b",
+        "purpose": "ReleaseBody"
+      },
+      "computed_sha256": "7df87f5547748498f4be6c3025545e964f60a83ebb340965d4adb74bbfecab7b",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "2aa525229edaa958adef1a38d5707e142b722be3dd1d81166dbd23ba663b6a8d",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/12",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "e0046f1c-85ff-5ba0-85fc-ba0fb0d379ae",
+        "version": "1",
+        "digest": "b91fd4c942c884ef39ecef142f224a32bf6690f39059de96214fb482d553ad5c",
+        "purpose": "TimelineBody"
+      },
+      "computed_sha256": "b91fd4c942c884ef39ecef142f224a32bf6690f39059de96214fb482d553ad5c",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "ebd248676fd030a9c587a44099bef549d7ef095520746aafd93b380c45a7abca",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/13",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "135019c3-11dc-540d-a049-513c8ed50022",
+        "version": "1",
+        "digest": "d1bdf3fbacbe4d6b07b007d00061e4c7ff2e958a3bd0024ebd09dbab87fa92dd",
+        "purpose": "ControlBody"
+      },
+      "computed_sha256": "d1bdf3fbacbe4d6b07b007d00061e4c7ff2e958a3bd0024ebd09dbab87fa92dd",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "71f8449c039f3c86c5eaa43e0dbb213cd4426fa1f39e6558d1fe889d46d484ab",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/14",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "135019c3-11dc-540d-a049-513c8ed50022",
+        "version": "2",
+        "digest": "95df29c01868b48bd48025068bec919e62a455d43a9da6987fac68aeec6459c8",
+        "purpose": "ControlBody"
+      },
+      "computed_sha256": "95df29c01868b48bd48025068bec919e62a455d43a9da6987fac68aeec6459c8",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "23be0928908f37bf1ccd58bb651a1a054f254a4de6077896cf48223888fdf018",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/15",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "d7acc29a-ce6b-5b83-9ad3-5cbf8ab9bfce",
+        "version": "1",
+        "digest": "44f29917636e063478bb3cbd926bc31adeb1ea18824d71dc871fa0a734e66606",
+        "purpose": "RootBody"
+      },
+      "computed_sha256": "44f29917636e063478bb3cbd926bc31adeb1ea18824d71dc871fa0a734e66606",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "d22acffebcd49c774e044629dc0c5a9dfb410bbddbdac3c9ac6f236434020c4c",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/16",
+      "type": "VersionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b83aa89f-cc42-5f95-b491-1114aa2903c0",
+        "version": "c5a20291-234d-5c72-9fc9-71e72ad1c1ed",
+        "digest": "458c31a3e7ae090bc3c9b0e95ff3fbb4a9929ac41f303ee96096c6333e5e9231",
+        "purpose": "FIN_MASTER_VERSION"
+      },
+      "computed_sha256": "458c31a3e7ae090bc3c9b0e95ff3fbb4a9929ac41f303ee96096c6333e5e9231",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "84cb4760c3e847cdc460016c0e16d7c2f97ce2a228c0bf0fb06c3994277f048f",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/17",
+      "type": "ReviewDecisionBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "fb5b5b22-9c77-5e9c-ae35-7a1e545b6912",
+        "version": "1",
+        "digest": "e8b48a757c9ca9d404548432976b408b61a7e27c5495499e5a844b1d66d24db1",
+        "purpose": "ReviewDecisionBody"
+      },
+      "computed_sha256": "e8b48a757c9ca9d404548432976b408b61a7e27c5495499e5a844b1d66d24db1",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "5a230fb9171052623017ebf60573b10762bbbe27262f566415e3abf4a97da87f",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/18",
+      "type": "ProposalBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "638809c4-ed88-578c-bf6c-846500134a92",
+        "version": "1",
+        "digest": "6045865826b34315374469751f6fcc88626dafe2f8a1d2750aafb4ce9bf25b6c",
+        "purpose": "ProposalBody"
+      },
+      "computed_sha256": "6045865826b34315374469751f6fcc88626dafe2f8a1d2750aafb4ce9bf25b6c",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "ce141ea7005c7afc35b59e0110680d2c9e7a728be3a36ec41f531e2e3609aac6",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/19",
+      "type": "ReleasePreviewBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "e1eef0e0-9c5e-5efa-a3ce-8b304c01c1bf",
+        "version": "1",
+        "digest": "b9a89ed8fbc31342c9e43791097fc5cf0d36f0113607ebfe1b0f66c88371add4",
+        "purpose": "ReleasePreviewBody"
+      },
+      "computed_sha256": "b9a89ed8fbc31342c9e43791097fc5cf0d36f0113607ebfe1b0f66c88371add4",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "4cef9228b6abad5d4dba6ce4a901f4052d31423d9768d2cffcdb4c825f7aef48",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/20",
+      "type": "ReleaseBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "96afcf1d-c54a-5370-bfe9-9ff9a2f3be0d",
+        "version": "1",
+        "digest": "68d7adac1d8b836d168ff8346e447fb5f6a88f3697669eb2455f939c7a55b4bb",
+        "purpose": "ReleaseBody"
+      },
+      "computed_sha256": "68d7adac1d8b836d168ff8346e447fb5f6a88f3697669eb2455f939c7a55b4bb",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "832bee8d081bb567178fe1081e6264b5e90ab3ec29f4a94ba8f5fe93c30861be",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/21",
+      "type": "TimelineBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b197b273-9c84-5a4a-b218-88c313010103",
+        "version": "1",
+        "digest": "6d2b7ee555594afe463b467fcae8518e44d2f53f8aea170996722cfa41e036df",
+        "purpose": "TimelineBody"
+      },
+      "computed_sha256": "6d2b7ee555594afe463b467fcae8518e44d2f53f8aea170996722cfa41e036df",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "c85cf383ca4ca41d15f27d182ff336e1f6df3c9e571aec334b1d5efbef4df9f6",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/22",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "de1a2315-13cc-5dd1-be4c-d7947b563875",
+        "version": "1",
+        "digest": "5932805a9db7a23da8e4fe2cfa76d236dc855ae5b22713bd8f28a50af0d8c3b8",
+        "purpose": "ControlBody"
+      },
+      "computed_sha256": "5932805a9db7a23da8e4fe2cfa76d236dc855ae5b22713bd8f28a50af0d8c3b8",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "e48fd9b612ee999dac51cb1cd0702337bd3c89484e94dd6c4c852c352efda5b9",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/23",
+      "type": "ControlBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "de1a2315-13cc-5dd1-be4c-d7947b563875",
+        "version": "2",
+        "digest": "11d69ba0ce8b1a9fdc625f2827155e23131ed3e339671d9d60577972b372deb4",
+        "purpose": "ControlBody"
+      },
+      "computed_sha256": "11d69ba0ce8b1a9fdc625f2827155e23131ed3e339671d9d60577972b372deb4",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "79743b11ba293e7b08f8aaac42eefc7d605181c2147a3e53606d682cbeca294f",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/records/24",
+      "type": "RootBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b83aa89f-cc42-5f95-b491-1114aa2903c0",
+        "version": "1",
+        "digest": "ae2591928f7ddd4b6d29447263a2e55c28590cfcf05f29d526741e3efe3fdb5a",
+        "purpose": "RootBody"
+      },
+      "computed_sha256": "ae2591928f7ddd4b6d29447263a2e55c28590cfcf05f29d526741e3efe3fdb5a",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "84e2fe45dba11b61c943a80763c351dac0079fe2b612df778f9224b6e65728d4",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/0/stagedRecords/0",
+      "type": "ConsumerIntentBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "8eba7442-1693-506d-ac1e-3f7fc3af2bdd",
+        "version": "1",
+        "digest": "24a84ac912709586120c2e697581aa818b977f521dc9062143d860f7cab54b4b",
+        "purpose": "ConsumerIntentBody"
+      },
+      "computed_sha256": "24a84ac912709586120c2e697581aa818b977f521dc9062143d860f7cab54b4b",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "b1786c2d9f5163cc9ce0fe3eddcd45a7201173c93161debb3c5e552cf71ff260",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/0/stagedRecords/1",
+      "type": "ConsumerIntentProofBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "5640e607-ee07-59e7-a5f8-71f2b9b79743",
+        "version": "1",
+        "digest": "350d31cb478a19d045af339c6b1bb0927d7f8395040969b4dff706c0ad5e1b18",
+        "purpose": "ConsumerIntentProofBody"
+      },
+      "computed_sha256": "350d31cb478a19d045af339c6b1bb0927d7f8395040969b4dff706c0ad5e1b18",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "7c50443b4bd82c03ad4911899688303c0bd2bedeff11d4cd5fdac451f5277288",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/0/stagedRecords/2",
+      "type": "UseReceiptBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "b5c7d2b9-d11e-5398-85ee-aa5170c74486",
+        "version": "1",
+        "digest": "6f630e89677effa1ff86312e7a8155017fa1b3d78bff056e7a30c8c4e696f122",
+        "purpose": "UseReceiptBody"
+      },
+      "computed_sha256": "6f630e89677effa1ff86312e7a8155017fa1b3d78bff056e7a30c8c4e696f122",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "2c2c63d0f5380ce97d9f03f6d4faf2bab1b2226f6d410dc40bb4441180a5e25c",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/0/stagedRecords/3",
+      "type": "ConsumerResultBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "2c913c07-ff0c-5028-9d6b-84622c09e98a",
+        "version": "1",
+        "digest": "8074d324aee142e591c9ddb9fde56b64f4274711e222313e33efcc9b8b0894ca",
+        "purpose": "ConsumerResultBody"
+      },
+      "computed_sha256": "8074d324aee142e591c9ddb9fde56b64f4274711e222313e33efcc9b8b0894ca",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "aad9adfdc700be8c283d3195f6fa717a652e44dc0a11c145c821704b5ac1f7aa",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/0/stagedRecords/4",
+      "type": "ConsumerIntentBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "fde2dc02-eb45-5ed3-9984-d35bd782c0b4",
+        "version": "1",
+        "digest": "aa4bc76fb423b1f2212f96e64b32744518fd7751f6167676449a085bbe2a10ef",
+        "purpose": "ConsumerIntentBody"
+      },
+      "computed_sha256": "aa4bc76fb423b1f2212f96e64b32744518fd7751f6167676449a085bbe2a10ef",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "17eed1e6f5583046d9ed03908155f786215e8cc0eda8e2096b36fe9e7425217b",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/0/stagedRecords/5",
+      "type": "ConsumerIntentProofBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "4ab41d26-e5e1-55b9-94ce-863a42643c64",
+        "version": "1",
+        "digest": "ff04b4ad0135d78b4720561424aa65bc70943998fad780b611436edd12b35b2d",
+        "purpose": "ConsumerIntentProofBody"
+      },
+      "computed_sha256": "ff04b4ad0135d78b4720561424aa65bc70943998fad780b611436edd12b35b2d",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "9225de12cf8095d787a9158a2a59dcf54dd586ce03b2f8ee26199b68518e28a5",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/0/stagedRecords/6",
+      "type": "UseReceiptBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "2d86192a-2625-59df-9637-cfa04fdfda8e",
+        "version": "1",
+        "digest": "dd7437f3237fbc36cda53dd56a6633180b6365e517d68efbf2f83db33e213daf",
+        "purpose": "UseReceiptBody"
+      },
+      "computed_sha256": "dd7437f3237fbc36cda53dd56a6633180b6365e517d68efbf2f83db33e213daf",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "b7697fddd91ad80f0ec6c27e01dc89480dc6e880e4f2e03b15a2a35772ae1cb2",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/0",
+      "type": "ConsumerIntentBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "2f28026a-887f-56d6-af4f-652fd3f831bb",
+        "version": "1",
+        "digest": "8e07077f269ba5bc46cbccb219776bd5f070ef6ba15cdf4ba8be103551577e0b",
+        "purpose": "ConsumerIntentBody"
+      },
+      "computed_sha256": "8e07077f269ba5bc46cbccb219776bd5f070ef6ba15cdf4ba8be103551577e0b",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "cd30d9c88c0f56cde4e54cf783f1257e3dd7e5ff54cb24d9be526ac674cb0306",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/1",
+      "type": "ConsumerIntentProofBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "50e6ddda-c169-58a9-bdee-e9a4ea7c219c",
+        "version": "1",
+        "digest": "cc92cc4239c42421b3afa328bbbd1fbb68e986e8e5286583472dd42ea0eb6ac8",
+        "purpose": "ConsumerIntentProofBody"
+      },
+      "computed_sha256": "cc92cc4239c42421b3afa328bbbd1fbb68e986e8e5286583472dd42ea0eb6ac8",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "dc5c145983b45849a40b52f0f785f1f3ea13f0de5f077c688de025d4faa6cedd",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/2",
+      "type": "UseReceiptBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "d843b238-a620-509d-97d9-ba330a1f75c2",
+        "version": "1",
+        "digest": "dde4e5727a00ec84804d3d293a86aa5c7af9f41295662c5fea2e4272b5f81099",
+        "purpose": "UseReceiptBody"
+      },
+      "computed_sha256": "dde4e5727a00ec84804d3d293a86aa5c7af9f41295662c5fea2e4272b5f81099",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "ff2856ed6287c6c3081f7a8ad4f53c5e748209ea046bef9db1ee3adde929c53d",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/3",
+      "type": "ConsumerResultBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "2c913c07-ff0c-5028-9d6b-84622c09e98a",
+        "version": "1",
+        "digest": "c51074c5da035ee93327ca8ff071cdd688684812985f1aa2771d45927401f397",
+        "purpose": "ConsumerResultBody"
+      },
+      "computed_sha256": "c51074c5da035ee93327ca8ff071cdd688684812985f1aa2771d45927401f397",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "60167131dee634169a1329a3b7b90f172b69c9d0fac1a8d6f2d53c2ca3378078",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/4",
+      "type": "ConsumerIntentBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "53817eec-36d5-5987-864d-a5d9a0619e05",
+        "version": "1",
+        "digest": "abc26424d06f69912915a0277b3080a8fd4b96d887569b451a3b5ab7085c1b5a",
+        "purpose": "ConsumerIntentBody"
+      },
+      "computed_sha256": "abc26424d06f69912915a0277b3080a8fd4b96d887569b451a3b5ab7085c1b5a",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "1252c2b0b140aeff2c1c050c25f8f0173b5ba8b8f3e2db3909f36a82ad8c4a81",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/5",
+      "type": "ConsumerIntentProofBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "dc02d47b-d2c6-54c6-a3af-f8b84c4571df",
+        "version": "1",
+        "digest": "c989240bbbf4b3bd473c40672b06fd16ccdb4fe7c30a0892c54f8089a224a0bc",
+        "purpose": "ConsumerIntentProofBody"
+      },
+      "computed_sha256": "c989240bbbf4b3bd473c40672b06fd16ccdb4fe7c30a0892c54f8089a224a0bc",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "36891bbd4b3a516f9cfe7586d367a1ca8e5e6e31d5d35b37c6f2d6d102ddefdd",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/6",
+      "type": "UseReceiptBody",
+      "reference": {
+        "owner": "FIN-MASTER",
+        "id": "efa0231c-c380-54d1-b61c-23ae23e673a1",
+        "version": "1",
+        "digest": "479ae489bf5a8c5c8e141e3daf96fa774e4529b53686257fa1ea48494563afda",
+        "purpose": "UseReceiptBody"
+      },
+      "computed_sha256": "479ae489bf5a8c5c8e141e3daf96fa774e4529b53686257fa1ea48494563afda",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "c8195ddc52201becbf92eb6e319382c29d12ffc26ce2a247b08e6e868270e66d",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arOutput65/failureThenSuccess/1/stagedRecords/7",
+      "type": "ConsumerResultBody",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "aba027a2-b97b-598a-944a-3ddb8e3f3f5b",
+        "version": "1",
+        "digest": "a4cb622a6899d0addba405aed723aed58e34cf43e1a23e666a55c00e291faeb7",
+        "purpose": "ConsumerResultBody"
+      },
+      "computed_sha256": "a4cb622a6899d0addba405aed723aed58e34cf43e1a23e666a55c00e291faeb7",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "14e095705c2872f5e1f7f5c5135be073e2a4ef523fdeb04b1623d0f396134cd3",
+        "matches": false,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "TYPENAME_LF_CANONICAL"
+    },
+    {
+      "pointer": "/arDemoRecords/0",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "6a5764da-df05-5234-968a-6ca1a2ad7fa0",
+        "version": "1",
+        "digest": "07225664539184b64ca5ae7c9f21d19c34a788180b15b7a29ff187d61527be5e",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "07225664539184b64ca5ae7c9f21d19c34a788180b15b7a29ff187d61527be5e",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "07225664539184b64ca5ae7c9f21d19c34a788180b15b7a29ff187d61527be5e",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/1",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "0ff38b0f-9342-5a6f-8121-3f19b17efb72",
+        "version": "1",
+        "digest": "1972bd086a4f94d30ea9bdfde6dcca98103c9011c548325476893ac5459720cb",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "1972bd086a4f94d30ea9bdfde6dcca98103c9011c548325476893ac5459720cb",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "1972bd086a4f94d30ea9bdfde6dcca98103c9011c548325476893ac5459720cb",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/2",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "643f5b87-be85-5684-a8ef-254af3cfd094",
+        "version": "1",
+        "digest": "e2fb7a8388614e894026d47b5b61034411b00bbf4802b81bfc06d9071724abab",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "e2fb7a8388614e894026d47b5b61034411b00bbf4802b81bfc06d9071724abab",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "e2fb7a8388614e894026d47b5b61034411b00bbf4802b81bfc06d9071724abab",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/3",
+      "type": "ReceiptRegistrationFact",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "251f7e8c-b758-5d73-b919-35b2ce6e4307",
+        "version": "1",
+        "digest": "052099902f741a85afc37537408ab66700c92af61415a24cdc1811bb85c7d462",
+        "purpose": "ReceiptRegistrationFact"
+      },
+      "computed_sha256": "052099902f741a85afc37537408ab66700c92af61415a24cdc1811bb85c7d462",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "052099902f741a85afc37537408ab66700c92af61415a24cdc1811bb85c7d462",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/4",
+      "type": "ArBusinessResult",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "d4746c6e-b386-5c9a-af27-d7d9c55b3a41",
+        "version": "1",
+        "digest": "32e1ba348d6fd6e5bade0f4c1e5ee22a8e1abd652b1255af62398d42d0491828",
+        "purpose": "ArBusinessResult"
+      },
+      "computed_sha256": "32e1ba348d6fd6e5bade0f4c1e5ee22a8e1abd652b1255af62398d42d0491828",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "32e1ba348d6fd6e5bade0f4c1e5ee22a8e1abd652b1255af62398d42d0491828",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/5",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "6f36bc49-3a30-5aaf-abbf-ecbd13091e7d",
+        "version": "1",
+        "digest": "2c688b91a291521573f28728b2f6c0f98995a5d6fdd0ce6ce0e18163498ef69d",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "2c688b91a291521573f28728b2f6c0f98995a5d6fdd0ce6ce0e18163498ef69d",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "2c688b91a291521573f28728b2f6c0f98995a5d6fdd0ce6ce0e18163498ef69d",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/6",
+      "type": "ArBusinessResult",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "950ee998-5400-5514-aeda-43d272178c35",
+        "version": "1",
+        "digest": "b4c0fd8746aca80133ed9e4fa9d20b480712d733867d9b212896fdda8058f121",
+        "purpose": "ArBusinessResult"
+      },
+      "computed_sha256": "b4c0fd8746aca80133ed9e4fa9d20b480712d733867d9b212896fdda8058f121",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "b4c0fd8746aca80133ed9e4fa9d20b480712d733867d9b212896fdda8058f121",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/7",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "7f9acf99-aeb9-5047-827d-092654a6c48c",
+        "version": "1",
+        "digest": "d700d08d0e76db34ff3e72f25ad9b89865c2bf305f0add513851b9602ec724ea",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "d700d08d0e76db34ff3e72f25ad9b89865c2bf305f0add513851b9602ec724ea",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "d700d08d0e76db34ff3e72f25ad9b89865c2bf305f0add513851b9602ec724ea",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/8",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "2d461713-6194-51ee-8d4d-07a4801848c5",
+        "version": "1",
+        "digest": "1873cac3e1fd414bff0e0b5277c2191b2886a02e4c94c94d3c5d58022f97d580",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "1873cac3e1fd414bff0e0b5277c2191b2886a02e4c94c94d3c5d58022f97d580",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "1873cac3e1fd414bff0e0b5277c2191b2886a02e4c94c94d3c5d58022f97d580",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/9",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "e20ca350-64dd-5e59-8d18-0d645d4bd97d",
+        "version": "1",
+        "digest": "db8226bc42bbcbc0e6ae25cd6ed00b00dda670efc68e7d10fec868f6a04d696a",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "db8226bc42bbcbc0e6ae25cd6ed00b00dda670efc68e7d10fec868f6a04d696a",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "db8226bc42bbcbc0e6ae25cd6ed00b00dda670efc68e7d10fec868f6a04d696a",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/10",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "d9cd185e-6864-5c98-a325-8b4d8d04b66d",
+        "version": "1",
+        "digest": "4dc2a6456e011e9b84dc13eadc52766dbe28813f9ddd39c9b90fb64108bb5777",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "4dc2a6456e011e9b84dc13eadc52766dbe28813f9ddd39c9b90fb64108bb5777",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "4dc2a6456e011e9b84dc13eadc52766dbe28813f9ddd39c9b90fb64108bb5777",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/11",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "d0ac3346-20a0-5e5c-b50b-1ebaf4382fd0",
+        "version": "1",
+        "digest": "33dd1fc19c23d2f9512713f6f04f3ed25ea2a8b83f5744fcedfc83c4ac2a895d",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "33dd1fc19c23d2f9512713f6f04f3ed25ea2a8b83f5744fcedfc83c4ac2a895d",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "33dd1fc19c23d2f9512713f6f04f3ed25ea2a8b83f5744fcedfc83c4ac2a895d",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/12",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "c5198aea-ff3b-5c9f-a27a-157238b6cbf5",
+        "version": "1",
+        "digest": "32043d5e4408118239392c63dbac90d5b83e4f326cbefbffde29b8bd39e058bc",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "32043d5e4408118239392c63dbac90d5b83e4f326cbefbffde29b8bd39e058bc",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "32043d5e4408118239392c63dbac90d5b83e4f326cbefbffde29b8bd39e058bc",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/13",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "0753b875-0dd3-59f0-98eb-a6adb0d403d7",
+        "version": "1",
+        "digest": "ef07b422b510af776871000fb4698b9c8cc388360d2323b33c004366b9cf03e2",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "ef07b422b510af776871000fb4698b9c8cc388360d2323b33c004366b9cf03e2",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "ef07b422b510af776871000fb4698b9c8cc388360d2323b33c004366b9cf03e2",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/14",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "4ffddfa5-d3a2-5a6b-b635-56bc7e0c60ae",
+        "version": "1",
+        "digest": "58ff90b7b9085ecccc8c2351cfc8cb4696a328f40ac0807693ad7c6e22787e7d",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "58ff90b7b9085ecccc8c2351cfc8cb4696a328f40ac0807693ad7c6e22787e7d",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "58ff90b7b9085ecccc8c2351cfc8cb4696a328f40ac0807693ad7c6e22787e7d",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/15",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "dc3ed697-30c7-59f6-b4f8-138435e288c3",
+        "version": "1",
+        "digest": "4a418b53b656da506a24005177885b748ed983702ef51e6ab1f14ce67bbfd7e9",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "4a418b53b656da506a24005177885b748ed983702ef51e6ab1f14ce67bbfd7e9",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "4a418b53b656da506a24005177885b748ed983702ef51e6ab1f14ce67bbfd7e9",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/16",
+      "type": "AR_ACCOUNTING_SOURCE_INTENT",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "a61f85f4-46ba-510f-a6fe-0e46905f7e9f",
+        "version": "1",
+        "digest": "93db65018f129159dcf9b6f0d272b6905b39a8bab06283ffb9abad00b04fa12a",
+        "purpose": "AR_ACCOUNTING_SOURCE_INTENT"
+      },
+      "computed_sha256": "93db65018f129159dcf9b6f0d272b6905b39a8bab06283ffb9abad00b04fa12a",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "93db65018f129159dcf9b6f0d272b6905b39a8bab06283ffb9abad00b04fa12a",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/17",
+      "type": "FINANCE_PLAN",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "bb8981a4-97ad-5fdf-b1ff-17dc406fb397",
+        "version": "1",
+        "digest": "1bf022148cd056a037e8dc9adbd255b46977493399929205be1795dbb4b0c424",
+        "purpose": "FINANCE_PLAN"
+      },
+      "computed_sha256": "1bf022148cd056a037e8dc9adbd255b46977493399929205be1795dbb4b0c424",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "1bf022148cd056a037e8dc9adbd255b46977493399929205be1795dbb4b0c424",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/18",
+      "type": "AR_RECEIPT_APPROVAL_POLICY",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "140f5de6-dc3c-5797-a9f7-59c14f831f03",
+        "version": "1",
+        "digest": "2ecc8ae412697538b5f87c2c57e74f8e3bbc39ba382f0f8af834598b6cc18b8d",
+        "purpose": "AR_RECEIPT_APPROVAL_POLICY"
+      },
+      "computed_sha256": "2ecc8ae412697538b5f87c2c57e74f8e3bbc39ba382f0f8af834598b6cc18b8d",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "2ecc8ae412697538b5f87c2c57e74f8e3bbc39ba382f0f8af834598b6cc18b8d",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/19",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "70c3d93c-1eaa-58da-b4c3-206d8630c093",
+        "version": "1",
+        "digest": "43b8d9eb3dd04c1b1a9396dc610c6fdd8d22dad84c7f7f941e80f6bb086006d9",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "43b8d9eb3dd04c1b1a9396dc610c6fdd8d22dad84c7f7f941e80f6bb086006d9",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "43b8d9eb3dd04c1b1a9396dc610c6fdd8d22dad84c7f7f941e80f6bb086006d9",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/20",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "e83eab05-0e77-5e38-8a09-d8b1f862d2e6",
+        "version": "1",
+        "digest": "cd0b995d2638ad1322401a4d80dd97610aff5767f5950089aee37174ba703382",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "cd0b995d2638ad1322401a4d80dd97610aff5767f5950089aee37174ba703382",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "cd0b995d2638ad1322401a4d80dd97610aff5767f5950089aee37174ba703382",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/21",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "e7cfb8c5-2c6f-5c21-b51e-16d4a18fa8ba",
+        "version": "1",
+        "digest": "deba98987dda0fc414e5ac53937e163ab26d9ac45dbff4b238dea301e64c5395",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "deba98987dda0fc414e5ac53937e163ab26d9ac45dbff4b238dea301e64c5395",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "deba98987dda0fc414e5ac53937e163ab26d9ac45dbff4b238dea301e64c5395",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/22",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "e9c01fb1-6e8c-5d7e-9bc3-6200a7885baf",
+        "version": "1",
+        "digest": "f63271006dcd2a32763d2d07d6d51fa37397052af89681bb7784b1f80c2c23c6",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "f63271006dcd2a32763d2d07d6d51fa37397052af89681bb7784b1f80c2c23c6",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "f63271006dcd2a32763d2d07d6d51fa37397052af89681bb7784b1f80c2c23c6",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/23",
+      "type": "RECEIPT_ACCOUNTING_FACT",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "74d4a5c0-b58b-57ec-8f24-cfd02b5749bf",
+        "version": "1",
+        "digest": "68debce89c5b57c77ab234bb41a77533192ceb32b723254f2e7cb927cc421dc8",
+        "purpose": "RECEIPT_ACCOUNTING_FACT"
+      },
+      "computed_sha256": "68debce89c5b57c77ab234bb41a77533192ceb32b723254f2e7cb927cc421dc8",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "68debce89c5b57c77ab234bb41a77533192ceb32b723254f2e7cb927cc421dc8",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/24",
+      "type": "ArBusinessResult",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "12e1d8bc-e2e6-573c-9596-8ce7c1b60dc3",
+        "version": "1",
+        "digest": "1242334d00a8ab627ece76831b4b9822f018801ed9bed562de936c8ed7d62a85",
+        "purpose": "ArBusinessResult"
+      },
+      "computed_sha256": "1242334d00a8ab627ece76831b4b9822f018801ed9bed562de936c8ed7d62a85",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "1242334d00a8ab627ece76831b4b9822f018801ed9bed562de936c8ed7d62a85",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    },
+    {
+      "pointer": "/arDemoRecords/25",
+      "type": "DemoOriginalEvidence",
+      "reference": {
+        "owner": "Finance AR",
+        "id": "27ca91a0-019e-5480-87dd-20a5d14d87b2",
+        "version": "1",
+        "digest": "98426313267c165953f5d518368366ab45d9bfbceb18050b690d2973e3befac8",
+        "purpose": "DemoOriginalEvidence"
+      },
+      "computed_sha256": "98426313267c165953f5d518368366ab45d9bfbceb18050b690d2973e3befac8",
+      "matches": true,
+      "initial_plain_canonical_comparison": {
+        "algorithm": "UNSCOPED_CANONICAL_ONLY",
+        "computed_sha256": "98426313267c165953f5d518368366ab45d9bfbceb18050b690d2973e3befac8",
+        "matches": true,
+        "classification": "exploratory_comparison_not_contract_failure"
+      },
+      "algorithm": "CANONICAL_JSON_1_BODY"
+    }
+  ],
+  "snapshot_checks": {
+    "decoded_value_equals_snapshot_body": true,
+    "decoded_bytes_equals_compact_sorted_snapshot": true,
+    "digest_matches": true
+  },
+  "wire_checks": {
+    "business_core_value_equals_envelope_without_transport_fields": true,
+    "business_core_hash_matches": true,
+    "transport_without_payloadDigest_hash_matches": true
+  },
+  "counts": {
+    "foundation_records": 25,
+    "tax_items": 65,
+    "batch_items": [
+      64,
+      1
+    ],
+    "tax_scenarios": 2,
+    "blank_page_steps": 13,
+    "ar_demo_records": 26,
+    "allocation_steps": 4
+  },
+  "boundary": "This reads a document fixture. Fields COMMITTED/ENLISTED/APPROVED and author staticChecks are design expectations, not real DbTransaction, Owner, schema validator or business test evidence.",
+  "business_tests": "NOT_RUN",
+  "runtime": "UNPROVEN",
+  "remaining_scope": "Module other required materials tracked by operations-reading; this evidence closes only 35c1942 fixture.",
+  "record_hash_failures": [],
+  "digest_domain_note": "FM typed originals use typeName + LF + canonical body; AR demo originals use plain canonical body. Initial naive cross-domain comparison retained as exploratory, not a source finding."
+}

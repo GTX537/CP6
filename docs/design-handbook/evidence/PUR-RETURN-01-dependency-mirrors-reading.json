@@ -1,0 +1,18 @@
+{
+  "target_ids": [
+    "FIN-AP-01",
+    "PUR-RETURN-01"
+  ],
+  "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/1f/1f904a10280b2cbb__PUR-RETURN-01_采购退货与供应商结算调整_前后端开发Spec_v1.0.3_REVIEW_R3_CANDIDATE.md",
+  "sha256": "1f904a10280b2cbbd0d50c2e1fbcc61f29b2fcece9ba40d0749fa17efb3f7f62",
+  "new_read_ranges": [
+    [
+      54376,
+      54911
+    ]
+  ],
+  "coverage": "selected_sections_full_semantic_read",
+  "content": "Full PO/STK/GR/OUT namespace mirrors and preceding multilocation capacity invariants read line-by-line; does not close remaining RETURN JSON or H31 shared scenarios.",
+  "updated_at_utc": "2026-10-10T13:27:29.229656+00:00",
+  "business_tests": "NOT_RUN"
+}

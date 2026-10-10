@@ -1,0 +1,55 @@
+{
+  "group": "root-planning",
+  "status": "required_materials_consolidated",
+  "updated_at_utc": "2026-10-10T13:14:10.738182+00:00",
+  "targets": [
+    {
+      "target_id": "PLAN-DEM-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PLAN-DEM-01.md",
+      "next_action": "当前规范/Office结构/辅助文本已归并；R03/R04评审、14真实实例、物理合同和完整视觉独立保留。",
+      "required_source_count": 19
+    },
+    {
+      "target_id": "PLAN-ATP-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PLAN-ATP-01.md",
+      "next_action": "当前规范与全部案例已整理；保存9程序未全文审计/旧DDL段边界。单位、终结锁序、SQL候选和真实采用保留编码前门。",
+      "required_source_count": 5
+    },
+    {
+      "target_id": "PLAN-POL-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PLAN-POL-01.md",
+      "next_action": "当前必需业务内容/接受与追踪闭合；全原生视觉、7真实Owner门和运行独立保留，最后集中跨域复核。",
+      "required_source_count": 24
+    },
+    {
+      "target_id": "PLAN-SUP-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PLAN-SUP-01.md",
+      "next_action": "当前必需业务内容/接受与追踪闭合；全原生视觉、7真实Owner门和运行独立保留，最后集中跨域复核。",
+      "required_source_count": 24
+    },
+    {
+      "target_id": "PLAN-MRP-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PLAN-MRP-01.md",
+      "next_action": "当前22份必读全读；最终跨域集中复核，7Q/6OPEN及未实现/原生画布边界保留，非业务完成。",
+      "required_source_count": 22
+    },
+    {
+      "target_id": "PLAN-PO-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PLAN-PO-01.md",
+      "next_action": "有效合同/必要附件/32正常场景均已整理，573成员用途分层；静态差异及旧R2缺包、实际采用0/业务未执行独立保留，最终集中跨域复核。"
+    },
+    {
+      "target_id": "PLAN-EXC-01",
+      "status": "required_materials_consolidated",
+      "module_path": "modules/PLAN-EXC-01.md",
+      "next_action": "有效当前规则和必要附件已整理，351成员逐项用途/阅读边界明确；集中跨域复核，保留4项静态差异及实际采用/运行未证。",
+      "required_source_count": 29
+    }
+  ]
+}

@@ -1,0 +1,266 @@
+{
+  "meaning": "Structural extraction only, not semantic reading or visual verification. No formulas, macros or source scripts executed. Cached values are source-provided, not recalculated.",
+  "files": [
+    {
+      "sha256": "04a85098f3ae0c0dc6de491a5f3635ec10a7022bb5498ac2233e687397269344",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/04/04a85098f3ae0c0d__CP6_功能详细设计书模板_v1.0.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/04a85098f3ae0c0dc6de491a5f3635ec10a7022bb5498ac2233e687397269344.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/04a85098f3ae0c0dc6de491a5f3635ec10a7022bb5498ac2233e687397269344.md",
+      "text_units": 1105,
+      "media_or_drawings": 0,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "25619918987d29e90638d015c303d47b098efe4c080c430effb6a9fd89666424",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/25/25619918987d29e9__CP6_全范围进度盘点_20261007.docx",
+      "format": ".docx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/25619918987d29e90638d015c303d47b098efe4c080c430effb6a9fd89666424.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/25619918987d29e90638d015c303d47b098efe4c080c430effb6a9fd89666424.md",
+      "text_units": 1465,
+      "media_or_drawings": 0,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/26/262f327165510b91__PLM-ITER-01_工程项目迭代与方案评审_詳細設計書_v0.1_REVIEW.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/262f327165510b91753a50598d6e5b5b86972a47bf31aecfcc76fbc0bcc30b38.md",
+      "text_units": 5343,
+      "media_or_drawings": 3,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "2b437f06188f83b105cd293a8c1c5fb92ffec2c0977529b9b240d8069509ba10",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2b/2b437f06188f83b1__ENG-REV-01_产品配置技术修订与受控基线_詳細設計書_v0.1_REVIEW.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/2b437f06188f83b105cd293a8c1c5fb92ffec2c0977529b9b240d8069509ba10.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/2b437f06188f83b105cd293a8c1c5fb92ffec2c0977529b9b240d8069509ba10.md",
+      "text_units": 7440,
+      "media_or_drawings": 3,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "2c9f9b2bf56d846cb2fe2f8dd27d0d92847d038fb760fd269619c37539675a21",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2c/2c9f9b2bf56d846c__PLM-VER-01_MSBBPA010原生母版_清例与原文摘录_工作稿.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/2c9f9b2bf56d846cb2fe2f8dd27d0d92847d038fb760fd269619c37539675a21.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/2c9f9b2bf56d846cb2fe2f8dd27d0d92847d038fb760fd269619c37539675a21.md",
+      "text_units": 1020,
+      "media_or_drawings": 36,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "2d96e5c7c861f340031225780131513d501c800b8640d6435b35bbb22d0f3f11",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/2d/2d96e5c7c861f340__ERP-ORD-01_機能詳細設計書_R04_v0.1_REVIEW_2026-09-27.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/2d96e5c7c861f340031225780131513d501c800b8640d6435b35bbb22d0f3f11.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/2d96e5c7c861f340031225780131513d501c800b8640d6435b35bbb22d0f3f11.md",
+      "text_units": 9289,
+      "media_or_drawings": 0,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "319ad9853d9dee0cdc41043b040ede59cb17c4b7082e1c9841b8b2ce46e9e93c",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/31/319ad9853d9dee0c__PLM-VER-01_MSBBPA010原生母版_Desktop布局验证稿.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/319ad9853d9dee0cdc41043b040ede59cb17c4b7082e1c9841b8b2ce46e9e93c.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/319ad9853d9dee0cdc41043b040ede59cb17c4b7082e1c9841b8b2ce46e9e93c.md",
+      "text_units": 20634,
+      "media_or_drawings": 78,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "33cb025d0778b4c0c0d144ad307c5fee95ca0ef129042cc5f69daac97945fddd",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/33/33cb025d0778b4c0__PLM-VER-01_方案验证试制与设计确认_詳細設計書_v0.1_REVIEW_R03_原文落版.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/33cb025d0778b4c0c0d144ad307c5fee95ca0ef129042cc5f69daac97945fddd.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/33cb025d0778b4c0c0d144ad307c5fee95ca0ef129042cc5f69daac97945fddd.md",
+      "text_units": 4896,
+      "media_or_drawings": 36,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "46ef5f39db683a6a2aad00671d1744a280fc9149c2d2438a508b6ee692d58441",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/46/46ef5f39db683a6a__CP6_全部125项设计目录_20261009.docx",
+      "format": ".docx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/46ef5f39db683a6a2aad00671d1744a280fc9149c2d2438a508b6ee692d58441.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/46ef5f39db683a6a2aad00671d1744a280fc9149c2d2438a508b6ee692d58441.md",
+      "text_units": 467,
+      "media_or_drawings": 0,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "659153aa346a10b6e6e34d4730fbe31a545ff765873c664203d68dd405f2edd0",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/65/659153aa346a10b6__PLAN-SUP-01_機能詳細設計書_PS-R04_v0.1_REVIEW_2026-09-28.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/659153aa346a10b6e6e34d4730fbe31a545ff765873c664203d68dd405f2edd0.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/659153aa346a10b6e6e34d4730fbe31a545ff765873c664203d68dd405f2edd0.md",
+      "text_units": 3579,
+      "media_or_drawings": 9,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "68b233cc95c6237b98fd0217d3c7ffb2fe669e78ac8f98e130ea0975ed4e2cd7",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/68/68b233cc95c6237b__PLAN-DEM-01_機能詳細設計書_R04_v0.1_REVIEW_2026-09-27.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/68b233cc95c6237b98fd0217d3c7ffb2fe669e78ac8f98e130ea0975ed4e2cd7.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/68b233cc95c6237b98fd0217d3c7ffb2fe669e78ac8f98e130ea0975ed4e2cd7.md",
+      "text_units": 7056,
+      "media_or_drawings": 0,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "75d115f0a8f9916a3e0deb2cc4fd0a97bb3bd7e8ef038657fb2f454a25cf95b0",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/75/75d115f0a8f9916a__PLAN-POL-01_機能詳細設計書_PS-R04_v0.1_REVIEW_2026-09-28.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/75d115f0a8f9916a3e0deb2cc4fd0a97bb3bd7e8ef038657fb2f454a25cf95b0.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/75d115f0a8f9916a3e0deb2cc4fd0a97bb3bd7e8ef038657fb2f454a25cf95b0.md",
+      "text_units": 3522,
+      "media_or_drawings": 9,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "7eea13dd4a9f5f3e13b4fed5a3a46023958b5772c398c767e5639c57c760d2e4",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/7e/7eea13dd4a9f5f3e__PLM-VER-01_方案验证试制与设计确认_詳細設計書_v0.1_REVIEW.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/7eea13dd4a9f5f3e13b4fed5a3a46023958b5772c398c767e5639c57c760d2e4.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/7eea13dd4a9f5f3e13b4fed5a3a46023958b5772c398c767e5639c57c760d2e4.md",
+      "text_units": 5381,
+      "media_or_drawings": 3,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "8fc2b9c88dd3c9c6a76184ea437f5b0698c7224ca14582ce5e3d96a126872f20",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/8f/8fc2b9c88dd3c9c6__CRM-CON-01_機能詳細設計書_R04.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/8fc2b9c88dd3c9c6a76184ea437f5b0698c7224ca14582ce5e3d96a126872f20.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/8fc2b9c88dd3c9c6a76184ea437f5b0698c7224ca14582ce5e3d96a126872f20.md",
+      "text_units": 2237,
+      "media_or_drawings": 2,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "b07346a91432da6e6d8e9889ced862a9f859cb5756854d913f56ead34e0df135",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/b0/b07346a91432da6e__【MSBBPA010】_画面設計書_アドオン(Web見積計算書入力)_20230207_V04.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/b07346a91432da6e6d8e9889ced862a9f859cb5756854d913f56ead34e0df135.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/b07346a91432da6e6d8e9889ced862a9f859cb5756854d913f56ead34e0df135.md",
+      "text_units": 20625,
+      "media_or_drawings": 74,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "bf2f36ee7f9685dbb6d323609d06d4dc478f2a6d289d9a24f735d8706043b773",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/bf/bf2f36ee7f9685db__CRM-ACT-01_機能詳細設計書_R04.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/bf2f36ee7f9685dbb6d323609d06d4dc478f2a6d289d9a24f735d8706043b773.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/bf2f36ee7f9685dbb6d323609d06d4dc478f2a6d289d9a24f735d8706043b773.md",
+      "text_units": 2084,
+      "media_or_drawings": 1,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "c1bc30822a75df9735fc8945472e3bcaafcb26466cd8fcb052cae2aa823f722e",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c1/c1bc30822a75df97__WMS-MASTER-01_機能詳細設計書_R04_CARRIER_REVIEW.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/c1bc30822a75df9735fc8945472e3bcaafcb26466cd8fcb052cae2aa823f722e.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/c1bc30822a75df9735fc8945472e3bcaafcb26466cd8fcb052cae2aa823f722e.md",
+      "text_units": 6937,
+      "media_or_drawings": 9,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "c40f8da3f565cff61beb8bcb64e8d6cf62f7a0fe3b84a6b1dc215c526411e501",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/c4/c40f8da3f565cff6__PUR-RFQ-01_機能詳細設計書_R04_CARRIER_REVIEW.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/c40f8da3f565cff61beb8bcb64e8d6cf62f7a0fe3b84a6b1dc215c526411e501.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/c40f8da3f565cff61beb8bcb64e8d6cf62f7a0fe3b84a6b1dc215c526411e501.md",
+      "text_units": 2893,
+      "media_or_drawings": 5,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "cf306bba668d6af532d1a2fb88e2503e3cde48761d9e6be16e817a7eb7527c9b",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/cf/cf306bba668d6af5__CRM-ACC-01_機能詳細設計書_R04.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/cf306bba668d6af532d1a2fb88e2503e3cde48761d9e6be16e817a7eb7527c9b.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/cf306bba668d6af532d1a2fb88e2503e3cde48761d9e6be16e817a7eb7527c9b.md",
+      "text_units": 2024,
+      "media_or_drawings": 1,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "d1fcf8f3ce49d6fe84d8004740bb0f40a13b020020f31ff6ae3b5cbf5bd2d5fe",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/d1/d1fcf8f3ce49d6fe__CP6_主链进度台账_PB01_2026-09-28.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/d1fcf8f3ce49d6fe84d8004740bb0f40a13b020020f31ff6ae3b5cbf5bd2d5fe.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/d1fcf8f3ce49d6fe84d8004740bb0f40a13b020020f31ff6ae3b5cbf5bd2d5fe.md",
+      "text_units": 3289,
+      "media_or_drawings": 0,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "db551515ec38690cdc60dad974177070834d4ea356cb781350595469acff478c",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/db/db551515ec38690c__PLM-VER-01_方案验证试制与设计确认_詳細設計書_v0.1_REVIEW_Desktop兼容版.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/db551515ec38690cdc60dad974177070834d4ea356cb781350595469acff478c.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/db551515ec38690cdc60dad974177070834d4ea356cb781350595469acff478c.md",
+      "text_units": 5381,
+      "media_or_drawings": 3,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "df389fbebebddc49cb6d698332965cdcdc09bf5b9490be3c95319c9c43aecc3d",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/df/df389fbebebddc49__CP6_完整设计总览_20261009.docx",
+      "format": ".docx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/df389fbebebddc49cb6d698332965cdcdc09bf5b9490be3c95319c9c43aecc3d.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/df389fbebebddc49cb6d698332965cdcdc09bf5b9490be3c95319c9c43aecc3d.md",
+      "text_units": 250,
+      "media_or_drawings": 0,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "eae727a40f11edc3c54e75abf75d5d8127ff1d1b713ed0a3de5852a0152b6fca",
+      "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/ea/eae727a40f11edc3__PLM-VER-01_MSBBPA010原生母版_章节落版_R02_工作稿.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/eae727a40f11edc3c54e75abf75d5d8127ff1d1b713ed0a3de5852a0152b6fca.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/eae727a40f11edc3c54e75abf75d5d8127ff1d1b713ed0a3de5852a0152b6fca.md",
+      "text_units": 1849,
+      "media_or_drawings": 36,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "57dd8bfe1519496f40877e92dd271aeafae36b32980ec2cac0020d64007c4895",
+      "source_path": "D:/CP6-archives/consolidation-20261010/objects/57dd8bfe1519496f40877e92dd271aeafae36b32980ec2cac0020d64007c4895.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/57dd8bfe1519496f40877e92dd271aeafae36b32980ec2cac0020d64007c4895.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/57dd8bfe1519496f40877e92dd271aeafae36b32980ec2cac0020d64007c4895.md",
+      "text_units": 20634,
+      "media_or_drawings": 75,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "f68b6ba68d801a15aa4307f200b4fb72b3db6e394389bf5eb53efbef979fdbee",
+      "source_path": "D:/CP6-archives/consolidation-20261010/objects/f68b6ba68d801a15aa4307f200b4fb72b3db6e394389bf5eb53efbef979fdbee.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/f68b6ba68d801a15aa4307f200b4fb72b3db6e394389bf5eb53efbef979fdbee.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/f68b6ba68d801a15aa4307f200b4fb72b3db6e394389bf5eb53efbef979fdbee.md",
+      "text_units": 20681,
+      "media_or_drawings": 75,
+      "status": "structurally_extracted_not_semantically_read"
+    },
+    {
+      "sha256": "13cd353f4bbcd940e55551d215d66291314d6d134ea1a31e5682340804e32fb4",
+      "source_path": "D:/CP6-archives/consolidation-20261010/objects/13cd353f4bbcd940e55551d215d66291314d6d134ea1a31e5682340804e32fb4.xlsx",
+      "format": ".xlsx",
+      "structured_path": "D:/CP6-archives/consolidation-20261010/office/13cd353f4bbcd940e55551d215d66291314d6d134ea1a31e5682340804e32fb4.json",
+      "reading_path": "D:/CP6-archives/consolidation-20261010/office/13cd353f4bbcd940e55551d215d66291314d6d134ea1a31e5682340804e32fb4.md",
+      "text_units": 20625,
+      "media_or_drawings": 71,
+      "status": "structurally_extracted_not_semantically_read"
+    }
+  ],
+  "errors": []
+}

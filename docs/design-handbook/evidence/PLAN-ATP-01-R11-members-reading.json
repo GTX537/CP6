@@ -1,0 +1,561 @@
+[
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/A-PLAN-ATP-MD-SPEC-01_SOURCE-MAP.json",
+    "sha256": "b48cf452d10d4a907a58ccf13fba72335b3b57c573a1b59539745dbb1f708b8b",
+    "bytes": 7509,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/A-PLAN-ATP-MD-SPEC-01_SOURCE-MAP.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        170
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CANONICAL-POLICY-OWNER-EVENT.json",
+    "sha256": "afb056bb3bf5abba896fbadb3c17b017cb5b42a8be0d0d18cf50cc552dff951e",
+    "bytes": 3621,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CANONICAL-POLICY-OWNER-EVENT.json",
+    "semantic_disposition": "exact_decoded_subtree_reuse_plus_unique_semantics",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "与CALC01已读对象按完整解码JSON值匹配复用；OwnerEvent/binding及完成后etag4/终态/Outbox等独有字段全部读取。未执行canonical算法。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PACKAGE-CHECKS.json",
+    "sha256": "3e58a2bd8d55ce1585bbdbaed96e7d5028777bbc97c2abf388baecf25177aa21",
+    "bytes": 1290,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PACKAGE-CHECKS.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/verify_recovery_r11_direct_repairs.py",
+    "sha256": "bbe1ab6d19e059b53a60a50db4ccd1cf2f715033b9d20cddea98d70b5c8b6c5c",
+    "bytes": 6308,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/verify_recovery_r11_direct_repairs.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/recovery_r11_fixture_helpers.py",
+    "sha256": "a85bf771a6dbcbb18a722d70644b0b3ff602217a09ec16b22e63f1264f3e47f6",
+    "bytes": 1282,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/recovery_r11_fixture_helpers.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/plan_atp_recovery_r11_model.py",
+    "sha256": "aa18196693cd6981b3d4a93e96ca7448ffd5cbdb96075a7d3785efeace3fe250",
+    "bytes": 186358,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/plan_atp_recovery_r11_model.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/build_recovery_r11_annexes.py",
+    "sha256": "9673390054bdca9a7d536fc08b536b608930fa997dd89f1e0ba5cf5fe878c254",
+    "bytes": 71194,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/build_recovery_r11_annexes.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-OWNER-NAME-VECTORS.json",
+    "sha256": "1b78722672e08dd0af30727233645d53475906ec1cf866bb66d7977c3488d3e9",
+    "bytes": 749,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-OWNER-NAME-VECTORS.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-POLICY.schema.json",
+    "sha256": "2cbb2d1e46b118d957cc56edc6eec11db115c721d37f795835f48893d9fd1729",
+    "bytes": 47111,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POLICY.schema.json",
+    "semantic_disposition": "exact_definition_reuse_plus_full_unique_metadata",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "83个$defs与已读WIRE Schema字典精确相等；本文件$id/$ref等独有元数据完整读取。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-CONTINUOUS-FIXTURES.json",
+    "sha256": "0447783a1e2c2c32525e56517c22f70aaaa1b9de9e5b371c4135702cb5395d91",
+    "bytes": 2427888,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-CONTINUOUS-FIXTURES.json",
+    "semantic_disposition": "full_semantics_via_decoded_base_and_exact_deltas",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "25计算：CALC01递归解码全部内容、其余24与基准的逐叶变化和精确共用；29工作流逐条前态/CAS/动作/期望写集，10日历全部条件与期望。不是执行测试。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-ANNEX-VERIFICATION.json",
+    "sha256": "c9e925531d8b3d54c40d476457caba27f7f9d0d9bb3adb991f2cd7c1bcdd846f",
+    "bytes": 406,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-ANNEX-VERIFICATION.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/A-PLAN-ATP-MD-SPEC-01_INDEX.md",
+    "sha256": "1c2271aa16046308b4b84bb52233106ece3a1ed8ff3777fdc774eb813ebea65d",
+    "bytes": 3856,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/A-PLAN-ATP-MD-SPEC-01_INDEX.md",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        53
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-RETURN-CLOSURE.json",
+    "sha256": "a14a87f120870f1f84be5c30351895a0d994dc68250c05f43bdc00d14c5b5bd0",
+    "bytes": 1319,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-RETURN-CLOSURE.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CROSS-LAYER-KATS.json",
+    "sha256": "372228e3b3b9c4d1bbc74b525728436c91402af252e53e89016b278554680020",
+    "bytes": 1652,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CROSS-LAYER-KATS.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-WIRE.types.cs",
+    "sha256": "2129edadd0ca38a3718ba7e30afde49e55da258ac90ac6dcf6b98eaf6280328f",
+    "bytes": 40100,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.cs",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        599
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CANONICAL-RESULT.json",
+    "sha256": "9881fd38d094f3a518962ba7ecbec2667b87325e128b4355ea22e451e87b4f6b",
+    "bytes": 12811,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CANONICAL-RESULT.json",
+    "semantic_disposition": "exact_decoded_subtree_reuse_plus_unique_semantics",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "与CALC01已读对象按完整解码JSON值匹配复用；OwnerEvent/binding及完成后etag4/终态/Outbox等独有字段全部读取。未执行canonical算法。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-LIBRARY-CHECKPOINTS.json",
+    "sha256": "864ee2aafe9500cd57d6501fc95bce3c757d37d4d70469577a844daf7f2e6770",
+    "bytes": 1161,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-LIBRARY-CHECKPOINTS.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        29
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-DATA-CONSTRAINTS.json",
+    "sha256": "269ddd3c34ff3d3e2021a62de75e92bb3bf2304ca6e8a17f5212d08e36126de0",
+    "bytes": 7188,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-DATA-CONSTRAINTS.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        138
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CANONICAL-TRUSTED-OBSERVER-ROW.json",
+    "sha256": "add2208ccfc221fa6df9ddb3ef051727663ced5ed8366a83d24a34d1b58b7769",
+    "bytes": 357,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CANONICAL-TRUSTED-OBSERVER-ROW.json",
+    "semantic_disposition": "exact_decoded_subtree_reuse_plus_unique_semantics",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "与CALC01已读对象按完整解码JSON值匹配复用；OwnerEvent/binding及完成后etag4/终态/Outbox等独有字段全部读取。未执行canonical算法。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/build_recovery_r11_closure.py",
+    "sha256": "e145e934b174253ef49660eeb9fdb4d51172140f23b31c970fddd7530d7e17c0",
+    "bytes": 2308,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/build_recovery_r11_closure.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-DIRECT-REPAIR-EVIDENCE.json",
+    "sha256": "1eb9fb9ed9bb9765fa4e908857164c4b1782a5bdd6fb5e002e369d96e0a150c4",
+    "bytes": 1745,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-DIRECT-REPAIR-EVIDENCE.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/build_recovery_r11_finalize.py",
+    "sha256": "b84e3a40dab70a24fedce6340da5decbeee5970d1a88a71d6224ef60ad6a7991",
+    "bytes": 9191,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/build_recovery_r11_finalize.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/A-PLAN-ATP-MD-SPEC-01_SOURCE-READ-RECEIPT.md",
+    "sha256": "2b060bb8da08f5ae7a106ab72662c837f64941a7399fb277f417b9240199d061",
+    "bytes": 2590,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/A-PLAN-ATP-MD-SPEC-01_SOURCE-READ-RECEIPT.md",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        57
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CANONICAL-PROJECTIONS.json",
+    "sha256": "27015ee34f1493188cf3aff266fd97700b3c94b5cead2e7dc2ee5f314a622fb1",
+    "bytes": 15283,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CANONICAL-PROJECTIONS.json",
+    "semantic_disposition": "exact_decoded_subtree_reuse_plus_unique_semantics",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "与CALC01已读对象按完整解码JSON值匹配复用；OwnerEvent/binding及完成后etag4/终态/Outbox等独有字段全部读取。未执行canonical算法。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-01_交期承诺查询_前后端开发Spec_v1.0_RECOVERY_R11_DRAFT.md",
+    "sha256": "d4e2a2805932996e8733a3782847c66e8add8a06ae171fc3b80188a237126a6e",
+    "bytes": 44846,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-01_交期承诺查询_前后端开发Spec_v1.0_RECOVERY_R11_DRAFT.md",
+    "semantic_disposition": "exact_byte_reuse",
+    "read_ranges": [
+      [
+        1,
+        617
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "SHA d4e2a280…与已完整读取的登记主文617行精确一致。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-CONTRACT-PARITY.json",
+    "sha256": "08ca50b99dcdb8203a4a6f5f388ab6fdc416af8bcbf6699d53cf93aee3b70df1",
+    "bytes": 2666,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-CONTRACT-PARITY.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CANONICAL-CARRIERS.json",
+    "sha256": "b7a809eb616328296b036f125363cbdf89a6da0dfd4ee78adb270d024b96055d",
+    "bytes": 36569,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CANONICAL-CARRIERS.json",
+    "semantic_disposition": "exact_decoded_subtree_reuse_plus_unique_semantics",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "与CALC01已读对象按完整解码JSON值匹配复用；OwnerEvent/binding及完成后etag4/终态/Outbox等独有字段全部读取。未执行canonical算法。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/build_recovery_r11.py",
+    "sha256": "d840c939b754fd00c45534f5c6d10444cfa8733b4f468f69e9c07e643c3a0980",
+    "bytes": 20934,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/build_recovery_r11.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-WIRE.schema.json",
+    "sha256": "5a99f543b8d5dac2db898de88e77baed6132953d31bfc9be3c3549bbfe0624cd",
+    "bytes": 49184,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.schema.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-AC-CATALOG.json",
+    "sha256": "57bcc2cbd1f6ae6a0d1bbae1f71f9eb3a714ca83295e65d425e2e6f6d1b6c658",
+    "bytes": 10613,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-AC-CATALOG.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-SCHEMA-VECTORS.json",
+    "sha256": "feb10b98093a4fb0f5b0b17c136fba686977d74176febd6d97b17581dbdfa629",
+    "bytes": 906319,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-SCHEMA-VECTORS.json",
+    "semantic_disposition": "full_semantics_via_raw_vectors_and_exact_reuse",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "22根×10类220向量，22基准原字节/解码结构、完整delta、重复键原文本插入及targetDefinition/expectedCode/Pointer全部读取；若目标为独立标量定义，未假称在22根每条路径做字段边界测试。BOUNDARY有若干与基准相同。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-STATIC-VERIFICATION.json",
+    "sha256": "33be12ff5ce1adaa295546716b362728c579dfe087074861501efaab5b3a8758",
+    "bytes": 566,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-STATIC-VERIFICATION.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CANONICAL-COMPLETED-STORE.json",
+    "sha256": "08545f2be347506c8a98692bb5cc38905ee255b42740d267aaa6101a9d1406c2",
+    "bytes": 77308,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CANONICAL-COMPLETED-STORE.json",
+    "semantic_disposition": "exact_decoded_subtree_reuse_plus_unique_semantics",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "与CALC01已读对象按完整解码JSON值匹配复用；OwnerEvent/binding及完成后etag4/终态/Outbox等独有字段全部读取。未执行canonical算法。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/FREEZE-MANIFEST.json",
+    "sha256": "a6b8c07cd010641e3d9abc17f883b6a55afcb8911dde8289cd2410ddee32128d",
+    "bytes": 6412,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/FREEZE-MANIFEST.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/verify_recovery_r11_manifest.py",
+    "sha256": "4cb89c90aeb191db9963f8558ff775323d3265da039ba3cc4e1661e241bdb287",
+    "bytes": 1078,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/verify_recovery_r11_manifest.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CHECKPOINT-1.json",
+    "sha256": "278cbdc56322f5c08d045967a2b6f685aa4916be3593b64a33a451c06ec14726",
+    "bytes": 755,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CHECKPOINT-1.json",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/verify_recovery_r11_static.py",
+    "sha256": "60aca9e0c1e31751da14e4f6ccf831950c55996822957835ee0e4aa748d4e9fb",
+    "bytes": 7137,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/verify_recovery_r11_static.py",
+    "semantic_disposition": "archived_reference_program_purpose_and_structure_only",
+    "read_ranges": [],
+    "unread_ranges": "函数实现体未全面审计；仅模块docstring、AST顶层函数边界/用途已读。规范算法/协议以已读R11正文、Schema、数据约束、类型定义、DDL、案例为准。该静态模型及生成/验证脚本不是生产代码；未执行。",
+    "what_was_read": "模型/夹具构造/制品生成/静态验证程序分别分类保留，未以AST扫描冒称全文语义审计。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-WIRE.types.ts",
+    "sha256": "da1d63553f481af5bcb716ab0d208c7f0346242f39fbc33bb700bf3976f60ea7",
+    "bytes": 25793,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-WIRE.types.ts",
+    "semantic_disposition": "full",
+    "read_ranges": [
+      [
+        1,
+        432
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "本轮完整读取内容；静态归档证据不作为本轮执行、数据库、编译或业务验收。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/PLAN-ATP-POSTGRESQL-DDL.sql",
+    "sha256": "cf6943f7f350ad0b6fa532aca93a2c5beef00a32ec975965b9f5b665d029cd4f",
+    "bytes": 182617,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/PLAN-ATP-POSTGRESQL-DDL.sql",
+    "semantic_disposition": "current_normative_sql_semantics_consolidated",
+    "read_ranges": [
+      [
+        1,
+        1782
+      ],
+      [
+        1877,
+        2863
+      ]
+    ],
+    "unread_ranges": "L1783–1876旧_legacy_accept_ingest_forbidden实现体未全读，现行runtime无此入口grant；不构成当前采用过程。全DDL未执行，外部cp6_plan_atp_jcs扩展未验证。",
+    "what_was_read": "当前表/约束/角色/授权/完整性/阶段/终结/查询/恢复/游标/事件/新鲜度过程已读；保留单位与顺序差异及两SQL审查候选。"
+  },
+  {
+    "member": "A_PLAN_ATP_SUCCESSOR_RECOVERY_R11/RECOVERY-R11-CANONICAL-STORE.json",
+    "sha256": "a42f76bdc38b34e63ad3bc2477127a997210a84fec95f79ec1320e94337338e8",
+    "bytes": 77007,
+    "local_cache_path": "D:/CP6-archives/consolidation-20261010/root-planning-cache/atp-r11/RECOVERY-R11-CANONICAL-STORE.json",
+    "semantic_disposition": "exact_decoded_subtree_reuse_plus_unique_semantics",
+    "read_ranges": [
+      [
+        1,
+        1
+      ]
+    ],
+    "unread_ranges": [],
+    "what_was_read": "与CALC01已读对象按完整解码JSON值匹配复用；OwnerEvent/binding及完成后etag4/终态/Outbox等独有字段全部读取。未执行canonical算法。"
+  }
+]

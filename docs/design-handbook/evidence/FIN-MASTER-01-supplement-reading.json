@@ -1,0 +1,150 @@
+{
+  "target_id": "FIN-MASTER-01",
+  "status": "required_schema_and_fixture_semantics_consolidated",
+  "prepared_at_utc": "2026-10-10T12:15:28.195050+00:00",
+  "source_path": "D:/CP6/docs/CP6_完整成果归档_20261009/完整成果/docs/originals/fe/fe3093133f8fa6ca__FIN-MASTER-01_财务基础资料_前后端开发Spec_v1.3_REVIEW_R3_CANDIDATE.md",
+  "sha256": "fe3093133f8fa6ca73a051c558dfd3b6141235c5235bbf28f9f5dd132a9310a8",
+  "schema_read": {
+    "range": [
+      1375,
+      9151
+    ],
+    "definition_count": 167,
+    "method": "All167 definitions compact JSON rendered and semantically read in four consecutive no-truncation batches, preserving every constraint/property/required/oneOf/allOf. Earlier operations ranges reused only for surrounding main/TS."
+  },
+  "fixture_read": {
+    "range": [
+      9159,
+      72947
+    ],
+    "records": 390,
+    "cases": 239,
+    "semantic_read_complete": true,
+    "projection_cache": "D:/CP6-archives/consolidation-20261010/root-planning-cache/fin-master",
+    "exact_subtree_reference_reuses": 2659,
+    "record_digest_checks": 390,
+    "record_digest_errors": [],
+    "note": "All390 records and all239 complete cases semantically read via exact typed base/full + every recursive delta, including removals. Every actor/input/output/predecessor/evidence/explanation and subject/transaction/timeline/control/recovery branch covered. Opaque UUID/hash aliases are bijective, not invented values.",
+    "record_pages_read": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "record_indices_read": [
+      [
+        0,
+        389
+      ]
+    ],
+    "cases_pages_read": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "compact_method": "Every novel field and recursive delta read; same_as refers to earlier fully read record/case. SourceRef/body exact subtree reuse and opaque symbol restoration reconstructed all629 original values with0 errors. This validates projection fidelity, not business runtime.",
+    "records_semantic_complete": true,
+    "compact_roundtrip_evidence": "evidence/FIN-MASTER-01-compact-reuse-validation.json",
+    "case_indices_read": [
+      [
+        0,
+        238
+      ]
+    ],
+    "cases_semantic_complete": true
+  },
+  "inherited_read": {
+    "ledger": "evidence/operations-reading.json",
+    "main": [
+      1,
+      1373
+    ],
+    "case_ranges": [
+      [
+        65563,
+        65977
+      ],
+      [
+        72371,
+        72649
+      ]
+    ],
+    "AC": "AppendixD156x6member exact reuse from full main483–638"
+  },
+  "business_tests": "NOT_RUN",
+  "runtime": "UNPROVEN",
+  "required_materials_consolidated": true,
+  "completed_at_utc": "2026-10-10T12:27:01.732651+00:00",
+  "boundary_lines_read": [
+    [
+      1372,
+      1378
+    ],
+    [
+      9151,
+      9165
+    ],
+    [
+      72941,
+      72956
+    ],
+    [
+      74196,
+      74205
+    ]
+  ],
+  "reading_artifacts": [
+    {
+      "path": "evidence/FIN-MASTER-01-records-compact.json",
+      "sha256": "a3539300dd6343f8056d1fabf46b3d964e4eb152a35c64d5a5fa87ff58885402",
+      "bytes": 250037
+    },
+    {
+      "path": "evidence/FIN-MASTER-01-cases-compact.json",
+      "sha256": "cfbacdb5ad4ceb7939989b0777ea9170d0e5cebe5ee7a255559f744ebd22906a",
+      "bytes": 267564
+    },
+    {
+      "path": "evidence/FIN-MASTER-01-compact-symbols.json",
+      "sha256": "9487f7e8c0edd5b6ac5db660f928239a2eeaf8920e7cb7b06fa5d314b9a7e5da",
+      "bytes": 59202
+    },
+    {
+      "path": "evidence/FIN-MASTER-01-compact-reuse.json",
+      "sha256": "e944b8a8b20bc51c988482f28e65bc08082294a2f8120e3fca4c293288c24287",
+      "bytes": 346830
+    },
+    {
+      "path": "evidence/FIN-MASTER-01-source-directory.json",
+      "sha256": "4b1efe0e0f8b0cae0104da5b4316028a7f455fec978480a159f08c19df9b3c3d",
+      "bytes": 248972
+    }
+  ],
+  "design_appendix": "contracts/FIN-MASTER-01-类型与调用原件.md",
+  "case_and_type_index": "contracts/FIN-MASTER-01-类型与案例索引.md",
+  "limits": [
+    "Original demo business statements are expected semantics only; no fixture scripts, database, encryption, signing or API executed.",
+    "Real adoption gates remain UNVERIFIED; required-material closure does not claim runtime readiness.",
+    "Mandatory extract windows may reuse original content only where operations ledger proves exact line correspondence."
+  ]
+}
